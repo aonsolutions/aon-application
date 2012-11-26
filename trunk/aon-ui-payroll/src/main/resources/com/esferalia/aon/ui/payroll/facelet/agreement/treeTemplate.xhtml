@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"	
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+
+	<ui:define name="content">
+ 	
+		<aon:form>
+			<aon:methodParam name="saveAction" default="agreement_tree"/>
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarId" value="agreementTreeToolbar" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_agreement_module}" />
+				<ui:param name="controller" value="#{agreement}" />
+				<ui:param name="skipRemoveButton" value="true" />
+				<ui:param name="skipSaveButton" value="true" />
+			</ui:decorate>
+		</aon:form>
+		
+		<h:panelGrid columns="2" style="width:100%;"
+			columnClasses="aon-vertical-align-top aon-width-250,aon-vertical-align-top aon-width-auto">
+			<aon:div>
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/tree.xhtml" />
+			</aon:div>
+			<aon:div id="agreementTreePanel">
+				<ui:insert name="treeContent" />
+			</aon:div>	
+		</h:panelGrid>
+	</ui:define>			
+
+</ui:composition>

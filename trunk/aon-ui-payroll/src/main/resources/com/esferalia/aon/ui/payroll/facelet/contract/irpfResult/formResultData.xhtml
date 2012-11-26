@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:panelGrid styleClass="aon-margin-top "
+				columns="1" style="width: 100%;"
+				columnClasses="aon-noborder aon-bold"
+				rendered="#{administration == 'COMMON_TERRITORY'}">
+			<aon:outputText value="La Agencia tributaria le comunica que, en relación con el perceptor que más abajo se indica y de acuerdo con los datos que asimismo se relacionan, los resultados del cálculo efectuado son los siguientes: " />
+	</aon:panelGrid>
+	
+	<aon:panelGrid styleClass="aon-margin-top "
+				columns="3" style="width: 100%;"
+				columnClasses="aon-noborder aon-vertical-align-bottom
+							  ,aon-noborder aon-vertical-align-bottom
+							  ,aon-noborder aon-width-150  aon-text-center aon-padding-left aon-padding-top aon-padding-right aon-vertical-align-bottom">
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="BASE PARA CALCULAR EL TIPO DE RETENCIÓN" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="baseIrpf" />
+			</ui:include>
+			
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="MÍNIMO PERSONAL Y FAMILIAR PARA CALCULAR EL TIPO DE RETENCIÓN" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="minimunPersonalFamily" />
+			</ui:include>
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="DEDUCCIÓN ART. 80 BIS LIRPF" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="deduct80Bis" />
+			</ui:include>
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="MINORACIÓN POR PAGOS DE PRÉSTAMOS PARA VIVIENDA HABITUAL" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="deductHomeLoanAmount" />
+			</ui:include>
+
+			<aon:div styleClass="irpf_bold_bottom_border aon-bold"  >
+				<aon:outputText value="TIPO DE RETENCIÓN APLICABLE" />
+			</aon:div>
+			<aon:div styleClass="irpf_bold_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="irpf" />
+			</ui:include>
+
+			<aon:div styleClass="irpf_bold_bottom_border aon-bold"  >
+				<aon:outputText value="IMPORTE ANUAL DE LAS RETENCIONES E INGRESOS A CUENTA" />
+			</aon:div>
+			<aon:div styleClass="irpf_bold_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="annualIrpf" />
+			</ui:include>
+
+	</aon:panelGrid>
+	
+</ui:composition>

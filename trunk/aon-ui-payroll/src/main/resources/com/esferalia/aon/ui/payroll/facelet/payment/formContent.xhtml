@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+	<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{controller.to.paymentConcept}" />
+		<ui:param name="idRequired" value="#{!aonRole.config and !aonRole.admin}" />
+		<ui:param name="skipNewButton" value="#{!aonRole.admin}" />
+		<ui:param name="lookupReRender" value="#{controller.beanName}MenuGrid" />
+	</ui:include>
+
+	<aon:outputLabel for="ContractPayment_startDate" value="#{bundle.aon_start_date}" />
+	<aon:selectInputDate id="ContractPayment_startDate" value="#{controller.to.startDate}" required="true"
+		timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}" />
+	
+	<aon:outputLabel for="ContractPayment_endDate" value="#{bundle.aon_end_date}" />
+	<aon:selectInputDate id="ContractPayment_endDate" value="#{controller.to.endDate}"
+		timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}" />
+
+	<aon:outputLabel for="ContractPayment_month" value="#{payrollBundle.payroll_salary_payment_month}" />
+	<aon:selectOneMenu id="ContractPayment_month" value="#{controller.to.month}">
+		<f:selectItem itemLabel=" - " itemValue="#{null}" />
+		<c:if test="#{!skipCurrentMonth}">
+			<f:selectItem value="#{controller.currentMonth}"  />
+		</c:if>
+		<c:if test="#{skipCurrentMonth}">
+			<f:selectItems value="#{commonCollections.months}"  />
+		</c:if>
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="ContractPayment_type" value="#{bundle.aon_type}" />
+	<aon:selectOneMenu id="ContractPayment_type" value="#{controller.to.type}" >
+		<a4j:support event="onchange" actionListener="#{controller.onTypeChange}" reRender="ContractPayment_PaymentConcept" ajaxSingle="true" limitToList="true"/>
+		<f:selectItem itemValue="#{null}" itemLabel=" - " />
+		<f:selectItems value="#{payrollCollections.paymentTypes}" />
+	</aon:selectOneMenu>
+
+<!--  
+	<aon:outputLabel for="ContractPayment_PaymentConcept" value="#{bundle.aon_concept}" />
+	<aon:selectOneMenu id="ContractPayment_PaymentConcept" value="#{controller.to.paymentConcept}" style="width: 300px;">
+		<a4j:support event="onchange" actionListener="#{controller.onPaymentConceptChange}" reRender="ContractPayment_description" ajaxSingle="true" limitToList="true"/>
+		<f:selectItem value="#{null}" itemLabel=" - " />
+		<f:selectItems value="#{controller.concepts}" />
+	</aon:selectOneMenu>
+-->	
+
+	<aon:outputLabel for="ContractPayment_salaryType" value="#{payrollBundle.payroll_salary_type}" />
+	<aon:selectOneMenu id="ContractPayment_salaryType" value="#{controller.to.salaryType}" >
+		<f:selectItems value="#{payrollCollections.salaryTypes}" />
+			<a4j:support event="onchange" reRender="#{controller.beanName}ModalForm" />
+	</aon:selectOneMenu>
+	
+<!--  
+	<aon:outputLabel for="ContractPayment_type" value="#{bundle.aon_type}" />
+	<aon:selectOneMenu id="ContractPayment_type" value="#{controller.to.type}" converter="aon.EnumConverter" >
+		<a4j:support event="onchange" actionListener="#{controller.onTypeChange}" reRender="ContractPayment_PaymentConcept" ajaxSingle="true" limitToList="true"/>
+		<f:selectItem value="#{null}" itemLabel=" - " />
+		<f:selectItems value="#{payrollCollections.paymentTypes}" />
+	</aon:selectOneMenu>
+-->
+	
+	<aon:outputLabel for="ContractPayment_description" value="#{bundle.aon_description}" />
+	<aon:inputText id="ContractPayment_description" size="40" maxlength="64" 
+		value="#{controller.to.description}" />
+		
+	<aon:outputText value="&#160;"/>
+	<aon:panelGroup>
+		<aon:selectBooleanCheckbox id="ContractPayment_decorateDescription" value="#{controller.to.descriptionDecorable}" />
+		<aon:outputLabel for="ContractPayment_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
+	</aon:panelGroup>
+	
+	<c:if test="#{controller.to.paymentConcept.id!=null and !controller.enableExpressionEdition}">
+		<aon:outputText value="#{payrollBundle.payroll_salary_expression}" />
+		<aon:panelGrid columnClasses="aon-panelGrid-even aon-noborder aon-vertical-align-top, aon-panelGrid-even aon-noborder aon-vertical-align-top" columns="2">
+			<aon:outputText value="#{controller.to.paymentConcept.expression}" />
+			<aon:commandButton id="ContractPayment_expression_edit-button"
+				title="#{(controller.enableExpressionEdition)?(payrollBundle.payroll_variable_manual_edit_cancel):(payrollBundle.payroll_variable_manual_edit)}" 
+				value="&#160;" ajaxSingle="true"
+				rendered="#{aonRole.admin}"
+				reRender="#{controller.beanName}ModalForm"
+				actionListener="#{controller.onSelectExpressionEdition}"
+				styleClass="aon-icon-commandButton #{(controller.enableExpressionEdition)?('aon-icon-cancel'):('aon-icon-edit')}" />
+		</aon:panelGrid>
+	</c:if>
+	
+	<c:if test="#{controller.to.paymentConcept.id==null or controller.enableExpressionEdition}">
+		<c:if test="#{!aonRole.admin}">
+			<c:if test="#{!aonRole.config}">
+				<aon:outputText value="#{payrollBundle.payroll_salary_expression}" />
+				<aon:outputText value="#{controller.to.paymentConcept.expression}" />
+			</c:if>
+			<c:if test="#{aonRole.config}">
+				<aon:outputLabel for="ContractPayment_amount" value="#{bundle.aon_amount}" />
+				<aon:inputText id="ContractPayment_amount" 
+					value="#{controller.to.expression}" size="64" maxlength="128">
+					<f:validateDoubleRange />
+					<a4j:support event="onchange" reRender="ContractPayment_irpf-amount, ContractPayment_quote-amount" ajaxSingle="true" />
+				</aon:inputText>
+		
+				<aon:outputLabel for="ContractPayment_irpf_taxation"
+					value="#{payrollBundle.payroll_salary_irpf_expression}" />
+				<aon:selectOneMenu id="ContractPayment_irpf_taxation"  
+					value="#{controller.taxation}">
+					<f:selectItem itemLabel=" - " itemValue="#{null}" />
+					<f:selectItems value="#{payrollCollections.taxationTypes}" />
+				</aon:selectOneMenu>
+		
+				<aon:outputLabel for="ContractPayment_quote_quote"
+					value="#{payrollBundle.payroll_salary_quote_expression}" />
+				<aon:selectOneMenu id="ContractPayment_quote_quote"  
+					value="#{controller.quote}">
+					<f:selectItem itemLabel=" - " itemValue="#{null}" />
+					<f:selectItems value="#{payrollCollections.quoteTypes}" />
+				</aon:selectOneMenu>
+			</c:if>
+		</c:if>
+		
+		<c:if test="#{aonRole.admin}">
+			<aon:outputLabel for="ContractPayment_expression" value="#{payrollBundle.payroll_salary_expression}" />
+			<aon:inputTextarea id="ContractPayment_expression" cols="60" rows="3" maxlength="128"
+				value="#{controller.expression}" >
+				<f:validateLength maximum="128"/>
+				<c:if test="#{!contextDisabled}">
+					<a4j:region>
+						<rich:suggestionbox id="ContractPayment_expression_suggestion"
+							for="ContractPayment_expression"
+							onselect="suggestionBoxActive=false;"
+							suggestionAction="#{controller.expressionContext}" var="exp"
+							similarityGroupingId=""
+							tokens=" +-/*%()"
+							fetchValue="#{exp.name}"
+							immediate="true" limitToList="true" ajaxSingle="true"
+							eventsQueue="ContractPayment_expressionSug" ignoreDupResponses="true"
+							requestDelay="100" width="500" height="200"
+							nothingLabel="#{bundle.aon_search_no_results}">
+							<aon:column>
+								<aon:outputText value="#{exp.name}" styleClass="aon-bold"/>
+								<aon:outputText value=" (#{exp.expression})"/>
+							</aon:column>
+						</rich:suggestionbox>
+					</a4j:region>
+				</c:if>
+			</aon:inputTextarea>
+			
+			<aon:outputLabel for="ContractPayment_irpf_expression"
+				value="#{payrollBundle.payroll_salary_irpf_expression}" />
+			<aon:div id="ContractPayment_taxation">
+				<aon:selectOneMenu id="ContractPayment_irpf_taxation"  
+					value="#{controller.taxation}">
+					<f:selectItems value="#{payrollCollections.taxationTypes}" />
+					<a4j:support event="onchange" reRender="ContractPayment_taxation" ajaxSingle="true" />
+				</aon:selectOneMenu>
+				<br />
+				<aon:inputTextarea id="ContractPayment_irpf_expression" cols="60"
+					rendered="#{controller.taxation=='MANUAL'}"
+					rows="3" maxlength="128" value="#{controller.irpfExpression}">
+					<f:validateLength maximum="128" />
+					<a4j:region>
+						<rich:suggestionbox id="ContractPayment_irpf_expression_suggestion"
+							for="ContractPayment_irpf_expression"
+							onselect="suggestionBoxActive=false;"
+							suggestionAction="#{controller.expressionContext}" var="exp"
+							similarityGroupingId="" tokens=" +-/*%(){}[]" fetchValue="#{exp}"
+							immediate="true" limitToList="true" ajaxSingle="true"
+							eventsQueue="ContractPayment_irpf_expressionSug"
+							ignoreDupResponses="true" requestDelay="100" width="500"
+							height="100" nothingLabel="#{bundle.aon_search_no_results}">
+							<aon:column>
+								<aon:outputText value="#{exp}" styleClass="aon-bold" />
+							</aon:column>
+						</rich:suggestionbox>
+					</a4j:region>
+				</aon:inputTextarea>
+			</aon:div>
+		
+			<aon:outputLabel for="ContractPayment_quote_expression"
+				value="#{payrollBundle.payroll_salary_quote_expression}" />
+			<aon:div id="ContractPayment_quote">
+				<aon:selectOneMenu id="PaymentConcept_quote_quote"  
+					value="#{controller.quote}">
+					<f:selectItems value="#{payrollCollections.quoteTypes}" />
+					<a4j:support event="onchange" reRender="ContractPayment_quote" ajaxSingle="true" />
+				</aon:selectOneMenu>
+				<br />
+				<aon:inputTextarea id="ContractPayment_quote_expression" cols="60"
+					rendered="#{controller.quote=='MANUAL'}"
+					rows="3" maxlength="128" value="#{controller.quoteExpression}">
+					<f:validateLength maximum="128" />
+					<a4j:region>
+						<rich:suggestionbox id="ContractPayment_quote_expression_suggestion"
+							for="ContractPayment_quote_expression"
+							onselect="suggestionBoxActive=false;"
+							suggestionAction="#{controller.expressionContext}" var="exp"
+							similarityGroupingId="" tokens=" +-/*%(){}[]" fetchValue="#{exp}"
+							immediate="true" limitToList="true" ajaxSingle="true"
+							eventsQueue="ContractPayment_quote_expressionSug"
+							ignoreDupResponses="true" requestDelay="100" width="500"
+							height="100" nothingLabel="#{bundle.aon_search_no_results}">
+							<aon:column>
+								<aon:outputText value="#{exp}" styleClass="aon-bold" />
+							</aon:column>
+						</rich:suggestionbox>
+					</a4j:region>
+				</aon:inputTextarea>
+			</aon:div>
+		
+		</c:if>
+	</c:if>
+	
+	<c:if test="#{!skipResult}">
+		<aon:outputText value="#{payrollBundle.payroll_result}" />
+		<aon:panelGrid id="resultPanel" columns="4"
+			columnClasses="aon-panelGrid-even aon-noborder, aon-panelGrid-even aon-noborder, 
+			aon-panelGrid-even aon-noborder, aon-panelGrid-even aon-noborder" >
+			<aon:outputText value="#{(controller.result!=null)?(controller.result):('Imposible evaluar la expresion')}"
+				title="#{(controller.to.expression!=null)?(controller.to.expression):(controller.to.paymentConcept.expression)}" 
+				style="color:#{(controller.result!=null)?('black'):('red')};" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+	
+			<aon:outputText styleClass="aon-italic aon-margin-left aon-margin-right" 
+				value="#{payrollBundle.payroll_on}" />
+		
+			<aon:selectOneMenu value="#{controller.month}">
+				<f:selectItems value="#{commonCollections.months}"  />
+				<a4j:support event="onchange" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+			</aon:selectOneMenu>
+	
+			<rich:inputNumberSpinner value="#{controller.year}" inputSize="4" 
+				minValue="2000" maxValue="2100">
+			  <a4j:support event="onchange" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+			  <a4j:support event="oninputkeydown" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+			  <a4j:support event="oninputkeyup" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true" />
+			</rich:inputNumberSpinner>
+		</aon:panelGrid>
+	</c:if>
+	
+</ui:composition>

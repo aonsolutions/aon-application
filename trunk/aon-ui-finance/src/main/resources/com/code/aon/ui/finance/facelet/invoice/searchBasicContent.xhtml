@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<c:if test="#{searchController.sales}">
+		<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
+	</c:if>
+
+	<aon:outputLabel for="Invoice_referenceCode"
+		value="#{financeBundle.finance_invoice_number}"
+		rendered="#{!searchController.sales}" />
+	<aon:inputText id="Invoice_referenceCode"
+		valueChangeListener="#{controller.addExpression}"
+		rendered="#{!searchController.sales}"
+		size="25" maxlength="25" />
+
+	<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+		<ui:param name="lookupTo" value="#{searchController.registry}" />
+		<ui:param name="lookupForRegistry" value="#{true}" />
+		<ui:param name="lookupRendered" value="#{searchController.sales}" />
+		<ui:param name="lookupSuffix" value="Invoice" />
+		<ui:param name="skipNewButton" value="#{true}" />
+	</ui:include>
+
+	<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
+		<ui:param name="lookupTo" value="#{searchController.registry}" />
+		<ui:param name="lookupForRegistry" value="#{true}" />
+		<ui:param name="lookupRendered" value="#{searchController.purchase}" />
+		<ui:param name="lookupSuffix" value="Invoice" />
+		<ui:param name="skipNewButton" value="#{true}" />
+	</ui:include>
+
+	<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
+		<ui:param name="lookupTo" value="#{searchController.registry}" />
+		<ui:param name="lookupForRegistry" value="#{true}" />
+		<ui:param name="lookupRendered" value="#{searchController.expenses}" />
+		<ui:param name="lookupSuffix" value="Invoice" />
+		<ui:param name="skipNewButton" value="#{true}" />
+	</ui:include>
+
+	<aon:outputLabel value="#{bundle.aon_date}" />
+	<aon:div>
+		<aon:outputLabel for="Invoice_issueDate-From" styleClass="aon-form-date-label aon-padding-right" 
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="Invoice_issueDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+
+		<aon:outputLabel for="Invoice_issueDate-To" styleClass="aon-form-date-label aon-padding-right" 
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="Invoice_issueDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+	</aon:div>
+
+	<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}" />
+	<aon:div>
+		<aon:outputLabel for="Invoice_series-Document" rendered="#{searchController.sales}"
+			styleClass="aon-form-date-label aon-margin-right" value="E-" />
+		<aon:outputLabel for="Invoice_series-Document" rendered="#{searchController.purchase or searchController.expenses}"
+			styleClass="aon-form-date-label aon-margin-right" value="R-" />
+		<aon:outputLabel for="Invoice_series-Document" rendered="#{searchController.undeductible}"
+			styleClass="aon-form-date-label aon-margin-right" value="G-" />
+
+		<aon:inputText id="Invoice_referenceCode-Document"
+			valueChangeListener="#{controller.addExpression}"
+			rendered="#{searchController.sales}"
+			size="20" maxlength="25" />
+		<aon:inputText id="Invoice_series-Document"
+			onblur="toUpperCase(this);"
+			valueChangeListener="#{controller.addExpression}"
+			rendered="#{!searchController.sales}" 
+			size="5" maxlength="5" />
+		<aon:outputLabel for="Invoice_number-Document"
+			styleClass="aon-form-date-label aon-margin-right" value="-"
+			rendered="#{!searchController.sales}"  />
+		<aon:inputText id="Invoice_number-Document"
+			valueChangeListener="#{controller.addExpression}"
+			rendered="#{!searchController.sales}" 
+			size="6" />
+	</aon:div>
+
+	<c:if test="#{aonRole.confidentiality}">
+		<aon:outputLabel for="Invoice_securityLevel"
+			value="#{bundle.aon_confidential}" />
+		<aon:selectOneRadio id="Invoice_securityLevel"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
+		</aon:selectOneRadio>				
+	</c:if>
+
+	<c:if test="#{company.EInvoice}">
+		<aon:outputLabel for="Invoice_signed" value="#{financeBundle.finance_signed}" />
+		<aon:selectOneRadio id="Invoice_signed"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+		</aon:selectOneRadio>				
+	</c:if>
+
+	<c:if test="#{aonRole.accountingOperator and searchController.defaultStatus == null}">
+		<aon:outputLabel for="Invoice_status" value="#{financeBundle.finance_invoice_recorded}" />
+		<aon:selectOneRadio id="Invoice_status"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
+		</aon:selectOneRadio>				
+	</c:if>
+
+</ui:composition>

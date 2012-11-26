@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:div id="detailsToolBarDiv" styleClass="aon-toolbar">
+		<c:if test="#{!fiscalBatch.to.generated}">
+			<aon:commandButton title="#{bundle.aon_check_all}"
+				styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+				value="#{bundle.aon_check_all}"
+				actionListener="#{fiscalBatch.detailsCheckAll}" reRender="fiscalBatchPanelTabSet"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+			<aon:commandButton title="#{bundle.aon_uncheck_all}"
+				styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+				value="#{bundle.aon_uncheck_all}"
+				actionListener="#{fiscalBatch.detailsCheckNone}" reRender="fiscalBatchPanelTabSet"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+			<aon:commandButton title="#{fiscalBundle.fiscal_remove_batch}"
+				styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
+				value="#{fiscalBundle.fiscal_remove_batch}" immediate="true"
+				rendered="#{fiscalBatch.detailsCheckedCount > 0}"
+				actionListener="#{fiscalBatch.onRemoveSelected}" 
+				reRender="fiscalBatchPanelTabSet"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+	     </c:if>
+	     <aon:outputText value="&#160;"/>				
+	</aon:div>
+
+	<aon:div id="detailsDataDiv">
+		<aon:dataTable id="fiscalBatchDetailsData" value="#{fiscalBatch.details}"
+			var="to" rows="20" rendered="#{fiscalBatch.details.rowCount > 0}">
+			<c:if test="#{!fiscalBatch.to.generated}">
+				<aon:column styleClass="aon-editDataTable-iconColumn aon-width-50">
+					<f:facet name="header">
+						<aon:outputText value="#{fiscalBatch.detailsCheckedCount}" />
+					</f:facet>
+					<aon:selectBooleanCheckbox id="Included_Row_checked"
+						value="#{fiscalBatch.detailsRowChecked}"
+						reRender="aonContent">
+					</aon:selectBooleanCheckbox>	
+				</aon:column>
+			</c:if>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_company_name}" />
+				</f:facet>
+				<aon:outputText value="#{to.company}"/>
+			</aon:column>
+<!-- 			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{fiscalBundle.fiscal_complementary}" />
+				</f:facet>
+				<aon:outputText styleClass="aon-nowrap" value="#{to.complementary}" />
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{fiscalBundle.fiscal_replacement}" />
+				</f:facet>
+				<aon:outputText styleClass="aon-nowrap" value="#{to.replacement}" />
+			</aon:column>
+ -->
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:outputText value="#{to.description}"/>
+			</aon:column>
+	
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_amount}" />
+				</f:facet>
+				<aon:outputText value="#{to.result}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:column>
+
+		</aon:dataTable>					
+	
+		<aon:dataScroller2 for="fiscalBatchDetailsData" showNote="true" />
+	</aon:div>
+</ui:composition>

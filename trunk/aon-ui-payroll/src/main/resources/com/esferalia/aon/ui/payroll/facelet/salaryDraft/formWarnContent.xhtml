@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" >
+	
+	<aon:div style="margin-top: 10px; width: 815px;" id="warningsGrid" >
+		<aon:dataTable id="warningsTable" var="warning" value="#{warnings}" rows="0">
+			<aon:column styleClass="aon-vertical-align-top aon-noborder">
+				<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-exception"/>
+				<aon:outputText value="#{warning.title}" styleClass="aon-bold"/>
+			</aon:column>
+			<aon:column styleClass="aon-vertical-align-top aon-noborder">
+				
+				<aon:commandLink  
+					style="display: inline; "
+					rendered="#{warning.action != null }"
+					action="person_form"
+					>
+					<aon:outputText value="#{warning.message}"  
+						style="text-decoration:underline;" 
+						styleClass="aon-label-error aon-width-auto" />
+
+					<f:setPropertyActionListener value="#{warning}" 
+						target="#{salaryDraft.warning}" />
+					<aon:actionListener method="#{salaryDraft.onWarning}" />
+
+				</aon:commandLink>	
+
+
+				<aon:outputText value="#{warning.message}" 
+					rendered="#{warning.action == null}"
+					styleClass="aon-label-error aon-width-auto"	/>
+						
+			</aon:column>
+			<aon:column styleClass="aon-vertical-align-top aon-noborder">
+				<aon:outputText value="#{empty warning.variable ? warning.description : warning.variable }" styleClass=""/>
+			</aon:column>
+		</aon:dataTable>
+	</aon:div>	
+
+</ui:composition>

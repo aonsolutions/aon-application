@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j">
+	
+	<aon:panelGrid columns="2">
+
+		<aon:outputLabel for="User_name" style="width:200px"
+			value="#{bundle.aon_name}" />
+		<aon:inputText id="User_name" disabled="true"
+			required="true" size="80"
+			maxlength="64" value="#{changePassword.to.name}" />
+
+		<aon:outputLabel for="User_login"
+			value="#{bundle.aon_login}" />
+		<aon:inputText id="User_login" disabled="true"
+			required="true" size="20"
+			maxlength="16" value="#{changePassword.to.login}" />
+
+		<aon:outputLabel for="User_Password"
+			value="#{bundle.aon_login_passwd}" />
+		<aon:inputSecret id="User_Password"
+			required="true" size="20"
+			maxlength="16" value="#{changePassword.password}" />
+
+		<aon:outputLabel for="User_NewPassword"
+			value="#{configBundle.config_user_new_password}" />
+		<aon:inputSecret id="User_NewPassword"
+			required="true" size="20" 
+			maxlength="16" value="#{changePassword.newPassword}">
+			<f:validateLength minimum="4" />
+		</aon:inputSecret>
+
+		<aon:outputLabel for="User_ConfirmPassword"
+			value="#{configBundle.config_user_confirm_password}" />
+		<aon:inputSecret id="User_ConfirmPassword"
+			required="true" size="20"
+			maxlength="16" value="#{changePassword.confirmPassword}" >
+			<f:validateLength minimum="4" />
+		</aon:inputSecret>
+
+		<rich:jQuery timing="onload" selector="#User_Password" query="focus()" />
+
+	</aon:panelGrid>
+
+</ui:composition>

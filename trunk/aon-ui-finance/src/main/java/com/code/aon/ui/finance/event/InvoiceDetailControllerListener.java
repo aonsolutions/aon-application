@@ -1,0 +1,114 @@
+package com.code.aon.ui.finance.event;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.WorkPlace;
+import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.enumeration.InvoiceSource;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ui.company.controller.CompanyCollectionsController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.finance.controller.InvoiceController;
+import com.code.aon.ui.finance.controller.InvoiceDetailController;
+import com.code.aon.ui.form.event.ControllerAdapter;
+import com.code.aon.ui.form.event.ControllerEvent;
+import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
+
+public class InvoiceDetailControllerListener extends ControllerAdapter {
+
+	@Override
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
+		Invoice invoice = (Invoice)controller.getMasterController().getTo();
+
+		controller.setLongDescription(false);
+		try {
+			invoiceDetail.setProject((invoice.getProject() != null && invoice.getProject().getId() != null) ? invoice.getProject() : null);
+			invoiceDetail.setLine(calculateNextLine(invoice));
+			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
+
+			String companyCollections = ICompanyConstants.COLLECTIONS_CONTROLLER_NAME;
+			CompanyCollectionsController compCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(companyCollections);
+			if (compCollections.getCurrentUserWorkPlacesCount() == 1) {
+				WorkPlace workPlace = (WorkPlace)compCollections.getCurrentUserWorkPlaces().get(0).getValue();
+				invoiceDetail.setWorkPlace(workPlace);
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
+
+		controller.setLongDescription((invoiceDetail.getDescription().length() > 64) ? true : false);
+	}
+
+	@Override
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
+		invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
+		obtainTaxableBase(event, invoiceDetail);
+	}
+
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		refreshInvoiceTotals((InvoiceDetailController)event.getController());
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
+		obtainTaxableBase(event, invoiceDetail);
+	}
+
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		event.getController().initializeModel();
+		refreshInvoiceTotals((InvoiceDetailController)event.getController());
+	}
+
+	@Override
+	public void afterBeanCanceled(ControllerEvent event) throws ControllerListenerException {
+		if (!event.getController().isNew()) {
+			event.getController().initializeModel();
+		}
+	}
+
+	@Override
+	public void afterBeanRemoved(ControllerEvent event)	throws ControllerListenerException {
+		refreshInvoiceTotals((InvoiceDetailController)event.getController());
+	}
+
+	private	Integer calculateNextLine(Invoice invoice) throws ManagerBeanException {
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		Projection projection = Projection.max(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE));
+		Object value = invoiceDetailBean.getUniqueResult(projection, criteria);
+		return (value != null) ? ((Integer)value) + 1 : 1;
+	}
+
+	private void obtainTaxableBase(ControllerEvent event, InvoiceDetail invoiceDetail) {
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
+		invoiceDetail.setTaxableBase(controller.getPriceStrategy().getBasePrice(invoiceDetail));
+	}
+
+	private void refreshInvoiceTotals(InvoiceDetailController controller) {
+		InvoiceController invoiceController = (InvoiceController)controller.getMasterController();
+		Invoice invoice = (Invoice)invoiceController.getTo();
+		invoice.setTaxableBase(((InvoiceDetail)controller.getTo()).getInvoice().getTaxableBase());
+		invoice.setVatQuota(((InvoiceDetail)controller.getTo()).getInvoice().getVatQuota());
+		invoice.setRetentionQuota(((InvoiceDetail)controller.getTo()).getInvoice().getRetentionQuota());
+		invoice.setTotal(((InvoiceDetail)controller.getTo()).getInvoice().getTotal());
+	}
+
+}

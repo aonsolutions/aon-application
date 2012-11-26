@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="dailyTrackingForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarID" value="toolbar" />
+				<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_daily_tracking_module}" />
+				<ui:param name="controller" value="#{dailyTracking}" />
+
+				<ui:define name="additionalToolbarContent">
+					<aon:selectBooleanCheckbox id="monitor" value="#{dailyTracking.monitor}"
+						rendered="#{aonRole.taskMonitor}">
+						<a4j:support event="onclick" ajaxSingle="true" reRender="dailyTrackingForm" />
+					</aon:selectBooleanCheckbox>
+					<aon:outputLabel for="monitor" value="Monitor" rendered="#{aonRole.taskMonitor}" />
+				</ui:define>
+
+			</ui:decorate>				
+
+			<aon:div styleClass="aon-scroll-area">
+				
+				<aon:panelGrid id="dataTable" columns="2">
+ 
+					<aon:outputLabel for="DailyTracking_user" rendered="#{dailyTracking.monitor}" value="#{groupwareBundle.groupware_user}" />
+					<aon:outputText rendered="#{!dailyTracking.monitor}" value="#{groupwareBundle.groupware_user}" />
+
+					<aon:panelGroup>
+						<aon:outputText rendered="#{!dailyTracking.monitor}" value="#{dailyTracking.to.taskHolder.registry.fullName}"/>
+						<aon:panelGroup id="taskHolderWarning">
+							<aon:selectOneMenu id="DailyTracking_user"
+								rendered="#{dailyTracking.monitor}"
+								reRender="taskHolderWarning"
+								value="#{dailyTracking.to.taskHolder}">
+								<f:selectItem itemLabel="-" value="#{null}"/>
+								<f:selectItems value="#{groupWareCollections.taskHolders}" />
+							</aon:selectOneMenu>
+							<aon:outputText
+								style="color:red; margin: 1em; padding: 1em; font-weight: bold;" 
+								rendered="#{dailyTracking.to.taskHolder.id != null and dailyTracking.to.taskHolder.costProfile.id == null}" 
+								value="Sin perfil de coste asignado." />					
+						</aon:panelGroup>
+					</aon:panelGroup>
+					
+
+
+					<aon:outputLabel for="DailyTracking_trackingDate" value="#{bundle.aon_date}" />
+					<aon:selectInputDate id="DailyTracking_trackingDate"
+						value="#{dailyTracking.to.trackingDate}" required="#{true}"
+						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+
+					<aon:outputLabel for="DailyTracking_project" value="#{projectBundle.project_project}"/>
+					<aon:panelGrid columns="2"
+						columnClasses="aon-panelGrid-even aon-italic aon-width-100,aon-panelGrid-even aon-width-auto">
+					
+					
+						<aon:outputLabel for="Registry_id" value="#{projectBundle.project_assigned}"/>
+						<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
+							<ui:param name="lookupTo" value="#{dailyTracking.to.registry}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="lookupReRender" value="DailyTracking_project, DailyTracking_activityType" />
+							<aon:methodParam name="lookupChangeListener"
+								value="#{dailyTracking.onRegistryChanged}" type="lookupChangeListener" />
+						</ui:include>
+						
+						<aon:outputLabel for="DailyTracking_project" value="#{bundle.aon_name}"/>
+						<aon:selectOneMenu id="DailyTracking_project" value="#{dailyTracking.to.project}">
+							<f:selectItem itemLabel="-" value="#{null}"/>
+							<f:selectItems value="#{dailyTracking.projects}" />
+							<a4j:support event="onchange"
+								actionListener="#{dailyTracking.onChangeProject}"
+								reRender="lookupRegistry, DailyTracking_project, DailyTracking_activityType"
+								ajaxSingle="true" />
+						</aon:selectOneMenu>
+						
+						<aon:outputLabel for="DailyTracking_activityType" value="#{projectBundle.project_activity_type}"/>
+						<aon:selectOneMenu id="DailyTracking_activityType"
+							value="#{dailyTracking.to.activityType}">
+							<f:selectItem itemLabel="-" value="#{null}"/>
+							<f:selectItems value="#{dailyTracking.activityTypes}" />
+						</aon:selectOneMenu>
+					</aon:panelGrid>
+					
+					<aon:outputLabel for="DailyTracking_jobType"
+						value="#{groupwareBundle.groupware_job_type}"/>
+					<aon:selectOneMenu id="DailyTracking_jobType" required="true"
+						value="#{dailyTracking.to.jobType}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{groupWareCollections.jobTypes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="DailyTracking_trackingDuration"
+						value="#{groupwareBundle.groupware_duration}"/>
+					<aon:inputText id="DailyTracking_trackingDuration"
+						value="#{dailyTracking.to.trackingDuration}" required="#{true}" size="5" />
+
+					<aon:outputLabel for="DailyTracking_cost" 
+						rendered="#{dailyTracking.monitor and !dailyTracking.new}"
+						value="#{groupwareBundle.groupware_cost}"/>
+					<aon:inputText id="DailyTracking_cost" 
+						rendered="#{dailyTracking.monitor and !dailyTracking.new}"
+						value="#{dailyTracking.to.cost}" size="15" />
+
+					<aon:outputLabel for="DailyTracking_comments"
+						value="#{bundle.aon_comment}"/>
+					<aon:inputTextarea id="DailyTracking_comments"
+						value="#{dailyTracking.to.comments}" cols="68" rows="5" />
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{registryLookup}" />
+ 	</ui:define>
+</ui:composition>

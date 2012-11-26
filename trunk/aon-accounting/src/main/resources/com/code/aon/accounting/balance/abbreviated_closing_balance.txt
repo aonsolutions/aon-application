@@ -1,0 +1,65 @@
+|ACTIVO||0|true|false|true|false|false
+11000|A) ACTIVO NO CORRIENTE|11100,11200,11300,11400,11500,11600|1|true|true|true|false|false
+11100|I. Inmovilizado intangible|20,(280),(290)|2|true|false|true|false|false
+11200|II. Inmovilizado material|21,(281),(291),23|3|true|false|true|false|false
+11300|III. Inversiones inmobiliarias|22,(282),(292)|4|true|false|true|false|false
+11400|IV. Inversiones en empresas del grupo y asociadas L/P|2403,2404,2413,2414,2423,2424,2493,2494,293,(2943),(2944),(2953),(2954)|5|true|false|true|false|false
+11500|V. Inversiones financieras a largo plazo|2405,2415,2425,(2495),250,251,252,253,254,255,257,258,259,26,2945,2955,297,298|6|true|false|true|false|false
+11600|VI. Activos por Impuesto diferido|474|7|true|false|true|false|false
+|||8|false|false|true|false|false
+12000|B) ACTIVO CORRIENTE|12100,12200,12300,12400,12500,12600,12700|9|true|true|true|false|false
+12100|I. Activos no corrientes mantenidos para la venta|580,581,582,583,584,(599)|10|true|false|true|false|false
+12200|II. Existencias|30,31,32,33,34,35,36,(39),407|11|true|false|true|false|false
+12300|III. Deudores comerciales y otras cuentas a cobrar|12380,12370,12390|12|true|true|true|false|false
+12380|1. Clientes por ventas y prestaciones de servicios|430,431,432,433,434,435,436,(437),(490),(493)|13|false|false|true|false|false
+12370|2. Accionistas (socios) por desembolsos exigidos|5580|14|false|false|true|false|false
+12390|3. Otros deudores|44,460,470,471,472,473,5531,5533,544|15|false|false|true|false|false
+12400|IV. Inversiones en empresas del grupo y asociadas C/P|5303,5304,5313,5314,5323,5324,5333,5334,5343,5344,5353,5354,(5393),(5394),5523,5524,(593),(5943),(5944),(5953),(5954)|16|true|false|true|false|false
+12500|V. Inversiones financieras a corto plazo|5305,5315,5325,5335,5345,5355,(5395),540,541,542,543,545,546,547,548,(549),?551,5525,5590,5593,565,566,(5945),(5955),(597),(598)|17|true|false|true|false|false
+12600|VI. Periodificaciones a corto plazo|480,567|18|true|false|true|false|false
+12700|VII. Efectivo y otros activos líquidos equivalentes|57|19|true|false|true|false|false
+|||20|false|false|true|false|false
+10000|TOTAL ACTIVO (A+B)|11000,12000|21|true|true|true|false|false
+|||22|false|false|true|false|false
+|PATRIMONIO NETO Y PASIVO||23|true|false|true|false|true
+20000|A) PATRIMONIO NETO|21000,22000,23000|24|true|true|true|false|true
+21000|A-1) Fondos propios|21100,21200,21300,21400,21500,21600,21700,21800,21900|25|true|true|true|false|true
+21100|I. Capital|21110,21120|26|true|true|true|false|true
+21110|1. Capital escriturado|100,101,102|27|false|false|true|false|true
+21120|2. (Capital no exigido)|(1030),(1040)|28|false|false|true|false|true
+21200|II. Prima de emisión|110|29|true|false|true|false|true
+21300|III. Reservas|112,113,114,115,119,108,109|30|true|false|true|false|true
+21400|IV. (Acciones y participaciones en patrimonio propias)|(108),(109)|31|true|false|true|false|true
+21500|V. Resultado de ejercicios anteriores|120,(121)|32|true|false|true|false|true
+21600|VI. Otras aportaciones de socios|118|33|true|false|true|false|true
+21700|VII. Resultado del ejercicio|129,6,7|34|true|false|true|false|true
+21800|VIII. (Dividendo a cuenta )|(557)|35|true|false|true|false|true
+21900|IX. Otros instrumentos de patrimonio neto|111|36|true|false|true|false|true
+22000|A-2) Ajustes por cambios de valor|133,1340,137|37|true|false|true|false|true
+23000|A-3) Subvenciones, donaciones y legados recibidos|130,131,132|38|true|false|true|false|true
+|||39|false|false|true|false|true
+31000|B) PASIVO NO CORRIENTE|31100,31200,31300,31400,31500|40|true|true|true|false|true
+31100|I. Provisiones a largo plazo|14|41|true|false|true|false|true
+31200|II. Deudas a largo plazo|31220,31230,31290|42|true|true|true|false|true
+31220|1. Deudas con entidades de crédito|1605,170|43|false|false|true|false|true
+31230|2. Acreedores por arrendamiento financiero|1625,174|44|false|false|true|false|true
+31290|3. Otras deudas a largo plazo|1615,1635,171,172,173,175,176,177,178,179,180,185,189|45|false|false|true|false|true
+31300|III .Deudas con empresas del grupo y asociadas L/P|1603,1604,1613,1614,1623,1624,1633,1634|46|true|false|true|false|true
+31400|IV. Pasivos por impuesto diferido|479|47|true|false|true|false|true
+31500|V. Periodificaciones a largo plazo|181|48|true|false|true|false|true
+|||49|false|false|true|false|true
+32000|C) PASIVO CORRIENTE|32100,32200,32300,32400,32500,32600|50|true|true|true|false|true
+32100|I. Pasivos vinculados con activos no corrientes mantenidos para la venta|585,586,587,588,589|51|true|false|true|false|true
+32200|II. Provisiones a corto plazo|499,529|52|true|false|true|false|true
+32300|III. Deudas a corto plazo|32320,32330,32390|53|true|true|true|false|true
+32320|1. Deudas con entidades de crédito|5105,520,527|54|false|false|true|false|true
+32330|2. Acreedores por arrendamiento financiero|5125,524|55|false|false|true|false|true
+32390|3. Otras deudas a corto plazo|(1034),(1044),(190),(192),194,500,501,505,509,5115,5135,5145,521,522,523,525,526,528,?551,5525,5530,5532,555,5565,5566,5595,5598,560,561,569|56|false|false|true|false|true
+32400|IV. Deudas con empresas del grupo y asociadas C/P|5103,5104,5113,5114,5123,5124,5133,5134,5143,5144,5523,5524,5563,5564|57|true|false|false|false|true
+32500|V. Acreedores comerciales y otras cuentas a pagar|32580,32590|58|true|true|true|false|true
+32580|1. Proveedores|400,401,403,404,405,(406)|59|false|false|true|false|true
+32590|2. Otros acreedores|41,438,465,466,475,476,477|60|false|false|true|false|true
+32600|VI. Periodificaciones a corto plazo|485,568|61|true|false|true|false|true
+|||62|false|false|true|false|true
+30000|TOTAL PATRIMONIO NETO Y PASIVO (A+B+C)|20000,31000,32000|63|true|true|true|false|true
+DIF|DIFERENCIA (ACTIVO-PATRIMONIO NETO Y PASIVO)|10000,(30000)|64|true|true|true|true|false

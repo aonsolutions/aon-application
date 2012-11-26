@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="calendarForm">
+			<aon:methodParam name="removeAction" value="#{calendar.backAction}" />
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_menu}" />
+				<ui:param name="controller" value="#{calendar}" />
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:htmlCommandLink id="calendarReport_list" value="#{bundle.aon_report}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						actionListener="#{calendarPrint.onLoad}"
+						rendered="#{!calendar.new}" action="#{report.onExecute}">
+						<f:param name="reportKey" value="calendarReport" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>	
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" style="width:100%;" 
+					columnClasses="
+					aon-panelGrid-even aon-noborder aon-vertical-align-top, 
+					aon-panelGrid-even aon-noborder aon-vertical-align-top">
+				
+					<aon:panelGrid columns="2" id="calendar_data" style="width:100%;">
+						
+						<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{calendar.to.calendar}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+						</ui:include>
+							
+						<aon:outputLabel rendered="#{!calendar.new}"
+							value="#{bundle.aon_year}" />
+						<rich:inputNumberSpinner value="#{calendar.year}"
+						 	rendered="#{!calendar.new}"
+							inputSize="4" minValue="2000" maxValue="2100"
+							enableManualInput="true" step="1"
+							ignoreDupResponses="true"
+							cycled="false"  style="width:5px;height:5px;" >
+							<a4j:support event="onchange" reRender="calendarForm, tabPanel, schedule"
+								actionListener="#{calendar.onChangeYear}"
+								ignoreDupResponses="true" />
+						</rich:inputNumberSpinner>
+				
+						<aon:outputLabel for="Calendar_description"
+							value="#{bundle.aon_description}" />
+						<aon:inputText id="Calendar_description" size="40" maxlength="32"
+							value="#{calendar.to.description}"  />
+						
+						<aon:outputLabel for="Calendar_anualHours"
+							value="#{calendarBundle.aon_calendar_anual_hours}" />
+						<aon:inputText id="Calendar_anualHours" size="10" maxlength="6"
+							value="#{calendar.to.anualHours}" />
+							
+						<ui:include src="/com/esferalia/aon/ui/calendar/facelet/holiday/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{calendar.to.holiday}" />
+						</ui:include>
+						
+						<aon:outputLabel for="Calendar_comments"
+							value="#{bundle.aon_comment}" />
+						<aon:inputTextarea id="Calendar_comments"
+							value="#{calendar.to.comments}" cols="77" rows="5">
+							<f:validateLength maximum="1024" />
+						</aon:inputTextarea>
+					</aon:panelGrid>
+					
+					<aon:div id="schedule">
+						<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/schedule_panel.xhtml" />
+					</aon:div>
+
+				</aon:panelGrid>
+				
+				<c:if test="#{!calendar.new}">
+					<aon:panelTabSet id="tabPanel">
+						<aon:panelTab label="#{calendarBundle.aon_calendar_days}">
+							<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/holiday_panel.xhtml" />
+							<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/inheritHolidays.xhtml" />
+							<aon:panel 
+								header="#{calendarBundle.aon_calendar_days}">
+									<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendarHoliday/tab_grid.xhtml" />
+							</aon:panel>
+						</aon:panelTab>
+						<aon:panelTab label="#{calendarBundle.aon_calendar_periods}">
+							<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/inheritPeriods.xhtml" />
+								<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendarPeriod/tab_grid.xhtml" />
+						</aon:panelTab>
+					</aon:panelTabSet>
+				</c:if>
+			</aon:div>
+		</aon:form>
+
+		<aon:lookupButtonPopup lookup="#{holidayLookup}" />
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{contractLookup}" />
+		<aon:lookupButtonPopup lookup="#{calendarLookup}" />
+		
+	</ui:define>
+</ui:composition>

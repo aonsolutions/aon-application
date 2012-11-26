@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
+
+	<ui:define name="header">
+		<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_payments_tab}" />
+			<ui:param name="toolbarDescription" value="&#160;" />
+		</ui:include>	
+	</ui:define>
+	
+	<ui:define name="content">
+		<aon:div id="paymentGrid" styleClass="aon-scroll-area">
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
+				<ui:param name="controller" value="#{contractPayment}" />
+			</ui:include>
+		</aon:div>
+	</ui:define>
+	
+	<ui:define name="additionalContent">
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/modalPayment.xhtml">
+			<ui:param name="controller" value="#{contractPayment}" />
+			<ui:param name="skipCurrentMonth" value="#{true}" />
+			<ui:param name="contextDisabled" value="#{true}" />
+			<ui:param name="container" value="contractPaymentForm" />
+		</ui:include>
+	</ui:define>
+
+</ui:composition>

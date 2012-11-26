@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+	
+	<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/modalSearch.xhtml">
+
+		<ui:define name="modalContent" >
+
+			<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{controller.enterprise}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+			</ui:include>
+			
+			<aon:outputLabel for="EnterpriseCCC_type" value="#{bundle.aon_type}" />
+			<aon:selectOneMenu id="EnterpriseCCC_type" converter="aon.EnumConverter"
+				valueChangeListener="#{controller.addEqualExpression}" >  
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{payrollCollections.CCCTypes}" />
+			</aon:selectOneMenu>
+			
+			<aon:outputLabel for="EnterpriseCCC_geozone" value="#{registryBundle.registry_geozone}" />
+			<aon:selectOneMenu id="EnterpriseCCC_geozone" value="#{controller.geozone}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{geozoneCollections.geoTrees}" />
+			</aon:selectOneMenu>
+			
+		</ui:define>
+		
+		<ui:define name="afterFormContent" >
+<!--  
+			<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+-->
+		</ui:define>
+	
+	</ui:decorate>
+	
+
+
+</ui:composition>

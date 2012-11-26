@@ -1,0 +1,189 @@
+body,table td,select,button {
+	margin: 0px;
+	color: #4B4B4B;
+	font: 12px/1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+}
+
+/* Dialog boxes */
+.dialogTopLeftInner,.dialogMiddleLeftInner,.dialogBottomLeftInner,.dialogTopRightInner,.dialogMiddleRightInner,.dialogBottomRightInner
+	{
+	display: none;
+}
+
+.gwt-DialogBox {
+	background-color: white;
+	border: 1px solid #666;
+	z-index: 2;
+}
+
+.gwt-DialogBox .Caption {
+	background: #d3d6dd url(gradient_bg_th.png) repeat-x bottom left;
+	font-weight: bold;
+	text-shadow: #fff 0 2px 2px;
+	cursor: default;
+	padding: 5px 10px;
+	border-bottom: 1px solid #999;
+	text-align: left;
+}
+
+.gwt-DialogBox .dialogContent {
+	
+}
+
+.gwt-DialogBox .gwt-Button {
+	margin: 10px;
+}
+
+.gwt-PopupPanelGlass {
+	background-color: #000;
+	opacity: 0.3;
+	filter: literal("alpha(opacity=30)");
+	z-index: 2;
+}
+
+/* GWT Tree */
+.gwt-Tree {
+	
+}
+
+.gwt-Tree .gwt-TreeItem {
+	padding: 0;
+	cursor: hand;
+	cursor: pointer;
+	font-size: 0.8em;
+	display: block !important;
+	border: 1px solid #FFFFFF;
+}
+
+.gwt-Tree .gwt-TreeItem-selected {
+	background: #FFFADC;
+    border: 1px solid #D3C061;
+}
+
+/* Splitters */
+.gwt-SplitLayoutPanel-HDragger,.gwt-SplitLayoutPanel-VDragger {
+	background-color: white;
+}
+
+.gwt-SplitLayoutPanel-HDragger {
+	cursor: col-resize;
+}
+
+.gwt-SplitLayoutPanel-VDragger {
+	cursor: row-resize;
+}
+@sprite .gwt-MenuBar-horizontal {
+	gwt-image: "menuBar"; 
+} 
+
+.gwt-MenuBar-horizontal {
+	background-repeat: repeat-x;
+	border-bottom: 1px solid #717E88;
+    border-top: 1px solid #FFFFFF;
+    font-size: 11px;
+    width:100%;	
+}
+
+.gwt-MenuBar-horizontal .gwt-MenuItem {
+    background-position: -2px 50% !important;
+    background-color:transparent;
+    border: 1px solid transparent;
+    color: #000000;
+    cursor: pointer;
+    font-family: arial,verdana,"sans-serif";
+    font-size: 1em;
+    font-weight: bold;
+    padding: 4px 5px 4px 5px;
+    text-transform: uppercase;
+}
+
+.gwt-MenuBar-vertical .gwt-MenuItemSeparator .menuSeparatorInner {
+	height: 1px;
+	padding: 0px;
+	border: 0px;
+	border-top: 1px solid #e5e5e5;
+}
+
+.gwt-MenuBar-vertical .gwt-MenuItem {
+	min-width :125px;
+	padding: 4px 40px 4px 2px;
+}
+
+.gwt-MenuBar .gwt-MenuItem:hover,
+.gwt-MenuBar-vertical .gwt-MenuItem-selected,
+.gwt-MenuBar-vertical .subMenuIcon-selected	{
+	border: none;
+	background: #EBEBEF;
+}
+
+.gwt-MenuBar-horizontal .gwt-MenuItem:hover,
+.gwt-MenuBar-horizontal .gwt-MenuItem-selected {
+	background: #FFFFFF;
+	border: 1px solid #FFFFFF;
+}
+
+.gwt-MenuBarPopup {
+	background: white;
+	border: 1px solid #EBEBEF;
+	box-shadow: 3px 3px 3px #EBEBEF;
+}
+
+.gwt-MenuBarPopup .menuPopupTopLeft,
+.gwt-MenuBarPopup .menuPopupTopCenter,
+.gwt-MenuBarPopup .menuPopupTopRight,
+.gwt-MenuBarPopup .menuPopupMiddleLeft,
+.gwt-MenuBarPopup .menuPopupMiddleRight,
+.gwt-MenuBarPopup .menuPopupBottomLeft,
+.gwt-MenuBarPopup .menuPopupBottomCenter,
+.gwt-MenuBarPopup .menuPopupBottomRight
+	{
+	background: none;
+}
+
+/*
+@sprite .gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader {
+	gwt-image: "menuBar"; 
+} 
+
+.gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader {
+	border: none;
+	cursor: pointer;
+	font-size: 10px;
+	font-weight: bold;
+	background-size:cover;
+	background-repeat: repeat-x;
+	text-transform: uppercase;
+}
+*/
+
+.gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader {
+	border: none;
+	cursor: pointer;
+	font-size: 10px;
+	font-weight: bold;
+	background: #EBEBEF;
+	text-transform: uppercase;
+	border-bottom: 1px solid #000000;
+}
+
+
+.gwt-StackLayoutPanel .gwt-StackLayoutPanelContent {
+  border: none;
+  vertical-align: middle;
+  border-right: 1px solid #bbbbbb;
+}
+
+.reset * { 
+	border:0;
+	margin: 0; 
+	padding: 0; 
+} 		
+
+.page {
+	margin-top: 5px;
+	margin-left: auto;
+	margin-right: 10px;
+	margin-bottom: 20px;
+	border: 1px solid #D4D0C8;
+	box-shadow: 5px 5px 10px 5px #D4D0C8;
+}

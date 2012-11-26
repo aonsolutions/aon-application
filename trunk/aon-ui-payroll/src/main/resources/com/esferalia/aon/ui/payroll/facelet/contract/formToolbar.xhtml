@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components" >
+
+	<c:if test="#{!contract.new}" >
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+			<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
+			<ui:param name="controller" value="#{contract}" />
+			<ui:param name="skipSaveButton" value="true" />
+			<ui:param name="skipRemoveButton" value="#{contract.to.status!='PENDING'}" />
+			<ui:param name="showMoreMenu" value="#{!contract.new}" />
+			<ui:define name="moreMenuContent">
+				<aon:menuItem 
+					value="#{payrollBundle.payroll_contractCalendarEvent}"
+					iconClass="aon-icon-daily-tracking"
+					rendered="#{!contract.new}"
+					action="contractCalendarEvent_form" >
+					<f:setPropertyActionListener
+						target="#{contractCalendarEvent.backActionListener}" value="contractCalendarEvent.onBack" />
+					<f:setPropertyActionListener
+						target="#{contractCalendarEvent.backAction}" value="contract_form" />
+				</aon:menuItem>
+				<aon:menuItem id="contract_leave"
+					value="#{payrollBundle.payroll_contractLeave_module}"
+					action="contractLeave_form"
+					iconClass="aon-icon-copy">
+					<f:setPropertyActionListener
+						target="#{contractLeave.treeOutcome}" value="#{true}" />
+					<f:setPropertyActionListener
+						target="#{contractLeave.contractEditable}" value="#{false}" />
+					<aon:actionListener method="#{contract.onShowContractLeave}" />
+					<f:setPropertyActionListener
+						target="#{contractLeave.backAction}" value="contract_form" />
+				</aon:menuItem>
+				<aon:menuItem id="settle"
+					value="#{payrollBundle.payroll_settle_module}"
+					action="settle_form"
+					rendered="#{contract.to.endDate==null}"
+					iconClass="aon-icon-black-list">
+					<f:setPropertyActionListener
+						target="#{settle.backAction}" value="contract_form" />
+					<aon:actionListener method="#{contract.onShowSettle}" />
+				</aon:menuItem>
+				<aon:menuItem id="IRPF-calculator"
+					value="#{payrollBundle.payroll_contract_irpf_data}"
+					action="irpfData_form"
+					iconClass="aon-icon-aeat">
+					<aon:actionListener method="#{contract.onShowIrpfData}" />
+					<f:setPropertyActionListener
+						target="#{irpfData.backAction}" value="contract_form" />
+				</aon:menuItem>
+				<aon:menuItem id="contrata"
+					value="#{payrollBundle.payroll_contract_contrataData}"
+					action="contrata_form" 
+					rendered="#{!contract.new}"
+					actionListener="#{contract.onShowContrataData}"
+					iconClass="aon-icon-contrata" >
+					<f:setPropertyActionListener
+						target="#{contract.contrataBackAction}" value="contract_form" />
+				</aon:menuItem>
+				
+				<rich:menuSeparator id="menuSeparator" />
+				
+				<aon:menuItem id="pdf-edition" 
+					action="contractPdfEdition_form"
+					value="EDITAR PDF"
+					iconClass="aon-icon-pdf" >
+					<f:setPropertyActionListener
+						target="#{contractPdf.backAction}" value="contract_form" />
+					<aon:actionListener method="#{contract.onContractDocumentShow}" />
+				</aon:menuItem>
+			</ui:define>
+		</ui:decorate>
+	</c:if>
+	<c:if test="#{contract.new}" >
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+			<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
+			<ui:param name="controller" value="#{contract}" />
+			<ui:param name="skipRemoveButton" value="true" />
+		</ui:decorate>
+	</c:if>
+
+</ui:composition>

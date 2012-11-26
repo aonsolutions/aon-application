@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+			
+	<aon:column alias="EnterpriseCCC.ccc"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_activity_ccc}" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.ccc}"/>
+		</aon:div>
+	</aon:column>
+
+	<aon:column alias="EnterpriseCCC.activity.description"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_activity}" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.activity.description}"/>
+		</aon:div>
+	</aon:column>
+	
+	<aon:column alias="FanBatchDetail.geozone"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{registryBundle.registry_geozone}" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.geozone.name}"/>
+		</aon:div>
+	</aon:column>
+
+	<aon:column alias="EnterpriseCCC.activity.enterprise.registry.surname,EnterpriseCCC.activity.enterprise.registry.name"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{companyBundle.company_enterprise}" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.activity.enterprise.registry.fullName}"/>
+		</aon:div>
+	</aon:column>
+
+<!--  
+	<aon:column alias="Contract.status"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_status}" />
+		</f:facet>
+		<aon:outputText value="#{to.status}" />		
+	</aon:column>
+-->	
+	
+</ui:composition>

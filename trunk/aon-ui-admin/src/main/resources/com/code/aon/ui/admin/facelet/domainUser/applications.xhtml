@@ -1,0 +1,81 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j" >
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+		<ui:param name="toolbarID" value="applications-aonToolbar" />
+		<ui:param name="innerToolbar" value="#{true}" />
+		<ui:define name="toolbarContent">	
+			<aon:commandButton id="userApplications-store"
+				title="#{bundle.aon_key_save_accelerator}"
+				value="#{bundle.aon_save}"
+				actionListener="#{domainUser.onSaveApplications}"
+				styleClass="aon-finding-toolbar-item aon-icon-accept"
+				accesskey="#{bundle.aon_key_save}" />
+		</ui:define>
+	</ui:decorate>
+
+	<aon:div styleClass="aon-scroll-area">
+		<c:if test="#{domainUser.showOnlyProfiles}" >
+			<aon:dataTable var="appProfile"
+				value="#{domainUser.applicationInfos[0].profileInfos}">
+				
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-100 aon-nowrap aon-vertical-align-top" >
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_name}" />
+					</f:facet>
+					<aon:selectBooleanCheckbox value="#{appProfile.checked}" />								
+					<aon:outputText styleClass="aon-bold"
+						value="#{appProfile.name}" />
+				</aon:column>				
+
+				<aon:column styleClass="aon-editDataTable-textColumn" >
+					<f:facet name="header">
+						<aon:outputText value="#{adminBundle.admin_roles}" />
+					</f:facet>
+					<aon:outputText value="#{appProfile.roleList}" />
+				</aon:column>					
+
+				<aon:column styleClass="aon-editDataTable-textColumn" >
+					<f:facet name="header">
+						<aon:outputText value="#{adminBundle.admin_modules_denied}" />
+					</f:facet>
+					<aon:outputText value="#{appProfile.moduleDeniedList}" />
+				</aon:column>					
+
+			</aon:dataTable>
+		</c:if>
+		<c:if test="#{!domainUser.showOnlyProfiles}" >
+			<aon:dataTable var="appInfo" value="#{domainUser.applicationInfos}">
+					
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-250 aon-vertical-align-top" >
+					<f:facet name="header">
+						<aon:outputText value="#{adminBundle.admin_applications}" />
+					</f:facet>
+					<aon:outputText styleClass="aon-bold"
+						value="#{appInfo.domainApplication.application.description}" />
+				</aon:column>				
+	
+				<aon:column styleClass="aon-editDataTable-textColumn" >
+					<f:facet name="header">
+						<aon:outputText value="#{adminBundle.admin_profiles}" />
+					</f:facet>
+					<a4j:repeat value="#{appInfo.profileInfos}" var="appProfile">
+						<aon:div>
+							<aon:selectBooleanCheckbox value="#{appProfile.checked}" />								
+							<aon:outputText styleClass="aon-italic"
+								value="#{appProfile.name}" />
+						</aon:div>
+					</a4j:repeat>
+				</aon:column>					
+			</aon:dataTable>
+		</c:if>
+	</aon:div>
+
+</ui:composition>

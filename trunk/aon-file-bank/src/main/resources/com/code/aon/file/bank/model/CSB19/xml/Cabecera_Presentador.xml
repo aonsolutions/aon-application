@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Registro Cabecera_Presentador -->
+<register name="Cabecera_Presentador">
+
+ <field name="inicial" value="5180" format="AlphaNumeric" pattern="X(4)" />
+ <field name="nif" value="bean" bean="PRESENTER" property="code" format="Nif" pattern="X(9)" />
+ <field name="sufijo" value="bean" bean="PRESENTER" property="sufix" format="AlphaNumeric" pattern="X(3)" />
+ <field name="fecha" value="bean" bean="PRESENTER" property="makeDate" format="FormatDate" pattern="ddMMyy" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(6)" />
+ <field name="nombre" value="bean" bean="PRESENTER" property="name" format="AlphaNumeric" pattern="X(40)" />
+ <field name="free2" value=" " format="Alphabetic" pattern="X(20)" />
+ <field name="entidad" value="bean" bean="PRESENTER" property="entity" format="Numeric" pattern="9(4)" />
+ <field name="oficina" value="bean" bean="PRESENTER" property="office" format="Numeric" pattern="9(4)" />
+ <field name="free3" value=" " format="Alphabetic" pattern="X(12)" />
+ <field name="free4" value=" " format="Alphabetic" pattern="X(40)" />
+ <field name="free5" value=" " format="Alphabetic" pattern="X(14)" />
+ 
+</register>

@@ -1,0 +1,367 @@
+package com.code.aon.finance;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IHeaderObject;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.audit.IAuditable;
+import com.code.aon.config.IScopable;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
+import com.code.aon.finance.enumeration.FinanceStatus;
+import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.RectificationType;
+import com.code.aon.finance.util.FinanceUtil;
+import com.code.aon.product.enumeration.ProductType;
+import com.code.aon.product.strategy.ICalculableContainer;
+import com.code.aon.product.util.DiscountExpression;
+import com.code.aon.ql.Criteria;
+import com.code.aon.registry.IAddress;
+import com.code.aon.registry.ITaxInfo;
+import com.code.aon.registry.RegistryDocument;
+import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.entity.master.InvoiceDB;
+
+@Entity
+@Table(name="invoice", uniqueConstraints = @UniqueConstraint(columnNames={"series", "number", "type"}))
+public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableContainer, ITaxInfo, IScopable, IAuditable {
+	
+	private static final long serialVersionUID = 5692053383866684819L;
+	private static final Logger LOGGER = LoggerFactory.getLogger(Invoice.class.getName());
+
+	private int issueYear;
+	private int issueMonth;
+	private int issueDay;
+	private boolean defaultTaxInfo;
+	private boolean updateEnabled;
+	private boolean attachmentAvailable;
+
+	private Set<InvoiceDetail> lines = new HashSet<InvoiceDetail>();
+	private Set<Finance> finances = new HashSet<Finance>();
+	private Set<InvoiceAddress> addresses = new HashSet<InvoiceAddress>();
+	private Set<InvoiceAttachment> attachments = new HashSet<InvoiceAttachment>();
+
+	public Invoice() {
+		setIssueDate(new Date());
+		setDefaultTaxInfo(true);
+		setUpdateEnabled(true);
+	}
+
+	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
+	@OrderBy("line")
+	public Set<InvoiceDetail> getLines() {
+		return this.lines;
+	}
+	public void setLines(Set<InvoiceDetail> lines) {
+		this.lines = lines;
+	}
+
+	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
+	@OrderBy()
+	public Set<Finance> getFinances() {
+		return this.finances;
+	}
+	public void setFinances(Set<Finance> finances) {
+		this.finances = finances;
+	}
+
+	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
+	public Set<InvoiceAddress> getAddresses() {
+		return addresses;
+	}
+	public void setAddresses(Set<InvoiceAddress> addresses) {
+		this.addresses = addresses;
+	}
+
+	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
+	@LazyCollection(LazyCollectionOption.EXTRA)
+	public Set<InvoiceAttachment> getAttachments() {
+		return attachments;
+	}
+	public void setAttachments(Set<InvoiceAttachment> attachments) {
+		this.attachments = attachments;
+	}
+
+    @Formula("year(issue_date)")
+	public int getIssueYear() {
+	 return issueYear;	
+	}
+	public void setIssueYear(int year) {
+		issueYear = year;
+	}
+
+	@Formula("month(issue_date)")
+	public int getIssueMonth() {
+	 return issueMonth;	
+	}
+	public void setIssueMonth(int month) {
+		issueMonth = month;
+	}
+	
+	@Formula("day(issue_date)")
+	public int getIssueDay() {
+	 return issueDay;	
+	}
+	public void setIssueDay(int day) {
+		issueDay = day;
+	}
+	
+	@Transient
+	public boolean isDefaultTaxInfo() {
+		return defaultTaxInfo;
+	}
+	public void setDefaultTaxInfo(boolean defaultTaxInfo) {
+		this.defaultTaxInfo = defaultTaxInfo;
+	}
+
+	@Transient
+	public boolean isUpdateEnabled() {
+		return updateEnabled;
+	}
+	public void setUpdateEnabled(boolean updateEnabled) {
+		this.updateEnabled = updateEnabled;
+	}
+
+	@Transient
+	public Date getDate() {
+		return getIssueDate();
+	}
+	
+	@Transient
+	public IAddress getAddress() {
+		for (IAddress iAddress : getAddresses()) {
+			return iAddress;
+		}
+		return getRegistryAddress();
+	}
+	
+	@Transient
+	public List<ITransferObject> getDetailList() {
+		try {
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getId());
+			return invoiceDetailBean.getList(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error obtaining invoiceDetail list", e);
+		}
+		return null;
+	}
+
+	@Transient
+	public List<ITransferObject> getOrderedDetailList() {
+		try {
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getId());
+			if (getType().equals(InvoiceType.SALES)) {
+				criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE));
+			}
+			criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ID));
+			return invoiceDetailBean.getList(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error obtaining invoiceDetail orderedList", e);
+		}
+		return null;
+	}
+
+	@Transient
+	public String getDocumentNumber() {
+		return FinanceUtil.getDocumentNumber(getType(), getSeries(), getNumber());
+	}
+
+	@Transient
+	public boolean isValidRegistryDocument() {
+		RegistryDocument registryDocument = new RegistryDocument();
+		registryDocument.setDocument(getRegistryDocument());
+		registryDocument.setType(getRegistryDocumentType());
+		registryDocument.setCountry(getRegistryDocumentCountry());
+		return registryDocument.isValid();
+	}
+	@Transient
+	public boolean isRegistryDocumentValidable() {
+		RegistryDocument registryDocument = new RegistryDocument();
+		registryDocument.setDocument(getRegistryDocument());
+		registryDocument.setType(getRegistryDocumentType());
+		registryDocument.setCountry(getRegistryDocumentCountry());
+		return registryDocument.isValidable();
+	}
+
+	@Transient
+	public DiscountExpression getDiscountExpression() {
+		return new DiscountExpression("0.0");
+	}
+
+	@Transient
+	public boolean isRecordable() {
+		return getStatus() == InvoiceStatus.PENDING;
+	}
+	@Transient
+	public boolean isRecorded() {
+		return getStatus() == InvoiceStatus.SCORED;
+	}
+	@Transient
+	public boolean isSales() {
+		return getType() == InvoiceType.SALES;
+	}
+	@Transient
+	public boolean isPurchase() {
+		return getType() == InvoiceType.PURCHASE;
+	}
+	@Transient
+	public boolean isExpense() {
+		return getType() == InvoiceType.EXPENSES;
+	}
+	@Transient
+	public boolean isUndeductibleExpense() {
+		return getType() == InvoiceType.UNDEDUCTIBLE;
+	}
+	@Transient
+	public boolean isNational() {
+		return getTransaction() == InvoiceTransactionType.NATIONAL;
+	}
+	@Transient
+	public boolean isIntracommunity() {
+		return getTransaction() == InvoiceTransactionType.INTRACOMMUNITY;
+	}
+	@Transient
+	public boolean isExtracommunity() {
+		return getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY;
+	}
+	@Transient
+	public boolean isCanCeuMel() {
+		return getTransaction() == InvoiceTransactionType.CAN_CEU_MEL;
+	}
+	@Transient
+	public boolean isOtherISP() {
+		return getTransaction() == InvoiceTransactionType.OTHER_ISP;
+	}
+	@Transient
+	public boolean isNoRectification() {
+		return (getRectificationType() == RectificationType.NONE);
+	}
+	@Transient
+	public boolean isRectifier() {
+		return (isNormalRectifier() || isSpecialRectifier());
+	}
+	@Transient
+	public boolean isNormalRectifier() {
+		return getRectificationType() == RectificationType.NORMAL_RECTIFIER;
+	}
+	@Transient
+	public boolean isSpecialRectifier() {
+		return getRectificationType() == RectificationType.SPECIAL_RECTIFIER;
+	}
+	@Transient
+	public boolean isRectified() {
+		return (getRectificationType() == RectificationType.RECTIFIED);
+	}
+	@Transient
+	public List<Invoice> getRectificationInvoices() throws ManagerBeanException {
+		if (isRectified()) {
+			List<Invoice> rectificationInvoices = new LinkedList<Invoice>();
+			if (getRectificationInvoice() != null && getRectificationInvoice().getId() != null) {
+				rectificationInvoices.add(getRectificationInvoice());
+			} else {
+				IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_RECTIFICATION_INVOICE_ID), getId());
+				for (ITransferObject ito : invoiceBean.getList(criteria)) {
+					Invoice rectifier = (Invoice)ito;
+					rectificationInvoices.add(rectifier);
+				}
+			}
+			return rectificationInvoices;
+		} else {
+			return null;
+		}
+	}
+	@Transient
+	public String getRectificationInvoicesString() throws ManagerBeanException {
+		String rectificationInvoiceStr = "";
+		if (isRectified()) {
+			for (Invoice rectifier : getRectificationInvoices()) {
+				rectificationInvoiceStr += rectificationInvoiceStr.equals("") ? "" : " - ";
+				rectificationInvoiceStr += rectifier.getReferenceCode();
+			}
+		}
+		return rectificationInvoiceStr;
+	}
+
+	@Transient
+	public FinanceStatus getInvoiceFinanceStatus() throws ManagerBeanException {
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), getId());
+		for (ITransferObject ito : financeBean.getList(criteria)) {
+			Finance finance = (Finance)ito;
+			if (FinanceStatus.PAID != finance.getFinanceStatus() && FinanceStatus.SETTLED != finance.getFinanceStatus()) {
+				return FinanceStatus.PENDING;
+			}
+		}
+		return (financeBean.getCount(criteria) == 0) ? null : FinanceStatus.PAID;
+	}
+
+	@Transient
+	public String getPayMethod() throws ManagerBeanException {
+		String payMethodName = null;
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), getId());
+		for (ITransferObject ito : financeBean.getList(criteria)) {
+			Finance finance = (Finance)ito;
+			if (payMethodName == null) {
+				payMethodName = (finance.getPayMethod() != null) ? finance.getPayMethod().getName() : null;
+			}
+			if (finance.getPayMethod() != null && !finance.getPayMethod().getName().equals(payMethodName)) {
+				return "MULTIPLE";
+			}
+		}
+		return payMethodName;
+	}
+
+	@Transient
+	public boolean isAllCommercialProducts() {
+		try {
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getId());
+			criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE), ProductType.COMMERCIAL_PRODUCT);
+			return (invoiceDetailBean.getCount(criteria) == 0);
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error obtaining invoiceDetail list", e);
+		}
+		return false;
+	}
+
+	@Formula("(select COUNT(*) from invoice_attach ia where id = ia.invoice)")
+	public boolean isAttachmentAvailable() {
+		return attachmentAvailable;
+	}
+	
+	public void setAttachmentAvailable(boolean customer) {
+		this.attachmentAvailable = customer;
+	}
+
+}

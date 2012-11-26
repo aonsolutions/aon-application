@@ -1,0 +1,296 @@
+<faces-config version="1.2" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.ebackoffice.i18n.messages</base-name>
+			<var>ebackofficeBundle</var>
+		</resource-bundle>
+	</application>
+
+
+	<!-- ****** ECCONFIG****** -->
+	<managed-bean>
+		<managed-bean-name>ecconfig</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.ebackoffice.controller.EcconfigController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.ebackoffice.Ecconfig</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>ecconfig</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{ecConfigControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>ecConfigControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.ebackoffice.event.EcConfigControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ****** ECCATALOGUE****** -->
+	<managed-bean>
+		<managed-bean-name>eccatalogue</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.ebackoffice.controller.EccatalogueController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.ebackoffice.Eccatalogue</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>eccatalogue</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>catalogue</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>catalogue.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{ecCatalogueControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>ecCatalogueControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.ebackoffice.event.EcCatalogueControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+
+	<managed-bean>
+		<managed-bean-name>catalogueOptionalControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.ebackoffice.event.CatalogueOptionalControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>catalogueEccatalogueListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>eccatalogue</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Eccatalogue_catalogue_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** ECTARGET **** -->
+	<managed-bean>
+		<managed-bean-name>ectarget</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.ebackoffice.controller.EctargetController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.ebackoffice.Ectarget</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>ectarget</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>target</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>target.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>targetEctargetListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>ectarget</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Ectarget_target_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+
+	<!-- ************* PAYMETHOD ***************** -->
+	<managed-bean>
+		<managed-bean-name>pmethod</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.ebackoffice.controller.PayMethodController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.PayMethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>pmethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{paymethodEcpaymethodtListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** ECPAYMETHOD **** -->
+	<managed-bean>
+		<managed-bean-name>ecpaymethod</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.ebackoffice.EcPaymethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>ecpaymethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>pmethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>paymethod.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>paymethodEcpaymethodtListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>ecpaymethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>EcPaymethod_paymethod_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<navigation-rule>
+
+		<navigation-case>
+			<from-outcome>ecconfig_grid</from-outcome>
+			<to-view-id>/com/code/aon/ui/ebackoffice/facelet/ecConfig/grid.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>ecconfig_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/ebackoffice/facelet/ecConfig/form.xhtml</to-view-id>
+		</navigation-case>
+
+       	<navigation-case>
+			<from-outcome>pmethod_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/ebackoffice/facelet/ecPaymethod/form.xhtml</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>pmethod_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/ebackoffice/facelet/ecPaymethod/list.xhtml</to-view-id>
+		</navigation-case>
+              
+
+		<navigation-case>
+			<from-outcome>eccatalogue_grid</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/ebackoffice/facelet/ecCatalogue/grid.xhtml</to-view-id>
+		</navigation-case>
+
+	</navigation-rule>
+</faces-config>

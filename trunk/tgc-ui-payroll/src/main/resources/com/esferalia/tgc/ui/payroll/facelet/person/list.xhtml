@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+		<aon:form>
+			<aon:methodParam name="searchAction" value="personReport_search"/>
+			<ui:include src="/com/esferalia/tgc/ui/payroll/facelet/report/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{tgcPayrollBundle.tgcPayroll_person_report_module}"/>
+				<ui:param name="reportNames" value="#{tgcPayrollCollections.personReportNames}"/>
+			</ui:include>
+			<aon:div styleClass="aon-scroll-area">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+					<ui:param name="controller" value="#{person}"/>
+					<ui:param name="skipSelectButton" value="true"/>
+					<ui:param name="rowSelectorToggleOnClick" value="false"/>
+					<ui:define name="columns">
+						<ui:include src="/com/code/aon/ui/registry/facelet/person/listBasic.xhtml"/>
+					</ui:define>
+				</ui:decorate>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,14 @@
+<div id="footer-wrapper">
+	<div id="footer">
+		<div id="footer-content ">
+				<div class="copiesferalia"><br> $!company.getName() 
+$!address.getAddress() $!address.getAddress2() $!add.getAddress3() $!address.getZip() $!address.getCity() $!address.getGeozone().getName() 
+$!phone <a href="mailto:$!email">$!email</a></br>
+
+<br>Desarrollado con aon Solutions<sup>&reg;</sup>
+/InfoWEB, marca registrada de <a target="_blank" href="http://www.esferalia.com/">ESFERALIA NETWORKS S.A.
+</a></br>
+</div>
+		</div>
+	</div>
+</div>

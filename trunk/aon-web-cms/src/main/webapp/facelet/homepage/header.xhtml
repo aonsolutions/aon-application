@@ -1,0 +1,15 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/header.xhtml" >
+		<ui:define name="afterVersionContent">
+			<aon:outputText value="(#{config.currentConfig.domain})"
+				styleClass="aon-applicationName" />								
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

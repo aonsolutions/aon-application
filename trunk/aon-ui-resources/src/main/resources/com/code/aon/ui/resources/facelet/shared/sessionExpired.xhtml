@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<rich:modalPanel id="sessionTimeOutWindow" height="140" width="400"
+		zindex="2000" resizeable="false">
+
+		<f:facet name="header">
+			<aon:div styleClass="aon-popupWindow-title">
+				<aon:outputText value="#{bundle.aon_session_expired}" />
+			</aon:div>
+		</f:facet>
+
+		<aon:form>
+			<aon:div  styleClass="aon-popupWindow-content">
+				<aon:div styleClass="aon-popupWindow-content-internal">
+				
+					<aon:div styleClass="aon-icon-big-info aon-message-big">								
+						<aon:outputText value="#{bundle.aon_session_expired_message}" />
+					</aon:div>					
+				
+					<aon:div styleClass="aon-text-center aon-margin-top">
+						<h:outputLink target="_top"
+							title="#{bundle.aon_home}"
+							styleClass="aon-commandButton"
+							value="${facesContext.externalContext.requestContextPath}">
+							<h:outputText value="#{bundle.aon_accept}" />
+						</h:outputLink>						
+					</aon:div>					
+				</aon:div>		
+			</aon:div>
+		</aon:form>		
+			
+	</rich:modalPanel>
+	
+</ui:composition>

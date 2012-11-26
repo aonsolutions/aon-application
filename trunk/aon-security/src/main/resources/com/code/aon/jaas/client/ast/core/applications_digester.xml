@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<digester-rules>
+	<object-create-rule pattern="applications" classname="com.code.aon.jaas.storage.ApplicationsStorage"/>
+
+	<pattern value="*/options/option">
+		<object-create-rule classname="com.code.aon.jaas.client.ast.core.Option" />
+		<set-properties-rule />
+		<set-next-rule methodname="addOption"/>
+	</pattern>
+
+	<pattern value="*/application">
+		<object-create-rule classname="com.code.aon.jaas.client.ast.core.Application" />
+		<call-method-rule pattern="id" methodname="setId" paramcount="0" />
+		<call-method-rule pattern="description" methodname="setDescription" paramcount="0" />
+
+		<pattern value="domain">
+			<object-create-rule classname="com.code.aon.jaas.client.ast.core.Domain" />
+			<call-method-rule pattern="id" methodname="setId" paramcount="0" />
+			<set-next-rule methodname="addDomain"/>
+		</pattern>
+
+		<set-next-rule methodname="addApplication"/>
+	</pattern>
+
+</digester-rules>

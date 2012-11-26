@@ -1,0 +1,67 @@
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<style>
+.aon-text-bold{
+	font-weight:bold;
+}
+</style>
+	<table cellpading="0" cellspacing="0" border="0" width="100%">
+		<tr>
+			<td>
+				<div class="aon-text-bold">${username}</div>
+			</td>
+			<td style="text-align: right;">
+				<div>${nowDate}</div>
+			</td>
+		</tr>
+	</table>
+<hr>
+<div style="font-size:10px; font-family:arial,verdana,sans;margin:10 0 30 0px;">
+	<table cellpading="0" cellspacing="0" border="0">
+		<tr>
+			<td>
+				<div class="aon-text-bold">${fromLiteral}:</div>
+			</td>
+			<td>
+				<div>${sender}</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="aon-text-bold">${toLiteral}:</div>
+			</td>
+			<td>
+				<div>${recipientsTo}</div>
+			</td>
+		</tr>
+#if ( ${recipientsCc} )		
+		<tr>
+			<td>
+				<div class="aon-text-bold">${ccLiteral}:</div>
+			</td>
+			<td>
+				<div>${recipientsCc}</div>
+			</td>
+		</tr>
+#end		
+		<tr>
+			<td>
+				<div class="aon-text-bold">${dateLiteral}:</div>
+			</td>
+			<td>
+				<div>${sentDateString}</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="aon-text-bold">${subjectLiteral}:</div>
+			</td>
+			<td>
+				<div>${subject}</div>
+			</td>
+		</tr>
+	</table>
+</div>
+${messageContent}
+<script>
+	window.print();
+</script>

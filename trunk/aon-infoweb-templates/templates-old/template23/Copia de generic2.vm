@@ -1,0 +1,13 @@
+<div class="content">	
+<h1 >$generic.getTitle()</h1>
+
+
+
+<table>
+  <tr>
+    <td>$text</td>
+    <td>$images</td>
+  </tr>
+</table>
+
+</div>

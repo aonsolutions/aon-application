@@ -1,0 +1,310 @@
+<html>
+<head>
+<style type="text/css">
+  body {
+    font-family: Arial;
+    }
+  table {
+	font-size: 15px;  
+  }
+  th {
+	font-size: 17px;
+	text-decoration: underline;   
+  }
+  label {
+  	font-weight: 600;
+  	margin-right: 20px;
+  }
+  input {
+  	border: solid black 1px;
+  	vertical-align: top;
+  }
+  .help {
+  	font-style: italic; 
+  	font-size: 0.8em; 
+  	margin-left: 15px;
+  }
+  .radio-value {
+  	font-size: 0.9em;
+  	font-weight: bold;
+  }  
+</style>
+</head>
+<body>
+<!-- 
+<form action="http://external.aonsolutions.net/aon-aio/newDomain/" method="POST">
+ -->
+<form action="http://aon.aonsolutions.net/aon-aio/newDomain/" method="POST">
+
+
+<div style="width: 100%; text-align: center;">
+	<table align="center">
+		<th colspan="2">
+			Creaci&oacute;n de Dominios
+		</th>
+		<tr>
+			<td style="width:300px;">&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="user" style="">Usuario</label>
+				<div class="help">
+					Usuario suministrado por AonSolutions
+				</div>
+			</td>
+			<td>
+				<input type="text" name="user" size="32"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="password" style="">Clave</label>
+				<div class="help">
+					Clave del usuario suministrado por AonSolutions 
+				</div>
+			</td>
+			<td>
+				<input type="password" name="password" size="32"/>
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td rowspan="4" style="vertical-align: top">
+				<label for="domain-target">Objetivo del dominio a crear</label>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="radio" name="domain-target" value="demo">
+					<span class="radio-value">DEMO</span> 
+					<span class="help">
+						Dominio de demo para presentaciones
+					</span>
+				</input>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="radio" name="domain-target" value="test">
+					<span  class="radio-value">TEST</span> 
+					<span class="help">
+						Dominio para pruebas de clientes
+					</span>
+				</input>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="radio" name="domain-target" value="pro">
+					<span  class="radio-value">PRODUCCI&Oacute;N</span> 
+					<span class="help">
+						Dominio de Producci&oacute;n
+					</span>
+				</input>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="domain-name">Nombre del Dominio</label>
+				<div class="help">
+					Nombre del dominio que desea crear
+				</div>
+			</td>
+			<td>
+				<input type="text" size="32" name="domain-name"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="domain-description">Descripci&oacute;n del Dominio</label>
+				<div class="help">
+					Descripci&oacute;n del dominio que desea crear
+				</div>
+			</td>
+			<td>
+				<input type="text" size="60" name="domain-description"/>
+			</td>
+		</tr>
+		<tr>
+			<td rowspan="3" style="vertical-align: top">
+				<label for="domain-type">Tipo de Dominio</label>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="radio" name="domain-type" value="Parent">
+					<span class="radio-value">PARENT</span> 
+					<span class="help">
+						Dominio con capacidad MultiDominio
+					</span>
+				</input>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="radio" name="domain-type" value="Simple">
+					<span  class="radio-value">SIMPLE</span> 
+					<span class="help">
+						Dominio independiente
+					</span>
+				</input>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="domain-user">Administrador del Dominio</label>
+				<div class="help">
+					Identificador del usuario administrador con el que acceder&aacute; a la aplicaci&oacute;n. 
+				</div>
+			</td>
+			<td>
+				<input type="text" name="domain-user" size="16"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="domain-password">Password</label>
+				<div class="help">
+					Clave del Administrador del Dominio 
+				</div>
+			</td>
+			<td>
+				<input type="password" name="domain-password" size="16"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="domain-max-defined-users">N&uacute;mero de usuarios</label>
+				<div class="help">
+					 N&uacute;mero m&aacute;ximo de usuarios que se podr&aacute;n crear 
+				</div>
+			</td>
+			<td>
+				<input type="text" size="5" name="domain-max-defined-users" default="1"/>
+			</td>
+		</tr>
+		<tr>
+			<td rowspan="11" style="vertical-align: top">
+				<label for="domain-modules">Extensiones</label>
+				<div class="help">
+					 Extensiones de la aplicaci&oacute;n a contratar 
+				</div>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="marketing">
+					<span  class="radio-value">Marketing</span> 
+					<span class="help">
+						Campa&ntilde;as de marketing, Communication center, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="commercial">
+					<span  class="radio-value">Comercial</span> 
+					<span class="help">
+						Presupuestos, pedidos, comerciales, comisiones, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="management">
+					<span  class="radio-value">Gesti&oacute;n</span> 
+					<span class="help">
+						Compras, ventas, gastos, estad&iacute;sticas, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="treasury">
+					<span  class="radio-value">Tesorer&iacute;a</span> 
+					<span class="help">
+						Vencimientos, remesas, previsiones, extracto bancario, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="warehouse">
+					<span  class="radio-value">Almac&eacute;n</span> 
+					<span class="help">
+						Albaranes, inventarios, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="groupware">
+					<span  class="radio-value">Expedientes</span> 
+					<span class="help">
+						Procesos, tareas, partes de trabajo, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="accounting">
+					<span  class="radio-value">Contabilidad</span> 
+					<span class="help">
+						Asientos, extractos, balances, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="fiscal">
+					<span  class="radio-value">Fiscal</span> 
+					<span class="help">
+						Declaraciones de IVA, IRPF, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="payroll">
+					<span  class="radio-value">Laboral</span> 
+					<span class="help">
+						N&oacute;minas, atrasos, bajas, pagas extras, RED, Contrat@, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="document">
+					<span  class="radio-value">Documental</span> 
+					<span class="help">
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td colspan="2" style="text-align: center;">
+				<input type="submit" value="Enviar" />
+			</td>
+		</tr>
+	</table>
+</div>	
+</form>
+</body>
+</html>

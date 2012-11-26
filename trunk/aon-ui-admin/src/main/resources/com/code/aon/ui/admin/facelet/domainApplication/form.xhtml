@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="domainApplicationForm">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{adminBundle.admin_applications} (#{adminDomain.to.name})" />
+				<ui:param name="controller" value="#{domainApplication}" />
+				<ui:param name="skipSearchButton" value="#{true}" />
+				<ui:param name="skipSaveButton" value="#{domainApplication.new and !adminMain.termsOfServiceAccepted}" />
+				<ui:param name="removeConfirmMessage" value="#{adminBundle.admin_domain_application_remove_confirm}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid columns="2">
+
+					<aon:outputLabel for="DomainApplication_name"
+						value="#{bundle.aon_name}" />
+					<aon:selectOneMenu id="DomainApplication_name"
+						rendered="#{domainApplication.new}" required="true"
+						value="#{domainApplication.to.application}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{domainApplication.availableApplications}" />
+					</aon:selectOneMenu>						
+					<aon:inputText id="DomainApplication_name-New"
+						size="80" disabled="true" rendered="#{!domainApplication.new}"
+						value="#{domainApplication.to.application.name}" />
+
+					<aon:outputLabel for="DomainApplication_auditLevel"
+						value="#{auditBundle.audit_audit_level}" />
+					<aon:selectOneMenu id="DomainApplication_auditLevel" 
+						value="#{domainApplication.to.auditLevel}">
+						<f:selectItems value="#{auditCollections.auditLevels}" />
+					</aon:selectOneMenu>		
+
+					<aon:outputLabel for="DomainApplication_active"
+						value="#{bundle.aon_active}" />
+					<aon:selectBooleanCheckbox id="DomainApplication_active"
+						value="#{domainApplication.to.active}" />
+					
+				</aon:panelGrid>
+
+				<ui:include src="/com/code/aon/ui/admin/facelet/adminMain/termsOfService.xhtml" >
+					<ui:param name="controller" value="#{domainApplication}" />
+					<ui:param name="termsOfServiceURL" value="#{adminMain.properties.newDomainApplicationURL}" />
+				</ui:include>
+									
+				<c:if test="#{!domainApplication.new}">
+					<aon:panelTabSet selectedTab="#{domainApplication.selectedTab}">
+						<aon:panelTab name="users"
+							label="#{adminBundle.admin_users}">
+							<ui:include src="/com/code/aon/ui/admin/facelet/appUser/grid.xhtml" >
+								<ui:param name="controller" value="#{appUser}" />
+							</ui:include>
+	                    </aon:panelTab>
+	                    
+						<aon:panelTab name="profiles"
+							label="#{adminBundle.admin_profiles}">
+
+							<ui:include src="/com/code/aon/ui/admin/facelet/profile/grid.xhtml" >
+								<ui:param name="controller" value="#{domainApplicationProfile}" />
+								<ui:param name="skipDomainColumn" value="#{adminDomain.parentDomain == null}" />
+								<ui:param name="rows" value="10" />	
+							</ui:include>
+								
+	                    </aon:panelTab>
+	                    
+						<aon:panelTab name="systemProfiles"
+							label="#{adminBundle.admin_systemProfiles}">
+
+							<ui:include src="/com/code/aon/ui/admin/facelet/applicationProfile/grid.xhtml" />
+
+	                    </aon:panelTab>	                    
+
+					</aon:panelTabSet>
+				</c:if>						
+				
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="MPG">
+	<field name="cabecera" value="MPG" format="AlphaNumeric" pattern="X(3)" />
+	<field name="solicitud_modalidad_pago" value="bean" bean="MPG" property="solicitudModalidadPago" format="AlphaNumeric" pattern="X(1)" />
+	<field name="cod_cuenta" value="bean" bean="MPG" property="condigoCuentaCliente" format="AlphaNumeric" pattern="X(20)" />
+	<field name="tipo_identificador_titular" value="bean" bean="MPG" property="tipoIdentificadorTitular" format="AlphaNumeric" pattern="X(1)" />
+	<field name="identificador_titular" value="bean" bean="MPG" property="identificadorTitular" format="AlphaNumeric" pattern="X(14)" />
+	<field name="nombre_titular" value="bean" bean="MPG" property="nombreTitular" format="AlphaNumeric" pattern="X(31)" />
+</register>

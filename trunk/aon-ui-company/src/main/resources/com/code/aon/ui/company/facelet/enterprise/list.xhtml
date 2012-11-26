@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{companyBundle.company_enterprise_module}" />
+				<ui:param name="controller" value="#{enterprise}" />
+				<ui:param name="skipResetButton" value="#{enterprise.skipResetButton}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+	
+				<c:if test="#{enterprise.treeView}">  
+					<aon:methodParam name="rowSelectorAction" value="#{enterprise.formAction}" />
+				</c:if>
+				
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{enterprise}" />
+					<ui:define name="columns">
+					
+						<ui:include 
+							src="/com/code/aon/ui/company/facelet/enterprise/listBasic.xhtml" />
+	
+						<aon:column alias="enterprise.registry.alias"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_company_alias}" />
+							</f:facet>
+							<aon:outputText value="#{to.registry.alias}" />
+						</aon:column>
+	
+					</ui:define>
+				</ui:decorate>
+
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

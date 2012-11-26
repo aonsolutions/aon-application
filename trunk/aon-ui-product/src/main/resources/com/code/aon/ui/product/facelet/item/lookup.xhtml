@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<c:if test="#{lookupForProduct}">
+		<ui:param name="lookupProperty" value="product"/>
+		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.name}"/>
+		<ui:param name="lookupInputValue" value="#{lookupTo.code}"/>
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.name} (#{lto.code})"/>
+	</c:if>
+
+	<c:if test="#{!lookupForProduct}">
+		<ui:param name="lookupInputValue" value="#{lookupTo.product.code}"/>
+		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.product.name}"/>
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.product.name} (#{lto.product.code})"/>
+	</c:if>
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookupAudit.xhtml" >
+		<ui:param name="lookupBean" value="#{itemLookup}" />
+		<ui:param name="lookupInputSize" value="10"/>
+		<ui:param name="lookupInputMaxLength" value="15"/>
+		<ui:param name="lookupInputOnSubmit" value="toUpperCase(this);"/>		
+		<ui:param name="lookupLabel" value="#{productBundle.product_item}" />
+		<ui:param name="controller" value="#{item}" />
+		<ui:param name="searchButtonTitle" value="#{productBundle.product_item_selection}" />
+		<ui:param name="newButtonTitle" value="#{productBundle.product_item_new}" />
+				
+		<ui:define name="lookupInputTextContent">
+			<aon:joinProperty alias="Item_product_code" value="#{lookupInputValue}" />
+		</ui:define>		
+	</ui:decorate>
+
+</ui:composition>

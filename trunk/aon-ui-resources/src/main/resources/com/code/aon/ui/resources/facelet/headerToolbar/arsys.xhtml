@@ -1,0 +1,15 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:graphicImage style="vertical-align:text-bottom;"
+		value="#{aonResource.resolve['/images/aon-main-menu/aon-icon-mail.png']}" />			
+	<aon:div layout="inline" styleClass="aon-header-menu-item">
+		<h:outputLink title="Arsys" 
+			value="https://serviciodecorreo.es/" target="_blank">
+			<aon:outputText value="#{webmailBundle.webmail_main}" />
+		</h:outputLink> 			
+	</aon:div> 			
+
+</ui:composition>

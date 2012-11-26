@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:outputLabel for="Finance_amount"
+		value="#{bundle.aon_amount}" />
+	<aon:inputText id="Finance_amount"
+		valueChangeListener="#{controller.addExpression}"
+		size="10" />
+
+	<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+		<ui:param name="lookupTo" value="#{searchController.registry}" />
+		<ui:param name="lookupForRegistry" value="#{true}" />
+		<ui:param name="lookupRendered" value="#{!controller.payment}" />
+		<ui:param name="skipNewButton" value="#{true}" />
+	</ui:include>
+
+	<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
+		<ui:param name="lookupTo" value="#{searchController.registry}" />
+		<ui:param name="lookupForRegistry" value="#{true}" />
+		<ui:param name="lookupRendered" value="#{controller.payment}" />
+		<ui:param name="skipNewButton" value="#{true}" />
+	</ui:include>
+
+	<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
+		<ui:param name="lookupTo" value="#{searchController.registry}" />
+		<ui:param name="lookupForRegistry" value="#{true}" />
+		<ui:param name="lookupRendered" value="#{controller.payment}" />
+		<ui:param name="skipNewButton" value="#{true}" />
+	</ui:include>
+
+	<aon:outputLabel for="Finance_concept" 
+		value="#{financeBundle.finance_invoice_document_number}" />
+	<aon:div>
+		<aon:inputText id="Finance_concept"
+			onblur="toUpperCase(this);"
+			valueChangeListener="#{controller.addExpression}"
+			size="20" />
+	</aon:div>
+
+	<c:if test="#{!controller.payment}">
+		<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml">
+			<ui:param name="aliasPreffix" value="Finance_invoice" />						
+		</ui:include>
+	</c:if>
+
+	<aon:outputLabel for="Finance_invoice_referenceCode"
+		rendered="#{controller.payment}"
+		value="#{financeBundle.finance_invoice_number}" />
+	<aon:inputText id="Finance_invoice_referenceCode"
+		rendered="#{controller.payment}"
+		valueChangeListener="#{controller.addExpression}"
+		size="20" />
+
+	<aon:outputLabel value="#{financeBundle.finance_invoice_date}" />
+	<aon:div>
+		<aon:outputLabel for="Finance_invoice_issueDate-From" styleClass="aon-form-date-label aon-padding-right"
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="Finance_invoice_issueDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+
+		<aon:outputLabel for="Finance_invoice_issueDate-To" styleClass="aon-form-date-label aon-padding-right"
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="Finance_invoice_issueDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+	</aon:div>
+	
+	<aon:outputLabel 
+		value="#{financeBundle.finance_finance_date}" />
+	<aon:div>
+		<aon:outputLabel for="Finance_dueDate-From" styleClass="aon-form-date-label aon-padding-right"
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="Finance_dueDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+
+		<aon:outputLabel for="Finance_dueDate-To" styleClass="aon-form-date-label aon-padding-right"
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="Finance_dueDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+	</aon:div>
+	
+	<aon:outputLabel for="Finance_payMethod_id"
+		value="#{configBundle.config_pay_method}" />
+	<aon:div id="payMethodDiv">
+		<a4j:repeat value="#{searchController.payMethods}" rowKeyVar="index" var="payMth">
+			<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+				<aon:selectOneMenu id="Finance_payMethod_id"
+					value="#{searchController.payMethods[index]}">
+					<f:selectItem itemLabel="-" itemValue="#{searchController.emptyPayMethod}" />
+					<f:selectItems value="#{configCollections.payMethods}" />
+				 	<a4j:support event="onchange" reRender="payMethodDiv" />
+				</aon:selectOneMenu>
+				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="payMethodDiv"
+					actionListener="#{searchController.onRemovePayMethod}"
+					rendered="#{payMth.id != null}">
+					<f:param name="index" value="#{index}" />
+				</aon:commandButton>
+				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="payMethodDiv"
+					actionListener="#{searchController.onAddPayMethod}"
+					rendered="#{(payMth.id != null) and (index == (searchController.payMethodsSize-1))}" />					
+			</aon:div>						
+		</a4j:repeat>
+	</aon:div>
+
+	<aon:outputLabel for="Finance_registryBank_id"
+		value="#{configBundle.config_bank}" />
+	<aon:selectOneMenu id="Finance_registryBank_id"
+		value="#{searchController.registryBank}">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{companyCollections.allCompanyBanks}" />
+	</aon:selectOneMenu>
+
+	<c:if test="#{aonRole.confidentiality}">
+		<aon:outputLabel for="Finance_securityLevel"
+			value="#{bundle.aon_confidential}" />
+		<aon:selectOneRadio id="Finance_securityLevel"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
+		</aon:selectOneRadio>				
+	</c:if>
+
+	<aon:outputText value="#{bundle.aon_status}" />
+	<aon:selectManyCheckbox value="#{searchController.financeStatuses}">
+		<f:selectItems value="#{financeCollections.financeStatuses}" />
+	</aon:selectManyCheckbox>							
+
+</ui:composition>

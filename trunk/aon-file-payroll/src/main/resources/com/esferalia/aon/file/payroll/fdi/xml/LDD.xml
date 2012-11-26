@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="LDD">
+	<field name="cabecera" value="LDD" format="AlphaNumeric" pattern="X(3)" />
+	<field name="codpos" value="bean" bean="DOM" property="numero" format="Numeric" pattern="9(5)" />
+	<field name="localidad" value="bean" bean="DOM" property="bis" format="AlphaNumeric" pattern="X(40)" />
+	<field name="provincia" value="bean" bean="DOM" property="bloque" format="Numeric" pattern="9(2)" />
+	<field name="telefono" value="bean" bean="DOM" property="bloque" format="Numeric" pattern="9(10)" />
+	<field name="free1" value=" " format="AlphaNumeric" pattern="X(10)" />
+</register>

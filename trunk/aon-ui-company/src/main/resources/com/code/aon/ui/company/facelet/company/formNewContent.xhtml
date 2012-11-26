@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:outputLabel for="Company_name" value="#{bundle.aon_name}" />
+	<aon:inputText id="Company_name" value="#{controller.to.name}"
+		required="true" maxlength="64" size="64" >
+		<f:validateLength minimum="1" maximum="64" />
+	</aon:inputText>
+
+	<aon:outputLabel for="Company_alias"
+		value="#{bundle.aon_company_alias}" />
+	<aon:inputText id="Company_alias" value="#{controller.to.alias}"
+		size="32" maxlength="32" >
+		<f:validateLength minimum="1" maximum="32" />
+	</aon:inputText>
+
+	<ui:include
+		src="/com/code/aon/ui/registry/facelet/registry/formDocument.xhtml" >
+		<ui:param name="registry" value="#{controller.to}" />
+	</ui:include>	
+
+	<aon:outputLabel for="Company_address"
+		value="#{registryBundle.registry_address}" />
+	<aon:div>
+		<aon:selectOneMenu id="Company_streetType" required="true"
+			label="#{registryBundle.registry_street_type}"
+			value="#{controller.mainAddress.streetType}">
+			<f:selectItems value="#{registryCollections.streetTypes}" />
+		</aon:selectOneMenu>
+		<aon:inputText id="Company_address" required="true"
+			style="margin-left: 5px;" value="#{controller.mainAddress.address}"
+			valueChangeListener="#{controller.addressChanged}" maxlength="128" size="32" />
+		<aon:outputLabel for="Company_number" styleClass="aon-italic aon-margin-left"
+			value="#{bundle.aon_number}" />
+		<aon:inputText id="Company_number" required="true"
+			style="margin-left: 5px;" value="#{controller.mainAddress.number}"
+			valueChangeListener="#{controller.addressChanged}" maxlength="12" size="5" />
+	</aon:div>
+
+	<aon:outputLabel for="Company_address2" value="#{registryBundle.registry_address_detail}" />
+	<aon:div>
+		<aon:inputText id="Company_address2"
+			value="#{controller.mainAddress.address2}"
+			valueChangeListener="#{controller.addressChanged}" maxlength="128" size="32" />
+		<aon:inputText id="Company_address3"
+			style="margin-left: 5px;" value="#{controller.mainAddress.address3}"
+			valueChangeListener="#{controller.addressChanged}" maxlength="128" size="37" />
+	</aon:div>
+
+	<aon:outputLabel for="Company_address_city"
+		value="#{registryBundle.registry_city}" />
+	<aon:inputText id="Company_address_city"
+		value="#{controller.mainAddress.city}" maxlength="64"
+		valueChangeListener="#{controller.addressChanged}" size="30" />
+
+	<aon:outputLabel for="Company_address_zip"
+		value="#{registryBundle.registry_zip}" />
+	<aon:inputText id="Company_address_zip"
+		value="#{controller.mainAddress.zip}" maxlength="16"
+		valueChangeListener="#{controller.addressChanged}" size="16" />
+
+	<aon:outputLabel for="Company_address_geozone"
+		value="#{registryBundle.registry_geozone}" />
+	<aon:selectOneMenu id="Company_address_geozone"
+		value="#{controller.mainAddress.geozone}"
+		styleClass="aon-form-selectOneMenu-field"
+		valueChangeListener="#{controller.addressChanged}">
+		<f:selectItems value="#{geozoneCollections.geoTrees}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="Company_telephone"
+		value="#{registryBundle.registry_phone}" />
+	<aon:inputText id="Company_telephone" value="#{controller.phone.value}"
+		valueChangeListener="#{controller.phoneChanged}" maxlength="64" size="15" />
+
+	<aon:outputLabel for="Company_fax"
+		value="#{registryBundle.registry_fax}" />
+	<aon:inputText id="Company_fax" value="#{controller.fax.value}"
+		valueChangeListener="#{controller.faxChanged}" maxlength="64" size="15" />
+
+	<aon:outputLabel for="Company_email"
+		value="#{registryBundle.registry_email}" />
+	<aon:inputText id="Company_email" value="#{controller.email.value}"
+		onblur="toLowerCase(this);" maxlength="64"
+		valueChangeListener="#{controller.emailChanged}" size="45" />
+
+	<aon:outputLabel for="Company_web"
+		value="#{registryBundle.registry_web}" />
+	<aon:inputText id="Company_web" value="#{controller.web.value}"
+		onblur="toLowerCase(this);" maxlength="64"
+		valueChangeListener="#{controller.webChanged}" size="45" />
+
+</ui:composition>

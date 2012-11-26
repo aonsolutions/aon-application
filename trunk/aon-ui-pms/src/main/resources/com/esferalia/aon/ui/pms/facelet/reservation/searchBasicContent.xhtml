@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<c:if test="#{pmsCollections.currentUserHotelsCount > 1}">
+		<aon:outputLabel for="ProjectReservation_hotel_id"
+			value="#{pmsBundle.pms_hotel}" />
+		<aon:selectOneMenu id="ProjectReservation_hotel_id"
+			value="#{searchController.hotel}">
+			<f:selectItem itemLabel="-" value="#{null}" />		
+			<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+		</aon:selectOneMenu>
+	</c:if>
+
+	<aon:outputLabel for="ProjectReservation_project_id" 
+		value="#{pmsBundle.pms_reservation_id}" />
+	<aon:inputText id="ProjectReservation_project_id"
+		valueChangeListener="#{controller.addExpression}"
+		size="20" />
+
+	<aon:outputLabel for="ProjectReservation_crsCode" 
+		value="#{bundle.aon_id} #{pmsBundle.pms_crs}" />
+	<aon:inputText id="ProjectReservation_crsCode"
+		valueChangeListener="#{controller.addExpression}"
+		size="20" />
+
+	<aon:outputLabel for="ProjectReservation_code" 
+		value="#{pmsBundle.pms_reservation_code}" />
+	<aon:inputText id="ProjectReservation_code"
+		valueChangeListener="#{controller.addExpression}"
+		size="20" />
+
+	<aon:outputLabel for="ProjectReservation_creationDate" 
+		value="#{pmsBundle.pms_reservation_creationDate}" />
+	<aon:div>
+		<aon:outputLabel for="ProjectReservation_creationDate-From"
+			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+		<aon:selectInputDate id="ProjectReservation_creationDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+		<aon:outputLabel for="ProjectReservation_creationDate-To"
+			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+		<aon:selectInputDate id="ProjectReservation_creationDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+
+	<aon:outputLabel for="ProjectReservation_startDate" 
+		value="#{pmsBundle.pms_checkIn}" />
+	<aon:div>
+		<aon:outputLabel for="ProjectReservation_startDate-From"
+			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+		<aon:selectInputDate id="ProjectReservation_startDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+		<aon:outputLabel for="ProjectReservation_startDate-To"
+			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+		<aon:selectInputDate id="ProjectReservation_startDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+
+	<aon:outputLabel for="ProjectReservation_endDate" 
+		value="#{pmsBundle.pms_checkOut}" />
+	<aon:div>
+		<aon:outputLabel for="ProjectReservation_endDate-From"
+			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+		<aon:selectInputDate id="ProjectReservation_endDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+		<aon:outputLabel for="ProjectReservation_endDate-To"
+			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+		<aon:selectInputDate id="ProjectReservation_endDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+
+	<aon:outputLabel for="ProjectReservation_insideDate" 
+		value="#{pmsBundle.pms_reservation_insideDate}" />
+	<aon:selectInputDate id="ProjectReservation_insideDate"
+		value="#{searchController.insideDate}"
+		timeZone="#{timeZoneController.timeZone}"
+		popupDateFormat="#{bundle.aon_date_pattern}"/>
+	
+	<aon:outputLabel for="ProjectReservation_remarks" 
+		value="#{bundle.aon_remark}" />
+	<aon:inputText id="ProjectReservation_remarks"
+		valueChangeListener="#{controller.addExpression}"
+		size="64" />
+
+	<aon:outputLabel for="ProjectReservation_agency" 
+		value="#{pmsBundle.pms_agency}" />
+	<aon:selectOneMenu id="ProjectReservation_agency" 
+		value="#{searchController.agency}"
+		styleClass="aon-width-350">
+		<f:selectItem itemLabel="-" value="#{null}" />		
+		<f:selectItems value="#{pmsCollections.agencies}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="ProjectReservation_seller" 
+		value="#{pmsBundle.pms_seller}" />
+	<aon:selectOneMenu id="ProjectReservation_seller" 
+		value="#{searchController.seller}"
+		styleClass="aon-width-350">
+		<f:selectItem itemLabel="-" value="#{null}" />		
+		<f:selectItems value="#{pmsCollections.sellers}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel value="#{pmsBundle.pms_guest}" />
+	<aon:div>
+		<aon:outputLabel for="ProjectReservation_guestName"
+			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_name}" />
+		<aon:inputText id="ProjectReservation_guestName"
+			value="#{searchController.guestName}"
+			size="14" />
+		<aon:outputLabel for="ProjectReservation_guestSurname"
+			styleClass="aon-italic aon-margin-left aon-margin-right" value="#{bundle.aon_surname}" />
+		<aon:inputText id="ProjectReservation_guestSurname"
+			value="#{searchController.guestSurname}"
+			size="20" />
+	</aon:div>
+
+	<c:if test="#{!skipStatus}">
+		<aon:outputText value="#{pmsBundle.pms_check}"/>
+		<aon:selectManyCheckbox value="#{searchController.reservationCheckStatuses}">
+			<f:selectItems value="#{pmsCollections.abbreviatedReservationCheckStatuses}"/>
+		</aon:selectManyCheckbox>
+
+		<aon:outputText value="#{bundle.aon_status}"/>
+		<aon:selectManyCheckbox value="#{searchController.reservationStatuses}">
+			<f:selectItems value="#{pmsCollections.reservationStatuses}"/>
+		</aon:selectManyCheckbox>
+	</c:if>
+
+</ui:composition>

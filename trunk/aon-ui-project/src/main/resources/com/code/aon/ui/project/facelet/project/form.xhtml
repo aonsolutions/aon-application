@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	
+	<ui:define name="content">
+
+		<aon:form id="projectForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{projectBundle.project_projects}" />
+				<ui:param name="controller" value="#{project}" />
+
+				<ui:param name="skipRemoveButton" value="#{project.to != null and project.to.extended}" />
+				<ui:param name="skipSaveButton" value="#{project.to != null and project.to.extended}" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="importDossier"
+						value="#{projectBundle.project_import}" reRender="importContainer"
+						rendered="#{!project.new}"
+						actionListener="#{activitiesImporter.onShowImportPanel}"
+						styleClass="aon-finding-toolbar-item aon-icon-mailReply" />
+					<c:if test="#{!project.new}">
+						<aon:commandButton id="ProjectHistory" 
+							action="project_stats" 
+							actionListener="#{project.onProjectHistory}"
+							value="#{statBundle.stat_dashboard}"
+							styleClass="aon-finding-toolbar-item aon-icon-statistics" />
+					</c:if>		
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:panelGrid columns="2" dir="true" style="width: 100%;">
+				
+					<ui:include src="/com/code/aon/ui/project/facelet/project/form_content.xhtml" >
+						<ui:param name="controller" value="#{project}" />
+					</ui:include>
+				
+				</aon:panelGrid>
+
+				<c:if test="#{!project.new}">
+					<aon:panelTabSet id="projectTabSet">
+						<aon:panelTab id="project_activities" label="#{projectBundle.project_activities}">
+							<ui:include src="/com/code/aon/ui/project/facelet/project/projectActivity.xhtml" />
+						</aon:panelTab>
+						<aon:panelTab id="project_charts" label="#{statBundle.stat_economic_summary}"
+							actionListener="#{project.onGraphicTab}">
+							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/economicSummary.xhtml" />
+						</aon:panelTab>
+						<aon:panelTab id="project_gantt" label="Gantt" actionListener="#{project.onGraphicTab}">
+							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/gantt.xhtml" />
+						</aon:panelTab>
+					</aon:panelTabSet>
+				</c:if>
+				
+			</aon:div>
+		</aon:form>
+		<ui:include src="/com/code/aon/ui/project/facelet/project/import.xhtml" />
+		<aon:lookupButtonPopup lookup="#{registryLookup}" />
+	</ui:define>
+</ui:composition>

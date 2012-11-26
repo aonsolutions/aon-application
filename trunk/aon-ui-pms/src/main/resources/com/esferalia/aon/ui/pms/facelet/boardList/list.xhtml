@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="boardList">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_boardList_module}" />
+				
+				<ui:define name="additionalToolbarContent">
+				
+					<aon:commandButton id="search" ignoreDupResponses="true"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						disabled="#{boardList.hotel==null}" 
+						value="#{bundle.aon_search}" 
+						action="boardList_list"
+						actionListener="#{boardList.onSearch}"
+						accesskey="#{bundle.aon_key_search}"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:htmlCommandLink id="boardList-excel-report"
+						rendered="#{boardList.model!=null and boardList.model.rowCount > 0}"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+						<f:param name="reportKey" value="boardList" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="boardList_report"
+						rendered="#{boardList.model!=null and boardList.model.rowCount > 0}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						value="#{bundle.aon_listing}"
+						action="#{report.onExecute}"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="boardList" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>	
+					
+				</ui:define>
+				
+			</ui:decorate>
+ 
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-panelGrid-search aon-margin-bottom " >
+					
+					<aon:panelGrid columns="8" 
+						columnClasses="aon-panelGrid-even aon-noborder, 
+						aon-panelGrid-even aon-noborder">
+					
+						<aon:outputLabel for="BoardList_hotel_id" styleClass="aon-bold aon-margin-left"
+							value="#{pmsBundle.pms_hotel}" />
+						<aon:selectOneMenu id="BoardList_hotel_id"
+							valueChangeListener="#{boardList.onHotelChanged}"
+							value="#{boardList.params.hotel}" >
+							<f:selectItem itemLabel=" - " itemValue="#{null}" />
+							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+							<a4j:support event="onchange" reRender="boardList" />
+						</aon:selectOneMenu>
+					
+						<aon:outputLabel for="BoardList_date" styleClass="aon-bold aon-margin-left"
+							value="#{bundle.aon_date}" />
+						<aon:selectInputDate id="BoardList_date"	
+							value="#{boardList.params.date}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+						<aon:outputLabel for="BoardList_boardItemFilter_id" styleClass="aon-bold aon-margin-left"
+							value="#{pmsBundle.pms_board}" />
+						<aon:selectOneMenu id="BoardList_boardItemFilter_id"
+							value="#{boardList.params.boardItemFilter}" >
+							<f:selectItem itemLabel=" - " itemValue="null" />
+							<f:selectItems value="#{boardList.boardItemList}" />
+						</aon:selectOneMenu>
+						
+						<aon:outputText value="&#160;" />
+						<aon:div >
+							<h:selectBooleanCheckbox id="boardPageBreak" 
+								value="#{boardList.params.boardPageBreak}" />
+							<aon:outputLabel for="boardPageBreak"
+								value="#{pmsBundle.pms_board_page_break}" />
+						</aon:div>
+					</aon:panelGrid>
+										
+					<aon:div styleClass="aon-margin-top"
+						rendered="#{boardList.model!=null and boardList.model.rowCount > 0}" >
+						<aon:outputText styleClass="aon-bold aon-margin-left"
+							value="#{bundle.aon_total}:" />
+						<c:forEach items="#{boardList.boardsTotalList}" var="boardTotal">
+							<aon:outputText value="&#160;&#160;" />
+							<aon:outputText value="#{boardTotal.boardName}" 
+								styleClass="aon-bold" />
+							<aon:outputText value=" (" />
+							<aon:outputText value="#{boardTotal.count}" />
+							<aon:outputText value=")" />
+						</c:forEach>
+					</aon:div>
+					
+				</aon:div>
+				
+				<aon:dataTable id="roomBoardList" value="#{boardList.model}" 
+					rendered="#{boardList.model!=null and boardList.model.rowCount > 0}" rows="20" var="to">
+						
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_board}" />
+							</f:facet>
+							<aon:outputText value="#{to.boardName}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_room}" />
+							</f:facet>
+							<aon:outputText value="#{to.room}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="PAX" />
+							</f:facet>
+							<aon:outputText value="#{to.quantity}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_guest}" />
+							</f:facet>
+							<aon:outputText value="#{to.guest}" />
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-dateColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_checkIn}" />
+							</f:facet>
+							<aon:outputText value="#{to.startDate}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-dateColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_checkOut}" />
+							</f:facet>
+							<aon:outputText value="#{to.endDate}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+
+				</aon:dataTable>
+			
+				<aon:dataScroller2 for="roomBoardList" showNote="true" />
+				
+			</aon:div>
+			
+		</aon:form>
+		
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		
+	</ui:define>
+</ui:composition>

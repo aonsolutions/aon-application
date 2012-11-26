@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+
+	<ui:define name="content">
+		<aon:form id="contractPdf">
+
+		<aon:div id="contractDetail">
+			<aon:div styleClass="aon-toolbar" >
+				<h:panelGrid columns="5" style="border: 0;" cellpadding="5" >
+					<aon:div>
+						<aon:commandButton id="contract-save"
+							value="#{bundle.aon_save}"
+							action="#{contractPdf.backAction}"
+							actionListener="#{contractPdf.onDocumentSave}"
+							onclick="if (!confirm('#{bundle.aon_save}?')) { return false;}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept" />	
+						<aon:commandButton id="prev" immediate="true"
+							value="#{contractPdf.new?bundle.aon_cancel:bundle.aon_back}"
+							action="#{contractPdf.backAction}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel" />
+					</aon:div>
+					
+					<aon:outputText styleClass="aon-margin-left" value="#{payrollBundle.payroll_contract_page}:" />
+					<aon:div styleClass="aon-spin-control" >
+						<aon:div styleClass="aon-spin-control-element"> 
+							<aon:commandButton id="contractDetail-prev"  
+								ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+								disabled="#{contractPdf.firstContractPage}"
+								reRender="contractDetail"
+								styleClass="aon-dataScroller-button #{contractPdf.firstContractPage?'aon-dataScroller-button-previous-disabled':'aon-dataScroller-button-previous'}"
+								actionListener="#{contractPdf.onPreviousContractPage}" />
+						</aon:div>
+						<aon:div styleClass="aon-spin-control-element aon-nowrap"> 
+							<aon:outputFormat value="#{bundle.aon_spin_result}">
+								<f:param value="#{contractPdf.contractPage}" />
+								<f:param value="#{contractPdf.numberOfContractPages}" />
+							</aon:outputFormat>	
+						</aon:div>
+						<aon:div styleClass="aon-spin-control-element"> 
+							<aon:commandButton id="contractDetail-next" 
+								ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+								disabled="#{contractPdf.lastContractPage}"
+								reRender="contractDetail"
+								styleClass="aon-dataScroller-button #{contractPdf.lastContractPage?'aon-dataScroller-button-next-disabled':'aon-dataScroller-button-next'}"
+								actionListener="#{contractPdf.onNextContractPage}" />				
+						</aon:div>
+					</aon:div>
+
+					<aon:outputText value="#{payrollBundle.payroll_size}:" />
+					<aon:div>
+						<rich:inputNumberSlider maxValue="4" step="1"
+							value="#{contractPdf.zoomFactor}"
+							showArrows="true" width="150"
+							showToolTip="true"  
+							showBoundaryValues="false"
+				            showInput="false"  
+							enableManualInput="false" 
+				            barClass=""
+				            decreaseClass="aon-icon-zoom-decrease"
+				            increaseClass="aon-icon-zoom-increase"
+				            >
+				            <a4j:support event="onchange" reRender="contractDetail"
+				            	actionListener="#{contractPdf.onChangeZoomFactor}" />
+				       </rich:inputNumberSlider>
+					</aon:div>
+
+				</h:panelGrid>
+			</aon:div>
+			
+			<aon:div styleClass="aon-scroll-area" 
+				style="height:#{contractPdf.contractHeight}px; width:#{contractPdf.contractWidth}px; border: #000000 1px solid; margin-left: 10px;">
+			<aon:div styleClass="contractModalContent"
+				style="position: absolute; left: 30; right: 30; margin: auto; background: white url(#{contractPdf.imageUrl}) top left no-repeat; border:#ffffff 1px solid; height:#{contractPdf.contractHeight}px; width:#{contractPdf.contractWidth}px;">
+				
+				<c:forEach items="#{contractPdf.contractPdfWriter.contractPdfFields}" var="field" >
+					<c:if test="#{field.text}">
+						<aon:inputText 
+							title="#{field.label}"
+							rendered="#{field.page==contractPdf.contractPage}"
+							style="background-color:transparent; border: #E0ECF8 2px solid; position:absolute; bottom:#{field.scaledBottomCoordinates-2}px; left:#{field.scaledLeftCoordinates}px;width:#{field.scaledWidth}px; "
+							value="#{field.value}" size="#{field.width}"
+							maxlength="16" />
+					</c:if>
+					<c:if test="#{field.check}">
+						<aon:selectBooleanCheckbox 
+							title="#{field.label}"
+							rendered="#{field.page==contractPdf.contractPage}"
+							style="background-color:#E0ECF8; border:none; position:absolute; bottom:#{field.scaledBottomCoordinates-2}px; left:#{field.scaledLeftCoordinates}px; "
+							value="#{field.booleanValue}" >
+						</aon:selectBooleanCheckbox>
+					</c:if>
+				</c:forEach>
+					
+			</aon:div>
+			</aon:div>
+			 
+		</aon:div>
+
+		</aon:form>		
+	</ui:define>
+
+</ui:composition>

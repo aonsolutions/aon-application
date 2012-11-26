@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components" >
+
+	<aon:panelGrid columns="3" style="width: 100%;"
+		columnClasses="aon-panelGrid-odd aon-width-250
+					  ,aon-panelGrid-even aon-width-auto
+					  ,aon-panelGrid-even aon-width-250">
+	
+		<aon:outputText value="#{registryBundle.registry_person}" />
+		<aon:div> 
+			<aon:outputText value="#{contract.to.person.registry.document}" />
+			<aon:outputText value=" - " />
+			<aon:outputText value="#{contract.to.person.fullName}" styleClass="aon-bold"/>
+		</aon:div>	
+		<aon:div id="contract_attach"> 
+			<aon:htmlCommandLink target="_blank" 
+				disabled="#{contract.aonFile.data==null}"
+				title="#{(contract.aonFile.data!=null)?('pdf'):('disabled')}"
+				actionListener="#{contract.onDownloadSelected}"
+				styleClass="aon-editDataTable-button #{(contract.aonFile.data!=null)?('aon-icon-pdf'):('aon-icon-pdf-disabled')}"
+				style="padding-left: 20px; float: left;"
+				value="#{bundle.aon_document}" />
+			<aon:fileUpload 
+				addControlLabel="#{bundle.aon_fileUpload_add}"
+				stopControlLabel="#{bundle.aon_fileUpload_stop}"
+				stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+				uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+				fileUploadListener="#{contract.fileUploaded}"
+				immediateUpload="true" autoclear="true"
+				listWidth="0px" listHeight="0px"
+				style="padding-left: 20px; float: left;">
+				<f:facet name="label">
+					<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+				</f:facet>
+				<a4j:support event="onuploadcomplete" reRender="contract_attach" >
+					<aon:actionListener method="#{contract.onFileUploaded}" />
+				</a4j:support>
+			</aon:fileUpload>
+<!--  
+			<aon:panelGrid columns="2" style="width:100%;"
+				columnClasses="
+				aon-panelGrid-even aon-noborder aon-width-100,
+				aon-panelGrid-even aon-noborder aon-width-auto" >
+				
+				
+				<aon:outputText value="#{contract.aonFile.fileName}"
+					rendered="#{contract.aonFile.size > 0}" />
+			</aon:panelGrid>
+-->			
+		</aon:div>
+
+		<aon:outputText value="#{payrollBundle.payroll_salary_ss_number}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+		<aon:outputText value="#{contract.to.person.socialSecurityNumber}"  style="margin-left: 50px;"/>
+		<aon:div>
+			<aon:outputText value="#{contract.to.status}" style="padding-left: 20px;" styleClass="aon-icon-point-orange" rendered="#{contract.to.pending}"/>	
+			<aon:outputText value="#{contract.to.status}" style="padding-left: 20px;" styleClass="aon-icon-point-green"  rendered="#{contract.to.processed}"/>
+			<aon:outputText value="#{contract.to.status}" style="padding-left: 20px;" styleClass="aon-icon-point-yellow" rendered="#{contract.to.blocked}"/>
+		</aon:div>
+
+		<aon:outputText value="#{companyBundle.company_enterprise}" />
+		<aon:div>
+			<aon:outputText value="#{contract.to.workPlace.enterprise.registry.document}" />
+			<aon:outputText value=" - " />	
+			<aon:outputText value="#{contract.to.workPlace.enterprise.registry.fullName}" styleClass="aon-bold"/>
+		</aon:div>
+		<aon:outputText value="&#160;" />
+
+		<aon:outputText value="#{companyBundle.company_workplace}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+		<aon:outputText value="#{contract.to.workPlace.description}" style="margin-left: 50px;"/>
+		<aon:outputText value="&#160;" />
+
+		<aon:outputText value="#{companyBundle.company_activity}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+		<aon:div>
+			<aon:outputText value="#{contract.to.activity.description}"  style="margin-left: 50px;"/>
+			<aon:outputText value=" - ("/>
+			<aon:outputText value="#{contract.to.activity.cnae2009.code}"/>
+			<aon:outputText value=") - "/>
+			<aon:outputText value="#{contract.to.activity.cnae2009.title}"/>
+		</aon:div>
+		<aon:outputText value="&#160;" />
+
+		<aon:outputText value="#{companyBundle.company_enterprise_ccc}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+		<aon:outputText value="#{contract.to.enterpriseCCC.ccc}"  style="margin-left: 50px;"/>
+		<aon:outputText value="&#160;" />
+		
+		<aon:outputText value="#{payrollBundle.payroll_contract_period}" />
+		<aon:div>
+			<aon:outputText value="#{bundle.aon_start_date}:" styleClass="aon-italic aon-margin-right"/>
+			<aon:outputText value="#{contract.to.startDate}" styleClass="aon-bold">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>		
+			<aon:outputText value="#{bundle.aon_end_date}:" styleClass="aon-italic aon-margin-right aon-margin-left"/>
+			<aon:outputText value="#{contract.to.endDate}" styleClass="aon-bold">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>		
+		</aon:div>
+		<aon:outputText value="&#160;" />
+
+		<aon:outputText value="#{payrollBundle.payroll_salary_seniority_date}" />
+		<aon:outputText value="#{contract.to.seniorityDate}" >
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>		
+		<aon:outputText value="&#160;" />
+		
+		<aon:outputText value="#{payrollBundle.payroll_salary_registration}"/>
+		<aon:outputText value="#{contract.to.registration}"/>
+		<aon:outputText value="&#160;" />
+	</aon:panelGrid>
+
+	<aon:panelGrid columns="6" style="width: 100%; margin-top:10px;"
+		columnClasses="aon-panelGrid-even aon-width-200 #{variablesSelected?'aon-highlight':''}
+					  ,aon-panelGrid-even aon-width-200 #{paymentsSelected?'aon-highlight':''}
+					  ,aon-panelGrid-even aon-width-200 #{deductionsSelected?'aon-highlight':''}
+					  ,aon-panelGrid-even aon-width-200 #{bonusSelected?'aon-highlight':''}
+					  ,aon-panelGrid-even aon-width-200 #{embargosSelected?'aon-highlight':''}
+					  ,aon-panelGrid-even aon-width-auto">
+	
+		<aon:div>
+			<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-search"/>
+			<aon:commandLink 
+				actionListener="#{contract.onShowVariables}"
+				action="contractData_list"
+				styleClass="aon-dataTable-link #{variablesSelected?'aon-bold':''}"
+				value="#{payrollBundle.payroll_contract_data_variables}" />
+		</aon:div>	
+
+		<aon:div>
+			<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-fraction"/>
+			<aon:commandLink 
+				actionListener="#{contract.onShowPayments}"
+				styleClass="aon-dataTable-link #{paymentsSelected?'aon-bold':''}"
+				action="contractPayment_list"
+				value="#{payrollBundle.payroll_salary_payments_tab}" />
+		</aon:div>	
+
+		<aon:div>
+			<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-settle"/>
+			<aon:commandLink 
+				actionListener="#{contract.onShowDeductions}"
+				styleClass="aon-dataTable-link #{deductionsSelected?'aon-bold':''}"
+				action="contractDeduction_list"
+				value="#{payrollBundle.payroll_salary_deductions_tab}" />
+		</aon:div>	
+
+		<aon:div>
+			<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-fraction"/>
+			<aon:commandLink 
+				actionListener="#{contract.onShowBonus}"
+				styleClass="aon-dataTable-link #{bonusSelected?'aon-bold':''}"
+				action="contractBonus_list"
+				value="#{payrollBundle.payroll_salary_bonus_tab}" />
+		</aon:div>	
+
+		<aon:div>
+			<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-settle"/>
+			<aon:commandLink 
+				actionListener="#{contract.onShowEmbargos}"
+				styleClass="aon-dataTable-link #{embargosSelected?'aon-bold':''}"
+				action="contractEmbargo_list"
+				value="#{payrollBundle.payroll_salary_embargos_tab}" />
+		</aon:div>	
+
+		<aon:outputText value="&#160;" />
+	</aon:panelGrid>
+
+
+
+</ui:composition>

@@ -1,0 +1,55 @@
+package com.code.aon.accounting;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.entity.master.AccountEntryDetailDB;
+
+@Entity
+@Table(name="account_entry_detail")
+public class AccountEntryDetail extends AccountEntryDetailDB {
+
+	private static final long serialVersionUID = 1L;
+
+	public void setDebit(double debit) {
+		if (debit != 0) {
+			if (debit < 0) {
+				super.setCredit(CommonUtil.round(0 - CommonUtil.round(debit)));
+				debit = 0;
+			} else {
+				super.setCredit(0);
+			}
+		}
+		super.setDebit(debit);
+	}
+
+	public void setCredit(double credit) {
+		if (credit != 0) {
+			if (credit < 0) {
+				super.setDebit(CommonUtil.round(0 - CommonUtil.round(credit)));
+				credit = 0;
+			} else {
+				super.setDebit(0);
+			}
+		}
+		super.setCredit(credit);
+	}
+
+	@Transient
+	public double getUnpaidBalance() {
+		if (getDebit() > getCredit()) {
+			return CommonUtil.round(getDebit() - getCredit());
+		}
+		return 0;
+	}
+	
+	@Transient
+	public double getCreditBalance() {
+		if (getCredit() > getDebit()) {
+			return CommonUtil.round(getCredit() - getDebit());
+		}
+		return 0;
+	}
+}

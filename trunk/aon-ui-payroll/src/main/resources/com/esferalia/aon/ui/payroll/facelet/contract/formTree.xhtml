@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
+
+	<ui:define name="header">
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
+			<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+			
+			
+			<ui:define name="toolbarContent">
+				<aon:commandButton id="Contract-Save"
+					value="#{bundle.aon_accept}"
+					reRender="contractMainGrid, dataGrid"
+					styleClass="aon-finding-toolbar-item aon-icon-accept">
+					<aon:actionListener method="#{contract.accept}" />
+					<aon:actionListener method="#{contract.onShowVariables}" />
+				</aon:commandButton>
+				<aon:commandButton id="person"
+					value="#{registryBundle.registry_person}"
+					action="person_form" actionListener="#{contract.onEditPerson}"
+					styleClass="aon-finding-toolbar-item aon-icon-contact" >
+					<f:setPropertyActionListener
+						target="#{person.backAction}" value="contract_formTree" />
+					<f:setPropertyActionListener
+						target="#{person.backActionListener}" value="person.onBack" />													
+				</aon:commandButton>
+				<aon:commandButton 
+					value="#{payrollBundle.payroll_contractCalendarEvent}"
+					styleClass="aon-finding-toolbar-item aon-icon-daily-tracking"
+					action="contractCalendarEvent_form" >
+					<f:setPropertyActionListener
+						target="#{contractCalendarEvent.backActionListener}" value="contractCalendarEvent.onBack" />
+					<f:setPropertyActionListener
+						target="#{contractCalendarEvent.backAction}" value="contract_formTree" />
+				</aon:commandButton>													
+				<aon:commandButton id="contract_leave"
+					value="#{payrollBundle.payroll_contractLeave_module}"
+					action="contractLeave_form"
+					styleClass="aon-finding-toolbar-item aon-icon-copy">
+					<f:setPropertyActionListener
+						target="#{contractLeave.treeOutcome}" value="#{true}" />
+					<f:setPropertyActionListener
+						target="#{contractLeave.contractEditable}" value="#{false}" />
+					<aon:actionListener method="#{contract.onShowContractLeave}" />
+					<f:setPropertyActionListener
+						target="#{contractLeave.backAction}" value="contract_formTree" />
+				</aon:commandButton>
+				<aon:commandButton id="settle"
+					value="#{payrollBundle.payroll_settle_module}"
+					action="settle_form"
+					rendered="#{contract.to.endDate==null}"
+					styleClass="aon-finding-toolbar-item aon-icon-black-list">
+					<f:setPropertyActionListener
+						target="#{settle.backAction}" value="contract_formTree" />
+					<aon:actionListener method="#{contract.onShowSettle}" />
+				</aon:commandButton>
+				<aon:commandButton id="IRPF-calculator"
+					value="#{payrollBundle.payroll_contract_irpf_data}"
+					action="irpfData_form"
+					styleClass="aon-finding-toolbar-item aon-icon-aeat">
+					<aon:actionListener method="#{contract.onShowIrpfData}" />
+					<f:setPropertyActionListener
+						target="#{irpfData.backAction}" value="contract_formTree" />
+				</aon:commandButton>
+				<aon:commandButton id="contrata"
+					value="#{payrollBundle.payroll_contract_contrataData}"
+					action="contrata_form" 
+					actionListener="#{contract.onShowContrataData}"
+					styleClass="aon-finding-toolbar-item aon-icon-contrata" >
+					<f:setPropertyActionListener
+						target="#{contract.contrataBackAction}" value="contract_formTree" />
+				</aon:commandButton>
+				<aon:commandButton id="pdf-edition" 
+					action="contractPdfEdition_form"
+					value="EDITAR PDF"
+					styleClass="aon-finding-toolbar-item aon-icon-pdf" >
+					<f:setPropertyActionListener
+						target="#{contractPdf.backAction}" value="contract_formTree" />
+					<aon:actionListener method="#{contract.onContractDocumentShow}" />
+				</aon:commandButton>
+			</ui:define>				
+		
+		</ui:decorate>	
+	</ui:define>
+	
+	<ui:define name="content">
+		<aon:div id="contractMainGrid" styleClass="aon-scroll-area">
+			<ui:include 
+				src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" >
+				<ui:param name="controller" value="#{contract}" />
+			</ui:include>
+		</aon:div>
+	
+		<aon:div id="dataGrid" styleClass="aon-scroll-area">
+			
+			<ui:include 
+				src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid.xhtml" >
+				<ui:param name="controller" value="#{contract}" />
+				<ui:param name="showVariableFilter" value="true" />
+			</ui:include>
+			
+		</aon:div>
+	</ui:define>
+		
+	<ui:define name="additionalContent">		
+		<aon:lookupButtonPopup lookup="#{agreementLookup}" />
+
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/helper/modalHelper.xhtml">
+			<ui:param name="controller" value="#{contract}" />
+			<ui:param name="container" value="dataGrid" />
+		</ui:include>
+		
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/modalPanel.xhtml" />
+	</ui:define>
+	
+</ui:composition>

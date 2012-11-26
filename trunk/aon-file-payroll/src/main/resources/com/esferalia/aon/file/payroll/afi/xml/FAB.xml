@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="FAB">
+	<field name="descriptor" value="FAB" format="AlphaNumeric" pattern="X(3)" />
+	<field name="accion" value="bean" bean="FAB" property="accion" format="AlphaNumeric" pattern="X(3)" />
+	<field name="free1" value="0" format="Numeric" pattern="9(2)" />
+	<field name="fecha_real" value="bean" bean="FAB" property="fechaReal" format="Numeric" pattern="9(8)" />
+	<field name="free2" value="0" format="Numeric" pattern="9(2)" />
+	<field name="free3" value=" " format="AlphaNumeric" pattern="X(3)" />
+	<field name="free4" value="0" format="Numeric" pattern="9(3)" />
+	<field name="free5" value=" " format="AlphaNumeric" pattern="X(1)" />
+	<field name="free6" value=" " format="AlphaNumeric" pattern="X(1)" />
+	<field name="free7" value="0" format="Numeric" pattern="9(3)" />
+	<field name="free8" value="0" format="Numeric" pattern="9(3)" />
+	<field name="free9" value=" " format="AlphaNumeric" pattern="X(1)" />
+	<field name="free10" value="0" format="Numeric" pattern="9(7)" />
+	<field name="free11" value="0" format="Numeric" pattern="9(8)" />
+	<field name="free12" value="0" format="Numeric" pattern="9(1)" />
+	<field name="free13" value=" " format="AlphaNumeric" pattern="X(1)" />
+	<field name="free14" value="0" format="Numeric" pattern="9(1)" />
+	<field name="free15" value="0" format="Numeric" pattern="9(3)" />
+	<field name="free16" value=" " format="AlphaNumeric" pattern="X(1)" />
+	<field name="free17" value=" " format="AlphaNumeric" pattern="X(1)" />
+	<field name="free18" value=" " format="AlphaNumeric" pattern="X(1)" />
+	<field name="free19" value="0" format="Numeric" pattern="9(2)" />
+	<field name="free20" value="0" format="Numeric" pattern="9(8)" />
+	<field name="free21" value="0" format="Numeric" pattern="9(1)" />
+	<field name="free22" value=" " format="AlphaNumeric" pattern="X(1)" />
+	<field name="free23" value=" " format="AlphaNumeric" pattern="X(1)" />
+<!--  
+	<field name="situacion" value="bean" bean="FAB" property="situacion" format="Numeric" pattern="9(2)" />
+	<field name="fecha_real" value="bean" bean="FAB" property="fechaReal" format="Numeric" pattern="9(8)" />
+	<field name="grupo_cotizacion" value="bean" bean="FAB" property="grupoCotizacion" format="Numeric" pattern="9(2)" />
+	<field name="free3" value=" " format="AlphaNumeric" pattern="X(3)" />  
+	<field name="clave_contrato_trabajo" value="bean" bean="FAB" property="claveContratoTrabajo" format="Numeric" pattern="9(3)" />
+	<field name="condicion_desempleado" value="bean" bean="FAB" property="condicionDesempleado" format="AlphaNumeric" pattern="X(1)" />
+	<field name="mujer_subrepresentada" value="bean" bean="FAB" property="mujerSubrepresentada" format="AlphaNumeric" pattern="X(1)" />
+	<field name="coeficiente_tiempo_parcial" value="bean" bean="FAB" property="coeficienteTiempoParcial" format="Numeric" pattern="9(3)" />
+	<field name="colectivo_trabajador" value="bean" bean="FAB" property="colectivoTrabajador" format="Numeric" pattern="9(3)" />
+	<field name="indicador_impresion" value="bean" bean="FAB" property="indicadorImpresion" format="AlphaNumeric" pattern="X(1)" />
+	<field name="categoria_profesional" value="bean" bean="FAB" property="categoriaProfesional" format="Numeric" pattern="9(7)" />
+	<field name="fecha_nacimiento" value="bean" bean="FAB" property="fechaNacimiento" format="Numeric" pattern="9(8)" />
+	<field name="sexo" value="bean" bean="FAB" property="sexo" format="Numeric" pattern="9(1)" />
+	<field name="tipo_inactividad" value="bean" bean="FAB" property="tipoInactividad" format="AlphaNumeric" pattern="X(1)" />
+	<field name="exclusion_desempleo" value="bean" bean="FAB" property="exclusionDesempleo" format="Numeric" pattern="9(1)" />
+	<field name="coef_activ_huelga_parcial" value="bean" bean="FAB" property="coeficienteActividadHuelgaParcial" format="Numeric" pattern="9(3)" />
+	<field name="mujer_reincorporada" value="bean" bean="FAB" property="mujerReincorporada" format="AlphaNumeric" pattern="X(1)" />
+	<field name="incapacitado_readmitido" value="bean" bean="FAB" property="incapacitadoReadmitido" format="AlphaNumeric" pattern="X(1)" />
+	<field name="autonomo" value="bean" bean="FAB" property="autonomo" format="AlphaNumeric" pattern="X(1)" />
+	<field name="grado_minusvalia" value="bean" bean="FAB" property="gradoMinusvalia" format="Numeric" pattern="9(2)" />
+	<field name="fecha_control" value="bean" bean="FAB" property="fechaControl" format="Numeric" pattern="9(8)" />
+	<field name="excl_social_violencia_dom" value="bean" bean="FAB" property="exclusionSocialViolenciaDomestica" format="Numeric" pattern="9(1)" />
+	<field name="renta_activa_insercion" value="bean" bean="FAB" property="rentaActivaInsercion" format="AlphaNumeric" pattern="X(1)" />
+	<field name="costratadas_post_alumbramiento" value="bean" bean="FAB" property="costratadasPostAlumbramiento" format="AlphaNumeric" pattern="X(1)" />
+-->
+</register>

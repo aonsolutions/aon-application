@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="vatTaxForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_professional_retention_module}" />
+				<ui:param name="controller" value="#{profRetention}" />
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="menuGrid" columns="2" dir="true" width="100%">
+
+					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{profRetention.to.enterprise}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="lookupReRender" value="menuGrid" />
+					</ui:include>
+				
+					<aon:outputText value="#{bundle.aon_date}" rendered="#{profRetention.to.enterprise.id != null}"/>
+					<aon:selectInputDate id="ProfessionalRetention_paymentDate"
+						rendered="#{profRetention.to.enterprise.id != null}"
+						value="#{profRetention.to.paymentDate}" required="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+				
+					<aon:outputLabel for="ProfessionalRetention_document" value="#{bundle.aon_document}" rendered="#{profRetention.to.enterprise.id != null}"/>
+					<aon:div id="documentContainer" rendered="#{profRetention.to.enterprise.id != null}">
+						<aon:selectOneMenu id="ProfessionalRetention_documentCountry" 
+							value="#{profRetention.to.documentCountry}">
+							<f:selectItem itemLabel="-" value="#{null}" />		
+							<f:selectItems value="#{commonCollections.countryCodes}" />
+						</aon:selectOneMenu>
+						<aon:selectOneMenu id="ProfessionalRetention_documentType" 
+							styleClass="aon-margin-left" value="#{profRetention.to.documentType}">
+							<f:selectItem itemLabel="-" value="#{null}" />		
+							<f:selectItems value="#{registryCollections.documentTypes}" />
+						</aon:selectOneMenu>
+						<aon:inputText id="ProfessionalRetention_document" size="20" 
+							styleClass="aon-inputText aon-margin-left" required="true"
+							value="#{profRetention.to.document}">
+							<a4j:support event="onchange" ajaxSingle="true"
+								actionListener="#{profRetention.documentChanged}"
+								reRender="ProfessionalRetention_name" 
+								focus="ProfessionalRetention_name"/>
+						</aon:inputText>
+					</aon:div>
+
+					<aon:outputLabel for="ProfessionalRetention_name" value="#{bundle.aon_company_name}" rendered="#{profRetention.to.enterprise.id != null}"/>
+					<aon:div rendered="#{profRetention.to.enterprise.id != null}">
+						<aon:inputText id="ProfessionalRetention_name" size="60" value="#{profRetention.to.name}" 
+							required="true" disabled="#{profRetention.resolved}">
+						</aon:inputText>
+						<a4j:region>
+							<rich:suggestionbox for="ProfessionalRetention_name"
+								suggestionAction="#{profRetention.autocompleteName}" 
+								var="result" immediate="true" limitToList="true" ajaxSingle="true"
+								eventsQueue="nameSug" ignoreDupResponses="true" minChars="3"
+								requestDelay="100" width="500" height="200"
+								nothingLabel="#{bundle.aon_search_no_results}">
+								<aon:column>
+									<aon:outputText value="#{result}" />
+								</aon:column>
+								<a4j:support event="onselect" limitToList="true" ajaxSingle="true"
+									reRender="ProfessionalRetention_name,documentContainer">
+									<f:setPropertyActionListener target="#{profRetention.to.name}" value="#{result}" />
+									<aon:actionListener method="#{profRetention.nameSelected}" />									
+								</a4j:support>
+							</rich:suggestionbox>
+						</a4j:region>
+					</aon:div>
+
+					<aon:outputLabel for="ProfessionalRetention_concept" value="#{bundle.aon_concept}" rendered="#{profRetention.to.enterprise.id != null}"/>
+					<aon:inputText id="ProfessionalRetention_concept" size="60" value="#{profRetention.to.concept}"  rendered="#{profRetention.to.enterprise.id != null}"/>
+
+					<aon:outputLabel for="ProfessionalRetention_key" value="#{bundle.aon_type}" rendered="#{profRetention.to.enterprise.id != null}"/>
+					<aon:selectOneMenu id="ProfessionalRetention_key" required="true"
+						rendered="#{profRetention.to.enterprise.id != null}" 
+						value="#{profRetention.to.key}">
+						<f:selectItem itemLabel="-" value="#{null}" />		
+						<f:selectItems value="#{fiscalCollections.withholdingDetailKeys}" />
+						<a4j:support event="onchange" limitToList="true" ajaxSingle="true"
+							reRender="ProfessionalRetention_subkey">
+							<aon:actionListener method="#{profRetention.onWithholdingDetailKeyChanged}" />									
+						</a4j:support>
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="ProfessionalRetention_subkey" value="#{bundle.aon_type}" rendered="#{profRetention.to.enterprise.id != null}"/>
+					<aon:selectOneMenu id="ProfessionalRetention_subkey" 
+						rendered="#{profRetention.to.enterprise.id != null}" 
+						value="#{profRetention.to.subkey}">
+						<f:selectItem itemLabel="-" value="#{null}" />		
+						<f:selectItems value="#{profRetention.withholdingDetailSubkeys}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="ProfessionalRetention_taxableBase" value="#{bundle.aon_taxable_base}" rendered="#{profRetention.to.enterprise.id != null}"/>
+					<aon:inputText id="ProfessionalRetention_taxableBase" size="10" rendered="#{profRetention.to.enterprise.id != null}" 
+						required="true" value="#{profRetention.to.taxableBase}">
+						<a4j:support event="onchange" ajaxSingle="true"
+							actionListener="#{profRetention.taxableBaseChanged}"
+							reRender="ProfessionalRetention_quota" 
+							focus="ProfessionalRetention_percent"/>
+					</aon:inputText>
+
+					<aon:outputLabel for="ProfessionalRetention_percent" value="#{bundle.aon_percentage}" rendered="#{profRetention.to.enterprise.id != null}"/>
+					<aon:inputText id="ProfessionalRetention_percent" size="5" rendered="#{profRetention.to.enterprise.id != null}" 
+						required="true" value="#{profRetention.to.percent}">
+						<a4j:support event="onchange" ajaxSingle="true"
+							actionListener="#{profRetention.percentChanged}"
+							reRender="ProfessionalRetention_taxableBase,ProfessionalRetention_quota"
+							focus="ProfessionalRetention_quota"/>
+					</aon:inputText>
+
+					<aon:outputLabel for="ProfessionalRetention_quota" value="#{bundle.aon_fee}" rendered="#{profRetention.to.enterprise.id != null}"/>
+					<aon:inputText id="ProfessionalRetention_quota" size="10" rendered="#{profRetention.to.enterprise.id != null}" 
+						required="true" value="#{profRetention.to.quota}">
+						<a4j:support event="onchange" ajaxSingle="true"
+							actionListener="#{profRetention.quotaChanged}"
+							reRender="ProfessionalRetention_taxableBase" 
+							focus="ProfessionalRetention_inKind"/>
+					</aon:inputText>
+					
+					<aon:outputText value="&#160;" rendered="#{profRetention.to.enterprise.id != null}"/>
+					<aon:div rendered="#{profRetention.to.enterprise.id != null}">
+						<aon:selectBooleanCheckbox id="ProfessionalRetention_inKind"
+							value="#{profRetention.to.inKind}"/>
+						<aon:outputLabel for="ProfessionalRetention_inKind" 
+							value="#{fiscalBundle.fiscal_salary_in_kind}"/>
+					</aon:div>
+					
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+	</ui:define>
+</ui:composition>

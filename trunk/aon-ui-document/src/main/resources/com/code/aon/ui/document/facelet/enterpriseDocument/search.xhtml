@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="enterpriseDocumentForm">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{bundle.aon_documents}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_toolbar_search}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="clear"
+						value="#{bundle.aon_clear}" 
+						actionListener="#{enterpriseDocumentSearch.onClear}"
+						styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+				</ui:define>
+			</ui:decorate>		
+			
+			<aon:div styleClass="aon-scroll-area">
+				<ui:include
+					src="/com/code/aon/ui/document/facelet/enterpriseDocument/searchContent.xhtml" />			
+				
+				<c:if test="#{enterpriseDocumentSearch.showList}">
+					<aon:methodParam name="rowSelectorAction" value="enterpriseDocument_formTree" />
+					<aon:methodParam name="rowSelectorActionListener" value="#{enterpriseDocumentTree.onShowDocument}" type="actionListener" />
+				
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+						<ui:param name="controller" value="#{enterpriseDocument}" />
+						<ui:define name="columns">
+							<ui:include
+								src="/com/code/aon/ui/document/facelet/enterpriseDocument/listContent.xhtml" />
+						</ui:define>
+					</ui:decorate>
+				</c:if>
+			</aon:div>
+
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{projectLookup}" />
+		<aon:lookupButtonPopup lookup="#{registryLookup}" />
+	</ui:define>
+</ui:composition>

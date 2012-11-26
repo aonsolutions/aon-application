@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+		
+	<ui:include src="/com/code/aon/ui/webmail/facelet/util/formInnerToolbar.xhtml" >
+		<ui:param name="toolbarTitle" value="#{mailConfig.mailAccountTitle}" />
+		<ui:param name="skipSearchButton" value="true" />
+		<ui:param name="skipRemoveButton" value="#{controller.new or (!mailConfig.mailAccountRemovable)}" />
+	</ui:include>			
+			
+	<aon:div styleClass="aon-scroll-area">
+		<aon:div styleClass="aon-margin-bottom">
+			<aon:div styleClass="aon-form-group-title">
+				<aon:div styleClass="aon-form-group-title-internal">
+					<aon:outputText value="#{webmailBundle.webmail_mailAccount_data}"/>
+				</aon:div>
+			</aon:div>
+			<aon:panelGrid columns="2" style="aon-width-500"
+				columnClasses="aon-width-150 aon-panelGrid-odd,aon-panelGrid-even">
+				<aon:outputLabel for="MailAccount_name"
+					value="#{bundle.aon_name}" />
+				<aon:inputText id="MailAccount_name"
+					disabled="#{!mailConfig.mailAccountEditable}"
+					validator="#{controller.idCheck}"
+					size="60" maxlength="45" required="true"
+					value="#{controller.to.name}" />
+
+				<aon:outputLabel for="MailAccount_email"
+					value="#{bundle.aon_email}" />
+				<aon:inputText id="MailAccount_email"
+					disabled="#{!mailConfig.mailAccountEditable}"
+					size="60" maxlength="256" required="true"
+					value="#{controller.to.email}" />
+					
+				<aon:outputLabel for="MailAccount_displayName"
+					value="#{bundle.aon_displayName}" />
+				<aon:inputText id="MailAccount_displayName"
+					size="60" maxlength="256" value="#{controller.to.displayName}" />
+								
+				<aon:outputLabel for="MailAccount_replyToMail"
+					value="#{webmailBundle.webmail_mailAccount_replyToMail}" />
+				<aon:inputText id="MailAccount_replyToMail"
+					size="60" value="#{controller.to.replyToMail}" />
+
+				<aon:outputLabel for="MailAccount_signature"
+					value="#{webmailBundle.webmail_signature_signature}" />
+				<aon:selectOneMenu id="MailAccount_signature"
+					converter="#{mailConfig.signatureConverter}" 
+					value="#{controller.to.signature}">
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{mailConfig.signatures}" />
+				</aon:selectOneMenu>
+
+				<aon:outputLabel for="MailAccount_protocol"
+					value="#{webmailBundle.webmail_mailAccount_protocol}" />
+				<aon:selectOneMenu id="MailAccount_protocol"
+					value="#{controller.to.protocol}">
+					<f:selectItem itemLabel="IMAP" itemValue="imap" />
+					<f:selectItem itemLabel="POP3" itemValue="pop3" />
+				</aon:selectOneMenu>
+			</aon:panelGrid>
+		</aon:div>
+		<aon:div styleClass="aon-margin-top aon-margin-bottom">
+			<aon:div styleClass="aon-form-group-title">
+				<aon:div styleClass="aon-form-group-title-internal">
+					<aon:outputText value="#{webmailBundle.webmail_mailAccount_incoming_host}"/>
+				</aon:div>
+			</aon:div>
+			<aon:panelGrid columns="2" style="aon-width-500"
+				columnClasses="aon-width-150 aon-panelGrid-odd,aon-panelGrid-even">
+
+				<aon:outputLabel for="MailAccount_incomingHost"
+					value="#{webmailBundle.webmail_mailAccount_incomingHost}" />
+				<aon:inputText id="MailAccount_incomingHost"
+					size="60" maxlength="256"
+					disabled="#{!mailConfig.mailAccountEditable}"
+					value="#{controller.to.incomingHost}" />
+
+				<aon:outputLabel for="MailAccount_incomingPort"
+					value="#{webmailBundle.webmail_mailAccount_incomingPort}" />
+				<aon:inputText id="MailAccount_incomingPort"
+					size="10" maxlength="10"
+					disabled="#{!mailConfig.mailAccountEditable}"
+					value="#{controller.to.incomingPort}" />
+
+				<aon:outputLabel for="MailAccount_incomingSecurity"
+					value="#{webmailBundle.webmail_mailAccount_connectionSecurity}" />
+				<aon:selectOneMenu id="MailAccount_incomingSecurity"
+					disabled="#{!mailConfig.mailAccountEditable}" 
+					value="#{controller.to.incomingSecurity}">
+					<f:selectItems value="#{mailConfig.connectionSecurities}" />
+				</aon:selectOneMenu>						
+					
+			</aon:panelGrid>
+	   </aon:div>
+	   <aon:div styleClass="aon-margin-top aon-margin-bottom">
+			<aon:div styleClass="aon-form-group-title">
+				<aon:div styleClass="aon-form-group-title-internal">
+					<aon:outputText value="#{webmailBundle.webmail_mailAccount_outgoing_host}"/>
+				</aon:div>
+			</aon:div>
+			<aon:panelGrid columns="2" style="aon-width-500"
+				columnClasses="aon-width-150 aon-panelGrid-odd,aon-panelGrid-even">
+				<aon:outputLabel for="MailAccount_outgoingVerification"
+					value="#{webmailBundle.webmail_mailAccount_outgoingVerification}" />
+                <aon:selectBooleanCheckbox id="MailAccount_outgoingVerification"
+					disabled="#{!mailConfig.mailAccountEditable}"
+					value="#{controller.to.outgoingVerification}"/>
+
+				<aon:outputLabel for="MailAccount_outgoingHost"
+					value="#{webmailBundle.webmail_mailAccount_outgoingHost}" />
+				<aon:inputText id="MailAccount_outgoingHost"
+					size="60" maxlength="256"
+					disabled="#{!mailConfig.mailAccountEditable}"
+					value="#{controller.to.outgoingHost}" />
+
+				<aon:outputLabel for="MailAccount_outgoingPort"
+					value="#{webmailBundle.webmail_mailAccount_outgoingPort}" />
+				<aon:inputText id="MailAccount_outgoingPort"
+					size="10" maxlength="10"
+					disabled="#{!mailConfig.mailAccountEditable}"
+					value="#{controller.to.outgoingPort}" />
+
+				<aon:outputLabel for="MailAccount_outgoingSecurity"
+					value="#{webmailBundle.webmail_mailAccount_connectionSecurity}" />
+				<aon:selectOneMenu id="MailAccount_outgoingSecurity"
+					disabled="#{!mailConfig.mailAccountEditable}" 
+					value="#{controller.to.outgoingSecurity}">
+					<f:selectItems value="#{mailConfig.connectionSecurities}" />
+				</aon:selectOneMenu>						
+
+				<aon:outputLabel for="MailAccount_mailUsername"
+					value="#{webmailBundle.webmail_mailAccount_mailUsername}" />
+				<aon:inputText id="MailAccount_mailUsername"
+					size="60" maxlength="256"
+					disabled="#{!mailConfig.mailAccountEditable}"
+					value="#{controller.to.mailUsername}" />
+
+				<aon:outputLabel for="MailAccount_password"
+					value="#{bundle.aon_login_passwd}" />
+				<aon:inputSecret id="MailAccount_password" redisplay="true"
+					size="60" maxlength="128"
+					disabled="#{!mailConfig.mailAccountEditable}"
+					value="#{controller.to.passwordString}" />							
+					
+			</aon:panelGrid>
+		</aon:div>
+		<c:if test="#{controller.to.IMAP}" >
+			<aon:div styleClass="aon-margin-top">
+				<aon:div styleClass="aon-form-group-title">
+					<aon:div styleClass="aon-form-group-title-internal">
+						<aon:outputText value="#{webmailBundle.webmail_mailAccount_folders}"/>
+					</aon:div>
+				</aon:div>
+				<aon:panelGrid columns="2" style="aon-width-500"
+					columnClasses="aon-width-150 aon-panelGrid-odd,aon-panelGrid-even">
+					<aon:outputLabel for="MailAccount_draftFolder"
+						value="#{webmailBundle.webmail_mailAccount_draft_folder}" />
+					<aon:div>
+						<aon:inputText id="MailAccount_draftFolder"
+							size="60" maxlength="64"
+							value="#{controller.to.draftFolder}" />
+						<aon:commandButton reRender="folderWindow"
+							rendered="#{!controller.new and (mailConfig.treeNode != null)}"
+							title="#{webmailBundle.webmail_folder_selection}"
+							value="&#160;" styleClass="aon-lookupButton aon-margin-left">
+							<f:setPropertyActionListener target="#{mailConfig.selectedFolder}"
+								value="draftFolder" />
+							<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
+								value="#{true}" />							
+						</aon:commandButton>
+					</aon:div>
+	
+					<aon:outputLabel for="MailAccount_sentFolder"
+						value="#{webmailBundle.webmail_mailAccount_sent_folder}" />
+					<aon:div>					
+						<aon:inputText id="MailAccount_sentFolder"
+							size="60" maxlength="64"
+							value="#{controller.to.sentFolder}" />
+						<aon:commandButton reRender="folderWindow"
+							rendered="#{!controller.new and (mailConfig.treeNode != null)}"
+							title="#{webmailBundle.webmail_folder_selection}"
+							value="&#160;" styleClass="aon-lookupButton aon-margin-left">
+							<f:setPropertyActionListener target="#{mailConfig.selectedFolder}"
+								value="sentFolder" />
+							<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
+								value="#{true}" />							
+						</aon:commandButton>						
+					</aon:div>
+	
+					<aon:outputLabel for="MailAccount_trashFolder"
+						value="#{webmailBundle.webmail_mailAccount_trash_folder}" />
+					<aon:div>
+						<aon:inputText id="MailAccount_trashFolder"
+							size="60" maxlength="64"
+							value="#{controller.to.trashFolder}" />
+						<aon:commandButton reRender="folderWindow"
+							rendered="#{!controller.new and (mailConfig.treeNode != null)}"
+							title="#{webmailBundle.webmail_folder_selection}"
+							value="&#160;" styleClass="aon-lookupButton aon-margin-left">
+							<f:setPropertyActionListener target="#{mailConfig.selectedFolder}"
+								value="trashFolder" />
+							<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
+								value="#{true}" />							
+						</aon:commandButton>												
+					</aon:div>
+	
+					<aon:outputLabel for="MailAccount_spamFolder"
+						value="#{webmailBundle.webmail_mailAccount_spam_folder}" />
+					<aon:div>					
+						<aon:inputText id="MailAccount_spamFolder"
+							size="60" maxlength="64"
+							value="#{controller.to.spamFolder}" />
+						<aon:commandButton reRender="folderWindow"
+							rendered="#{!controller.new and (mailConfig.treeNode != null)}"
+							title="#{webmailBundle.webmail_folder_selection}"
+							value="&#160;" styleClass="aon-lookupButton aon-margin-left">
+							<f:setPropertyActionListener target="#{mailConfig.selectedFolder}"
+								value="spamFolder" />
+							<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
+								value="#{true}" />							
+						</aon:commandButton>							
+					</aon:div>
+	
+	
+				</aon:panelGrid>
+			</aon:div>
+		</c:if>
+	</aon:div>
+	
+	<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/moveMessages.xhtml">
+		<aon:methodParam name="moveMessagesActionListener" value="#{mailConfig.selectFolder}" type="nodeSelectListener" />
+		<ui:param name="folderPanelTitle" value="#{webmailBundle.webmail_folder_selection}" />
+		<ui:param name="folderModel" value="#{mailConfig.treeNode}" />
+	</ui:include>
+
+</ui:composition>

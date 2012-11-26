@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+
+		<ui:define name="columns">
+		
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="EnterpriseCCC_ccc" value="#{bundle.aon_value}" />
+				</f:facet>
+				<aon:outputText value="#{to.ccc}"
+					rendered="#{formList}" />
+				<aon:inputText id="EnterpriseCCC_ccc" value="#{to.ccc}"
+					rendered="#{formEdit}" required="true" maxlength="11" size="12" />
+				<f:facet name="footer">
+					<aon:inputText id="EnterpriseCCC_ccc-New" value="#{controller.to.ccc}"
+						rendered="#{formNew}" required="true" maxlength="11" size="12" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="EnterpriseCCC_type"
+						value="#{bundle.aon_type}" />
+				</f:facet>
+				<aon:outputText value="#{to.type}"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="EnterpriseCCC_type" required="true"
+					value="#{controller.to.type}" rendered="#{formEdit}">
+					<f:selectItems value="#{payrollCollections.CCCTypes}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="EnterpriseCCC_type-New" required="true"
+						value="#{controller.to.type}" rendered="#{formNew}">
+						<f:selectItems value="#{payrollCollections.CCCTypes}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryAddress_geozone" value="#{registryBundle.registry_geozone}" />
+				</f:facet>
+				<aon:outputText value="#{to.geozone.name}"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="RegistryAddress_geozone"
+					value="#{controller.to.geozone}" rendered="#{formEdit}">
+					<f:selectItems value="#{geozoneCollections.geoTrees}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="RegistryAddress_geozone-New"
+						value="#{controller.to.geozone}" rendered="#{formNew}">
+						<f:selectItems value="#{geozoneCollections.geoTrees}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>						
+			
+		</ui:define>
+		
+	</ui:decorate>
+</ui:composition>

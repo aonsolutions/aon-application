@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelCollapsible expanded="false" 
+		label="#{calendarBundle.aon_calendar_days_of}&#160;#{calendar.masterCalendar.description}"
+		rendered="#{calendar.to.calendar!=null and calendar.inheritHolidaysModel.rowCount>0}">
+		<aon:dataTable value="#{calendar.inheritHolidaysModel}" var="to"
+			columnClasses="aon-editDataTable-date aon-width-100, 
+										aon-editDataTable-text aon-width-100, 
+										aon-editDataTable-number aon-width-100, 
+										aon-editDataTable-text aon-width-auto">
+			<aon:column
+				style="padding: 0px; border: none;background-color: #FBEDB6;">
+				<h:panelGrid columns="8" style="font-size: 0.9em; width: 100%;"
+					cellpadding="0" cellspacing="0" border="0"
+					columnClasses="
+	 				aon-width-40 aon-editDataTable-textdateColumn aon-form-text-label aon-noborder aon-bold,
+	 				aon-width-70 aon-editDataTable-dateColumn aon-noborder,
+	 				aon-width-40 aon-editDataTable-textColumn aon-form-text-label aon-noborder aon-bold,
+	 				aon-width-20 aon-editDataTable-textColumn aon-noborder,
+	 				aon-width-40 aon-editDataTable-textColumn aon-form-text-label aon-noborder aon-bold,
+	 				aon-width-20 aon-editDataTable-numberColumn aon-noborder,
+	 				aon-width-40 aon-editDataTable-textColumn aon-form-text-label aon-noborder aon-bold,
+	 				aon-width-auto aon-editDataTable-textColumn aon-noborder
+	 				">
+	 				
+					<aon:outputLabel value="#{bundle.aon_date}:" />
+					<aon:outputText value="#{to.date}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+
+					<aon:outputLabel value="#{calendarBundle.aon_calendar_day_type}:" />
+					<aon:outputText value="#{to.dayType}" />
+
+					<aon:outputLabel value="#{calendarBundle.aon_calendar_hours}:" />
+					<aon:outputText value="#{to.hours}" />
+
+					<aon:outputLabel value="#{bundle.aon_description}:" />
+					<aon:outputText value="#{to.description}" />
+	 				
+	 			</h:panelGrid>
+	 		</aon:column>
+		</aon:dataTable>
+	</aon:panelCollapsible>
+
+</ui:composition>

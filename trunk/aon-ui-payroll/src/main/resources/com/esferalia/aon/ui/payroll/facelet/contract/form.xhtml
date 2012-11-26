@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="contractForm">
+
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formToolbar.xhtml" />
+			
+			<c:if test="#{!contract.new}" >
+				<aon:div styleClass="aon-scroll-area">
+					
+					<aon:panelGrid columns="2" 
+						columnClasses="aon-panelGrid-even aon-noborder aon-vertical-align-top, aon-panelGrid-even aon-noborder aon-vertical-align-top" >
+						
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
+						
+						<!--  
+						<aon:panelGrid columns="1" columnClasses="aon-panelGrid-even, aon-panelGrid-even" >
+						-->
+							<aon:panelGrid columns="2" styleClass="aon-panelGrid-even"
+								columnClasses="aon-panelGrid-even aon-bold aon-noborder, aon-panelGrid-even aon-noborder" >
+								
+								<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
+								<aon:outputText value="#{contract.to.workPlace.enterprise.registry.fullName}"/>
+								
+								<aon:outputText value="#{payrollBundle.payroll_employee_name}" />
+								<aon:outputText value="#{contract.to.person.fullName}" />
+								
+								<aon:outputText value="#{bundle.aon_document}" />
+								<aon:outputText value="#{contract.to.person.registry.document}"/>
+								
+								<aon:outputText value="#{registryBundle.registry_person_birthDate}" />
+								<aon:div>
+									<aon:outputText value="#{contract.to.person.birthDate}" >
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</aon:outputText>		
+									<aon:outputText value="&#160;(" rendered="#{contract.to.person.age!=null}"/>
+									<aon:outputText value="#{contract.to.person.age}" rendered="#{contract.to.person.age!=null}"/>
+									<aon:outputText value="&#160;#{bundle.aon_years}" rendered="#{contract.to.person.age!=null}"/>
+									<aon:outputText value=")" rendered="#{contract.to.person.age!=null}"/>
+								</aon:div>
+								
+								<aon:outputText value="#{registryBundle.registry_nationality}" />
+								<aon:outputText value="#{contract.to.person.registry.nationality}" />
+								
+								<aon:outputText value="#{registryBundle.registry_person_nss}" />
+								<aon:outputText value="#{contract.to.person.socialSecurityNumber}"/>
+								
+							</aon:panelGrid>
+<!--  
+						</aon:panelGrid> 
+-->
+						
+					</aon:panelGrid>
+						
+					
+<!--  
+					<aon:panelGrid columns="7" style="width: 100%; margin-top:10px;"
+						columnClasses="aon-panelGrid-even aon-width-180 #{variablesSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-180 #{paymentsSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-180 #{deductionsSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-180 #{bonusSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-180 #{embargosSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-180 #{documentsSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-auto">
+					
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-search"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowVariables}"
+								action="contractData_list"
+								styleClass="aon-dataTable-link #{variablesSelected?'aon-bold':''}"
+								value="#{payrollBundle.payroll_contract_data_variables}" />
+						</aon:div>	
+				
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-fraction"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowPayments}"
+								styleClass="aon-dataTable-link #{paymentsSelected?'aon-bold':''}"
+								action="contractPayment_list"
+								value="#{payrollBundle.payroll_salary_payments_tab}" />
+						</aon:div>	
+				
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-settle"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowDeductions}"
+								styleClass="aon-dataTable-link #{deductionsSelected?'aon-bold':''}"
+								action="contractDeduction_list"
+								value="#{payrollBundle.payroll_salary_deductions_tab}" />
+						</aon:div>	
+				
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-fraction"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowBonus}"
+								styleClass="aon-dataTable-link #{bonusSelected?'aon-bold':''}"
+								action="contractBonus_list"
+								value="#{payrollBundle.payroll_salary_bonus_tab}" />
+						</aon:div>	
+				
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-settle"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowEmbargos}"
+								styleClass="aon-dataTable-link #{embargosSelected?'aon-bold':''}"
+								action="contractEmbargo_list"
+								value="#{payrollBundle.payroll_salary_embargos_tab}" />
+						</aon:div>	
+				
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-attach-file"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowDocuments}"
+								styleClass="aon-dataTable-link #{documentsSelected?'aon-bold':''}"
+								action="contractDocuments_grid"
+								value="#{payrollBundle.payroll_documents}" />
+						</aon:div>	
+				
+						<aon:outputText value="&#160;" />
+					</aon:panelGrid>
+-->			
+				</aon:div>	
+				
+				<aon:div styleClass="aon-scroll-area" >	
+					<aon:panelCollapsible id="variablesPanel" expanded="true" actionListener="#{contract.onShowVariables}" >
+						<f:facet name="header">
+							<aon:outputText value="#{payrollBundle.payroll_contract_data_variables}" style="padding-left:18px;" styleClass="aon-icon-search"/>
+						</f:facet>
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid.xhtml" >
+							<ui:param name="controller" value="#{contract}" />
+							<ui:param name="showVariableFilter" value="true" />
+						</ui:include>
+					</aon:panelCollapsible>
+
+					<aon:panelCollapsible id="paymentsPanel" expanded="false" actionListener="#{contract.onShowPayments}" >
+						<f:facet name="header">
+							<aon:outputText value="#{payrollBundle.payroll_salary_payments_tab}" style="padding-left:18px;" styleClass="aon-icon-fraction"/>
+						</f:facet>
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
+							<ui:param name="controller" value="#{contractPayment}" />
+						</ui:include>
+					</aon:panelCollapsible>
+
+					<aon:panelCollapsible id="deductionsPanel" expanded="false" actionListener="#{contract.onShowDeductions}" >
+						<f:facet name="header">
+							<aon:outputText value="#{payrollBundle.payroll_salary_deductions_tab}" style="padding-left:18px;" styleClass="aon-icon-settle"/>
+						</f:facet>
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/editGridContent.xhtml" >
+							<ui:param name="controller" value="#{contractDeduction}" />
+						</ui:include>
+					</aon:panelCollapsible>
+
+					<aon:panelCollapsible id="bonusPanel" expanded="false" actionListener="#{contract.onShowBonus}" >
+						<f:facet name="header">
+							<aon:outputText value="#{payrollBundle.payroll_salary_bonus_tab}" style="padding-left:18px;" styleClass="aon-icon-pay"/>
+						</f:facet>
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonus/editGridContent.xhtml" >
+							<ui:param name="controller" value="#{contractBonus}" />
+						</ui:include>
+					</aon:panelCollapsible>
+
+					<aon:panelCollapsible id="embargosPanel" expanded="false" actionListener="#{contract.onShowEmbargos}" >
+						<f:facet name="header">
+							<aon:outputText value="#{payrollBundle.payroll_salary_embargos_tab}" style="padding-left:18px;" styleClass="aon-icon-return"/>
+						</f:facet>
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/listContent.xhtml">
+							<ui:param name="controller" value="#{contractEmbargo}" />
+						</ui:include>
+					</aon:panelCollapsible>
+
+					<aon:panelCollapsible expanded="false" actionListener="#{contract.onShowDocuments}" >
+						<f:facet name="header">
+							<aon:outputText value="#{payrollBundle.payroll_documents}" style="padding-left:18px;" styleClass="aon-icon-attach-file"/>
+						</f:facet>
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/document/gridContent.xhtml" />
+					</aon:panelCollapsible>
+
+				</aon:div>
+			</c:if>
+			<c:if test="#{contract.new}" >
+				<aon:div styleClass="aon-scroll-area">		
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formNewContent.xhtml" />
+				</aon:div>
+			</c:if>
+			
+		</aon:form>
+		
+		<ui:insert name="contractDetail" />
+		
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		<aon:lookupButtonPopup lookup="#{agreementLookup}" />
+		<aon:lookupButtonPopup lookup="#{cnoLookup}" />
+		
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/modalPanel.xhtml" />
+		
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/helper/modalHelper.xhtml">
+			<ui:param name="controller" value="#{contract}" />
+			<ui:param name="container" value="variablesPanel" />
+		</ui:include>
+		
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/modalPayment.xhtml">
+			<ui:param name="controller" value="#{contractPayment}" />
+			<ui:param name="skipCurrentMonth" value="#{true}" />
+			<ui:param name="contextDisabled" value="#{true}" />
+			<ui:param name="container" value="paymentsPanel" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/modalDeduction.xhtml">
+			<ui:param name="controller" value="#{contractDeduction}" />
+			<ui:param name="skipCurrentMonth" value="#{true}" />
+			<ui:param name="contextDisabled" value="#{true}" />
+			<ui:param name="container" value="deductionsPanel" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonus/modalBonus.xhtml">
+			<ui:param name="controller" value="#{contractBonus}" />
+			<ui:param name="skipCurrentMonth" value="#{true}" />
+			<ui:param name="contextDisabled" value="#{true}" />
+			<ui:param name="container" value="bonusPanel" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/modalEmbargo.xhtml">
+			<ui:param name="controller" value="#{contractEmbargo}" />
+			<ui:param name="container" value="embargosPanel" />
+		</ui:include>
+		
+	</ui:define>
+</ui:composition>

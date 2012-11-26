@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+	
+	
+	<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/formNoBatched.xhtml">
+		<ui:param name="controller" value="#{certifica2Batch}" />
+		<ui:param name="controllerList" value="#{certifica2List}" />
+		<ui:param name="checkReRender" value="listToolBarDiv, listDataDiv" />
+		
+		<ui:define name="afterToolbarContent" >
+			<aon:commandButton id="apply"
+				disabled="#{!certifica2List.anyEmpleadoSelected}"
+				value="#{payrollBundle.payroll_apply_to_all}"
+				styleClass="aon-icon-commandButton aon-icon-accept aon-margin-left" >
+				<aon:actionListener method="#{certifica2List.onApplyAllSuspensionCause}" />
+			</aon:commandButton>
+			<rich:inplaceSelect rendered="#{certifica2List.anyEmpleadoSelected}" 
+			 	id="suspensionCauseApplyAll"
+			 	value="#{certifica2List.suspensionCauseForAll}"
+			 	listHeight="300px" listWidth="300px"
+			 	style="margin-left: 10px; width:300px; overflow:hidden; white-space:normal; border-bottom-style:none; cursor: pointer;"
+				defaultLabel="#{payrollBundle.payroll_causes}" >
+				<f:selectItems value="#{payrollCollections.suspensionCauses}" />
+			</rich:inplaceSelect>
+			<aon:outputText value="&#160;" styleClass="aon-finding-toolbar-item"/>
+		</ui:define>
+		
+		<ui:define name="listDataColumns" >
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/certifica2/listColumns.xhtml" />
+		</ui:define>
+		
+	</ui:decorate>
+	
+</ui:composition>

@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components" >
+	
+	<aon:div id="contract_new_panel">
+
+		<aon:panelGrid columns="2" style="width: 80%;" >
+
+			<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.enterprise}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+				<ui:param name="lookupReRender" value="contract_new_panel" />
+				<ui:param name="idRequired" value="#{true}" />
+				<ui:param name="lookupDisabled" value="#{enterpriseLookupDisabled}" />
+				<aon:methodParam name="lookupChangeListener" 
+					value="#{contract.onEnterpriseChanged}" type="lookupChangeListener" />
+			</ui:include>
+			
+			<aon:outputLabel for="workPlace" styleClass="aon-italic aon-margin-left"
+				style="font-size: 0.9em" value="#{companyBundle.company_workplace}" />
+			<aon:selectOneMenu id="workPlace" required="true"
+				disabled="#{contract.enterprise==null or contract.enterprise.id==null}"
+				value="#{contract.to.workPlace}" >
+				<f:selectItems value="#{contract.workPlaces}" />
+				<a4j:support event="onchange" actionListener="#{contract.loadWorkplaceAgreement}" ajaxSingle="true" reRender="contract_new_panel" />
+			</aon:selectOneMenu>
+			
+			<aon:outputLabel for="enterpriseActivities" value="#{companyBundle.company_activity}" 
+				style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+			<aon:selectOneMenu id="enterpriseActivities"
+				disabled="#{contract.enterprise==null or contract.enterprise.id==null}"
+				value="#{contract.to.activity}" >
+				<f:selectItems value="#{contract.activities}" />
+				<a4j:support event="onchange" actionListener="#{contract.onActivityChanged}" ajaxSingle="true" reRender="enterpriseCCCs"/>
+			</aon:selectOneMenu>
+
+			<aon:outputLabel for="enterpriseCCCs" value="#{companyBundle.company_enterprise_ccc}"
+				style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+			<aon:selectOneMenu id="enterpriseCCCs"
+				disabled="#{contract.to.activity==null or contract.to.activity.id==null}"
+				value="#{contract.to.enterpriseCCC}" >
+				<f:selectItems value="#{contract.enterpriseCCCs}" />
+			</aon:selectOneMenu>
+			
+			<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.to.person}" />
+				<ui:param name="idRequired" value="#{true}" />
+				<ui:param name="lookupDisabled" value="#{false}" />
+			</ui:include>
+			
+			<aon:outputLabel for="ssRegime"
+				value="#{payrollBundle.payroll_contract_regime}" />
+			<aon:selectOneMenu id="ssRegime" required="true" 
+				value="#{contract.to.regimeType}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{payrollCollections.ssRegimes}" />
+			</aon:selectOneMenu>
+			
+			<aon:outputLabel value="#{payrollBundle.payroll_contract_period}"/>
+			<aon:div>
+				<aon:outputLabel for="startDate" styleClass="aon-italic aon-margin-right"
+					value="#{bundle.aon_start_date}:" />
+				<aon:selectInputDate id="startDate" 
+					value="#{contract.to.startDate}" required="true" 
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+					<a4j:support event="oninputchange" reRender="seniorityDateContainer" ajaxSingle="true"/>
+					<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true"/>
+				</aon:selectInputDate>
+				<aon:outputLabel for="endDate" styleClass="aon-italic aon-margin-right"
+					value="#{bundle.aon_end_date}:" />
+				<aon:selectInputDate id="endDate" 
+					value="#{contract.to.endDate}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+				</aon:selectInputDate>
+			</aon:div>
+			
+			<aon:outputLabel value="#{payrollBundle.payroll_salary_seniority_date}"
+				style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+			<aon:panelGroup id="seniorityDateContainer">
+				<aon:selectInputDate id="seniorityDate"
+					value="#{contract.to.seniorityDate}" required="true" 
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+					<a4j:support event="oninputchange" reRender="seniorityDateContainer" ajaxSingle="true"/>
+					<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true"/>
+				</aon:selectInputDate>
+				<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
+					title="#{payrollBundle.payroll_salary_start_date_seniority_date_difference}"
+					styleClass="aon-icon-info"
+					rendered="#{contract.to.seniorityDateDifferent}" />
+			</aon:panelGroup>
+			
+			<aon:outputLabel value="#{payrollBundle.payroll_contract_occupation}"
+				for="occupationType"/>
+			<aon:selectOneMenu id="occupationType" 
+				value="#{contract.params.occupationType}">
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{payrollCollections.occupationTypes}" />
+			</aon:selectOneMenu>
+
+			<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/agreement/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.agreement}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+				<ui:param name="lookupInputSuggestSize" value="40" />
+				<ui:param name="lookupReRender" value="agreementLevelCategory, gross_salary_check" />
+				<ui:param name="lookupDisabled" value="#{false}" />
+			</ui:decorate>
+			
+			<aon:outputLabel for="agreementLevelCategory" 
+				value="#{payrollBundle.payroll_agreementLevel_category}" />
+			<aon:selectOneMenu id="agreementLevelCategory"
+				value="#{contract.to.agreementLevelCategory}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{contract.agreementLevelCategories}" />
+				<a4j:support event="onchange" reRender="grossSalaryDiv" ajaxSingle="true"
+					actionListener="#{contract.onChangeAgreementLevelCategory}" />
+			</aon:selectOneMenu>
+			
+<!--  
+			<aon:outputLabel for="gross_salary"
+				value="#{payrollBundle.payroll_contract_gross_salary}" />
+			<aon:div id="grossSalaryDiv">
+				<aon:inputText id="gross_salary"
+					disabled="#{contract.params.agreementSalaryCheck}"
+					value="#{contract.params.grossSalary}" />
+				<aon:selectBooleanCheckbox id="gross_salary_check"
+					ajaxSingle="true"
+					value="#{contract.params.agreementSalaryCheck}"
+					styleClass="-margin-left"
+					disabled="#{contract.agreement.id == null}">
+					<a4j:support event="onclick" reRender="gross_salary" ajaxSingle="true" />
+				</aon:selectBooleanCheckbox>
+				<aon:outputText styleClass="aon-italic aon-margin-left aon-margin-right"
+					value="#{payrollBundle.payroll_contract_like_agreement}&#160;" />
+			</aon:div>
+-->			
+			
+			<aon:outputLabel for="Contract_tc2Code"
+				value="#{payrollBundle.payroll_contract_contract_code}" />
+			<aon:selectOneMenu id="Contract_tc2Code" required="true" 
+				value="#{contract.params.tc2Code}">
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{payrollCollections.tc2List}" />
+			</aon:selectOneMenu>
+			
+			<aon:outputLabel for="quote_group"
+				value="#{payrollBundle.payroll_contract_quote_group}" />
+			<aon:selectOneMenu id="quote_group" required="true" 
+				value="#{contract.params.quoteGroup}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{payrollCollections.quoteGroups}" />
+			</aon:selectOneMenu>
+				
+			<aon:outputLabel for="irpf"
+				value="#{payrollBundle.payroll_contract_irpf_percent}" />
+			<aon:inputText id="irpf" size="10" required="true" 
+				value="#{contract.params.irpf}" >
+				<f:validateDoubleRange />
+			</aon:inputText>
+			
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.params.cno}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+				<ui:param name="lookupDisabled" value="#{false}" />
+			</ui:include>
+
+<!--  
+			<aon:outputLabel
+				value="#{payrollBundle.payroll_file_attach}" />
+			<aon:panelGrid columns="2" style="width:100%;"
+				columnClasses="
+				aon-panelGrid-even aon-noborder aon-width-100,
+				aon-panelGrid-even aon-noborder aon-width-auto" >
+				
+				<aon:fileUpload 
+					addControlLabel="#{bundle.aon_fileUpload_add}"
+					stopControlLabel="#{bundle.aon_fileUpload_stop}"
+					stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+					uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+					fileUploadListener="#{contract.fileUploaded}"
+					immediateUpload="true" autoclear="true"
+					listWidth="0px" listHeight="0px">
+					<f:facet name="label">
+						<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+					</f:facet>
+					<a4j:support event="onuploadcomplete" reRender="contract_new_panel" >
+						<aon:actionListener method="#{contract.onFileUploaded}" />
+					</a4j:support>
+				</aon:fileUpload>
+				
+				<aon:outputText value="#{contract.aonFile.fileName}"
+					rendered="#{contract.aonFile.size > 0}" />
+			</aon:panelGrid>
+-->			
+
+		</aon:panelGrid>
+		
+	</aon:div>
+	
+</ui:composition>

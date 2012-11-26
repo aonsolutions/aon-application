@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:column alias="Purchase.series,Purchase.number"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+		</f:facet>
+		<aon:outputText value="#{to.referenceCode}" />
+	</aon:column>
+
+	<aon:column alias="Purchase.issueDate"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_date}" />
+		</f:facet>
+		<aon:outputText value="#{to.issueDate}">
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
+	</aon:column>
+	
+	<aon:column alias="Purchase.workPlace.description" 
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{companyBundle.company_workplace}" />
+		</f:facet>
+		<aon:outputText value="#{to.workPlace.description}" />
+	</aon:column>
+
+	<aon:column alias="Purchase.supplier.registry.name"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<h:outputText value="#{supplierBundle.supplier_supplier}" />
+		</f:facet>
+		<aon:outputText value="#{to.supplier.registry.fullName}">
+			<aon:abbreviateConverter maxWidth="50" />
+		</aon:outputText>
+	</aon:column>
+
+	<aon:column alias="Purchase.supplier.registry.document"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<h:outputText value="#{bundle.aon_company_document}" />
+		</f:facet>
+		<aon:outputText value="#{to.supplier.registry.document}" />
+	</aon:column>
+
+	<aon:column alias="Purchase.status"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_status}" />
+		</f:facet>
+		<aon:outputText value="#{to.status}" />
+	</aon:column>
+
+	<c:if test="#{aonRole.purchaseOperator}">
+		<aon:column styleClass="aon-editDataTable-numberColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_total}" />
+			</f:facet>
+			<aon:outputText value="#{controller.purchaseTotalPrice}">
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<f:facet name="footer">
+				<aon:div style="float:right">
+					<aon:outputText style="text-align:right" value="#{controller.purchasesTotalAmount}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div>
+			</f:facet>
+		</aon:column>
+	</c:if>
+
+</ui:composition>
