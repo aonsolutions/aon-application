@@ -7,10 +7,10 @@
 
 	<aon:div styleClass="aon-scroll-area">
 		<aon:valueParam name="rowSelectorToggleOnClick" default="#{!skipProfileEdit}" />
+		<aon:valueParam name="showDataScroller" default="#{!skipProfileEdit}" />
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 			<ui:param name="showNote" value="#{false}" />
 			<ui:param name="skipSelectButton" value="#{skipProfileEdit}" />
-			<ui:param name="showDataScroller" value="#{!skipProfileEdit}" />
 			<ui:define name="columns">
 		
 				<aon:column styleClass="aon-width-160 aon-editDataTable-textColumn"

@@ -67,7 +67,10 @@ public class UserOverloadController extends BasicController {
 	private DomainApplication loadDomainApplication() throws ManagerBeanException {
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		Integer id = AdminUtil.getDomainApplication(DomainManager.getCurrentDomain(), principal.getApplicationId());
-		return (DomainApplication) BeanManager.getManagerBean(DomainApplication.class).get(id);
+		if ( id != null ) {
+			return (DomainApplication) BeanManager.getManagerBean(DomainApplication.class).get(id);	
+		}
+		return null;
 	}
 	
 	private void updateUserProfiles() throws ManagerBeanException {
@@ -138,8 +141,10 @@ public class UserOverloadController extends BasicController {
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
+	}
+
+	public DomainApplication getDomainApplication() {
+		return domainApplication;
 	}		
-	
-	
 	
 }

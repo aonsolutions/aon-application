@@ -199,6 +199,7 @@ public class DomainController extends BasicController {
 	}
 
 	private void initDomainApplication() {
+		this.domainApplication = null;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
 			Criteria criteria = new Criteria();
@@ -215,12 +216,14 @@ public class DomainController extends BasicController {
 	}	
 
 	public void updateDomainApplication() {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
-			bean.update(domainApplication);
-		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
-		}				
+		if ( this.domainApplication != null ) {
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
+				bean.update(domainApplication);
+			} catch (ManagerBeanException e) {
+				LOGGER.error( e.getMessage(), e );
+			}							
+		}
 	}
 
 	public DomainApplication getDomainApplication() {

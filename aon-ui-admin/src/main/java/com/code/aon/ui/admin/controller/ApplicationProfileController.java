@@ -1,6 +1,10 @@
 package com.code.aon.ui.admin.controller;
 
+import static com.code.aon.ui.admin.controller.IAdminConstants.APPLICATION_PROFILE_CONTROLLER_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_APPLICATION_CONTROLLER_NAME;
+import static com.esferalia.aon.entity.IEntityAlias.PROFILE_ACTION_DENIED_PROFILE_ID;
+import static com.esferalia.aon.entity.IEntityAlias.PROFILE_MODULE_DENIED_PROFILE_ID;
+import static com.esferalia.aon.entity.IEntityAlias.PROFILE_ROLE_PROFILE_ID;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -16,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.admin.ApplicationRole;
 import com.code.aon.admin.Profile;
 import com.code.aon.admin.ProfileRole;
+import com.code.aon.audit.ProfileActionDenied;
 import com.code.aon.audit.ProfileModuleDenied;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
@@ -29,6 +34,8 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.SelectTransferObject;
 import com.code.aon.ui.common.role.IAonRole;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -38,6 +45,8 @@ public class ApplicationProfileController extends LinesController {
 	private List<SelectTransferObject<ApplicationRole,ProfileRole>> roles;
 	
 	private List<SelectTransferObject<Module,ProfileModuleDenied>> deniedModules;
+	
+	private boolean noRegisteredApplications;
 	
 	private String selectedTab;
 	
@@ -215,11 +224,36 @@ public class ApplicationProfileController extends LinesController {
 		return null;
 	}	
 
+	private void initSystemProfiles( Integer applicationId ) throws ManagerBeanException {
+		IController profile = FormUtil.getController(APPLICATION_PROFILE_CONTROLLER_NAME);
+		profile.clearCriteria();
+		String application = profile.getFieldName(IEntityAlias.PROFILE_APPLICATION_ID);
+		profile.getCriteria().addEqualExpression(application, applicationId);
+		profile.initializeModel();
+	}
+
+	
 	public void onInit( ActionEvent event ) throws ManagerBeanException {
+		this.noRegisteredApplications = false;
 		DomainApplicationController dac = (DomainApplicationController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_CONTROLLER_NAME);
 		AuthPrincipal user = AonUtil.getAuthPrincipal();
 		Integer domainApplication = AdminUtil.getDomainApplication(DomainManager.getCurrentDomain(), user.getApplicationId());
-		dac.select(event, domainApplication);
+		if ( domainApplication != null ) {
+			dac.select(event, domainApplication);	
+		} else {
+			this.noRegisteredApplications = true;
+		}
+		initSystemProfiles(user.getApplicationId());
+	}
+
+	public boolean isNoRegisteredApplications() {
+		return noRegisteredApplications;
+	}
+
+	public static void removeLines( Profile profile ) throws ManagerBeanException {
+		AdminMainController.removeLines(ProfileRole.class, profile.getId(), PROFILE_ROLE_PROFILE_ID);
+		AdminMainController.removeLines(ProfileModuleDenied.class, profile.getId(), PROFILE_MODULE_DENIED_PROFILE_ID);
+		AdminMainController.removeLines(ProfileActionDenied.class, profile.getId(), PROFILE_ACTION_DENIED_PROFILE_ID);		
 	}
 	
 }

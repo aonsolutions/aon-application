@@ -125,7 +125,7 @@ public class DomainApplicationInfo {
 		for( DomainModuleInfo dmi: getApplicationModules() ) {
 			DomainApplicationModule dam = dmi.getApplicationModule();
 			if ( dmi.isChecked() ) {
-				if ( dam == null ) {
+				if ( (dam == null) && (getDomainApplication() != null) ) {
 					dam = new DomainApplicationModule();
 					dam.setDomainApplication(getDomainApplication());
 					dam.setModule(dmi.getModule());

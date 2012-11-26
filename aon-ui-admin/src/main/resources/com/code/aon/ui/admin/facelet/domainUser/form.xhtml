@@ -96,7 +96,8 @@
                     
 					<aon:panelTabSet selectedTab="#{domainUser.selectedTab}" >
                     
-						<aon:panelTab name="applications" label="#{adminBundle.admin_profiles}">
+						<aon:panelTab name="applications" label="#{adminBundle.admin_profiles}"
+							rendered="#{domainUser.applicationsInfoSize &gt; 0}">
 							<ui:include src="/com/code/aon/ui/admin/facelet/domainUser/applications.xhtml" />						
 	                    </aon:panelTab>
                     

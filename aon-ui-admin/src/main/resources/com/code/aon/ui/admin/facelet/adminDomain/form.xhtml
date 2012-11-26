@@ -57,12 +57,14 @@
 							size="64" maxlength="64" value="#{adminDomain.to.name}" />				
 					</c:if>					   				
 
-					<aon:outputLabel for="DomainApplication_auditLevel"
-						value="#{auditBundle.audit_audit_level}" />
-					<aon:selectOneMenu id="DomainApplication_auditLevel" 
-						value="#{adminDomain.domainApplication.auditLevel}">
-						<f:selectItems value="#{auditCollections.auditLevels}" />
-					</aon:selectOneMenu>	
+					<c:if test="#{adminDomain.domainApplication != null}" >
+						<aon:outputLabel for="DomainApplication_auditLevel"
+							value="#{auditBundle.audit_audit_level}" />
+						<aon:selectOneMenu id="DomainApplication_auditLevel" 
+							value="#{adminDomain.domainApplication.auditLevel}">
+							<f:selectItems value="#{auditCollections.auditLevels}" />
+						</aon:selectOneMenu>
+					</c:if>	
 
 					<c:if test="#{aonRole.sysAdmin}" >
 						<aon:outputLabel for="Domain_active"

@@ -14,6 +14,7 @@
 				<ui:param name="toolbarTitle" value="#{adminBundle.admin_overload_users}" />
 				<ui:param name="controller" value="#{userOverload}" />
 				<ui:param name="skipSearchButton" value="#{true}" />
+				<ui:param name="skipResetButton" value="#{userOverload.domainApplication == null}" />
 			</ui:include>
 
 			<!--  aon-region-body -->

@@ -14,6 +14,7 @@
 				<ui:param name="toolbarTitle" value="#{adminBundle.admin_profiles}" />
 				<ui:param name="controller" value="#{domainApplicationProfile}" />
 				<ui:param name="skipSearchButton" value="#{true}" />
+				<ui:param name="skipResetButton" value="#{domainApplicationProfile.noRegisteredApplications}" />
 				<ui:define name="additionalToolbarContent" >
 					<aon:commandButton id="systemProfiles"
 						value="#{adminBundle.admin_systemProfiles}"
@@ -27,6 +28,8 @@
 				<ui:param name="skipDomainColumn" value="#{domainSwitcher.parentDomain}" />
 				<ui:param name="selectButtonRendered" value="#{to.domain.id == domainSwitcher.domainId}" />
 				<ui:param name="rowSelectorToggleOnClick" value="#{to.domain.id == domainSwitcher.domainId}" />
+				<ui:param name="showDataTable" value="#{!domainApplicationProfile.noRegisteredApplications}" />
+				<ui:param name="showDataScroller" value="#{!domainApplicationProfile.noRegisteredApplications}" />
 			</ui:include>
 
 		</aon:form>

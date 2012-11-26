@@ -22,7 +22,7 @@
 	</ui:decorate>
 
 	<aon:div styleClass="aon-scroll-area">
-		<c:if test="#{domainUser.showOnlyProfiles}" >
+		<c:if test="#{domainUser.applicationsInfoSize == 1}" >
 			<aon:dataTable var="appProfile"
 				value="#{domainUser.applicationInfos[0].profileInfos}">
 				
@@ -51,7 +51,7 @@
 
 			</aon:dataTable>
 		</c:if>
-		<c:if test="#{!domainUser.showOnlyProfiles}" >
+		<c:if test="#{domainUser.applicationsInfoSize != 1}" >
 			<aon:dataTable var="appInfo" value="#{domainUser.applicationInfos}">
 					
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-250 aon-vertical-align-top" >

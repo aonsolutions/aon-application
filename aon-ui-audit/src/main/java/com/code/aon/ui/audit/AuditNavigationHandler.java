@@ -33,7 +33,7 @@ public class AuditNavigationHandler extends AonNavigationHandler {
 				LOGGER.error( "Error in insert action execution", th );
 			}
 		} else {
-			LOGGER.error( "Not found {}", AuditManager.AUDIT_SESSION_PROPERTY  );
+			LOGGER.debug( "Not found {} context property", AuditManager.AUDIT_SESSION_PROPERTY  );
 		}
 	}	
 	

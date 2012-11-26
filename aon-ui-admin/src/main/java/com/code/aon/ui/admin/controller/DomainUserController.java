@@ -275,8 +275,8 @@ public class DomainUserController extends BasicController {
 		return applicationInfos;
 	}
 	
-	public boolean isShowOnlyProfiles() {
-		return applicationInfos.size() == 1;
+	public int getApplicationsInfoSize() {
+		return applicationInfos.size();
 	}
 
 	public void registerAllApplications() throws ManagerBeanException {

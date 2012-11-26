@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.admin.Profile;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.admin.controller.ApplicationProfileController;
 import com.code.aon.ui.admin.controller.ProfileActionDeniedController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -59,4 +60,17 @@ public class DomainApplicationProfileControllerListener extends ControllerAdapte
 			throw new ControllerListenerException( e.getMessage(), e );
 		}		
 	}	
+
+	@Override
+	public void beforeBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		ApplicationProfileController apc = (ApplicationProfileController) event.getController();
+		try {		
+			ApplicationProfileController.removeLines( (Profile) apc.getTo() );
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException( e.getMessage(), e );
+		}	
+	}	
+
 }
