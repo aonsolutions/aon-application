@@ -848,54 +848,71 @@ public class AccountingBookController implements ICollectionProvider{
 		buf.append("100");
 		buf.append("");
 		buf.append("\r\n");
+		// Fecha
 		buf.append("101");
 		buf.append(dateFormatter.format(new Date()));
 		buf.append("\r\n");
+		// Nombre empresa
 		buf.append("102");
 		buf.append(StringUtils.substring(ctx.empresa(),0, 32));
 		buf.append("\r\n");
+		// Apellido 1
 		buf.append("103");
 		buf.append("");
 		buf.append("\r\n");
+		// Apellido 1
 		buf.append("104");
 		buf.append("");
 		buf.append("\r\n");
+		// NIF
 		buf.append("105");
 		buf.append(StringUtils.substring(ctx.nifEmpresa(),0, 9));
 		buf.append("\r\n");
+		// Calle
 		buf.append("106");
 		buf.append(StringUtils.substring(ctx.domicilioEmpresa(),0, 32));
 		buf.append("\r\n");
+		// Localidad
 		buf.append("107");
-		buf.append("");
+		buf.append(StringUtils.substring(ctx.localidadEmpresa(),0, 32));
 		buf.append("\r\n");
+		// C.P.
 		buf.append("108");
-		buf.append("");
+		buf.append(StringUtils.substring(ctx.codigoPostalEmpresa(),0, 32));
 		buf.append("\r\n");
+		// Provincia
 		buf.append("109");
-		buf.append("0");
+		buf.append(StringUtils.substring(ctx.codigoProvinciaEmpresa(),0, 5));
 		buf.append("\r\n");
+		// Fax
 		buf.append("110");
-		buf.append("0");
+		buf.append(StringUtils.substring(ctx.faxEmpresa(),0, 10));
 		buf.append("\r\n");
+		// Telefono
 		buf.append("111");
-		buf.append("");
+		buf.append(StringUtils.substring(ctx.telefonoEmpresa(),0, 10));
 		buf.append("\r\n");
+		// Tomo
 		buf.append("201");
 		buf.append(StringUtils.substring(ctx.tomoRegistroMercantil(),0, 6));
 		buf.append("\r\n");
+		// Folio
 		buf.append("204");
 		buf.append(StringUtils.substring(ctx.folioRegistroMercantil(),0, 6));
 		buf.append("\r\n");
+		// Tipo Registro
 		buf.append("205");
 		buf.append(StringUtils.substring(ctx.registroMercantil(),0, 6));
 		buf.append("\r\n");
+		// Hoja Registral
 		buf.append("206");
 		buf.append(StringUtils.substring(ctx.hojaRegistroMercantil(),0, 6));
 		buf.append("\r\n");
+		// Otros
 		buf.append("207");
 		buf.append("");
 		buf.append("\r\n");
+
 		buf.append("501");
 		buf.append(bookList.size());
 		buf.append("\r\n");

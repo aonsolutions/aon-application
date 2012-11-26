@@ -13,9 +13,12 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
+import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RecordData;
+import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryDirStaff;
+import com.code.aon.registry.RegistryMedia;
 import com.esferalia.aon.entity.IEntityAlias;
 
 /**
@@ -33,6 +36,7 @@ public class AnnualReportContext {
 	private String CLOSE_BRACKET = ")";
 	private String PIPE = "|";
 	private String COMMA = ",";
+	private String ERROR = "<ERROR>";
 	private Double ZERO = new Double(0);
 
 	private AnnualReportParameters params;
@@ -185,16 +189,121 @@ public class AnnualReportContext {
 	
 	/**
 	 * Devuelve el domicio completo, de la dirección principal de la empresa. Es
-	 * el dato introducido en la pantalla de "Datos de Empresa", solapa
-	 * "Direcciones".
+	 * el dato introducido en la pantalla de "Datos de Empresa".
 	 * 
 	 * @return Cadena de caracteres.
 	 */
 	public String domicilioEmpresa() {
 		try {
-			return getCompany().getDefaultAddress().getFullAddress();
-		} catch (ManagerBeanException e) {
+			RegistryAddress raddress = getCompany().getDefaultAddress();
+			if (raddress != null) {
+				return raddress.getFullAddress();
+			}
 			return null;
+		} catch (ManagerBeanException e) {
+			return ERROR;
+		}
+	}
+
+	/**
+	 * Devuelve el nombre de la provincia de la empresa. Es el dato incluido en la dirección principal de la empresa.
+	 * @return
+	 */
+	public String provinciaEmpresa() {
+		try {
+			RegistryAddress raddress = getCompany().getDefaultAddress();
+			if (raddress != null) {
+				GeoZone geozone = raddress.getGeozone();
+				if (geozone != null) {
+					return geozone.getName();
+				}
+			}
+			return null;
+		} catch (ManagerBeanException e) {
+			return "<ERROR>";
+		}
+	}
+
+	/**
+	 * Devuelve el codigo de la provincia de la empresa. Es el dato incluido en la dirección principal de la empresa.
+	 * @return
+	 */
+	public String codigoProvinciaEmpresa() {
+		try {
+			RegistryAddress raddress = getCompany().getDefaultAddress();
+			if (raddress != null) {
+				GeoZone geozone = raddress.getGeozone();
+				if (geozone != null) {
+					return geozone.getCode();
+				}
+			}
+			return null;
+		} catch (ManagerBeanException e) {
+			return "<ERROR>";
+		}
+	}
+
+	/**
+	 * Devuelve la localidad de la empresa. Es el dato incluido en la dirección principal de la empresa.
+	 * @return
+	 */
+	public String localidadEmpresa() {
+		try {
+			RegistryAddress raddress = getCompany().getDefaultAddress();
+			if (raddress != null) {
+				return raddress.getLocation();
+			}
+			return null;
+		} catch (ManagerBeanException e) {
+			return "<ERROR>";
+		}
+	}
+
+	/**
+	 * Devuelve el código postal de la empresa. Es el dato incluido en la dirección principal de la empresa.
+	 * @return
+	 */
+	public String codigoPostalEmpresa() {
+		try {
+			RegistryAddress raddress = getCompany().getDefaultAddress();
+			if (raddress != null) {
+				return raddress.getZip();
+			}
+			return null;
+		} catch (ManagerBeanException e) {
+			return "<ERROR>";
+		}
+	}
+	
+	/**
+	 * Devuelve el fax de la empresa. Es el dato incluido en la pantalla "Datos de empresa".
+	 * @return
+	 */
+	public String faxEmpresa() {
+		try {
+			RegistryMedia rmedia = getCompany().getFax();
+			if (rmedia != null) {
+				return rmedia.getValue();
+			}
+			return null;
+		} catch (ManagerBeanException e) {
+			return "<ERROR>";
+		}
+	}
+
+	/**
+	 * Devuelve el fax de la empresa. Es el dato incluido en la pantalla "Datos de empresa".
+	 * @return
+	 */
+	public String telefonoEmpresa() {
+		try {
+			RegistryMedia rmedia = getCompany().getPhone();
+			if (rmedia != null) {
+				return rmedia.getValue();
+			}
+			return null;
+		} catch (ManagerBeanException e) {
+			return "<ERROR>";
 		}
 	}
 
