@@ -130,7 +130,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 		Iterator<ITransferObject> iterator = icc.getDetailList().iterator();
 		while (iterator.hasNext()) {
 			ICalculable calc = (ICalculable)iterator.next();
-			taxableBase += getBasePrice(calc);
+			taxableBase = CommonUtil.round(taxableBase + getBasePrice(calc), 4);
 		}
 		if (icc.getDiscountExpression().getDiscounts() != null) {
 			for (int i = 0;i<icc.getDiscountExpression().getDiscounts().length;i++) {

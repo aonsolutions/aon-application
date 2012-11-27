@@ -1,5 +1,7 @@
 package com.code.aon.common.util;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,7 +26,7 @@ public class CommonUtil {
 	 * @return double el valor redondeado
 	 */
 	public static double round(double value, int precision) {
-		return Math.round(Math.abs(value) * Math.pow(10, precision)) / Math.pow(10, precision) * (value < 0 ? -1 : 1);
+		return new BigDecimal(Double.toString(value)).setScale(precision, RoundingMode.HALF_UP).doubleValue();
 	}
 
 	/**
