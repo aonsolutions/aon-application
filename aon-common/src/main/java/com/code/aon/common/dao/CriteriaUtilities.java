@@ -8,7 +8,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.HibernateRenderer;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
