@@ -12,6 +12,7 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{registryBundle.registry_document_global_search}" />
 				<ui:param name="controller" value="#{documentGlobal}" />
+				<ui:param name="skipResetButton" value="#{true}" />
 			</ui:include>
 
 			<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/searchContent.xhtml" >

@@ -94,13 +94,5 @@
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
 		</aon:selectOneRadio>
 	</c:if>
-	
-	<c:if test="#{showDomainLookup}">		
-		<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml">
-			<ui:param name="lookupTo" value="#{documentGlobalSearch.domain}" />
-			<ui:param name="skipGoToButton" value="#{true}" />
-			<ui:param name="skipNewButton" value="#{true}" />				
-		</ui:include>			
-	</c:if>			
 
 </ui:composition>
