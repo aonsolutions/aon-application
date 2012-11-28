@@ -1,5 +1,7 @@
 package com.code.aon.faces.component.richfaces.editDataTable;
 
+import static com.code.aon.faces.controller.IRichConstants.EDIT_DATA_TABLE_ID;
+
 import java.io.IOException;
 
 import javax.el.ELException;
@@ -18,8 +20,6 @@ import com.sun.facelets.tag.jsf.ComponentSupport;
 
 public class EditDataTableHandler extends AonComponentHandler {
 
-	public static final String EDIT_DATA_TABLE_ID = "com.code.aon.faces.EditDataTable.id";
-	
 	public EditDataTableHandler(ComponentConfig config) {
 		super(config);
 	}

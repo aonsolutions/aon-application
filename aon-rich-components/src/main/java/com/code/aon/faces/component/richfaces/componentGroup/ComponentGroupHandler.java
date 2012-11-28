@@ -1,5 +1,7 @@
 package com.code.aon.faces.component.richfaces.componentGroup;
 
+import static com.code.aon.faces.controller.IRichConstants.CURRENT_COMPONENT_GROUP;
+
 import java.io.IOException;
 
 import javax.el.ELException;
@@ -36,14 +38,14 @@ public class ComponentGroupHandler extends TagHandler implements IRichFacesTags 
 			MethodExpression me = method.getMethodExpression(ctx, null, FaceletUtil.COMPONENT_GROUP_SIG);
 			ComponentGroupMethod cgm = new ComponentGroupMethod( family.getValue(ctx), me );
 			ComponentGroup cg = new ComponentGroup( cgm );		
-			ComponentGroup lastCG = (ComponentGroup) root.getAttributes().get( ComponentGroup.CURRENT_COMPONENT_GROUP );
-			root.getAttributes().put( ComponentGroup.CURRENT_COMPONENT_GROUP, cg );
+			ComponentGroup lastCG = (ComponentGroup) root.getAttributes().get( CURRENT_COMPONENT_GROUP );
+			root.getAttributes().put( CURRENT_COMPONENT_GROUP, cg );
 			
 	        this.nextHandler.apply(ctx, parent);
 	        
-			root.getAttributes().remove( ComponentGroup.CURRENT_COMPONENT_GROUP );
+			root.getAttributes().remove( CURRENT_COMPONENT_GROUP );
 			if ( lastCG != null ) {
-				root.getAttributes().put( ComponentGroup.CURRENT_COMPONENT_GROUP, lastCG );
+				root.getAttributes().put( CURRENT_COMPONENT_GROUP, lastCG );
 			}
 		} else {
 	        this.nextHandler.apply(ctx, parent);

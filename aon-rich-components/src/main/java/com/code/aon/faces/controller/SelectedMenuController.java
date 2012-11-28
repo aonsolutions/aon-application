@@ -1,5 +1,7 @@
 package com.code.aon.faces.controller;
 
+import static com.code.aon.faces.controller.IRichConstants.SELECTED_MENU_ATTRIBUTE;
+
 import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
 import javax.faces.component.UICommand;
@@ -19,8 +21,6 @@ public class SelectedMenuController {
 	
 	private static final String CONTROLLER_NAME = "selectedMenu";
 	
-	private static final String SELECTED_MENU_ATTRIBUTE = "com.code.aon.faces.selectedMenu";
-
 	private static final String SELECTED_CLASS = "aon-top-menu-item-select";
 	
 	private static final String ON_MENU_SELECT = "onMenuSelect";

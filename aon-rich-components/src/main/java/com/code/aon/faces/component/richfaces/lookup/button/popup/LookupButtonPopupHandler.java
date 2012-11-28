@@ -1,5 +1,7 @@
 package com.code.aon.faces.component.richfaces.lookup.button.popup;
 
+import static com.code.aon.faces.controller.IRichConstants.LOOKUP_MODAL_PANEL_MAP;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,8 +31,6 @@ import com.sun.facelets.tag.jsf.ComponentSupport;
  */
 public class LookupButtonPopupHandler extends TagHandler implements ILookupConstants, IRichFacesTags {
 
-	private static final String LOOKUP_MODAL_PANEL_MAP = "com.code.aon.faces.LookupButtonPopup.map";
-	
 	private static final String LOOKUP_ID = "lookupId";
 	
 	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/richfaces/lookup/";

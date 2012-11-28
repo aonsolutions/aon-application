@@ -1,5 +1,8 @@
 package com.code.aon.faces.component.richfaces.form;
 
+import static com.code.aon.faces.controller.IRichConstants.CURRENT_FORM;
+import static com.code.aon.faces.controller.IRichConstants.CURRENT_FORM_DATA_TABLE_MAP;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,10 +20,6 @@ import com.sun.facelets.tag.jsf.ComponentSupport;
 
 public class FormHandler extends AonAjaxComponentHandler {
 
-	public static final String CURRENT_FORM = "com.code.aon.faces.Form.current";
-	
-	public static final String CURRENT_FORM_DATA_TABLE_MAP = "com.code.aon.faces.Form.current.DataTable.map";
-	
 	public FormHandler(ComponentConfig config) {
 		super(config);
 	}

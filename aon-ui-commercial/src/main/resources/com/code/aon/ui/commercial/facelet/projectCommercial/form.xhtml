@@ -56,9 +56,8 @@
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
 
-		<ui:include	src="/com/code/aon/ui/commercial/facelet/projectCommercialTracking/newTrackingModal.xhtml">
-			<ui:param name="controller" value="#{projectCommercialTracking}" />
-			<ui:param name="showNewTrackingWindow" value="#{projectCommercial.showNewTrackingWindow}" />
+		<ui:include	src="/com/code/aon/ui/commercial/facelet/projectCommercialTracking/newTrackingModal.xhtml" >
+			<ui:param name="skipProjectData" value="#{true}" />
 		</ui:include>
 	</ui:define>
 </ui:composition>

@@ -1,6 +1,9 @@
 package com.code.aon.ui.marketing.controller;
 
 import static com.code.aon.ui.commercial.controller.ICommercialConstants.COMMERCIAL_TRACKING_CONTROLLER_NAME;
+import static com.code.aon.ui.commercial.controller.ICommercialConstants.PROJECT_COMMERCIAL_CONTROLLER_NAME;
+import static com.code.aon.ui.commercial.controller.ICommercialConstants.PROJECT_COMMERCIAL_LOOKUP_NAME;
+import static com.code.aon.ui.commercial.controller.ICommercialConstants.PROJECT_COMMERCIAL_SEARCH_CONTROLLER_NAME;
 import static com.code.aon.ui.commercial.controller.ICommercialConstants.TARGET_CONTROLLER_NAME;
 import static com.code.aon.ui.groupware.controller.IGroupWareConstants.ALARM_CONTROLLER_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
@@ -25,16 +28,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.commercial.CommercialTracking;
+import com.code.aon.commercial.ProjectCommercial;
 import com.code.aon.commercial.Question;
 import com.code.aon.commercial.QuestionValue;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.TargetProfile;
+import com.code.aon.commercial.enumeration.ProjectSource;
 import com.code.aon.commercial.enumeration.QuestionType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
+import com.code.aon.faces.controller.RichLookupBean;
 import com.code.aon.groupware.Alarm;
 import com.code.aon.groupware.enumeration.AlarmSource;
 import com.code.aon.marketing.ActionTarget;
@@ -56,11 +62,17 @@ import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
 import com.code.aon.ui.commercial.controller.CommercialTrackingController;
+import com.code.aon.ui.commercial.controller.ProjectCommercialController;
+import com.code.aon.ui.commercial.event.ProjectCommercialSearchListener;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.form.event.ControllerAdapter;
+import com.code.aon.ui.form.event.ControllerEvent;
+import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.groupware.controller.AlarmController;
 import com.code.aon.ui.mailing.MailData;
 import com.code.aon.ui.mailing.MailingManager;
@@ -127,6 +139,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 	private User user;
 	
 	private int numberOfTargetsInEmail;
+	
+	private IControllerListener projectCommercialListener;
 	
 	public CommunicationCenterController() {
 		this.date = new Date();
@@ -843,6 +857,36 @@ public class CommunicationCenterController implements IMarketingConstants {
 		setActionTarget(null);
 		setFinishedAction(ctc.getSurveyReturnAction());
 		onStartSurveyResponse(event);
+	}
+
+	public void onNewCommercialTracking( ActionEvent event ) throws ManagerBeanException {
+		ProjectCommercialController pcc = (ProjectCommercialController) AonUtil.getRegisteredBean(PROJECT_COMMERCIAL_CONTROLLER_NAME);
+		pcc.setShowNewTrackingWindow(true);
+		CommercialTrackingController ctc = (CommercialTrackingController) AonUtil.getRegisteredBean(COMMERCIAL_TRACKING_CONTROLLER_NAME);
+		ctc.onReset(event);
+	}
+
+	public IControllerListener getProjectCommercialListener() {
+		if ( this.projectCommercialListener == null ) {
+			this.projectCommercialListener = new ControllerAdapter() {
+				@Override
+				public void afterEditSearch(ControllerEvent event) throws ControllerListenerException {
+					ProjectCommercialSearchListener pcsl = (ProjectCommercialSearchListener) AonUtil.getRegisteredBean(PROJECT_COMMERCIAL_SEARCH_CONTROLLER_NAME);
+					pcsl.setTarget(getTarget());
+				}
+
+				@Override
+				public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+					RichLookupBean lookup = (RichLookupBean) AonUtil.getRegisteredBean(PROJECT_COMMERCIAL_LOOKUP_NAME);
+					ProjectCommercial pc = (ProjectCommercial) lookup.getTo();
+					pc.setStatusDate(new Date());
+					pc.setSource(ProjectSource.CALL_CENTER);
+					pc.setTarget(getTarget());
+				}
+
+			};			
+		}
+		return this.projectCommercialListener;
 	}
 	
 }

@@ -42,6 +42,11 @@
 										actionListener="#{communicationCenter.onNewAlarm}"
 										styleClass="aon-finding-toolbar-item aon-icon-alarms" />
 								</c:if>
+								<aon:commandButton id="newCommercialTracking"
+									value="#{commercialBundle.commercial_tracking_new_action}"
+									reRender="showNewTrackingWindow"
+									actionListener="#{communicationCenter.onNewCommercialTracking}"
+									styleClass="aon-finding-toolbar-item aon-icon-new" />
 							</c:if>
 						</c:if>					
 						<c:if test="#{communicationCenter.action.mediaType  == 'MAIL'}" >							
@@ -111,6 +116,7 @@
 							<aon:div id="CommunicationCenter_target">
 								<ui:decorate template="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
 									<ui:param name="lookupTo" value="#{communicationCenter.target}" />
+									<ui:param name="lookupSuffix" value="_CommunicationCenter" />
 									<ui:param name="skipLabel" value="#{true}" />
 									<ui:param name="lookupDisabled" value="#{true}" />
 									<ui:param name="goToBackAction" value="communicationCenter" />
@@ -160,6 +166,7 @@
 						
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		<aon:lookupButtonPopup lookup="#{campaignActionLookup}" />
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
 		<aon:lookupButtonPopup lookup="#{marketingTemplateLookup}" />
@@ -174,6 +181,12 @@
 				<aon:methodParam name="sendActionListener" value="#{communicationCenter.onSendEmail}" type="actionListener" />
 			</ui:include>
 		</c:if>
+		<ui:include	src="/com/code/aon/ui/commercial/facelet/projectCommercialTracking/newTrackingModal.xhtml" >
+			<aon:methodParam name="pctSaveActionListener" value="#{commercialTracking.onAccept}" type="actionListener" />
+			<aon:methodParam name="pctSaveAction" value="communicationCenter" />		
+			<ui:param name="lookupProjectCommercialListener" value="#{communicationCenter.projectCommercialListener}" />
+		</ui:include>
+		<aon:lookupButtonPopup lookup="#{projectCommercialLookup}" />
 	</ui:define>
 </ui:composition>
 

@@ -9,10 +9,14 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showNewTrackingWindow">
-		<c:if test="#{showNewTrackingWindow}">
+		<c:if test="#{projectCommercial.showNewTrackingWindow}">
+		
+			<aon:methodParam name="pctSaveActionListener" default="#{projectCommercialTracking.onAcceptTracking}" type="actionListener" />
+			<aon:methodParam name="pctSaveAction" default="#{commercialTracking.saveAction}" />
+		
 			<rich:modalPanel id="newTrackingModalPanel"
-				minWidth="700" minHeight="500" zindex="90"
-				showWhenRendered="#{showNewTrackingWindow}" >
+				minWidth="760" minHeight="700" zindex="90"
+				showWhenRendered="#{projectCommercial.showNewTrackingWindow}" >
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{commercialBundle.commercial_tracking_module}" />
@@ -22,11 +26,11 @@
 					<aon:form>
 						<aon:commandButton type="close-button"
 							styleClass="aon-popupWindow-close"
-							actionListener="#{controller.onCancelTracking}"
+							actionListener="#{projectCommercialTracking.onCancelTracking}"
 							reRender="showNewTrackingWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{showNewTrackingWindow}"
+								target="#{projectCommercial.showNewTrackingWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
@@ -49,24 +53,22 @@
 												<aon:commandButton id="commercialTracking-save"
 													value="#{bundle.aon_save}"
 													reRender="aonContent"
-													action="#{commercialTracking.saveAction}"
-													actionListener="#{controller.onAcceptTracking}"
+													action="#{pctSaveAction}"
+													actionListener="#{pctSaveActionListener}"
 													styleClass="aon-finding-toolbar-item aon-icon-accept"
 													accesskey="#{bundle.aon_key_save}">
-													<rich:componentControl for="newTrackingModalPanel"
-														event="onclick" operation="hide"/>																					
 													<f:setPropertyActionListener
-														target="#{showNewTrackingWindow}"
+														target="#{projectCommercial.showNewTrackingWindow}"
 														value="#{false}" />
 												</aon:commandButton>
 												<aon:commandButton id="commercialTracking-cancel"
 													value="#{bundle.aon_cancel}"
 													reRender="showNewTrackingWindow"
-													actionListener="#{controller.onCancelTracking}"
+													actionListener="#{projectCommercialTracking.onCancelTracking}"
 													immediate="true"
 													styleClass="aon-finding-toolbar-item aon-icon-cancel">
 													<f:setPropertyActionListener
-														target="#{showNewTrackingWindow}"
+														target="#{projectCommercial.showNewTrackingWindow}"
 														value="#{false}" />
 												</aon:commandButton>		
 											</aon:div>
@@ -75,9 +77,7 @@
 									</aon:div>
 									<aon:div styleClass="aon-scroll-area">
 
-										<ui:include src="/com/code/aon/ui/commercial/facelet/commercialTracking/formContent.xhtml">
-											<ui:param name="skipProjectData" value="#{true}" />
-										</ui:include>
+										<ui:include src="/com/code/aon/ui/commercial/facelet/commercialTracking/formContent.xhtml" />
 										
 									</aon:div>
 								</aon:div>

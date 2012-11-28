@@ -1,5 +1,7 @@
 package com.code.aon.faces.component;
 
+import static com.code.aon.faces.controller.IRichConstants.LABELS_MAP;
+
 import java.net.URL;
 import java.util.Map;
 
@@ -14,7 +16,6 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
-import com.code.aon.faces.component.richfaces.outputLabel.OutputLabelHandler;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.faces.component.util.HTML;
 import com.sun.facelets.FaceletContext;
@@ -81,7 +82,7 @@ public class AonComponentHandler extends ComponentHandler {
 	
 	private void updateLabel(FaceletContext ctx, UIInput c) {
 		UIViewRoot root = ComponentSupport.getViewRoot(ctx, c);		
-		Map map = (Map) root.getAttributes().get(OutputLabelHandler.LABELS_MAP);
+		Map map = (Map) root.getAttributes().get(LABELS_MAP);
 		if (map != null) {
 			String id = StringUtils.substringBefore(getId(ctx), "-");
 			UIOutput label = (UIOutput) map.get(id);

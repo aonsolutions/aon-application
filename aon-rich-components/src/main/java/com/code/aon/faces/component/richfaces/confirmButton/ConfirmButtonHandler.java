@@ -1,5 +1,7 @@
 package com.code.aon.faces.component.richfaces.confirmButton;
 
+import static com.code.aon.faces.controller.IRichConstants.ATTRIBUTE_PREFFIX;
+
 import java.io.IOException;
 import java.net.URL;
 
@@ -41,8 +43,6 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 	private static final String MIN_HEIGHT_2 = "150";		
 	
 	private static final String PREFFIX = "aon_cb_";
-	
-    private static final String COMPONENT_TYPE = "com.code.aon.faces.HtmlConfirmButton";
 	
 	private static final String CONFIRM_SHOW_WINDOW = "showWindow";
 	
@@ -112,7 +112,7 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 	}
 	
 	private String getStateKey( UIComponent component ) {
-		return COMPONENT_TYPE + "." + component.getId() + ".showWindow";
+		return ATTRIBUTE_PREFFIX + "." + component.getId() + ".showWindow";
 	}
 
 	private ValueExpression getStateExpression( FaceletContext ctx, UIComponent component ) {

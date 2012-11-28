@@ -1,10 +1,11 @@
 package com.code.aon.faces.component.richfaces;
 
+import static com.code.aon.faces.controller.IRichConstants.EDIT_DATA_TABLE_ID;
+
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
-import com.code.aon.faces.component.richfaces.editDataTable.EditDataTableHandler;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.jsf.ComponentConfig;
@@ -21,7 +22,7 @@ public class AonAjaxCommandHandler extends AonAjaxComponentHandler implements IR
 		super.setAttributes(ctx, instance);
 		UIComponent component = (UIComponent) instance;
 		UIViewRoot root = ComponentSupport.getViewRoot(ctx, component);
-		String id = (String) root.getAttributes().get( EditDataTableHandler.EDIT_DATA_TABLE_ID );
+		String id = (String) root.getAttributes().get( EDIT_DATA_TABLE_ID );
 		if ( id != null ) {
 			String value = FaceletUtil.updateList(ctx, getAttribute(RERENDER), id);
 			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), component, RERENDER, value);

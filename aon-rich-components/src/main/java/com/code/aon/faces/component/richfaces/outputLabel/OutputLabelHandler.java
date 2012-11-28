@@ -1,5 +1,7 @@
 package com.code.aon.faces.component.richfaces.outputLabel;
 
+import static com.code.aon.faces.controller.IRichConstants.LABELS_MAP;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,8 +18,6 @@ import com.sun.facelets.tag.jsf.ComponentSupport;
 
 public class OutputLabelHandler extends AonComponentHandler implements IRichFacesTags {
 	
-	public static final String LABELS_MAP = "com.code.aon.faces.OutputLabel.map";
-
 	public OutputLabelHandler(ComponentConfig config) {
 		super(config);
 	}
@@ -35,7 +35,7 @@ public class OutputLabelHandler extends AonComponentHandler implements IRichFace
 		if ( _for != null ) {
 			TagAttribute value = getAttribute(VALUE);
 			if (value != null) {
-				map.put(_for.getValue(ctx), (UIOutput) c );					
+				map.put(_for.getValue(ctx), (UIOutput) c );			
 			}
 		}
 	}

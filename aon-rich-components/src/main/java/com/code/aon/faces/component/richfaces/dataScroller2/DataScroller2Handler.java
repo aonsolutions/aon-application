@@ -1,5 +1,7 @@
 package com.code.aon.faces.component.richfaces.dataScroller2;
 
+import static com.code.aon.faces.controller.IRichConstants.ATTRIBUTE_PREFFIX;
+
 import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
@@ -11,6 +13,7 @@ import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.code.aon.faces.component.richfaces.form.FormHandler;
 import com.code.aon.faces.component.util.FaceletUtil;
+import com.code.aon.faces.controller.IRichConstants;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
 import com.sun.facelets.tag.TagAttribute;
@@ -74,7 +77,7 @@ public class DataScroller2Handler extends TagHandler implements IRichFacesTags {
 	}
 	
 	private String getScrollerModelId( FaceletContext ctx ) {
-		String id = forTag.getValue(ctx) + "Model";
+		String id = ATTRIBUTE_PREFFIX + forTag.getValue(ctx) + "Model";
 		return id;
 	}
 	

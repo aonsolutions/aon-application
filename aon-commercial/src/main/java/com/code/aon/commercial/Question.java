@@ -26,7 +26,7 @@ public class Question extends QuestionDB{
     }
 	@Transient
 	public String getDescription() {
-		return StringUtils.defaultString(getAlias(), getText());
+		return StringUtils.defaultIfEmpty(getAlias(), getText());
 	}
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,

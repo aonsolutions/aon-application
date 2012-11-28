@@ -1,18 +1,19 @@
 package com.code.aon.faces.component.richfaces.componentGroup;
 
+import static com.code.aon.faces.controller.IRichConstants.CURRENT_COMPONENT_GROUP;
+
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 
+import com.code.aon.faces.controller.IRichConstants;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.jsf.ComponentSupport;
 
 public class ComponentGroup {
 	
-	public static final String CURRENT_COMPONENT_GROUP = "com.code.aon.faces.ComponentGroup.current";
-
 	private List<ComponentGroupMethod> componentGroupMethods;
 
 	public ComponentGroup( ComponentGroupMethod cgm ) {

@@ -41,13 +41,13 @@
 			
 	<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml" >
 		<ui:param name="lookupTo" value="#{projectCommercialSearch.seller}" />
-		<ui:param name="lookupSuffix" value="-ProjectCommercial" />
+		<ui:param name="lookupSuffix" value="_ProjectCommercial" />
 		<ui:param name="skipNewButton" value="#{true}" />
 	</ui:include>
 
 	<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
 		<ui:param name="lookupTo" value="#{projectCommercialSearch.target}" />
-		<ui:param name="lookupSuffix" value="-ProjectCommercial" />
+		<ui:param name="lookupSuffix" value="_ProjectCommercial" />
 		<ui:param name="skipNewButton" value="#{true}" />
 	</ui:include>
 	

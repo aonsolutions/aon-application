@@ -1,5 +1,7 @@
 package com.code.aon.faces.component.richfaces.rowSelector;
 
+import static com.code.aon.faces.controller.IRichConstants.EDIT_DATA_TABLE_ID;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,6 @@ import org.richfaces.component.html.HtmlExtendedDataTable;
 
 import com.code.aon.faces.component.AttributeInfo;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
-import com.code.aon.faces.component.richfaces.editDataTable.EditDataTableHandler;
 import com.code.aon.faces.component.util.AonComponentConfig;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
@@ -86,7 +87,7 @@ public class RowSelectorHandler extends TagHandler implements IRichFacesTags {
 	private TagHandler getSupportHandler(FaceletContext ctx, UIComponent component) {
 		List<AttributeInfo> attributes = new ArrayList<AttributeInfo>();
 		UIViewRoot root = ComponentSupport.getViewRoot(ctx, component);
-		String id = (String) root.getAttributes().get( EditDataTableHandler.EDIT_DATA_TABLE_ID );
+		String id = (String) root.getAttributes().get( EDIT_DATA_TABLE_ID );
 		if ( id != null ) {
 			String value = FaceletUtil.updateList(ctx, getAttribute(RERENDER), id);
 			AttributeInfo reRender = new AttributeInfo(RERENDER, value);

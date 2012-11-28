@@ -20,9 +20,10 @@
 					<ui:param name="skipLabel" value="#{true}" />
 					<ui:param name="idRequired" value="#{true}" />
 					<ui:param name="lookupReRender"
-						value="CommercialTracking_project_detail" />
+						value="CommercialTracking_project_detail,lookupSeller_TrackingSeller" />
 					<aon:methodParam name="lookupChangeListener"
-						value="#{commercialTracking.projectChanged}" type="lookupChangeListener" />							
+						value="#{commercialTracking.projectChanged}" type="lookupChangeListener" />	
+					<ui:param name="lookupControllerListener" value="#{lookupProjectCommercialListener}" />
 				</ui:include>
 				<aon:div id="CommercialTracking_project_detail" >
 					<aon:panelGrid styleClass="aon-margin-top aon-margin-bottom"
@@ -34,7 +35,7 @@
 							<ui:param name="lookupTo" value="#{commercialTracking.to.project.target}" />
 							<ui:param name="lookupDisabled" value="#{true}" />
 							<ui:param name="skipLabel" value="#{true}" />
-							<ui:param name="lookupSuffix" value="-TrackingTarget" />
+							<ui:param name="lookupSuffix" value="_TrackingTarget" />
 						</ui:include>					
 						<aon:outputText value="#{bundle.aon_comment}"	
 							styleClass="aon-margin-right aon-italic aon-bold" />
@@ -49,7 +50,7 @@
 		<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml" >
 			<ui:param name="lookupTo" value="#{commercialTracking.to.seller}" />
 			<ui:param name="idRequired" value="#{true}" />
-			<ui:param name="lookupSuffix" value="-TrackingSeller" />
+			<ui:param name="lookupSuffix" value="_TrackingSeller" />			
 		</ui:include>					
 	
 		<aon:outputLabel for="CommercialTracking_date"
@@ -153,7 +154,7 @@
 
 						<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{commercialTracking.next.seller}" />
-							<ui:param name="lookupSuffix" value="-NextTrackingSeller" />
+							<ui:param name="lookupSuffix" value="_NextTrackingSeller" />
 							<ui:param name="idRequired" value="#{true}" />
 						</ui:include>	
 	
