@@ -352,6 +352,7 @@ public class DBContext extends VelocityContext{
 			String name  = rs.getString("TABLE_NAME");
 			String remarks = rs.getString("REMARKS");
 			Table table = new Table(name, remarks);
+			System.out.println( "\tSuccess : table  " + name  );
 			tables.put(name, table);
 		}
 		rs.close();

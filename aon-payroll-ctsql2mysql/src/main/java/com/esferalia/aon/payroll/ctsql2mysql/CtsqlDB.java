@@ -97,21 +97,28 @@ public class CtsqlDB extends AbstractCtsqlDB
             if ( line.hasOption(helpOption.getOpt()) )
             	helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
             
+//            String url = line.getOptionValue(ctsqlURLOption.getOpt(), 
+//            		"jdbc:ctsql://localhost:1101/empre055;DBPATH=/usr/share/ctsql/data;RTRIMCHAR=true");
             String url = line.getOptionValue(ctsqlURLOption.getOpt(), 
-            		"jdbc:ctsql://192.168.2.100:1101/empre055;DBPATH=/usr/share/ctsql/data;RTRIMCHAR=true");
+            		"jdbc:ctsql://194.30.98.127:1101/empre800;DBPATH=/usr/share/ctsql/data;RTRIMCHAR=true");
             String user = line.getOptionValue(ctsqlUserOption.getOpt(), "ctl");
             String passwd = line.getOptionValue(ctsqlPasswdOption.getOpt(), "ctl");
             
             Connection connection =  DriverManager.getConnection(url, user, passwd);
+    		System.out.println( "Success :  Connection "  );
     		DatabaseMetaData dbMetaData = connection.getMetaData(); 
+    		System.out.println( "Success :  DatabaseMetaData "  );
     		DBContext dbContext = new DBContext(dbMetaData);
+
+    		System.out.println( "Success :  DBContext "  );
     		
             Writer out = new FileWriter("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/AbstractCtsqlDB.java");
             Reader in =  new FileReader("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/CtsqlDB.java.vm");
     		DBContext.evaluate(dbContext, out, "DBContext", in);
     		in.close();
     		out.close();
-
+    		
+    		System.out.println( "Success :  AbstractCtsqlDB.java "  );
 
             out = new FileWriter("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/CtsqlDBVisitor.java");
             in =  new FileReader("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/CtsqlDBVisitor.java.vm");
@@ -119,12 +126,15 @@ public class CtsqlDB extends AbstractCtsqlDB
     		in.close();
     		out.close();
 
+    		System.out.println( "Success :  CtsqlDBVisitor.java "  );
+
             out = new FileWriter("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/DefaultCtsqlDBVisitor.java");
             in =  new FileReader("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/DefaultCtsqlDBVisitor.java.vm");
             DBContext.evaluate(dbContext, out, "DBContext", in);
     		in.close();
     		out.close();
             
+    		System.out.println( "Success :  DefaultCtsqlDBVisitor.java "  );
     	}
         catch( ParseException exp ) {
             // oops, something went wrong

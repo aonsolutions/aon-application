@@ -3,8 +3,11 @@ package com.esferalia.aon.payroll.ctsql2mysql;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Arrays;
@@ -23,6 +26,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.commons.codec.binary.Base64;
 
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.AonSQLFile;
@@ -71,7 +75,9 @@ public class Ctsql2Mysql
 	private String mysqlUser;
 	private String mysqlPasswd;
 	private boolean dryRun;
+	private String domain;
 	
+	private String passwdHash;
 	private Date fromDate;
 	private File imagesDir;
 	private List<String> cifs ;
@@ -163,7 +169,20 @@ public class Ctsql2Mysql
     	OptionBuilder.withDescription(  "traspasar únicamente estas empresas" );
     	Option enterprisesOption = OptionBuilder.create( "enterprises" );
 
+    	OptionBuilder.isRequired(false);
+    	OptionBuilder.hasArg(true);
+    	OptionBuilder.withArgName( "clave" );
+    	OptionBuilder.withType(String.class);
+    	OptionBuilder.withDescription(  "clave genérica para todos los usuarios" );
+    	Option passwdOption = OptionBuilder.create( "passwd" );
 
+    	OptionBuilder.isRequired(false);
+    	OptionBuilder.hasArg(true);
+    	OptionBuilder.withArgName( "dominio" );
+    	OptionBuilder.withType(String.class);
+    	OptionBuilder.withDescription(  "dominio" );
+    	Option domainOption = OptionBuilder.create( "domain" );
+    	
     	options.addOption(helpOption);
     	options.addOption(dryRunOption);
     	options.addOption(ctsqlURLOption);
@@ -173,6 +192,8 @@ public class Ctsql2Mysql
     	options.addOption(ctsqlPasswdOption);
     	options.addOption(mysqlPasswdOption);
     	options.addOption(fromDateOption);
+    	options.addOption(passwdOption);
+    	options.addOption(domainOption);
     	options.addOption(imagesDirOption);
     	options.addOption(enterprisesOption);
     	
@@ -199,10 +220,23 @@ public class Ctsql2Mysql
             
             dryRun=  line.hasOption(dryRunOption.getOpt());
 			
+            domain = line.getOptionValue(domainOption.getOpt());
+
             String fromString = line.getOptionValue(fromDateOption.getOpt());
             if ( fromString != null ) {
 	        	fromDate = DateFormat.getDateInstance(DateFormat.SHORT).parse(fromString);
 	        }
+
+            String passwd = line.getOptionValue(passwdOption.getOpt());
+            if ( passwd != null ) {
+        		try {
+        			MessageDigest digest = MessageDigest.getInstance("SHA-1");
+        			digest.update(passwd.getBytes("UTF-8"));
+        			byte raw [] = digest.digest();
+        			passwdHash = new String ( Base64.encodeBase64(raw), "UTF-8"); //step 5
+        		} catch (NoSuchAlgorithmException e) {
+        		}
+            }
 
             String imagesDirPath = line.getOptionValue(imagesDirOption.getOpt());
             if ( imagesDirPath != null ) {
@@ -248,7 +282,8 @@ public class Ctsql2Mysql
 					DriverManager.getConnection(mysqlServerURL, mysqlUser, mysqlPasswd);
 			
 			URL createURL = getCreateScript();
-            AonSQLFile sqlCreateFile = new AonSQLFile(createURL.openStream());
+            AonSQLFile sqlCreateFile = 
+            		new AonSQLFile(createURL.openStream());
             sqlCreateFile.setDbName(dbName);
             sqlCreateFile.setFileName( createURL.getFile());
             AonSQLScript script = new AonSQLScript(sqlCreateFile, connection);
@@ -256,6 +291,13 @@ public class Ctsql2Mysql
             
             VersionManager versionManager = new VersionManager();
             versionManager.uptodateDatabase(connection);
+            
+            if ( domain != null ) {
+	            PreparedStatement stmt = 
+	            		connection.prepareStatement("UPDATE domain SET name=?");
+	            stmt.setString(1, domain);
+	            stmt.execute();
+            }
             
 			return connection;
 		}
@@ -281,6 +323,7 @@ public class Ctsql2Mysql
 	        mysqlWriter.setCifs(cifs);
 	        mysqlWriter.setFromDate(fromDate);
 	        mysqlWriter.setImagesDir(imagesDir);
+	        mysqlWriter.setPasswdHash(passwdHash);
 	        
 	        CtsqlDB ctsqlReader = new CtsqlDB(ctsqlConnection);
 	        mysqlWriter.write(ctsqlReader);
@@ -299,8 +342,6 @@ public class Ctsql2Mysql
 	
 	public static void main( String[] args ) throws SQLException, ClassNotFoundException, java.text.ParseException, AonSQLException, IOException
     {
-		//String dbName = matcher.group(2);
-		
 		new Ctsql2Mysql(args).transfer();
     }
 
@@ -320,5 +361,6 @@ public class Ctsql2Mysql
         return cl.getResource(name);
     }
 
+	
 }
 

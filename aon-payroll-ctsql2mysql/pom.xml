@@ -59,6 +59,12 @@
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
+        <dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.3</version>
+			<scope>provided</scope>
+        </dependency>
 		<dependency>
 			<groupId>com.transtools</groupId>
 			<artifactId>ctsql-jdbc</artifactId>
@@ -163,7 +169,7 @@
 
 	<build>
 		<plugins>
-			<plugin>
+			<!--plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
 				<version>1.2</version>
@@ -179,7 +185,7 @@
 					<doCheck>false</doCheck>
 					<doUpdate>false</doUpdate>
 				</configuration>
-			</plugin>
+			</plugin-->
 		</plugins>
 	</build>
 	
@@ -222,6 +228,7 @@
 								<require>aon-master</require>
 								<require>jakarta-commons-cli</require>
 								<require>jakarta-commons-lang</require>
+								<require>jakarta-commons-codec</require>
 								<require>jakarta-commons-logging</require>
 								<require>mysql-connector-java</require>
 							</requires>

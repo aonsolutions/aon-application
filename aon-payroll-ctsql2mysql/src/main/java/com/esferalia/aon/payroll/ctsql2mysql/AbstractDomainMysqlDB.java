@@ -70,6 +70,22 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	/**
+	 * Item_addinfo
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param item Identificador de Articulo
+	 * @param attribute Atributo adicional
+	 * @param value Valor del atributo adicional
+	 * @param value_date Fecha del valor del atributo
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertItem_addinfo(Integer item, String attribute, String value, Date value_date)
+	throws SQLException {
+		return super.insertItem_addinfo( 1, item, attribute, value, value_date );
+	}
+
+	/**
 	 * Agreement_data
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
@@ -129,12 +145,19 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param name Nombre
 	 * @param invoiceable Indicador de si es facturable
 	 * @param item Identificador del Producto
+	 * @param initial_amount Importe inicial de apertura por defecto
+	 * @param pin_pad Indicador de si es un Pin Pad
+	 * @param commerce Clave de firma del comercio
+	 * @param signature_password Clave de firma del comercio
+	 * @param terminal Numero de terminal
+	 * @param port_configuration Configuracion de puerto
+	 * @param pos_version Version actual
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertPos(Integer workplace, String name, Boolean invoiceable, Integer item)
+	protected int insertPos(Integer workplace, String name, Boolean invoiceable, Integer item, Double initial_amount, Boolean pin_pad, String commerce, String signature_password, String terminal, String port_configuration, String pos_version)
 	throws SQLException {
-		return super.insertPos( 1, workplace, name, invoiceable, item );
+		return super.insertPos( 1, workplace, name, invoiceable, item, initial_amount, pin_pad, commerce, signature_password, terminal, port_configuration, pos_version );
 	}
 
 	/**
@@ -148,6 +171,20 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	protected int insertMessage_content(String content)
 	throws SQLException {
 		return super.insertMessage_content( 1, content );
+	}
+
+	/**
+	 * Application_user_profile
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param application_user Identificador del Usuario de la Aplicacion
+	 * @param profile Identificador del Perfil
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertApplication_user_profile(Integer application_user, Integer profile)
+	throws SQLException {
+		return super.insertApplication_user_profile( 1, application_user, profile );
 	}
 
 	/**
@@ -169,6 +206,33 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	protected int insertInvoice_tax(Integer invoice_detail, Short tax_type, Double percentage, Double surcharge, Double quota, Double surcharge_quota, Short vat_deduction_type, Short withholding_type, Double deductible_quota)
 	throws SQLException {
 		return super.insertInvoice_tax( 1, invoice_detail, tax_type, percentage, surcharge, quota, surcharge_quota, vat_deduction_type, withholding_type, deductible_quota );
+	}
+
+	/**
+	 * Reservation_request_guest
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param reservation_request Identificador de la Solicitud de Reserva
+	 * @param guest_index Numero de Huesped
+	 * @param name Nombre
+	 * @param surname Apellidos
+	 * @param email Email
+	 * @param phone Telefono
+	 * @param address Direccion
+	 * @param zip Codigo postal
+	 * @param city Ciudad
+	 * @param province Provincia
+	 * @param country Pais
+	 * @param creation_user Usuario de creacion
+	 * @param creation_date Fecha de creacion
+	 * @param modification_user Usuario de modificacion
+	 * @param modification_date Fecha de modificacion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertReservation_request_guest(Integer reservation_request, Short guest_index, String name, String surname, String email, String phone, String address, String zip, String city, String province, String country, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
+	throws SQLException {
+		return super.insertReservation_request_guest( 1, reservation_request, guest_index, name, surname, email, phone, address, zip, city, province, country, creation_user, creation_date, modification_user, modification_date );
 	}
 
 	/**
@@ -258,6 +322,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertCost_profile( 1, description, cost );
 	}
 
+
 	/**
 	 * Feature
 	 * @param id Identificador unico
@@ -277,8 +342,8 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param type Tipo de Nomina
 	 * @param contract Contrato
-	 * @param start_date Fecha de inicio liquidacin
-	 * @param end_date Fecha de finalizacion liquidacin
+	 * @param start_date Fecha de inicio liquidaci?n
+	 * @param end_date Fecha de finalizacion liquidaci?n
 	 * @param enterprise_name Nombre de la empresa
 	 * @param enterprise_address Domicilio de la empresa
 	 * @param enterprise_document Numero de Documento de la Empresa
@@ -287,16 +352,16 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param social_security_number Numero de la seguridad social
 	 * @param employee_document Numero de Documento de la Persona
 	 * @param seniority_date Fecha de antiguedad
-	 * @param quote_group Grupo de Cotizacin
+	 * @param quote_group Grupo de Cotizaci?n
 	 * @param category Categoria o grupo profesional
-	 * @param registration Nmero libro de matricula
+	 * @param registration N?mero libro de matricula
 	 * @param time_units total dias/horas
 	 * @param total_payment Total devengado
 	 * @param total_deduction Total a deducir
 	 * @param total_liquid Liquido total a percibir
 	 * @param total_enterprise Cuota total de la empresa
-	 * @param issue_date Fecha de emisin
-	 * @param remuneration Remuneracin mensual
+	 * @param issue_date Fecha de emisi?n
+	 * @param remuneration Remuneraci?n mensual
 	 * @param pro_ext_base Base prorraterreada de pagas extras
 	 * @param it_base Base de IT
 	 * @param raw_cgc_base Base efectiva de cotizacion por contingencias comunes 
@@ -304,11 +369,11 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param hextra_base Base de cotizacion adicional por horas extraordinarias estructurales
 	 * @param non_hextra_base Base de cotizacion adicional por horas extraordinarias no estructurales
 	 * @param cgp_base Base de cotizacion por contingencias profesionales
-	 * @param money_irpf_base Salario en dinero sujeto a retencin I.R.P.F
-	 * @param inkind_irpf_base Salario en especie sujeto a retencin I.R.P.F
-	 * @param irpf_base Base sujeta a retencin I.R.P.F
+	 * @param money_irpf_base Salario en dinero sujeto a retenci?n I.R.P.F
+	 * @param inkind_irpf_base Salario en especie sujeto a retenci?n I.R.P.F
+	 * @param irpf_base Base sujeta a retenci?n I.R.P.F
 	 * @param social_security_contributions Aportaciones a la Seguridad Social
-	 * @param total_irpf Total retencin aplicada 
+	 * @param total_irpf Total retenci?n aplicada 
 	 * @param charge_date Fecha de cobro
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -354,14 +419,13 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param name Nombre de la Firma
 	 * @param signature Texto de la Firma de la Cuenta de Correo
-	 * @param source Origen de la Firma
-	 * @param source_id Identificador del origen de la Firma
+	 * @param user_id Identificador del Usuario
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSignature(String name, String signature, Short source, Integer source_id)
+	protected int insertSignature(String name, String signature, Integer user_id)
 	throws SQLException {
-		return super.insertSignature( 1, name, signature, source, source_id );
+		return super.insertSignature( 1, name, signature, user_id );
 	}
 
 	/**
@@ -376,6 +440,20 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	protected int insertUser_scope(Integer user_id, Integer scope)
 	throws SQLException {
 		return super.insertUser_scope( 1, user_id, scope );
+	}
+
+	/**
+	 * Contact_detail
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param contact_group Identificador del Grupo de Contactos
+	 * @param contact Identificador del Contacto
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertContact_detail(Integer contact_group, Integer contact)
+	throws SQLException {
+		return super.insertContact_detail( 1, contact_group, contact );
 	}
 
 	/**
@@ -419,12 +497,14 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param start_time Fecha-hora de apertura
 	 * @param end_time Fecha-hora de cierre
 	 * @param initial_amount Efectivo inicial
+	 * @param remarks Observaciones del turno
+	 * @param invoice Identificador de la Factura
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertPos_shift(Integer pos, Short shift, Integer user, Timestamp start_time, Timestamp end_time, Double initial_amount)
+	protected int insertPos_shift(Integer pos, Short shift, Integer user, Timestamp start_time, Timestamp end_time, Double initial_amount, String remarks, Integer invoice)
 	throws SQLException {
-		return super.insertPos_shift( 1, pos, shift, user, start_time, end_time, initial_amount );
+		return super.insertPos_shift( 1, pos, shift, user, start_time, end_time, initial_amount, remarks, invoice );
 	}
 
 	/**
@@ -589,10 +669,10 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param salary Recibo del pago de salarios
-	 * @param type Tipo de Percepcin Salarial
+	 * @param type Tipo de Percepci?n Salarial
 	 * @param payment_concept Codigo del concepto
 	 * @param description Descripcion
-	 * @param expression Frmula
+	 * @param expression F?rmula
 	 * @param amount Importe
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -618,7 +698,6 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	throws SQLException {
 		return super.insertContract_data( 1, name, contract, expression, start_date, end_date );
 	}
-
 
 	/**
 	 * Enterprise_data
@@ -664,18 +743,33 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Mk_action
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campaa
+	 * @param campaign Identificador de la Campa?a
 	 * @param media_type Tipo de contacto de la Accion
 	 * @param start_date Fecha de inicio
 	 * @param end_date Fecha de finalizacion
 	 * @param survey Identificador del Cuestionario
 	 * @param template Identificador de la Plantilla
+	 * @param description Descripcion de la Accion
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertMk_action(Integer campaign, Integer media_type, Timestamp start_date, Timestamp end_date, Integer survey, Integer template)
+	protected int insertMk_action(Integer campaign, Integer media_type, Timestamp start_date, Timestamp end_date, Integer survey, Integer template, String description)
 	throws SQLException {
-		return super.insertMk_action( 1, campaign, media_type, start_date, end_date, survey, template );
+		return super.insertMk_action( 1, campaign, media_type, start_date, end_date, survey, template, description );
+	}
+
+	/**
+	 * Profile_action_denied
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param profile Identificador del Perfil
+	 * @param action_id Identificador de la Accion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertProfile_action_denied(Integer profile, Integer action_id)
+	throws SQLException {
+		return super.insertProfile_action_denied( 1, profile, action_id );
 	}
 
 	/**
@@ -780,7 +874,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param balance Identificador del Balance
 	 * @param code Codigo del Detalle en el Balance
-	 * @param description Descripcin del detalle de balance
+	 * @param description Descripci?n del detalle de balance
 	 * @param accounts Cuentas separadas por comas, que forman el acumulado.
 	 * @param sortKey Orden el que aparecera en el listado.
 	 * @param title 
@@ -940,6 +1034,28 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	/**
+	 * Fs_mod349
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param year Ejercicio de la Declaracion
+	 * @param period Periodo de la Declaracion
+	 * @param administration Administracion
+	 * @param comments Comentarios de la Declaracion
+	 * @param status Estado de la Declaracion
+	 * @param security_level Nivel de seguridad
+	 * @param complementary Declaracion complementaria
+	 * @param replacement Declaracion sustitutiva
+	 * @param number Numero de Declaracion
+	 * @param replaced_number Numero de Declaracion complementada o sustituida
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertFs_mod349(Integer year, Short period, Short administration, String comments, Short status, Short security_level, Boolean complementary, Boolean replacement, Integer number, Integer replaced_number)
+	throws SQLException {
+		return super.insertFs_mod349( 1, year, period, administration, comments, status, security_level, complementary, replacement, number, replaced_number );
+	}
+
+	/**
 	 * Salary_bonus
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
@@ -976,9 +1092,9 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 
 	/**
 	 * Process_task
-	 * @param id Identificador unico de la Relacion entre Campaas, Actividades y Tareas
+	 * @param id Identificador unico de la Relacion entre Campa?as, Actividades y Tareas
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campaa
+	 * @param campaign Identificador de la Campa?a
 	 * @param process_detail Identificador del Detalle de Proceso
 	 * @param task Identificador de la Tarea
 	 * @returns auto-generated key
@@ -995,12 +1111,13 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param expression Importe
 	 * @param description Descripcion
+	 * @param type Tipo de Bonificacion Salarial
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertBonus_concept(String expression, String description)
+	protected int insertBonus_concept(String expression, String description, Short type)
 	throws SQLException {
-		return super.insertBonus_concept( 1, expression, description );
+		return super.insertBonus_concept( 1, expression, description, type );
 	}
 
 	/**
@@ -1087,12 +1204,27 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertAction_entry( 1, executionDate, action_id, session_id );
 	}
 
+	/**
+	 * Absence
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param course_alumn Identificador del CursoAlumno
+	 * @param absence_date Fecha de la Ausencia
+	 * @param comments Comentarios de la Ausencia
+	 * @param evaluation Numero de Evaluacion en que se produjo la Ausencia
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertAbsence(Integer course_alumn, Date absence_date, String comments, Short evaluation)
+	throws SQLException {
+		return super.insertAbsence( 1, course_alumn, absence_date, comments, evaluation );
+	}
 
 	/**
 	 * System_payment
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Percepcin Salarial
+	 * @param type Tipo de Percepci?n Salarial
 	 * @param payment_concept Identificador unico del concepto
 	 * @param description Descripcion
 	 * @param description_decorable 
@@ -1109,6 +1241,21 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	protected int insertSystem_payment(Short type, Integer payment_concept, String description, Short description_decorable, String expression, String irpf_expression, String quote_expression, Date start_date, Short month, Date end_date, Short salary_type)
 	throws SQLException {
 		return super.insertSystem_payment( 1, type, payment_concept, description, description_decorable, expression, irpf_expression, quote_expression, start_date, month, end_date, salary_type );
+	}
+
+	/**
+	 * Application_user
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param user_id Identificador del Usuario
+	 * @param domain_application Identificador de la Aplicacion del Dominio
+	 * @param active Indica si la Aplicacion del Dominio esta activo o no
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertApplication_user(Integer user_id, Integer domain_application, Boolean active)
+	throws SQLException {
+		return super.insertApplication_user( 1, user_id, domain_application, active );
 	}
 
 	/**
@@ -1176,10 +1323,9 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Project_reservation
 	 * @param project Identificador del Proyecto
 	 * @param domain Identificador del Dominio
-	 * @param hotel Identificador del Hotel
+	 * @param hotel Identificador del Hotel de Produccion
+	 * @param hotel_reservation Identificador del Hotel de la Reserva
 	 * @param code Localizador de la Reserva
-	 * @param creation_date Fecha de creacion
-	 * @param modification_date Fecha de modificacion
 	 * @param start_date Fecha de entrada
 	 * @param start_time Hora de entrada
 	 * @param end_date Fecha de salida
@@ -1201,12 +1347,19 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param remarks Observaciones
 	 * @param crs Indica si el origen de la Reserva es un CRS
 	 * @param crs_code Codigo de la Reserva en el CRS
+	 * @param advance Anticipo
+	 * @param advance_invoiced Indica si el anticipo esta Facturado
+	 * @param check_status Estado de registro en el Hotel
 	 * @param status Estado de la Reserva
+	 * @param creation_user Usuario de creacion
+	 * @param creation_date Fecha de creacion
+	 * @param modification_user Usuario de modificacion
+	 * @param modification_date Fecha de modificacion
 	 * @throws SQLException
 	*/
-	protected void insertProject_reservation(Integer project, Integer hotel, String code, Timestamp creation_date, Timestamp modification_date, Date start_date, Timestamp start_time, Date end_date, Timestamp end_time, Integer seller, Integer agency, Double agency_commission_percent, Double agency_commission_amount, Boolean agency_rebate, Integer company, Double discount_percent, Double discount_amount, Short booking_holder, Double taxable_base, Double vat_quota, Double other_tax_quota, Double total, String comments, String remarks, Boolean crs, String crs_code, Short status)
+	protected void insertProject_reservation(Integer project, Integer hotel, Integer hotel_reservation, String code, Date start_date, Timestamp start_time, Date end_date, Timestamp end_time, Integer seller, Integer agency, Double agency_commission_percent, Double agency_commission_amount, Boolean agency_rebate, Integer company, Double discount_percent, Double discount_amount, Short booking_holder, Double taxable_base, Double vat_quota, Double other_tax_quota, Double total, String comments, String remarks, Boolean crs, String crs_code, Double advance, Boolean advance_invoiced, Short check_status, Short status, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
 	throws SQLException {
-		 super.insertProject_reservation( project, 1, hotel, code, creation_date, modification_date, start_date, start_time, end_date, end_time, seller, agency, agency_commission_percent, agency_commission_amount, agency_rebate, company, discount_percent, discount_amount, booking_holder, taxable_base, vat_quota, other_tax_quota, total, comments, remarks, crs, crs_code, status );
+		 super.insertProject_reservation( project, 1, hotel, hotel_reservation, code, start_date, start_time, end_date, end_time, seller, agency, agency_commission_percent, agency_commission_amount, agency_rebate, company, discount_percent, discount_amount, booking_holder, taxable_base, vat_quota, other_tax_quota, total, comments, remarks, crs, crs_code, advance, advance_invoiced, check_status, status, creation_user, creation_date, modification_user, modification_date );
 	}
 
 	/**
@@ -1295,7 +1448,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param line Numero de linea de Condicion
 	 * @param name Nombre de la Condicion Comercial
 	 * @param description Descripcion de la Condicion Comercial
-	 * @param term_general Indica si la Condicin es particular o general
+	 * @param term_general Indica si la Condici?n es particular o general
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -1346,6 +1499,20 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	protected int insertRsegment(Integer registry, Integer segment)
 	throws SQLException {
 		return super.insertRsegment( 1, registry, segment );
+	}
+
+	/**
+	 * Domain_application_module
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param domain_application Identificador de la Aplicacion del Dominio
+	 * @param module Modulo de la Aplicacion del Dominio
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertDomain_application_module(Integer domain_application, Short module)
+	throws SQLException {
+		return super.insertDomain_application_module( 1, domain_application, module );
 	}
 
 	/**
@@ -1412,7 +1579,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param first_surname Primer apellido
 	 * @param second_surname Segundo apellido
 	 * @param ss_number Numero seguridad social
-	 * @param quote_group Grupo de Cotización
+	 * @param quote_group Grupo de Cotizaci
 	 * @param contract_type Tipo de contrato
 	 * @param contract_duration Duracion contrato
 	 * @param contract_duration_indicator Indicador duracion contrato
@@ -1456,7 +1623,19 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertContract_batch( 1, date, red_notify_date, red_notify_id, red_response_date, red_response_id, status );
 	}
 
-
+	/**
+	 * Quality_skill
+	 * @param id Identificador unico de la Aptitud Calidad
+	 * @param domain Identificador del Dominio
+	 * @param code Codigo de la Aptitud Calidad
+	 * @param description Descripcion de la Aptitud Calidad
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertQuality_skill(String code, String description)
+	throws SQLException {
+		return super.insertQuality_skill( 1, code, description );
+	}
 
 	/**
 	 * Balance
@@ -1473,6 +1652,21 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertBalance( 1, name, removable, type );
 	}
 
+	/**
+	 * Qualification
+	 * @param id Identificador unico de la Calificacion
+	 * @param domain Identificador del Dominio
+	 * @param code Codigo de la Calificacion
+	 * @param description Descripcion de la Calificacion
+	 * @param min_value Limite inferior de la Calificacion
+	 * @param max_value Limite superior de la Calificacion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertQualification(String code, String description, Double min_value, Double max_value)
+	throws SQLException {
+		return super.insertQualification( 1, code, description, min_value, max_value );
+	}
 
 	/**
 	 * Tax_detail
@@ -1534,6 +1728,21 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertActivity_type( 1, description, project_type, active );
 	}
 
+	/**
+	 * Course_evaluation
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param course Identificador de Curso
+	 * @param quality_skill Identificador de Aptitudes Calidad
+	 * @param evaluation Evaluaciones
+	 * @param quantity Cantidad
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertCourse_evaluation(Integer course, Integer quality_skill, Double evaluation, Integer quantity)
+	throws SQLException {
+		return super.insertCourse_evaluation( 1, course, quality_skill, evaluation, quantity );
+	}
 
 	/**
 	 * Irpf_data
@@ -1550,16 +1759,16 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param start_date Fecha inicio del modelo
 	 * @param end_date Fecha fin del modelo
 	 * @param fiscal_exclusion Exclusion a la obligacion de tributar
-	 * @param issue_date Fecha de emisin
-	 * @param annual_remuneration Retribuciones totales (dinerarias y en especie). Importe ntegro
+	 * @param issue_date Fecha de emisi?n
+	 * @param annual_remuneration Retribuciones totales (dinerarias y en especie). Importe ?ntegro
 	 * @param irregular_18_2_reduction Reducciones por irregularidad ( Atr. 18.2 LIRPF)
-	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Atr. 18.3: Disposiciones transitorias 11 y 12  de la LIRPF)
+	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Atr. 18.3: Disposiciones transitorias 11? y 12 ? de la LIRPF)
 	 * @param deduccibles_expenses Gastos deducibles ( Atr 19.2, letras a, b y c de la LINRPF: Seguridad Social, Mutualidades ...)
-	 * @param spousal_support Pension compensatoria a favor del cnyuge. Importe fijado judicialmente
+	 * @param spousal_support Pension compensatoria a favor del c?nyuge. Importe fijado judicialmente
 	 * @param food_annuity Anualidades por alimentos en favor de los hijos. Importe fijado judicialmente
-	 * @param deduct_home_loan Comunicacin de pagos por la adquisin o rehabilitacin de la vivienda habitual utilizando financiacin ajena
-	 * @param request_irpf Tipo de retencin solicitado
-	 * @param contract_type Contrato o relacin
+	 * @param deduct_home_loan Comunicaci?n de pagos por la adquisi?n o rehabilitaci?n de la vivienda habitual utilizando financiaci?n ajena
+	 * @param request_irpf Tipo de retenci?n solicitado
+	 * @param contract_type Contrato o relaci?n
 	 * @param ceuta_melilla Los datos anteriores corresponden a rendimientos obtenidos en Ceuta o Melilla
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -1597,7 +1806,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param discount_expr Descuentos de la Cuota
 	 * @param initial_date Fecha de inicio de la Cuota
 	 * @param final_date Fecha de finalizacion de la Cuota
-	 * @param billing_date Proxima fecha de facturacin de la Cuota
+	 * @param billing_date Proxima fecha de facturaci?n de la Cuota
 	 * @param period Periodo de facturacion en meses de la Cuota
 	 * @param security_level Nivel de seguridad de la Cuota
 	 * @param workplace Identificador del Centro de Trabajo
@@ -1753,6 +1962,18 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertCommission_category( 1, commission, category, quantity, rate );
 	}
 
+	/**
+	 * Academic_year
+	 * @param id Identificador unico del A?o Academico
+	 * @param domain Identificador del Dominio
+	 * @param description Descripcion del A?o Academico
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertAcademic_year(String description)
+	throws SQLException {
+		return super.insertAcademic_year( 1, description );
+	}
 
 	/**
 	 * Bank_concept_account
@@ -1791,7 +2012,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param type Tipo de Seguimiento
 	 * @param description Descripcion del Seguimiento
 	 * @param pm_type_detail Identificador del Detalle por Tipo de Forma de Pago
-	 * @param rbank Identificador de la Cuenta Bancaria de la Compaia
+	 * @param rbank Identificador de la Cuenta Bancaria de la Compa?ia
 	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
 	 * @param amount Importe del Seguimiento
 	 * @param recorded Indica si esta contabilizado o no
@@ -1843,7 +2064,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico del Detalle del Pedido de Venta
 	 * @param domain Identificador del Dominio
 	 * @param sales Identificador del Pedido de Venta
-	 * @param line Numero de lnea del Detalle dentro del Pedido
+	 * @param line Numero de l?nea del Detalle dentro del Pedido
 	 * @param item Identificador del Articulo del Detalle de Pedido
 	 * @param description Descripcion del Detalle de Pedido
 	 * @param quantity Cantidad del Detalle de Pedido
@@ -1862,17 +2083,67 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	/**
+	 * Project_attach
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param project Identificador del Proyecto
+	 * @param mimeType Mime Type del Archivo Adjunto
+	 * @param description Descripcion del Archivo Adjunto
+	 * @param data Archivo Adjunto en binario
+	 * @param attach_date Fecha del Archivo Adjunto
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertProject_attach(Integer project, Short mimeType, String description, Blob data, Date attach_date)
+	throws SQLException {
+		return super.insertProject_attach( 1, project, mimeType, description, data, attach_date );
+	}
+
+	/**
+	 * Contact_data
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param name Nombre
+	 * @param surname Apellido
+	 * @param address Direccion
+	 * @param postalCode Codigo postal
+	 * @param city Localidad
+	 * @param contactState Estado
+	 * @param country Pais
+	 * @param phone Telefono
+	 * @param cellularPhone Movil
+	 * @param fax Fax
+	 * @param email Email
+	 * @param note Nota
+	 * @param organization Organizaci?n
+	 * @param title Cargo
+	 * @param organizationAddress Direcci?n de la Organizaci?n
+	 * @param organizationPostalCode Codigo postal de la Organizaci?n
+	 * @param organizationCity Localidad de la Organizaci?n
+	 * @param organizationState Estado de la Organizaci?n
+	 * @param organizationPhone Telefono de la Organizaci?n
+	 * @param organizationFax Fax de la Organizaci?n
+	 * @param web Web
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertContact_data(String name, String surname, String address, String postalCode, String city, String contactState, String country, String phone, String cellularPhone, String fax, String email, String note, String organization, String title, String organizationAddress, String organizationPostalCode, String organizationCity, String organizationState, String organizationPhone, String organizationFax, String web)
+	throws SQLException {
+		return super.insertContact_data( 1, name, surname, address, postalCode, city, contactState, country, phone, cellularPhone, fax, email, note, organization, title, organizationAddress, organizationPostalCode, organizationCity, organizationState, organizationPhone, organizationFax, web );
+	}
+
+	/**
 	 * System_deduction
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Deduccin
+	 * @param type Tipo de Deducci?n
 	 * @param deduction_concept Identificador unico del concepto
 	 * @param description Descripcion
 	 * @param description_decorable 
-	 * @param expression Frmula
+	 * @param expression F?rmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
-	 * @param month Mes de la deduccin
+	 * @param month Mes de la deducci?n
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -2006,12 +2277,28 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param pymnt_days Dias de pago
 	 * @param bank Identificador de la Entidad Bancaria
 	 * @param bank_account Numero de cuenta en la Entidad Bancaria
+	 * @param email_communication Indica si se ha comunicado a traves de email
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertPurchase(Integer project, Integer supplier, String series, Integer number, Integer address, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
+	protected int insertPurchase(Integer project, Integer supplier, String series, Integer number, Integer address, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account, Boolean email_communication)
 	throws SQLException {
-		return super.insertPurchase( 1, project, supplier, series, number, address, discount_expr, issue_date, pay_method, document_type, security_level, status, comments, remarks, workplace, scope, number_of_pymnts, days_to_first_pymnt, days_between_pymnts, pymnt_days, bank, bank_account );
+		return super.insertPurchase( 1, project, supplier, series, number, address, discount_expr, issue_date, pay_method, document_type, security_level, status, comments, remarks, workplace, scope, number_of_pymnts, days_to_first_pymnt, days_between_pymnts, pymnt_days, bank, bank_account, email_communication );
+	}
+
+	/**
+	 * Domain_application
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param application Identificador de la Aplicacion
+	 * @param active Indica si la Aplicacion del Dominio esta activa o no
+	 * @param audit_level Nivel de auditoria
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertDomain_application(Integer application, Boolean active, Short audit_level)
+	throws SQLException {
+		return super.insertDomain_application( 1, application, active, audit_level );
 	}
 
 	/**
@@ -2047,6 +2334,21 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	protected int insertBank_statement_link(Integer bank_statement, Short source, Integer source_id, Date source_date, Double amount, Short status, Integer linked_bank_statement_link)
 	throws SQLException {
 		return super.insertBank_statement_link( 1, bank_statement, source, source_id, source_date, amount, status, linked_bank_statement_link );
+	}
+
+	/**
+	 * Course_alumn
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param course Identificador del Curso
+	 * @param customer Identificador del Alumno
+	 * @param status Estado del alumno en el curso
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertCourse_alumn(Integer course, Integer customer, Short status)
+	throws SQLException {
+		return super.insertCourse_alumn( 1, course, customer, status );
 	}
 
 
@@ -2110,7 +2412,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param extra_charge Recargo
 	 * @param delay_interest Intereses de demora
 	 * @param total_tax_debt Total deuda tributaria
-	 * @param rbank Banco de la Compaia
+	 * @param rbank Banco de la Compa?ia
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -2175,6 +2477,36 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertRecord_data( 1, registry, creation_date, description, notary, number, record_date, volume, section, page, sheet, registration, attach );
 	}
 
+	/**
+	 * Alumn_loan
+	 * @param id Identificador unico del Prestamo
+	 * @param domain Identificador del Dominio
+	 * @param customer Alumno al que se le realizo el Prestamo
+	 * @param material Material prestado
+	 * @param loan_date Fecha del Prestamo
+	 * @param end_date Fecha devolucion del material
+	 * @param comments Observaciones
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertAlumn_loan(Integer customer, String material, Date loan_date, Date end_date, String comments)
+	throws SQLException {
+		return super.insertAlumn_loan( 1, customer, material, loan_date, end_date, comments );
+	}
+
+	/**
+	 * Profile
+	 * @param id Identificador unico
+	 * @param name Nombre del Perfil
+	 * @param application Identificador de la Aplicacion
+	 * @param domain Identificador del Dominio
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertProfile(String name, Integer application)
+	throws SQLException {
+		return super.insertProfile( name, application, 1 );
+	}
 
 	/**
 	 * Calendar
@@ -2207,7 +2539,6 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	throws SQLException {
 		return super.insertCalendar( 1, holiday, anual_hours, description, comments, monday, monday_hours, tuesday, tuesday_hours, wednesday, wednesday_hours, thursday, thursday_hours, friday, friday_hours, saturday, saturday_hours, sunday, sunday_hours, generic, calendar );
 	}
-
 
 	/**
 	 * Asset_activity
@@ -2247,12 +2578,13 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param city Ciudad
 	 * @param province Provincia
 	 * @param country Pais
+	 * @param barcode Codigo de pulsera
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertProject_reservation_guest(Integer project_reservation, Short guest_index, String name, String surname, String treatment, String document, Short document_type, String document_country, String email, String phone, String address, String zip, String city, String province, String country)
+	protected int insertProject_reservation_guest(Integer project_reservation, Short guest_index, String name, String surname, String treatment, String document, Short document_type, String document_country, String email, String phone, String address, String zip, String city, String province, String country, String barcode)
 	throws SQLException {
-		return super.insertProject_reservation_guest( 1, project_reservation, guest_index, name, surname, treatment, document, document_type, document_country, email, phone, address, zip, city, province, country );
+		return super.insertProject_reservation_guest( 1, project_reservation, guest_index, name, surname, treatment, document, document_type, document_country, email, phone, address, zip, city, province, country, barcode );
 	}
 
 	/**
@@ -2295,7 +2627,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param description Descripcion
 	 * @param expression Expresion
 	 * @param type Tipo de Costo
-	 * @param code Cdigo
+	 * @param code C?digo
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -2312,7 +2644,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param issue_date Fecha de emision de la Remesa
 	 * @param type Tipo de Remesa
 	 * @param status Estado de la Remesa
-	 * @param rbank Banco de la Compaia utilizado en la Remesa
+	 * @param rbank Banco de la Compa?ia utilizado en la Remesa
 	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
 	 * @param payment Indica si es un pago o un cobro
 	 * @param security_level Nivel de seguridad
@@ -2401,14 +2733,13 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertPay_method( 1, name, type );
 	}
 
-
 	/**
 	 * Workactivity
 	 * @param id Identificador unico de la Actividad
 	 * @param domain Identificador del Dominio
 	 * @param description Descripcion de la Actividad
 	 * @param workplace Identificador del Centro de Trabajo
-	 * @param enterpriseCCC Cuenta de Cotizacin asociada a la Actividad
+	 * @param enterpriseCCC Cuenta de Cotizaci?n asociada a la Actividad
 	 * @param active Indica si la Actividad esta activa o no
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -2417,7 +2748,6 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	throws SQLException {
 		return super.insertWorkactivity( 1, description, workplace, enterpriseCCC, active );
 	}
-
 
 	/**
 	 * Project_commercial
@@ -2438,6 +2768,19 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 
+	/**
+	 * Course_observation
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param course Identificador de Curso
+	 * @param observation Observaciones
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertCourse_observation(Integer course, String observation)
+	throws SQLException {
+		return super.insertCourse_observation( 1, course, observation );
+	}
 
 	/**
 	 * Salary_data
@@ -2456,6 +2799,53 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	/**
+	 * Reservation_request_room
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param reservation_request Identificador de la Solicitud de Reserva
+	 * @param room_index Numero de Habitacion
+	 * @param units Numero de Habitaciones
+	 * @param item Identificador del Tipo de Habitacion
+	 * @param adults Numero de adultos
+	 * @param children Numero de ni?os
+	 * @param babies Numero de bebes
+	 * @param crs_code Codigo de Reserva en CRS
+	 * @param tariff_code Codigo de Tarifa
+	 * @param tariff_description Descripcion de Tarifa
+	 * @param inventory_code Codigo de Servicio
+	 * @param room_code Codigo de Habitacion
+	 * @param room_description Descripcion de Habitacion
+	 * @param meal_plan Tipo de regimen
+	 * @param daily_price Importe Diario
+	 * @param total_price Importe Total
+	 * @param cancel_penalty Penalizaciones por cancelacion
+	 * @param creation_user Usuario de creacion
+	 * @param creation_date Fecha de creacion
+	 * @param modification_user Usuario de modificacion
+	 * @param modification_date Fecha de modificacion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertReservation_request_room(Integer reservation_request, Short room_index, Short units, Integer item, Integer adults, Integer children, Integer babies, String crs_code, String tariff_code, String tariff_description, String inventory_code, String room_code, String room_description, String meal_plan, Double daily_price, Double total_price, String cancel_penalty, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
+	throws SQLException {
+		return super.insertReservation_request_room( 1, reservation_request, room_index, units, item, adults, children, babies, crs_code, tariff_code, tariff_description, inventory_code, room_code, room_description, meal_plan, daily_price, total_price, cancel_penalty, creation_user, creation_date, modification_user, modification_date );
+	}
+
+	/**
+	 * Profile_role
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param profile Identificador del Perfil
+	 * @param application_role Identificador del Role de la Aplicacion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertProfile_role(Integer profile, Integer application_role)
+	throws SQLException {
+		return super.insertProfile_role( 1, profile, application_role );
+	}
+
+	/**
 	 * Survey_response
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
@@ -2464,7 +2854,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param survey Identificador del Cuestionario
 	 * @param target Identificador del Cliente Potencial
 	 * @param user Identificador del Usuario
-	 * @param campaign_action Identificador de la Accion de la Campaa
+	 * @param campaign_action Identificador de la Accion de la Campa?a
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -2473,6 +2863,20 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertSurvey_response( 1, creationDate, response_date, survey, target, user, campaign_action );
 	}
 
+	/**
+	 * Evaluation_observation
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param alumn Identificador de Alumno
+	 * @param evaluation Numero de Evaluacion
+	 * @param comments Comentarios
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertEvaluation_observation(Integer alumn, Short evaluation, String comments)
+	throws SQLException {
+		return super.insertEvaluation_observation( 1, alumn, evaluation, comments );
+	}
 
 	/**
 	 * Person
@@ -2497,7 +2901,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Contract_payment
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Percepcin Salarial
+	 * @param type Tipo de Percepci?n Salarial
 	 * @param contract Contrato
 	 * @param payment_concept Identificador unico del concepto
 	 * @param description Descripcion
@@ -2522,18 +2926,18 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param contract Identificador del contrato
-	 * @param reason Causa de regularizacin
+	 * @param reason Causa de regularizaci?n
 	 * @param effective_date Fecha de entrada en vigor
-	 * @param paid_irpf Retenciones practicadas con anterioridad a la regularizacin.
-	 * @param paid_remuneration Retribuciones ya satisfechas con anterioridad a la regularizacin.
-	 * @param prior_annual_irpf Retenciones anuales anteriores a la regularizacin.
-	 * @param prior_annual_remuneration Retribucines anulaes consideradas con anterioridad a la regularizacin.
-	 * @param prior_base_irpf Base para calcular el tipo de retencin determinado antes de la regularizacin.
-	 * @param prior_irpf Tipo de retencin aplicado antes de la regularizacin.
-	 * @param prior_in_ceuta_melilla Los rendimientos anteriores a la regularizacin fueron obtenidos en Ceuta o Melilla
-	 * @param prior_minimun_personal_family Mnimo personal y familiar para calcular el tipo de retencin determinado antes de la regularizacin.
-	 * @param prior_deduct_home_loan En algn momento antes de la regularizacin se aplico la minoracin por pagos por la adquisin o rehabilitacin de la vivienda
-	 * @param prior_deduct_home_loan_amount Importe de la minoracin por pagos por la adquisin o rehabilitacin de la vivienda antes de la regularizacin
+	 * @param paid_irpf Retenciones practicadas con anterioridad a la regularizaci?n.
+	 * @param paid_remuneration Retribuciones ya satisfechas con anterioridad a la regularizaci?n.
+	 * @param prior_annual_irpf Retenciones anuales anteriores a la regularizaci?n.
+	 * @param prior_annual_remuneration Retribucines anulaes consideradas con anterioridad a la regularizaci?n.
+	 * @param prior_base_irpf Base para calcular el tipo de retenci?n determinado antes de la regularizaci?n.
+	 * @param prior_irpf Tipo de retenci?n aplicado antes de la regularizaci?n.
+	 * @param prior_in_ceuta_melilla Los rendimientos anteriores a la regularizaci?n fueron obtenidos en Ceuta o Melilla
+	 * @param prior_minimun_personal_family M?nimo personal y familiar para calcular el tipo de retenci?n determinado antes de la regularizaci?n.
+	 * @param prior_deduct_home_loan En alg?n momento antes de la regularizaci?n se aplico la minoraci?n por pagos por la adquisi?n o rehabilitaci?n de la vivienda
+	 * @param prior_deduct_home_loan_amount Importe de la minoraci?n por pagos por la adquisi?n o rehabilitaci?n de la vivienda antes de la regularizaci?n
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -2550,7 +2954,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param description Descripcion
 	 * @param start_date Fecha de inicio de aplicacion
 	 * @param due_date Fecha final de aplicacion
-	 * @param rbank Identificador de Banco de la Compaia
+	 * @param rbank Identificador de Banco de la Compa?ia
 	 * @param amount Importe
 	 * @param payment_day Dia de pago
 	 * @param january Aplicable en enero
@@ -2592,6 +2996,19 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	/**
+	 * Tag
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param name Nombre de la Etiqueta
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertTag(String name)
+	throws SQLException {
+		return super.insertTag( 1, name );
+	}
+
+	/**
 	 * Geotree
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
@@ -2612,14 +3029,15 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param item Identificador de Articulo
 	 * @param supplier Identificador de Proveedor
 	 * @param code Codigo del Producto en el Proveedor
+	 * @param price Precio del Producto en el Proveedor
 	 * @param priority Prioridad del Proveedor
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertItem_supplier(Integer item, Integer supplier, String code, Short priority, Integer workplace)
+	protected int insertItem_supplier(Integer item, Integer supplier, String code, Double price, Short priority, Integer workplace)
 	throws SQLException {
-		return super.insertItem_supplier( 1, item, supplier, code, priority, workplace );
+		return super.insertItem_supplier( 1, item, supplier, code, price, priority, workplace );
 	}
 
 	/**
@@ -2651,6 +3069,28 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertSurvey_question( 1, survey, question, position );
 	}
 
+	/**
+	 * Course
+	 * @param id Identificador unico del Curso
+	 * @param domain Identificador del Dominio
+	 * @param code Alias del Curso
+	 * @param description Descripcion del Curso
+	 * @param start_date Fecha inicio del Curso
+	 * @param end_date Fecha fin del Curso
+	 * @param academic_year A?o Academico del Curso
+	 * @param subject Materia del Curso
+	 * @param level Nivel del Curso
+	 * @param workplace Identificador del Centro de Trabajo
+	 * @param alumn_limit Limite de Alumnos del Curso
+	 * @param status Estado del Curso
+	 * @param comments Comentarios sobre el Curso
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertCourse(String code, String description, Date start_date, Date end_date, Integer academic_year, Integer subject, Integer level, Integer workplace, Integer alumn_limit, Short status, String comments)
+	throws SQLException {
+		return super.insertCourse( 1, code, description, start_date, end_date, academic_year, subject, level, workplace, alumn_limit, status, comments );
+	}
 
 	/**
 	 * Stock
@@ -2896,30 +3336,30 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param contract Identificador del contrato
 	 * @param effective_date Fecha de entrada en vigor
-	 * @param base_irpf Base para calcular el tipo de retencin
-	 * @param minimun_personal_family Mnimo personal y familiar para calcular el tipo de retencin
-	 * @param deduct_home_loan_amount Minoracin por pagos de prstamo para vivienda habitual
-	 * @param deduct_80_bis Deduccion Arttculo 80 bis LIRPF
-	 * @param irpf Tipo retencin apliclabe 
+	 * @param base_irpf Base para calcular el tipo de retenci?n
+	 * @param minimun_personal_family M?nimo personal y familiar para calcular el tipo de retenci?n
+	 * @param deduct_home_loan_amount Minoraci?n por pagos de pr?stamo para vivienda habitual
+	 * @param deduct_80_bis Deduccion Artt?culo 80 bis LIRPF
+	 * @param irpf Tipo retenci?n apliclabe 
 	 * @param annual_irpf Importe anual de las retenciones e ingresos a cuenta
-	 * @param annual_remuneration Retribuciones anuales. Importe ntegro
+	 * @param annual_remuneration Retribuciones anuales. Importe ?ntegro
 	 * @param irregular_18_2_reduction Reducciones por irregularidad ( Art. 18.2 LIRPF). Importe
-	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Art. 18.3: DD.TT 11 y 12  de la LIRPF). Importe
+	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Art. 18.3: DD.TT 11? y 12 ? de la LIRPF). Importe
 	 * @param deduccibles_expenses Gastos deducibles. Importe anual
 	 * @param work_remuneration_reduction Reducciones por rendimiento del trabajo 
-	 * @param work_prolongation_reduction Reducciones por prolongacin de la actividad 
+	 * @param work_prolongation_reduction Reducciones por prolongaci?n de la actividad 
 	 * @param work_moving_reduction Reducciones por movilidad geografica 
 	 * @param work_disability_reduction Reducciones por discapacidad 
 	 * @param social_security_pensioner Por ser pensionista de la s. social/cl. Pasivas o desempleado
-	 * @param two_or_more_descendents_min Por tener ms de dos descendientes con derecho a mnimo
-	 * @param spousal_support Pension compensatoria a favor del cnyuge. Importe anual
+	 * @param two_or_more_descendents_min Por tener m?s de dos descendientes con derecho a m?nimo
+	 * @param spousal_support Pension compensatoria a favor del c?nyuge. Importe anual
 	 * @param food_annuity Anualidades por alimentos en favor de los hijos. Importe anual
-	 * @param minimun_personal Mnimo personal
-	 * @param minimun_ascendents Mnimo por descendientes
-	 * @param minimun_descendents Mnimo por descendientes
-	 * @param minimun_disability Mnimo por discapacidad
-	 * @param descendents_minor_3_total Descendientes computados menores de tres aos. Total
-	 * @param descendents_minor_3_entirely Descendientes computados menores de tres aos. Por entero
+	 * @param minimun_personal M?nimo personal
+	 * @param minimun_ascendents M?nimo por descendientes
+	 * @param minimun_descendents M?nimo por descendientes
+	 * @param minimun_disability M?nimo por discapacidad
+	 * @param descendents_minor_3_total Descendientes computados menores de tres a?os. Total
+	 * @param descendents_minor_3_entirely Descendientes computados menores de tres a?os. Por entero
 	 * @param descendents_remainder_total Resto de descendientes computados . Total
 	 * @param descendents_remainder_entirely Resto de descendientes computados . Por entero
 	 * @param descendents_33_65_total Descendientes con discapacidad >= 33% y < 65%. Total
@@ -2928,15 +3368,15 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param descendents_moving_entirely Descendientes con discapacidad, movilidad reducida. Por entero
 	 * @param descendents_65_total Descendientes con discapacidad > 65%. Total
 	 * @param descendents_65_entirely Descendientes con discapacidad > 65%. Por entero
-	 * @param descendents_first Detalle del cmputo de descendientes. Hijo 1
-	 * @param descendents_second Detalle del cmputo de descendientes. Hijo 2
-	 * @param descendents_third Detalle del cmputo de descendientes. Hijo 3
-	 * @param descendents_fourth_subsequent_total Detalle del cmputo de descendientes. Hijo 4 y sucesivos. Total
-	 * @param descendents_fourth_subsequent_entirely Detalle del cmputo de descendientes. Hijo 4 y sucesivos. Por entero
-	 * @param ascendents_minor_75_total Ascendientes computados menores de 75 aos. Total
-	 * @param ascendents_minor_75_entirely Ascendientes computados menores de 75 aos. Por entero
-	 * @param ascendents_mayor_75_total Ascendientes computados mayores de 75 aos. Total
-	 * @param ascendents_mayor_75_entirely Ascendientes computados mayores de 75 aos. Por entero
+	 * @param descendents_first Detalle del c?mputo de descendientes. Hijo 1?
+	 * @param descendents_second Detalle del c?mputo de descendientes. Hijo 2?
+	 * @param descendents_third Detalle del c?mputo de descendientes. Hijo 3?
+	 * @param descendents_fourth_subsequent_total Detalle del c?mputo de descendientes. Hijo 4? y sucesivos. Total
+	 * @param descendents_fourth_subsequent_entirely Detalle del c?mputo de descendientes. Hijo 4? y sucesivos. Por entero
+	 * @param ascendents_minor_75_total Ascendientes computados menores de 75 a?os. Total
+	 * @param ascendents_minor_75_entirely Ascendientes computados menores de 75 a?os. Por entero
+	 * @param ascendents_mayor_75_total Ascendientes computados mayores de 75 a?os. Total
+	 * @param ascendents_mayor_75_entirely Ascendientes computados mayores de 75 a?os. Por entero
 	 * @param ascendents_33_65_total Ascendientes con discapacidad >= 33% y < 65%. Total
 	 * @param ascendents_33_65_entirely Ascendientes con discapacidad >= 33% y < 65%. Por entero
 	 * @param ascendents_moving_total Ascendientes con discapacidad, movilidad reducida. Total
@@ -2970,7 +3410,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param action Identificador de la Accion
 	 * @param target Identificador del Cliente Potencial
-	 * @param status Estado del Cliente Potencial de la Accion de Campaa
+	 * @param status Estado del Cliente Potencial de la Accion de Campa?a
 	 * @param survey_response Identificador de la Respuesta de Cuestionario
 	 * @param comments Comentarios
 	 * @param user Identificador del Usuario
@@ -3008,16 +3448,16 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param endDate Fecha de finalizacion
 	 * @param remote_address IP remota
 	 * @param remote_host Equipo remoto
-	 * @param session_id Identificador web de la sesin
+	 * @param session_id Identificador web de la sesi?n
 	 * @param startDate Fecha de inicio
-	 * @param application_id Identificador de la Aplicacion
+	 * @param application Identificador de la Aplicacion
 	 * @param user_id Identificador del Usuario
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSession(Timestamp endDate, String remote_address, String remote_host, String session_id, Timestamp startDate, Integer application_id, Integer user_id)
+	protected int insertSession(Timestamp endDate, String remote_address, String remote_host, String session_id, Timestamp startDate, Integer application, Integer user_id)
 	throws SQLException {
-		return super.insertSession( 1, endDate, remote_address, remote_host, session_id, startDate, application_id, user_id );
+		return super.insertSession( 1, endDate, remote_address, remote_host, session_id, startDate, application, user_id );
 	}
 
 	/**
@@ -3075,15 +3515,14 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param name Nombre de la Cuenta de Correo
 	 * @param email Cuenta de correo
 	 * @param replyto_mail Email de Respuesta
-	 * @param host Host del servidor de correo
-	 * @param protocol Protocolo utilizado (IMAP)
 	 * @param incoming_host Host del correo entrante
+	 * @param protocol Protocolo utilizado (IMAP)
 	 * @param incoming_port Puerto del correo entrante
-	 * @param incoming_ssl Indica si tiene SSL el correo entrante
+	 * @param incoming_security Seguridad de conexi?n del correo entrante
 	 * @param outgoing_verification Indica si hay autentificacion en el correo saliente
 	 * @param outgoing_host Host del servidor de correo saliente
 	 * @param outgoing_port Puerto del servidor de correo saliente
-	 * @param outgoing_ssl Indica si tiene SSL el correo saliente
+	 * @param outgoing_security Seguridad de conexi?n del correo saliente
 	 * @param mail_username Nombre del usuario
 	 * @param password Clave del usuario
 	 * @param default_account Indica si es la cuenta de correo por defecto
@@ -3093,14 +3532,13 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param spam_folder Ruta de Spam
 	 * @param display_name Mostrar como
 	 * @param signature Identificador de la Firma
-	 * @param source Origen de la Firma
-	 * @param source_id Identificador del origen de la Firma
+	 * @param user_id Identificador del Usuario
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertMail_account(String name, String email, String replyto_mail, String host, String protocol, String incoming_host, Integer incoming_port, Boolean incoming_ssl, Boolean outgoing_verification, String outgoing_host, Integer outgoing_port, Boolean outgoing_ssl, String mail_username, String password, Boolean default_account, String draft_folder, String sent_folder, String trash_folder, String spam_folder, String display_name, Integer signature, Short source, Integer source_id)
+	protected int insertMail_account(String name, String email, String replyto_mail, String incoming_host, String protocol, Integer incoming_port, Short incoming_security, Boolean outgoing_verification, String outgoing_host, Integer outgoing_port, Short outgoing_security, String mail_username, String password, Boolean default_account, String draft_folder, String sent_folder, String trash_folder, String spam_folder, String display_name, Integer signature, Integer user_id)
 	throws SQLException {
-		return super.insertMail_account( 1, name, email, replyto_mail, host, protocol, incoming_host, incoming_port, incoming_ssl, outgoing_verification, outgoing_host, outgoing_port, outgoing_ssl, mail_username, password, default_account, draft_folder, sent_folder, trash_folder, spam_folder, display_name, signature, source, source_id );
+		return super.insertMail_account( 1, name, email, replyto_mail, incoming_host, protocol, incoming_port, incoming_security, outgoing_verification, outgoing_host, outgoing_port, outgoing_security, mail_username, password, default_account, draft_folder, sent_folder, trash_folder, spam_folder, display_name, signature, user_id );
 	}
 
 	/**
@@ -3124,7 +3562,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param project Identificador del Proyecto
 	 * @param series Serie del Albaran
-	 * @param number Nmero del Albaran
+	 * @param number N?mero del Albaran
 	 * @param customer Identificador del Cliente
 	 * @param address Identificador de la Direccion de envio del Albaran
 	 * @param issue_time Fecha de emision del Albaran
@@ -3227,7 +3665,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param prev_deposit Ingresado anteriormente
 	 * @param prev_pay_back Devuelto anteriormente
 	 * @param total_tax_debt Total deuda tributaria
-	 * @param rbank Banco de la Compaia
+	 * @param rbank Banco de la Compa?ia
 	 * @param compensable Compensar o devolver
 	 * @param status Estado de la Declaracion
 	 * @returns auto-generated key
@@ -3238,6 +3676,18 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertFs_vat_declaration( 1, fs_vat, without_activity, administration, percent, operations_volume, quota, prev_year_compensate_quota, done_deposits, done_refunds, extra_charge, delay_interest, compensate, pay_back, deposit, prev_deposit, prev_pay_back, total_tax_debt, rbank, compensable, status );
 	}
 
+	/**
+	 * Course_level
+	 * @param id Identificador unico del Nivel
+	 * @param domain Identificador del Dominio
+	 * @param description Descripcion del Nivel
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertCourse_level(String description)
+	throws SQLException {
+		return super.insertCourse_level( 1, description );
+	}
 
 	/**
 	 * Workplace
@@ -3263,16 +3713,17 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param project_reservation Identificador de la Reserva
 	 * @param room_index Numero de Habitacion
+	 * @param room_code Codigo de Habitacion en origen
 	 * @param item Identificador del Tipo de Habitacion
 	 * @param tariff Identificador de la Tarifa
 	 * @param adults Numero de adultos
-	 * @param children Numero de nios
+	 * @param children Numero de ni?os
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertProject_reservation_room(Integer project_reservation, Short room_index, Integer item, Integer tariff, Integer adults, Integer children)
+	protected int insertProject_reservation_room(Integer project_reservation, Short room_index, String room_code, Integer item, Integer tariff, Integer adults, Integer children)
 	throws SQLException {
-		return super.insertProject_reservation_room( 1, project_reservation, room_index, item, tariff, adults, children );
+		return super.insertProject_reservation_room( 1, project_reservation, room_index, room_code, item, tariff, adults, children );
 	}
 
 	/**
@@ -3304,6 +3755,21 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	/**
+	 * Contact
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param user_id Identificador del Usuario
+	 * @param displayName Mostrar Como
+	 * @param contact_data Identificador de la Informaci?n del Contacto
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertContact(Integer user_id, String displayName, Integer contact_data)
+	throws SQLException {
+		return super.insertContact( 1, user_id, displayName, contact_data );
+	}
+
+	/**
 	 * User_workgroup
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
@@ -3317,6 +3783,21 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertUser_workgroup( 1, user_id, workgroup );
 	}
 
+	/**
+	 * Course_schedule
+	 * @param id Identificador unico del Horario
+	 * @param domain Identificador del Dominio
+	 * @param course Identificador del Curso
+	 * @param day_of_week Dia de la semana
+	 * @param start_time Hora de comienzo
+	 * @param end_time Hora de fin
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertCourse_schedule(Integer course, Short day_of_week, Time start_time, Time end_time)
+	throws SQLException {
+		return super.insertCourse_schedule( 1, course, day_of_week, start_time, end_time );
+	}
 
 	/**
 	 * Rrelationship
@@ -3324,7 +3805,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param registry Identificador de la Persona o Empresa que tiene la Relacion
 	 * @param related_registry Identificador de la Persona o Empresa relacionada
-	 * @param relationship Identificador del Tipo de Relacin
+	 * @param relationship Identificador del Tipo de Relaci?n
 	 * @param comments Comentarios de la Relacion
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -3367,16 +3848,16 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 
 	/**
 	 * Campaign
-	 * @param id Identificador unico de la Campaa
+	 * @param id Identificador unico de la Campa?a
 	 * @param domain Identificador del Dominio
-	 * @param campaign_type Identificador del Tipo de Campaa
-	 * @param description Descripcion de la Campaa
+	 * @param campaign_type Identificador del Tipo de Campa?a
+	 * @param description Descripcion de la Campa?a
 	 * @param process Identificador del Proceso
-	 * @param start_date Fecha de inicio de la Campaa
-	 * @param end_date Fecha de finalizacion de la Campaa
-	 * @param workgroup Grupo de Trabajo supervisor de la Campaa
-	 * @param manual Tipo de Campaa
-	 * @param status Estado de la Campaa
+	 * @param start_date Fecha de inicio de la Campa?a
+	 * @param end_date Fecha de finalizacion de la Campa?a
+	 * @param workgroup Grupo de Trabajo supervisor de la Campa?a
+	 * @param manual Tipo de Campa?a
+	 * @param status Estado de la Campa?a
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -3411,12 +3892,12 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Contract_deduction
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Deduccin
+	 * @param type Tipo de Deducci?n
 	 * @param deduction_concept Identificador unico del concepto
 	 * @param contract Contrato
 	 * @param description Descripcion
 	 * @param description_decorable 
-	 * @param expression Frmula
+	 * @param expression F?rmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
 	 * @param month Mes de la percepcion
@@ -3444,7 +3925,31 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertNote( 1, subject, date, owner, note );
 	}
 
+	/**
+	 * Observation
+	 * @param id Identificador unico de la Observacion
+	 * @param domain Identificador del Dominio
+	 * @param description Descripcion de la Observacion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertObservation(String description)
+	throws SQLException {
+		return super.insertObservation( 1, description );
+	}
 
+	/**
+	 * Course_subject
+	 * @param id Identificador unico de la Materia
+	 * @param domain Identificador del Dominio
+	 * @param description Descripcion de la Materia
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertCourse_subject(String description)
+	throws SQLException {
+		return super.insertCourse_subject( 1, description );
+	}
 
 	/**
 	 * Action_favorite
@@ -3489,6 +3994,32 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	protected int insertSalary_embargo(Integer salary, Integer contract_embargo, Double amount, String description)
 	throws SQLException {
 		return super.insertSalary_embargo( 1, salary, contract_embargo, amount, description );
+	}
+
+	/**
+	 * Reservation_request
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param hotel Identificador del Hotel
+	 * @param code Localizador
+	 * @param start_date Fecha de entrada
+	 * @param end_date Fecha de salida
+	 * @param agency Identificador de la agencia de viajes
+	 * @param company Identificador de la empresa
+	 * @param booking_holder Titular
+	 * @param request_counter Numero de solicitudes enviadas
+	 * @param remarks Observaciones
+	 * @param active Indica si la Solicitud esta activa o no
+	 * @param creation_user Usuario de creacion
+	 * @param creation_date Fecha de creacion
+	 * @param modification_user Usuario de modificacion
+	 * @param modification_date Fecha de modificacion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertReservation_request(Integer hotel, String code, Date start_date, Date end_date, Integer agency, Integer company, Short booking_holder, Integer request_counter, String remarks, Boolean active, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
+	throws SQLException {
+		return super.insertReservation_request( 1, hotel, code, start_date, end_date, agency, company, booking_holder, request_counter, remarks, active, creation_user, creation_date, modification_user, modification_date );
 	}
 
 	/**
@@ -3614,17 +4145,20 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param issue_date Fecha de emision de la Propuesta
-	 * @param workplace_department Identificador del Departamento
+	 * @param department Identificador del Departamento
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @param scope Identificador del Ambito
 	 * @param remarks Observaciones de la Propuesta
+	 * @param item_return Indica si es una devolucion
 	 * @param status Estado de la Propuesta
+	 * @param transfer_status Indica si es un traspaso y su estado
+	 * @param transfer_proposal Identificador de la Solicitud de traspaso vinculada
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertProposal(Date issue_date, Integer workplace_department, Integer workplace, Integer scope, String remarks, Short status)
+	protected int insertProposal(Date issue_date, Integer department, Integer workplace, Integer scope, String remarks, Boolean item_return, Short status, Short transfer_status, Integer transfer_proposal)
 	throws SQLException {
-		return super.insertProposal( 1, issue_date, workplace_department, workplace, scope, remarks, status );
+		return super.insertProposal( 1, issue_date, department, workplace, scope, remarks, item_return, status, transfer_status, transfer_proposal );
 	}
 
 	/**
@@ -3721,7 +4255,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param contract Contrato
 	 * @param description Descripcion
-	 * @param expression Frmula
+	 * @param expression F?rmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
 	 * @param bonus_concept Concepto de bonificacion
@@ -3754,12 +4288,14 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param status Estado del Vencimiento
 	 * @param security_level Nivel de seguridad del Vencimiento
 	 * @param scope Ambito del Vencimiento
+	 * @param payroll Indica si el Vencimiento es de Nominas
+	 * @param finance_group Identificador unico del Vencimiento agrupador
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFinance(Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, Integer scope)
+	protected int insertFinance(Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, Integer scope, Boolean payroll, Integer finance_group)
 	throws SQLException {
-		return super.insertFinance( 1, payment, registry, rdocument, rdocument_type, rdocument_country, rname, amount, expenses, concept, invoice, due_date, pay_method, bank, bank_account, status, security_level, scope );
+		return super.insertFinance( 1, payment, registry, rdocument, rdocument_type, rdocument_country, rname, amount, expenses, concept, invoice, due_date, pay_method, bank, bank_account, status, security_level, scope, payroll, finance_group );
 	}
 
 	/**
@@ -3822,10 +4358,10 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param salary Recibo del pago de salarios
-	 * @param type Tipo de deduccin Salarial
+	 * @param type Tipo de deducci?n Salarial
 	 * @param deduction_concept Codigo del concepto
 	 * @param description Descripcion
-	 * @param expression Frmula
+	 * @param expression F?rmula
 	 * @param amount Importe
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -3866,16 +4402,21 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param service Indica si es una Factura de servicios
 	 * @param rectification_type Tipo de rectificacion (Normal o Especial)
 	 * @param rectification_invoice Relacion de rectificacion de Facturas
+	 * @param advance Indica si la Factura es un anticipo
 	 * @param taxable_base Base Imponible de la Factura
 	 * @param vat_quota Cuota de IVA de la Factura
 	 * @param retention_quota Cuota de IRPF de la Factura
 	 * @param total Total Factura
+	 * @param creation_user Usuario de creacion
+	 * @param creation_date Fecha de creacion
+	 * @param modification_user Usuario de modificacion
+	 * @param modification_date Fecha de modificacion
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertInvoice(Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Double taxable_base, Double vat_quota, Double retention_quota, Double total)
+	protected int insertInvoice(Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Boolean advance, Double taxable_base, Double vat_quota, Double retention_quota, Double total, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
 	throws SQLException {
-		return super.insertInvoice( 1, project, series, number, reference_code, registry, rdocument, rdocument_type, rdocument_country, rname, raddress, issue_date, tax_date, security_level, status, type, taxFree, surcharge, withholding, comments, remarks, investment, transaction, signed, scope, service, rectification_type, rectification_invoice, taxable_base, vat_quota, retention_quota, total );
+		return super.insertInvoice( 1, project, series, number, reference_code, registry, rdocument, rdocument_type, rdocument_country, rname, raddress, issue_date, tax_date, security_level, status, type, taxFree, surcharge, withholding, comments, remarks, investment, transaction, signed, scope, service, rectification_type, rectification_invoice, advance, taxable_base, vat_quota, retention_quota, total, creation_user, creation_date, modification_user, modification_date );
 	}
 
 	/**
@@ -3886,12 +4427,14 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param mimeType Mime Type del Archivo Adjunto
 	 * @param description Descripcion del Archivo Adjunto
 	 * @param data Archivo Adjunto en binario
+	 * @param type Tipo de Archivo Adjunto
+	 * @param attach_date Fecha del Archivo Adjunto
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertInvoice_attach(Integer invoice, Short mimeType, String description, Blob data)
+	protected int insertInvoice_attach(Integer invoice, Short mimeType, String description, Blob data, Short type, Date attach_date)
 	throws SQLException {
-		return super.insertInvoice_attach( 1, invoice, mimeType, description, data );
+		return super.insertInvoice_attach( 1, invoice, mimeType, description, data, type, attach_date );
 	}
 
 	/**
@@ -3900,7 +4443,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param invoice Identificador de la Factura
 	 * @param project Identificador del Proyecto
-	 * @param line Numero de lnea del Detalle dentro de la Factura
+	 * @param line Numero de l?nea del Detalle dentro de la Factura
 	 * @param item Identificador del Articulo del Detalle de Factura
 	 * @param description Descripcion del Detalle de Factura
 	 * @param quantity Cantidad del Detalle de Factura
@@ -3948,7 +4491,6 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertProject_reservation_room_detail( 1, project_reservation_room, asset_activity );
 	}
 
-
 	/**
 	 * Account_entry_finance_tracking
 	 * @param id Identificador unico
@@ -3961,6 +4503,21 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	protected int insertAccount_entry_finance_tracking(Integer account_entry, Integer finance_tracking)
 	throws SQLException {
 		return super.insertAccount_entry_finance_tracking( 1, account_entry, finance_tracking );
+	}
+
+	/**
+	 * Course_instructor
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param course Identificador del Curso
+	 * @param employee Identificador del Profesor
+	 * @param type Tipo de Profesor
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertCourse_instructor(Integer course, Integer employee, Short type)
+	throws SQLException {
+		return super.insertCourse_instructor( 1, course, employee, type );
 	}
 
 	/**
@@ -4103,20 +4660,6 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertRaddress( 1, registry, type, recipient, street_type, address, number, address2, address3, zip, city, geozone, alias );
 	}
 
-	/**
-	 * Action
-	 * @param id Identificador unico
-	 * @param domain Identificador del Dominio
-	 * @param menu Indica si la Accion esta o no dentro del menu
-	 * @param name Nombre de la Accion
-	 * @param application_id Aplicacion a la que pertenece la Accion
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	protected int insertAction(Boolean menu, String name, Integer application_id)
-	throws SQLException {
-		return super.insertAction( 1, menu, name, application_id );
-	}
 
 	/**
 	 * Survey
@@ -4229,6 +4772,39 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertCatalogue_item( 1, catalogue, item, quantity, price, discount );
 	}
 
+	/**
+	 * Academic_skill
+	 * @param id Identificador unico de la Aptitud Academica
+	 * @param domain Identificador del Dominio
+	 * @param code Codigo de la Aptitud Academica
+	 * @param description Descripcion de la Aptitud Academica
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertAcademic_skill(String code, String description)
+	throws SQLException {
+		return super.insertAcademic_skill( 1, code, description );
+	}
+
+	/**
+	 * Offer_detail
+	 * @param id Identificador unico del Detalle de Presupuesto
+	 * @param domain Identificador del Dominio
+	 * @param offer Identificador del Presupuesto
+	 * @param line Numero de l?nea del Detalle dentro del Presupuesto
+	 * @param item Identificador del Articulo
+	 * @param description Descripci?n del Articulo
+	 * @param quantity Cantidad del Articulo
+	 * @param price Precio del Articulo
+	 * @param discount_expr Descuentos del Articulo
+	 * @param status Estado del Detalle del Presupuesto
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertOffer_detail(Integer offer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short status)
+	throws SQLException {
+		return super.insertOffer_detail( 1, offer, line, item, description, quantity, price, discount_expr, status );
+	}
 
 	/**
 	 * Contract
@@ -4243,7 +4819,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param document Impreso (.pdf) del contrato.
 	 * @param description Descripcion
 	 * @param status Estado de notificacion del contrato
-	 * @param registration Nmero libro de matricula
+	 * @param registration N?mero libro de matricula
 	 * @param seniority_date Fecha de antiguedad
 	 * @param enterprise_activity Actividad
 	 * @param ss_regime Regimen de la Seguridad Social
@@ -4254,26 +4830,6 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	protected int insertContract(Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, Blob document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category)
 	throws SQLException {
 		return super.insertContract( 1, person, workplace, enterprise_ccc, start_date, end_date, calendar, document, description, status, registration, seniority_date, enterprise_activity, ss_regime, agreement_level_category );
-	}
-
-	/**
-	 * Offer_detail
-	 * @param id Identificador unico del Detalle de Presupuesto
-	 * @param domain Identificador del Dominio
-	 * @param offer Identificador del Presupuesto
-	 * @param line Numero de lnea del Detalle dentro del Presupuesto
-	 * @param item Identificador del Articulo
-	 * @param description Descripcin del Articulo
-	 * @param quantity Cantidad del Articulo
-	 * @param price Precio del Articulo
-	 * @param discount_expr Descuentos del Articulo
-	 * @param status Estado del Detalle del Presupuesto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	protected int insertOffer_detail(Integer offer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short status)
-	throws SQLException {
-		return super.insertOffer_detail( 1, offer, line, item, description, quantity, price, discount_expr, status );
 	}
 
 	/**
@@ -4314,6 +4870,21 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		 super.insertEnterprise( registry, 1, scope, calendar );
 	}
 
+	/**
+	 * Mark
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param subject Identificador de Asignatura
+	 * @param alumn Identificador de Alumno
+	 * @param evaluation Numero de evaluacion
+	 * @param mark Nota
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertMark(Integer subject, Integer alumn, Short evaluation, Double mark)
+	throws SQLException {
+		return super.insertMark( 1, subject, alumn, evaluation, mark );
+	}
 
 	/**
 	 * Catalogue_category
@@ -4333,13 +4904,38 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 
 
 	/**
-	 * Company
-	 * @param registry Registro de la Compaia
+	 * Fs_mod349_detail
+	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param active Indica si la Compaia es activa o inactiva
-	 * @param surcharge Indica si la Compaia tiene de recargo de equivalencia
-	 * @param withholding Indica si la Compaia aplica retencion de impuestos
-	 * @param e_invoice Indica si la Compaia desea emitir Facturas electronicas
+	 * @param fs_mod349 Identificador de la Declaracion
+	 * @param rectification Rectificacion
+	 * @param type Clave de operacion
+	 * @param document Documento del operador
+	 * @param registry Identificador del Declarado
+	 * @param name Apellidos y Nombre del Declarado
+	 * @param country Pais del Declarado
+	 * @param accumulated Importe acumulado de las operaciones
+	 * @param declared Importe declarado de las operaciones
+	 * @param amount Importe de las operaciones
+	 * @param rectified_year Ejercicio de la Declaracion del importe rectificado
+	 * @param rectified_period Periodo de la Declaracion del importe rectificado
+	 * @param rectified_amount Importe rectificado
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertFs_mod349_detail(Integer fs_mod349, Boolean rectification, String type, String document, Integer registry, String name, String country, Double accumulated, Double declared, Double amount, Integer rectified_year, Short rectified_period, String rectified_amount)
+	throws SQLException {
+		return super.insertFs_mod349_detail( 1, fs_mod349, rectification, type, document, registry, name, country, accumulated, declared, amount, rectified_year, rectified_period, rectified_amount );
+	}
+
+	/**
+	 * Company
+	 * @param registry Registro de la Compa?ia
+	 * @param domain Identificador del Dominio
+	 * @param active Indica si la Compa?ia es activa o inactiva
+	 * @param surcharge Indica si la Compa?ia tiene de recargo de equivalencia
+	 * @param withholding Indica si la Compa?ia aplica retencion de impuestos
+	 * @param e_invoice Indica si la Compa?ia desea emitir Facturas electronicas
 	 * @throws SQLException
 	*/
 	protected void insertCompany(Integer registry, Boolean active, Boolean surcharge, Boolean withholding, Boolean e_invoice)
@@ -4359,6 +4955,20 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	protected int insertAccount_entry_bank_statement(Integer account_entry, Integer bank_statement)
 	throws SQLException {
 		return super.insertAccount_entry_bank_statement( 1, account_entry, bank_statement );
+	}
+
+	/**
+	 * Profile_module_denied
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param profile Identificador del Perfil
+	 * @param module Modulo Inhabilitado para el Perfil
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertProfile_module_denied(Integer profile, Short module)
+	throws SQLException {
+		return super.insertProfile_module_denied( 1, profile, module );
 	}
 
 	/**
@@ -4485,15 +5095,17 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param project_reservation Identificador de la Reserva
 	 * @param service_index Numero de Servicio
+	 * @param service_code Codigo del Servicio en origen
 	 * @param item Identificador del Servicio
 	 * @param description Descripcion
+	 * @param project_reservation_room Identificador de la Habitacion de la Reserva
 	 * @param extra Indica si se trata de un Servicio extra
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertProject_reservation_service(Integer project_reservation, Short service_index, Integer item, String description, Boolean extra)
+	protected int insertProject_reservation_service(Integer project_reservation, Short service_index, String service_code, Integer item, String description, Integer project_reservation_room, Boolean extra)
 	throws SQLException {
-		return super.insertProject_reservation_service( 1, project_reservation, service_index, item, description, extra );
+		return super.insertProject_reservation_service( 1, project_reservation, service_index, service_code, item, description, project_reservation_room, extra );
 	}
 
 	/**
@@ -4571,6 +5183,36 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	protected int insertFan_batch_attach(Integer fan_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
 	throws SQLException {
 		return super.insertFan_batch_attach( 1, fan_batch, mimeType, description, data, type, scope, attach_date );
+	}
+
+	/**
+	 * Rattach_tag
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param rattach Identificador del Archivo Adjunto
+	 * @param tag Identificador de la Etiqueta
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertRattach_tag(Integer rattach, Integer tag)
+	throws SQLException {
+		return super.insertRattach_tag( 1, rattach, tag );
+	}
+
+	/**
+	 * Finance_pos
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param finance Identificador de Vencimiento
+	 * @param pos Identificador del TPV
+	 * @param code Codigo de autorizacion
+	 * @param xml_response XML de respuesta
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertFinance_pos(Integer finance, Integer pos, String code, String xml_response)
+	throws SQLException {
+		return super.insertFinance_pos( 1, finance, pos, code, xml_response );
 	}
 
 	/**
@@ -4720,9 +5362,9 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 
 	/**
 	 * Campaign_project
-	 * @param id Identificador unico de la Relacion de Campaas y Expedientes
+	 * @param id Identificador unico de la Relacion de Campa?as y Expedientes
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campaa
+	 * @param campaign Identificador de la Campa?a
 	 * @param project Identificador del Expediente
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -4732,19 +5374,6 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertCampaign_project( 1, campaign, project );
 	}
 
-	/**
-	 * Application
-	 * @param id Identificador unico
-	 * @param domain Identificador del Dominio
-	 * @param audit_level Nivel de auditoria
-	 * @param name Nombre de la Aplicacion
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	protected int insertApplication(Short audit_level, String name)
-	throws SQLException {
-		return super.insertApplication( 1, audit_level, name );
-	}
 
 	/**
 	 * Contract_calendar_event
@@ -4811,6 +5440,25 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	protected int insertTask(String description, Date start_date, Date end_date, Date due_date, Short priority, Short status, Short percent, Integer task_holder, Integer workgroup, Short source, Integer project, Integer registry, Integer activity_type, Integer sender, String comments, Short repeat_period)
 	throws SQLException {
 		return super.insertTask( 1, description, start_date, end_date, due_date, priority, status, percent, task_holder, workgroup, source, project, registry, activity_type, sender, comments, repeat_period );
+	}
+
+	/**
+	 * Project_reservation_divert
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param project_reservation Identificador de la Reserva
+	 * @param request_hotel Identificador del Hotel solicitante
+	 * @param divert_hotel Identificador del Hotel destino
+	 * @param divert_date Fecha de Desvio
+	 * @param status Estado del Desvio
+	 * @param request_user Identificador del Usuario solicitante
+	 * @param response_user Identificador del Usuario de respuesta
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertProject_reservation_divert(Integer project_reservation, Integer request_hotel, Integer divert_hotel, Date divert_date, Short status, Integer request_user, Integer response_user)
+	throws SQLException {
+		return super.insertProject_reservation_divert( 1, project_reservation, request_hotel, divert_hotel, divert_date, status, request_user, response_user );
 	}
 
 	/**
@@ -4944,6 +5592,20 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return super.insertBank_concept( 1, name );
 	}
 
+	/**
+	 * Course_academicskill
+	 * @param id Identificador Unico
+	 * @param domain Identificador del Dominio
+	 * @param course Curso
+	 * @param academic_skill Aptitud Academica
+	 * @param weight Peso de la Aptitud para calcular la Nota media
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertCourse_academicskill(Integer course, Integer academic_skill, Integer weight)
+	throws SQLException {
+		return super.insertCourse_academicskill( 1, course, academic_skill, weight );
+	}
 
 	/**
 	 * Enterprise_ccc
@@ -4983,14 +5645,15 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Mk_campaign
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param active Indica si la Campaa esta activa o no
-	 * @param description Descripcion de la Campaa
+	 * @param active Indica si la Campa?a esta activa o no
+	 * @param description Descripcion de la Campa?a
+	 * @param scope Identificador del Ambito
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertMk_campaign(Boolean active, String description)
+	protected int insertMk_campaign(Boolean active, String description, Integer scope)
 	throws SQLException {
-		return super.insertMk_campaign( 1, active, description );
+		return super.insertMk_campaign( 1, active, description, scope );
 	}
 
 	/**
@@ -5014,7 +5677,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Bank_statement
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param rbank Identificador de Banco de la Compaia
+	 * @param rbank Identificador de Banco de la Compa?ia
 	 * @param lot_number Numero de lote
 	 * @param operation_date Fecha de operacion
 	 * @param common_concept Concepto comun
@@ -5044,15 +5707,23 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param code Codigo del Hotel
 	 * @param scope Identificador del Ambito
 	 * @param workplace Identificador del Centro de Trabajo
+	 * @param phone Telefono del Hotel
+	 * @param fax Fax del Hotel
+	 * @param email Email del Hotel
+	 * @param web Web del Hotel
 	 * @param customer Identificador del Cliente
 	 * @param service_catalogue Identificador del Catalogo de Servicios
+	 * @param item_advance Identificador del Producto para anticipos
+	 * @param item_no_show Identificador del Producto para no-show
+	 * @param item_penalty Identificador del Producto para penalizaciones
+	 * @param sheet_changing Dias entre cambio de sabanas
 	 * @param active Indica si el Hotel esta activo o no
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertHotel(String code, Integer scope, Integer workplace, Integer customer, Integer service_catalogue, Boolean active)
+	protected int insertHotel(String code, Integer scope, Integer workplace, String phone, String fax, String email, String web, Integer customer, Integer service_catalogue, Integer item_advance, Integer item_no_show, Integer item_penalty, Short sheet_changing, Boolean active)
 	throws SQLException {
-		return super.insertHotel( 1, code, scope, workplace, customer, service_catalogue, active );
+		return super.insertHotel( 1, code, scope, workplace, phone, fax, email, web, customer, service_catalogue, item_advance, item_no_show, item_penalty, sheet_changing, active );
 	}
 
 	/**
@@ -5079,13 +5750,15 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param enterprise Identificador de la Empresa
 	 * @param registry Identificador del Registry
 	 * @param active Indica si el Usuario esta activo o no
-	 * @param password Contrasea del Usuario
+	 * @param password Contrase?a del Usuario
+	 * @param passwordExpiration Fecha de Expiracion de la Contrase?a
+	 * @param toolbar Tipo de Barra de Herramientas del Usuario
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertUser(String name, String login, Integer enterprise, Integer registry, Boolean active, String password)
+	protected int insertUser(String name, String login, Integer enterprise, Integer registry, Boolean active, String password, Date passwordExpiration, Short toolbar)
 	throws SQLException {
-		return super.insertUser( 1, name, login, enterprise, registry, active, password );
+		return super.insertUser( 1, name, login, enterprise, registry, active, password, passwordExpiration, toolbar );
 	}
 
 	/**

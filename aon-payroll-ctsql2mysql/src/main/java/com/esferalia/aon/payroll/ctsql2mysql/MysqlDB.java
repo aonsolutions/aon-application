@@ -36,6 +36,7 @@ public class MysqlDB extends DefaultMysqlDB{
 	
 	
 	// --------------------------------------------------------------
+	private String 			passwdHash = null;
 	private List<String>	cifs = null;
 	private Date			fromDate = null;		
 	private File			imagesDir = null;
@@ -57,6 +58,11 @@ public class MysqlDB extends DefaultMysqlDB{
 	
 	public void setImagesDir(File imagesDir) {
 		this.imagesDir = imagesDir;
+	}
+	
+	
+	public void setPasswdHash(String passwdHash) {
+		this.passwdHash = passwdHash;
 	}
 	
 	public void write(CtsqlDB ctsqlReader) throws SQLException {
@@ -86,7 +92,8 @@ public class MysqlDB extends DefaultMysqlDB{
 			new MyEnterprise(this, 
 					myAgreement,
 					myCalendar,
-					imagesDir);
+					imagesDir,
+					passwdHash);
 		MyContract myContract= 
 			new MyContract(this, 
 					myEnterprise, 
@@ -94,6 +101,7 @@ public class MysqlDB extends DefaultMysqlDB{
 					myConcept,
 					myAgreement,
 					myCalendar,
+					passwdHash,
 					fromDate);
 		MyFsProfRetention myFsProfRetention = 
 			new MyFsProfRetention(this, 
@@ -141,6 +149,7 @@ public class MysqlDB extends DefaultMysqlDB{
 					myCalendar,
 					myAgreement,
 					imagesDir,
+					passwdHash,
 					fromDate,
 					cifs);
 		
@@ -221,8 +230,10 @@ public class MysqlDB extends DefaultMysqlDB{
             if ( line.hasOption(helpOption.getOpt()) )
             	helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
             
+//            String url = line.getOptionValue(ctsqlURLOption.getOpt(), 
+//            		"jdbc:mysql://127.0.0.1:3306/aon_master");
             String url = line.getOptionValue(ctsqlURLOption.getOpt(), 
-            		"jdbc:mysql://127.0.0.1:3306/payroll-esferalia-org");
+            		"jdbc:mysql://194.30.98.127:3306/tadsr800-aonsolutions-net");
             String user = line.getOptionValue(ctsqlUserOption.getOpt(), "dbuser");
             String passwd = line.getOptionValue(ctsqlPasswdOption.getOpt(), "serubd2000");
 

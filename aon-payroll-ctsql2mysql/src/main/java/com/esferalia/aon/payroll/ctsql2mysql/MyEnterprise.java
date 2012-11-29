@@ -8,12 +8,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -140,8 +142,8 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 	final static short 	OTHER_ADDRESS  		= 1;
 
 	final static int 	COMPANY_REGISTRY 	= 1;
-
-	final static String PASSWORD  			= "demo";
+	
+	private String								passwdHash;
 
 	private Integer 							scopeId;
 	
@@ -157,6 +159,9 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 	private Map<String, Integer> 				customerChilds;
 	private Integer 							customerId;
 	
+	private Integer								profileId;
+	private Integer								domainApplicationId;
+
 	private Map<Integer, Activity> 				activities ;
 	private Map<Integer, Map<Integer, Integer>> cnae_activity ;
 	private Map<Integer, Map<Integer, Integer>> raddresses ;
@@ -168,11 +173,12 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 	private Map<Integer, Map<RegistryAttachmentType, List<String>>>		images;
 	
 
-	public MyEnterprise(DefaultMysqlDB mysqlDB, IAgreements agreements, ICalendars calendars, File logosAndSignaturesDir ) {
+	public MyEnterprise(DefaultMysqlDB mysqlDB, IAgreements agreements, ICalendars calendars, File logosAndSignaturesDir, String passwdHash ) {
 		this.mysqlDB = mysqlDB;
 		this.agreements = agreements;
 		this.calendars = calendars;
 		this.logosAndSignaturesDir = logosAndSignaturesDir;
+		this.passwdHash = passwdHash;
 		this.activities = new HashMap<Integer, Activity>();
 		this.cifs= new HashMap<String, Integer>();
 		this.enterprises = new HashMap<Integer, Enterprise>();
@@ -187,9 +193,18 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 	}
 	
 
+	protected void init(AbstractCtsqlDB ctsqlDB)
+			throws SQLException {
+		this.domainApplicationId = 
+				mysqlDB.getDomainApplicationId("aon-employee");
+		this.profileId = 
+				mysqlDB.getProfileId("aon-employee", "Administrador");
+		
+	}
+
 	@Override
 	public void visit(AbstractCtsqlDB ctsqlDB) throws SQLException {
-		
+		init(ctsqlDB);
 		ctsqlDB.visitDelegacion(this);
 		ctsqlDB.visitDomicilio(this);
 	}
@@ -265,7 +280,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 						MysqlDB.enum2short(RegistryType.LEGAL), 
 						Country.ES.getValue(),
 						DefaultMysqlDB.enum2short(SecurityLevel.OFFICIAL));
-				mysqlDB.insertCustomer(registry,null, false, false,null,status,null,  scopeId,false, true,true);
+				mysqlDB.insertCustomer(registry,null, false, false,null,status, null, scopeId,false, true,true);
 			}
 			
 			Integer group = mysqlDB.insertInvoicing_group(registry);
@@ -301,10 +316,13 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 
 		Country docCountry = mysqlDB.getCountry( emprnif.getPaiemi() );
 
+		String name = emprnif.getDescripcion();
+		String doc = emprnif.getNumdoc();
+
 		registry = mysqlDB.insertEnterprise(
-				emprnif.getNumdoc(), 
+				doc, 
 				docCountry,
-				emprnif.getDescripcion(), 
+				name, 
 				Country.ES,
 				emprnif.getAlias(), 	
 				scopeId,
@@ -334,16 +352,45 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		enterprises.put(emprnif.getCdg(), new Enterprise(registry, emprnif.getCecon(),scopeId));
 
 		customerChilds.put(emprnif.getNumdoc(), registry);
-		
+
+
+		String passwd = null;
+		if ( passwdHash != null ) {
+			passwd = passwdHash;
+		}
+		else {
+			if (name != null && name.length() >= 4 && 
+					doc != null && doc.length() >=3 ){
+				try {
+					passwd = DefaultMysqlDB.encode(name.toUpperCase().substring(0, 4) + 
+							doc.substring(doc.length()-3, doc.length()));
+				} catch (NoSuchAlgorithmException e) {
+					// TODO Auto-generated catch block
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+				}
+			}
+		}
 		
 		Integer userId = 
 			mysqlDB.insertUser(
-				emprnif.getDescripcion(), 
-				emprnif.getNumdoc(), 
+				name, 
+				doc, 
 				registry, 
 				null, 
 				true, 
-				PASSWORD);
+				passwd,
+				null,
+				(short) 0);
+		int applicationUserId = 
+				mysqlDB.insertApplication_user(
+						userId, 				
+						domainApplicationId, 	 
+						true 					// active
+						);
+				mysqlDB.insertApplication_user_profile(
+						applicationUserId, 
+						profileId);
 		
 		mysqlDB.insertUser_scope(userId, this.scopeId);
 		
@@ -571,6 +618,9 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 					domicilio.getAclaracion();
 				if ( description == null ){
 					description = domicilio.getNomvia(); 
+				}
+				if ( description == null ){
+					description = " "; 
 				}
 				
 				

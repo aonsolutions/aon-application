@@ -18,7 +18,6 @@ import javax.management.RuntimeErrorException;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.IrpfResult;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calculo;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calen;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Comunica;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empresa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;

@@ -28,7 +28,9 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEEK_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEEK_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -78,7 +80,6 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 		+ " AND fecini >= ?"
 		+ " AND fecfin <= ?";
 	
-	final static String PASSWORD  			= "demo";
 	
 
 	private static final Concept<PaymentType> NULL_CONCEPT = 
@@ -157,6 +158,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 		return oneDate.compareTo(anotherDate) >= 0;
 	}
 	
+	private String			passwdHash;
 	
 	
 	private Integer 		contractId;
@@ -179,7 +181,9 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 	private AbstractCtsqlDB ctsqlDB;
 	
 	private Integer 		irpfConceptId;
-
+	private Integer			profileId;
+	private Integer			domainApplicationId;
+	
 	private List<ContractPorCot> 		contractPorCots;
 	private Map<String, List<Percents>> quotePercents;
 	private Map<String, FullEmbargo> 	embargos;
@@ -197,15 +201,17 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 
 	private Map<String, List<ContractData>> contractDatas ;
 	private Map<String, List<ContractVariable>> contractVariables;
+	
 
-	public MyContract(DefaultMysqlDB mysqlDB, IEnterprises enterprises, IPersons persons, IConcepts concepts, IAgreements agreements, ICalendars calendars) 
+	public MyContract(DefaultMysqlDB mysqlDB, IEnterprises enterprises, IPersons persons, IConcepts concepts, IAgreements agreements, ICalendars calendars , String passwdHash) 
 	{
-		this ( mysqlDB, enterprises, persons, concepts, agreements, calendars, null );
+		this ( mysqlDB, enterprises, persons, concepts, agreements, calendars, passwdHash, null );
 	}
 
-	public MyContract(DefaultMysqlDB mysqlDB, IEnterprises enterprises, IPersons persons,  IConcepts concepts, IAgreements agreements, ICalendars calendars, Date fromDate) 
+	public MyContract(DefaultMysqlDB mysqlDB, IEnterprises enterprises, IPersons persons,  IConcepts concepts, IAgreements agreements, ICalendars calendars, String passwdHash, Date fromDate) 
 	 {
 		this.mysqlDB = mysqlDB;
+		this.passwdHash = passwdHash;
 		this.fromDate = fromDate;
 		this.persons = persons;
 		this.concepts = concepts;
@@ -392,10 +398,15 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 			throws SQLException {
 		this.irpfConceptId = 
 				mysqlDB.getDeductionConceptId("IRPF");
-			this.ctsqlDB = ctsqlDB;
-			
-			this.delayCodCmos = getDelaysCodComs();
+		this.domainApplicationId = 
+				mysqlDB.getDomainApplicationId("aon-employee");
+		this.profileId = 
+				mysqlDB.getProfileId("aon-employee", "Invitado");
+		this.ctsqlDB = ctsqlDB;
+		
+		this.delayCodCmos = getDelaysCodComs();
 		ctsqlDB.visitLinporco(this);
+		
 	}
 	
 	@Override
@@ -697,12 +708,43 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 			enterprises.getEnterprise(emprper.getCodemp());
 		
 		if ( isActive( emprper )) {
-			mysqlDB.insertUser(persons.getName(emprper.getCodper()), 
-					numDoc, 
-					enterprise, 
-					person, 
-					true, 
-					PASSWORD);
+			String name = persons.getName(emprper.getCodper());
+			String passwd = null;
+			if ( passwdHash != null ) {
+				passwd = passwdHash;
+			}
+			else {
+				if (name != null && name.length() >= 4 && 
+						numDoc != null && numDoc.length() >=3 ){
+					try {
+						passwd = DefaultMysqlDB.encode(name.toUpperCase().substring(0, 4) + 
+								numDoc.substring(numDoc.length()-3, numDoc.length()));
+					} catch (NoSuchAlgorithmException e) {
+						// TODO Auto-generated catch block
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+					}
+				}
+			}
+
+			int userId = 
+					mysqlDB.insertUser(name, 
+						numDoc, 
+						enterprise, 
+						person, 
+						true, 
+						passwd,
+						null,
+						(short) 0);
+			int applicationUserId = 
+					mysqlDB.insertApplication_user(
+							userId, 				
+							domainApplicationId, 	 
+							true 					// active
+							);
+			mysqlDB.insertApplication_user_profile(
+					applicationUserId, 
+					profileId);
 		}
 		contractPorCots.clear();
 

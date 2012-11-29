@@ -312,6 +312,188 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int item_addinfoStmtSize = 0;
+
+	private int item_addinfoInserted = 0;
+
+	private List<Item_addinfo> item_addinfos = 
+		new LinkedList<Item_addinfo>();
+
+	private PreparedStatement item_addinfoStmt = null;
+
+	public static class Item_addinfo {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer item; 
+		protected String attribute; 
+		protected String value; 
+		protected Date value_date; 
+	}
+	
+	protected void insertItem_addinfo( List<Item_addinfo> item_addinfos )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = item_addinfos.size();
+		if ( item_addinfoStmtSize != size ) {
+			if ( item_addinfoStmt != null ) {
+				item_addinfoStmt.close();
+			}
+			String values = "(?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			item_addinfoStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO item_addinfo (id,domain,item,attribute,value,value_date)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			item_addinfoStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Item_addinfo item_addinfo : item_addinfos) {
+			if ( item_addinfo.id == null )
+				item_addinfoStmt.setNull(offset++, 4);
+			else
+				item_addinfoStmt.setInt(offset++, item_addinfo.id);
+			if ( item_addinfo.domain == null )
+				item_addinfoStmt.setNull(offset++, 4);
+			else
+				item_addinfoStmt.setInt(offset++, item_addinfo.domain);
+			if ( item_addinfo.item == null )
+				item_addinfoStmt.setNull(offset++, 4);
+			else
+				item_addinfoStmt.setInt(offset++, item_addinfo.item);
+			if ( item_addinfo.attribute == null )
+				item_addinfoStmt.setNull(offset++, 12);
+			else
+				item_addinfoStmt.setString(offset++, item_addinfo.attribute);
+			if ( item_addinfo.value == null )
+				item_addinfoStmt.setNull(offset++, 12);
+			else
+				item_addinfoStmt.setString(offset++, item_addinfo.value);
+			if ( item_addinfo.value_date == null )
+				item_addinfoStmt.setNull(offset++, 91);
+			else
+				item_addinfoStmt.setDate(offset++, item_addinfo.value_date);
+		}
+		item_addinfoStmt.executeUpdate();
+		item_addinfoInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Item_addinfos in {} milliseconds.", size, item_addinfoInserted, elapsed );		
+	}
+		
+		private int item_addinfoId = -1;
+		
+		private void initItem_addinfoId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `item_addinfo`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.item_addinfoId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextItem_addinfoId() {
+			return ++this.item_addinfoId;
+		} 
+
+		public void setItem_addinfoId(Integer item_addinfoId) {
+			this.item_addinfoId = item_addinfoId;
+		} 
+	
+	private void flushItem_addinfo(  )
+	throws SQLException {
+		if ( ! item_addinfos.isEmpty() )
+			insertItem_addinfo(item_addinfos);
+		if ( item_addinfoStmt != null )
+			item_addinfoStmt.close();
+	}	
+
+	/**
+	 * Item_addinfo
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param item Identificador de Articulo
+	 * @param attribute Atributo adicional
+	 * @param value Valor del atributo adicional
+	 * @param value_date Fecha del valor del atributo
+	 * @throws SQLException
+	*/
+	protected void insertItem_addinfo(Integer id, Integer domain, Integer item, String attribute, String value, Date value_date)
+	throws SQLException {
+
+		Item_addinfo item_addinfo_ = new Item_addinfo();
+		item_addinfo_.id = id;
+		item_addinfo_.domain = domain;
+		item_addinfo_.item = item;
+		item_addinfo_.attribute = attribute;
+		item_addinfo_.value = value;
+		item_addinfo_.value_date = value_date;
+
+		item_addinfos.add(item_addinfo_);
+		
+		int item_addinfoCount = item_addinfos.size();
+		
+		if ( 200 * item_addinfoCount >=  this.maxAllowedPacket ){
+			insertItem_addinfo(item_addinfos);
+			item_addinfos.clear();
+		} 
+	}
+
+
+	/**
+	 * Item_addinfo
+	 * @param domain Identificador del Dominio
+	 * @param item Identificador de Articulo
+	 * @param attribute Atributo adicional
+	 * @param value Valor del atributo adicional
+	 * @param value_date Fecha del valor del atributo
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertItem_addinfo(Integer domain, Integer item, String attribute, String value, Date value_date)
+	throws SQLException {
+		int id = nextItem_addinfoId();
+
+		Item_addinfo item_addinfo_ = new Item_addinfo();
+		item_addinfo_.id = id;
+		item_addinfo_.domain = domain;
+		item_addinfo_.item = item;
+		item_addinfo_.attribute = attribute;
+		item_addinfo_.value = value;
+		item_addinfo_.value_date = value_date;
+
+		item_addinfos.add(item_addinfo_);
+		
+		int item_addinfoCount = item_addinfos.size();
+		
+		if ( 200 * item_addinfoCount >=  this.maxAllowedPacket ){
+			insertItem_addinfo(item_addinfos);
+			item_addinfos.clear();
+		} 
+		return id;
+	}
+
+
 	private int agreement_dataStmtSize = 0;
 
 	private int agreement_dataInserted = 0;
@@ -844,6 +1026,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String name; 
 		protected Boolean invoiceable; 
 		protected Integer item; 
+		protected Double initial_amount; 
+		protected Boolean pin_pad; 
+		protected String commerce; 
+		protected String signature_password; 
+		protected String terminal; 
+		protected String port_configuration; 
+		protected String pos_version; 
 	}
 	
 	protected void insertPos( List<Pos> poss )
@@ -854,7 +1043,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( posStmt != null ) {
 				posStmt.close();
 			}
-			String values = "(?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -863,7 +1052,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			posStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO pos (id,domain,workplace,name,invoiceable,item)"  
+				"INSERT INTO pos (id,domain,workplace,name,invoiceable,item,initial_amount,pin_pad,commerce,signature_password,terminal,port_configuration,pos_version)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			posStmtSize = size;
@@ -896,6 +1085,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				posStmt.setNull(offset++, 4);
 			else
 				posStmt.setInt(offset++, pos.item);
+			if ( pos.initial_amount == null )
+				posStmt.setNull(offset++, 8);
+			else
+				posStmt.setDouble(offset++, pos.initial_amount);
+			if ( pos.pin_pad == null )
+				posStmt.setNull(offset++, -7);
+			else
+				posStmt.setBoolean(offset++, pos.pin_pad);
+			if ( pos.commerce == null )
+				posStmt.setNull(offset++, 12);
+			else
+				posStmt.setString(offset++, pos.commerce);
+			if ( pos.signature_password == null )
+				posStmt.setNull(offset++, 12);
+			else
+				posStmt.setString(offset++, pos.signature_password);
+			if ( pos.terminal == null )
+				posStmt.setNull(offset++, 12);
+			else
+				posStmt.setString(offset++, pos.terminal);
+			if ( pos.port_configuration == null )
+				posStmt.setNull(offset++, 12);
+			else
+				posStmt.setString(offset++, pos.port_configuration);
+			if ( pos.pos_version == null )
+				posStmt.setNull(offset++, 12);
+			else
+				posStmt.setString(offset++, pos.pos_version);
 		}
 		posStmt.executeUpdate();
 		posInserted += size;
@@ -952,9 +1169,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param name Nombre
 	 * @param invoiceable Indicador de si es facturable
 	 * @param item Identificador del Producto
+	 * @param initial_amount Importe inicial de apertura por defecto
+	 * @param pin_pad Indicador de si es un Pin Pad
+	 * @param commerce Clave de firma del comercio
+	 * @param signature_password Clave de firma del comercio
+	 * @param terminal Numero de terminal
+	 * @param port_configuration Configuracion de puerto
+	 * @param pos_version Version actual
 	 * @throws SQLException
 	*/
-	protected void insertPos(Integer id, Integer domain, Integer workplace, String name, Boolean invoiceable, Integer item)
+	protected void insertPos(Integer id, Integer domain, Integer workplace, String name, Boolean invoiceable, Integer item, Double initial_amount, Boolean pin_pad, String commerce, String signature_password, String terminal, String port_configuration, String pos_version)
 	throws SQLException {
 
 		Pos pos_ = new Pos();
@@ -964,12 +1188,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		pos_.name = name;
 		pos_.invoiceable = invoiceable;
 		pos_.item = item;
+		pos_.initial_amount = initial_amount;
+		pos_.pin_pad = pin_pad;
+		pos_.commerce = commerce;
+		pos_.signature_password = signature_password;
+		pos_.terminal = terminal;
+		pos_.port_configuration = port_configuration;
+		pos_.pos_version = pos_version;
 
 		poss.add(pos_);
 		
 		int posCount = poss.size();
 		
-		if ( 72 * posCount >=  this.maxAllowedPacket ){
+		if ( 183 * posCount >=  this.maxAllowedPacket ){
 			insertPos(poss);
 			poss.clear();
 		} 
@@ -983,10 +1214,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param name Nombre
 	 * @param invoiceable Indicador de si es facturable
 	 * @param item Identificador del Producto
+	 * @param initial_amount Importe inicial de apertura por defecto
+	 * @param pin_pad Indicador de si es un Pin Pad
+	 * @param commerce Clave de firma del comercio
+	 * @param signature_password Clave de firma del comercio
+	 * @param terminal Numero de terminal
+	 * @param port_configuration Configuracion de puerto
+	 * @param pos_version Version actual
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertPos(Integer domain, Integer workplace, String name, Boolean invoiceable, Integer item)
+	public int insertPos(Integer domain, Integer workplace, String name, Boolean invoiceable, Integer item, Double initial_amount, Boolean pin_pad, String commerce, String signature_password, String terminal, String port_configuration, String pos_version)
 	throws SQLException {
 		int id = nextPosId();
 
@@ -997,12 +1235,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		pos_.name = name;
 		pos_.invoiceable = invoiceable;
 		pos_.item = item;
+		pos_.initial_amount = initial_amount;
+		pos_.pin_pad = pin_pad;
+		pos_.commerce = commerce;
+		pos_.signature_password = signature_password;
+		pos_.terminal = terminal;
+		pos_.port_configuration = port_configuration;
+		pos_.pos_version = pos_version;
 
 		poss.add(pos_);
 		
 		int posCount = poss.size();
 		
-		if ( 72 * posCount >=  this.maxAllowedPacket ){
+		if ( 183 * posCount >=  this.maxAllowedPacket ){
 			insertPos(poss);
 			poss.clear();
 		} 
@@ -1160,6 +1405,170 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 20 * message_contentCount >=  this.maxAllowedPacket ){
 			insertMessage_content(message_contents);
 			message_contents.clear();
+		} 
+		return id;
+	}
+
+
+	private int application_user_profileStmtSize = 0;
+
+	private int application_user_profileInserted = 0;
+
+	private List<Application_user_profile> application_user_profiles = 
+		new LinkedList<Application_user_profile>();
+
+	private PreparedStatement application_user_profileStmt = null;
+
+	public static class Application_user_profile {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer application_user; 
+		protected Integer profile; 
+	}
+	
+	protected void insertApplication_user_profile( List<Application_user_profile> application_user_profiles )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = application_user_profiles.size();
+		if ( application_user_profileStmtSize != size ) {
+			if ( application_user_profileStmt != null ) {
+				application_user_profileStmt.close();
+			}
+			String values = "(?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			application_user_profileStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO application_user_profile (id,domain,application_user,profile)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			application_user_profileStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Application_user_profile application_user_profile : application_user_profiles) {
+			if ( application_user_profile.id == null )
+				application_user_profileStmt.setNull(offset++, 4);
+			else
+				application_user_profileStmt.setInt(offset++, application_user_profile.id);
+			if ( application_user_profile.domain == null )
+				application_user_profileStmt.setNull(offset++, 4);
+			else
+				application_user_profileStmt.setInt(offset++, application_user_profile.domain);
+			if ( application_user_profile.application_user == null )
+				application_user_profileStmt.setNull(offset++, 4);
+			else
+				application_user_profileStmt.setInt(offset++, application_user_profile.application_user);
+			if ( application_user_profile.profile == null )
+				application_user_profileStmt.setNull(offset++, 4);
+			else
+				application_user_profileStmt.setInt(offset++, application_user_profile.profile);
+		}
+		application_user_profileStmt.executeUpdate();
+		application_user_profileInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Application_user_profiles in {} milliseconds.", size, application_user_profileInserted, elapsed );		
+	}
+		
+		private int application_user_profileId = -1;
+		
+		private void initApplication_user_profileId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `application_user_profile`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.application_user_profileId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextApplication_user_profileId() {
+			return ++this.application_user_profileId;
+		} 
+
+		public void setApplication_user_profileId(Integer application_user_profileId) {
+			this.application_user_profileId = application_user_profileId;
+		} 
+	
+	private void flushApplication_user_profile(  )
+	throws SQLException {
+		if ( ! application_user_profiles.isEmpty() )
+			insertApplication_user_profile(application_user_profiles);
+		if ( application_user_profileStmt != null )
+			application_user_profileStmt.close();
+	}	
+
+	/**
+	 * Application_user_profile
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param application_user Identificador del Usuario de la Aplicacion
+	 * @param profile Identificador del Perfil
+	 * @throws SQLException
+	*/
+	protected void insertApplication_user_profile(Integer id, Integer domain, Integer application_user, Integer profile)
+	throws SQLException {
+
+		Application_user_profile application_user_profile_ = new Application_user_profile();
+		application_user_profile_.id = id;
+		application_user_profile_.domain = domain;
+		application_user_profile_.application_user = application_user;
+		application_user_profile_.profile = profile;
+
+		application_user_profiles.add(application_user_profile_);
+		
+		int application_user_profileCount = application_user_profiles.size();
+		
+		if ( 40 * application_user_profileCount >=  this.maxAllowedPacket ){
+			insertApplication_user_profile(application_user_profiles);
+			application_user_profiles.clear();
+		} 
+	}
+
+
+	/**
+	 * Application_user_profile
+	 * @param domain Identificador del Dominio
+	 * @param application_user Identificador del Usuario de la Aplicacion
+	 * @param profile Identificador del Perfil
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertApplication_user_profile(Integer domain, Integer application_user, Integer profile)
+	throws SQLException {
+		int id = nextApplication_user_profileId();
+
+		Application_user_profile application_user_profile_ = new Application_user_profile();
+		application_user_profile_.id = id;
+		application_user_profile_.domain = domain;
+		application_user_profile_.application_user = application_user;
+		application_user_profile_.profile = profile;
+
+		application_user_profiles.add(application_user_profile_);
+		
+		int application_user_profileCount = application_user_profiles.size();
+		
+		if ( 40 * application_user_profileCount >=  this.maxAllowedPacket ){
+			insertApplication_user_profile(application_user_profiles);
+			application_user_profiles.clear();
 		} 
 		return id;
 	}
@@ -1387,6 +1796,287 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 135 * invoice_taxCount >=  this.maxAllowedPacket ){
 			insertInvoice_tax(invoice_taxs);
 			invoice_taxs.clear();
+		} 
+		return id;
+	}
+
+
+	private int reservation_request_guestStmtSize = 0;
+
+	private int reservation_request_guestInserted = 0;
+
+	private List<Reservation_request_guest> reservation_request_guests = 
+		new LinkedList<Reservation_request_guest>();
+
+	private PreparedStatement reservation_request_guestStmt = null;
+
+	public static class Reservation_request_guest {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer reservation_request; 
+		protected Short guest_index; 
+		protected String name; 
+		protected String surname; 
+		protected String email; 
+		protected String phone; 
+		protected String address; 
+		protected String zip; 
+		protected String city; 
+		protected String province; 
+		protected String country; 
+		protected String creation_user; 
+		protected Timestamp creation_date; 
+		protected String modification_user; 
+		protected Timestamp modification_date; 
+	}
+	
+	protected void insertReservation_request_guest( List<Reservation_request_guest> reservation_request_guests )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = reservation_request_guests.size();
+		if ( reservation_request_guestStmtSize != size ) {
+			if ( reservation_request_guestStmt != null ) {
+				reservation_request_guestStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			reservation_request_guestStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO reservation_request_guest (id,domain,reservation_request,guest_index,name,surname,email,phone,address,zip,city,province,country,creation_user,creation_date,modification_user,modification_date)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			reservation_request_guestStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Reservation_request_guest reservation_request_guest : reservation_request_guests) {
+			if ( reservation_request_guest.id == null )
+				reservation_request_guestStmt.setNull(offset++, 4);
+			else
+				reservation_request_guestStmt.setInt(offset++, reservation_request_guest.id);
+			if ( reservation_request_guest.domain == null )
+				reservation_request_guestStmt.setNull(offset++, 4);
+			else
+				reservation_request_guestStmt.setInt(offset++, reservation_request_guest.domain);
+			if ( reservation_request_guest.reservation_request == null )
+				reservation_request_guestStmt.setNull(offset++, 4);
+			else
+				reservation_request_guestStmt.setInt(offset++, reservation_request_guest.reservation_request);
+			if ( reservation_request_guest.guest_index == null )
+				reservation_request_guestStmt.setNull(offset++, -6);
+			else
+				reservation_request_guestStmt.setShort(offset++, reservation_request_guest.guest_index);
+			if ( reservation_request_guest.name == null )
+				reservation_request_guestStmt.setNull(offset++, 12);
+			else
+				reservation_request_guestStmt.setString(offset++, reservation_request_guest.name);
+			if ( reservation_request_guest.surname == null )
+				reservation_request_guestStmt.setNull(offset++, 12);
+			else
+				reservation_request_guestStmt.setString(offset++, reservation_request_guest.surname);
+			if ( reservation_request_guest.email == null )
+				reservation_request_guestStmt.setNull(offset++, 12);
+			else
+				reservation_request_guestStmt.setString(offset++, reservation_request_guest.email);
+			if ( reservation_request_guest.phone == null )
+				reservation_request_guestStmt.setNull(offset++, 12);
+			else
+				reservation_request_guestStmt.setString(offset++, reservation_request_guest.phone);
+			if ( reservation_request_guest.address == null )
+				reservation_request_guestStmt.setNull(offset++, 12);
+			else
+				reservation_request_guestStmt.setString(offset++, reservation_request_guest.address);
+			if ( reservation_request_guest.zip == null )
+				reservation_request_guestStmt.setNull(offset++, 12);
+			else
+				reservation_request_guestStmt.setString(offset++, reservation_request_guest.zip);
+			if ( reservation_request_guest.city == null )
+				reservation_request_guestStmt.setNull(offset++, 12);
+			else
+				reservation_request_guestStmt.setString(offset++, reservation_request_guest.city);
+			if ( reservation_request_guest.province == null )
+				reservation_request_guestStmt.setNull(offset++, 12);
+			else
+				reservation_request_guestStmt.setString(offset++, reservation_request_guest.province);
+			if ( reservation_request_guest.country == null )
+				reservation_request_guestStmt.setNull(offset++, 12);
+			else
+				reservation_request_guestStmt.setString(offset++, reservation_request_guest.country);
+			if ( reservation_request_guest.creation_user == null )
+				reservation_request_guestStmt.setNull(offset++, 12);
+			else
+				reservation_request_guestStmt.setString(offset++, reservation_request_guest.creation_user);
+			if ( reservation_request_guest.creation_date == null )
+				reservation_request_guestStmt.setNull(offset++, 93);
+			else
+				reservation_request_guestStmt.setTimestamp(offset++, reservation_request_guest.creation_date);
+			if ( reservation_request_guest.modification_user == null )
+				reservation_request_guestStmt.setNull(offset++, 12);
+			else
+				reservation_request_guestStmt.setString(offset++, reservation_request_guest.modification_user);
+			if ( reservation_request_guest.modification_date == null )
+				reservation_request_guestStmt.setNull(offset++, 93);
+			else
+				reservation_request_guestStmt.setTimestamp(offset++, reservation_request_guest.modification_date);
+		}
+		reservation_request_guestStmt.executeUpdate();
+		reservation_request_guestInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Reservation_request_guests in {} milliseconds.", size, reservation_request_guestInserted, elapsed );		
+	}
+		
+		private int reservation_request_guestId = -1;
+		
+		private void initReservation_request_guestId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `reservation_request_guest`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.reservation_request_guestId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextReservation_request_guestId() {
+			return ++this.reservation_request_guestId;
+		} 
+
+		public void setReservation_request_guestId(Integer reservation_request_guestId) {
+			this.reservation_request_guestId = reservation_request_guestId;
+		} 
+	
+	private void flushReservation_request_guest(  )
+	throws SQLException {
+		if ( ! reservation_request_guests.isEmpty() )
+			insertReservation_request_guest(reservation_request_guests);
+		if ( reservation_request_guestStmt != null )
+			reservation_request_guestStmt.close();
+	}	
+
+	/**
+	 * Reservation_request_guest
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param reservation_request Identificador de la Solicitud de Reserva
+	 * @param guest_index Numero de Huesped
+	 * @param name Nombre
+	 * @param surname Apellidos
+	 * @param email Email
+	 * @param phone Telefono
+	 * @param address Direccion
+	 * @param zip Codigo postal
+	 * @param city Ciudad
+	 * @param province Provincia
+	 * @param country Pais
+	 * @param creation_user Usuario de creacion
+	 * @param creation_date Fecha de creacion
+	 * @param modification_user Usuario de modificacion
+	 * @param modification_date Fecha de modificacion
+	 * @throws SQLException
+	*/
+	protected void insertReservation_request_guest(Integer id, Integer domain, Integer reservation_request, Short guest_index, String name, String surname, String email, String phone, String address, String zip, String city, String province, String country, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
+	throws SQLException {
+
+		Reservation_request_guest reservation_request_guest_ = new Reservation_request_guest();
+		reservation_request_guest_.id = id;
+		reservation_request_guest_.domain = domain;
+		reservation_request_guest_.reservation_request = reservation_request;
+		reservation_request_guest_.guest_index = guest_index;
+		reservation_request_guest_.name = name;
+		reservation_request_guest_.surname = surname;
+		reservation_request_guest_.email = email;
+		reservation_request_guest_.phone = phone;
+		reservation_request_guest_.address = address;
+		reservation_request_guest_.zip = zip;
+		reservation_request_guest_.city = city;
+		reservation_request_guest_.province = province;
+		reservation_request_guest_.country = country;
+		reservation_request_guest_.creation_user = creation_user;
+		reservation_request_guest_.creation_date = creation_date;
+		reservation_request_guest_.modification_user = modification_user;
+		reservation_request_guest_.modification_date = modification_date;
+
+		reservation_request_guests.add(reservation_request_guest_);
+		
+		int reservation_request_guestCount = reservation_request_guests.size();
+		
+		if ( 793 * reservation_request_guestCount >=  this.maxAllowedPacket ){
+			insertReservation_request_guest(reservation_request_guests);
+			reservation_request_guests.clear();
+		} 
+	}
+
+
+	/**
+	 * Reservation_request_guest
+	 * @param domain Identificador del Dominio
+	 * @param reservation_request Identificador de la Solicitud de Reserva
+	 * @param guest_index Numero de Huesped
+	 * @param name Nombre
+	 * @param surname Apellidos
+	 * @param email Email
+	 * @param phone Telefono
+	 * @param address Direccion
+	 * @param zip Codigo postal
+	 * @param city Ciudad
+	 * @param province Provincia
+	 * @param country Pais
+	 * @param creation_user Usuario de creacion
+	 * @param creation_date Fecha de creacion
+	 * @param modification_user Usuario de modificacion
+	 * @param modification_date Fecha de modificacion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertReservation_request_guest(Integer domain, Integer reservation_request, Short guest_index, String name, String surname, String email, String phone, String address, String zip, String city, String province, String country, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
+	throws SQLException {
+		int id = nextReservation_request_guestId();
+
+		Reservation_request_guest reservation_request_guest_ = new Reservation_request_guest();
+		reservation_request_guest_.id = id;
+		reservation_request_guest_.domain = domain;
+		reservation_request_guest_.reservation_request = reservation_request;
+		reservation_request_guest_.guest_index = guest_index;
+		reservation_request_guest_.name = name;
+		reservation_request_guest_.surname = surname;
+		reservation_request_guest_.email = email;
+		reservation_request_guest_.phone = phone;
+		reservation_request_guest_.address = address;
+		reservation_request_guest_.zip = zip;
+		reservation_request_guest_.city = city;
+		reservation_request_guest_.province = province;
+		reservation_request_guest_.country = country;
+		reservation_request_guest_.creation_user = creation_user;
+		reservation_request_guest_.creation_date = creation_date;
+		reservation_request_guest_.modification_user = modification_user;
+		reservation_request_guest_.modification_date = modification_date;
+
+		reservation_request_guests.add(reservation_request_guest_);
+		
+		int reservation_request_guestCount = reservation_request_guests.size();
+		
+		if ( 793 * reservation_request_guestCount >=  this.maxAllowedPacket ){
+			insertReservation_request_guest(reservation_request_guests);
+			reservation_request_guests.clear();
 		} 
 		return id;
 	}
@@ -2365,6 +3055,152 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int roleStmtSize = 0;
+
+	private int roleInserted = 0;
+
+	private List<Role> roles = 
+		new LinkedList<Role>();
+
+	private PreparedStatement roleStmt = null;
+
+	public static class Role {
+		protected Integer id; 
+		protected String name; 
+	}
+	
+	protected void insertRole( List<Role> roles )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = roles.size();
+		if ( roleStmtSize != size ) {
+			if ( roleStmt != null ) {
+				roleStmt.close();
+			}
+			String values = "(?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			roleStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO role (id,name)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			roleStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Role role : roles) {
+			if ( role.id == null )
+				roleStmt.setNull(offset++, 4);
+			else
+				roleStmt.setInt(offset++, role.id);
+			if ( role.name == null )
+				roleStmt.setNull(offset++, 12);
+			else
+				roleStmt.setString(offset++, role.name);
+		}
+		roleStmt.executeUpdate();
+		roleInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Roles in {} milliseconds.", size, roleInserted, elapsed );		
+	}
+		
+		private int roleId = -1;
+		
+		private void initRoleId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `role`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.roleId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextRoleId() {
+			return ++this.roleId;
+		} 
+
+		public void setRoleId(Integer roleId) {
+			this.roleId = roleId;
+		} 
+	
+	private void flushRole(  )
+	throws SQLException {
+		if ( ! roles.isEmpty() )
+			insertRole(roles);
+		if ( roleStmt != null )
+			roleStmt.close();
+	}	
+
+	/**
+	 * Role
+	 * @param id Identificador unico
+	 * @param name Nombre del Role
+	 * @throws SQLException
+	*/
+	protected void insertRole(Integer id, String name)
+	throws SQLException {
+
+		Role role_ = new Role();
+		role_.id = id;
+		role_.name = name;
+
+		roles.add(role_);
+		
+		int roleCount = roles.size();
+		
+		if ( 74 * roleCount >=  this.maxAllowedPacket ){
+			insertRole(roles);
+			roles.clear();
+		} 
+	}
+
+
+	/**
+	 * Role
+	 * @param name Nombre del Role
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertRole(String name)
+	throws SQLException {
+		int id = nextRoleId();
+
+		Role role_ = new Role();
+		role_.id = id;
+		role_.name = name;
+
+		roles.add(role_);
+		
+		int roleCount = roles.size();
+		
+		if ( 74 * roleCount >=  this.maxAllowedPacket ){
+			insertRole(roles);
+			roles.clear();
+		} 
+		return id;
+	}
+
+
 	private int featureStmtSize = 0;
 
 	private int featureInserted = 0;
@@ -2797,8 +3633,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param type Tipo de Nomina
 	 * @param contract Contrato
-	 * @param start_date Fecha de inicio liquidaciùn
-	 * @param end_date Fecha de finalizacion liquidaciùn
+	 * @param start_date Fecha de inicio liquidaci?n
+	 * @param end_date Fecha de finalizacion liquidaci?n
 	 * @param enterprise_name Nombre de la empresa
 	 * @param enterprise_address Domicilio de la empresa
 	 * @param enterprise_document Numero de Documento de la Empresa
@@ -2807,16 +3643,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param social_security_number Numero de la seguridad social
 	 * @param employee_document Numero de Documento de la Persona
 	 * @param seniority_date Fecha de antiguedad
-	 * @param quote_group Grupo de Cotizaciùn
+	 * @param quote_group Grupo de Cotizaci?n
 	 * @param category Categoria o grupo profesional
-	 * @param registration Nùmero libro de matricula
+	 * @param registration N?mero libro de matricula
 	 * @param time_units total dias/horas
 	 * @param total_payment Total devengado
 	 * @param total_deduction Total a deducir
 	 * @param total_liquid Liquido total a percibir
 	 * @param total_enterprise Cuota total de la empresa
-	 * @param issue_date Fecha de emisiùn
-	 * @param remuneration Remuneraciùn mensual
+	 * @param issue_date Fecha de emisi?n
+	 * @param remuneration Remuneraci?n mensual
 	 * @param pro_ext_base Base prorraterreada de pagas extras
 	 * @param it_base Base de IT
 	 * @param raw_cgc_base Base efectiva de cotizacion por contingencias comunes 
@@ -2824,11 +3660,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param hextra_base Base de cotizacion adicional por horas extraordinarias estructurales
 	 * @param non_hextra_base Base de cotizacion adicional por horas extraordinarias no estructurales
 	 * @param cgp_base Base de cotizacion por contingencias profesionales
-	 * @param money_irpf_base Salario en dinero sujeto a retenciùn I.R.P.F
-	 * @param inkind_irpf_base Salario en especie sujeto a retenciùn I.R.P.F
-	 * @param irpf_base Base sujeta a retenciùn I.R.P.F
+	 * @param money_irpf_base Salario en dinero sujeto a retenci?n I.R.P.F
+	 * @param inkind_irpf_base Salario en especie sujeto a retenci?n I.R.P.F
+	 * @param irpf_base Base sujeta a retenci?n I.R.P.F
 	 * @param social_security_contributions Aportaciones a la Seguridad Social
-	 * @param total_irpf Total retenciùn aplicada 
+	 * @param total_irpf Total retenci?n aplicada 
 	 * @param charge_date Fecha de cobro
 	 * @throws SQLException
 	*/
@@ -2890,8 +3726,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param type Tipo de Nomina
 	 * @param contract Contrato
-	 * @param start_date Fecha de inicio liquidaciùn
-	 * @param end_date Fecha de finalizacion liquidaciùn
+	 * @param start_date Fecha de inicio liquidaci?n
+	 * @param end_date Fecha de finalizacion liquidaci?n
 	 * @param enterprise_name Nombre de la empresa
 	 * @param enterprise_address Domicilio de la empresa
 	 * @param enterprise_document Numero de Documento de la Empresa
@@ -2900,16 +3736,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param social_security_number Numero de la seguridad social
 	 * @param employee_document Numero de Documento de la Persona
 	 * @param seniority_date Fecha de antiguedad
-	 * @param quote_group Grupo de Cotizaciùn
+	 * @param quote_group Grupo de Cotizaci?n
 	 * @param category Categoria o grupo profesional
-	 * @param registration Nùmero libro de matricula
+	 * @param registration N?mero libro de matricula
 	 * @param time_units total dias/horas
 	 * @param total_payment Total devengado
 	 * @param total_deduction Total a deducir
 	 * @param total_liquid Liquido total a percibir
 	 * @param total_enterprise Cuota total de la empresa
-	 * @param issue_date Fecha de emisiùn
-	 * @param remuneration Remuneraciùn mensual
+	 * @param issue_date Fecha de emisi?n
+	 * @param remuneration Remuneraci?n mensual
 	 * @param pro_ext_base Base prorraterreada de pagas extras
 	 * @param it_base Base de IT
 	 * @param raw_cgc_base Base efectiva de cotizacion por contingencias comunes 
@@ -2917,11 +3753,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param hextra_base Base de cotizacion adicional por horas extraordinarias estructurales
 	 * @param non_hextra_base Base de cotizacion adicional por horas extraordinarias no estructurales
 	 * @param cgp_base Base de cotizacion por contingencias profesionales
-	 * @param money_irpf_base Salario en dinero sujeto a retenciùn I.R.P.F
-	 * @param inkind_irpf_base Salario en especie sujeto a retenciùn I.R.P.F
-	 * @param irpf_base Base sujeta a retenciùn I.R.P.F
+	 * @param money_irpf_base Salario en dinero sujeto a retenci?n I.R.P.F
+	 * @param inkind_irpf_base Salario en especie sujeto a retenci?n I.R.P.F
+	 * @param irpf_base Base sujeta a retenci?n I.R.P.F
 	 * @param social_security_contributions Aportaciones a la Seguridad Social
-	 * @param total_irpf Total retenciùn aplicada 
+	 * @param total_irpf Total retenci?n aplicada 
 	 * @param charge_date Fecha de cobro
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -3287,8 +4123,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer domain; 
 		protected String name; 
 		protected String signature; 
-		protected Short source; 
-		protected Integer source_id; 
+		protected Integer user_id; 
 	}
 	
 	protected void insertSignature( List<Signature> signatures )
@@ -3299,7 +4134,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( signatureStmt != null ) {
 				signatureStmt.close();
 			}
-			String values = "(?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -3308,7 +4143,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			signatureStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO signature (id,domain,name,signature,source,source_id)"  
+				"INSERT INTO signature (id,domain,name,signature,user_id)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			signatureStmtSize = size;
@@ -3333,14 +4168,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				signatureStmt.setNull(offset++, -1);
 			else
 				signatureStmt.setString(offset++, signature.signature);
-			if ( signature.source == null )
-				signatureStmt.setNull(offset++, -6);
-			else
-				signatureStmt.setShort(offset++, signature.source);
-			if ( signature.source_id == null )
+			if ( signature.user_id == null )
 				signatureStmt.setNull(offset++, 4);
 			else
-				signatureStmt.setInt(offset++, signature.source_id);
+				signatureStmt.setInt(offset++, signature.user_id);
 		}
 		signatureStmt.executeUpdate();
 		signatureInserted += size;
@@ -3395,11 +4226,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param name Nombre de la Firma
 	 * @param signature Texto de la Firma de la Cuenta de Correo
-	 * @param source Origen de la Firma
-	 * @param source_id Identificador del origen de la Firma
+	 * @param user_id Identificador del Usuario
 	 * @throws SQLException
 	*/
-	protected void insertSignature(Integer id, Integer domain, String name, String signature, Short source, Integer source_id)
+	protected void insertSignature(Integer id, Integer domain, String name, String signature, Integer user_id)
 	throws SQLException {
 
 		Signature signature_ = new Signature();
@@ -3407,14 +4237,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		signature_.domain = domain;
 		signature_.name = name;
 		signature_.signature = signature;
-		signature_.source = source;
-		signature_.source_id = source_id;
+		signature_.user_id = user_id;
 
 		signatures.add(signature_);
 		
 		int signatureCount = signatures.size();
 		
-		if ( 97 * signatureCount >=  this.maxAllowedPacket ){
+		if ( 94 * signatureCount >=  this.maxAllowedPacket ){
 			insertSignature(signatures);
 			signatures.clear();
 		} 
@@ -3426,12 +4255,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param name Nombre de la Firma
 	 * @param signature Texto de la Firma de la Cuenta de Correo
-	 * @param source Origen de la Firma
-	 * @param source_id Identificador del origen de la Firma
+	 * @param user_id Identificador del Usuario
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertSignature(Integer domain, String name, String signature, Short source, Integer source_id)
+	public int insertSignature(Integer domain, String name, String signature, Integer user_id)
 	throws SQLException {
 		int id = nextSignatureId();
 
@@ -3440,14 +4268,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		signature_.domain = domain;
 		signature_.name = name;
 		signature_.signature = signature;
-		signature_.source = source;
-		signature_.source_id = source_id;
+		signature_.user_id = user_id;
 
 		signatures.add(signature_);
 		
 		int signatureCount = signatures.size();
 		
-		if ( 97 * signatureCount >=  this.maxAllowedPacket ){
+		if ( 94 * signatureCount >=  this.maxAllowedPacket ){
 			insertSignature(signatures);
 			signatures.clear();
 		} 
@@ -3614,6 +4441,170 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 40 * user_scopeCount >=  this.maxAllowedPacket ){
 			insertUser_scope(user_scopes);
 			user_scopes.clear();
+		} 
+		return id;
+	}
+
+
+	private int contact_detailStmtSize = 0;
+
+	private int contact_detailInserted = 0;
+
+	private List<Contact_detail> contact_details = 
+		new LinkedList<Contact_detail>();
+
+	private PreparedStatement contact_detailStmt = null;
+
+	public static class Contact_detail {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer contact_group; 
+		protected Integer contact; 
+	}
+	
+	protected void insertContact_detail( List<Contact_detail> contact_details )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = contact_details.size();
+		if ( contact_detailStmtSize != size ) {
+			if ( contact_detailStmt != null ) {
+				contact_detailStmt.close();
+			}
+			String values = "(?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			contact_detailStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO contact_detail (id,domain,contact_group,contact)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			contact_detailStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Contact_detail contact_detail : contact_details) {
+			if ( contact_detail.id == null )
+				contact_detailStmt.setNull(offset++, 4);
+			else
+				contact_detailStmt.setInt(offset++, contact_detail.id);
+			if ( contact_detail.domain == null )
+				contact_detailStmt.setNull(offset++, 4);
+			else
+				contact_detailStmt.setInt(offset++, contact_detail.domain);
+			if ( contact_detail.contact_group == null )
+				contact_detailStmt.setNull(offset++, 4);
+			else
+				contact_detailStmt.setInt(offset++, contact_detail.contact_group);
+			if ( contact_detail.contact == null )
+				contact_detailStmt.setNull(offset++, 4);
+			else
+				contact_detailStmt.setInt(offset++, contact_detail.contact);
+		}
+		contact_detailStmt.executeUpdate();
+		contact_detailInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Contact_details in {} milliseconds.", size, contact_detailInserted, elapsed );		
+	}
+		
+		private int contact_detailId = -1;
+		
+		private void initContact_detailId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `contact_detail`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.contact_detailId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextContact_detailId() {
+			return ++this.contact_detailId;
+		} 
+
+		public void setContact_detailId(Integer contact_detailId) {
+			this.contact_detailId = contact_detailId;
+		} 
+	
+	private void flushContact_detail(  )
+	throws SQLException {
+		if ( ! contact_details.isEmpty() )
+			insertContact_detail(contact_details);
+		if ( contact_detailStmt != null )
+			contact_detailStmt.close();
+	}	
+
+	/**
+	 * Contact_detail
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param contact_group Identificador del Grupo de Contactos
+	 * @param contact Identificador del Contacto
+	 * @throws SQLException
+	*/
+	protected void insertContact_detail(Integer id, Integer domain, Integer contact_group, Integer contact)
+	throws SQLException {
+
+		Contact_detail contact_detail_ = new Contact_detail();
+		contact_detail_.id = id;
+		contact_detail_.domain = domain;
+		contact_detail_.contact_group = contact_group;
+		contact_detail_.contact = contact;
+
+		contact_details.add(contact_detail_);
+		
+		int contact_detailCount = contact_details.size();
+		
+		if ( 40 * contact_detailCount >=  this.maxAllowedPacket ){
+			insertContact_detail(contact_details);
+			contact_details.clear();
+		} 
+	}
+
+
+	/**
+	 * Contact_detail
+	 * @param domain Identificador del Dominio
+	 * @param contact_group Identificador del Grupo de Contactos
+	 * @param contact Identificador del Contacto
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertContact_detail(Integer domain, Integer contact_group, Integer contact)
+	throws SQLException {
+		int id = nextContact_detailId();
+
+		Contact_detail contact_detail_ = new Contact_detail();
+		contact_detail_.id = id;
+		contact_detail_.domain = domain;
+		contact_detail_.contact_group = contact_group;
+		contact_detail_.contact = contact;
+
+		contact_details.add(contact_detail_);
+		
+		int contact_detailCount = contact_details.size();
+		
+		if ( 40 * contact_detailCount >=  this.maxAllowedPacket ){
+			insertContact_detail(contact_details);
+			contact_details.clear();
 		} 
 		return id;
 	}
@@ -3992,6 +4983,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Timestamp start_time; 
 		protected Timestamp end_time; 
 		protected Double initial_amount; 
+		protected String remarks; 
+		protected Integer invoice; 
 	}
 	
 	protected void insertPos_shift( List<Pos_shift> pos_shifts )
@@ -4002,7 +4995,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( pos_shiftStmt != null ) {
 				pos_shiftStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -4011,7 +5004,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			pos_shiftStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO pos_shift (id,domain,pos,shift,user,start_time,end_time,initial_amount)"  
+				"INSERT INTO pos_shift (id,domain,pos,shift,user,start_time,end_time,initial_amount,remarks,invoice)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			pos_shiftStmtSize = size;
@@ -4052,6 +5045,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				pos_shiftStmt.setNull(offset++, 8);
 			else
 				pos_shiftStmt.setDouble(offset++, pos_shift.initial_amount);
+			if ( pos_shift.remarks == null )
+				pos_shiftStmt.setNull(offset++, -1);
+			else
+				pos_shiftStmt.setString(offset++, pos_shift.remarks);
+			if ( pos_shift.invoice == null )
+				pos_shiftStmt.setNull(offset++, 4);
+			else
+				pos_shiftStmt.setInt(offset++, pos_shift.invoice);
 		}
 		pos_shiftStmt.executeUpdate();
 		pos_shiftInserted += size;
@@ -4110,9 +5111,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param start_time Fecha-hora de apertura
 	 * @param end_time Fecha-hora de cierre
 	 * @param initial_amount Efectivo inicial
+	 * @param remarks Observaciones del turno
+	 * @param invoice Identificador de la Factura
 	 * @throws SQLException
 	*/
-	protected void insertPos_shift(Integer id, Integer domain, Integer pos, Short shift, Integer user, Timestamp start_time, Timestamp end_time, Double initial_amount)
+	protected void insertPos_shift(Integer id, Integer domain, Integer pos, Short shift, Integer user, Timestamp start_time, Timestamp end_time, Double initial_amount, String remarks, Integer invoice)
 	throws SQLException {
 
 		Pos_shift pos_shift_ = new Pos_shift();
@@ -4124,12 +5127,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		pos_shift_.start_time = start_time;
 		pos_shift_.end_time = end_time;
 		pos_shift_.initial_amount = initial_amount;
+		pos_shift_.remarks = remarks;
+		pos_shift_.invoice = invoice;
 
 		pos_shifts.add(pos_shift_);
 		
 		int pos_shiftCount = pos_shifts.size();
 		
-		if ( 96 * pos_shiftCount >=  this.maxAllowedPacket ){
+		if ( 106 * pos_shiftCount >=  this.maxAllowedPacket ){
 			insertPos_shift(pos_shifts);
 			pos_shifts.clear();
 		} 
@@ -4145,10 +5150,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param start_time Fecha-hora de apertura
 	 * @param end_time Fecha-hora de cierre
 	 * @param initial_amount Efectivo inicial
+	 * @param remarks Observaciones del turno
+	 * @param invoice Identificador de la Factura
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertPos_shift(Integer domain, Integer pos, Short shift, Integer user, Timestamp start_time, Timestamp end_time, Double initial_amount)
+	public int insertPos_shift(Integer domain, Integer pos, Short shift, Integer user, Timestamp start_time, Timestamp end_time, Double initial_amount, String remarks, Integer invoice)
 	throws SQLException {
 		int id = nextPos_shiftId();
 
@@ -4161,12 +5168,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		pos_shift_.start_time = start_time;
 		pos_shift_.end_time = end_time;
 		pos_shift_.initial_amount = initial_amount;
+		pos_shift_.remarks = remarks;
+		pos_shift_.invoice = invoice;
 
 		pos_shifts.add(pos_shift_);
 		
 		int pos_shiftCount = pos_shifts.size();
 		
-		if ( 96 * pos_shiftCount >=  this.maxAllowedPacket ){
+		if ( 106 * pos_shiftCount >=  this.maxAllowedPacket ){
 			insertPos_shift(pos_shifts);
 			pos_shifts.clear();
 		} 
@@ -6022,10 +7031,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param salary Recibo del pago de salarios
-	 * @param type Tipo de Percepciùn Salarial
+	 * @param type Tipo de Percepci?n Salarial
 	 * @param payment_concept Codigo del concepto
 	 * @param description Descripcion
-	 * @param expression Fùrmula
+	 * @param expression F?rmula
 	 * @param amount Importe
 	 * @throws SQLException
 	*/
@@ -6057,10 +7066,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Salary_payment
 	 * @param domain Identificador del Dominio
 	 * @param salary Recibo del pago de salarios
-	 * @param type Tipo de Percepciùn Salarial
+	 * @param type Tipo de Percepci?n Salarial
 	 * @param payment_concept Codigo del concepto
 	 * @param description Descripcion
-	 * @param expression Fùrmula
+	 * @param expression F?rmula
 	 * @param amount Importe
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -6277,179 +7286,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 210 * contract_dataCount >=  this.maxAllowedPacket ){
 			insertContract_data(contract_datas);
 			contract_datas.clear();
-		} 
-		return id;
-	}
-
-
-	private int ec_paymethodStmtSize = 0;
-
-	private int ec_paymethodInserted = 0;
-
-	private List<Ec_paymethod> ec_paymethods = 
-		new LinkedList<Ec_paymethod>();
-
-	private PreparedStatement ec_paymethodStmt = null;
-
-	public static class Ec_paymethod {
-		protected Integer id; 
-		protected Integer pay_method; 
-		protected String user_name; 
-		protected String password; 
-		protected String signature; 
-	}
-	
-	protected void insertEc_paymethod( List<Ec_paymethod> ec_paymethods )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = ec_paymethods.size();
-		if ( ec_paymethodStmtSize != size ) {
-			if ( ec_paymethodStmt != null ) {
-				ec_paymethodStmt.close();
-			}
-			String values = "(?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			ec_paymethodStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO ec_paymethod (id,pay_method,user_name,password,signature)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			ec_paymethodStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Ec_paymethod ec_paymethod : ec_paymethods) {
-			if ( ec_paymethod.id == null )
-				ec_paymethodStmt.setNull(offset++, 4);
-			else
-				ec_paymethodStmt.setInt(offset++, ec_paymethod.id);
-			if ( ec_paymethod.pay_method == null )
-				ec_paymethodStmt.setNull(offset++, 4);
-			else
-				ec_paymethodStmt.setInt(offset++, ec_paymethod.pay_method);
-			if ( ec_paymethod.user_name == null )
-				ec_paymethodStmt.setNull(offset++, 12);
-			else
-				ec_paymethodStmt.setString(offset++, ec_paymethod.user_name);
-			if ( ec_paymethod.password == null )
-				ec_paymethodStmt.setNull(offset++, 12);
-			else
-				ec_paymethodStmt.setString(offset++, ec_paymethod.password);
-			if ( ec_paymethod.signature == null )
-				ec_paymethodStmt.setNull(offset++, 12);
-			else
-				ec_paymethodStmt.setString(offset++, ec_paymethod.signature);
-		}
-		ec_paymethodStmt.executeUpdate();
-		ec_paymethodInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Ec_paymethods in {} milliseconds.", size, ec_paymethodInserted, elapsed );		
-	}
-		
-		private int ec_paymethodId = -1;
-		
-		private void initEc_paymethodId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `ec_paymethod`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.ec_paymethodId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextEc_paymethodId() {
-			return ++this.ec_paymethodId;
-		} 
-
-		public void setEc_paymethodId(Integer ec_paymethodId) {
-			this.ec_paymethodId = ec_paymethodId;
-		} 
-	
-	private void flushEc_paymethod(  )
-	throws SQLException {
-		if ( ! ec_paymethods.isEmpty() )
-			insertEc_paymethod(ec_paymethods);
-		if ( ec_paymethodStmt != null )
-			ec_paymethodStmt.close();
-	}	
-
-	/**
-	 * Ec_paymethod
-	 * @param id Identificador unico
-	 * @param pay_method Identificador de la Forma de Pago
-	 * @param user_name Nombre de Usuario
-	 * @param password Contraseùa para la pasarela de pago
-	 * @param signature Identificador unico de la empresa para pasarela
-	 * @throws SQLException
-	*/
-	protected void insertEc_paymethod(Integer id, Integer pay_method, String user_name, String password, String signature)
-	throws SQLException {
-
-		Ec_paymethod ec_paymethod_ = new Ec_paymethod();
-		ec_paymethod_.id = id;
-		ec_paymethod_.pay_method = pay_method;
-		ec_paymethod_.user_name = user_name;
-		ec_paymethod_.password = password;
-		ec_paymethod_.signature = signature;
-
-		ec_paymethods.add(ec_paymethod_);
-		
-		int ec_paymethodCount = ec_paymethods.size();
-		
-		if ( 244 * ec_paymethodCount >=  this.maxAllowedPacket ){
-			insertEc_paymethod(ec_paymethods);
-			ec_paymethods.clear();
-		} 
-	}
-
-
-	/**
-	 * Ec_paymethod
-	 * @param pay_method Identificador de la Forma de Pago
-	 * @param user_name Nombre de Usuario
-	 * @param password Contraseùa para la pasarela de pago
-	 * @param signature Identificador unico de la empresa para pasarela
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertEc_paymethod(Integer pay_method, String user_name, String password, String signature)
-	throws SQLException {
-		int id = nextEc_paymethodId();
-
-		Ec_paymethod ec_paymethod_ = new Ec_paymethod();
-		ec_paymethod_.id = id;
-		ec_paymethod_.pay_method = pay_method;
-		ec_paymethod_.user_name = user_name;
-		ec_paymethod_.password = password;
-		ec_paymethod_.signature = signature;
-
-		ec_paymethods.add(ec_paymethod_);
-		
-		int ec_paymethodCount = ec_paymethods.size();
-		
-		if ( 244 * ec_paymethodCount >=  this.maxAllowedPacket ){
-			insertEc_paymethod(ec_paymethods);
-			ec_paymethods.clear();
 		} 
 		return id;
 	}
@@ -6909,6 +7745,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Timestamp end_date; 
 		protected Integer survey; 
 		protected Integer template; 
+		protected String description; 
 	}
 	
 	protected void insertMk_action( List<Mk_action> mk_actions )
@@ -6919,7 +7756,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( mk_actionStmt != null ) {
 				mk_actionStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -6928,7 +7765,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			mk_actionStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO mk_action (id,domain,campaign,media_type,start_date,end_date,survey,template)"  
+				"INSERT INTO mk_action (id,domain,campaign,media_type,start_date,end_date,survey,template,description)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			mk_actionStmtSize = size;
@@ -6969,6 +7806,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				mk_actionStmt.setNull(offset++, 4);
 			else
 				mk_actionStmt.setInt(offset++, mk_action.template);
+			if ( mk_action.description == null )
+				mk_actionStmt.setNull(offset++, 12);
+			else
+				mk_actionStmt.setString(offset++, mk_action.description);
 		}
 		mk_actionStmt.executeUpdate();
 		mk_actionInserted += size;
@@ -7021,15 +7862,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Mk_action
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campaùa
+	 * @param campaign Identificador de la Campa?a
 	 * @param media_type Tipo de contacto de la Accion
 	 * @param start_date Fecha de inicio
 	 * @param end_date Fecha de finalizacion
 	 * @param survey Identificador del Cuestionario
 	 * @param template Identificador de la Plantilla
+	 * @param description Descripcion de la Accion
 	 * @throws SQLException
 	*/
-	protected void insertMk_action(Integer id, Integer domain, Integer campaign, Integer media_type, Timestamp start_date, Timestamp end_date, Integer survey, Integer template)
+	protected void insertMk_action(Integer id, Integer domain, Integer campaign, Integer media_type, Timestamp start_date, Timestamp end_date, Integer survey, Integer template, String description)
 	throws SQLException {
 
 		Mk_action mk_action_ = new Mk_action();
@@ -7041,12 +7883,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		mk_action_.end_date = end_date;
 		mk_action_.survey = survey;
 		mk_action_.template = template;
+		mk_action_.description = description;
 
 		mk_actions.add(mk_action_);
 		
 		int mk_actionCount = mk_actions.size();
 		
-		if ( 98 * mk_actionCount >=  this.maxAllowedPacket ){
+		if ( 162 * mk_actionCount >=  this.maxAllowedPacket ){
 			insertMk_action(mk_actions);
 			mk_actions.clear();
 		} 
@@ -7056,16 +7899,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Mk_action
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campaùa
+	 * @param campaign Identificador de la Campa?a
 	 * @param media_type Tipo de contacto de la Accion
 	 * @param start_date Fecha de inicio
 	 * @param end_date Fecha de finalizacion
 	 * @param survey Identificador del Cuestionario
 	 * @param template Identificador de la Plantilla
+	 * @param description Descripcion de la Accion
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertMk_action(Integer domain, Integer campaign, Integer media_type, Timestamp start_date, Timestamp end_date, Integer survey, Integer template)
+	public int insertMk_action(Integer domain, Integer campaign, Integer media_type, Timestamp start_date, Timestamp end_date, Integer survey, Integer template, String description)
 	throws SQLException {
 		int id = nextMk_actionId();
 
@@ -7078,14 +7922,179 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		mk_action_.end_date = end_date;
 		mk_action_.survey = survey;
 		mk_action_.template = template;
+		mk_action_.description = description;
 
 		mk_actions.add(mk_action_);
 		
 		int mk_actionCount = mk_actions.size();
 		
-		if ( 98 * mk_actionCount >=  this.maxAllowedPacket ){
+		if ( 162 * mk_actionCount >=  this.maxAllowedPacket ){
 			insertMk_action(mk_actions);
 			mk_actions.clear();
+		} 
+		return id;
+	}
+
+
+	private int profile_action_deniedStmtSize = 0;
+
+	private int profile_action_deniedInserted = 0;
+
+	private List<Profile_action_denied> profile_action_denieds = 
+		new LinkedList<Profile_action_denied>();
+
+	private PreparedStatement profile_action_deniedStmt = null;
+
+	public static class Profile_action_denied {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer profile; 
+		protected Integer action_id; 
+	}
+	
+	protected void insertProfile_action_denied( List<Profile_action_denied> profile_action_denieds )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = profile_action_denieds.size();
+		if ( profile_action_deniedStmtSize != size ) {
+			if ( profile_action_deniedStmt != null ) {
+				profile_action_deniedStmt.close();
+			}
+			String values = "(?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			profile_action_deniedStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO profile_action_denied (id,domain,profile,action_id)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			profile_action_deniedStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Profile_action_denied profile_action_denied : profile_action_denieds) {
+			if ( profile_action_denied.id == null )
+				profile_action_deniedStmt.setNull(offset++, 4);
+			else
+				profile_action_deniedStmt.setInt(offset++, profile_action_denied.id);
+			if ( profile_action_denied.domain == null )
+				profile_action_deniedStmt.setNull(offset++, 4);
+			else
+				profile_action_deniedStmt.setInt(offset++, profile_action_denied.domain);
+			if ( profile_action_denied.profile == null )
+				profile_action_deniedStmt.setNull(offset++, 4);
+			else
+				profile_action_deniedStmt.setInt(offset++, profile_action_denied.profile);
+			if ( profile_action_denied.action_id == null )
+				profile_action_deniedStmt.setNull(offset++, 4);
+			else
+				profile_action_deniedStmt.setInt(offset++, profile_action_denied.action_id);
+		}
+		profile_action_deniedStmt.executeUpdate();
+		profile_action_deniedInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Profile_action_denieds in {} milliseconds.", size, profile_action_deniedInserted, elapsed );		
+	}
+		
+		private int profile_action_deniedId = -1;
+		
+		private void initProfile_action_deniedId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `profile_action_denied`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.profile_action_deniedId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextProfile_action_deniedId() {
+			return ++this.profile_action_deniedId;
+		} 
+
+		public void setProfile_action_deniedId(Integer profile_action_deniedId) {
+			this.profile_action_deniedId = profile_action_deniedId;
+		} 
+	
+	private void flushProfile_action_denied(  )
+	throws SQLException {
+		if ( ! profile_action_denieds.isEmpty() )
+			insertProfile_action_denied(profile_action_denieds);
+		if ( profile_action_deniedStmt != null )
+			profile_action_deniedStmt.close();
+	}	
+
+	/**
+	 * Profile_action_denied
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param profile Identificador del Perfil
+	 * @param action_id Identificador de la Accion
+	 * @throws SQLException
+	*/
+	protected void insertProfile_action_denied(Integer id, Integer domain, Integer profile, Integer action_id)
+	throws SQLException {
+
+		Profile_action_denied profile_action_denied_ = new Profile_action_denied();
+		profile_action_denied_.id = id;
+		profile_action_denied_.domain = domain;
+		profile_action_denied_.profile = profile;
+		profile_action_denied_.action_id = action_id;
+
+		profile_action_denieds.add(profile_action_denied_);
+		
+		int profile_action_deniedCount = profile_action_denieds.size();
+		
+		if ( 40 * profile_action_deniedCount >=  this.maxAllowedPacket ){
+			insertProfile_action_denied(profile_action_denieds);
+			profile_action_denieds.clear();
+		} 
+	}
+
+
+	/**
+	 * Profile_action_denied
+	 * @param domain Identificador del Dominio
+	 * @param profile Identificador del Perfil
+	 * @param action_id Identificador de la Accion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertProfile_action_denied(Integer domain, Integer profile, Integer action_id)
+	throws SQLException {
+		int id = nextProfile_action_deniedId();
+
+		Profile_action_denied profile_action_denied_ = new Profile_action_denied();
+		profile_action_denied_.id = id;
+		profile_action_denied_.domain = domain;
+		profile_action_denied_.profile = profile;
+		profile_action_denied_.action_id = action_id;
+
+		profile_action_denieds.add(profile_action_denied_);
+		
+		int profile_action_deniedCount = profile_action_denieds.size();
+		
+		if ( 40 * profile_action_deniedCount >=  this.maxAllowedPacket ){
+			insertProfile_action_denied(profile_action_denieds);
+			profile_action_denieds.clear();
 		} 
 		return id;
 	}
@@ -8452,7 +9461,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param balance Identificador del Balance
 	 * @param code Codigo del Detalle en el Balance
-	 * @param description Descripciùn del detalle de balance
+	 * @param description Descripci?n del detalle de balance
 	 * @param accounts Cuentas separadas por comas, que forman el acumulado.
 	 * @param sortKey Orden el que aparecera en el listado.
 	 * @param title 
@@ -8495,7 +9504,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param balance Identificador del Balance
 	 * @param code Codigo del Detalle en el Balance
-	 * @param description Descripciùn del detalle de balance
+	 * @param description Descripci?n del detalle de balance
 	 * @param accounts Cuentas separadas por comas, que forman el acumulado.
 	 * @param sortKey Orden el que aparecera en el listado.
 	 * @param title 
@@ -10049,8 +11058,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	public static class Domain {
 		protected Integer id; 
 		protected String name; 
+		protected String description; 
 		protected Integer parent; 
+		protected Short type; 
+		protected String subDomainSuffix; 
+		protected Boolean userManagement; 
+		protected Boolean domainManagement; 
+		protected Boolean documentManagement; 
+		protected Integer maxDocumentSize; 
+		protected Integer maxTotalDocumentSize; 
+		protected Integer maxDefinedUsers; 
 		protected Boolean active; 
+		protected String owner; 
 	}
 	
 	protected void insertDomain( List<Domain> domains )
@@ -10061,7 +11080,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( domainStmt != null ) {
 				domainStmt.close();
 			}
-			String values = "(?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -10070,7 +11089,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			domainStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO domain (id,name,parent,active)"  
+				"INSERT INTO domain (id,name,description,parent,type,subDomainSuffix,userManagement,domainManagement,documentManagement,maxDocumentSize,maxTotalDocumentSize,maxDefinedUsers,active,owner)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			domainStmtSize = size;
@@ -10087,14 +11106,54 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				domainStmt.setNull(offset++, 12);
 			else
 				domainStmt.setString(offset++, domain.name);
+			if ( domain.description == null )
+				domainStmt.setNull(offset++, 12);
+			else
+				domainStmt.setString(offset++, domain.description);
 			if ( domain.parent == null )
 				domainStmt.setNull(offset++, 4);
 			else
 				domainStmt.setInt(offset++, domain.parent);
+			if ( domain.type == null )
+				domainStmt.setNull(offset++, -6);
+			else
+				domainStmt.setShort(offset++, domain.type);
+			if ( domain.subDomainSuffix == null )
+				domainStmt.setNull(offset++, 12);
+			else
+				domainStmt.setString(offset++, domain.subDomainSuffix);
+			if ( domain.userManagement == null )
+				domainStmt.setNull(offset++, -7);
+			else
+				domainStmt.setBoolean(offset++, domain.userManagement);
+			if ( domain.domainManagement == null )
+				domainStmt.setNull(offset++, -7);
+			else
+				domainStmt.setBoolean(offset++, domain.domainManagement);
+			if ( domain.documentManagement == null )
+				domainStmt.setNull(offset++, -7);
+			else
+				domainStmt.setBoolean(offset++, domain.documentManagement);
+			if ( domain.maxDocumentSize == null )
+				domainStmt.setNull(offset++, 4);
+			else
+				domainStmt.setInt(offset++, domain.maxDocumentSize);
+			if ( domain.maxTotalDocumentSize == null )
+				domainStmt.setNull(offset++, 4);
+			else
+				domainStmt.setInt(offset++, domain.maxTotalDocumentSize);
+			if ( domain.maxDefinedUsers == null )
+				domainStmt.setNull(offset++, 4);
+			else
+				domainStmt.setInt(offset++, domain.maxDefinedUsers);
 			if ( domain.active == null )
 				domainStmt.setNull(offset++, -7);
 			else
 				domainStmt.setBoolean(offset++, domain.active);
+			if ( domain.owner == null )
+				domainStmt.setNull(offset++, 12);
+			else
+				domainStmt.setString(offset++, domain.owner);
 		}
 		domainStmt.executeUpdate();
 		domainInserted += size;
@@ -10147,24 +11206,44 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Domain
 	 * @param id Identificador unico
 	 * @param name Nombre del Dominio
+	 * @param description Descripcion del Dominio
 	 * @param parent Identificador del Dominio padre
+	 * @param type Tipo de Dominio
+	 * @param subDomainSuffix Sufijo de los Dominio Hijo
+	 * @param userManagement Indica si el Dominio tiene capacidad de MultiUsuario o no
+	 * @param domainManagement Indica si el Dominio tiene capacidad de MultiDominio o no
+	 * @param documentManagement Indica si el Dominio tiene capacidad de Documental o no
+	 * @param maxDocumentSize Tama?o Maximo de los Documentos
+	 * @param maxTotalDocumentSize Almacenamiento Documental Contratado
+	 * @param maxDefinedUsers Numero Maximo de Usuarios
 	 * @param active Indica si el Dominio esta activo o no
+	 * @param owner Creador del Dominio
 	 * @throws SQLException
 	*/
-	protected void insertDomain(Integer id, String name, Integer parent, Boolean active)
+	protected void insertDomain(Integer id, String name, String description, Integer parent, Short type, String subDomainSuffix, Boolean userManagement, Boolean domainManagement, Boolean documentManagement, Integer maxDocumentSize, Integer maxTotalDocumentSize, Integer maxDefinedUsers, Boolean active, String owner)
 	throws SQLException {
 
 		Domain domain_ = new Domain();
 		domain_.id = id;
 		domain_.name = name;
+		domain_.description = description;
 		domain_.parent = parent;
+		domain_.type = type;
+		domain_.subDomainSuffix = subDomainSuffix;
+		domain_.userManagement = userManagement;
+		domain_.domainManagement = domainManagement;
+		domain_.documentManagement = documentManagement;
+		domain_.maxDocumentSize = maxDocumentSize;
+		domain_.maxTotalDocumentSize = maxTotalDocumentSize;
+		domain_.maxDefinedUsers = maxDefinedUsers;
 		domain_.active = active;
+		domain_.owner = owner;
 
 		domains.add(domain_);
 		
 		int domainCount = domains.size();
 		
-		if ( 84 * domainCount >=  this.maxAllowedPacket ){
+		if ( 341 * domainCount >=  this.maxAllowedPacket ){
 			insertDomain(domains);
 			domains.clear();
 		} 
@@ -10174,26 +11253,46 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Domain
 	 * @param name Nombre del Dominio
+	 * @param description Descripcion del Dominio
 	 * @param parent Identificador del Dominio padre
+	 * @param type Tipo de Dominio
+	 * @param subDomainSuffix Sufijo de los Dominio Hijo
+	 * @param userManagement Indica si el Dominio tiene capacidad de MultiUsuario o no
+	 * @param domainManagement Indica si el Dominio tiene capacidad de MultiDominio o no
+	 * @param documentManagement Indica si el Dominio tiene capacidad de Documental o no
+	 * @param maxDocumentSize Tama?o Maximo de los Documentos
+	 * @param maxTotalDocumentSize Almacenamiento Documental Contratado
+	 * @param maxDefinedUsers Numero Maximo de Usuarios
 	 * @param active Indica si el Dominio esta activo o no
+	 * @param owner Creador del Dominio
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertDomain(String name, Integer parent, Boolean active)
+	public int insertDomain(String name, String description, Integer parent, Short type, String subDomainSuffix, Boolean userManagement, Boolean domainManagement, Boolean documentManagement, Integer maxDocumentSize, Integer maxTotalDocumentSize, Integer maxDefinedUsers, Boolean active, String owner)
 	throws SQLException {
 		int id = nextDomainId();
 
 		Domain domain_ = new Domain();
 		domain_.id = id;
 		domain_.name = name;
+		domain_.description = description;
 		domain_.parent = parent;
+		domain_.type = type;
+		domain_.subDomainSuffix = subDomainSuffix;
+		domain_.userManagement = userManagement;
+		domain_.domainManagement = domainManagement;
+		domain_.documentManagement = documentManagement;
+		domain_.maxDocumentSize = maxDocumentSize;
+		domain_.maxTotalDocumentSize = maxTotalDocumentSize;
+		domain_.maxDefinedUsers = maxDefinedUsers;
 		domain_.active = active;
+		domain_.owner = owner;
 
 		domains.add(domain_);
 		
 		int domainCount = domains.size();
 		
-		if ( 84 * domainCount >=  this.maxAllowedPacket ){
+		if ( 341 * domainCount >=  this.maxAllowedPacket ){
 			insertDomain(domains);
 			domains.clear();
 		} 
@@ -10441,6 +11540,242 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 222 * noticeCount >=  this.maxAllowedPacket ){
 			insertNotice(notices);
 			notices.clear();
+		} 
+		return id;
+	}
+
+
+	private int fs_mod349StmtSize = 0;
+
+	private int fs_mod349Inserted = 0;
+
+	private List<Fs_mod349> fs_mod349s = 
+		new LinkedList<Fs_mod349>();
+
+	private PreparedStatement fs_mod349Stmt = null;
+
+	public static class Fs_mod349 {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer year; 
+		protected Short period; 
+		protected Short administration; 
+		protected String comments; 
+		protected Short status; 
+		protected Short security_level; 
+		protected Boolean complementary; 
+		protected Boolean replacement; 
+		protected Integer number; 
+		protected Integer replaced_number; 
+	}
+	
+	protected void insertFs_mod349( List<Fs_mod349> fs_mod349s )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = fs_mod349s.size();
+		if ( fs_mod349StmtSize != size ) {
+			if ( fs_mod349Stmt != null ) {
+				fs_mod349Stmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			fs_mod349Stmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO fs_mod349 (id,domain,year,period,administration,comments,status,security_level,complementary,replacement,number,replaced_number)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			fs_mod349StmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Fs_mod349 fs_mod349 : fs_mod349s) {
+			if ( fs_mod349.id == null )
+				fs_mod349Stmt.setNull(offset++, 4);
+			else
+				fs_mod349Stmt.setInt(offset++, fs_mod349.id);
+			if ( fs_mod349.domain == null )
+				fs_mod349Stmt.setNull(offset++, 4);
+			else
+				fs_mod349Stmt.setInt(offset++, fs_mod349.domain);
+			if ( fs_mod349.year == null )
+				fs_mod349Stmt.setNull(offset++, 4);
+			else
+				fs_mod349Stmt.setInt(offset++, fs_mod349.year);
+			if ( fs_mod349.period == null )
+				fs_mod349Stmt.setNull(offset++, -6);
+			else
+				fs_mod349Stmt.setShort(offset++, fs_mod349.period);
+			if ( fs_mod349.administration == null )
+				fs_mod349Stmt.setNull(offset++, -6);
+			else
+				fs_mod349Stmt.setShort(offset++, fs_mod349.administration);
+			if ( fs_mod349.comments == null )
+				fs_mod349Stmt.setNull(offset++, -1);
+			else
+				fs_mod349Stmt.setString(offset++, fs_mod349.comments);
+			if ( fs_mod349.status == null )
+				fs_mod349Stmt.setNull(offset++, -6);
+			else
+				fs_mod349Stmt.setShort(offset++, fs_mod349.status);
+			if ( fs_mod349.security_level == null )
+				fs_mod349Stmt.setNull(offset++, -6);
+			else
+				fs_mod349Stmt.setShort(offset++, fs_mod349.security_level);
+			if ( fs_mod349.complementary == null )
+				fs_mod349Stmt.setNull(offset++, -7);
+			else
+				fs_mod349Stmt.setBoolean(offset++, fs_mod349.complementary);
+			if ( fs_mod349.replacement == null )
+				fs_mod349Stmt.setNull(offset++, -7);
+			else
+				fs_mod349Stmt.setBoolean(offset++, fs_mod349.replacement);
+			if ( fs_mod349.number == null )
+				fs_mod349Stmt.setNull(offset++, 4);
+			else
+				fs_mod349Stmt.setInt(offset++, fs_mod349.number);
+			if ( fs_mod349.replaced_number == null )
+				fs_mod349Stmt.setNull(offset++, 4);
+			else
+				fs_mod349Stmt.setInt(offset++, fs_mod349.replaced_number);
+		}
+		fs_mod349Stmt.executeUpdate();
+		fs_mod349Inserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Fs_mod349s in {} milliseconds.", size, fs_mod349Inserted, elapsed );		
+	}
+		
+		private int fs_mod349Id = -1;
+		
+		private void initFs_mod349Id() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `fs_mod349`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.fs_mod349Id = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextFs_mod349Id() {
+			return ++this.fs_mod349Id;
+		} 
+
+		public void setFs_mod349Id(Integer fs_mod349Id) {
+			this.fs_mod349Id = fs_mod349Id;
+		} 
+	
+	private void flushFs_mod349(  )
+	throws SQLException {
+		if ( ! fs_mod349s.isEmpty() )
+			insertFs_mod349(fs_mod349s);
+		if ( fs_mod349Stmt != null )
+			fs_mod349Stmt.close();
+	}	
+
+	/**
+	 * Fs_mod349
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param year Ejercicio de la Declaracion
+	 * @param period Periodo de la Declaracion
+	 * @param administration Administracion
+	 * @param comments Comentarios de la Declaracion
+	 * @param status Estado de la Declaracion
+	 * @param security_level Nivel de seguridad
+	 * @param complementary Declaracion complementaria
+	 * @param replacement Declaracion sustitutiva
+	 * @param number Numero de Declaracion
+	 * @param replaced_number Numero de Declaracion complementada o sustituida
+	 * @throws SQLException
+	*/
+	protected void insertFs_mod349(Integer id, Integer domain, Integer year, Short period, Short administration, String comments, Short status, Short security_level, Boolean complementary, Boolean replacement, Integer number, Integer replaced_number)
+	throws SQLException {
+
+		Fs_mod349 fs_mod349_ = new Fs_mod349();
+		fs_mod349_.id = id;
+		fs_mod349_.domain = domain;
+		fs_mod349_.year = year;
+		fs_mod349_.period = period;
+		fs_mod349_.administration = administration;
+		fs_mod349_.comments = comments;
+		fs_mod349_.status = status;
+		fs_mod349_.security_level = security_level;
+		fs_mod349_.complementary = complementary;
+		fs_mod349_.replacement = replacement;
+		fs_mod349_.number = number;
+		fs_mod349_.replaced_number = replaced_number;
+
+		fs_mod349s.add(fs_mod349_);
+		
+		int fs_mod349Count = fs_mod349s.size();
+		
+		if ( 62 * fs_mod349Count >=  this.maxAllowedPacket ){
+			insertFs_mod349(fs_mod349s);
+			fs_mod349s.clear();
+		} 
+	}
+
+
+	/**
+	 * Fs_mod349
+	 * @param domain Identificador del Dominio
+	 * @param year Ejercicio de la Declaracion
+	 * @param period Periodo de la Declaracion
+	 * @param administration Administracion
+	 * @param comments Comentarios de la Declaracion
+	 * @param status Estado de la Declaracion
+	 * @param security_level Nivel de seguridad
+	 * @param complementary Declaracion complementaria
+	 * @param replacement Declaracion sustitutiva
+	 * @param number Numero de Declaracion
+	 * @param replaced_number Numero de Declaracion complementada o sustituida
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertFs_mod349(Integer domain, Integer year, Short period, Short administration, String comments, Short status, Short security_level, Boolean complementary, Boolean replacement, Integer number, Integer replaced_number)
+	throws SQLException {
+		int id = nextFs_mod349Id();
+
+		Fs_mod349 fs_mod349_ = new Fs_mod349();
+		fs_mod349_.id = id;
+		fs_mod349_.domain = domain;
+		fs_mod349_.year = year;
+		fs_mod349_.period = period;
+		fs_mod349_.administration = administration;
+		fs_mod349_.comments = comments;
+		fs_mod349_.status = status;
+		fs_mod349_.security_level = security_level;
+		fs_mod349_.complementary = complementary;
+		fs_mod349_.replacement = replacement;
+		fs_mod349_.number = number;
+		fs_mod349_.replaced_number = replaced_number;
+
+		fs_mod349s.add(fs_mod349_);
+		
+		int fs_mod349Count = fs_mod349s.size();
+		
+		if ( 62 * fs_mod349Count >=  this.maxAllowedPacket ){
+			insertFs_mod349(fs_mod349s);
+			fs_mod349s.clear();
 		} 
 		return id;
 	}
@@ -10950,9 +12285,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Process_task
-	 * @param id Identificador unico de la Relacion entre Campaùas, Actividades y Tareas
+	 * @param id Identificador unico de la Relacion entre Campa?as, Actividades y Tareas
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campaùa
+	 * @param campaign Identificador de la Campa?a
 	 * @param process_detail Identificador del Detalle de Proceso
 	 * @param task Identificador de la Tarea
 	 * @throws SQLException
@@ -10981,7 +12316,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Process_task
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campaùa
+	 * @param campaign Identificador de la Campa?a
 	 * @param process_detail Identificador del Detalle de Proceso
 	 * @param task Identificador de la Tarea
 	 * @returns auto-generated key
@@ -11024,6 +12359,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer domain; 
 		protected String expression; 
 		protected String description; 
+		protected Short type; 
 	}
 	
 	protected void insertBonus_concept( List<Bonus_concept> bonus_concepts )
@@ -11034,7 +12370,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( bonus_conceptStmt != null ) {
 				bonus_conceptStmt.close();
 			}
-			String values = "(?,?,?,?)";
+			String values = "(?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -11043,7 +12379,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			bonus_conceptStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO bonus_concept (id,domain,expression,description)"  
+				"INSERT INTO bonus_concept (id,domain,expression,description,type)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			bonus_conceptStmtSize = size;
@@ -11068,6 +12404,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				bonus_conceptStmt.setNull(offset++, 12);
 			else
 				bonus_conceptStmt.setString(offset++, bonus_concept.description);
+			if ( bonus_concept.type == null )
+				bonus_conceptStmt.setNull(offset++, -6);
+			else
+				bonus_conceptStmt.setShort(offset++, bonus_concept.type);
 		}
 		bonus_conceptStmt.executeUpdate();
 		bonus_conceptInserted += size;
@@ -11122,9 +12462,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param expression Importe
 	 * @param description Descripcion
+	 * @param type Tipo de Bonificacion Salarial
 	 * @throws SQLException
 	*/
-	protected void insertBonus_concept(Integer id, Integer domain, String expression, String description)
+	protected void insertBonus_concept(Integer id, Integer domain, String expression, String description, Short type)
 	throws SQLException {
 
 		Bonus_concept bonus_concept_ = new Bonus_concept();
@@ -11132,12 +12473,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		bonus_concept_.domain = domain;
 		bonus_concept_.expression = expression;
 		bonus_concept_.description = description;
+		bonus_concept_.type = type;
 
 		bonus_concepts.add(bonus_concept_);
 		
 		int bonus_conceptCount = bonus_concepts.size();
 		
-		if ( 788 * bonus_conceptCount >=  this.maxAllowedPacket ){
+		if ( 791 * bonus_conceptCount >=  this.maxAllowedPacket ){
 			insertBonus_concept(bonus_concepts);
 			bonus_concepts.clear();
 		} 
@@ -11149,10 +12491,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param expression Importe
 	 * @param description Descripcion
+	 * @param type Tipo de Bonificacion Salarial
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertBonus_concept(Integer domain, String expression, String description)
+	public int insertBonus_concept(Integer domain, String expression, String description, Short type)
 	throws SQLException {
 		int id = nextBonus_conceptId();
 
@@ -11161,12 +12504,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		bonus_concept_.domain = domain;
 		bonus_concept_.expression = expression;
 		bonus_concept_.description = description;
+		bonus_concept_.type = type;
 
 		bonus_concepts.add(bonus_concept_);
 		
 		int bonus_conceptCount = bonus_concepts.size();
 		
-		if ( 788 * bonus_conceptCount >=  this.maxAllowedPacket ){
+		if ( 791 * bonus_conceptCount >=  this.maxAllowedPacket ){
 			insertBonus_concept(bonus_concepts);
 			bonus_concepts.clear();
 		} 
@@ -12131,6 +13475,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class Absence {
 		protected Integer id; 
+		protected Integer domain; 
 		protected Integer course_alumn; 
 		protected Date absence_date; 
 		protected String comments; 
@@ -12145,7 +13490,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( absenceStmt != null ) {
 				absenceStmt.close();
 			}
-			String values = "(?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -12154,7 +13499,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			absenceStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO absence (id,course_alumn,absence_date,comments,evaluation)"  
+				"INSERT INTO absence (id,domain,course_alumn,absence_date,comments,evaluation)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			absenceStmtSize = size;
@@ -12167,6 +13512,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				absenceStmt.setNull(offset++, 4);
 			else
 				absenceStmt.setInt(offset++, absence.id);
+			if ( absence.domain == null )
+				absenceStmt.setNull(offset++, 4);
+			else
+				absenceStmt.setInt(offset++, absence.domain);
 			if ( absence.course_alumn == null )
 				absenceStmt.setNull(offset++, 4);
 			else
@@ -12234,17 +13583,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Absence
 	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
 	 * @param course_alumn Identificador del CursoAlumno
 	 * @param absence_date Fecha de la Ausencia
 	 * @param comments Comentarios de la Ausencia
 	 * @param evaluation Numero de Evaluacion en que se produjo la Ausencia
 	 * @throws SQLException
 	*/
-	protected void insertAbsence(Integer id, Integer course_alumn, Date absence_date, String comments, Short evaluation)
+	protected void insertAbsence(Integer id, Integer domain, Integer course_alumn, Date absence_date, String comments, Short evaluation)
 	throws SQLException {
 
 		Absence absence_ = new Absence();
 		absence_.id = id;
+		absence_.domain = domain;
 		absence_.course_alumn = course_alumn;
 		absence_.absence_date = absence_date;
 		absence_.comments = comments;
@@ -12254,7 +13605,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int absenceCount = absences.size();
 		
-		if ( 33 * absenceCount >=  this.maxAllowedPacket ){
+		if ( 43 * absenceCount >=  this.maxAllowedPacket ){
 			insertAbsence(absences);
 			absences.clear();
 		} 
@@ -12263,6 +13614,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Absence
+	 * @param domain Identificador del Dominio
 	 * @param course_alumn Identificador del CursoAlumno
 	 * @param absence_date Fecha de la Ausencia
 	 * @param comments Comentarios de la Ausencia
@@ -12270,12 +13622,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertAbsence(Integer course_alumn, Date absence_date, String comments, Short evaluation)
+	public int insertAbsence(Integer domain, Integer course_alumn, Date absence_date, String comments, Short evaluation)
 	throws SQLException {
 		int id = nextAbsenceId();
 
 		Absence absence_ = new Absence();
 		absence_.id = id;
+		absence_.domain = domain;
 		absence_.course_alumn = course_alumn;
 		absence_.absence_date = absence_date;
 		absence_.comments = comments;
@@ -12285,7 +13638,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int absenceCount = absences.size();
 		
-		if ( 33 * absenceCount >=  this.maxAllowedPacket ){
+		if ( 43 * absenceCount >=  this.maxAllowedPacket ){
 			insertAbsence(absences);
 			absences.clear();
 		} 
@@ -12448,7 +13801,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * System_payment
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Percepciùn Salarial
+	 * @param type Tipo de Percepci?n Salarial
 	 * @param payment_concept Identificador unico del concepto
 	 * @param description Descripcion
 	 * @param description_decorable 
@@ -12493,7 +13846,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * System_payment
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Percepciùn Salarial
+	 * @param type Tipo de Percepci?n Salarial
 	 * @param payment_concept Identificador unico del concepto
 	 * @param description Descripcion
 	 * @param description_decorable 
@@ -12533,6 +13886,179 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 510 * system_paymentCount >=  this.maxAllowedPacket ){
 			insertSystem_payment(system_payments);
 			system_payments.clear();
+		} 
+		return id;
+	}
+
+
+	private int application_userStmtSize = 0;
+
+	private int application_userInserted = 0;
+
+	private List<Application_user> application_users = 
+		new LinkedList<Application_user>();
+
+	private PreparedStatement application_userStmt = null;
+
+	public static class Application_user {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer user_id; 
+		protected Integer domain_application; 
+		protected Boolean active; 
+	}
+	
+	protected void insertApplication_user( List<Application_user> application_users )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = application_users.size();
+		if ( application_userStmtSize != size ) {
+			if ( application_userStmt != null ) {
+				application_userStmt.close();
+			}
+			String values = "(?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			application_userStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO application_user (id,domain,user_id,domain_application,active)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			application_userStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Application_user application_user : application_users) {
+			if ( application_user.id == null )
+				application_userStmt.setNull(offset++, 4);
+			else
+				application_userStmt.setInt(offset++, application_user.id);
+			if ( application_user.domain == null )
+				application_userStmt.setNull(offset++, 4);
+			else
+				application_userStmt.setInt(offset++, application_user.domain);
+			if ( application_user.user_id == null )
+				application_userStmt.setNull(offset++, 4);
+			else
+				application_userStmt.setInt(offset++, application_user.user_id);
+			if ( application_user.domain_application == null )
+				application_userStmt.setNull(offset++, 4);
+			else
+				application_userStmt.setInt(offset++, application_user.domain_application);
+			if ( application_user.active == null )
+				application_userStmt.setNull(offset++, -7);
+			else
+				application_userStmt.setBoolean(offset++, application_user.active);
+		}
+		application_userStmt.executeUpdate();
+		application_userInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Application_users in {} milliseconds.", size, application_userInserted, elapsed );		
+	}
+		
+		private int application_userId = -1;
+		
+		private void initApplication_userId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `application_user`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.application_userId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextApplication_userId() {
+			return ++this.application_userId;
+		} 
+
+		public void setApplication_userId(Integer application_userId) {
+			this.application_userId = application_userId;
+		} 
+	
+	private void flushApplication_user(  )
+	throws SQLException {
+		if ( ! application_users.isEmpty() )
+			insertApplication_user(application_users);
+		if ( application_userStmt != null )
+			application_userStmt.close();
+	}	
+
+	/**
+	 * Application_user
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param user_id Identificador del Usuario
+	 * @param domain_application Identificador de la Aplicacion del Dominio
+	 * @param active Indica si la Aplicacion del Dominio esta activo o no
+	 * @throws SQLException
+	*/
+	protected void insertApplication_user(Integer id, Integer domain, Integer user_id, Integer domain_application, Boolean active)
+	throws SQLException {
+
+		Application_user application_user_ = new Application_user();
+		application_user_.id = id;
+		application_user_.domain = domain;
+		application_user_.user_id = user_id;
+		application_user_.domain_application = domain_application;
+		application_user_.active = active;
+
+		application_users.add(application_user_);
+		
+		int application_userCount = application_users.size();
+		
+		if ( 40 * application_userCount >=  this.maxAllowedPacket ){
+			insertApplication_user(application_users);
+			application_users.clear();
+		} 
+	}
+
+
+	/**
+	 * Application_user
+	 * @param domain Identificador del Dominio
+	 * @param user_id Identificador del Usuario
+	 * @param domain_application Identificador de la Aplicacion del Dominio
+	 * @param active Indica si la Aplicacion del Dominio esta activo o no
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertApplication_user(Integer domain, Integer user_id, Integer domain_application, Boolean active)
+	throws SQLException {
+		int id = nextApplication_userId();
+
+		Application_user application_user_ = new Application_user();
+		application_user_.id = id;
+		application_user_.domain = domain;
+		application_user_.user_id = user_id;
+		application_user_.domain_application = domain_application;
+		application_user_.active = active;
+
+		application_users.add(application_user_);
+		
+		int application_userCount = application_users.size();
+		
+		if ( 40 * application_userCount >=  this.maxAllowedPacket ){
+			insertApplication_user(application_users);
+			application_users.clear();
 		} 
 		return id;
 	}
@@ -13348,9 +14874,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer project; 
 		protected Integer domain; 
 		protected Integer hotel; 
+		protected Integer hotel_reservation; 
 		protected String code; 
-		protected Timestamp creation_date; 
-		protected Timestamp modification_date; 
 		protected Date start_date; 
 		protected Timestamp start_time; 
 		protected Date end_date; 
@@ -13372,7 +14897,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String remarks; 
 		protected Boolean crs; 
 		protected String crs_code; 
+		protected Double advance; 
+		protected Boolean advance_invoiced; 
+		protected Short check_status; 
 		protected Short status; 
+		protected String creation_user; 
+		protected Timestamp creation_date; 
+		protected String modification_user; 
+		protected Timestamp modification_date; 
 	}
 	
 	protected void insertProject_reservation( List<Project_reservation> project_reservations )
@@ -13383,7 +14915,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( project_reservationStmt != null ) {
 				project_reservationStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -13392,7 +14924,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			project_reservationStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO project_reservation (project,domain,hotel,code,creation_date,modification_date,start_date,start_time,end_date,end_time,seller,agency,agency_commission_percent,agency_commission_amount,agency_rebate,company,discount_percent,discount_amount,booking_holder,taxable_base,vat_quota,other_tax_quota,total,comments,remarks,crs,crs_code,status)"  
+				"INSERT INTO project_reservation (project,domain,hotel,hotel_reservation,code,start_date,start_time,end_date,end_time,seller,agency,agency_commission_percent,agency_commission_amount,agency_rebate,company,discount_percent,discount_amount,booking_holder,taxable_base,vat_quota,other_tax_quota,total,comments,remarks,crs,crs_code,advance,advance_invoiced,check_status,status,creation_user,creation_date,modification_user,modification_date)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			project_reservationStmtSize = size;
@@ -13413,18 +14945,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_reservationStmt.setNull(offset++, 4);
 			else
 				project_reservationStmt.setInt(offset++, project_reservation.hotel);
+			if ( project_reservation.hotel_reservation == null )
+				project_reservationStmt.setNull(offset++, 4);
+			else
+				project_reservationStmt.setInt(offset++, project_reservation.hotel_reservation);
 			if ( project_reservation.code == null )
 				project_reservationStmt.setNull(offset++, 12);
 			else
 				project_reservationStmt.setString(offset++, project_reservation.code);
-			if ( project_reservation.creation_date == null )
-				project_reservationStmt.setNull(offset++, 93);
-			else
-				project_reservationStmt.setTimestamp(offset++, project_reservation.creation_date);
-			if ( project_reservation.modification_date == null )
-				project_reservationStmt.setNull(offset++, 93);
-			else
-				project_reservationStmt.setTimestamp(offset++, project_reservation.modification_date);
 			if ( project_reservation.start_date == null )
 				project_reservationStmt.setNull(offset++, 91);
 			else
@@ -13509,10 +15037,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_reservationStmt.setNull(offset++, 12);
 			else
 				project_reservationStmt.setString(offset++, project_reservation.crs_code);
+			if ( project_reservation.advance == null )
+				project_reservationStmt.setNull(offset++, 8);
+			else
+				project_reservationStmt.setDouble(offset++, project_reservation.advance);
+			if ( project_reservation.advance_invoiced == null )
+				project_reservationStmt.setNull(offset++, -7);
+			else
+				project_reservationStmt.setBoolean(offset++, project_reservation.advance_invoiced);
+			if ( project_reservation.check_status == null )
+				project_reservationStmt.setNull(offset++, -6);
+			else
+				project_reservationStmt.setShort(offset++, project_reservation.check_status);
 			if ( project_reservation.status == null )
 				project_reservationStmt.setNull(offset++, -6);
 			else
 				project_reservationStmt.setShort(offset++, project_reservation.status);
+			if ( project_reservation.creation_user == null )
+				project_reservationStmt.setNull(offset++, 12);
+			else
+				project_reservationStmt.setString(offset++, project_reservation.creation_user);
+			if ( project_reservation.creation_date == null )
+				project_reservationStmt.setNull(offset++, 93);
+			else
+				project_reservationStmt.setTimestamp(offset++, project_reservation.creation_date);
+			if ( project_reservation.modification_user == null )
+				project_reservationStmt.setNull(offset++, 12);
+			else
+				project_reservationStmt.setString(offset++, project_reservation.modification_user);
+			if ( project_reservation.modification_date == null )
+				project_reservationStmt.setNull(offset++, 93);
+			else
+				project_reservationStmt.setTimestamp(offset++, project_reservation.modification_date);
 		}
 		project_reservationStmt.executeUpdate();
 		project_reservationInserted += size;
@@ -13535,10 +15091,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Project_reservation
 	 * @param project Identificador del Proyecto
 	 * @param domain Identificador del Dominio
-	 * @param hotel Identificador del Hotel
+	 * @param hotel Identificador del Hotel de Produccion
+	 * @param hotel_reservation Identificador del Hotel de la Reserva
 	 * @param code Localizador de la Reserva
-	 * @param creation_date Fecha de creacion
-	 * @param modification_date Fecha de modificacion
 	 * @param start_date Fecha de entrada
 	 * @param start_time Hora de entrada
 	 * @param end_date Fecha de salida
@@ -13560,19 +15115,25 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param remarks Observaciones
 	 * @param crs Indica si el origen de la Reserva es un CRS
 	 * @param crs_code Codigo de la Reserva en el CRS
+	 * @param advance Anticipo
+	 * @param advance_invoiced Indica si el anticipo esta Facturado
+	 * @param check_status Estado de registro en el Hotel
 	 * @param status Estado de la Reserva
+	 * @param creation_user Usuario de creacion
+	 * @param creation_date Fecha de creacion
+	 * @param modification_user Usuario de modificacion
+	 * @param modification_date Fecha de modificacion
 	 * @throws SQLException
 	*/
-	protected void insertProject_reservation(Integer project, Integer domain, Integer hotel, String code, Timestamp creation_date, Timestamp modification_date, Date start_date, Timestamp start_time, Date end_date, Timestamp end_time, Integer seller, Integer agency, Double agency_commission_percent, Double agency_commission_amount, Boolean agency_rebate, Integer company, Double discount_percent, Double discount_amount, Short booking_holder, Double taxable_base, Double vat_quota, Double other_tax_quota, Double total, String comments, String remarks, Boolean crs, String crs_code, Short status)
+	protected void insertProject_reservation(Integer project, Integer domain, Integer hotel, Integer hotel_reservation, String code, Date start_date, Timestamp start_time, Date end_date, Timestamp end_time, Integer seller, Integer agency, Double agency_commission_percent, Double agency_commission_amount, Boolean agency_rebate, Integer company, Double discount_percent, Double discount_amount, Short booking_holder, Double taxable_base, Double vat_quota, Double other_tax_quota, Double total, String comments, String remarks, Boolean crs, String crs_code, Double advance, Boolean advance_invoiced, Short check_status, Short status, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
 	throws SQLException {
 
 		Project_reservation project_reservation_ = new Project_reservation();
 		project_reservation_.project = project;
 		project_reservation_.domain = domain;
 		project_reservation_.hotel = hotel;
+		project_reservation_.hotel_reservation = hotel_reservation;
 		project_reservation_.code = code;
-		project_reservation_.creation_date = creation_date;
-		project_reservation_.modification_date = modification_date;
 		project_reservation_.start_date = start_date;
 		project_reservation_.start_time = start_time;
 		project_reservation_.end_date = end_date;
@@ -13594,13 +15155,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		project_reservation_.remarks = remarks;
 		project_reservation_.crs = crs;
 		project_reservation_.crs_code = crs_code;
+		project_reservation_.advance = advance;
+		project_reservation_.advance_invoiced = advance_invoiced;
+		project_reservation_.check_status = check_status;
 		project_reservation_.status = status;
+		project_reservation_.creation_user = creation_user;
+		project_reservation_.creation_date = creation_date;
+		project_reservation_.modification_user = modification_user;
+		project_reservation_.modification_date = modification_date;
 
 		project_reservations.add(project_reservation_);
 		
 		int project_reservationCount = project_reservations.size();
 		
-		if ( 310 * project_reservationCount >=  this.maxAllowedPacket ){
+		if ( 370 * project_reservationCount >=  this.maxAllowedPacket ){
 			insertProject_reservation(project_reservations);
 			project_reservations.clear();
 		} 
@@ -14632,7 +16200,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param line Numero de linea de Condicion
 	 * @param name Nombre de la Condicion Comercial
 	 * @param description Descripcion de la Condicion Comercial
-	 * @param term_general Indica si la Condiciùn es particular o general
+	 * @param term_general Indica si la Condici?n es particular o general
 	 * @throws SQLException
 	*/
 	protected void insertCommercial_term(Integer id, Integer domain, Integer line, String name, String description, Boolean term_general)
@@ -14663,7 +16231,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param line Numero de linea de Condicion
 	 * @param name Nombre de la Condicion Comercial
 	 * @param description Descripcion de la Condicion Comercial
-	 * @param term_general Indica si la Condiciùn es particular o general
+	 * @param term_general Indica si la Condici?n es particular o general
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -15196,6 +16764,170 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 40 * rsegmentCount >=  this.maxAllowedPacket ){
 			insertRsegment(rsegments);
 			rsegments.clear();
+		} 
+		return id;
+	}
+
+
+	private int domain_application_moduleStmtSize = 0;
+
+	private int domain_application_moduleInserted = 0;
+
+	private List<Domain_application_module> domain_application_modules = 
+		new LinkedList<Domain_application_module>();
+
+	private PreparedStatement domain_application_moduleStmt = null;
+
+	public static class Domain_application_module {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer domain_application; 
+		protected Short module; 
+	}
+	
+	protected void insertDomain_application_module( List<Domain_application_module> domain_application_modules )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = domain_application_modules.size();
+		if ( domain_application_moduleStmtSize != size ) {
+			if ( domain_application_moduleStmt != null ) {
+				domain_application_moduleStmt.close();
+			}
+			String values = "(?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			domain_application_moduleStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO domain_application_module (id,domain,domain_application,module)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			domain_application_moduleStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Domain_application_module domain_application_module : domain_application_modules) {
+			if ( domain_application_module.id == null )
+				domain_application_moduleStmt.setNull(offset++, 4);
+			else
+				domain_application_moduleStmt.setInt(offset++, domain_application_module.id);
+			if ( domain_application_module.domain == null )
+				domain_application_moduleStmt.setNull(offset++, 4);
+			else
+				domain_application_moduleStmt.setInt(offset++, domain_application_module.domain);
+			if ( domain_application_module.domain_application == null )
+				domain_application_moduleStmt.setNull(offset++, 4);
+			else
+				domain_application_moduleStmt.setInt(offset++, domain_application_module.domain_application);
+			if ( domain_application_module.module == null )
+				domain_application_moduleStmt.setNull(offset++, -6);
+			else
+				domain_application_moduleStmt.setShort(offset++, domain_application_module.module);
+		}
+		domain_application_moduleStmt.executeUpdate();
+		domain_application_moduleInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Domain_application_modules in {} milliseconds.", size, domain_application_moduleInserted, elapsed );		
+	}
+		
+		private int domain_application_moduleId = -1;
+		
+		private void initDomain_application_moduleId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `domain_application_module`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.domain_application_moduleId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextDomain_application_moduleId() {
+			return ++this.domain_application_moduleId;
+		} 
+
+		public void setDomain_application_moduleId(Integer domain_application_moduleId) {
+			this.domain_application_moduleId = domain_application_moduleId;
+		} 
+	
+	private void flushDomain_application_module(  )
+	throws SQLException {
+		if ( ! domain_application_modules.isEmpty() )
+			insertDomain_application_module(domain_application_modules);
+		if ( domain_application_moduleStmt != null )
+			domain_application_moduleStmt.close();
+	}	
+
+	/**
+	 * Domain_application_module
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param domain_application Identificador de la Aplicacion del Dominio
+	 * @param module Modulo de la Aplicacion del Dominio
+	 * @throws SQLException
+	*/
+	protected void insertDomain_application_module(Integer id, Integer domain, Integer domain_application, Short module)
+	throws SQLException {
+
+		Domain_application_module domain_application_module_ = new Domain_application_module();
+		domain_application_module_.id = id;
+		domain_application_module_.domain = domain;
+		domain_application_module_.domain_application = domain_application;
+		domain_application_module_.module = module;
+
+		domain_application_modules.add(domain_application_module_);
+		
+		int domain_application_moduleCount = domain_application_modules.size();
+		
+		if ( 33 * domain_application_moduleCount >=  this.maxAllowedPacket ){
+			insertDomain_application_module(domain_application_modules);
+			domain_application_modules.clear();
+		} 
+	}
+
+
+	/**
+	 * Domain_application_module
+	 * @param domain Identificador del Dominio
+	 * @param domain_application Identificador de la Aplicacion del Dominio
+	 * @param module Modulo de la Aplicacion del Dominio
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertDomain_application_module(Integer domain, Integer domain_application, Short module)
+	throws SQLException {
+		int id = nextDomain_application_moduleId();
+
+		Domain_application_module domain_application_module_ = new Domain_application_module();
+		domain_application_module_.id = id;
+		domain_application_module_.domain = domain;
+		domain_application_module_.domain_application = domain_application;
+		domain_application_module_.module = module;
+
+		domain_application_modules.add(domain_application_module_);
+		
+		int domain_application_moduleCount = domain_application_modules.size();
+		
+		if ( 33 * domain_application_moduleCount >=  this.maxAllowedPacket ){
+			insertDomain_application_module(domain_application_modules);
+			domain_application_modules.clear();
 		} 
 		return id;
 	}
@@ -15952,7 +17684,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param first_surname Primer apellido
 	 * @param second_surname Segundo apellido
 	 * @param ss_number Numero seguridad social
-	 * @param quote_group Grupo de CotizaciÛn
+	 * @param quote_group Grupo de Cotizaci
 	 * @param contract_type Tipo de contrato
 	 * @param contract_duration Duracion contrato
 	 * @param contract_duration_indicator Indicador duracion contrato
@@ -16029,7 +17761,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param first_surname Primer apellido
 	 * @param second_surname Segundo apellido
 	 * @param ss_number Numero seguridad social
-	 * @param quote_group Grupo de CotizaciÛn
+	 * @param quote_group Grupo de Cotizaci
 	 * @param contract_type Tipo de contrato
 	 * @param contract_duration Duracion contrato
 	 * @param contract_duration_indicator Indicador duracion contrato
@@ -16308,6 +18040,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class Quality_skill {
 		protected Integer id; 
+		protected Integer domain; 
 		protected String code; 
 		protected String description; 
 	}
@@ -16320,7 +18053,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( quality_skillStmt != null ) {
 				quality_skillStmt.close();
 			}
-			String values = "(?,?,?)";
+			String values = "(?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -16329,7 +18062,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			quality_skillStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO quality_skill (id,code,description)"  
+				"INSERT INTO quality_skill (id,domain,code,description)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			quality_skillStmtSize = size;
@@ -16342,6 +18075,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				quality_skillStmt.setNull(offset++, 4);
 			else
 				quality_skillStmt.setInt(offset++, quality_skill.id);
+			if ( quality_skill.domain == null )
+				quality_skillStmt.setNull(offset++, 4);
+			else
+				quality_skillStmt.setInt(offset++, quality_skill.domain);
 			if ( quality_skill.code == null )
 				quality_skillStmt.setNull(offset++, 1);
 			else
@@ -16401,15 +18138,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Quality_skill
 	 * @param id Identificador unico de la Aptitud Calidad
+	 * @param domain Identificador del Dominio
 	 * @param code Codigo de la Aptitud Calidad
 	 * @param description Descripcion de la Aptitud Calidad
 	 * @throws SQLException
 	*/
-	protected void insertQuality_skill(Integer id, String code, String description)
+	protected void insertQuality_skill(Integer id, Integer domain, String code, String description)
 	throws SQLException {
 
 		Quality_skill quality_skill_ = new Quality_skill();
 		quality_skill_.id = id;
+		quality_skill_.domain = domain;
 		quality_skill_.code = code;
 		quality_skill_.description = description;
 
@@ -16417,7 +18156,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int quality_skillCount = quality_skills.size();
 		
-		if ( 79 * quality_skillCount >=  this.maxAllowedPacket ){
+		if ( 89 * quality_skillCount >=  this.maxAllowedPacket ){
 			insertQuality_skill(quality_skills);
 			quality_skills.clear();
 		} 
@@ -16426,17 +18165,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Quality_skill
+	 * @param domain Identificador del Dominio
 	 * @param code Codigo de la Aptitud Calidad
 	 * @param description Descripcion de la Aptitud Calidad
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertQuality_skill(String code, String description)
+	public int insertQuality_skill(Integer domain, String code, String description)
 	throws SQLException {
 		int id = nextQuality_skillId();
 
 		Quality_skill quality_skill_ = new Quality_skill();
 		quality_skill_.id = id;
+		quality_skill_.domain = domain;
 		quality_skill_.code = code;
 		quality_skill_.description = description;
 
@@ -16444,191 +18185,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int quality_skillCount = quality_skills.size();
 		
-		if ( 79 * quality_skillCount >=  this.maxAllowedPacket ){
+		if ( 89 * quality_skillCount >=  this.maxAllowedPacket ){
 			insertQuality_skill(quality_skills);
 			quality_skills.clear();
-		} 
-		return id;
-	}
-
-
-	private int ec_targetStmtSize = 0;
-
-	private int ec_targetInserted = 0;
-
-	private List<Ec_target> ec_targets = 
-		new LinkedList<Ec_target>();
-
-	private PreparedStatement ec_targetStmt = null;
-
-	public static class Ec_target {
-		protected Integer id; 
-		protected Integer target; 
-		protected String login; 
-		protected String password; 
-		protected Short type; 
-		protected Date last_access; 
-	}
-	
-	protected void insertEc_target( List<Ec_target> ec_targets )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = ec_targets.size();
-		if ( ec_targetStmtSize != size ) {
-			if ( ec_targetStmt != null ) {
-				ec_targetStmt.close();
-			}
-			String values = "(?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			ec_targetStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO ec_target (id,target,login,password,type,last_access)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			ec_targetStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Ec_target ec_target : ec_targets) {
-			if ( ec_target.id == null )
-				ec_targetStmt.setNull(offset++, 4);
-			else
-				ec_targetStmt.setInt(offset++, ec_target.id);
-			if ( ec_target.target == null )
-				ec_targetStmt.setNull(offset++, 4);
-			else
-				ec_targetStmt.setInt(offset++, ec_target.target);
-			if ( ec_target.login == null )
-				ec_targetStmt.setNull(offset++, 12);
-			else
-				ec_targetStmt.setString(offset++, ec_target.login);
-			if ( ec_target.password == null )
-				ec_targetStmt.setNull(offset++, 12);
-			else
-				ec_targetStmt.setString(offset++, ec_target.password);
-			if ( ec_target.type == null )
-				ec_targetStmt.setNull(offset++, -6);
-			else
-				ec_targetStmt.setShort(offset++, ec_target.type);
-			if ( ec_target.last_access == null )
-				ec_targetStmt.setNull(offset++, 91);
-			else
-				ec_targetStmt.setDate(offset++, ec_target.last_access);
-		}
-		ec_targetStmt.executeUpdate();
-		ec_targetInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Ec_targets in {} milliseconds.", size, ec_targetInserted, elapsed );		
-	}
-		
-		private int ec_targetId = -1;
-		
-		private void initEc_targetId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `ec_target`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.ec_targetId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextEc_targetId() {
-			return ++this.ec_targetId;
-		} 
-
-		public void setEc_targetId(Integer ec_targetId) {
-			this.ec_targetId = ec_targetId;
-		} 
-	
-	private void flushEc_target(  )
-	throws SQLException {
-		if ( ! ec_targets.isEmpty() )
-			insertEc_target(ec_targets);
-		if ( ec_targetStmt != null )
-			ec_targetStmt.close();
-	}	
-
-	/**
-	 * Ec_target
-	 * @param id Identificador unico
-	 * @param target Identificador del Cliente Potencial
-	 * @param login Login del Cliente Potencial
-	 * @param password Password del Cliente Potencial
-	 * @param type Tipo de conexion
-	 * @param last_access Ultima fecha de conexion
-	 * @throws SQLException
-	*/
-	protected void insertEc_target(Integer id, Integer target, String login, String password, Short type, Date last_access)
-	throws SQLException {
-
-		Ec_target ec_target_ = new Ec_target();
-		ec_target_.id = id;
-		ec_target_.target = target;
-		ec_target_.login = login;
-		ec_target_.password = password;
-		ec_target_.type = type;
-		ec_target_.last_access = last_access;
-
-		ec_targets.add(ec_target_);
-		
-		int ec_targetCount = ec_targets.size();
-		
-		if ( 113 * ec_targetCount >=  this.maxAllowedPacket ){
-			insertEc_target(ec_targets);
-			ec_targets.clear();
-		} 
-	}
-
-
-	/**
-	 * Ec_target
-	 * @param target Identificador del Cliente Potencial
-	 * @param login Login del Cliente Potencial
-	 * @param password Password del Cliente Potencial
-	 * @param type Tipo de conexion
-	 * @param last_access Ultima fecha de conexion
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertEc_target(Integer target, String login, String password, Short type, Date last_access)
-	throws SQLException {
-		int id = nextEc_targetId();
-
-		Ec_target ec_target_ = new Ec_target();
-		ec_target_.id = id;
-		ec_target_.target = target;
-		ec_target_.login = login;
-		ec_target_.password = password;
-		ec_target_.type = type;
-		ec_target_.last_access = last_access;
-
-		ec_targets.add(ec_target_);
-		
-		int ec_targetCount = ec_targets.size();
-		
-		if ( 113 * ec_targetCount >=  this.maxAllowedPacket ){
-			insertEc_target(ec_targets);
-			ec_targets.clear();
 		} 
 		return id;
 	}
@@ -16818,6 +18377,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class Qualification {
 		protected Integer id; 
+		protected Integer domain; 
 		protected String code; 
 		protected String description; 
 		protected Double min_value; 
@@ -16832,7 +18392,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( qualificationStmt != null ) {
 				qualificationStmt.close();
 			}
-			String values = "(?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -16841,7 +18401,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			qualificationStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO qualification (id,code,description,min_value,max_value)"  
+				"INSERT INTO qualification (id,domain,code,description,min_value,max_value)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			qualificationStmtSize = size;
@@ -16854,6 +18414,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				qualificationStmt.setNull(offset++, 4);
 			else
 				qualificationStmt.setInt(offset++, qualification.id);
+			if ( qualification.domain == null )
+				qualificationStmt.setNull(offset++, 4);
+			else
+				qualificationStmt.setInt(offset++, qualification.domain);
 			if ( qualification.code == null )
 				qualificationStmt.setNull(offset++, 1);
 			else
@@ -16921,17 +18485,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Qualification
 	 * @param id Identificador unico de la Calificacion
+	 * @param domain Identificador del Dominio
 	 * @param code Codigo de la Calificacion
 	 * @param description Descripcion de la Calificacion
 	 * @param min_value Limite inferior de la Calificacion
 	 * @param max_value Limite superior de la Calificacion
 	 * @throws SQLException
 	*/
-	protected void insertQualification(Integer id, String code, String description, Double min_value, Double max_value)
+	protected void insertQualification(Integer id, Integer domain, String code, String description, Double min_value, Double max_value)
 	throws SQLException {
 
 		Qualification qualification_ = new Qualification();
 		qualification_.id = id;
+		qualification_.domain = domain;
 		qualification_.code = code;
 		qualification_.description = description;
 		qualification_.min_value = min_value;
@@ -16941,7 +18507,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int qualificationCount = qualifications.size();
 		
-		if ( 109 * qualificationCount >=  this.maxAllowedPacket ){
+		if ( 119 * qualificationCount >=  this.maxAllowedPacket ){
 			insertQualification(qualifications);
 			qualifications.clear();
 		} 
@@ -16950,6 +18516,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Qualification
+	 * @param domain Identificador del Dominio
 	 * @param code Codigo de la Calificacion
 	 * @param description Descripcion de la Calificacion
 	 * @param min_value Limite inferior de la Calificacion
@@ -16957,12 +18524,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertQualification(String code, String description, Double min_value, Double max_value)
+	public int insertQualification(Integer domain, String code, String description, Double min_value, Double max_value)
 	throws SQLException {
 		int id = nextQualificationId();
 
 		Qualification qualification_ = new Qualification();
 		qualification_.id = id;
+		qualification_.domain = domain;
 		qualification_.code = code;
 		qualification_.description = description;
 		qualification_.min_value = min_value;
@@ -16972,7 +18540,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int qualificationCount = qualifications.size();
 		
-		if ( 109 * qualificationCount >=  this.maxAllowedPacket ){
+		if ( 119 * qualificationCount >=  this.maxAllowedPacket ){
 			insertQualification(qualifications);
 			qualifications.clear();
 		} 
@@ -17683,6 +19251,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class Course_evaluation {
 		protected Integer id; 
+		protected Integer domain; 
 		protected Integer course; 
 		protected Integer quality_skill; 
 		protected Double evaluation; 
@@ -17697,7 +19266,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( course_evaluationStmt != null ) {
 				course_evaluationStmt.close();
 			}
-			String values = "(?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -17706,7 +19275,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			course_evaluationStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO course_evaluation (id,course,quality_skill,evaluation,quantity)"  
+				"INSERT INTO course_evaluation (id,domain,course,quality_skill,evaluation,quantity)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			course_evaluationStmtSize = size;
@@ -17719,6 +19288,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				course_evaluationStmt.setNull(offset++, 4);
 			else
 				course_evaluationStmt.setInt(offset++, course_evaluation.id);
+			if ( course_evaluation.domain == null )
+				course_evaluationStmt.setNull(offset++, 4);
+			else
+				course_evaluationStmt.setInt(offset++, course_evaluation.domain);
 			if ( course_evaluation.course == null )
 				course_evaluationStmt.setNull(offset++, 4);
 			else
@@ -17786,17 +19359,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Course_evaluation
 	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
 	 * @param course Identificador de Curso
 	 * @param quality_skill Identificador de Aptitudes Calidad
 	 * @param evaluation Evaluaciones
 	 * @param quantity Cantidad
 	 * @throws SQLException
 	*/
-	protected void insertCourse_evaluation(Integer id, Integer course, Integer quality_skill, Double evaluation, Integer quantity)
+	protected void insertCourse_evaluation(Integer id, Integer domain, Integer course, Integer quality_skill, Double evaluation, Integer quantity)
 	throws SQLException {
 
 		Course_evaluation course_evaluation_ = new Course_evaluation();
 		course_evaluation_.id = id;
+		course_evaluation_.domain = domain;
 		course_evaluation_.course = course;
 		course_evaluation_.quality_skill = quality_skill;
 		course_evaluation_.evaluation = evaluation;
@@ -17806,7 +19381,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int course_evaluationCount = course_evaluations.size();
 		
-		if ( 55 * course_evaluationCount >=  this.maxAllowedPacket ){
+		if ( 65 * course_evaluationCount >=  this.maxAllowedPacket ){
 			insertCourse_evaluation(course_evaluations);
 			course_evaluations.clear();
 		} 
@@ -17815,6 +19390,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Course_evaluation
+	 * @param domain Identificador del Dominio
 	 * @param course Identificador de Curso
 	 * @param quality_skill Identificador de Aptitudes Calidad
 	 * @param evaluation Evaluaciones
@@ -17822,12 +19398,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertCourse_evaluation(Integer course, Integer quality_skill, Double evaluation, Integer quantity)
+	public int insertCourse_evaluation(Integer domain, Integer course, Integer quality_skill, Double evaluation, Integer quantity)
 	throws SQLException {
 		int id = nextCourse_evaluationId();
 
 		Course_evaluation course_evaluation_ = new Course_evaluation();
 		course_evaluation_.id = id;
+		course_evaluation_.domain = domain;
 		course_evaluation_.course = course;
 		course_evaluation_.quality_skill = quality_skill;
 		course_evaluation_.evaluation = evaluation;
@@ -17837,7 +19414,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int course_evaluationCount = course_evaluations.size();
 		
-		if ( 55 * course_evaluationCount >=  this.maxAllowedPacket ){
+		if ( 65 * course_evaluationCount >=  this.maxAllowedPacket ){
 			insertCourse_evaluation(course_evaluations);
 			course_evaluations.clear();
 		} 
@@ -18066,16 +19643,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param start_date Fecha inicio del modelo
 	 * @param end_date Fecha fin del modelo
 	 * @param fiscal_exclusion Exclusion a la obligacion de tributar
-	 * @param issue_date Fecha de emisiùn
-	 * @param annual_remuneration Retribuciones totales (dinerarias y en especie). Importe ùntegro
+	 * @param issue_date Fecha de emisi?n
+	 * @param annual_remuneration Retribuciones totales (dinerarias y en especie). Importe ?ntegro
 	 * @param irregular_18_2_reduction Reducciones por irregularidad ( Atr. 18.2 LIRPF)
-	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Atr. 18.3: Disposiciones transitorias 11ù y 12 ù de la LIRPF)
+	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Atr. 18.3: Disposiciones transitorias 11? y 12 ? de la LIRPF)
 	 * @param deduccibles_expenses Gastos deducibles ( Atr 19.2, letras a, b y c de la LINRPF: Seguridad Social, Mutualidades ...)
-	 * @param spousal_support Pension compensatoria a favor del cùnyuge. Importe fijado judicialmente
+	 * @param spousal_support Pension compensatoria a favor del c?nyuge. Importe fijado judicialmente
 	 * @param food_annuity Anualidades por alimentos en favor de los hijos. Importe fijado judicialmente
-	 * @param deduct_home_loan Comunicaciùn de pagos por la adquisiùn o rehabilitaciùn de la vivienda habitual utilizando financiaciùn ajena
-	 * @param request_irpf Tipo de retenciùn solicitado
-	 * @param contract_type Contrato o relaciùn
+	 * @param deduct_home_loan Comunicaci?n de pagos por la adquisi?n o rehabilitaci?n de la vivienda habitual utilizando financiaci?n ajena
+	 * @param request_irpf Tipo de retenci?n solicitado
+	 * @param contract_type Contrato o relaci?n
 	 * @param ceuta_melilla Los datos anteriores corresponden a rendimientos obtenidos en Ceuta o Melilla
 	 * @throws SQLException
 	*/
@@ -18133,16 +19710,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param start_date Fecha inicio del modelo
 	 * @param end_date Fecha fin del modelo
 	 * @param fiscal_exclusion Exclusion a la obligacion de tributar
-	 * @param issue_date Fecha de emisiùn
-	 * @param annual_remuneration Retribuciones totales (dinerarias y en especie). Importe ùntegro
+	 * @param issue_date Fecha de emisi?n
+	 * @param annual_remuneration Retribuciones totales (dinerarias y en especie). Importe ?ntegro
 	 * @param irregular_18_2_reduction Reducciones por irregularidad ( Atr. 18.2 LIRPF)
-	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Atr. 18.3: Disposiciones transitorias 11ù y 12 ù de la LIRPF)
+	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Atr. 18.3: Disposiciones transitorias 11? y 12 ? de la LIRPF)
 	 * @param deduccibles_expenses Gastos deducibles ( Atr 19.2, letras a, b y c de la LINRPF: Seguridad Social, Mutualidades ...)
-	 * @param spousal_support Pension compensatoria a favor del cùnyuge. Importe fijado judicialmente
+	 * @param spousal_support Pension compensatoria a favor del c?nyuge. Importe fijado judicialmente
 	 * @param food_annuity Anualidades por alimentos en favor de los hijos. Importe fijado judicialmente
-	 * @param deduct_home_loan Comunicaciùn de pagos por la adquisiùn o rehabilitaciùn de la vivienda habitual utilizando financiaciùn ajena
-	 * @param request_irpf Tipo de retenciùn solicitado
-	 * @param contract_type Contrato o relaciùn
+	 * @param deduct_home_loan Comunicaci?n de pagos por la adquisi?n o rehabilitaci?n de la vivienda habitual utilizando financiaci?n ajena
+	 * @param request_irpf Tipo de retenci?n solicitado
+	 * @param contract_type Contrato o relaci?n
 	 * @param ceuta_melilla Los datos anteriores corresponden a rendimientos obtenidos en Ceuta o Melilla
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -18536,7 +20113,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param discount_expr Descuentos de la Cuota
 	 * @param initial_date Fecha de inicio de la Cuota
 	 * @param final_date Fecha de finalizacion de la Cuota
-	 * @param billing_date Proxima fecha de facturaciùn de la Cuota
+	 * @param billing_date Proxima fecha de facturaci?n de la Cuota
 	 * @param period Periodo de facturacion en meses de la Cuota
 	 * @param security_level Nivel de seguridad de la Cuota
 	 * @param workplace Identificador del Centro de Trabajo
@@ -18585,7 +20162,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param discount_expr Descuentos de la Cuota
 	 * @param initial_date Fecha de inicio de la Cuota
 	 * @param final_date Fecha de finalizacion de la Cuota
-	 * @param billing_date Proxima fecha de facturaciùn de la Cuota
+	 * @param billing_date Proxima fecha de facturaci?n de la Cuota
 	 * @param period Periodo de facturacion en meses de la Cuota
 	 * @param security_level Nivel de seguridad de la Cuota
 	 * @param workplace Identificador del Centro de Trabajo
@@ -20274,6 +21851,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class Academic_year {
 		protected Integer id; 
+		protected Integer domain; 
 		protected String description; 
 	}
 	
@@ -20285,7 +21863,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( academic_yearStmt != null ) {
 				academic_yearStmt.close();
 			}
-			String values = "(?,?)";
+			String values = "(?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -20294,7 +21872,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			academic_yearStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO academic_year (id,description)"  
+				"INSERT INTO academic_year (id,domain,description)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			academic_yearStmtSize = size;
@@ -20307,6 +21885,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				academic_yearStmt.setNull(offset++, 4);
 			else
 				academic_yearStmt.setInt(offset++, academic_year.id);
+			if ( academic_year.domain == null )
+				academic_yearStmt.setNull(offset++, 4);
+			else
+				academic_yearStmt.setInt(offset++, academic_year.domain);
 			if ( academic_year.description == null )
 				academic_yearStmt.setNull(offset++, 12);
 			else
@@ -20361,22 +21943,24 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Academic_year
-	 * @param id Identificador unico del Aùo Academico
-	 * @param description Descripcion del Aùo Academico
+	 * @param id Identificador unico del A?o Academico
+	 * @param domain Identificador del Dominio
+	 * @param description Descripcion del A?o Academico
 	 * @throws SQLException
 	*/
-	protected void insertAcademic_year(Integer id, String description)
+	protected void insertAcademic_year(Integer id, Integer domain, String description)
 	throws SQLException {
 
 		Academic_year academic_year_ = new Academic_year();
 		academic_year_.id = id;
+		academic_year_.domain = domain;
 		academic_year_.description = description;
 
 		academic_years.add(academic_year_);
 		
 		int academic_yearCount = academic_years.size();
 		
-		if ( 19 * academic_yearCount >=  this.maxAllowedPacket ){
+		if ( 29 * academic_yearCount >=  this.maxAllowedPacket ){
 			insertAcademic_year(academic_years);
 			academic_years.clear();
 		} 
@@ -20385,23 +21969,25 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Academic_year
-	 * @param description Descripcion del Aùo Academico
+	 * @param domain Identificador del Dominio
+	 * @param description Descripcion del A?o Academico
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertAcademic_year(String description)
+	public int insertAcademic_year(Integer domain, String description)
 	throws SQLException {
 		int id = nextAcademic_yearId();
 
 		Academic_year academic_year_ = new Academic_year();
 		academic_year_.id = id;
+		academic_year_.domain = domain;
 		academic_year_.description = description;
 
 		academic_years.add(academic_year_);
 		
 		int academic_yearCount = academic_years.size();
 		
-		if ( 19 * academic_yearCount >=  this.maxAllowedPacket ){
+		if ( 29 * academic_yearCount >=  this.maxAllowedPacket ){
 			insertAcademic_year(academic_years);
 			academic_years.clear();
 		} 
@@ -20887,7 +22473,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param type Tipo de Seguimiento
 	 * @param description Descripcion del Seguimiento
 	 * @param pm_type_detail Identificador del Detalle por Tipo de Forma de Pago
-	 * @param rbank Identificador de la Cuenta Bancaria de la Compaùia
+	 * @param rbank Identificador de la Cuenta Bancaria de la Compa?ia
 	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
 	 * @param amount Importe del Seguimiento
 	 * @param recorded Indica si esta contabilizado o no
@@ -20928,7 +22514,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param type Tipo de Seguimiento
 	 * @param description Descripcion del Seguimiento
 	 * @param pm_type_detail Identificador del Detalle por Tipo de Forma de Pago
-	 * @param rbank Identificador de la Cuenta Bancaria de la Compaùia
+	 * @param rbank Identificador de la Cuenta Bancaria de la Compa?ia
 	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
 	 * @param amount Importe del Seguimiento
 	 * @param recorded Indica si esta contabilizado o no
@@ -21511,7 +23097,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param id Identificador unico del Detalle del Pedido de Venta
 	 * @param domain Identificador del Dominio
 	 * @param sales Identificador del Pedido de Venta
-	 * @param line Numero de lùnea del Detalle dentro del Pedido
+	 * @param line Numero de l?nea del Detalle dentro del Pedido
 	 * @param item Identificador del Articulo del Detalle de Pedido
 	 * @param description Descripcion del Detalle de Pedido
 	 * @param quantity Cantidad del Detalle de Pedido
@@ -21556,7 +23142,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Sales_detail
 	 * @param domain Identificador del Dominio
 	 * @param sales Identificador del Pedido de Venta
-	 * @param line Numero de lùnea del Detalle dentro del Pedido
+	 * @param line Numero de l?nea del Detalle dentro del Pedido
 	 * @param item Identificador del Articulo del Detalle de Pedido
 	 * @param description Descripcion del Detalle de Pedido
 	 * @param quantity Cantidad del Detalle de Pedido
@@ -21595,6 +23181,532 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 1188 * sales_detailCount >=  this.maxAllowedPacket ){
 			insertSales_detail(sales_details);
 			sales_details.clear();
+		} 
+		return id;
+	}
+
+
+	private int project_attachStmtSize = 0;
+
+	private int project_attachInserted = 0;
+
+	private List<Project_attach> project_attachs = 
+		new LinkedList<Project_attach>();
+
+	private PreparedStatement project_attachStmt = null;
+
+	public static class Project_attach {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer project; 
+		protected Short mimeType; 
+		protected String description; 
+		protected Blob data; 
+		protected Date attach_date; 
+	}
+	
+	protected void insertProject_attach( List<Project_attach> project_attachs )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = project_attachs.size();
+		if ( project_attachStmtSize != size ) {
+			if ( project_attachStmt != null ) {
+				project_attachStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			project_attachStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO project_attach (id,domain,project,mimeType,description,data,attach_date)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			project_attachStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Project_attach project_attach : project_attachs) {
+			if ( project_attach.id == null )
+				project_attachStmt.setNull(offset++, 4);
+			else
+				project_attachStmt.setInt(offset++, project_attach.id);
+			if ( project_attach.domain == null )
+				project_attachStmt.setNull(offset++, 4);
+			else
+				project_attachStmt.setInt(offset++, project_attach.domain);
+			if ( project_attach.project == null )
+				project_attachStmt.setNull(offset++, 4);
+			else
+				project_attachStmt.setInt(offset++, project_attach.project);
+			if ( project_attach.mimeType == null )
+				project_attachStmt.setNull(offset++, -6);
+			else
+				project_attachStmt.setShort(offset++, project_attach.mimeType);
+			if ( project_attach.description == null )
+				project_attachStmt.setNull(offset++, 12);
+			else
+				project_attachStmt.setString(offset++, project_attach.description);
+			if ( project_attach.data == null )
+				project_attachStmt.setNull(offset++, -4);
+			else
+				project_attachStmt.setBlob(offset++, project_attach.data);
+			if ( project_attach.attach_date == null )
+				project_attachStmt.setNull(offset++, 91);
+			else
+				project_attachStmt.setDate(offset++, project_attach.attach_date);
+		}
+		project_attachStmt.executeUpdate();
+		project_attachInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Project_attachs in {} milliseconds.", size, project_attachInserted, elapsed );		
+	}
+		
+		private int project_attachId = -1;
+		
+		private void initProject_attachId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `project_attach`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.project_attachId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextProject_attachId() {
+			return ++this.project_attachId;
+		} 
+
+		public void setProject_attachId(Integer project_attachId) {
+			this.project_attachId = project_attachId;
+		} 
+	
+	private void flushProject_attach(  )
+	throws SQLException {
+		if ( ! project_attachs.isEmpty() )
+			insertProject_attach(project_attachs);
+		if ( project_attachStmt != null )
+			project_attachStmt.close();
+	}	
+
+	/**
+	 * Project_attach
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param project Identificador del Proyecto
+	 * @param mimeType Mime Type del Archivo Adjunto
+	 * @param description Descripcion del Archivo Adjunto
+	 * @param data Archivo Adjunto en binario
+	 * @param attach_date Fecha del Archivo Adjunto
+	 * @throws SQLException
+	*/
+	protected void insertProject_attach(Integer id, Integer domain, Integer project, Short mimeType, String description, Blob data, Date attach_date)
+	throws SQLException {
+
+		Project_attach project_attach_ = new Project_attach();
+		project_attach_.id = id;
+		project_attach_.domain = domain;
+		project_attach_.project = project;
+		project_attach_.mimeType = mimeType;
+		project_attach_.description = description;
+		project_attach_.data = data;
+		project_attach_.attach_date = attach_date;
+
+		project_attachs.add(project_attach_);
+		
+		int project_attachCount = project_attachs.size();
+		
+		if ( 107 * project_attachCount >=  this.maxAllowedPacket ){
+			insertProject_attach(project_attachs);
+			project_attachs.clear();
+		} 
+	}
+
+
+	/**
+	 * Project_attach
+	 * @param domain Identificador del Dominio
+	 * @param project Identificador del Proyecto
+	 * @param mimeType Mime Type del Archivo Adjunto
+	 * @param description Descripcion del Archivo Adjunto
+	 * @param data Archivo Adjunto en binario
+	 * @param attach_date Fecha del Archivo Adjunto
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertProject_attach(Integer domain, Integer project, Short mimeType, String description, Blob data, Date attach_date)
+	throws SQLException {
+		int id = nextProject_attachId();
+
+		Project_attach project_attach_ = new Project_attach();
+		project_attach_.id = id;
+		project_attach_.domain = domain;
+		project_attach_.project = project;
+		project_attach_.mimeType = mimeType;
+		project_attach_.description = description;
+		project_attach_.data = data;
+		project_attach_.attach_date = attach_date;
+
+		project_attachs.add(project_attach_);
+		
+		int project_attachCount = project_attachs.size();
+		
+		if ( 107 * project_attachCount >=  this.maxAllowedPacket ){
+			insertProject_attach(project_attachs);
+			project_attachs.clear();
+		} 
+		return id;
+	}
+
+
+	private int contact_dataStmtSize = 0;
+
+	private int contact_dataInserted = 0;
+
+	private List<Contact_data> contact_datas = 
+		new LinkedList<Contact_data>();
+
+	private PreparedStatement contact_dataStmt = null;
+
+	public static class Contact_data {
+		protected Integer id; 
+		protected Integer domain; 
+		protected String name; 
+		protected String surname; 
+		protected String address; 
+		protected String postalCode; 
+		protected String city; 
+		protected String contactState; 
+		protected String country; 
+		protected String phone; 
+		protected String cellularPhone; 
+		protected String fax; 
+		protected String email; 
+		protected String note; 
+		protected String organization; 
+		protected String title; 
+		protected String organizationAddress; 
+		protected String organizationPostalCode; 
+		protected String organizationCity; 
+		protected String organizationState; 
+		protected String organizationPhone; 
+		protected String organizationFax; 
+		protected String web; 
+	}
+	
+	protected void insertContact_data( List<Contact_data> contact_datas )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = contact_datas.size();
+		if ( contact_dataStmtSize != size ) {
+			if ( contact_dataStmt != null ) {
+				contact_dataStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			contact_dataStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO contact_data (id,domain,name,surname,address,postalCode,city,contactState,country,phone,cellularPhone,fax,email,note,organization,title,organizationAddress,organizationPostalCode,organizationCity,organizationState,organizationPhone,organizationFax,web)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			contact_dataStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Contact_data contact_data : contact_datas) {
+			if ( contact_data.id == null )
+				contact_dataStmt.setNull(offset++, 4);
+			else
+				contact_dataStmt.setInt(offset++, contact_data.id);
+			if ( contact_data.domain == null )
+				contact_dataStmt.setNull(offset++, 4);
+			else
+				contact_dataStmt.setInt(offset++, contact_data.domain);
+			if ( contact_data.name == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.name);
+			if ( contact_data.surname == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.surname);
+			if ( contact_data.address == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.address);
+			if ( contact_data.postalCode == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.postalCode);
+			if ( contact_data.city == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.city);
+			if ( contact_data.contactState == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.contactState);
+			if ( contact_data.country == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.country);
+			if ( contact_data.phone == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.phone);
+			if ( contact_data.cellularPhone == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.cellularPhone);
+			if ( contact_data.fax == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.fax);
+			if ( contact_data.email == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.email);
+			if ( contact_data.note == null )
+				contact_dataStmt.setNull(offset++, -1);
+			else
+				contact_dataStmt.setString(offset++, contact_data.note);
+			if ( contact_data.organization == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.organization);
+			if ( contact_data.title == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.title);
+			if ( contact_data.organizationAddress == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.organizationAddress);
+			if ( contact_data.organizationPostalCode == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.organizationPostalCode);
+			if ( contact_data.organizationCity == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.organizationCity);
+			if ( contact_data.organizationState == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.organizationState);
+			if ( contact_data.organizationPhone == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.organizationPhone);
+			if ( contact_data.organizationFax == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.organizationFax);
+			if ( contact_data.web == null )
+				contact_dataStmt.setNull(offset++, 12);
+			else
+				contact_dataStmt.setString(offset++, contact_data.web);
+		}
+		contact_dataStmt.executeUpdate();
+		contact_dataInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Contact_datas in {} milliseconds.", size, contact_dataInserted, elapsed );		
+	}
+		
+		private int contact_dataId = -1;
+		
+		private void initContact_dataId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `contact_data`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.contact_dataId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextContact_dataId() {
+			return ++this.contact_dataId;
+		} 
+
+		public void setContact_dataId(Integer contact_dataId) {
+			this.contact_dataId = contact_dataId;
+		} 
+	
+	private void flushContact_data(  )
+	throws SQLException {
+		if ( ! contact_datas.isEmpty() )
+			insertContact_data(contact_datas);
+		if ( contact_dataStmt != null )
+			contact_dataStmt.close();
+	}	
+
+	/**
+	 * Contact_data
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param name Nombre
+	 * @param surname Apellido
+	 * @param address Direccion
+	 * @param postalCode Codigo postal
+	 * @param city Localidad
+	 * @param contactState Estado
+	 * @param country Pais
+	 * @param phone Telefono
+	 * @param cellularPhone Movil
+	 * @param fax Fax
+	 * @param email Email
+	 * @param note Nota
+	 * @param organization Organizaci?n
+	 * @param title Cargo
+	 * @param organizationAddress Direcci?n de la Organizaci?n
+	 * @param organizationPostalCode Codigo postal de la Organizaci?n
+	 * @param organizationCity Localidad de la Organizaci?n
+	 * @param organizationState Estado de la Organizaci?n
+	 * @param organizationPhone Telefono de la Organizaci?n
+	 * @param organizationFax Fax de la Organizaci?n
+	 * @param web Web
+	 * @throws SQLException
+	*/
+	protected void insertContact_data(Integer id, Integer domain, String name, String surname, String address, String postalCode, String city, String contactState, String country, String phone, String cellularPhone, String fax, String email, String note, String organization, String title, String organizationAddress, String organizationPostalCode, String organizationCity, String organizationState, String organizationPhone, String organizationFax, String web)
+	throws SQLException {
+
+		Contact_data contact_data_ = new Contact_data();
+		contact_data_.id = id;
+		contact_data_.domain = domain;
+		contact_data_.name = name;
+		contact_data_.surname = surname;
+		contact_data_.address = address;
+		contact_data_.postalCode = postalCode;
+		contact_data_.city = city;
+		contact_data_.contactState = contactState;
+		contact_data_.country = country;
+		contact_data_.phone = phone;
+		contact_data_.cellularPhone = cellularPhone;
+		contact_data_.fax = fax;
+		contact_data_.email = email;
+		contact_data_.note = note;
+		contact_data_.organization = organization;
+		contact_data_.title = title;
+		contact_data_.organizationAddress = organizationAddress;
+		contact_data_.organizationPostalCode = organizationPostalCode;
+		contact_data_.organizationCity = organizationCity;
+		contact_data_.organizationState = organizationState;
+		contact_data_.organizationPhone = organizationPhone;
+		contact_data_.organizationFax = organizationFax;
+		contact_data_.web = web;
+
+		contact_datas.add(contact_data_);
+		
+		int contact_dataCount = contact_datas.size();
+		
+		if ( 1844 * contact_dataCount >=  this.maxAllowedPacket ){
+			insertContact_data(contact_datas);
+			contact_datas.clear();
+		} 
+	}
+
+
+	/**
+	 * Contact_data
+	 * @param domain Identificador del Dominio
+	 * @param name Nombre
+	 * @param surname Apellido
+	 * @param address Direccion
+	 * @param postalCode Codigo postal
+	 * @param city Localidad
+	 * @param contactState Estado
+	 * @param country Pais
+	 * @param phone Telefono
+	 * @param cellularPhone Movil
+	 * @param fax Fax
+	 * @param email Email
+	 * @param note Nota
+	 * @param organization Organizaci?n
+	 * @param title Cargo
+	 * @param organizationAddress Direcci?n de la Organizaci?n
+	 * @param organizationPostalCode Codigo postal de la Organizaci?n
+	 * @param organizationCity Localidad de la Organizaci?n
+	 * @param organizationState Estado de la Organizaci?n
+	 * @param organizationPhone Telefono de la Organizaci?n
+	 * @param organizationFax Fax de la Organizaci?n
+	 * @param web Web
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertContact_data(Integer domain, String name, String surname, String address, String postalCode, String city, String contactState, String country, String phone, String cellularPhone, String fax, String email, String note, String organization, String title, String organizationAddress, String organizationPostalCode, String organizationCity, String organizationState, String organizationPhone, String organizationFax, String web)
+	throws SQLException {
+		int id = nextContact_dataId();
+
+		Contact_data contact_data_ = new Contact_data();
+		contact_data_.id = id;
+		contact_data_.domain = domain;
+		contact_data_.name = name;
+		contact_data_.surname = surname;
+		contact_data_.address = address;
+		contact_data_.postalCode = postalCode;
+		contact_data_.city = city;
+		contact_data_.contactState = contactState;
+		contact_data_.country = country;
+		contact_data_.phone = phone;
+		contact_data_.cellularPhone = cellularPhone;
+		contact_data_.fax = fax;
+		contact_data_.email = email;
+		contact_data_.note = note;
+		contact_data_.organization = organization;
+		contact_data_.title = title;
+		contact_data_.organizationAddress = organizationAddress;
+		contact_data_.organizationPostalCode = organizationPostalCode;
+		contact_data_.organizationCity = organizationCity;
+		contact_data_.organizationState = organizationState;
+		contact_data_.organizationPhone = organizationPhone;
+		contact_data_.organizationFax = organizationFax;
+		contact_data_.web = web;
+
+		contact_datas.add(contact_data_);
+		
+		int contact_dataCount = contact_datas.size();
+		
+		if ( 1844 * contact_dataCount >=  this.maxAllowedPacket ){
+			insertContact_data(contact_datas);
+			contact_datas.clear();
 		} 
 		return id;
 	}
@@ -21740,14 +23852,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * System_deduction
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Deducciùn
+	 * @param type Tipo de Deducci?n
 	 * @param deduction_concept Identificador unico del concepto
 	 * @param description Descripcion
 	 * @param description_decorable 
-	 * @param expression Fùrmula
+	 * @param expression F?rmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
-	 * @param month Mes de la deducciùn
+	 * @param month Mes de la deducci?n
 	 * @throws SQLException
 	*/
 	protected void insertSystem_deduction(Integer id, Integer domain, Short type, Integer deduction_concept, String description, Short description_decorable, String expression, Date start_date, Date end_date, Short month)
@@ -21779,14 +23891,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * System_deduction
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Deducciùn
+	 * @param type Tipo de Deducci?n
 	 * @param deduction_concept Identificador unico del concepto
 	 * @param description Descripcion
 	 * @param description_decorable 
-	 * @param expression Fùrmula
+	 * @param expression F?rmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
-	 * @param month Mes de la deducciùn
+	 * @param month Mes de la deducci?n
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -23113,6 +25225,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String pymnt_days; 
 		protected Integer bank; 
 		protected String bank_account; 
+		protected Boolean email_communication; 
 	}
 	
 	protected void insertPurchase( List<Purchase> purchases )
@@ -23123,7 +25236,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( purchaseStmt != null ) {
 				purchaseStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -23132,7 +25245,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			purchaseStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO purchase (id,domain,project,supplier,series,number,address,discount_expr,issue_date,pay_method,document_type,security_level,status,comments,remarks,workplace,scope,number_of_pymnts,days_to_first_pymnt,days_between_pymnts,pymnt_days,bank,bank_account)"  
+				"INSERT INTO purchase (id,domain,project,supplier,series,number,address,discount_expr,issue_date,pay_method,document_type,security_level,status,comments,remarks,workplace,scope,number_of_pymnts,days_to_first_pymnt,days_between_pymnts,pymnt_days,bank,bank_account,email_communication)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			purchaseStmtSize = size;
@@ -23233,6 +25346,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				purchaseStmt.setNull(offset++, 12);
 			else
 				purchaseStmt.setString(offset++, purchase.bank_account);
+			if ( purchase.email_communication == null )
+				purchaseStmt.setNull(offset++, -7);
+			else
+				purchaseStmt.setBoolean(offset++, purchase.email_communication);
 		}
 		purchaseStmt.executeUpdate();
 		purchaseInserted += size;
@@ -23306,9 +25423,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param pymnt_days Dias de pago
 	 * @param bank Identificador de la Entidad Bancaria
 	 * @param bank_account Numero de cuenta en la Entidad Bancaria
+	 * @param email_communication Indica si se ha comunicado a traves de email
 	 * @throws SQLException
 	*/
-	protected void insertPurchase(Integer id, Integer domain, Integer project, Integer supplier, String series, Integer number, Integer address, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
+	protected void insertPurchase(Integer id, Integer domain, Integer project, Integer supplier, String series, Integer number, Integer address, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account, Boolean email_communication)
 	throws SQLException {
 
 		Purchase purchase_ = new Purchase();
@@ -23335,6 +25453,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		purchase_.pymnt_days = pymnt_days;
 		purchase_.bank = bank;
 		purchase_.bank_account = bank_account;
+		purchase_.email_communication = email_communication;
 
 		purchases.add(purchase_);
 		
@@ -23371,10 +25490,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param pymnt_days Dias de pago
 	 * @param bank Identificador de la Entidad Bancaria
 	 * @param bank_account Numero de cuenta en la Entidad Bancaria
+	 * @param email_communication Indica si se ha comunicado a traves de email
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertPurchase(Integer domain, Integer project, Integer supplier, String series, Integer number, Integer address, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
+	public int insertPurchase(Integer domain, Integer project, Integer supplier, String series, Integer number, Integer address, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account, Boolean email_communication)
 	throws SQLException {
 		int id = nextPurchaseId();
 
@@ -23402,6 +25522,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		purchase_.pymnt_days = pymnt_days;
 		purchase_.bank = bank;
 		purchase_.bank_account = bank_account;
+		purchase_.email_communication = email_communication;
 
 		purchases.add(purchase_);
 		
@@ -23410,6 +25531,179 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 209 * purchaseCount >=  this.maxAllowedPacket ){
 			insertPurchase(purchases);
 			purchases.clear();
+		} 
+		return id;
+	}
+
+
+	private int domain_applicationStmtSize = 0;
+
+	private int domain_applicationInserted = 0;
+
+	private List<Domain_application> domain_applications = 
+		new LinkedList<Domain_application>();
+
+	private PreparedStatement domain_applicationStmt = null;
+
+	public static class Domain_application {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer application; 
+		protected Boolean active; 
+		protected Short audit_level; 
+	}
+	
+	protected void insertDomain_application( List<Domain_application> domain_applications )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = domain_applications.size();
+		if ( domain_applicationStmtSize != size ) {
+			if ( domain_applicationStmt != null ) {
+				domain_applicationStmt.close();
+			}
+			String values = "(?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			domain_applicationStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO domain_application (id,domain,application,active,audit_level)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			domain_applicationStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Domain_application domain_application : domain_applications) {
+			if ( domain_application.id == null )
+				domain_applicationStmt.setNull(offset++, 4);
+			else
+				domain_applicationStmt.setInt(offset++, domain_application.id);
+			if ( domain_application.domain == null )
+				domain_applicationStmt.setNull(offset++, 4);
+			else
+				domain_applicationStmt.setInt(offset++, domain_application.domain);
+			if ( domain_application.application == null )
+				domain_applicationStmt.setNull(offset++, 4);
+			else
+				domain_applicationStmt.setInt(offset++, domain_application.application);
+			if ( domain_application.active == null )
+				domain_applicationStmt.setNull(offset++, -7);
+			else
+				domain_applicationStmt.setBoolean(offset++, domain_application.active);
+			if ( domain_application.audit_level == null )
+				domain_applicationStmt.setNull(offset++, -6);
+			else
+				domain_applicationStmt.setShort(offset++, domain_application.audit_level);
+		}
+		domain_applicationStmt.executeUpdate();
+		domain_applicationInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Domain_applications in {} milliseconds.", size, domain_applicationInserted, elapsed );		
+	}
+		
+		private int domain_applicationId = -1;
+		
+		private void initDomain_applicationId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `domain_application`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.domain_applicationId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextDomain_applicationId() {
+			return ++this.domain_applicationId;
+		} 
+
+		public void setDomain_applicationId(Integer domain_applicationId) {
+			this.domain_applicationId = domain_applicationId;
+		} 
+	
+	private void flushDomain_application(  )
+	throws SQLException {
+		if ( ! domain_applications.isEmpty() )
+			insertDomain_application(domain_applications);
+		if ( domain_applicationStmt != null )
+			domain_applicationStmt.close();
+	}	
+
+	/**
+	 * Domain_application
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param application Identificador de la Aplicacion
+	 * @param active Indica si la Aplicacion del Dominio esta activa o no
+	 * @param audit_level Nivel de auditoria
+	 * @throws SQLException
+	*/
+	protected void insertDomain_application(Integer id, Integer domain, Integer application, Boolean active, Short audit_level)
+	throws SQLException {
+
+		Domain_application domain_application_ = new Domain_application();
+		domain_application_.id = id;
+		domain_application_.domain = domain;
+		domain_application_.application = application;
+		domain_application_.active = active;
+		domain_application_.audit_level = audit_level;
+
+		domain_applications.add(domain_application_);
+		
+		int domain_applicationCount = domain_applications.size();
+		
+		if ( 33 * domain_applicationCount >=  this.maxAllowedPacket ){
+			insertDomain_application(domain_applications);
+			domain_applications.clear();
+		} 
+	}
+
+
+	/**
+	 * Domain_application
+	 * @param domain Identificador del Dominio
+	 * @param application Identificador de la Aplicacion
+	 * @param active Indica si la Aplicacion del Dominio esta activa o no
+	 * @param audit_level Nivel de auditoria
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertDomain_application(Integer domain, Integer application, Boolean active, Short audit_level)
+	throws SQLException {
+		int id = nextDomain_applicationId();
+
+		Domain_application domain_application_ = new Domain_application();
+		domain_application_.id = id;
+		domain_application_.domain = domain;
+		domain_application_.application = application;
+		domain_application_.active = active;
+		domain_application_.audit_level = audit_level;
+
+		domain_applications.add(domain_application_);
+		
+		int domain_applicationCount = domain_applications.size();
+		
+		if ( 33 * domain_applicationCount >=  this.maxAllowedPacket ){
+			insertDomain_application(domain_applications);
+			domain_applications.clear();
 		} 
 		return id;
 	}
@@ -23817,6 +26111,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class Course_alumn {
 		protected Integer id; 
+		protected Integer domain; 
 		protected Integer course; 
 		protected Integer customer; 
 		protected Short status; 
@@ -23830,7 +26125,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( course_alumnStmt != null ) {
 				course_alumnStmt.close();
 			}
-			String values = "(?,?,?,?)";
+			String values = "(?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -23839,7 +26134,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			course_alumnStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO course_alumn (id,course,customer,status)"  
+				"INSERT INTO course_alumn (id,domain,course,customer,status)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			course_alumnStmtSize = size;
@@ -23852,6 +26147,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				course_alumnStmt.setNull(offset++, 4);
 			else
 				course_alumnStmt.setInt(offset++, course_alumn.id);
+			if ( course_alumn.domain == null )
+				course_alumnStmt.setNull(offset++, 4);
+			else
+				course_alumnStmt.setInt(offset++, course_alumn.domain);
 			if ( course_alumn.course == null )
 				course_alumnStmt.setNull(offset++, 4);
 			else
@@ -23915,16 +26214,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Course_alumn
 	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
 	 * @param course Identificador del Curso
 	 * @param customer Identificador del Alumno
 	 * @param status Estado del alumno en el curso
 	 * @throws SQLException
 	*/
-	protected void insertCourse_alumn(Integer id, Integer course, Integer customer, Short status)
+	protected void insertCourse_alumn(Integer id, Integer domain, Integer course, Integer customer, Short status)
 	throws SQLException {
 
 		Course_alumn course_alumn_ = new Course_alumn();
 		course_alumn_.id = id;
+		course_alumn_.domain = domain;
 		course_alumn_.course = course;
 		course_alumn_.customer = customer;
 		course_alumn_.status = status;
@@ -23933,7 +26234,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int course_alumnCount = course_alumns.size();
 		
-		if ( 33 * course_alumnCount >=  this.maxAllowedPacket ){
+		if ( 43 * course_alumnCount >=  this.maxAllowedPacket ){
 			insertCourse_alumn(course_alumns);
 			course_alumns.clear();
 		} 
@@ -23942,18 +26243,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Course_alumn
+	 * @param domain Identificador del Dominio
 	 * @param course Identificador del Curso
 	 * @param customer Identificador del Alumno
 	 * @param status Estado del alumno en el curso
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertCourse_alumn(Integer course, Integer customer, Short status)
+	public int insertCourse_alumn(Integer domain, Integer course, Integer customer, Short status)
 	throws SQLException {
 		int id = nextCourse_alumnId();
 
 		Course_alumn course_alumn_ = new Course_alumn();
 		course_alumn_.id = id;
+		course_alumn_.domain = domain;
 		course_alumn_.course = course;
 		course_alumn_.customer = customer;
 		course_alumn_.status = status;
@@ -23962,9 +26265,164 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int course_alumnCount = course_alumns.size();
 		
-		if ( 33 * course_alumnCount >=  this.maxAllowedPacket ){
+		if ( 43 * course_alumnCount >=  this.maxAllowedPacket ){
 			insertCourse_alumn(course_alumns);
 			course_alumns.clear();
+		} 
+		return id;
+	}
+
+
+	private int application_roleStmtSize = 0;
+
+	private int application_roleInserted = 0;
+
+	private List<Application_role> application_roles = 
+		new LinkedList<Application_role>();
+
+	private PreparedStatement application_roleStmt = null;
+
+	public static class Application_role {
+		protected Integer id; 
+		protected Integer application; 
+		protected Integer role; 
+	}
+	
+	protected void insertApplication_role( List<Application_role> application_roles )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = application_roles.size();
+		if ( application_roleStmtSize != size ) {
+			if ( application_roleStmt != null ) {
+				application_roleStmt.close();
+			}
+			String values = "(?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			application_roleStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO application_role (id,application,role)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			application_roleStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Application_role application_role : application_roles) {
+			if ( application_role.id == null )
+				application_roleStmt.setNull(offset++, 4);
+			else
+				application_roleStmt.setInt(offset++, application_role.id);
+			if ( application_role.application == null )
+				application_roleStmt.setNull(offset++, 4);
+			else
+				application_roleStmt.setInt(offset++, application_role.application);
+			if ( application_role.role == null )
+				application_roleStmt.setNull(offset++, 4);
+			else
+				application_roleStmt.setInt(offset++, application_role.role);
+		}
+		application_roleStmt.executeUpdate();
+		application_roleInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Application_roles in {} milliseconds.", size, application_roleInserted, elapsed );		
+	}
+		
+		private int application_roleId = -1;
+		
+		private void initApplication_roleId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `application_role`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.application_roleId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextApplication_roleId() {
+			return ++this.application_roleId;
+		} 
+
+		public void setApplication_roleId(Integer application_roleId) {
+			this.application_roleId = application_roleId;
+		} 
+	
+	private void flushApplication_role(  )
+	throws SQLException {
+		if ( ! application_roles.isEmpty() )
+			insertApplication_role(application_roles);
+		if ( application_roleStmt != null )
+			application_roleStmt.close();
+	}	
+
+	/**
+	 * Application_role
+	 * @param id Identificador unico
+	 * @param application Identificador de la Aplicacion
+	 * @param role Identificador del Role
+	 * @throws SQLException
+	*/
+	protected void insertApplication_role(Integer id, Integer application, Integer role)
+	throws SQLException {
+
+		Application_role application_role_ = new Application_role();
+		application_role_.id = id;
+		application_role_.application = application;
+		application_role_.role = role;
+
+		application_roles.add(application_role_);
+		
+		int application_roleCount = application_roles.size();
+		
+		if ( 30 * application_roleCount >=  this.maxAllowedPacket ){
+			insertApplication_role(application_roles);
+			application_roles.clear();
+		} 
+	}
+
+
+	/**
+	 * Application_role
+	 * @param application Identificador de la Aplicacion
+	 * @param role Identificador del Role
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertApplication_role(Integer application, Integer role)
+	throws SQLException {
+		int id = nextApplication_roleId();
+
+		Application_role application_role_ = new Application_role();
+		application_role_.id = id;
+		application_role_.application = application;
+		application_role_.role = role;
+
+		application_roles.add(application_role_);
+		
+		int application_roleCount = application_roles.size();
+		
+		if ( 30 * application_roleCount >=  this.maxAllowedPacket ){
+			insertApplication_role(application_roles);
+			application_roles.clear();
 		} 
 		return id;
 	}
@@ -24494,7 +26952,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param extra_charge Recargo
 	 * @param delay_interest Intereses de demora
 	 * @param total_tax_debt Total deuda tributaria
-	 * @param rbank Banco de la Compaùia
+	 * @param rbank Banco de la Compa?ia
 	 * @throws SQLException
 	*/
 	protected void insertFs_renting(Integer id, Integer domain, Integer year, Short period, Short administration, String comments, Short status, Short security_level, Boolean complementary, Boolean replacement, Double lessor_count_accumulated, Double lessor_count_declared, Double lessor_count_result, Double lessor_count_adjust, Double lessor_count, Double renting_amount_accumulated, Double renting_amount_declared, Double renting_amount_result, Double renting_amount_adjust, Double renting_amount, Double retention_accumulated, Double retention_declared, Double retention_result, Double retention_adjust, Double retention, Double lessor_count_in_kind_accumulated, Double lessor_count_in_kind_declared, Double lessor_count_in_kind_result, Double lessor_count_in_kind_adjust, Double lessor_count_in_kind, Double remuneration_in_kind_accumulated, Double remuneration_in_kind_declared, Double remuneration_in_kind_result, Double remuneration_in_kind_adjust, Double remuneration_in_kind, Double account_deposit_accumulated, Double account_deposit_declared, Double account_deposit_result, Double account_deposit_adjust, Double account_deposit, Double extra_charge, Double delay_interest, Double total_tax_debt, Integer rbank)
@@ -24601,7 +27059,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param extra_charge Recargo
 	 * @param delay_interest Intereses de demora
 	 * @param total_tax_debt Total deuda tributaria
-	 * @param rbank Banco de la Compaùia
+	 * @param rbank Banco de la Compa?ia
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -25296,6 +27754,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class Alumn_loan {
 		protected Integer id; 
+		protected Integer domain; 
 		protected Integer customer; 
 		protected String material; 
 		protected Date loan_date; 
@@ -25311,7 +27770,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( alumn_loanStmt != null ) {
 				alumn_loanStmt.close();
 			}
-			String values = "(?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -25320,7 +27779,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			alumn_loanStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO alumn_loan (id,customer,material,loan_date,end_date,comments)"  
+				"INSERT INTO alumn_loan (id,domain,customer,material,loan_date,end_date,comments)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			alumn_loanStmtSize = size;
@@ -25333,6 +27792,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				alumn_loanStmt.setNull(offset++, 4);
 			else
 				alumn_loanStmt.setInt(offset++, alumn_loan.id);
+			if ( alumn_loan.domain == null )
+				alumn_loanStmt.setNull(offset++, 4);
+			else
+				alumn_loanStmt.setInt(offset++, alumn_loan.domain);
 			if ( alumn_loan.customer == null )
 				alumn_loanStmt.setNull(offset++, 4);
 			else
@@ -25404,6 +27867,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Alumn_loan
 	 * @param id Identificador unico del Prestamo
+	 * @param domain Identificador del Dominio
 	 * @param customer Alumno al que se le realizo el Prestamo
 	 * @param material Material prestado
 	 * @param loan_date Fecha del Prestamo
@@ -25411,11 +27875,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param comments Observaciones
 	 * @throws SQLException
 	*/
-	protected void insertAlumn_loan(Integer id, Integer customer, String material, Date loan_date, Date end_date, String comments)
+	protected void insertAlumn_loan(Integer id, Integer domain, Integer customer, String material, Date loan_date, Date end_date, String comments)
 	throws SQLException {
 
 		Alumn_loan alumn_loan_ = new Alumn_loan();
 		alumn_loan_.id = id;
+		alumn_loan_.domain = domain;
 		alumn_loan_.customer = customer;
 		alumn_loan_.material = material;
 		alumn_loan_.loan_date = loan_date;
@@ -25426,7 +27891,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int alumn_loanCount = alumn_loans.size();
 		
-		if ( 120 * alumn_loanCount >=  this.maxAllowedPacket ){
+		if ( 130 * alumn_loanCount >=  this.maxAllowedPacket ){
 			insertAlumn_loan(alumn_loans);
 			alumn_loans.clear();
 		} 
@@ -25435,6 +27900,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Alumn_loan
+	 * @param domain Identificador del Dominio
 	 * @param customer Alumno al que se le realizo el Prestamo
 	 * @param material Material prestado
 	 * @param loan_date Fecha del Prestamo
@@ -25443,12 +27909,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertAlumn_loan(Integer customer, String material, Date loan_date, Date end_date, String comments)
+	public int insertAlumn_loan(Integer domain, Integer customer, String material, Date loan_date, Date end_date, String comments)
 	throws SQLException {
 		int id = nextAlumn_loanId();
 
 		Alumn_loan alumn_loan_ = new Alumn_loan();
 		alumn_loan_.id = id;
+		alumn_loan_.domain = domain;
 		alumn_loan_.customer = customer;
 		alumn_loan_.material = material;
 		alumn_loan_.loan_date = loan_date;
@@ -25459,9 +27926,173 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int alumn_loanCount = alumn_loans.size();
 		
-		if ( 120 * alumn_loanCount >=  this.maxAllowedPacket ){
+		if ( 130 * alumn_loanCount >=  this.maxAllowedPacket ){
 			insertAlumn_loan(alumn_loans);
 			alumn_loans.clear();
+		} 
+		return id;
+	}
+
+
+	private int profileStmtSize = 0;
+
+	private int profileInserted = 0;
+
+	private List<Profile> profiles = 
+		new LinkedList<Profile>();
+
+	private PreparedStatement profileStmt = null;
+
+	public static class Profile {
+		protected Integer id; 
+		protected String name; 
+		protected Integer application; 
+		protected Integer domain; 
+	}
+	
+	protected void insertProfile( List<Profile> profiles )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = profiles.size();
+		if ( profileStmtSize != size ) {
+			if ( profileStmt != null ) {
+				profileStmt.close();
+			}
+			String values = "(?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			profileStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO profile (id,name,application,domain)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			profileStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Profile profile : profiles) {
+			if ( profile.id == null )
+				profileStmt.setNull(offset++, 4);
+			else
+				profileStmt.setInt(offset++, profile.id);
+			if ( profile.name == null )
+				profileStmt.setNull(offset++, 12);
+			else
+				profileStmt.setString(offset++, profile.name);
+			if ( profile.application == null )
+				profileStmt.setNull(offset++, 4);
+			else
+				profileStmt.setInt(offset++, profile.application);
+			if ( profile.domain == null )
+				profileStmt.setNull(offset++, 4);
+			else
+				profileStmt.setInt(offset++, profile.domain);
+		}
+		profileStmt.executeUpdate();
+		profileInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Profiles in {} milliseconds.", size, profileInserted, elapsed );		
+	}
+		
+		private int profileId = -1;
+		
+		private void initProfileId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `profile`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.profileId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextProfileId() {
+			return ++this.profileId;
+		} 
+
+		public void setProfileId(Integer profileId) {
+			this.profileId = profileId;
+		} 
+	
+	private void flushProfile(  )
+	throws SQLException {
+		if ( ! profiles.isEmpty() )
+			insertProfile(profiles);
+		if ( profileStmt != null )
+			profileStmt.close();
+	}	
+
+	/**
+	 * Profile
+	 * @param id Identificador unico
+	 * @param name Nombre del Perfil
+	 * @param application Identificador de la Aplicacion
+	 * @param domain Identificador del Dominio
+	 * @throws SQLException
+	*/
+	protected void insertProfile(Integer id, String name, Integer application, Integer domain)
+	throws SQLException {
+
+		Profile profile_ = new Profile();
+		profile_.id = id;
+		profile_.name = name;
+		profile_.application = application;
+		profile_.domain = domain;
+
+		profiles.add(profile_);
+		
+		int profileCount = profiles.size();
+		
+		if ( 94 * profileCount >=  this.maxAllowedPacket ){
+			insertProfile(profiles);
+			profiles.clear();
+		} 
+	}
+
+
+	/**
+	 * Profile
+	 * @param name Nombre del Perfil
+	 * @param application Identificador de la Aplicacion
+	 * @param domain Identificador del Dominio
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertProfile(String name, Integer application, Integer domain)
+	throws SQLException {
+		int id = nextProfileId();
+
+		Profile profile_ = new Profile();
+		profile_.id = id;
+		profile_.name = name;
+		profile_.application = application;
+		profile_.domain = domain;
+
+		profiles.add(profile_);
+		
+		int profileCount = profiles.size();
+		
+		if ( 94 * profileCount >=  this.maxAllowedPacket ){
+			insertProfile(profiles);
+			profiles.clear();
 		} 
 		return id;
 	}
@@ -25793,170 +28424,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int ec_offer_pay_infoStmtSize = 0;
-
-	private int ec_offer_pay_infoInserted = 0;
-
-	private List<Ec_offer_pay_info> ec_offer_pay_infos = 
-		new LinkedList<Ec_offer_pay_info>();
-
-	private PreparedStatement ec_offer_pay_infoStmt = null;
-
-	public static class Ec_offer_pay_info {
-		protected Integer id; 
-		protected Integer offer; 
-		protected Short payment_status; 
-		protected Integer authorization_number; 
-	}
-	
-	protected void insertEc_offer_pay_info( List<Ec_offer_pay_info> ec_offer_pay_infos )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = ec_offer_pay_infos.size();
-		if ( ec_offer_pay_infoStmtSize != size ) {
-			if ( ec_offer_pay_infoStmt != null ) {
-				ec_offer_pay_infoStmt.close();
-			}
-			String values = "(?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			ec_offer_pay_infoStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO ec_offer_pay_info (id,offer,payment_status,authorization_number)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			ec_offer_pay_infoStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Ec_offer_pay_info ec_offer_pay_info : ec_offer_pay_infos) {
-			if ( ec_offer_pay_info.id == null )
-				ec_offer_pay_infoStmt.setNull(offset++, 4);
-			else
-				ec_offer_pay_infoStmt.setInt(offset++, ec_offer_pay_info.id);
-			if ( ec_offer_pay_info.offer == null )
-				ec_offer_pay_infoStmt.setNull(offset++, 4);
-			else
-				ec_offer_pay_infoStmt.setInt(offset++, ec_offer_pay_info.offer);
-			if ( ec_offer_pay_info.payment_status == null )
-				ec_offer_pay_infoStmt.setNull(offset++, -6);
-			else
-				ec_offer_pay_infoStmt.setShort(offset++, ec_offer_pay_info.payment_status);
-			if ( ec_offer_pay_info.authorization_number == null )
-				ec_offer_pay_infoStmt.setNull(offset++, 4);
-			else
-				ec_offer_pay_infoStmt.setInt(offset++, ec_offer_pay_info.authorization_number);
-		}
-		ec_offer_pay_infoStmt.executeUpdate();
-		ec_offer_pay_infoInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Ec_offer_pay_infos in {} milliseconds.", size, ec_offer_pay_infoInserted, elapsed );		
-	}
-		
-		private int ec_offer_pay_infoId = -1;
-		
-		private void initEc_offer_pay_infoId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `ec_offer_pay_info`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.ec_offer_pay_infoId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextEc_offer_pay_infoId() {
-			return ++this.ec_offer_pay_infoId;
-		} 
-
-		public void setEc_offer_pay_infoId(Integer ec_offer_pay_infoId) {
-			this.ec_offer_pay_infoId = ec_offer_pay_infoId;
-		} 
-	
-	private void flushEc_offer_pay_info(  )
-	throws SQLException {
-		if ( ! ec_offer_pay_infos.isEmpty() )
-			insertEc_offer_pay_info(ec_offer_pay_infos);
-		if ( ec_offer_pay_infoStmt != null )
-			ec_offer_pay_infoStmt.close();
-	}	
-
-	/**
-	 * Ec_offer_pay_info
-	 * @param id Identificador unico
-	 * @param offer Identificador del Presupuesto
-	 * @param payment_status Estado del pago
-	 * @param authorization_number Numero de autorizacion
-	 * @throws SQLException
-	*/
-	protected void insertEc_offer_pay_info(Integer id, Integer offer, Short payment_status, Integer authorization_number)
-	throws SQLException {
-
-		Ec_offer_pay_info ec_offer_pay_info_ = new Ec_offer_pay_info();
-		ec_offer_pay_info_.id = id;
-		ec_offer_pay_info_.offer = offer;
-		ec_offer_pay_info_.payment_status = payment_status;
-		ec_offer_pay_info_.authorization_number = authorization_number;
-
-		ec_offer_pay_infos.add(ec_offer_pay_info_);
-		
-		int ec_offer_pay_infoCount = ec_offer_pay_infos.size();
-		
-		if ( 33 * ec_offer_pay_infoCount >=  this.maxAllowedPacket ){
-			insertEc_offer_pay_info(ec_offer_pay_infos);
-			ec_offer_pay_infos.clear();
-		} 
-	}
-
-
-	/**
-	 * Ec_offer_pay_info
-	 * @param offer Identificador del Presupuesto
-	 * @param payment_status Estado del pago
-	 * @param authorization_number Numero de autorizacion
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertEc_offer_pay_info(Integer offer, Short payment_status, Integer authorization_number)
-	throws SQLException {
-		int id = nextEc_offer_pay_infoId();
-
-		Ec_offer_pay_info ec_offer_pay_info_ = new Ec_offer_pay_info();
-		ec_offer_pay_info_.id = id;
-		ec_offer_pay_info_.offer = offer;
-		ec_offer_pay_info_.payment_status = payment_status;
-		ec_offer_pay_info_.authorization_number = authorization_number;
-
-		ec_offer_pay_infos.add(ec_offer_pay_info_);
-		
-		int ec_offer_pay_infoCount = ec_offer_pay_infos.size();
-		
-		if ( 33 * ec_offer_pay_infoCount >=  this.maxAllowedPacket ){
-			insertEc_offer_pay_info(ec_offer_pay_infos);
-			ec_offer_pay_infos.clear();
-		} 
-		return id;
-	}
-
-
 	private int asset_activityStmtSize = 0;
 
 	private int asset_activityInserted = 0;
@@ -26193,6 +28660,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String city; 
 		protected String province; 
 		protected String country; 
+		protected String barcode; 
 	}
 	
 	protected void insertProject_reservation_guest( List<Project_reservation_guest> project_reservation_guests )
@@ -26203,7 +28671,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( project_reservation_guestStmt != null ) {
 				project_reservation_guestStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -26212,7 +28680,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			project_reservation_guestStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO project_reservation_guest (id,domain,project_reservation,guest_index,name,surname,treatment,document,document_type,document_country,email,phone,address,zip,city,province,country)"  
+				"INSERT INTO project_reservation_guest (id,domain,project_reservation,guest_index,name,surname,treatment,document,document_type,document_country,email,phone,address,zip,city,province,country,barcode)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			project_reservation_guestStmtSize = size;
@@ -26289,6 +28757,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_reservation_guestStmt.setNull(offset++, 12);
 			else
 				project_reservation_guestStmt.setString(offset++, project_reservation_guest.country);
+			if ( project_reservation_guest.barcode == null )
+				project_reservation_guestStmt.setNull(offset++, 12);
+			else
+				project_reservation_guestStmt.setString(offset++, project_reservation_guest.barcode);
 		}
 		project_reservation_guestStmt.executeUpdate();
 		project_reservation_guestInserted += size;
@@ -26356,9 +28828,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param city Ciudad
 	 * @param province Provincia
 	 * @param country Pais
+	 * @param barcode Codigo de pulsera
 	 * @throws SQLException
 	*/
-	protected void insertProject_reservation_guest(Integer id, Integer domain, Integer project_reservation, Short guest_index, String name, String surname, String treatment, String document, Short document_type, String document_country, String email, String phone, String address, String zip, String city, String province, String country)
+	protected void insertProject_reservation_guest(Integer id, Integer domain, Integer project_reservation, Short guest_index, String name, String surname, String treatment, String document, Short document_type, String document_country, String email, String phone, String address, String zip, String city, String province, String country, String barcode)
 	throws SQLException {
 
 		Project_reservation_guest project_reservation_guest_ = new Project_reservation_guest();
@@ -26379,12 +28852,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		project_reservation_guest_.city = city;
 		project_reservation_guest_.province = province;
 		project_reservation_guest_.country = country;
+		project_reservation_guest_.barcode = barcode;
 
 		project_reservation_guests.add(project_reservation_guest_);
 		
 		int project_reservation_guestCount = project_reservation_guests.size();
 		
-		if ( 748 * project_reservation_guestCount >=  this.maxAllowedPacket ){
+		if ( 780 * project_reservation_guestCount >=  this.maxAllowedPacket ){
 			insertProject_reservation_guest(project_reservation_guests);
 			project_reservation_guests.clear();
 		} 
@@ -26409,10 +28883,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param city Ciudad
 	 * @param province Provincia
 	 * @param country Pais
+	 * @param barcode Codigo de pulsera
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertProject_reservation_guest(Integer domain, Integer project_reservation, Short guest_index, String name, String surname, String treatment, String document, Short document_type, String document_country, String email, String phone, String address, String zip, String city, String province, String country)
+	public int insertProject_reservation_guest(Integer domain, Integer project_reservation, Short guest_index, String name, String surname, String treatment, String document, Short document_type, String document_country, String email, String phone, String address, String zip, String city, String province, String country, String barcode)
 	throws SQLException {
 		int id = nextProject_reservation_guestId();
 
@@ -26434,12 +28909,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		project_reservation_guest_.city = city;
 		project_reservation_guest_.province = province;
 		project_reservation_guest_.country = country;
+		project_reservation_guest_.barcode = barcode;
 
 		project_reservation_guests.add(project_reservation_guest_);
 		
 		int project_reservation_guestCount = project_reservation_guests.size();
 		
-		if ( 748 * project_reservation_guestCount >=  this.maxAllowedPacket ){
+		if ( 780 * project_reservation_guestCount >=  this.maxAllowedPacket ){
 			insertProject_reservation_guest(project_reservation_guests);
 			project_reservation_guests.clear();
 		} 
@@ -26899,7 +29375,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param description Descripcion
 	 * @param expression Expresion
 	 * @param type Tipo de Costo
-	 * @param code Cùdigo
+	 * @param code C?digo
 	 * @throws SQLException
 	*/
 	protected void insertSystem_cost(Integer id, Integer domain, Date start_date, Date end_date, String description, String expression, Short type, String code)
@@ -26934,7 +29410,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param description Descripcion
 	 * @param expression Expresion
 	 * @param type Tipo de Costo
-	 * @param code Cùdigo
+	 * @param code C?digo
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -27108,7 +29584,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param issue_date Fecha de emision de la Remesa
 	 * @param type Tipo de Remesa
 	 * @param status Estado de la Remesa
-	 * @param rbank Banco de la Compaùia utilizado en la Remesa
+	 * @param rbank Banco de la Compa?ia utilizado en la Remesa
 	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
 	 * @param payment Indica si es un pago o un cobro
 	 * @param security_level Nivel de seguridad
@@ -27147,7 +29623,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param issue_date Fecha de emision de la Remesa
 	 * @param type Tipo de Remesa
 	 * @param status Estado de la Remesa
-	 * @param rbank Banco de la Compaùia utilizado en la Remesa
+	 * @param rbank Banco de la Compa?ia utilizado en la Remesa
 	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
 	 * @param payment Indica si es un pago o un cobro
 	 * @param security_level Nivel de seguridad
@@ -28065,188 +30541,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int ec_catalogueStmtSize = 0;
-
-	private int ec_catalogueInserted = 0;
-
-	private List<Ec_catalogue> ec_catalogues = 
-		new LinkedList<Ec_catalogue>();
-
-	private PreparedStatement ec_catalogueStmt = null;
-
-	public static class Ec_catalogue {
-		protected Integer id; 
-		protected Integer catalogue; 
-		protected Blob catalogue_img; 
-		protected Blob catalogue_icon; 
-		protected Short type; 
-		protected Boolean visible; 
-	}
-	
-	protected void insertEc_catalogue( List<Ec_catalogue> ec_catalogues )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = ec_catalogues.size();
-		if ( ec_catalogueStmtSize != size ) {
-			if ( ec_catalogueStmt != null ) {
-				ec_catalogueStmt.close();
-			}
-			String values = "(?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			ec_catalogueStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO ec_catalogue (id,catalogue,catalogue_img,catalogue_icon,type,visible)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			ec_catalogueStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Ec_catalogue ec_catalogue : ec_catalogues) {
-			if ( ec_catalogue.id == null )
-				ec_catalogueStmt.setNull(offset++, 4);
-			else
-				ec_catalogueStmt.setInt(offset++, ec_catalogue.id);
-			if ( ec_catalogue.catalogue == null )
-				ec_catalogueStmt.setNull(offset++, 4);
-			else
-				ec_catalogueStmt.setInt(offset++, ec_catalogue.catalogue);
-			if ( ec_catalogue.catalogue_img == null )
-				ec_catalogueStmt.setNull(offset++, -4);
-			else
-				ec_catalogueStmt.setBlob(offset++, ec_catalogue.catalogue_img);
-			if ( ec_catalogue.catalogue_icon == null )
-				ec_catalogueStmt.setNull(offset++, -4);
-			else
-				ec_catalogueStmt.setBlob(offset++, ec_catalogue.catalogue_icon);
-			if ( ec_catalogue.type == null )
-				ec_catalogueStmt.setNull(offset++, -6);
-			else
-				ec_catalogueStmt.setShort(offset++, ec_catalogue.type);
-			if ( ec_catalogue.visible == null )
-				ec_catalogueStmt.setNull(offset++, -7);
-			else
-				ec_catalogueStmt.setBoolean(offset++, ec_catalogue.visible);
-		}
-		ec_catalogueStmt.executeUpdate();
-		ec_catalogueInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Ec_catalogues in {} milliseconds.", size, ec_catalogueInserted, elapsed );		
-	}
-		
-		private int ec_catalogueId = -1;
-		
-		private void initEc_catalogueId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `ec_catalogue`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.ec_catalogueId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextEc_catalogueId() {
-			return ++this.ec_catalogueId;
-		} 
-
-		public void setEc_catalogueId(Integer ec_catalogueId) {
-			this.ec_catalogueId = ec_catalogueId;
-		} 
-	
-	private void flushEc_catalogue(  )
-	throws SQLException {
-		if ( ! ec_catalogues.isEmpty() )
-			insertEc_catalogue(ec_catalogues);
-		if ( ec_catalogueStmt != null )
-			ec_catalogueStmt.close();
-	}	
-
-	/**
-	 * Ec_catalogue
-	 * @param id Identificador unico
-	 * @param catalogue Identificador del Catalogo
-	 * @param catalogue_img Imagen para el Catalogo
-	 * @param catalogue_icon Icono del Catalogo
-	 * @param type Tipo de Catalogo
-	 * @param visible Indica si es visible en internet
-	 * @throws SQLException
-	*/
-	protected void insertEc_catalogue(Integer id, Integer catalogue, Blob catalogue_img, Blob catalogue_icon, Short type, Boolean visible)
-	throws SQLException {
-
-		Ec_catalogue ec_catalogue_ = new Ec_catalogue();
-		ec_catalogue_.id = id;
-		ec_catalogue_.catalogue = catalogue;
-		ec_catalogue_.catalogue_img = catalogue_img;
-		ec_catalogue_.catalogue_icon = catalogue_icon;
-		ec_catalogue_.type = type;
-		ec_catalogue_.visible = visible;
-
-		ec_catalogues.add(ec_catalogue_);
-		
-		int ec_catalogueCount = ec_catalogues.size();
-		
-		if ( 23 * ec_catalogueCount >=  this.maxAllowedPacket ){
-			insertEc_catalogue(ec_catalogues);
-			ec_catalogues.clear();
-		} 
-	}
-
-
-	/**
-	 * Ec_catalogue
-	 * @param catalogue Identificador del Catalogo
-	 * @param catalogue_img Imagen para el Catalogo
-	 * @param catalogue_icon Icono del Catalogo
-	 * @param type Tipo de Catalogo
-	 * @param visible Indica si es visible en internet
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertEc_catalogue(Integer catalogue, Blob catalogue_img, Blob catalogue_icon, Short type, Boolean visible)
-	throws SQLException {
-		int id = nextEc_catalogueId();
-
-		Ec_catalogue ec_catalogue_ = new Ec_catalogue();
-		ec_catalogue_.id = id;
-		ec_catalogue_.catalogue = catalogue;
-		ec_catalogue_.catalogue_img = catalogue_img;
-		ec_catalogue_.catalogue_icon = catalogue_icon;
-		ec_catalogue_.type = type;
-		ec_catalogue_.visible = visible;
-
-		ec_catalogues.add(ec_catalogue_);
-		
-		int ec_catalogueCount = ec_catalogues.size();
-		
-		if ( 23 * ec_catalogueCount >=  this.maxAllowedPacket ){
-			insertEc_catalogue(ec_catalogues);
-			ec_catalogues.clear();
-		} 
-		return id;
-	}
-
-
 	private int workactivityStmtSize = 0;
 
 	private int workactivityInserted = 0;
@@ -28369,7 +30663,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param description Descripcion de la Actividad
 	 * @param workplace Identificador del Centro de Trabajo
-	 * @param enterpriseCCC Cuenta de Cotizaciùn asociada a la Actividad
+	 * @param enterpriseCCC Cuenta de Cotizaci?n asociada a la Actividad
 	 * @param active Indica si la Actividad esta activa o no
 	 * @throws SQLException
 	*/
@@ -28400,7 +30694,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param description Descripcion de la Actividad
 	 * @param workplace Identificador del Centro de Trabajo
-	 * @param enterpriseCCC Cuenta de Cotizaciùn asociada a la Actividad
+	 * @param enterpriseCCC Cuenta de Cotizaci?n asociada a la Actividad
 	 * @param active Indica si la Actividad esta activa o no
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -28424,431 +30718,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 104 * workactivityCount >=  this.maxAllowedPacket ){
 			insertWorkactivity(workactivitys);
 			workactivitys.clear();
-		} 
-		return id;
-	}
-
-
-	private int ec_configStmtSize = 0;
-
-	private int ec_configInserted = 0;
-
-	private List<Ec_config> ec_configs = 
-		new LinkedList<Ec_config>();
-
-	private PreparedStatement ec_configStmt = null;
-
-	public static class Ec_config {
-		protected Integer id; 
-		protected Boolean active; 
-		protected String name; 
-		protected Short skin; 
-		protected Blob header_img; 
-		protected String series; 
-		protected Boolean commerce; 
-		protected Short show_login; 
-		protected Short price; 
-		protected Short tax_in_price; 
-		protected Short discount; 
-		protected Integer bank_transfer; 
-		protected Integer cash_on_delivery; 
-		protected Integer visa; 
-		protected Integer paypal; 
-		protected Integer bank_draft; 
-		protected String legal_note1; 
-		protected String legal_note2; 
-		protected String legal_note3; 
-		protected Integer tariff; 
-		protected String header_color; 
-		protected String telephone; 
-		protected Short row_items; 
-		protected Blob left_banner; 
-		protected Blob right_banner; 
-		protected Blob welcome_banner; 
-		protected Short ecommerce_status; 
-		protected Double shipping_costs; 
-		protected Double free_shipping; 
-		protected String title_note1; 
-		protected String title_note2; 
-		protected String title_note3; 
-		protected String email; 
-	}
-	
-	protected void insertEc_config( List<Ec_config> ec_configs )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = ec_configs.size();
-		if ( ec_configStmtSize != size ) {
-			if ( ec_configStmt != null ) {
-				ec_configStmt.close();
-			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			ec_configStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO ec_config (id,active,name,skin,header_img,series,commerce,show_login,price,tax_in_price,discount,bank_transfer,cash_on_delivery,visa,paypal,bank_draft,legal_note1,legal_note2,legal_note3,tariff,header_color,telephone,row_items,left_banner,right_banner,welcome_banner,ecommerce_status,shipping_costs,free_shipping,title_note1,title_note2,title_note3,email)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			ec_configStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Ec_config ec_config : ec_configs) {
-			if ( ec_config.id == null )
-				ec_configStmt.setNull(offset++, 4);
-			else
-				ec_configStmt.setInt(offset++, ec_config.id);
-			if ( ec_config.active == null )
-				ec_configStmt.setNull(offset++, -7);
-			else
-				ec_configStmt.setBoolean(offset++, ec_config.active);
-			if ( ec_config.name == null )
-				ec_configStmt.setNull(offset++, 12);
-			else
-				ec_configStmt.setString(offset++, ec_config.name);
-			if ( ec_config.skin == null )
-				ec_configStmt.setNull(offset++, -6);
-			else
-				ec_configStmt.setShort(offset++, ec_config.skin);
-			if ( ec_config.header_img == null )
-				ec_configStmt.setNull(offset++, -4);
-			else
-				ec_configStmt.setBlob(offset++, ec_config.header_img);
-			if ( ec_config.series == null )
-				ec_configStmt.setNull(offset++, 1);
-			else
-				ec_configStmt.setString(offset++, ec_config.series);
-			if ( ec_config.commerce == null )
-				ec_configStmt.setNull(offset++, -7);
-			else
-				ec_configStmt.setBoolean(offset++, ec_config.commerce);
-			if ( ec_config.show_login == null )
-				ec_configStmt.setNull(offset++, -6);
-			else
-				ec_configStmt.setShort(offset++, ec_config.show_login);
-			if ( ec_config.price == null )
-				ec_configStmt.setNull(offset++, -6);
-			else
-				ec_configStmt.setShort(offset++, ec_config.price);
-			if ( ec_config.tax_in_price == null )
-				ec_configStmt.setNull(offset++, -6);
-			else
-				ec_configStmt.setShort(offset++, ec_config.tax_in_price);
-			if ( ec_config.discount == null )
-				ec_configStmt.setNull(offset++, -6);
-			else
-				ec_configStmt.setShort(offset++, ec_config.discount);
-			if ( ec_config.bank_transfer == null )
-				ec_configStmt.setNull(offset++, 4);
-			else
-				ec_configStmt.setInt(offset++, ec_config.bank_transfer);
-			if ( ec_config.cash_on_delivery == null )
-				ec_configStmt.setNull(offset++, 4);
-			else
-				ec_configStmt.setInt(offset++, ec_config.cash_on_delivery);
-			if ( ec_config.visa == null )
-				ec_configStmt.setNull(offset++, 4);
-			else
-				ec_configStmt.setInt(offset++, ec_config.visa);
-			if ( ec_config.paypal == null )
-				ec_configStmt.setNull(offset++, 4);
-			else
-				ec_configStmt.setInt(offset++, ec_config.paypal);
-			if ( ec_config.bank_draft == null )
-				ec_configStmt.setNull(offset++, 4);
-			else
-				ec_configStmt.setInt(offset++, ec_config.bank_draft);
-			if ( ec_config.legal_note1 == null )
-				ec_configStmt.setNull(offset++, -1);
-			else
-				ec_configStmt.setString(offset++, ec_config.legal_note1);
-			if ( ec_config.legal_note2 == null )
-				ec_configStmt.setNull(offset++, -1);
-			else
-				ec_configStmt.setString(offset++, ec_config.legal_note2);
-			if ( ec_config.legal_note3 == null )
-				ec_configStmt.setNull(offset++, -1);
-			else
-				ec_configStmt.setString(offset++, ec_config.legal_note3);
-			if ( ec_config.tariff == null )
-				ec_configStmt.setNull(offset++, 4);
-			else
-				ec_configStmt.setInt(offset++, ec_config.tariff);
-			if ( ec_config.header_color == null )
-				ec_configStmt.setNull(offset++, 12);
-			else
-				ec_configStmt.setString(offset++, ec_config.header_color);
-			if ( ec_config.telephone == null )
-				ec_configStmt.setNull(offset++, 12);
-			else
-				ec_configStmt.setString(offset++, ec_config.telephone);
-			if ( ec_config.row_items == null )
-				ec_configStmt.setNull(offset++, -6);
-			else
-				ec_configStmt.setShort(offset++, ec_config.row_items);
-			if ( ec_config.left_banner == null )
-				ec_configStmt.setNull(offset++, -4);
-			else
-				ec_configStmt.setBlob(offset++, ec_config.left_banner);
-			if ( ec_config.right_banner == null )
-				ec_configStmt.setNull(offset++, -4);
-			else
-				ec_configStmt.setBlob(offset++, ec_config.right_banner);
-			if ( ec_config.welcome_banner == null )
-				ec_configStmt.setNull(offset++, -4);
-			else
-				ec_configStmt.setBlob(offset++, ec_config.welcome_banner);
-			if ( ec_config.ecommerce_status == null )
-				ec_configStmt.setNull(offset++, -6);
-			else
-				ec_configStmt.setShort(offset++, ec_config.ecommerce_status);
-			if ( ec_config.shipping_costs == null )
-				ec_configStmt.setNull(offset++, 8);
-			else
-				ec_configStmt.setDouble(offset++, ec_config.shipping_costs);
-			if ( ec_config.free_shipping == null )
-				ec_configStmt.setNull(offset++, 8);
-			else
-				ec_configStmt.setDouble(offset++, ec_config.free_shipping);
-			if ( ec_config.title_note1 == null )
-				ec_configStmt.setNull(offset++, 12);
-			else
-				ec_configStmt.setString(offset++, ec_config.title_note1);
-			if ( ec_config.title_note2 == null )
-				ec_configStmt.setNull(offset++, 12);
-			else
-				ec_configStmt.setString(offset++, ec_config.title_note2);
-			if ( ec_config.title_note3 == null )
-				ec_configStmt.setNull(offset++, 12);
-			else
-				ec_configStmt.setString(offset++, ec_config.title_note3);
-			if ( ec_config.email == null )
-				ec_configStmt.setNull(offset++, 12);
-			else
-				ec_configStmt.setString(offset++, ec_config.email);
-		}
-		ec_configStmt.executeUpdate();
-		ec_configInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Ec_configs in {} milliseconds.", size, ec_configInserted, elapsed );		
-	}
-		
-		private int ec_configId = -1;
-		
-		private void initEc_configId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `ec_config`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.ec_configId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextEc_configId() {
-			return ++this.ec_configId;
-		} 
-
-		public void setEc_configId(Integer ec_configId) {
-			this.ec_configId = ec_configId;
-		} 
-	
-	private void flushEc_config(  )
-	throws SQLException {
-		if ( ! ec_configs.isEmpty() )
-			insertEc_config(ec_configs);
-		if ( ec_configStmt != null )
-			ec_configStmt.close();
-	}	
-
-	/**
-	 * Ec_config
-	 * @param id Identificador unico
-	 * @param active Indica si es la configuracion activa
-	 * @param name Nombre del Catalogo de internet
-	 * @param skin Tipo de skin a utilizar
-	 * @param header_img Imagen de cabecera
-	 * @param series Serie de los presupuestos que se van a grabar
-	 * @param commerce Indica si el ECommerce permite grabar un presupuesto
-	 * @param show_login Indica la forma de autenticarse en el ECommerce
-	 * @param price Indica la forma de mostrar los precios en el Catalogo
-	 * @param tax_in_price Indica si los precios van a mostrarse con Impuestos incluidos
-	 * @param discount Indica si adicionalmente se va a mostrar el precio original del Producto
-	 * @param bank_transfer Forma de pago por transferencia bancaria
-	 * @param cash_on_delivery Forma de pago por contrarreembolso
-	 * @param visa Forma de pago con tarjeta
-	 * @param paypal Forma de pago por paypal
-	 * @param bank_draft Forma de pago por giro bancario
-	 * @param legal_note1 Politica de privacidad
-	 * @param legal_note2 Nota legal
-	 * @param legal_note3 Proteccion de datos
-	 * @param tariff Identificador de Tarifa para Ecommerce
-	 * @param header_color Color del background del header
-	 * @param telephone Telefono de contacto
-	 * @param row_items Numero de articulos por fila
-	 * @param left_banner Banner de la izquierda
-	 * @param right_banner Banner de la derecha
-	 * @param welcome_banner Banner de bienvenida
-	 * @param ecommerce_status Estado del comercio electronico
-	 * @param shipping_costs Gastos de envio
-	 * @param free_shipping Gastos de envio gratis a partir de esta cantidad
-	 * @param title_note1 
-	 * @param title_note2 
-	 * @param title_note3 
-	 * @param email Email de contacto
-	 * @throws SQLException
-	*/
-	protected void insertEc_config(Integer id, Boolean active, String name, Short skin, Blob header_img, String series, Boolean commerce, Short show_login, Short price, Short tax_in_price, Short discount, Integer bank_transfer, Integer cash_on_delivery, Integer visa, Integer paypal, Integer bank_draft, String legal_note1, String legal_note2, String legal_note3, Integer tariff, String header_color, String telephone, Short row_items, Blob left_banner, Blob right_banner, Blob welcome_banner, Short ecommerce_status, Double shipping_costs, Double free_shipping, String title_note1, String title_note2, String title_note3, String email)
-	throws SQLException {
-
-		Ec_config ec_config_ = new Ec_config();
-		ec_config_.id = id;
-		ec_config_.active = active;
-		ec_config_.name = name;
-		ec_config_.skin = skin;
-		ec_config_.header_img = header_img;
-		ec_config_.series = series;
-		ec_config_.commerce = commerce;
-		ec_config_.show_login = show_login;
-		ec_config_.price = price;
-		ec_config_.tax_in_price = tax_in_price;
-		ec_config_.discount = discount;
-		ec_config_.bank_transfer = bank_transfer;
-		ec_config_.cash_on_delivery = cash_on_delivery;
-		ec_config_.visa = visa;
-		ec_config_.paypal = paypal;
-		ec_config_.bank_draft = bank_draft;
-		ec_config_.legal_note1 = legal_note1;
-		ec_config_.legal_note2 = legal_note2;
-		ec_config_.legal_note3 = legal_note3;
-		ec_config_.tariff = tariff;
-		ec_config_.header_color = header_color;
-		ec_config_.telephone = telephone;
-		ec_config_.row_items = row_items;
-		ec_config_.left_banner = left_banner;
-		ec_config_.right_banner = right_banner;
-		ec_config_.welcome_banner = welcome_banner;
-		ec_config_.ecommerce_status = ecommerce_status;
-		ec_config_.shipping_costs = shipping_costs;
-		ec_config_.free_shipping = free_shipping;
-		ec_config_.title_note1 = title_note1;
-		ec_config_.title_note2 = title_note2;
-		ec_config_.title_note3 = title_note3;
-		ec_config_.email = email;
-
-		ec_configs.add(ec_config_);
-		
-		int ec_configCount = ec_configs.size();
-		
-		if ( 466 * ec_configCount >=  this.maxAllowedPacket ){
-			insertEc_config(ec_configs);
-			ec_configs.clear();
-		} 
-	}
-
-
-	/**
-	 * Ec_config
-	 * @param active Indica si es la configuracion activa
-	 * @param name Nombre del Catalogo de internet
-	 * @param skin Tipo de skin a utilizar
-	 * @param header_img Imagen de cabecera
-	 * @param series Serie de los presupuestos que se van a grabar
-	 * @param commerce Indica si el ECommerce permite grabar un presupuesto
-	 * @param show_login Indica la forma de autenticarse en el ECommerce
-	 * @param price Indica la forma de mostrar los precios en el Catalogo
-	 * @param tax_in_price Indica si los precios van a mostrarse con Impuestos incluidos
-	 * @param discount Indica si adicionalmente se va a mostrar el precio original del Producto
-	 * @param bank_transfer Forma de pago por transferencia bancaria
-	 * @param cash_on_delivery Forma de pago por contrarreembolso
-	 * @param visa Forma de pago con tarjeta
-	 * @param paypal Forma de pago por paypal
-	 * @param bank_draft Forma de pago por giro bancario
-	 * @param legal_note1 Politica de privacidad
-	 * @param legal_note2 Nota legal
-	 * @param legal_note3 Proteccion de datos
-	 * @param tariff Identificador de Tarifa para Ecommerce
-	 * @param header_color Color del background del header
-	 * @param telephone Telefono de contacto
-	 * @param row_items Numero de articulos por fila
-	 * @param left_banner Banner de la izquierda
-	 * @param right_banner Banner de la derecha
-	 * @param welcome_banner Banner de bienvenida
-	 * @param ecommerce_status Estado del comercio electronico
-	 * @param shipping_costs Gastos de envio
-	 * @param free_shipping Gastos de envio gratis a partir de esta cantidad
-	 * @param title_note1 
-	 * @param title_note2 
-	 * @param title_note3 
-	 * @param email Email de contacto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertEc_config(Boolean active, String name, Short skin, Blob header_img, String series, Boolean commerce, Short show_login, Short price, Short tax_in_price, Short discount, Integer bank_transfer, Integer cash_on_delivery, Integer visa, Integer paypal, Integer bank_draft, String legal_note1, String legal_note2, String legal_note3, Integer tariff, String header_color, String telephone, Short row_items, Blob left_banner, Blob right_banner, Blob welcome_banner, Short ecommerce_status, Double shipping_costs, Double free_shipping, String title_note1, String title_note2, String title_note3, String email)
-	throws SQLException {
-		int id = nextEc_configId();
-
-		Ec_config ec_config_ = new Ec_config();
-		ec_config_.id = id;
-		ec_config_.active = active;
-		ec_config_.name = name;
-		ec_config_.skin = skin;
-		ec_config_.header_img = header_img;
-		ec_config_.series = series;
-		ec_config_.commerce = commerce;
-		ec_config_.show_login = show_login;
-		ec_config_.price = price;
-		ec_config_.tax_in_price = tax_in_price;
-		ec_config_.discount = discount;
-		ec_config_.bank_transfer = bank_transfer;
-		ec_config_.cash_on_delivery = cash_on_delivery;
-		ec_config_.visa = visa;
-		ec_config_.paypal = paypal;
-		ec_config_.bank_draft = bank_draft;
-		ec_config_.legal_note1 = legal_note1;
-		ec_config_.legal_note2 = legal_note2;
-		ec_config_.legal_note3 = legal_note3;
-		ec_config_.tariff = tariff;
-		ec_config_.header_color = header_color;
-		ec_config_.telephone = telephone;
-		ec_config_.row_items = row_items;
-		ec_config_.left_banner = left_banner;
-		ec_config_.right_banner = right_banner;
-		ec_config_.welcome_banner = welcome_banner;
-		ec_config_.ecommerce_status = ecommerce_status;
-		ec_config_.shipping_costs = shipping_costs;
-		ec_config_.free_shipping = free_shipping;
-		ec_config_.title_note1 = title_note1;
-		ec_config_.title_note2 = title_note2;
-		ec_config_.title_note3 = title_note3;
-		ec_config_.email = email;
-
-		ec_configs.add(ec_config_);
-		
-		int ec_configCount = ec_configs.size();
-		
-		if ( 466 * ec_configCount >=  this.maxAllowedPacket ){
-			insertEc_config(ec_configs);
-			ec_configs.clear();
 		} 
 		return id;
 	}
@@ -28992,161 +30861,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 	}
 
-
-
-	private int course_observationStmtSize = 0;
-
-	private int course_observationInserted = 0;
-
-	private List<Course_observation> course_observations = 
-		new LinkedList<Course_observation>();
-
-	private PreparedStatement course_observationStmt = null;
-
-	public static class Course_observation {
-		protected Integer id; 
-		protected Integer course; 
-		protected String observation; 
-	}
-	
-	protected void insertCourse_observation( List<Course_observation> course_observations )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = course_observations.size();
-		if ( course_observationStmtSize != size ) {
-			if ( course_observationStmt != null ) {
-				course_observationStmt.close();
-			}
-			String values = "(?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			course_observationStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO course_observation (id,course,observation)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			course_observationStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Course_observation course_observation : course_observations) {
-			if ( course_observation.id == null )
-				course_observationStmt.setNull(offset++, 4);
-			else
-				course_observationStmt.setInt(offset++, course_observation.id);
-			if ( course_observation.course == null )
-				course_observationStmt.setNull(offset++, 4);
-			else
-				course_observationStmt.setInt(offset++, course_observation.course);
-			if ( course_observation.observation == null )
-				course_observationStmt.setNull(offset++, 12);
-			else
-				course_observationStmt.setString(offset++, course_observation.observation);
-		}
-		course_observationStmt.executeUpdate();
-		course_observationInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Course_observations in {} milliseconds.", size, course_observationInserted, elapsed );		
-	}
-		
-		private int course_observationId = -1;
-		
-		private void initCourse_observationId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `course_observation`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.course_observationId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCourse_observationId() {
-			return ++this.course_observationId;
-		} 
-
-		public void setCourse_observationId(Integer course_observationId) {
-			this.course_observationId = course_observationId;
-		} 
-	
-	private void flushCourse_observation(  )
-	throws SQLException {
-		if ( ! course_observations.isEmpty() )
-			insertCourse_observation(course_observations);
-		if ( course_observationStmt != null )
-			course_observationStmt.close();
-	}	
-
-	/**
-	 * Course_observation
-	 * @param id Identificador unico
-	 * @param course Identificador de Curso
-	 * @param observation Observaciones
-	 * @throws SQLException
-	*/
-	protected void insertCourse_observation(Integer id, Integer course, String observation)
-	throws SQLException {
-
-		Course_observation course_observation_ = new Course_observation();
-		course_observation_.id = id;
-		course_observation_.course = course;
-		course_observation_.observation = observation;
-
-		course_observations.add(course_observation_);
-		
-		int course_observationCount = course_observations.size();
-		
-		if ( 84 * course_observationCount >=  this.maxAllowedPacket ){
-			insertCourse_observation(course_observations);
-			course_observations.clear();
-		} 
-	}
-
-
-	/**
-	 * Course_observation
-	 * @param course Identificador de Curso
-	 * @param observation Observaciones
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCourse_observation(Integer course, String observation)
-	throws SQLException {
-		int id = nextCourse_observationId();
-
-		Course_observation course_observation_ = new Course_observation();
-		course_observation_.id = id;
-		course_observation_.course = course;
-		course_observation_.observation = observation;
-
-		course_observations.add(course_observation_);
-		
-		int course_observationCount = course_observations.size();
-		
-		if ( 84 * course_observationCount >=  this.maxAllowedPacket ){
-			insertCourse_observation(course_observations);
-			course_observations.clear();
-		} 
-		return id;
-	}
 
 
 	private int cnae2009StmtSize = 0;
@@ -29299,6 +31013,170 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 269 * cnae2009Count >=  this.maxAllowedPacket ){
 			insertCnae2009(cnae2009s);
 			cnae2009s.clear();
+		} 
+		return id;
+	}
+
+
+	private int course_observationStmtSize = 0;
+
+	private int course_observationInserted = 0;
+
+	private List<Course_observation> course_observations = 
+		new LinkedList<Course_observation>();
+
+	private PreparedStatement course_observationStmt = null;
+
+	public static class Course_observation {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer course; 
+		protected String observation; 
+	}
+	
+	protected void insertCourse_observation( List<Course_observation> course_observations )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = course_observations.size();
+		if ( course_observationStmtSize != size ) {
+			if ( course_observationStmt != null ) {
+				course_observationStmt.close();
+			}
+			String values = "(?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			course_observationStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO course_observation (id,domain,course,observation)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			course_observationStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Course_observation course_observation : course_observations) {
+			if ( course_observation.id == null )
+				course_observationStmt.setNull(offset++, 4);
+			else
+				course_observationStmt.setInt(offset++, course_observation.id);
+			if ( course_observation.domain == null )
+				course_observationStmt.setNull(offset++, 4);
+			else
+				course_observationStmt.setInt(offset++, course_observation.domain);
+			if ( course_observation.course == null )
+				course_observationStmt.setNull(offset++, 4);
+			else
+				course_observationStmt.setInt(offset++, course_observation.course);
+			if ( course_observation.observation == null )
+				course_observationStmt.setNull(offset++, 12);
+			else
+				course_observationStmt.setString(offset++, course_observation.observation);
+		}
+		course_observationStmt.executeUpdate();
+		course_observationInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Course_observations in {} milliseconds.", size, course_observationInserted, elapsed );		
+	}
+		
+		private int course_observationId = -1;
+		
+		private void initCourse_observationId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `course_observation`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.course_observationId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextCourse_observationId() {
+			return ++this.course_observationId;
+		} 
+
+		public void setCourse_observationId(Integer course_observationId) {
+			this.course_observationId = course_observationId;
+		} 
+	
+	private void flushCourse_observation(  )
+	throws SQLException {
+		if ( ! course_observations.isEmpty() )
+			insertCourse_observation(course_observations);
+		if ( course_observationStmt != null )
+			course_observationStmt.close();
+	}	
+
+	/**
+	 * Course_observation
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param course Identificador de Curso
+	 * @param observation Observaciones
+	 * @throws SQLException
+	*/
+	protected void insertCourse_observation(Integer id, Integer domain, Integer course, String observation)
+	throws SQLException {
+
+		Course_observation course_observation_ = new Course_observation();
+		course_observation_.id = id;
+		course_observation_.domain = domain;
+		course_observation_.course = course;
+		course_observation_.observation = observation;
+
+		course_observations.add(course_observation_);
+		
+		int course_observationCount = course_observations.size();
+		
+		if ( 94 * course_observationCount >=  this.maxAllowedPacket ){
+			insertCourse_observation(course_observations);
+			course_observations.clear();
+		} 
+	}
+
+
+	/**
+	 * Course_observation
+	 * @param domain Identificador del Dominio
+	 * @param course Identificador de Curso
+	 * @param observation Observaciones
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertCourse_observation(Integer domain, Integer course, String observation)
+	throws SQLException {
+		int id = nextCourse_observationId();
+
+		Course_observation course_observation_ = new Course_observation();
+		course_observation_.id = id;
+		course_observation_.domain = domain;
+		course_observation_.course = course;
+		course_observation_.observation = observation;
+
+		course_observations.add(course_observation_);
+		
+		int course_observationCount = course_observations.size();
+		
+		if ( 94 * course_observationCount >=  this.maxAllowedPacket ){
+			insertCourse_observation(course_observations);
+			course_observations.clear();
 		} 
 		return id;
 	}
@@ -29486,6 +31364,505 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int reservation_request_roomStmtSize = 0;
+
+	private int reservation_request_roomInserted = 0;
+
+	private List<Reservation_request_room> reservation_request_rooms = 
+		new LinkedList<Reservation_request_room>();
+
+	private PreparedStatement reservation_request_roomStmt = null;
+
+	public static class Reservation_request_room {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer reservation_request; 
+		protected Short room_index; 
+		protected Short units; 
+		protected Integer item; 
+		protected Integer adults; 
+		protected Integer children; 
+		protected Integer babies; 
+		protected String crs_code; 
+		protected String tariff_code; 
+		protected String tariff_description; 
+		protected String inventory_code; 
+		protected String room_code; 
+		protected String room_description; 
+		protected String meal_plan; 
+		protected Double daily_price; 
+		protected Double total_price; 
+		protected String cancel_penalty; 
+		protected String creation_user; 
+		protected Timestamp creation_date; 
+		protected String modification_user; 
+		protected Timestamp modification_date; 
+	}
+	
+	protected void insertReservation_request_room( List<Reservation_request_room> reservation_request_rooms )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = reservation_request_rooms.size();
+		if ( reservation_request_roomStmtSize != size ) {
+			if ( reservation_request_roomStmt != null ) {
+				reservation_request_roomStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			reservation_request_roomStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO reservation_request_room (id,domain,reservation_request,room_index,units,item,adults,children,babies,crs_code,tariff_code,tariff_description,inventory_code,room_code,room_description,meal_plan,daily_price,total_price,cancel_penalty,creation_user,creation_date,modification_user,modification_date)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			reservation_request_roomStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Reservation_request_room reservation_request_room : reservation_request_rooms) {
+			if ( reservation_request_room.id == null )
+				reservation_request_roomStmt.setNull(offset++, 4);
+			else
+				reservation_request_roomStmt.setInt(offset++, reservation_request_room.id);
+			if ( reservation_request_room.domain == null )
+				reservation_request_roomStmt.setNull(offset++, 4);
+			else
+				reservation_request_roomStmt.setInt(offset++, reservation_request_room.domain);
+			if ( reservation_request_room.reservation_request == null )
+				reservation_request_roomStmt.setNull(offset++, 4);
+			else
+				reservation_request_roomStmt.setInt(offset++, reservation_request_room.reservation_request);
+			if ( reservation_request_room.room_index == null )
+				reservation_request_roomStmt.setNull(offset++, -6);
+			else
+				reservation_request_roomStmt.setShort(offset++, reservation_request_room.room_index);
+			if ( reservation_request_room.units == null )
+				reservation_request_roomStmt.setNull(offset++, -6);
+			else
+				reservation_request_roomStmt.setShort(offset++, reservation_request_room.units);
+			if ( reservation_request_room.item == null )
+				reservation_request_roomStmt.setNull(offset++, 4);
+			else
+				reservation_request_roomStmt.setInt(offset++, reservation_request_room.item);
+			if ( reservation_request_room.adults == null )
+				reservation_request_roomStmt.setNull(offset++, 5);
+			else
+				reservation_request_roomStmt.setInt(offset++, reservation_request_room.adults);
+			if ( reservation_request_room.children == null )
+				reservation_request_roomStmt.setNull(offset++, 5);
+			else
+				reservation_request_roomStmt.setInt(offset++, reservation_request_room.children);
+			if ( reservation_request_room.babies == null )
+				reservation_request_roomStmt.setNull(offset++, 5);
+			else
+				reservation_request_roomStmt.setInt(offset++, reservation_request_room.babies);
+			if ( reservation_request_room.crs_code == null )
+				reservation_request_roomStmt.setNull(offset++, 12);
+			else
+				reservation_request_roomStmt.setString(offset++, reservation_request_room.crs_code);
+			if ( reservation_request_room.tariff_code == null )
+				reservation_request_roomStmt.setNull(offset++, 12);
+			else
+				reservation_request_roomStmt.setString(offset++, reservation_request_room.tariff_code);
+			if ( reservation_request_room.tariff_description == null )
+				reservation_request_roomStmt.setNull(offset++, 12);
+			else
+				reservation_request_roomStmt.setString(offset++, reservation_request_room.tariff_description);
+			if ( reservation_request_room.inventory_code == null )
+				reservation_request_roomStmt.setNull(offset++, 12);
+			else
+				reservation_request_roomStmt.setString(offset++, reservation_request_room.inventory_code);
+			if ( reservation_request_room.room_code == null )
+				reservation_request_roomStmt.setNull(offset++, 12);
+			else
+				reservation_request_roomStmt.setString(offset++, reservation_request_room.room_code);
+			if ( reservation_request_room.room_description == null )
+				reservation_request_roomStmt.setNull(offset++, 12);
+			else
+				reservation_request_roomStmt.setString(offset++, reservation_request_room.room_description);
+			if ( reservation_request_room.meal_plan == null )
+				reservation_request_roomStmt.setNull(offset++, 12);
+			else
+				reservation_request_roomStmt.setString(offset++, reservation_request_room.meal_plan);
+			if ( reservation_request_room.daily_price == null )
+				reservation_request_roomStmt.setNull(offset++, 8);
+			else
+				reservation_request_roomStmt.setDouble(offset++, reservation_request_room.daily_price);
+			if ( reservation_request_room.total_price == null )
+				reservation_request_roomStmt.setNull(offset++, 8);
+			else
+				reservation_request_roomStmt.setDouble(offset++, reservation_request_room.total_price);
+			if ( reservation_request_room.cancel_penalty == null )
+				reservation_request_roomStmt.setNull(offset++, 12);
+			else
+				reservation_request_roomStmt.setString(offset++, reservation_request_room.cancel_penalty);
+			if ( reservation_request_room.creation_user == null )
+				reservation_request_roomStmt.setNull(offset++, 12);
+			else
+				reservation_request_roomStmt.setString(offset++, reservation_request_room.creation_user);
+			if ( reservation_request_room.creation_date == null )
+				reservation_request_roomStmt.setNull(offset++, 93);
+			else
+				reservation_request_roomStmt.setTimestamp(offset++, reservation_request_room.creation_date);
+			if ( reservation_request_room.modification_user == null )
+				reservation_request_roomStmt.setNull(offset++, 12);
+			else
+				reservation_request_roomStmt.setString(offset++, reservation_request_room.modification_user);
+			if ( reservation_request_room.modification_date == null )
+				reservation_request_roomStmt.setNull(offset++, 93);
+			else
+				reservation_request_roomStmt.setTimestamp(offset++, reservation_request_room.modification_date);
+		}
+		reservation_request_roomStmt.executeUpdate();
+		reservation_request_roomInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Reservation_request_rooms in {} milliseconds.", size, reservation_request_roomInserted, elapsed );		
+	}
+		
+		private int reservation_request_roomId = -1;
+		
+		private void initReservation_request_roomId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `reservation_request_room`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.reservation_request_roomId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextReservation_request_roomId() {
+			return ++this.reservation_request_roomId;
+		} 
+
+		public void setReservation_request_roomId(Integer reservation_request_roomId) {
+			this.reservation_request_roomId = reservation_request_roomId;
+		} 
+	
+	private void flushReservation_request_room(  )
+	throws SQLException {
+		if ( ! reservation_request_rooms.isEmpty() )
+			insertReservation_request_room(reservation_request_rooms);
+		if ( reservation_request_roomStmt != null )
+			reservation_request_roomStmt.close();
+	}	
+
+	/**
+	 * Reservation_request_room
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param reservation_request Identificador de la Solicitud de Reserva
+	 * @param room_index Numero de Habitacion
+	 * @param units Numero de Habitaciones
+	 * @param item Identificador del Tipo de Habitacion
+	 * @param adults Numero de adultos
+	 * @param children Numero de ni?os
+	 * @param babies Numero de bebes
+	 * @param crs_code Codigo de Reserva en CRS
+	 * @param tariff_code Codigo de Tarifa
+	 * @param tariff_description Descripcion de Tarifa
+	 * @param inventory_code Codigo de Servicio
+	 * @param room_code Codigo de Habitacion
+	 * @param room_description Descripcion de Habitacion
+	 * @param meal_plan Tipo de regimen
+	 * @param daily_price Importe Diario
+	 * @param total_price Importe Total
+	 * @param cancel_penalty Penalizaciones por cancelacion
+	 * @param creation_user Usuario de creacion
+	 * @param creation_date Fecha de creacion
+	 * @param modification_user Usuario de modificacion
+	 * @param modification_date Fecha de modificacion
+	 * @throws SQLException
+	*/
+	protected void insertReservation_request_room(Integer id, Integer domain, Integer reservation_request, Short room_index, Short units, Integer item, Integer adults, Integer children, Integer babies, String crs_code, String tariff_code, String tariff_description, String inventory_code, String room_code, String room_description, String meal_plan, Double daily_price, Double total_price, String cancel_penalty, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
+	throws SQLException {
+
+		Reservation_request_room reservation_request_room_ = new Reservation_request_room();
+		reservation_request_room_.id = id;
+		reservation_request_room_.domain = domain;
+		reservation_request_room_.reservation_request = reservation_request;
+		reservation_request_room_.room_index = room_index;
+		reservation_request_room_.units = units;
+		reservation_request_room_.item = item;
+		reservation_request_room_.adults = adults;
+		reservation_request_room_.children = children;
+		reservation_request_room_.babies = babies;
+		reservation_request_room_.crs_code = crs_code;
+		reservation_request_room_.tariff_code = tariff_code;
+		reservation_request_room_.tariff_description = tariff_description;
+		reservation_request_room_.inventory_code = inventory_code;
+		reservation_request_room_.room_code = room_code;
+		reservation_request_room_.room_description = room_description;
+		reservation_request_room_.meal_plan = meal_plan;
+		reservation_request_room_.daily_price = daily_price;
+		reservation_request_room_.total_price = total_price;
+		reservation_request_room_.cancel_penalty = cancel_penalty;
+		reservation_request_room_.creation_user = creation_user;
+		reservation_request_room_.creation_date = creation_date;
+		reservation_request_room_.modification_user = modification_user;
+		reservation_request_room_.modification_date = modification_date;
+
+		reservation_request_rooms.add(reservation_request_room_);
+		
+		int reservation_request_roomCount = reservation_request_rooms.size();
+		
+		if ( 583 * reservation_request_roomCount >=  this.maxAllowedPacket ){
+			insertReservation_request_room(reservation_request_rooms);
+			reservation_request_rooms.clear();
+		} 
+	}
+
+
+	/**
+	 * Reservation_request_room
+	 * @param domain Identificador del Dominio
+	 * @param reservation_request Identificador de la Solicitud de Reserva
+	 * @param room_index Numero de Habitacion
+	 * @param units Numero de Habitaciones
+	 * @param item Identificador del Tipo de Habitacion
+	 * @param adults Numero de adultos
+	 * @param children Numero de ni?os
+	 * @param babies Numero de bebes
+	 * @param crs_code Codigo de Reserva en CRS
+	 * @param tariff_code Codigo de Tarifa
+	 * @param tariff_description Descripcion de Tarifa
+	 * @param inventory_code Codigo de Servicio
+	 * @param room_code Codigo de Habitacion
+	 * @param room_description Descripcion de Habitacion
+	 * @param meal_plan Tipo de regimen
+	 * @param daily_price Importe Diario
+	 * @param total_price Importe Total
+	 * @param cancel_penalty Penalizaciones por cancelacion
+	 * @param creation_user Usuario de creacion
+	 * @param creation_date Fecha de creacion
+	 * @param modification_user Usuario de modificacion
+	 * @param modification_date Fecha de modificacion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertReservation_request_room(Integer domain, Integer reservation_request, Short room_index, Short units, Integer item, Integer adults, Integer children, Integer babies, String crs_code, String tariff_code, String tariff_description, String inventory_code, String room_code, String room_description, String meal_plan, Double daily_price, Double total_price, String cancel_penalty, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
+	throws SQLException {
+		int id = nextReservation_request_roomId();
+
+		Reservation_request_room reservation_request_room_ = new Reservation_request_room();
+		reservation_request_room_.id = id;
+		reservation_request_room_.domain = domain;
+		reservation_request_room_.reservation_request = reservation_request;
+		reservation_request_room_.room_index = room_index;
+		reservation_request_room_.units = units;
+		reservation_request_room_.item = item;
+		reservation_request_room_.adults = adults;
+		reservation_request_room_.children = children;
+		reservation_request_room_.babies = babies;
+		reservation_request_room_.crs_code = crs_code;
+		reservation_request_room_.tariff_code = tariff_code;
+		reservation_request_room_.tariff_description = tariff_description;
+		reservation_request_room_.inventory_code = inventory_code;
+		reservation_request_room_.room_code = room_code;
+		reservation_request_room_.room_description = room_description;
+		reservation_request_room_.meal_plan = meal_plan;
+		reservation_request_room_.daily_price = daily_price;
+		reservation_request_room_.total_price = total_price;
+		reservation_request_room_.cancel_penalty = cancel_penalty;
+		reservation_request_room_.creation_user = creation_user;
+		reservation_request_room_.creation_date = creation_date;
+		reservation_request_room_.modification_user = modification_user;
+		reservation_request_room_.modification_date = modification_date;
+
+		reservation_request_rooms.add(reservation_request_room_);
+		
+		int reservation_request_roomCount = reservation_request_rooms.size();
+		
+		if ( 583 * reservation_request_roomCount >=  this.maxAllowedPacket ){
+			insertReservation_request_room(reservation_request_rooms);
+			reservation_request_rooms.clear();
+		} 
+		return id;
+	}
+
+
+	private int profile_roleStmtSize = 0;
+
+	private int profile_roleInserted = 0;
+
+	private List<Profile_role> profile_roles = 
+		new LinkedList<Profile_role>();
+
+	private PreparedStatement profile_roleStmt = null;
+
+	public static class Profile_role {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer profile; 
+		protected Integer application_role; 
+	}
+	
+	protected void insertProfile_role( List<Profile_role> profile_roles )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = profile_roles.size();
+		if ( profile_roleStmtSize != size ) {
+			if ( profile_roleStmt != null ) {
+				profile_roleStmt.close();
+			}
+			String values = "(?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			profile_roleStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO profile_role (id,domain,profile,application_role)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			profile_roleStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Profile_role profile_role : profile_roles) {
+			if ( profile_role.id == null )
+				profile_roleStmt.setNull(offset++, 4);
+			else
+				profile_roleStmt.setInt(offset++, profile_role.id);
+			if ( profile_role.domain == null )
+				profile_roleStmt.setNull(offset++, 4);
+			else
+				profile_roleStmt.setInt(offset++, profile_role.domain);
+			if ( profile_role.profile == null )
+				profile_roleStmt.setNull(offset++, 4);
+			else
+				profile_roleStmt.setInt(offset++, profile_role.profile);
+			if ( profile_role.application_role == null )
+				profile_roleStmt.setNull(offset++, 4);
+			else
+				profile_roleStmt.setInt(offset++, profile_role.application_role);
+		}
+		profile_roleStmt.executeUpdate();
+		profile_roleInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Profile_roles in {} milliseconds.", size, profile_roleInserted, elapsed );		
+	}
+		
+		private int profile_roleId = -1;
+		
+		private void initProfile_roleId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `profile_role`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.profile_roleId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextProfile_roleId() {
+			return ++this.profile_roleId;
+		} 
+
+		public void setProfile_roleId(Integer profile_roleId) {
+			this.profile_roleId = profile_roleId;
+		} 
+	
+	private void flushProfile_role(  )
+	throws SQLException {
+		if ( ! profile_roles.isEmpty() )
+			insertProfile_role(profile_roles);
+		if ( profile_roleStmt != null )
+			profile_roleStmt.close();
+	}	
+
+	/**
+	 * Profile_role
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param profile Identificador del Perfil
+	 * @param application_role Identificador del Role de la Aplicacion
+	 * @throws SQLException
+	*/
+	protected void insertProfile_role(Integer id, Integer domain, Integer profile, Integer application_role)
+	throws SQLException {
+
+		Profile_role profile_role_ = new Profile_role();
+		profile_role_.id = id;
+		profile_role_.domain = domain;
+		profile_role_.profile = profile;
+		profile_role_.application_role = application_role;
+
+		profile_roles.add(profile_role_);
+		
+		int profile_roleCount = profile_roles.size();
+		
+		if ( 40 * profile_roleCount >=  this.maxAllowedPacket ){
+			insertProfile_role(profile_roles);
+			profile_roles.clear();
+		} 
+	}
+
+
+	/**
+	 * Profile_role
+	 * @param domain Identificador del Dominio
+	 * @param profile Identificador del Perfil
+	 * @param application_role Identificador del Role de la Aplicacion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertProfile_role(Integer domain, Integer profile, Integer application_role)
+	throws SQLException {
+		int id = nextProfile_roleId();
+
+		Profile_role profile_role_ = new Profile_role();
+		profile_role_.id = id;
+		profile_role_.domain = domain;
+		profile_role_.profile = profile;
+		profile_role_.application_role = application_role;
+
+		profile_roles.add(profile_role_);
+		
+		int profile_roleCount = profile_roles.size();
+		
+		if ( 40 * profile_roleCount >=  this.maxAllowedPacket ){
+			insertProfile_role(profile_roles);
+			profile_roles.clear();
+		} 
+		return id;
+	}
+
+
 	private int survey_responseStmtSize = 0;
 
 	private int survey_responseInserted = 0;
@@ -29621,7 +31998,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param survey Identificador del Cuestionario
 	 * @param target Identificador del Cliente Potencial
 	 * @param user Identificador del Usuario
-	 * @param campaign_action Identificador de la Accion de la Campaùa
+	 * @param campaign_action Identificador de la Accion de la Campa?a
 	 * @throws SQLException
 	*/
 	protected void insertSurvey_response(Integer id, Integer domain, Timestamp creationDate, Timestamp response_date, Integer survey, Integer target, Integer user, Integer campaign_action)
@@ -29656,7 +32033,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param survey Identificador del Cuestionario
 	 * @param target Identificador del Cliente Potencial
 	 * @param user Identificador del Usuario
-	 * @param campaign_action Identificador de la Accion de la Campaùa
+	 * @param campaign_action Identificador de la Accion de la Campa?a
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -29697,6 +32074,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class Evaluation_observation {
 		protected Integer id; 
+		protected Integer domain; 
 		protected Integer alumn; 
 		protected Short evaluation; 
 		protected String comments; 
@@ -29710,7 +32088,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( evaluation_observationStmt != null ) {
 				evaluation_observationStmt.close();
 			}
-			String values = "(?,?,?,?)";
+			String values = "(?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -29719,7 +32097,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			evaluation_observationStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO evaluation_observation (id,alumn,evaluation,comments)"  
+				"INSERT INTO evaluation_observation (id,domain,alumn,evaluation,comments)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			evaluation_observationStmtSize = size;
@@ -29732,6 +32110,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				evaluation_observationStmt.setNull(offset++, 4);
 			else
 				evaluation_observationStmt.setInt(offset++, evaluation_observation.id);
+			if ( evaluation_observation.domain == null )
+				evaluation_observationStmt.setNull(offset++, 4);
+			else
+				evaluation_observationStmt.setInt(offset++, evaluation_observation.domain);
 			if ( evaluation_observation.alumn == null )
 				evaluation_observationStmt.setNull(offset++, 4);
 			else
@@ -29795,16 +32177,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Evaluation_observation
 	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
 	 * @param alumn Identificador de Alumno
 	 * @param evaluation Numero de Evaluacion
 	 * @param comments Comentarios
 	 * @throws SQLException
 	*/
-	protected void insertEvaluation_observation(Integer id, Integer alumn, Short evaluation, String comments)
+	protected void insertEvaluation_observation(Integer id, Integer domain, Integer alumn, Short evaluation, String comments)
 	throws SQLException {
 
 		Evaluation_observation evaluation_observation_ = new Evaluation_observation();
 		evaluation_observation_.id = id;
+		evaluation_observation_.domain = domain;
 		evaluation_observation_.alumn = alumn;
 		evaluation_observation_.evaluation = evaluation;
 		evaluation_observation_.comments = comments;
@@ -29813,7 +32197,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int evaluation_observationCount = evaluation_observations.size();
 		
-		if ( 23 * evaluation_observationCount >=  this.maxAllowedPacket ){
+		if ( 33 * evaluation_observationCount >=  this.maxAllowedPacket ){
 			insertEvaluation_observation(evaluation_observations);
 			evaluation_observations.clear();
 		} 
@@ -29822,18 +32206,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Evaluation_observation
+	 * @param domain Identificador del Dominio
 	 * @param alumn Identificador de Alumno
 	 * @param evaluation Numero de Evaluacion
 	 * @param comments Comentarios
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertEvaluation_observation(Integer alumn, Short evaluation, String comments)
+	public int insertEvaluation_observation(Integer domain, Integer alumn, Short evaluation, String comments)
 	throws SQLException {
 		int id = nextEvaluation_observationId();
 
 		Evaluation_observation evaluation_observation_ = new Evaluation_observation();
 		evaluation_observation_.id = id;
+		evaluation_observation_.domain = domain;
 		evaluation_observation_.alumn = alumn;
 		evaluation_observation_.evaluation = evaluation;
 		evaluation_observation_.comments = comments;
@@ -29842,7 +32228,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int evaluation_observationCount = evaluation_observations.size();
 		
-		if ( 23 * evaluation_observationCount >=  this.maxAllowedPacket ){
+		if ( 33 * evaluation_observationCount >=  this.maxAllowedPacket ){
 			insertEvaluation_observation(evaluation_observations);
 			evaluation_observations.clear();
 		} 
@@ -30069,7 +32455,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Instructor
 	 * @param registry Registro del Empleado
-	 * @param social_security_num Nùmero de Seguridad Social del Empleado
+	 * @param social_security_num N?mero de Seguridad Social del Empleado
 	 * @param agreement_time Horas del Convenio
 	 * @param active Indica si el Empleado sigue vinculado a la Empresa o no
 	 * @throws SQLException
@@ -30255,7 +32641,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Contract_payment
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Percepciùn Salarial
+	 * @param type Tipo de Percepci?n Salarial
 	 * @param contract Contrato
 	 * @param payment_concept Identificador unico del concepto
 	 * @param description Descripcion
@@ -30302,7 +32688,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Contract_payment
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Percepciùn Salarial
+	 * @param type Tipo de Percepci?n Salarial
 	 * @param contract Contrato
 	 * @param payment_concept Identificador unico del concepto
 	 * @param description Descripcion
@@ -30515,18 +32901,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param contract Identificador del contrato
-	 * @param reason Causa de regularizaciùn
+	 * @param reason Causa de regularizaci?n
 	 * @param effective_date Fecha de entrada en vigor
-	 * @param paid_irpf Retenciones practicadas con anterioridad a la regularizaciùn.
-	 * @param paid_remuneration Retribuciones ya satisfechas con anterioridad a la regularizaciùn.
-	 * @param prior_annual_irpf Retenciones anuales anteriores a la regularizaciùn.
-	 * @param prior_annual_remuneration Retribucines anulaes consideradas con anterioridad a la regularizaciùn.
-	 * @param prior_base_irpf Base para calcular el tipo de retenciùn determinado antes de la regularizaciùn.
-	 * @param prior_irpf Tipo de retenciùn aplicado antes de la regularizaciùn.
-	 * @param prior_in_ceuta_melilla Los rendimientos anteriores a la regularizaciùn fueron obtenidos en Ceuta o Melilla
-	 * @param prior_minimun_personal_family Mùnimo personal y familiar para calcular el tipo de retenciùn determinado antes de la regularizaciùn.
-	 * @param prior_deduct_home_loan En algùn momento antes de la regularizaciùn se aplico la minoraciùn por pagos por la adquisiùn o rehabilitaciùn de la vivienda
-	 * @param prior_deduct_home_loan_amount Importe de la minoraciùn por pagos por la adquisiùn o rehabilitaciùn de la vivienda antes de la regularizaciùn
+	 * @param paid_irpf Retenciones practicadas con anterioridad a la regularizaci?n.
+	 * @param paid_remuneration Retribuciones ya satisfechas con anterioridad a la regularizaci?n.
+	 * @param prior_annual_irpf Retenciones anuales anteriores a la regularizaci?n.
+	 * @param prior_annual_remuneration Retribucines anulaes consideradas con anterioridad a la regularizaci?n.
+	 * @param prior_base_irpf Base para calcular el tipo de retenci?n determinado antes de la regularizaci?n.
+	 * @param prior_irpf Tipo de retenci?n aplicado antes de la regularizaci?n.
+	 * @param prior_in_ceuta_melilla Los rendimientos anteriores a la regularizaci?n fueron obtenidos en Ceuta o Melilla
+	 * @param prior_minimun_personal_family M?nimo personal y familiar para calcular el tipo de retenci?n determinado antes de la regularizaci?n.
+	 * @param prior_deduct_home_loan En alg?n momento antes de la regularizaci?n se aplico la minoraci?n por pagos por la adquisi?n o rehabilitaci?n de la vivienda
+	 * @param prior_deduct_home_loan_amount Importe de la minoraci?n por pagos por la adquisi?n o rehabilitaci?n de la vivienda antes de la regularizaci?n
 	 * @throws SQLException
 	*/
 	protected void insertIrpf_regularization(Integer id, Integer domain, Integer contract, Short reason, Date effective_date, Double paid_irpf, Double paid_remuneration, Double prior_annual_irpf, Double prior_annual_remuneration, Double prior_base_irpf, Double prior_irpf, Boolean prior_in_ceuta_melilla, Double prior_minimun_personal_family, Short prior_deduct_home_loan, Double prior_deduct_home_loan_amount)
@@ -30564,18 +32950,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Irpf_regularization
 	 * @param domain Identificador del Dominio
 	 * @param contract Identificador del contrato
-	 * @param reason Causa de regularizaciùn
+	 * @param reason Causa de regularizaci?n
 	 * @param effective_date Fecha de entrada en vigor
-	 * @param paid_irpf Retenciones practicadas con anterioridad a la regularizaciùn.
-	 * @param paid_remuneration Retribuciones ya satisfechas con anterioridad a la regularizaciùn.
-	 * @param prior_annual_irpf Retenciones anuales anteriores a la regularizaciùn.
-	 * @param prior_annual_remuneration Retribucines anulaes consideradas con anterioridad a la regularizaciùn.
-	 * @param prior_base_irpf Base para calcular el tipo de retenciùn determinado antes de la regularizaciùn.
-	 * @param prior_irpf Tipo de retenciùn aplicado antes de la regularizaciùn.
-	 * @param prior_in_ceuta_melilla Los rendimientos anteriores a la regularizaciùn fueron obtenidos en Ceuta o Melilla
-	 * @param prior_minimun_personal_family Mùnimo personal y familiar para calcular el tipo de retenciùn determinado antes de la regularizaciùn.
-	 * @param prior_deduct_home_loan En algùn momento antes de la regularizaciùn se aplico la minoraciùn por pagos por la adquisiùn o rehabilitaciùn de la vivienda
-	 * @param prior_deduct_home_loan_amount Importe de la minoraciùn por pagos por la adquisiùn o rehabilitaciùn de la vivienda antes de la regularizaciùn
+	 * @param paid_irpf Retenciones practicadas con anterioridad a la regularizaci?n.
+	 * @param paid_remuneration Retribuciones ya satisfechas con anterioridad a la regularizaci?n.
+	 * @param prior_annual_irpf Retenciones anuales anteriores a la regularizaci?n.
+	 * @param prior_annual_remuneration Retribucines anulaes consideradas con anterioridad a la regularizaci?n.
+	 * @param prior_base_irpf Base para calcular el tipo de retenci?n determinado antes de la regularizaci?n.
+	 * @param prior_irpf Tipo de retenci?n aplicado antes de la regularizaci?n.
+	 * @param prior_in_ceuta_melilla Los rendimientos anteriores a la regularizaci?n fueron obtenidos en Ceuta o Melilla
+	 * @param prior_minimun_personal_family M?nimo personal y familiar para calcular el tipo de retenci?n determinado antes de la regularizaci?n.
+	 * @param prior_deduct_home_loan En alg?n momento antes de la regularizaci?n se aplico la minoraci?n por pagos por la adquisi?n o rehabilitaci?n de la vivienda
+	 * @param prior_deduct_home_loan_amount Importe de la minoraci?n por pagos por la adquisi?n o rehabilitaci?n de la vivienda antes de la regularizaci?n
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -30811,7 +33197,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param description Descripcion
 	 * @param start_date Fecha de inicio de aplicacion
 	 * @param due_date Fecha final de aplicacion
-	 * @param rbank Identificador de Banco de la Compaùia
+	 * @param rbank Identificador de Banco de la Compa?ia
 	 * @param amount Importe
 	 * @param payment_day Dia de pago
 	 * @param january Aplicable en enero
@@ -30872,7 +33258,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param description Descripcion
 	 * @param start_date Fecha de inicio de aplicacion
 	 * @param due_date Fecha final de aplicacion
-	 * @param rbank Identificador de Banco de la Compaùia
+	 * @param rbank Identificador de Banco de la Compa?ia
 	 * @param amount Importe
 	 * @param payment_day Dia de pago
 	 * @param january Aplicable en enero
@@ -31129,6 +33515,161 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int tagStmtSize = 0;
+
+	private int tagInserted = 0;
+
+	private List<Tag> tags = 
+		new LinkedList<Tag>();
+
+	private PreparedStatement tagStmt = null;
+
+	public static class Tag {
+		protected Integer id; 
+		protected Integer domain; 
+		protected String name; 
+	}
+	
+	protected void insertTag( List<Tag> tags )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = tags.size();
+		if ( tagStmtSize != size ) {
+			if ( tagStmt != null ) {
+				tagStmt.close();
+			}
+			String values = "(?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			tagStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO tag (id,domain,name)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			tagStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Tag tag : tags) {
+			if ( tag.id == null )
+				tagStmt.setNull(offset++, 4);
+			else
+				tagStmt.setInt(offset++, tag.id);
+			if ( tag.domain == null )
+				tagStmt.setNull(offset++, 4);
+			else
+				tagStmt.setInt(offset++, tag.domain);
+			if ( tag.name == null )
+				tagStmt.setNull(offset++, 12);
+			else
+				tagStmt.setString(offset++, tag.name);
+		}
+		tagStmt.executeUpdate();
+		tagInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Tags in {} milliseconds.", size, tagInserted, elapsed );		
+	}
+		
+		private int tagId = -1;
+		
+		private void initTagId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `tag`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.tagId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextTagId() {
+			return ++this.tagId;
+		} 
+
+		public void setTagId(Integer tagId) {
+			this.tagId = tagId;
+		} 
+	
+	private void flushTag(  )
+	throws SQLException {
+		if ( ! tags.isEmpty() )
+			insertTag(tags);
+		if ( tagStmt != null )
+			tagStmt.close();
+	}	
+
+	/**
+	 * Tag
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param name Nombre de la Etiqueta
+	 * @throws SQLException
+	*/
+	protected void insertTag(Integer id, Integer domain, String name)
+	throws SQLException {
+
+		Tag tag_ = new Tag();
+		tag_.id = id;
+		tag_.domain = domain;
+		tag_.name = name;
+
+		tags.add(tag_);
+		
+		int tagCount = tags.size();
+		
+		if ( 84 * tagCount >=  this.maxAllowedPacket ){
+			insertTag(tags);
+			tags.clear();
+		} 
+	}
+
+
+	/**
+	 * Tag
+	 * @param domain Identificador del Dominio
+	 * @param name Nombre de la Etiqueta
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertTag(Integer domain, String name)
+	throws SQLException {
+		int id = nextTagId();
+
+		Tag tag_ = new Tag();
+		tag_.id = id;
+		tag_.domain = domain;
+		tag_.name = name;
+
+		tags.add(tag_);
+		
+		int tagCount = tags.size();
+		
+		if ( 84 * tagCount >=  this.maxAllowedPacket ){
+			insertTag(tags);
+			tags.clear();
+		} 
+		return id;
+	}
+
+
 	private int geotreeStmtSize = 0;
 
 	private int geotreeInserted = 0;
@@ -31308,6 +33849,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer item; 
 		protected Integer supplier; 
 		protected String code; 
+		protected Double price; 
 		protected Short priority; 
 		protected Integer workplace; 
 	}
@@ -31320,7 +33862,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( item_supplierStmt != null ) {
 				item_supplierStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -31329,7 +33871,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			item_supplierStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO item_supplier (id,domain,item,supplier,code,priority,workplace)"  
+				"INSERT INTO item_supplier (id,domain,item,supplier,code,price,priority,workplace)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			item_supplierStmtSize = size;
@@ -31358,6 +33900,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				item_supplierStmt.setNull(offset++, 12);
 			else
 				item_supplierStmt.setString(offset++, item_supplier.code);
+			if ( item_supplier.price == null )
+				item_supplierStmt.setNull(offset++, 8);
+			else
+				item_supplierStmt.setDouble(offset++, item_supplier.price);
 			if ( item_supplier.priority == null )
 				item_supplierStmt.setNull(offset++, -6);
 			else
@@ -31421,11 +33967,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param item Identificador de Articulo
 	 * @param supplier Identificador de Proveedor
 	 * @param code Codigo del Producto en el Proveedor
+	 * @param price Precio del Producto en el Proveedor
 	 * @param priority Prioridad del Proveedor
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @throws SQLException
 	*/
-	protected void insertItem_supplier(Integer id, Integer domain, Integer item, Integer supplier, String code, Short priority, Integer workplace)
+	protected void insertItem_supplier(Integer id, Integer domain, Integer item, Integer supplier, String code, Double price, Short priority, Integer workplace)
 	throws SQLException {
 
 		Item_supplier item_supplier_ = new Item_supplier();
@@ -31434,6 +33981,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		item_supplier_.item = item;
 		item_supplier_.supplier = supplier;
 		item_supplier_.code = code;
+		item_supplier_.price = price;
 		item_supplier_.priority = priority;
 		item_supplier_.workplace = workplace;
 
@@ -31441,7 +33989,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int item_supplierCount = item_suppliers.size();
 		
-		if ( 68 * item_supplierCount >=  this.maxAllowedPacket ){
+		if ( 90 * item_supplierCount >=  this.maxAllowedPacket ){
 			insertItem_supplier(item_suppliers);
 			item_suppliers.clear();
 		} 
@@ -31454,12 +34002,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param item Identificador de Articulo
 	 * @param supplier Identificador de Proveedor
 	 * @param code Codigo del Producto en el Proveedor
+	 * @param price Precio del Producto en el Proveedor
 	 * @param priority Prioridad del Proveedor
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertItem_supplier(Integer domain, Integer item, Integer supplier, String code, Short priority, Integer workplace)
+	public int insertItem_supplier(Integer domain, Integer item, Integer supplier, String code, Double price, Short priority, Integer workplace)
 	throws SQLException {
 		int id = nextItem_supplierId();
 
@@ -31469,6 +34018,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		item_supplier_.item = item;
 		item_supplier_.supplier = supplier;
 		item_supplier_.code = code;
+		item_supplier_.price = price;
 		item_supplier_.priority = priority;
 		item_supplier_.workplace = workplace;
 
@@ -31476,7 +34026,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int item_supplierCount = item_suppliers.size();
 		
-		if ( 68 * item_supplierCount >=  this.maxAllowedPacket ){
+		if ( 90 * item_supplierCount >=  this.maxAllowedPacket ){
 			insertItem_supplier(item_suppliers);
 			item_suppliers.clear();
 		} 
@@ -31832,6 +34382,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class Course {
 		protected Integer id; 
+		protected Integer domain; 
 		protected String code; 
 		protected String description; 
 		protected Date start_date; 
@@ -31853,7 +34404,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( courseStmt != null ) {
 				courseStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -31862,7 +34413,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			courseStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO course (id,code,description,start_date,end_date,academic_year,subject,level,workplace,alumn_limit,status,comments)"  
+				"INSERT INTO course (id,domain,code,description,start_date,end_date,academic_year,subject,level,workplace,alumn_limit,status,comments)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			courseStmtSize = size;
@@ -31875,6 +34426,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				courseStmt.setNull(offset++, 4);
 			else
 				courseStmt.setInt(offset++, course.id);
+			if ( course.domain == null )
+				courseStmt.setNull(offset++, 4);
+			else
+				courseStmt.setInt(offset++, course.domain);
 			if ( course.code == null )
 				courseStmt.setNull(offset++, 12);
 			else
@@ -31970,11 +34525,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Course
 	 * @param id Identificador unico del Curso
+	 * @param domain Identificador del Dominio
 	 * @param code Alias del Curso
 	 * @param description Descripcion del Curso
 	 * @param start_date Fecha inicio del Curso
 	 * @param end_date Fecha fin del Curso
-	 * @param academic_year Aùo Academico del Curso
+	 * @param academic_year A?o Academico del Curso
 	 * @param subject Materia del Curso
 	 * @param level Nivel del Curso
 	 * @param workplace Identificador del Centro de Trabajo
@@ -31983,11 +34539,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param comments Comentarios sobre el Curso
 	 * @throws SQLException
 	*/
-	protected void insertCourse(Integer id, String code, String description, Date start_date, Date end_date, Integer academic_year, Integer subject, Integer level, Integer workplace, Integer alumn_limit, Short status, String comments)
+	protected void insertCourse(Integer id, Integer domain, String code, String description, Date start_date, Date end_date, Integer academic_year, Integer subject, Integer level, Integer workplace, Integer alumn_limit, Short status, String comments)
 	throws SQLException {
 
 		Course course_ = new Course();
 		course_.id = id;
+		course_.domain = domain;
 		course_.code = code;
 		course_.description = description;
 		course_.start_date = start_date;
@@ -32004,7 +34561,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int courseCount = courses.size();
 		
-		if ( 275 * courseCount >=  this.maxAllowedPacket ){
+		if ( 285 * courseCount >=  this.maxAllowedPacket ){
 			insertCourse(courses);
 			courses.clear();
 		} 
@@ -32013,11 +34570,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Course
+	 * @param domain Identificador del Dominio
 	 * @param code Alias del Curso
 	 * @param description Descripcion del Curso
 	 * @param start_date Fecha inicio del Curso
 	 * @param end_date Fecha fin del Curso
-	 * @param academic_year Aùo Academico del Curso
+	 * @param academic_year A?o Academico del Curso
 	 * @param subject Materia del Curso
 	 * @param level Nivel del Curso
 	 * @param workplace Identificador del Centro de Trabajo
@@ -32027,12 +34585,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertCourse(String code, String description, Date start_date, Date end_date, Integer academic_year, Integer subject, Integer level, Integer workplace, Integer alumn_limit, Short status, String comments)
+	public int insertCourse(Integer domain, String code, String description, Date start_date, Date end_date, Integer academic_year, Integer subject, Integer level, Integer workplace, Integer alumn_limit, Short status, String comments)
 	throws SQLException {
 		int id = nextCourseId();
 
 		Course course_ = new Course();
 		course_.id = id;
+		course_.domain = domain;
 		course_.code = code;
 		course_.description = description;
 		course_.start_date = start_date;
@@ -32049,7 +34608,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int courseCount = courses.size();
 		
-		if ( 275 * courseCount >=  this.maxAllowedPacket ){
+		if ( 285 * courseCount >=  this.maxAllowedPacket ){
 			insertCourse(courses);
 			courses.clear();
 		} 
@@ -33991,7 +36550,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Cnae2009_rate
-	 * @param id Identificador ùnico
+	 * @param id Identificador ?nico
 	 * @param cnae2009 CNAE
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
@@ -35175,30 +37734,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param contract Identificador del contrato
 	 * @param effective_date Fecha de entrada en vigor
-	 * @param base_irpf Base para calcular el tipo de retenciùn
-	 * @param minimun_personal_family Mùnimo personal y familiar para calcular el tipo de retenciùn
-	 * @param deduct_home_loan_amount Minoraciùn por pagos de prùstamo para vivienda habitual
-	 * @param deduct_80_bis Deduccion Arttùculo 80 bis LIRPF
-	 * @param irpf Tipo retenciùn apliclabe 
+	 * @param base_irpf Base para calcular el tipo de retenci?n
+	 * @param minimun_personal_family M?nimo personal y familiar para calcular el tipo de retenci?n
+	 * @param deduct_home_loan_amount Minoraci?n por pagos de pr?stamo para vivienda habitual
+	 * @param deduct_80_bis Deduccion Artt?culo 80 bis LIRPF
+	 * @param irpf Tipo retenci?n apliclabe 
 	 * @param annual_irpf Importe anual de las retenciones e ingresos a cuenta
-	 * @param annual_remuneration Retribuciones anuales. Importe ùntegro
+	 * @param annual_remuneration Retribuciones anuales. Importe ?ntegro
 	 * @param irregular_18_2_reduction Reducciones por irregularidad ( Art. 18.2 LIRPF). Importe
-	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Art. 18.3: DD.TT 11ù y 12 ù de la LIRPF). Importe
+	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Art. 18.3: DD.TT 11? y 12 ? de la LIRPF). Importe
 	 * @param deduccibles_expenses Gastos deducibles. Importe anual
 	 * @param work_remuneration_reduction Reducciones por rendimiento del trabajo 
-	 * @param work_prolongation_reduction Reducciones por prolongaciùn de la actividad 
+	 * @param work_prolongation_reduction Reducciones por prolongaci?n de la actividad 
 	 * @param work_moving_reduction Reducciones por movilidad geografica 
 	 * @param work_disability_reduction Reducciones por discapacidad 
 	 * @param social_security_pensioner Por ser pensionista de la s. social/cl. Pasivas o desempleado
-	 * @param two_or_more_descendents_min Por tener mùs de dos descendientes con derecho a mùnimo
-	 * @param spousal_support Pension compensatoria a favor del cùnyuge. Importe anual
+	 * @param two_or_more_descendents_min Por tener m?s de dos descendientes con derecho a m?nimo
+	 * @param spousal_support Pension compensatoria a favor del c?nyuge. Importe anual
 	 * @param food_annuity Anualidades por alimentos en favor de los hijos. Importe anual
-	 * @param minimun_personal Mùnimo personal
-	 * @param minimun_ascendents Mùnimo por descendientes
-	 * @param minimun_descendents Mùnimo por descendientes
-	 * @param minimun_disability Mùnimo por discapacidad
-	 * @param descendents_minor_3_total Descendientes computados menores de tres aùos. Total
-	 * @param descendents_minor_3_entirely Descendientes computados menores de tres aùos. Por entero
+	 * @param minimun_personal M?nimo personal
+	 * @param minimun_ascendents M?nimo por descendientes
+	 * @param minimun_descendents M?nimo por descendientes
+	 * @param minimun_disability M?nimo por discapacidad
+	 * @param descendents_minor_3_total Descendientes computados menores de tres a?os. Total
+	 * @param descendents_minor_3_entirely Descendientes computados menores de tres a?os. Por entero
 	 * @param descendents_remainder_total Resto de descendientes computados . Total
 	 * @param descendents_remainder_entirely Resto de descendientes computados . Por entero
 	 * @param descendents_33_65_total Descendientes con discapacidad >= 33% y < 65%. Total
@@ -35207,15 +37766,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param descendents_moving_entirely Descendientes con discapacidad, movilidad reducida. Por entero
 	 * @param descendents_65_total Descendientes con discapacidad > 65%. Total
 	 * @param descendents_65_entirely Descendientes con discapacidad > 65%. Por entero
-	 * @param descendents_first Detalle del cùmputo de descendientes. Hijo 1ù
-	 * @param descendents_second Detalle del cùmputo de descendientes. Hijo 2ù
-	 * @param descendents_third Detalle del cùmputo de descendientes. Hijo 3ù
-	 * @param descendents_fourth_subsequent_total Detalle del cùmputo de descendientes. Hijo 4ù y sucesivos. Total
-	 * @param descendents_fourth_subsequent_entirely Detalle del cùmputo de descendientes. Hijo 4ù y sucesivos. Por entero
-	 * @param ascendents_minor_75_total Ascendientes computados menores de 75 aùos. Total
-	 * @param ascendents_minor_75_entirely Ascendientes computados menores de 75 aùos. Por entero
-	 * @param ascendents_mayor_75_total Ascendientes computados mayores de 75 aùos. Total
-	 * @param ascendents_mayor_75_entirely Ascendientes computados mayores de 75 aùos. Por entero
+	 * @param descendents_first Detalle del c?mputo de descendientes. Hijo 1?
+	 * @param descendents_second Detalle del c?mputo de descendientes. Hijo 2?
+	 * @param descendents_third Detalle del c?mputo de descendientes. Hijo 3?
+	 * @param descendents_fourth_subsequent_total Detalle del c?mputo de descendientes. Hijo 4? y sucesivos. Total
+	 * @param descendents_fourth_subsequent_entirely Detalle del c?mputo de descendientes. Hijo 4? y sucesivos. Por entero
+	 * @param ascendents_minor_75_total Ascendientes computados menores de 75 a?os. Total
+	 * @param ascendents_minor_75_entirely Ascendientes computados menores de 75 a?os. Por entero
+	 * @param ascendents_mayor_75_total Ascendientes computados mayores de 75 a?os. Total
+	 * @param ascendents_mayor_75_entirely Ascendientes computados mayores de 75 a?os. Por entero
 	 * @param ascendents_33_65_total Ascendientes con discapacidad >= 33% y < 65%. Total
 	 * @param ascendents_33_65_entirely Ascendientes con discapacidad >= 33% y < 65%. Por entero
 	 * @param ascendents_moving_total Ascendientes con discapacidad, movilidad reducida. Total
@@ -35296,30 +37855,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param contract Identificador del contrato
 	 * @param effective_date Fecha de entrada en vigor
-	 * @param base_irpf Base para calcular el tipo de retenciùn
-	 * @param minimun_personal_family Mùnimo personal y familiar para calcular el tipo de retenciùn
-	 * @param deduct_home_loan_amount Minoraciùn por pagos de prùstamo para vivienda habitual
-	 * @param deduct_80_bis Deduccion Arttùculo 80 bis LIRPF
-	 * @param irpf Tipo retenciùn apliclabe 
+	 * @param base_irpf Base para calcular el tipo de retenci?n
+	 * @param minimun_personal_family M?nimo personal y familiar para calcular el tipo de retenci?n
+	 * @param deduct_home_loan_amount Minoraci?n por pagos de pr?stamo para vivienda habitual
+	 * @param deduct_80_bis Deduccion Artt?culo 80 bis LIRPF
+	 * @param irpf Tipo retenci?n apliclabe 
 	 * @param annual_irpf Importe anual de las retenciones e ingresos a cuenta
-	 * @param annual_remuneration Retribuciones anuales. Importe ùntegro
+	 * @param annual_remuneration Retribuciones anuales. Importe ?ntegro
 	 * @param irregular_18_2_reduction Reducciones por irregularidad ( Art. 18.2 LIRPF). Importe
-	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Art. 18.3: DD.TT 11ù y 12 ù de la LIRPF). Importe
+	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Art. 18.3: DD.TT 11? y 12 ? de la LIRPF). Importe
 	 * @param deduccibles_expenses Gastos deducibles. Importe anual
 	 * @param work_remuneration_reduction Reducciones por rendimiento del trabajo 
-	 * @param work_prolongation_reduction Reducciones por prolongaciùn de la actividad 
+	 * @param work_prolongation_reduction Reducciones por prolongaci?n de la actividad 
 	 * @param work_moving_reduction Reducciones por movilidad geografica 
 	 * @param work_disability_reduction Reducciones por discapacidad 
 	 * @param social_security_pensioner Por ser pensionista de la s. social/cl. Pasivas o desempleado
-	 * @param two_or_more_descendents_min Por tener mùs de dos descendientes con derecho a mùnimo
-	 * @param spousal_support Pension compensatoria a favor del cùnyuge. Importe anual
+	 * @param two_or_more_descendents_min Por tener m?s de dos descendientes con derecho a m?nimo
+	 * @param spousal_support Pension compensatoria a favor del c?nyuge. Importe anual
 	 * @param food_annuity Anualidades por alimentos en favor de los hijos. Importe anual
-	 * @param minimun_personal Mùnimo personal
-	 * @param minimun_ascendents Mùnimo por descendientes
-	 * @param minimun_descendents Mùnimo por descendientes
-	 * @param minimun_disability Mùnimo por discapacidad
-	 * @param descendents_minor_3_total Descendientes computados menores de tres aùos. Total
-	 * @param descendents_minor_3_entirely Descendientes computados menores de tres aùos. Por entero
+	 * @param minimun_personal M?nimo personal
+	 * @param minimun_ascendents M?nimo por descendientes
+	 * @param minimun_descendents M?nimo por descendientes
+	 * @param minimun_disability M?nimo por discapacidad
+	 * @param descendents_minor_3_total Descendientes computados menores de tres a?os. Total
+	 * @param descendents_minor_3_entirely Descendientes computados menores de tres a?os. Por entero
 	 * @param descendents_remainder_total Resto de descendientes computados . Total
 	 * @param descendents_remainder_entirely Resto de descendientes computados . Por entero
 	 * @param descendents_33_65_total Descendientes con discapacidad >= 33% y < 65%. Total
@@ -35328,15 +37887,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param descendents_moving_entirely Descendientes con discapacidad, movilidad reducida. Por entero
 	 * @param descendents_65_total Descendientes con discapacidad > 65%. Total
 	 * @param descendents_65_entirely Descendientes con discapacidad > 65%. Por entero
-	 * @param descendents_first Detalle del cùmputo de descendientes. Hijo 1ù
-	 * @param descendents_second Detalle del cùmputo de descendientes. Hijo 2ù
-	 * @param descendents_third Detalle del cùmputo de descendientes. Hijo 3ù
-	 * @param descendents_fourth_subsequent_total Detalle del cùmputo de descendientes. Hijo 4ù y sucesivos. Total
-	 * @param descendents_fourth_subsequent_entirely Detalle del cùmputo de descendientes. Hijo 4ù y sucesivos. Por entero
-	 * @param ascendents_minor_75_total Ascendientes computados menores de 75 aùos. Total
-	 * @param ascendents_minor_75_entirely Ascendientes computados menores de 75 aùos. Por entero
-	 * @param ascendents_mayor_75_total Ascendientes computados mayores de 75 aùos. Total
-	 * @param ascendents_mayor_75_entirely Ascendientes computados mayores de 75 aùos. Por entero
+	 * @param descendents_first Detalle del c?mputo de descendientes. Hijo 1?
+	 * @param descendents_second Detalle del c?mputo de descendientes. Hijo 2?
+	 * @param descendents_third Detalle del c?mputo de descendientes. Hijo 3?
+	 * @param descendents_fourth_subsequent_total Detalle del c?mputo de descendientes. Hijo 4? y sucesivos. Total
+	 * @param descendents_fourth_subsequent_entirely Detalle del c?mputo de descendientes. Hijo 4? y sucesivos. Por entero
+	 * @param ascendents_minor_75_total Ascendientes computados menores de 75 a?os. Total
+	 * @param ascendents_minor_75_entirely Ascendientes computados menores de 75 a?os. Por entero
+	 * @param ascendents_mayor_75_total Ascendientes computados mayores de 75 a?os. Total
+	 * @param ascendents_mayor_75_entirely Ascendientes computados mayores de 75 a?os. Por entero
 	 * @param ascendents_33_65_total Ascendientes con discapacidad >= 33% y < 65%. Total
 	 * @param ascendents_33_65_entirely Ascendientes con discapacidad >= 33% y < 65%. Por entero
 	 * @param ascendents_moving_total Ascendientes con discapacidad, movilidad reducida. Total
@@ -35702,7 +38261,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param action Identificador de la Accion
 	 * @param target Identificador del Cliente Potencial
-	 * @param status Estado del Cliente Potencial de la Accion de Campaùa
+	 * @param status Estado del Cliente Potencial de la Accion de Campa?a
 	 * @param survey_response Identificador de la Respuesta de Cuestionario
 	 * @param comments Comentarios
 	 * @param user Identificador del Usuario
@@ -35737,7 +38296,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param action Identificador de la Accion
 	 * @param target Identificador del Cliente Potencial
-	 * @param status Estado del Cliente Potencial de la Accion de Campaùa
+	 * @param status Estado del Cliente Potencial de la Accion de Campa?a
 	 * @param survey_response Identificador de la Respuesta de Cuestionario
 	 * @param comments Comentarios
 	 * @param user Identificador del Usuario
@@ -35996,7 +38555,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String remote_host; 
 		protected String session_id; 
 		protected Timestamp startDate; 
-		protected Integer application_id; 
+		protected Integer application; 
 		protected Integer user_id; 
 	}
 	
@@ -36017,7 +38576,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			sessionStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO session (id,domain,endDate,remote_address,remote_host,session_id,startDate,application_id,user_id)"  
+				"INSERT INTO session (id,domain,endDate,remote_address,remote_host,session_id,startDate,application,user_id)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			sessionStmtSize = size;
@@ -36054,10 +38613,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				sessionStmt.setNull(offset++, 93);
 			else
 				sessionStmt.setTimestamp(offset++, session.startDate);
-			if ( session.application_id == null )
+			if ( session.application == null )
 				sessionStmt.setNull(offset++, 4);
 			else
-				sessionStmt.setInt(offset++, session.application_id);
+				sessionStmt.setInt(offset++, session.application);
 			if ( session.user_id == null )
 				sessionStmt.setNull(offset++, 4);
 			else
@@ -36117,13 +38676,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param endDate Fecha de finalizacion
 	 * @param remote_address IP remota
 	 * @param remote_host Equipo remoto
-	 * @param session_id Identificador web de la sesiùn
+	 * @param session_id Identificador web de la sesi?n
 	 * @param startDate Fecha de inicio
-	 * @param application_id Identificador de la Aplicacion
+	 * @param application Identificador de la Aplicacion
 	 * @param user_id Identificador del Usuario
 	 * @throws SQLException
 	*/
-	protected void insertSession(Integer id, Integer domain, Timestamp endDate, String remote_address, String remote_host, String session_id, Timestamp startDate, Integer application_id, Integer user_id)
+	protected void insertSession(Integer id, Integer domain, Timestamp endDate, String remote_address, String remote_host, String session_id, Timestamp startDate, Integer application, Integer user_id)
 	throws SQLException {
 
 		Session session_ = new Session();
@@ -36134,7 +38693,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		session_.remote_host = remote_host;
 		session_.session_id = session_id;
 		session_.startDate = startDate;
-		session_.application_id = application_id;
+		session_.application = application;
 		session_.user_id = user_id;
 
 		sessions.add(session_);
@@ -36154,14 +38713,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param endDate Fecha de finalizacion
 	 * @param remote_address IP remota
 	 * @param remote_host Equipo remoto
-	 * @param session_id Identificador web de la sesiùn
+	 * @param session_id Identificador web de la sesi?n
 	 * @param startDate Fecha de inicio
-	 * @param application_id Identificador de la Aplicacion
+	 * @param application Identificador de la Aplicacion
 	 * @param user_id Identificador del Usuario
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertSession(Integer domain, Timestamp endDate, String remote_address, String remote_host, String session_id, Timestamp startDate, Integer application_id, Integer user_id)
+	public int insertSession(Integer domain, Timestamp endDate, String remote_address, String remote_host, String session_id, Timestamp startDate, Integer application, Integer user_id)
 	throws SQLException {
 		int id = nextSessionId();
 
@@ -36173,7 +38732,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		session_.remote_host = remote_host;
 		session_.session_id = session_id;
 		session_.startDate = startDate;
-		session_.application_id = application_id;
+		session_.application = application;
 		session_.user_id = user_id;
 
 		sessions.add(session_);
@@ -36749,15 +39308,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String name; 
 		protected String email; 
 		protected String replyto_mail; 
-		protected String host; 
-		protected String protocol; 
 		protected String incoming_host; 
+		protected String protocol; 
 		protected Integer incoming_port; 
-		protected Boolean incoming_ssl; 
+		protected Short incoming_security; 
 		protected Boolean outgoing_verification; 
 		protected String outgoing_host; 
 		protected Integer outgoing_port; 
-		protected Boolean outgoing_ssl; 
+		protected Short outgoing_security; 
 		protected String mail_username; 
 		protected String password; 
 		protected Boolean default_account; 
@@ -36767,8 +39325,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String spam_folder; 
 		protected String display_name; 
 		protected Integer signature; 
-		protected Short source; 
-		protected Integer source_id; 
+		protected Integer user_id; 
 	}
 	
 	protected void insertMail_account( List<Mail_account> mail_accounts )
@@ -36779,7 +39336,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( mail_accountStmt != null ) {
 				mail_accountStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -36788,7 +39345,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			mail_accountStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO mail_account (id,domain,name,email,replyto_mail,host,protocol,incoming_host,incoming_port,incoming_ssl,outgoing_verification,outgoing_host,outgoing_port,outgoing_ssl,mail_username,password,default_account,draft_folder,sent_folder,trash_folder,spam_folder,display_name,signature,source,source_id)"  
+				"INSERT INTO mail_account (id,domain,name,email,replyto_mail,incoming_host,protocol,incoming_port,incoming_security,outgoing_verification,outgoing_host,outgoing_port,outgoing_security,mail_username,password,default_account,draft_folder,sent_folder,trash_folder,spam_folder,display_name,signature,user_id)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			mail_accountStmtSize = size;
@@ -36817,26 +39374,22 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				mail_accountStmt.setNull(offset++, 12);
 			else
 				mail_accountStmt.setString(offset++, mail_account.replyto_mail);
-			if ( mail_account.host == null )
-				mail_accountStmt.setNull(offset++, 12);
-			else
-				mail_accountStmt.setString(offset++, mail_account.host);
-			if ( mail_account.protocol == null )
-				mail_accountStmt.setNull(offset++, 12);
-			else
-				mail_accountStmt.setString(offset++, mail_account.protocol);
 			if ( mail_account.incoming_host == null )
 				mail_accountStmt.setNull(offset++, 12);
 			else
 				mail_accountStmt.setString(offset++, mail_account.incoming_host);
+			if ( mail_account.protocol == null )
+				mail_accountStmt.setNull(offset++, 12);
+			else
+				mail_accountStmt.setString(offset++, mail_account.protocol);
 			if ( mail_account.incoming_port == null )
 				mail_accountStmt.setNull(offset++, 4);
 			else
 				mail_accountStmt.setInt(offset++, mail_account.incoming_port);
-			if ( mail_account.incoming_ssl == null )
-				mail_accountStmt.setNull(offset++, -7);
+			if ( mail_account.incoming_security == null )
+				mail_accountStmt.setNull(offset++, -6);
 			else
-				mail_accountStmt.setBoolean(offset++, mail_account.incoming_ssl);
+				mail_accountStmt.setShort(offset++, mail_account.incoming_security);
 			if ( mail_account.outgoing_verification == null )
 				mail_accountStmt.setNull(offset++, -7);
 			else
@@ -36849,10 +39402,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				mail_accountStmt.setNull(offset++, 4);
 			else
 				mail_accountStmt.setInt(offset++, mail_account.outgoing_port);
-			if ( mail_account.outgoing_ssl == null )
-				mail_accountStmt.setNull(offset++, -7);
+			if ( mail_account.outgoing_security == null )
+				mail_accountStmt.setNull(offset++, -6);
 			else
-				mail_accountStmt.setBoolean(offset++, mail_account.outgoing_ssl);
+				mail_accountStmt.setShort(offset++, mail_account.outgoing_security);
 			if ( mail_account.mail_username == null )
 				mail_accountStmt.setNull(offset++, 12);
 			else
@@ -36889,14 +39442,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				mail_accountStmt.setNull(offset++, 4);
 			else
 				mail_accountStmt.setInt(offset++, mail_account.signature);
-			if ( mail_account.source == null )
-				mail_accountStmt.setNull(offset++, -6);
-			else
-				mail_accountStmt.setShort(offset++, mail_account.source);
-			if ( mail_account.source_id == null )
+			if ( mail_account.user_id == null )
 				mail_accountStmt.setNull(offset++, 4);
 			else
-				mail_accountStmt.setInt(offset++, mail_account.source_id);
+				mail_accountStmt.setInt(offset++, mail_account.user_id);
 		}
 		mail_accountStmt.executeUpdate();
 		mail_accountInserted += size;
@@ -36952,15 +39501,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param name Nombre de la Cuenta de Correo
 	 * @param email Cuenta de correo
 	 * @param replyto_mail Email de Respuesta
-	 * @param host Host del servidor de correo
-	 * @param protocol Protocolo utilizado (IMAP)
 	 * @param incoming_host Host del correo entrante
+	 * @param protocol Protocolo utilizado (IMAP)
 	 * @param incoming_port Puerto del correo entrante
-	 * @param incoming_ssl Indica si tiene SSL el correo entrante
+	 * @param incoming_security Seguridad de conexi?n del correo entrante
 	 * @param outgoing_verification Indica si hay autentificacion en el correo saliente
 	 * @param outgoing_host Host del servidor de correo saliente
 	 * @param outgoing_port Puerto del servidor de correo saliente
-	 * @param outgoing_ssl Indica si tiene SSL el correo saliente
+	 * @param outgoing_security Seguridad de conexi?n del correo saliente
 	 * @param mail_username Nombre del usuario
 	 * @param password Clave del usuario
 	 * @param default_account Indica si es la cuenta de correo por defecto
@@ -36970,11 +39518,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param spam_folder Ruta de Spam
 	 * @param display_name Mostrar como
 	 * @param signature Identificador de la Firma
-	 * @param source Origen de la Firma
-	 * @param source_id Identificador del origen de la Firma
+	 * @param user_id Identificador del Usuario
 	 * @throws SQLException
 	*/
-	protected void insertMail_account(Integer id, Integer domain, String name, String email, String replyto_mail, String host, String protocol, String incoming_host, Integer incoming_port, Boolean incoming_ssl, Boolean outgoing_verification, String outgoing_host, Integer outgoing_port, Boolean outgoing_ssl, String mail_username, String password, Boolean default_account, String draft_folder, String sent_folder, String trash_folder, String spam_folder, String display_name, Integer signature, Short source, Integer source_id)
+	protected void insertMail_account(Integer id, Integer domain, String name, String email, String replyto_mail, String incoming_host, String protocol, Integer incoming_port, Short incoming_security, Boolean outgoing_verification, String outgoing_host, Integer outgoing_port, Short outgoing_security, String mail_username, String password, Boolean default_account, String draft_folder, String sent_folder, String trash_folder, String spam_folder, String display_name, Integer signature, Integer user_id)
 	throws SQLException {
 
 		Mail_account mail_account_ = new Mail_account();
@@ -36983,15 +39530,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		mail_account_.name = name;
 		mail_account_.email = email;
 		mail_account_.replyto_mail = replyto_mail;
-		mail_account_.host = host;
-		mail_account_.protocol = protocol;
 		mail_account_.incoming_host = incoming_host;
+		mail_account_.protocol = protocol;
 		mail_account_.incoming_port = incoming_port;
-		mail_account_.incoming_ssl = incoming_ssl;
+		mail_account_.incoming_security = incoming_security;
 		mail_account_.outgoing_verification = outgoing_verification;
 		mail_account_.outgoing_host = outgoing_host;
 		mail_account_.outgoing_port = outgoing_port;
-		mail_account_.outgoing_ssl = outgoing_ssl;
+		mail_account_.outgoing_security = outgoing_security;
 		mail_account_.mail_username = mail_username;
 		mail_account_.password = password;
 		mail_account_.default_account = default_account;
@@ -37001,14 +39547,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		mail_account_.spam_folder = spam_folder;
 		mail_account_.display_name = display_name;
 		mail_account_.signature = signature;
-		mail_account_.source = source;
-		mail_account_.source_id = source_id;
+		mail_account_.user_id = user_id;
 
 		mail_accounts.add(mail_account_);
 		
 		int mail_accountCount = mail_accounts.size();
 		
-		if ( 2371 * mail_accountCount >=  this.maxAllowedPacket ){
+		if ( 2114 * mail_accountCount >=  this.maxAllowedPacket ){
 			insertMail_account(mail_accounts);
 			mail_accounts.clear();
 		} 
@@ -37021,15 +39566,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param name Nombre de la Cuenta de Correo
 	 * @param email Cuenta de correo
 	 * @param replyto_mail Email de Respuesta
-	 * @param host Host del servidor de correo
-	 * @param protocol Protocolo utilizado (IMAP)
 	 * @param incoming_host Host del correo entrante
+	 * @param protocol Protocolo utilizado (IMAP)
 	 * @param incoming_port Puerto del correo entrante
-	 * @param incoming_ssl Indica si tiene SSL el correo entrante
+	 * @param incoming_security Seguridad de conexi?n del correo entrante
 	 * @param outgoing_verification Indica si hay autentificacion en el correo saliente
 	 * @param outgoing_host Host del servidor de correo saliente
 	 * @param outgoing_port Puerto del servidor de correo saliente
-	 * @param outgoing_ssl Indica si tiene SSL el correo saliente
+	 * @param outgoing_security Seguridad de conexi?n del correo saliente
 	 * @param mail_username Nombre del usuario
 	 * @param password Clave del usuario
 	 * @param default_account Indica si es la cuenta de correo por defecto
@@ -37039,12 +39583,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param spam_folder Ruta de Spam
 	 * @param display_name Mostrar como
 	 * @param signature Identificador de la Firma
-	 * @param source Origen de la Firma
-	 * @param source_id Identificador del origen de la Firma
+	 * @param user_id Identificador del Usuario
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertMail_account(Integer domain, String name, String email, String replyto_mail, String host, String protocol, String incoming_host, Integer incoming_port, Boolean incoming_ssl, Boolean outgoing_verification, String outgoing_host, Integer outgoing_port, Boolean outgoing_ssl, String mail_username, String password, Boolean default_account, String draft_folder, String sent_folder, String trash_folder, String spam_folder, String display_name, Integer signature, Short source, Integer source_id)
+	public int insertMail_account(Integer domain, String name, String email, String replyto_mail, String incoming_host, String protocol, Integer incoming_port, Short incoming_security, Boolean outgoing_verification, String outgoing_host, Integer outgoing_port, Short outgoing_security, String mail_username, String password, Boolean default_account, String draft_folder, String sent_folder, String trash_folder, String spam_folder, String display_name, Integer signature, Integer user_id)
 	throws SQLException {
 		int id = nextMail_accountId();
 
@@ -37054,15 +39597,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		mail_account_.name = name;
 		mail_account_.email = email;
 		mail_account_.replyto_mail = replyto_mail;
-		mail_account_.host = host;
-		mail_account_.protocol = protocol;
 		mail_account_.incoming_host = incoming_host;
+		mail_account_.protocol = protocol;
 		mail_account_.incoming_port = incoming_port;
-		mail_account_.incoming_ssl = incoming_ssl;
+		mail_account_.incoming_security = incoming_security;
 		mail_account_.outgoing_verification = outgoing_verification;
 		mail_account_.outgoing_host = outgoing_host;
 		mail_account_.outgoing_port = outgoing_port;
-		mail_account_.outgoing_ssl = outgoing_ssl;
+		mail_account_.outgoing_security = outgoing_security;
 		mail_account_.mail_username = mail_username;
 		mail_account_.password = password;
 		mail_account_.default_account = default_account;
@@ -37072,14 +39614,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		mail_account_.spam_folder = spam_folder;
 		mail_account_.display_name = display_name;
 		mail_account_.signature = signature;
-		mail_account_.source = source;
-		mail_account_.source_id = source_id;
+		mail_account_.user_id = user_id;
 
 		mail_accounts.add(mail_account_);
 		
 		int mail_accountCount = mail_accounts.size();
 		
-		if ( 2371 * mail_accountCount >=  this.maxAllowedPacket ){
+		if ( 2114 * mail_accountCount >=  this.maxAllowedPacket ){
 			insertMail_account(mail_accounts);
 			mail_accounts.clear();
 		} 
@@ -37403,7 +39944,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param project Identificador del Proyecto
 	 * @param series Serie del Albaran
-	 * @param number Nùmero del Albaran
+	 * @param number N?mero del Albaran
 	 * @param customer Identificador del Cliente
 	 * @param address Identificador de la Direccion de envio del Albaran
 	 * @param issue_time Fecha de emision del Albaran
@@ -37464,7 +40005,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param project Identificador del Proyecto
 	 * @param series Serie del Albaran
-	 * @param number Nùmero del Albaran
+	 * @param number N?mero del Albaran
 	 * @param customer Identificador del Cliente
 	 * @param address Identificador de la Direccion de envio del Albaran
 	 * @param issue_time Fecha de emision del Albaran
@@ -38367,7 +40908,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param prev_deposit Ingresado anteriormente
 	 * @param prev_pay_back Devuelto anteriormente
 	 * @param total_tax_debt Total deuda tributaria
-	 * @param rbank Banco de la Compaùia
+	 * @param rbank Banco de la Compa?ia
 	 * @param compensable Compensar o devolver
 	 * @param status Estado de la Declaracion
 	 * @throws SQLException
@@ -38430,7 +40971,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param prev_deposit Ingresado anteriormente
 	 * @param prev_pay_back Devuelto anteriormente
 	 * @param total_tax_debt Total deuda tributaria
-	 * @param rbank Banco de la Compaùia
+	 * @param rbank Banco de la Compa?ia
 	 * @param compensable Compensar o devolver
 	 * @param status Estado de la Declaracion
 	 * @returns auto-generated key
@@ -38487,6 +41028,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class Course_level {
 		protected Integer id; 
+		protected Integer domain; 
 		protected String description; 
 	}
 	
@@ -38498,7 +41040,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( course_levelStmt != null ) {
 				course_levelStmt.close();
 			}
-			String values = "(?,?)";
+			String values = "(?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -38507,7 +41049,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			course_levelStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO course_level (id,description)"  
+				"INSERT INTO course_level (id,domain,description)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			course_levelStmtSize = size;
@@ -38520,6 +41062,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				course_levelStmt.setNull(offset++, 4);
 			else
 				course_levelStmt.setInt(offset++, course_level.id);
+			if ( course_level.domain == null )
+				course_levelStmt.setNull(offset++, 4);
+			else
+				course_levelStmt.setInt(offset++, course_level.domain);
 			if ( course_level.description == null )
 				course_levelStmt.setNull(offset++, 12);
 			else
@@ -38575,21 +41121,23 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Course_level
 	 * @param id Identificador unico del Nivel
+	 * @param domain Identificador del Dominio
 	 * @param description Descripcion del Nivel
 	 * @throws SQLException
 	*/
-	protected void insertCourse_level(Integer id, String description)
+	protected void insertCourse_level(Integer id, Integer domain, String description)
 	throws SQLException {
 
 		Course_level course_level_ = new Course_level();
 		course_level_.id = id;
+		course_level_.domain = domain;
 		course_level_.description = description;
 
 		course_levels.add(course_level_);
 		
 		int course_levelCount = course_levels.size();
 		
-		if ( 74 * course_levelCount >=  this.maxAllowedPacket ){
+		if ( 84 * course_levelCount >=  this.maxAllowedPacket ){
 			insertCourse_level(course_levels);
 			course_levels.clear();
 		} 
@@ -38598,23 +41146,25 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Course_level
+	 * @param domain Identificador del Dominio
 	 * @param description Descripcion del Nivel
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertCourse_level(String description)
+	public int insertCourse_level(Integer domain, String description)
 	throws SQLException {
 		int id = nextCourse_levelId();
 
 		Course_level course_level_ = new Course_level();
 		course_level_.id = id;
+		course_level_.domain = domain;
 		course_level_.description = description;
 
 		course_levels.add(course_level_);
 		
 		int course_levelCount = course_levels.size();
 		
-		if ( 74 * course_levelCount >=  this.maxAllowedPacket ){
+		if ( 84 * course_levelCount >=  this.maxAllowedPacket ){
 			insertCourse_level(course_levels);
 			course_levels.clear();
 		} 
@@ -38836,6 +41386,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer domain; 
 		protected Integer project_reservation; 
 		protected Short room_index; 
+		protected String room_code; 
 		protected Integer item; 
 		protected Integer tariff; 
 		protected Integer adults; 
@@ -38850,7 +41401,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( project_reservation_roomStmt != null ) {
 				project_reservation_roomStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -38859,7 +41410,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			project_reservation_roomStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO project_reservation_room (id,domain,project_reservation,room_index,item,tariff,adults,children)"  
+				"INSERT INTO project_reservation_room (id,domain,project_reservation,room_index,room_code,item,tariff,adults,children)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			project_reservation_roomStmtSize = size;
@@ -38884,6 +41435,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_reservation_roomStmt.setNull(offset++, -6);
 			else
 				project_reservation_roomStmt.setShort(offset++, project_reservation_room.room_index);
+			if ( project_reservation_room.room_code == null )
+				project_reservation_roomStmt.setNull(offset++, 12);
+			else
+				project_reservation_roomStmt.setString(offset++, project_reservation_room.room_code);
 			if ( project_reservation_room.item == null )
 				project_reservation_roomStmt.setNull(offset++, 4);
 			else
@@ -38954,13 +41509,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param project_reservation Identificador de la Reserva
 	 * @param room_index Numero de Habitacion
+	 * @param room_code Codigo de Habitacion en origen
 	 * @param item Identificador del Tipo de Habitacion
 	 * @param tariff Identificador de la Tarifa
 	 * @param adults Numero de adultos
-	 * @param children Numero de niùos
+	 * @param children Numero de ni?os
 	 * @throws SQLException
 	*/
-	protected void insertProject_reservation_room(Integer id, Integer domain, Integer project_reservation, Short room_index, Integer item, Integer tariff, Integer adults, Integer children)
+	protected void insertProject_reservation_room(Integer id, Integer domain, Integer project_reservation, Short room_index, String room_code, Integer item, Integer tariff, Integer adults, Integer children)
 	throws SQLException {
 
 		Project_reservation_room project_reservation_room_ = new Project_reservation_room();
@@ -38968,6 +41524,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		project_reservation_room_.domain = domain;
 		project_reservation_room_.project_reservation = project_reservation;
 		project_reservation_room_.room_index = room_index;
+		project_reservation_room_.room_code = room_code;
 		project_reservation_room_.item = item;
 		project_reservation_room_.tariff = tariff;
 		project_reservation_room_.adults = adults;
@@ -38977,7 +41534,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int project_reservation_roomCount = project_reservation_rooms.size();
 		
-		if ( 63 * project_reservation_roomCount >=  this.maxAllowedPacket ){
+		if ( 79 * project_reservation_roomCount >=  this.maxAllowedPacket ){
 			insertProject_reservation_room(project_reservation_rooms);
 			project_reservation_rooms.clear();
 		} 
@@ -38989,14 +41546,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param project_reservation Identificador de la Reserva
 	 * @param room_index Numero de Habitacion
+	 * @param room_code Codigo de Habitacion en origen
 	 * @param item Identificador del Tipo de Habitacion
 	 * @param tariff Identificador de la Tarifa
 	 * @param adults Numero de adultos
-	 * @param children Numero de niùos
+	 * @param children Numero de ni?os
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertProject_reservation_room(Integer domain, Integer project_reservation, Short room_index, Integer item, Integer tariff, Integer adults, Integer children)
+	public int insertProject_reservation_room(Integer domain, Integer project_reservation, Short room_index, String room_code, Integer item, Integer tariff, Integer adults, Integer children)
 	throws SQLException {
 		int id = nextProject_reservation_roomId();
 
@@ -39005,6 +41563,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		project_reservation_room_.domain = domain;
 		project_reservation_room_.project_reservation = project_reservation;
 		project_reservation_room_.room_index = room_index;
+		project_reservation_room_.room_code = room_code;
 		project_reservation_room_.item = item;
 		project_reservation_room_.tariff = tariff;
 		project_reservation_room_.adults = adults;
@@ -39014,7 +41573,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int project_reservation_roomCount = project_reservation_rooms.size();
 		
-		if ( 63 * project_reservation_roomCount >=  this.maxAllowedPacket ){
+		if ( 79 * project_reservation_roomCount >=  this.maxAllowedPacket ){
 			insertProject_reservation_room(project_reservation_rooms);
 			project_reservation_rooms.clear();
 		} 
@@ -39350,6 +41909,179 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int contactStmtSize = 0;
+
+	private int contactInserted = 0;
+
+	private List<Contact> contacts = 
+		new LinkedList<Contact>();
+
+	private PreparedStatement contactStmt = null;
+
+	public static class Contact {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer user_id; 
+		protected String displayName; 
+		protected Integer contact_data; 
+	}
+	
+	protected void insertContact( List<Contact> contacts )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = contacts.size();
+		if ( contactStmtSize != size ) {
+			if ( contactStmt != null ) {
+				contactStmt.close();
+			}
+			String values = "(?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			contactStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO contact (id,domain,user_id,displayName,contact_data)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			contactStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Contact contact : contacts) {
+			if ( contact.id == null )
+				contactStmt.setNull(offset++, 4);
+			else
+				contactStmt.setInt(offset++, contact.id);
+			if ( contact.domain == null )
+				contactStmt.setNull(offset++, 4);
+			else
+				contactStmt.setInt(offset++, contact.domain);
+			if ( contact.user_id == null )
+				contactStmt.setNull(offset++, 4);
+			else
+				contactStmt.setInt(offset++, contact.user_id);
+			if ( contact.displayName == null )
+				contactStmt.setNull(offset++, 12);
+			else
+				contactStmt.setString(offset++, contact.displayName);
+			if ( contact.contact_data == null )
+				contactStmt.setNull(offset++, 4);
+			else
+				contactStmt.setInt(offset++, contact.contact_data);
+		}
+		contactStmt.executeUpdate();
+		contactInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Contacts in {} milliseconds.", size, contactInserted, elapsed );		
+	}
+		
+		private int contactId = -1;
+		
+		private void initContactId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `contact`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.contactId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextContactId() {
+			return ++this.contactId;
+		} 
+
+		public void setContactId(Integer contactId) {
+			this.contactId = contactId;
+		} 
+	
+	private void flushContact(  )
+	throws SQLException {
+		if ( ! contacts.isEmpty() )
+			insertContact(contacts);
+		if ( contactStmt != null )
+			contactStmt.close();
+	}	
+
+	/**
+	 * Contact
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param user_id Identificador del Usuario
+	 * @param displayName Mostrar Como
+	 * @param contact_data Identificador de la Informaci?n del Contacto
+	 * @throws SQLException
+	*/
+	protected void insertContact(Integer id, Integer domain, Integer user_id, String displayName, Integer contact_data)
+	throws SQLException {
+
+		Contact contact_ = new Contact();
+		contact_.id = id;
+		contact_.domain = domain;
+		contact_.user_id = user_id;
+		contact_.displayName = displayName;
+		contact_.contact_data = contact_data;
+
+		contacts.add(contact_);
+		
+		int contactCount = contacts.size();
+		
+		if ( 168 * contactCount >=  this.maxAllowedPacket ){
+			insertContact(contacts);
+			contacts.clear();
+		} 
+	}
+
+
+	/**
+	 * Contact
+	 * @param domain Identificador del Dominio
+	 * @param user_id Identificador del Usuario
+	 * @param displayName Mostrar Como
+	 * @param contact_data Identificador de la Informaci?n del Contacto
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertContact(Integer domain, Integer user_id, String displayName, Integer contact_data)
+	throws SQLException {
+		int id = nextContactId();
+
+		Contact contact_ = new Contact();
+		contact_.id = id;
+		contact_.domain = domain;
+		contact_.user_id = user_id;
+		contact_.displayName = displayName;
+		contact_.contact_data = contact_data;
+
+		contacts.add(contact_);
+		
+		int contactCount = contacts.size();
+		
+		if ( 168 * contactCount >=  this.maxAllowedPacket ){
+			insertContact(contacts);
+			contacts.clear();
+		} 
+		return id;
+	}
+
+
 	private int user_workgroupStmtSize = 0;
 
 	private int user_workgroupInserted = 0;
@@ -39525,6 +42257,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class Course_schedule {
 		protected Integer id; 
+		protected Integer domain; 
 		protected Integer course; 
 		protected Short day_of_week; 
 		protected Time start_time; 
@@ -39539,7 +42272,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( course_scheduleStmt != null ) {
 				course_scheduleStmt.close();
 			}
-			String values = "(?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -39548,7 +42281,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			course_scheduleStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO course_schedule (id,course,day_of_week,start_time,end_time)"  
+				"INSERT INTO course_schedule (id,domain,course,day_of_week,start_time,end_time)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			course_scheduleStmtSize = size;
@@ -39561,6 +42294,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				course_scheduleStmt.setNull(offset++, 4);
 			else
 				course_scheduleStmt.setInt(offset++, course_schedule.id);
+			if ( course_schedule.domain == null )
+				course_scheduleStmt.setNull(offset++, 4);
+			else
+				course_scheduleStmt.setInt(offset++, course_schedule.domain);
 			if ( course_schedule.course == null )
 				course_scheduleStmt.setNull(offset++, 4);
 			else
@@ -39628,17 +42365,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Course_schedule
 	 * @param id Identificador unico del Horario
+	 * @param domain Identificador del Dominio
 	 * @param course Identificador del Curso
 	 * @param day_of_week Dia de la semana
 	 * @param start_time Hora de comienzo
 	 * @param end_time Hora de fin
 	 * @throws SQLException
 	*/
-	protected void insertCourse_schedule(Integer id, Integer course, Short day_of_week, Time start_time, Time end_time)
+	protected void insertCourse_schedule(Integer id, Integer domain, Integer course, Short day_of_week, Time start_time, Time end_time)
 	throws SQLException {
 
 		Course_schedule course_schedule_ = new Course_schedule();
 		course_schedule_.id = id;
+		course_schedule_.domain = domain;
 		course_schedule_.course = course;
 		course_schedule_.day_of_week = day_of_week;
 		course_schedule_.start_time = start_time;
@@ -39648,7 +42387,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int course_scheduleCount = course_schedules.size();
 		
-		if ( 39 * course_scheduleCount >=  this.maxAllowedPacket ){
+		if ( 49 * course_scheduleCount >=  this.maxAllowedPacket ){
 			insertCourse_schedule(course_schedules);
 			course_schedules.clear();
 		} 
@@ -39657,6 +42396,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Course_schedule
+	 * @param domain Identificador del Dominio
 	 * @param course Identificador del Curso
 	 * @param day_of_week Dia de la semana
 	 * @param start_time Hora de comienzo
@@ -39664,12 +42404,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertCourse_schedule(Integer course, Short day_of_week, Time start_time, Time end_time)
+	public int insertCourse_schedule(Integer domain, Integer course, Short day_of_week, Time start_time, Time end_time)
 	throws SQLException {
 		int id = nextCourse_scheduleId();
 
 		Course_schedule course_schedule_ = new Course_schedule();
 		course_schedule_.id = id;
+		course_schedule_.domain = domain;
 		course_schedule_.course = course;
 		course_schedule_.day_of_week = day_of_week;
 		course_schedule_.start_time = start_time;
@@ -39679,7 +42420,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int course_scheduleCount = course_schedules.size();
 		
-		if ( 39 * course_scheduleCount >=  this.maxAllowedPacket ){
+		if ( 49 * course_scheduleCount >=  this.maxAllowedPacket ){
 			insertCourse_schedule(course_schedules);
 			course_schedules.clear();
 		} 
@@ -39809,7 +42550,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param registry Identificador de la Persona o Empresa que tiene la Relacion
 	 * @param related_registry Identificador de la Persona o Empresa relacionada
-	 * @param relationship Identificador del Tipo de Relaciùn
+	 * @param relationship Identificador del Tipo de Relaci?n
 	 * @param comments Comentarios de la Relacion
 	 * @throws SQLException
 	*/
@@ -39840,7 +42581,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param registry Identificador de la Persona o Empresa que tiene la Relacion
 	 * @param related_registry Identificador de la Persona o Empresa relacionada
-	 * @param relationship Identificador del Tipo de Relaciùn
+	 * @param relationship Identificador del Tipo de Relaci?n
 	 * @param comments Comentarios de la Relacion
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -40308,16 +43049,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Campaign
-	 * @param id Identificador unico de la Campaùa
+	 * @param id Identificador unico de la Campa?a
 	 * @param domain Identificador del Dominio
-	 * @param campaign_type Identificador del Tipo de Campaùa
-	 * @param description Descripcion de la Campaùa
+	 * @param campaign_type Identificador del Tipo de Campa?a
+	 * @param description Descripcion de la Campa?a
 	 * @param process Identificador del Proceso
-	 * @param start_date Fecha de inicio de la Campaùa
-	 * @param end_date Fecha de finalizacion de la Campaùa
-	 * @param workgroup Grupo de Trabajo supervisor de la Campaùa
-	 * @param manual Tipo de Campaùa
-	 * @param status Estado de la Campaùa
+	 * @param start_date Fecha de inicio de la Campa?a
+	 * @param end_date Fecha de finalizacion de la Campa?a
+	 * @param workgroup Grupo de Trabajo supervisor de la Campa?a
+	 * @param manual Tipo de Campa?a
+	 * @param status Estado de la Campa?a
 	 * @throws SQLException
 	*/
 	protected void insertCampaign(Integer id, Integer domain, Integer campaign_type, String description, Integer process, Date start_date, Date end_date, Integer workgroup, Boolean manual, Short status)
@@ -40349,14 +43090,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Campaign
 	 * @param domain Identificador del Dominio
-	 * @param campaign_type Identificador del Tipo de Campaùa
-	 * @param description Descripcion de la Campaùa
+	 * @param campaign_type Identificador del Tipo de Campa?a
+	 * @param description Descripcion de la Campa?a
 	 * @param process Identificador del Proceso
-	 * @param start_date Fecha de inicio de la Campaùa
-	 * @param end_date Fecha de finalizacion de la Campaùa
-	 * @param workgroup Grupo de Trabajo supervisor de la Campaùa
-	 * @param manual Tipo de Campaùa
-	 * @param status Estado de la Campaùa
+	 * @param start_date Fecha de inicio de la Campa?a
+	 * @param end_date Fecha de finalizacion de la Campa?a
+	 * @param workgroup Grupo de Trabajo supervisor de la Campa?a
+	 * @param manual Tipo de Campa?a
+	 * @param status Estado de la Campa?a
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -40769,12 +43510,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Contract_deduction
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Deducciùn
+	 * @param type Tipo de Deducci?n
 	 * @param deduction_concept Identificador unico del concepto
 	 * @param contract Contrato
 	 * @param description Descripcion
 	 * @param description_decorable 
-	 * @param expression Fùrmula
+	 * @param expression F?rmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
 	 * @param month Mes de la percepcion
@@ -40810,12 +43551,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Contract_deduction
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Deducciùn
+	 * @param type Tipo de Deducci?n
 	 * @param deduction_concept Identificador unico del concepto
 	 * @param contract Contrato
 	 * @param description Descripcion
 	 * @param description_decorable 
-	 * @param expression Fùrmula
+	 * @param expression F?rmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
 	 * @param month Mes de la percepcion
@@ -41033,152 +43774,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int course_subjectStmtSize = 0;
-
-	private int course_subjectInserted = 0;
-
-	private List<Course_subject> course_subjects = 
-		new LinkedList<Course_subject>();
-
-	private PreparedStatement course_subjectStmt = null;
-
-	public static class Course_subject {
-		protected Integer id; 
-		protected String description; 
-	}
-	
-	protected void insertCourse_subject( List<Course_subject> course_subjects )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = course_subjects.size();
-		if ( course_subjectStmtSize != size ) {
-			if ( course_subjectStmt != null ) {
-				course_subjectStmt.close();
-			}
-			String values = "(?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			course_subjectStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO course_subject (id,description)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			course_subjectStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Course_subject course_subject : course_subjects) {
-			if ( course_subject.id == null )
-				course_subjectStmt.setNull(offset++, 4);
-			else
-				course_subjectStmt.setInt(offset++, course_subject.id);
-			if ( course_subject.description == null )
-				course_subjectStmt.setNull(offset++, 12);
-			else
-				course_subjectStmt.setString(offset++, course_subject.description);
-		}
-		course_subjectStmt.executeUpdate();
-		course_subjectInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Course_subjects in {} milliseconds.", size, course_subjectInserted, elapsed );		
-	}
-		
-		private int course_subjectId = -1;
-		
-		private void initCourse_subjectId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `course_subject`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.course_subjectId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCourse_subjectId() {
-			return ++this.course_subjectId;
-		} 
-
-		public void setCourse_subjectId(Integer course_subjectId) {
-			this.course_subjectId = course_subjectId;
-		} 
-	
-	private void flushCourse_subject(  )
-	throws SQLException {
-		if ( ! course_subjects.isEmpty() )
-			insertCourse_subject(course_subjects);
-		if ( course_subjectStmt != null )
-			course_subjectStmt.close();
-	}	
-
-	/**
-	 * Course_subject
-	 * @param id Identificador unico de la Materia
-	 * @param description Descripcion de la Materia
-	 * @throws SQLException
-	*/
-	protected void insertCourse_subject(Integer id, String description)
-	throws SQLException {
-
-		Course_subject course_subject_ = new Course_subject();
-		course_subject_.id = id;
-		course_subject_.description = description;
-
-		course_subjects.add(course_subject_);
-		
-		int course_subjectCount = course_subjects.size();
-		
-		if ( 74 * course_subjectCount >=  this.maxAllowedPacket ){
-			insertCourse_subject(course_subjects);
-			course_subjects.clear();
-		} 
-	}
-
-
-	/**
-	 * Course_subject
-	 * @param description Descripcion de la Materia
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCourse_subject(String description)
-	throws SQLException {
-		int id = nextCourse_subjectId();
-
-		Course_subject course_subject_ = new Course_subject();
-		course_subject_.id = id;
-		course_subject_.description = description;
-
-		course_subjects.add(course_subject_);
-		
-		int course_subjectCount = course_subjects.size();
-		
-		if ( 74 * course_subjectCount >=  this.maxAllowedPacket ){
-			insertCourse_subject(course_subjects);
-			course_subjects.clear();
-		} 
-		return id;
-	}
-
-
 	private int observationStmtSize = 0;
 
 	private int observationInserted = 0;
@@ -41190,6 +43785,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class Observation {
 		protected Integer id; 
+		protected Integer domain; 
 		protected String description; 
 	}
 	
@@ -41201,7 +43797,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( observationStmt != null ) {
 				observationStmt.close();
 			}
-			String values = "(?,?)";
+			String values = "(?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -41210,7 +43806,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			observationStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO observation (id,description)"  
+				"INSERT INTO observation (id,domain,description)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			observationStmtSize = size;
@@ -41223,6 +43819,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				observationStmt.setNull(offset++, 4);
 			else
 				observationStmt.setInt(offset++, observation.id);
+			if ( observation.domain == null )
+				observationStmt.setNull(offset++, 4);
+			else
+				observationStmt.setInt(offset++, observation.domain);
 			if ( observation.description == null )
 				observationStmt.setNull(offset++, 12);
 			else
@@ -41278,21 +43878,23 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Observation
 	 * @param id Identificador unico de la Observacion
+	 * @param domain Identificador del Dominio
 	 * @param description Descripcion de la Observacion
 	 * @throws SQLException
 	*/
-	protected void insertObservation(Integer id, String description)
+	protected void insertObservation(Integer id, Integer domain, String description)
 	throws SQLException {
 
 		Observation observation_ = new Observation();
 		observation_.id = id;
+		observation_.domain = domain;
 		observation_.description = description;
 
 		observations.add(observation_);
 		
 		int observationCount = observations.size();
 		
-		if ( 266 * observationCount >=  this.maxAllowedPacket ){
+		if ( 276 * observationCount >=  this.maxAllowedPacket ){
 			insertObservation(observations);
 			observations.clear();
 		} 
@@ -41301,25 +43903,182 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Observation
+	 * @param domain Identificador del Dominio
 	 * @param description Descripcion de la Observacion
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertObservation(String description)
+	public int insertObservation(Integer domain, String description)
 	throws SQLException {
 		int id = nextObservationId();
 
 		Observation observation_ = new Observation();
 		observation_.id = id;
+		observation_.domain = domain;
 		observation_.description = description;
 
 		observations.add(observation_);
 		
 		int observationCount = observations.size();
 		
-		if ( 266 * observationCount >=  this.maxAllowedPacket ){
+		if ( 276 * observationCount >=  this.maxAllowedPacket ){
 			insertObservation(observations);
 			observations.clear();
+		} 
+		return id;
+	}
+
+
+	private int course_subjectStmtSize = 0;
+
+	private int course_subjectInserted = 0;
+
+	private List<Course_subject> course_subjects = 
+		new LinkedList<Course_subject>();
+
+	private PreparedStatement course_subjectStmt = null;
+
+	public static class Course_subject {
+		protected Integer id; 
+		protected Integer domain; 
+		protected String description; 
+	}
+	
+	protected void insertCourse_subject( List<Course_subject> course_subjects )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = course_subjects.size();
+		if ( course_subjectStmtSize != size ) {
+			if ( course_subjectStmt != null ) {
+				course_subjectStmt.close();
+			}
+			String values = "(?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			course_subjectStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO course_subject (id,domain,description)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			course_subjectStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Course_subject course_subject : course_subjects) {
+			if ( course_subject.id == null )
+				course_subjectStmt.setNull(offset++, 4);
+			else
+				course_subjectStmt.setInt(offset++, course_subject.id);
+			if ( course_subject.domain == null )
+				course_subjectStmt.setNull(offset++, 4);
+			else
+				course_subjectStmt.setInt(offset++, course_subject.domain);
+			if ( course_subject.description == null )
+				course_subjectStmt.setNull(offset++, 12);
+			else
+				course_subjectStmt.setString(offset++, course_subject.description);
+		}
+		course_subjectStmt.executeUpdate();
+		course_subjectInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Course_subjects in {} milliseconds.", size, course_subjectInserted, elapsed );		
+	}
+		
+		private int course_subjectId = -1;
+		
+		private void initCourse_subjectId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `course_subject`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.course_subjectId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextCourse_subjectId() {
+			return ++this.course_subjectId;
+		} 
+
+		public void setCourse_subjectId(Integer course_subjectId) {
+			this.course_subjectId = course_subjectId;
+		} 
+	
+	private void flushCourse_subject(  )
+	throws SQLException {
+		if ( ! course_subjects.isEmpty() )
+			insertCourse_subject(course_subjects);
+		if ( course_subjectStmt != null )
+			course_subjectStmt.close();
+	}	
+
+	/**
+	 * Course_subject
+	 * @param id Identificador unico de la Materia
+	 * @param domain Identificador del Dominio
+	 * @param description Descripcion de la Materia
+	 * @throws SQLException
+	*/
+	protected void insertCourse_subject(Integer id, Integer domain, String description)
+	throws SQLException {
+
+		Course_subject course_subject_ = new Course_subject();
+		course_subject_.id = id;
+		course_subject_.domain = domain;
+		course_subject_.description = description;
+
+		course_subjects.add(course_subject_);
+		
+		int course_subjectCount = course_subjects.size();
+		
+		if ( 84 * course_subjectCount >=  this.maxAllowedPacket ){
+			insertCourse_subject(course_subjects);
+			course_subjects.clear();
+		} 
+	}
+
+
+	/**
+	 * Course_subject
+	 * @param domain Identificador del Dominio
+	 * @param description Descripcion de la Materia
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertCourse_subject(Integer domain, String description)
+	throws SQLException {
+		int id = nextCourse_subjectId();
+
+		Course_subject course_subject_ = new Course_subject();
+		course_subject_.id = id;
+		course_subject_.domain = domain;
+		course_subject_.description = description;
+
+		course_subjects.add(course_subject_);
+		
+		int course_subjectCount = course_subjects.size();
+		
+		if ( 84 * course_subjectCount >=  this.maxAllowedPacket ){
+			insertCourse_subject(course_subjects);
+			course_subjects.clear();
 		} 
 		return id;
 	}
@@ -41839,6 +44598,278 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 119 * salary_embargoCount >=  this.maxAllowedPacket ){
 			insertSalary_embargo(salary_embargos);
 			salary_embargos.clear();
+		} 
+		return id;
+	}
+
+
+	private int reservation_requestStmtSize = 0;
+
+	private int reservation_requestInserted = 0;
+
+	private List<Reservation_request> reservation_requests = 
+		new LinkedList<Reservation_request>();
+
+	private PreparedStatement reservation_requestStmt = null;
+
+	public static class Reservation_request {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer hotel; 
+		protected String code; 
+		protected Date start_date; 
+		protected Date end_date; 
+		protected Integer agency; 
+		protected Integer company; 
+		protected Short booking_holder; 
+		protected Integer request_counter; 
+		protected String remarks; 
+		protected Boolean active; 
+		protected String creation_user; 
+		protected Timestamp creation_date; 
+		protected String modification_user; 
+		protected Timestamp modification_date; 
+	}
+	
+	protected void insertReservation_request( List<Reservation_request> reservation_requests )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = reservation_requests.size();
+		if ( reservation_requestStmtSize != size ) {
+			if ( reservation_requestStmt != null ) {
+				reservation_requestStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			reservation_requestStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO reservation_request (id,domain,hotel,code,start_date,end_date,agency,company,booking_holder,request_counter,remarks,active,creation_user,creation_date,modification_user,modification_date)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			reservation_requestStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Reservation_request reservation_request : reservation_requests) {
+			if ( reservation_request.id == null )
+				reservation_requestStmt.setNull(offset++, 4);
+			else
+				reservation_requestStmt.setInt(offset++, reservation_request.id);
+			if ( reservation_request.domain == null )
+				reservation_requestStmt.setNull(offset++, 4);
+			else
+				reservation_requestStmt.setInt(offset++, reservation_request.domain);
+			if ( reservation_request.hotel == null )
+				reservation_requestStmt.setNull(offset++, 4);
+			else
+				reservation_requestStmt.setInt(offset++, reservation_request.hotel);
+			if ( reservation_request.code == null )
+				reservation_requestStmt.setNull(offset++, 12);
+			else
+				reservation_requestStmt.setString(offset++, reservation_request.code);
+			if ( reservation_request.start_date == null )
+				reservation_requestStmt.setNull(offset++, 91);
+			else
+				reservation_requestStmt.setDate(offset++, reservation_request.start_date);
+			if ( reservation_request.end_date == null )
+				reservation_requestStmt.setNull(offset++, 91);
+			else
+				reservation_requestStmt.setDate(offset++, reservation_request.end_date);
+			if ( reservation_request.agency == null )
+				reservation_requestStmt.setNull(offset++, 4);
+			else
+				reservation_requestStmt.setInt(offset++, reservation_request.agency);
+			if ( reservation_request.company == null )
+				reservation_requestStmt.setNull(offset++, 4);
+			else
+				reservation_requestStmt.setInt(offset++, reservation_request.company);
+			if ( reservation_request.booking_holder == null )
+				reservation_requestStmt.setNull(offset++, -6);
+			else
+				reservation_requestStmt.setShort(offset++, reservation_request.booking_holder);
+			if ( reservation_request.request_counter == null )
+				reservation_requestStmt.setNull(offset++, 5);
+			else
+				reservation_requestStmt.setInt(offset++, reservation_request.request_counter);
+			if ( reservation_request.remarks == null )
+				reservation_requestStmt.setNull(offset++, 12);
+			else
+				reservation_requestStmt.setString(offset++, reservation_request.remarks);
+			if ( reservation_request.active == null )
+				reservation_requestStmt.setNull(offset++, -7);
+			else
+				reservation_requestStmt.setBoolean(offset++, reservation_request.active);
+			if ( reservation_request.creation_user == null )
+				reservation_requestStmt.setNull(offset++, 12);
+			else
+				reservation_requestStmt.setString(offset++, reservation_request.creation_user);
+			if ( reservation_request.creation_date == null )
+				reservation_requestStmt.setNull(offset++, 93);
+			else
+				reservation_requestStmt.setTimestamp(offset++, reservation_request.creation_date);
+			if ( reservation_request.modification_user == null )
+				reservation_requestStmt.setNull(offset++, 12);
+			else
+				reservation_requestStmt.setString(offset++, reservation_request.modification_user);
+			if ( reservation_request.modification_date == null )
+				reservation_requestStmt.setNull(offset++, 93);
+			else
+				reservation_requestStmt.setTimestamp(offset++, reservation_request.modification_date);
+		}
+		reservation_requestStmt.executeUpdate();
+		reservation_requestInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Reservation_requests in {} milliseconds.", size, reservation_requestInserted, elapsed );		
+	}
+		
+		private int reservation_requestId = -1;
+		
+		private void initReservation_requestId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `reservation_request`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.reservation_requestId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextReservation_requestId() {
+			return ++this.reservation_requestId;
+		} 
+
+		public void setReservation_requestId(Integer reservation_requestId) {
+			this.reservation_requestId = reservation_requestId;
+		} 
+	
+	private void flushReservation_request(  )
+	throws SQLException {
+		if ( ! reservation_requests.isEmpty() )
+			insertReservation_request(reservation_requests);
+		if ( reservation_requestStmt != null )
+			reservation_requestStmt.close();
+	}	
+
+	/**
+	 * Reservation_request
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param hotel Identificador del Hotel
+	 * @param code Localizador
+	 * @param start_date Fecha de entrada
+	 * @param end_date Fecha de salida
+	 * @param agency Identificador de la agencia de viajes
+	 * @param company Identificador de la empresa
+	 * @param booking_holder Titular
+	 * @param request_counter Numero de solicitudes enviadas
+	 * @param remarks Observaciones
+	 * @param active Indica si la Solicitud esta activa o no
+	 * @param creation_user Usuario de creacion
+	 * @param creation_date Fecha de creacion
+	 * @param modification_user Usuario de modificacion
+	 * @param modification_date Fecha de modificacion
+	 * @throws SQLException
+	*/
+	protected void insertReservation_request(Integer id, Integer domain, Integer hotel, String code, Date start_date, Date end_date, Integer agency, Integer company, Short booking_holder, Integer request_counter, String remarks, Boolean active, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
+	throws SQLException {
+
+		Reservation_request reservation_request_ = new Reservation_request();
+		reservation_request_.id = id;
+		reservation_request_.domain = domain;
+		reservation_request_.hotel = hotel;
+		reservation_request_.code = code;
+		reservation_request_.start_date = start_date;
+		reservation_request_.end_date = end_date;
+		reservation_request_.agency = agency;
+		reservation_request_.company = company;
+		reservation_request_.booking_holder = booking_holder;
+		reservation_request_.request_counter = request_counter;
+		reservation_request_.remarks = remarks;
+		reservation_request_.active = active;
+		reservation_request_.creation_user = creation_user;
+		reservation_request_.creation_date = creation_date;
+		reservation_request_.modification_user = modification_user;
+		reservation_request_.modification_date = modification_date;
+
+		reservation_requests.add(reservation_request_);
+		
+		int reservation_requestCount = reservation_requests.size();
+		
+		if ( 346 * reservation_requestCount >=  this.maxAllowedPacket ){
+			insertReservation_request(reservation_requests);
+			reservation_requests.clear();
+		} 
+	}
+
+
+	/**
+	 * Reservation_request
+	 * @param domain Identificador del Dominio
+	 * @param hotel Identificador del Hotel
+	 * @param code Localizador
+	 * @param start_date Fecha de entrada
+	 * @param end_date Fecha de salida
+	 * @param agency Identificador de la agencia de viajes
+	 * @param company Identificador de la empresa
+	 * @param booking_holder Titular
+	 * @param request_counter Numero de solicitudes enviadas
+	 * @param remarks Observaciones
+	 * @param active Indica si la Solicitud esta activa o no
+	 * @param creation_user Usuario de creacion
+	 * @param creation_date Fecha de creacion
+	 * @param modification_user Usuario de modificacion
+	 * @param modification_date Fecha de modificacion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertReservation_request(Integer domain, Integer hotel, String code, Date start_date, Date end_date, Integer agency, Integer company, Short booking_holder, Integer request_counter, String remarks, Boolean active, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
+	throws SQLException {
+		int id = nextReservation_requestId();
+
+		Reservation_request reservation_request_ = new Reservation_request();
+		reservation_request_.id = id;
+		reservation_request_.domain = domain;
+		reservation_request_.hotel = hotel;
+		reservation_request_.code = code;
+		reservation_request_.start_date = start_date;
+		reservation_request_.end_date = end_date;
+		reservation_request_.agency = agency;
+		reservation_request_.company = company;
+		reservation_request_.booking_holder = booking_holder;
+		reservation_request_.request_counter = request_counter;
+		reservation_request_.remarks = remarks;
+		reservation_request_.active = active;
+		reservation_request_.creation_user = creation_user;
+		reservation_request_.creation_date = creation_date;
+		reservation_request_.modification_user = modification_user;
+		reservation_request_.modification_date = modification_date;
+
+		reservation_requests.add(reservation_request_);
+		
+		int reservation_requestCount = reservation_requests.size();
+		
+		if ( 346 * reservation_requestCount >=  this.maxAllowedPacket ){
+			insertReservation_request(reservation_requests);
+			reservation_requests.clear();
 		} 
 		return id;
 	}
@@ -43147,11 +46178,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer id; 
 		protected Integer domain; 
 		protected Date issue_date; 
-		protected Integer workplace_department; 
+		protected Integer department; 
 		protected Integer workplace; 
 		protected Integer scope; 
 		protected String remarks; 
+		protected Boolean item_return; 
 		protected Short status; 
+		protected Short transfer_status; 
+		protected Integer transfer_proposal; 
 	}
 	
 	protected void insertProposal( List<Proposal> proposals )
@@ -43162,7 +46196,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( proposalStmt != null ) {
 				proposalStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -43171,7 +46205,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			proposalStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO proposal (id,domain,issue_date,workplace_department,workplace,scope,remarks,status)"  
+				"INSERT INTO proposal (id,domain,issue_date,department,workplace,scope,remarks,item_return,status,transfer_status,transfer_proposal)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			proposalStmtSize = size;
@@ -43192,10 +46226,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				proposalStmt.setNull(offset++, 91);
 			else
 				proposalStmt.setDate(offset++, proposal.issue_date);
-			if ( proposal.workplace_department == null )
+			if ( proposal.department == null )
 				proposalStmt.setNull(offset++, 4);
 			else
-				proposalStmt.setInt(offset++, proposal.workplace_department);
+				proposalStmt.setInt(offset++, proposal.department);
 			if ( proposal.workplace == null )
 				proposalStmt.setNull(offset++, 4);
 			else
@@ -43208,10 +46242,22 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				proposalStmt.setNull(offset++, -1);
 			else
 				proposalStmt.setString(offset++, proposal.remarks);
+			if ( proposal.item_return == null )
+				proposalStmt.setNull(offset++, -7);
+			else
+				proposalStmt.setBoolean(offset++, proposal.item_return);
 			if ( proposal.status == null )
 				proposalStmt.setNull(offset++, -6);
 			else
 				proposalStmt.setShort(offset++, proposal.status);
+			if ( proposal.transfer_status == null )
+				proposalStmt.setNull(offset++, -6);
+			else
+				proposalStmt.setShort(offset++, proposal.transfer_status);
+			if ( proposal.transfer_proposal == null )
+				proposalStmt.setNull(offset++, 4);
+			else
+				proposalStmt.setInt(offset++, proposal.transfer_proposal);
 		}
 		proposalStmt.executeUpdate();
 		proposalInserted += size;
@@ -43265,31 +46311,37 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param issue_date Fecha de emision de la Propuesta
-	 * @param workplace_department Identificador del Departamento
+	 * @param department Identificador del Departamento
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @param scope Identificador del Ambito
 	 * @param remarks Observaciones de la Propuesta
+	 * @param item_return Indica si es una devolucion
 	 * @param status Estado de la Propuesta
+	 * @param transfer_status Indica si es un traspaso y su estado
+	 * @param transfer_proposal Identificador de la Solicitud de traspaso vinculada
 	 * @throws SQLException
 	*/
-	protected void insertProposal(Integer id, Integer domain, Date issue_date, Integer workplace_department, Integer workplace, Integer scope, String remarks, Short status)
+	protected void insertProposal(Integer id, Integer domain, Date issue_date, Integer department, Integer workplace, Integer scope, String remarks, Boolean item_return, Short status, Short transfer_status, Integer transfer_proposal)
 	throws SQLException {
 
 		Proposal proposal_ = new Proposal();
 		proposal_.id = id;
 		proposal_.domain = domain;
 		proposal_.issue_date = issue_date;
-		proposal_.workplace_department = workplace_department;
+		proposal_.department = department;
 		proposal_.workplace = workplace;
 		proposal_.scope = scope;
 		proposal_.remarks = remarks;
+		proposal_.item_return = item_return;
 		proposal_.status = status;
+		proposal_.transfer_status = transfer_status;
+		proposal_.transfer_proposal = transfer_proposal;
 
 		proposals.add(proposal_);
 		
 		int proposalCount = proposals.size();
 		
-		if ( 63 * proposalCount >=  this.maxAllowedPacket ){
+		if ( 76 * proposalCount >=  this.maxAllowedPacket ){
 			insertProposal(proposals);
 			proposals.clear();
 		} 
@@ -43300,15 +46352,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Proposal
 	 * @param domain Identificador del Dominio
 	 * @param issue_date Fecha de emision de la Propuesta
-	 * @param workplace_department Identificador del Departamento
+	 * @param department Identificador del Departamento
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @param scope Identificador del Ambito
 	 * @param remarks Observaciones de la Propuesta
+	 * @param item_return Indica si es una devolucion
 	 * @param status Estado de la Propuesta
+	 * @param transfer_status Indica si es un traspaso y su estado
+	 * @param transfer_proposal Identificador de la Solicitud de traspaso vinculada
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertProposal(Integer domain, Date issue_date, Integer workplace_department, Integer workplace, Integer scope, String remarks, Short status)
+	public int insertProposal(Integer domain, Date issue_date, Integer department, Integer workplace, Integer scope, String remarks, Boolean item_return, Short status, Short transfer_status, Integer transfer_proposal)
 	throws SQLException {
 		int id = nextProposalId();
 
@@ -43316,17 +46371,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		proposal_.id = id;
 		proposal_.domain = domain;
 		proposal_.issue_date = issue_date;
-		proposal_.workplace_department = workplace_department;
+		proposal_.department = department;
 		proposal_.workplace = workplace;
 		proposal_.scope = scope;
 		proposal_.remarks = remarks;
+		proposal_.item_return = item_return;
 		proposal_.status = status;
+		proposal_.transfer_status = transfer_status;
+		proposal_.transfer_proposal = transfer_proposal;
 
 		proposals.add(proposal_);
 		
 		int proposalCount = proposals.size();
 		
-		if ( 63 * proposalCount >=  this.maxAllowedPacket ){
+		if ( 76 * proposalCount >=  this.maxAllowedPacket ){
 			insertProposal(proposals);
 			proposals.clear();
 		} 
@@ -44448,7 +47506,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param contract Contrato
 	 * @param description Descripcion
-	 * @param expression Fùrmula
+	 * @param expression F?rmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
 	 * @param bonus_concept Concepto de bonificacion
@@ -44483,7 +47541,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param contract Contrato
 	 * @param description Descripcion
-	 * @param expression Fùrmula
+	 * @param expression F?rmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
 	 * @param bonus_concept Concepto de bonificacion
@@ -44545,6 +47603,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 		protected Short security_level; 
 		protected Integer scope; 
+		protected Boolean payroll; 
+		protected Integer finance_group; 
 	}
 	
 	protected void insertFinance( List<Finance> finances )
@@ -44555,7 +47615,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( financeStmt != null ) {
 				financeStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -44564,7 +47624,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			financeStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO finance (id,domain,payment,registry,rdocument,rdocument_type,rdocument_country,rname,amount,expenses,concept,invoice,due_date,pay_method,bank,bank_account,status,security_level,scope)"  
+				"INSERT INTO finance (id,domain,payment,registry,rdocument,rdocument_type,rdocument_country,rname,amount,expenses,concept,invoice,due_date,pay_method,bank,bank_account,status,security_level,scope,payroll,finance_group)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			financeStmtSize = size;
@@ -44649,6 +47709,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				financeStmt.setNull(offset++, 4);
 			else
 				financeStmt.setInt(offset++, finance.scope);
+			if ( finance.payroll == null )
+				financeStmt.setNull(offset++, -7);
+			else
+				financeStmt.setBoolean(offset++, finance.payroll);
+			if ( finance.finance_group == null )
+				financeStmt.setNull(offset++, 4);
+			else
+				financeStmt.setInt(offset++, finance.finance_group);
 		}
 		financeStmt.executeUpdate();
 		financeInserted += size;
@@ -44718,9 +47786,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param status Estado del Vencimiento
 	 * @param security_level Nivel de seguridad del Vencimiento
 	 * @param scope Ambito del Vencimiento
+	 * @param payroll Indica si el Vencimiento es de Nominas
+	 * @param finance_group Identificador unico del Vencimiento agrupador
 	 * @throws SQLException
 	*/
-	protected void insertFinance(Integer id, Integer domain, Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, Integer scope)
+	protected void insertFinance(Integer id, Integer domain, Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, Integer scope, Boolean payroll, Integer finance_group)
 	throws SQLException {
 
 		Finance finance_ = new Finance();
@@ -44743,12 +47813,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		finance_.status = status;
 		finance_.security_level = security_level;
 		finance_.scope = scope;
+		finance_.payroll = payroll;
+		finance_.finance_group = finance_group;
 
 		finances.add(finance_);
 		
 		int financeCount = finances.size();
 		
-		if ( 334 * financeCount >=  this.maxAllowedPacket ){
+		if ( 344 * financeCount >=  this.maxAllowedPacket ){
 			insertFinance(finances);
 			finances.clear();
 		} 
@@ -44775,10 +47847,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param status Estado del Vencimiento
 	 * @param security_level Nivel de seguridad del Vencimiento
 	 * @param scope Ambito del Vencimiento
+	 * @param payroll Indica si el Vencimiento es de Nominas
+	 * @param finance_group Identificador unico del Vencimiento agrupador
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertFinance(Integer domain, Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, Integer scope)
+	public int insertFinance(Integer domain, Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, Integer scope, Boolean payroll, Integer finance_group)
 	throws SQLException {
 		int id = nextFinanceId();
 
@@ -44802,12 +47876,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		finance_.status = status;
 		finance_.security_level = security_level;
 		finance_.scope = scope;
+		finance_.payroll = payroll;
+		finance_.finance_group = finance_group;
 
 		finances.add(finance_);
 		
 		int financeCount = finances.size();
 		
-		if ( 334 * financeCount >=  this.maxAllowedPacket ){
+		if ( 344 * financeCount >=  this.maxAllowedPacket ){
 			insertFinance(finances);
 			finances.clear();
 		} 
@@ -45593,10 +48669,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param salary Recibo del pago de salarios
-	 * @param type Tipo de deducciùn Salarial
+	 * @param type Tipo de deducci?n Salarial
 	 * @param deduction_concept Codigo del concepto
 	 * @param description Descripcion
-	 * @param expression Fùrmula
+	 * @param expression F?rmula
 	 * @param amount Importe
 	 * @throws SQLException
 	*/
@@ -45628,10 +48704,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Salary_deduction
 	 * @param domain Identificador del Dominio
 	 * @param salary Recibo del pago de salarios
-	 * @param type Tipo de deducciùn Salarial
+	 * @param type Tipo de deducci?n Salarial
 	 * @param deduction_concept Codigo del concepto
 	 * @param description Descripcion
-	 * @param expression Fùrmula
+	 * @param expression F?rmula
 	 * @param amount Importe
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -45701,10 +48777,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean service; 
 		protected Short rectification_type; 
 		protected Integer rectification_invoice; 
+		protected Boolean advance; 
 		protected Double taxable_base; 
 		protected Double vat_quota; 
 		protected Double retention_quota; 
 		protected Double total; 
+		protected String creation_user; 
+		protected Timestamp creation_date; 
+		protected String modification_user; 
+		protected Timestamp modification_date; 
 	}
 	
 	protected void insertInvoice( List<Invoice> invoices )
@@ -45715,7 +48796,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( invoiceStmt != null ) {
 				invoiceStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -45724,7 +48805,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			invoiceStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO invoice (id,domain,project,series,number,reference_code,registry,rdocument,rdocument_type,rdocument_country,rname,raddress,issue_date,tax_date,security_level,status,type,taxFree,surcharge,withholding,comments,remarks,investment,transaction,signed,scope,service,rectification_type,rectification_invoice,taxable_base,vat_quota,retention_quota,total)"  
+				"INSERT INTO invoice (id,domain,project,series,number,reference_code,registry,rdocument,rdocument_type,rdocument_country,rname,raddress,issue_date,tax_date,security_level,status,type,taxFree,surcharge,withholding,comments,remarks,investment,transaction,signed,scope,service,rectification_type,rectification_invoice,advance,taxable_base,vat_quota,retention_quota,total,creation_user,creation_date,modification_user,modification_date)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			invoiceStmtSize = size;
@@ -45849,6 +48930,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoiceStmt.setNull(offset++, 4);
 			else
 				invoiceStmt.setInt(offset++, invoice.rectification_invoice);
+			if ( invoice.advance == null )
+				invoiceStmt.setNull(offset++, -7);
+			else
+				invoiceStmt.setBoolean(offset++, invoice.advance);
 			if ( invoice.taxable_base == null )
 				invoiceStmt.setNull(offset++, 8);
 			else
@@ -45865,6 +48950,22 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoiceStmt.setNull(offset++, 8);
 			else
 				invoiceStmt.setDouble(offset++, invoice.total);
+			if ( invoice.creation_user == null )
+				invoiceStmt.setNull(offset++, 12);
+			else
+				invoiceStmt.setString(offset++, invoice.creation_user);
+			if ( invoice.creation_date == null )
+				invoiceStmt.setNull(offset++, 93);
+			else
+				invoiceStmt.setTimestamp(offset++, invoice.creation_date);
+			if ( invoice.modification_user == null )
+				invoiceStmt.setNull(offset++, 12);
+			else
+				invoiceStmt.setString(offset++, invoice.modification_user);
+			if ( invoice.modification_date == null )
+				invoiceStmt.setNull(offset++, 93);
+			else
+				invoiceStmt.setTimestamp(offset++, invoice.modification_date);
 		}
 		invoiceStmt.executeUpdate();
 		invoiceInserted += size;
@@ -45944,13 +49045,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param service Indica si es una Factura de servicios
 	 * @param rectification_type Tipo de rectificacion (Normal o Especial)
 	 * @param rectification_invoice Relacion de rectificacion de Facturas
+	 * @param advance Indica si la Factura es un anticipo
 	 * @param taxable_base Base Imponible de la Factura
 	 * @param vat_quota Cuota de IVA de la Factura
 	 * @param retention_quota Cuota de IRPF de la Factura
 	 * @param total Total Factura
+	 * @param creation_user Usuario de creacion
+	 * @param creation_date Fecha de creacion
+	 * @param modification_user Usuario de modificacion
+	 * @param modification_date Fecha de modificacion
 	 * @throws SQLException
 	*/
-	protected void insertInvoice(Integer id, Integer domain, Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Double taxable_base, Double vat_quota, Double retention_quota, Double total)
+	protected void insertInvoice(Integer id, Integer domain, Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Boolean advance, Double taxable_base, Double vat_quota, Double retention_quota, Double total, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
 	throws SQLException {
 
 		Invoice invoice_ = new Invoice();
@@ -45983,16 +49089,21 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		invoice_.service = service;
 		invoice_.rectification_type = rectification_type;
 		invoice_.rectification_invoice = rectification_invoice;
+		invoice_.advance = advance;
 		invoice_.taxable_base = taxable_base;
 		invoice_.vat_quota = vat_quota;
 		invoice_.retention_quota = retention_quota;
 		invoice_.total = total;
+		invoice_.creation_user = creation_user;
+		invoice_.creation_date = creation_date;
+		invoice_.modification_user = modification_user;
+		invoice_.modification_date = modification_date;
 
 		invoices.add(invoice_);
 		
 		int invoiceCount = invoices.size();
 		
-		if ( 389 * invoiceCount >=  this.maxAllowedPacket ){
+		if ( 459 * invoiceCount >=  this.maxAllowedPacket ){
 			insertInvoice(invoices);
 			invoices.clear();
 		} 
@@ -46029,14 +49140,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param service Indica si es una Factura de servicios
 	 * @param rectification_type Tipo de rectificacion (Normal o Especial)
 	 * @param rectification_invoice Relacion de rectificacion de Facturas
+	 * @param advance Indica si la Factura es un anticipo
 	 * @param taxable_base Base Imponible de la Factura
 	 * @param vat_quota Cuota de IVA de la Factura
 	 * @param retention_quota Cuota de IRPF de la Factura
 	 * @param total Total Factura
+	 * @param creation_user Usuario de creacion
+	 * @param creation_date Fecha de creacion
+	 * @param modification_user Usuario de modificacion
+	 * @param modification_date Fecha de modificacion
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoice(Integer domain, Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Double taxable_base, Double vat_quota, Double retention_quota, Double total)
+	public int insertInvoice(Integer domain, Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Boolean advance, Double taxable_base, Double vat_quota, Double retention_quota, Double total, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
 	throws SQLException {
 		int id = nextInvoiceId();
 
@@ -46070,16 +49186,21 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		invoice_.service = service;
 		invoice_.rectification_type = rectification_type;
 		invoice_.rectification_invoice = rectification_invoice;
+		invoice_.advance = advance;
 		invoice_.taxable_base = taxable_base;
 		invoice_.vat_quota = vat_quota;
 		invoice_.retention_quota = retention_quota;
 		invoice_.total = total;
+		invoice_.creation_user = creation_user;
+		invoice_.creation_date = creation_date;
+		invoice_.modification_user = modification_user;
+		invoice_.modification_date = modification_date;
 
 		invoices.add(invoice_);
 		
 		int invoiceCount = invoices.size();
 		
-		if ( 389 * invoiceCount >=  this.maxAllowedPacket ){
+		if ( 459 * invoiceCount >=  this.maxAllowedPacket ){
 			insertInvoice(invoices);
 			invoices.clear();
 		} 
@@ -46103,6 +49224,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short mimeType; 
 		protected String description; 
 		protected Blob data; 
+		protected Short type; 
+		protected Date attach_date; 
 	}
 	
 	protected void insertInvoice_attach( List<Invoice_attach> invoice_attachs )
@@ -46113,7 +49236,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( invoice_attachStmt != null ) {
 				invoice_attachStmt.close();
 			}
-			String values = "(?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -46122,7 +49245,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			invoice_attachStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO invoice_attach (id,domain,invoice,mimeType,description,data)"  
+				"INSERT INTO invoice_attach (id,domain,invoice,mimeType,description,data,type,attach_date)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			invoice_attachStmtSize = size;
@@ -46155,6 +49278,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoice_attachStmt.setNull(offset++, -4);
 			else
 				invoice_attachStmt.setBlob(offset++, invoice_attach.data);
+			if ( invoice_attach.type == null )
+				invoice_attachStmt.setNull(offset++, -6);
+			else
+				invoice_attachStmt.setShort(offset++, invoice_attach.type);
+			if ( invoice_attach.attach_date == null )
+				invoice_attachStmt.setNull(offset++, 91);
+			else
+				invoice_attachStmt.setDate(offset++, invoice_attach.attach_date);
 		}
 		invoice_attachStmt.executeUpdate();
 		invoice_attachInserted += size;
@@ -46211,9 +49342,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param mimeType Mime Type del Archivo Adjunto
 	 * @param description Descripcion del Archivo Adjunto
 	 * @param data Archivo Adjunto en binario
+	 * @param type Tipo de Archivo Adjunto
+	 * @param attach_date Fecha del Archivo Adjunto
 	 * @throws SQLException
 	*/
-	protected void insertInvoice_attach(Integer id, Integer domain, Integer invoice, Short mimeType, String description, Blob data)
+	protected void insertInvoice_attach(Integer id, Integer domain, Integer invoice, Short mimeType, String description, Blob data, Short type, Date attach_date)
 	throws SQLException {
 
 		Invoice_attach invoice_attach_ = new Invoice_attach();
@@ -46223,12 +49356,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		invoice_attach_.mimeType = mimeType;
 		invoice_attach_.description = description;
 		invoice_attach_.data = data;
+		invoice_attach_.type = type;
+		invoice_attach_.attach_date = attach_date;
 
 		invoice_attachs.add(invoice_attach_);
 		
 		int invoice_attachCount = invoice_attachs.size();
 		
-		if ( 97 * invoice_attachCount >=  this.maxAllowedPacket ){
+		if ( 110 * invoice_attachCount >=  this.maxAllowedPacket ){
 			insertInvoice_attach(invoice_attachs);
 			invoice_attachs.clear();
 		} 
@@ -46242,10 +49377,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param mimeType Mime Type del Archivo Adjunto
 	 * @param description Descripcion del Archivo Adjunto
 	 * @param data Archivo Adjunto en binario
+	 * @param type Tipo de Archivo Adjunto
+	 * @param attach_date Fecha del Archivo Adjunto
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoice_attach(Integer domain, Integer invoice, Short mimeType, String description, Blob data)
+	public int insertInvoice_attach(Integer domain, Integer invoice, Short mimeType, String description, Blob data, Short type, Date attach_date)
 	throws SQLException {
 		int id = nextInvoice_attachId();
 
@@ -46256,12 +49393,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		invoice_attach_.mimeType = mimeType;
 		invoice_attach_.description = description;
 		invoice_attach_.data = data;
+		invoice_attach_.type = type;
+		invoice_attach_.attach_date = attach_date;
 
 		invoice_attachs.add(invoice_attach_);
 		
 		int invoice_attachCount = invoice_attachs.size();
 		
-		if ( 97 * invoice_attachCount >=  this.maxAllowedPacket ){
+		if ( 110 * invoice_attachCount >=  this.maxAllowedPacket ){
 			insertInvoice_attach(invoice_attachs);
 			invoice_attachs.clear();
 		} 
@@ -46441,7 +49580,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param invoice Identificador de la Factura
 	 * @param project Identificador del Proyecto
-	 * @param line Numero de lùnea del Detalle dentro de la Factura
+	 * @param line Numero de l?nea del Detalle dentro de la Factura
 	 * @param item Identificador del Articulo del Detalle de Factura
 	 * @param description Descripcion del Detalle de Factura
 	 * @param quantity Cantidad del Detalle de Factura
@@ -46492,7 +49631,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param invoice Identificador de la Factura
 	 * @param project Identificador del Proyecto
-	 * @param line Numero de lùnea del Detalle dentro de la Factura
+	 * @param line Numero de l?nea del Detalle dentro de la Factura
 	 * @param item Identificador del Articulo del Detalle de Factura
 	 * @param description Descripcion del Detalle de Factura
 	 * @param quantity Cantidad del Detalle de Factura
@@ -46869,170 +50008,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int course_instructorStmtSize = 0;
-
-	private int course_instructorInserted = 0;
-
-	private List<Course_instructor> course_instructors = 
-		new LinkedList<Course_instructor>();
-
-	private PreparedStatement course_instructorStmt = null;
-
-	public static class Course_instructor {
-		protected Integer id; 
-		protected Integer course; 
-		protected Integer employee; 
-		protected Short type; 
-	}
-	
-	protected void insertCourse_instructor( List<Course_instructor> course_instructors )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = course_instructors.size();
-		if ( course_instructorStmtSize != size ) {
-			if ( course_instructorStmt != null ) {
-				course_instructorStmt.close();
-			}
-			String values = "(?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			course_instructorStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO course_instructor (id,course,employee,type)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			course_instructorStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Course_instructor course_instructor : course_instructors) {
-			if ( course_instructor.id == null )
-				course_instructorStmt.setNull(offset++, 4);
-			else
-				course_instructorStmt.setInt(offset++, course_instructor.id);
-			if ( course_instructor.course == null )
-				course_instructorStmt.setNull(offset++, 4);
-			else
-				course_instructorStmt.setInt(offset++, course_instructor.course);
-			if ( course_instructor.employee == null )
-				course_instructorStmt.setNull(offset++, 4);
-			else
-				course_instructorStmt.setInt(offset++, course_instructor.employee);
-			if ( course_instructor.type == null )
-				course_instructorStmt.setNull(offset++, -6);
-			else
-				course_instructorStmt.setShort(offset++, course_instructor.type);
-		}
-		course_instructorStmt.executeUpdate();
-		course_instructorInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Course_instructors in {} milliseconds.", size, course_instructorInserted, elapsed );		
-	}
-		
-		private int course_instructorId = -1;
-		
-		private void initCourse_instructorId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `course_instructor`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.course_instructorId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCourse_instructorId() {
-			return ++this.course_instructorId;
-		} 
-
-		public void setCourse_instructorId(Integer course_instructorId) {
-			this.course_instructorId = course_instructorId;
-		} 
-	
-	private void flushCourse_instructor(  )
-	throws SQLException {
-		if ( ! course_instructors.isEmpty() )
-			insertCourse_instructor(course_instructors);
-		if ( course_instructorStmt != null )
-			course_instructorStmt.close();
-	}	
-
-	/**
-	 * Course_instructor
-	 * @param id Identificador unico
-	 * @param course Identificador del Curso
-	 * @param employee Identificador del Profesor
-	 * @param type Tipo de Profesor
-	 * @throws SQLException
-	*/
-	protected void insertCourse_instructor(Integer id, Integer course, Integer employee, Short type)
-	throws SQLException {
-
-		Course_instructor course_instructor_ = new Course_instructor();
-		course_instructor_.id = id;
-		course_instructor_.course = course;
-		course_instructor_.employee = employee;
-		course_instructor_.type = type;
-
-		course_instructors.add(course_instructor_);
-		
-		int course_instructorCount = course_instructors.size();
-		
-		if ( 33 * course_instructorCount >=  this.maxAllowedPacket ){
-			insertCourse_instructor(course_instructors);
-			course_instructors.clear();
-		} 
-	}
-
-
-	/**
-	 * Course_instructor
-	 * @param course Identificador del Curso
-	 * @param employee Identificador del Profesor
-	 * @param type Tipo de Profesor
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCourse_instructor(Integer course, Integer employee, Short type)
-	throws SQLException {
-		int id = nextCourse_instructorId();
-
-		Course_instructor course_instructor_ = new Course_instructor();
-		course_instructor_.id = id;
-		course_instructor_.course = course;
-		course_instructor_.employee = employee;
-		course_instructor_.type = type;
-
-		course_instructors.add(course_instructor_);
-		
-		int course_instructorCount = course_instructors.size();
-		
-		if ( 33 * course_instructorCount >=  this.maxAllowedPacket ){
-			insertCourse_instructor(course_instructors);
-			course_instructors.clear();
-		} 
-		return id;
-	}
-
-
 	private int account_entry_finance_trackingStmtSize = 0;
 
 	private int account_entry_finance_trackingInserted = 0;
@@ -47192,6 +50167,179 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 40 * account_entry_finance_trackingCount >=  this.maxAllowedPacket ){
 			insertAccount_entry_finance_tracking(account_entry_finance_trackings);
 			account_entry_finance_trackings.clear();
+		} 
+		return id;
+	}
+
+
+	private int course_instructorStmtSize = 0;
+
+	private int course_instructorInserted = 0;
+
+	private List<Course_instructor> course_instructors = 
+		new LinkedList<Course_instructor>();
+
+	private PreparedStatement course_instructorStmt = null;
+
+	public static class Course_instructor {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer course; 
+		protected Integer employee; 
+		protected Short type; 
+	}
+	
+	protected void insertCourse_instructor( List<Course_instructor> course_instructors )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = course_instructors.size();
+		if ( course_instructorStmtSize != size ) {
+			if ( course_instructorStmt != null ) {
+				course_instructorStmt.close();
+			}
+			String values = "(?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			course_instructorStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO course_instructor (id,domain,course,employee,type)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			course_instructorStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Course_instructor course_instructor : course_instructors) {
+			if ( course_instructor.id == null )
+				course_instructorStmt.setNull(offset++, 4);
+			else
+				course_instructorStmt.setInt(offset++, course_instructor.id);
+			if ( course_instructor.domain == null )
+				course_instructorStmt.setNull(offset++, 4);
+			else
+				course_instructorStmt.setInt(offset++, course_instructor.domain);
+			if ( course_instructor.course == null )
+				course_instructorStmt.setNull(offset++, 4);
+			else
+				course_instructorStmt.setInt(offset++, course_instructor.course);
+			if ( course_instructor.employee == null )
+				course_instructorStmt.setNull(offset++, 4);
+			else
+				course_instructorStmt.setInt(offset++, course_instructor.employee);
+			if ( course_instructor.type == null )
+				course_instructorStmt.setNull(offset++, -6);
+			else
+				course_instructorStmt.setShort(offset++, course_instructor.type);
+		}
+		course_instructorStmt.executeUpdate();
+		course_instructorInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Course_instructors in {} milliseconds.", size, course_instructorInserted, elapsed );		
+	}
+		
+		private int course_instructorId = -1;
+		
+		private void initCourse_instructorId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `course_instructor`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.course_instructorId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextCourse_instructorId() {
+			return ++this.course_instructorId;
+		} 
+
+		public void setCourse_instructorId(Integer course_instructorId) {
+			this.course_instructorId = course_instructorId;
+		} 
+	
+	private void flushCourse_instructor(  )
+	throws SQLException {
+		if ( ! course_instructors.isEmpty() )
+			insertCourse_instructor(course_instructors);
+		if ( course_instructorStmt != null )
+			course_instructorStmt.close();
+	}	
+
+	/**
+	 * Course_instructor
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param course Identificador del Curso
+	 * @param employee Identificador del Profesor
+	 * @param type Tipo de Profesor
+	 * @throws SQLException
+	*/
+	protected void insertCourse_instructor(Integer id, Integer domain, Integer course, Integer employee, Short type)
+	throws SQLException {
+
+		Course_instructor course_instructor_ = new Course_instructor();
+		course_instructor_.id = id;
+		course_instructor_.domain = domain;
+		course_instructor_.course = course;
+		course_instructor_.employee = employee;
+		course_instructor_.type = type;
+
+		course_instructors.add(course_instructor_);
+		
+		int course_instructorCount = course_instructors.size();
+		
+		if ( 43 * course_instructorCount >=  this.maxAllowedPacket ){
+			insertCourse_instructor(course_instructors);
+			course_instructors.clear();
+		} 
+	}
+
+
+	/**
+	 * Course_instructor
+	 * @param domain Identificador del Dominio
+	 * @param course Identificador del Curso
+	 * @param employee Identificador del Profesor
+	 * @param type Tipo de Profesor
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertCourse_instructor(Integer domain, Integer course, Integer employee, Short type)
+	throws SQLException {
+		int id = nextCourse_instructorId();
+
+		Course_instructor course_instructor_ = new Course_instructor();
+		course_instructor_.id = id;
+		course_instructor_.domain = domain;
+		course_instructor_.course = course;
+		course_instructor_.employee = employee;
+		course_instructor_.type = type;
+
+		course_instructors.add(course_instructor_);
+		
+		int course_instructorCount = course_instructors.size();
+		
+		if ( 43 * course_instructorCount >=  this.maxAllowedPacket ){
+			insertCourse_instructor(course_instructors);
+			course_instructors.clear();
 		} 
 		return id;
 	}
@@ -48734,10 +51882,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class Action {
 		protected Integer id; 
-		protected Integer domain; 
 		protected Boolean menu; 
 		protected String name; 
-		protected Integer application_id; 
+		protected Integer application; 
 	}
 	
 	protected void insertAction( List<Action> actions )
@@ -48748,7 +51895,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( actionStmt != null ) {
 				actionStmt.close();
 			}
-			String values = "(?,?,?,?,?)";
+			String values = "(?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -48757,7 +51904,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			actionStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO action (id,domain,menu,name,application_id)"  
+				"INSERT INTO action (id,menu,name,application)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			actionStmtSize = size;
@@ -48770,10 +51917,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				actionStmt.setNull(offset++, 4);
 			else
 				actionStmt.setInt(offset++, action.id);
-			if ( action.domain == null )
-				actionStmt.setNull(offset++, 4);
-			else
-				actionStmt.setInt(offset++, action.domain);
 			if ( action.menu == null )
 				actionStmt.setNull(offset++, -7);
 			else
@@ -48782,10 +51925,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				actionStmt.setNull(offset++, 12);
 			else
 				actionStmt.setString(offset++, action.name);
-			if ( action.application_id == null )
+			if ( action.application == null )
 				actionStmt.setNull(offset++, 4);
 			else
-				actionStmt.setInt(offset++, action.application_id);
+				actionStmt.setInt(offset++, action.application);
 		}
 		actionStmt.executeUpdate();
 		actionInserted += size;
@@ -48837,27 +51980,25 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Action
 	 * @param id Identificador unico
-	 * @param domain Identificador del Dominio
 	 * @param menu Indica si la Accion esta o no dentro del menu
 	 * @param name Nombre de la Accion
-	 * @param application_id Aplicacion a la que pertenece la Accion
+	 * @param application Aplicacion a la que pertenece la Accion
 	 * @throws SQLException
 	*/
-	protected void insertAction(Integer id, Integer domain, Boolean menu, String name, Integer application_id)
+	protected void insertAction(Integer id, Boolean menu, String name, Integer application)
 	throws SQLException {
 
 		Action action_ = new Action();
 		action_.id = id;
-		action_.domain = domain;
 		action_.menu = menu;
 		action_.name = name;
-		action_.application_id = application_id;
+		action_.application = application;
 
 		actions.add(action_);
 		
 		int actionCount = actions.size();
 		
-		if ( 94 * actionCount >=  this.maxAllowedPacket ){
+		if ( 84 * actionCount >=  this.maxAllowedPacket ){
 			insertAction(actions);
 			actions.clear();
 		} 
@@ -48866,29 +52007,27 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Action
-	 * @param domain Identificador del Dominio
 	 * @param menu Indica si la Accion esta o no dentro del menu
 	 * @param name Nombre de la Accion
-	 * @param application_id Aplicacion a la que pertenece la Accion
+	 * @param application Aplicacion a la que pertenece la Accion
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertAction(Integer domain, Boolean menu, String name, Integer application_id)
+	public int insertAction(Boolean menu, String name, Integer application)
 	throws SQLException {
 		int id = nextActionId();
 
 		Action action_ = new Action();
 		action_.id = id;
-		action_.domain = domain;
 		action_.menu = menu;
 		action_.name = name;
-		action_.application_id = application_id;
+		action_.application = application;
 
 		actions.add(action_);
 		
 		int actionCount = actions.size();
 		
-		if ( 94 * actionCount >=  this.maxAllowedPacket ){
+		if ( 84 * actionCount >=  this.maxAllowedPacket ){
 			insertAction(actions);
 			actions.clear();
 		} 
@@ -50172,6 +53311,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class Academic_skill {
 		protected Integer id; 
+		protected Integer domain; 
 		protected String code; 
 		protected String description; 
 	}
@@ -50184,7 +53324,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( academic_skillStmt != null ) {
 				academic_skillStmt.close();
 			}
-			String values = "(?,?,?)";
+			String values = "(?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -50193,7 +53333,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			academic_skillStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO academic_skill (id,code,description)"  
+				"INSERT INTO academic_skill (id,domain,code,description)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			academic_skillStmtSize = size;
@@ -50206,6 +53346,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				academic_skillStmt.setNull(offset++, 4);
 			else
 				academic_skillStmt.setInt(offset++, academic_skill.id);
+			if ( academic_skill.domain == null )
+				academic_skillStmt.setNull(offset++, 4);
+			else
+				academic_skillStmt.setInt(offset++, academic_skill.domain);
 			if ( academic_skill.code == null )
 				academic_skillStmt.setNull(offset++, 1);
 			else
@@ -50265,15 +53409,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Academic_skill
 	 * @param id Identificador unico de la Aptitud Academica
+	 * @param domain Identificador del Dominio
 	 * @param code Codigo de la Aptitud Academica
 	 * @param description Descripcion de la Aptitud Academica
 	 * @throws SQLException
 	*/
-	protected void insertAcademic_skill(Integer id, String code, String description)
+	protected void insertAcademic_skill(Integer id, Integer domain, String code, String description)
 	throws SQLException {
 
 		Academic_skill academic_skill_ = new Academic_skill();
 		academic_skill_.id = id;
+		academic_skill_.domain = domain;
 		academic_skill_.code = code;
 		academic_skill_.description = description;
 
@@ -50281,7 +53427,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int academic_skillCount = academic_skills.size();
 		
-		if ( 79 * academic_skillCount >=  this.maxAllowedPacket ){
+		if ( 89 * academic_skillCount >=  this.maxAllowedPacket ){
 			insertAcademic_skill(academic_skills);
 			academic_skills.clear();
 		} 
@@ -50290,17 +53436,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Academic_skill
+	 * @param domain Identificador del Dominio
 	 * @param code Codigo de la Aptitud Academica
 	 * @param description Descripcion de la Aptitud Academica
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertAcademic_skill(String code, String description)
+	public int insertAcademic_skill(Integer domain, String code, String description)
 	throws SQLException {
 		int id = nextAcademic_skillId();
 
 		Academic_skill academic_skill_ = new Academic_skill();
 		academic_skill_.id = id;
+		academic_skill_.domain = domain;
 		academic_skill_.code = code;
 		academic_skill_.description = description;
 
@@ -50308,9 +53456,227 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int academic_skillCount = academic_skills.size();
 		
-		if ( 79 * academic_skillCount >=  this.maxAllowedPacket ){
+		if ( 89 * academic_skillCount >=  this.maxAllowedPacket ){
 			insertAcademic_skill(academic_skills);
 			academic_skills.clear();
+		} 
+		return id;
+	}
+
+
+	private int offer_detailStmtSize = 0;
+
+	private int offer_detailInserted = 0;
+
+	private List<Offer_detail> offer_details = 
+		new LinkedList<Offer_detail>();
+
+	private PreparedStatement offer_detailStmt = null;
+
+	public static class Offer_detail {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer offer; 
+		protected Integer line; 
+		protected Integer item; 
+		protected String description; 
+		protected Double quantity; 
+		protected Double price; 
+		protected String discount_expr; 
+		protected Short status; 
+	}
+	
+	protected void insertOffer_detail( List<Offer_detail> offer_details )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = offer_details.size();
+		if ( offer_detailStmtSize != size ) {
+			if ( offer_detailStmt != null ) {
+				offer_detailStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			offer_detailStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO offer_detail (id,domain,offer,line,item,description,quantity,price,discount_expr,status)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			offer_detailStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Offer_detail offer_detail : offer_details) {
+			if ( offer_detail.id == null )
+				offer_detailStmt.setNull(offset++, 4);
+			else
+				offer_detailStmt.setInt(offset++, offer_detail.id);
+			if ( offer_detail.domain == null )
+				offer_detailStmt.setNull(offset++, 4);
+			else
+				offer_detailStmt.setInt(offset++, offer_detail.domain);
+			if ( offer_detail.offer == null )
+				offer_detailStmt.setNull(offset++, 4);
+			else
+				offer_detailStmt.setInt(offset++, offer_detail.offer);
+			if ( offer_detail.line == null )
+				offer_detailStmt.setNull(offset++, 5);
+			else
+				offer_detailStmt.setInt(offset++, offer_detail.line);
+			if ( offer_detail.item == null )
+				offer_detailStmt.setNull(offset++, 4);
+			else
+				offer_detailStmt.setInt(offset++, offer_detail.item);
+			if ( offer_detail.description == null )
+				offer_detailStmt.setNull(offset++, 12);
+			else
+				offer_detailStmt.setString(offset++, offer_detail.description);
+			if ( offer_detail.quantity == null )
+				offer_detailStmt.setNull(offset++, 8);
+			else
+				offer_detailStmt.setDouble(offset++, offer_detail.quantity);
+			if ( offer_detail.price == null )
+				offer_detailStmt.setNull(offset++, 8);
+			else
+				offer_detailStmt.setDouble(offset++, offer_detail.price);
+			if ( offer_detail.discount_expr == null )
+				offer_detailStmt.setNull(offset++, 12);
+			else
+				offer_detailStmt.setString(offset++, offer_detail.discount_expr);
+			if ( offer_detail.status == null )
+				offer_detailStmt.setNull(offset++, -6);
+			else
+				offer_detailStmt.setShort(offset++, offer_detail.status);
+		}
+		offer_detailStmt.executeUpdate();
+		offer_detailInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Offer_details in {} milliseconds.", size, offer_detailInserted, elapsed );		
+	}
+		
+		private int offer_detailId = -1;
+		
+		private void initOffer_detailId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `offer_detail`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.offer_detailId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextOffer_detailId() {
+			return ++this.offer_detailId;
+		} 
+
+		public void setOffer_detailId(Integer offer_detailId) {
+			this.offer_detailId = offer_detailId;
+		} 
+	
+	private void flushOffer_detail(  )
+	throws SQLException {
+		if ( ! offer_details.isEmpty() )
+			insertOffer_detail(offer_details);
+		if ( offer_detailStmt != null )
+			offer_detailStmt.close();
+	}	
+
+	/**
+	 * Offer_detail
+	 * @param id Identificador unico del Detalle de Presupuesto
+	 * @param domain Identificador del Dominio
+	 * @param offer Identificador del Presupuesto
+	 * @param line Numero de l?nea del Detalle dentro del Presupuesto
+	 * @param item Identificador del Articulo
+	 * @param description Descripci?n del Articulo
+	 * @param quantity Cantidad del Articulo
+	 * @param price Precio del Articulo
+	 * @param discount_expr Descuentos del Articulo
+	 * @param status Estado del Detalle del Presupuesto
+	 * @throws SQLException
+	*/
+	protected void insertOffer_detail(Integer id, Integer domain, Integer offer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short status)
+	throws SQLException {
+
+		Offer_detail offer_detail_ = new Offer_detail();
+		offer_detail_.id = id;
+		offer_detail_.domain = domain;
+		offer_detail_.offer = offer;
+		offer_detail_.line = line;
+		offer_detail_.item = item;
+		offer_detail_.description = description;
+		offer_detail_.quantity = quantity;
+		offer_detail_.price = price;
+		offer_detail_.discount_expr = discount_expr;
+		offer_detail_.status = status;
+
+		offer_details.add(offer_detail_);
+		
+		int offer_detailCount = offer_details.size();
+		
+		if ( 1141 * offer_detailCount >=  this.maxAllowedPacket ){
+			insertOffer_detail(offer_details);
+			offer_details.clear();
+		} 
+	}
+
+
+	/**
+	 * Offer_detail
+	 * @param domain Identificador del Dominio
+	 * @param offer Identificador del Presupuesto
+	 * @param line Numero de l?nea del Detalle dentro del Presupuesto
+	 * @param item Identificador del Articulo
+	 * @param description Descripci?n del Articulo
+	 * @param quantity Cantidad del Articulo
+	 * @param price Precio del Articulo
+	 * @param discount_expr Descuentos del Articulo
+	 * @param status Estado del Detalle del Presupuesto
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertOffer_detail(Integer domain, Integer offer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short status)
+	throws SQLException {
+		int id = nextOffer_detailId();
+
+		Offer_detail offer_detail_ = new Offer_detail();
+		offer_detail_.id = id;
+		offer_detail_.domain = domain;
+		offer_detail_.offer = offer;
+		offer_detail_.line = line;
+		offer_detail_.item = item;
+		offer_detail_.description = description;
+		offer_detail_.quantity = quantity;
+		offer_detail_.price = price;
+		offer_detail_.discount_expr = discount_expr;
+		offer_detail_.status = status;
+
+		offer_details.add(offer_detail_);
+		
+		int offer_detailCount = offer_details.size();
+		
+		if ( 1141 * offer_detailCount >=  this.maxAllowedPacket ){
+			insertOffer_detail(offer_details);
+			offer_details.clear();
 		} 
 		return id;
 	}
@@ -50495,7 +53861,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param document Impreso (.pdf) del contrato.
 	 * @param description Descripcion
 	 * @param status Estado de notificacion del contrato
-	 * @param registration Nùmero libro de matricula
+	 * @param registration N?mero libro de matricula
 	 * @param seniority_date Fecha de antiguedad
 	 * @param enterprise_activity Actividad
 	 * @param ss_regime Regimen de la Seguridad Social
@@ -50546,7 +53912,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param document Impreso (.pdf) del contrato.
 	 * @param description Descripcion
 	 * @param status Estado de notificacion del contrato
-	 * @param registration Nùmero libro de matricula
+	 * @param registration N?mero libro de matricula
 	 * @param seniority_date Fecha de antiguedad
 	 * @param enterprise_activity Actividad
 	 * @param ss_regime Regimen de la Seguridad Social
@@ -50583,224 +53949,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 190 * contractCount >=  this.maxAllowedPacket ){
 			insertContract(contracts);
 			contracts.clear();
-		} 
-		return id;
-	}
-
-
-	private int offer_detailStmtSize = 0;
-
-	private int offer_detailInserted = 0;
-
-	private List<Offer_detail> offer_details = 
-		new LinkedList<Offer_detail>();
-
-	private PreparedStatement offer_detailStmt = null;
-
-	public static class Offer_detail {
-		protected Integer id; 
-		protected Integer domain; 
-		protected Integer offer; 
-		protected Integer line; 
-		protected Integer item; 
-		protected String description; 
-		protected Double quantity; 
-		protected Double price; 
-		protected String discount_expr; 
-		protected Short status; 
-	}
-	
-	protected void insertOffer_detail( List<Offer_detail> offer_details )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = offer_details.size();
-		if ( offer_detailStmtSize != size ) {
-			if ( offer_detailStmt != null ) {
-				offer_detailStmt.close();
-			}
-			String values = "(?,?,?,?,?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			offer_detailStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO offer_detail (id,domain,offer,line,item,description,quantity,price,discount_expr,status)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			offer_detailStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Offer_detail offer_detail : offer_details) {
-			if ( offer_detail.id == null )
-				offer_detailStmt.setNull(offset++, 4);
-			else
-				offer_detailStmt.setInt(offset++, offer_detail.id);
-			if ( offer_detail.domain == null )
-				offer_detailStmt.setNull(offset++, 4);
-			else
-				offer_detailStmt.setInt(offset++, offer_detail.domain);
-			if ( offer_detail.offer == null )
-				offer_detailStmt.setNull(offset++, 4);
-			else
-				offer_detailStmt.setInt(offset++, offer_detail.offer);
-			if ( offer_detail.line == null )
-				offer_detailStmt.setNull(offset++, 5);
-			else
-				offer_detailStmt.setInt(offset++, offer_detail.line);
-			if ( offer_detail.item == null )
-				offer_detailStmt.setNull(offset++, 4);
-			else
-				offer_detailStmt.setInt(offset++, offer_detail.item);
-			if ( offer_detail.description == null )
-				offer_detailStmt.setNull(offset++, 12);
-			else
-				offer_detailStmt.setString(offset++, offer_detail.description);
-			if ( offer_detail.quantity == null )
-				offer_detailStmt.setNull(offset++, 8);
-			else
-				offer_detailStmt.setDouble(offset++, offer_detail.quantity);
-			if ( offer_detail.price == null )
-				offer_detailStmt.setNull(offset++, 8);
-			else
-				offer_detailStmt.setDouble(offset++, offer_detail.price);
-			if ( offer_detail.discount_expr == null )
-				offer_detailStmt.setNull(offset++, 12);
-			else
-				offer_detailStmt.setString(offset++, offer_detail.discount_expr);
-			if ( offer_detail.status == null )
-				offer_detailStmt.setNull(offset++, -6);
-			else
-				offer_detailStmt.setShort(offset++, offer_detail.status);
-		}
-		offer_detailStmt.executeUpdate();
-		offer_detailInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Offer_details in {} milliseconds.", size, offer_detailInserted, elapsed );		
-	}
-		
-		private int offer_detailId = -1;
-		
-		private void initOffer_detailId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `offer_detail`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.offer_detailId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextOffer_detailId() {
-			return ++this.offer_detailId;
-		} 
-
-		public void setOffer_detailId(Integer offer_detailId) {
-			this.offer_detailId = offer_detailId;
-		} 
-	
-	private void flushOffer_detail(  )
-	throws SQLException {
-		if ( ! offer_details.isEmpty() )
-			insertOffer_detail(offer_details);
-		if ( offer_detailStmt != null )
-			offer_detailStmt.close();
-	}	
-
-	/**
-	 * Offer_detail
-	 * @param id Identificador unico del Detalle de Presupuesto
-	 * @param domain Identificador del Dominio
-	 * @param offer Identificador del Presupuesto
-	 * @param line Numero de lùnea del Detalle dentro del Presupuesto
-	 * @param item Identificador del Articulo
-	 * @param description Descripciùn del Articulo
-	 * @param quantity Cantidad del Articulo
-	 * @param price Precio del Articulo
-	 * @param discount_expr Descuentos del Articulo
-	 * @param status Estado del Detalle del Presupuesto
-	 * @throws SQLException
-	*/
-	protected void insertOffer_detail(Integer id, Integer domain, Integer offer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short status)
-	throws SQLException {
-
-		Offer_detail offer_detail_ = new Offer_detail();
-		offer_detail_.id = id;
-		offer_detail_.domain = domain;
-		offer_detail_.offer = offer;
-		offer_detail_.line = line;
-		offer_detail_.item = item;
-		offer_detail_.description = description;
-		offer_detail_.quantity = quantity;
-		offer_detail_.price = price;
-		offer_detail_.discount_expr = discount_expr;
-		offer_detail_.status = status;
-
-		offer_details.add(offer_detail_);
-		
-		int offer_detailCount = offer_details.size();
-		
-		if ( 1141 * offer_detailCount >=  this.maxAllowedPacket ){
-			insertOffer_detail(offer_details);
-			offer_details.clear();
-		} 
-	}
-
-
-	/**
-	 * Offer_detail
-	 * @param domain Identificador del Dominio
-	 * @param offer Identificador del Presupuesto
-	 * @param line Numero de lùnea del Detalle dentro del Presupuesto
-	 * @param item Identificador del Articulo
-	 * @param description Descripciùn del Articulo
-	 * @param quantity Cantidad del Articulo
-	 * @param price Precio del Articulo
-	 * @param discount_expr Descuentos del Articulo
-	 * @param status Estado del Detalle del Presupuesto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertOffer_detail(Integer domain, Integer offer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short status)
-	throws SQLException {
-		int id = nextOffer_detailId();
-
-		Offer_detail offer_detail_ = new Offer_detail();
-		offer_detail_.id = id;
-		offer_detail_.domain = domain;
-		offer_detail_.offer = offer;
-		offer_detail_.line = line;
-		offer_detail_.item = item;
-		offer_detail_.description = description;
-		offer_detail_.quantity = quantity;
-		offer_detail_.price = price;
-		offer_detail_.discount_expr = discount_expr;
-		offer_detail_.status = status;
-
-		offer_details.add(offer_detail_);
-		
-		int offer_detailCount = offer_details.size();
-		
-		if ( 1141 * offer_detailCount >=  this.maxAllowedPacket ){
-			insertOffer_detail(offer_details);
-			offer_details.clear();
 		} 
 		return id;
 	}
@@ -51185,6 +54333,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class Mark {
 		protected Integer id; 
+		protected Integer domain; 
 		protected Integer subject; 
 		protected Integer alumn; 
 		protected Short evaluation; 
@@ -51199,7 +54348,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( markStmt != null ) {
 				markStmt.close();
 			}
-			String values = "(?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -51208,7 +54357,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			markStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO mark (id,subject,alumn,evaluation,mark)"  
+				"INSERT INTO mark (id,domain,subject,alumn,evaluation,mark)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			markStmtSize = size;
@@ -51221,6 +54370,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				markStmt.setNull(offset++, 4);
 			else
 				markStmt.setInt(offset++, mark.id);
+			if ( mark.domain == null )
+				markStmt.setNull(offset++, 4);
+			else
+				markStmt.setInt(offset++, mark.domain);
 			if ( mark.subject == null )
 				markStmt.setNull(offset++, 4);
 			else
@@ -51288,17 +54441,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Mark
 	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
 	 * @param subject Identificador de Asignatura
 	 * @param alumn Identificador de Alumno
 	 * @param evaluation Numero de evaluacion
 	 * @param mark Nota
 	 * @throws SQLException
 	*/
-	protected void insertMark(Integer id, Integer subject, Integer alumn, Short evaluation, Double mark)
+	protected void insertMark(Integer id, Integer domain, Integer subject, Integer alumn, Short evaluation, Double mark)
 	throws SQLException {
 
 		Mark mark_ = new Mark();
 		mark_.id = id;
+		mark_.domain = domain;
 		mark_.subject = subject;
 		mark_.alumn = alumn;
 		mark_.evaluation = evaluation;
@@ -51308,7 +54463,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int markCount = marks.size();
 		
-		if ( 48 * markCount >=  this.maxAllowedPacket ){
+		if ( 58 * markCount >=  this.maxAllowedPacket ){
 			insertMark(marks);
 			marks.clear();
 		} 
@@ -51317,6 +54472,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Mark
+	 * @param domain Identificador del Dominio
 	 * @param subject Identificador de Asignatura
 	 * @param alumn Identificador de Alumno
 	 * @param evaluation Numero de evaluacion
@@ -51324,12 +54480,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertMark(Integer subject, Integer alumn, Short evaluation, Double mark)
+	public int insertMark(Integer domain, Integer subject, Integer alumn, Short evaluation, Double mark)
 	throws SQLException {
 		int id = nextMarkId();
 
 		Mark mark_ = new Mark();
 		mark_.id = id;
+		mark_.domain = domain;
 		mark_.subject = subject;
 		mark_.alumn = alumn;
 		mark_.evaluation = evaluation;
@@ -51339,7 +54496,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int markCount = marks.size();
 		
-		if ( 48 * markCount >=  this.maxAllowedPacket ){
+		if ( 58 * markCount >=  this.maxAllowedPacket ){
 			insertMark(marks);
 			marks.clear();
 		} 
@@ -51693,6 +54850,269 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int fs_mod349_detailStmtSize = 0;
+
+	private int fs_mod349_detailInserted = 0;
+
+	private List<Fs_mod349_detail> fs_mod349_details = 
+		new LinkedList<Fs_mod349_detail>();
+
+	private PreparedStatement fs_mod349_detailStmt = null;
+
+	public static class Fs_mod349_detail {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer fs_mod349; 
+		protected Boolean rectification; 
+		protected String type; 
+		protected String document; 
+		protected Integer registry; 
+		protected String name; 
+		protected String country; 
+		protected Double accumulated; 
+		protected Double declared; 
+		protected Double amount; 
+		protected Integer rectified_year; 
+		protected Short rectified_period; 
+		protected String rectified_amount; 
+	}
+	
+	protected void insertFs_mod349_detail( List<Fs_mod349_detail> fs_mod349_details )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = fs_mod349_details.size();
+		if ( fs_mod349_detailStmtSize != size ) {
+			if ( fs_mod349_detailStmt != null ) {
+				fs_mod349_detailStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			fs_mod349_detailStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO fs_mod349_detail (id,domain,fs_mod349,rectification,type,document,registry,name,country,accumulated,declared,amount,rectified_year,rectified_period,rectified_amount)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			fs_mod349_detailStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Fs_mod349_detail fs_mod349_detail : fs_mod349_details) {
+			if ( fs_mod349_detail.id == null )
+				fs_mod349_detailStmt.setNull(offset++, 4);
+			else
+				fs_mod349_detailStmt.setInt(offset++, fs_mod349_detail.id);
+			if ( fs_mod349_detail.domain == null )
+				fs_mod349_detailStmt.setNull(offset++, 4);
+			else
+				fs_mod349_detailStmt.setInt(offset++, fs_mod349_detail.domain);
+			if ( fs_mod349_detail.fs_mod349 == null )
+				fs_mod349_detailStmt.setNull(offset++, 4);
+			else
+				fs_mod349_detailStmt.setInt(offset++, fs_mod349_detail.fs_mod349);
+			if ( fs_mod349_detail.rectification == null )
+				fs_mod349_detailStmt.setNull(offset++, -7);
+			else
+				fs_mod349_detailStmt.setBoolean(offset++, fs_mod349_detail.rectification);
+			if ( fs_mod349_detail.type == null )
+				fs_mod349_detailStmt.setNull(offset++, 12);
+			else
+				fs_mod349_detailStmt.setString(offset++, fs_mod349_detail.type);
+			if ( fs_mod349_detail.document == null )
+				fs_mod349_detailStmt.setNull(offset++, 12);
+			else
+				fs_mod349_detailStmt.setString(offset++, fs_mod349_detail.document);
+			if ( fs_mod349_detail.registry == null )
+				fs_mod349_detailStmt.setNull(offset++, 4);
+			else
+				fs_mod349_detailStmt.setInt(offset++, fs_mod349_detail.registry);
+			if ( fs_mod349_detail.name == null )
+				fs_mod349_detailStmt.setNull(offset++, 12);
+			else
+				fs_mod349_detailStmt.setString(offset++, fs_mod349_detail.name);
+			if ( fs_mod349_detail.country == null )
+				fs_mod349_detailStmt.setNull(offset++, 12);
+			else
+				fs_mod349_detailStmt.setString(offset++, fs_mod349_detail.country);
+			if ( fs_mod349_detail.accumulated == null )
+				fs_mod349_detailStmt.setNull(offset++, 8);
+			else
+				fs_mod349_detailStmt.setDouble(offset++, fs_mod349_detail.accumulated);
+			if ( fs_mod349_detail.declared == null )
+				fs_mod349_detailStmt.setNull(offset++, 8);
+			else
+				fs_mod349_detailStmt.setDouble(offset++, fs_mod349_detail.declared);
+			if ( fs_mod349_detail.amount == null )
+				fs_mod349_detailStmt.setNull(offset++, 8);
+			else
+				fs_mod349_detailStmt.setDouble(offset++, fs_mod349_detail.amount);
+			if ( fs_mod349_detail.rectified_year == null )
+				fs_mod349_detailStmt.setNull(offset++, 4);
+			else
+				fs_mod349_detailStmt.setInt(offset++, fs_mod349_detail.rectified_year);
+			if ( fs_mod349_detail.rectified_period == null )
+				fs_mod349_detailStmt.setNull(offset++, -6);
+			else
+				fs_mod349_detailStmt.setShort(offset++, fs_mod349_detail.rectified_period);
+			if ( fs_mod349_detail.rectified_amount == null )
+				fs_mod349_detailStmt.setNull(offset++, 12);
+			else
+				fs_mod349_detailStmt.setString(offset++, fs_mod349_detail.rectified_amount);
+		}
+		fs_mod349_detailStmt.executeUpdate();
+		fs_mod349_detailInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Fs_mod349_details in {} milliseconds.", size, fs_mod349_detailInserted, elapsed );		
+	}
+		
+		private int fs_mod349_detailId = -1;
+		
+		private void initFs_mod349_detailId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `fs_mod349_detail`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.fs_mod349_detailId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextFs_mod349_detailId() {
+			return ++this.fs_mod349_detailId;
+		} 
+
+		public void setFs_mod349_detailId(Integer fs_mod349_detailId) {
+			this.fs_mod349_detailId = fs_mod349_detailId;
+		} 
+	
+	private void flushFs_mod349_detail(  )
+	throws SQLException {
+		if ( ! fs_mod349_details.isEmpty() )
+			insertFs_mod349_detail(fs_mod349_details);
+		if ( fs_mod349_detailStmt != null )
+			fs_mod349_detailStmt.close();
+	}	
+
+	/**
+	 * Fs_mod349_detail
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param fs_mod349 Identificador de la Declaracion
+	 * @param rectification Rectificacion
+	 * @param type Clave de operacion
+	 * @param document Documento del operador
+	 * @param registry Identificador del Declarado
+	 * @param name Apellidos y Nombre del Declarado
+	 * @param country Pais del Declarado
+	 * @param accumulated Importe acumulado de las operaciones
+	 * @param declared Importe declarado de las operaciones
+	 * @param amount Importe de las operaciones
+	 * @param rectified_year Ejercicio de la Declaracion del importe rectificado
+	 * @param rectified_period Periodo de la Declaracion del importe rectificado
+	 * @param rectified_amount Importe rectificado
+	 * @throws SQLException
+	*/
+	protected void insertFs_mod349_detail(Integer id, Integer domain, Integer fs_mod349, Boolean rectification, String type, String document, Integer registry, String name, String country, Double accumulated, Double declared, Double amount, Integer rectified_year, Short rectified_period, String rectified_amount)
+	throws SQLException {
+
+		Fs_mod349_detail fs_mod349_detail_ = new Fs_mod349_detail();
+		fs_mod349_detail_.id = id;
+		fs_mod349_detail_.domain = domain;
+		fs_mod349_detail_.fs_mod349 = fs_mod349;
+		fs_mod349_detail_.rectification = rectification;
+		fs_mod349_detail_.type = type;
+		fs_mod349_detail_.document = document;
+		fs_mod349_detail_.registry = registry;
+		fs_mod349_detail_.name = name;
+		fs_mod349_detail_.country = country;
+		fs_mod349_detail_.accumulated = accumulated;
+		fs_mod349_detail_.declared = declared;
+		fs_mod349_detail_.amount = amount;
+		fs_mod349_detail_.rectified_year = rectified_year;
+		fs_mod349_detail_.rectified_period = rectified_period;
+		fs_mod349_detail_.rectified_amount = rectified_amount;
+
+		fs_mod349_details.add(fs_mod349_detail_);
+		
+		int fs_mod349_detailCount = fs_mod349_details.size();
+		
+		if ( 225 * fs_mod349_detailCount >=  this.maxAllowedPacket ){
+			insertFs_mod349_detail(fs_mod349_details);
+			fs_mod349_details.clear();
+		} 
+	}
+
+
+	/**
+	 * Fs_mod349_detail
+	 * @param domain Identificador del Dominio
+	 * @param fs_mod349 Identificador de la Declaracion
+	 * @param rectification Rectificacion
+	 * @param type Clave de operacion
+	 * @param document Documento del operador
+	 * @param registry Identificador del Declarado
+	 * @param name Apellidos y Nombre del Declarado
+	 * @param country Pais del Declarado
+	 * @param accumulated Importe acumulado de las operaciones
+	 * @param declared Importe declarado de las operaciones
+	 * @param amount Importe de las operaciones
+	 * @param rectified_year Ejercicio de la Declaracion del importe rectificado
+	 * @param rectified_period Periodo de la Declaracion del importe rectificado
+	 * @param rectified_amount Importe rectificado
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertFs_mod349_detail(Integer domain, Integer fs_mod349, Boolean rectification, String type, String document, Integer registry, String name, String country, Double accumulated, Double declared, Double amount, Integer rectified_year, Short rectified_period, String rectified_amount)
+	throws SQLException {
+		int id = nextFs_mod349_detailId();
+
+		Fs_mod349_detail fs_mod349_detail_ = new Fs_mod349_detail();
+		fs_mod349_detail_.id = id;
+		fs_mod349_detail_.domain = domain;
+		fs_mod349_detail_.fs_mod349 = fs_mod349;
+		fs_mod349_detail_.rectification = rectification;
+		fs_mod349_detail_.type = type;
+		fs_mod349_detail_.document = document;
+		fs_mod349_detail_.registry = registry;
+		fs_mod349_detail_.name = name;
+		fs_mod349_detail_.country = country;
+		fs_mod349_detail_.accumulated = accumulated;
+		fs_mod349_detail_.declared = declared;
+		fs_mod349_detail_.amount = amount;
+		fs_mod349_detail_.rectified_year = rectified_year;
+		fs_mod349_detail_.rectified_period = rectified_period;
+		fs_mod349_detail_.rectified_amount = rectified_amount;
+
+		fs_mod349_details.add(fs_mod349_detail_);
+		
+		int fs_mod349_detailCount = fs_mod349_details.size();
+		
+		if ( 225 * fs_mod349_detailCount >=  this.maxAllowedPacket ){
+			insertFs_mod349_detail(fs_mod349_details);
+			fs_mod349_details.clear();
+		} 
+		return id;
+	}
+
+
 	private int companyStmtSize = 0;
 
 	private int companyInserted = 0;
@@ -51781,12 +55201,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Company
-	 * @param registry Registro de la Compaùia
+	 * @param registry Registro de la Compa?ia
 	 * @param domain Identificador del Dominio
-	 * @param active Indica si la Compaùia es activa o inactiva
-	 * @param surcharge Indica si la Compaùia tiene de recargo de equivalencia
-	 * @param withholding Indica si la Compaùia aplica retencion de impuestos
-	 * @param e_invoice Indica si la Compaùia desea emitir Facturas electronicas
+	 * @param active Indica si la Compa?ia es activa o inactiva
+	 * @param surcharge Indica si la Compa?ia tiene de recargo de equivalencia
+	 * @param withholding Indica si la Compa?ia aplica retencion de impuestos
+	 * @param e_invoice Indica si la Compa?ia desea emitir Facturas electronicas
 	 * @throws SQLException
 	*/
 	protected void insertCompany(Integer registry, Integer domain, Boolean active, Boolean surcharge, Boolean withholding, Boolean e_invoice)
@@ -51971,6 +55391,170 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 40 * account_entry_bank_statementCount >=  this.maxAllowedPacket ){
 			insertAccount_entry_bank_statement(account_entry_bank_statements);
 			account_entry_bank_statements.clear();
+		} 
+		return id;
+	}
+
+
+	private int profile_module_deniedStmtSize = 0;
+
+	private int profile_module_deniedInserted = 0;
+
+	private List<Profile_module_denied> profile_module_denieds = 
+		new LinkedList<Profile_module_denied>();
+
+	private PreparedStatement profile_module_deniedStmt = null;
+
+	public static class Profile_module_denied {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer profile; 
+		protected Short module; 
+	}
+	
+	protected void insertProfile_module_denied( List<Profile_module_denied> profile_module_denieds )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = profile_module_denieds.size();
+		if ( profile_module_deniedStmtSize != size ) {
+			if ( profile_module_deniedStmt != null ) {
+				profile_module_deniedStmt.close();
+			}
+			String values = "(?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			profile_module_deniedStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO profile_module_denied (id,domain,profile,module)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			profile_module_deniedStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Profile_module_denied profile_module_denied : profile_module_denieds) {
+			if ( profile_module_denied.id == null )
+				profile_module_deniedStmt.setNull(offset++, 4);
+			else
+				profile_module_deniedStmt.setInt(offset++, profile_module_denied.id);
+			if ( profile_module_denied.domain == null )
+				profile_module_deniedStmt.setNull(offset++, 4);
+			else
+				profile_module_deniedStmt.setInt(offset++, profile_module_denied.domain);
+			if ( profile_module_denied.profile == null )
+				profile_module_deniedStmt.setNull(offset++, 4);
+			else
+				profile_module_deniedStmt.setInt(offset++, profile_module_denied.profile);
+			if ( profile_module_denied.module == null )
+				profile_module_deniedStmt.setNull(offset++, -6);
+			else
+				profile_module_deniedStmt.setShort(offset++, profile_module_denied.module);
+		}
+		profile_module_deniedStmt.executeUpdate();
+		profile_module_deniedInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Profile_module_denieds in {} milliseconds.", size, profile_module_deniedInserted, elapsed );		
+	}
+		
+		private int profile_module_deniedId = -1;
+		
+		private void initProfile_module_deniedId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `profile_module_denied`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.profile_module_deniedId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextProfile_module_deniedId() {
+			return ++this.profile_module_deniedId;
+		} 
+
+		public void setProfile_module_deniedId(Integer profile_module_deniedId) {
+			this.profile_module_deniedId = profile_module_deniedId;
+		} 
+	
+	private void flushProfile_module_denied(  )
+	throws SQLException {
+		if ( ! profile_module_denieds.isEmpty() )
+			insertProfile_module_denied(profile_module_denieds);
+		if ( profile_module_deniedStmt != null )
+			profile_module_deniedStmt.close();
+	}	
+
+	/**
+	 * Profile_module_denied
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param profile Identificador del Perfil
+	 * @param module Modulo Inhabilitado para el Perfil
+	 * @throws SQLException
+	*/
+	protected void insertProfile_module_denied(Integer id, Integer domain, Integer profile, Short module)
+	throws SQLException {
+
+		Profile_module_denied profile_module_denied_ = new Profile_module_denied();
+		profile_module_denied_.id = id;
+		profile_module_denied_.domain = domain;
+		profile_module_denied_.profile = profile;
+		profile_module_denied_.module = module;
+
+		profile_module_denieds.add(profile_module_denied_);
+		
+		int profile_module_deniedCount = profile_module_denieds.size();
+		
+		if ( 33 * profile_module_deniedCount >=  this.maxAllowedPacket ){
+			insertProfile_module_denied(profile_module_denieds);
+			profile_module_denieds.clear();
+		} 
+	}
+
+
+	/**
+	 * Profile_module_denied
+	 * @param domain Identificador del Dominio
+	 * @param profile Identificador del Perfil
+	 * @param module Modulo Inhabilitado para el Perfil
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertProfile_module_denied(Integer domain, Integer profile, Short module)
+	throws SQLException {
+		int id = nextProfile_module_deniedId();
+
+		Profile_module_denied profile_module_denied_ = new Profile_module_denied();
+		profile_module_denied_.id = id;
+		profile_module_denied_.domain = domain;
+		profile_module_denied_.profile = profile;
+		profile_module_denied_.module = module;
+
+		profile_module_denieds.add(profile_module_denied_);
+		
+		int profile_module_deniedCount = profile_module_denieds.size();
+		
+		if ( 33 * profile_module_deniedCount >=  this.maxAllowedPacket ){
+			insertProfile_module_denied(profile_module_denieds);
+			profile_module_denieds.clear();
 		} 
 		return id;
 	}
@@ -53264,8 +56848,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer domain; 
 		protected Integer project_reservation; 
 		protected Short service_index; 
+		protected String service_code; 
 		protected Integer item; 
 		protected String description; 
+		protected Integer project_reservation_room; 
 		protected Boolean extra; 
 	}
 	
@@ -53277,7 +56863,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( project_reservation_serviceStmt != null ) {
 				project_reservation_serviceStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -53286,7 +56872,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			project_reservation_serviceStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO project_reservation_service (id,domain,project_reservation,service_index,item,description,extra)"  
+				"INSERT INTO project_reservation_service (id,domain,project_reservation,service_index,service_code,item,description,project_reservation_room,extra)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			project_reservation_serviceStmtSize = size;
@@ -53311,6 +56897,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_reservation_serviceStmt.setNull(offset++, -6);
 			else
 				project_reservation_serviceStmt.setShort(offset++, project_reservation_service.service_index);
+			if ( project_reservation_service.service_code == null )
+				project_reservation_serviceStmt.setNull(offset++, 12);
+			else
+				project_reservation_serviceStmt.setString(offset++, project_reservation_service.service_code);
 			if ( project_reservation_service.item == null )
 				project_reservation_serviceStmt.setNull(offset++, 4);
 			else
@@ -53319,6 +56909,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_reservation_serviceStmt.setNull(offset++, 12);
 			else
 				project_reservation_serviceStmt.setString(offset++, project_reservation_service.description);
+			if ( project_reservation_service.project_reservation_room == null )
+				project_reservation_serviceStmt.setNull(offset++, 4);
+			else
+				project_reservation_serviceStmt.setInt(offset++, project_reservation_service.project_reservation_room);
 			if ( project_reservation_service.extra == null )
 				project_reservation_serviceStmt.setNull(offset++, -7);
 			else
@@ -53377,12 +56971,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param project_reservation Identificador de la Reserva
 	 * @param service_index Numero de Servicio
+	 * @param service_code Codigo del Servicio en origen
 	 * @param item Identificador del Servicio
 	 * @param description Descripcion
+	 * @param project_reservation_room Identificador de la Habitacion de la Reserva
 	 * @param extra Indica si se trata de un Servicio extra
 	 * @throws SQLException
 	*/
-	protected void insertProject_reservation_service(Integer id, Integer domain, Integer project_reservation, Short service_index, Integer item, String description, Boolean extra)
+	protected void insertProject_reservation_service(Integer id, Integer domain, Integer project_reservation, Short service_index, String service_code, Integer item, String description, Integer project_reservation_room, Boolean extra)
 	throws SQLException {
 
 		Project_reservation_service project_reservation_service_ = new Project_reservation_service();
@@ -53390,15 +56986,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		project_reservation_service_.domain = domain;
 		project_reservation_service_.project_reservation = project_reservation;
 		project_reservation_service_.service_index = service_index;
+		project_reservation_service_.service_code = service_code;
 		project_reservation_service_.item = item;
 		project_reservation_service_.description = description;
+		project_reservation_service_.project_reservation_room = project_reservation_room;
 		project_reservation_service_.extra = extra;
 
 		project_reservation_services.add(project_reservation_service_);
 		
 		int project_reservation_serviceCount = project_reservation_services.size();
 		
-		if ( 107 * project_reservation_serviceCount >=  this.maxAllowedPacket ){
+		if ( 133 * project_reservation_serviceCount >=  this.maxAllowedPacket ){
 			insertProject_reservation_service(project_reservation_services);
 			project_reservation_services.clear();
 		} 
@@ -53410,13 +57008,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param project_reservation Identificador de la Reserva
 	 * @param service_index Numero de Servicio
+	 * @param service_code Codigo del Servicio en origen
 	 * @param item Identificador del Servicio
 	 * @param description Descripcion
+	 * @param project_reservation_room Identificador de la Habitacion de la Reserva
 	 * @param extra Indica si se trata de un Servicio extra
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertProject_reservation_service(Integer domain, Integer project_reservation, Short service_index, Integer item, String description, Boolean extra)
+	public int insertProject_reservation_service(Integer domain, Integer project_reservation, Short service_index, String service_code, Integer item, String description, Integer project_reservation_room, Boolean extra)
 	throws SQLException {
 		int id = nextProject_reservation_serviceId();
 
@@ -53425,15 +57025,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		project_reservation_service_.domain = domain;
 		project_reservation_service_.project_reservation = project_reservation;
 		project_reservation_service_.service_index = service_index;
+		project_reservation_service_.service_code = service_code;
 		project_reservation_service_.item = item;
 		project_reservation_service_.description = description;
+		project_reservation_service_.project_reservation_room = project_reservation_room;
 		project_reservation_service_.extra = extra;
 
 		project_reservation_services.add(project_reservation_service_);
 		
 		int project_reservation_serviceCount = project_reservation_services.size();
 		
-		if ( 107 * project_reservation_serviceCount >=  this.maxAllowedPacket ){
+		if ( 133 * project_reservation_serviceCount >=  this.maxAllowedPacket ){
 			insertProject_reservation_service(project_reservation_services);
 			project_reservation_services.clear();
 		} 
@@ -54418,6 +58020,352 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 120 * fan_batch_attachCount >=  this.maxAllowedPacket ){
 			insertFan_batch_attach(fan_batch_attachs);
 			fan_batch_attachs.clear();
+		} 
+		return id;
+	}
+
+
+	private int rattach_tagStmtSize = 0;
+
+	private int rattach_tagInserted = 0;
+
+	private List<Rattach_tag> rattach_tags = 
+		new LinkedList<Rattach_tag>();
+
+	private PreparedStatement rattach_tagStmt = null;
+
+	public static class Rattach_tag {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer rattach; 
+		protected Integer tag; 
+	}
+	
+	protected void insertRattach_tag( List<Rattach_tag> rattach_tags )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = rattach_tags.size();
+		if ( rattach_tagStmtSize != size ) {
+			if ( rattach_tagStmt != null ) {
+				rattach_tagStmt.close();
+			}
+			String values = "(?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			rattach_tagStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO rattach_tag (id,domain,rattach,tag)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			rattach_tagStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Rattach_tag rattach_tag : rattach_tags) {
+			if ( rattach_tag.id == null )
+				rattach_tagStmt.setNull(offset++, 4);
+			else
+				rattach_tagStmt.setInt(offset++, rattach_tag.id);
+			if ( rattach_tag.domain == null )
+				rattach_tagStmt.setNull(offset++, 4);
+			else
+				rattach_tagStmt.setInt(offset++, rattach_tag.domain);
+			if ( rattach_tag.rattach == null )
+				rattach_tagStmt.setNull(offset++, 4);
+			else
+				rattach_tagStmt.setInt(offset++, rattach_tag.rattach);
+			if ( rattach_tag.tag == null )
+				rattach_tagStmt.setNull(offset++, 4);
+			else
+				rattach_tagStmt.setInt(offset++, rattach_tag.tag);
+		}
+		rattach_tagStmt.executeUpdate();
+		rattach_tagInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Rattach_tags in {} milliseconds.", size, rattach_tagInserted, elapsed );		
+	}
+		
+		private int rattach_tagId = -1;
+		
+		private void initRattach_tagId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `rattach_tag`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.rattach_tagId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextRattach_tagId() {
+			return ++this.rattach_tagId;
+		} 
+
+		public void setRattach_tagId(Integer rattach_tagId) {
+			this.rattach_tagId = rattach_tagId;
+		} 
+	
+	private void flushRattach_tag(  )
+	throws SQLException {
+		if ( ! rattach_tags.isEmpty() )
+			insertRattach_tag(rattach_tags);
+		if ( rattach_tagStmt != null )
+			rattach_tagStmt.close();
+	}	
+
+	/**
+	 * Rattach_tag
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param rattach Identificador del Archivo Adjunto
+	 * @param tag Identificador de la Etiqueta
+	 * @throws SQLException
+	*/
+	protected void insertRattach_tag(Integer id, Integer domain, Integer rattach, Integer tag)
+	throws SQLException {
+
+		Rattach_tag rattach_tag_ = new Rattach_tag();
+		rattach_tag_.id = id;
+		rattach_tag_.domain = domain;
+		rattach_tag_.rattach = rattach;
+		rattach_tag_.tag = tag;
+
+		rattach_tags.add(rattach_tag_);
+		
+		int rattach_tagCount = rattach_tags.size();
+		
+		if ( 40 * rattach_tagCount >=  this.maxAllowedPacket ){
+			insertRattach_tag(rattach_tags);
+			rattach_tags.clear();
+		} 
+	}
+
+
+	/**
+	 * Rattach_tag
+	 * @param domain Identificador del Dominio
+	 * @param rattach Identificador del Archivo Adjunto
+	 * @param tag Identificador de la Etiqueta
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertRattach_tag(Integer domain, Integer rattach, Integer tag)
+	throws SQLException {
+		int id = nextRattach_tagId();
+
+		Rattach_tag rattach_tag_ = new Rattach_tag();
+		rattach_tag_.id = id;
+		rattach_tag_.domain = domain;
+		rattach_tag_.rattach = rattach;
+		rattach_tag_.tag = tag;
+
+		rattach_tags.add(rattach_tag_);
+		
+		int rattach_tagCount = rattach_tags.size();
+		
+		if ( 40 * rattach_tagCount >=  this.maxAllowedPacket ){
+			insertRattach_tag(rattach_tags);
+			rattach_tags.clear();
+		} 
+		return id;
+	}
+
+
+	private int finance_posStmtSize = 0;
+
+	private int finance_posInserted = 0;
+
+	private List<Finance_pos> finance_poss = 
+		new LinkedList<Finance_pos>();
+
+	private PreparedStatement finance_posStmt = null;
+
+	public static class Finance_pos {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer finance; 
+		protected Integer pos; 
+		protected String code; 
+		protected String xml_response; 
+	}
+	
+	protected void insertFinance_pos( List<Finance_pos> finance_poss )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = finance_poss.size();
+		if ( finance_posStmtSize != size ) {
+			if ( finance_posStmt != null ) {
+				finance_posStmt.close();
+			}
+			String values = "(?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			finance_posStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO finance_pos (id,domain,finance,pos,code,xml_response)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			finance_posStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Finance_pos finance_pos : finance_poss) {
+			if ( finance_pos.id == null )
+				finance_posStmt.setNull(offset++, 4);
+			else
+				finance_posStmt.setInt(offset++, finance_pos.id);
+			if ( finance_pos.domain == null )
+				finance_posStmt.setNull(offset++, 4);
+			else
+				finance_posStmt.setInt(offset++, finance_pos.domain);
+			if ( finance_pos.finance == null )
+				finance_posStmt.setNull(offset++, 4);
+			else
+				finance_posStmt.setInt(offset++, finance_pos.finance);
+			if ( finance_pos.pos == null )
+				finance_posStmt.setNull(offset++, 4);
+			else
+				finance_posStmt.setInt(offset++, finance_pos.pos);
+			if ( finance_pos.code == null )
+				finance_posStmt.setNull(offset++, 1);
+			else
+				finance_posStmt.setString(offset++, finance_pos.code);
+			if ( finance_pos.xml_response == null )
+				finance_posStmt.setNull(offset++, -1);
+			else
+				finance_posStmt.setString(offset++, finance_pos.xml_response);
+		}
+		finance_posStmt.executeUpdate();
+		finance_posInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Finance_poss in {} milliseconds.", size, finance_posInserted, elapsed );		
+	}
+		
+		private int finance_posId = -1;
+		
+		private void initFinance_posId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `finance_pos`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.finance_posId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextFinance_posId() {
+			return ++this.finance_posId;
+		} 
+
+		public void setFinance_posId(Integer finance_posId) {
+			this.finance_posId = finance_posId;
+		} 
+	
+	private void flushFinance_pos(  )
+	throws SQLException {
+		if ( ! finance_poss.isEmpty() )
+			insertFinance_pos(finance_poss);
+		if ( finance_posStmt != null )
+			finance_posStmt.close();
+	}	
+
+	/**
+	 * Finance_pos
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param finance Identificador de Vencimiento
+	 * @param pos Identificador del TPV
+	 * @param code Codigo de autorizacion
+	 * @param xml_response XML de respuesta
+	 * @throws SQLException
+	*/
+	protected void insertFinance_pos(Integer id, Integer domain, Integer finance, Integer pos, String code, String xml_response)
+	throws SQLException {
+
+		Finance_pos finance_pos_ = new Finance_pos();
+		finance_pos_.id = id;
+		finance_pos_.domain = domain;
+		finance_pos_.finance = finance;
+		finance_pos_.pos = pos;
+		finance_pos_.code = code;
+		finance_pos_.xml_response = xml_response;
+
+		finance_poss.add(finance_pos_);
+		
+		int finance_posCount = finance_poss.size();
+		
+		if ( 56 * finance_posCount >=  this.maxAllowedPacket ){
+			insertFinance_pos(finance_poss);
+			finance_poss.clear();
+		} 
+	}
+
+
+	/**
+	 * Finance_pos
+	 * @param domain Identificador del Dominio
+	 * @param finance Identificador de Vencimiento
+	 * @param pos Identificador del TPV
+	 * @param code Codigo de autorizacion
+	 * @param xml_response XML de respuesta
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertFinance_pos(Integer domain, Integer finance, Integer pos, String code, String xml_response)
+	throws SQLException {
+		int id = nextFinance_posId();
+
+		Finance_pos finance_pos_ = new Finance_pos();
+		finance_pos_.id = id;
+		finance_pos_.domain = domain;
+		finance_pos_.finance = finance;
+		finance_pos_.pos = pos;
+		finance_pos_.code = code;
+		finance_pos_.xml_response = xml_response;
+
+		finance_poss.add(finance_pos_);
+		
+		int finance_posCount = finance_poss.size();
+		
+		if ( 56 * finance_posCount >=  this.maxAllowedPacket ){
+			insertFinance_pos(finance_poss);
+			finance_poss.clear();
 		} 
 		return id;
 	}
@@ -56178,9 +60126,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Campaign_project
-	 * @param id Identificador unico de la Relacion de Campaùas y Expedientes
+	 * @param id Identificador unico de la Relacion de Campa?as y Expedientes
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campaùa
+	 * @param campaign Identificador de la Campa?a
 	 * @param project Identificador del Expediente
 	 * @throws SQLException
 	*/
@@ -56207,7 +60155,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Campaign_project
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campaùa
+	 * @param campaign Identificador de la Campa?a
 	 * @param project Identificador del Expediente
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -56245,9 +60193,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class Application {
 		protected Integer id; 
-		protected Integer domain; 
-		protected Short audit_level; 
 		protected String name; 
+		protected String description; 
+		protected Boolean contratable; 
 	}
 	
 	protected void insertApplication( List<Application> applications )
@@ -56267,7 +60215,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			applicationStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO application (id,domain,audit_level,name)"  
+				"INSERT INTO application (id,name,description,contratable)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			applicationStmtSize = size;
@@ -56280,18 +60228,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				applicationStmt.setNull(offset++, 4);
 			else
 				applicationStmt.setInt(offset++, application.id);
-			if ( application.domain == null )
-				applicationStmt.setNull(offset++, 4);
-			else
-				applicationStmt.setInt(offset++, application.domain);
-			if ( application.audit_level == null )
-				applicationStmt.setNull(offset++, -6);
-			else
-				applicationStmt.setShort(offset++, application.audit_level);
 			if ( application.name == null )
 				applicationStmt.setNull(offset++, 12);
 			else
 				applicationStmt.setString(offset++, application.name);
+			if ( application.description == null )
+				applicationStmt.setNull(offset++, 12);
+			else
+				applicationStmt.setString(offset++, application.description);
+			if ( application.contratable == null )
+				applicationStmt.setNull(offset++, -7);
+			else
+				applicationStmt.setBoolean(offset++, application.contratable);
 		}
 		applicationStmt.executeUpdate();
 		applicationInserted += size;
@@ -56343,25 +60291,25 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Application
 	 * @param id Identificador unico
-	 * @param domain Identificador del Dominio
-	 * @param audit_level Nivel de auditoria
 	 * @param name Nombre de la Aplicacion
+	 * @param description Descripcion de la Aplicacion
+	 * @param contratable Indica si la Aplicacion es contratable o no
 	 * @throws SQLException
 	*/
-	protected void insertApplication(Integer id, Integer domain, Short audit_level, String name)
+	protected void insertApplication(Integer id, String name, String description, Boolean contratable)
 	throws SQLException {
 
 		Application application_ = new Application();
 		application_.id = id;
-		application_.domain = domain;
-		application_.audit_level = audit_level;
 		application_.name = name;
+		application_.description = description;
+		application_.contratable = contratable;
 
 		applications.add(application_);
 		
 		int applicationCount = applications.size();
 		
-		if ( 87 * applicationCount >=  this.maxAllowedPacket ){
+		if ( 202 * applicationCount >=  this.maxAllowedPacket ){
 			insertApplication(applications);
 			applications.clear();
 		} 
@@ -56370,27 +60318,27 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Application
-	 * @param domain Identificador del Dominio
-	 * @param audit_level Nivel de auditoria
 	 * @param name Nombre de la Aplicacion
+	 * @param description Descripcion de la Aplicacion
+	 * @param contratable Indica si la Aplicacion es contratable o no
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertApplication(Integer domain, Short audit_level, String name)
+	public int insertApplication(String name, String description, Boolean contratable)
 	throws SQLException {
 		int id = nextApplicationId();
 
 		Application application_ = new Application();
 		application_.id = id;
-		application_.domain = domain;
-		application_.audit_level = audit_level;
 		application_.name = name;
+		application_.description = description;
+		application_.contratable = contratable;
 
 		applications.add(application_);
 		
 		int applicationCount = applications.size();
 		
-		if ( 87 * applicationCount >=  this.maxAllowedPacket ){
+		if ( 202 * applicationCount >=  this.maxAllowedPacket ){
 			insertApplication(applications);
 			applications.clear();
 		} 
@@ -57110,6 +61058,215 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 253 * taskCount >=  this.maxAllowedPacket ){
 			insertTask(tasks);
 			tasks.clear();
+		} 
+		return id;
+	}
+
+
+	private int project_reservation_divertStmtSize = 0;
+
+	private int project_reservation_divertInserted = 0;
+
+	private List<Project_reservation_divert> project_reservation_diverts = 
+		new LinkedList<Project_reservation_divert>();
+
+	private PreparedStatement project_reservation_divertStmt = null;
+
+	public static class Project_reservation_divert {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer project_reservation; 
+		protected Integer request_hotel; 
+		protected Integer divert_hotel; 
+		protected Date divert_date; 
+		protected Short status; 
+		protected Integer request_user; 
+		protected Integer response_user; 
+	}
+	
+	protected void insertProject_reservation_divert( List<Project_reservation_divert> project_reservation_diverts )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = project_reservation_diverts.size();
+		if ( project_reservation_divertStmtSize != size ) {
+			if ( project_reservation_divertStmt != null ) {
+				project_reservation_divertStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			project_reservation_divertStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO project_reservation_divert (id,domain,project_reservation,request_hotel,divert_hotel,divert_date,status,request_user,response_user)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			project_reservation_divertStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Project_reservation_divert project_reservation_divert : project_reservation_diverts) {
+			if ( project_reservation_divert.id == null )
+				project_reservation_divertStmt.setNull(offset++, 4);
+			else
+				project_reservation_divertStmt.setInt(offset++, project_reservation_divert.id);
+			if ( project_reservation_divert.domain == null )
+				project_reservation_divertStmt.setNull(offset++, 4);
+			else
+				project_reservation_divertStmt.setInt(offset++, project_reservation_divert.domain);
+			if ( project_reservation_divert.project_reservation == null )
+				project_reservation_divertStmt.setNull(offset++, 4);
+			else
+				project_reservation_divertStmt.setInt(offset++, project_reservation_divert.project_reservation);
+			if ( project_reservation_divert.request_hotel == null )
+				project_reservation_divertStmt.setNull(offset++, 4);
+			else
+				project_reservation_divertStmt.setInt(offset++, project_reservation_divert.request_hotel);
+			if ( project_reservation_divert.divert_hotel == null )
+				project_reservation_divertStmt.setNull(offset++, 4);
+			else
+				project_reservation_divertStmt.setInt(offset++, project_reservation_divert.divert_hotel);
+			if ( project_reservation_divert.divert_date == null )
+				project_reservation_divertStmt.setNull(offset++, 91);
+			else
+				project_reservation_divertStmt.setDate(offset++, project_reservation_divert.divert_date);
+			if ( project_reservation_divert.status == null )
+				project_reservation_divertStmt.setNull(offset++, -6);
+			else
+				project_reservation_divertStmt.setShort(offset++, project_reservation_divert.status);
+			if ( project_reservation_divert.request_user == null )
+				project_reservation_divertStmt.setNull(offset++, 4);
+			else
+				project_reservation_divertStmt.setInt(offset++, project_reservation_divert.request_user);
+			if ( project_reservation_divert.response_user == null )
+				project_reservation_divertStmt.setNull(offset++, 4);
+			else
+				project_reservation_divertStmt.setInt(offset++, project_reservation_divert.response_user);
+		}
+		project_reservation_divertStmt.executeUpdate();
+		project_reservation_divertInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Project_reservation_diverts in {} milliseconds.", size, project_reservation_divertInserted, elapsed );		
+	}
+		
+		private int project_reservation_divertId = -1;
+		
+		private void initProject_reservation_divertId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `project_reservation_divert`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.project_reservation_divertId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextProject_reservation_divertId() {
+			return ++this.project_reservation_divertId;
+		} 
+
+		public void setProject_reservation_divertId(Integer project_reservation_divertId) {
+			this.project_reservation_divertId = project_reservation_divertId;
+		} 
+	
+	private void flushProject_reservation_divert(  )
+	throws SQLException {
+		if ( ! project_reservation_diverts.isEmpty() )
+			insertProject_reservation_divert(project_reservation_diverts);
+		if ( project_reservation_divertStmt != null )
+			project_reservation_divertStmt.close();
+	}	
+
+	/**
+	 * Project_reservation_divert
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param project_reservation Identificador de la Reserva
+	 * @param request_hotel Identificador del Hotel solicitante
+	 * @param divert_hotel Identificador del Hotel destino
+	 * @param divert_date Fecha de Desvio
+	 * @param status Estado del Desvio
+	 * @param request_user Identificador del Usuario solicitante
+	 * @param response_user Identificador del Usuario de respuesta
+	 * @throws SQLException
+	*/
+	protected void insertProject_reservation_divert(Integer id, Integer domain, Integer project_reservation, Integer request_hotel, Integer divert_hotel, Date divert_date, Short status, Integer request_user, Integer response_user)
+	throws SQLException {
+
+		Project_reservation_divert project_reservation_divert_ = new Project_reservation_divert();
+		project_reservation_divert_.id = id;
+		project_reservation_divert_.domain = domain;
+		project_reservation_divert_.project_reservation = project_reservation;
+		project_reservation_divert_.request_hotel = request_hotel;
+		project_reservation_divert_.divert_hotel = divert_hotel;
+		project_reservation_divert_.divert_date = divert_date;
+		project_reservation_divert_.status = status;
+		project_reservation_divert_.request_user = request_user;
+		project_reservation_divert_.response_user = response_user;
+
+		project_reservation_diverts.add(project_reservation_divert_);
+		
+		int project_reservation_divertCount = project_reservation_diverts.size();
+		
+		if ( 83 * project_reservation_divertCount >=  this.maxAllowedPacket ){
+			insertProject_reservation_divert(project_reservation_diverts);
+			project_reservation_diverts.clear();
+		} 
+	}
+
+
+	/**
+	 * Project_reservation_divert
+	 * @param domain Identificador del Dominio
+	 * @param project_reservation Identificador de la Reserva
+	 * @param request_hotel Identificador del Hotel solicitante
+	 * @param divert_hotel Identificador del Hotel destino
+	 * @param divert_date Fecha de Desvio
+	 * @param status Estado del Desvio
+	 * @param request_user Identificador del Usuario solicitante
+	 * @param response_user Identificador del Usuario de respuesta
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertProject_reservation_divert(Integer domain, Integer project_reservation, Integer request_hotel, Integer divert_hotel, Date divert_date, Short status, Integer request_user, Integer response_user)
+	throws SQLException {
+		int id = nextProject_reservation_divertId();
+
+		Project_reservation_divert project_reservation_divert_ = new Project_reservation_divert();
+		project_reservation_divert_.id = id;
+		project_reservation_divert_.domain = domain;
+		project_reservation_divert_.project_reservation = project_reservation;
+		project_reservation_divert_.request_hotel = request_hotel;
+		project_reservation_divert_.divert_hotel = divert_hotel;
+		project_reservation_divert_.divert_date = divert_date;
+		project_reservation_divert_.status = status;
+		project_reservation_divert_.request_user = request_user;
+		project_reservation_divert_.response_user = response_user;
+
+		project_reservation_diverts.add(project_reservation_divert_);
+		
+		int project_reservation_divertCount = project_reservation_diverts.size();
+		
+		if ( 83 * project_reservation_divertCount >=  this.maxAllowedPacket ){
+			insertProject_reservation_divert(project_reservation_diverts);
+			project_reservation_diverts.clear();
 		} 
 		return id;
 	}
@@ -58571,6 +62728,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class Course_academicskill {
 		protected Integer id; 
+		protected Integer domain; 
 		protected Integer course; 
 		protected Integer academic_skill; 
 		protected Integer weight; 
@@ -58584,7 +62742,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( course_academicskillStmt != null ) {
 				course_academicskillStmt.close();
 			}
-			String values = "(?,?,?,?)";
+			String values = "(?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -58593,7 +62751,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			course_academicskillStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO course_academicskill (id,course,academic_skill,weight)"  
+				"INSERT INTO course_academicskill (id,domain,course,academic_skill,weight)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			course_academicskillStmtSize = size;
@@ -58606,6 +62764,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				course_academicskillStmt.setNull(offset++, 4);
 			else
 				course_academicskillStmt.setInt(offset++, course_academicskill.id);
+			if ( course_academicskill.domain == null )
+				course_academicskillStmt.setNull(offset++, 4);
+			else
+				course_academicskillStmt.setInt(offset++, course_academicskill.domain);
 			if ( course_academicskill.course == null )
 				course_academicskillStmt.setNull(offset++, 4);
 			else
@@ -58669,16 +62831,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Course_academicskill
 	 * @param id Identificador Unico
+	 * @param domain Identificador del Dominio
 	 * @param course Curso
 	 * @param academic_skill Aptitud Academica
 	 * @param weight Peso de la Aptitud para calcular la Nota media
 	 * @throws SQLException
 	*/
-	protected void insertCourse_academicskill(Integer id, Integer course, Integer academic_skill, Integer weight)
+	protected void insertCourse_academicskill(Integer id, Integer domain, Integer course, Integer academic_skill, Integer weight)
 	throws SQLException {
 
 		Course_academicskill course_academicskill_ = new Course_academicskill();
 		course_academicskill_.id = id;
+		course_academicskill_.domain = domain;
 		course_academicskill_.course = course;
 		course_academicskill_.academic_skill = academic_skill;
 		course_academicskill_.weight = weight;
@@ -58687,7 +62851,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int course_academicskillCount = course_academicskills.size();
 		
-		if ( 40 * course_academicskillCount >=  this.maxAllowedPacket ){
+		if ( 50 * course_academicskillCount >=  this.maxAllowedPacket ){
 			insertCourse_academicskill(course_academicskills);
 			course_academicskills.clear();
 		} 
@@ -58696,18 +62860,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Course_academicskill
+	 * @param domain Identificador del Dominio
 	 * @param course Curso
 	 * @param academic_skill Aptitud Academica
 	 * @param weight Peso de la Aptitud para calcular la Nota media
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertCourse_academicskill(Integer course, Integer academic_skill, Integer weight)
+	public int insertCourse_academicskill(Integer domain, Integer course, Integer academic_skill, Integer weight)
 	throws SQLException {
 		int id = nextCourse_academicskillId();
 
 		Course_academicskill course_academicskill_ = new Course_academicskill();
 		course_academicskill_.id = id;
+		course_academicskill_.domain = domain;
 		course_academicskill_.course = course;
 		course_academicskill_.academic_skill = academic_skill;
 		course_academicskill_.weight = weight;
@@ -58716,7 +62882,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int course_academicskillCount = course_academicskills.size();
 		
-		if ( 40 * course_academicskillCount >=  this.maxAllowedPacket ){
+		if ( 50 * course_academicskillCount >=  this.maxAllowedPacket ){
 			insertCourse_academicskill(course_academicskills);
 			course_academicskills.clear();
 		} 
@@ -59060,6 +63226,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer domain; 
 		protected Boolean active; 
 		protected String description; 
+		protected Integer scope; 
 	}
 	
 	protected void insertMk_campaign( List<Mk_campaign> mk_campaigns )
@@ -59070,7 +63237,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( mk_campaignStmt != null ) {
 				mk_campaignStmt.close();
 			}
-			String values = "(?,?,?,?)";
+			String values = "(?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -59079,7 +63246,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			mk_campaignStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO mk_campaign (id,domain,active,description)"  
+				"INSERT INTO mk_campaign (id,domain,active,description,scope)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			mk_campaignStmtSize = size;
@@ -59104,6 +63271,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				mk_campaignStmt.setNull(offset++, 12);
 			else
 				mk_campaignStmt.setString(offset++, mk_campaign.description);
+			if ( mk_campaign.scope == null )
+				mk_campaignStmt.setNull(offset++, 4);
+			else
+				mk_campaignStmt.setInt(offset++, mk_campaign.scope);
 		}
 		mk_campaignStmt.executeUpdate();
 		mk_campaignInserted += size;
@@ -59156,11 +63327,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Mk_campaign
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param active Indica si la Campaùa esta activa o no
-	 * @param description Descripcion de la Campaùa
+	 * @param active Indica si la Campa?a esta activa o no
+	 * @param description Descripcion de la Campa?a
+	 * @param scope Identificador del Ambito
 	 * @throws SQLException
 	*/
-	protected void insertMk_campaign(Integer id, Integer domain, Boolean active, String description)
+	protected void insertMk_campaign(Integer id, Integer domain, Boolean active, String description, Integer scope)
 	throws SQLException {
 
 		Mk_campaign mk_campaign_ = new Mk_campaign();
@@ -59168,12 +63340,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		mk_campaign_.domain = domain;
 		mk_campaign_.active = active;
 		mk_campaign_.description = description;
+		mk_campaign_.scope = scope;
 
 		mk_campaigns.add(mk_campaign_);
 		
 		int mk_campaignCount = mk_campaigns.size();
 		
-		if ( 84 * mk_campaignCount >=  this.maxAllowedPacket ){
+		if ( 94 * mk_campaignCount >=  this.maxAllowedPacket ){
 			insertMk_campaign(mk_campaigns);
 			mk_campaigns.clear();
 		} 
@@ -59183,12 +63356,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Mk_campaign
 	 * @param domain Identificador del Dominio
-	 * @param active Indica si la Campaùa esta activa o no
-	 * @param description Descripcion de la Campaùa
+	 * @param active Indica si la Campa?a esta activa o no
+	 * @param description Descripcion de la Campa?a
+	 * @param scope Identificador del Ambito
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertMk_campaign(Integer domain, Boolean active, String description)
+	public int insertMk_campaign(Integer domain, Boolean active, String description, Integer scope)
 	throws SQLException {
 		int id = nextMk_campaignId();
 
@@ -59197,12 +63371,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		mk_campaign_.domain = domain;
 		mk_campaign_.active = active;
 		mk_campaign_.description = description;
+		mk_campaign_.scope = scope;
 
 		mk_campaigns.add(mk_campaign_);
 		
 		int mk_campaignCount = mk_campaigns.size();
 		
-		if ( 84 * mk_campaignCount >=  this.maxAllowedPacket ){
+		if ( 94 * mk_campaignCount >=  this.maxAllowedPacket ){
 			insertMk_campaign(mk_campaigns);
 			mk_campaigns.clear();
 		} 
@@ -59576,7 +63751,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Bank_statement
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param rbank Identificador de Banco de la Compaùia
+	 * @param rbank Identificador de Banco de la Compa?ia
 	 * @param lot_number Numero de lote
 	 * @param operation_date Fecha de operacion
 	 * @param common_concept Concepto comun
@@ -59629,7 +63804,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Bank_statement
 	 * @param domain Identificador del Dominio
-	 * @param rbank Identificador de Banco de la Compaùia
+	 * @param rbank Identificador de Banco de la Compa?ia
 	 * @param lot_number Numero de lote
 	 * @param operation_date Fecha de operacion
 	 * @param common_concept Concepto comun
@@ -59697,8 +63872,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String code; 
 		protected Integer scope; 
 		protected Integer workplace; 
+		protected String phone; 
+		protected String fax; 
+		protected String email; 
+		protected String web; 
 		protected Integer customer; 
 		protected Integer service_catalogue; 
+		protected Integer item_advance; 
+		protected Integer item_no_show; 
+		protected Integer item_penalty; 
+		protected Short sheet_changing; 
 		protected Boolean active; 
 	}
 	
@@ -59710,7 +63893,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( hotelStmt != null ) {
 				hotelStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -59719,7 +63902,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			hotelStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO hotel (id,domain,code,scope,workplace,customer,service_catalogue,active)"  
+				"INSERT INTO hotel (id,domain,code,scope,workplace,phone,fax,email,web,customer,service_catalogue,item_advance,item_no_show,item_penalty,sheet_changing,active)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			hotelStmtSize = size;
@@ -59748,6 +63931,22 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				hotelStmt.setNull(offset++, 4);
 			else
 				hotelStmt.setInt(offset++, hotel.workplace);
+			if ( hotel.phone == null )
+				hotelStmt.setNull(offset++, 12);
+			else
+				hotelStmt.setString(offset++, hotel.phone);
+			if ( hotel.fax == null )
+				hotelStmt.setNull(offset++, 12);
+			else
+				hotelStmt.setString(offset++, hotel.fax);
+			if ( hotel.email == null )
+				hotelStmt.setNull(offset++, 12);
+			else
+				hotelStmt.setString(offset++, hotel.email);
+			if ( hotel.web == null )
+				hotelStmt.setNull(offset++, 12);
+			else
+				hotelStmt.setString(offset++, hotel.web);
 			if ( hotel.customer == null )
 				hotelStmt.setNull(offset++, 4);
 			else
@@ -59756,6 +63955,22 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				hotelStmt.setNull(offset++, 4);
 			else
 				hotelStmt.setInt(offset++, hotel.service_catalogue);
+			if ( hotel.item_advance == null )
+				hotelStmt.setNull(offset++, 4);
+			else
+				hotelStmt.setInt(offset++, hotel.item_advance);
+			if ( hotel.item_no_show == null )
+				hotelStmt.setNull(offset++, 4);
+			else
+				hotelStmt.setInt(offset++, hotel.item_no_show);
+			if ( hotel.item_penalty == null )
+				hotelStmt.setNull(offset++, 4);
+			else
+				hotelStmt.setInt(offset++, hotel.item_penalty);
+			if ( hotel.sheet_changing == null )
+				hotelStmt.setNull(offset++, -6);
+			else
+				hotelStmt.setShort(offset++, hotel.sheet_changing);
 			if ( hotel.active == null )
 				hotelStmt.setNull(offset++, -7);
 			else
@@ -59815,12 +64030,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param code Codigo del Hotel
 	 * @param scope Identificador del Ambito
 	 * @param workplace Identificador del Centro de Trabajo
+	 * @param phone Telefono del Hotel
+	 * @param fax Fax del Hotel
+	 * @param email Email del Hotel
+	 * @param web Web del Hotel
 	 * @param customer Identificador del Cliente
 	 * @param service_catalogue Identificador del Catalogo de Servicios
+	 * @param item_advance Identificador del Producto para anticipos
+	 * @param item_no_show Identificador del Producto para no-show
+	 * @param item_penalty Identificador del Producto para penalizaciones
+	 * @param sheet_changing Dias entre cambio de sabanas
 	 * @param active Indica si el Hotel esta activo o no
 	 * @throws SQLException
 	*/
-	protected void insertHotel(Integer id, Integer domain, String code, Integer scope, Integer workplace, Integer customer, Integer service_catalogue, Boolean active)
+	protected void insertHotel(Integer id, Integer domain, String code, Integer scope, Integer workplace, String phone, String fax, String email, String web, Integer customer, Integer service_catalogue, Integer item_advance, Integer item_no_show, Integer item_penalty, Short sheet_changing, Boolean active)
 	throws SQLException {
 
 		Hotel hotel_ = new Hotel();
@@ -59829,15 +64052,23 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		hotel_.code = code;
 		hotel_.scope = scope;
 		hotel_.workplace = workplace;
+		hotel_.phone = phone;
+		hotel_.fax = fax;
+		hotel_.email = email;
+		hotel_.web = web;
 		hotel_.customer = customer;
 		hotel_.service_catalogue = service_catalogue;
+		hotel_.item_advance = item_advance;
+		hotel_.item_no_show = item_no_show;
+		hotel_.item_penalty = item_penalty;
+		hotel_.sheet_changing = sheet_changing;
 		hotel_.active = active;
 
 		hotels.add(hotel_);
 		
 		int hotelCount = hotels.size();
 		
-		if ( 76 * hotelCount >=  this.maxAllowedPacket ){
+		if ( 269 * hotelCount >=  this.maxAllowedPacket ){
 			insertHotel(hotels);
 			hotels.clear();
 		} 
@@ -59850,13 +64081,21 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param code Codigo del Hotel
 	 * @param scope Identificador del Ambito
 	 * @param workplace Identificador del Centro de Trabajo
+	 * @param phone Telefono del Hotel
+	 * @param fax Fax del Hotel
+	 * @param email Email del Hotel
+	 * @param web Web del Hotel
 	 * @param customer Identificador del Cliente
 	 * @param service_catalogue Identificador del Catalogo de Servicios
+	 * @param item_advance Identificador del Producto para anticipos
+	 * @param item_no_show Identificador del Producto para no-show
+	 * @param item_penalty Identificador del Producto para penalizaciones
+	 * @param sheet_changing Dias entre cambio de sabanas
 	 * @param active Indica si el Hotel esta activo o no
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertHotel(Integer domain, String code, Integer scope, Integer workplace, Integer customer, Integer service_catalogue, Boolean active)
+	public int insertHotel(Integer domain, String code, Integer scope, Integer workplace, String phone, String fax, String email, String web, Integer customer, Integer service_catalogue, Integer item_advance, Integer item_no_show, Integer item_penalty, Short sheet_changing, Boolean active)
 	throws SQLException {
 		int id = nextHotelId();
 
@@ -59866,15 +64105,23 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		hotel_.code = code;
 		hotel_.scope = scope;
 		hotel_.workplace = workplace;
+		hotel_.phone = phone;
+		hotel_.fax = fax;
+		hotel_.email = email;
+		hotel_.web = web;
 		hotel_.customer = customer;
 		hotel_.service_catalogue = service_catalogue;
+		hotel_.item_advance = item_advance;
+		hotel_.item_no_show = item_no_show;
+		hotel_.item_penalty = item_penalty;
+		hotel_.sheet_changing = sheet_changing;
 		hotel_.active = active;
 
 		hotels.add(hotel_);
 		
 		int hotelCount = hotels.size();
 		
-		if ( 76 * hotelCount >=  this.maxAllowedPacket ){
+		if ( 269 * hotelCount >=  this.maxAllowedPacket ){
 			insertHotel(hotels);
 			hotels.clear();
 		} 
@@ -60073,6 +64320,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer registry; 
 		protected Boolean active; 
 		protected String password; 
+		protected Date passwordExpiration; 
+		protected Short toolbar; 
 	}
 	
 	protected void insertUser( List<User> users )
@@ -60083,7 +64332,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( userStmt != null ) {
 				userStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -60092,7 +64341,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			userStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO user (id,domain,name,login,enterprise,registry,active,password)"  
+				"INSERT INTO user (id,domain,name,login,enterprise,registry,active,password,passwordExpiration,toolbar)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			userStmtSize = size;
@@ -60133,6 +64382,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				userStmt.setNull(offset++, 12);
 			else
 				userStmt.setString(offset++, user.password);
+			if ( user.passwordExpiration == null )
+				userStmt.setNull(offset++, 91);
+			else
+				userStmt.setDate(offset++, user.passwordExpiration);
+			if ( user.toolbar == null )
+				userStmt.setNull(offset++, -6);
+			else
+				userStmt.setShort(offset++, user.toolbar);
 		}
 		userStmt.executeUpdate();
 		userInserted += size;
@@ -60190,10 +64447,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param enterprise Identificador de la Empresa
 	 * @param registry Identificador del Registry
 	 * @param active Indica si el Usuario esta activo o no
-	 * @param password Contraseùa del Usuario
+	 * @param password Contrase?a del Usuario
+	 * @param passwordExpiration Fecha de Expiracion de la Contrase?a
+	 * @param toolbar Tipo de Barra de Herramientas del Usuario
 	 * @throws SQLException
 	*/
-	protected void insertUser(Integer id, Integer domain, String name, String login, Integer enterprise, Integer registry, Boolean active, String password)
+	protected void insertUser(Integer id, Integer domain, String name, String login, Integer enterprise, Integer registry, Boolean active, String password, Date passwordExpiration, Short toolbar)
 	throws SQLException {
 
 		User user_ = new User();
@@ -60205,12 +64464,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		user_.registry = registry;
 		user_.active = active;
 		user_.password = password;
+		user_.passwordExpiration = passwordExpiration;
+		user_.toolbar = toolbar;
 
 		users.add(user_);
 		
 		int userCount = users.size();
 		
-		if ( 248 * userCount >=  this.maxAllowedPacket ){
+		if ( 261 * userCount >=  this.maxAllowedPacket ){
 			insertUser(users);
 			users.clear();
 		} 
@@ -60225,11 +64486,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param enterprise Identificador de la Empresa
 	 * @param registry Identificador del Registry
 	 * @param active Indica si el Usuario esta activo o no
-	 * @param password Contraseùa del Usuario
+	 * @param password Contrase?a del Usuario
+	 * @param passwordExpiration Fecha de Expiracion de la Contrase?a
+	 * @param toolbar Tipo de Barra de Herramientas del Usuario
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertUser(Integer domain, String name, String login, Integer enterprise, Integer registry, Boolean active, String password)
+	public int insertUser(Integer domain, String name, String login, Integer enterprise, Integer registry, Boolean active, String password, Date passwordExpiration, Short toolbar)
 	throws SQLException {
 		int id = nextUserId();
 
@@ -60242,12 +64505,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		user_.registry = registry;
 		user_.active = active;
 		user_.password = password;
+		user_.passwordExpiration = passwordExpiration;
+		user_.toolbar = toolbar;
 
 		users.add(user_);
 		
 		int userCount = users.size();
 		
-		if ( 248 * userCount >=  this.maxAllowedPacket ){
+		if ( 261 * userCount >=  this.maxAllowedPacket ){
 			insertUser(users);
 			users.clear();
 		} 
@@ -60423,23 +64688,28 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	throws SQLException {
 		flushDb_version();
 		flushPcategory();
+		flushItem_addinfo();
 		flushAgreement_data();
 		flushWarehouse();
 		flushCustomer();
 		flushPos();
 		flushMessage_content();
+		flushApplication_user_profile();
 		flushInvoice_tax();
+		flushReservation_request_guest();
 		flushContract_attach();
 		flushIattach();
 		flushTas_item();
 		flushPayment_concept();
 		flushCost_profile();
+		flushRole();
 		flushFeature();
 		flushSalary();
 		flushCommission();
 		flushSupplier();
 		flushSignature();
 		flushUser_scope();
+		flushContact_detail();
 		flushAsset();
 		flushItem_warehouse();
 		flushPos_shift();
@@ -60453,10 +64723,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushWeb_info_style();
 		flushSalary_payment();
 		flushContract_data();
-		flushEc_paymethod();
 		flushEnterprise_data();
 		flushFs_renting_detail();
 		flushMk_action();
+		flushProfile_action_denied();
 		flushProposal_detail();
 		flushFs_vat_detail();
 		flushOffer_detail_commission();
@@ -60474,6 +64744,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushAmortization_detail();
 		flushDomain();
 		flushNotice();
+		flushFs_mod349();
 		flushSalary_bonus();
 		flushCertifica2_batch_attach();
 		flushProcess_task();
@@ -60485,6 +64756,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushAction_entry();
 		flushAbsence();
 		flushSystem_payment();
+		flushApplication_user();
 		flushItem_tariff();
 		flushCno();
 		flushAccount_entry_fbatch();
@@ -60500,13 +64772,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushOffer_term();
 		flushCommercial_activity();
 		flushRsegment();
+		flushDomain_application_module();
 		flushProject_tas();
 		flushProcess_transition_type();
 		flushDeduction_concept();
 		flushCertifica2_batch_detail();
 		flushContract_batch();
 		flushQuality_skill();
-		flushEc_target();
 		flushBalance();
 		flushQualification();
 		flushTax_detail();
@@ -60533,6 +64805,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushRattach();
 		flushLeave_batch_detail();
 		flushSales_detail();
+		flushProject_attach();
+		flushContact_data();
 		flushSystem_deduction();
 		flushMake();
 		flushRoom();
@@ -60543,17 +64817,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushDepartment();
 		flushTarget_profile();
 		flushPurchase();
+		flushDomain_application();
 		flushWeb_info();
 		flushBank_statement_link();
 		flushCourse_alumn();
+		flushApplication_role();
 		flushFan_batch();
 		flushFs_renting();
 		flushWarehouse_transfer_detail();
 		flushQuestion();
 		flushRecord_data();
 		flushAlumn_loan();
+		flushProfile();
 		flushCalendar();
-		flushEc_offer_pay_info();
 		flushAsset_activity();
 		flushProject_reservation_guest();
 		flushCalendar_period();
@@ -60564,13 +64840,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushCommission_type();
 		flushAlarm();
 		flushPay_method();
-		flushEc_catalogue();
 		flushWorkactivity();
-		flushEc_config();
 		flushProject_commercial();
-		flushCourse_observation();
 		flushCnae2009();
+		flushCourse_observation();
 		flushSalary_data();
+		flushReservation_request_room();
+		flushProfile_role();
 		flushSurvey_response();
 		flushEvaluation_observation();
 		flushPerson();
@@ -60579,6 +64855,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushIrpf_regularization();
 		flushCashflow_forecast();
 		flushAccount_entry();
+		flushTag();
 		flushGeotree();
 		flushItem_supplier();
 		flushCustomer_account();
@@ -60617,6 +64894,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushProject_reservation_room();
 		flushAction_denied();
 		flushAgreement_level();
+		flushContact();
 		flushUser_workgroup();
 		flushCourse_schedule();
 		flushRrelationship();
@@ -60626,11 +64904,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushFs_vat();
 		flushContract_deduction();
 		flushNote();
-		flushCourse_subject();
 		flushObservation();
+		flushCourse_subject();
 		flushAction_favorite();
 		flushLoan_account();
 		flushSalary_embargo();
+		flushReservation_request();
 		flushFs_prof_retention();
 		flushIrpf_data_descendients();
 		flushSurvey_workflow();
@@ -60655,8 +64934,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushInvoice_detail();
 		flushLeave_batch();
 		flushProject_reservation_room_detail();
-		flushCourse_instructor();
 		flushAccount_entry_finance_tracking();
+		flushCourse_instructor();
 		flushItem_composition();
 		flushAgreement_level_data();
 		flushIncome_detail();
@@ -60673,15 +64952,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushCampaign_type();
 		flushCatalogue_item();
 		flushAcademic_skill();
-		flushContract();
 		flushOffer_detail();
+		flushContract();
 		flushAmortization();
 		flushEnterprise();
 		flushMark();
 		flushCatalogue_category();
 		flushGeozone_irpf_descendant();
+		flushFs_mod349_detail();
 		flushCompany();
 		flushAccount_entry_bank_statement();
+		flushProfile_module_denied();
 		flushProject_reservation_service_detail();
 		flushSalary_cost();
 		flushProject_dossier();
@@ -60695,6 +64976,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushLeave_batch_attach();
 		flushAgreement_payment();
 		flushFan_batch_attach();
+		flushRattach_tag();
+		flushFinance_pos();
 		flushAuto_concept();
 		flushWeb_info_page_detail();
 		flushPos_shift_count();
@@ -60709,6 +64992,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushContract_calendar_event();
 		flushRdir_staff();
 		flushTask();
+		flushProject_reservation_divert();
 		flushAgreement();
 		flushOffer();
 		flushAsset_feature();
@@ -60787,6 +65071,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initPcategoryId();
 		initMaxAllowedPacket();
+		initItem_addinfoId();
+		initMaxAllowedPacket();
 		initAgreement_dataId();
 		initMaxAllowedPacket();
 		initWarehouseId();
@@ -60796,7 +65082,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initMessage_contentId();
 		initMaxAllowedPacket();
+		initApplication_user_profileId();
+		initMaxAllowedPacket();
 		initInvoice_taxId();
+		initMaxAllowedPacket();
+		initReservation_request_guestId();
 		initMaxAllowedPacket();
 		initContract_attachId();
 		initMaxAllowedPacket();
@@ -60808,6 +65098,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initCost_profileId();
 		initMaxAllowedPacket();
+		initRoleId();
+		initMaxAllowedPacket();
 		initFeatureId();
 		initMaxAllowedPacket();
 		initSalaryId();
@@ -60818,6 +65110,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initSignatureId();
 		initMaxAllowedPacket();
 		initUser_scopeId();
+		initMaxAllowedPacket();
+		initContact_detailId();
 		initMaxAllowedPacket();
 		initAssetId();
 		initMaxAllowedPacket();
@@ -60845,13 +65139,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initContract_dataId();
 		initMaxAllowedPacket();
-		initEc_paymethodId();
-		initMaxAllowedPacket();
 		initEnterprise_dataId();
 		initMaxAllowedPacket();
 		initFs_renting_detailId();
 		initMaxAllowedPacket();
 		initMk_actionId();
+		initMaxAllowedPacket();
+		initProfile_action_deniedId();
 		initMaxAllowedPacket();
 		initProposal_detailId();
 		initMaxAllowedPacket();
@@ -60887,6 +65181,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initNoticeId();
 		initMaxAllowedPacket();
+		initFs_mod349Id();
+		initMaxAllowedPacket();
 		initSalary_bonusId();
 		initMaxAllowedPacket();
 		initCertifica2_batch_attachId();
@@ -60908,6 +65204,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initAbsenceId();
 		initMaxAllowedPacket();
 		initSystem_paymentId();
+		initMaxAllowedPacket();
+		initApplication_userId();
 		initMaxAllowedPacket();
 		initItem_tariffId();
 		initMaxAllowedPacket();
@@ -60937,6 +65235,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initRsegmentId();
 		initMaxAllowedPacket();
+		initDomain_application_moduleId();
+		initMaxAllowedPacket();
 		initMaxAllowedPacket();
 		initProcess_transition_typeId();
 		initMaxAllowedPacket();
@@ -60947,8 +65247,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initContract_batchId();
 		initMaxAllowedPacket();
 		initQuality_skillId();
-		initMaxAllowedPacket();
-		initEc_targetId();
 		initMaxAllowedPacket();
 		initBalanceId();
 		initMaxAllowedPacket();
@@ -61002,6 +65300,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initSales_detailId();
 		initMaxAllowedPacket();
+		initProject_attachId();
+		initMaxAllowedPacket();
+		initContact_dataId();
+		initMaxAllowedPacket();
 		initSystem_deductionId();
 		initMaxAllowedPacket();
 		initMakeId();
@@ -61021,11 +65323,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initPurchaseId();
 		initMaxAllowedPacket();
+		initDomain_applicationId();
+		initMaxAllowedPacket();
 		initWeb_infoId();
 		initMaxAllowedPacket();
 		initBank_statement_linkId();
 		initMaxAllowedPacket();
 		initCourse_alumnId();
+		initMaxAllowedPacket();
+		initApplication_roleId();
 		initMaxAllowedPacket();
 		initFan_batchId();
 		initMaxAllowedPacket();
@@ -61039,9 +65345,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initAlumn_loanId();
 		initMaxAllowedPacket();
-		initCalendarId();
+		initProfileId();
 		initMaxAllowedPacket();
-		initEc_offer_pay_infoId();
+		initCalendarId();
 		initMaxAllowedPacket();
 		initAsset_activityId();
 		initMaxAllowedPacket();
@@ -61063,18 +65369,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initPay_methodId();
 		initMaxAllowedPacket();
-		initEc_catalogueId();
-		initMaxAllowedPacket();
 		initWorkactivityId();
 		initMaxAllowedPacket();
-		initEc_configId();
-		initMaxAllowedPacket();
-		initMaxAllowedPacket();
-		initCourse_observationId();
 		initMaxAllowedPacket();
 		initCnae2009Id();
 		initMaxAllowedPacket();
+		initCourse_observationId();
+		initMaxAllowedPacket();
 		initSalary_dataId();
+		initMaxAllowedPacket();
+		initReservation_request_roomId();
+		initMaxAllowedPacket();
+		initProfile_roleId();
 		initMaxAllowedPacket();
 		initSurvey_responseId();
 		initMaxAllowedPacket();
@@ -61089,6 +65395,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initCashflow_forecastId();
 		initMaxAllowedPacket();
 		initAccount_entryId();
+		initMaxAllowedPacket();
+		initTagId();
 		initMaxAllowedPacket();
 		initGeotreeId();
 		initMaxAllowedPacket();
@@ -61165,6 +65473,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initAgreement_levelId();
 		initMaxAllowedPacket();
+		initContactId();
+		initMaxAllowedPacket();
 		initUser_workgroupId();
 		initMaxAllowedPacket();
 		initCourse_scheduleId();
@@ -61182,15 +65492,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initNoteId();
 		initMaxAllowedPacket();
-		initCourse_subjectId();
-		initMaxAllowedPacket();
 		initObservationId();
+		initMaxAllowedPacket();
+		initCourse_subjectId();
 		initMaxAllowedPacket();
 		initAction_favoriteId();
 		initMaxAllowedPacket();
 		initLoan_accountId();
 		initMaxAllowedPacket();
 		initSalary_embargoId();
+		initMaxAllowedPacket();
+		initReservation_requestId();
 		initMaxAllowedPacket();
 		initFs_prof_retentionId();
 		initMaxAllowedPacket();
@@ -61240,9 +65552,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initProject_reservation_room_detailId();
 		initMaxAllowedPacket();
-		initCourse_instructorId();
-		initMaxAllowedPacket();
 		initAccount_entry_finance_trackingId();
+		initMaxAllowedPacket();
+		initCourse_instructorId();
 		initMaxAllowedPacket();
 		initItem_compositionId();
 		initMaxAllowedPacket();
@@ -61276,9 +65588,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initAcademic_skillId();
 		initMaxAllowedPacket();
-		initContractId();
-		initMaxAllowedPacket();
 		initOffer_detailId();
+		initMaxAllowedPacket();
+		initContractId();
 		initMaxAllowedPacket();
 		initAmortizationId();
 		initMaxAllowedPacket();
@@ -61289,8 +65601,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initGeozone_irpf_descendantId();
 		initMaxAllowedPacket();
+		initFs_mod349_detailId();
+		initMaxAllowedPacket();
 		initMaxAllowedPacket();
 		initAccount_entry_bank_statementId();
+		initMaxAllowedPacket();
+		initProfile_module_deniedId();
 		initMaxAllowedPacket();
 		initProject_reservation_service_detailId();
 		initMaxAllowedPacket();
@@ -61316,6 +65632,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initAgreement_paymentId();
 		initMaxAllowedPacket();
 		initFan_batch_attachId();
+		initMaxAllowedPacket();
+		initRattach_tagId();
+		initMaxAllowedPacket();
+		initFinance_posId();
 		initMaxAllowedPacket();
 		initAuto_conceptId();
 		initMaxAllowedPacket();
@@ -61344,6 +65664,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initRdir_staffId();
 		initMaxAllowedPacket();
 		initTaskId();
+		initMaxAllowedPacket();
+		initProject_reservation_divertId();
 		initMaxAllowedPacket();
 		initAgreementId();
 		initMaxAllowedPacket();

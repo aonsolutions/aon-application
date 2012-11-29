@@ -1,5 +1,8 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
+import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.enum2short;
+import static com.esferalia.aon.salary.enumeration.SalaryType.SETTLE;
+
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,8 +11,6 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -25,12 +26,6 @@ import com.den_4.inotify_java.exceptions.InotifyException;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finiquito;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomina;
-import com.esferalia.aon.salary.enumeration.PaymentType;
-import com.esferalia.aon.salary.enumeration.SalaryType;
-
-import static com.esferalia.aon.salary.enumeration.SalaryType.SETTLE;
-
-import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.enum2short;
 
 public class Ctsql2MysqlD {
 	

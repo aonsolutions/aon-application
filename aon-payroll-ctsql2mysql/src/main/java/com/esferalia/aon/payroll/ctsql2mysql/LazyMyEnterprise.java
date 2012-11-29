@@ -46,13 +46,15 @@ public class LazyMyEnterprise extends MyEnterprise {
 						ICalendars calendars,
 						IAgreements agreements,
 						File logosAndSignaturesDir,
+						String passwdHash,
 						Date fromDate,
 						EmprnifFilter emprnifFilter) {
 		
 		super(mysqlDB, 
 				agreements, 
 				calendars, 
-				logosAndSignaturesDir);
+				logosAndSignaturesDir,
+				passwdHash);
 		this.emprnifFilter = emprnifFilter;
 		
 		this.myContract = 
@@ -62,6 +64,7 @@ public class LazyMyEnterprise extends MyEnterprise {
 						concepts, 
 						agreements,
 						calendars,
+						passwdHash,
 						fromDate );
 	}
 
@@ -71,6 +74,7 @@ public class LazyMyEnterprise extends MyEnterprise {
 			ICalendars calendars,
 			IAgreements agreements,
 			File logosAndSignaturesDir,
+			String passwdHash,
 			Date fromDate,
 			List<String> cifs) {
 		this(mysqlDB, 
@@ -79,6 +83,7 @@ public class LazyMyEnterprise extends MyEnterprise {
 				calendars, 
 				agreements, 
 				logosAndSignaturesDir, 
+				passwdHash,
 				fromDate , 
 				new CifEmprnifFilter(cifs) );
 	}

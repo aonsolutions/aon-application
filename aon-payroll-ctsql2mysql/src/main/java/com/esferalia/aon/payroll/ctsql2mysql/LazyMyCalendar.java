@@ -1,5 +1,7 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calendar;
@@ -39,12 +41,47 @@ public class LazyMyCalendar extends MyCalendar {
 	
 	@Override
 	public void visitEmprctra(Emprctra emprctra) throws SQLException {
-		emprctra.visitRel_cal_ctra(this);
+		ResultSet 			rs 	= null;
+		try {
+			
+			if ( rel_cal_ctraStmt == null )
+				 initRel_cal_ctraStmt();
+			
+			rel_cal_ctraStmt.setInt(1, emprctra.getCodact()); 
+			rel_cal_ctraStmt.setInt(2, emprctra.getCdg()); 
+			rel_cal_ctraStmt.setInt(3, emprctra.getDomicilio()); 
+			rs = rel_cal_ctraStmt.executeQuery();
+			Calendar calendar = ctsqlDB.new Calendar(rs); 
+			while ( rs.next() ) {
+				super.visitCalendar(calendar);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+		}
 	}
 	
-	@Override
-	public void visitRel_cal_ctra(Calendar calendar, Emprctra emprctra)
-			throws SQLException {
-		super.visitCalendar(calendar);
+	
+
+	
+	private PreparedStatement rel_cal_ctraStmt = null;
+		
+	private void initRel_cal_ctraStmt() 
+	throws SQLException{
+		this.rel_cal_ctraStmt = ctsqlDB.ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",feccal" 
+				+ ",tipdia" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",domicilio" 
+				+ " FROM calendar"
+				+ " WHERE" 
+				+ " codact = ?  "  + "AND" 				
+				+ " codemp = ?  "  + "AND" 				
+				+ " domicilio = ?  " 			); 
 	}
+	
 }

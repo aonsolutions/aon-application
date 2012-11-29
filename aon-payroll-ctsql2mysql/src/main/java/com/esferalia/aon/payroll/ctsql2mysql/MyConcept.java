@@ -17,6 +17,7 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipboni;
 import com.esferalia.aon.payroll.sql.AbstractSQL.IPaymentConcept;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.enumeration.BonusType;
 
 public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 
@@ -346,10 +347,15 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 	public void visitTipboni(Tipboni tipboni) throws SQLException {
 		String description = tipboni.getDescripcion();
 		String expression = getExpr(tipboni);
+		BonusType bonusType = null;
+		if ( "S".equals(tipboni.getBoniss() )){
+			bonusType = BonusType.SOCIAL_SECURITY;
+		}
 		Integer bonusConceptId = 
 			mysqlDB.insertBonus_concept(
 					expression, 
-					description );
+					description,
+					enum2short(bonusType));
 		
 		Bonus bonus = 
 			new Bonus(bonusConceptId, tipboni.getCalculo(), description, expression);

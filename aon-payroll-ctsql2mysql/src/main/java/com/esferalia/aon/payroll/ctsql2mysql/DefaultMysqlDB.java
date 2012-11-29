@@ -3,7 +3,10 @@
  */
 package com.esferalia.aon.payroll.ctsql2mysql;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -20,6 +23,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+
+import org.apache.commons.codec.binary.Base64;
 
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -409,7 +414,7 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 				false,
 				null,
 				status,
-				null,  
+				null,
 				scope,
 				false, 
 				true,
@@ -661,6 +666,60 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		}
 	}
 	
+	public Integer getDomainApplicationId(String application) throws SQLException {
+		ResultSet rs = null; 
+		PreparedStatement stmt = null ;
+		try {
+			stmt = mysqlConnection.prepareStatement(
+					"SELECT id "+
+					" FROM domain_application" + 
+					" WHERE domain_application.application IN ( SELECT id FROM application WHERE name=?)"
+					);
+			stmt.setString(1, application);
+			rs = stmt.executeQuery();
+			if ( rs.next() ){
+				return rs.getInt("id");
+			}
+			else {
+				return null;
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	public Integer getProfileId(String application, String profile ) throws SQLException {
+		ResultSet rs = null; 
+		PreparedStatement stmt = null ;
+		try {
+			stmt = mysqlConnection.prepareStatement(
+					"SELECT id "+
+					" FROM profile" + 
+					" WHERE application IN ( SELECT id FROM application WHERE name=? )" +
+					" AND name=?"
+					);
+			stmt.setString(1, application);
+			stmt.setString(2, profile);
+			rs = stmt.executeQuery();
+			if ( rs.next() ){
+				return rs.getInt("id");
+			}
+			else {
+				return null;
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
 	public static boolean is9999 ( Date date ) {
 		if ( date == null )
 			return false;
@@ -672,5 +731,12 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		return DefaultMysqlDB.is9999(fecFin)? null : fecFin;
 	}
 	
+
+	public static String encode(String str) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		MessageDigest digest = MessageDigest.getInstance("SHA-1");
+		digest.update(str.getBytes("UTF-8"));
+		byte raw [] = digest.digest();
+		return new String ( Base64.encodeBase64(raw), "UTF-8"); //step 5
+	}
 	
 }
