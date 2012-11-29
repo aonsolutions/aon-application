@@ -239,18 +239,19 @@ public class RoomBookingController implements ICollectionProvider {
 			list.addAll(getReservationOccupationList(notAssignedOccupation));
 		}
 		Collections.sort(list, new Comparator() {  
-	        public int compare(Object o1, Object o2) {  
-	            String hotel1 = (String)((Object[]) o1)[0];  
-	            Date date1 = (Date)((Object[]) o1)[1];  
-	            String hotel2 = (String)((Object[]) o2)[0];  
-	            Date date2 = (Date)((Object[]) o2)[1];
-	            if(hotel2.equals(hotel1)){
-	            	return date1.compareTo(date2);
-	            } else {
-	            	return -1;
-	            }  
-	        }  
-	    });  
+			public int compare(Object o1, Object o2) {  
+				String hotel1 = (String)((Object[]) o1)[0];  
+				Date date1 = (Date)((Object[]) o1)[1];  
+				String hotel2 = (String)((Object[]) o2)[0];  
+				Date date2 = (Date)((Object[]) o2)[1];
+				if(hotel1.compareTo(hotel2)==0){
+					return date1.compareTo(date2);
+				} else {
+					return hotel1.compareTo(hotel2);
+				}  
+			}  
+		}
+		);
 		return list;
 	}
 	
