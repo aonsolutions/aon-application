@@ -129,6 +129,7 @@ public class AdminMainController implements IAdminConstants {
 			}
 			controller.initApplicationInfos();
 			controller.initOEM();
+			controller.updateDocumental();
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				

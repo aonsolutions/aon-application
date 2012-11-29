@@ -49,6 +49,8 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
+import com.code.aon.ui.registry.controller.DocumentManager;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -295,6 +297,11 @@ public class DomainController extends BasicController {
 
 	public void setOEMDomain(Domain oEMDomain) {
 		OEMDomain = oEMDomain;
+	}
+	
+	public void updateDocumental() throws ManagerBeanException {
+		DocumentManager dm = (DocumentManager) AonUtil.getRegisteredBean(IRegistryConstants.DOCUMENT_MANAGER_CONTROLLER_NAME);
+		dm.updateLimits(getManagerBean(), getDomain());
 	}
 
 	public IControllerListener getParentDomainFilter() {

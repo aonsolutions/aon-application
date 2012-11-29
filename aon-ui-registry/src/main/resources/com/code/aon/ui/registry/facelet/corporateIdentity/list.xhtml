@@ -18,6 +18,7 @@
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{corporateIdentityAttach}" />
+					<ui:param name="showNote" value="#{false}" />
 					<ui:param name="skipSelectButton" value="#{!aonRole.documentManager}" />
 					<ui:param name="rowSelectorToggleOnClick" value="#{aonRole.documentManager}" />
 					<ui:define name="columns">
@@ -27,7 +28,7 @@
 							
 					</ui:define>
 					<ui:define name="additionalDataTableContent" >
-						<aon:div rendered="#{showDataTable}" styleClass="aon-margin-top" >
+						<aon:div styleClass="aon-margin-top" >
 							<aon:outputText style="#{documentManager.freeSpaceStyle}"
 								value="#{documentManager.freeSpaceMessage}" />
 						</aon:div>

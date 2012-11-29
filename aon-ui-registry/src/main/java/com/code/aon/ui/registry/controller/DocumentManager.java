@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Domain;
@@ -35,9 +36,13 @@ public class DocumentManager {
 	
 	private static final Long MB_SIZE = 1048576L;
 	
-	private static final Long DEFAULT_MAX_DOCUMENT_SIZE = 1 * MB_SIZE;
+	private static final int MINIMUM_MAX_DOCUMENT_SIZE = 1;
 	
-	private static final Long DEFAULT_MAX_TOTAL_DOCUMENT_SIZE = 10 * MB_SIZE;
+	private static final int MAXIMUM_MAX_DOCUMENT_SIZE = 16;
+	
+	private static final int MINIMUM_MAX_TOTAL_DOCUMENT_SIZE = 100;
+	
+	private static final int MAXIMUM_MAX_TOTAL_DOCUMENT_SIZE = 1500;
 	
 	/** Maximum number of users defined for the domain. */
 	private Long maxDocumentSize;
@@ -46,8 +51,8 @@ public class DocumentManager {
 	private Long maxTotalDocumentSize;	
 	
 	public DocumentManager() {
-		this.maxDocumentSize = DEFAULT_MAX_DOCUMENT_SIZE;
-		this.maxTotalDocumentSize = DEFAULT_MAX_TOTAL_DOCUMENT_SIZE;
+		this.maxDocumentSize = MINIMUM_MAX_DOCUMENT_SIZE * MB_SIZE;
+		this.maxTotalDocumentSize = MINIMUM_MAX_TOTAL_DOCUMENT_SIZE * MB_SIZE;
 		if (! AonUtil.isSkipLdap() ) {
 			initLdap();	
 		} else {
@@ -89,15 +94,35 @@ public class DocumentManager {
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 			Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
 			if ( domain != null ) {
-				if ( domain.getMaxDocumentSize() != null ) {
-					maxDocumentSize = domain.getMaxDocumentSize() * MB_SIZE;	
-				}
-				if ( domain.getMaxTotalDocumentSize() != null ) {
-					maxTotalDocumentSize = domain.getMaxTotalDocumentSize() * MB_SIZE;
-				}
+				updateLimits(bean, domain);
 			}
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error init max document szie", th);
+		}		
+	}
+	
+	public void updateLimits( IManagerBean bean, Domain domain ) throws ManagerBeanException {
+		boolean updateDomain = false;
+		Integer value = domain.getMaxDocumentSize();
+		if ( (value == null) || (value < MINIMUM_MAX_DOCUMENT_SIZE)  ) {
+			updateDomain = true;
+			domain.setMaxDocumentSize(MINIMUM_MAX_DOCUMENT_SIZE);
+		} else if (value > MAXIMUM_MAX_DOCUMENT_SIZE  ) {
+			updateDomain = true;
+			domain.setMaxDocumentSize(MAXIMUM_MAX_DOCUMENT_SIZE);
+		}
+		maxDocumentSize = domain.getMaxDocumentSize() * MB_SIZE;
+		value = domain.getMaxTotalDocumentSize();
+		if ( (value == null) || (value < MINIMUM_MAX_TOTAL_DOCUMENT_SIZE)  ) {
+			updateDomain = true;
+			domain.setMaxTotalDocumentSize(MINIMUM_MAX_TOTAL_DOCUMENT_SIZE);
+		} else if (value > MAXIMUM_MAX_TOTAL_DOCUMENT_SIZE  ) {
+			updateDomain = true;
+			domain.setMaxTotalDocumentSize(MAXIMUM_MAX_TOTAL_DOCUMENT_SIZE);
+		}
+		maxTotalDocumentSize = domain.getMaxTotalDocumentSize() * MB_SIZE;
+		if ( updateDomain ) {
+			bean.update(domain);
 		}		
 	}
 	
