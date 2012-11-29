@@ -44,7 +44,7 @@
 	<!-- **************** ACCOUNTING BOOK ************************** -->
 	<managed-bean>
 		<managed-bean-name>accountingBook</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.accounting.controller.report.AccountingBookController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.book.AccountingBookController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 

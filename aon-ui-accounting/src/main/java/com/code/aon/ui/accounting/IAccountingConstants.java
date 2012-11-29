@@ -6,6 +6,7 @@ public interface IAccountingConstants {
 	// COMMON
 	String ASTERISK = "*";
 	String EMPTY = "";
+	String CR = "\r\n";
 	String OPEN_BRACKET = "(";
 	String CLOSE_BRACKET = ")";
 	String PIPE = "|";
@@ -28,6 +29,14 @@ public interface IAccountingConstants {
 	String STATEMENT_CONTROLLER_NAME = "statement";
 	String TRIAL_BALANCE_CONTROLLER_NAME = "trialBalance";
 	String ACCOUNTING_COLLECTIONS_CONTROLLER_NAME =  "accountingCollections";
+	String REPORT_CONTROLLER = "report";
+	String COMPANY_CONTROLLER = "company";
+	String JOURNAL_REPORT_CONTROLLER = "journalReport";
+	String ACCOUNTING_REGENERATOR_CONTROLLER = "accountRegenerator";
+	String LEDGER_REPORT_CONTROLLER = "ledgerReport";
+	String OFFICIAL_TRIAL_BALANCE_CONTROLLER = "officialTrialBalance";
+	String VAT_REPORT_CONTROLLER = "vatReport";
+	String BALANCE_SHEET_CONTROLLER = "balanceSheet";
 	
 	// NAVIGATION KEYS
 	String ACCOUNT_ENTRY_FORM_NAVKEY = "accountEntry_form";
