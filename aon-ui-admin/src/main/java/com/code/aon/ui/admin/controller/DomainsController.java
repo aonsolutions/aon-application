@@ -88,7 +88,6 @@ public class DomainsController {
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		if (! ObjectUtils.equals( principal.getDomainId(), domain.getId()) )  {
 			ds.setDomainManagementAvailable(true);
-			ds.setParentDomain(true);
 			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 			adc.enableOnlyConfig();			
 		}

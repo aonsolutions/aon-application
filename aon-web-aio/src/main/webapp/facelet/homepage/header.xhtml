@@ -33,7 +33,7 @@
 			<aon:div styleClass="aon-nowrap aon-padding-left" rendered="#{loggedUser.logged}"
 				style="color:#999;">
 				<aon:form id="headerOptionsForm">
-					<c:if test="#{domainSwitcher.parentDomainUserInChildDomain}">
+					<c:if test="#{domainSwitcher.enabledGoToParent}">
 						<aon:panelGroup styleClass="aon-margin-right">
 			 				<h:commandLink id="DomainSwitch" 
 								title="#{bundle.aon_module_enterprise}"

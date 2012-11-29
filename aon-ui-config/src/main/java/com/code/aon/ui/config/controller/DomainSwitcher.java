@@ -12,6 +12,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -261,5 +262,12 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 		}
 		return domainURL;
 	}	
-		
+
+	public boolean isEnabledGoToParent() {
+		if ( isParentDomainUserInChildDomain() ) {
+			return ObjectUtils.equals(getParentDomainId(), AonUtil.getAuthPrincipal().getDomainId());
+		}
+		return false;
+	}
+	
 }

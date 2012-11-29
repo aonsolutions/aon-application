@@ -153,7 +153,7 @@
 								columnClasses="aon-width-50 aon-vertical-align-top
 											,aon-width-auto aon-vertical-align-top">
 											
-								<c:if test="#{domainSwitcher.parentDomainUserInChildDomain}">
+								<c:if test="#{domainSwitcher.enabledGoToParent}">
 									<h:commandLink action="start" actionListener="#{domainSwitcher.onParentDomain}">
 									
 										<!--
@@ -169,7 +169,7 @@
 									</h:commandLink>
 								</c:if>
 								
-								<c:if test="#{!domainSwitcher.parentDomainUserInChildDomain}">
+								<c:if test="#{!domainSwitcher.enabledGoToParent}">
 										<!--
 											a4j:mediaOutput duplicado un poco mas arriba, cuando el link esta habilitado 
 										 -->

@@ -19,12 +19,16 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 	protected Integer domainId;
 	private boolean domainManagementAvailable;
 	protected int type;
-	private boolean parentDomain;
+	private Integer parentDomainId;
 	private Collection<Integer> domainFilter;
 	
 	@Override
 	public Integer getDomainId() {
 		return domainId;
+	}
+
+	public Integer getParentDomainId() {
+		return parentDomainId;
 	}
 
 	@Override
@@ -46,13 +50,9 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 		this.domainManagementAvailable = domainManagementAvailable;
 	}
 
-	public void setParentDomain(boolean parentDomain) {
-		this.parentDomain = parentDomain;
-	}
-
 	@Override
 	public boolean isParentDomain() {
-		return parentDomain;
+		return this.parentDomainId == null;
 	}
 	
 	@Override
@@ -84,7 +84,7 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 	}
 
 	private void initializeDomain() {
-		parentDomain = false;
+		this.parentDomainId = null;
 		domainManagementAvailable = false;
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(DOMAIN_CLASS_NAME);
 		String q = "SELECT d.parent,d.domainManagement,d.type FROM domain d"
@@ -97,8 +97,7 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 				.addScalar("type", Hibernate.INTEGER)
 				.uniqueResult();
 		if (! ArrayUtils.isEmpty(arr) ) {
-			Integer parent = (Integer) arr[0]; 
-			parentDomain = (parent == null);
+			parentDomainId = (Integer) arr[0]; 
 			domainManagementAvailable = (Boolean) arr[1];
 			type = (Integer) arr[2];
 		}
