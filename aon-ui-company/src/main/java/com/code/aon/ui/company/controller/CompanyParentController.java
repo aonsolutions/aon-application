@@ -1,5 +1,6 @@
 package com.code.aon.ui.company.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +10,9 @@ import java.util.Map;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.imageio.ImageIO;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,6 +130,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	private boolean smartCard;
 	
 	private boolean customReportTemplate;
+	
+	private boolean bigLogo;
 
     /**
      * Gets the company label.
@@ -155,6 +160,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	 */
 	public void setAttach(RegistryAttachment attach) {
 		this.attach = attach;
+		updateBigLogo(attach);
 	}
 
 	/**
@@ -820,6 +826,24 @@ public class CompanyParentController extends BasicController implements ICompany
 		} catch (ManagerBeanException e) {
 			LOGGER.warn("unable to check Document.",e);
 		}
+	}
+
+
+	private void updateBigLogo( RegistryAttachment attach ) {
+		this.bigLogo = false;
+		if ( (attach != null) && (!ArrayUtils.isEmpty(attach.getData())) ) {
+			InputStream in = new ByteArrayInputStream(attach.getData());
+			try {
+				BufferedImage image = ImageIO.read(in);
+				bigLogo = (image.getWidth() > 200);
+			} catch (Throwable th) {
+				LOGGER.error( "Error reading logo", th);
+			}
+		}
+	}	
+	
+	public boolean isBigLogo() {
+		return bigLogo;
 	}	
 	
 }

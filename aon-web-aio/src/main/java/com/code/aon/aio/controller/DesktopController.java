@@ -9,8 +9,6 @@ import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_PERSON
 import static com.code.aon.ui.product.controller.IItemConstants.SHOW_SALES_PRICE;
 import static com.code.aon.ui.tas.controller.ITasConstants.SHOW_TAS_DATA;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.InetAddress;
@@ -28,9 +26,7 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
-import javax.imageio.ImageIO;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -57,7 +53,6 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -94,8 +89,6 @@ public class DesktopController {
     private TaskHolder taskHolder;
     
     private boolean checkUpdateURL = true;
-    
-    private Boolean bigLogo;
 
     public DesktopController() {
 		try {
@@ -221,24 +214,6 @@ public class DesktopController {
 		}
     	return "http://" + server + ":7654";		
 	}    
-
-	public boolean isBigLogo() {
-		if ( bigLogo == null ) {
-			bigLogo = Boolean.FALSE;
-			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			RegistryAttachment attach = companyController.getAttach();
-			if ( (attach != null) && (!ArrayUtils.isEmpty(attach.getData())) ) {
-				InputStream in = new ByteArrayInputStream(attach.getData());
-				try {
-					BufferedImage image = ImageIO.read(in);
-					bigLogo = (image.getWidth() > 200);
-				} catch (Throwable th) {
-					LOGGER.error( "Error reading logo", th);
-				}
-			}
-		}
-		return bigLogo;
-	}	
 
 	private void initTask() {
 		try {
