@@ -216,33 +216,35 @@ public class VatTaxManager {
 				if (!service) {
 					if (transaction == InvoiceTransactionType.INTRACOMMUNITY) {
 						return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.EI)};
-					}
-					if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
+					} else if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
 						return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.EX1)};
-					}
-					if (transaction == InvoiceTransactionType.CAN_CEU_MEL) {
+					} else if (transaction == InvoiceTransactionType.CAN_CEU_MEL) {
 						return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.EX2)};
+					} else if (transaction == InvoiceTransactionType.OTHER_ISP) {
+						return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.OI)};
 					}
 				} else {
 					if (vatDeductionType == VatDeductionType.WITHOUT_RIGHT) {
 						return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.OS)};
 					} else {
-						if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
+						if (transaction == InvoiceTransactionType.EXTRACOMMUNITY || transaction == InvoiceTransactionType.CAN_CEU_MEL) {
 							return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.OO)};
-						} else if (transaction != InvoiceTransactionType.NATIONAL) {
+						} else if (transaction == InvoiceTransactionType.OTHER_ISP) {
 							return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.OI)};
+						} else if (transaction == InvoiceTransactionType.INTRACOMMUNITY) {
+							return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.PS)};
 						}
 					}
 				}
 			}
 		} else if (invoiceType == InvoiceType.PURCHASE) {
 			
-			if (transaction == InvoiceTransactionType.NATIONAL ) {
+			if (transaction == InvoiceTransactionType.NATIONAL || transaction == InvoiceTransactionType.OTHER_ISP) {
 				return investment?
 					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B2),new VatTaxKeyEx(VatTaxKey.BI,percent)}:
 					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B1),new VatTaxKeyEx(VatTaxKey.CP,percent)};
 			}
-			if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
+			if (transaction == InvoiceTransactionType.EXTRACOMMUNITY || transaction == InvoiceTransactionType.CAN_CEU_MEL) {
 				return investment?
 					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.C2),new VatTaxKeyEx(VatTaxKey.BI,percent)}:
 					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.C1),new VatTaxKeyEx(VatTaxKey.CP,percent)};
@@ -253,10 +255,14 @@ public class VatTaxManager {
 					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A3,percent),new VatTaxKeyEx(VatTaxKey.D1),new VatTaxKeyEx(VatTaxKey.CP,percent)};
 			}
 		} else if (invoiceType == InvoiceType.EXPENSES) {
-			if (transaction == InvoiceTransactionType.NATIONAL || transaction == InvoiceTransactionType.CAN_CEU_MEL) {
+			if (transaction == InvoiceTransactionType.NATIONAL 
+				|| transaction == InvoiceTransactionType.CAN_CEU_MEL 
+				|| transaction == InvoiceTransactionType.OTHER_ISP) {
 				return investment?
 					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B2),new VatTaxKeyEx(VatTaxKey.BI,percent)}:
 					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent)};
+			} else {
+				
 			}
 			if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
 				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent),new VatTaxKeyEx(VatTaxKey.A4,percent)};

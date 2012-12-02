@@ -79,7 +79,9 @@ public enum VatTaxKey implements IResourceable, IStringEnum   {
 	// Otras Op. no sujetas sin drcho. a deducción
 	OS	("OS"	,true	,false	,false	,false	,false	,false	,false	,null,null),
 	// Operaciones por inversión de sujet pasivo no incluídas.
-	OI	("OI"	,true	,false	,false	,false	,false	,false	,false	,null,null);
+	OI	("OI"	,true	,false	,false	,false	,false	,false	,false	,null,null),
+	// Prestaciones intracomunitarias de servicios localizadas fuera del territorio de aplicación del impuesto
+	PS	("PS"	,true	,false	,false	,false	,false	,false	,false	,null,null);
 
 	private String key;
 	private boolean taxableBaseVisible;
