@@ -55,27 +55,25 @@ public class EmailSender {
 		AonMessage aonMessage = server.createAonMessage(from);
 		aonMessage.setRecipientsTo( to );
 		aonMessage.setSubject(subject);
-		if (! ArrayUtils.isEmpty(attachemnts) ) {
+       	String type = (mimeType != null) ? mimeType.getName() : MimeType.MIME_TXT.getName();
+       	MimeBodyPart mainPart = new MimeBodyPart();
+       	try {
+	       	mainPart.setContent( content, type );
 	       	MimeMultipart multipart = new MimeMultipart();
-	       	MimeBodyPart mainPart = new MimeBodyPart();
-	       	String type = (mimeType != null) ? mimeType.getName() : MimeType.MIME_TXT.getName();
-	       	try {
-		       	mainPart.setContent( content, type );
-		       	multipart.addBodyPart(mainPart);
+	       	multipart.addBodyPart(mainPart);
+			if (! ArrayUtils.isEmpty(attachemnts) ) {
 				for ( AonFile file : attachemnts ) {
 					BodyPart bodyPart = WebmailUtil.getBodyPart(file);
 					multipart.addBodyPart(bodyPart);
 				}
-	       	} catch ( MessagingException e ) {
-	       		throw new WebmailException( e.getMessage(), e );
-	       	}
-	       	if ( si != null ) {
-	       		multipart = EmailSecurity.sign( multipart, si );
-	       	}
-			aonMessage.setContent(multipart);				
-		} else {
-			aonMessage.setContent(content);	
-		}
+		       	if ( si != null ) {
+		       		multipart = EmailSecurity.sign( multipart, si );
+		       	}				
+			}
+			aonMessage.setContent(multipart);
+       	} catch ( MessagingException e ) {
+       		throw new WebmailException( e.getMessage(), e );
+       	}
 		server.sendMessage(aonMessage);
 	}
 

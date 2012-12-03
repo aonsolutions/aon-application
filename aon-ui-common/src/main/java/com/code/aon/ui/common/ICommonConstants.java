@@ -56,6 +56,10 @@ public interface ICommonConstants {
 	/** The DATE. */
 	String DATE = "aon_date";
 	
+	String YES = "aon_yes";
+	
+	String NO = "aon_no";
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************

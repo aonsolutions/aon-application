@@ -4,19 +4,36 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_
 import static com.code.aon.ui.admin.controller.IAdminConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.admin.controller.IAdminConstants.AON_PLATFORM;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_1;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_2;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_3;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_4;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_5;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_FOOTER;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_MANAGEMENT;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_NAME_DUPLICATED;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_ID;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_OEM;
+import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
+import static com.code.aon.ui.common.ICommonConstants.NO;
+import static com.code.aon.ui.common.ICommonConstants.YES;
+import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_EMAIL_BODY_HEADER;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.validator.ValidatorException;
+import javax.mail.Address;
+import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
@@ -29,6 +46,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.company.Company;
 import com.code.aon.config.Application;
@@ -41,8 +59,11 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.admin.DomainApplicationInfo;
+import com.code.aon.ui.admin.DomainInfo;
 import com.code.aon.ui.admin.DomainModuleInfo;
 import com.code.aon.ui.audit.AuditManager;
+import com.code.aon.ui.common.controller.LoggedUser;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -52,6 +73,10 @@ import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.webmail.EmailSender;
+import com.code.aon.webmail.WebmailException;
+import com.code.aon.webmail.db.MailAccount;
+import com.code.aon.webmail.enumeration.ConnectionSecurity;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainController extends BasicController {
@@ -366,6 +391,79 @@ public class DomainController extends BasicController {
 			};
 		}
 		return this.OEMDomainFilter;
+	}
+	
+	public DomainInfo getDomainInfo() {
+		Domain domain = getDomain();
+		DomainInfo di = new DomainInfo();
+		di.setName( domain.getDescription() );
+		di.setUrl( domain.getName() );
+		di.setType(domain.getType());
+		di.setParent(domain.getParent());
+		di.setNumberOfUsers(domain.getMaxDefinedUsers());
+		di.setMaxTotalDocumentSize(domain.getMaxTotalDocumentSize());
+		di.setDomainManagement(domain.isDomainManagement());
+		List<Module> modules = new LinkedList<Module>();
+		for( DomainModuleInfo dim : this.aioInfo.getApplicationModules() ) {
+			if ( dim.isChecked() ) {
+				modules.add(dim.getModule());	
+			}
+		}
+		di.setModules(modules);
+		return di;
+	}
+	
+	public EmailSender getEmailSender() throws UnsupportedEncodingException {
+		MailAccount mailAccount = new MailAccount();
+		mailAccount.setEmail("admin@aonSolutions.es");
+		mailAccount.setMailUsername("admin@aonSolutions.es");
+		mailAccount.setPasswordString("admineM41L");
+		mailAccount.setIncomingSecurity(ConnectionSecurity.TLS);
+		mailAccount.setIncomingHost("imap.aonsolutions.es");
+		mailAccount.setOutgoingSecurity(ConnectionSecurity.TLS);
+		mailAccount.setOutgoingHost("smtp.aonsolutions.es");
+		mailAccount.setDisplayName("ESFERALIA Networks S.A.");
+		Address from = new InternetAddress( mailAccount.getEmail(), mailAccount.getDisplayName() );
+		return new EmailSender( from, mailAccount );							
+	}
+	
+	private String getEmailContent( DomainInfo di ) {
+		StringBuffer body = new StringBuffer();
+		body.append( "<html><head>" );
+		body.append( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" );
+		body.append( "</head><body>" );
+		
+		body.append( AonUtil.getMessage(ICompanyConstants.BUNDLE_NAME, COMPANY_EMAIL_BODY_HEADER) );
+		LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
+		body.append( AonUtil.getMessage(IAdminConstants.BUNDLE_NAME, DOMAIN_EMAIL_BODY_1, loggedUser.getLoggedUserName(), di.getUrl()) );
+		body.append( AonUtil.getMessage(IAdminConstants.BUNDLE_NAME, DOMAIN_EMAIL_BODY_2, di.getName()) );
+		if ( (di.getParent() != null) && (di.getParent().getId() != null) ) {
+			body.append( AonUtil.getMessage(IAdminConstants.BUNDLE_NAME, DOMAIN_EMAIL_BODY_3, di.getParent().getDescription()) );
+		}
+		Locale locale = AonUtil.getCurrentLocale();
+		String type = di.getType().getName(locale);
+		String size = FileUtils.byteCountToDisplaySize(di.getMaxTotalDocumentSize()*FileUtils.ONE_MB);
+		body.append( AonUtil.getMessage(IAdminConstants.BUNDLE_NAME, DOMAIN_EMAIL_BODY_4, type, di.getNumberOfUsers(), size ) );
+		String multiDomain = di.isDomainManagement() ? AonUtil.getMessage(YES) : AonUtil.getMessage(NO) ;
+		body.append( AonUtil.getMessage(IAdminConstants.BUNDLE_NAME, DOMAIN_EMAIL_BODY_5, multiDomain, di.getModules().size()) );
+		if (! di.getModules().isEmpty() ) {
+			body.append( "<ul>" );
+			for( Module module : di.getModules() ) {
+				body.append( "<li>" ).append( module.getName(locale) ).append( "</li>" );
+			}
+			body.append( "</ul>" );
+		}
+		
+		body.append( AonUtil.getMessage(IAdminConstants.BUNDLE_NAME, DOMAIN_EMAIL_BODY_FOOTER) );
+		body.append( "</body>" );
+		return body.toString();
+	}	
+	
+	public void sendEmail( DomainInfo di ) throws IOException, WebmailException {
+		Address to = new InternetAddress("atellitu@esferalia.com", "Aimar Tellitu");
+		Address[] recipients = new Address[] {to};
+		String subject = AonUtil.getMessage(IAdminConstants.BUNDLE_NAME, DOMAIN_MANAGEMENT);
+		getEmailSender().sendMessage(recipients, subject, getEmailContent(di), MimeType.MIME_HTML );		
 	}
 	
 }

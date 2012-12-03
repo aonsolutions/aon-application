@@ -42,6 +42,7 @@ public interface IAdminConstants {
 	String NEW_PASSWORD_ERROR = "admin_new_passwd_error";
 	String USER_DUPLICATED = "admin_user_duplicated_login";
 	String DOMAIN_NAME_DUPLICATED = "admin_domain_duplicated_name";
+	String DOMAIN_MANAGEMENT = "admin_domain_management";
 	
 	String EMPLOYEE_PORTAL = "admin_employee_portal";
 	String AON_PLATFORM = "admin_aon_plataform";
@@ -51,6 +52,13 @@ public interface IAdminConstants {
 	
 	String ACTIVE_USERS = "admin_active_users";
 	String MAXIMUM_NUMBER_USERS = "admin_maximum_number_users";
+
+	String DOMAIN_EMAIL_BODY_1 = "admin_domain_email_body_1";
+	String DOMAIN_EMAIL_BODY_2 = "admin_domain_email_body_2";
+	String DOMAIN_EMAIL_BODY_3 = "admin_domain_email_body_3";
+	String DOMAIN_EMAIL_BODY_4 = "admin_domain_email_body_4";
+	String DOMAIN_EMAIL_BODY_5 = "admin_domain_email_body_5";
+	String DOMAIN_EMAIL_BODY_FOOTER = "admin_domain_email_body_footer";
 	
 	String SYSTEM = "admin_system";
 		
