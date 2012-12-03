@@ -460,7 +460,7 @@ public class DomainController extends BasicController {
 	}	
 	
 	public void sendEmail( DomainInfo di ) throws IOException, WebmailException {
-		Address to = new InternetAddress("atellitu@esferalia.com", "Aimar Tellitu");
+		Address to = new InternetAddress("administracion@aonSolutions.es", "Administración");
 		Address[] recipients = new Address[] {to};
 		String subject = AonUtil.getMessage(IAdminConstants.BUNDLE_NAME, DOMAIN_MANAGEMENT);
 		getEmailSender().sendMessage(recipients, subject, getEmailContent(di), MimeType.MIME_HTML );		
