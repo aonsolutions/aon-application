@@ -29,7 +29,7 @@ CLASSPATH=$CLASSPATH:/usr/share/java/commons-logging.jar:/usr/share/java/commons
 
 ERR=1
 
-DEPLOYED_XML=/etc/jbossas/default/aon.workspace/deployed.xml
+DEPLOYED_XML=/etc/tomcat6/aon.workspace/deployed.xml
 
 function getDBs() {
 	mysql -h $1 -u $2 --password=$3 -sNe "SHOW DATABASES" | \
@@ -57,7 +57,7 @@ DBS=`getDBs $HOST $USERNAME $PASSWORD`
 
 for DB in $DBS; do
         echo -n "Actualizando '$DB'..." ;
-        ERR=$(java -classpath $CLASSPATH com.code.aon.master.Up2DateDB $URL/$DB  dbuser serubd2000 com.mysql.jdbc.Driver 2>&1);
+        ERR=$(java -classpath $CLASSPATH com.code.aon.master.Up2DateDB $URL/$DB  $USERNAME  $PASSWORD com.mysql.jdbc.Driver 2>&1);
         [ $? -eq 0 ] && echo -e "\\033[1;32mOK\\033[0;39m" || echo -e "\\033[1;31mERROR $ERR\\033[0;39m";
 done
 

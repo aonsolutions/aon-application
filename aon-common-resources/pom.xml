@@ -226,8 +226,8 @@
 							<mappings>
 								<mapping>
 									<filemode>755</filemode>
-									<username>jboss</username>
-									<groupname>jboss</groupname>
+									<username>tomcat</username>
+									<groupname>tomcat</groupname>
 									<directory>/home/COMMON-RESOURCES/aon-report</directory>
 									<sources>
 										<source>
@@ -237,8 +237,8 @@
 								</mapping>
 								<mapping>
 									<filemode>755</filemode>
-									<username>jboss</username>
-									<groupname>jboss</groupname>
+									<username>tomcat</username>
+									<groupname>tomcat</groupname>
 									<directory>/home/COMMON-RESOURCES/aon-ui-sign</directory>
 									<sources>
 										<softlinkSource>
