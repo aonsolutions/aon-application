@@ -1,0 +1,937 @@
+package com.esferalia.aon.ui.payroll.file;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Map;
+
+import javax.faces.event.AbortProcessingException;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
+import javax.xml.bind.ValidationEventLocator;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.person.Person;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.file.payroll.contract.model.IContratoType;
+import com.esferalia.aon.file.payroll.contract.model.IProrrogaType;
+import com.esferalia.aon.file.payroll.contract.model.ITransformacionType;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO100TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO130TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO150TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO200TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO230TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO250TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO300TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO330TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO350TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO401TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO402TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO403TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO410TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO420TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO421TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO430TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO441TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO450TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO452TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO501TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO502TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO503TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO510TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO520TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO530TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO540TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO541TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO550TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO552TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO970TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO980TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATO990TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATOS;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSANEXOCONTRATORELEVOTYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSBONIFICACIONTYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSCOMUNICACOPIABASICATYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSCONTRATOEXTRANJEROTYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSCONTRATOINSERCIONTYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSCONTRATOINTERINIDADTYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSCONTRATOINVESTIGACIONTYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSCONTRATOPRACTICASTYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSCONTRATOTIEMPOPARCIALTYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSCOPIABASICATYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSEMPRESAINSERCIONTYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSETCOTYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSETTTYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSEXCLUSIONSOCIALTYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSGENERALESCONTRATOTYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSMEDIDASFOMENTOTYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSPROGEMPLEOPUBLICOTYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSREDUCCIONRDL12011TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSTRABAJADORTYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSUSOLIBREEMPRESATYPE;
+import com.esferalia.aon.file.payroll.contrata.model.contratos.ObjectFactory;
+import com.esferalia.aon.file.payroll.contrata.model.prorrogas.PRORROGAS;
+import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION109TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION139TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION189TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION209TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION239TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION289TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION309TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION389TYPE;
+import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACIONES;
+import com.esferalia.aon.payroll.CNO;
+import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractAttachment;
+import com.esferalia.aon.payroll.enumeration.BasicCopySignatureType;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.payroll.enumeration.DisabilityCode;
+import com.esferalia.aon.payroll.enumeration.DismissalCollective;
+import com.esferalia.aon.payroll.enumeration.EducationalLevel;
+import com.esferalia.aon.payroll.enumeration.EmployeeType;
+import com.esferalia.aon.payroll.enumeration.EmploymentProgram;
+import com.esferalia.aon.payroll.enumeration.InterimCause;
+import com.esferalia.aon.payroll.enumeration.OtherLaws;
+import com.esferalia.aon.payroll.enumeration.ResearchEmployee;
+import com.esferalia.aon.payroll.enumeration.ResearchEmployer;
+import com.esferalia.aon.payroll.enumeration.SchoolWorkshop;
+import com.esferalia.aon.payroll.enumeration.WorkingDayType;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
+
+
+public class ContrataReader {
+	
+	private final String CONTRATA_CONTRATOS_MODEL_PATH = "com.esferalia.aon.file.payroll.contrata.model.contratos";
+	private final String CONTRATA_TRANSFORMACIONES_MODEL_PATH = "com.esferalia.aon.file.payroll.contrata.model.transformaciones";
+	private final String CONTRATA_PRORROGAS_MODEL_PATH = "com.esferalia.aon.file.payroll.contrata.model.prorrogas";
+	
+	private ContrataParams params;
+	
+	public ContrataParams readFile(ContractAttachment attach) throws ManagerBeanException, IOException{
+		
+		
+		boolean contratoFile = false;
+		boolean transfonacionFile = false;
+		boolean prorrogaFile = false;
+		
+		String code = getContractDataMap(attach.getContract()).get(ContextVariable.TC2.getName());
+
+		if(code.equals(ContractCode.C109.getValue())
+				 || code.equals(ContractCode.C139.getValue())
+				 || code.equals(ContractCode.C189.getValue())
+				 || code.equals(ContractCode.C209.getValue())
+				 || code.equals(ContractCode.C239.getValue())
+				 || code.equals(ContractCode.C289.getValue())
+				 || code.equals(ContractCode.C309.getValue())
+//	TODO: nueva clave de contrato - Boletin Noticias RED 2012/05
+//				 || code.equals(ContractCode.C339.getValue())
+				 || code.equals(ContractCode.C389.getValue()) ){
+			transfonacionFile = true;
+		} else if (code.equals(ContractCode.C408.getValue())
+				 || code.equals(ContractCode.C418.getValue())
+				 || code.equals(ContractCode.C508.getValue())
+				 || code.equals(ContractCode.C518.getValue()) ){
+			String msg = "Contrato no implementado para el fichero contrat@";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} else if( StringUtils.isBlank(code) ) {
+			// DO NOTHING
+			String msg = "Contrato no reconocido";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} else {
+			contratoFile = true;
+		}
+		
+		
+		
+		byte[] f = attach.getData();
+		if(f!=null && f.length>0){
+			File file = File.createTempFile("aon-temp", ".XML");
+			FileOutputStream fos = new FileOutputStream(file);
+			fos.write(f);
+			fos.close();
+			try {
+			
+				CONTRATOS contratos = null;
+				TRANSFORMACIONES transformaciones = null;
+				PRORROGAS prorrogas = null;
+				if( contratoFile ){
+					JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_CONTRATOS_MODEL_PATH);
+					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+					unmarshaller.setEventHandler(new ContractValidationEventHandler());
+					
+					com.esferalia.aon.file.payroll.contrata.model.contratos.ObjectFactory contratosFactory = new ObjectFactory();
+					contratos = (CONTRATOS) unmarshaller.unmarshal(file);
+					
+				} else if( transfonacionFile ) {
+					JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_TRANSFORMACIONES_MODEL_PATH);
+					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+					unmarshaller.setEventHandler(new ContractValidationEventHandler());
+
+					com.esferalia.aon.file.payroll.contrata.model.transformaciones.ObjectFactory transformacionesFactory = new com.esferalia.aon.file.payroll.contrata.model.transformaciones.ObjectFactory();
+					transformaciones = (TRANSFORMACIONES) unmarshaller.unmarshal(file);
+				} else if( prorrogaFile ) {
+					JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_PRORROGAS_MODEL_PATH);
+					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+					unmarshaller.setEventHandler(new ContractValidationEventHandler());
+				
+					com.esferalia.aon.file.payroll.contrata.model.prorrogas.ObjectFactory prorrogasFactory = new com.esferalia.aon.file.payroll.contrata.model.prorrogas.ObjectFactory();
+					prorrogas = (PRORROGAS) unmarshaller.unmarshal(file);
+				}
+				
+
+				this.params = new ContrataParams();
+				
+				
+				if( contratoFile ){
+					IContratoType contratoType = (IContratoType) contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
+					completeContratosParams(contratoType, params);
+				} else if( transfonacionFile ) {
+					ITransformacionType transformacionType = (ITransformacionType) transformaciones.getTRANSFORMACION109AndTRANSFORMACION139AndTRANSFORMACION189().get(0);
+					completeTransformacionesParams(transformacionType, params);
+				} else if( prorrogaFile ) {
+					IProrrogaType prorrogaType = (IProrrogaType) prorrogas.getPRORROGATIPO().get(0);
+					completeProrrogasParams(prorrogaType, params);
+				}
+
+				return params;
+			} catch (JAXBException e) {
+				String msg = "Error al obtener los datos del documento xml de contrata";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg, e);
+			}
+		}
+		return null;
+	}
+	
+	public void completeContratosParams(IContratoType o, ContrataParams params) throws JAXBException, IOException {
+		
+		if (o instanceof CONTRATO100TYPE) {
+			readContract100((CONTRATO100TYPE)o);
+		} else if (o instanceof CONTRATO130TYPE) {
+			readContract130((CONTRATO130TYPE)o);
+		} else if (o instanceof CONTRATO150TYPE) {
+			readContract150((CONTRATO150TYPE)o);
+		} else if (o instanceof CONTRATO200TYPE) {
+			readContract200((CONTRATO200TYPE)o);
+		} else if (o instanceof CONTRATO230TYPE) {
+			readContract230((CONTRATO230TYPE)o);
+		} else if (o instanceof CONTRATO250TYPE) {
+			readContract250((CONTRATO250TYPE)o);
+		} else if (o instanceof CONTRATO300TYPE) {
+			readContract300((CONTRATO300TYPE)o);
+		} else if (o instanceof CONTRATO330TYPE) {
+			readContract330((CONTRATO330TYPE)o);
+		} else if (o instanceof CONTRATO350TYPE) {
+			readContract350((CONTRATO350TYPE)o);
+		} else if (o instanceof CONTRATO401TYPE) {
+			readContract401((CONTRATO401TYPE)o);
+		} else if (o instanceof CONTRATO402TYPE) {
+			readContract402((CONTRATO402TYPE)o);
+		} else if (o instanceof CONTRATO403TYPE) {
+			readContract403((CONTRATO403TYPE)o);
+		} else if (o instanceof CONTRATO410TYPE) {
+			readContract410((CONTRATO410TYPE)o);
+		} else if (o instanceof CONTRATO420TYPE) {
+			readContract420((CONTRATO420TYPE)o);
+		} else if (o instanceof CONTRATO421TYPE) {
+			readContract421((CONTRATO421TYPE)o);
+		} else if (o instanceof CONTRATO430TYPE) {
+			readContract430((CONTRATO430TYPE)o);
+		} else if (o instanceof CONTRATO441TYPE) {
+			readContract441((CONTRATO441TYPE)o);
+		} else if (o instanceof CONTRATO450TYPE) {
+			readContract450((CONTRATO450TYPE)o);
+		} else if (o instanceof CONTRATO452TYPE) {
+			readContract452((CONTRATO452TYPE)o);
+		} else if (o instanceof CONTRATO501TYPE) {
+			readContract501((CONTRATO501TYPE)o);
+		} else if (o instanceof CONTRATO502TYPE) {
+			readContract502((CONTRATO502TYPE)o);
+		} else if (o instanceof CONTRATO503TYPE) {
+			readContract503((CONTRATO503TYPE)o);
+		} else if (o instanceof CONTRATO510TYPE) {
+			readContract510((CONTRATO510TYPE)o);
+		} else if (o instanceof CONTRATO520TYPE) {
+			readContract520((CONTRATO520TYPE)o);
+		} else if (o instanceof CONTRATO530TYPE) {
+			readContract530((CONTRATO530TYPE)o);
+		} else if (o instanceof CONTRATO540TYPE) {
+			readContract540((CONTRATO540TYPE)o);
+		} else if (o instanceof CONTRATO541TYPE) {
+			readContract541((CONTRATO541TYPE)o);
+		} else if (o instanceof CONTRATO550TYPE) {
+			readContract550((CONTRATO550TYPE)o);
+		} else if (o instanceof CONTRATO552TYPE) {
+			readContract552((CONTRATO552TYPE)o);
+		} else if (o instanceof CONTRATO970TYPE) {
+			readContract970((CONTRATO970TYPE)o);
+		} else if (o instanceof CONTRATO980TYPE) {
+			readContract980((CONTRATO980TYPE)o);
+		} else if (o instanceof CONTRATO990TYPE) {
+			readContract990((CONTRATO990TYPE)o);
+		}
+	}
+	
+	public void completeTransformacionesParams(ITransformacionType transformacionType, ContrataParams params) throws JAXBException, IOException {
+		
+		if (transformacionType instanceof TRANSFORMACION109TYPE) {
+			readTransformacion109((TRANSFORMACION109TYPE)transformacionType);
+		} else if (transformacionType instanceof TRANSFORMACION139TYPE) {
+			readTransformacion139((TRANSFORMACION139TYPE)transformacionType);
+		} else if (transformacionType instanceof TRANSFORMACION189TYPE) {
+			readTransformacion189((TRANSFORMACION189TYPE)transformacionType);
+		} else if (transformacionType instanceof TRANSFORMACION209TYPE) {
+			readTransformacion209((TRANSFORMACION209TYPE)transformacionType);
+		} else if (transformacionType instanceof TRANSFORMACION239TYPE) {
+			readTransformacion239((TRANSFORMACION239TYPE)transformacionType);
+		} else if (transformacionType instanceof TRANSFORMACION289TYPE) {
+			readTransformacion289((TRANSFORMACION289TYPE)transformacionType);
+		} else if (transformacionType instanceof TRANSFORMACION309TYPE) {
+			readTransformacion309((TRANSFORMACION309TYPE)transformacionType);
+//	TODO: nueva clave de contrato - Boletin Noticias RED 2012/05
+//		} else if (transformacionType instanceof TRANSFORMACION339TYPE) {
+//			readTransformacion339((TRANSFORMACION339TYPE)transformacionType);
+		} else if (transformacionType instanceof TRANSFORMACION389TYPE) {
+			readTransformacion389((TRANSFORMACION389TYPE)transformacionType);
+		}
+		
+		
+	}
+			
+	public void completeProrrogasParams(IProrrogaType prorrogaType, ContrataParams params) throws JAXBException, IOException {
+//	} else if (code.equals(ContractCode.C408.getValue())
+//			|| code.equals(ContractCode.C418.getValue())
+//			|| code.equals(ContractCode.C508.getValue())
+//			|| code.equals(ContractCode.C518.getValue()) ){	
+	}
+	
+	
+	private CNO getCno(String value){
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(CNO.class);
+			return (CNO) bean.get(Integer.parseInt(value.substring(0, 4)));
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+		return null;
+	}
+	
+	private void readContract100(CONTRATO100TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosEtt(o.getDATOSETT());
+		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract130(CONTRATO130TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+	    completeDatosBonificacion(o.getDATOSBONIFICACION());
+	    completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
+	    completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
+	    completeDatosEtCote(o.getDATOSETCOTE());
+	    completeDatosEtt(o.getDATOSETT()); 
+	    completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+	    completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract150(CONTRATO150TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosBonificacion(o.getDATOSBONIFICACION());
+		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosEtt(o.getDATOSETT());
+		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract200(CONTRATO200TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosEtt(o.getDATOSETT());
+		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+	}
+	private void readContract230(CONTRATO230TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+		completeDatosBonificacion(o.getDATOSBONIFICACION());
+		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosEtt(o.getDATOSETT());
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract250(CONTRATO250TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+		completeDatosBonificacion(o.getDATOSBONIFICACION());
+		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosEtt(o.getDATOSETT());
+		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION());
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract300(CONTRATO300TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+	    completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+	    completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
+	    completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
+	    completeDatosEtCote(o.getDATOSETCOTE());
+	    completeDatosEtt(o.getDATOSETT()); 
+	    completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
+	    completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+    	completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract330(CONTRATO330TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+		completeDatosBonificacion(o.getDATOSBONIFICACION());
+		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract350(CONTRATO350TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+		completeDatosBonificacion(o.getDATOSBONIFICACION());
+		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION());
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract401(CONTRATO401TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosContratoInvestigacion(o.getDATOSCONTRATOINVESTIGACION());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract402(CONTRATO402TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosCopiaBasica(o.getDATOSCOPIABASICA());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract403(CONTRATO403TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosContratoInsercion(o.getDATOSCONTRATOINSERCION());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract410(CONTRATO410TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract420(CONTRATO420TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosContratoPracticas(o.getDATOSCONTRATOPRACTICAS());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosContratoInvestigacion(o.getDATOSCONTRATOINVESTIGACION());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract421(CONTRATO421TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract430(CONTRATO430TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosBonificacion(o.getDATOSBONIFICACION());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract441(CONTRATO441TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract450(CONTRATO450TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosExclusionSocial(o.getDATOSEXCLUSIONSOCIAL());
+		completeDatosBonificacion(o.getDATOSBONIFICACION());
+		completeDatosContratoPracticas(o.getDATOSCONTRATOPRACTICAS());
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosCopiaBasica(o.getDATOSCOPIABASICA());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract452(CONTRATO452TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosBonificacion(o.getDATOSBONIFICACION());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosCopiaBasica(o.getDATOSCOPIABASICA());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract501(CONTRATO501TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosContratoInvestigacion(o.getDATOSCONTRATOINVESTIGACION());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO());
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract502(CONTRATO502TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO());
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract503(CONTRATO503TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosContratoInsercion(o.getDATOSCONTRATOINSERCION());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract510(CONTRATO510TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract520(CONTRATO520TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosContratoPracticas(o.getDATOSCONTRATOPRACTICAS());
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosContratoInvestigacion(o.getDATOSCONTRATOINVESTIGACION());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract530(CONTRATO530TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosBonificacion(o.getDATOSBONIFICACION());
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract540(CONTRATO540TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract541(CONTRATO541TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract550(CONTRATO550TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosExclusionSocial(o.getDATOSEXCLUSIONSOCIAL());
+		completeDatosBonificacion(o.getDATOSBONIFICACION());
+		completeDatosContratoPracticas(o.getDATOSCONTRATOPRACTICAS());
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosCopiaBasica(o.getDATOSCOPIABASICA());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION());
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract552(CONTRATO552TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosBonificacion(o.getDATOSBONIFICACION());
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosCopiaBasica(o.getDATOSCOPIABASICA());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosEtt(o.getDATOSETT());
+		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract970(CONTRATO970TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosEtt(o.getDATOSETT());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract980(CONTRATO980TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosEtt(o.getDATOSETT());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	private void readContract990(CONTRATO990TYPE o) {
+		completeDatosTrabajador(o.getDATOSTRABAJADOR());
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
+		completeDatosEtCote(o.getDATOSETCOTE());
+		completeDatosCopiaBasica(o.getDATOSCOPIABASICA());
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
+		completeDatosEtt(o.getDATOSETT());
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	}
+	
+	
+	private void completeDatosTrabajador(DATOSTRABAJADORTYPE datos) {
+		if(datos != null){
+			params.setTownCode(datos.getMUNICIPIORESIDENCIA());
+		}
+	}
+	
+	private void completeDatosGeneralesContrato(DATOSGENERALESCONTRATOTYPE datos) {
+		if(datos != null){
+			if(datos.getINDCONVENIOCOLECTIVO()!=null){
+				params.setCollectiveAgreement(datos.getINDCONVENIOCOLECTIVO().equals("S")?true:false);
+			}
+			if(datos.getNIVELFORMATIVO()!=null){
+				params.setEducationalLevel(EducationalLevel.valueOf("EL"+datos.getNIVELFORMATIVO()));
+			}
+			if(datos.getINDDISCAPACIDAD()!=null){
+				params.setDisabilityCode(DisabilityCode.valueOf("DC_"+datos.getINDDISCAPACIDAD()));
+				params.setDisabilityData(true);
+			}
+			if(datos.getCODIGOOCUPACION()!=null){
+				params.setCno(getCno(datos.getCODIGOOCUPACION()));
+			}
+			if(datos.getIDOFERTA()!=null){
+				params.setOffer(datos.getIDOFERTA());
+				params.setOfferData(true);
+			}
+			if(datos.getCODIGOPROGRAMAEMPLEO()!=null){
+				params.setEmploymentProgram(EmploymentProgram.valueOf("EP"+datos.getCODIGOPROGRAMAEMPLEO()));
+				params.setEmploymentProgramData(true);
+			}
+			if(datos.getOTRASLEGISLACIONES()!=null){
+				params.setOtherLaws(OtherLaws.valueOf("OL"+datos.getOTRASLEGISLACIONES()));
+				params.setOlderThan52Data(true);
+			}
+			if(datos.getDATOSCAMPAÑAS()!=null){
+				params.setCampaignGeozone(datos.getDATOSCAMPAÑAS().substring(0, 2));
+				params.setCampaign(datos.getDATOSCAMPAÑAS().substring(2, 5));
+				params.setCampaignYear(datos.getDATOSCAMPAÑAS().substring(datos.getDATOSCAMPAÑAS().length()-4, datos.getDATOSCAMPAÑAS().length()));
+				params.setCanpaignData(true);
+			}
+		}
+	}
+	private void completeDatosMedidasFomento(DATOSMEDIDASFOMENTOTYPE datos) {
+		if(datos != null){
+			params.setPermanentContractDevelopment(datos.getINDCOSTEDESPIDO().equals("1")?true:false);
+			if(datos.getCODIGOCOLECTIVODESPIDO()!=null){
+				params.setDismissalCollective(DismissalCollective.valueOf("DC"+datos.getCODIGOCOLECTIVODESPIDO()));
+			}
+		}
+	}
+	private void completeDatosAnexoContratoRelevo(DATOSANEXOCONTRATORELEVOTYPE datos) {
+		if(datos != null){
+			params.setReliefData(true);
+			if(datos.getTIPOTRABAJADOR()!=null){
+				params.setReliefEmployeeType(EmployeeType.valueOf("ET"+datos.getTIPOTRABAJADOR()));
+			}
+			Person person = new Person();
+			person.setName(datos.getNOMBREAPELLIDOS().getNOMBRE());
+			person.setFirstSurname(datos.getNOMBREAPELLIDOS().getPRIMERAPELLIDO());
+			person.setSecondSurname(datos.getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO());
+			params.setReliefPerson(person);
+		}
+	}
+	private void completeDatosEtCote(DATOSETCOTYPE datos) {
+		if(datos != null){
+			params.setSchoolWorkshopData(true);
+			params.setSchoolWorkshop(SchoolWorkshop.valueOf("SW_"+datos.getCODIGOETCOTE()));
+		}
+	}
+	private void completeDatosEtt(DATOSETTTYPE datos) {
+		if(datos != null){
+			params.setEttData(true);
+			params.setEttCif(datos.getCIFNIFEMPRESAUSUARIA().getCIFNIF());
+			params.setEttName(datos.getRAZONSOCIALEMPRESAUSUARIA());
+			params.setEttContractTemplate(!StringUtils.isBlank(datos.getINDCTOPLANTILLA()) && datos.getINDCTOPLANTILLA().equals("S"));
+			params.setEttForeignEnterprise(!StringUtils.isBlank(datos.getINDEMPRESAEXTRANJERA()) && datos.getINDEMPRESAEXTRANJERA().equals("S"));
+		}
+	}
+	private void completeDatosContratoExtranjero(DATOSCONTRATOEXTRANJEROTYPE datos) {
+		if(datos != null){
+			params.setAnnexData(true);
+			params.setAnexEmploymentYear(datos.getAÑOCONTINGENTE());
+			params.setEmploymentCharacter(datos.getINDCARACTEROFERTA());
+		}
+	}
+	private void completeDatosComunicacionCopiaBasica(DATOSCOMUNICACOPIABASICATYPE datos) {
+		if(datos != null){
+			params.setEttData(true);
+			params.setBasicCopyComments(datos.getTEXTOCOPIABASICA());
+			params.setBasicCopySignatureType(BasicCopySignatureType.valueOf("BCST"+datos.getTIPOFIRMA()));
+		}
+	}
+
+	private void completeDatosUsoLibreEmpresa(DATOSUSOLIBREEMPRESATYPE datos) {
+		if(datos != null){
+			params.setEnterpriseFreeUse(datos.getUSOLIBREEMPRESA());
+		}
+	}
+	
+	private void completeDatosContratoTiempoParcial(DATOSCONTRATOTIEMPOPARCIALTYPE datos) {
+		if(datos != null){
+			params.setActividadsinfechacierta(datos.getACTIVIDADSINFECHACIERTA());
+			params.setColectivoedad(datos.getCOLECTIVOEDAD());
+			params.setFijodiscontinuoperiodico(datos.getFIJODISCONTINUOPERIODICO().equals("S"));
+			params.setHorasanualestiempocompleto(datos.getHORASANUALESTIEMPOCOMPLETO());
+			params.setHorasconvenio(getHoras(datos.getHORASCONVENIO()));
+			params.setMinutosconvenio(getMinutos(datos.getHORASCONVENIO()));
+			params.setHorasformacion(getHoras(datos.getHORASFORMACION()));
+			params.setMinutosformacion(getMinutos(datos.getHORASFORMACION()));
+			params.setHorasjornada(getHoras(datos.getHORASJORNADA()));
+			params.setMinutosjornada(getMinutos(datos.getHORASJORNADA()));
+			params.setIndicformacionteorica(datos.getINDICFORMACIONTEORICA());
+			params.setPorcentajejubilacionparcial(datos.getPORCENTAJEJUBILACIONPARCIAL());
+			params.setPorcjornadapactada(datos.getPORCJORNADAPACTADA());
+			params.setTipojornada(WorkingDayType.enumByValue(datos.getTIPOJORNADA()));
+		}
+	}
+	private String getHoras(String duracion){
+		return StringUtils.isBlank(duracion)?null:duracion.substring(0,4);
+	}
+	private String getMinutos(String duracion){
+		return StringUtils.isBlank(duracion)?null:duracion.substring(4,6);
+	}
+	private void completeDatosReduccionRdl2011(DATOSREDUCCIONRDL12011TYPE datos) {
+		// TODO
+	}
+	private void completeDatosBonificacion(DATOSBONIFICACIONTYPE datos) {
+		// TODO
+	}
+	private void completeDatosEmpresaInsercion(DATOSEMPRESAINSERCIONTYPE dato) {
+		// TODO
+	}
+	private void completeDatosCopiaBasica(DATOSCOPIABASICATYPE datos) {
+		// TODO
+	}
+	private void completeDatosProgramaEmpleoPublico(DATOSPROGEMPLEOPUBLICOTYPE datos) {
+		// TODO
+		if(datos != null){
+			params.setEmploymentProgramData(true);
+//			datos.setACTUACION("");
+//			datos.setCORPORACIONLOCAL("");
+//			datos.setEJERCICIOPRESUPUESTARIO("");
+//			datos.setGRUPOCOTIZACIONCORPORACIONLOCAL("");
+		}
+	}
+	private void completeDatosContratoInvestigacion(DATOSCONTRATOINVESTIGACIONTYPE datos) {
+		if(datos != null){
+			params.setIndempleador(ResearchEmployer.enumByValue(datos.getINDEMPLEADOR()));
+			params.setIndtrabajador(ResearchEmployee.enumByValue(datos.getINDTRABAJADOR()));
+			params.setIndrd632006(datos.getINDRD632006().equals("S"));
+		}
+	}
+	private void completeDatosContratoInsercion(DATOSCONTRATOINSERCIONTYPE datos) {
+		// TODO
+	}
+	private void completeDatosContratoInterinidad(DATOSCONTRATOINTERINIDADTYPE datos) {
+		if(datos != null){
+			params.setInterimData(true);
+			params.setCausaInterinidad(InterimCause.valueOf(datos.getCAUSAINTERINIDAD()));
+		}
+	}
+	private void completeDatosContratoPracticas(DATOSCONTRATOPRACTICASTYPE datos) {
+		// TODO
+	}
+	private void completeDatosExclusionSocial(DATOSEXCLUSIONSOCIALTYPE datos) {
+		// TODO
+	}
+	
+	
+	/*
+	 * 
+	 * TRANSFORMACIONES
+	 * 
+	 */
+	private void readTransformacion109(TRANSFORMACION109TYPE transformacionType){
+		
+	}
+	private void readTransformacion139(TRANSFORMACION139TYPE transformacionType){
+		
+	}
+	private void readTransformacion189(TRANSFORMACION189TYPE transformacionType){
+		
+	}
+	private void readTransformacion209(TRANSFORMACION209TYPE transformacionType){
+		
+	}
+	private void readTransformacion239(TRANSFORMACION239TYPE transformacionType){
+		
+	}
+	private void readTransformacion289(TRANSFORMACION289TYPE transformacionType){
+		
+	}
+	private void readTransformacion309(TRANSFORMACION309TYPE transformacionType){
+		
+	}
+	private void readTransformacion389(TRANSFORMACION389TYPE transformacionType){
+		
+	}
+	
+
+	/* ***************************************
+	 * ***************************************
+	 * AUXILIARES
+	 * ***************************************
+	 * ***************************************
+	 */
+	private Map<String, String> contractDataMap;
+	
+	protected Map<String, String> getContractDataMap(Contract contract) {
+		if(contractDataMap==null){
+			PayrollUtils utils = new PayrollUtils();
+			contractDataMap = utils.getContractDataMap(contract);
+		}
+		return contractDataMap;
+	}
+	protected Map<String, String> getContractDataMap() {
+		return contractDataMap;
+	}
+	
+
+	
+	public class ContractValidationEventHandler implements ValidationEventHandler {
+		public boolean handleEvent(ValidationEvent ve) {
+			if (ve.getSeverity() == ValidationEvent.FATAL_ERROR || ve.getSeverity() == ValidationEvent.ERROR) {
+				ValidationEventLocator locator = ve.getLocator();
+				// Print message from valdation event
+				System.out.println("Invalid booking document: " + locator.getURL());
+				System.out.println("Error: " + ve.getMessage());
+				// Output line and column number
+				System.out.println("Error at column "
+						+ locator.getColumnNumber() + ", line "
+						+ locator.getLineNumber());
+			}
+			return true;
+		}
+	}
+	
+}
+

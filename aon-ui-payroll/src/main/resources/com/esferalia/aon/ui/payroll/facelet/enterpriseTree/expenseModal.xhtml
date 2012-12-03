@@ -78,7 +78,9 @@
 										rendered="#{!salaryExpense.allSalaryCalculated}"
 										actionListener="#{salaryExpense.launchRemainingSalaries}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
-										reRender="salaryExpenseFrom" />
+										reRender="salaryExpenseFrom"
+										onclick="Richfaces.showModalPanel('waitProccess')" 
+							     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 								</aon:div>
 								
 								<aon:div id="modalContent" styleClass="salaryExpenseModalContent" >
@@ -130,6 +132,9 @@
 					</aon:div>
 				</aon:div>
 				</aon:form>
+				
+				<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+				
 			</rich:modalPanel>
 		</c:if>
 	</aon:panelGroup>

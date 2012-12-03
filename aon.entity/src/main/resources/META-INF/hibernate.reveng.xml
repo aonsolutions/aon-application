@@ -328,6 +328,7 @@
 	<table name="contract">
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.ContractStatus"/>
 		<column name="ss_regime" property="regimeType" type="com.esferalia.aon.payroll.enumeration.SSRegimeType"/>
+		<column name="model" type="com.esferalia.aon.payroll.enumeration.ContractModel"/>
 		<foreign-key constraint-name="FK_CONTRACT_ENTERPRISE_CCC">
 			<many-to-one property="enterpriseCCC"/>
 		</foreign-key>

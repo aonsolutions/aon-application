@@ -96,8 +96,8 @@ public class ContractControllerListener extends ControllerAdapter{
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		saveContractData();
 		ContractController controller = (ContractController) this.getController();
-		if(controller.isModalPanelVisible()){
-			controller.setModalPanelVisible(false);
+		if(controller.isShowNewContractModal()){
+			controller.setShowNewContractModal(false);
 			EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_TREE_CONTROLLER);
 			tree.loadTree();
 		}
@@ -107,7 +107,7 @@ public class ContractControllerListener extends ControllerAdapter{
 	public void afterBeanCanceled(ControllerEvent event)
 			throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
-		controller.setModalPanelVisible(false);
+		controller.setShowNewContractModal(false);
 	}
 	
 	private void saveContractData() throws ControllerListenerException {

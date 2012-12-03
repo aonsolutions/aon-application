@@ -39,16 +39,21 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.enumeration.CNO;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.payroll.enumeration.ContractModel;
+import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.payroll.enumeration.VariableType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 
 public abstract class AbstractVariableHandler {
 	
@@ -209,6 +214,7 @@ public abstract class AbstractVariableHandler {
 			data.setStartDate(getData().getStartDate());
 			data.setEndDate(getData().getEndDate());
 			ITransferObject d = getVariableManagerBean().insertOrUpdate((ITransferObject) data);
+			afterVariableSaved();
 			d.toString();
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible guardar la variable (" + e.getMessage() +")";
@@ -220,6 +226,23 @@ public abstract class AbstractVariableHandler {
 		initEditor();
 		initializeVariables(event);
 	}
+	
+	private void afterVariableSaved() {
+		try {
+			if(this.contractModelCode!=null && getVariableManagerBean().getPOJOClass().equals(ContractData.class)){
+				ContractController controller = (ContractController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
+				Contract contract = (Contract)controller.getTo();
+				contract.setModel(this.contractModelCode.getModel());
+				controller.getManagerBean().restoreNullSubPOJOs(contract);
+				controller.getManagerBean().update(contract);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo guardar el model del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+		}
+	}
+
 	public void onCancelVariable(ActionEvent event) {
 		setNew(false);
 		getData().checkVariableNature();
@@ -407,6 +430,7 @@ public abstract class AbstractVariableHandler {
 	}
 	
 	private CNO cno;
+	private ContractModelCode contractModelCode;
 	private ContractCode contractCode;
 	private QuoteGroup quoteGroup;
 	private OccupationType occupationType;
@@ -417,6 +441,20 @@ public abstract class AbstractVariableHandler {
 	}
 	public void setCno(CNO cno) {
 		this.cno = cno;
+	}
+	public ContractModelCode getContractModelCode() {
+		ContractController controller = (ContractController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
+		ContractModel model = ((Contract)controller.getTo()).getModel();
+		for( ContractModelCode o : ContractModelCode.values() ) {
+			if ( o.getModel() == model && o.getCode() == getContractCode() ) {
+				contractModelCode = o;
+			}
+		}
+		return contractModelCode;
+	}
+	public void setContractModelCode(ContractModelCode contractModelCode) {
+		this.contractModelCode = contractModelCode;
+		setContractCode(this.contractModelCode.getCode());
 	}
 	public ContractCode getContractCode() {
 		return contractCode;

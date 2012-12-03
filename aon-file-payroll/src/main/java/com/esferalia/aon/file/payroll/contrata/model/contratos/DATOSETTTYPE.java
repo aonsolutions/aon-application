@@ -1,0 +1,173 @@
+//
+// Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.5-2 
+// Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
+// Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
+// Generado el: PM.11.26 a las 06:54:59 PM CET 
+//
+
+
+package com.esferalia.aon.file.payroll.contrata.model.contratos;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
+
+/**
+ * Datos de contratos de ETT.
+ * 
+ * <p>Clase Java para DATOS_ETT_TYPE complex type.
+ * 
+ * <p>El siguiente fragmento de esquema especifica el contenido que se espera que haya en esta clase.
+ * 
+ * <pre>
+ * &lt;complexType name="DATOS_ETT_TYPE">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="CIF_NIF_EMPRESA_USUARIA" type="{}CIFNIFTYPE" minOccurs="0"/>
+ *         &lt;element name="RAZON_SOCIAL_EMPRESA_USUARIA" minOccurs="0">
+ *           &lt;simpleType>
+ *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *               &lt;maxLength value="55"/>
+ *             &lt;/restriction>
+ *           &lt;/simpleType>
+ *         &lt;/element>
+ *         &lt;element name="IND_CTO_PLANTILLA" minOccurs="0">
+ *           &lt;simpleType>
+ *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *               &lt;pattern value="[S\s]"/>
+ *             &lt;/restriction>
+ *           &lt;/simpleType>
+ *         &lt;/element>
+ *         &lt;element name="IND_EMPRESA_EXTRANJERA" minOccurs="0">
+ *           &lt;simpleType>
+ *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *               &lt;pattern value="[S\s]"/>
+ *             &lt;/restriction>
+ *           &lt;/simpleType>
+ *         &lt;/element>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "DATOS_ETT_TYPE", propOrder = {
+    "cifnifempresausuaria",
+    "razonsocialempresausuaria",
+    "indctoplantilla",
+    "indempresaextranjera"
+})
+public class DATOSETTTYPE {
+
+    @XmlElement(name = "CIF_NIF_EMPRESA_USUARIA")
+    protected CIFNIFTYPE cifnifempresausuaria;
+    @XmlElement(name = "RAZON_SOCIAL_EMPRESA_USUARIA")
+    protected String razonsocialempresausuaria;
+    @XmlElement(name = "IND_CTO_PLANTILLA")
+    protected String indctoplantilla;
+    @XmlElement(name = "IND_EMPRESA_EXTRANJERA")
+    protected String indempresaextranjera;
+
+    /**
+     * Obtiene el valor de la propiedad cifnifempresausuaria.
+     * 
+     * @return
+     *     possible object is
+     *     {@link CIFNIFTYPE }
+     *     
+     */
+    public CIFNIFTYPE getCIFNIFEMPRESAUSUARIA() {
+        return cifnifempresausuaria;
+    }
+
+    /**
+     * Define el valor de la propiedad cifnifempresausuaria.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link CIFNIFTYPE }
+     *     
+     */
+    public void setCIFNIFEMPRESAUSUARIA(CIFNIFTYPE value) {
+        this.cifnifempresausuaria = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad razonsocialempresausuaria.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getRAZONSOCIALEMPRESAUSUARIA() {
+        return razonsocialempresausuaria;
+    }
+
+    /**
+     * Define el valor de la propiedad razonsocialempresausuaria.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setRAZONSOCIALEMPRESAUSUARIA(String value) {
+        this.razonsocialempresausuaria = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad indctoplantilla.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getINDCTOPLANTILLA() {
+        return indctoplantilla;
+    }
+
+    /**
+     * Define el valor de la propiedad indctoplantilla.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setINDCTOPLANTILLA(String value) {
+        this.indctoplantilla = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad indempresaextranjera.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getINDEMPRESAEXTRANJERA() {
+        return indempresaextranjera;
+    }
+
+    /**
+     * Define el valor de la propiedad indempresaextranjera.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setINDEMPRESAEXTRANJERA(String value) {
+        this.indempresaextranjera = value;
+    }
+
+}

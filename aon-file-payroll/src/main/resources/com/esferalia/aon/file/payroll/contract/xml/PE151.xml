@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="EMP">
+
+<!-- 
+################
+PAGE 1
+################ 
+tipocontrato_100
+tipocontrato_150
+Texto65
+Texto66
+Texto67
+Casilla de verificación78464
+Casilla de verificación71016430
+profetraba
+catetraba
+funciontraba
+calletrab
+fechaini
+horasjorna1
+horainicio
+horafin
+
+################
+PAGE 2
+################
+retribu
+perioretri
+concepsala
+vacaciones
+Casilla de verificación7
+Casilla de verificación8
+Casilla de verificación11
+Casilla de verificación9
+Casilla de verificación10
+Casilla de verificación13
+Casilla de verificación12
+Casilla de verificación14
+Casilla de verificación15
+Casilla de verificación16
+convcole
+oecomu
+T25
+munifirma
+diafirma
+mesfirma
+añofirma
+
+################ 
+COPIA BASICA
+################
+cto
+totaldura
+euros
+jornada
+
+-->
+
+</register>

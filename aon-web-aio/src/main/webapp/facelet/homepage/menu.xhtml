@@ -89,12 +89,20 @@
 				styleClass="aon-top-menu-item" />
 		</c:if>
 		
+		<c:if test="#{aonRole.payroll}">
+			<aon:commandLink id="payroll"
+				value="#{bundle.aon_module_payroll}"
+				action="menu_payroll" immediate="true"
+				styleClass="aon-top-menu-item" />
+		</c:if>
+		<!--  
 		<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 			<aon:commandLink id="payroll"
 				value="#{bundle.aon_module_payroll}"
 				action="menu_payroll" immediate="true"
 				styleClass="aon-top-menu-item" />
 		</c:if>
+		-->
 		
 		<c:if test="#{(domainSwitcher.type == 'CONSULTANCY') or (!domainSwitcher.domainManagementAvailable)}">
 			<aon:commandLink id="document"

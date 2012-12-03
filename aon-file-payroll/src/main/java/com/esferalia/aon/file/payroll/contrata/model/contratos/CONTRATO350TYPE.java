@@ -1,0 +1,437 @@
+//
+// Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.5-2 
+// Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
+// Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
+// Generado el: PM.11.26 a las 06:54:59 PM CET 
+//
+
+
+package com.esferalia.aon.file.payroll.contrata.model.contratos;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+import com.esferalia.aon.file.payroll.contract.model.IContratoType;
+
+
+/**
+ * Fijo discontinuo con bonificación
+ * 
+ * <p>Clase Java para CONTRATO350TYPE complex type.
+ * 
+ * <p>El siguiente fragmento de esquema especifica el contenido que se espera que haya en esta clase.
+ * 
+ * <pre>
+ * &lt;complexType name="CONTRATO350TYPE">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="DATOS_EMPRESA" type="{}DATOS_EMPRESATYPE"/>
+ *         &lt;element name="DATOS_TRABAJADOR" type="{}DATOS_TRABAJADORTYPE"/>
+ *         &lt;element name="DATOS_GENERALES_CONTRATO" type="{}DATOS_GENERALESCONTRATOTYPE"/>
+ *         &lt;element name="DATOS_CONTRATO_TIEMPO_PARCIAL" type="{}DATOS_CONTRATOTIEMPOPARCIALTYPE"/>
+ *         &lt;element name="DATOS_BONIFICACION" type="{}DATOS_BONIFICACIONTYPE" minOccurs="0"/>
+ *         &lt;element name="DATOS_MEDIDAS_FOMENTO" type="{}DATOS_MEDIDASFOMENTOTYPE" minOccurs="0"/>
+ *         &lt;element name="DATOS_ANEXO_CONTRATO_RELEVO" type="{}DATOS_ANEXOCONTRATORELEVOTYPE" minOccurs="0"/>
+ *         &lt;element name="DATOS_ET_CO_TE" type="{}DATOS_ET_CO_TYPE" minOccurs="0"/>
+ *         &lt;element name="DATOS_ETT" type="{}DATOS_ETT_TYPE" minOccurs="0"/>
+ *         &lt;element name="DATOS_EMPRESA_INSERCION" type="{}DATOS_EMPRESA_INSERCIONTYPE" minOccurs="0"/>
+ *         &lt;element name="DATOS_REDUCCION_RDL_1_2011" type="{}DATOS_REDUCCION_RDL_1_2011TYPE" minOccurs="0"/>
+ *         &lt;element name="DATOS_CONTRATO_EMPRENDEDORES" type="{}DATOS_CONTRATO_EMPRENDEDORESTYPE" minOccurs="0"/>
+ *         &lt;element name="DATOS_COMUNICA_COPIA_BASICA" type="{}DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+ *         &lt;element name="DATOS_USOLIBRE_EMPRESA" type="{}DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "CONTRATO350TYPE", propOrder = {
+    "datosempresa",
+    "datostrabajador",
+    "datosgeneralescontrato",
+    "datoscontratotiempoparcial",
+    "datosbonificacion",
+    "datosmedidasfomento",
+    "datosanexocontratorelevo",
+    "datosetcote",
+    "datosett",
+    "datosempresainsercion",
+    "datosreduccionrdl12011",
+    "datoscontratoemprendedores",
+    "datoscomunicacopiabasica",
+    "datosusolibreempresa"
+})
+public class CONTRATO350TYPE implements IContratoType
+{
+
+    @XmlElement(name = "DATOS_EMPRESA", required = true)
+    protected DATOSEMPRESATYPE datosempresa;
+    @XmlElement(name = "DATOS_TRABAJADOR", required = true)
+    protected DATOSTRABAJADORTYPE datostrabajador;
+    @XmlElement(name = "DATOS_GENERALES_CONTRATO", required = true)
+    protected DATOSGENERALESCONTRATOTYPE datosgeneralescontrato;
+    @XmlElement(name = "DATOS_CONTRATO_TIEMPO_PARCIAL", required = true)
+    protected DATOSCONTRATOTIEMPOPARCIALTYPE datoscontratotiempoparcial;
+    @XmlElement(name = "DATOS_BONIFICACION")
+    protected DATOSBONIFICACIONTYPE datosbonificacion;
+    @XmlElement(name = "DATOS_MEDIDAS_FOMENTO")
+    protected DATOSMEDIDASFOMENTOTYPE datosmedidasfomento;
+    @XmlElement(name = "DATOS_ANEXO_CONTRATO_RELEVO")
+    protected DATOSANEXOCONTRATORELEVOTYPE datosanexocontratorelevo;
+    @XmlElement(name = "DATOS_ET_CO_TE")
+    protected DATOSETCOTYPE datosetcote;
+    @XmlElement(name = "DATOS_ETT")
+    protected DATOSETTTYPE datosett;
+    @XmlElement(name = "DATOS_EMPRESA_INSERCION")
+    protected DATOSEMPRESAINSERCIONTYPE datosempresainsercion;
+    @XmlElement(name = "DATOS_REDUCCION_RDL_1_2011")
+    protected DATOSREDUCCIONRDL12011TYPE datosreduccionrdl12011;
+    @XmlElement(name = "DATOS_CONTRATO_EMPRENDEDORES")
+    protected DATOSCONTRATOEMPRENDEDORESTYPE datoscontratoemprendedores;
+    @XmlElement(name = "DATOS_COMUNICA_COPIA_BASICA")
+    protected DATOSCOMUNICACOPIABASICATYPE datoscomunicacopiabasica;
+    @XmlElement(name = "DATOS_USOLIBRE_EMPRESA")
+    protected DATOSUSOLIBREEMPRESATYPE datosusolibreempresa;
+
+    /**
+     * Obtiene el valor de la propiedad datosempresa.
+     * 
+     * @return
+     *     possible object is
+     *     {@link DATOSEMPRESATYPE }
+     *     
+     */
+    public DATOSEMPRESATYPE getDATOSEMPRESA() {
+        return datosempresa;
+    }
+
+    /**
+     * Define el valor de la propiedad datosempresa.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DATOSEMPRESATYPE }
+     *     
+     */
+    public void setDATOSEMPRESA(DATOSEMPRESATYPE value) {
+        this.datosempresa = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad datostrabajador.
+     * 
+     * @return
+     *     possible object is
+     *     {@link DATOSTRABAJADORTYPE }
+     *     
+     */
+    public DATOSTRABAJADORTYPE getDATOSTRABAJADOR() {
+        return datostrabajador;
+    }
+
+    /**
+     * Define el valor de la propiedad datostrabajador.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DATOSTRABAJADORTYPE }
+     *     
+     */
+    public void setDATOSTRABAJADOR(DATOSTRABAJADORTYPE value) {
+        this.datostrabajador = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad datosgeneralescontrato.
+     * 
+     * @return
+     *     possible object is
+     *     {@link DATOSGENERALESCONTRATOTYPE }
+     *     
+     */
+    public DATOSGENERALESCONTRATOTYPE getDATOSGENERALESCONTRATO() {
+        return datosgeneralescontrato;
+    }
+
+    /**
+     * Define el valor de la propiedad datosgeneralescontrato.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DATOSGENERALESCONTRATOTYPE }
+     *     
+     */
+    public void setDATOSGENERALESCONTRATO(DATOSGENERALESCONTRATOTYPE value) {
+        this.datosgeneralescontrato = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad datoscontratotiempoparcial.
+     * 
+     * @return
+     *     possible object is
+     *     {@link DATOSCONTRATOTIEMPOPARCIALTYPE }
+     *     
+     */
+    public DATOSCONTRATOTIEMPOPARCIALTYPE getDATOSCONTRATOTIEMPOPARCIAL() {
+        return datoscontratotiempoparcial;
+    }
+
+    /**
+     * Define el valor de la propiedad datoscontratotiempoparcial.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DATOSCONTRATOTIEMPOPARCIALTYPE }
+     *     
+     */
+    public void setDATOSCONTRATOTIEMPOPARCIAL(DATOSCONTRATOTIEMPOPARCIALTYPE value) {
+        this.datoscontratotiempoparcial = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad datosbonificacion.
+     * 
+     * @return
+     *     possible object is
+     *     {@link DATOSBONIFICACIONTYPE }
+     *     
+     */
+    public DATOSBONIFICACIONTYPE getDATOSBONIFICACION() {
+        return datosbonificacion;
+    }
+
+    /**
+     * Define el valor de la propiedad datosbonificacion.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DATOSBONIFICACIONTYPE }
+     *     
+     */
+    public void setDATOSBONIFICACION(DATOSBONIFICACIONTYPE value) {
+        this.datosbonificacion = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad datosmedidasfomento.
+     * 
+     * @return
+     *     possible object is
+     *     {@link DATOSMEDIDASFOMENTOTYPE }
+     *     
+     */
+    public DATOSMEDIDASFOMENTOTYPE getDATOSMEDIDASFOMENTO() {
+        return datosmedidasfomento;
+    }
+
+    /**
+     * Define el valor de la propiedad datosmedidasfomento.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DATOSMEDIDASFOMENTOTYPE }
+     *     
+     */
+    public void setDATOSMEDIDASFOMENTO(DATOSMEDIDASFOMENTOTYPE value) {
+        this.datosmedidasfomento = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad datosanexocontratorelevo.
+     * 
+     * @return
+     *     possible object is
+     *     {@link DATOSANEXOCONTRATORELEVOTYPE }
+     *     
+     */
+    public DATOSANEXOCONTRATORELEVOTYPE getDATOSANEXOCONTRATORELEVO() {
+        return datosanexocontratorelevo;
+    }
+
+    /**
+     * Define el valor de la propiedad datosanexocontratorelevo.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DATOSANEXOCONTRATORELEVOTYPE }
+     *     
+     */
+    public void setDATOSANEXOCONTRATORELEVO(DATOSANEXOCONTRATORELEVOTYPE value) {
+        this.datosanexocontratorelevo = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad datosetcote.
+     * 
+     * @return
+     *     possible object is
+     *     {@link DATOSETCOTYPE }
+     *     
+     */
+    public DATOSETCOTYPE getDATOSETCOTE() {
+        return datosetcote;
+    }
+
+    /**
+     * Define el valor de la propiedad datosetcote.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DATOSETCOTYPE }
+     *     
+     */
+    public void setDATOSETCOTE(DATOSETCOTYPE value) {
+        this.datosetcote = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad datosett.
+     * 
+     * @return
+     *     possible object is
+     *     {@link DATOSETTTYPE }
+     *     
+     */
+    public DATOSETTTYPE getDATOSETT() {
+        return datosett;
+    }
+
+    /**
+     * Define el valor de la propiedad datosett.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DATOSETTTYPE }
+     *     
+     */
+    public void setDATOSETT(DATOSETTTYPE value) {
+        this.datosett = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad datosempresainsercion.
+     * 
+     * @return
+     *     possible object is
+     *     {@link DATOSEMPRESAINSERCIONTYPE }
+     *     
+     */
+    public DATOSEMPRESAINSERCIONTYPE getDATOSEMPRESAINSERCION() {
+        return datosempresainsercion;
+    }
+
+    /**
+     * Define el valor de la propiedad datosempresainsercion.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DATOSEMPRESAINSERCIONTYPE }
+     *     
+     */
+    public void setDATOSEMPRESAINSERCION(DATOSEMPRESAINSERCIONTYPE value) {
+        this.datosempresainsercion = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad datosreduccionrdl12011.
+     * 
+     * @return
+     *     possible object is
+     *     {@link DATOSREDUCCIONRDL12011TYPE }
+     *     
+     */
+    public DATOSREDUCCIONRDL12011TYPE getDATOSREDUCCIONRDL12011() {
+        return datosreduccionrdl12011;
+    }
+
+    /**
+     * Define el valor de la propiedad datosreduccionrdl12011.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DATOSREDUCCIONRDL12011TYPE }
+     *     
+     */
+    public void setDATOSREDUCCIONRDL12011(DATOSREDUCCIONRDL12011TYPE value) {
+        this.datosreduccionrdl12011 = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad datoscontratoemprendedores.
+     * 
+     * @return
+     *     possible object is
+     *     {@link DATOSCONTRATOEMPRENDEDORESTYPE }
+     *     
+     */
+    public DATOSCONTRATOEMPRENDEDORESTYPE getDATOSCONTRATOEMPRENDEDORES() {
+        return datoscontratoemprendedores;
+    }
+
+    /**
+     * Define el valor de la propiedad datoscontratoemprendedores.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DATOSCONTRATOEMPRENDEDORESTYPE }
+     *     
+     */
+    public void setDATOSCONTRATOEMPRENDEDORES(DATOSCONTRATOEMPRENDEDORESTYPE value) {
+        this.datoscontratoemprendedores = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad datoscomunicacopiabasica.
+     * 
+     * @return
+     *     possible object is
+     *     {@link DATOSCOMUNICACOPIABASICATYPE }
+     *     
+     */
+    public DATOSCOMUNICACOPIABASICATYPE getDATOSCOMUNICACOPIABASICA() {
+        return datoscomunicacopiabasica;
+    }
+
+    /**
+     * Define el valor de la propiedad datoscomunicacopiabasica.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DATOSCOMUNICACOPIABASICATYPE }
+     *     
+     */
+    public void setDATOSCOMUNICACOPIABASICA(DATOSCOMUNICACOPIABASICATYPE value) {
+        this.datoscomunicacopiabasica = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad datosusolibreempresa.
+     * 
+     * @return
+     *     possible object is
+     *     {@link DATOSUSOLIBREEMPRESATYPE }
+     *     
+     */
+    public DATOSUSOLIBREEMPRESATYPE getDATOSUSOLIBREEMPRESA() {
+        return datosusolibreempresa;
+    }
+
+    /**
+     * Define el valor de la propiedad datosusolibreempresa.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DATOSUSOLIBREEMPRESATYPE }
+     *     
+     */
+    public void setDATOSUSOLIBREEMPRESA(DATOSUSOLIBREEMPRESATYPE value) {
+        this.datosusolibreempresa = value;
+    }
+
+}

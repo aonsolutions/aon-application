@@ -2,8 +2,10 @@ package com.esferalia.aon.ui.payroll.utils;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.faces.event.AbortProcessingException;
@@ -189,6 +191,24 @@ public class PayrollUtils {
 		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 		criteria.addOrder(bean.getFieldName(IEntityAlias.AGREEMENT_DATA_START_DATE), false);			
 		return bean.getList(criteria);
+	}
+	
+	public Map<String, String> getContractDataMap(Contract contract) {
+		Map<String, String> map = new HashMap<String, String>();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
+			for(ITransferObject to: bean.getList(criteria)){
+				ContractData data = (ContractData) to;
+				map.put(data.getName(), data.getExpression().replace('"', ' ').trim());
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, se devuelve un mapa vacio
+			return map;
+		}
+		return map;
 	}
 	
 }

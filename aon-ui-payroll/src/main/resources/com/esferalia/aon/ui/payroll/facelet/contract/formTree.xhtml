@@ -75,10 +75,11 @@
 					actionListener="#{contract.onShowContrataData}"
 					styleClass="aon-finding-toolbar-item aon-icon-contrata" >
 					<f:setPropertyActionListener
-						target="#{contract.contrataBackAction}" value="contract_formTree" />
+						target="#{contractContrata.backAction}" value="contract_formTree" />
 				</aon:commandButton>
 				<aon:commandButton id="pdf-edition" 
 					action="contractPdfEdition_form"
+					rendered="#{not empty contract.to.model and not contract.existDocument}"
 					value="EDITAR PDF"
 					styleClass="aon-finding-toolbar-item aon-icon-pdf" >
 					<f:setPropertyActionListener
@@ -92,10 +93,11 @@
 	
 	<ui:define name="content">
 		<aon:div id="contractMainGrid" styleClass="aon-scroll-area">
-			<ui:include 
-				src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" >
-				<ui:param name="controller" value="#{contract}" />
-			</ui:include>
+			<aon:panelGrid columns="2" 
+				columnClasses="aon-panelGrid-even aon-noborder aon-vertical-align-top, aon-panelGrid-even aon-noborder aon-vertical-align-top" >
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formPersonContent.xhtml" />
+			</aon:panelGrid>
 		</aon:div>
 	
 		<aon:div id="dataGrid" styleClass="aon-scroll-area">
@@ -104,6 +106,7 @@
 				src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid.xhtml" >
 				<ui:param name="controller" value="#{contract}" />
 				<ui:param name="showVariableFilter" value="true" />
+				<ui:param name="container" value="treeRightContent" />
 			</ui:include>
 			
 		</aon:div>

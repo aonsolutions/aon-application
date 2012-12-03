@@ -18,49 +18,9 @@
 					
 					<aon:panelGrid columns="2" 
 						columnClasses="aon-panelGrid-even aon-noborder aon-vertical-align-top, aon-panelGrid-even aon-noborder aon-vertical-align-top" >
-						
 						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
-						
-						<!--  
-						<aon:panelGrid columns="1" columnClasses="aon-panelGrid-even, aon-panelGrid-even" >
-						-->
-							<aon:panelGrid columns="2" styleClass="aon-panelGrid-even"
-								columnClasses="aon-panelGrid-even aon-bold aon-noborder, aon-panelGrid-even aon-noborder" >
-								
-								<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
-								<aon:outputText value="#{contract.to.workPlace.enterprise.registry.fullName}"/>
-								
-								<aon:outputText value="#{payrollBundle.payroll_employee_name}" />
-								<aon:outputText value="#{contract.to.person.fullName}" />
-								
-								<aon:outputText value="#{bundle.aon_document}" />
-								<aon:outputText value="#{contract.to.person.registry.document}"/>
-								
-								<aon:outputText value="#{registryBundle.registry_person_birthDate}" />
-								<aon:div>
-									<aon:outputText value="#{contract.to.person.birthDate}" >
-										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
-									</aon:outputText>		
-									<aon:outputText value="&#160;(" rendered="#{contract.to.person.age!=null}"/>
-									<aon:outputText value="#{contract.to.person.age}" rendered="#{contract.to.person.age!=null}"/>
-									<aon:outputText value="&#160;#{bundle.aon_years}" rendered="#{contract.to.person.age!=null}"/>
-									<aon:outputText value=")" rendered="#{contract.to.person.age!=null}"/>
-								</aon:div>
-								
-								<aon:outputText value="#{registryBundle.registry_nationality}" />
-								<aon:outputText value="#{contract.to.person.registry.nationality}" />
-								
-								<aon:outputText value="#{registryBundle.registry_person_nss}" />
-								<aon:outputText value="#{contract.to.person.socialSecurityNumber}"/>
-								
-							</aon:panelGrid>
-<!--  
-						</aon:panelGrid> 
--->
-						
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formPersonContent.xhtml" />
 					</aon:panelGrid>
-						
 					
 <!--  
 					<aon:panelGrid columns="7" style="width: 100%; margin-top:10px;"

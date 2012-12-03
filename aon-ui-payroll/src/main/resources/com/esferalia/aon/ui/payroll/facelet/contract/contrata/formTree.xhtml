@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
+
+	<ui:define name="header">
+	
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_contrataData}" />
+				<ui:param name="toolbarDescription" value="#{contractContrata.contrataAttach.id==null?bundle.aon_reset:bundle.aon_editing}" />
+				<ui:define name="toolbarContent">
+				
+					<aon:commandButton id="contrata-accept"
+						value="#{bundle.aon_accept}"
+						actionListener="#{contractContrata.onAccept}"
+						action="#{contractContrata.backAction}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept">
+						<rich:componentControl for="contrataPanel"
+							event="onclick" reRender="contrataForm" operation="hide"/>																					
+						<f:setPropertyActionListener 
+							target="#{contract.showContrataWindow}"
+							value="#{false}" />
+					</aon:commandButton>
+					<aon:commandButton id="contrata-cancel"
+						immediate="true"
+						value="#{contractContrata.contrataAttach.id==null?bundle.aon_cancel:bundle.aon_back}"
+						action="#{contractContrata.backAction}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel" />
+						
+				</ui:define>				
+			</ui:decorate>
+	
+	</ui:define>
+
+	<ui:define name="content">				
+		
+		<aon:div styleClass="aon-scroll-area" style="width:800px;">	
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_content.xhtml" />
+		</aon:div>
+					
+	</ui:define>
+
+</ui:composition>

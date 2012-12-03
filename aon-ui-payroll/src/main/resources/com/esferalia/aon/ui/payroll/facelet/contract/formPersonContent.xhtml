@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components" >
+
+	<aon:panelGrid columns="2" styleClass="aon-panelGrid-even"
+		columnClasses="aon-panelGrid-even aon-bold aon-noborder, 
+				aon-panelGrid-even aon-noborder" >
+		
+		<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
+		<aon:outputText value="#{contract.to.workPlace.enterprise.registry.fullName}"/>
+		
+		<aon:outputText value="#{payrollBundle.payroll_employee_name}" />
+		<aon:outputText value="#{contract.to.person.fullName}" />
+		
+		<aon:outputText value="#{bundle.aon_document}" />
+		<aon:outputText value="#{contract.to.person.registry.document}"/>
+		
+		<aon:outputText value="#{registryBundle.registry_person_birthDate}" />
+		<aon:div>
+			<aon:outputText value="#{contract.to.person.birthDate}" >
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>		
+			<aon:outputText value="&#160;(" rendered="#{contract.to.person.age!=null}"/>
+			<aon:outputText value="#{contract.to.person.age}" rendered="#{contract.to.person.age!=null}"/>
+			<aon:outputText value="&#160;#{bundle.aon_years}" rendered="#{contract.to.person.age!=null}"/>
+			<aon:outputText value=")" rendered="#{contract.to.person.age!=null}"/>
+		</aon:div>
+		
+		<aon:outputText value="#{registryBundle.registry_nationality}" />
+		<aon:outputText value="#{contract.to.person.registry.nationality}" />
+		
+		<aon:outputText value="#{registryBundle.registry_person_nss}" />
+		<aon:outputText value="#{contract.to.person.socialSecurityNumber}"/>
+
+		<aon:outputText value="#{registryBundle.registry_address}" />
+		<aon:outputText value="#{contract.to.person.registry.defaultAddress.fullAddress}"/>
+		
+	</aon:panelGrid>
+
+</ui:composition>

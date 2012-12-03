@@ -6,12 +6,14 @@ import java.util.ResourceBundle;
 import com.code.aon.common.enumeration.IResourceable;
 
 public enum ContractAttachmentType implements IResourceable {
-	// TODO
+	
+	CONTRACT_DRAFT,
 	
 	PDF_DOCUMENT,
-//	BASIC_COPY
+	
+//	BASIC_COPY,
+	
 	SPEE_CONTRATA
-//	OTHER
 	;
 	
     private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";

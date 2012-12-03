@@ -33,7 +33,6 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractAttachController;
 import com.esferalia.aon.ui.payroll.controller.wizard.ContractGenerationWizard;
-import com.esferalia.aon.ui.payroll.controller.wizard.ContrataParams;
 
 public class ContractGenerationControllerListener extends ControllerAdapter{
 	

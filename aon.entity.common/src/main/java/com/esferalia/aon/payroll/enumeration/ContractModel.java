@@ -15,6 +15,7 @@ import com.code.aon.common.enumeration.IResourceable;
 public enum ContractModel implements IResourceable {
 
 	
+	PE151,
 	PE166,
 	PE170,
 	PE174,
@@ -46,7 +47,8 @@ public enum ContractModel implements IResourceable {
 	PE217,
 	PE218,
 	PE220,
-	PE221;
+	PE221,
+	PE226;
 
 	/** Message file base path. */
     private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";

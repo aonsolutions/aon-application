@@ -8,55 +8,55 @@ import com.code.aon.common.enumeration.IStringEnum;
 
 public enum ContractCode implements IResourceable, IStringEnum {
 
-	C100("100"),
-	C109("109"),
-	C130("130"),
-	C139("139"),
-	C150("150"),
-	C189("189"),
+	C100("100", null),
+	C109("109", null),
+	C130("130", null),
+	C139("139", null),
+	C150("150", null),
+	C189("189", null),
 	
-	C200("200"),
-	C209("209"),
-	C230("230"),
-	C239("239"),
-	C250("250"),
-	C289("289"),
+	C200("200", null),
+	C209("209", null),
+	C230("230", null),
+	C239("239", null),
+	C250("250", null),
+	C289("289", null),
 	
-	C300("300"),
-	C309("309"),
-	C330("330"),
-	C350("350"),
-	C389("389"),
+	C300("300", null),
+	C309("309", null),
+	C330("330", null),
+	C350("350", null),
+	C389("389", null),
 	
-	C401("401"),
-	C402("402"),
-	C403("403"),
-	C408("408"),
-	C410("410"),
-	C418("418"),
-	C420("420"),
-	C421("421"),
-	C430("430"),
-	C441("441"),
-	C450("450"),
-	C452("452"),
+	C401("401", null),
+	C402("402", null),
+	C403("403", null),
+	C408("408", null),
+	C410("410", null),
+	C418("418", null),
+	C420("420", null),
+	C421("421", null),
+	C430("430", null),
+	C441("441", null),
+	C450("450", null),
+	C452("452", null),
 	
-	C501("501"),
-	C502("502"),
-	C503("503"),
-	C508("508"),
-	C510("510"),
-	C518("518"),
-	C520("520"),
-	C530("530"),
-	C540("540"),
-	C541("541"),
-	C550("550"),
-	C552("552"), 
+	C501("501", null),
+	C502("502", null),
+	C503("503", null),
+	C508("508", null),
+	C510("510", null),
+	C518("518", null),
+	C520("520", null),
+	C530("530", null),
+	C540("540", null),
+	C541("541", null),
+	C550("550", null),
+	C552("552", null), 
 
-	C970("970"),
-	C980("980"),
-	C990("990")
+	C970("970", null),
+	C980("980", null),
+	C990("990", null)
 	
 	;
 
@@ -74,8 +74,9 @@ public enum ContractCode implements IResourceable, IStringEnum {
 	}
 	
 	private String value;
+	private ContractModel model;
     
-    ContractCode( String value ) {
+    ContractCode( String value, ContractModel model ) {
       	this.value = value;
   	}
 	    
@@ -83,6 +84,13 @@ public enum ContractCode implements IResourceable, IStringEnum {
 	public String getValue() {
 		return value;
 	}
+    
+    public ContractModel getModel(){
+		return model;
+	}
+    public void setModel(ContractModel model){
+    	this.model = model;
+    }
 
 	public static ContractCode getContractCodeByValue(String expression) {
 		for( ContractCode c : ContractCode.values() ) {

@@ -14,16 +14,14 @@
 		<aon:form id="contrataForm">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle"
-					value="#{payrollBundle.payroll_contract_contrataData}" />
-				<ui:param name="toolbarDescription"
-					value="#{formNew?(bundle.aon_reset):(bundle.aon_editing)}" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_contrataData}" />
+				<ui:param name="toolbarDescription" value="#{contractContrata.contrataAttach.id==null?bundle.aon_reset:bundle.aon_editing}" />
 				<ui:define name="toolbarContent">
 				
 					<aon:commandButton id="contrata-accept"
 						value="#{bundle.aon_accept}"
-						actionListener="#{contract.onAcceptContrata}"
-						action="contract_form"
+						actionListener="#{contractContrata.onAccept}"
+						action="#{contractContrata.backAction}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept">
 						<rich:componentControl for="contrataPanel"
 							event="onclick" reRender="contrataForm" operation="hide"/>																					
@@ -32,18 +30,16 @@
 							value="#{false}" />
 					</aon:commandButton>
 					<aon:commandButton id="contrata-cancel"
-						value="#{bundle.aon_cancel}"
-						action="#{contract.contrataBackAction}"
 						immediate="true"
+						value="#{contractContrata.contrataAttach.id==null?bundle.aon_cancel:bundle.aon_back}"
+						action="#{contractContrata.backAction}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel" />
 						
 				</ui:define>				
 			</ui:decorate>
 		
 			<aon:div styleClass="aon-scroll-area" style="width:800px;">	
-				
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_content.xhtml" />
-				
 			</aon:div>
 					
 		</aon:form>

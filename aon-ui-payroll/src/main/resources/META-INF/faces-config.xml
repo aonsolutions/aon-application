@@ -365,6 +365,13 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractPdfController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+
+	<!-- ************ CONTRACT CONTRATA XML EDITION ************** -->
+	<managed-bean>
+		<managed-bean-name>contractContrata</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractContrataController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
 	<!-- ************ CONTRACT LEAVE ************** -->
 	<managed-bean>
@@ -2898,6 +2905,14 @@
 		<navigation-case>
 			<from-outcome>contrata_form</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contrata_formTree</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/contrata/formTree.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contractPdfEdition_formTree</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/pdfEdition/formTree.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>contractPdfEdition_form</from-outcome>

@@ -1,10 +1,11 @@
 package com.esferalia.aon.file.payroll.contract.pdf.model;
 
-import com.esferalia.aon.file.payroll.contract.model.DATOSEMPRESATYPE;
-import com.esferalia.aon.file.payroll.contract.model.DATOSGENERALESCONTRATOTYPE;
-import com.esferalia.aon.file.payroll.contract.model.DATOSTRABAJADORTYPE;
+import java.io.IOException;
+
+import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.lowagie.text.pdf.PdfReader;
 
 
 
@@ -13,47 +14,48 @@ public class ModelPE226 extends AbstractContractModel {
 	/*
 	 * Contract page 1
 	 */
-	final static String PE151_TC2_100 = "tipocontrato_100";
-	final static String PE151_TC2_150 = "tipocontrato_150";
-//	final static String PE151_ = "Texto65";
-//	final static String PE151_ = "Texto66";
-//	final static String PE151_ = "Texto67";
-//	final static String PE151_ = "Casilla de verificación78464";
-//	final static String PE151_ = "Casilla de verificación71016430";
-//	final static String PE151_ = "profetraba";
-//	final static String PE151_ = "catetraba";
-//	final static String PE151_ = "funciontraba";
-//	final static String PE151_ = "calletrab";
-//	final static String PE151_ = "fechaini";
-//	final static String PE151_ = "horasjorna1";
-//	final static String PE151_ = "horainicio";
-//	final static String PE151_ = "horafin";
-	
+	final static String PE226_QUOTE_BONUS = "si_bonif_cuota";
+	final static String PE226_QUOTE_NO_BONUS = "no_bonif_cuota";
+//	nomreptra
+//	dnireptra
+//	calireptra
+//	verificacion123
+//	verificacion1234
+//	entre16y30
+//	trabdiscap
+//	alumproy
+//	profetraba
+//	catetraba
+//	cno1
+//	cno2
+//	cno3
+//	cno4
+
 	/*
 	 * Contract page 2
 	 */
-	final static String PE151_SALARY = "retribu";
-//	final static String PE151_ = "perioretri";
-//	final static String PE151_ = "concepsala";
-//	final static String PE151_ = "vacaciones";
-//	final static String PE151_ = "Casilla de verificación7";
-//	final static String PE151_ = "Casilla de verificación8";
-//	final static String PE151_ = "Casilla de verificación11";
-//	final static String PE151_ = "Casilla de verificación9";
-//	final static String PE151_ = "Casilla de verificación10";
-//	final static String PE151_ = "Casilla de verificación13";
-//	final static String PE151_ = "Casilla de verificación12";
-//	final static String PE151_ = "Casilla de verificación14";
-//	final static String PE151_ = "Casilla de verificación15";
-//	final static String PE151_ = "Casilla de verificación16";
-//	final static String PE151_ = "convcole";
-//	final static String PE151_ = "oecomu";
-//	final static String PE151_ = "T25";
-//	final static String PE151_ = "munifirma";
-//	final static String PE151_ = "diafirma";
-//	final static String PE151_ = "mesfirma";
-//	final static String PE151_ = "añofirma";
-
+//	año1
+//	año2y3
+//	trabefec
+//	porcforma
+//	convcole
+//	jornhoraefec
+//	totaldura
+//	fechaini
+//	fechafin
+//	periodoprue
+//	retribu
+//	perioretri
+//	vacaciones
+//	porc_75_250
+//	porc_100_249
+//	convcole2
+//	munifirma
+//	clausadici
+//	diafirma
+//	mesfirma
+//	añofirma
+	
 	public final static String MODEL_NAME = "PE226";
 	
 	public ModelPE226(){
@@ -63,7 +65,35 @@ public class ModelPE226 extends AbstractContractModel {
 	@Override
 	public void loadPdfFields(ContractCode code, Contract contract) throws UnsupportedContractModelException{
 		// TODO
-		
+		try {
+			PdfReader reader = new PdfReader(getContractModelUrl(modelName+".pdf"));
+			
+			readPdfFields(reader);
+			
+			if(code == ContractCode.C421){
+				if( isQuoteBonus(contract) ){
+					getPdfFieldsMap().get(PE226_QUOTE_BONUS).setValue("true");
+				} else {
+					getPdfFieldsMap().get(PE226_QUOTE_NO_BONUS).setValue("true");
+				}
+			} else {
+				throw new UnsupportedContractModelException("El modelo de contrato seleccionado es incorrecto");
+			}
+			
+			super.loadPdfCommonFields(contract);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private boolean isQuoteBonus(Contract contract) {
+		// TODO 
+		return true;
 	}
 	
 }

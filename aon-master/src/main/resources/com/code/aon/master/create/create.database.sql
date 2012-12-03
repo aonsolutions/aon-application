@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.2.1
-# Created by: ecastellano
-# Creation Date: 26/11/2012 20:25
+# Version: 7.2.0
+# Created by: eagirrezabal
+# Creation Date: 03/12/2012 20:12
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2083,6 +2083,7 @@ CREATE TABLE `contract` (
   `enterprise_activity` int(4) default NULL COMMENT 'Actividad',
   `ss_regime` tinyint(2) NOT NULL default '0' COMMENT 'Regimen de la Seguridad Social',
   `agreement_level_category` int(4) default NULL COMMENT 'Identificador unico de la Categoria Profesional',
+  `model` tinyint(2) default NULL COMMENT 'Indica el modelo de codumento del contrato',
   PRIMARY KEY  (`id`),
   KEY `IDX_CONTRACT_PERSON` (`person`),
   KEY `IDX_CONTRACT_WORKPLACE` (`workplace`),
@@ -7075,7 +7076,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.2.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.2.0');
 
 COMMIT;
 

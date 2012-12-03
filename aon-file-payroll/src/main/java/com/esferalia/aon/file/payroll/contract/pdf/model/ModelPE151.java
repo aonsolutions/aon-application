@@ -1,14 +1,11 @@
 package com.esferalia.aon.file.payroll.contract.pdf.model;
 
+import java.io.IOException;
+
 import com.code.aon.common.ManagerBeanException;
-import com.esferalia.aon.file.payroll.contract.model.CONTRATO100TYPE;
-import com.esferalia.aon.file.payroll.contract.model.CONTRATO150TYPE;
-import com.esferalia.aon.file.payroll.contract.model.CONTRATO200TYPE;
-import com.esferalia.aon.file.payroll.contract.model.DATOSEMPRESATYPE;
-import com.esferalia.aon.file.payroll.contract.model.DATOSGENERALESCONTRATOTYPE;
-import com.esferalia.aon.file.payroll.contract.model.DATOSTRABAJADORTYPE;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.lowagie.text.pdf.PdfReader;
 
 
 
@@ -69,6 +66,28 @@ public class ModelPE151 extends AbstractContractModel {
 	public void loadPdfFields(ContractCode code, Contract contract) throws UnsupportedContractModelException{
 		// TODO
 		
+		try {
+			PdfReader reader = new PdfReader(getContractModelUrl(modelName+".pdf"));
+			
+			readPdfFields(reader);
+			
+			if(code == ContractCode.C100){
+				getPdfFieldsMap().get(PE151_TC2_100).setValue("true");
+			} else if(code == ContractCode.C150){
+				getPdfFieldsMap().get(PE151_TC2_150).setValue("true");
+			} else {
+				throw new UnsupportedContractModelException("El modelo de contrato seleccionado es incorrecto");
+			}
+			
+			super.loadPdfCommonFields(contract);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	

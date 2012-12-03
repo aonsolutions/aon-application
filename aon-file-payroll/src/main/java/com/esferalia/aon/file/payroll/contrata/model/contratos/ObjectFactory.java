@@ -1,0 +1,503 @@
+//
+// Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.5-2 
+// Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
+// Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
+// Generado el: PM.11.26 a las 06:54:59 PM CET 
+//
+
+
+package com.esferalia.aon.file.payroll.contrata.model.contratos;
+
+import javax.xml.bind.annotation.XmlRegistry;
+
+
+/**
+ * This object contains factory methods for each 
+ * Java content interface and Java element interface 
+ * generated in the com.esferalia.aon.file.payroll.contract.generated.contratos package. 
+ * <p>An ObjectFactory allows you to programatically 
+ * construct new instances of the Java representation 
+ * for XML content. The Java representation of XML 
+ * content can consist of schema derived interfaces 
+ * and classes representing the binding of schema 
+ * type definitions, element declarations and model 
+ * groups.  Factory methods for each of these are 
+ * provided in this class.
+ * 
+ */
+@XmlRegistry
+public class ObjectFactory {
+
+
+    /**
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: com.esferalia.aon.file.payroll.contract.generated.contratos
+     * 
+     */
+    public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link CONTRATOS }
+     * 
+     */
+    public CONTRATOS createCONTRATOS() {
+        return new CONTRATOS();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO100TYPE }
+     * 
+     */
+    public CONTRATO100TYPE createCONTRATO100TYPE() {
+        return new CONTRATO100TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO130TYPE }
+     * 
+     */
+    public CONTRATO130TYPE createCONTRATO130TYPE() {
+        return new CONTRATO130TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO150TYPE }
+     * 
+     */
+    public CONTRATO150TYPE createCONTRATO150TYPE() {
+        return new CONTRATO150TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO200TYPE }
+     * 
+     */
+    public CONTRATO200TYPE createCONTRATO200TYPE() {
+        return new CONTRATO200TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO230TYPE }
+     * 
+     */
+    public CONTRATO230TYPE createCONTRATO230TYPE() {
+        return new CONTRATO230TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO250TYPE }
+     * 
+     */
+    public CONTRATO250TYPE createCONTRATO250TYPE() {
+        return new CONTRATO250TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO300TYPE }
+     * 
+     */
+    public CONTRATO300TYPE createCONTRATO300TYPE() {
+        return new CONTRATO300TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO330TYPE }
+     * 
+     */
+    public CONTRATO330TYPE createCONTRATO330TYPE() {
+        return new CONTRATO330TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO350TYPE }
+     * 
+     */
+    public CONTRATO350TYPE createCONTRATO350TYPE() {
+        return new CONTRATO350TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO401TYPE }
+     * 
+     */
+    public CONTRATO401TYPE createCONTRATO401TYPE() {
+        return new CONTRATO401TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO402TYPE }
+     * 
+     */
+    public CONTRATO402TYPE createCONTRATO402TYPE() {
+        return new CONTRATO402TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO403TYPE }
+     * 
+     */
+    public CONTRATO403TYPE createCONTRATO403TYPE() {
+        return new CONTRATO403TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO410TYPE }
+     * 
+     */
+    public CONTRATO410TYPE createCONTRATO410TYPE() {
+        return new CONTRATO410TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO420TYPE }
+     * 
+     */
+    public CONTRATO420TYPE createCONTRATO420TYPE() {
+        return new CONTRATO420TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO421TYPE }
+     * 
+     */
+    public CONTRATO421TYPE createCONTRATO421TYPE() {
+        return new CONTRATO421TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO430TYPE }
+     * 
+     */
+    public CONTRATO430TYPE createCONTRATO430TYPE() {
+        return new CONTRATO430TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO441TYPE }
+     * 
+     */
+    public CONTRATO441TYPE createCONTRATO441TYPE() {
+        return new CONTRATO441TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO450TYPE }
+     * 
+     */
+    public CONTRATO450TYPE createCONTRATO450TYPE() {
+        return new CONTRATO450TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO452TYPE }
+     * 
+     */
+    public CONTRATO452TYPE createCONTRATO452TYPE() {
+        return new CONTRATO452TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO501TYPE }
+     * 
+     */
+    public CONTRATO501TYPE createCONTRATO501TYPE() {
+        return new CONTRATO501TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO502TYPE }
+     * 
+     */
+    public CONTRATO502TYPE createCONTRATO502TYPE() {
+        return new CONTRATO502TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO503TYPE }
+     * 
+     */
+    public CONTRATO503TYPE createCONTRATO503TYPE() {
+        return new CONTRATO503TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO510TYPE }
+     * 
+     */
+    public CONTRATO510TYPE createCONTRATO510TYPE() {
+        return new CONTRATO510TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO520TYPE }
+     * 
+     */
+    public CONTRATO520TYPE createCONTRATO520TYPE() {
+        return new CONTRATO520TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO530TYPE }
+     * 
+     */
+    public CONTRATO530TYPE createCONTRATO530TYPE() {
+        return new CONTRATO530TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO540TYPE }
+     * 
+     */
+    public CONTRATO540TYPE createCONTRATO540TYPE() {
+        return new CONTRATO540TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO541TYPE }
+     * 
+     */
+    public CONTRATO541TYPE createCONTRATO541TYPE() {
+        return new CONTRATO541TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO550TYPE }
+     * 
+     */
+    public CONTRATO550TYPE createCONTRATO550TYPE() {
+        return new CONTRATO550TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO552TYPE }
+     * 
+     */
+    public CONTRATO552TYPE createCONTRATO552TYPE() {
+        return new CONTRATO552TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO970TYPE }
+     * 
+     */
+    public CONTRATO970TYPE createCONTRATO970TYPE() {
+        return new CONTRATO970TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO980TYPE }
+     * 
+     */
+    public CONTRATO980TYPE createCONTRATO980TYPE() {
+        return new CONTRATO980TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CONTRATO990TYPE }
+     * 
+     */
+    public CONTRATO990TYPE createCONTRATO990TYPE() {
+        return new CONTRATO990TYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSCONTRATOINSERCIONTYPE }
+     * 
+     */
+    public DATOSCONTRATOINSERCIONTYPE createDATOSCONTRATOINSERCIONTYPE() {
+        return new DATOSCONTRATOINSERCIONTYPE();
+    }
+
+    /**
+     * Create an instance of {@link NOMBREAPELLIDOSTYPE }
+     * 
+     */
+    public NOMBREAPELLIDOSTYPE createNOMBREAPELLIDOSTYPE() {
+        return new NOMBREAPELLIDOSTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSPROGEMPLEOPUBLICOTYPE }
+     * 
+     */
+    public DATOSPROGEMPLEOPUBLICOTYPE createDATOSPROGEMPLEOPUBLICOTYPE() {
+        return new DATOSPROGEMPLEOPUBLICOTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSREDUCCIONRDL12011TYPE }
+     * 
+     */
+    public DATOSREDUCCIONRDL12011TYPE createDATOSREDUCCIONRDL12011TYPE() {
+        return new DATOSREDUCCIONRDL12011TYPE();
+    }
+
+    /**
+     * Create an instance of {@link CIFNIFTYPE }
+     * 
+     */
+    public CIFNIFTYPE createCIFNIFTYPE() {
+        return new CIFNIFTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSCOMUNICACOPIABASICATYPE }
+     * 
+     */
+    public DATOSCOMUNICACOPIABASICATYPE createDATOSCOMUNICACOPIABASICATYPE() {
+        return new DATOSCOMUNICACOPIABASICATYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSMEDIDASFOMENTOTYPE }
+     * 
+     */
+    public DATOSMEDIDASFOMENTOTYPE createDATOSMEDIDASFOMENTOTYPE() {
+        return new DATOSMEDIDASFOMENTOTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSCONTRATOINVESTIGACIONTYPE }
+     * 
+     */
+    public DATOSCONTRATOINVESTIGACIONTYPE createDATOSCONTRATOINVESTIGACIONTYPE() {
+        return new DATOSCONTRATOINVESTIGACIONTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSUSOLIBREEMPRESATYPE }
+     * 
+     */
+    public DATOSUSOLIBREEMPRESATYPE createDATOSUSOLIBREEMPRESATYPE() {
+        return new DATOSUSOLIBREEMPRESATYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSCONTRATOTIEMPOPARCIALTYPE }
+     * 
+     */
+    public DATOSCONTRATOTIEMPOPARCIALTYPE createDATOSCONTRATOTIEMPOPARCIALTYPE() {
+        return new DATOSCONTRATOTIEMPOPARCIALTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSANEXOCONTRATORELEVOTYPE }
+     * 
+     */
+    public DATOSANEXOCONTRATORELEVOTYPE createDATOSANEXOCONTRATORELEVOTYPE() {
+        return new DATOSANEXOCONTRATORELEVOTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSTRABAJADORTYPE }
+     * 
+     */
+    public DATOSTRABAJADORTYPE createDATOSTRABAJADORTYPE() {
+        return new DATOSTRABAJADORTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSGENERALESCONTRATOTYPE }
+     * 
+     */
+    public DATOSGENERALESCONTRATOTYPE createDATOSGENERALESCONTRATOTYPE() {
+        return new DATOSGENERALESCONTRATOTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSBONIFICACIONTYPE }
+     * 
+     */
+    public DATOSBONIFICACIONTYPE createDATOSBONIFICACIONTYPE() {
+        return new DATOSBONIFICACIONTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSEXCLUSIONSOCIALTYPE }
+     * 
+     */
+    public DATOSEXCLUSIONSOCIALTYPE createDATOSEXCLUSIONSOCIALTYPE() {
+        return new DATOSEXCLUSIONSOCIALTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSREDUCCIONFORMACIONTYPE }
+     * 
+     */
+    public DATOSREDUCCIONFORMACIONTYPE createDATOSREDUCCIONFORMACIONTYPE() {
+        return new DATOSREDUCCIONFORMACIONTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSCONTRATOEMPRENDEDORESTYPE }
+     * 
+     */
+    public DATOSCONTRATOEMPRENDEDORESTYPE createDATOSCONTRATOEMPRENDEDORESTYPE() {
+        return new DATOSCONTRATOEMPRENDEDORESTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSETCOTYPE }
+     * 
+     */
+    public DATOSETCOTYPE createDATOSETCOTYPE() {
+        return new DATOSETCOTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSCOPIABASICATYPE }
+     * 
+     */
+    public DATOSCOPIABASICATYPE createDATOSCOPIABASICATYPE() {
+        return new DATOSCOPIABASICATYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSEMPRESAINSERCIONTYPE }
+     * 
+     */
+    public DATOSEMPRESAINSERCIONTYPE createDATOSEMPRESAINSERCIONTYPE() {
+        return new DATOSEMPRESAINSERCIONTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSETTTYPE }
+     * 
+     */
+    public DATOSETTTYPE createDATOSETTTYPE() {
+        return new DATOSETTTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSEMPRESATYPE }
+     * 
+     */
+    public DATOSEMPRESATYPE createDATOSEMPRESATYPE() {
+        return new DATOSEMPRESATYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSCONTRATOINTERINIDADTYPE }
+     * 
+     */
+    public DATOSCONTRATOINTERINIDADTYPE createDATOSCONTRATOINTERINIDADTYPE() {
+        return new DATOSCONTRATOINTERINIDADTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSCONTRATOPRACTICASTYPE }
+     * 
+     */
+    public DATOSCONTRATOPRACTICASTYPE createDATOSCONTRATOPRACTICASTYPE() {
+        return new DATOSCONTRATOPRACTICASTYPE();
+    }
+
+    /**
+     * Create an instance of {@link DATOSCONTRATOEXTRANJEROTYPE }
+     * 
+     */
+    public DATOSCONTRATOEXTRANJEROTYPE createDATOSCONTRATOEXTRANJEROTYPE() {
+        return new DATOSCONTRATOEXTRANJEROTYPE();
+    }
+
+}

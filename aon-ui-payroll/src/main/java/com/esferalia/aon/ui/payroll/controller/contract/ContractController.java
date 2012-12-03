@@ -14,7 +14,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
@@ -75,24 +74,12 @@ public class ContractController extends BasicController implements IVariablesHan
 	private AonFile aonFile;
 	private Agreement agreement;
 	
-	private boolean showContrataWindow;
-	
-	private boolean modalPanelVisible;
-	
 	private ContractVariableHandler variableHandler;
-	
-	private ContractContrataHandler contrataHandler;
-	
-	private String contrataBackAction;
-	
 	private ContractParams params;
-	
-	public boolean isShowContrataWindow() {
-		return showContrataWindow;
-	}
-	public void setShowContrataWindow(boolean showContrataWindow) {
-		this.showContrataWindow = showContrataWindow;
-	}
+
+	private boolean showNewContractModal;
+	private boolean showContrataWindow;
+
 	public ContractParams getParams() {
 		if(params==null){
 			params = new ContractParams();
@@ -111,26 +98,18 @@ public class ContractController extends BasicController implements IVariablesHan
 	public void setHandler(ContractVariableHandler handler) {
 		this.variableHandler = handler;
 	}
-	public boolean isModalPanelVisible() {
-		return modalPanelVisible;
+	
+	public boolean isShowContrataWindow() {
+		return showContrataWindow;
 	}
-	public void setModalPanelVisible(boolean modalPanelVisible) {
-		this.modalPanelVisible = modalPanelVisible;
+	public void setShowContrataWindow(boolean showContrataWindow) {
+		this.showContrataWindow = showContrataWindow;
 	}
-	public ContractContrataHandler getContrataHandler() {
-		return contrataHandler;
+	public boolean isShowNewContractModal() {
+		return showNewContractModal;
 	}
-	public void setContrataHandler(ContractContrataHandler contrataHandler) {
-		this.contrataHandler = contrataHandler;
-	}
-	public String contrataBackAction() {
-		return contrataBackAction;
-	}
-	public String getContrataBackAction() {
-		return contrataBackAction;
-	}
-	public void setContrataBackAction(String contrataBackAction) {
-		this.contrataBackAction = contrataBackAction;
+	public void setShowNewContractModal(boolean showNewContractModal) {
+		this.showNewContractModal = showNewContractModal;
 	}
 	public Agreement getAgreement() {
 		return agreement;
@@ -182,9 +161,9 @@ public class ContractController extends BasicController implements IVariablesHan
 	public void setActivities(List<SelectItem> activities) {
 		this.activities = activities;
 	}
-	
+		
 	public void onShowNewContractModal(ActionEvent event) {
-		setModalPanelVisible(true);
+		setShowNewContractModal(true);
 	}
 	
 	public void onShowVariables( ActionEvent event ) {
@@ -254,51 +233,6 @@ public class ContractController extends BasicController implements IVariablesHan
 	}
 	public void onShowDocuments( ActionEvent event ) {
 		
-	}
-
-	public void onShowContrataData(ActionEvent event){
-		contrataHandler = new ContractContrataHandler(this);
-		try {
-			contrataHandler.readXml();
-		} catch (JAXBException e) {
-			String msg = "Error al leer el documento xml";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		} catch (IOException e) {
-			String msg = "Error al leer el documento xml";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		}
-	}
-
-	public void onAcceptContrata( ActionEvent event ) {
-		ContractAttachController attachController = (ContractAttachController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_ATTACH_CONTROLLER);
-		try {
-			contrataHandler.generateXml();
-			ContractAttachment attach = new ContractAttachment();
-			attach = contrataHandler.getContrataAttach();
-			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
-			attach.setAttachDate(new Date());
-			bean.insertOrUpdate(attach);
-			attachController.initializeModel();
-		} catch(IOException e) {
-			String msg = "Error al guardar el documento xml de contrata";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		} catch (ManagerBeanException e) {
-			String msg = "Error al guardar el documento xml de contrata";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		} catch (JAXBException e) {
-			String msg = "Error al guardar el documento xml de contrata";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		}
 	}
 	
 	public void onEnterpriseChanged( LookupChangeEvent event ) {
@@ -642,6 +576,12 @@ public class ContractController extends BasicController implements IVariablesHan
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}				
+	}
+	
+	public void onShowContrataData(ActionEvent event){
+		ContractContrataController controller = (ContractContrataController) AonUtil.getRegisteredBean("contractContrata");
+		controller.initialize((Contract) this.getTo());
+		controller.onContractaDataShow(event);
 	}
 	
 	public void onContractDocumentShow( ActionEvent event ) {

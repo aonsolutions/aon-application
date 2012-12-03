@@ -7,6 +7,9 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum ContractType implements IResourceable {
 	
+	PE151(ContractModel.PE151, 
+			ContractCode.C100, ContractCode.C150),
+
 	PE166(ContractModel.PE166, 
 			ContractCode.C139, ContractCode.C239),
 			
@@ -23,9 +26,11 @@ public enum ContractType implements IResourceable {
 			ContractCode.C350, ContractCode.C450,
 			ContractCode.C550),
 	
-	PE175(ContractModel.PE175), 
+	PE175(ContractModel.PE175, 
+			ContractCode.C421), 
 	
-	PE176(ContractModel.PE176), 
+	PE176(ContractModel.PE176, 
+			ContractCode.C420, ContractCode.C520), 
 	
 	PE177_WORK_SERVICE(ContractModel.PE177, 
 			ContractCode.C401, ContractCode.C402,
@@ -166,8 +171,19 @@ public enum ContractType implements IResourceable {
 			ContractCode.C150, ContractCode.C250, 
 			ContractCode.C350),
 					
-	PE218_ORDINARY(ContractModel.PE218),
-	PE218_INSERTION(ContractModel.PE218),
+	PE218_ORDINARY(ContractModel.PE218,
+		ContractCode.C150, ContractCode.C250, 
+		ContractCode.C350, ContractCode.C450,
+		ContractCode.C550, ContractCode.C452,
+		ContractCode.C552),
+		
+	PE218_INSERTION(ContractModel.PE218,
+		ContractCode.C150, ContractCode.C250, 
+		ContractCode.C350, ContractCode.C450,
+		ContractCode.C550, ContractCode.C452,
+		ContractCode.C552),
+	
+	PE226(ContractModel.PE226, ContractCode.C421),
 	;
 	
 	/** Message file base path. */

@@ -39,16 +39,28 @@ import com.esferalia.aon.ui.payroll.utils.PdfToImage;
 
 public class ContractPdfController {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContractPdfController.class.getName());
+	private static final String IMAGE_URL_PREFIX0 = ".contractImage";
+	private static final String IMAGE_URL_PREFIX1 = "?model=";
+	private static final String IMAGE_URL_PREFIX2 = "&width=";
+	private static final String IMAGE_URL_PREFIX3 = "&height=";
 	private static final double FACTOR_1X = 1.2;
 	private static final double FACTOR_2X = 1.4;
 	private static final double FACTOR_3X = 1.6;
 	private static final double FACTOR_4X = 1.8;
 
 	private Integer contractPage;
-//	private Integer contractWidth;
-//	private Integer contractHeight;
-//	private int numberOfContractPages;
 	private int zoomFactor;
+	private Contract contract;
+	private ContractPdfWriter contractPdfWriter;
+	private String imageUrl;
+	private ContractOption contractOption;
+	private ContractType contractType;
+	private ContractModel contractModel;
+	private ContractCode code;
+	private Map<String, String> contractDataMap;
+	private ContractAttachment contractPdfDraft;	
+	private String backAction;
 	
 	public Integer getContractPage() {
 		return contractPage;
@@ -81,48 +93,15 @@ public class ContractPdfController {
 	
 	public Integer getContractWidth() {
 		return getFactorizedValue(getContractPdfWriter().getContractWidth());
-//		return getFactorizedValue(contractWidth);
 	}
-	
-//	public void setContractWidth(Integer contractWidth) {
-//		this.contractWidth = contractWidth;
-//	}
 	
 	public Integer getContractHeight() {
 		return getFactorizedValue(getContractPdfWriter().getContractHeight());
-//		return getFactorizedValue(contractHeight);
 	}
 	
-//	public void setContractHeight(Integer contractHeight) {
-//		this.contractHeight = contractHeight;
-//	}
 	public int getNumberOfContractPages() {
 		return getContractPdfWriter().getNumberOfContractPages();
 	}
-//	public void setNumberOfContractPages(int numberOfContractPages) {
-//		this.numberOfContractPages = numberOfContractPages;
-//	}
-	
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(ContractPdfController.class.getName());
-	private static final String IMAGE_URL_PREFIX0 = ".contractImage";
-	private static final String IMAGE_URL_PREFIX1 = "?model=";
-	private static final String IMAGE_URL_PREFIX2 = "&width=";
-	private static final String IMAGE_URL_PREFIX3 = "&height=";
-//	private static final int MAX_FILE_SIZE_MB = 3;
-//	private static final int MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024;
-//	private static final String CONTRACT_XML_CONTEXT_PATH = "com.esferalia.aon.ui.payroll.utils.contractMojo";
-	
-	private Contract contract;
-	private ContractPdfWriter contractPdfWriter;
-	private String imageUrl;
-	private ContractOption contractOption;
-	private ContractType contractType;
-	private ContractModel contractModel;
-	private ContractCode code;
-	private Map<String, String> contractDataMap;
-	private ContractAttachment contractPdfDraft;	
-	private String backAction;
 	
 	public String backAction() {
 		return backAction;
@@ -227,7 +206,7 @@ public class ContractPdfController {
 				IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), getContract().getId());
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.PDF_DOCUMENT);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.CONTRACT_DRAFT);
 				List<ITransferObject> list = bean.getList(criteria);
 				if(!list.isEmpty()){
 					return (ContractAttachment) list.get(0);
@@ -240,13 +219,9 @@ public class ContractPdfController {
 	}
 
 	public void beforeDocumentShow() {
-//		contractDataMap = null;
-		
 		String tc2 = getContractDataMap().get(ContextVariable.TC2.getName());
 		String indefinite = getContractDataMap().get(ContextVariable.INDEFINITE.getName());
 		String fullTime = getContractDataMap().get(ContextVariable.FULL_TIME.getName());
-		
-//		getContractPdfWriter().setContractPdfFields(null);
 		if( tc2!=null ){
 			if(new Boolean(indefinite)){
 				
@@ -254,76 +229,8 @@ public class ContractPdfController {
 			if(new Boolean(fullTime)){
 				
 			}
-			
 			setCode(ContractCode.getContractCodeByValue(tc2));
-			setContractModel(null);
-			
-			// TODO EN DESARROLLO, solo se contempla cuando el TC2 es 100
-			if(getCode()==ContractCode.C100){
-//				for (ContractOption contractOption:ContractOption.values()) {
-//					for (ContractType contractType:contractOption.getTypes()) {
-//						for (ContractCode c : contractType.getCodes()) {
-//							if(contractType==ContractType.PE170){
-//								setContractType(contractType);
-//							}
-//							if(contractOption==ContractOption.INDEFINITE){
-//								setContractOption(contractOption);
-//							}
-////							if( c.equals(getCode()) ){
-////								setContractType(contractType);
-////								if(contractOption==ContractOption.INDEFINITE){
-////									setContractOption(contractOption);
-////								}
-////								break;
-////							}
-//						}
-//					}
-//				}
-			} else {
-//				setCode(null);
-//				setContractType(null);
-//				setContractOption(null);
-			}
-//			for(int i=0; i<ContractType.PE151.getCodes().length && getContractModel()==null; i++){
-//				if(getCode()==ContractType.PE151.getCodes()[i]){
-//					setContractModel(ContractType.PE151.getModel());
-//				}
-//			}
-			for(int i=0; i<ContractType.PE170.getCodes().length && getContractModel()==null; i++){
-				if(getCode()==ContractType.PE170.getCodes()[i]){
-					setContractModel(ContractType.PE170.getModel());
-				}
-			}
-			for(int i=0; i<ContractType.PE176.getCodes().length && getContractModel()==null; i++){
-				if(getCode()==ContractType.PE176.getCodes()[i]){
-					setContractModel(ContractType.PE176.getModel());
-				}
-			}
-			for(int i=0; i<ContractType.PE177_WORK_SERVICE.getCodes().length && getContractModel()==null; i++){
-				if(getCode()==ContractType.PE177_WORK_SERVICE.getCodes()[i]){
-					setContractModel(ContractType.PE177_WORK_SERVICE.getModel());
-				}
-			}
-			for(int i=0; i<ContractType.PE179.getCodes().length && getContractModel()==null; i++){
-				if(getCode()==ContractType.PE179.getCodes()[i]){
-					setContractModel(ContractType.PE179.getModel());
-				}
-			}
-			for(int i=0; i<ContractType.PE183.getCodes().length && getContractModel()==null; i++){
-				if(getCode()==ContractType.PE183.getCodes()[i]){
-					setContractModel(ContractType.PE183.getModel());
-				}
-			}
-			for(int i=0; i<ContractType.PE187.getCodes().length && getContractModel()==null; i++){
-				if(getCode()==ContractType.PE187.getCodes()[i]){
-					setContractModel(ContractType.PE187.getModel());
-				}
-			}
-//			for(int i=0; i<ContractType.PE226.getCodes().length && getContractModel()==null; i++){
-//				if(getCode()==ContractType.PE226.getCodes()[i]){
-//					setContractModel(ContractType.PE226.getModel());
-//				}
-//			}
+			setContractModel(getContract().getModel());
 		}
 	}
 	
@@ -345,23 +252,16 @@ public class ContractPdfController {
 				throw new AbortProcessingException(msg);
 			}
 			
-			
 			setZoomFactor(2);
-//			readPdfFields(getContractPdfDraft().getData(),getContractModel());
-//			getContractPdfHandler().readPdfFields(getContractModel());
+
 			if(getContractPdfDraft()==null || getContractPdfDraft().getId()==null){
-//				getContractPdfWriter().loadDefaultFields(getContract());
 				getContractPdfWriter().loadPdf(getContractModel(), getContract());
 			} else {
-				getContractPdfWriter().loadPdf(getContractPdfDraft());
+				getContractPdfWriter().loadPdf(getContractPdfDraft(), getContract());
 			}
+
 			setContractPage(1);
 			
-			
-//			final String SCHEMA = getContractModel()+".pdf"; 
-//			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-//			URL[] urls = Classpath.search(cl, IPayrollConstants.MODEL_PATH, SCHEMA);
-//			PdfToImage.create(urls[0], getContractPage(), getContractWidth().intValue(), getContractHeight().intValue());
 			createPdfThumbnail();
 
 		} catch (IOException e) {
@@ -412,18 +312,12 @@ public class ContractPdfController {
 			attach.setContract(getContract());
 			attach.setData(getContractPdfWriter().buildPdf());
 			attach.setAttachDate(new Date());
-			attach.setAttachmentType(ContractAttachmentType.PDF_DOCUMENT);
+			attach.setAttachmentType(ContractAttachmentType.CONTRACT_DRAFT);
 			attach.setMimeType(MimeType.MIME_PDF);
-			attach.setDescription("Contrato (Borrador)");
+			attach.setDescription("Contrato laboral");
 			bean.insertOrUpdate(attach);
 			ContractAttachController attachController = (ContractAttachController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_ATTACH_CONTROLLER);
 			attachController.initializeModel();
-//		} catch (IOException e) {
-//			LOGGER.error(e.getMessage(), e);
-//			throw new AbortProcessingException(e);
-//		} catch (UnsupportedContractModelException e) {
-//			LOGGER.error(e.getMessage(), e);
-//			throw new AbortProcessingException(e);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new AbortProcessingException(e);

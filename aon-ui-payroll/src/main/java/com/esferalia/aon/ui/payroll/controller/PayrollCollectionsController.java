@@ -70,6 +70,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 public class PayrollCollectionsController {
 	
 	private final int NAME_LENGHT_80 = 80;
+	private final int NAME_LENGHT_120 = 120;
 
 	private List<SelectItem> contractDurations;
 	private List<SelectItem> contractWorkingDays;
@@ -131,9 +132,9 @@ public class PayrollCollectionsController {
 	private List<SelectItem> workingDayTypes;
 	private List<SelectItem> ageCollectives;
 	
-	private String getAbbreviatedSelectItemLabel(String name) {
-		if(name.length()>NAME_LENGHT_80){
-			return name.substring(0, NAME_LENGHT_80)+"...";
+	private String getAbbreviatedSelectItemLabel(String name, int lenght) {
+		if(name.length()>lenght){
+			return name.substring(0, lenght)+"...";
 		}
 		return name;
 	}
@@ -345,7 +346,7 @@ public class PayrollCollectionsController {
 			QuoteGroup[] models = QuoteGroup.values();
 			for (QuoteGroup cm : models) {
 				String name = cm.getFullName(locale);
-				SelectItem item = new SelectItem(cm, getAbbreviatedSelectItemLabel(name));
+				SelectItem item = new SelectItem(cm, getAbbreviatedSelectItemLabel(name, NAME_LENGHT_80));
 				quoteGroups.add(item);
 			}
 		}
@@ -359,7 +360,7 @@ public class PayrollCollectionsController {
 			OccupationType[] types = OccupationType.values();
 			for (OccupationType t : types) {
 				String name = t.getFullName(locale);
-				SelectItem item = new SelectItem(t, getAbbreviatedSelectItemLabel(name));
+				SelectItem item = new SelectItem(t, getAbbreviatedSelectItemLabel(name, NAME_LENGHT_80));
 				occupationTypes.add(item);
 			}
 		}
@@ -723,10 +724,10 @@ public class PayrollCollectionsController {
 			List<SelectItem> subList = new ArrayList<SelectItem>();
 			for( ContractCode c : p.getCodes() ) {
 				String name = c.getName(locale);
-				SelectItem item = new SelectItem(c, getAbbreviatedSelectItemLabel(name));
+				SelectItem item = new SelectItem(c, getAbbreviatedSelectItemLabel(name, NAME_LENGHT_80));
 				subList.add(item);			
 			}
-			SelectItemGroup group = new SelectItemGroup(getAbbreviatedSelectItemLabel(p.getName(locale)), p.getName(locale), false, subList.toArray(new SelectItem[0]));
+			SelectItemGroup group = new SelectItemGroup(getAbbreviatedSelectItemLabel(p.getName(locale), 150), p.getName(locale), false, subList.toArray(new SelectItem[0]));
 			list.add(group);
 		}
 		return list;
