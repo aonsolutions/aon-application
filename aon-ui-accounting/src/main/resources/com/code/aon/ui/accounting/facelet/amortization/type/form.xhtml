@@ -20,10 +20,6 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="2">
 
-					<aon:outputLabel for="AmortizationType_id" value="#{bundle.aon_id}" />
-					<aon:inputText id="AmortizationType_id"
-						value="#{amortizationType.to.id}" size="5" disabled="true" />
-
 					<aon:outputLabel for="AmortizationType_description"
 						value="#{bundle.aon_description}" />
 					<aon:inputText id="AmortizationType_description"
@@ -36,21 +32,21 @@
 						value="#{accountingBundle.accounting_fixed_asset_account}" />
 					<aon:selectOneMenu id="fixedAccountId" required="true"  value="#{amortizationType.to.fixedAssetAccount}">
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{accountCollections.fixedAssetAccounts}" />
+						<f:selectItems value="#{amortizationType.fixedAssetAccounts}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="accumulatedAccountId"
 						value="#{accountingBundle.accounting_accumulated_account}" />
 					<aon:selectOneMenu id="accumulatedAccountId" required="true"  value="#{amortizationType.to.accumulatedAccount}">
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{accountCollections.accumulatedDepreciationAccounts}" />
+						<f:selectItems value="#{amortizationType.accumulatedDepreciationAccounts}" />
 					</aon:selectOneMenu>
  
 					<aon:outputLabel for="allocationAccountId"
 						value="#{accountingBundle.accounting_allocation_account}" />
 					<aon:selectOneMenu id="allocationAccountId" required="true"  value="#{amortizationType.to.allocationAccount}">
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{accountCollections.amortizationAllocationAccounts}" />
+						<f:selectItems value="#{amortizationType.amortizationAllocationAccounts}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="AmortizationType_percentage"

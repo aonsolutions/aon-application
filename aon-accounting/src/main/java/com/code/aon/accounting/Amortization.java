@@ -19,6 +19,17 @@ public class Amortization extends AmortizationDB {
 	private static final long serialVersionUID = 1L;
 
 	private List<AmortizationDetail> details;
+
+	@Transient
+	private AmortizationType amortizationType;
+	
+	@Transient
+	public AmortizationType getAmortizationType() {
+		return amortizationType;
+	}
+	public void setAmortizationType(AmortizationType amortizationType) {
+		this.amortizationType = amortizationType;
+	}
 	
 	@Transient
 	private boolean detailsInitialized;

@@ -34,10 +34,9 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{amortizationType}.getDescription() +
 " ( "+
- $F{amortizationType}.getFixedAssetAccount().getCode() + ", " +
- $F{amortizationType}.getAllocationAccount().getCode() + ", " +
- $F{amortizationType}.getAccumulatedAccount().getCode()+
-" )"]]></textFieldExpression>
+ $F{amortizationType}.getFixedAssetAccount() + ", " +
+ $F{amortizationType}.getAllocationAccount() + ", " +
+ $F{amortizationType}.getAccumulatedAccount()+" )"]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>

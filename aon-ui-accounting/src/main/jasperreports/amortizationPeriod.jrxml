@@ -3,14 +3,14 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.9965000000000006"/>
-	<property name="ireport.x" value="766"/>
+	<property name="ireport.x" value="429"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<parameter name="logoImageFile" class="java.io.InputStream"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<parameter name="period" class="com.code.aon.accounting.Period"/>
+	<parameter name="controller" class="com.code.aon.ui.accounting.controller.amortization.PeriodAmortizationController"/>
 	<field name="toDate" class="java.util.Date"/>
 	<field name="fromDate" class="java.util.Date"/>
 	<field name="coefficient" class="java.lang.Double"/>
@@ -163,7 +163,7 @@
 		</groupFooter>
 	</group>
 	<group name="AmortizationTypeFixedAssetAccount">
-		<groupExpression><![CDATA[$F{amortization}.getAmortizationType().getFixedAssetAccount().getId()]]></groupExpression>
+		<groupExpression><![CDATA[$F{amortization}.getFixedAssetAccount().getCode().substring(0,4)]]></groupExpression>
 		<groupHeader>
 			<band height="16">
 				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
@@ -177,7 +177,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{amortization}.getAmortizationType().getFixedAssetAccount().getFullDescription()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{amortization}.getFixedAssetAccount().getCode().substring(0,4) + " - " + $P{controller}.getAccountDescription( $F{amortization}.getFixedAssetAccount().getCode().substring(0,4) )]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -285,7 +285,11 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="false" pdfFontName="Helvetica"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{account_total} + " " + $F{amortization}.getAmortizationType().getFixedAssetAccount().getCode() + " (" + $R{accounting_amortization_dotacion} + " " + $F{amortization}.getAmortizationType().getAllocationAccount().getCode() + " )"]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{account_total} + " "
++ $F{amortization}.getFixedAssetAccount().getCode().substring(0,4)
++ " (" + $R{accounting_amortization_dotacion} + " "
++ $F{amortization}.getAllocationAccount().getCode().substring(0,4)
++ " )"]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>

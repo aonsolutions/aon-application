@@ -7,6 +7,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 
+import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
@@ -14,6 +15,9 @@ import com.code.aon.accounting.Period;
 import com.code.aon.accounting.amortization.AmortizationManager;
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
 import com.code.aon.accounting.summary.SummaryProvider;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
@@ -290,5 +294,24 @@ public class PeriodAmortizationController extends BasicController {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+	}
+	
+	public PeriodAmortizationController getController() {
+		return this;
+	}
+	
+	public String getAccountDescription( String code ) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Account.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_CODE), code );
+			List<ITransferObject> list = bean.getList(criteria);
+			if ( list != null && list.size() > 0 ) {
+				Account account = (Account) list.get(0);
+				return account.getDescription();
+			}
+		} catch (ManagerBeanException e) {
+		}
+		return "???????";
 	}
 }

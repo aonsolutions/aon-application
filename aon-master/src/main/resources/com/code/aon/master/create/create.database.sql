@@ -1209,20 +1209,14 @@ CREATE TABLE `alumn_loan` (
 CREATE TABLE `amortization_type` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `fixed_asset_account` int(4) NOT NULL COMMENT 'Cuenta de inmovilizado',
-  `accumulated_account` int(4) NOT NULL COMMENT 'Cuenta de amortizacion acumulada',
-  `allocation_account` int(4) NOT NULL COMMENT 'Cuenta para la dotacion de la amortizacion',
+  `fixed_asset_account` VARCHAR(4) NOT NULL COMMENT 'Cuenta de inmovilizado',
+  `accumulated_account` VARCHAR(4) NOT NULL COMMENT 'Cuenta de amortizacion acumulada',
+  `allocation_account` VARCHAR(4) NOT NULL COMMENT 'Cuenta para la dotacion de la amortizacion',
   `percentage` double default '0' COMMENT 'Porcentaje de amortizacion',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Tipo de Amortizacion',
   PRIMARY KEY  (`id`),
-  KEY `IDX_AMORTIZATION_TYPE_FIXED_ASSET_ACCOUNT` (`fixed_asset_account`),
-  KEY `IDX_AMORTIZATION_TYPE_ACCUMULATED_ACCOUNT` (`accumulated_account`),
-  KEY `IDX_AMORTIZATION_TYPE_ALLOCATION_ACCOUNT` (`allocation_account`),
   KEY `IDX_AMORTIZATION_TYPE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_AMORTIZATION_TYPE_ACCUMULATED_ACCOUNT` FOREIGN KEY (`accumulated_account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_AMORTIZATION_TYPE_ALLOCATION_ACCOUNT` FOREIGN KEY (`allocation_account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_AMORTIZATION_TYPE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_AMORTIZATION_TYPE_FIXED_ASSET_ACCOUNT` FOREIGN KEY (`fixed_asset_account`) REFERENCES `account` (`id`)
+  CONSTRAINT `FK_AMORTIZATION_TYPE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Amortizacion';
 
 #
@@ -1233,7 +1227,6 @@ CREATE TABLE `amortization` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del inmovilizado',
-  `amortization_type` int(4) NOT NULL COMMENT 'Tipo de Amortizacion',
   `initial_date` date NOT NULL COMMENT 'Fecha de inicio de la Amortizacion',
   `deadline` date default NULL COMMENT 'Fecha de baja de la Amortizacion',
   `amount` double NOT NULL default '0' COMMENT 'Importe a amortizar.',
@@ -1246,14 +1239,12 @@ CREATE TABLE `amortization` (
   `percentage` double default '0' COMMENT 'Porcentaje de Amortizacion',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad',
   PRIMARY KEY  (`id`),
-  KEY `IDX_AMORTIZATION_AMORTIZATION_TYPE` (`amortization_type`),
   KEY `IDX_AMORTIZATION_FIXED_ASSET_ACCOUNT` (`fixed_asset_account`),
   KEY `IDX_AMORTIZATION_ACCUMULATED_ACCOUNT` (`accumulated_account`),
   KEY `IDX_AMORTIZATION_ALLOCATION_ACCOUNT` (`allocation_account`),
   KEY `IDX_AMORTIZATION_DOMAIN` (`domain`),
   CONSTRAINT `FK_AMORTIZATION_ACCUMULATED_ACCOUNT` FOREIGN KEY (`accumulated_account`) REFERENCES `account` (`id`),
   CONSTRAINT `FK_AMORTIZATION_ALLOCATION_ACCOUNT` FOREIGN KEY (`allocation_account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_AMORTIZATION_AMORTIZATION_TYPE` FOREIGN KEY (`amortization_type`) REFERENCES `amortization_type` (`id`),
   CONSTRAINT `FK_AMORTIZATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_AMORTIZATION_FIXED_ASSET_ACCOUNT` FOREIGN KEY (`fixed_asset_account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Fichas de Amortizacion Contables';
@@ -7076,7 +7067,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.2.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.2.2');
 
 COMMIT;
 

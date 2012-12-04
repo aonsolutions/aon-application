@@ -19,82 +19,43 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:dataTable id="amortizationTypeDataList"
 					value="#{amortizationType.model}" rows="20" var="to"
-					rendered="#{amortizationType.model.rowCount > 0}"
-					columnClasses="
-						 aon-editDataTable-textColumn aon-width-40
-						,aon-editDataTable-textColumn aon-width-auto
-						,aon-editDataTable-textColumn aon-width-auto 
-						,aon-editDataTable-numberColumn aon-width-40
-						,aon-editDataTable-numberColumn aon-width-40">
-					
+					rendered="#{amortizationType.model.rowCount > 0}">
 
 					<aon:rowSelector action="amortizationType_form"
 						actionListener="#{amortizationType.onSelect}" />
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_id}" />
-						</f:facet>
-						<aon:outputText value="#{to.id}" />
-					</aon:column>
-
-					<aon:column>
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-300" alias="AmortizationType.description">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_description}" />
 						</f:facet>
 						<aon:outputText value="#{to.description}" />
 					</aon:column>
-
-					<aon:column>
+					
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" alias="AmortizationType.fixedAssetAccount">
 						<f:facet name="header">
-							<aon:outputText value="&#160;" />
+							<aon:outputLabel value="&#160;" />
 						</f:facet>
 						
-						<aon:div>
-							<aon:outputText value="#{to.fixedAssetAccount.fullDescription}">
-								<aon:abbreviateConverter maxWidth="50" />
-							</aon:outputText>
+						<aon:div styleClass="aon-nowrap">
+							<aon:outputText value="#{to.fixedAssetAccount}" />
+							<aon:outputText value=" - " />
+							<aon:outputText value="#{to.fixedAssetAccountDescription}" />
 						</aon:div>
-						<aon:div>
-							<aon:outputText value="#{to.accumulatedAccount.fullDescription}">
-								<aon:abbreviateConverter maxWidth="50" />
-							</aon:outputText>
+						
+						<aon:div styleClass="aon-nowrap">
+							<aon:outputText value="#{to.accumulatedAccount}" />
+							<aon:outputText value=" - " />
+							<aon:outputText value="#{to.accumulatedAccountDescription}" />
 						</aon:div>
-						<aon:div>
-							<aon:outputText value="#{to.allocationAccount.fullDescription}">
-								<aon:abbreviateConverter maxWidth="50" />
-							</aon:outputText>
+
+						<aon:div styleClass="aon-nowrap">
+							<aon:outputText value="#{to.allocationAccount}"/>
+							<aon:outputText value=" - " />
+							<aon:outputText value="#{to.allocationAccountDescription}" />
 						</aon:div>
 					</aon:column>
 
-<!-- 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{accountingBundle.accounting_fixed_asset_account}" />
-						</f:facet>
-						<aon:outputText value="#{to.fixedAssetAccount.fullDescription}">
-							<aon:abbreviateConverter maxWidth="50" />
-						</aon:outputText>
-					</aon:column>
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{accountingBundle.accounting_accumulated_account}" />
-						</f:facet>
-						<aon:outputText value="#{to.accumulatedAccount.fullDescription}">
-							<aon:abbreviateConverter maxWidth="50" />
-						</aon:outputText>
-					</aon:column>
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{accountingBundle.accounting_allocation_account}" />
-						</f:facet>
-						<aon:outputText value="#{to.allocationAccount.fullDescription}">
-							<aon:abbreviateConverter maxWidth="50" />
-						</aon:outputText>
-					</aon:column>
- -->
- 
-					<aon:column>
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-80" alias="AmortizationType.percentage">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_percentage}" />
 						</f:facet>
@@ -104,7 +65,7 @@
 						<aon:outputText value="%" />
 					</aon:column>
 
-					<aon:column>
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 						<f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_years}" />
 						</f:facet>

@@ -81,30 +81,35 @@
 				<f:validateLength maximum="64" />
 			</aon:inputText>
 	
-			<aon:outputLabel for="Amortization_amortizationType"
-				value="#{accountingBundle.accounting_amortization_type}" />
-			<aon:selectOneMenu id="Amortization_amortizationType"
-				disabled="#{!amortization.new}"
-				value="#{amortization.to.amortizationType}"
-				reRender="fixedAssetAccount,accumulatedAccount,allocationAccount,percentage,AmortizationDetails"
-				ajaxSingle="true">
-				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{accountingCollections.amortizationTypes}" />
-			</aon:selectOneMenu>
+			<c:if test="#{amortization.new}">
+				<aon:outputLabel for="Amortization_amortizationType"
+					value="#{accountingBundle.accounting_amortization_type}" />
+				<aon:selectOneMenu id="Amortization_amortizationType"
+					disabled=""
+					value="#{amortization.to.amortizationType}"
+					reRender="fixedAssetAccount,accumulatedAccount,allocationAccount,percentage,AmortizationDetails"
+					ajaxSingle="true">
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{accountingCollections.amortizationTypes}" />
+				</aon:selectOneMenu>
+			</c:if>
+			
+			<c:if test="#{!amortization.new}">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="&#160;"/>
+			</c:if>
 	
-			<aon:outputText
-				value="#{accountingBundle.accounting_fixed_asset_account}" />
+			<aon:outputText value="#{accountingBundle.accounting_fixed_asset_account}" />
 			<aon:panelGroup id="fixedAssetAccount" styleClass="aon-nowrap">
-				<aon:outputText rendered="#{!amortization.updatable}"
+				<aon:outputText rendered="#{!amortization.new}"
 					value="#{amortization.to.fixedAssetAccount.fullDescription}" />
 				<aon:selectOneMenu id="Amortization_fixedAssetAccount"
-					rendered="#{(!amortization.new and amortization.updatable) or (amortization.new and amortization.to.amortizationType.id != null)}"
+					rendered="#{amortization.new and amortization.to.amortizationType != null}"
 					value="#{amortization.to.fixedAssetAccount}">
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{amortization.fixedAssetAccounts}" />
 				</aon:selectOneMenu>
-				<aon:outputText rendered="#{amortization.new and amortization.to.amortizationType.id == null}"
-					value="&#160;" />
+				<aon:outputText rendered="#{!amortization.new and amortization.to.amortizationType == null}" value="&#160;" />
 				<aon:commandButton
 					value="&#160;"
 					title="#{accountBundle.account_synchronize}"
@@ -121,16 +126,15 @@
 			<aon:outputText
 				value="#{accountingBundle.accounting_accumulated_account}" />
 			<aon:panelGroup id="accumulatedAccount" styleClass="aon-nowrap">
-				<aon:outputText rendered="#{!amortization.updatable}"
+				<aon:outputText rendered="#{!amortization.new}"
 					value="#{amortization.to.accumulatedAccount.fullDescription}" />
 				<aon:selectOneMenu id="Amortization_accumulatedAccount"
-					rendered="#{(!amortization.new and amortization.updatable) or (amortization.new and amortization.to.amortizationType.id != null)}"
+					rendered="#{amortization.new and amortization.to.amortizationType != null}"
 					value="#{amortization.to.accumulatedAccount}">
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{amortization.accumulatedAccounts}" />
 				</aon:selectOneMenu>
-				<aon:outputText rendered="#{amortization.new and amortization.to.amortizationType.id == null}"
-					value="&#160;" />
+				<aon:outputText rendered="#{!amortization.new and amortization.to.amortizationType == null}" value="&#160;" />
 				<aon:commandButton
 					value="&#160;"
 					title="#{accountBundle.account_synchronize}"
@@ -148,16 +152,15 @@
 			<aon:outputText
 				value="#{accountingBundle.accounting_allocation_account}" />
 			<aon:panelGroup id="allocationAccount" styleClass="aon-nowrap">
-				<aon:outputText rendered="#{!amortization.updatable}"
+				<aon:outputText rendered="#{!amortization.new}"
 					value="#{amortization.to.allocationAccount.fullDescription}" />
-					<aon:selectOneMenu id="Amortization_allocationAccount"
-					rendered="#{(!amortization.new and amortization.updatable) or (amortization.new and amortization.to.amortizationType.id != null)}"
+				<aon:selectOneMenu id="Amortization_allocationAccount"
+					rendered="#{amortization.new and amortization.to.amortizationType != null}"
 					value="#{amortization.to.allocationAccount}">
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{amortization.allocationAccounts}" />
 				</aon:selectOneMenu>
-				<aon:outputText rendered="#{amortization.new and amortization.to.amortizationType.id == null}"
-					value="&#160;" />
+				<aon:outputText rendered="#{!amortization.new and amortization.to.amortizationType == null}" value="&#160;" />
 				<aon:commandButton
 					value="&#160;"
 					title="#{accountBundle.account_synchronize}"
@@ -169,7 +172,7 @@
 					actionListener="#{amortization.onAllocationAccountSynchronize}">
 				</aon:commandButton>
 			</aon:panelGroup>
-	
+			
 			<aon:outputText
 				rendered="#{amortization.to.deadline != null}"
 				value="#{accountingBundle.accounting_sale_amount}" />

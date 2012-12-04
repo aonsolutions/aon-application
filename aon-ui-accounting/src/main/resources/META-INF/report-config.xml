@@ -237,7 +237,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
 	</report>
 	
@@ -248,7 +247,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
 	</report>	  
 
@@ -259,7 +257,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
 	</report>	  
 		
@@ -270,7 +267,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
 	</report>	  
 
@@ -282,7 +278,7 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="period" value="#{periodAmortization.getPeriod}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="controller" value="#{periodAmortization.getController}" />
 		</params>
 	</report>
 	<report id="amortizationPeriodXLS" description="Amortization Period List">
@@ -292,7 +288,6 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="period" value="#{periodAmortization.getPeriod}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
 	</report>
 

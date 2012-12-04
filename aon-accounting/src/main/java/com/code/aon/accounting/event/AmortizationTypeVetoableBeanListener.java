@@ -1,6 +1,5 @@
 package com.code.aon.accounting.event;
 
-import com.code.aon.account.Account;
 import com.code.aon.accounting.AmortizationType;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
@@ -33,11 +32,11 @@ public class AmortizationTypeVetoableBeanListener extends ManagerBeanVetoListene
 		
 	}
 
-	private void checkAccount(Account account, String text) throws ManagerBeanVetoListenerException {
+	private void checkAccount(String account, String text) throws ManagerBeanVetoListenerException {
 		if (account == null) {
 			throw new ManagerBeanVetoListenerException("La "+ text + " es un dato requerido.");
 		}
-		if (account.getLevel() != 4) {
+		if (account.length()  != 4) {
 			throw new ManagerBeanVetoListenerException("La "+ text + " debe ser un cuenta de cuatro dígitos.");
 		}
 	}

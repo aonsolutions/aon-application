@@ -134,15 +134,6 @@
 
 	<table name="amortization_type">
 		<column name="percentage" type="java.lang.Double"/>
-		<foreign-key constraint-name="FK_AMORTIZATION_TYPE_FIXED_ASSET_ACCOUNT">
-			<many-to-one property="fixedAssetAccount" />
-		</foreign-key>
-		<foreign-key constraint-name="FK_AMORTIZATION_TYPE_ACCUMULATED_ACCOUNT">
-			<many-to-one property="accumulatedAccount" />
-		</foreign-key>
-		<foreign-key constraint-name="FK_AMORTIZATION_TYPE_ALLOCATION_ACCOUNT">
-			<many-to-one property="allocationAccount" />
-		</foreign-key>
 	</table>
 
 	<table name="app_param" class="com.esferalia.aon.entity.master.ApplicationParameter" />

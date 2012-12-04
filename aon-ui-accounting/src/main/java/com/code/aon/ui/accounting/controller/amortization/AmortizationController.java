@@ -82,10 +82,10 @@ public class AmortizationController extends BasicController {
 	public List<SelectItem> getFixedAssetAccounts() {
 		try {
 			Amortization am = (Amortization) getTo();
-			Account a = am.getAmortizationType().getFixedAssetAccount();
+			String code = am.getAmortizationType().getFixedAssetAccount();
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Criteria criteria = new Criteria();
-			criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), a.getCode() + IAccountingConstants.ASTERISK);
+			criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), code + IAccountingConstants.ASTERISK);
 			criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED), true);
 			return getAccounts(criteria);
 		} catch (ManagerBeanException e) {
@@ -102,10 +102,10 @@ public class AmortizationController extends BasicController {
 	public List<SelectItem> getAccumulatedAccounts() {
 		try {
 			Amortization am = (Amortization) getTo();
-			Account a = am.getAmortizationType().getAccumulatedAccount();
+			String code = am.getAmortizationType().getAccumulatedAccount();
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Criteria criteria = new Criteria();
-			criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), a.getCode() + IAccountingConstants.ASTERISK);
+			criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), code + IAccountingConstants.ASTERISK);
 			criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED), true);
 			return getAccounts(criteria);
 		} catch (ManagerBeanException e) {
@@ -122,10 +122,10 @@ public class AmortizationController extends BasicController {
 	public List<SelectItem> getAllocationAccounts() {
 		try {
 			Amortization am = (Amortization) getTo();
-			Account a = am.getAmortizationType().getAllocationAccount();
+			String code = am.getAmortizationType().getAllocationAccount();
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Criteria criteria = new Criteria();
-			criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), a.getCode() + IAccountingConstants.ASTERISK);
+			criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), code + IAccountingConstants.ASTERISK);
 			criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED), true);
 			return getAccounts(criteria);
 		} catch (ManagerBeanException e) {

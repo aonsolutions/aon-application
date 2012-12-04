@@ -168,11 +168,18 @@
 											value="#{accountingBundle.accounting_period_module}" />
 									</aon:div>
 								</c:if>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accounting_balance-fiscal" 
-										action="balance_list-accounting"
-										value="#{accountingBundle.accounting_balance_menu}" />
-								</aon:div>
+								<c:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accounting_balance-fiscal" 
+											action="balance_list-accounting"
+											value="#{accountingBundle.accounting_balance_menu}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="amortizationType"
+											action="amortizationType_list"
+											value="#{accountingBundle.accounting_amortization_type_module}" />
+									</aon:div>
+								</c:if>
 								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="defaultParams-fiscal" 
@@ -270,37 +277,6 @@
 											action="account_importer"
 											actionListener="#{accountImporter.onInitialize}"
 											value="#{accountBundle.account_importer_module}" />
-									</aon:div>
-<!--
-	****************************************************
-	Al subir la definicion de balances al dominio padre, 
-	ya no tiene sentido importar y exportar los	balances 
-	de esta forma, en un futuro se eliminaran
-	****************************************************  									
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="balance_exporter"
-											action="balance_exporter"
-											value="#{accountingBundle.accounting_balance_exporter_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="balance_importer"
-											action="balance_importer"
-											actionListener="#{balanceImporter.onInitialize}"
-											value="#{accountingBundle.accounting_balance_importer_module}" />
-									</aon:div>
-	****************************************************
-	****************************************************
- -->
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="amortization_exporter"
-											action="amortization_exporter"
-											value="#{accountingBundle.accounting_amortizationType_exporter_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="amortization_importer"
-											action="amortization_importer"
-											actionListener="#{amortizationTypeImporter.onInitialize}"
-											value="#{accountingBundle.accounting_amortizationType_importer_module}" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>

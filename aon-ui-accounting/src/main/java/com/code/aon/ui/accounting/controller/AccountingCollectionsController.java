@@ -305,7 +305,10 @@ public class AccountingCollectionsController {
 	public List<SelectItem> getAmortizationTypes() throws ManagerBeanException {
 		List<SelectItem> ats = new LinkedList<SelectItem>();
 		IManagerBean atBean = BeanManager.getManagerBean(AmortizationType.class);
-		List<ITransferObject> list = atBean.getList(null);
+		Criteria c = new Criteria();
+		String alias = atBean.getFieldName(IEntityAlias.AMORTIZATION_TYPE_DOMAIN);
+		addParentDomainExpression(c,alias);
+		List<ITransferObject> list = atBean.getList(c);
 		for (ITransferObject to : list) {
 			AmortizationType at = (AmortizationType) to;
 			SelectItem item = new SelectItem(at, at.getDescription());
