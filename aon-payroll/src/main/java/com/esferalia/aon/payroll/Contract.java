@@ -101,15 +101,5 @@ public class Contract extends ContractDB {
 			return false;
 		return true;
 	}
-	
-	@Transient
-	public ContractModel getModel(){
-		return null;
-	}
-	
-	@Transient
-	public void setModel(ContractModel model){
-		
-	}
 
 }
