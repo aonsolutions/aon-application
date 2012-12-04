@@ -1,10 +1,17 @@
 package com.code.aon.ui.admin;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.DomainType;
+import com.code.aon.ui.util.AonUtil;
 
 public class DomainInfo {
 	
@@ -24,6 +31,10 @@ public class DomainInfo {
 
 	private List<Module> modules;
 
+	private boolean active;
+	
+	private AuditLevel auditLevel; 
+	
 	public String getName() {
 		return name;
 	}
@@ -48,6 +59,10 @@ public class DomainInfo {
 		this.type = type;
 	}
 
+	public Integer getParentId() {
+		return (parent != null) ? parent.getId() : null;
+	}
+	
 	public Domain getParent() {
 		return parent;
 	}
@@ -80,12 +95,45 @@ public class DomainInfo {
 		this.domainManagement = domainManagement;
 	}
 
+	public boolean[] getModuleArray() {
+		boolean[] array = new boolean[Module.values().length];
+		for( int i = 0; i < array.length; i++ ) {
+			array[i] = this.modules.contains(Module.values()[i]);
+		}
+		return array;
+	}
+
+	public String getModuleList() {
+		Set<String> modules = new TreeSet<String>();
+		Locale locale = AonUtil.getCurrentLocale();
+		for( Module module : this.modules ) {
+			modules.add( module.getName(locale) );
+		}
+		return StringUtils.join(modules, ", ");
+	}	
+	
 	public List<Module> getModules() {
 		return modules;
 	}
 
 	public void setModules(List<Module> modules) {
 		this.modules = modules;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public AuditLevel getAuditLevel() {
+		return auditLevel;
+	}
+
+	public void setAuditLevel(AuditLevel auditLevel) {
+		this.auditLevel = auditLevel;
 	}
 	
 }

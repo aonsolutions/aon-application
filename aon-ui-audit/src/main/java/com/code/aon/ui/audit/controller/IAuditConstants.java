@@ -32,5 +32,8 @@ public interface IAuditConstants {
 	// Id preffixes
 	String FAVORITE_PREFFIX = "favorite_";
 	String MORE_USED_PREFFIX = "moreUsed_";	
+	
+	// Messages
+	String AUDIT_LEVEL = "audit_audit_level";
 
 }

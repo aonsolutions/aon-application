@@ -53,6 +53,15 @@ public interface IAdminConstants {
 	String ACTIVE_USERS = "admin_active_users";
 	String MAXIMUM_NUMBER_USERS = "admin_maximum_number_users";
 
+	String DOMAIN_DISPLAY_NAME = "admin_domain_displayName";
+	String DOMAIN_TYPE = "admin_domain_type";
+	String DOMAIN_URL = "admin_domain_url";
+	String DOMAIN_PARENT = "admin_domain_parent";
+	String DOMAIN_MAX_DEFINED_USERS = "admin_domain_maxDefinedUsers";
+	String DOMAIN_MAX_TOTAL_DOCUMENT_SIZE = "admin_domain_maxTotalDocumentSize";
+	String DOMAIN_DOMAIN_MANAGEMENT = "admin_domain_domainManagement";
+	String DOMAIN_MODULES = "admin_modules";
+	
 	String DOMAIN_EMAIL_BODY_1 = "admin_domain_email_body_1";
 	String DOMAIN_EMAIL_BODY_2 = "admin_domain_email_body_2";
 	String DOMAIN_EMAIL_BODY_3 = "admin_domain_email_body_3";

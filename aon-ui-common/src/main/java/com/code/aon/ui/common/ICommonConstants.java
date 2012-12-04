@@ -60,6 +60,8 @@ public interface ICommonConstants {
 	
 	String NO = "aon_no";
 	
+	String ACTIVE = "aon_active";
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************

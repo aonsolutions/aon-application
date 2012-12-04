@@ -4,6 +4,8 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_
 import static com.code.aon.ui.admin.controller.IAdminConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.admin.controller.IAdminConstants.AON_PLATFORM;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_DISPLAY_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_DOMAIN_MANAGEMENT;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_1;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_2;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_3;
@@ -11,7 +13,15 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_5;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_FOOTER;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_MANAGEMENT;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_MAX_DEFINED_USERS;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_MAX_TOTAL_DOCUMENT_SIZE;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_MODULES;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_NAME_DUPLICATED;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_PARENT;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_TYPE;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_URL;
+import static com.code.aon.ui.audit.controller.IAuditConstants.AUDIT_LEVEL;
+import static com.code.aon.ui.common.ICommonConstants.ACTIVE;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_ID;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_OEM;
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
@@ -19,8 +29,10 @@ import static com.code.aon.ui.common.ICommonConstants.NO;
 import static com.code.aon.ui.common.ICommonConstants.YES;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_EMAIL_BODY_HEADER;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -34,6 +46,8 @@ import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
@@ -48,6 +62,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AdminUtil;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Company;
 import com.code.aon.config.Application;
 import com.code.aon.config.ApplicationParameter;
@@ -62,6 +77,7 @@ import com.code.aon.ui.admin.DomainApplicationInfo;
 import com.code.aon.ui.admin.DomainInfo;
 import com.code.aon.ui.admin.DomainModuleInfo;
 import com.code.aon.ui.audit.AuditManager;
+import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
@@ -101,6 +117,8 @@ public class DomainController extends BasicController {
 	
 	private IControllerListener OEMDomainFilter;
 	
+	private DomainInfo currentDomainInfo;
+	
 	private AdminMainController getAdmin() {
 		return (AdminMainController) AonUtil.getRegisteredBean(ADMIN_CONTROLLER_NAME);
 	}
@@ -125,6 +143,7 @@ public class DomainController extends BasicController {
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				
+		this.currentDomainInfo = getDomainInfo();
 	}
 	
 	public DomainModuleInfo getDocumental() {
@@ -393,7 +412,7 @@ public class DomainController extends BasicController {
 		return this.OEMDomainFilter;
 	}
 	
-	public DomainInfo getDomainInfo() {
+	private DomainInfo getDomainInfo() {
 		Domain domain = getDomain();
 		DomainInfo di = new DomainInfo();
 		di.setName( domain.getDescription() );
@@ -410,10 +429,14 @@ public class DomainController extends BasicController {
 			}
 		}
 		di.setModules(modules);
+		di.setActive(domain.isActive());
+		if ( this.domainApplication != null ) {
+			di.setAuditLevel(this.domainApplication.getAuditLevel());
+		}
 		return di;
 	}
 	
-	public EmailSender getEmailSender() throws UnsupportedEncodingException {
+	private EmailSender getEmailSender() throws UnsupportedEncodingException {
 		MailAccount mailAccount = new MailAccount();
 		mailAccount.setEmail("admin@aonSolutions.es");
 		mailAccount.setMailUsername("admin@aonSolutions.es");
@@ -435,17 +458,17 @@ public class DomainController extends BasicController {
 		
 		body.append( AonUtil.getMessage(ICompanyConstants.BUNDLE_NAME, COMPANY_EMAIL_BODY_HEADER) );
 		LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
-		body.append( AonUtil.getMessage(IAdminConstants.BUNDLE_NAME, DOMAIN_EMAIL_BODY_1, loggedUser.getLoggedUserName(), di.getUrl()) );
-		body.append( AonUtil.getMessage(IAdminConstants.BUNDLE_NAME, DOMAIN_EMAIL_BODY_2, di.getName()) );
+		body.append( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_EMAIL_BODY_1, loggedUser.getLoggedUserName(), di.getUrl()) );
+		body.append( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_EMAIL_BODY_2, di.getName()) );
 		if ( (di.getParent() != null) && (di.getParent().getId() != null) ) {
-			body.append( AonUtil.getMessage(IAdminConstants.BUNDLE_NAME, DOMAIN_EMAIL_BODY_3, di.getParent().getDescription()) );
+			body.append( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_EMAIL_BODY_3, di.getParent().getDescription()) );
 		}
 		Locale locale = AonUtil.getCurrentLocale();
 		String type = di.getType().getName(locale);
 		String size = FileUtils.byteCountToDisplaySize(di.getMaxTotalDocumentSize()*FileUtils.ONE_MB);
-		body.append( AonUtil.getMessage(IAdminConstants.BUNDLE_NAME, DOMAIN_EMAIL_BODY_4, type, di.getNumberOfUsers(), size ) );
+		body.append( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_EMAIL_BODY_4, type, di.getNumberOfUsers(), size ) );
 		String multiDomain = di.isDomainManagement() ? AonUtil.getMessage(YES) : AonUtil.getMessage(NO) ;
-		body.append( AonUtil.getMessage(IAdminConstants.BUNDLE_NAME, DOMAIN_EMAIL_BODY_5, multiDomain, di.getModules().size()) );
+		body.append( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_EMAIL_BODY_5, multiDomain, di.getModules().size()) );
 		if (! di.getModules().isEmpty() ) {
 			body.append( "<ul>" );
 			for( Module module : di.getModules() ) {
@@ -454,16 +477,81 @@ public class DomainController extends BasicController {
 			body.append( "</ul>" );
 		}
 		
-		body.append( AonUtil.getMessage(IAdminConstants.BUNDLE_NAME, DOMAIN_EMAIL_BODY_FOOTER) );
+		body.append( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_EMAIL_BODY_FOOTER) );
 		body.append( "</body>" );
 		return body.toString();
 	}	
+
+	private void diff( StringBuffer sb, String message, Object oldValue, Object newValue ) {
+		diff( AonUtil.getMessage(BUNDLE_NAME, message), sb, oldValue, newValue );
+	}
+
+	private void diff( String message, StringBuffer sb, Object oldValue, Object newValue ) {
+		sb.append( message ).append(": ");
+		sb.append( oldValue ).append( " -> ").append( newValue );
+		sb.append(IOUtils.LINE_SEPARATOR);
+	}
 	
-	public void sendEmail( DomainInfo di ) throws IOException, WebmailException {
-		Address to = new InternetAddress("administracion@aonSolutions.es", "Administración");
-		Address[] recipients = new Address[] {to};
-		String subject = AonUtil.getMessage(IAdminConstants.BUNDLE_NAME, DOMAIN_MANAGEMENT);
-		getEmailSender().sendMessage(recipients, subject, getEmailContent(di), MimeType.MIME_HTML );		
+	private AonFile getDiffFile( DomainInfo di1, DomainInfo di2 ) throws IOException {
+		StringBuffer sb = new StringBuffer();
+		Locale locale = AonUtil.getCurrentLocale();	
+		if (! StringUtils.equals(di1.getName(), di2.getName()) ) {
+			diff( sb, DOMAIN_DISPLAY_NAME, di1.getName(), di2.getName() );
+		}
+		if ( di1.getType() != di2.getType() ) {
+			diff( sb, DOMAIN_TYPE, di1.getType().getName(locale), di2.getType().getName(locale) );
+		}
+		if (! StringUtils.equals(di1.getUrl(), di2.getUrl()) ) {
+			diff( sb, DOMAIN_URL, di1.getUrl(), di2.getUrl() );
+		}
+		if (! ObjectUtils.equals(di1.getParentId(), di2.getParentId()) ) {
+			String p1 = (di1.getParentId() != null) ? di1.getParent().getId() + "-" + di1.getParent().getDescription() : "null";
+			String p2 = (di2.getParentId() != null) ? di2.getParent().getId() + "-" + di2.getParent().getDescription() : "null";
+			diff( sb, DOMAIN_PARENT, p1, p2 );
+		}
+		if (! ObjectUtils.equals(di1.getNumberOfUsers(), di2.getNumberOfUsers()) ) {
+			diff( sb, DOMAIN_MAX_DEFINED_USERS, di1.getNumberOfUsers(), di2.getNumberOfUsers() );
+		}
+		if (! ObjectUtils.equals(di1.getMaxTotalDocumentSize(), di2.getMaxTotalDocumentSize()) ) {
+			diff( sb, DOMAIN_MAX_TOTAL_DOCUMENT_SIZE, di1.getMaxTotalDocumentSize(), di2.getMaxTotalDocumentSize() );
+		}
+		if ( di1.isDomainManagement() != di2.isDomainManagement() ) {
+			diff( sb, DOMAIN_DOMAIN_MANAGEMENT, di1.isDomainManagement(), di2.isDomainManagement() );
+		}
+		if (! Arrays.equals(di1.getModuleArray(), di2.getModuleArray()) ) {
+			diff( sb, DOMAIN_MODULES, di1.getModuleList(), di2.getModuleList() );
+		}
+		if ( di1.isActive() != di2.isActive() ) {
+			String active1 = di1.isActive() ? AonUtil.getMessage(YES) : AonUtil.getMessage(NO) ;
+			String active2 = di2.isActive() ? AonUtil.getMessage(YES) : AonUtil.getMessage(NO) ;
+			diff( AonUtil.getMessage(ACTIVE), sb, active1, active2 );
+		}
+		if (! ObjectUtils.equals(di1.getAuditLevel(), di2.getAuditLevel()) ) {
+			diff( AonUtil.getMessage(IAuditConstants.BUNDLE_NAME, AUDIT_LEVEL), sb, di1.getAuditLevel().getName(locale), di2.getAuditLevel().getName(locale) );
+		}
+		
+		if ( sb.length() > 0 ) {
+			AonFile aonFile = new AonFile();
+			File file = File.createTempFile( "diff", "." + MimeType.MIME_TXT.getExtension() );
+			FileUtils.writeStringToFile(file, sb.toString());
+			aonFile.setFile( file );
+			aonFile.setFileName( "diff." + MimeType.MIME_TXT.getExtension() );
+			aonFile.setMimeType(MimeType.MIME_TXT);
+			return aonFile;			
+		}
+		return null;
+	}		
+	
+	public void updateDomainInfo() throws IOException, WebmailException {
+		DomainInfo di = getDomainInfo(); 
+		AonFile diffFile = getDiffFile(this.currentDomainInfo, di);
+		if ( diffFile != null ) {
+			Address to = new InternetAddress("administracion@aonSolutions.es", "Administración");
+			Address[] recipients = new Address[] {to};
+			String subject = AonUtil.getMessage(BUNDLE_NAME, DOMAIN_MANAGEMENT);
+			getEmailSender().sendMessage(recipients, subject, getEmailContent(di), MimeType.MIME_HTML, diffFile );	
+		}
+		this.currentDomainInfo = di;
 	}
 	
 }
