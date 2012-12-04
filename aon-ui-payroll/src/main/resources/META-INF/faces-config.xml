@@ -2907,14 +2907,6 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>contrata_formTree</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/contrata/formTree.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>contractPdfEdition_formTree</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/pdfEdition/formTree.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
 			<from-outcome>contractPdfEdition_form</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/pdfEdition/form.xhtml</to-view-id>
 		</navigation-case>

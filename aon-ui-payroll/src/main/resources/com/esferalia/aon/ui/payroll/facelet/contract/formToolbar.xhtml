@@ -68,6 +68,7 @@
 				
 				<aon:menuItem id="pdf-edition" 
 					action="contractPdfEdition_form"
+					rendered="#{not empty contract.to.model and not contract.existDocument}"
 					value="EDITAR PDF"
 					iconClass="aon-icon-pdf" >
 					<f:setPropertyActionListener
