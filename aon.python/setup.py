@@ -10,9 +10,11 @@ print
 print( "Building aon.python (setup.py)" )
 print( "-------------------" )
 print
-version = os.environ['AON_VERSION']
-if (version == None):
+try:
+	version = os.environ['AON_VERSION']
+except KeyError, e:
 	version = "UnknownVersion"
+	
 setup(
       name='aon.python',
       version=version,
