@@ -1,16 +1,7 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
-import xml.dom.minidom
 import os
-
-def get_pom_version():
-    print "Reading pom ..."
-    doc=xml.dom.minidom.parse("pom.xml")
-    versionNode = doc.getElementsByTagName("version")[0]
-    version = versionNode.firstChild.nodeValue
-    return version
-
 
 #
 # SETUP 
@@ -19,9 +10,12 @@ print
 print( "Building aon.python (setup.py)" )
 print( "-------------------" )
 print
+version = os.environ['AON_VERSION']
+if (version == None):
+	version = "UnknownVersion"
 setup(
       name='aon.python',
-      version="7.0-SNAPSHOT",
+      version=version,
       author='Euke Castellano',
       author_email='ecastellano@esferalia.com',
       packages= ['aonAdmin',],

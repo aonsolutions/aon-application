@@ -24,6 +24,24 @@
 				<plugins>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>buildnumber-maven-plugin</artifactId>
+						<version>1.2</version>
+						<executions>
+							<execution>
+								<phase>validate</phase>
+								<goals>
+									<goal>create</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<doCheck>false</doCheck>
+							<doUpdate>false</doUpdate>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
 						<version>1.2.1</version>
 						<executions>
@@ -36,6 +54,7 @@
 									</arguments>    
 									<environmentVariables>
 										<PYTHONPATH>src/main/python:$PYTHONPATH</PYTHONPATH>
+										<AON_VERSION>${project.version}-${buildNumber}</AON_VERSION>
 									</environmentVariables>
 								</configuration>
 								<id>python-build</id>

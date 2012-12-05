@@ -21,7 +21,7 @@ class ListDomains(object):
         try: 
             
             system_domain_modules = ("MARKETING","COMERCIAL","GESTION","TESORERIA"
-                               ,"ALMACEN","EXPEDIENTES","CONTABILIDAD","FISCAL","LABORAL","DOCUMENTAL","GARAGE","ACADEMY")
+                               ,"ALMACEN","EXPEDIENTES","CONTABILIDAD","FISCAL","LABORAL","DOCUMENTAL","GARAGE","ACADEMY","HOTEL")
             
             conn = self.__arguments.get_connection(nodatabase=True)
             
@@ -94,7 +94,7 @@ class ListDomains(object):
                     mod = conn.cursor()
                     mod.execute("SELECT module FROM `"+schema[0]+"`.domain_application_module WHERE domain = %s",(str(domain[0]),))
                     modules = mod.fetchall()
-                    domain_modules = ["NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO"]
+                    domain_modules = ["NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO"]
                     for module in modules:
                         domain_modules[module[0]] = "SI"
                     mod.close
