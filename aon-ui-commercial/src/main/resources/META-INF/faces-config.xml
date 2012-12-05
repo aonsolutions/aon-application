@@ -79,6 +79,7 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
+				<value>#{projectCommercialControllerListener}</value>
 				<value>#{projectCommercialSearch}</value>
 				<value>#{projectCommercialScopeListener}</value>
 				<value>#{projectCommercialTrackingListener}</value>
@@ -86,6 +87,14 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>projectCommercialControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.event.ProjectCommercialControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
 
 	<managed-bean>
 		<managed-bean-name>projectCommercialSearch</managed-bean-name>
