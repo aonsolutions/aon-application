@@ -239,10 +239,15 @@ public class VatTaxManager {
 			}
 		} else if (invoiceType == InvoiceType.PURCHASE) {
 			
-			if (transaction == InvoiceTransactionType.NATIONAL || transaction == InvoiceTransactionType.OTHER_ISP) {
+			if (transaction == InvoiceTransactionType.NATIONAL) {
 				return investment?
 					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B2),new VatTaxKeyEx(VatTaxKey.BI,percent)}:
 					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B1),new VatTaxKeyEx(VatTaxKey.CP,percent)};
+			}
+			if (transaction == InvoiceTransactionType.OTHER_ISP) {
+				return investment?
+					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A4,percent),new VatTaxKeyEx(VatTaxKey.B2),new VatTaxKeyEx(VatTaxKey.BI,percent)}:
+					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A4,percent),new VatTaxKeyEx(VatTaxKey.B1),new VatTaxKeyEx(VatTaxKey.CP,percent)};
 			}
 			if (transaction == InvoiceTransactionType.EXTRACOMMUNITY || transaction == InvoiceTransactionType.CAN_CEU_MEL) {
 				return investment?
@@ -255,15 +260,16 @@ public class VatTaxManager {
 					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A3,percent),new VatTaxKeyEx(VatTaxKey.D1),new VatTaxKeyEx(VatTaxKey.CP,percent)};
 			}
 		} else if (invoiceType == InvoiceType.EXPENSES) {
-			if (transaction == InvoiceTransactionType.NATIONAL 
-				|| transaction == InvoiceTransactionType.CAN_CEU_MEL 
-				|| transaction == InvoiceTransactionType.OTHER_ISP) {
+			if (transaction == InvoiceTransactionType.NATIONAL) {
 				return investment?
 					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B2),new VatTaxKeyEx(VatTaxKey.BI,percent)}:
 					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent)};
-			} else {
-				
-			}
+			} 
+			if (transaction == InvoiceTransactionType.CAN_CEU_MEL || transaction == InvoiceTransactionType.OTHER_ISP) {
+					return investment?
+						new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A4,percent),new VatTaxKeyEx(VatTaxKey.B2),new VatTaxKeyEx(VatTaxKey.BI,percent)}:
+						new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A4,percent),new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent)};
+				} 
 			if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
 				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent),new VatTaxKeyEx(VatTaxKey.A4,percent)};
 			}
