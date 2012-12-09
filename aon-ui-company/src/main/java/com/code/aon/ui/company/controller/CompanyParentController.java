@@ -69,7 +69,9 @@ public class CompanyParentController extends BasicController implements ICompany
 	public static final String PRINT_ADDRESS_PARAM = "APP_PRINT_ADDRESS_PARAM";
 	
 	public static final String PRINT_INTERNET_DATA_PARAM = "APP_PRINT_INTERNET_DATA_PARAM";
-	
+
+	public static final String PRINT_SALE_INVOICE_FOOTER = "APP_PRINT_S_INVOICE_FOOTER_PARAM";
+
 	public static final String SMART_CARD_PARAM = "APP_SMART_CARD_PARAM";
 	
 	public static final String SALE_INVOICE_REPORT_KEY_PARAM = "REPORT_saleInvoice";
@@ -126,6 +128,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	private ReportPrintOption printAddress;
 	
 	private ReportPrintOption printInternetData;
+	
+	private boolean printSaleInvoiceFooter;
 	
 	private boolean smartCard;
 	
@@ -664,6 +668,14 @@ public class CompanyParentController extends BasicController implements ICompany
 	public void setPrintInternetData(ReportPrintOption printInternetData) {
 		this.printInternetData = printInternetData;
 	}
+	
+	public boolean isPrintSaleInvoiceFooter() {
+		return printSaleInvoiceFooter;
+	}
+
+	public void setPrintSaleInvoiceFooter(boolean printSaleInvoiceFooter) {
+		this.printSaleInvoiceFooter = printSaleInvoiceFooter;
+	}
 
 	public boolean isSmartCard() {
 		return smartCard;
@@ -757,6 +769,11 @@ public class CompanyParentController extends BasicController implements ICompany
 	public ReportPrintOption obtainPrintInternetData() throws ManagerBeanException {
 		ApplicationParameter appParam = obtainApplicationParameter(PRINT_INTERNET_DATA_PARAM);
 		return getReportPrintOptionValue(appParam);
+	}
+	
+	public boolean obtainPrintSaleInvoiceFooter() throws ManagerBeanException {
+		ApplicationParameter appParam = obtainApplicationParameter(PRINT_SALE_INVOICE_FOOTER);
+		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
 	}
 	
 	public boolean obtainSmartCard() throws ManagerBeanException {

@@ -23,6 +23,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 			companyController.setPrintNif(companyController.obtainPrintNif());
 			companyController.setPrintAddress(companyController.obtainPrintAddress());
 			companyController.setPrintInternetData(companyController.obtainPrintInternetData());
+			companyController.setPrintSaleInvoiceFooter(companyController.obtainPrintSaleInvoiceFooter());
 			companyController.setSmartCard(companyController.obtainSmartCard());
 			companyController.searchCustomReportTemplate();
 		} catch (ManagerBeanException e) {
@@ -59,6 +60,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 		updateParam(companyController, CompanyController.PRINT_NIF_PARAM, companyController.getPrintNif());
 		updateParam(companyController, CompanyController.PRINT_ADDRESS_PARAM, companyController.getPrintAddress());
 		updateParam(companyController, CompanyController.PRINT_INTERNET_DATA_PARAM, companyController.getPrintInternetData());
+		updateParam(companyController, CompanyController.PRINT_SALE_INVOICE_FOOTER, companyController.isPrintSaleInvoiceFooter());
 		updateParam(companyController, CompanyController.SMART_CARD_PARAM, companyController.isSmartCard());		
 	}
 	

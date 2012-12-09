@@ -35,6 +35,9 @@ public interface ICompanyController extends IController {
 	ReportPrintOption getPrintInternetData();
 	void setPrintInternetData(ReportPrintOption printInternetData);
 	
+	boolean isPrintSaleInvoiceFooter();
+	void setPrintSaleInvoiceFooter(boolean printSaleInvoiceFooter);
+	
 	boolean isSmartCard();
 	void setSmartCard(boolean smartCard);
 
@@ -46,6 +49,7 @@ public interface ICompanyController extends IController {
 	ReportPrintOption obtainPrintNif() throws ManagerBeanException;
 	ReportPrintOption obtainPrintAddress() throws ManagerBeanException;
 	ReportPrintOption obtainPrintInternetData() throws ManagerBeanException;
+	boolean obtainPrintSaleInvoiceFooter() throws ManagerBeanException;
 	boolean obtainSmartCard() throws ManagerBeanException;
 	void searchCustomReportTemplate() throws ManagerBeanException;
 

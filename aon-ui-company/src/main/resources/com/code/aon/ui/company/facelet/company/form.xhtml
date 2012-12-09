@@ -179,6 +179,11 @@
 														value="#{company.printInternetData}">
 														<f:selectItems value="#{companyCollections.shortReportPrintOptions}" />
 													</aon:selectOneMenu>
+													
+													<aon:outputLabel for="Company_print_saleInvoice_footer"
+														value="#{companyBundle.company_saleInvoice_footer_text}" />
+													<aon:selectBooleanCheckbox id="Company_print_saleInvoice_footer"
+														value="#{company.printSaleInvoiceFooter}" />
 												</aon:panelGrid>
 											</c:if>
 										</aon:panelGrid>
@@ -255,11 +260,20 @@
 								</ui:include>
 							</aon:panelTab>
 						</c:if>
-
+						
 						<c:if test="#{companyCustomize.show}">
 							<aon:panelTab label="#{bundle.aon_oem}">
-								<ui:include src="/com/code/aon/ui/company/facelet/companyCustomize/tab_grid.xhtml">
-									<ui:param name="controller" value="#{companyCustomize}" />
+								<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
+									<ui:param name="controller" value="#{companyCertificate}" />
+									<ui:param name="skipCategoryColumn" value="#{true}" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
+
+						<c:if test="#{company.printSaleInvoiceFooter}">
+							<aon:panelTab label="#{companyBundle.company_saleInvoice_footer_text}">
+								<ui:include src="/com/code/aon/ui/company/facelet/saleInvoiceFooter/tab_grid.xhtml">
+									
 								</ui:include>
 							</aon:panelTab>
 						</c:if>
