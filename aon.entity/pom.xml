@@ -82,6 +82,7 @@
 			<plugin>
 				<groupId>com.esferalia.aon</groupId>
 				<artifactId>aon-maven-plugin</artifactId>
+				<version>${project.version}</version>
 				<executions>
 					<execution>
 						<goals>
