@@ -450,7 +450,7 @@
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
-					<preparationGoals>clean</preparationGoals>
+					<preparationGoals></preparationGoals>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<tagBase>http://dev.esferalia.com/repos/aon-application/releases</tagBase>
 				</configuration>
