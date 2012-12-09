@@ -85,6 +85,7 @@
 				<executions>
 					<!-- Para crear la base de datos utilizada por hibernate-tools. -->
 					<execution>
+						<id>create-db</id>
 						<goals>
 							<goal>create-db</goal>
 						</goals>
@@ -94,6 +95,7 @@
 					</execution>
 					<!-- Para generar el fichero de configuracion de hibernate, puesto que la base de datos es variable. -->
 					<execution>
+						<id>create-hibernate-configuration-file</id>
 						<goals>
 							<goal>create-hibernate-configuration-file</goal>
 						</goals>
