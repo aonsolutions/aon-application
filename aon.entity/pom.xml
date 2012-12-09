@@ -78,47 +78,40 @@
 				</executions>
 			</plugin>
 			
-			<!-- Para crear la base de datos utilizada por hibernate-tools. -->
 			<plugin>
 				<groupId>com.esferalia.aon</groupId>
 				<artifactId>aon-maven-plugin</artifactId>
 				<version>${project.version}</version>
 				<executions>
+					<!-- Para crear la base de datos utilizada por hibernate-tools. -->
 					<execution>
 						<goals>
 							<goal>create-db</goal>
 						</goals>
+						<configuration>
+							<dbName>aon_reveng_${buildNumber}</dbName>
+						</configuration>
 					</execution>
-				</executions>
-				<configuration>
-					<dbName>aon_reveng_${buildNumber}</dbName>
-				</configuration>
-			</plugin>
-
-			<!-- Para generar el fichero de configuracion de hibernate, puesto que la base de datos es variable. -->
-			<plugin>
-				<groupId>com.esferalia.aon</groupId>
-				<artifactId>aon-maven-plugin</artifactId>
-				<version>${project.version}</version>
-				<executions>
+					<!-- Para generar el fichero de configuracion de hibernate, puesto que la base de datos es variable. -->
 					<execution>
 						<goals>
 							<goal>create-hibernate-configuration-file</goal>
 						</goals>
+						<configuration>
+							<destDir>${basedir}/target/generated-sources/reveng/hibernate_reveng.properties</destDir>
+							<properties>
+								<param>hibernate.dialect=org.hibernate.dialect.MySQLInnoDBDialect</param>
+								<param>hibernate.connection.url=jdbc:mysql://127.0.0.1:3306/aon_reveng_${buildNumber}?autoReconnect=true</param>
+								<param>hibernate.connection.driver_class=org.gjt.mm.mysql.Driver</param>
+								<param>hibernate.connection.username=dbuser</param>
+								<param>hibernate.connection.password=serubd2000</param>
+								<param>hibernate.default_catalog=aon_reveng_${buildNumber}</param>
+							</properties>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<destDir>${basedir}/target/generated-sources/reveng/hibernate_reveng.properties</destDir>
-					<properties>
-						<param>hibernate.dialect=org.hibernate.dialect.MySQLInnoDBDialect</param>
-						<param>hibernate.connection.url=jdbc:mysql://127.0.0.1:3306/aon_reveng_${buildNumber}?autoReconnect=true</param>
-						<param>hibernate.connection.driver_class=org.gjt.mm.mysql.Driver</param>
-						<param>hibernate.connection.username=dbuser</param>
-						<param>hibernate.connection.password=serubd2000</param>
-						<param>hibernate.default_catalog=aon_reveng_${buildNumber}</param>
-					</properties>
-				</configuration>
 			</plugin>
+
 			
 			<!-- Para levantar los entities mediate el proceso de reven de hibernate tools -->
 			<plugin>
