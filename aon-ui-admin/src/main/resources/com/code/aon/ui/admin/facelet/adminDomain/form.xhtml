@@ -72,6 +72,11 @@
 						<aon:selectBooleanCheckbox id="Domain_active"
 							value="#{adminDomain.to.active}" />								
 
+						<aon:outputLabel for="Domain_disableDomainManagement"
+							value="#{adminBundle.admin_domain_disableDomainManagement}" />
+						<aon:selectBooleanCheckbox id="Domain_disableDomainManagement"
+							value="#{adminDomain.to.disableDomainManagement}" />								
+
 						<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{adminDomain.to.parent}" />
 							<ui:param name="lookupLabel" value="#{adminBundle.admin_domain_parent}" />

@@ -18,6 +18,7 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 	private List<IDomainChangeListener> listeners;
 	protected Integer domainId;
 	private boolean domainManagementAvailable;
+	private boolean disableDomainManagement;
 	protected int type;
 	private Integer parentDomainId;
 	private Collection<Integer> domainFilter;
@@ -48,6 +49,15 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 	
 	public void setDomainManagementAvailable(boolean domainManagementAvailable) {
 		this.domainManagementAvailable = domainManagementAvailable;
+	}
+
+	@Override
+	public boolean isDisableDomainManagement() {
+		return disableDomainManagement;
+	}
+
+	public void setDisableDomainManagement(boolean disableDomainManagement) {
+		this.disableDomainManagement = disableDomainManagement;
 	}
 
 	@Override
@@ -87,19 +97,21 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 		this.parentDomainId = null;
 		domainManagementAvailable = false;
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(DOMAIN_CLASS_NAME);
-		String q = "SELECT d.parent,d.domainManagement,d.type FROM domain d"
+		String q = "SELECT d.parent,d.domainManagement,d.disableDomainManagement,d.type FROM domain d"
 				+ " WHERE d.id = " + domainId
 				+ " AND d.active = 1";
 		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
 		Object[] arr = (Object[]) query
 				.addScalar("parent", Hibernate.INTEGER)
 				.addScalar("domainManagement", Hibernate.BOOLEAN)
+				.addScalar("disableDomainManagement", Hibernate.BOOLEAN)
 				.addScalar("type", Hibernate.INTEGER)
 				.uniqueResult();
 		if (! ArrayUtils.isEmpty(arr) ) {
 			parentDomainId = (Integer) arr[0]; 
 			domainManagementAvailable = (Boolean) arr[1];
-			type = (Integer) arr[2];
+			disableDomainManagement = (Boolean) arr[2];
+			type = (Integer) arr[3];
 		}
 	}
 	

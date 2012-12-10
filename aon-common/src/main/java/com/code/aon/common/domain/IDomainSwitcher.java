@@ -11,6 +11,7 @@ public interface IDomainSwitcher {
 	void fireAfterDomainChanged(Integer oldDomain, Integer newDomain);
 	boolean isParentDomain();
 	boolean isDomainManagementAvailable();
+	boolean isDisableDomainManagement();
 	Collection<Integer> getDomainFilter();
 	
 	
