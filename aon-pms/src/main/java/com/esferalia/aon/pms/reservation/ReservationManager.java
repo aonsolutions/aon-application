@@ -77,7 +77,7 @@ public class ReservationManager implements IReservationConstants {
 	public String processReservation(String reservationXml) {
 		successMap = new HashMap<String, Integer>();
 		try {
-			OTAHotelResNotifRQDocument document = OTAHotelResNotifRQDocument.Factory.parse(reservationXml);
+			OTAHotelResNotifRQDocument document = OTAHotelResNotifRQDocument.Factory.parse(reservationXml.replaceAll("&", "&amp;"));
 			if (document.validate()) {
 				POSType posType = document.getOTAHotelResNotifRQ().getPOS();
 				HotelReservationsType reservationsType = document.getOTAHotelResNotifRQ().getHotelReservations();
