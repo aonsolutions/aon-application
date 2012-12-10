@@ -171,12 +171,12 @@
 								<c:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="accounting_balance-fiscal" 
-											action="balance_list-accounting"
+											action="balance_list-fiscal"
 											value="#{accountingBundle.accounting_balance_menu}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="amortizationType"
-											action="amortizationType_list"
+										<aon:commandLink id="amortizationType-fiscal"
+											action="amortizationType_list-fiscal"
 											value="#{accountingBundle.accounting_amortization_type_module}" />
 									</aon:div>
 								</c:if>
@@ -252,8 +252,8 @@
 											action="undeductibleInvoiceRecorder_search-fiscal" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="financeTrackingEntry-accounting"
-											action="account_finance_tracking_entry-accounting"
+										<aon:commandLink id="financeTrackingEntry-fiscal"
+											action="account_finance_tracking_entry-fiscal"
 											actionListener="#{financeTrackingEntry.onReset}"
 											value="#{accountingBundle.accounting_entry_finance_tracking_module}" />
 									</aon:div>								

@@ -52,7 +52,10 @@ public enum Module implements IResourceable {
 	ACADEMY( "academy" ),
 
     /** HOTEL. */
-	HOTEL( "hotel" );
+	HOTEL( "hotel" ),
+	
+    /** INFOWEB. */
+	INFOWEB( "infoweb" );
 	
 	/** Message file base path. */
 	private static final String BASE_NAME = "com.code.aon.audit.i18n.messages";

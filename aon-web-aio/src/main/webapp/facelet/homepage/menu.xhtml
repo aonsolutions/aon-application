@@ -46,6 +46,11 @@
 					action="menu_commercial" immediate="true"
 					styleClass="aon-top-menu-item" />
 			</c:if>
+
+			<aon:commandLink id="infoweb"
+				value="#{bundle.aon_module_infoweb}"
+				action="menu_infoweb" immediate="true"
+				styleClass="aon-top-menu-item" />
 			
 			<c:if test="#{aonRole.saleOperator or aonRole.purchaseOperator}">
 				<aon:commandLink id="management"

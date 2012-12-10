@@ -219,6 +219,12 @@ public class DomainController extends BasicController {
 		}
 		appInfo.updateApplicationModules();
 		appInfo.sortApplicationModules();
+		if (! AonUtil.getRoleManager().isSysAdmin() ) {
+			DomainModuleInfo infoweb = this.aioInfo.getModuleInfo(Module.INFOWEB);
+			if ( infoweb != null ) {
+				this.aioInfo.getApplicationModules().remove(infoweb);
+			}
+		}
 	}
 
 	public void initApplicationInfos() throws ManagerBeanException {

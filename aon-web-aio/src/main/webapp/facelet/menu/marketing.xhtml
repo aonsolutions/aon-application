@@ -85,82 +85,38 @@
 											<aon:actionListener method="#{survey.onSearch}" />
 										</aon:commandLink>
 									</aon:div>								
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="marketingTemplate"
-											action="marketingTemplate_list" actionListener="#{marketingTemplate.onEditSearch}" 
-											value="#{marketingBundle.marketing_template_module}" >
-											<aon:actionListener method="#{marketingTemplate.onSearch}" />
-										</aon:commandLink>
-									</aon:div>								
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
 
-						<c:if test="#{aonRole.admin}">
-							<aon:panelGrid id="group_marketing_infoweb"
+						<c:if test="#{aonRole.config}">
+							<aon:panelGrid id="group_marketing_templates"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-general">
 								<f:facet name="header">
-									<aon:outputText value="#{infowebBundle.infoweb_module}" />
+									<aon:outputText value="#{marketingBundle.marketing_template_module}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="company-marketing" 
-											action="company-marketing" actionListener="#{company.onLoad}"
-											value="#{companyBundle.company_data_module}">
+										<aon:commandLink id="marketingTemplate"
+											action="marketingTemplate_list"
+											actionListener="#{marketingTemplate.onEditSearch}" 
+											value="#{marketingBundle.marketing_template_module}" >
+											<aon:actionListener method="#{marketingTemplate.onSearch}" />
 										</aon:commandLink>
 									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="companyWebInfo" 
-											action="companyWebInfo" 
-											actionListener="#{companyWebInfo.onInit}"
-											value="#{infowebBundle.infoweb_data}" >
-											<aon:actionListener method="#{companyWebInfo.onLoadWebInfo}" />
-										</aon:commandLink>
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="images" 
-											action="companyImages" 
+									<aon:div styleClass="aon-direct-access-list-element">																										
+										<aon:commandLink id="images-marketing" 
+											action="companyImages-marketing" 
 											actionListener="#{companyWebInfo.onInit}"
 											value="#{companyBundle.company_images_module}">
 											<aon:actionListener method="#{companyImages.onCancel}" />
 										</aon:commandLink>
 									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="webPage" 
-											action="webPage" 
-											actionListener="#{companyWebInfo.onInit}"
-											value="#{infowebBundle.infoweb_pages}" >
-											<aon:actionListener method="#{webPage.onInit}" />
-										</aon:commandLink>
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="webPageStyle" 
-											action="webPageStyle" 
-											actionListener="#{companyWebInfo.onInit}"
-											value="#{infowebBundle.infoweb_template}" >
-											<aon:actionListener method="#{webPageStyle.onLoad}" />
-										</aon:commandLink>
-									</aon:div>
-									<c:if test="#{aonRole.admin}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="publishParameter" 
-												action="publishParameter" 
-												actionListener="#{publishParameter.onInit}"
-												value="#{infowebBundle.infoweb_publish_parameters}" />
-										</aon:div>
-									</c:if>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="generator" 
-											action="generator" 
-											actionListener="#{companyWebInfo.onInit}"
-											value="#{infowebBundle.infoweb_generate}" >
-											<aon:actionListener method="#{generator.onInit}" />
-										</aon:commandLink>
-									</aon:div>
 								</aon:div>							
 							</aon:panelGrid>
 						</c:if>
+
 					</aon:panelGroup>													
 					
 				</h:panelGrid>

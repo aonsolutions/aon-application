@@ -124,13 +124,33 @@
 											actionListener="#{survey.onSearch}" 
 											value="#{marketingBundle.marketing_survey_module}" />
 									</aon:div>								
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
+
+						<c:if test="#{aonRole.config}">
+							<aon:panelGrid id="group_commercial_templates"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-general">
+								<f:facet name="header">
+									<aon:outputText value="#{marketingBundle.marketing_template_module}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="marketingTemplate-commercial"
 											action="marketingTemplate_list-commercial"
 											actionListener="#{marketingTemplate.onSearch}" 
 											value="#{marketingBundle.marketing_template_module}" />
-									</aon:div>								
-								</aon:div>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">																										
+										<aon:commandLink id="images-commercial" 
+											action="companyImages-commercial" 
+											actionListener="#{companyWebInfo.onInit}"
+											value="#{companyBundle.company_images_module}">
+											<aon:actionListener method="#{companyImages.onCancel}" />
+										</aon:commandLink>
+									</aon:div>
+								</aon:div>							
 							</aon:panelGrid>
 						</c:if>
 
