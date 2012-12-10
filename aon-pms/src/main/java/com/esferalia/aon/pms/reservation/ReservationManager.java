@@ -596,7 +596,7 @@ public class ReservationManager implements IReservationConstants {
 				ProfileInfo profileInfo = guest.getProfiles().getProfileInfoArray(j);
 				if (profileInfo.getUniqueID() != null && profileInfo.getUniqueID().getType().equals(type)) {
 					String idContext = profileInfo.getUniqueID().getIDContext();
-					if ((idContext == null && context == null) || (context.equals(idContext))) {
+					if ((idContext == null && context == null) || (context.equalsIgnoreCase(idContext))) {
 						return profileInfo;
 					}
 				}
