@@ -714,7 +714,7 @@ public class ReservationUtils implements IReservationConstants {
 
 	public boolean isServiceBreakdown(Item item) throws ManagerBeanException {
 		ItemAddInfo itemAddInfo = obtainItemAddInfo(item, SERVICE_BREAKDOWN, null);
-		return (itemAddInfo == null || itemAddInfo.getValue() == null) ? false : itemAddInfo.getValue().equals(YES);
+		return (itemAddInfo == null || itemAddInfo.getValue() == null) ? true : !itemAddInfo.getValue().equalsIgnoreCase(NO);
 	}
 
 	public Tariff obtainRoomTariff(ProjectReservation reservation, RatePlanType ratePlan) throws ManagerBeanException, ReservationException {
