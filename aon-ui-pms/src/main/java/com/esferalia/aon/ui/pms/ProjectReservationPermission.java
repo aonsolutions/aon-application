@@ -303,6 +303,10 @@ public class ProjectReservationPermission {
 		return roleAllowed && reservation.isActive() && reservationRoom.getRoomNumber() == null;
 	}
 
+	public boolean isReservationRoomTariffAllowed() {
+		return isRoleAdmin();
+	}
+
 	public boolean isReservationRoomTariffEditable() throws ManagerBeanException {
 		Date now = new Date();
 		boolean roleAllowed = (isRoleCommercial() && isBeforeCheckIn(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));

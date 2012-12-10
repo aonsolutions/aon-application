@@ -132,10 +132,10 @@
 
 											<aon:outputLabel for="ProjectReservationRoom_tariff"
 												value="#{productBundle.product_tariff}"
-												rendered="#{controller.new}" />
+												rendered="#{controller.new or reservation.reservationPermission.reservationRoomTariffAllowed}" />
 											<aon:selectOneMenu id="ProjectReservationRoom_tariff" 
 												value="#{controller.to.tariff}" required="true"
-												rendered="#{controller.new}"
+												rendered="#{controller.new or reservation.reservationPermission.reservationRoomTariffAllowed}"
 												disabled="#{!reservation.reservationPermission.reservationRoomTariffEditable}">
 												<f:selectItems value="#{pmsCollections.tariffs}" />
 											</aon:selectOneMenu>
