@@ -17,13 +17,13 @@
 			<aon:commandButton id="saleInvoice_footer_text-save"
 				title="#{bundle.aon_key_save_accelerator}"
 				value="#{bundle.aon_save}" 
-				actionListener="#{saleInvoiceFooter.onAccept}"
+				actionListener="#{companySaleInvoiceFooter.onAccept}"
 				styleClass="aon-finding-toolbar-item aon-icon-accept"
 				accesskey="#{bundle.aon_key_save}" />
 			<aon:commandButton id="saleInvoice_footer_text-import"
 				title="#{companyBundle.company_create_LOPD_text}"
 				value="#{companyBundle.company_create_LOPD_text}" reRender="tab_content"
-				actionListener="#{saleInvoiceFooter.createLOPD}"
+				actionListener="#{companySaleInvoiceFooter.createLOPD}"
 				styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
 		</ui:define>				
 	</ui:decorate>	
@@ -33,8 +33,8 @@
 		<aon:panelGrid  columns="2" style="width:100%">
 			<aon:outputLabel for="SaleInvoice_footer_text"
 				value="#{companyBundle.company_invoice_footer_text}" />
-			<aon:inputTextarea id="SaleInvoice_footer_text" cols="100" rows="6"
-				value="#{saleInvoiceFooter.text}"/>
+			<aon:inputTextarea id="SaleInvoice_footer_text" cols="150" rows="6"
+				value="#{companySaleInvoiceFooter.text}"/>
 				
 		</aon:panelGrid>
 
