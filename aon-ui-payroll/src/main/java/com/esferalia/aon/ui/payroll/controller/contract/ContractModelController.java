@@ -28,8 +28,8 @@ public class ContractModelController {
 
 	public DataModel getModel() {
 		if (model == null) {
-			PayrollCollectionsController ecc = (PayrollCollectionsController) AonUtil.getRegisteredBean("payrollCollections");
-			model = new ListDataModel( ecc.getContractModels() ); 
+			PayrollCollectionsController pcc = (PayrollCollectionsController) AonUtil.getRegisteredBean("payrollCollections");
+			model = new ListDataModel( pcc.getContractModels() ); 
 		}
 		return model;
 	}

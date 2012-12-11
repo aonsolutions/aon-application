@@ -270,11 +270,9 @@ public class PayrollCollectionsController {
 			contractModels = new LinkedList<SelectItem>();
 			ContractModel[] models = ContractModel.values();
 			for (ContractModel cm : models) {
-				if(cm==ContractModel.PE170){
-					String name = cm.getDescription(locale);
-					SelectItem item = new SelectItem(cm, name);
-					contractModels.add(item);
-				}
+				String name = cm.getDescription(locale);
+				SelectItem item = new SelectItem(cm, name);
+				contractModels.add(item);
 			}
 		}
 		return contractModels;
