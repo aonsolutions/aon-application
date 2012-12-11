@@ -4,15 +4,15 @@ import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.faces.model.SelectItem;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
@@ -46,19 +46,18 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 		super.afterBeanCreated(event);
 
 		ExpenseInvoiceDetailController controller = (ExpenseInvoiceDetailController)event.getController();
-		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
-		invoiceDetail.setTaxDataInDetail(true);
+		controller.setTotalChanged(0);
 		try {
-			controller.setTotalChanged(0);
-			controller.loadExpenseItems();
-			if (controller.getExpenseItems().size() > 0) {
-				SelectItem selectItem = (SelectItem)controller.getExpenseItems().get(0);
-				Item item = (Item)selectItem.getValue();
+			Item item = obtainCreditorLastExpense((Invoice)controller.getMasterController().getTo(), ((InvoiceDetail)controller.getTo()).getLine());
+			if (item != null) {
 				controller.itemChanged(item);
 			}
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
+
+		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
+		invoiceDetail.setTaxDataInDetail(true);
 	}
 
 	@Override
@@ -66,24 +65,15 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 		super.afterBeanSelected(event);
 
 		ExpenseInvoiceDetailController controller = (ExpenseInvoiceDetailController)event.getController();
+		controller.setTotalChanged(0);
+
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 		invoiceDetail.setTaxDataInDetail(true);
 		fillTaxDataInDetail(invoiceDetail);
-		try {
-			controller.setTotalChanged(0);
-			controller.loadExpenseItems();
-		} catch(ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
 	}
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		beforeSaveExpenseDetail((ExpenseInvoiceDetailController)event.getController());
-	}
-
-	@Override
-	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		beforeSaveExpenseDetail((ExpenseInvoiceDetailController)event.getController());
 	}
 
@@ -94,9 +84,29 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 	}
 
 	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		beforeSaveExpenseDetail((ExpenseInvoiceDetailController)event.getController());
+	}
+
+	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		afterSaveExpenseDetail((ExpenseInvoiceDetailController)event.getController());
 		super.afterBeanUpdated(event);
+	}
+
+	private Item obtainCreditorLastExpense(Invoice invoice, int line) throws ManagerBeanException {
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_REGISTRY_ID), invoice.getRegistry().getId());
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_TYPE), InvoiceType.EXPENSES);
+		criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		criteria.addLessThanOrEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE), line);
+		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ISSUE_DATE), false);
+		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE), false);
+		for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
+			return ((InvoiceDetail)ito).getItem();
+		}
+		return null;
 	}
 
 	private void beforeSaveExpenseDetail(ExpenseInvoiceDetailController controller) {
