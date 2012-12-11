@@ -15,7 +15,8 @@ public enum RegistryAttachmentType implements IResourceable {
 	DOCUMENT,
 	FISCAL_TEMPLATES,
 	FISCAL_REPORTS,
-	SIGNATURE;
+	SIGNATURE,
+	INVOICE_FOOTER_TEXT;
 	
 	
 	/** Message file base path. */
