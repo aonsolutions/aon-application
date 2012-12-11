@@ -31,4 +31,16 @@
 		</params>
 	</report>
 	
+	<!--  *********  Listado de Tarifas ********* -->
+	<report id="tariffList" description="Tariff List">
+		<template path="/com/code/aon/ui/product/report/tariffList.jasper"/>
+		<bean key="com.code.aon.config.Tariff" />
+		<criteria provider="#{tariff}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.product.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
+	
 </report-config>

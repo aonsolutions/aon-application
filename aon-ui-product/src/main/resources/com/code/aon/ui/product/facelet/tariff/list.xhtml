@@ -10,11 +10,28 @@
 
 		<aon:form id="tariffList">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="skipSearchButton" value="true" />
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{productBundle.product_tariff_module}" />
 				<ui:param name="controller" value="#{tariff}" />
-			</ui:include>
+				
+				<ui:define name="additionalToolbarContent">
+					<aon:htmlCommandLink id="tariffList-excel-report" value="&#160;" 
+						target="_new" action="#{report.onExecute}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
+						<f:param name="reportKey" value="tariffList" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="tariffList-report" value="#{bundle.aon_listing}"
+						target="_new" action="#{report.onExecute}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="tariffList" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>
+				</ui:define>
+				
+			</ui:decorate>
 
 			<aon:div id="tariffData" styleClass="aon-scroll-area">
 				<aon:dataTable id="tariffDataList" value="#{tariff.model}"
