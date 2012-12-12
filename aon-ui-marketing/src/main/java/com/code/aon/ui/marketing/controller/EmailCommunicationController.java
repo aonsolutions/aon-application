@@ -61,14 +61,14 @@ public class EmailCommunicationController implements IMarketingConstants {
 	
 	private boolean sendEmail( MessageController messageController, AonServer server, List<String> emails ) {
 		boolean result = true;
+		String recipients = StringUtils.join(emails, ",");
 		try {
-			String recipients = StringUtils.join(emails, ",");
 	    	LOGGER.debug( "Sending email to: {}", recipients );			
 			messageController.setRecipientsBcc(recipients);
 	    	AonMessage aonMessage = messageController.compoundMessage(server);
 	    	server.sendMessage(aonMessage);
 		} catch ( Throwable th ) {
-			LOGGER.error("Error sending email to " + emails, th );
+			LOGGER.error("Error sending email to " + recipients, th );
 			result = false;
 		}
 		return result;
@@ -106,8 +106,10 @@ public class EmailCommunicationController implements IMarketingConstants {
 			}
 		}
 		ActionTargetStatus status = ActionTargetStatus.INCORRECT;
-		if ( sendEmail(messageController, server, emails) ) {
-			status = ActionTargetStatus.SENT;
+		if (! emails.isEmpty() ) {
+			if ( sendEmail(messageController, server, emails) ) {
+				status = ActionTargetStatus.SENT;
+			}			
 		}
 		for( ActionTarget actionTarget : list ) {
 			if ( actionTarget.getStatus() != ActionTargetStatus.CANCEL ) {
