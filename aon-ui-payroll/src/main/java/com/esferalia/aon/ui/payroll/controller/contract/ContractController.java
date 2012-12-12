@@ -46,6 +46,8 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
+import com.esferalia.aon.payroll.IrpfRegularization;
+import com.esferalia.aon.payroll.IrpfResult;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -312,6 +314,11 @@ public class ContractController extends BasicController implements IVariablesHan
 	}
 
 	private void loadEnterpriseCCCs() {
+//		IrpfResult i;
+//		i.g
+//		IrpfRegularization r;
+//		r.g
+		
 		setEnterpriseCCCs( new LinkedList<SelectItem>());
 		Contract contract = (Contract) getTo();
 		contract.setEnterpriseCCC(null);
@@ -570,12 +577,23 @@ public class ContractController extends BasicController implements IVariablesHan
 	public void onEditPerson( ActionEvent event ) {
 		try {
 			BasicController controller = (BasicController) FormUtil.getController(IRegistryConstants.PERSON_CONTROLLER_NAME);
-			controller.select(event, ((Contract)this.getTo()).getPerson());
+			controller.onLoad(event, ((Contract)this.getTo()).getPerson().getId(), "contract_formTree", "contract.onPersonBack");
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onEditPerson exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}				
+	}
+	
+	public void onPersonBack(ActionEvent event){
+		try {
+			this.refresh(event);
+			this.getManagerBean().restoreNullSubPOJOs(getTo());
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onPersonBack exception: ",e);
+			AonUtil.addErrorMessage("Se ha producido un error al recargar los datos de persona. ");
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
 	}
 	
 	public void onShowContrataData(ActionEvent event){

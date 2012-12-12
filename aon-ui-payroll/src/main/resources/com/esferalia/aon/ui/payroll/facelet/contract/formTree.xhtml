@@ -28,8 +28,6 @@
 					styleClass="aon-finding-toolbar-item aon-icon-contact" >
 					<f:setPropertyActionListener
 						target="#{person.backAction}" value="contract_formTree" />
-					<f:setPropertyActionListener
-						target="#{person.backActionListener}" value="person.onBack" />													
 				</aon:commandButton>
 				<aon:commandButton 
 					value="#{payrollBundle.payroll_contractCalendarEvent}"
@@ -37,6 +35,8 @@
 					action="contractCalendarEvent_form" >
 					<f:setPropertyActionListener
 						target="#{contractCalendarEvent.backActionListener}" value="contractCalendarEvent.onBack" />
+					<f:setPropertyActionListener
+						target="#{contractCalendarEvent.forceBackAction}" value="true" />
 					<f:setPropertyActionListener
 						target="#{contractCalendarEvent.backAction}" value="contract_formTree" />
 				</aon:commandButton>													

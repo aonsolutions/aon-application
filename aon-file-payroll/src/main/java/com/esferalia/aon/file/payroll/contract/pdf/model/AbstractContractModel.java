@@ -9,6 +9,9 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
+
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.Classpath;
 import com.esferalia.aon.payroll.Contract;
@@ -224,6 +227,8 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 			setPdfFieldValue(ENTERPRISE_COUNTRY_CODE3,String.valueOf(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getIsoNum()).substring(2,3));
 		} catch (StringIndexOutOfBoundsException aie) {
 			// do nothing
+		} catch (NullPointerException npe) {
+			// do nothing
 		}
 		setPdfFieldValue(ENTERPRISE_TOWN,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getCity());
 		setPdfFieldValue(ENTERPRISE_TOWN_CODE1,null);
@@ -238,6 +243,8 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 			setPdfFieldValue(ENTERPRISE_ZIP4,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(3, 4));
 			setPdfFieldValue(ENTERPRISE_ZIP5,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(4, 5));
 		} catch (StringIndexOutOfBoundsException aie) {
+			// do nothing
+		} catch (NullPointerException npe) {
 			// do nothing
 		}
 		/* 
@@ -271,13 +278,15 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 			setPdfFieldValue(WORKPLACE_TOWN_CODE5,contract.getWorkPlace().getAddress().getZip().substring(4, 5));
 		} catch (StringIndexOutOfBoundsException aie) {
 			// do nothing
+		} catch (NullPointerException npe) {
+			// do nothing
 		}
 		/*
 		 * Contract employee fields
 		 */
 		setPdfFieldValue(EMPLOYEE_NAME,contract.getPerson().getFullName());
 		setPdfFieldValue(EMPLOYEE_NIF,contract.getPerson().getRegistry().getDocument());
-		setPdfFieldValue(EMPLOYEE_BIRTH_DATE,contract.getPerson().getBirthDate().toString());
+		setPdfFieldValue(EMPLOYEE_BIRTH_DATE,contract.getPerson().getBirthDate()!=null?contract.getPerson().getBirthDate().toString():null);
 		setPdfFieldValue(EMPLOYEE_NSS,contract.getPerson().getSocialSecurityNumber());
 		setPdfFieldValue(EMPLOYEE_FORMATION_CODE1,null);
 		setPdfFieldValue(EMPLOYEE_FORMATION_CODE2,null);
@@ -287,8 +296,10 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 			setPdfFieldValue(EMPLOYEE_COUNTRY_CODE3,String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(2,3));
 		} catch (StringIndexOutOfBoundsException aie) {
 			// do nothing
+		} catch (NullPointerException npe) {
+			// do nothing
 		}
-		setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN,contract.getPerson().getRegistry().getDefaultAddress().getCity());
+		setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN,contract.getPerson().getRegistry().getDefaultAddress()!=null?contract.getPerson().getRegistry().getDefaultAddress().getCity():null);
 		try {
 			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE1,contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(0, 1));
 			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE2,contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(1, 2));
@@ -296,6 +307,8 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE4,contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(3, 4));
 			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE5,contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(4, 5));
 		} catch (StringIndexOutOfBoundsException aie) {
+			// do nothing
+		} catch (NullPointerException npe) {
 			// do nothing
 		}
 		setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY,null);
