@@ -384,7 +384,7 @@ public abstract class AbstractVariableHandler {
 	} 
 	
 	public List<?> getVariablesCollection() {
-		PayrollVariablesCollectionsController c = new PayrollVariablesCollectionsController();
+		PayrollCollectionsController c = new PayrollCollectionsController();
 		if(getData().getVariable()==ContextVariable.CNO){
 			return c.getCnoList();
 		}else if(getData().getVariable()==ContextVariable.TC2){
@@ -415,7 +415,7 @@ public abstract class AbstractVariableHandler {
 		}
 		if (expression instanceof Date) {
 			Date date = (Date) expression;
-			AonUtil.getMessage("aon_date_pattern");
+//			AonUtil.getMessage("aon_date_pattern");
 			String pattern = AonUtil.getMessage("aon_date_pattern");
 			return new SimpleDateFormat(pattern).format(date);
 		}

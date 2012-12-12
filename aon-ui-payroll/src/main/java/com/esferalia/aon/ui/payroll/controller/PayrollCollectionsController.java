@@ -28,6 +28,7 @@ import com.esferalia.aon.payroll.enumeration.ContractCalendarEventType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractDuration;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
+import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
@@ -69,8 +70,8 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public class PayrollCollectionsController {
 	
-	private final int NAME_LENGHT_80 = 80;
-	private final int NAME_LENGHT_120 = 120;
+	private final int NAME_LENGHT_80 = 80;	
+	private final int NAME_LENGHT_100 = 100;	
 
 	private List<SelectItem> contractDurations;
 	private List<SelectItem> contractWorkingDays;
@@ -453,20 +454,6 @@ public class PayrollCollectionsController {
 		return fileStatus;
 	}
 	
-	public List<SelectItem> getCnoList() {
-		if (cnoList == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			cnoList = new LinkedList<SelectItem>();
-			CNO[] cno = CNO.values();
-			for (CNO c : cno) {
-				String name = c.getName(locale);
-				SelectItem item = new SelectItem(c, name);
-				cnoList.add(item);
-			}
-		}
-		return cnoList;
-	}
-
 	public List<SelectItem> getEmploymentProgramList() {
 		if (employmentProgramList == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -718,16 +705,74 @@ public class PayrollCollectionsController {
 	public List<?> getTc2List() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		List<SelectItemGroup> list = new LinkedList<SelectItemGroup>();
-		for( ContractType p : ContractType.values() ) {
-			List<SelectItem> subList = new ArrayList<SelectItem>();
-			for( ContractCode c : p.getCodes() ) {
-				String name = c.getName(locale);
-				SelectItem item = new SelectItem(c, getAbbreviatedSelectItemLabel(name, NAME_LENGHT_80));
-				subList.add(item);			
+		for( ContractType type : ContractType.values() ) {
+			if(type.getModel()==ContractModel.PE151
+					|| type.getModel()==ContractModel.PE170
+					|| type.getModel()==ContractModel.PE176
+					|| type.getModel()==ContractModel.PE177
+					|| type.getModel()==ContractModel.PE179
+					|| type.getModel()==ContractModel.PE183
+					|| type.getModel()==ContractModel.PE187
+					|| type.getModel()==ContractModel.PE226){
+				List<SelectItem> subList = new ArrayList<SelectItem>();
+				for( ContractModelCode o : ContractModelCode.values() ) {
+					if ( o.getModel() == type.getModel() ) {
+						String name = getAbbreviatedSelectItemLabel(o.getCode().getName(locale), NAME_LENGHT_80);
+						SelectItem item = new SelectItem(o, name);
+						subList.add(item);
+					}
+				}
+				SelectItemGroup group = new SelectItemGroup(getAbbreviatedSelectItemLabel(type.getName(locale), NAME_LENGHT_100), type.getName(locale), false, subList.toArray(new SelectItem[0]));
+				group.setValue(type);
+				list.add(group);
 			}
-			SelectItemGroup group = new SelectItemGroup(getAbbreviatedSelectItemLabel(p.getName(locale), 150), p.getName(locale), false, subList.toArray(new SelectItem[0]));
-			list.add(group);
 		}
+		return list;
+	}
+	
+	public List<SelectItem> getCnoList() {
+		if (cnoList == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			cnoList = new LinkedList<SelectItem>();
+			CNO[] cno = CNO.values();
+			for (CNO c : cno) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, name);
+				cnoList.add(item);
+			}
+		}
+		return cnoList;
+	}
+	
+	public List<SelectItem> getCategoryList() {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		return list;
+	}
+	
+	public List<SelectItem> getQuoteGroupList() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		for( QuoteGroup p : QuoteGroup.values() ) {
+			String name = p.getName(locale);
+			SelectItem item = new SelectItem(p, getAbbreviatedSelectItemLabel(name, NAME_LENGHT_80));
+			list.add(item);			
+		}
+		return list;
+	}
+
+	public List<SelectItem> getOccupationList() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		for( OccupationType p : OccupationType.values() ) {
+			String name = p.getName(locale);
+			SelectItem item = new SelectItem(p, getAbbreviatedSelectItemLabel(name, NAME_LENGHT_80));
+			list.add(item);			
+		}
+		return list;
+	}
+
+	public List<SelectItem> getQuoteItList() {
+		List<SelectItem> list = new LinkedList<SelectItem>();
 		return list;
 	}
 	

@@ -148,7 +148,7 @@
 			<aon:outputLabel for="Contract_tc2Code"
 				value="#{payrollBundle.payroll_contract_contract_code}" />
 			<aon:selectOneMenu id="Contract_tc2Code" required="true" 
-				value="#{contract.params.tc2Code}">
+				value="#{contract.params.contractModelCode}">
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{payrollCollections.tc2List}" />
 			</aon:selectOneMenu>

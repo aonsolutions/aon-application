@@ -90,6 +90,9 @@ public class ContractControllerListener extends ControllerAdapter{
 		if(controller.getAonFile()!=null){
 			contract.setDocument(controller.getAonFile().getData());
 		}
+		if(controller.getParams().getContractModelCode()!=null){
+			contract.setModel(controller.getParams().getContractModelCode().getModel());
+		}
 	}
 	
 	@Override
@@ -187,13 +190,26 @@ public class ContractControllerListener extends ControllerAdapter{
 			String msg = "Error al grabar el salario bruto. (" +e.getMessage() + ")";
 			LOGGER.error(msg);
 		}
+//		try {
+//			if(controller.getParams().getTc2Code()!=null){
+//				data = new ContractData();
+//				data.setContract(contract);
+//				data.setStartDate(contract.getStartDate());
+//				data.setName( ContextVariable.TC2.getName() );
+//				data.setExpression("\"" + controller.getParams().getTc2Code().getValue() + "\"");
+//				bean.insert(data);
+//			}
+//		} catch (ManagerBeanException e) {
+//			String msg = "Error al grabar el codigo TC2. (" +e.getMessage() + ")";
+//			LOGGER.error(msg);
+//		}
 		try {
-			if(controller.getParams().getTc2Code()!=null){
+			if(controller.getParams().getContractModelCode()!=null){
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
 				data.setName( ContextVariable.TC2.getName() );
-				data.setExpression("\"" + controller.getParams().getTc2Code().getValue() + "\"");
+				data.setExpression("\"" + controller.getParams().getContractModelCode().getCode().getValue() + "\"");
 				bean.insert(data);
 			}
 		} catch (ManagerBeanException e) {

@@ -52,6 +52,8 @@ import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractDuration;
+import com.esferalia.aon.payroll.enumeration.ContractModel;
+import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
@@ -683,6 +685,7 @@ public class ContractController extends BasicController implements IVariablesHan
 	public class ContractParams {
 		private ContractOption contractOption;
 		private ContractType contractType;
+		private ContractModelCode contractModelCode;
 		private ContractCode contractCode;
 		private QuoteGroup quoteGroup;
 		private OccupationType occupationType;
@@ -733,7 +736,12 @@ public class ContractController extends BasicController implements IVariablesHan
 		public void setContractType(ContractType contractType) {
 			this.contractType = contractType;
 		}
-
+		public ContractModelCode getContractModelCode() {
+			return contractModelCode;
+		}
+		public void setContractModelCode(ContractModelCode contractModelCode) {
+			this.contractModelCode = contractModelCode;
+		}
 		public ContractCode getContractCode() {
 			return contractCode;
 		}
