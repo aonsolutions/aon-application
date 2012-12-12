@@ -63,9 +63,10 @@ public class EmailCommunicationController implements IMarketingConstants {
 		boolean result = true;
 		try {
 			String recipients = StringUtils.join(emails, ",");
+	    	LOGGER.debug( "Sending email to: {}", recipients );			
 			messageController.setRecipientsBcc(recipients);
 	    	AonMessage aonMessage = messageController.compoundMessage(server);
-	   		server.sendMessage(aonMessage);
+	    	server.sendMessage(aonMessage);
 		} catch ( Throwable th ) {
 			LOGGER.error("Error sending email to " + emails, th );
 			result = false;
@@ -171,8 +172,8 @@ public class EmailCommunicationController implements IMarketingConstants {
     				offset -= count;
     			}
     		} while ( count > 0 );
-		} catch (ManagerBeanException e) {
-			LOGGER.error("Error retrieving next ActionTarget", e);
+		} catch (Throwable e) {
+			LOGGER.error("Error sending emails", e);
 			logger.error( e.getMessage() );
 			throw new AbortProcessingException(e.getMessage(), e);
 		} finally {
