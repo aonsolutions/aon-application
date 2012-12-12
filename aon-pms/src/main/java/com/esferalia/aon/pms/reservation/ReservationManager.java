@@ -104,7 +104,7 @@ public class ReservationManager implements IReservationConstants {
 		} else if (actionType.equals(MODIFY_RESERVATION)) {
 			return modifyReservation(reservationType, posType);
 		} else if (actionType.equals(CANCEL_RESERVATION)) {
-			return cancelReservation(reservationType);
+			return cancelReservation(reservationType, posType);
 		}
 		return null;
 	}
@@ -144,8 +144,12 @@ public class ReservationManager implements IReservationConstants {
 		}
 	}
 
-	private ProjectReservation cancelReservation(HotelReservationType reservationType) throws ManagerBeanException, ReservationException {
+	private ProjectReservation cancelReservation(HotelReservationType reservationType, POSType posType) throws ManagerBeanException, ReservationException {
 		ProjectReservation reservation = obtainReservation(reservationType);
+		if (reservation == null) {
+			reservation = addReservation(reservationType, posType);
+		}
+
 		if (reservation != null) {
 			if (reservation.getStatus() == ReservationStatus.ACTIVE || reservation.getStatus() == ReservationStatus.BLOCKED) {
 				removeReservationRoomDetail(reservation);
