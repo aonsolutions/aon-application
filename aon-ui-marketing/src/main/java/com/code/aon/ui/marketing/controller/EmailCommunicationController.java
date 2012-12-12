@@ -103,6 +103,7 @@ public class EmailCommunicationController implements IMarketingConstants {
 				actionTarget.setStatus(ActionTargetStatus.CANCEL);				
 			} else {
 				emails.addAll(targetEmails);
+				actionTarget.setStatus(ActionTargetStatus.PENDING);
 			}
 		}
 		ActionTargetStatus status = ActionTargetStatus.INCORRECT;
@@ -163,6 +164,7 @@ public class EmailCommunicationController implements IMarketingConstants {
     		AonServer server = new AonServer(messageController.getSenderMailAccount());
     		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
     		Criteria criteria = ccc.getPendingTargetsCriteria(bean);
+    		criteria.addOrder("ActionTarget.target.registry.name", false);
     		int count = ccc.getNumberOfTargetsInEmail();
     		int offset = ccc.getPendingTargets() - count;
     		List<ActionTarget> list = null;
