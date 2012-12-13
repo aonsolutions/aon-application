@@ -31,6 +31,7 @@
 				
 		<ui:define name="lookupInputTextContent">
 			<aon:joinProperty alias="Item_product_code" value="#{lookupInputValue}" />
+			<aon:joinProperty alias="Item_barcode" value="#{lookupInputValue}" orExpression="#{true}" />
 		</ui:define>		
 	</ui:decorate>
 

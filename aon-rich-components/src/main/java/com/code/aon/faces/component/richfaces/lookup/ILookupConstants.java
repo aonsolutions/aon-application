@@ -16,6 +16,7 @@ public interface ILookupConstants {
 	String SUGGEST_ALIAS = "suggestAlias";
 	String MATCH_BEGIN_ONLY = "matchBeginOnly";
 	String LOOKUP_ACTION = "lookupAction";
+	String OR_EXPRESSION = "orExpression";
 	
 	// Title default messages
 	String LIST_TITLE = "#{bundle.aon_open_select_window}";

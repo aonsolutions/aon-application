@@ -1,10 +1,9 @@
 package com.code.aon.faces.component.richfaces.lookup.inputText;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 
-import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 
 import com.code.aon.faces.component.richfaces.lookup.HtmlLookupBasicInput;
@@ -12,7 +11,7 @@ import com.code.aon.faces.component.richfaces.lookup.HtmlLookupBasicInput;
 public class HtmlLookupInputText extends HtmlLookupBasicInput {
 
 	/** The map of join value bindings. */
-	private Map<String,ValueExpression> joinBindingsMap;
+	private List<JoinProperty> joinProperties;
     
 	private Object[] _state;    
     
@@ -20,32 +19,32 @@ public class HtmlLookupInputText extends HtmlLookupBasicInput {
      * default no args constructor
      */
     public HtmlLookupInputText() {
-        this.joinBindingsMap = Collections.emptyMap();
+        this.joinProperties = Collections.emptyList();
     }
 	
-	public void addJoinProperty( String alias, ValueExpression ve ) {
-		if ( this.joinBindingsMap.isEmpty() ) {
-			this.joinBindingsMap = new HashMap<String, ValueExpression>();
+	public void addJoinProperty( JoinProperty joinProperty ) {
+		if ( this.joinProperties.isEmpty() ) {
+			this.joinProperties = new LinkedList<JoinProperty>();
 		}
-		this.joinBindingsMap.put( alias, ve );
+		this.joinProperties.add( joinProperty );
 	}
 	
 	/**
-	 * Gets the join bindings map.
+	 * Gets the join properties list.
 	 * 
-	 * @return the join bindings map
+	 * @return the join properties list
 	 */
-	public Map<String, ValueExpression> getJoinBindingsMap() {
-		return this.joinBindingsMap;
+	public List<JoinProperty> getJoinProperties() {
+		return joinProperties;
 	}
-	
+
 	/**
-	 * Sets the join bindings map.
+	 * Sets the join properties list.
 	 * 
-	 * @param joinBindingsMap the join bindings map
+	 * @param joinProperties the join properties list
 	 */
-	public void setJoinBindingsMap(Map<String, ValueExpression> joinBindingsMap) {
-		this.joinBindingsMap = joinBindingsMap;
+	public void setJoinProperties(List<JoinProperty> joinProperties) {
+		this.joinProperties = joinProperties;
 	}
 
 	/**
@@ -55,10 +54,11 @@ public class HtmlLookupInputText extends HtmlLookupBasicInput {
      * @param context
      * @return Object values[]
      */
-  	public void restoreState(FacesContext context, Object value) {  
+  	@SuppressWarnings("unchecked")
+	public void restoreState(FacesContext context, Object value) {  
   		this._state = (Object[]) value;  
   		super.restoreState(context, this._state[0]);  
-  		joinBindingsMap = (Map<String, ValueExpression>) this._state[1];
+  		joinProperties = (List<JoinProperty>) this._state[1];
   	}  
    
     /**
@@ -73,7 +73,7 @@ public class HtmlLookupInputText extends HtmlLookupBasicInput {
   			_state = new Object[2];  
   		}  
   		_state[0] = super.saveState(_context);  
-  		_state[1] = joinBindingsMap;
+  		_state[1] = joinProperties;
   		
   		return _state;  
   	}

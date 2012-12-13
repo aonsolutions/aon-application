@@ -4,10 +4,8 @@ import static com.code.aon.faces.controller.IRichConstants.SEARCH_NO_RESULTS;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
@@ -31,6 +29,7 @@ import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
 import com.code.aon.faces.component.richfaces.lookup.button.HtmlLookupButton;
 import com.code.aon.faces.component.richfaces.lookup.button.LookupButtonType;
 import com.code.aon.faces.component.richfaces.lookup.inputText.HtmlLookupInputText;
+import com.code.aon.faces.component.richfaces.lookup.inputText.JoinProperty;
 import com.code.aon.faces.component.richfaces.lookup.suggestText.HtmlLookupSuggestText;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
@@ -169,20 +168,20 @@ public class RichLookupBean {
 	}
 
 	/**
-	 * Gets the join bindings map.
+	 * Gets the join properties list.
 	 * 
 	 * @param event
 	 *            the event
 	 * 
-	 * @return the join bindings map
+	 * @return the join properties list
 	 */
-	public Map<String, ValueExpression> getJoinBindingsMap(UIComponent component) {
-		Map<String, ValueExpression> joinBindingsMap = Collections.emptyMap();
+	public List<JoinProperty> getJoinBindingsMap(UIComponent component) {
+		List<JoinProperty> joinProperties = Collections.emptyList();
 		if (component instanceof HtmlLookupInputText) {
 			HtmlLookupInputText lookupComponent = (HtmlLookupInputText) component;
-			joinBindingsMap = lookupComponent.getJoinBindingsMap();
+			joinProperties = lookupComponent.getJoinProperties();
 		}
-		return joinBindingsMap;
+		return joinProperties;
 	}
 
 	/**
@@ -489,35 +488,28 @@ public class RichLookupBean {
 	}
 
 	/**
-	 * Gets the values map.
-	 * 
-	 * @return the values map
-	 */
-	private Map<String, Object> getValuesMap(Map<String, ValueExpression> joinBindingsMap) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		for (Entry<String, ValueExpression> entry : joinBindingsMap.entrySet()) {
-			Object value = entry.getValue().getValue(ctx.getELContext());
-			map.put(entry.getKey(), value);
-		}
-		return map;
-	}
-
-	/**
 	 * Gets the criteria.
 	 * 
 	 * @return the criteria
 	 * @throws ManagerBeanException
 	 */
-	private void updateCriteria(Map<String, Object> valuesMap) throws ManagerBeanException {
+	private void updateCriteria(List<JoinProperty> joinProperties) throws ManagerBeanException {
 		Criteria criteria = getController().getCriteria();
+		FacesContext ctx = FacesContext.getCurrentInstance();
 		IManagerBean bean = getController().getManagerBean();
-		for (Entry<String, Object> entry : valuesMap.entrySet()) {
-			String fieldName = bean.getFieldName(entry.getKey());
-			if (entry.getValue() != null) {
-				criteria.addEqualExpression(fieldName, entry.getValue());
+		for (JoinProperty jp : joinProperties) {
+			String fieldName = bean.getFieldName(jp.getAlias());
+			Object value = jp.getValue(ctx);
+			Expression expression = null;
+			if (value != null) {
+				expression = ExpressionUtilities.getEqualExpression(fieldName, value);
 			} else {
-				criteria.addNullExpression(fieldName);
+				expression = ExpressionUtilities.getNullExpression(fieldName);
+			}
+			if ( jp.isOrExpression() ) {
+				criteria.addOrExpression(expression);
+			} else {
+				criteria.addExpression(expression);
 			}
 		}
 	}
@@ -579,9 +571,8 @@ public class RichLookupBean {
 		UIComponent component = event.getComponent().getParent();
 		setBindings( component );
 		onEditSearch(event);
-		Map<String, ValueExpression> joinBindingsMap = getJoinBindingsMap(component);
-		Map<String, Object> valuesMap = getValuesMap(joinBindingsMap);
-		updateCriteria(valuesMap);
+		List<JoinProperty> joinProperties = getJoinBindingsMap(component);
+		updateCriteria(joinProperties);
 		onSearch(event);
 		if (getModel().getRowCount() == 1) {
 			getController().getModel().setRowIndex(0);

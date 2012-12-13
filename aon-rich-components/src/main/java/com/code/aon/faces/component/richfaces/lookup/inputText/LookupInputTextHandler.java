@@ -1,11 +1,9 @@
 package com.code.aon.faces.component.richfaces.lookup.inputText;
 
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.el.ExpressionFactory;
-import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 
 import com.code.aon.common.dao.AliasEntry;
@@ -52,8 +50,8 @@ public class LookupInputTextHandler extends LookupBasicInputHandler {
     	}
 	}
 
-	private Map<String, ValueExpression> calculateJoinBindings( FaceletContext ctx, HtmlLookupInputText text ) {
-		Map<String, ValueExpression> joinBindingsMap = new HashMap<String, ValueExpression>();
+	private List<JoinProperty> calculateJoinBindings( FaceletContext ctx, HtmlLookupInputText text ) {
+		List<JoinProperty> joinProperties = new LinkedList<JoinProperty>();
 		if ( text.getProperty() != null ) {
 			DAOConstantsResolver resolver = new DAOConstantsResolver();
 			String expression = text.getProperty().getExpressionString();
@@ -61,19 +59,20 @@ public class LookupInputTextHandler extends LookupBasicInputHandler {
 			BasicController controller = text.getLookup().getController();
 			for (AliasEntry entry : resolver.getIdentifierAliasEntryList(controller.getPojo())) {
 				String value = FaceletUtil.appendExpression(expression, entry.getAccessPath());
-				joinBindingsMap.put(entry.getAlias(), factory.createValueExpression(ctx, value, Object.class));
+				JoinProperty jp = new JoinProperty(entry.getAlias(), factory.createValueExpression(ctx, value, Object.class));
+				joinProperties.add(jp);
 			}
 		}
-		return joinBindingsMap;
+		return joinProperties;
 	}
 
 	@Override
 	protected void onComponentPopulated(FaceletContext ctx, UIComponent c, UIComponent parent) {
 		HtmlLookupInputText text = (HtmlLookupInputText) c;
-		Map<String, ValueExpression> joinBindingsMap = text.getJoinBindingsMap(); 
-		if (joinBindingsMap.isEmpty()) {
-			joinBindingsMap = calculateJoinBindings(ctx, text);
-			text.setJoinBindingsMap(joinBindingsMap);
+		List<JoinProperty> joinProperties = text.getJoinProperties(); 
+		if (joinProperties.isEmpty()) {
+			joinProperties = calculateJoinBindings(ctx, text);
+			text.setJoinProperties(joinProperties);
 		}
 	}
 	

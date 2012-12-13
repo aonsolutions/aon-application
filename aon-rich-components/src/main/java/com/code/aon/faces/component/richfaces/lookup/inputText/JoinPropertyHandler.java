@@ -3,6 +3,10 @@
  */
 package com.code.aon.faces.component.richfaces.lookup.inputText;
 
+import static com.code.aon.faces.component.richfaces.IRichFacesTags.VALUE;
+import static com.code.aon.faces.component.richfaces.lookup.ILookupConstants.ALIAS;
+import static com.code.aon.faces.component.richfaces.lookup.ILookupConstants.OR_EXPRESSION;
+
 import java.io.IOException;
 
 import javax.el.ELException;
@@ -10,7 +14,6 @@ import javax.el.ValueExpression;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 
-import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.FaceletException;
 import com.sun.facelets.tag.TagAttribute;
@@ -22,7 +25,7 @@ import com.sun.facelets.tag.TagHandler;
  * @author Consulting & Development. Iñaki Ayerbe - 27/11/2006
  *
  */
-public class JoinPropertyHandler extends TagHandler implements IRichFacesTags {
+public class JoinPropertyHandler extends TagHandler {
 
     private final TagAttribute aliasTag;
     
@@ -35,7 +38,7 @@ public class JoinPropertyHandler extends TagHandler implements IRichFacesTags {
 	 */
 	public JoinPropertyHandler(TagConfig config) {
 		super(config);
-		this.aliasTag = this.getRequiredAttribute("alias");
+		this.aliasTag = this.getRequiredAttribute(ALIAS);
 		this.valueTag = this.getRequiredAttribute(VALUE);
 	}
 
@@ -50,7 +53,13 @@ public class JoinPropertyHandler extends TagHandler implements IRichFacesTags {
 	    			String alias = aliasTag.getValue(ctx);
 	            	ValueExpression ve = valueTag.getValueExpression(ctx, Object.class);
 	    			HtmlLookupInputText text = (HtmlLookupInputText) parent;
-	    			text.addJoinProperty(alias, ve);
+	    			boolean orExpression = false;
+	    			TagAttribute orExpressionTag = getAttribute(OR_EXPRESSION);
+	    			if ( orExpressionTag != null ) {
+	    				orExpression = orExpressionTag.getBoolean(ctx);
+	    			}
+	    			JoinProperty jp = new JoinProperty(alias, ve, orExpression);
+	    			text.addJoinProperty( jp );
 	            } else {
 	                throw new TagAttributeException( this.tag, valueTag, "Tag " + this.tagId + " attribute value must be a value reference, was " + valueTag.getValue());
 	            }
