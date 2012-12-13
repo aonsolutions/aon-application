@@ -88,7 +88,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-jcl</artifactId>
+			<artifactId>slf4j-simple</artifactId>
 			<version>1.5.11</version>
 			<scope>runtime</scope>
 			<optional>false</optional>
@@ -164,7 +164,6 @@
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
-		
 	</dependencies>
 
 	<build>
@@ -222,11 +221,11 @@
 							<release>${buildNumber}</release>
 							<copyright>2010, esferalia Networks S.A</copyright>
 							<requires>
-								<require>slf4j</require>
+								<!--  require>slf4j</require-->
+								<require>aon.python</require>
 								<require>inotify-java</require>
 								<require>aon-dbutils</require>
 								<require>aon-master</require>
-								<require>jakarta-commons-cli</require>
 								<require>jakarta-commons-lang</require>
 								<require>jakarta-commons-codec</require>
 								<require>jakarta-commons-logging</require>
@@ -238,6 +237,9 @@
 									<directory>/usr/share/java</directory>
 									<dependency>
 										<includes>
+											<include>org.slf4j:slf4j-api</include>
+											<include>org.slf4j:slf4j-simple</include>
+											<include>commons-cli:commons-cli</include>
 											<include>com.code.aon:aon.config</include>
 											<include>com.code.aon:aon.config</include>
 											<include>com.code.aon:aon.common</include>
@@ -258,6 +260,18 @@
 												<include>${project.artifactId}-${project.version}.jar</include>
 											</includes>
 										</source>
+										<softlinkSource>
+											<location>/usr/share/java/commons-cli-1.2.jar</location>
+											<destination>commons-cli.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/slf4j-api-1.5.11.jar</location>
+											<destination>slf4j-api.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/slf4j-simple-1.5.11.jar</location>
+											<destination>slf4j-simple.jar</destination>
+										</softlinkSource>
 										<softlinkSource>
 											<location>/usr/share/java/${project.artifactId}-${project.version}.jar</location>
 											<destination>${project.artifactId}.jar</destination>

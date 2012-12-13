@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	final static Logger LOGGER = 
-		LoggerFactory.getLogger(AbstractMysqlDB.class);
+		LoggerFactory.getLogger("AbstractMysqlDB");
 	
 	private int maxAllowedPacket ; 
 	
@@ -111,6 +111,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 #end
 		}
 		${table.name}Stmt.executeUpdate();
+		${table.name}s.clear();
 		${table.name}Inserted += size;
 
 		// elapsed time in milliseconds
@@ -151,11 +152,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 #end
 	
-	private void flush$table(  )
+	protected void flush$table( )
+	throws SQLException {
+		flush$table(false);
+	}	
+
+	private void flush$table( boolean close )
 	throws SQLException {
 		if ( ! ${table.name}s.isEmpty() )
 			insert${table}(${table.name}s);
-		if ( ${table.name}Stmt != null )
+		if ( close && ${table.name}Stmt != null )
 			${table.name}Stmt.close();
 	}	
 
@@ -183,7 +189,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( ${table.size} * ${table.name}Count >=  this.maxAllowedPacket ){
 			insert${table}(${table.name}s);
-			${table.name}s.clear();
 		} 
 	}
 
@@ -234,7 +239,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	protected void finish() 
 	throws SQLException {
 #foreach($table in $tables)
-		flush${table}();
+		flush${table}(true);
 #end
 		Statement stmt = null; 
 		try {
@@ -302,6 +307,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 #end
 	}
 	
+	protected void syncIds() 
+	throws SQLException {
+#foreach($table in $tables)
+#if($table.isAutoIncrement())		
+		flush${table}();
+		init${table}Id();
+#end
+#end
+	}
+
 	protected static void debug(String format, Object ... args){
 		LOGGER.debug(format, args);
 	}

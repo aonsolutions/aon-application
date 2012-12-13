@@ -563,7 +563,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 					finiquito.getFecbaj());
 		} // end-if vacacines que cotizan, 
 		else if ( vacImporte > 0 ){
-			Integer conceptId = mysqlDB.getPaymentConceptId("FIVAC");
+			Integer conceptId = mysqlDB.getPaymentConceptId(mysqlDB.getDefaultDomain(), "FIVAC");
 			mysqlDB.insertContract_payment(null, 
 					contractId, 
 					conceptId, 
@@ -688,7 +688,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		
 		String irpf = finindem.getIrpf();
 		
-		Integer conceptId = mysqlDB.getPaymentConceptId("INDEM");
+		Integer conceptId = mysqlDB.getPaymentConceptId(mysqlDB.getDefaultDomain(), "INDEM");
 		mysqlDB.insertContract_payment(
 				null, 
 				contractId, 

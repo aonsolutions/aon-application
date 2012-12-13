@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	final static Logger LOGGER = 
-		LoggerFactory.getLogger(AbstractMysqlDB.class);
+		LoggerFactory.getLogger("AbstractMysqlDB");
 	
 	private int maxAllowedPacket ; 
 	
@@ -100,6 +100,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				db_versionStmt.setString(offset++, db_version.version_number);
 		}
 		db_versionStmt.executeUpdate();
+		db_versions.clear();
 		db_versionInserted += size;
 
 		// elapsed time in milliseconds
@@ -108,11 +109,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 		
 	
-	private void flushDb_version(  )
+	protected void flushDb_version( )
+	throws SQLException {
+		flushDb_version(false);
+	}	
+
+	private void flushDb_version( boolean close )
 	throws SQLException {
 		if ( ! db_versions.isEmpty() )
 			insertDb_version(db_versions);
-		if ( db_versionStmt != null )
+		if ( close && db_versionStmt != null )
 			db_versionStmt.close();
 	}	
 
@@ -133,7 +139,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 10 * db_versionCount >=  this.maxAllowedPacket ){
 			insertDb_version(db_versions);
-			db_versions.clear();
 		} 
 	}
 
@@ -204,6 +209,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				pcategoryStmt.setInt(offset++, pcategory.pcategory_group);
 		}
 		pcategoryStmt.executeUpdate();
+		pcategorys.clear();
 		pcategoryInserted += size;
 
 		// elapsed time in milliseconds
@@ -242,11 +248,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.pcategoryId = pcategoryId;
 		} 
 	
-	private void flushPcategory(  )
+	protected void flushPcategory( )
+	throws SQLException {
+		flushPcategory(false);
+	}	
+
+	private void flushPcategory( boolean close )
 	throws SQLException {
 		if ( ! pcategorys.isEmpty() )
 			insertPcategory(pcategorys);
-		if ( pcategoryStmt != null )
+		if ( close && pcategoryStmt != null )
 			pcategoryStmt.close();
 	}	
 
@@ -275,7 +286,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 126 * pcategoryCount >=  this.maxAllowedPacket ){
 			insertPcategory(pcategorys);
-			pcategorys.clear();
 		} 
 	}
 
@@ -382,6 +392,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				item_addinfoStmt.setDate(offset++, item_addinfo.value_date);
 		}
 		item_addinfoStmt.executeUpdate();
+		item_addinfos.clear();
 		item_addinfoInserted += size;
 
 		// elapsed time in milliseconds
@@ -420,11 +431,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.item_addinfoId = item_addinfoId;
 		} 
 	
-	private void flushItem_addinfo(  )
+	protected void flushItem_addinfo( )
+	throws SQLException {
+		flushItem_addinfo(false);
+	}	
+
+	private void flushItem_addinfo( boolean close )
 	throws SQLException {
 		if ( ! item_addinfos.isEmpty() )
 			insertItem_addinfo(item_addinfos);
-		if ( item_addinfoStmt != null )
+		if ( close && item_addinfoStmt != null )
 			item_addinfoStmt.close();
 	}	
 
@@ -455,7 +471,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 200 * item_addinfoCount >=  this.maxAllowedPacket ){
 			insertItem_addinfo(item_addinfos);
-			item_addinfos.clear();
 		} 
 	}
 
@@ -569,6 +584,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				agreement_dataStmt.setDate(offset++, agreement_data.end_date);
 		}
 		agreement_dataStmt.executeUpdate();
+		agreement_datas.clear();
 		agreement_dataInserted += size;
 
 		// elapsed time in milliseconds
@@ -607,11 +623,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.agreement_dataId = agreement_dataId;
 		} 
 	
-	private void flushAgreement_data(  )
+	protected void flushAgreement_data( )
+	throws SQLException {
+		flushAgreement_data(false);
+	}	
+
+	private void flushAgreement_data( boolean close )
 	throws SQLException {
 		if ( ! agreement_datas.isEmpty() )
 			insertAgreement_data(agreement_datas);
-		if ( agreement_dataStmt != null )
+		if ( close && agreement_dataStmt != null )
 			agreement_dataStmt.close();
 	}	
 
@@ -644,7 +665,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 210 * agreement_dataCount >=  this.maxAllowedPacket ){
 			insertAgreement_data(agreement_datas);
-			agreement_datas.clear();
 		} 
 	}
 
@@ -745,6 +765,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				warehouseStmt.setInt(offset++, warehouse.workplace);
 		}
 		warehouseStmt.executeUpdate();
+		warehouses.clear();
 		warehouseInserted += size;
 
 		// elapsed time in milliseconds
@@ -783,11 +804,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.warehouseId = warehouseId;
 		} 
 	
-	private void flushWarehouse(  )
+	protected void flushWarehouse( )
+	throws SQLException {
+		flushWarehouse(false);
+	}	
+
+	private void flushWarehouse( boolean close )
 	throws SQLException {
 		if ( ! warehouses.isEmpty() )
 			insertWarehouse(warehouses);
-		if ( warehouseStmt != null )
+		if ( close && warehouseStmt != null )
 			warehouseStmt.close();
 	}	
 
@@ -814,7 +840,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 62 * warehouseCount >=  this.maxAllowedPacket ){
 			insertWarehouse(warehouses);
-			warehouses.clear();
 		} 
 	}
 
@@ -866,7 +891,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean withholding; 
 		protected Short transaction; 
 		protected Short status; 
-		protected Integer segment; 
 		protected Integer scope; 
 		protected Boolean e_invoice; 
 		protected Boolean delivery_grouped; 
@@ -881,7 +905,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( customerStmt != null ) {
 				customerStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -890,7 +914,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			customerStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO customer (registry,domain,tariff,surcharge,withholding,transaction,status,segment,scope,e_invoice,delivery_grouped,delivery_valuated)"  
+				"INSERT INTO customer (registry,domain,tariff,surcharge,withholding,transaction,status,scope,e_invoice,delivery_grouped,delivery_valuated)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			customerStmtSize = size;
@@ -927,10 +951,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				customerStmt.setNull(offset++, -6);
 			else
 				customerStmt.setShort(offset++, customer.status);
-			if ( customer.segment == null )
-				customerStmt.setNull(offset++, 4);
-			else
-				customerStmt.setInt(offset++, customer.segment);
 			if ( customer.scope == null )
 				customerStmt.setNull(offset++, 4);
 			else
@@ -949,6 +969,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				customerStmt.setBoolean(offset++, customer.delivery_valuated);
 		}
 		customerStmt.executeUpdate();
+		customers.clear();
 		customerInserted += size;
 
 		// elapsed time in milliseconds
@@ -957,11 +978,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 		
 	
-	private void flushCustomer(  )
+	protected void flushCustomer( )
+	throws SQLException {
+		flushCustomer(false);
+	}	
+
+	private void flushCustomer( boolean close )
 	throws SQLException {
 		if ( ! customers.isEmpty() )
 			insertCustomer(customers);
-		if ( customerStmt != null )
+		if ( close && customerStmt != null )
 			customerStmt.close();
 	}	
 
@@ -974,14 +1000,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param withholding Indica si el Cliente aplica retencion de impuestos
 	 * @param transaction Tipo de transacciones del Cliente
 	 * @param status Estado del Cliente
-	 * @param segment Segmento del Cliente
 	 * @param scope Identificador del Ambito
 	 * @param e_invoice Indica si el Cliente desea recibir Facturas electronicas
 	 * @param delivery_grouped Indica si el Cliente desea agrupar Albaranes en una sola Factura
 	 * @param delivery_valuated Indica si el Cliente desea imprimir el Albaran valorado
 	 * @throws SQLException
 	*/
-	protected void insertCustomer(Integer registry, Integer domain, Integer tariff, Boolean surcharge, Boolean withholding, Short transaction, Short status, Integer segment, Integer scope, Boolean e_invoice, Boolean delivery_grouped, Boolean delivery_valuated)
+	protected void insertCustomer(Integer registry, Integer domain, Integer tariff, Boolean surcharge, Boolean withholding, Short transaction, Short status, Integer scope, Boolean e_invoice, Boolean delivery_grouped, Boolean delivery_valuated)
 	throws SQLException {
 
 		Customer customer_ = new Customer();
@@ -992,7 +1017,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		customer_.withholding = withholding;
 		customer_.transaction = transaction;
 		customer_.status = status;
-		customer_.segment = segment;
 		customer_.scope = scope;
 		customer_.e_invoice = e_invoice;
 		customer_.delivery_grouped = delivery_grouped;
@@ -1002,9 +1026,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int customerCount = customers.size();
 		
-		if ( 56 * customerCount >=  this.maxAllowedPacket ){
+		if ( 46 * customerCount >=  this.maxAllowedPacket ){
 			insertCustomer(customers);
-			customers.clear();
 		} 
 	}
 
@@ -1115,6 +1138,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				posStmt.setString(offset++, pos.pos_version);
 		}
 		posStmt.executeUpdate();
+		poss.clear();
 		posInserted += size;
 
 		// elapsed time in milliseconds
@@ -1153,11 +1177,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.posId = posId;
 		} 
 	
-	private void flushPos(  )
+	protected void flushPos( )
+	throws SQLException {
+		flushPos(false);
+	}	
+
+	private void flushPos( boolean close )
 	throws SQLException {
 		if ( ! poss.isEmpty() )
 			insertPos(poss);
-		if ( posStmt != null )
+		if ( close && posStmt != null )
 			posStmt.close();
 	}	
 
@@ -1202,7 +1231,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 183 * posCount >=  this.maxAllowedPacket ){
 			insertPos(poss);
-			poss.clear();
 		} 
 	}
 
@@ -1310,6 +1338,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				message_contentStmt.setString(offset++, message_content.content);
 		}
 		message_contentStmt.executeUpdate();
+		message_contents.clear();
 		message_contentInserted += size;
 
 		// elapsed time in milliseconds
@@ -1348,11 +1377,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.message_contentId = message_contentId;
 		} 
 	
-	private void flushMessage_content(  )
+	protected void flushMessage_content( )
+	throws SQLException {
+		flushMessage_content(false);
+	}	
+
+	private void flushMessage_content( boolean close )
 	throws SQLException {
 		if ( ! message_contents.isEmpty() )
 			insertMessage_content(message_contents);
-		if ( message_contentStmt != null )
+		if ( close && message_contentStmt != null )
 			message_contentStmt.close();
 	}	
 
@@ -1377,7 +1411,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 20 * message_contentCount >=  this.maxAllowedPacket ){
 			insertMessage_content(message_contents);
-			message_contents.clear();
 		} 
 	}
 
@@ -1470,6 +1503,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				application_user_profileStmt.setInt(offset++, application_user_profile.profile);
 		}
 		application_user_profileStmt.executeUpdate();
+		application_user_profiles.clear();
 		application_user_profileInserted += size;
 
 		// elapsed time in milliseconds
@@ -1508,11 +1542,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.application_user_profileId = application_user_profileId;
 		} 
 	
-	private void flushApplication_user_profile(  )
+	protected void flushApplication_user_profile( )
+	throws SQLException {
+		flushApplication_user_profile(false);
+	}	
+
+	private void flushApplication_user_profile( boolean close )
 	throws SQLException {
 		if ( ! application_user_profiles.isEmpty() )
 			insertApplication_user_profile(application_user_profiles);
-		if ( application_user_profileStmt != null )
+		if ( close && application_user_profileStmt != null )
 			application_user_profileStmt.close();
 	}	
 
@@ -1539,7 +1578,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * application_user_profileCount >=  this.maxAllowedPacket ){
 			insertApplication_user_profile(application_user_profiles);
-			application_user_profiles.clear();
 		} 
 	}
 
@@ -1669,6 +1707,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoice_taxStmt.setDouble(offset++, invoice_tax.deductible_quota);
 		}
 		invoice_taxStmt.executeUpdate();
+		invoice_taxs.clear();
 		invoice_taxInserted += size;
 
 		// elapsed time in milliseconds
@@ -1707,11 +1746,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.invoice_taxId = invoice_taxId;
 		} 
 	
-	private void flushInvoice_tax(  )
+	protected void flushInvoice_tax( )
+	throws SQLException {
+		flushInvoice_tax(false);
+	}	
+
+	private void flushInvoice_tax( boolean close )
 	throws SQLException {
 		if ( ! invoice_taxs.isEmpty() )
 			insertInvoice_tax(invoice_taxs);
-		if ( invoice_taxStmt != null )
+		if ( close && invoice_taxStmt != null )
 			invoice_taxStmt.close();
 	}	
 
@@ -1752,7 +1796,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 135 * invoice_taxCount >=  this.maxAllowedPacket ){
 			insertInvoice_tax(invoice_taxs);
-			invoice_taxs.clear();
 		} 
 	}
 
@@ -1926,6 +1969,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				reservation_request_guestStmt.setTimestamp(offset++, reservation_request_guest.modification_date);
 		}
 		reservation_request_guestStmt.executeUpdate();
+		reservation_request_guests.clear();
 		reservation_request_guestInserted += size;
 
 		// elapsed time in milliseconds
@@ -1964,11 +2008,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.reservation_request_guestId = reservation_request_guestId;
 		} 
 	
-	private void flushReservation_request_guest(  )
+	protected void flushReservation_request_guest( )
+	throws SQLException {
+		flushReservation_request_guest(false);
+	}	
+
+	private void flushReservation_request_guest( boolean close )
 	throws SQLException {
 		if ( ! reservation_request_guests.isEmpty() )
 			insertReservation_request_guest(reservation_request_guests);
-		if ( reservation_request_guestStmt != null )
+		if ( close && reservation_request_guestStmt != null )
 			reservation_request_guestStmt.close();
 	}	
 
@@ -2021,7 +2070,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 793 * reservation_request_guestCount >=  this.maxAllowedPacket ){
 			insertReservation_request_guest(reservation_request_guests);
-			reservation_request_guests.clear();
 		} 
 	}
 
@@ -2172,6 +2220,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_attachStmt.setDate(offset++, contract_attach.attach_date);
 		}
 		contract_attachStmt.executeUpdate();
+		contract_attachs.clear();
 		contract_attachInserted += size;
 
 		// elapsed time in milliseconds
@@ -2210,11 +2259,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.contract_attachId = contract_attachId;
 		} 
 	
-	private void flushContract_attach(  )
+	protected void flushContract_attach( )
+	throws SQLException {
+		flushContract_attach(false);
+	}	
+
+	private void flushContract_attach( boolean close )
 	throws SQLException {
 		if ( ! contract_attachs.isEmpty() )
 			insertContract_attach(contract_attachs);
-		if ( contract_attachStmt != null )
+		if ( close && contract_attachStmt != null )
 			contract_attachStmt.close();
 	}	
 
@@ -2253,7 +2307,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 123 * contract_attachCount >=  this.maxAllowedPacket ){
 			insertContract_attach(contract_attachs);
-			contract_attachs.clear();
 		} 
 	}
 
@@ -2375,6 +2428,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				iattachStmt.setShort(offset++, iattach.type);
 		}
 		iattachStmt.executeUpdate();
+		iattachs.clear();
 		iattachInserted += size;
 
 		// elapsed time in milliseconds
@@ -2413,11 +2467,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.iattachId = iattachId;
 		} 
 	
-	private void flushIattach(  )
+	protected void flushIattach( )
+	throws SQLException {
+		flushIattach(false);
+	}	
+
+	private void flushIattach( boolean close )
 	throws SQLException {
 		if ( ! iattachs.isEmpty() )
 			insertIattach(iattachs);
-		if ( iattachStmt != null )
+		if ( close && iattachStmt != null )
 			iattachStmt.close();
 	}	
 
@@ -2450,7 +2509,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 100 * iattachCount >=  this.maxAllowedPacket ){
 			insertIattach(iattachs);
-			iattachs.clear();
 		} 
 	}
 
@@ -2566,6 +2624,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				tas_itemStmt.setString(offset++, tas_item.add_info);
 		}
 		tas_itemStmt.executeUpdate();
+		tas_items.clear();
 		tas_itemInserted += size;
 
 		// elapsed time in milliseconds
@@ -2604,11 +2663,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.tas_itemId = tas_itemId;
 		} 
 	
-	private void flushTas_item(  )
+	protected void flushTas_item( )
+	throws SQLException {
+		flushTas_item(false);
+	}	
+
+	private void flushTas_item( boolean close )
 	throws SQLException {
 		if ( ! tas_items.isEmpty() )
 			insertTas_item(tas_items);
-		if ( tas_itemStmt != null )
+		if ( close && tas_itemStmt != null )
 			tas_itemStmt.close();
 	}	
 
@@ -2641,7 +2705,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 590 * tas_itemCount >=  this.maxAllowedPacket ){
 			insertTas_item(tas_items);
-			tas_items.clear();
 		} 
 	}
 
@@ -2767,6 +2830,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				payment_conceptStmt.setString(offset++, payment_concept.quote_expression);
 		}
 		payment_conceptStmt.executeUpdate();
+		payment_concepts.clear();
 		payment_conceptInserted += size;
 
 		// elapsed time in milliseconds
@@ -2805,11 +2869,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.payment_conceptId = payment_conceptId;
 		} 
 	
-	private void flushPayment_concept(  )
+	protected void flushPayment_concept( )
+	throws SQLException {
+		flushPayment_concept(false);
+	}	
+
+	private void flushPayment_concept( boolean close )
 	throws SQLException {
 		if ( ! payment_concepts.isEmpty() )
 			insertPayment_concept(payment_concepts);
-		if ( payment_conceptStmt != null )
+		if ( close && payment_conceptStmt != null )
 			payment_conceptStmt.close();
 	}	
 
@@ -2846,7 +2915,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 479 * payment_conceptCount >=  this.maxAllowedPacket ){
 			insertPayment_concept(payment_concepts);
-			payment_concepts.clear();
 		} 
 	}
 
@@ -2951,6 +3019,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				cost_profileStmt.setDouble(offset++, cost_profile.cost);
 		}
 		cost_profileStmt.executeUpdate();
+		cost_profiles.clear();
 		cost_profileInserted += size;
 
 		// elapsed time in milliseconds
@@ -2989,11 +3058,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.cost_profileId = cost_profileId;
 		} 
 	
-	private void flushCost_profile(  )
+	protected void flushCost_profile( )
+	throws SQLException {
+		flushCost_profile(false);
+	}	
+
+	private void flushCost_profile( boolean close )
 	throws SQLException {
 		if ( ! cost_profiles.isEmpty() )
 			insertCost_profile(cost_profiles);
-		if ( cost_profileStmt != null )
+		if ( close && cost_profileStmt != null )
 			cost_profileStmt.close();
 	}	
 
@@ -3020,7 +3094,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 74 * cost_profileCount >=  this.maxAllowedPacket ){
 			insertCost_profile(cost_profiles);
-			cost_profiles.clear();
 		} 
 	}
 
@@ -3105,6 +3178,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				roleStmt.setString(offset++, role.name);
 		}
 		roleStmt.executeUpdate();
+		roles.clear();
 		roleInserted += size;
 
 		// elapsed time in milliseconds
@@ -3143,11 +3217,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.roleId = roleId;
 		} 
 	
-	private void flushRole(  )
+	protected void flushRole( )
+	throws SQLException {
+		flushRole(false);
+	}	
+
+	private void flushRole( boolean close )
 	throws SQLException {
 		if ( ! roles.isEmpty() )
 			insertRole(roles);
-		if ( roleStmt != null )
+		if ( close && roleStmt != null )
 			roleStmt.close();
 	}	
 
@@ -3170,7 +3249,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 74 * roleCount >=  this.maxAllowedPacket ){
 			insertRole(roles);
-			roles.clear();
 		} 
 	}
 
@@ -3256,6 +3334,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				featureStmt.setString(offset++, feature.name);
 		}
 		featureStmt.executeUpdate();
+		features.clear();
 		featureInserted += size;
 
 		// elapsed time in milliseconds
@@ -3294,11 +3373,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.featureId = featureId;
 		} 
 	
-	private void flushFeature(  )
+	protected void flushFeature( )
+	throws SQLException {
+		flushFeature(false);
+	}	
+
+	private void flushFeature( boolean close )
 	throws SQLException {
 		if ( ! features.isEmpty() )
 			insertFeature(features);
-		if ( featureStmt != null )
+		if ( close && featureStmt != null )
 			featureStmt.close();
 	}	
 
@@ -3323,7 +3407,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 52 * featureCount >=  this.maxAllowedPacket ){
 			insertFeature(features);
-			features.clear();
 		} 
 	}
 
@@ -3581,6 +3664,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				salaryStmt.setDate(offset++, salary.charge_date);
 		}
 		salaryStmt.executeUpdate();
+		salarys.clear();
 		salaryInserted += size;
 
 		// elapsed time in milliseconds
@@ -3619,11 +3703,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.salaryId = salaryId;
 		} 
 	
-	private void flushSalary(  )
+	protected void flushSalary( )
+	throws SQLException {
+		flushSalary(false);
+	}	
+
+	private void flushSalary( boolean close )
 	throws SQLException {
 		if ( ! salarys.isEmpty() )
 			insertSalary(salarys);
-		if ( salaryStmt != null )
+		if ( close && salaryStmt != null )
 			salaryStmt.close();
 	}	
 
@@ -3633,8 +3722,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param type Tipo de Nomina
 	 * @param contract Contrato
-	 * @param start_date Fecha de inicio liquidaci?n
-	 * @param end_date Fecha de finalizacion liquidaci?n
+	 * @param start_date Fecha de inicio liquidacin
+	 * @param end_date Fecha de finalizacion liquidacin
 	 * @param enterprise_name Nombre de la empresa
 	 * @param enterprise_address Domicilio de la empresa
 	 * @param enterprise_document Numero de Documento de la Empresa
@@ -3643,16 +3732,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param social_security_number Numero de la seguridad social
 	 * @param employee_document Numero de Documento de la Persona
 	 * @param seniority_date Fecha de antiguedad
-	 * @param quote_group Grupo de Cotizaci?n
+	 * @param quote_group Grupo de Cotizacin
 	 * @param category Categoria o grupo profesional
-	 * @param registration N?mero libro de matricula
+	 * @param registration Nmero libro de matricula
 	 * @param time_units total dias/horas
 	 * @param total_payment Total devengado
 	 * @param total_deduction Total a deducir
 	 * @param total_liquid Liquido total a percibir
 	 * @param total_enterprise Cuota total de la empresa
-	 * @param issue_date Fecha de emisi?n
-	 * @param remuneration Remuneraci?n mensual
+	 * @param issue_date Fecha de emisin
+	 * @param remuneration Remuneracin mensual
 	 * @param pro_ext_base Base prorraterreada de pagas extras
 	 * @param it_base Base de IT
 	 * @param raw_cgc_base Base efectiva de cotizacion por contingencias comunes 
@@ -3660,11 +3749,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param hextra_base Base de cotizacion adicional por horas extraordinarias estructurales
 	 * @param non_hextra_base Base de cotizacion adicional por horas extraordinarias no estructurales
 	 * @param cgp_base Base de cotizacion por contingencias profesionales
-	 * @param money_irpf_base Salario en dinero sujeto a retenci?n I.R.P.F
-	 * @param inkind_irpf_base Salario en especie sujeto a retenci?n I.R.P.F
-	 * @param irpf_base Base sujeta a retenci?n I.R.P.F
+	 * @param money_irpf_base Salario en dinero sujeto a retencin I.R.P.F
+	 * @param inkind_irpf_base Salario en especie sujeto a retencin I.R.P.F
+	 * @param irpf_base Base sujeta a retencin I.R.P.F
 	 * @param social_security_contributions Aportaciones a la Seguridad Social
-	 * @param total_irpf Total retenci?n aplicada 
+	 * @param total_irpf Total retencin aplicada 
 	 * @param charge_date Fecha de cobro
 	 * @throws SQLException
 	*/
@@ -3716,7 +3805,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 691 * salaryCount >=  this.maxAllowedPacket ){
 			insertSalary(salarys);
-			salarys.clear();
 		} 
 	}
 
@@ -3726,8 +3814,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param type Tipo de Nomina
 	 * @param contract Contrato
-	 * @param start_date Fecha de inicio liquidaci?n
-	 * @param end_date Fecha de finalizacion liquidaci?n
+	 * @param start_date Fecha de inicio liquidacin
+	 * @param end_date Fecha de finalizacion liquidacin
 	 * @param enterprise_name Nombre de la empresa
 	 * @param enterprise_address Domicilio de la empresa
 	 * @param enterprise_document Numero de Documento de la Empresa
@@ -3736,16 +3824,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param social_security_number Numero de la seguridad social
 	 * @param employee_document Numero de Documento de la Persona
 	 * @param seniority_date Fecha de antiguedad
-	 * @param quote_group Grupo de Cotizaci?n
+	 * @param quote_group Grupo de Cotizacin
 	 * @param category Categoria o grupo profesional
-	 * @param registration N?mero libro de matricula
+	 * @param registration Nmero libro de matricula
 	 * @param time_units total dias/horas
 	 * @param total_payment Total devengado
 	 * @param total_deduction Total a deducir
 	 * @param total_liquid Liquido total a percibir
 	 * @param total_enterprise Cuota total de la empresa
-	 * @param issue_date Fecha de emisi?n
-	 * @param remuneration Remuneraci?n mensual
+	 * @param issue_date Fecha de emisin
+	 * @param remuneration Remuneracin mensual
 	 * @param pro_ext_base Base prorraterreada de pagas extras
 	 * @param it_base Base de IT
 	 * @param raw_cgc_base Base efectiva de cotizacion por contingencias comunes 
@@ -3753,11 +3841,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param hextra_base Base de cotizacion adicional por horas extraordinarias estructurales
 	 * @param non_hextra_base Base de cotizacion adicional por horas extraordinarias no estructurales
 	 * @param cgp_base Base de cotizacion por contingencias profesionales
-	 * @param money_irpf_base Salario en dinero sujeto a retenci?n I.R.P.F
-	 * @param inkind_irpf_base Salario en especie sujeto a retenci?n I.R.P.F
-	 * @param irpf_base Base sujeta a retenci?n I.R.P.F
+	 * @param money_irpf_base Salario en dinero sujeto a retencin I.R.P.F
+	 * @param inkind_irpf_base Salario en especie sujeto a retencin I.R.P.F
+	 * @param irpf_base Base sujeta a retencin I.R.P.F
 	 * @param social_security_contributions Aportaciones a la Seguridad Social
-	 * @param total_irpf Total retenci?n aplicada 
+	 * @param total_irpf Total retencin aplicada 
 	 * @param charge_date Fecha de cobro
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -3882,6 +3970,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				commissionStmt.setDate(offset++, commission.end_date);
 		}
 		commissionStmt.executeUpdate();
+		commissions.clear();
 		commissionInserted += size;
 
 		// elapsed time in milliseconds
@@ -3920,11 +4009,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.commissionId = commissionId;
 		} 
 	
-	private void flushCommission(  )
+	protected void flushCommission( )
+	throws SQLException {
+		flushCommission(false);
+	}	
+
+	private void flushCommission( boolean close )
 	throws SQLException {
 		if ( ! commissions.isEmpty() )
 			insertCommission(commissions);
-		if ( commissionStmt != null )
+		if ( close && commissionStmt != null )
 			commissionStmt.close();
 	}	
 
@@ -3953,7 +4047,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 72 * commissionCount >=  this.maxAllowedPacket ){
 			insertCommission(commissions);
-			commissions.clear();
 		} 
 	}
 
@@ -4060,6 +4153,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				supplierStmt.setInt(offset++, supplier.scope);
 		}
 		supplierStmt.executeUpdate();
+		suppliers.clear();
 		supplierInserted += size;
 
 		// elapsed time in milliseconds
@@ -4068,11 +4162,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 		
 	
-	private void flushSupplier(  )
+	protected void flushSupplier( )
+	throws SQLException {
+		flushSupplier(false);
+	}	
+
+	private void flushSupplier( boolean close )
 	throws SQLException {
 		if ( ! suppliers.isEmpty() )
 			insertSupplier(suppliers);
-		if ( supplierStmt != null )
+		if ( close && supplierStmt != null )
 			supplierStmt.close();
 	}	
 
@@ -4103,7 +4202,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 36 * supplierCount >=  this.maxAllowedPacket ){
 			insertSupplier(suppliers);
-			suppliers.clear();
 		} 
 	}
 
@@ -4174,6 +4272,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				signatureStmt.setInt(offset++, signature.user_id);
 		}
 		signatureStmt.executeUpdate();
+		signatures.clear();
 		signatureInserted += size;
 
 		// elapsed time in milliseconds
@@ -4212,11 +4311,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.signatureId = signatureId;
 		} 
 	
-	private void flushSignature(  )
+	protected void flushSignature( )
+	throws SQLException {
+		flushSignature(false);
+	}	
+
+	private void flushSignature( boolean close )
 	throws SQLException {
 		if ( ! signatures.isEmpty() )
 			insertSignature(signatures);
-		if ( signatureStmt != null )
+		if ( close && signatureStmt != null )
 			signatureStmt.close();
 	}	
 
@@ -4245,7 +4349,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 94 * signatureCount >=  this.maxAllowedPacket ){
 			insertSignature(signatures);
-			signatures.clear();
 		} 
 	}
 
@@ -4342,6 +4445,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				user_scopeStmt.setInt(offset++, user_scope.scope);
 		}
 		user_scopeStmt.executeUpdate();
+		user_scopes.clear();
 		user_scopeInserted += size;
 
 		// elapsed time in milliseconds
@@ -4380,11 +4484,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.user_scopeId = user_scopeId;
 		} 
 	
-	private void flushUser_scope(  )
+	protected void flushUser_scope( )
+	throws SQLException {
+		flushUser_scope(false);
+	}	
+
+	private void flushUser_scope( boolean close )
 	throws SQLException {
 		if ( ! user_scopes.isEmpty() )
 			insertUser_scope(user_scopes);
-		if ( user_scopeStmt != null )
+		if ( close && user_scopeStmt != null )
 			user_scopeStmt.close();
 	}	
 
@@ -4411,7 +4520,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * user_scopeCount >=  this.maxAllowedPacket ){
 			insertUser_scope(user_scopes);
-			user_scopes.clear();
 		} 
 	}
 
@@ -4506,6 +4614,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contact_detailStmt.setInt(offset++, contact_detail.contact);
 		}
 		contact_detailStmt.executeUpdate();
+		contact_details.clear();
 		contact_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -4544,11 +4653,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.contact_detailId = contact_detailId;
 		} 
 	
-	private void flushContact_detail(  )
+	protected void flushContact_detail( )
+	throws SQLException {
+		flushContact_detail(false);
+	}	
+
+	private void flushContact_detail( boolean close )
 	throws SQLException {
 		if ( ! contact_details.isEmpty() )
 			insertContact_detail(contact_details);
-		if ( contact_detailStmt != null )
+		if ( close && contact_detailStmt != null )
 			contact_detailStmt.close();
 	}	
 
@@ -4575,7 +4689,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * contact_detailCount >=  this.maxAllowedPacket ){
 			insertContact_detail(contact_details);
-			contact_details.clear();
 		} 
 	}
 
@@ -4670,6 +4783,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				assetStmt.setString(offset++, asset.name);
 		}
 		assetStmt.executeUpdate();
+		assets.clear();
 		assetInserted += size;
 
 		// elapsed time in milliseconds
@@ -4708,11 +4822,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.assetId = assetId;
 		} 
 	
-	private void flushAsset(  )
+	protected void flushAsset( )
+	throws SQLException {
+		flushAsset(false);
+	}	
+
+	private void flushAsset( boolean close )
 	throws SQLException {
 		if ( ! assets.isEmpty() )
 			insertAsset(assets);
-		if ( assetStmt != null )
+		if ( close && assetStmt != null )
 			assetStmt.close();
 	}	
 
@@ -4739,7 +4858,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 94 * assetCount >=  this.maxAllowedPacket ){
 			insertAsset(assets);
-			assets.clear();
 		} 
 	}
 
@@ -4849,6 +4967,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				item_warehouseStmt.setString(offset++, item_warehouse.location);
 		}
 		item_warehouseStmt.executeUpdate();
+		item_warehouses.clear();
 		item_warehouseInserted += size;
 
 		// elapsed time in milliseconds
@@ -4887,11 +5006,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.item_warehouseId = item_warehouseId;
 		} 
 	
-	private void flushItem_warehouse(  )
+	protected void flushItem_warehouse( )
+	throws SQLException {
+		flushItem_warehouse(false);
+	}	
+
+	private void flushItem_warehouse( boolean close )
 	throws SQLException {
 		if ( ! item_warehouses.isEmpty() )
 			insertItem_warehouse(item_warehouses);
-		if ( item_warehouseStmt != null )
+		if ( close && item_warehouseStmt != null )
 			item_warehouseStmt.close();
 	}	
 
@@ -4924,7 +5048,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 102 * item_warehouseCount >=  this.maxAllowedPacket ){
 			insertItem_warehouse(item_warehouses);
-			item_warehouses.clear();
 		} 
 	}
 
@@ -5055,6 +5178,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				pos_shiftStmt.setInt(offset++, pos_shift.invoice);
 		}
 		pos_shiftStmt.executeUpdate();
+		pos_shifts.clear();
 		pos_shiftInserted += size;
 
 		// elapsed time in milliseconds
@@ -5093,11 +5217,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.pos_shiftId = pos_shiftId;
 		} 
 	
-	private void flushPos_shift(  )
+	protected void flushPos_shift( )
+	throws SQLException {
+		flushPos_shift(false);
+	}	
+
+	private void flushPos_shift( boolean close )
 	throws SQLException {
 		if ( ! pos_shifts.isEmpty() )
 			insertPos_shift(pos_shifts);
-		if ( pos_shiftStmt != null )
+		if ( close && pos_shiftStmt != null )
 			pos_shiftStmt.close();
 	}	
 
@@ -5136,7 +5265,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 106 * pos_shiftCount >=  this.maxAllowedPacket ){
 			insertPos_shift(pos_shifts);
-			pos_shifts.clear();
 		} 
 	}
 
@@ -5263,6 +5391,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				rnoteStmt.setShort(offset++, rnote.security_level);
 		}
 		rnoteStmt.executeUpdate();
+		rnotes.clear();
 		rnoteInserted += size;
 
 		// elapsed time in milliseconds
@@ -5301,11 +5430,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.rnoteId = rnoteId;
 		} 
 	
-	private void flushRnote(  )
+	protected void flushRnote( )
+	throws SQLException {
+		flushRnote(false);
+	}	
+
+	private void flushRnote( boolean close )
 	throws SQLException {
 		if ( ! rnotes.isEmpty() )
 			insertRnote(rnotes);
-		if ( rnoteStmt != null )
+		if ( close && rnoteStmt != null )
 			rnoteStmt.close();
 	}	
 
@@ -5340,7 +5474,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 110 * rnoteCount >=  this.maxAllowedPacket ){
 			insertRnote(rnotes);
-			rnotes.clear();
 		} 
 	}
 
@@ -5453,6 +5586,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				favoriteStmt.setInt(offset++, favorite.user_id);
 		}
 		favoriteStmt.executeUpdate();
+		favorites.clear();
 		favoriteInserted += size;
 
 		// elapsed time in milliseconds
@@ -5491,11 +5625,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.favoriteId = favoriteId;
 		} 
 	
-	private void flushFavorite(  )
+	protected void flushFavorite( )
+	throws SQLException {
+		flushFavorite(false);
+	}	
+
+	private void flushFavorite( boolean close )
 	throws SQLException {
 		if ( ! favorites.isEmpty() )
 			insertFavorite(favorites);
-		if ( favoriteStmt != null )
+		if ( close && favoriteStmt != null )
 			favoriteStmt.close();
 	}	
 
@@ -5526,7 +5665,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 296 * favoriteCount >=  this.maxAllowedPacket ){
 			insertFavorite(favorites);
-			favorites.clear();
 		} 
 	}
 
@@ -5665,6 +5803,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				daily_trackingStmt.setDouble(offset++, daily_tracking.cost);
 		}
 		daily_trackingStmt.executeUpdate();
+		daily_trackings.clear();
 		daily_trackingInserted += size;
 
 		// elapsed time in milliseconds
@@ -5703,11 +5842,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.daily_trackingId = daily_trackingId;
 		} 
 	
-	private void flushDaily_tracking(  )
+	protected void flushDaily_tracking( )
+	throws SQLException {
+		flushDaily_tracking(false);
+	}	
+
+	private void flushDaily_tracking( boolean close )
 	throws SQLException {
 		if ( ! daily_trackings.isEmpty() )
 			insertDaily_tracking(daily_trackings);
-		if ( daily_trackingStmt != null )
+		if ( close && daily_trackingStmt != null )
 			daily_trackingStmt.close();
 	}	
 
@@ -5750,7 +5894,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 134 * daily_trackingCount >=  this.maxAllowedPacket ){
 			insertDaily_tracking(daily_trackings);
-			daily_trackings.clear();
 		} 
 	}
 
@@ -5916,6 +6059,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				loanStmt.setShort(offset++, loan.status);
 		}
 		loanStmt.executeUpdate();
+		loans.clear();
 		loanInserted += size;
 
 		// elapsed time in milliseconds
@@ -5954,11 +6098,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.loanId = loanId;
 		} 
 	
-	private void flushLoan(  )
+	protected void flushLoan( )
+	throws SQLException {
+		flushLoan(false);
+	}	
+
+	private void flushLoan( boolean close )
 	throws SQLException {
 		if ( ! loans.isEmpty() )
 			insertLoan(loans);
-		if ( loanStmt != null )
+		if ( close && loanStmt != null )
 			loanStmt.close();
 	}	
 
@@ -6007,7 +6156,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 223 * loanCount >=  this.maxAllowedPacket ){
 			insertLoan(loans);
-			loans.clear();
 		} 
 	}
 
@@ -6164,6 +6312,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				projectStmt.setBoolean(offset++, project.active);
 		}
 		projectStmt.executeUpdate();
+		projects.clear();
 		projectInserted += size;
 
 		// elapsed time in milliseconds
@@ -6202,11 +6351,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.projectId = projectId;
 		} 
 	
-	private void flushProject(  )
+	protected void flushProject( )
+	throws SQLException {
+		flushProject(false);
+	}	
+
+	private void flushProject( boolean close )
 	throws SQLException {
 		if ( ! projects.isEmpty() )
 			insertProject(projects);
-		if ( projectStmt != null )
+		if ( close && projectStmt != null )
 			projectStmt.close();
 	}	
 
@@ -6249,7 +6403,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 146 * projectCount >=  this.maxAllowedPacket ){
 			insertProject(projects);
-			projects.clear();
 		} 
 	}
 
@@ -6370,6 +6523,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				question_valueStmt.setTimestamp(offset++, question_value.value_date);
 		}
 		question_valueStmt.executeUpdate();
+		question_values.clear();
 		question_valueInserted += size;
 
 		// elapsed time in milliseconds
@@ -6408,11 +6562,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.question_valueId = question_valueId;
 		} 
 	
-	private void flushQuestion_value(  )
+	protected void flushQuestion_value( )
+	throws SQLException {
+		flushQuestion_value(false);
+	}	
+
+	private void flushQuestion_value( boolean close )
 	throws SQLException {
 		if ( ! question_values.isEmpty() )
 			insertQuestion_value(question_values);
-		if ( question_valueStmt != null )
+		if ( close && question_valueStmt != null )
 			question_valueStmt.close();
 	}	
 
@@ -6443,7 +6602,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 1088 * question_valueCount >=  this.maxAllowedPacket ){
 			insertQuestion_value(question_values);
-			question_values.clear();
 		} 
 	}
 
@@ -6592,6 +6750,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				fs_mod347_detailStmt.setDouble(offset++, fs_mod347_detail.fourth_quarter_amount);
 		}
 		fs_mod347_detailStmt.executeUpdate();
+		fs_mod347_details.clear();
 		fs_mod347_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -6630,11 +6789,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.fs_mod347_detailId = fs_mod347_detailId;
 		} 
 	
-	private void flushFs_mod347_detail(  )
+	protected void flushFs_mod347_detail( )
+	throws SQLException {
+		flushFs_mod347_detail(false);
+	}	
+
+	private void flushFs_mod347_detail( boolean close )
 	throws SQLException {
 		if ( ! fs_mod347_details.isEmpty() )
 			insertFs_mod347_detail(fs_mod347_details);
-		if ( fs_mod347_detailStmt != null )
+		if ( close && fs_mod347_detailStmt != null )
 			fs_mod347_detailStmt.close();
 	}	
 
@@ -6681,7 +6845,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 201 * fs_mod347_detailCount >=  this.maxAllowedPacket ){
 			insertFs_mod347_detail(fs_mod347_details);
-			fs_mod347_details.clear();
 		} 
 	}
 
@@ -6796,6 +6959,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				web_info_styleStmt.setString(offset++, web_info_style.value);
 		}
 		web_info_styleStmt.executeUpdate();
+		web_info_styles.clear();
 		web_info_styleInserted += size;
 
 		// elapsed time in milliseconds
@@ -6834,11 +6998,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.web_info_styleId = web_info_styleId;
 		} 
 	
-	private void flushWeb_info_style(  )
+	protected void flushWeb_info_style( )
+	throws SQLException {
+		flushWeb_info_style(false);
+	}	
+
+	private void flushWeb_info_style( boolean close )
 	throws SQLException {
 		if ( ! web_info_styles.isEmpty() )
 			insertWeb_info_style(web_info_styles);
-		if ( web_info_styleStmt != null )
+		if ( close && web_info_styleStmt != null )
 			web_info_styleStmt.close();
 	}	
 
@@ -6865,7 +7034,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 403 * web_info_styleCount >=  this.maxAllowedPacket ){
 			insertWeb_info_style(web_info_styles);
-			web_info_styles.clear();
 		} 
 	}
 
@@ -6980,6 +7148,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				salary_paymentStmt.setDouble(offset++, salary_payment.amount);
 		}
 		salary_paymentStmt.executeUpdate();
+		salary_payments.clear();
 		salary_paymentInserted += size;
 
 		// elapsed time in milliseconds
@@ -7018,11 +7187,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.salary_paymentId = salary_paymentId;
 		} 
 	
-	private void flushSalary_payment(  )
+	protected void flushSalary_payment( )
+	throws SQLException {
+		flushSalary_payment(false);
+	}	
+
+	private void flushSalary_payment( boolean close )
 	throws SQLException {
 		if ( ! salary_payments.isEmpty() )
 			insertSalary_payment(salary_payments);
-		if ( salary_paymentStmt != null )
+		if ( close && salary_paymentStmt != null )
 			salary_paymentStmt.close();
 	}	
 
@@ -7031,10 +7205,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param salary Recibo del pago de salarios
-	 * @param type Tipo de Percepci?n Salarial
+	 * @param type Tipo de Percepcin Salarial
 	 * @param payment_concept Codigo del concepto
 	 * @param description Descripcion
-	 * @param expression F?rmula
+	 * @param expression Frmula
 	 * @param amount Importe
 	 * @throws SQLException
 	*/
@@ -7057,7 +7231,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 245 * salary_paymentCount >=  this.maxAllowedPacket ){
 			insertSalary_payment(salary_payments);
-			salary_payments.clear();
 		} 
 	}
 
@@ -7066,10 +7239,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Salary_payment
 	 * @param domain Identificador del Dominio
 	 * @param salary Recibo del pago de salarios
-	 * @param type Tipo de Percepci?n Salarial
+	 * @param type Tipo de Percepcin Salarial
 	 * @param payment_concept Codigo del concepto
 	 * @param description Descripcion
-	 * @param expression F?rmula
+	 * @param expression Frmula
 	 * @param amount Importe
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -7175,6 +7348,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_dataStmt.setDate(offset++, contract_data.end_date);
 		}
 		contract_dataStmt.executeUpdate();
+		contract_datas.clear();
 		contract_dataInserted += size;
 
 		// elapsed time in milliseconds
@@ -7213,11 +7387,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.contract_dataId = contract_dataId;
 		} 
 	
-	private void flushContract_data(  )
+	protected void flushContract_data( )
+	throws SQLException {
+		flushContract_data(false);
+	}	
+
+	private void flushContract_data( boolean close )
 	throws SQLException {
 		if ( ! contract_datas.isEmpty() )
 			insertContract_data(contract_datas);
-		if ( contract_dataStmt != null )
+		if ( close && contract_dataStmt != null )
 			contract_dataStmt.close();
 	}	
 
@@ -7250,7 +7429,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 210 * contract_dataCount >=  this.maxAllowedPacket ){
 			insertContract_data(contract_datas);
-			contract_datas.clear();
 		} 
 	}
 
@@ -7366,6 +7544,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				enterprise_dataStmt.setDate(offset++, enterprise_data.end_date);
 		}
 		enterprise_dataStmt.executeUpdate();
+		enterprise_datas.clear();
 		enterprise_dataInserted += size;
 
 		// elapsed time in milliseconds
@@ -7404,11 +7583,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.enterprise_dataId = enterprise_dataId;
 		} 
 	
-	private void flushEnterprise_data(  )
+	protected void flushEnterprise_data( )
+	throws SQLException {
+		flushEnterprise_data(false);
+	}	
+
+	private void flushEnterprise_data( boolean close )
 	throws SQLException {
 		if ( ! enterprise_datas.isEmpty() )
 			insertEnterprise_data(enterprise_datas);
-		if ( enterprise_dataStmt != null )
+		if ( close && enterprise_dataStmt != null )
 			enterprise_dataStmt.close();
 	}	
 
@@ -7441,7 +7625,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 210 * enterprise_dataCount >=  this.maxAllowedPacket ){
 			insertEnterprise_data(enterprise_datas);
-			enterprise_datas.clear();
 		} 
 	}
 
@@ -7587,6 +7770,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				fs_renting_detailStmt.setString(offset++, fs_renting_detail.province);
 		}
 		fs_renting_detailStmt.executeUpdate();
+		fs_renting_details.clear();
 		fs_renting_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -7625,11 +7809,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.fs_renting_detailId = fs_renting_detailId;
 		} 
 	
-	private void flushFs_renting_detail(  )
+	protected void flushFs_renting_detail( )
+	throws SQLException {
+		flushFs_renting_detail(false);
+	}	
+
+	private void flushFs_renting_detail( boolean close )
 	throws SQLException {
 		if ( ! fs_renting_details.isEmpty() )
 			insertFs_renting_detail(fs_renting_details);
-		if ( fs_renting_detailStmt != null )
+		if ( close && fs_renting_detailStmt != null )
 			fs_renting_detailStmt.close();
 	}	
 
@@ -7674,7 +7863,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 291 * fs_renting_detailCount >=  this.maxAllowedPacket ){
 			insertFs_renting_detail(fs_renting_details);
-			fs_renting_details.clear();
 		} 
 	}
 
@@ -7812,6 +8000,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				mk_actionStmt.setString(offset++, mk_action.description);
 		}
 		mk_actionStmt.executeUpdate();
+		mk_actions.clear();
 		mk_actionInserted += size;
 
 		// elapsed time in milliseconds
@@ -7850,11 +8039,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.mk_actionId = mk_actionId;
 		} 
 	
-	private void flushMk_action(  )
+	protected void flushMk_action( )
+	throws SQLException {
+		flushMk_action(false);
+	}	
+
+	private void flushMk_action( boolean close )
 	throws SQLException {
 		if ( ! mk_actions.isEmpty() )
 			insertMk_action(mk_actions);
-		if ( mk_actionStmt != null )
+		if ( close && mk_actionStmt != null )
 			mk_actionStmt.close();
 	}	
 
@@ -7862,7 +8056,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Mk_action
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campa?a
+	 * @param campaign Identificador de la Campaa
 	 * @param media_type Tipo de contacto de la Accion
 	 * @param start_date Fecha de inicio
 	 * @param end_date Fecha de finalizacion
@@ -7891,7 +8085,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 162 * mk_actionCount >=  this.maxAllowedPacket ){
 			insertMk_action(mk_actions);
-			mk_actions.clear();
 		} 
 	}
 
@@ -7899,7 +8092,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Mk_action
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campa?a
+	 * @param campaign Identificador de la Campaa
 	 * @param media_type Tipo de contacto de la Accion
 	 * @param start_date Fecha de inicio
 	 * @param end_date Fecha de finalizacion
@@ -7996,6 +8189,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				profile_action_deniedStmt.setInt(offset++, profile_action_denied.action_id);
 		}
 		profile_action_deniedStmt.executeUpdate();
+		profile_action_denieds.clear();
 		profile_action_deniedInserted += size;
 
 		// elapsed time in milliseconds
@@ -8034,11 +8228,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.profile_action_deniedId = profile_action_deniedId;
 		} 
 	
-	private void flushProfile_action_denied(  )
+	protected void flushProfile_action_denied( )
+	throws SQLException {
+		flushProfile_action_denied(false);
+	}	
+
+	private void flushProfile_action_denied( boolean close )
 	throws SQLException {
 		if ( ! profile_action_denieds.isEmpty() )
 			insertProfile_action_denied(profile_action_denieds);
-		if ( profile_action_deniedStmt != null )
+		if ( close && profile_action_deniedStmt != null )
 			profile_action_deniedStmt.close();
 	}	
 
@@ -8065,7 +8264,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * profile_action_deniedCount >=  this.maxAllowedPacket ){
 			insertProfile_action_denied(profile_action_denieds);
-			profile_action_denieds.clear();
 		} 
 	}
 
@@ -8190,6 +8388,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				proposal_detailStmt.setInt(offset++, proposal_detail.supplier);
 		}
 		proposal_detailStmt.executeUpdate();
+		proposal_details.clear();
 		proposal_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -8228,11 +8427,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.proposal_detailId = proposal_detailId;
 		} 
 	
-	private void flushProposal_detail(  )
+	protected void flushProposal_detail( )
+	throws SQLException {
+		flushProposal_detail(false);
+	}	
+
+	private void flushProposal_detail( boolean close )
 	throws SQLException {
 		if ( ! proposal_details.isEmpty() )
 			insertProposal_detail(proposal_details);
-		if ( proposal_detailStmt != null )
+		if ( close && proposal_detailStmt != null )
 			proposal_detailStmt.close();
 	}	
 
@@ -8271,7 +8475,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 1146 * proposal_detailCount >=  this.maxAllowedPacket ){
 			insertProposal_detail(proposal_details);
-			proposal_details.clear();
 		} 
 	}
 
@@ -8458,6 +8661,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				fs_vat_detailStmt.setDouble(offset++, fs_vat_detail.res_deductible_quota);
 		}
 		fs_vat_detailStmt.executeUpdate();
+		fs_vat_details.clear();
 		fs_vat_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -8496,11 +8700,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.fs_vat_detailId = fs_vat_detailId;
 		} 
 	
-	private void flushFs_vat_detail(  )
+	protected void flushFs_vat_detail( )
+	throws SQLException {
+		flushFs_vat_detail(false);
+	}	
+
+	private void flushFs_vat_detail( boolean close )
 	throws SQLException {
 		if ( ! fs_vat_details.isEmpty() )
 			insertFs_vat_detail(fs_vat_details);
-		if ( fs_vat_detailStmt != null )
+		if ( close && fs_vat_detailStmt != null )
 			fs_vat_detailStmt.close();
 	}	
 
@@ -8559,7 +8768,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 280 * fs_vat_detailCount >=  this.maxAllowedPacket ){
 			insertFs_vat_detail(fs_vat_details);
-			fs_vat_details.clear();
 		} 
 	}
 
@@ -8701,6 +8909,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				offer_detail_commissionStmt.setDate(offset++, offer_detail_commission.pay_date);
 		}
 		offer_detail_commissionStmt.executeUpdate();
+		offer_detail_commissions.clear();
 		offer_detail_commissionInserted += size;
 
 		// elapsed time in milliseconds
@@ -8739,11 +8948,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.offer_detail_commissionId = offer_detail_commissionId;
 		} 
 	
-	private void flushOffer_detail_commission(  )
+	protected void flushOffer_detail_commission( )
+	throws SQLException {
+		flushOffer_detail_commission(false);
+	}	
+
+	private void flushOffer_detail_commission( boolean close )
 	throws SQLException {
 		if ( ! offer_detail_commissions.isEmpty() )
 			insertOffer_detail_commission(offer_detail_commissions);
-		if ( offer_detail_commissionStmt != null )
+		if ( close && offer_detail_commissionStmt != null )
 			offer_detail_commissionStmt.close();
 	}	
 
@@ -8776,7 +8990,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 87 * offer_detail_commissionCount >=  this.maxAllowedPacket ){
 			insertOffer_detail_commission(offer_detail_commissions);
-			offer_detail_commissions.clear();
 		} 
 	}
 
@@ -8877,6 +9090,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				favorite_categoryStmt.setInt(offset++, favorite_category.user_id);
 		}
 		favorite_categoryStmt.executeUpdate();
+		favorite_categorys.clear();
 		favorite_categoryInserted += size;
 
 		// elapsed time in milliseconds
@@ -8915,11 +9129,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.favorite_categoryId = favorite_categoryId;
 		} 
 	
-	private void flushFavorite_category(  )
+	protected void flushFavorite_category( )
+	throws SQLException {
+		flushFavorite_category(false);
+	}	
+
+	private void flushFavorite_category( boolean close )
 	throws SQLException {
 		if ( ! favorite_categorys.isEmpty() )
 			insertFavorite_category(favorite_categorys);
-		if ( favorite_categoryStmt != null )
+		if ( close && favorite_categoryStmt != null )
 			favorite_categoryStmt.close();
 	}	
 
@@ -8946,7 +9165,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 94 * favorite_categoryCount >=  this.maxAllowedPacket ){
 			insertFavorite_category(favorite_categorys);
-			favorite_categorys.clear();
 		} 
 	}
 
@@ -9041,6 +9259,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				geozone_irpf_handicapStmt.setDouble(offset++, geozone_irpf_handicap.percent);
 		}
 		geozone_irpf_handicapStmt.executeUpdate();
+		geozone_irpf_handicaps.clear();
 		geozone_irpf_handicapInserted += size;
 
 		// elapsed time in milliseconds
@@ -9079,11 +9298,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.geozone_irpf_handicapId = geozone_irpf_handicapId;
 		} 
 	
-	private void flushGeozone_irpf_handicap(  )
+	protected void flushGeozone_irpf_handicap( )
+	throws SQLException {
+		flushGeozone_irpf_handicap(false);
+	}	
+
+	private void flushGeozone_irpf_handicap( boolean close )
 	throws SQLException {
 		if ( ! geozone_irpf_handicaps.isEmpty() )
 			insertGeozone_irpf_handicap(geozone_irpf_handicaps);
-		if ( geozone_irpf_handicapStmt != null )
+		if ( close && geozone_irpf_handicapStmt != null )
 			geozone_irpf_handicapStmt.close();
 	}	
 
@@ -9110,7 +9334,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 38 * geozone_irpf_handicapCount >=  this.maxAllowedPacket ){
 			insertGeozone_irpf_handicap(geozone_irpf_handicaps);
-			geozone_irpf_handicaps.clear();
 		} 
 	}
 
@@ -9205,6 +9428,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_typeStmt.setBoolean(offset++, project_type.active);
 		}
 		project_typeStmt.executeUpdate();
+		project_types.clear();
 		project_typeInserted += size;
 
 		// elapsed time in milliseconds
@@ -9243,11 +9467,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.project_typeId = project_typeId;
 		} 
 	
-	private void flushProject_type(  )
+	protected void flushProject_type( )
+	throws SQLException {
+		flushProject_type(false);
+	}	
+
+	private void flushProject_type( boolean close )
 	throws SQLException {
 		if ( ! project_types.isEmpty() )
 			insertProject_type(project_types);
-		if ( project_typeStmt != null )
+		if ( close && project_typeStmt != null )
 			project_typeStmt.close();
 	}	
 
@@ -9274,7 +9503,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 84 * project_typeCount >=  this.maxAllowedPacket ){
 			insertProject_type(project_types);
-			project_types.clear();
 		} 
 	}
 
@@ -9326,6 +9554,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 		protected String accounts; 
 		protected Integer sortKey; 
+		protected String notes; 
 		protected Boolean title; 
 		protected Boolean internal_calculation; 
 		protected Boolean visible; 
@@ -9341,7 +9570,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( balance_detailStmt != null ) {
 				balance_detailStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -9350,7 +9579,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			balance_detailStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO balance_detail (id,domain,balance,code,description,accounts,sortKey,title,internal_calculation,visible,zeroFlag,creditNature)"  
+				"INSERT INTO balance_detail (id,domain,balance,code,description,accounts,sortKey,notes,title,internal_calculation,visible,zeroFlag,creditNature)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			balance_detailStmtSize = size;
@@ -9387,6 +9616,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				balance_detailStmt.setNull(offset++, 4);
 			else
 				balance_detailStmt.setInt(offset++, balance_detail.sortKey);
+			if ( balance_detail.notes == null )
+				balance_detailStmt.setNull(offset++, 12);
+			else
+				balance_detailStmt.setString(offset++, balance_detail.notes);
 			if ( balance_detail.title == null )
 				balance_detailStmt.setNull(offset++, -7);
 			else
@@ -9409,6 +9642,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				balance_detailStmt.setBoolean(offset++, balance_detail.creditNature);
 		}
 		balance_detailStmt.executeUpdate();
+		balance_details.clear();
 		balance_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -9447,11 +9681,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.balance_detailId = balance_detailId;
 		} 
 	
-	private void flushBalance_detail(  )
+	protected void flushBalance_detail( )
+	throws SQLException {
+		flushBalance_detail(false);
+	}	
+
+	private void flushBalance_detail( boolean close )
 	throws SQLException {
 		if ( ! balance_details.isEmpty() )
 			insertBalance_detail(balance_details);
-		if ( balance_detailStmt != null )
+		if ( close && balance_detailStmt != null )
 			balance_detailStmt.close();
 	}	
 
@@ -9461,9 +9700,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param balance Identificador del Balance
 	 * @param code Codigo del Detalle en el Balance
-	 * @param description Descripci?n del detalle de balance
+	 * @param description Descripcin del detalle de balance
 	 * @param accounts Cuentas separadas por comas, que forman el acumulado.
 	 * @param sortKey Orden el que aparecera en el listado.
+	 * @param notes Notas en el Balance
 	 * @param title 
 	 * @param internal_calculation Indica si es un calculo interno, es decir si el contenido de accounts son referencias a la columna -code- de esta tabla
 	 * @param visible Si aparece o no en la impresion.
@@ -9471,7 +9711,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param creditNature Si es verdadero se hace una haber menos debe de las cuentas indicadas
 	 * @throws SQLException
 	*/
-	protected void insertBalance_detail(Integer id, Integer domain, Integer balance, String code, String description, String accounts, Integer sortKey, Boolean title, Boolean internal_calculation, Boolean visible, Boolean zeroFlag, Boolean creditNature)
+	protected void insertBalance_detail(Integer id, Integer domain, Integer balance, String code, String description, String accounts, Integer sortKey, String notes, Boolean title, Boolean internal_calculation, Boolean visible, Boolean zeroFlag, Boolean creditNature)
 	throws SQLException {
 
 		Balance_detail balance_detail_ = new Balance_detail();
@@ -9482,6 +9722,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		balance_detail_.description = description;
 		balance_detail_.accounts = accounts;
 		balance_detail_.sortKey = sortKey;
+		balance_detail_.notes = notes;
 		balance_detail_.title = title;
 		balance_detail_.internal_calculation = internal_calculation;
 		balance_detail_.visible = visible;
@@ -9492,9 +9733,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int balance_detailCount = balance_details.size();
 		
-		if ( 184 * balance_detailCount >=  this.maxAllowedPacket ){
+		if ( 248 * balance_detailCount >=  this.maxAllowedPacket ){
 			insertBalance_detail(balance_details);
-			balance_details.clear();
 		} 
 	}
 
@@ -9504,9 +9744,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param balance Identificador del Balance
 	 * @param code Codigo del Detalle en el Balance
-	 * @param description Descripci?n del detalle de balance
+	 * @param description Descripcin del detalle de balance
 	 * @param accounts Cuentas separadas por comas, que forman el acumulado.
 	 * @param sortKey Orden el que aparecera en el listado.
+	 * @param notes Notas en el Balance
 	 * @param title 
 	 * @param internal_calculation Indica si es un calculo interno, es decir si el contenido de accounts son referencias a la columna -code- de esta tabla
 	 * @param visible Si aparece o no en la impresion.
@@ -9515,7 +9756,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertBalance_detail(Integer domain, Integer balance, String code, String description, String accounts, Integer sortKey, Boolean title, Boolean internal_calculation, Boolean visible, Boolean zeroFlag, Boolean creditNature)
+	public int insertBalance_detail(Integer domain, Integer balance, String code, String description, String accounts, Integer sortKey, String notes, Boolean title, Boolean internal_calculation, Boolean visible, Boolean zeroFlag, Boolean creditNature)
 	throws SQLException {
 		int id = nextBalance_detailId();
 
@@ -9527,6 +9768,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		balance_detail_.description = description;
 		balance_detail_.accounts = accounts;
 		balance_detail_.sortKey = sortKey;
+		balance_detail_.notes = notes;
 		balance_detail_.title = title;
 		balance_detail_.internal_calculation = internal_calculation;
 		balance_detail_.visible = visible;
@@ -9537,7 +9779,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int balance_detailCount = balance_details.size();
 		
-		if ( 184 * balance_detailCount >=  this.maxAllowedPacket ){
+		if ( 248 * balance_detailCount >=  this.maxAllowedPacket ){
 			insertBalance_detail(balance_details);
 			balance_details.clear();
 		} 
@@ -9605,6 +9847,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoice_tax_accountStmt.setInt(offset++, invoice_tax_account.account);
 		}
 		invoice_tax_accountStmt.executeUpdate();
+		invoice_tax_accounts.clear();
 		invoice_tax_accountInserted += size;
 
 		// elapsed time in milliseconds
@@ -9643,11 +9886,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.invoice_tax_accountId = invoice_tax_accountId;
 		} 
 	
-	private void flushInvoice_tax_account(  )
+	protected void flushInvoice_tax_account( )
+	throws SQLException {
+		flushInvoice_tax_account(false);
+	}	
+
+	private void flushInvoice_tax_account( boolean close )
 	throws SQLException {
 		if ( ! invoice_tax_accounts.isEmpty() )
 			insertInvoice_tax_account(invoice_tax_accounts);
-		if ( invoice_tax_accountStmt != null )
+		if ( close && invoice_tax_accountStmt != null )
 			invoice_tax_accountStmt.close();
 	}	
 
@@ -9674,7 +9922,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * invoice_tax_accountCount >=  this.maxAllowedPacket ){
 			insertInvoice_tax_account(invoice_tax_accounts);
-			invoice_tax_accounts.clear();
 		} 
 	}
 
@@ -9804,6 +10051,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				fs_mod347Stmt.setInt(offset++, fs_mod347.replaced_number);
 		}
 		fs_mod347Stmt.executeUpdate();
+		fs_mod347s.clear();
 		fs_mod347Inserted += size;
 
 		// elapsed time in milliseconds
@@ -9842,11 +10090,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.fs_mod347Id = fs_mod347Id;
 		} 
 	
-	private void flushFs_mod347(  )
+	protected void flushFs_mod347( )
+	throws SQLException {
+		flushFs_mod347(false);
+	}	
+
+	private void flushFs_mod347( boolean close )
 	throws SQLException {
 		if ( ! fs_mod347s.isEmpty() )
 			insertFs_mod347(fs_mod347s);
-		if ( fs_mod347Stmt != null )
+		if ( close && fs_mod347Stmt != null )
 			fs_mod347Stmt.close();
 	}	
 
@@ -9887,7 +10140,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 59 * fs_mod347Count >=  this.maxAllowedPacket ){
 			insertFs_mod347(fs_mod347s);
-			fs_mod347s.clear();
 		} 
 	}
 
@@ -10001,6 +10253,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				product_accountStmt.setShort(offset++, product_account.type);
 		}
 		product_accountStmt.executeUpdate();
+		product_accounts.clear();
 		product_accountInserted += size;
 
 		// elapsed time in milliseconds
@@ -10039,11 +10292,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.product_accountId = product_accountId;
 		} 
 	
-	private void flushProduct_account(  )
+	protected void flushProduct_account( )
+	throws SQLException {
+		flushProduct_account(false);
+	}	
+
+	private void flushProduct_account( boolean close )
 	throws SQLException {
 		if ( ! product_accounts.isEmpty() )
 			insertProduct_account(product_accounts);
-		if ( product_accountStmt != null )
+		if ( close && product_accountStmt != null )
 			product_accountStmt.close();
 	}	
 
@@ -10072,7 +10330,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 43 * product_accountCount >=  this.maxAllowedPacket ){
 			insertProduct_account(product_accounts);
-			product_accounts.clear();
 		} 
 	}
 
@@ -10169,6 +10426,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				pcategory_treeStmt.setInt(offset++, pcategory_tree.child);
 		}
 		pcategory_treeStmt.executeUpdate();
+		pcategory_trees.clear();
 		pcategory_treeInserted += size;
 
 		// elapsed time in milliseconds
@@ -10207,11 +10465,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.pcategory_treeId = pcategory_treeId;
 		} 
 	
-	private void flushPcategory_tree(  )
+	protected void flushPcategory_tree( )
+	throws SQLException {
+		flushPcategory_tree(false);
+	}	
+
+	private void flushPcategory_tree( boolean close )
 	throws SQLException {
 		if ( ! pcategory_trees.isEmpty() )
 			insertPcategory_tree(pcategory_trees);
-		if ( pcategory_treeStmt != null )
+		if ( close && pcategory_treeStmt != null )
 			pcategory_treeStmt.close();
 	}	
 
@@ -10238,7 +10501,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * pcategory_treeCount >=  this.maxAllowedPacket ){
 			insertPcategory_tree(pcategory_trees);
-			pcategory_trees.clear();
 		} 
 	}
 
@@ -10363,6 +10625,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				account_entry_detailStmt.setString(offset++, account_entry_detail.document_number);
 		}
 		account_entry_detailStmt.executeUpdate();
+		account_entry_details.clear();
 		account_entry_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -10401,11 +10664,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.account_entry_detailId = account_entry_detailId;
 		} 
 	
-	private void flushAccount_entry_detail(  )
+	protected void flushAccount_entry_detail( )
+	throws SQLException {
+		flushAccount_entry_detail(false);
+	}	
+
+	private void flushAccount_entry_detail( boolean close )
 	throws SQLException {
 		if ( ! account_entry_details.isEmpty() )
 			insertAccount_entry_detail(account_entry_details);
-		if ( account_entry_detailStmt != null )
+		if ( close && account_entry_detailStmt != null )
 			account_entry_detailStmt.close();
 	}	
 
@@ -10444,7 +10712,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 168 * account_entry_detailCount >=  this.maxAllowedPacket ){
 			insertAccount_entry_detail(account_entry_details);
-			account_entry_details.clear();
 		} 
 	}
 
@@ -10556,6 +10823,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				geozone_irpfStmt.setDouble(offset++, geozone_irpf.amount);
 		}
 		geozone_irpfStmt.executeUpdate();
+		geozone_irpfs.clear();
 		geozone_irpfInserted += size;
 
 		// elapsed time in milliseconds
@@ -10594,11 +10862,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.geozone_irpfId = geozone_irpfId;
 		} 
 	
-	private void flushGeozone_irpf(  )
+	protected void flushGeozone_irpf( )
+	throws SQLException {
+		flushGeozone_irpf(false);
+	}	
+
+	private void flushGeozone_irpf( boolean close )
 	throws SQLException {
 		if ( ! geozone_irpfs.isEmpty() )
 			insertGeozone_irpf(geozone_irpfs);
-		if ( geozone_irpfStmt != null )
+		if ( close && geozone_irpfStmt != null )
 			geozone_irpfStmt.close();
 	}	
 
@@ -10627,7 +10900,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 48 * geozone_irpfCount >=  this.maxAllowedPacket ){
 			insertGeozone_irpf(geozone_irpfs);
-			geozone_irpfs.clear();
 		} 
 	}
 
@@ -10724,6 +10996,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				tariff_catalogueStmt.setInt(offset++, tariff_catalogue.catalogue);
 		}
 		tariff_catalogueStmt.executeUpdate();
+		tariff_catalogues.clear();
 		tariff_catalogueInserted += size;
 
 		// elapsed time in milliseconds
@@ -10762,11 +11035,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.tariff_catalogueId = tariff_catalogueId;
 		} 
 	
-	private void flushTariff_catalogue(  )
+	protected void flushTariff_catalogue( )
+	throws SQLException {
+		flushTariff_catalogue(false);
+	}	
+
+	private void flushTariff_catalogue( boolean close )
 	throws SQLException {
 		if ( ! tariff_catalogues.isEmpty() )
 			insertTariff_catalogue(tariff_catalogues);
-		if ( tariff_catalogueStmt != null )
+		if ( close && tariff_catalogueStmt != null )
 			tariff_catalogueStmt.close();
 	}	
 
@@ -10793,7 +11071,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * tariff_catalogueCount >=  this.maxAllowedPacket ){
 			insertTariff_catalogue(tariff_catalogues);
-			tariff_catalogues.clear();
 		} 
 	}
 
@@ -10918,6 +11195,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				amortization_detailStmt.setDouble(offset++, amortization_detail.fiscal_allocation);
 		}
 		amortization_detailStmt.executeUpdate();
+		amortization_details.clear();
 		amortization_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -10956,11 +11234,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.amortization_detailId = amortization_detailId;
 		} 
 	
-	private void flushAmortization_detail(  )
+	protected void flushAmortization_detail( )
+	throws SQLException {
+		flushAmortization_detail(false);
+	}	
+
+	private void flushAmortization_detail( boolean close )
 	throws SQLException {
 		if ( ! amortization_details.isEmpty() )
 			insertAmortization_detail(amortization_details);
-		if ( amortization_detailStmt != null )
+		if ( close && amortization_detailStmt != null )
 			amortization_detailStmt.close();
 	}	
 
@@ -10999,7 +11282,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 108 * amortization_detailCount >=  this.maxAllowedPacket ){
 			insertAmortization_detail(amortization_details);
-			amortization_details.clear();
 		} 
 	}
 
@@ -11064,7 +11346,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String subDomainSuffix; 
 		protected Boolean userManagement; 
 		protected Boolean domainManagement; 
-		protected Boolean documentManagement; 
+		protected Boolean disableDomainManagement; 
 		protected Integer maxDocumentSize; 
 		protected Integer maxTotalDocumentSize; 
 		protected Integer maxDefinedUsers; 
@@ -11089,7 +11371,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			domainStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO domain (id,name,description,parent,type,subDomainSuffix,userManagement,domainManagement,documentManagement,maxDocumentSize,maxTotalDocumentSize,maxDefinedUsers,active,owner)"  
+				"INSERT INTO domain (id,name,description,parent,type,subDomainSuffix,userManagement,domainManagement,disableDomainManagement,maxDocumentSize,maxTotalDocumentSize,maxDefinedUsers,active,owner)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			domainStmtSize = size;
@@ -11130,10 +11412,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				domainStmt.setNull(offset++, -7);
 			else
 				domainStmt.setBoolean(offset++, domain.domainManagement);
-			if ( domain.documentManagement == null )
+			if ( domain.disableDomainManagement == null )
 				domainStmt.setNull(offset++, -7);
 			else
-				domainStmt.setBoolean(offset++, domain.documentManagement);
+				domainStmt.setBoolean(offset++, domain.disableDomainManagement);
 			if ( domain.maxDocumentSize == null )
 				domainStmt.setNull(offset++, 4);
 			else
@@ -11156,6 +11438,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				domainStmt.setString(offset++, domain.owner);
 		}
 		domainStmt.executeUpdate();
+		domains.clear();
 		domainInserted += size;
 
 		// elapsed time in milliseconds
@@ -11194,11 +11477,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.domainId = domainId;
 		} 
 	
-	private void flushDomain(  )
+	protected void flushDomain( )
+	throws SQLException {
+		flushDomain(false);
+	}	
+
+	private void flushDomain( boolean close )
 	throws SQLException {
 		if ( ! domains.isEmpty() )
 			insertDomain(domains);
-		if ( domainStmt != null )
+		if ( close && domainStmt != null )
 			domainStmt.close();
 	}	
 
@@ -11212,15 +11500,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param subDomainSuffix Sufijo de los Dominio Hijo
 	 * @param userManagement Indica si el Dominio tiene capacidad de MultiUsuario o no
 	 * @param domainManagement Indica si el Dominio tiene capacidad de MultiDominio o no
-	 * @param documentManagement Indica si el Dominio tiene capacidad de Documental o no
-	 * @param maxDocumentSize Tama?o Maximo de los Documentos
+	 * @param disableDomainManagement Indica si el Dominio tiene deshabilitado el mantenimiento de Dominios o no
+	 * @param maxDocumentSize Tamao Maximo de los Documentos
 	 * @param maxTotalDocumentSize Almacenamiento Documental Contratado
 	 * @param maxDefinedUsers Numero Maximo de Usuarios
 	 * @param active Indica si el Dominio esta activo o no
 	 * @param owner Creador del Dominio
 	 * @throws SQLException
 	*/
-	protected void insertDomain(Integer id, String name, String description, Integer parent, Short type, String subDomainSuffix, Boolean userManagement, Boolean domainManagement, Boolean documentManagement, Integer maxDocumentSize, Integer maxTotalDocumentSize, Integer maxDefinedUsers, Boolean active, String owner)
+	protected void insertDomain(Integer id, String name, String description, Integer parent, Short type, String subDomainSuffix, Boolean userManagement, Boolean domainManagement, Boolean disableDomainManagement, Integer maxDocumentSize, Integer maxTotalDocumentSize, Integer maxDefinedUsers, Boolean active, String owner)
 	throws SQLException {
 
 		Domain domain_ = new Domain();
@@ -11232,7 +11520,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		domain_.subDomainSuffix = subDomainSuffix;
 		domain_.userManagement = userManagement;
 		domain_.domainManagement = domainManagement;
-		domain_.documentManagement = documentManagement;
+		domain_.disableDomainManagement = disableDomainManagement;
 		domain_.maxDocumentSize = maxDocumentSize;
 		domain_.maxTotalDocumentSize = maxTotalDocumentSize;
 		domain_.maxDefinedUsers = maxDefinedUsers;
@@ -11245,7 +11533,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 341 * domainCount >=  this.maxAllowedPacket ){
 			insertDomain(domains);
-			domains.clear();
 		} 
 	}
 
@@ -11259,8 +11546,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param subDomainSuffix Sufijo de los Dominio Hijo
 	 * @param userManagement Indica si el Dominio tiene capacidad de MultiUsuario o no
 	 * @param domainManagement Indica si el Dominio tiene capacidad de MultiDominio o no
-	 * @param documentManagement Indica si el Dominio tiene capacidad de Documental o no
-	 * @param maxDocumentSize Tama?o Maximo de los Documentos
+	 * @param disableDomainManagement Indica si el Dominio tiene deshabilitado el mantenimiento de Dominios o no
+	 * @param maxDocumentSize Tamao Maximo de los Documentos
 	 * @param maxTotalDocumentSize Almacenamiento Documental Contratado
 	 * @param maxDefinedUsers Numero Maximo de Usuarios
 	 * @param active Indica si el Dominio esta activo o no
@@ -11268,7 +11555,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertDomain(String name, String description, Integer parent, Short type, String subDomainSuffix, Boolean userManagement, Boolean domainManagement, Boolean documentManagement, Integer maxDocumentSize, Integer maxTotalDocumentSize, Integer maxDefinedUsers, Boolean active, String owner)
+	public int insertDomain(String name, String description, Integer parent, Short type, String subDomainSuffix, Boolean userManagement, Boolean domainManagement, Boolean disableDomainManagement, Integer maxDocumentSize, Integer maxTotalDocumentSize, Integer maxDefinedUsers, Boolean active, String owner)
 	throws SQLException {
 		int id = nextDomainId();
 
@@ -11281,7 +11568,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		domain_.subDomainSuffix = subDomainSuffix;
 		domain_.userManagement = userManagement;
 		domain_.domainManagement = domainManagement;
-		domain_.documentManagement = documentManagement;
+		domain_.disableDomainManagement = disableDomainManagement;
 		domain_.maxDocumentSize = maxDocumentSize;
 		domain_.maxTotalDocumentSize = maxTotalDocumentSize;
 		domain_.maxDefinedUsers = maxDefinedUsers;
@@ -11405,6 +11692,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				noticeStmt.setShort(offset++, notice.priority);
 		}
 		noticeStmt.executeUpdate();
+		notices.clear();
 		noticeInserted += size;
 
 		// elapsed time in milliseconds
@@ -11443,11 +11731,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.noticeId = noticeId;
 		} 
 	
-	private void flushNotice(  )
+	protected void flushNotice( )
+	throws SQLException {
+		flushNotice(false);
+	}	
+
+	private void flushNotice( boolean close )
 	throws SQLException {
 		if ( ! notices.isEmpty() )
 			insertNotice(notices);
-		if ( noticeStmt != null )
+		if ( close && noticeStmt != null )
 			noticeStmt.close();
 	}	
 
@@ -11492,7 +11785,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 222 * noticeCount >=  this.maxAllowedPacket ){
 			insertNotice(notices);
-			notices.clear();
 		} 
 	}
 
@@ -11645,6 +11937,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				fs_mod349Stmt.setInt(offset++, fs_mod349.replaced_number);
 		}
 		fs_mod349Stmt.executeUpdate();
+		fs_mod349s.clear();
 		fs_mod349Inserted += size;
 
 		// elapsed time in milliseconds
@@ -11683,11 +11976,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.fs_mod349Id = fs_mod349Id;
 		} 
 	
-	private void flushFs_mod349(  )
+	protected void flushFs_mod349( )
+	throws SQLException {
+		flushFs_mod349(false);
+	}	
+
+	private void flushFs_mod349( boolean close )
 	throws SQLException {
 		if ( ! fs_mod349s.isEmpty() )
 			insertFs_mod349(fs_mod349s);
-		if ( fs_mod349Stmt != null )
+		if ( close && fs_mod349Stmt != null )
 			fs_mod349Stmt.close();
 	}	
 
@@ -11730,7 +12028,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 62 * fs_mod349Count >=  this.maxAllowedPacket ){
 			insertFs_mod349(fs_mod349s);
-			fs_mod349s.clear();
 		} 
 	}
 
@@ -11851,6 +12148,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				salary_bonusStmt.setString(offset++, salary_bonus.description);
 		}
 		salary_bonusStmt.executeUpdate();
+		salary_bonuss.clear();
 		salary_bonusInserted += size;
 
 		// elapsed time in milliseconds
@@ -11889,11 +12187,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.salary_bonusId = salary_bonusId;
 		} 
 	
-	private void flushSalary_bonus(  )
+	protected void flushSalary_bonus( )
+	throws SQLException {
+		flushSalary_bonus(false);
+	}	
+
+	private void flushSalary_bonus( boolean close )
 	throws SQLException {
 		if ( ! salary_bonuss.isEmpty() )
 			insertSalary_bonus(salary_bonuss);
-		if ( salary_bonusStmt != null )
+		if ( close && salary_bonusStmt != null )
 			salary_bonusStmt.close();
 	}	
 
@@ -11924,7 +12227,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 114 * salary_bonusCount >=  this.maxAllowedPacket ){
 			insertSalary_bonus(salary_bonuss);
-			salary_bonuss.clear();
 		} 
 	}
 
@@ -12048,6 +12350,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				certifica2_batch_attachStmt.setDate(offset++, certifica2_batch_attach.attach_date);
 		}
 		certifica2_batch_attachStmt.executeUpdate();
+		certifica2_batch_attachs.clear();
 		certifica2_batch_attachInserted += size;
 
 		// elapsed time in milliseconds
@@ -12086,11 +12389,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.certifica2_batch_attachId = certifica2_batch_attachId;
 		} 
 	
-	private void flushCertifica2_batch_attach(  )
+	protected void flushCertifica2_batch_attach( )
+	throws SQLException {
+		flushCertifica2_batch_attach(false);
+	}	
+
+	private void flushCertifica2_batch_attach( boolean close )
 	throws SQLException {
 		if ( ! certifica2_batch_attachs.isEmpty() )
 			insertCertifica2_batch_attach(certifica2_batch_attachs);
-		if ( certifica2_batch_attachStmt != null )
+		if ( close && certifica2_batch_attachStmt != null )
 			certifica2_batch_attachStmt.close();
 	}	
 
@@ -12127,7 +12435,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 120 * certifica2_batch_attachCount >=  this.maxAllowedPacket ){
 			insertCertifica2_batch_attach(certifica2_batch_attachs);
-			certifica2_batch_attachs.clear();
 		} 
 	}
 
@@ -12237,6 +12544,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				process_taskStmt.setInt(offset++, process_task.task);
 		}
 		process_taskStmt.executeUpdate();
+		process_tasks.clear();
 		process_taskInserted += size;
 
 		// elapsed time in milliseconds
@@ -12275,19 +12583,24 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.process_taskId = process_taskId;
 		} 
 	
-	private void flushProcess_task(  )
+	protected void flushProcess_task( )
+	throws SQLException {
+		flushProcess_task(false);
+	}	
+
+	private void flushProcess_task( boolean close )
 	throws SQLException {
 		if ( ! process_tasks.isEmpty() )
 			insertProcess_task(process_tasks);
-		if ( process_taskStmt != null )
+		if ( close && process_taskStmt != null )
 			process_taskStmt.close();
 	}	
 
 	/**
 	 * Process_task
-	 * @param id Identificador unico de la Relacion entre Campa?as, Actividades y Tareas
+	 * @param id Identificador unico de la Relacion entre Campaas, Actividades y Tareas
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campa?a
+	 * @param campaign Identificador de la Campaa
 	 * @param process_detail Identificador del Detalle de Proceso
 	 * @param task Identificador de la Tarea
 	 * @throws SQLException
@@ -12308,7 +12621,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 50 * process_taskCount >=  this.maxAllowedPacket ){
 			insertProcess_task(process_tasks);
-			process_tasks.clear();
 		} 
 	}
 
@@ -12316,7 +12628,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Process_task
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campa?a
+	 * @param campaign Identificador de la Campaa
 	 * @param process_detail Identificador del Detalle de Proceso
 	 * @param task Identificador de la Tarea
 	 * @returns auto-generated key
@@ -12410,6 +12722,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				bonus_conceptStmt.setShort(offset++, bonus_concept.type);
 		}
 		bonus_conceptStmt.executeUpdate();
+		bonus_concepts.clear();
 		bonus_conceptInserted += size;
 
 		// elapsed time in milliseconds
@@ -12448,11 +12761,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.bonus_conceptId = bonus_conceptId;
 		} 
 	
-	private void flushBonus_concept(  )
+	protected void flushBonus_concept( )
+	throws SQLException {
+		flushBonus_concept(false);
+	}	
+
+	private void flushBonus_concept( boolean close )
 	throws SQLException {
 		if ( ! bonus_concepts.isEmpty() )
 			insertBonus_concept(bonus_concepts);
-		if ( bonus_conceptStmt != null )
+		if ( close && bonus_conceptStmt != null )
 			bonus_conceptStmt.close();
 	}	
 
@@ -12481,7 +12799,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 791 * bonus_conceptCount >=  this.maxAllowedPacket ){
 			insertBonus_concept(bonus_concepts);
-			bonus_concepts.clear();
 		} 
 	}
 
@@ -12530,9 +12847,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	public static class Amortization_type {
 		protected Integer id; 
 		protected Integer domain; 
-		protected Integer fixed_asset_account; 
-		protected Integer accumulated_account; 
-		protected Integer allocation_account; 
+		protected String fixed_asset_account; 
+		protected String accumulated_account; 
+		protected String allocation_account; 
 		protected Double percentage; 
 		protected String description; 
 	}
@@ -12572,17 +12889,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			else
 				amortization_typeStmt.setInt(offset++, amortization_type.domain);
 			if ( amortization_type.fixed_asset_account == null )
-				amortization_typeStmt.setNull(offset++, 4);
+				amortization_typeStmt.setNull(offset++, 12);
 			else
-				amortization_typeStmt.setInt(offset++, amortization_type.fixed_asset_account);
+				amortization_typeStmt.setString(offset++, amortization_type.fixed_asset_account);
 			if ( amortization_type.accumulated_account == null )
-				amortization_typeStmt.setNull(offset++, 4);
+				amortization_typeStmt.setNull(offset++, 12);
 			else
-				amortization_typeStmt.setInt(offset++, amortization_type.accumulated_account);
+				amortization_typeStmt.setString(offset++, amortization_type.accumulated_account);
 			if ( amortization_type.allocation_account == null )
-				amortization_typeStmt.setNull(offset++, 4);
+				amortization_typeStmt.setNull(offset++, 12);
 			else
-				amortization_typeStmt.setInt(offset++, amortization_type.allocation_account);
+				amortization_typeStmt.setString(offset++, amortization_type.allocation_account);
 			if ( amortization_type.percentage == null )
 				amortization_typeStmt.setNull(offset++, 8);
 			else
@@ -12593,6 +12910,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				amortization_typeStmt.setString(offset++, amortization_type.description);
 		}
 		amortization_typeStmt.executeUpdate();
+		amortization_types.clear();
 		amortization_typeInserted += size;
 
 		// elapsed time in milliseconds
@@ -12631,11 +12949,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.amortization_typeId = amortization_typeId;
 		} 
 	
-	private void flushAmortization_type(  )
+	protected void flushAmortization_type( )
+	throws SQLException {
+		flushAmortization_type(false);
+	}	
+
+	private void flushAmortization_type( boolean close )
 	throws SQLException {
 		if ( ! amortization_types.isEmpty() )
 			insertAmortization_type(amortization_types);
-		if ( amortization_typeStmt != null )
+		if ( close && amortization_typeStmt != null )
 			amortization_typeStmt.close();
 	}	
 
@@ -12650,7 +12973,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param description Descripcion del Tipo de Amortizacion
 	 * @throws SQLException
 	*/
-	protected void insertAmortization_type(Integer id, Integer domain, Integer fixed_asset_account, Integer accumulated_account, Integer allocation_account, Double percentage, String description)
+	protected void insertAmortization_type(Integer id, Integer domain, String fixed_asset_account, String accumulated_account, String allocation_account, Double percentage, String description)
 	throws SQLException {
 
 		Amortization_type amortization_type_ = new Amortization_type();
@@ -12666,9 +12989,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int amortization_typeCount = amortization_types.size();
 		
-		if ( 136 * amortization_typeCount >=  this.maxAllowedPacket ){
+		if ( 118 * amortization_typeCount >=  this.maxAllowedPacket ){
 			insertAmortization_type(amortization_types);
-			amortization_types.clear();
 		} 
 	}
 
@@ -12684,7 +13006,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertAmortization_type(Integer domain, Integer fixed_asset_account, Integer accumulated_account, Integer allocation_account, Double percentage, String description)
+	public int insertAmortization_type(Integer domain, String fixed_asset_account, String accumulated_account, String allocation_account, Double percentage, String description)
 	throws SQLException {
 		int id = nextAmortization_typeId();
 
@@ -12701,7 +13023,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int amortization_typeCount = amortization_types.size();
 		
-		if ( 136 * amortization_typeCount >=  this.maxAllowedPacket ){
+		if ( 118 * amortization_typeCount >=  this.maxAllowedPacket ){
 			insertAmortization_type(amortization_types);
 			amortization_types.clear();
 		} 
@@ -12804,6 +13126,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				delivery_detailStmt.setInt(offset++, delivery_detail.sales_detail);
 		}
 		delivery_detailStmt.executeUpdate();
+		delivery_details.clear();
 		delivery_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -12842,11 +13165,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.delivery_detailId = delivery_detailId;
 		} 
 	
-	private void flushDelivery_detail(  )
+	protected void flushDelivery_detail( )
+	throws SQLException {
+		flushDelivery_detail(false);
+	}	
+
+	private void flushDelivery_detail( boolean close )
 	throws SQLException {
 		if ( ! delivery_details.isEmpty() )
 			insertDelivery_detail(delivery_details);
-		if ( delivery_detailStmt != null )
+		if ( close && delivery_detailStmt != null )
 			delivery_detailStmt.close();
 	}	
 
@@ -12887,7 +13215,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 1158 * delivery_detailCount >=  this.maxAllowedPacket ){
 			insertDelivery_detail(delivery_details);
-			delivery_details.clear();
 		} 
 	}
 
@@ -13006,6 +13333,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				payroll_workplaceStmt.setInt(offset++, payroll_workplace.calendar);
 		}
 		payroll_workplaceStmt.executeUpdate();
+		payroll_workplaces.clear();
 		payroll_workplaceInserted += size;
 
 		// elapsed time in milliseconds
@@ -13044,11 +13372,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.payroll_workplaceId = payroll_workplaceId;
 		} 
 	
-	private void flushPayroll_workplace(  )
+	protected void flushPayroll_workplace( )
+	throws SQLException {
+		flushPayroll_workplace(false);
+	}	
+
+	private void flushPayroll_workplace( boolean close )
 	throws SQLException {
 		if ( ! payroll_workplaces.isEmpty() )
 			insertPayroll_workplace(payroll_workplaces);
-		if ( payroll_workplaceStmt != null )
+		if ( close && payroll_workplaceStmt != null )
 			payroll_workplaceStmt.close();
 	}	
 
@@ -13079,7 +13412,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 60 * payroll_workplaceCount >=  this.maxAllowedPacket ){
 			insertPayroll_workplace(payroll_workplaces);
-			payroll_workplaces.clear();
 		} 
 	}
 
@@ -13183,6 +13515,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				catalogueStmt.setDate(offset++, catalogue.end_date);
 		}
 		catalogueStmt.executeUpdate();
+		catalogues.clear();
 		catalogueInserted += size;
 
 		// elapsed time in milliseconds
@@ -13221,11 +13554,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.catalogueId = catalogueId;
 		} 
 	
-	private void flushCatalogue(  )
+	protected void flushCatalogue( )
+	throws SQLException {
+		flushCatalogue(false);
+	}	
+
+	private void flushCatalogue( boolean close )
 	throws SQLException {
 		if ( ! catalogues.isEmpty() )
 			insertCatalogue(catalogues);
-		if ( catalogueStmt != null )
+		if ( close && catalogueStmt != null )
 			catalogueStmt.close();
 	}	
 
@@ -13254,7 +13592,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 72 * catalogueCount >=  this.maxAllowedPacket ){
 			insertCatalogue(catalogues);
-			catalogues.clear();
 		} 
 	}
 
@@ -13286,6 +13623,247 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 72 * catalogueCount >=  this.maxAllowedPacket ){
 			insertCatalogue(catalogues);
 			catalogues.clear();
+		} 
+		return id;
+	}
+
+
+	private int fs_batch_detailStmtSize = 0;
+
+	private int fs_batch_detailInserted = 0;
+
+	private List<Fs_batch_detail> fs_batch_details = 
+		new LinkedList<Fs_batch_detail>();
+
+	private PreparedStatement fs_batch_detailStmt = null;
+
+	public static class Fs_batch_detail {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer fs_batch; 
+		protected Integer child_domain; 
+		protected String company; 
+		protected Integer detail_id; 
+		protected Integer year; 
+		protected Short period; 
+		protected Boolean complementary; 
+		protected Boolean replacement; 
+		protected String description; 
+		protected Double result; 
+	}
+	
+	protected void insertFs_batch_detail( List<Fs_batch_detail> fs_batch_details )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = fs_batch_details.size();
+		if ( fs_batch_detailStmtSize != size ) {
+			if ( fs_batch_detailStmt != null ) {
+				fs_batch_detailStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			fs_batch_detailStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO fs_batch_detail (id,domain,fs_batch,child_domain,company,detail_id,year,period,complementary,replacement,description,result)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			fs_batch_detailStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Fs_batch_detail fs_batch_detail : fs_batch_details) {
+			if ( fs_batch_detail.id == null )
+				fs_batch_detailStmt.setNull(offset++, 4);
+			else
+				fs_batch_detailStmt.setInt(offset++, fs_batch_detail.id);
+			if ( fs_batch_detail.domain == null )
+				fs_batch_detailStmt.setNull(offset++, 4);
+			else
+				fs_batch_detailStmt.setInt(offset++, fs_batch_detail.domain);
+			if ( fs_batch_detail.fs_batch == null )
+				fs_batch_detailStmt.setNull(offset++, 4);
+			else
+				fs_batch_detailStmt.setInt(offset++, fs_batch_detail.fs_batch);
+			if ( fs_batch_detail.child_domain == null )
+				fs_batch_detailStmt.setNull(offset++, 4);
+			else
+				fs_batch_detailStmt.setInt(offset++, fs_batch_detail.child_domain);
+			if ( fs_batch_detail.company == null )
+				fs_batch_detailStmt.setNull(offset++, 12);
+			else
+				fs_batch_detailStmt.setString(offset++, fs_batch_detail.company);
+			if ( fs_batch_detail.detail_id == null )
+				fs_batch_detailStmt.setNull(offset++, 4);
+			else
+				fs_batch_detailStmt.setInt(offset++, fs_batch_detail.detail_id);
+			if ( fs_batch_detail.year == null )
+				fs_batch_detailStmt.setNull(offset++, 4);
+			else
+				fs_batch_detailStmt.setInt(offset++, fs_batch_detail.year);
+			if ( fs_batch_detail.period == null )
+				fs_batch_detailStmt.setNull(offset++, -6);
+			else
+				fs_batch_detailStmt.setShort(offset++, fs_batch_detail.period);
+			if ( fs_batch_detail.complementary == null )
+				fs_batch_detailStmt.setNull(offset++, -7);
+			else
+				fs_batch_detailStmt.setBoolean(offset++, fs_batch_detail.complementary);
+			if ( fs_batch_detail.replacement == null )
+				fs_batch_detailStmt.setNull(offset++, -7);
+			else
+				fs_batch_detailStmt.setBoolean(offset++, fs_batch_detail.replacement);
+			if ( fs_batch_detail.description == null )
+				fs_batch_detailStmt.setNull(offset++, 12);
+			else
+				fs_batch_detailStmt.setString(offset++, fs_batch_detail.description);
+			if ( fs_batch_detail.result == null )
+				fs_batch_detailStmt.setNull(offset++, 8);
+			else
+				fs_batch_detailStmt.setDouble(offset++, fs_batch_detail.result);
+		}
+		fs_batch_detailStmt.executeUpdate();
+		fs_batch_details.clear();
+		fs_batch_detailInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Fs_batch_details in {} milliseconds.", size, fs_batch_detailInserted, elapsed );		
+	}
+		
+		private int fs_batch_detailId = -1;
+		
+		private void initFs_batch_detailId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `fs_batch_detail`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.fs_batch_detailId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextFs_batch_detailId() {
+			return ++this.fs_batch_detailId;
+		} 
+
+		public void setFs_batch_detailId(Integer fs_batch_detailId) {
+			this.fs_batch_detailId = fs_batch_detailId;
+		} 
+	
+	protected void flushFs_batch_detail( )
+	throws SQLException {
+		flushFs_batch_detail(false);
+	}	
+
+	private void flushFs_batch_detail( boolean close )
+	throws SQLException {
+		if ( ! fs_batch_details.isEmpty() )
+			insertFs_batch_detail(fs_batch_details);
+		if ( close && fs_batch_detailStmt != null )
+			fs_batch_detailStmt.close();
+	}	
+
+	/**
+	 * Fs_batch_detail
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param fs_batch Identificador del Lote
+	 * @param child_domain Identificador del Dominio de la declaracion
+	 * @param company Nombre / Razon Social de la declaracion
+	 * @param detail_id Identificador de la Declaracion
+	 * @param year Ejercicio de la declaracion
+	 * @param period Periodo de la declaracion
+	 * @param complementary Declaracion complementaria
+	 * @param replacement Declaracion sustitutiva
+	 * @param description Descripcion
+	 * @param result Resultado de la declaracion
+	 * @throws SQLException
+	*/
+	protected void insertFs_batch_detail(Integer id, Integer domain, Integer fs_batch, Integer child_domain, String company, Integer detail_id, Integer year, Short period, Boolean complementary, Boolean replacement, String description, Double result)
+	throws SQLException {
+
+		Fs_batch_detail fs_batch_detail_ = new Fs_batch_detail();
+		fs_batch_detail_.id = id;
+		fs_batch_detail_.domain = domain;
+		fs_batch_detail_.fs_batch = fs_batch;
+		fs_batch_detail_.child_domain = child_domain;
+		fs_batch_detail_.company = company;
+		fs_batch_detail_.detail_id = detail_id;
+		fs_batch_detail_.year = year;
+		fs_batch_detail_.period = period;
+		fs_batch_detail_.complementary = complementary;
+		fs_batch_detail_.replacement = replacement;
+		fs_batch_detail_.description = description;
+		fs_batch_detail_.result = result;
+
+		fs_batch_details.add(fs_batch_detail_);
+		
+		int fs_batch_detailCount = fs_batch_details.size();
+		
+		if ( 182 * fs_batch_detailCount >=  this.maxAllowedPacket ){
+			insertFs_batch_detail(fs_batch_details);
+		} 
+	}
+
+
+	/**
+	 * Fs_batch_detail
+	 * @param domain Identificador del Dominio
+	 * @param fs_batch Identificador del Lote
+	 * @param child_domain Identificador del Dominio de la declaracion
+	 * @param company Nombre / Razon Social de la declaracion
+	 * @param detail_id Identificador de la Declaracion
+	 * @param year Ejercicio de la declaracion
+	 * @param period Periodo de la declaracion
+	 * @param complementary Declaracion complementaria
+	 * @param replacement Declaracion sustitutiva
+	 * @param description Descripcion
+	 * @param result Resultado de la declaracion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertFs_batch_detail(Integer domain, Integer fs_batch, Integer child_domain, String company, Integer detail_id, Integer year, Short period, Boolean complementary, Boolean replacement, String description, Double result)
+	throws SQLException {
+		int id = nextFs_batch_detailId();
+
+		Fs_batch_detail fs_batch_detail_ = new Fs_batch_detail();
+		fs_batch_detail_.id = id;
+		fs_batch_detail_.domain = domain;
+		fs_batch_detail_.fs_batch = fs_batch;
+		fs_batch_detail_.child_domain = child_domain;
+		fs_batch_detail_.company = company;
+		fs_batch_detail_.detail_id = detail_id;
+		fs_batch_detail_.year = year;
+		fs_batch_detail_.period = period;
+		fs_batch_detail_.complementary = complementary;
+		fs_batch_detail_.replacement = replacement;
+		fs_batch_detail_.description = description;
+		fs_batch_detail_.result = result;
+
+		fs_batch_details.add(fs_batch_detail_);
+		
+		int fs_batch_detailCount = fs_batch_details.size();
+		
+		if ( 182 * fs_batch_detailCount >=  this.maxAllowedPacket ){
+			insertFs_batch_detail(fs_batch_details);
+			fs_batch_details.clear();
 		} 
 		return id;
 	}
@@ -13356,6 +13934,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				action_entryStmt.setInt(offset++, action_entry.session_id);
 		}
 		action_entryStmt.executeUpdate();
+		action_entrys.clear();
 		action_entryInserted += size;
 
 		// elapsed time in milliseconds
@@ -13394,11 +13973,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.action_entryId = action_entryId;
 		} 
 	
-	private void flushAction_entry(  )
+	protected void flushAction_entry( )
+	throws SQLException {
+		flushAction_entry(false);
+	}	
+
+	private void flushAction_entry( boolean close )
 	throws SQLException {
 		if ( ! action_entrys.isEmpty() )
 			insertAction_entry(action_entrys);
-		if ( action_entryStmt != null )
+		if ( close && action_entryStmt != null )
 			action_entryStmt.close();
 	}	
 
@@ -13427,7 +14011,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 59 * action_entryCount >=  this.maxAllowedPacket ){
 			insertAction_entry(action_entrys);
-			action_entrys.clear();
 		} 
 	}
 
@@ -13534,6 +14117,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				absenceStmt.setShort(offset++, absence.evaluation);
 		}
 		absenceStmt.executeUpdate();
+		absences.clear();
 		absenceInserted += size;
 
 		// elapsed time in milliseconds
@@ -13572,11 +14156,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.absenceId = absenceId;
 		} 
 	
-	private void flushAbsence(  )
+	protected void flushAbsence( )
+	throws SQLException {
+		flushAbsence(false);
+	}	
+
+	private void flushAbsence( boolean close )
 	throws SQLException {
 		if ( ! absences.isEmpty() )
 			insertAbsence(absences);
-		if ( absenceStmt != null )
+		if ( close && absenceStmt != null )
 			absenceStmt.close();
 	}	
 
@@ -13607,7 +14196,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 43 * absenceCount >=  this.maxAllowedPacket ){
 			insertAbsence(absences);
-			absences.clear();
 		} 
 	}
 
@@ -13751,6 +14339,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				system_paymentStmt.setShort(offset++, system_payment.salary_type);
 		}
 		system_paymentStmt.executeUpdate();
+		system_payments.clear();
 		system_paymentInserted += size;
 
 		// elapsed time in milliseconds
@@ -13789,11 +14378,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.system_paymentId = system_paymentId;
 		} 
 	
-	private void flushSystem_payment(  )
+	protected void flushSystem_payment( )
+	throws SQLException {
+		flushSystem_payment(false);
+	}	
+
+	private void flushSystem_payment( boolean close )
 	throws SQLException {
 		if ( ! system_payments.isEmpty() )
 			insertSystem_payment(system_payments);
-		if ( system_paymentStmt != null )
+		if ( close && system_paymentStmt != null )
 			system_paymentStmt.close();
 	}	
 
@@ -13801,7 +14395,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * System_payment
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Percepci?n Salarial
+	 * @param type Tipo de Percepcin Salarial
 	 * @param payment_concept Identificador unico del concepto
 	 * @param description Descripcion
 	 * @param description_decorable 
@@ -13838,7 +14432,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 510 * system_paymentCount >=  this.maxAllowedPacket ){
 			insertSystem_payment(system_payments);
-			system_payments.clear();
 		} 
 	}
 
@@ -13846,7 +14439,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * System_payment
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Percepci?n Salarial
+	 * @param type Tipo de Percepcin Salarial
 	 * @param payment_concept Identificador unico del concepto
 	 * @param description Descripcion
 	 * @param description_decorable 
@@ -13956,6 +14549,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				application_userStmt.setBoolean(offset++, application_user.active);
 		}
 		application_userStmt.executeUpdate();
+		application_users.clear();
 		application_userInserted += size;
 
 		// elapsed time in milliseconds
@@ -13994,11 +14588,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.application_userId = application_userId;
 		} 
 	
-	private void flushApplication_user(  )
+	protected void flushApplication_user( )
+	throws SQLException {
+		flushApplication_user(false);
+	}	
+
+	private void flushApplication_user( boolean close )
 	throws SQLException {
 		if ( ! application_users.isEmpty() )
 			insertApplication_user(application_users);
-		if ( application_userStmt != null )
+		if ( close && application_userStmt != null )
 			application_userStmt.close();
 	}	
 
@@ -14027,7 +14626,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * application_userCount >=  this.maxAllowedPacket ){
 			insertApplication_user(application_users);
-			application_users.clear();
 		} 
 	}
 
@@ -14139,6 +14737,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				item_tariffStmt.setDouble(offset++, item_tariff.price);
 		}
 		item_tariffStmt.executeUpdate();
+		item_tariffs.clear();
 		item_tariffInserted += size;
 
 		// elapsed time in milliseconds
@@ -14177,11 +14776,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.item_tariffId = item_tariffId;
 		} 
 	
-	private void flushItem_tariff(  )
+	protected void flushItem_tariff( )
+	throws SQLException {
+		flushItem_tariff(false);
+	}	
+
+	private void flushItem_tariff( boolean close )
 	throws SQLException {
 		if ( ! item_tariffs.isEmpty() )
 			insertItem_tariff(item_tariffs);
-		if ( item_tariffStmt != null )
+		if ( close && item_tariffStmt != null )
 			item_tariffStmt.close();
 	}	
 
@@ -14214,7 +14818,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 87 * item_tariffCount >=  this.maxAllowedPacket ){
 			insertItem_tariff(item_tariffs);
-			item_tariffs.clear();
 		} 
 	}
 
@@ -14310,6 +14913,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				cnoStmt.setString(offset++, cno.title);
 		}
 		cnoStmt.executeUpdate();
+		cnos.clear();
 		cnoInserted += size;
 
 		// elapsed time in milliseconds
@@ -14348,11 +14952,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.cnoId = cnoId;
 		} 
 	
-	private void flushCno(  )
+	protected void flushCno( )
+	throws SQLException {
+		flushCno(false);
+	}	
+
+	private void flushCno( boolean close )
 	throws SQLException {
 		if ( ! cnos.isEmpty() )
 			insertCno(cnos);
-		if ( cnoStmt != null )
+		if ( close && cnoStmt != null )
 			cnoStmt.close();
 	}	
 
@@ -14377,7 +14986,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 270 * cnoCount >=  this.maxAllowedPacket ){
 			insertCno(cnos);
-			cnos.clear();
 		} 
 	}
 
@@ -14470,6 +15078,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				account_entry_fbatchStmt.setInt(offset++, account_entry_fbatch.fbatch);
 		}
 		account_entry_fbatchStmt.executeUpdate();
+		account_entry_fbatchs.clear();
 		account_entry_fbatchInserted += size;
 
 		// elapsed time in milliseconds
@@ -14508,11 +15117,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.account_entry_fbatchId = account_entry_fbatchId;
 		} 
 	
-	private void flushAccount_entry_fbatch(  )
+	protected void flushAccount_entry_fbatch( )
+	throws SQLException {
+		flushAccount_entry_fbatch(false);
+	}	
+
+	private void flushAccount_entry_fbatch( boolean close )
 	throws SQLException {
 		if ( ! account_entry_fbatchs.isEmpty() )
 			insertAccount_entry_fbatch(account_entry_fbatchs);
-		if ( account_entry_fbatchStmt != null )
+		if ( close && account_entry_fbatchStmt != null )
 			account_entry_fbatchStmt.close();
 	}	
 
@@ -14539,7 +15153,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * account_entry_fbatchCount >=  this.maxAllowedPacket ){
 			insertAccount_entry_fbatch(account_entry_fbatchs);
-			account_entry_fbatchs.clear();
 		} 
 	}
 
@@ -14634,6 +15247,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				sellerStmt.setShort(offset++, seller.status);
 		}
 		sellerStmt.executeUpdate();
+		sellers.clear();
 		sellerInserted += size;
 
 		// elapsed time in milliseconds
@@ -14642,11 +15256,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 		
 	
-	private void flushSeller(  )
+	protected void flushSeller( )
+	throws SQLException {
+		flushSeller(false);
+	}	
+
+	private void flushSeller( boolean close )
 	throws SQLException {
 		if ( ! sellers.isEmpty() )
 			insertSeller(sellers);
-		if ( sellerStmt != null )
+		if ( close && sellerStmt != null )
 			sellerStmt.close();
 	}	
 
@@ -14673,7 +15292,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 33 * sellerCount >=  this.maxAllowedPacket ){
 			insertSeller(sellers);
-			sellers.clear();
 		} 
 	}
 
@@ -14749,6 +15367,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				offer_attachStmt.setBlob(offset++, offer_attach.data);
 		}
 		offer_attachStmt.executeUpdate();
+		offer_attachs.clear();
 		offer_attachInserted += size;
 
 		// elapsed time in milliseconds
@@ -14787,11 +15406,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.offer_attachId = offer_attachId;
 		} 
 	
-	private void flushOffer_attach(  )
+	protected void flushOffer_attach( )
+	throws SQLException {
+		flushOffer_attach(false);
+	}	
+
+	private void flushOffer_attach( boolean close )
 	throws SQLException {
 		if ( ! offer_attachs.isEmpty() )
 			insertOffer_attach(offer_attachs);
-		if ( offer_attachStmt != null )
+		if ( close && offer_attachStmt != null )
 			offer_attachStmt.close();
 	}	
 
@@ -14822,7 +15446,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 97 * offer_attachCount >=  this.maxAllowedPacket ){
 			insertOffer_attach(offer_attachs);
-			offer_attachs.clear();
 		} 
 	}
 
@@ -15071,6 +15694,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_reservationStmt.setTimestamp(offset++, project_reservation.modification_date);
 		}
 		project_reservationStmt.executeUpdate();
+		project_reservations.clear();
 		project_reservationInserted += size;
 
 		// elapsed time in milliseconds
@@ -15079,11 +15703,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 		
 	
-	private void flushProject_reservation(  )
+	protected void flushProject_reservation( )
+	throws SQLException {
+		flushProject_reservation(false);
+	}	
+
+	private void flushProject_reservation( boolean close )
 	throws SQLException {
 		if ( ! project_reservations.isEmpty() )
 			insertProject_reservation(project_reservations);
-		if ( project_reservationStmt != null )
+		if ( close && project_reservationStmt != null )
 			project_reservationStmt.close();
 	}	
 
@@ -15170,7 +15799,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 370 * project_reservationCount >=  this.maxAllowedPacket ){
 			insertProject_reservation(project_reservations);
-			project_reservations.clear();
 		} 
 	}
 
@@ -15276,6 +15904,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				process_detailStmt.setString(offset++, process_detail.comments);
 		}
 		process_detailStmt.executeUpdate();
+		process_details.clear();
 		process_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -15314,11 +15943,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.process_detailId = process_detailId;
 		} 
 	
-	private void flushProcess_detail(  )
+	protected void flushProcess_detail( )
+	throws SQLException {
+		flushProcess_detail(false);
+	}	
+
+	private void flushProcess_detail( boolean close )
 	throws SQLException {
 		if ( ! process_details.isEmpty() )
 			insertProcess_detail(process_details);
-		if ( process_detailStmt != null )
+		if ( close && process_detailStmt != null )
 			process_detailStmt.close();
 	}	
 
@@ -15361,7 +15995,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 140 * process_detailCount >=  this.maxAllowedPacket ){
 			insertProcess_detail(process_details);
-			process_details.clear();
 		} 
 	}
 
@@ -15467,6 +16100,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				relationshipStmt.setString(offset++, relationship.description);
 		}
 		relationshipStmt.executeUpdate();
+		relationships.clear();
 		relationshipInserted += size;
 
 		// elapsed time in milliseconds
@@ -15505,11 +16139,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.relationshipId = relationshipId;
 		} 
 	
-	private void flushRelationship(  )
+	protected void flushRelationship( )
+	throws SQLException {
+		flushRelationship(false);
+	}	
+
+	private void flushRelationship( boolean close )
 	throws SQLException {
 		if ( ! relationships.isEmpty() )
 			insertRelationship(relationships);
-		if ( relationshipStmt != null )
+		if ( close && relationshipStmt != null )
 			relationshipStmt.close();
 	}	
 
@@ -15534,7 +16173,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 52 * relationshipCount >=  this.maxAllowedPacket ){
 			insertRelationship(relationships);
-			relationships.clear();
 		} 
 	}
 
@@ -15627,6 +16265,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				account_entry_invoiceStmt.setInt(offset++, account_entry_invoice.invoice);
 		}
 		account_entry_invoiceStmt.executeUpdate();
+		account_entry_invoices.clear();
 		account_entry_invoiceInserted += size;
 
 		// elapsed time in milliseconds
@@ -15665,11 +16304,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.account_entry_invoiceId = account_entry_invoiceId;
 		} 
 	
-	private void flushAccount_entry_invoice(  )
+	protected void flushAccount_entry_invoice( )
+	throws SQLException {
+		flushAccount_entry_invoice(false);
+	}	
+
+	private void flushAccount_entry_invoice( boolean close )
 	throws SQLException {
 		if ( ! account_entry_invoices.isEmpty() )
 			insertAccount_entry_invoice(account_entry_invoices);
-		if ( account_entry_invoiceStmt != null )
+		if ( close && account_entry_invoiceStmt != null )
 			account_entry_invoiceStmt.close();
 	}	
 
@@ -15696,7 +16340,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * account_entry_invoiceCount >=  this.maxAllowedPacket ){
 			insertAccount_entry_invoice(account_entry_invoices);
-			account_entry_invoices.clear();
 		} 
 	}
 
@@ -15796,6 +16439,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				tax_accountStmt.setShort(offset++, tax_account.type);
 		}
 		tax_accountStmt.executeUpdate();
+		tax_accounts.clear();
 		tax_accountInserted += size;
 
 		// elapsed time in milliseconds
@@ -15834,11 +16478,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.tax_accountId = tax_accountId;
 		} 
 	
-	private void flushTax_account(  )
+	protected void flushTax_account( )
+	throws SQLException {
+		flushTax_account(false);
+	}	
+
+	private void flushTax_account( boolean close )
 	throws SQLException {
 		if ( ! tax_accounts.isEmpty() )
 			insertTax_account(tax_accounts);
-		if ( tax_accountStmt != null )
+		if ( close && tax_accountStmt != null )
 			tax_accountStmt.close();
 	}	
 
@@ -15867,7 +16516,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 43 * tax_accountCount >=  this.maxAllowedPacket ){
 			insertTax_account(tax_accounts);
-			tax_accounts.clear();
 		} 
 	}
 
@@ -15969,6 +16617,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				inventoryStmt.setString(offset++, inventory.description);
 		}
 		inventoryStmt.executeUpdate();
+		inventorys.clear();
 		inventoryInserted += size;
 
 		// elapsed time in milliseconds
@@ -16007,11 +16656,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.inventoryId = inventoryId;
 		} 
 	
-	private void flushInventory(  )
+	protected void flushInventory( )
+	throws SQLException {
+		flushInventory(false);
+	}	
+
+	private void flushInventory( boolean close )
 	throws SQLException {
 		if ( ! inventorys.isEmpty() )
 			insertInventory(inventorys);
-		if ( inventoryStmt != null )
+		if ( close && inventoryStmt != null )
 			inventoryStmt.close();
 	}	
 
@@ -16040,7 +16694,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 104 * inventoryCount >=  this.maxAllowedPacket ){
 			insertInventory(inventorys);
-			inventorys.clear();
 		} 
 	}
 
@@ -16147,6 +16800,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				commercial_termStmt.setBoolean(offset++, commercial_term.term_general);
 		}
 		commercial_termStmt.executeUpdate();
+		commercial_terms.clear();
 		commercial_termInserted += size;
 
 		// elapsed time in milliseconds
@@ -16185,11 +16839,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.commercial_termId = commercial_termId;
 		} 
 	
-	private void flushCommercial_term(  )
+	protected void flushCommercial_term( )
+	throws SQLException {
+		flushCommercial_term(false);
+	}	
+
+	private void flushCommercial_term( boolean close )
 	throws SQLException {
 		if ( ! commercial_terms.isEmpty() )
 			insertCommercial_term(commercial_terms);
-		if ( commercial_termStmt != null )
+		if ( close && commercial_termStmt != null )
 			commercial_termStmt.close();
 	}	
 
@@ -16200,7 +16859,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param line Numero de linea de Condicion
 	 * @param name Nombre de la Condicion Comercial
 	 * @param description Descripcion de la Condicion Comercial
-	 * @param term_general Indica si la Condici?n es particular o general
+	 * @param term_general Indica si la Condicin es particular o general
 	 * @throws SQLException
 	*/
 	protected void insertCommercial_term(Integer id, Integer domain, Integer line, String name, String description, Boolean term_general)
@@ -16220,7 +16879,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 89 * commercial_termCount >=  this.maxAllowedPacket ){
 			insertCommercial_term(commercial_terms);
-			commercial_terms.clear();
 		} 
 	}
 
@@ -16231,7 +16889,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param line Numero de linea de Condicion
 	 * @param name Nombre de la Condicion Comercial
 	 * @param description Descripcion de la Condicion Comercial
-	 * @param term_general Indica si la Condici?n es particular o general
+	 * @param term_general Indica si la Condicin es particular o general
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -16334,6 +16992,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				offer_termStmt.setBoolean(offset++, offer_term.term_general);
 		}
 		offer_termStmt.executeUpdate();
+		offer_terms.clear();
 		offer_termInserted += size;
 
 		// elapsed time in milliseconds
@@ -16372,11 +17031,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.offer_termId = offer_termId;
 		} 
 	
-	private void flushOffer_term(  )
+	protected void flushOffer_term( )
+	throws SQLException {
+		flushOffer_term(false);
+	}	
+
+	private void flushOffer_term( boolean close )
 	throws SQLException {
 		if ( ! offer_terms.isEmpty() )
 			insertOffer_term(offer_terms);
-		if ( offer_termStmt != null )
+		if ( close && offer_termStmt != null )
 			offer_termStmt.close();
 	}	
 
@@ -16409,7 +17073,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 99 * offer_termCount >=  this.maxAllowedPacket ){
 			insertOffer_term(offer_terms);
-			offer_terms.clear();
 		} 
 	}
 
@@ -16463,6 +17126,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer id; 
 		protected Integer domain; 
 		protected String name; 
+		protected Integer probability; 
+		protected Integer survey; 
 	}
 	
 	protected void insertCommercial_activity( List<Commercial_activity> commercial_activitys )
@@ -16473,7 +17138,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( commercial_activityStmt != null ) {
 				commercial_activityStmt.close();
 			}
-			String values = "(?,?,?)";
+			String values = "(?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -16482,7 +17147,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			commercial_activityStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO commercial_activity (id,domain,name)"  
+				"INSERT INTO commercial_activity (id,domain,name,probability,survey)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			commercial_activityStmtSize = size;
@@ -16503,8 +17168,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				commercial_activityStmt.setNull(offset++, 12);
 			else
 				commercial_activityStmt.setString(offset++, commercial_activity.name);
+			if ( commercial_activity.probability == null )
+				commercial_activityStmt.setNull(offset++, 4);
+			else
+				commercial_activityStmt.setInt(offset++, commercial_activity.probability);
+			if ( commercial_activity.survey == null )
+				commercial_activityStmt.setNull(offset++, 4);
+			else
+				commercial_activityStmt.setInt(offset++, commercial_activity.survey);
 		}
 		commercial_activityStmt.executeUpdate();
+		commercial_activitys.clear();
 		commercial_activityInserted += size;
 
 		// elapsed time in milliseconds
@@ -16543,11 +17217,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.commercial_activityId = commercial_activityId;
 		} 
 	
-	private void flushCommercial_activity(  )
+	protected void flushCommercial_activity( )
+	throws SQLException {
+		flushCommercial_activity(false);
+	}	
+
+	private void flushCommercial_activity( boolean close )
 	throws SQLException {
 		if ( ! commercial_activitys.isEmpty() )
 			insertCommercial_activity(commercial_activitys);
-		if ( commercial_activityStmt != null )
+		if ( close && commercial_activityStmt != null )
 			commercial_activityStmt.close();
 	}	
 
@@ -16556,23 +17235,26 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param name Nombre de la Actividad Comercial
+	 * @param probability Probabilidad de la Actividad
+	 * @param survey Identificador del Cuestionario
 	 * @throws SQLException
 	*/
-	protected void insertCommercial_activity(Integer id, Integer domain, String name)
+	protected void insertCommercial_activity(Integer id, Integer domain, String name, Integer probability, Integer survey)
 	throws SQLException {
 
 		Commercial_activity commercial_activity_ = new Commercial_activity();
 		commercial_activity_.id = id;
 		commercial_activity_.domain = domain;
 		commercial_activity_.name = name;
+		commercial_activity_.probability = probability;
+		commercial_activity_.survey = survey;
 
 		commercial_activitys.add(commercial_activity_);
 		
 		int commercial_activityCount = commercial_activitys.size();
 		
-		if ( 52 * commercial_activityCount >=  this.maxAllowedPacket ){
+		if ( 72 * commercial_activityCount >=  this.maxAllowedPacket ){
 			insertCommercial_activity(commercial_activitys);
-			commercial_activitys.clear();
 		} 
 	}
 
@@ -16581,10 +17263,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Commercial_activity
 	 * @param domain Identificador del Dominio
 	 * @param name Nombre de la Actividad Comercial
+	 * @param probability Probabilidad de la Actividad
+	 * @param survey Identificador del Cuestionario
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertCommercial_activity(Integer domain, String name)
+	public int insertCommercial_activity(Integer domain, String name, Integer probability, Integer survey)
 	throws SQLException {
 		int id = nextCommercial_activityId();
 
@@ -16592,12 +17276,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		commercial_activity_.id = id;
 		commercial_activity_.domain = domain;
 		commercial_activity_.name = name;
+		commercial_activity_.probability = probability;
+		commercial_activity_.survey = survey;
 
 		commercial_activitys.add(commercial_activity_);
 		
 		int commercial_activityCount = commercial_activitys.size();
 		
-		if ( 52 * commercial_activityCount >=  this.maxAllowedPacket ){
+		if ( 72 * commercial_activityCount >=  this.maxAllowedPacket ){
 			insertCommercial_activity(commercial_activitys);
 			commercial_activitys.clear();
 		} 
@@ -16665,6 +17351,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				rsegmentStmt.setInt(offset++, rsegment.segment);
 		}
 		rsegmentStmt.executeUpdate();
+		rsegments.clear();
 		rsegmentInserted += size;
 
 		// elapsed time in milliseconds
@@ -16703,11 +17390,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.rsegmentId = rsegmentId;
 		} 
 	
-	private void flushRsegment(  )
+	protected void flushRsegment( )
+	throws SQLException {
+		flushRsegment(false);
+	}	
+
+	private void flushRsegment( boolean close )
 	throws SQLException {
 		if ( ! rsegments.isEmpty() )
 			insertRsegment(rsegments);
-		if ( rsegmentStmt != null )
+		if ( close && rsegmentStmt != null )
 			rsegmentStmt.close();
 	}	
 
@@ -16734,7 +17426,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * rsegmentCount >=  this.maxAllowedPacket ){
 			insertRsegment(rsegments);
-			rsegments.clear();
 		} 
 	}
 
@@ -16829,6 +17520,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				domain_application_moduleStmt.setShort(offset++, domain_application_module.module);
 		}
 		domain_application_moduleStmt.executeUpdate();
+		domain_application_modules.clear();
 		domain_application_moduleInserted += size;
 
 		// elapsed time in milliseconds
@@ -16867,11 +17559,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.domain_application_moduleId = domain_application_moduleId;
 		} 
 	
-	private void flushDomain_application_module(  )
+	protected void flushDomain_application_module( )
+	throws SQLException {
+		flushDomain_application_module(false);
+	}	
+
+	private void flushDomain_application_module( boolean close )
 	throws SQLException {
 		if ( ! domain_application_modules.isEmpty() )
 			insertDomain_application_module(domain_application_modules);
-		if ( domain_application_moduleStmt != null )
+		if ( close && domain_application_moduleStmt != null )
 			domain_application_moduleStmt.close();
 	}	
 
@@ -16898,7 +17595,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 33 * domain_application_moduleCount >=  this.maxAllowedPacket ){
 			insertDomain_application_module(domain_application_modules);
-			domain_application_modules.clear();
 		} 
 	}
 
@@ -17033,6 +17729,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_tasStmt.setInt(offset++, project_tas.workplace);
 		}
 		project_tasStmt.executeUpdate();
+		project_tass.clear();
 		project_tasInserted += size;
 
 		// elapsed time in milliseconds
@@ -17041,11 +17738,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 		
 	
-	private void flushProject_tas(  )
+	protected void flushProject_tas( )
+	throws SQLException {
+		flushProject_tas(false);
+	}	
+
+	private void flushProject_tas( boolean close )
 	throws SQLException {
 		if ( ! project_tass.isEmpty() )
 			insertProject_tas(project_tass);
-		if ( project_tasStmt != null )
+		if ( close && project_tasStmt != null )
 			project_tasStmt.close();
 	}	
 
@@ -17088,7 +17790,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 103 * project_tasCount >=  this.maxAllowedPacket ){
 			insertProject_tas(project_tass);
-			project_tass.clear();
 		} 
 	}
 
@@ -17149,6 +17850,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				process_transition_typeStmt.setString(offset++, process_transition_type.description);
 		}
 		process_transition_typeStmt.executeUpdate();
+		process_transition_types.clear();
 		process_transition_typeInserted += size;
 
 		// elapsed time in milliseconds
@@ -17187,11 +17889,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.process_transition_typeId = process_transition_typeId;
 		} 
 	
-	private void flushProcess_transition_type(  )
+	protected void flushProcess_transition_type( )
+	throws SQLException {
+		flushProcess_transition_type(false);
+	}	
+
+	private void flushProcess_transition_type( boolean close )
 	throws SQLException {
 		if ( ! process_transition_types.isEmpty() )
 			insertProcess_transition_type(process_transition_types);
-		if ( process_transition_typeStmt != null )
+		if ( close && process_transition_typeStmt != null )
 			process_transition_typeStmt.close();
 	}	
 
@@ -17216,7 +17923,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 84 * process_transition_typeCount >=  this.maxAllowedPacket ){
 			insertProcess_transition_type(process_transition_types);
-			process_transition_types.clear();
 		} 
 	}
 
@@ -17324,6 +18030,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				deduction_conceptStmt.setString(offset++, deduction_concept.expression);
 		}
 		deduction_conceptStmt.executeUpdate();
+		deduction_concepts.clear();
 		deduction_conceptInserted += size;
 
 		// elapsed time in milliseconds
@@ -17362,11 +18069,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.deduction_conceptId = deduction_conceptId;
 		} 
 	
-	private void flushDeduction_concept(  )
+	protected void flushDeduction_concept( )
+	throws SQLException {
+		flushDeduction_concept(false);
+	}	
+
+	private void flushDeduction_concept( boolean close )
 	throws SQLException {
 		if ( ! deduction_concepts.isEmpty() )
 			insertDeduction_concept(deduction_concepts);
-		if ( deduction_conceptStmt != null )
+		if ( close && deduction_conceptStmt != null )
 			deduction_conceptStmt.close();
 	}	
 
@@ -17399,7 +18111,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 223 * deduction_conceptCount >=  this.maxAllowedPacket ){
 			insertDeduction_concept(deduction_concepts);
-			deduction_concepts.clear();
 		} 
 	}
 
@@ -17625,6 +18336,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.salary_processing_days);
 		}
 		certifica2_batch_detailStmt.executeUpdate();
+		certifica2_batch_details.clear();
 		certifica2_batch_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -17663,11 +18375,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.certifica2_batch_detailId = certifica2_batch_detailId;
 		} 
 	
-	private void flushCertifica2_batch_detail(  )
+	protected void flushCertifica2_batch_detail( )
+	throws SQLException {
+		flushCertifica2_batch_detail(false);
+	}	
+
+	private void flushCertifica2_batch_detail( boolean close )
 	throws SQLException {
 		if ( ! certifica2_batch_details.isEmpty() )
 			insertCertifica2_batch_detail(certifica2_batch_details);
-		if ( certifica2_batch_detailStmt != null )
+		if ( close && certifica2_batch_detailStmt != null )
 			certifica2_batch_detailStmt.close();
 	}	
 
@@ -17684,7 +18401,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param first_surname Primer apellido
 	 * @param second_surname Segundo apellido
 	 * @param ss_number Numero seguridad social
-	 * @param quote_group Grupo de Cotizaci
+	 * @param quote_group Grupo de Cotización
 	 * @param contract_type Tipo de contrato
 	 * @param contract_duration Duracion contrato
 	 * @param contract_duration_indicator Indicador duracion contrato
@@ -17744,7 +18461,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 266 * certifica2_batch_detailCount >=  this.maxAllowedPacket ){
 			insertCertifica2_batch_detail(certifica2_batch_details);
-			certifica2_batch_details.clear();
 		} 
 	}
 
@@ -17761,7 +18477,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param first_surname Primer apellido
 	 * @param second_surname Segundo apellido
 	 * @param ss_number Numero seguridad social
-	 * @param quote_group Grupo de Cotizaci
+	 * @param quote_group Grupo de Cotización
 	 * @param contract_type Tipo de contrato
 	 * @param contract_duration Duracion contrato
 	 * @param contract_duration_indicator Indicador duracion contrato
@@ -17909,6 +18625,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_batchStmt.setShort(offset++, contract_batch.status);
 		}
 		contract_batchStmt.executeUpdate();
+		contract_batchs.clear();
 		contract_batchInserted += size;
 
 		// elapsed time in milliseconds
@@ -17947,11 +18664,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.contract_batchId = contract_batchId;
 		} 
 	
-	private void flushContract_batch(  )
+	protected void flushContract_batch( )
+	throws SQLException {
+		flushContract_batch(false);
+	}	
+
+	private void flushContract_batch( boolean close )
 	throws SQLException {
 		if ( ! contract_batchs.isEmpty() )
 			insertContract_batch(contract_batchs);
-		if ( contract_batchStmt != null )
+		if ( close && contract_batchStmt != null )
 			contract_batchStmt.close();
 	}	
 
@@ -17986,7 +18708,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 117 * contract_batchCount >=  this.maxAllowedPacket ){
 			insertContract_batch(contract_batchs);
-			contract_batchs.clear();
 		} 
 	}
 
@@ -18089,6 +18810,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				quality_skillStmt.setString(offset++, quality_skill.description);
 		}
 		quality_skillStmt.executeUpdate();
+		quality_skills.clear();
 		quality_skillInserted += size;
 
 		// elapsed time in milliseconds
@@ -18127,11 +18849,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.quality_skillId = quality_skillId;
 		} 
 	
-	private void flushQuality_skill(  )
+	protected void flushQuality_skill( )
+	throws SQLException {
+		flushQuality_skill(false);
+	}	
+
+	private void flushQuality_skill( boolean close )
 	throws SQLException {
 		if ( ! quality_skills.isEmpty() )
 			insertQuality_skill(quality_skills);
-		if ( quality_skillStmt != null )
+		if ( close && quality_skillStmt != null )
 			quality_skillStmt.close();
 	}	
 
@@ -18158,7 +18885,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 89 * quality_skillCount >=  this.maxAllowedPacket ){
 			insertQuality_skill(quality_skills);
-			quality_skills.clear();
 		} 
 	}
 
@@ -18258,6 +18984,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				balanceStmt.setShort(offset++, balance.type);
 		}
 		balanceStmt.executeUpdate();
+		balances.clear();
 		balanceInserted += size;
 
 		// elapsed time in milliseconds
@@ -18296,11 +19023,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.balanceId = balanceId;
 		} 
 	
-	private void flushBalance(  )
+	protected void flushBalance( )
+	throws SQLException {
+		flushBalance(false);
+	}	
+
+	private void flushBalance( boolean close )
 	throws SQLException {
 		if ( ! balances.isEmpty() )
 			insertBalance(balances);
-		if ( balanceStmt != null )
+		if ( close && balanceStmt != null )
 			balanceStmt.close();
 	}	
 
@@ -18329,7 +19061,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 87 * balanceCount >=  this.maxAllowedPacket ){
 			insertBalance(balances);
-			balances.clear();
 		} 
 	}
 
@@ -18436,6 +19167,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				qualificationStmt.setDouble(offset++, qualification.max_value);
 		}
 		qualificationStmt.executeUpdate();
+		qualifications.clear();
 		qualificationInserted += size;
 
 		// elapsed time in milliseconds
@@ -18474,11 +19206,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.qualificationId = qualificationId;
 		} 
 	
-	private void flushQualification(  )
+	protected void flushQualification( )
+	throws SQLException {
+		flushQualification(false);
+	}	
+
+	private void flushQualification( boolean close )
 	throws SQLException {
 		if ( ! qualifications.isEmpty() )
 			insertQualification(qualifications);
-		if ( qualificationStmt != null )
+		if ( close && qualificationStmt != null )
 			qualificationStmt.close();
 	}	
 
@@ -18509,7 +19246,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 119 * qualificationCount >=  this.maxAllowedPacket ){
 			insertQualification(qualifications);
-			qualifications.clear();
 		} 
 	}
 
@@ -18623,6 +19359,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				tax_detailStmt.setDouble(offset++, tax_detail.surcharge);
 		}
 		tax_detailStmt.executeUpdate();
+		tax_details.clear();
 		tax_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -18661,11 +19398,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.tax_detailId = tax_detailId;
 		} 
 	
-	private void flushTax_detail(  )
+	protected void flushTax_detail( )
+	throws SQLException {
+		flushTax_detail(false);
+	}	
+
+	private void flushTax_detail( boolean close )
 	throws SQLException {
 		if ( ! tax_details.isEmpty() )
 			insertTax_detail(tax_details);
-		if ( tax_detailStmt != null )
+		if ( close && tax_detailStmt != null )
 			tax_detailStmt.close();
 	}	
 
@@ -18698,7 +19440,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 80 * tax_detailCount >=  this.maxAllowedPacket ){
 			insertTax_detail(tax_details);
-			tax_details.clear();
 		} 
 	}
 
@@ -18799,6 +19540,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				supplier_accountStmt.setInt(offset++, supplier_account.account);
 		}
 		supplier_accountStmt.executeUpdate();
+		supplier_accounts.clear();
 		supplier_accountInserted += size;
 
 		// elapsed time in milliseconds
@@ -18837,11 +19579,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.supplier_accountId = supplier_accountId;
 		} 
 	
-	private void flushSupplier_account(  )
+	protected void flushSupplier_account( )
+	throws SQLException {
+		flushSupplier_account(false);
+	}	
+
+	private void flushSupplier_account( boolean close )
 	throws SQLException {
 		if ( ! supplier_accounts.isEmpty() )
 			insertSupplier_account(supplier_accounts);
-		if ( supplier_accountStmt != null )
+		if ( close && supplier_accountStmt != null )
 			supplier_accountStmt.close();
 	}	
 
@@ -18868,7 +19615,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * supplier_accountCount >=  this.maxAllowedPacket ){
 			insertSupplier_account(supplier_accounts);
-			supplier_accounts.clear();
 		} 
 	}
 
@@ -18963,6 +19709,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				bankStmt.setString(offset++, bank.code);
 		}
 		bankStmt.executeUpdate();
+		banks.clear();
 		bankInserted += size;
 
 		// elapsed time in milliseconds
@@ -19001,11 +19748,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.bankId = bankId;
 		} 
 	
-	private void flushBank(  )
+	protected void flushBank( )
+	throws SQLException {
+		flushBank(false);
+	}	
+
+	private void flushBank( boolean close )
 	throws SQLException {
 		if ( ! banks.isEmpty() )
 			insertBank(banks);
-		if ( bankStmt != null )
+		if ( close && bankStmt != null )
 			bankStmt.close();
 	}	
 
@@ -19032,7 +19784,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 88 * bankCount >=  this.maxAllowedPacket ){
 			insertBank(banks);
-			banks.clear();
 		} 
 	}
 
@@ -19132,6 +19883,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				activity_typeStmt.setBoolean(offset++, activity_type.active);
 		}
 		activity_typeStmt.executeUpdate();
+		activity_types.clear();
 		activity_typeInserted += size;
 
 		// elapsed time in milliseconds
@@ -19170,11 +19922,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.activity_typeId = activity_typeId;
 		} 
 	
-	private void flushActivity_type(  )
+	protected void flushActivity_type( )
+	throws SQLException {
+		flushActivity_type(false);
+	}	
+
+	private void flushActivity_type( boolean close )
 	throws SQLException {
 		if ( ! activity_types.isEmpty() )
 			insertActivity_type(activity_types);
-		if ( activity_typeStmt != null )
+		if ( close && activity_typeStmt != null )
 			activity_typeStmt.close();
 	}	
 
@@ -19203,7 +19960,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 94 * activity_typeCount >=  this.maxAllowedPacket ){
 			insertActivity_type(activity_types);
-			activity_types.clear();
 		} 
 	}
 
@@ -19310,6 +20066,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				course_evaluationStmt.setInt(offset++, course_evaluation.quantity);
 		}
 		course_evaluationStmt.executeUpdate();
+		course_evaluations.clear();
 		course_evaluationInserted += size;
 
 		// elapsed time in milliseconds
@@ -19348,11 +20105,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.course_evaluationId = course_evaluationId;
 		} 
 	
-	private void flushCourse_evaluation(  )
+	protected void flushCourse_evaluation( )
+	throws SQLException {
+		flushCourse_evaluation(false);
+	}	
+
+	private void flushCourse_evaluation( boolean close )
 	throws SQLException {
 		if ( ! course_evaluations.isEmpty() )
 			insertCourse_evaluation(course_evaluations);
-		if ( course_evaluationStmt != null )
+		if ( close && course_evaluationStmt != null )
 			course_evaluationStmt.close();
 	}	
 
@@ -19383,7 +20145,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 65 * course_evaluationCount >=  this.maxAllowedPacket ){
 			insertCourse_evaluation(course_evaluations);
-			course_evaluations.clear();
 		} 
 	}
 
@@ -19582,6 +20343,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				irpf_dataStmt.setBoolean(offset++, irpf_data.ceuta_melilla);
 		}
 		irpf_dataStmt.executeUpdate();
+		irpf_datas.clear();
 		irpf_dataInserted += size;
 
 		// elapsed time in milliseconds
@@ -19620,11 +20382,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.irpf_dataId = irpf_dataId;
 		} 
 	
-	private void flushIrpf_data(  )
+	protected void flushIrpf_data( )
+	throws SQLException {
+		flushIrpf_data(false);
+	}	
+
+	private void flushIrpf_data( boolean close )
 	throws SQLException {
 		if ( ! irpf_datas.isEmpty() )
 			insertIrpf_data(irpf_datas);
-		if ( irpf_dataStmt != null )
+		if ( close && irpf_dataStmt != null )
 			irpf_dataStmt.close();
 	}	
 
@@ -19643,16 +20410,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param start_date Fecha inicio del modelo
 	 * @param end_date Fecha fin del modelo
 	 * @param fiscal_exclusion Exclusion a la obligacion de tributar
-	 * @param issue_date Fecha de emisi?n
-	 * @param annual_remuneration Retribuciones totales (dinerarias y en especie). Importe ?ntegro
+	 * @param issue_date Fecha de emisin
+	 * @param annual_remuneration Retribuciones totales (dinerarias y en especie). Importe ntegro
 	 * @param irregular_18_2_reduction Reducciones por irregularidad ( Atr. 18.2 LIRPF)
-	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Atr. 18.3: Disposiciones transitorias 11? y 12 ? de la LIRPF)
+	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Atr. 18.3: Disposiciones transitorias 11 y 12  de la LIRPF)
 	 * @param deduccibles_expenses Gastos deducibles ( Atr 19.2, letras a, b y c de la LINRPF: Seguridad Social, Mutualidades ...)
-	 * @param spousal_support Pension compensatoria a favor del c?nyuge. Importe fijado judicialmente
+	 * @param spousal_support Pension compensatoria a favor del cnyuge. Importe fijado judicialmente
 	 * @param food_annuity Anualidades por alimentos en favor de los hijos. Importe fijado judicialmente
-	 * @param deduct_home_loan Comunicaci?n de pagos por la adquisi?n o rehabilitaci?n de la vivienda habitual utilizando financiaci?n ajena
-	 * @param request_irpf Tipo de retenci?n solicitado
-	 * @param contract_type Contrato o relaci?n
+	 * @param deduct_home_loan Comunicacin de pagos por la adquisin o rehabilitacin de la vivienda habitual utilizando financiacin ajena
+	 * @param request_irpf Tipo de retencin solicitado
+	 * @param contract_type Contrato o relacin
 	 * @param ceuta_melilla Los datos anteriores corresponden a rendimientos obtenidos en Ceuta o Melilla
 	 * @throws SQLException
 	*/
@@ -19691,7 +20458,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 206 * irpf_dataCount >=  this.maxAllowedPacket ){
 			insertIrpf_data(irpf_datas);
-			irpf_datas.clear();
 		} 
 	}
 
@@ -19710,16 +20476,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param start_date Fecha inicio del modelo
 	 * @param end_date Fecha fin del modelo
 	 * @param fiscal_exclusion Exclusion a la obligacion de tributar
-	 * @param issue_date Fecha de emisi?n
-	 * @param annual_remuneration Retribuciones totales (dinerarias y en especie). Importe ?ntegro
+	 * @param issue_date Fecha de emisin
+	 * @param annual_remuneration Retribuciones totales (dinerarias y en especie). Importe ntegro
 	 * @param irregular_18_2_reduction Reducciones por irregularidad ( Atr. 18.2 LIRPF)
-	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Atr. 18.3: Disposiciones transitorias 11? y 12 ? de la LIRPF)
+	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Atr. 18.3: Disposiciones transitorias 11 y 12  de la LIRPF)
 	 * @param deduccibles_expenses Gastos deducibles ( Atr 19.2, letras a, b y c de la LINRPF: Seguridad Social, Mutualidades ...)
-	 * @param spousal_support Pension compensatoria a favor del c?nyuge. Importe fijado judicialmente
+	 * @param spousal_support Pension compensatoria a favor del cnyuge. Importe fijado judicialmente
 	 * @param food_annuity Anualidades por alimentos en favor de los hijos. Importe fijado judicialmente
-	 * @param deduct_home_loan Comunicaci?n de pagos por la adquisi?n o rehabilitaci?n de la vivienda habitual utilizando financiaci?n ajena
-	 * @param request_irpf Tipo de retenci?n solicitado
-	 * @param contract_type Contrato o relaci?n
+	 * @param deduct_home_loan Comunicacin de pagos por la adquisin o rehabilitacin de la vivienda habitual utilizando financiacin ajena
+	 * @param request_irpf Tipo de retencin solicitado
+	 * @param contract_type Contrato o relacin
 	 * @param ceuta_melilla Los datos anteriores corresponden a rendimientos obtenidos en Ceuta o Melilla
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -19831,6 +20597,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				process_detail_transitionStmt.setInt(offset++, process_detail_transition.next_process_detail);
 		}
 		process_detail_transitionStmt.executeUpdate();
+		process_detail_transitions.clear();
 		process_detail_transitionInserted += size;
 
 		// elapsed time in milliseconds
@@ -19869,11 +20636,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.process_detail_transitionId = process_detail_transitionId;
 		} 
 	
-	private void flushProcess_detail_transition(  )
+	protected void flushProcess_detail_transition( )
+	throws SQLException {
+		flushProcess_detail_transition(false);
+	}	
+
+	private void flushProcess_detail_transition( boolean close )
 	throws SQLException {
 		if ( ! process_detail_transitions.isEmpty() )
 			insertProcess_detail_transition(process_detail_transitions);
-		if ( process_detail_transitionStmt != null )
+		if ( close && process_detail_transitionStmt != null )
 			process_detail_transitionStmt.close();
 	}	
 
@@ -19902,7 +20674,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 50 * process_detail_transitionCount >=  this.maxAllowedPacket ){
 			insertProcess_detail_transition(process_detail_transitions);
-			process_detail_transitions.clear();
 		} 
 	}
 
@@ -20054,6 +20825,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				customer_feeStmt.setInt(offset++, customer_fee.workplace);
 		}
 		customer_feeStmt.executeUpdate();
+		customer_fees.clear();
 		customer_feeInserted += size;
 
 		// elapsed time in milliseconds
@@ -20092,11 +20864,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.customer_feeId = customer_feeId;
 		} 
 	
-	private void flushCustomer_fee(  )
+	protected void flushCustomer_fee( )
+	throws SQLException {
+		flushCustomer_fee(false);
+	}	
+
+	private void flushCustomer_fee( boolean close )
 	throws SQLException {
 		if ( ! customer_fees.isEmpty() )
 			insertCustomer_fee(customer_fees);
-		if ( customer_feeStmt != null )
+		if ( close && customer_feeStmt != null )
 			customer_feeStmt.close();
 	}	
 
@@ -20113,7 +20890,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param discount_expr Descuentos de la Cuota
 	 * @param initial_date Fecha de inicio de la Cuota
 	 * @param final_date Fecha de finalizacion de la Cuota
-	 * @param billing_date Proxima fecha de facturaci?n de la Cuota
+	 * @param billing_date Proxima fecha de facturacin de la Cuota
 	 * @param period Periodo de facturacion en meses de la Cuota
 	 * @param security_level Nivel de seguridad de la Cuota
 	 * @param workplace Identificador del Centro de Trabajo
@@ -20145,7 +20922,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 1186 * customer_feeCount >=  this.maxAllowedPacket ){
 			insertCustomer_fee(customer_fees);
-			customer_fees.clear();
 		} 
 	}
 
@@ -20162,7 +20938,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param discount_expr Descuentos de la Cuota
 	 * @param initial_date Fecha de inicio de la Cuota
 	 * @param final_date Fecha de finalizacion de la Cuota
-	 * @param billing_date Proxima fecha de facturaci?n de la Cuota
+	 * @param billing_date Proxima fecha de facturacin de la Cuota
 	 * @param period Periodo de facturacion en meses de la Cuota
 	 * @param security_level Nivel de seguridad de la Cuota
 	 * @param workplace Identificador del Centro de Trabajo
@@ -20312,6 +21088,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				purchase_detailStmt.setDouble(offset++, purchase_detail.delivered);
 		}
 		purchase_detailStmt.executeUpdate();
+		purchase_details.clear();
 		purchase_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -20350,11 +21127,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.purchase_detailId = purchase_detailId;
 		} 
 	
-	private void flushPurchase_detail(  )
+	protected void flushPurchase_detail( )
+	throws SQLException {
+		flushPurchase_detail(false);
+	}	
+
+	private void flushPurchase_detail( boolean close )
 	throws SQLException {
 		if ( ! purchase_details.isEmpty() )
 			insertPurchase_detail(purchase_details);
-		if ( purchase_detailStmt != null )
+		if ( close && purchase_detailStmt != null )
 			purchase_detailStmt.close();
 	}	
 
@@ -20401,7 +21183,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 1198 * purchase_detailCount >=  this.maxAllowedPacket ){
 			insertPurchase_detail(purchase_details);
-			purchase_details.clear();
 		} 
 	}
 
@@ -20516,6 +21297,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				pm_type_detailStmt.setString(offset++, pm_type_detail.description);
 		}
 		pm_type_detailStmt.executeUpdate();
+		pm_type_details.clear();
 		pm_type_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -20554,11 +21336,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.pm_type_detailId = pm_type_detailId;
 		} 
 	
-	private void flushPm_type_detail(  )
+	protected void flushPm_type_detail( )
+	throws SQLException {
+		flushPm_type_detail(false);
+	}	
+
+	private void flushPm_type_detail( boolean close )
 	throws SQLException {
 		if ( ! pm_type_details.isEmpty() )
 			insertPm_type_detail(pm_type_details);
-		if ( pm_type_detailStmt != null )
+		if ( close && pm_type_detailStmt != null )
 			pm_type_detailStmt.close();
 	}	
 
@@ -20585,7 +21372,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 55 * pm_type_detailCount >=  this.maxAllowedPacket ){
 			insertPm_type_detail(pm_type_details);
-			pm_type_details.clear();
 		} 
 	}
 
@@ -20685,6 +21471,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				holiday_detailStmt.setString(offset++, holiday_detail.description);
 		}
 		holiday_detailStmt.executeUpdate();
+		holiday_details.clear();
 		holiday_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -20723,11 +21510,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.holiday_detailId = holiday_detailId;
 		} 
 	
-	private void flushHoliday_detail(  )
+	protected void flushHoliday_detail( )
+	throws SQLException {
+		flushHoliday_detail(false);
+	}	
+
+	private void flushHoliday_detail( boolean close )
 	throws SQLException {
 		if ( ! holiday_details.isEmpty() )
 			insertHoliday_detail(holiday_details);
-		if ( holiday_detailStmt != null )
+		if ( close && holiday_detailStmt != null )
 			holiday_detailStmt.close();
 	}	
 
@@ -20756,7 +21548,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 104 * holiday_detailCount >=  this.maxAllowedPacket ){
 			insertHoliday_detail(holiday_details);
-			holiday_details.clear();
 		} 
 	}
 
@@ -20858,6 +21649,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				target_itemStmt.setShort(offset++, target_item.status);
 		}
 		target_itemStmt.executeUpdate();
+		target_items.clear();
 		target_itemInserted += size;
 
 		// elapsed time in milliseconds
@@ -20896,11 +21688,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.target_itemId = target_itemId;
 		} 
 	
-	private void flushTarget_item(  )
+	protected void flushTarget_item( )
+	throws SQLException {
+		flushTarget_item(false);
+	}	
+
+	private void flushTarget_item( boolean close )
 	throws SQLException {
 		if ( ! target_items.isEmpty() )
 			insertTarget_item(target_items);
-		if ( target_itemStmt != null )
+		if ( close && target_itemStmt != null )
 			target_itemStmt.close();
 	}	
 
@@ -20929,7 +21726,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 43 * target_itemCount >=  this.maxAllowedPacket ){
 			insertTarget_item(target_items);
-			target_items.clear();
 		} 
 	}
 
@@ -21026,6 +21822,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				agreement_level_categoryStmt.setString(offset++, agreement_level_category.description);
 		}
 		agreement_level_categoryStmt.executeUpdate();
+		agreement_level_categorys.clear();
 		agreement_level_categoryInserted += size;
 
 		// elapsed time in milliseconds
@@ -21064,11 +21861,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.agreement_level_categoryId = agreement_level_categoryId;
 		} 
 	
-	private void flushAgreement_level_category(  )
+	protected void flushAgreement_level_category( )
+	throws SQLException {
+		flushAgreement_level_category(false);
+	}	
+
+	private void flushAgreement_level_category( boolean close )
 	throws SQLException {
 		if ( ! agreement_level_categorys.isEmpty() )
 			insertAgreement_level_category(agreement_level_categorys);
-		if ( agreement_level_categoryStmt != null )
+		if ( close && agreement_level_categoryStmt != null )
 			agreement_level_categoryStmt.close();
 	}	
 
@@ -21095,7 +21897,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 94 * agreement_level_categoryCount >=  this.maxAllowedPacket ){
 			insertAgreement_level_category(agreement_level_categorys);
-			agreement_level_categorys.clear();
 		} 
 	}
 
@@ -21205,6 +22006,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				agreement_extraStmt.setString(offset++, agreement_extra.issue_date);
 		}
 		agreement_extraStmt.executeUpdate();
+		agreement_extras.clear();
 		agreement_extraInserted += size;
 
 		// elapsed time in milliseconds
@@ -21243,11 +22045,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.agreement_extraId = agreement_extraId;
 		} 
 	
-	private void flushAgreement_extra(  )
+	protected void flushAgreement_extra( )
+	throws SQLException {
+		flushAgreement_extra(false);
+	}	
+
+	private void flushAgreement_extra( boolean close )
 	throws SQLException {
 		if ( ! agreement_extras.isEmpty() )
 			insertAgreement_extra(agreement_extras);
-		if ( agreement_extraStmt != null )
+		if ( close && agreement_extraStmt != null )
 			agreement_extraStmt.close();
 	}	
 
@@ -21280,7 +22087,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 136 * agreement_extraCount >=  this.maxAllowedPacket ){
 			insertAgreement_extra(agreement_extras);
-			agreement_extras.clear();
 		} 
 	}
 
@@ -21386,6 +22192,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				holidayStmt.setBoolean(offset++, holiday.editable);
 		}
 		holidayStmt.executeUpdate();
+		holidays.clear();
 		holidayInserted += size;
 
 		// elapsed time in milliseconds
@@ -21424,11 +22231,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.holidayId = holidayId;
 		} 
 	
-	private void flushHoliday(  )
+	protected void flushHoliday( )
+	throws SQLException {
+		flushHoliday(false);
+	}	
+
+	private void flushHoliday( boolean close )
 	throws SQLException {
 		if ( ! holidays.isEmpty() )
 			insertHoliday(holidays);
-		if ( holidayStmt != null )
+		if ( close && holidayStmt != null )
 			holidayStmt.close();
 	}	
 
@@ -21457,7 +22269,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 94 * holidayCount >=  this.maxAllowedPacket ){
 			insertHoliday(holidays);
-			holidays.clear();
 		} 
 	}
 
@@ -21554,6 +22365,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				pm_type_detail_accountStmt.setInt(offset++, pm_type_detail_account.account);
 		}
 		pm_type_detail_accountStmt.executeUpdate();
+		pm_type_detail_accounts.clear();
 		pm_type_detail_accountInserted += size;
 
 		// elapsed time in milliseconds
@@ -21592,11 +22404,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.pm_type_detail_accountId = pm_type_detail_accountId;
 		} 
 	
-	private void flushPm_type_detail_account(  )
+	protected void flushPm_type_detail_account( )
+	throws SQLException {
+		flushPm_type_detail_account(false);
+	}	
+
+	private void flushPm_type_detail_account( boolean close )
 	throws SQLException {
 		if ( ! pm_type_detail_accounts.isEmpty() )
 			insertPm_type_detail_account(pm_type_detail_accounts);
-		if ( pm_type_detail_accountStmt != null )
+		if ( close && pm_type_detail_accountStmt != null )
 			pm_type_detail_accountStmt.close();
 	}	
 
@@ -21623,7 +22440,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * pm_type_detail_accountCount >=  this.maxAllowedPacket ){
 			insertPm_type_detail_account(pm_type_detail_accounts);
-			pm_type_detail_accounts.clear();
 		} 
 	}
 
@@ -21728,6 +22544,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				commission_categoryStmt.setDouble(offset++, commission_category.rate);
 		}
 		commission_categoryStmt.executeUpdate();
+		commission_categorys.clear();
 		commission_categoryInserted += size;
 
 		// elapsed time in milliseconds
@@ -21766,11 +22583,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.commission_categoryId = commission_categoryId;
 		} 
 	
-	private void flushCommission_category(  )
+	protected void flushCommission_category( )
+	throws SQLException {
+		flushCommission_category(false);
+	}	
+
+	private void flushCommission_category( boolean close )
 	throws SQLException {
 		if ( ! commission_categorys.isEmpty() )
 			insertCommission_category(commission_categorys);
-		if ( commission_categoryStmt != null )
+		if ( close && commission_categoryStmt != null )
 			commission_categoryStmt.close();
 	}	
 
@@ -21801,7 +22623,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 68 * commission_categoryCount >=  this.maxAllowedPacket ){
 			insertCommission_category(commission_categorys);
-			commission_categorys.clear();
 		} 
 	}
 
@@ -21895,6 +22716,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				academic_yearStmt.setString(offset++, academic_year.description);
 		}
 		academic_yearStmt.executeUpdate();
+		academic_years.clear();
 		academic_yearInserted += size;
 
 		// elapsed time in milliseconds
@@ -21933,19 +22755,24 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.academic_yearId = academic_yearId;
 		} 
 	
-	private void flushAcademic_year(  )
+	protected void flushAcademic_year( )
+	throws SQLException {
+		flushAcademic_year(false);
+	}	
+
+	private void flushAcademic_year( boolean close )
 	throws SQLException {
 		if ( ! academic_years.isEmpty() )
 			insertAcademic_year(academic_years);
-		if ( academic_yearStmt != null )
+		if ( close && academic_yearStmt != null )
 			academic_yearStmt.close();
 	}	
 
 	/**
 	 * Academic_year
-	 * @param id Identificador unico del A?o Academico
+	 * @param id Identificador unico del Ao Academico
 	 * @param domain Identificador del Dominio
-	 * @param description Descripcion del A?o Academico
+	 * @param description Descripcion del Ao Academico
 	 * @throws SQLException
 	*/
 	protected void insertAcademic_year(Integer id, Integer domain, String description)
@@ -21962,7 +22789,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 29 * academic_yearCount >=  this.maxAllowedPacket ){
 			insertAcademic_year(academic_years);
-			academic_years.clear();
 		} 
 	}
 
@@ -21970,7 +22796,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Academic_year
 	 * @param domain Identificador del Dominio
-	 * @param description Descripcion del A?o Academico
+	 * @param description Descripcion del Ao Academico
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -22055,6 +22881,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				bank_concept_accountStmt.setInt(offset++, bank_concept_account.account);
 		}
 		bank_concept_accountStmt.executeUpdate();
+		bank_concept_accounts.clear();
 		bank_concept_accountInserted += size;
 
 		// elapsed time in milliseconds
@@ -22093,11 +22920,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.bank_concept_accountId = bank_concept_accountId;
 		} 
 	
-	private void flushBank_concept_account(  )
+	protected void flushBank_concept_account( )
+	throws SQLException {
+		flushBank_concept_account(false);
+	}	
+
+	private void flushBank_concept_account( boolean close )
 	throws SQLException {
 		if ( ! bank_concept_accounts.isEmpty() )
 			insertBank_concept_account(bank_concept_accounts);
-		if ( bank_concept_accountStmt != null )
+		if ( close && bank_concept_accountStmt != null )
 			bank_concept_accountStmt.close();
 	}	
 
@@ -22124,7 +22956,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * bank_concept_accountCount >=  this.maxAllowedPacket ){
 			insertBank_concept_account(bank_concept_accounts);
-			bank_concept_accounts.clear();
 		} 
 	}
 
@@ -22219,6 +23050,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				creditor_accountStmt.setInt(offset++, creditor_account.account);
 		}
 		creditor_accountStmt.executeUpdate();
+		creditor_accounts.clear();
 		creditor_accountInserted += size;
 
 		// elapsed time in milliseconds
@@ -22257,11 +23089,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.creditor_accountId = creditor_accountId;
 		} 
 	
-	private void flushCreditor_account(  )
+	protected void flushCreditor_account( )
+	throws SQLException {
+		flushCreditor_account(false);
+	}	
+
+	private void flushCreditor_account( boolean close )
 	throws SQLException {
 		if ( ! creditor_accounts.isEmpty() )
 			insertCreditor_account(creditor_accounts);
-		if ( creditor_accountStmt != null )
+		if ( close && creditor_accountStmt != null )
 			creditor_accountStmt.close();
 	}	
 
@@ -22288,7 +23125,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * creditor_accountCount >=  this.maxAllowedPacket ){
 			insertCreditor_account(creditor_accounts);
-			creditor_accounts.clear();
 		} 
 	}
 
@@ -22418,6 +23254,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				finance_trackingStmt.setBoolean(offset++, finance_tracking.recorded);
 		}
 		finance_trackingStmt.executeUpdate();
+		finance_trackings.clear();
 		finance_trackingInserted += size;
 
 		// elapsed time in milliseconds
@@ -22456,11 +23293,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.finance_trackingId = finance_trackingId;
 		} 
 	
-	private void flushFinance_tracking(  )
+	protected void flushFinance_tracking( )
+	throws SQLException {
+		flushFinance_tracking(false);
+	}	
+
+	private void flushFinance_tracking( boolean close )
 	throws SQLException {
 		if ( ! finance_trackings.isEmpty() )
 			insertFinance_tracking(finance_trackings);
-		if ( finance_trackingStmt != null )
+		if ( close && finance_trackingStmt != null )
 			finance_trackingStmt.close();
 	}	
 
@@ -22473,7 +23315,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param type Tipo de Seguimiento
 	 * @param description Descripcion del Seguimiento
 	 * @param pm_type_detail Identificador del Detalle por Tipo de Forma de Pago
-	 * @param rbank Identificador de la Cuenta Bancaria de la Compa?ia
+	 * @param rbank Identificador de la Cuenta Bancaria de la Compaia
 	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
 	 * @param amount Importe del Seguimiento
 	 * @param recorded Indica si esta contabilizado o no
@@ -22501,7 +23343,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 152 * finance_trackingCount >=  this.maxAllowedPacket ){
 			insertFinance_tracking(finance_trackings);
-			finance_trackings.clear();
 		} 
 	}
 
@@ -22514,7 +23355,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param type Tipo de Seguimiento
 	 * @param description Descripcion del Seguimiento
 	 * @param pm_type_detail Identificador del Detalle por Tipo de Forma de Pago
-	 * @param rbank Identificador de la Cuenta Bancaria de la Compa?ia
+	 * @param rbank Identificador de la Cuenta Bancaria de la Compaia
 	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
 	 * @param amount Importe del Seguimiento
 	 * @param recorded Indica si esta contabilizado o no
@@ -22645,6 +23486,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				rattachStmt.setDate(offset++, rattach.attach_date);
 		}
 		rattachStmt.executeUpdate();
+		rattachs.clear();
 		rattachInserted += size;
 
 		// elapsed time in milliseconds
@@ -22683,11 +23525,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.rattachId = rattachId;
 		} 
 	
-	private void flushRattach(  )
+	protected void flushRattach( )
+	throws SQLException {
+		flushRattach(false);
+	}	
+
+	private void flushRattach( boolean close )
 	throws SQLException {
 		if ( ! rattachs.isEmpty() )
 			insertRattach(rattachs);
-		if ( rattachStmt != null )
+		if ( close && rattachStmt != null )
 			rattachStmt.close();
 	}	
 
@@ -22728,7 +23575,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 133 * rattachCount >=  this.maxAllowedPacket ){
 			insertRattach(rattachs);
-			rattachs.clear();
 		} 
 	}
 
@@ -22837,6 +23683,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				leave_batch_detailStmt.setInt(offset++, leave_batch_detail.contract_leave_detail);
 		}
 		leave_batch_detailStmt.executeUpdate();
+		leave_batch_details.clear();
 		leave_batch_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -22875,11 +23722,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.leave_batch_detailId = leave_batch_detailId;
 		} 
 	
-	private void flushLeave_batch_detail(  )
+	protected void flushLeave_batch_detail( )
+	throws SQLException {
+		flushLeave_batch_detail(false);
+	}	
+
+	private void flushLeave_batch_detail( boolean close )
 	throws SQLException {
 		if ( ! leave_batch_details.isEmpty() )
 			insertLeave_batch_detail(leave_batch_details);
-		if ( leave_batch_detailStmt != null )
+		if ( close && leave_batch_detailStmt != null )
 			leave_batch_detailStmt.close();
 	}	
 
@@ -22906,7 +23758,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * leave_batch_detailCount >=  this.maxAllowedPacket ){
 			insertLeave_batch_detail(leave_batch_details);
-			leave_batch_details.clear();
 		} 
 	}
 
@@ -23046,6 +23897,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				sales_detailStmt.setDouble(offset++, sales_detail.delivered);
 		}
 		sales_detailStmt.executeUpdate();
+		sales_details.clear();
 		sales_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -23084,11 +23936,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.sales_detailId = sales_detailId;
 		} 
 	
-	private void flushSales_detail(  )
+	protected void flushSales_detail( )
+	throws SQLException {
+		flushSales_detail(false);
+	}	
+
+	private void flushSales_detail( boolean close )
 	throws SQLException {
 		if ( ! sales_details.isEmpty() )
 			insertSales_detail(sales_details);
-		if ( sales_detailStmt != null )
+		if ( close && sales_detailStmt != null )
 			sales_detailStmt.close();
 	}	
 
@@ -23097,7 +23954,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param id Identificador unico del Detalle del Pedido de Venta
 	 * @param domain Identificador del Dominio
 	 * @param sales Identificador del Pedido de Venta
-	 * @param line Numero de l?nea del Detalle dentro del Pedido
+	 * @param line Numero de lnea del Detalle dentro del Pedido
 	 * @param item Identificador del Articulo del Detalle de Pedido
 	 * @param description Descripcion del Detalle de Pedido
 	 * @param quantity Cantidad del Detalle de Pedido
@@ -23133,7 +23990,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 1188 * sales_detailCount >=  this.maxAllowedPacket ){
 			insertSales_detail(sales_details);
-			sales_details.clear();
 		} 
 	}
 
@@ -23142,7 +23998,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Sales_detail
 	 * @param domain Identificador del Dominio
 	 * @param sales Identificador del Pedido de Venta
-	 * @param line Numero de l?nea del Detalle dentro del Pedido
+	 * @param line Numero de lnea del Detalle dentro del Pedido
 	 * @param item Identificador del Articulo del Detalle de Pedido
 	 * @param description Descripcion del Detalle de Pedido
 	 * @param quantity Cantidad del Detalle de Pedido
@@ -23261,6 +24117,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_attachStmt.setDate(offset++, project_attach.attach_date);
 		}
 		project_attachStmt.executeUpdate();
+		project_attachs.clear();
 		project_attachInserted += size;
 
 		// elapsed time in milliseconds
@@ -23299,11 +24156,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.project_attachId = project_attachId;
 		} 
 	
-	private void flushProject_attach(  )
+	protected void flushProject_attach( )
+	throws SQLException {
+		flushProject_attach(false);
+	}	
+
+	private void flushProject_attach( boolean close )
 	throws SQLException {
 		if ( ! project_attachs.isEmpty() )
 			insertProject_attach(project_attachs);
-		if ( project_attachStmt != null )
+		if ( close && project_attachStmt != null )
 			project_attachStmt.close();
 	}	
 
@@ -23336,7 +24198,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 107 * project_attachCount >=  this.maxAllowedPacket ){
 			insertProject_attach(project_attachs);
-			project_attachs.clear();
 		} 
 	}
 
@@ -23532,6 +24393,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contact_dataStmt.setString(offset++, contact_data.web);
 		}
 		contact_dataStmt.executeUpdate();
+		contact_datas.clear();
 		contact_dataInserted += size;
 
 		// elapsed time in milliseconds
@@ -23570,11 +24432,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.contact_dataId = contact_dataId;
 		} 
 	
-	private void flushContact_data(  )
+	protected void flushContact_data( )
+	throws SQLException {
+		flushContact_data(false);
+	}	
+
+	private void flushContact_data( boolean close )
 	throws SQLException {
 		if ( ! contact_datas.isEmpty() )
 			insertContact_data(contact_datas);
-		if ( contact_dataStmt != null )
+		if ( close && contact_dataStmt != null )
 			contact_dataStmt.close();
 	}	
 
@@ -23594,14 +24461,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param fax Fax
 	 * @param email Email
 	 * @param note Nota
-	 * @param organization Organizaci?n
+	 * @param organization Organizacin
 	 * @param title Cargo
-	 * @param organizationAddress Direcci?n de la Organizaci?n
-	 * @param organizationPostalCode Codigo postal de la Organizaci?n
-	 * @param organizationCity Localidad de la Organizaci?n
-	 * @param organizationState Estado de la Organizaci?n
-	 * @param organizationPhone Telefono de la Organizaci?n
-	 * @param organizationFax Fax de la Organizaci?n
+	 * @param organizationAddress Direccin de la Organizacin
+	 * @param organizationPostalCode Codigo postal de la Organizacin
+	 * @param organizationCity Localidad de la Organizacin
+	 * @param organizationState Estado de la Organizacin
+	 * @param organizationPhone Telefono de la Organizacin
+	 * @param organizationFax Fax de la Organizacin
 	 * @param web Web
 	 * @throws SQLException
 	*/
@@ -23639,7 +24506,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 1844 * contact_dataCount >=  this.maxAllowedPacket ){
 			insertContact_data(contact_datas);
-			contact_datas.clear();
 		} 
 	}
 
@@ -23659,14 +24525,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param fax Fax
 	 * @param email Email
 	 * @param note Nota
-	 * @param organization Organizaci?n
+	 * @param organization Organizacin
 	 * @param title Cargo
-	 * @param organizationAddress Direcci?n de la Organizaci?n
-	 * @param organizationPostalCode Codigo postal de la Organizaci?n
-	 * @param organizationCity Localidad de la Organizaci?n
-	 * @param organizationState Estado de la Organizaci?n
-	 * @param organizationPhone Telefono de la Organizaci?n
-	 * @param organizationFax Fax de la Organizaci?n
+	 * @param organizationAddress Direccin de la Organizacin
+	 * @param organizationPostalCode Codigo postal de la Organizacin
+	 * @param organizationCity Localidad de la Organizacin
+	 * @param organizationState Estado de la Organizacin
+	 * @param organizationPhone Telefono de la Organizacin
+	 * @param organizationFax Fax de la Organizacin
 	 * @param web Web
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -23802,6 +24668,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				system_deductionStmt.setShort(offset++, system_deduction.month);
 		}
 		system_deductionStmt.executeUpdate();
+		system_deductions.clear();
 		system_deductionInserted += size;
 
 		// elapsed time in milliseconds
@@ -23840,11 +24707,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.system_deductionId = system_deductionId;
 		} 
 	
-	private void flushSystem_deduction(  )
+	protected void flushSystem_deduction( )
+	throws SQLException {
+		flushSystem_deduction(false);
+	}	
+
+	private void flushSystem_deduction( boolean close )
 	throws SQLException {
 		if ( ! system_deductions.isEmpty() )
 			insertSystem_deduction(system_deductions);
-		if ( system_deductionStmt != null )
+		if ( close && system_deductionStmt != null )
 			system_deductionStmt.close();
 	}	
 
@@ -23852,14 +24724,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * System_deduction
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Deducci?n
+	 * @param type Tipo de Deduccin
 	 * @param deduction_concept Identificador unico del concepto
 	 * @param description Descripcion
 	 * @param description_decorable 
-	 * @param expression F?rmula
+	 * @param expression Frmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
-	 * @param month Mes de la deducci?n
+	 * @param month Mes de la deduccin
 	 * @throws SQLException
 	*/
 	protected void insertSystem_deduction(Integer id, Integer domain, Short type, Integer deduction_concept, String description, Short description_decorable, String expression, Date start_date, Date end_date, Short month)
@@ -23883,7 +24755,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 251 * system_deductionCount >=  this.maxAllowedPacket ){
 			insertSystem_deduction(system_deductions);
-			system_deductions.clear();
 		} 
 	}
 
@@ -23891,14 +24762,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * System_deduction
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Deducci?n
+	 * @param type Tipo de Deduccin
 	 * @param deduction_concept Identificador unico del concepto
 	 * @param description Descripcion
 	 * @param description_decorable 
-	 * @param expression F?rmula
+	 * @param expression Frmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
-	 * @param month Mes de la deducci?n
+	 * @param month Mes de la deduccin
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -23985,6 +24856,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				makeStmt.setString(offset++, make.name);
 		}
 		makeStmt.executeUpdate();
+		makes.clear();
 		makeInserted += size;
 
 		// elapsed time in milliseconds
@@ -24023,11 +24895,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.makeId = makeId;
 		} 
 	
-	private void flushMake(  )
+	protected void flushMake( )
+	throws SQLException {
+		flushMake(false);
+	}	
+
+	private void flushMake( boolean close )
 	throws SQLException {
 		if ( ! makes.isEmpty() )
 			insertMake(makes);
-		if ( makeStmt != null )
+		if ( close && makeStmt != null )
 			makeStmt.close();
 	}	
 
@@ -24052,7 +24929,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 84 * makeCount >=  this.maxAllowedPacket ){
 			insertMake(makes);
-			makes.clear();
 		} 
 	}
 
@@ -24145,6 +25021,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				roomStmt.setInt(offset++, room.item);
 		}
 		roomStmt.executeUpdate();
+		rooms.clear();
 		roomInserted += size;
 
 		// elapsed time in milliseconds
@@ -24153,11 +25030,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 		
 	
-	private void flushRoom(  )
+	protected void flushRoom( )
+	throws SQLException {
+		flushRoom(false);
+	}	
+
+	private void flushRoom( boolean close )
 	throws SQLException {
 		if ( ! rooms.isEmpty() )
 			insertRoom(rooms);
-		if ( roomStmt != null )
+		if ( close && roomStmt != null )
 			roomStmt.close();
 	}	
 
@@ -24184,7 +25066,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * roomCount >=  this.maxAllowedPacket ){
 			insertRoom(rooms);
-			rooms.clear();
 		} 
 	}
 
@@ -24250,6 +25131,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				rbank_accountStmt.setInt(offset++, rbank_account.account);
 		}
 		rbank_accountStmt.executeUpdate();
+		rbank_accounts.clear();
 		rbank_accountInserted += size;
 
 		// elapsed time in milliseconds
@@ -24288,11 +25170,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.rbank_accountId = rbank_accountId;
 		} 
 	
-	private void flushRbank_account(  )
+	protected void flushRbank_account( )
+	throws SQLException {
+		flushRbank_account(false);
+	}	
+
+	private void flushRbank_account( boolean close )
 	throws SQLException {
 		if ( ! rbank_accounts.isEmpty() )
 			insertRbank_account(rbank_accounts);
-		if ( rbank_accountStmt != null )
+		if ( close && rbank_accountStmt != null )
 			rbank_accountStmt.close();
 	}	
 
@@ -24319,7 +25206,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * rbank_accountCount >=  this.maxAllowedPacket ){
 			insertRbank_account(rbank_accounts);
-			rbank_accounts.clear();
 		} 
 	}
 
@@ -24414,6 +25300,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				modelStmt.setString(offset++, model.name);
 		}
 		modelStmt.executeUpdate();
+		models.clear();
 		modelInserted += size;
 
 		// elapsed time in milliseconds
@@ -24452,11 +25339,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.modelId = modelId;
 		} 
 	
-	private void flushModel(  )
+	protected void flushModel( )
+	throws SQLException {
+		flushModel(false);
+	}	
+
+	private void flushModel( boolean close )
 	throws SQLException {
 		if ( ! models.isEmpty() )
 			insertModel(models);
-		if ( modelStmt != null )
+		if ( close && modelStmt != null )
 			modelStmt.close();
 	}	
 
@@ -24483,7 +25375,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 94 * modelCount >=  this.maxAllowedPacket ){
 			insertModel(models);
-			models.clear();
 		} 
 	}
 
@@ -24573,6 +25464,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				cnaeStmt.setString(offset++, cnae.title);
 		}
 		cnaeStmt.executeUpdate();
+		cnaes.clear();
 		cnaeInserted += size;
 
 		// elapsed time in milliseconds
@@ -24611,11 +25503,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.cnaeId = cnaeId;
 		} 
 	
-	private void flushCnae(  )
+	protected void flushCnae( )
+	throws SQLException {
+		flushCnae(false);
+	}	
+
+	private void flushCnae( boolean close )
 	throws SQLException {
 		if ( ! cnaes.isEmpty() )
 			insertCnae(cnaes);
-		if ( cnaeStmt != null )
+		if ( close && cnaeStmt != null )
 			cnaeStmt.close();
 	}	
 
@@ -24640,7 +25537,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 270 * cnaeCount >=  this.maxAllowedPacket ){
 			insertCnae(cnaes);
-			cnaes.clear();
 		} 
 	}
 
@@ -24733,6 +25629,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				fan_batch_detailStmt.setInt(offset++, fan_batch_detail.enterprise_ccc);
 		}
 		fan_batch_detailStmt.executeUpdate();
+		fan_batch_details.clear();
 		fan_batch_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -24771,11 +25668,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.fan_batch_detailId = fan_batch_detailId;
 		} 
 	
-	private void flushFan_batch_detail(  )
+	protected void flushFan_batch_detail( )
+	throws SQLException {
+		flushFan_batch_detail(false);
+	}	
+
+	private void flushFan_batch_detail( boolean close )
 	throws SQLException {
 		if ( ! fan_batch_details.isEmpty() )
 			insertFan_batch_detail(fan_batch_details);
-		if ( fan_batch_detailStmt != null )
+		if ( close && fan_batch_detailStmt != null )
 			fan_batch_detailStmt.close();
 	}	
 
@@ -24802,7 +25704,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * fan_batch_detailCount >=  this.maxAllowedPacket ){
 			insertFan_batch_detail(fan_batch_details);
-			fan_batch_details.clear();
 		} 
 	}
 
@@ -24892,6 +25793,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				departmentStmt.setString(offset++, department.name);
 		}
 		departmentStmt.executeUpdate();
+		departments.clear();
 		departmentInserted += size;
 
 		// elapsed time in milliseconds
@@ -24930,11 +25832,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.departmentId = departmentId;
 		} 
 	
-	private void flushDepartment(  )
+	protected void flushDepartment( )
+	throws SQLException {
+		flushDepartment(false);
+	}	
+
+	private void flushDepartment( boolean close )
 	throws SQLException {
 		if ( ! departments.isEmpty() )
 			insertDepartment(departments);
-		if ( departmentStmt != null )
+		if ( close && departmentStmt != null )
 			departmentStmt.close();
 	}	
 
@@ -24959,7 +25866,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 52 * departmentCount >=  this.maxAllowedPacket ){
 			insertDepartment(departments);
-			departments.clear();
 		} 
 	}
 
@@ -25072,6 +25978,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				target_profileStmt.setTimestamp(offset++, target_profile.value_date);
 		}
 		target_profileStmt.executeUpdate();
+		target_profiles.clear();
 		target_profileInserted += size;
 
 		// elapsed time in milliseconds
@@ -25110,11 +26017,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.target_profileId = target_profileId;
 		} 
 	
-	private void flushTarget_profile(  )
+	protected void flushTarget_profile( )
+	throws SQLException {
+		flushTarget_profile(false);
+	}	
+
+	private void flushTarget_profile( boolean close )
 	throws SQLException {
 		if ( ! target_profiles.isEmpty() )
 			insertTarget_profile(target_profiles);
-		if ( target_profileStmt != null )
+		if ( close && target_profileStmt != null )
 			target_profileStmt.close();
 	}	
 
@@ -25149,7 +26061,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 1117 * target_profileCount >=  this.maxAllowedPacket ){
 			insertTarget_profile(target_profiles);
-			target_profiles.clear();
 		} 
 	}
 
@@ -25352,6 +26263,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				purchaseStmt.setBoolean(offset++, purchase.email_communication);
 		}
 		purchaseStmt.executeUpdate();
+		purchases.clear();
 		purchaseInserted += size;
 
 		// elapsed time in milliseconds
@@ -25390,11 +26302,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.purchaseId = purchaseId;
 		} 
 	
-	private void flushPurchase(  )
+	protected void flushPurchase( )
+	throws SQLException {
+		flushPurchase(false);
+	}	
+
+	private void flushPurchase( boolean close )
 	throws SQLException {
 		if ( ! purchases.isEmpty() )
 			insertPurchase(purchases);
-		if ( purchaseStmt != null )
+		if ( close && purchaseStmt != null )
 			purchaseStmt.close();
 	}	
 
@@ -25461,7 +26378,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 209 * purchaseCount >=  this.maxAllowedPacket ){
 			insertPurchase(purchases);
-			purchases.clear();
 		} 
 	}
 
@@ -25601,6 +26517,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				domain_applicationStmt.setShort(offset++, domain_application.audit_level);
 		}
 		domain_applicationStmt.executeUpdate();
+		domain_applications.clear();
 		domain_applicationInserted += size;
 
 		// elapsed time in milliseconds
@@ -25639,11 +26556,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.domain_applicationId = domain_applicationId;
 		} 
 	
-	private void flushDomain_application(  )
+	protected void flushDomain_application( )
+	throws SQLException {
+		flushDomain_application(false);
+	}	
+
+	private void flushDomain_application( boolean close )
 	throws SQLException {
 		if ( ! domain_applications.isEmpty() )
 			insertDomain_application(domain_applications);
-		if ( domain_applicationStmt != null )
+		if ( close && domain_applicationStmt != null )
 			domain_applicationStmt.close();
 	}	
 
@@ -25672,7 +26594,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 33 * domain_applicationCount >=  this.maxAllowedPacket ){
 			insertDomain_application(domain_applications);
-			domain_applications.clear();
 		} 
 	}
 
@@ -25779,6 +26700,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				web_infoStmt.setString(offset++, web_info.slogan);
 		}
 		web_infoStmt.executeUpdate();
+		web_infos.clear();
 		web_infoInserted += size;
 
 		// elapsed time in milliseconds
@@ -25817,11 +26739,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.web_infoId = web_infoId;
 		} 
 	
-	private void flushWeb_info(  )
+	protected void flushWeb_info( )
+	throws SQLException {
+		flushWeb_info(false);
+	}	
+
+	private void flushWeb_info( boolean close )
 	throws SQLException {
 		if ( ! web_infos.isEmpty() )
 			insertWeb_info(web_infos);
-		if ( web_infoStmt != null )
+		if ( close && web_infoStmt != null )
 			web_infoStmt.close();
 	}	
 
@@ -25852,7 +26779,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 94 * web_infoCount >=  this.maxAllowedPacket ){
 			insertWeb_info(web_infos);
-			web_infos.clear();
 		} 
 	}
 
@@ -25976,6 +26902,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				bank_statement_linkStmt.setInt(offset++, bank_statement_link.linked_bank_statement_link);
 		}
 		bank_statement_linkStmt.executeUpdate();
+		bank_statement_links.clear();
 		bank_statement_linkInserted += size;
 
 		// elapsed time in milliseconds
@@ -26014,11 +26941,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.bank_statement_linkId = bank_statement_linkId;
 		} 
 	
-	private void flushBank_statement_link(  )
+	protected void flushBank_statement_link( )
+	throws SQLException {
+		flushBank_statement_link(false);
+	}	
+
+	private void flushBank_statement_link( boolean close )
 	throws SQLException {
 		if ( ! bank_statement_links.isEmpty() )
 			insertBank_statement_link(bank_statement_links);
-		if ( bank_statement_linkStmt != null )
+		if ( close && bank_statement_linkStmt != null )
 			bank_statement_linkStmt.close();
 	}	
 
@@ -26055,7 +26987,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 81 * bank_statement_linkCount >=  this.maxAllowedPacket ){
 			insertBank_statement_link(bank_statement_links);
-			bank_statement_links.clear();
 		} 
 	}
 
@@ -26165,6 +27096,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				course_alumnStmt.setShort(offset++, course_alumn.status);
 		}
 		course_alumnStmt.executeUpdate();
+		course_alumns.clear();
 		course_alumnInserted += size;
 
 		// elapsed time in milliseconds
@@ -26203,11 +27135,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.course_alumnId = course_alumnId;
 		} 
 	
-	private void flushCourse_alumn(  )
+	protected void flushCourse_alumn( )
+	throws SQLException {
+		flushCourse_alumn(false);
+	}	
+
+	private void flushCourse_alumn( boolean close )
 	throws SQLException {
 		if ( ! course_alumns.isEmpty() )
 			insertCourse_alumn(course_alumns);
-		if ( course_alumnStmt != null )
+		if ( close && course_alumnStmt != null )
 			course_alumnStmt.close();
 	}	
 
@@ -26236,7 +27173,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 43 * course_alumnCount >=  this.maxAllowedPacket ){
 			insertCourse_alumn(course_alumns);
-			course_alumns.clear();
 		} 
 	}
 
@@ -26328,6 +27264,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				application_roleStmt.setInt(offset++, application_role.role);
 		}
 		application_roleStmt.executeUpdate();
+		application_roles.clear();
 		application_roleInserted += size;
 
 		// elapsed time in milliseconds
@@ -26366,11 +27303,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.application_roleId = application_roleId;
 		} 
 	
-	private void flushApplication_role(  )
+	protected void flushApplication_role( )
+	throws SQLException {
+		flushApplication_role(false);
+	}	
+
+	private void flushApplication_role( boolean close )
 	throws SQLException {
 		if ( ! application_roles.isEmpty() )
 			insertApplication_role(application_roles);
-		if ( application_roleStmt != null )
+		if ( close && application_roleStmt != null )
 			application_roleStmt.close();
 	}	
 
@@ -26395,7 +27337,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 30 * application_roleCount >=  this.maxAllowedPacket ){
 			insertApplication_role(application_roles);
-			application_roles.clear();
 		} 
 	}
 
@@ -26493,6 +27434,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				fan_batchStmt.setShort(offset++, fan_batch.liquidation_type);
 		}
 		fan_batchStmt.executeUpdate();
+		fan_batchs.clear();
 		fan_batchInserted += size;
 
 		// elapsed time in milliseconds
@@ -26531,11 +27473,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.fan_batchId = fan_batchId;
 		} 
 	
-	private void flushFan_batch(  )
+	protected void flushFan_batch( )
+	throws SQLException {
+		flushFan_batch(false);
+	}	
+
+	private void flushFan_batch( boolean close )
 	throws SQLException {
 		if ( ! fan_batchs.isEmpty() )
 			insertFan_batch(fan_batchs);
-		if ( fan_batchStmt != null )
+		if ( close && fan_batchStmt != null )
 			fan_batchStmt.close();
 	}	
 
@@ -26564,7 +27511,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 36 * fan_batchCount >=  this.maxAllowedPacket ){
 			insertFan_batch(fan_batchs);
-			fan_batchs.clear();
 		} 
 	}
 
@@ -26861,6 +27807,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				fs_rentingStmt.setInt(offset++, fs_renting.rbank);
 		}
 		fs_rentingStmt.executeUpdate();
+		fs_rentings.clear();
 		fs_rentingInserted += size;
 
 		// elapsed time in milliseconds
@@ -26899,11 +27846,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.fs_rentingId = fs_rentingId;
 		} 
 	
-	private void flushFs_renting(  )
+	protected void flushFs_renting( )
+	throws SQLException {
+		flushFs_renting(false);
+	}	
+
+	private void flushFs_renting( boolean close )
 	throws SQLException {
 		if ( ! fs_rentings.isEmpty() )
 			insertFs_renting(fs_rentings);
-		if ( fs_rentingStmt != null )
+		if ( close && fs_rentingStmt != null )
 			fs_rentingStmt.close();
 	}	
 
@@ -26952,7 +27904,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param extra_charge Recargo
 	 * @param delay_interest Intereses de demora
 	 * @param total_tax_debt Total deuda tributaria
-	 * @param rbank Banco de la Compa?ia
+	 * @param rbank Banco de la Compaia
 	 * @throws SQLException
 	*/
 	protected void insertFs_renting(Integer id, Integer domain, Integer year, Short period, Short administration, String comments, Short status, Short security_level, Boolean complementary, Boolean replacement, Double lessor_count_accumulated, Double lessor_count_declared, Double lessor_count_result, Double lessor_count_adjust, Double lessor_count, Double renting_amount_accumulated, Double renting_amount_declared, Double renting_amount_result, Double renting_amount_adjust, Double renting_amount, Double retention_accumulated, Double retention_declared, Double retention_result, Double retention_adjust, Double retention, Double lessor_count_in_kind_accumulated, Double lessor_count_in_kind_declared, Double lessor_count_in_kind_result, Double lessor_count_in_kind_adjust, Double lessor_count_in_kind, Double remuneration_in_kind_accumulated, Double remuneration_in_kind_declared, Double remuneration_in_kind_result, Double remuneration_in_kind_adjust, Double remuneration_in_kind, Double account_deposit_accumulated, Double account_deposit_declared, Double account_deposit_result, Double account_deposit_adjust, Double account_deposit, Double extra_charge, Double delay_interest, Double total_tax_debt, Integer rbank)
@@ -27010,7 +27962,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 547 * fs_rentingCount >=  this.maxAllowedPacket ){
 			insertFs_renting(fs_rentings);
-			fs_rentings.clear();
 		} 
 	}
 
@@ -27059,7 +28010,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param extra_charge Recargo
 	 * @param delay_interest Intereses de demora
 	 * @param total_tax_debt Total deuda tributaria
-	 * @param rbank Banco de la Compa?ia
+	 * @param rbank Banco de la Compaia
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -27190,6 +28141,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				warehouse_transfer_detailStmt.setDouble(offset++, warehouse_transfer_detail.quantity);
 		}
 		warehouse_transfer_detailStmt.executeUpdate();
+		warehouse_transfer_details.clear();
 		warehouse_transfer_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -27228,11 +28180,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.warehouse_transfer_detailId = warehouse_transfer_detailId;
 		} 
 	
-	private void flushWarehouse_transfer_detail(  )
+	protected void flushWarehouse_transfer_detail( )
+	throws SQLException {
+		flushWarehouse_transfer_detail(false);
+	}	
+
+	private void flushWarehouse_transfer_detail( boolean close )
 	throws SQLException {
 		if ( ! warehouse_transfer_details.isEmpty() )
 			insertWarehouse_transfer_detail(warehouse_transfer_details);
-		if ( warehouse_transfer_detailStmt != null )
+		if ( close && warehouse_transfer_detailStmt != null )
 			warehouse_transfer_detailStmt.close();
 	}	
 
@@ -27261,7 +28218,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 55 * warehouse_transfer_detailCount >=  this.maxAllowedPacket ){
 			insertWarehouse_transfer_detail(warehouse_transfer_details);
-			warehouse_transfer_details.clear();
 		} 
 	}
 
@@ -27373,6 +28329,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				questionStmt.setString(offset++, question.alias);
 		}
 		questionStmt.executeUpdate();
+		questions.clear();
 		questionInserted += size;
 
 		// elapsed time in milliseconds
@@ -27411,11 +28368,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.questionId = questionId;
 		} 
 	
-	private void flushQuestion(  )
+	protected void flushQuestion( )
+	throws SQLException {
+		flushQuestion(false);
+	}	
+
+	private void flushQuestion( boolean close )
 	throws SQLException {
 		if ( ! questions.isEmpty() )
 			insertQuestion(questions);
-		if ( questionStmt != null )
+		if ( close && questionStmt != null )
 			questionStmt.close();
 	}	
 
@@ -27448,7 +28410,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 342 * questionCount >=  this.maxAllowedPacket ){
 			insertQuestion(questions);
-			questions.clear();
 		} 
 	}
 
@@ -27599,6 +28560,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				record_dataStmt.setInt(offset++, record_data.attach);
 		}
 		record_dataStmt.executeUpdate();
+		record_datas.clear();
 		record_dataInserted += size;
 
 		// elapsed time in milliseconds
@@ -27637,11 +28599,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.record_dataId = record_dataId;
 		} 
 	
-	private void flushRecord_data(  )
+	protected void flushRecord_data( )
+	throws SQLException {
+		flushRecord_data(false);
+	}	
+
+	private void flushRecord_data( boolean close )
 	throws SQLException {
 		if ( ! record_datas.isEmpty() )
 			insertRecord_data(record_datas);
-		if ( record_dataStmt != null )
+		if ( close && record_dataStmt != null )
 			record_dataStmt.close();
 	}	
 
@@ -27688,7 +28655,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 332 * record_dataCount >=  this.maxAllowedPacket ){
 			insertRecord_data(record_datas);
-			record_datas.clear();
 		} 
 	}
 
@@ -27818,6 +28784,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				alumn_loanStmt.setString(offset++, alumn_loan.comments);
 		}
 		alumn_loanStmt.executeUpdate();
+		alumn_loans.clear();
 		alumn_loanInserted += size;
 
 		// elapsed time in milliseconds
@@ -27856,11 +28823,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.alumn_loanId = alumn_loanId;
 		} 
 	
-	private void flushAlumn_loan(  )
+	protected void flushAlumn_loan( )
+	throws SQLException {
+		flushAlumn_loan(false);
+	}	
+
+	private void flushAlumn_loan( boolean close )
 	throws SQLException {
 		if ( ! alumn_loans.isEmpty() )
 			insertAlumn_loan(alumn_loans);
-		if ( alumn_loanStmt != null )
+		if ( close && alumn_loanStmt != null )
 			alumn_loanStmt.close();
 	}	
 
@@ -27893,7 +28865,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 130 * alumn_loanCount >=  this.maxAllowedPacket ){
 			insertAlumn_loan(alumn_loans);
-			alumn_loans.clear();
 		} 
 	}
 
@@ -27994,6 +28965,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				profileStmt.setInt(offset++, profile.domain);
 		}
 		profileStmt.executeUpdate();
+		profiles.clear();
 		profileInserted += size;
 
 		// elapsed time in milliseconds
@@ -28032,11 +29004,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.profileId = profileId;
 		} 
 	
-	private void flushProfile(  )
+	protected void flushProfile( )
+	throws SQLException {
+		flushProfile(false);
+	}	
+
+	private void flushProfile( boolean close )
 	throws SQLException {
 		if ( ! profiles.isEmpty() )
 			insertProfile(profiles);
-		if ( profileStmt != null )
+		if ( close && profileStmt != null )
 			profileStmt.close();
 	}	
 
@@ -28063,7 +29040,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 94 * profileCount >=  this.maxAllowedPacket ){
 			insertProfile(profiles);
-			profiles.clear();
 		} 
 	}
 
@@ -28248,6 +29224,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				calendarStmt.setInt(offset++, calendar.calendar);
 		}
 		calendarStmt.executeUpdate();
+		calendars.clear();
 		calendarInserted += size;
 
 		// elapsed time in milliseconds
@@ -28286,11 +29263,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.calendarId = calendarId;
 		} 
 	
-	private void flushCalendar(  )
+	protected void flushCalendar( )
+	throws SQLException {
+		flushCalendar(false);
+	}	
+
+	private void flushCalendar( boolean close )
 	throws SQLException {
 		if ( ! calendars.isEmpty() )
 			insertCalendar(calendars);
-		if ( calendarStmt != null )
+		if ( close && calendarStmt != null )
 			calendarStmt.close();
 	}	
 
@@ -28353,7 +29335,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 301 * calendarCount >=  this.maxAllowedPacket ){
 			insertCalendar(calendars);
-			calendars.clear();
 		} 
 	}
 
@@ -28509,6 +29490,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				asset_activityStmt.setShort(offset++, asset_activity.status);
 		}
 		asset_activityStmt.executeUpdate();
+		asset_activitys.clear();
 		asset_activityInserted += size;
 
 		// elapsed time in milliseconds
@@ -28547,11 +29529,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.asset_activityId = asset_activityId;
 		} 
 	
-	private void flushAsset_activity(  )
+	protected void flushAsset_activity( )
+	throws SQLException {
+		flushAsset_activity(false);
+	}	
+
+	private void flushAsset_activity( boolean close )
 	throws SQLException {
 		if ( ! asset_activitys.isEmpty() )
 			insertAsset_activity(asset_activitys);
-		if ( asset_activityStmt != null )
+		if ( close && asset_activityStmt != null )
 			asset_activityStmt.close();
 	}	
 
@@ -28588,7 +29575,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 229 * asset_activityCount >=  this.maxAllowedPacket ){
 			insertAsset_activity(asset_activitys);
-			asset_activitys.clear();
 		} 
 	}
 
@@ -28763,6 +29749,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_reservation_guestStmt.setString(offset++, project_reservation_guest.barcode);
 		}
 		project_reservation_guestStmt.executeUpdate();
+		project_reservation_guests.clear();
 		project_reservation_guestInserted += size;
 
 		// elapsed time in milliseconds
@@ -28801,11 +29788,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.project_reservation_guestId = project_reservation_guestId;
 		} 
 	
-	private void flushProject_reservation_guest(  )
+	protected void flushProject_reservation_guest( )
+	throws SQLException {
+		flushProject_reservation_guest(false);
+	}	
+
+	private void flushProject_reservation_guest( boolean close )
 	throws SQLException {
 		if ( ! project_reservation_guests.isEmpty() )
 			insertProject_reservation_guest(project_reservation_guests);
-		if ( project_reservation_guestStmt != null )
+		if ( close && project_reservation_guestStmt != null )
 			project_reservation_guestStmt.close();
 	}	
 
@@ -28860,7 +29852,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 780 * project_reservation_guestCount >=  this.maxAllowedPacket ){
 			insertProject_reservation_guest(project_reservation_guests);
-			project_reservation_guests.clear();
 		} 
 	}
 
@@ -29068,6 +30059,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				calendar_periodStmt.setDouble(offset++, calendar_period.sunday_hours);
 		}
 		calendar_periodStmt.executeUpdate();
+		calendar_periods.clear();
 		calendar_periodInserted += size;
 
 		// elapsed time in milliseconds
@@ -29106,11 +30098,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.calendar_periodId = calendar_periodId;
 		} 
 	
-	private void flushCalendar_period(  )
+	protected void flushCalendar_period( )
+	throws SQLException {
+		flushCalendar_period(false);
+	}	
+
+	private void flushCalendar_period( boolean close )
 	throws SQLException {
 		if ( ! calendar_periods.isEmpty() )
 			insertCalendar_period(calendar_periods);
-		if ( calendar_periodStmt != null )
+		if ( close && calendar_periodStmt != null )
 			calendar_periodStmt.close();
 	}	
 
@@ -29171,7 +30168,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 278 * calendar_periodCount >=  this.maxAllowedPacket ){
 			insertCalendar_period(calendar_periods);
-			calendar_periods.clear();
 		} 
 	}
 
@@ -29320,6 +30316,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				system_costStmt.setString(offset++, system_cost.code);
 		}
 		system_costStmt.executeUpdate();
+		system_costs.clear();
 		system_costInserted += size;
 
 		// elapsed time in milliseconds
@@ -29358,11 +30355,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.system_costId = system_costId;
 		} 
 	
-	private void flushSystem_cost(  )
+	protected void flushSystem_cost( )
+	throws SQLException {
+		flushSystem_cost(false);
+	}	
+
+	private void flushSystem_cost( boolean close )
 	throws SQLException {
 		if ( ! system_costs.isEmpty() )
 			insertSystem_cost(system_costs);
-		if ( system_costStmt != null )
+		if ( close && system_costStmt != null )
 			system_costStmt.close();
 	}	
 
@@ -29375,7 +30377,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param description Descripcion
 	 * @param expression Expresion
 	 * @param type Tipo de Costo
-	 * @param code C?digo
+	 * @param code Cdigo
 	 * @throws SQLException
 	*/
 	protected void insertSystem_cost(Integer id, Integer domain, Date start_date, Date end_date, String description, String expression, Short type, String code)
@@ -29397,7 +30399,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 117 * system_costCount >=  this.maxAllowedPacket ){
 			insertSystem_cost(system_costs);
-			system_costs.clear();
 		} 
 	}
 
@@ -29410,7 +30411,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param description Descripcion
 	 * @param expression Expresion
 	 * @param type Tipo de Costo
-	 * @param code C?digo
+	 * @param code Cdigo
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -29530,6 +30531,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				fbatchStmt.setShort(offset++, fbatch.security_level);
 		}
 		fbatchStmt.executeUpdate();
+		fbatchs.clear();
 		fbatchInserted += size;
 
 		// elapsed time in milliseconds
@@ -29568,11 +30570,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.fbatchId = fbatchId;
 		} 
 	
-	private void flushFbatch(  )
+	protected void flushFbatch( )
+	throws SQLException {
+		flushFbatch(false);
+	}	
+
+	private void flushFbatch( boolean close )
 	throws SQLException {
 		if ( ! fbatchs.isEmpty() )
 			insertFbatch(fbatchs);
-		if ( fbatchStmt != null )
+		if ( close && fbatchStmt != null )
 			fbatchStmt.close();
 	}	
 
@@ -29584,7 +30591,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param issue_date Fecha de emision de la Remesa
 	 * @param type Tipo de Remesa
 	 * @param status Estado de la Remesa
-	 * @param rbank Banco de la Compa?ia utilizado en la Remesa
+	 * @param rbank Banco de la Compaia utilizado en la Remesa
 	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
 	 * @param payment Indica si es un pago o un cobro
 	 * @param security_level Nivel de seguridad
@@ -29611,7 +30618,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 91 * fbatchCount >=  this.maxAllowedPacket ){
 			insertFbatch(fbatchs);
-			fbatchs.clear();
 		} 
 	}
 
@@ -29623,7 +30629,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param issue_date Fecha de emision de la Remesa
 	 * @param type Tipo de Remesa
 	 * @param status Estado de la Remesa
-	 * @param rbank Banco de la Compa?ia utilizado en la Remesa
+	 * @param rbank Banco de la Compaia utilizado en la Remesa
 	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
 	 * @param payment Indica si es un pago o un cobro
 	 * @param security_level Nivel de seguridad
@@ -29728,6 +30734,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				certifica2_batchStmt.setString(offset++, certifica2_batch.sign);
 		}
 		certifica2_batchStmt.executeUpdate();
+		certifica2_batchs.clear();
 		certifica2_batchInserted += size;
 
 		// elapsed time in milliseconds
@@ -29766,11 +30773,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.certifica2_batchId = certifica2_batchId;
 		} 
 	
-	private void flushCertifica2_batch(  )
+	protected void flushCertifica2_batch( )
+	throws SQLException {
+		flushCertifica2_batch(false);
+	}	
+
+	private void flushCertifica2_batch( boolean close )
 	throws SQLException {
 		if ( ! certifica2_batchs.isEmpty() )
 			insertCertifica2_batch(certifica2_batchs);
-		if ( certifica2_batchStmt != null )
+		if ( close && certifica2_batchStmt != null )
 			certifica2_batchStmt.close();
 	}	
 
@@ -29801,7 +30813,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 82 * certifica2_batchCount >=  this.maxAllowedPacket ){
 			insertCertifica2_batch(certifica2_batchs);
-			certifica2_batchs.clear();
 		} 
 	}
 
@@ -29900,6 +30911,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoice_detail_accountStmt.setInt(offset++, invoice_detail_account.account);
 		}
 		invoice_detail_accountStmt.executeUpdate();
+		invoice_detail_accounts.clear();
 		invoice_detail_accountInserted += size;
 
 		// elapsed time in milliseconds
@@ -29938,11 +30950,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.invoice_detail_accountId = invoice_detail_accountId;
 		} 
 	
-	private void flushInvoice_detail_account(  )
+	protected void flushInvoice_detail_account( )
+	throws SQLException {
+		flushInvoice_detail_account(false);
+	}	
+
+	private void flushInvoice_detail_account( boolean close )
 	throws SQLException {
 		if ( ! invoice_detail_accounts.isEmpty() )
 			insertInvoice_detail_account(invoice_detail_accounts);
-		if ( invoice_detail_accountStmt != null )
+		if ( close && invoice_detail_accountStmt != null )
 			invoice_detail_accountStmt.close();
 	}	
 
@@ -29969,7 +30986,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * invoice_detail_accountCount >=  this.maxAllowedPacket ){
 			insertInvoice_detail_account(invoice_detail_accounts);
-			invoice_detail_accounts.clear();
 		} 
 	}
 
@@ -30064,6 +31080,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				commission_typeStmt.setDouble(offset++, commission_type.rate);
 		}
 		commission_typeStmt.executeUpdate();
+		commission_types.clear();
 		commission_typeInserted += size;
 
 		// elapsed time in milliseconds
@@ -30102,11 +31119,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.commission_typeId = commission_typeId;
 		} 
 	
-	private void flushCommission_type(  )
+	protected void flushCommission_type( )
+	throws SQLException {
+		flushCommission_type(false);
+	}	
+
+	private void flushCommission_type( boolean close )
 	throws SQLException {
 		if ( ! commission_types.isEmpty() )
 			insertCommission_type(commission_types);
-		if ( commission_typeStmt != null )
+		if ( close && commission_typeStmt != null )
 			commission_typeStmt.close();
 	}	
 
@@ -30133,7 +31155,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 58 * commission_typeCount >=  this.maxAllowedPacket ){
 			insertCommission_type(commission_types);
-			commission_types.clear();
 		} 
 	}
 
@@ -30253,6 +31274,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				alarmStmt.setShort(offset++, alarm.priority);
 		}
 		alarmStmt.executeUpdate();
+		alarms.clear();
 		alarmInserted += size;
 
 		// elapsed time in milliseconds
@@ -30291,11 +31313,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.alarmId = alarmId;
 		} 
 	
-	private void flushAlarm(  )
+	protected void flushAlarm( )
+	throws SQLException {
+		flushAlarm(false);
+	}	
+
+	private void flushAlarm( boolean close )
 	throws SQLException {
 		if ( ! alarms.isEmpty() )
 			insertAlarm(alarms);
-		if ( alarmStmt != null )
+		if ( close && alarmStmt != null )
 			alarmStmt.close();
 	}	
 
@@ -30332,7 +31359,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 68 * alarmCount >=  this.maxAllowedPacket ){
 			insertAlarm(alarms);
-			alarms.clear();
 		} 
 	}
 
@@ -30437,6 +31463,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				pay_methodStmt.setShort(offset++, pay_method.type);
 		}
 		pay_methodStmt.executeUpdate();
+		pay_methods.clear();
 		pay_methodInserted += size;
 
 		// elapsed time in milliseconds
@@ -30475,11 +31502,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.pay_methodId = pay_methodId;
 		} 
 	
-	private void flushPay_method(  )
+	protected void flushPay_method( )
+	throws SQLException {
+		flushPay_method(false);
+	}	
+
+	private void flushPay_method( boolean close )
 	throws SQLException {
 		if ( ! pay_methods.isEmpty() )
 			insertPay_method(pay_methods);
-		if ( pay_methodStmt != null )
+		if ( close && pay_methodStmt != null )
 			pay_methodStmt.close();
 	}	
 
@@ -30506,7 +31538,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 55 * pay_methodCount >=  this.maxAllowedPacket ){
 			insertPay_method(pay_methods);
-			pay_methods.clear();
 		} 
 	}
 
@@ -30611,6 +31642,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				workactivityStmt.setBoolean(offset++, workactivity.active);
 		}
 		workactivityStmt.executeUpdate();
+		workactivitys.clear();
 		workactivityInserted += size;
 
 		// elapsed time in milliseconds
@@ -30649,11 +31681,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.workactivityId = workactivityId;
 		} 
 	
-	private void flushWorkactivity(  )
+	protected void flushWorkactivity( )
+	throws SQLException {
+		flushWorkactivity(false);
+	}	
+
+	private void flushWorkactivity( boolean close )
 	throws SQLException {
 		if ( ! workactivitys.isEmpty() )
 			insertWorkactivity(workactivitys);
-		if ( workactivityStmt != null )
+		if ( close && workactivityStmt != null )
 			workactivityStmt.close();
 	}	
 
@@ -30663,7 +31700,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param description Descripcion de la Actividad
 	 * @param workplace Identificador del Centro de Trabajo
-	 * @param enterpriseCCC Cuenta de Cotizaci?n asociada a la Actividad
+	 * @param enterpriseCCC Cuenta de Cotizacin asociada a la Actividad
 	 * @param active Indica si la Actividad esta activa o no
 	 * @throws SQLException
 	*/
@@ -30684,7 +31721,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 104 * workactivityCount >=  this.maxAllowedPacket ){
 			insertWorkactivity(workactivitys);
-			workactivitys.clear();
 		} 
 	}
 
@@ -30694,7 +31730,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param description Descripcion de la Actividad
 	 * @param workplace Identificador del Centro de Trabajo
-	 * @param enterpriseCCC Cuenta de Cotizaci?n asociada a la Actividad
+	 * @param enterpriseCCC Cuenta de Cotizacin asociada a la Actividad
 	 * @param active Indica si la Actividad esta activa o no
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -30808,6 +31844,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_commercialStmt.setInt(offset++, project_commercial.probability);
 		}
 		project_commercialStmt.executeUpdate();
+		project_commercials.clear();
 		project_commercialInserted += size;
 
 		// elapsed time in milliseconds
@@ -30816,11 +31853,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 		
 	
-	private void flushProject_commercial(  )
+	protected void flushProject_commercial( )
+	throws SQLException {
+		flushProject_commercial(false);
+	}	
+
+	private void flushProject_commercial( boolean close )
 	throws SQLException {
 		if ( ! project_commercials.isEmpty() )
 			insertProject_commercial(project_commercials);
-		if ( project_commercialStmt != null )
+		if ( close && project_commercialStmt != null )
 			project_commercialStmt.close();
 	}	
 
@@ -30857,7 +31899,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 66 * project_commercialCount >=  this.maxAllowedPacket ){
 			insertProject_commercial(project_commercials);
-			project_commercials.clear();
 		} 
 	}
 
@@ -30918,6 +31959,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				cnae2009Stmt.setString(offset++, cnae2009.title);
 		}
 		cnae2009Stmt.executeUpdate();
+		cnae2009s.clear();
 		cnae2009Inserted += size;
 
 		// elapsed time in milliseconds
@@ -30956,11 +31998,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.cnae2009Id = cnae2009Id;
 		} 
 	
-	private void flushCnae2009(  )
+	protected void flushCnae2009( )
+	throws SQLException {
+		flushCnae2009(false);
+	}	
+
+	private void flushCnae2009( boolean close )
 	throws SQLException {
 		if ( ! cnae2009s.isEmpty() )
 			insertCnae2009(cnae2009s);
-		if ( cnae2009Stmt != null )
+		if ( close && cnae2009Stmt != null )
 			cnae2009Stmt.close();
 	}	
 
@@ -30985,7 +32032,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 269 * cnae2009Count >=  this.maxAllowedPacket ){
 			insertCnae2009(cnae2009s);
-			cnae2009s.clear();
 		} 
 	}
 
@@ -31078,6 +32124,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				course_observationStmt.setString(offset++, course_observation.observation);
 		}
 		course_observationStmt.executeUpdate();
+		course_observations.clear();
 		course_observationInserted += size;
 
 		// elapsed time in milliseconds
@@ -31116,11 +32163,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.course_observationId = course_observationId;
 		} 
 	
-	private void flushCourse_observation(  )
+	protected void flushCourse_observation( )
+	throws SQLException {
+		flushCourse_observation(false);
+	}	
+
+	private void flushCourse_observation( boolean close )
 	throws SQLException {
 		if ( ! course_observations.isEmpty() )
 			insertCourse_observation(course_observations);
-		if ( course_observationStmt != null )
+		if ( close && course_observationStmt != null )
 			course_observationStmt.close();
 	}	
 
@@ -31147,7 +32199,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 94 * course_observationCount >=  this.maxAllowedPacket ){
 			insertCourse_observation(course_observations);
-			course_observations.clear();
 		} 
 	}
 
@@ -31252,6 +32303,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				salary_dataStmt.setDate(offset++, salary_data.end_date);
 		}
 		salary_dataStmt.executeUpdate();
+		salary_datas.clear();
 		salary_dataInserted += size;
 
 		// elapsed time in milliseconds
@@ -31290,11 +32342,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.salary_dataId = salary_dataId;
 		} 
 	
-	private void flushSalary_data(  )
+	protected void flushSalary_data( )
+	throws SQLException {
+		flushSalary_data(false);
+	}	
+
+	private void flushSalary_data( boolean close )
 	throws SQLException {
 		if ( ! salary_datas.isEmpty() )
 			insertSalary_data(salary_datas);
-		if ( salary_dataStmt != null )
+		if ( close && salary_dataStmt != null )
 			salary_dataStmt.close();
 	}	
 
@@ -31325,7 +32382,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 171 * salary_dataCount >=  this.maxAllowedPacket ){
 			insertSalary_data(salary_datas);
-			salary_datas.clear();
 		} 
 	}
 
@@ -31519,6 +32575,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				reservation_request_roomStmt.setTimestamp(offset++, reservation_request_room.modification_date);
 		}
 		reservation_request_roomStmt.executeUpdate();
+		reservation_request_rooms.clear();
 		reservation_request_roomInserted += size;
 
 		// elapsed time in milliseconds
@@ -31557,11 +32614,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.reservation_request_roomId = reservation_request_roomId;
 		} 
 	
-	private void flushReservation_request_room(  )
+	protected void flushReservation_request_room( )
+	throws SQLException {
+		flushReservation_request_room(false);
+	}	
+
+	private void flushReservation_request_room( boolean close )
 	throws SQLException {
 		if ( ! reservation_request_rooms.isEmpty() )
 			insertReservation_request_room(reservation_request_rooms);
-		if ( reservation_request_roomStmt != null )
+		if ( close && reservation_request_roomStmt != null )
 			reservation_request_roomStmt.close();
 	}	
 
@@ -31574,7 +32636,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param units Numero de Habitaciones
 	 * @param item Identificador del Tipo de Habitacion
 	 * @param adults Numero de adultos
-	 * @param children Numero de ni?os
+	 * @param children Numero de nios
 	 * @param babies Numero de bebes
 	 * @param crs_code Codigo de Reserva en CRS
 	 * @param tariff_code Codigo de Tarifa
@@ -31626,7 +32688,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 583 * reservation_request_roomCount >=  this.maxAllowedPacket ){
 			insertReservation_request_room(reservation_request_rooms);
-			reservation_request_rooms.clear();
 		} 
 	}
 
@@ -31639,7 +32700,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param units Numero de Habitaciones
 	 * @param item Identificador del Tipo de Habitacion
 	 * @param adults Numero de adultos
-	 * @param children Numero de ni?os
+	 * @param children Numero de nios
 	 * @param babies Numero de bebes
 	 * @param crs_code Codigo de Reserva en CRS
 	 * @param tariff_code Codigo de Tarifa
@@ -31759,6 +32820,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				profile_roleStmt.setInt(offset++, profile_role.application_role);
 		}
 		profile_roleStmt.executeUpdate();
+		profile_roles.clear();
 		profile_roleInserted += size;
 
 		// elapsed time in milliseconds
@@ -31797,11 +32859,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.profile_roleId = profile_roleId;
 		} 
 	
-	private void flushProfile_role(  )
+	protected void flushProfile_role( )
+	throws SQLException {
+		flushProfile_role(false);
+	}	
+
+	private void flushProfile_role( boolean close )
 	throws SQLException {
 		if ( ! profile_roles.isEmpty() )
 			insertProfile_role(profile_roles);
-		if ( profile_roleStmt != null )
+		if ( close && profile_roleStmt != null )
 			profile_roleStmt.close();
 	}	
 
@@ -31828,7 +32895,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * profile_roleCount >=  this.maxAllowedPacket ){
 			insertProfile_role(profile_roles);
-			profile_roles.clear();
 		} 
 	}
 
@@ -31943,6 +33009,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				survey_responseStmt.setInt(offset++, survey_response.campaign_action);
 		}
 		survey_responseStmt.executeUpdate();
+		survey_responses.clear();
 		survey_responseInserted += size;
 
 		// elapsed time in milliseconds
@@ -31981,11 +33048,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.survey_responseId = survey_responseId;
 		} 
 	
-	private void flushSurvey_response(  )
+	protected void flushSurvey_response( )
+	throws SQLException {
+		flushSurvey_response(false);
+	}	
+
+	private void flushSurvey_response( boolean close )
 	throws SQLException {
 		if ( ! survey_responses.isEmpty() )
 			insertSurvey_response(survey_responses);
-		if ( survey_responseStmt != null )
+		if ( close && survey_responseStmt != null )
 			survey_responseStmt.close();
 	}	
 
@@ -31998,7 +33070,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param survey Identificador del Cuestionario
 	 * @param target Identificador del Cliente Potencial
 	 * @param user Identificador del Usuario
-	 * @param campaign_action Identificador de la Accion de la Campa?a
+	 * @param campaign_action Identificador de la Accion de la Campaa
 	 * @throws SQLException
 	*/
 	protected void insertSurvey_response(Integer id, Integer domain, Timestamp creationDate, Timestamp response_date, Integer survey, Integer target, Integer user, Integer campaign_action)
@@ -32020,7 +33092,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 98 * survey_responseCount >=  this.maxAllowedPacket ){
 			insertSurvey_response(survey_responses);
-			survey_responses.clear();
 		} 
 	}
 
@@ -32033,7 +33104,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param survey Identificador del Cuestionario
 	 * @param target Identificador del Cliente Potencial
 	 * @param user Identificador del Usuario
-	 * @param campaign_action Identificador de la Accion de la Campa?a
+	 * @param campaign_action Identificador de la Accion de la Campaa
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -32128,6 +33199,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				evaluation_observationStmt.setString(offset++, evaluation_observation.comments);
 		}
 		evaluation_observationStmt.executeUpdate();
+		evaluation_observations.clear();
 		evaluation_observationInserted += size;
 
 		// elapsed time in milliseconds
@@ -32166,11 +33238,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.evaluation_observationId = evaluation_observationId;
 		} 
 	
-	private void flushEvaluation_observation(  )
+	protected void flushEvaluation_observation( )
+	throws SQLException {
+		flushEvaluation_observation(false);
+	}	
+
+	private void flushEvaluation_observation( boolean close )
 	throws SQLException {
 		if ( ! evaluation_observations.isEmpty() )
 			insertEvaluation_observation(evaluation_observations);
-		if ( evaluation_observationStmt != null )
+		if ( close && evaluation_observationStmt != null )
 			evaluation_observationStmt.close();
 	}	
 
@@ -32199,7 +33276,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 33 * evaluation_observationCount >=  this.maxAllowedPacket ){
 			insertEvaluation_observation(evaluation_observations);
-			evaluation_observations.clear();
 		} 
 	}
 
@@ -32321,6 +33397,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				personStmt.setString(offset++, person.second_surname);
 		}
 		personStmt.executeUpdate();
+		persons.clear();
 		personInserted += size;
 
 		// elapsed time in milliseconds
@@ -32329,11 +33406,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 		
 	
-	private void flushPerson(  )
+	protected void flushPerson( )
+	throws SQLException {
+		flushPerson(false);
+	}	
+
+	private void flushPerson( boolean close )
 	throws SQLException {
 		if ( ! persons.isEmpty() )
 			insertPerson(persons);
-		if ( personStmt != null )
+		if ( close && personStmt != null )
 			personStmt.close();
 	}	
 
@@ -32370,112 +33452,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 260 * personCount >=  this.maxAllowedPacket ){
 			insertPerson(persons);
-			persons.clear();
-		} 
-	}
-
-
-
-	private int instructorStmtSize = 0;
-
-	private int instructorInserted = 0;
-
-	private List<Instructor> instructors = 
-		new LinkedList<Instructor>();
-
-	private PreparedStatement instructorStmt = null;
-
-	public static class Instructor {
-		protected Integer registry; 
-		protected String social_security_num; 
-		protected Integer agreement_time; 
-		protected Boolean active; 
-	}
-	
-	protected void insertInstructor( List<Instructor> instructors )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = instructors.size();
-		if ( instructorStmtSize != size ) {
-			if ( instructorStmt != null ) {
-				instructorStmt.close();
-			}
-			String values = "(?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			instructorStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO instructor (registry,social_security_num,agreement_time,active)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			instructorStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Instructor instructor : instructors) {
-			if ( instructor.registry == null )
-				instructorStmt.setNull(offset++, 4);
-			else
-				instructorStmt.setInt(offset++, instructor.registry);
-			if ( instructor.social_security_num == null )
-				instructorStmt.setNull(offset++, 12);
-			else
-				instructorStmt.setString(offset++, instructor.social_security_num);
-			if ( instructor.agreement_time == null )
-				instructorStmt.setNull(offset++, 4);
-			else
-				instructorStmt.setInt(offset++, instructor.agreement_time);
-			if ( instructor.active == null )
-				instructorStmt.setNull(offset++, -7);
-			else
-				instructorStmt.setBoolean(offset++, instructor.active);
-		}
-		instructorStmt.executeUpdate();
-		instructorInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Instructors in {} milliseconds.", size, instructorInserted, elapsed );		
-	}
-		
-	
-	private void flushInstructor(  )
-	throws SQLException {
-		if ( ! instructors.isEmpty() )
-			insertInstructor(instructors);
-		if ( instructorStmt != null )
-			instructorStmt.close();
-	}	
-
-	/**
-	 * Instructor
-	 * @param registry Registro del Empleado
-	 * @param social_security_num N?mero de Seguridad Social del Empleado
-	 * @param agreement_time Horas del Convenio
-	 * @param active Indica si el Empleado sigue vinculado a la Empresa o no
-	 * @throws SQLException
-	*/
-	protected void insertInstructor(Integer registry, String social_security_num, Integer agreement_time, Boolean active)
-	throws SQLException {
-
-		Instructor instructor_ = new Instructor();
-		instructor_.registry = registry;
-		instructor_.social_security_num = social_security_num;
-		instructor_.agreement_time = agreement_time;
-		instructor_.active = active;
-
-		instructors.add(instructor_);
-		
-		int instructorCount = instructors.size();
-		
-		if ( 52 * instructorCount >=  this.maxAllowedPacket ){
-			insertInstructor(instructors);
-			instructors.clear();
 		} 
 	}
 
@@ -32591,6 +33567,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_paymentStmt.setShort(offset++, contract_payment.salary_type);
 		}
 		contract_paymentStmt.executeUpdate();
+		contract_payments.clear();
 		contract_paymentInserted += size;
 
 		// elapsed time in milliseconds
@@ -32629,11 +33606,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.contract_paymentId = contract_paymentId;
 		} 
 	
-	private void flushContract_payment(  )
+	protected void flushContract_payment( )
+	throws SQLException {
+		flushContract_payment(false);
+	}	
+
+	private void flushContract_payment( boolean close )
 	throws SQLException {
 		if ( ! contract_payments.isEmpty() )
 			insertContract_payment(contract_payments);
-		if ( contract_paymentStmt != null )
+		if ( close && contract_paymentStmt != null )
 			contract_paymentStmt.close();
 	}	
 
@@ -32641,7 +33623,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Contract_payment
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Percepci?n Salarial
+	 * @param type Tipo de Percepcin Salarial
 	 * @param contract Contrato
 	 * @param payment_concept Identificador unico del concepto
 	 * @param description Descripcion
@@ -32680,7 +33662,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 520 * contract_paymentCount >=  this.maxAllowedPacket ){
 			insertContract_payment(contract_payments);
-			contract_payments.clear();
 		} 
 	}
 
@@ -32688,7 +33669,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Contract_payment
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Percepci?n Salarial
+	 * @param type Tipo de Percepcin Salarial
 	 * @param contract Contrato
 	 * @param payment_concept Identificador unico del concepto
 	 * @param description Descripcion
@@ -32850,6 +33831,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				irpf_regularizationStmt.setDouble(offset++, irpf_regularization.prior_deduct_home_loan_amount);
 		}
 		irpf_regularizationStmt.executeUpdate();
+		irpf_regularizations.clear();
 		irpf_regularizationInserted += size;
 
 		// elapsed time in milliseconds
@@ -32888,11 +33870,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.irpf_regularizationId = irpf_regularizationId;
 		} 
 	
-	private void flushIrpf_regularization(  )
+	protected void flushIrpf_regularization( )
+	throws SQLException {
+		flushIrpf_regularization(false);
+	}	
+
+	private void flushIrpf_regularization( boolean close )
 	throws SQLException {
 		if ( ! irpf_regularizations.isEmpty() )
 			insertIrpf_regularization(irpf_regularizations);
-		if ( irpf_regularizationStmt != null )
+		if ( close && irpf_regularizationStmt != null )
 			irpf_regularizationStmt.close();
 	}	
 
@@ -32901,18 +33888,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param contract Identificador del contrato
-	 * @param reason Causa de regularizaci?n
+	 * @param reason Causa de regularizacin
 	 * @param effective_date Fecha de entrada en vigor
-	 * @param paid_irpf Retenciones practicadas con anterioridad a la regularizaci?n.
-	 * @param paid_remuneration Retribuciones ya satisfechas con anterioridad a la regularizaci?n.
-	 * @param prior_annual_irpf Retenciones anuales anteriores a la regularizaci?n.
-	 * @param prior_annual_remuneration Retribucines anulaes consideradas con anterioridad a la regularizaci?n.
-	 * @param prior_base_irpf Base para calcular el tipo de retenci?n determinado antes de la regularizaci?n.
-	 * @param prior_irpf Tipo de retenci?n aplicado antes de la regularizaci?n.
-	 * @param prior_in_ceuta_melilla Los rendimientos anteriores a la regularizaci?n fueron obtenidos en Ceuta o Melilla
-	 * @param prior_minimun_personal_family M?nimo personal y familiar para calcular el tipo de retenci?n determinado antes de la regularizaci?n.
-	 * @param prior_deduct_home_loan En alg?n momento antes de la regularizaci?n se aplico la minoraci?n por pagos por la adquisi?n o rehabilitaci?n de la vivienda
-	 * @param prior_deduct_home_loan_amount Importe de la minoraci?n por pagos por la adquisi?n o rehabilitaci?n de la vivienda antes de la regularizaci?n
+	 * @param paid_irpf Retenciones practicadas con anterioridad a la regularizacin.
+	 * @param paid_remuneration Retribuciones ya satisfechas con anterioridad a la regularizacin.
+	 * @param prior_annual_irpf Retenciones anuales anteriores a la regularizacin.
+	 * @param prior_annual_remuneration Retribucines anulaes consideradas con anterioridad a la regularizacin.
+	 * @param prior_base_irpf Base para calcular el tipo de retencin determinado antes de la regularizacin.
+	 * @param prior_irpf Tipo de retencin aplicado antes de la regularizacin.
+	 * @param prior_in_ceuta_melilla Los rendimientos anteriores a la regularizacin fueron obtenidos en Ceuta o Melilla
+	 * @param prior_minimun_personal_family Mnimo personal y familiar para calcular el tipo de retencin determinado antes de la regularizacin.
+	 * @param prior_deduct_home_loan En algn momento antes de la regularizacin se aplico la minoracin por pagos por la adquisin o rehabilitacin de la vivienda
+	 * @param prior_deduct_home_loan_amount Importe de la minoracin por pagos por la adquisin o rehabilitacin de la vivienda antes de la regularizacin
 	 * @throws SQLException
 	*/
 	protected void insertIrpf_regularization(Integer id, Integer domain, Integer contract, Short reason, Date effective_date, Double paid_irpf, Double paid_remuneration, Double prior_annual_irpf, Double prior_annual_remuneration, Double prior_base_irpf, Double prior_irpf, Boolean prior_in_ceuta_melilla, Double prior_minimun_personal_family, Short prior_deduct_home_loan, Double prior_deduct_home_loan_amount)
@@ -32941,7 +33928,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 166 * irpf_regularizationCount >=  this.maxAllowedPacket ){
 			insertIrpf_regularization(irpf_regularizations);
-			irpf_regularizations.clear();
 		} 
 	}
 
@@ -32950,18 +33936,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Irpf_regularization
 	 * @param domain Identificador del Dominio
 	 * @param contract Identificador del contrato
-	 * @param reason Causa de regularizaci?n
+	 * @param reason Causa de regularizacin
 	 * @param effective_date Fecha de entrada en vigor
-	 * @param paid_irpf Retenciones practicadas con anterioridad a la regularizaci?n.
-	 * @param paid_remuneration Retribuciones ya satisfechas con anterioridad a la regularizaci?n.
-	 * @param prior_annual_irpf Retenciones anuales anteriores a la regularizaci?n.
-	 * @param prior_annual_remuneration Retribucines anulaes consideradas con anterioridad a la regularizaci?n.
-	 * @param prior_base_irpf Base para calcular el tipo de retenci?n determinado antes de la regularizaci?n.
-	 * @param prior_irpf Tipo de retenci?n aplicado antes de la regularizaci?n.
-	 * @param prior_in_ceuta_melilla Los rendimientos anteriores a la regularizaci?n fueron obtenidos en Ceuta o Melilla
-	 * @param prior_minimun_personal_family M?nimo personal y familiar para calcular el tipo de retenci?n determinado antes de la regularizaci?n.
-	 * @param prior_deduct_home_loan En alg?n momento antes de la regularizaci?n se aplico la minoraci?n por pagos por la adquisi?n o rehabilitaci?n de la vivienda
-	 * @param prior_deduct_home_loan_amount Importe de la minoraci?n por pagos por la adquisi?n o rehabilitaci?n de la vivienda antes de la regularizaci?n
+	 * @param paid_irpf Retenciones practicadas con anterioridad a la regularizacin.
+	 * @param paid_remuneration Retribuciones ya satisfechas con anterioridad a la regularizacin.
+	 * @param prior_annual_irpf Retenciones anuales anteriores a la regularizacin.
+	 * @param prior_annual_remuneration Retribucines anulaes consideradas con anterioridad a la regularizacin.
+	 * @param prior_base_irpf Base para calcular el tipo de retencin determinado antes de la regularizacin.
+	 * @param prior_irpf Tipo de retencin aplicado antes de la regularizacin.
+	 * @param prior_in_ceuta_melilla Los rendimientos anteriores a la regularizacin fueron obtenidos en Ceuta o Melilla
+	 * @param prior_minimun_personal_family Mnimo personal y familiar para calcular el tipo de retencin determinado antes de la regularizacin.
+	 * @param prior_deduct_home_loan En algn momento antes de la regularizacin se aplico la minoracin por pagos por la adquisin o rehabilitacin de la vivienda
+	 * @param prior_deduct_home_loan_amount Importe de la minoracin por pagos por la adquisin o rehabilitacin de la vivienda antes de la regularizacin
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -33143,6 +34129,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				cashflow_forecastStmt.setBoolean(offset++, cashflow_forecast.december);
 		}
 		cashflow_forecastStmt.executeUpdate();
+		cashflow_forecasts.clear();
 		cashflow_forecastInserted += size;
 
 		// elapsed time in milliseconds
@@ -33181,11 +34168,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.cashflow_forecastId = cashflow_forecastId;
 		} 
 	
-	private void flushCashflow_forecast(  )
+	protected void flushCashflow_forecast( )
+	throws SQLException {
+		flushCashflow_forecast(false);
+	}	
+
+	private void flushCashflow_forecast( boolean close )
 	throws SQLException {
 		if ( ! cashflow_forecasts.isEmpty() )
 			insertCashflow_forecast(cashflow_forecasts);
-		if ( cashflow_forecastStmt != null )
+		if ( close && cashflow_forecastStmt != null )
 			cashflow_forecastStmt.close();
 	}	
 
@@ -33197,7 +34189,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param description Descripcion
 	 * @param start_date Fecha de inicio de aplicacion
 	 * @param due_date Fecha final de aplicacion
-	 * @param rbank Identificador de Banco de la Compa?ia
+	 * @param rbank Identificador de Banco de la Compaia
 	 * @param amount Importe
 	 * @param payment_day Dia de pago
 	 * @param january Aplicable en enero
@@ -33246,7 +34238,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 112 * cashflow_forecastCount >=  this.maxAllowedPacket ){
 			insertCashflow_forecast(cashflow_forecasts);
-			cashflow_forecasts.clear();
 		} 
 	}
 
@@ -33258,7 +34249,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param description Descripcion
 	 * @param start_date Fecha de inicio de aplicacion
 	 * @param due_date Fecha final de aplicacion
-	 * @param rbank Identificador de Banco de la Compa?ia
+	 * @param rbank Identificador de Banco de la Compaia
 	 * @param amount Importe
 	 * @param payment_day Dia de pago
 	 * @param january Aplicable en enero
@@ -33395,6 +34386,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				account_entryStmt.setString(offset++, account_entry.comments);
 		}
 		account_entryStmt.executeUpdate();
+		account_entrys.clear();
 		account_entryInserted += size;
 
 		// elapsed time in milliseconds
@@ -33433,11 +34425,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.account_entryId = account_entryId;
 		} 
 	
-	private void flushAccount_entry(  )
+	protected void flushAccount_entry( )
+	throws SQLException {
+		flushAccount_entry(false);
+	}	
+
+	private void flushAccount_entry( boolean close )
 	throws SQLException {
 		if ( ! account_entrys.isEmpty() )
 			insertAccount_entry(account_entrys);
-		if ( account_entryStmt != null )
+		if ( close && account_entryStmt != null )
 			account_entryStmt.close();
 	}	
 
@@ -33472,7 +34469,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 56 * account_entryCount >=  this.maxAllowedPacket ){
 			insertAccount_entry(account_entrys);
-			account_entrys.clear();
 		} 
 	}
 
@@ -33570,6 +34566,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				tagStmt.setString(offset++, tag.name);
 		}
 		tagStmt.executeUpdate();
+		tags.clear();
 		tagInserted += size;
 
 		// elapsed time in milliseconds
@@ -33608,11 +34605,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.tagId = tagId;
 		} 
 	
-	private void flushTag(  )
+	protected void flushTag( )
+	throws SQLException {
+		flushTag(false);
+	}	
+
+	private void flushTag( boolean close )
 	throws SQLException {
 		if ( ! tags.isEmpty() )
 			insertTag(tags);
-		if ( tagStmt != null )
+		if ( close && tagStmt != null )
 			tagStmt.close();
 	}	
 
@@ -33637,7 +34639,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 84 * tagCount >=  this.maxAllowedPacket ){
 			insertTag(tags);
-			tags.clear();
 		} 
 	}
 
@@ -33730,6 +34731,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				geotreeStmt.setInt(offset++, geotree.child);
 		}
 		geotreeStmt.executeUpdate();
+		geotrees.clear();
 		geotreeInserted += size;
 
 		// elapsed time in milliseconds
@@ -33768,11 +34770,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.geotreeId = geotreeId;
 		} 
 	
-	private void flushGeotree(  )
+	protected void flushGeotree( )
+	throws SQLException {
+		flushGeotree(false);
+	}	
+
+	private void flushGeotree( boolean close )
 	throws SQLException {
 		if ( ! geotrees.isEmpty() )
 			insertGeotree(geotrees);
-		if ( geotreeStmt != null )
+		if ( close && geotreeStmt != null )
 			geotreeStmt.close();
 	}	
 
@@ -33799,7 +34806,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * geotreeCount >=  this.maxAllowedPacket ){
 			insertGeotree(geotrees);
-			geotrees.clear();
 		} 
 	}
 
@@ -33914,6 +34920,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				item_supplierStmt.setInt(offset++, item_supplier.workplace);
 		}
 		item_supplierStmt.executeUpdate();
+		item_suppliers.clear();
 		item_supplierInserted += size;
 
 		// elapsed time in milliseconds
@@ -33952,11 +34959,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.item_supplierId = item_supplierId;
 		} 
 	
-	private void flushItem_supplier(  )
+	protected void flushItem_supplier( )
+	throws SQLException {
+		flushItem_supplier(false);
+	}	
+
+	private void flushItem_supplier( boolean close )
 	throws SQLException {
 		if ( ! item_suppliers.isEmpty() )
 			insertItem_supplier(item_suppliers);
-		if ( item_supplierStmt != null )
+		if ( close && item_supplierStmt != null )
 			item_supplierStmt.close();
 	}	
 
@@ -33991,7 +35003,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 90 * item_supplierCount >=  this.maxAllowedPacket ){
 			insertItem_supplier(item_suppliers);
-			item_suppliers.clear();
 		} 
 	}
 
@@ -34094,6 +35105,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				customer_accountStmt.setInt(offset++, customer_account.account);
 		}
 		customer_accountStmt.executeUpdate();
+		customer_accounts.clear();
 		customer_accountInserted += size;
 
 		// elapsed time in milliseconds
@@ -34132,11 +35144,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.customer_accountId = customer_accountId;
 		} 
 	
-	private void flushCustomer_account(  )
+	protected void flushCustomer_account( )
+	throws SQLException {
+		flushCustomer_account(false);
+	}	
+
+	private void flushCustomer_account( boolean close )
 	throws SQLException {
 		if ( ! customer_accounts.isEmpty() )
 			insertCustomer_account(customer_accounts);
-		if ( customer_accountStmt != null )
+		if ( close && customer_accountStmt != null )
 			customer_accountStmt.close();
 	}	
 
@@ -34163,7 +35180,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * customer_accountCount >=  this.maxAllowedPacket ){
 			insertCustomer_account(customer_accounts);
-			customer_accounts.clear();
 		} 
 	}
 
@@ -34263,6 +35279,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				survey_questionStmt.setInt(offset++, survey_question.position);
 		}
 		survey_questionStmt.executeUpdate();
+		survey_questions.clear();
 		survey_questionInserted += size;
 
 		// elapsed time in milliseconds
@@ -34301,11 +35318,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.survey_questionId = survey_questionId;
 		} 
 	
-	private void flushSurvey_question(  )
+	protected void flushSurvey_question( )
+	throws SQLException {
+		flushSurvey_question(false);
+	}	
+
+	private void flushSurvey_question( boolean close )
 	throws SQLException {
 		if ( ! survey_questions.isEmpty() )
 			insertSurvey_question(survey_questions);
-		if ( survey_questionStmt != null )
+		if ( close && survey_questionStmt != null )
 			survey_questionStmt.close();
 	}	
 
@@ -34334,7 +35356,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 50 * survey_questionCount >=  this.maxAllowedPacket ){
 			insertSurvey_question(survey_questions);
-			survey_questions.clear();
 		} 
 	}
 
@@ -34476,6 +35497,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				courseStmt.setString(offset++, course.comments);
 		}
 		courseStmt.executeUpdate();
+		courses.clear();
 		courseInserted += size;
 
 		// elapsed time in milliseconds
@@ -34514,11 +35536,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.courseId = courseId;
 		} 
 	
-	private void flushCourse(  )
+	protected void flushCourse( )
+	throws SQLException {
+		flushCourse(false);
+	}	
+
+	private void flushCourse( boolean close )
 	throws SQLException {
 		if ( ! courses.isEmpty() )
 			insertCourse(courses);
-		if ( courseStmt != null )
+		if ( close && courseStmt != null )
 			courseStmt.close();
 	}	
 
@@ -34530,7 +35557,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param description Descripcion del Curso
 	 * @param start_date Fecha inicio del Curso
 	 * @param end_date Fecha fin del Curso
-	 * @param academic_year A?o Academico del Curso
+	 * @param academic_year Ao Academico del Curso
 	 * @param subject Materia del Curso
 	 * @param level Nivel del Curso
 	 * @param workplace Identificador del Centro de Trabajo
@@ -34563,7 +35590,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 285 * courseCount >=  this.maxAllowedPacket ){
 			insertCourse(courses);
-			courses.clear();
 		} 
 	}
 
@@ -34575,7 +35601,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param description Descripcion del Curso
 	 * @param start_date Fecha inicio del Curso
 	 * @param end_date Fecha fin del Curso
-	 * @param academic_year A?o Academico del Curso
+	 * @param academic_year Ao Academico del Curso
 	 * @param subject Materia del Curso
 	 * @param level Nivel del Curso
 	 * @param workplace Identificador del Centro de Trabajo
@@ -34681,6 +35707,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				stockStmt.setDouble(offset++, stock.quantity);
 		}
 		stockStmt.executeUpdate();
+		stocks.clear();
 		stockInserted += size;
 
 		// elapsed time in milliseconds
@@ -34719,11 +35746,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.stockId = stockId;
 		} 
 	
-	private void flushStock(  )
+	protected void flushStock( )
+	throws SQLException {
+		flushStock(false);
+	}	
+
+	private void flushStock( boolean close )
 	throws SQLException {
 		if ( ! stocks.isEmpty() )
 			insertStock(stocks);
-		if ( stockStmt != null )
+		if ( close && stockStmt != null )
 			stockStmt.close();
 	}	
 
@@ -34752,7 +35784,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 55 * stockCount >=  this.maxAllowedPacket ){
 			insertStock(stocks);
-			stocks.clear();
 		} 
 	}
 
@@ -34869,6 +35900,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				rbankStmt.setBoolean(offset++, rbank.active);
 		}
 		rbankStmt.executeUpdate();
+		rbanks.clear();
 		rbankInserted += size;
 
 		// elapsed time in milliseconds
@@ -34907,11 +35939,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.rbankId = rbankId;
 		} 
 	
-	private void flushRbank(  )
+	protected void flushRbank( )
+	throws SQLException {
+		flushRbank(false);
+	}	
+
+	private void flushRbank( boolean close )
 	throws SQLException {
 		if ( ! rbanks.isEmpty() )
 			insertRbank(rbanks);
-		if ( rbankStmt != null )
+		if ( close && rbankStmt != null )
 			rbankStmt.close();
 	}	
 
@@ -34946,7 +35983,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 89 * rbankCount >=  this.maxAllowedPacket ){
 			insertRbank(rbanks);
-			rbanks.clear();
 		} 
 	}
 
@@ -35074,6 +36110,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				rpaymethodStmt.setString(offset++, rpaymethod.pymnt_days);
 		}
 		rpaymethodStmt.executeUpdate();
+		rpaymethods.clear();
 		rpaymethodInserted += size;
 
 		// elapsed time in milliseconds
@@ -35112,11 +36149,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.rpaymethodId = rpaymethodId;
 		} 
 	
-	private void flushRpaymethod(  )
+	protected void flushRpaymethod( )
+	throws SQLException {
+		flushRpaymethod(false);
+	}	
+
+	private void flushRpaymethod( boolean close )
 	throws SQLException {
 		if ( ! rpaymethods.isEmpty() )
 			insertRpaymethod(rpaymethods);
-		if ( rpaymethodStmt != null )
+		if ( close && rpaymethodStmt != null )
 			rpaymethodStmt.close();
 	}	
 
@@ -35153,7 +36195,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 73 * rpaymethodCount >=  this.maxAllowedPacket ){
 			insertRpaymethod(rpaymethods);
-			rpaymethods.clear();
 		} 
 	}
 
@@ -35358,6 +36399,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				salesStmt.setString(offset++, sales.bank_account);
 		}
 		salesStmt.executeUpdate();
+		saless.clear();
 		salesInserted += size;
 
 		// elapsed time in milliseconds
@@ -35396,11 +36438,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.salesId = salesId;
 		} 
 	
-	private void flushSales(  )
+	protected void flushSales( )
+	throws SQLException {
+		flushSales(false);
+	}	
+
+	private void flushSales( boolean close )
 	throws SQLException {
 		if ( ! saless.isEmpty() )
 			insertSales(saless);
-		if ( salesStmt != null )
+		if ( close && salesStmt != null )
 			salesStmt.close();
 	}	
 
@@ -35467,7 +36514,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 219 * salesCount >=  this.maxAllowedPacket ){
 			insertSales(saless);
-			saless.clear();
 		} 
 	}
 
@@ -35687,6 +36733,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				incomeStmt.setString(offset++, income.bank_account);
 		}
 		incomeStmt.executeUpdate();
+		incomes.clear();
 		incomeInserted += size;
 
 		// elapsed time in milliseconds
@@ -35725,11 +36772,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.incomeId = incomeId;
 		} 
 	
-	private void flushIncome(  )
+	protected void flushIncome( )
+	throws SQLException {
+		flushIncome(false);
+	}	
+
+	private void flushIncome( boolean close )
 	throws SQLException {
 		if ( ! incomes.isEmpty() )
 			insertIncome(incomes);
-		if ( incomeStmt != null )
+		if ( close && incomeStmt != null )
 			incomeStmt.close();
 	}	
 
@@ -35790,7 +36842,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 174 * incomeCount >=  this.maxAllowedPacket ){
 			insertIncome(incomes);
-			incomes.clear();
 		} 
 	}
 
@@ -35934,6 +36985,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				enterprise_activityStmt.setInt(offset++, enterprise_activity.cnae2009);
 		}
 		enterprise_activityStmt.executeUpdate();
+		enterprise_activitys.clear();
 		enterprise_activityInserted += size;
 
 		// elapsed time in milliseconds
@@ -35972,11 +37024,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.enterprise_activityId = enterprise_activityId;
 		} 
 	
-	private void flushEnterprise_activity(  )
+	protected void flushEnterprise_activity( )
+	throws SQLException {
+		flushEnterprise_activity(false);
+	}	
+
+	private void flushEnterprise_activity( boolean close )
 	throws SQLException {
 		if ( ! enterprise_activitys.isEmpty() )
 			insertEnterprise_activity(enterprise_activitys);
-		if ( enterprise_activityStmt != null )
+		if ( close && enterprise_activityStmt != null )
 			enterprise_activityStmt.close();
 	}	
 
@@ -36009,7 +37066,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 117 * enterprise_activityCount >=  this.maxAllowedPacket ){
 			insertEnterprise_activity(enterprise_activitys);
-			enterprise_activitys.clear();
 		} 
 	}
 
@@ -36135,6 +37191,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				certifica2_batch_dataStmt.setString(offset++, certifica2_batch_data.comments);
 		}
 		certifica2_batch_dataStmt.executeUpdate();
+		certifica2_batch_datas.clear();
 		certifica2_batch_dataInserted += size;
 
 		// elapsed time in milliseconds
@@ -36173,11 +37230,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.certifica2_batch_dataId = certifica2_batch_dataId;
 		} 
 	
-	private void flushCertifica2_batch_data(  )
+	protected void flushCertifica2_batch_data( )
+	throws SQLException {
+		flushCertifica2_batch_data(false);
+	}	
+
+	private void flushCertifica2_batch_data( boolean close )
 	throws SQLException {
 		if ( ! certifica2_batch_datas.isEmpty() )
 			insertCertifica2_batch_data(certifica2_batch_datas);
-		if ( certifica2_batch_dataStmt != null )
+		if ( close && certifica2_batch_dataStmt != null )
 			certifica2_batch_dataStmt.close();
 	}	
 
@@ -36214,7 +37276,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 140 * certifica2_batch_dataCount >=  this.maxAllowedPacket ){
 			insertCertifica2_batch_data(certifica2_batch_datas);
-			certifica2_batch_datas.clear();
 		} 
 	}
 
@@ -36324,6 +37385,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				web_info_page_resourceStmt.setString(offset++, web_info_page_resource.content);
 		}
 		web_info_page_resourceStmt.executeUpdate();
+		web_info_page_resources.clear();
 		web_info_page_resourceInserted += size;
 
 		// elapsed time in milliseconds
@@ -36362,11 +37424,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.web_info_page_resourceId = web_info_page_resourceId;
 		} 
 	
-	private void flushWeb_info_page_resource(  )
+	protected void flushWeb_info_page_resource( )
+	throws SQLException {
+		flushWeb_info_page_resource(false);
+	}	
+
+	private void flushWeb_info_page_resource( boolean close )
 	throws SQLException {
 		if ( ! web_info_page_resources.isEmpty() )
 			insertWeb_info_page_resource(web_info_page_resources);
-		if ( web_info_page_resourceStmt != null )
+		if ( close && web_info_page_resourceStmt != null )
 			web_info_page_resourceStmt.close();
 	}	
 
@@ -36395,7 +37462,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 295 * web_info_page_resourceCount >=  this.maxAllowedPacket ){
 			insertWeb_info_page_resource(web_info_page_resources);
-			web_info_page_resources.clear();
 		} 
 	}
 
@@ -36502,6 +37568,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				cnae2009_rateStmt.setDouble(offset++, cnae2009_rate.ims_amount);
 		}
 		cnae2009_rateStmt.executeUpdate();
+		cnae2009_rates.clear();
 		cnae2009_rateInserted += size;
 
 		// elapsed time in milliseconds
@@ -36540,17 +37607,22 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.cnae2009_rateId = cnae2009_rateId;
 		} 
 	
-	private void flushCnae2009_rate(  )
+	protected void flushCnae2009_rate( )
+	throws SQLException {
+		flushCnae2009_rate(false);
+	}	
+
+	private void flushCnae2009_rate( boolean close )
 	throws SQLException {
 		if ( ! cnae2009_rates.isEmpty() )
 			insertCnae2009_rate(cnae2009_rates);
-		if ( cnae2009_rateStmt != null )
+		if ( close && cnae2009_rateStmt != null )
 			cnae2009_rateStmt.close();
 	}	
 
 	/**
 	 * Cnae2009_rate
-	 * @param id Identificador ?nico
+	 * @param id Identificador nico
 	 * @param cnae2009 CNAE
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
@@ -36575,7 +37647,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 70 * cnae2009_rateCount >=  this.maxAllowedPacket ){
 			insertCnae2009_rate(cnae2009_rates);
-			cnae2009_rates.clear();
 		} 
 	}
 
@@ -36684,6 +37755,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				fbatch_detailStmt.setShort(offset++, fbatch_detail.status);
 		}
 		fbatch_detailStmt.executeUpdate();
+		fbatch_details.clear();
 		fbatch_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -36722,11 +37794,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.fbatch_detailId = fbatch_detailId;
 		} 
 	
-	private void flushFbatch_detail(  )
+	protected void flushFbatch_detail( )
+	throws SQLException {
+		flushFbatch_detail(false);
+	}	
+
+	private void flushFbatch_detail( boolean close )
 	throws SQLException {
 		if ( ! fbatch_details.isEmpty() )
 			insertFbatch_detail(fbatch_details);
-		if ( fbatch_detailStmt != null )
+		if ( close && fbatch_detailStmt != null )
 			fbatch_detailStmt.close();
 	}	
 
@@ -36757,7 +37834,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 58 * fbatch_detailCount >=  this.maxAllowedPacket ){
 			insertFbatch_detail(fbatch_details);
-			fbatch_details.clear();
 		} 
 	}
 
@@ -36896,6 +37972,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_leaveStmt.setShort(offset++, contract_leave.discharge_cause);
 		}
 		contract_leaveStmt.executeUpdate();
+		contract_leaves.clear();
 		contract_leaveInserted += size;
 
 		// elapsed time in milliseconds
@@ -36934,11 +38011,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.contract_leaveId = contract_leaveId;
 		} 
 	
-	private void flushContract_leave(  )
+	protected void flushContract_leave( )
+	throws SQLException {
+		flushContract_leave(false);
+	}	
+
+	private void flushContract_leave( boolean close )
 	throws SQLException {
 		if ( ! contract_leaves.isEmpty() )
 			insertContract_leave(contract_leaves);
-		if ( contract_leaveStmt != null )
+		if ( close && contract_leaveStmt != null )
 			contract_leaveStmt.close();
 	}	
 
@@ -36981,7 +38063,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 175 * contract_leaveCount >=  this.maxAllowedPacket ){
 			insertContract_leave(contract_leaves);
-			contract_leaves.clear();
 		} 
 	}
 
@@ -37107,6 +38188,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				calendar_holidayStmt.setDouble(offset++, calendar_holiday.hours);
 		}
 		calendar_holidayStmt.executeUpdate();
+		calendar_holidays.clear();
 		calendar_holidayInserted += size;
 
 		// elapsed time in milliseconds
@@ -37145,11 +38227,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.calendar_holidayId = calendar_holidayId;
 		} 
 	
-	private void flushCalendar_holiday(  )
+	protected void flushCalendar_holiday( )
+	throws SQLException {
+		flushCalendar_holiday(false);
+	}	
+
+	private void flushCalendar_holiday( boolean close )
 	throws SQLException {
 		if ( ! calendar_holidays.isEmpty() )
 			insertCalendar_holiday(calendar_holidays);
-		if ( calendar_holidayStmt != null )
+		if ( close && calendar_holidayStmt != null )
 			calendar_holidayStmt.close();
 	}	
 
@@ -37182,7 +38269,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 129 * calendar_holidayCount >=  this.maxAllowedPacket ){
 			insertCalendar_holiday(calendar_holidays);
-			calendar_holidays.clear();
 		} 
 	}
 
@@ -37283,6 +38369,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				workgroupStmt.setShort(offset++, workgroup.status);
 		}
 		workgroupStmt.executeUpdate();
+		workgroups.clear();
 		workgroupInserted += size;
 
 		// elapsed time in milliseconds
@@ -37321,11 +38408,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.workgroupId = workgroupId;
 		} 
 	
-	private void flushWorkgroup(  )
+	protected void flushWorkgroup( )
+	throws SQLException {
+		flushWorkgroup(false);
+	}	
+
+	private void flushWorkgroup( boolean close )
 	throws SQLException {
 		if ( ! workgroups.isEmpty() )
 			insertWorkgroup(workgroups);
-		if ( workgroupStmt != null )
+		if ( close && workgroupStmt != null )
 			workgroupStmt.close();
 	}	
 
@@ -37352,7 +38444,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 87 * workgroupCount >=  this.maxAllowedPacket ){
 			insertWorkgroup(workgroups);
-			workgroups.clear();
 		} 
 	}
 
@@ -37682,6 +38773,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				irpf_resultStmt.setShort(offset++, irpf_result.ascendents_65_entirely);
 		}
 		irpf_resultStmt.executeUpdate();
+		irpf_results.clear();
 		irpf_resultInserted += size;
 
 		// elapsed time in milliseconds
@@ -37720,11 +38812,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.irpf_resultId = irpf_resultId;
 		} 
 	
-	private void flushIrpf_result(  )
+	protected void flushIrpf_result( )
+	throws SQLException {
+		flushIrpf_result(false);
+	}	
+
+	private void flushIrpf_result( boolean close )
 	throws SQLException {
 		if ( ! irpf_results.isEmpty() )
 			insertIrpf_result(irpf_results);
-		if ( irpf_resultStmt != null )
+		if ( close && irpf_resultStmt != null )
 			irpf_resultStmt.close();
 	}	
 
@@ -37734,30 +38831,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param contract Identificador del contrato
 	 * @param effective_date Fecha de entrada en vigor
-	 * @param base_irpf Base para calcular el tipo de retenci?n
-	 * @param minimun_personal_family M?nimo personal y familiar para calcular el tipo de retenci?n
-	 * @param deduct_home_loan_amount Minoraci?n por pagos de pr?stamo para vivienda habitual
-	 * @param deduct_80_bis Deduccion Artt?culo 80 bis LIRPF
-	 * @param irpf Tipo retenci?n apliclabe 
+	 * @param base_irpf Base para calcular el tipo de retencin
+	 * @param minimun_personal_family Mnimo personal y familiar para calcular el tipo de retencin
+	 * @param deduct_home_loan_amount Minoracin por pagos de prstamo para vivienda habitual
+	 * @param deduct_80_bis Deduccion Arttculo 80 bis LIRPF
+	 * @param irpf Tipo retencin apliclabe 
 	 * @param annual_irpf Importe anual de las retenciones e ingresos a cuenta
-	 * @param annual_remuneration Retribuciones anuales. Importe ?ntegro
+	 * @param annual_remuneration Retribuciones anuales. Importe ntegro
 	 * @param irregular_18_2_reduction Reducciones por irregularidad ( Art. 18.2 LIRPF). Importe
-	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Art. 18.3: DD.TT 11? y 12 ? de la LIRPF). Importe
+	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Art. 18.3: DD.TT 11 y 12  de la LIRPF). Importe
 	 * @param deduccibles_expenses Gastos deducibles. Importe anual
 	 * @param work_remuneration_reduction Reducciones por rendimiento del trabajo 
-	 * @param work_prolongation_reduction Reducciones por prolongaci?n de la actividad 
+	 * @param work_prolongation_reduction Reducciones por prolongacin de la actividad 
 	 * @param work_moving_reduction Reducciones por movilidad geografica 
 	 * @param work_disability_reduction Reducciones por discapacidad 
 	 * @param social_security_pensioner Por ser pensionista de la s. social/cl. Pasivas o desempleado
-	 * @param two_or_more_descendents_min Por tener m?s de dos descendientes con derecho a m?nimo
-	 * @param spousal_support Pension compensatoria a favor del c?nyuge. Importe anual
+	 * @param two_or_more_descendents_min Por tener ms de dos descendientes con derecho a mnimo
+	 * @param spousal_support Pension compensatoria a favor del cnyuge. Importe anual
 	 * @param food_annuity Anualidades por alimentos en favor de los hijos. Importe anual
-	 * @param minimun_personal M?nimo personal
-	 * @param minimun_ascendents M?nimo por descendientes
-	 * @param minimun_descendents M?nimo por descendientes
-	 * @param minimun_disability M?nimo por discapacidad
-	 * @param descendents_minor_3_total Descendientes computados menores de tres a?os. Total
-	 * @param descendents_minor_3_entirely Descendientes computados menores de tres a?os. Por entero
+	 * @param minimun_personal Mnimo personal
+	 * @param minimun_ascendents Mnimo por descendientes
+	 * @param minimun_descendents Mnimo por descendientes
+	 * @param minimun_disability Mnimo por discapacidad
+	 * @param descendents_minor_3_total Descendientes computados menores de tres aos. Total
+	 * @param descendents_minor_3_entirely Descendientes computados menores de tres aos. Por entero
 	 * @param descendents_remainder_total Resto de descendientes computados . Total
 	 * @param descendents_remainder_entirely Resto de descendientes computados . Por entero
 	 * @param descendents_33_65_total Descendientes con discapacidad >= 33% y < 65%. Total
@@ -37766,15 +38863,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param descendents_moving_entirely Descendientes con discapacidad, movilidad reducida. Por entero
 	 * @param descendents_65_total Descendientes con discapacidad > 65%. Total
 	 * @param descendents_65_entirely Descendientes con discapacidad > 65%. Por entero
-	 * @param descendents_first Detalle del c?mputo de descendientes. Hijo 1?
-	 * @param descendents_second Detalle del c?mputo de descendientes. Hijo 2?
-	 * @param descendents_third Detalle del c?mputo de descendientes. Hijo 3?
-	 * @param descendents_fourth_subsequent_total Detalle del c?mputo de descendientes. Hijo 4? y sucesivos. Total
-	 * @param descendents_fourth_subsequent_entirely Detalle del c?mputo de descendientes. Hijo 4? y sucesivos. Por entero
-	 * @param ascendents_minor_75_total Ascendientes computados menores de 75 a?os. Total
-	 * @param ascendents_minor_75_entirely Ascendientes computados menores de 75 a?os. Por entero
-	 * @param ascendents_mayor_75_total Ascendientes computados mayores de 75 a?os. Total
-	 * @param ascendents_mayor_75_entirely Ascendientes computados mayores de 75 a?os. Por entero
+	 * @param descendents_first Detalle del cmputo de descendientes. Hijo 1
+	 * @param descendents_second Detalle del cmputo de descendientes. Hijo 2
+	 * @param descendents_third Detalle del cmputo de descendientes. Hijo 3
+	 * @param descendents_fourth_subsequent_total Detalle del cmputo de descendientes. Hijo 4 y sucesivos. Total
+	 * @param descendents_fourth_subsequent_entirely Detalle del cmputo de descendientes. Hijo 4 y sucesivos. Por entero
+	 * @param ascendents_minor_75_total Ascendientes computados menores de 75 aos. Total
+	 * @param ascendents_minor_75_entirely Ascendientes computados menores de 75 aos. Por entero
+	 * @param ascendents_mayor_75_total Ascendientes computados mayores de 75 aos. Total
+	 * @param ascendents_mayor_75_entirely Ascendientes computados mayores de 75 aos. Por entero
 	 * @param ascendents_33_65_total Ascendientes con discapacidad >= 33% y < 65%. Total
 	 * @param ascendents_33_65_entirely Ascendientes con discapacidad >= 33% y < 65%. Por entero
 	 * @param ascendents_moving_total Ascendientes con discapacidad, movilidad reducida. Total
@@ -37845,7 +38942,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 445 * irpf_resultCount >=  this.maxAllowedPacket ){
 			insertIrpf_result(irpf_results);
-			irpf_results.clear();
 		} 
 	}
 
@@ -37855,30 +38951,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param contract Identificador del contrato
 	 * @param effective_date Fecha de entrada en vigor
-	 * @param base_irpf Base para calcular el tipo de retenci?n
-	 * @param minimun_personal_family M?nimo personal y familiar para calcular el tipo de retenci?n
-	 * @param deduct_home_loan_amount Minoraci?n por pagos de pr?stamo para vivienda habitual
-	 * @param deduct_80_bis Deduccion Artt?culo 80 bis LIRPF
-	 * @param irpf Tipo retenci?n apliclabe 
+	 * @param base_irpf Base para calcular el tipo de retencin
+	 * @param minimun_personal_family Mnimo personal y familiar para calcular el tipo de retencin
+	 * @param deduct_home_loan_amount Minoracin por pagos de prstamo para vivienda habitual
+	 * @param deduct_80_bis Deduccion Arttculo 80 bis LIRPF
+	 * @param irpf Tipo retencin apliclabe 
 	 * @param annual_irpf Importe anual de las retenciones e ingresos a cuenta
-	 * @param annual_remuneration Retribuciones anuales. Importe ?ntegro
+	 * @param annual_remuneration Retribuciones anuales. Importe ntegro
 	 * @param irregular_18_2_reduction Reducciones por irregularidad ( Art. 18.2 LIRPF). Importe
-	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Art. 18.3: DD.TT 11? y 12 ? de la LIRPF). Importe
+	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Art. 18.3: DD.TT 11 y 12  de la LIRPF). Importe
 	 * @param deduccibles_expenses Gastos deducibles. Importe anual
 	 * @param work_remuneration_reduction Reducciones por rendimiento del trabajo 
-	 * @param work_prolongation_reduction Reducciones por prolongaci?n de la actividad 
+	 * @param work_prolongation_reduction Reducciones por prolongacin de la actividad 
 	 * @param work_moving_reduction Reducciones por movilidad geografica 
 	 * @param work_disability_reduction Reducciones por discapacidad 
 	 * @param social_security_pensioner Por ser pensionista de la s. social/cl. Pasivas o desempleado
-	 * @param two_or_more_descendents_min Por tener m?s de dos descendientes con derecho a m?nimo
-	 * @param spousal_support Pension compensatoria a favor del c?nyuge. Importe anual
+	 * @param two_or_more_descendents_min Por tener ms de dos descendientes con derecho a mnimo
+	 * @param spousal_support Pension compensatoria a favor del cnyuge. Importe anual
 	 * @param food_annuity Anualidades por alimentos en favor de los hijos. Importe anual
-	 * @param minimun_personal M?nimo personal
-	 * @param minimun_ascendents M?nimo por descendientes
-	 * @param minimun_descendents M?nimo por descendientes
-	 * @param minimun_disability M?nimo por discapacidad
-	 * @param descendents_minor_3_total Descendientes computados menores de tres a?os. Total
-	 * @param descendents_minor_3_entirely Descendientes computados menores de tres a?os. Por entero
+	 * @param minimun_personal Mnimo personal
+	 * @param minimun_ascendents Mnimo por descendientes
+	 * @param minimun_descendents Mnimo por descendientes
+	 * @param minimun_disability Mnimo por discapacidad
+	 * @param descendents_minor_3_total Descendientes computados menores de tres aos. Total
+	 * @param descendents_minor_3_entirely Descendientes computados menores de tres aos. Por entero
 	 * @param descendents_remainder_total Resto de descendientes computados . Total
 	 * @param descendents_remainder_entirely Resto de descendientes computados . Por entero
 	 * @param descendents_33_65_total Descendientes con discapacidad >= 33% y < 65%. Total
@@ -37887,15 +38983,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param descendents_moving_entirely Descendientes con discapacidad, movilidad reducida. Por entero
 	 * @param descendents_65_total Descendientes con discapacidad > 65%. Total
 	 * @param descendents_65_entirely Descendientes con discapacidad > 65%. Por entero
-	 * @param descendents_first Detalle del c?mputo de descendientes. Hijo 1?
-	 * @param descendents_second Detalle del c?mputo de descendientes. Hijo 2?
-	 * @param descendents_third Detalle del c?mputo de descendientes. Hijo 3?
-	 * @param descendents_fourth_subsequent_total Detalle del c?mputo de descendientes. Hijo 4? y sucesivos. Total
-	 * @param descendents_fourth_subsequent_entirely Detalle del c?mputo de descendientes. Hijo 4? y sucesivos. Por entero
-	 * @param ascendents_minor_75_total Ascendientes computados menores de 75 a?os. Total
-	 * @param ascendents_minor_75_entirely Ascendientes computados menores de 75 a?os. Por entero
-	 * @param ascendents_mayor_75_total Ascendientes computados mayores de 75 a?os. Total
-	 * @param ascendents_mayor_75_entirely Ascendientes computados mayores de 75 a?os. Por entero
+	 * @param descendents_first Detalle del cmputo de descendientes. Hijo 1
+	 * @param descendents_second Detalle del cmputo de descendientes. Hijo 2
+	 * @param descendents_third Detalle del cmputo de descendientes. Hijo 3
+	 * @param descendents_fourth_subsequent_total Detalle del cmputo de descendientes. Hijo 4 y sucesivos. Total
+	 * @param descendents_fourth_subsequent_entirely Detalle del cmputo de descendientes. Hijo 4 y sucesivos. Por entero
+	 * @param ascendents_minor_75_total Ascendientes computados menores de 75 aos. Total
+	 * @param ascendents_minor_75_entirely Ascendientes computados menores de 75 aos. Por entero
+	 * @param ascendents_mayor_75_total Ascendientes computados mayores de 75 aos. Total
+	 * @param ascendents_mayor_75_entirely Ascendientes computados mayores de 75 aos. Por entero
 	 * @param ascendents_33_65_total Ascendientes con discapacidad >= 33% y < 65%. Total
 	 * @param ascendents_33_65_entirely Ascendientes con discapacidad >= 33% y < 65%. Por entero
 	 * @param ascendents_moving_total Ascendientes con discapacidad, movilidad reducida. Total
@@ -38029,6 +39125,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				categoryStmt.setString(offset++, category.name);
 		}
 		categoryStmt.executeUpdate();
+		categorys.clear();
 		categoryInserted += size;
 
 		// elapsed time in milliseconds
@@ -38067,11 +39164,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.categoryId = categoryId;
 		} 
 	
-	private void flushCategory(  )
+	protected void flushCategory( )
+	throws SQLException {
+		flushCategory(false);
+	}	
+
+	private void flushCategory( boolean close )
 	throws SQLException {
 		if ( ! categorys.isEmpty() )
 			insertCategory(categorys);
-		if ( categoryStmt != null )
+		if ( close && categoryStmt != null )
 			categoryStmt.close();
 	}	
 
@@ -38096,7 +39198,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 52 * categoryCount >=  this.maxAllowedPacket ){
 			insertCategory(categorys);
-			categorys.clear();
 		} 
 	}
 
@@ -38209,6 +39310,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				mk_action_targetStmt.setInt(offset++, mk_action_target.user);
 		}
 		mk_action_targetStmt.executeUpdate();
+		mk_action_targets.clear();
 		mk_action_targetInserted += size;
 
 		// elapsed time in milliseconds
@@ -38247,11 +39349,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.mk_action_targetId = mk_action_targetId;
 		} 
 	
-	private void flushMk_action_target(  )
+	protected void flushMk_action_target( )
+	throws SQLException {
+		flushMk_action_target(false);
+	}	
+
+	private void flushMk_action_target( boolean close )
 	throws SQLException {
 		if ( ! mk_action_targets.isEmpty() )
 			insertMk_action_target(mk_action_targets);
-		if ( mk_action_targetStmt != null )
+		if ( close && mk_action_targetStmt != null )
 			mk_action_targetStmt.close();
 	}	
 
@@ -38261,7 +39368,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param action Identificador de la Accion
 	 * @param target Identificador del Cliente Potencial
-	 * @param status Estado del Cliente Potencial de la Accion de Campa?a
+	 * @param status Estado del Cliente Potencial de la Accion de Campaa
 	 * @param survey_response Identificador de la Respuesta de Cuestionario
 	 * @param comments Comentarios
 	 * @param user Identificador del Usuario
@@ -38286,7 +39393,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 63 * mk_action_targetCount >=  this.maxAllowedPacket ){
 			insertMk_action_target(mk_action_targets);
-			mk_action_targets.clear();
 		} 
 	}
 
@@ -38296,7 +39402,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param action Identificador de la Accion
 	 * @param target Identificador del Cliente Potencial
-	 * @param status Estado del Cliente Potencial de la Accion de Campa?a
+	 * @param status Estado del Cliente Potencial de la Accion de Campaa
 	 * @param survey_response Identificador de la Respuesta de Cuestionario
 	 * @param comments Comentarios
 	 * @param user Identificador del Usuario
@@ -38414,6 +39520,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				taxStmt.setShort(offset++, tax.withholding_type);
 		}
 		taxStmt.executeUpdate();
+		taxs.clear();
 		taxInserted += size;
 
 		// elapsed time in milliseconds
@@ -38452,11 +39559,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.taxId = taxId;
 		} 
 	
-	private void flushTax(  )
+	protected void flushTax( )
+	throws SQLException {
+		flushTax(false);
+	}	
+
+	private void flushTax( boolean close )
 	throws SQLException {
 		if ( ! taxs.isEmpty() )
 			insertTax(taxs);
-		if ( taxStmt != null )
+		if ( close && taxStmt != null )
 			taxStmt.close();
 	}	
 
@@ -38493,7 +39605,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 99 * taxCount >=  this.maxAllowedPacket ){
 			insertTax(taxs);
-			taxs.clear();
 		} 
 	}
 
@@ -38623,6 +39734,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				sessionStmt.setInt(offset++, session.user_id);
 		}
 		sessionStmt.executeUpdate();
+		sessions.clear();
 		sessionInserted += size;
 
 		// elapsed time in milliseconds
@@ -38661,11 +39773,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.sessionId = sessionId;
 		} 
 	
-	private void flushSession(  )
+	protected void flushSession( )
+	throws SQLException {
+		flushSession(false);
+	}	
+
+	private void flushSession( boolean close )
 	throws SQLException {
 		if ( ! sessions.isEmpty() )
 			insertSession(sessions);
-		if ( sessionStmt != null )
+		if ( close && sessionStmt != null )
 			sessionStmt.close();
 	}	
 
@@ -38676,7 +39793,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param endDate Fecha de finalizacion
 	 * @param remote_address IP remota
 	 * @param remote_host Equipo remoto
-	 * @param session_id Identificador web de la sesi?n
+	 * @param session_id Identificador web de la sesin
 	 * @param startDate Fecha de inicio
 	 * @param application Identificador de la Aplicacion
 	 * @param user_id Identificador del Usuario
@@ -38702,7 +39819,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 285 * sessionCount >=  this.maxAllowedPacket ){
 			insertSession(sessions);
-			sessions.clear();
 		} 
 	}
 
@@ -38713,7 +39829,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param endDate Fecha de finalizacion
 	 * @param remote_address IP remota
 	 * @param remote_host Equipo remoto
-	 * @param session_id Identificador web de la sesi?n
+	 * @param session_id Identificador web de la sesin
 	 * @param startDate Fecha de inicio
 	 * @param application Identificador de la Aplicacion
 	 * @param user_id Identificador del Usuario
@@ -38802,6 +39918,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoicing_groupStmt.setInt(offset++, invoicing_group.parent);
 		}
 		invoicing_groupStmt.executeUpdate();
+		invoicing_groups.clear();
 		invoicing_groupInserted += size;
 
 		// elapsed time in milliseconds
@@ -38840,11 +39957,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.invoicing_groupId = invoicing_groupId;
 		} 
 	
-	private void flushInvoicing_group(  )
+	protected void flushInvoicing_group( )
+	throws SQLException {
+		flushInvoicing_group(false);
+	}	
+
+	private void flushInvoicing_group( boolean close )
 	throws SQLException {
 		if ( ! invoicing_groups.isEmpty() )
 			insertInvoicing_group(invoicing_groups);
-		if ( invoicing_groupStmt != null )
+		if ( close && invoicing_groupStmt != null )
 			invoicing_groupStmt.close();
 	}	
 
@@ -38869,7 +39991,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 30 * invoicing_groupCount >=  this.maxAllowedPacket ){
 			insertInvoicing_group(invoicing_groups);
-			invoicing_groups.clear();
 		} 
 	}
 
@@ -38967,6 +40088,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_activityStmt.setBoolean(offset++, project_activity.active);
 		}
 		project_activityStmt.executeUpdate();
+		project_activitys.clear();
 		project_activityInserted += size;
 
 		// elapsed time in milliseconds
@@ -39005,11 +40127,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.project_activityId = project_activityId;
 		} 
 	
-	private void flushProject_activity(  )
+	protected void flushProject_activity( )
+	throws SQLException {
+		flushProject_activity(false);
+	}	
+
+	private void flushProject_activity( boolean close )
 	throws SQLException {
 		if ( ! project_activitys.isEmpty() )
 			insertProject_activity(project_activitys);
-		if ( project_activityStmt != null )
+		if ( close && project_activityStmt != null )
 			project_activityStmt.close();
 	}	
 
@@ -39038,7 +40165,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * project_activityCount >=  this.maxAllowedPacket ){
 			insertProject_activity(project_activitys);
-			project_activitys.clear();
 		} 
 	}
 
@@ -39165,6 +40291,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				registryStmt.setShort(offset++, registry.security_level);
 		}
 		registryStmt.executeUpdate();
+		registrys.clear();
 		registryInserted += size;
 
 		// elapsed time in milliseconds
@@ -39203,11 +40330,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.registryId = registryId;
 		} 
 	
-	private void flushRegistry(  )
+	protected void flushRegistry( )
+	throws SQLException {
+		flushRegistry(false);
+	}	
+
+	private void flushRegistry( boolean close )
 	throws SQLException {
 		if ( ! registrys.isEmpty() )
 			insertRegistry(registrys);
-		if ( registryStmt != null )
+		if ( close && registryStmt != null )
 			registryStmt.close();
 	}	
 
@@ -39246,7 +40378,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 145 * registryCount >=  this.maxAllowedPacket ){
 			insertRegistry(registrys);
-			registrys.clear();
 		} 
 	}
 
@@ -39448,6 +40579,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				mail_accountStmt.setInt(offset++, mail_account.user_id);
 		}
 		mail_accountStmt.executeUpdate();
+		mail_accounts.clear();
 		mail_accountInserted += size;
 
 		// elapsed time in milliseconds
@@ -39486,11 +40618,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.mail_accountId = mail_accountId;
 		} 
 	
-	private void flushMail_account(  )
+	protected void flushMail_account( )
+	throws SQLException {
+		flushMail_account(false);
+	}	
+
+	private void flushMail_account( boolean close )
 	throws SQLException {
 		if ( ! mail_accounts.isEmpty() )
 			insertMail_account(mail_accounts);
-		if ( mail_accountStmt != null )
+		if ( close && mail_accountStmt != null )
 			mail_accountStmt.close();
 	}	
 
@@ -39504,11 +40641,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param incoming_host Host del correo entrante
 	 * @param protocol Protocolo utilizado (IMAP)
 	 * @param incoming_port Puerto del correo entrante
-	 * @param incoming_security Seguridad de conexi?n del correo entrante
+	 * @param incoming_security Seguridad de conexin del correo entrante
 	 * @param outgoing_verification Indica si hay autentificacion en el correo saliente
 	 * @param outgoing_host Host del servidor de correo saliente
 	 * @param outgoing_port Puerto del servidor de correo saliente
-	 * @param outgoing_security Seguridad de conexi?n del correo saliente
+	 * @param outgoing_security Seguridad de conexin del correo saliente
 	 * @param mail_username Nombre del usuario
 	 * @param password Clave del usuario
 	 * @param default_account Indica si es la cuenta de correo por defecto
@@ -39555,7 +40692,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 2114 * mail_accountCount >=  this.maxAllowedPacket ){
 			insertMail_account(mail_accounts);
-			mail_accounts.clear();
 		} 
 	}
 
@@ -39569,11 +40705,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param incoming_host Host del correo entrante
 	 * @param protocol Protocolo utilizado (IMAP)
 	 * @param incoming_port Puerto del correo entrante
-	 * @param incoming_security Seguridad de conexi?n del correo entrante
+	 * @param incoming_security Seguridad de conexin del correo entrante
 	 * @param outgoing_verification Indica si hay autentificacion en el correo saliente
 	 * @param outgoing_host Host del servidor de correo saliente
 	 * @param outgoing_port Puerto del servidor de correo saliente
-	 * @param outgoing_security Seguridad de conexi?n del correo saliente
+	 * @param outgoing_security Seguridad de conexin del correo saliente
 	 * @param mail_username Nombre del usuario
 	 * @param password Clave del usuario
 	 * @param default_account Indica si es la cuenta de correo por defecto
@@ -39698,6 +40834,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				creditorStmt.setInt(offset++, creditor.scope);
 		}
 		creditorStmt.executeUpdate();
+		creditors.clear();
 		creditorInserted += size;
 
 		// elapsed time in milliseconds
@@ -39706,11 +40843,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 		
 	
-	private void flushCreditor(  )
+	protected void flushCreditor( )
+	throws SQLException {
+		flushCreditor(false);
+	}	
+
+	private void flushCreditor( boolean close )
 	throws SQLException {
 		if ( ! creditors.isEmpty() )
 			insertCreditor(creditors);
-		if ( creditorStmt != null )
+		if ( close && creditorStmt != null )
 			creditorStmt.close();
 	}	
 
@@ -39741,7 +40883,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 36 * creditorCount >=  this.maxAllowedPacket ){
 			insertCreditor(creditors);
-			creditors.clear();
 		} 
 	}
 
@@ -39892,6 +41033,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				deliveryStmt.setString(offset++, delivery.bank_account);
 		}
 		deliveryStmt.executeUpdate();
+		deliverys.clear();
 		deliveryInserted += size;
 
 		// elapsed time in milliseconds
@@ -39930,11 +41072,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.deliveryId = deliveryId;
 		} 
 	
-	private void flushDelivery(  )
+	protected void flushDelivery( )
+	throws SQLException {
+		flushDelivery(false);
+	}	
+
+	private void flushDelivery( boolean close )
 	throws SQLException {
 		if ( ! deliverys.isEmpty() )
 			insertDelivery(deliverys);
-		if ( deliveryStmt != null )
+		if ( close && deliveryStmt != null )
 			deliveryStmt.close();
 	}	
 
@@ -39944,7 +41091,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param project Identificador del Proyecto
 	 * @param series Serie del Albaran
-	 * @param number N?mero del Albaran
+	 * @param number Nmero del Albaran
 	 * @param customer Identificador del Cliente
 	 * @param address Identificador de la Direccion de envio del Albaran
 	 * @param issue_time Fecha de emision del Albaran
@@ -39995,7 +41142,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 183 * deliveryCount >=  this.maxAllowedPacket ){
 			insertDelivery(deliverys);
-			deliverys.clear();
 		} 
 	}
 
@@ -40005,7 +41151,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param project Identificador del Proyecto
 	 * @param series Serie del Albaran
-	 * @param number N?mero del Albaran
+	 * @param number Nmero del Albaran
 	 * @param customer Identificador del Cliente
 	 * @param address Identificador de la Direccion de envio del Albaran
 	 * @param issue_time Fecha de emision del Albaran
@@ -40134,6 +41280,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				account_periodStmt.setShort(offset++, account_period.status);
 		}
 		account_periodStmt.executeUpdate();
+		account_periods.clear();
 		account_periodInserted += size;
 
 		// elapsed time in milliseconds
@@ -40172,11 +41319,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.account_periodId = account_periodId;
 		} 
 	
-	private void flushAccount_period(  )
+	protected void flushAccount_period( )
+	throws SQLException {
+		flushAccount_period(false);
+	}	
+
+	private void flushAccount_period( boolean close )
 	throws SQLException {
 		if ( ! account_periods.isEmpty() )
 			insertAccount_period(account_periods);
-		if ( account_periodStmt != null )
+		if ( close && account_periodStmt != null )
 			account_periodStmt.close();
 	}	
 
@@ -40207,7 +41359,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 59 * account_periodCount >=  this.maxAllowedPacket ){
 			insertAccount_period(account_periods);
-			account_periods.clear();
 		} 
 	}
 
@@ -40258,12 +41409,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	public static class Mk_template {
 		protected Integer id; 
 		protected Integer domain; 
+		protected Integer scope; 
 		protected String name; 
 		protected String data; 
 		protected Boolean active; 
 		protected Timestamp creationDate; 
 		protected String subject; 
 		protected Boolean append_signature; 
+		protected Integer rattach; 
 	}
 	
 	protected void insertMk_template( List<Mk_template> mk_templates )
@@ -40274,7 +41427,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( mk_templateStmt != null ) {
 				mk_templateStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -40283,7 +41436,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			mk_templateStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO mk_template (id,domain,name,data,active,creationDate,subject,append_signature)"  
+				"INSERT INTO mk_template (id,domain,scope,name,data,active,creationDate,subject,append_signature,rattach)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			mk_templateStmtSize = size;
@@ -40300,6 +41453,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				mk_templateStmt.setNull(offset++, 4);
 			else
 				mk_templateStmt.setInt(offset++, mk_template.domain);
+			if ( mk_template.scope == null )
+				mk_templateStmt.setNull(offset++, 4);
+			else
+				mk_templateStmt.setInt(offset++, mk_template.scope);
 			if ( mk_template.name == null )
 				mk_templateStmt.setNull(offset++, 12);
 			else
@@ -40324,8 +41481,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				mk_templateStmt.setNull(offset++, -7);
 			else
 				mk_templateStmt.setBoolean(offset++, mk_template.append_signature);
+			if ( mk_template.rattach == null )
+				mk_templateStmt.setNull(offset++, 4);
+			else
+				mk_templateStmt.setInt(offset++, mk_template.rattach);
 		}
 		mk_templateStmt.executeUpdate();
+		mk_templates.clear();
 		mk_templateInserted += size;
 
 		// elapsed time in milliseconds
@@ -40364,11 +41526,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.mk_templateId = mk_templateId;
 		} 
 	
-	private void flushMk_template(  )
+	protected void flushMk_template( )
+	throws SQLException {
+		flushMk_template(false);
+	}	
+
+	private void flushMk_template( boolean close )
 	throws SQLException {
 		if ( ! mk_templates.isEmpty() )
 			insertMk_template(mk_templates);
-		if ( mk_templateStmt != null )
+		if ( close && mk_templateStmt != null )
 			mk_templateStmt.close();
 	}	
 
@@ -40376,34 +41543,37 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Mk_template
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
+	 * @param scope Identificador del Ambito
 	 * @param name Nombre de la Plantilla
 	 * @param data Contenido de la Plantilla
 	 * @param active Indica si la Plantilla esta activa o no
 	 * @param creationDate Fecha de la creacion en el sistema de la Plantilla
 	 * @param subject Asunto de la Plantilla
 	 * @param append_signature Indica si la Plantilla incluye la firma o no
+	 * @param rattach Identificador del Archivo Adjunto
 	 * @throws SQLException
 	*/
-	protected void insertMk_template(Integer id, Integer domain, String name, String data, Boolean active, Timestamp creationDate, String subject, Boolean append_signature)
+	protected void insertMk_template(Integer id, Integer domain, Integer scope, String name, String data, Boolean active, Timestamp creationDate, String subject, Boolean append_signature, Integer rattach)
 	throws SQLException {
 
 		Mk_template mk_template_ = new Mk_template();
 		mk_template_.id = id;
 		mk_template_.domain = domain;
+		mk_template_.scope = scope;
 		mk_template_.name = name;
 		mk_template_.data = data;
 		mk_template_.active = active;
 		mk_template_.creationDate = creationDate;
 		mk_template_.subject = subject;
 		mk_template_.append_signature = append_signature;
+		mk_template_.rattach = rattach;
 
 		mk_templates.add(mk_template_);
 		
 		int mk_templateCount = mk_templates.size();
 		
-		if ( 231 * mk_templateCount >=  this.maxAllowedPacket ){
+		if ( 251 * mk_templateCount >=  this.maxAllowedPacket ){
 			insertMk_template(mk_templates);
-			mk_templates.clear();
 		} 
 	}
 
@@ -40411,34 +41581,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Mk_template
 	 * @param domain Identificador del Dominio
+	 * @param scope Identificador del Ambito
 	 * @param name Nombre de la Plantilla
 	 * @param data Contenido de la Plantilla
 	 * @param active Indica si la Plantilla esta activa o no
 	 * @param creationDate Fecha de la creacion en el sistema de la Plantilla
 	 * @param subject Asunto de la Plantilla
 	 * @param append_signature Indica si la Plantilla incluye la firma o no
+	 * @param rattach Identificador del Archivo Adjunto
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertMk_template(Integer domain, String name, String data, Boolean active, Timestamp creationDate, String subject, Boolean append_signature)
+	public int insertMk_template(Integer domain, Integer scope, String name, String data, Boolean active, Timestamp creationDate, String subject, Boolean append_signature, Integer rattach)
 	throws SQLException {
 		int id = nextMk_templateId();
 
 		Mk_template mk_template_ = new Mk_template();
 		mk_template_.id = id;
 		mk_template_.domain = domain;
+		mk_template_.scope = scope;
 		mk_template_.name = name;
 		mk_template_.data = data;
 		mk_template_.active = active;
 		mk_template_.creationDate = creationDate;
 		mk_template_.subject = subject;
 		mk_template_.append_signature = append_signature;
+		mk_template_.rattach = rattach;
 
 		mk_templates.add(mk_template_);
 		
 		int mk_templateCount = mk_templates.size();
 		
-		if ( 231 * mk_templateCount >=  this.maxAllowedPacket ){
+		if ( 251 * mk_templateCount >=  this.maxAllowedPacket ){
 			insertMk_template(mk_templates);
 			mk_templates.clear();
 		} 
@@ -40551,6 +41725,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				seriesStmt.setBoolean(offset++, series.active);
 		}
 		seriesStmt.executeUpdate();
+		seriess.clear();
 		seriesInserted += size;
 
 		// elapsed time in milliseconds
@@ -40589,11 +41764,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.seriesId = seriesId;
 		} 
 	
-	private void flushSeries(  )
+	protected void flushSeries( )
+	throws SQLException {
+		flushSeries(false);
+	}	
+
+	private void flushSeries( boolean close )
 	throws SQLException {
 		if ( ! seriess.isEmpty() )
 			insertSeries(seriess);
-		if ( seriesStmt != null )
+		if ( close && seriesStmt != null )
 			seriesStmt.close();
 	}	
 
@@ -40638,7 +41818,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 70 * seriesCount >=  this.maxAllowedPacket ){
 			insertSeries(seriess);
-			seriess.clear();
 		} 
 	}
 
@@ -40841,6 +42020,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				fs_vat_declarationStmt.setShort(offset++, fs_vat_declaration.status);
 		}
 		fs_vat_declarationStmt.executeUpdate();
+		fs_vat_declarations.clear();
 		fs_vat_declarationInserted += size;
 
 		// elapsed time in milliseconds
@@ -40879,11 +42059,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.fs_vat_declarationId = fs_vat_declarationId;
 		} 
 	
-	private void flushFs_vat_declaration(  )
+	protected void flushFs_vat_declaration( )
+	throws SQLException {
+		flushFs_vat_declaration(false);
+	}	
+
+	private void flushFs_vat_declaration( boolean close )
 	throws SQLException {
 		if ( ! fs_vat_declarations.isEmpty() )
 			insertFs_vat_declaration(fs_vat_declarations);
-		if ( fs_vat_declarationStmt != null )
+		if ( close && fs_vat_declarationStmt != null )
 			fs_vat_declarationStmt.close();
 	}	
 
@@ -40908,7 +42093,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param prev_deposit Ingresado anteriormente
 	 * @param prev_pay_back Devuelto anteriormente
 	 * @param total_tax_debt Total deuda tributaria
-	 * @param rbank Banco de la Compa?ia
+	 * @param rbank Banco de la Compaia
 	 * @param compensable Compensar o devolver
 	 * @param status Estado de la Declaracion
 	 * @throws SQLException
@@ -40946,7 +42131,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 263 * fs_vat_declarationCount >=  this.maxAllowedPacket ){
 			insertFs_vat_declaration(fs_vat_declarations);
-			fs_vat_declarations.clear();
 		} 
 	}
 
@@ -40971,7 +42155,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param prev_deposit Ingresado anteriormente
 	 * @param prev_pay_back Devuelto anteriormente
 	 * @param total_tax_debt Total deuda tributaria
-	 * @param rbank Banco de la Compa?ia
+	 * @param rbank Banco de la Compaia
 	 * @param compensable Compensar o devolver
 	 * @param status Estado de la Declaracion
 	 * @returns auto-generated key
@@ -41072,6 +42256,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				course_levelStmt.setString(offset++, course_level.description);
 		}
 		course_levelStmt.executeUpdate();
+		course_levels.clear();
 		course_levelInserted += size;
 
 		// elapsed time in milliseconds
@@ -41110,11 +42295,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.course_levelId = course_levelId;
 		} 
 	
-	private void flushCourse_level(  )
+	protected void flushCourse_level( )
+	throws SQLException {
+		flushCourse_level(false);
+	}	
+
+	private void flushCourse_level( boolean close )
 	throws SQLException {
 		if ( ! course_levels.isEmpty() )
 			insertCourse_level(course_levels);
-		if ( course_levelStmt != null )
+		if ( close && course_levelStmt != null )
 			course_levelStmt.close();
 	}	
 
@@ -41139,7 +42329,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 84 * course_levelCount >=  this.maxAllowedPacket ){
 			insertCourse_level(course_levels);
-			course_levels.clear();
 		} 
 	}
 
@@ -41252,6 +42441,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				workplaceStmt.setBoolean(offset++, workplace.active);
 		}
 		workplaceStmt.executeUpdate();
+		workplaces.clear();
 		workplaceInserted += size;
 
 		// elapsed time in milliseconds
@@ -41290,11 +42480,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.workplaceId = workplaceId;
 		} 
 	
-	private void flushWorkplace(  )
+	protected void flushWorkplace( )
+	throws SQLException {
+		flushWorkplace(false);
+	}	
+
+	private void flushWorkplace( boolean close )
 	throws SQLException {
 		if ( ! workplaces.isEmpty() )
 			insertWorkplace(workplaces);
-		if ( workplaceStmt != null )
+		if ( close && workplaceStmt != null )
 			workplaceStmt.close();
 	}	
 
@@ -41329,7 +42524,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 117 * workplaceCount >=  this.maxAllowedPacket ){
 			insertWorkplace(workplaces);
-			workplaces.clear();
 		} 
 	}
 
@@ -41457,6 +42651,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_reservation_roomStmt.setInt(offset++, project_reservation_room.children);
 		}
 		project_reservation_roomStmt.executeUpdate();
+		project_reservation_rooms.clear();
 		project_reservation_roomInserted += size;
 
 		// elapsed time in milliseconds
@@ -41495,11 +42690,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.project_reservation_roomId = project_reservation_roomId;
 		} 
 	
-	private void flushProject_reservation_room(  )
+	protected void flushProject_reservation_room( )
+	throws SQLException {
+		flushProject_reservation_room(false);
+	}	
+
+	private void flushProject_reservation_room( boolean close )
 	throws SQLException {
 		if ( ! project_reservation_rooms.isEmpty() )
 			insertProject_reservation_room(project_reservation_rooms);
-		if ( project_reservation_roomStmt != null )
+		if ( close && project_reservation_roomStmt != null )
 			project_reservation_roomStmt.close();
 	}	
 
@@ -41513,7 +42713,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param item Identificador del Tipo de Habitacion
 	 * @param tariff Identificador de la Tarifa
 	 * @param adults Numero de adultos
-	 * @param children Numero de ni?os
+	 * @param children Numero de nios
 	 * @throws SQLException
 	*/
 	protected void insertProject_reservation_room(Integer id, Integer domain, Integer project_reservation, Short room_index, String room_code, Integer item, Integer tariff, Integer adults, Integer children)
@@ -41536,7 +42736,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 79 * project_reservation_roomCount >=  this.maxAllowedPacket ){
 			insertProject_reservation_room(project_reservation_rooms);
-			project_reservation_rooms.clear();
 		} 
 	}
 
@@ -41550,7 +42749,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param item Identificador del Tipo de Habitacion
 	 * @param tariff Identificador de la Tarifa
 	 * @param adults Numero de adultos
-	 * @param children Numero de ni?os
+	 * @param children Numero de nios
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -41641,6 +42840,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				action_deniedStmt.setInt(offset++, action_denied.user_id);
 		}
 		action_deniedStmt.executeUpdate();
+		action_denieds.clear();
 		action_deniedInserted += size;
 
 		// elapsed time in milliseconds
@@ -41679,11 +42879,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.action_deniedId = action_deniedId;
 		} 
 	
-	private void flushAction_denied(  )
+	protected void flushAction_denied( )
+	throws SQLException {
+		flushAction_denied(false);
+	}	
+
+	private void flushAction_denied( boolean close )
 	throws SQLException {
 		if ( ! action_denieds.isEmpty() )
 			insertAction_denied(action_denieds);
-		if ( action_deniedStmt != null )
+		if ( close && action_deniedStmt != null )
 			action_deniedStmt.close();
 	}	
 
@@ -41710,7 +42915,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * action_deniedCount >=  this.maxAllowedPacket ){
 			insertAction_denied(action_denieds);
-			action_denieds.clear();
 		} 
 	}
 
@@ -41805,6 +43009,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				agreement_levelStmt.setString(offset++, agreement_level.description);
 		}
 		agreement_levelStmt.executeUpdate();
+		agreement_levels.clear();
 		agreement_levelInserted += size;
 
 		// elapsed time in milliseconds
@@ -41843,11 +43048,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.agreement_levelId = agreement_levelId;
 		} 
 	
-	private void flushAgreement_level(  )
+	protected void flushAgreement_level( )
+	throws SQLException {
+		flushAgreement_level(false);
+	}	
+
+	private void flushAgreement_level( boolean close )
 	throws SQLException {
 		if ( ! agreement_levels.isEmpty() )
 			insertAgreement_level(agreement_levels);
-		if ( agreement_levelStmt != null )
+		if ( close && agreement_levelStmt != null )
 			agreement_levelStmt.close();
 	}	
 
@@ -41874,7 +43084,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 94 * agreement_levelCount >=  this.maxAllowedPacket ){
 			insertAgreement_level(agreement_levels);
-			agreement_levels.clear();
 		} 
 	}
 
@@ -41974,6 +43183,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contactStmt.setInt(offset++, contact.contact_data);
 		}
 		contactStmt.executeUpdate();
+		contacts.clear();
 		contactInserted += size;
 
 		// elapsed time in milliseconds
@@ -42012,11 +43222,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.contactId = contactId;
 		} 
 	
-	private void flushContact(  )
+	protected void flushContact( )
+	throws SQLException {
+		flushContact(false);
+	}	
+
+	private void flushContact( boolean close )
 	throws SQLException {
 		if ( ! contacts.isEmpty() )
 			insertContact(contacts);
-		if ( contactStmt != null )
+		if ( close && contactStmt != null )
 			contactStmt.close();
 	}	
 
@@ -42026,7 +43241,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param user_id Identificador del Usuario
 	 * @param displayName Mostrar Como
-	 * @param contact_data Identificador de la Informaci?n del Contacto
+	 * @param contact_data Identificador de la Informacin del Contacto
 	 * @throws SQLException
 	*/
 	protected void insertContact(Integer id, Integer domain, Integer user_id, String displayName, Integer contact_data)
@@ -42045,7 +43260,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 168 * contactCount >=  this.maxAllowedPacket ){
 			insertContact(contacts);
-			contacts.clear();
 		} 
 	}
 
@@ -42055,7 +43269,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param user_id Identificador del Usuario
 	 * @param displayName Mostrar Como
-	 * @param contact_data Identificador de la Informaci?n del Contacto
+	 * @param contact_data Identificador de la Informacin del Contacto
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -42142,6 +43356,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				user_workgroupStmt.setInt(offset++, user_workgroup.workgroup);
 		}
 		user_workgroupStmt.executeUpdate();
+		user_workgroups.clear();
 		user_workgroupInserted += size;
 
 		// elapsed time in milliseconds
@@ -42180,11 +43395,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.user_workgroupId = user_workgroupId;
 		} 
 	
-	private void flushUser_workgroup(  )
+	protected void flushUser_workgroup( )
+	throws SQLException {
+		flushUser_workgroup(false);
+	}	
+
+	private void flushUser_workgroup( boolean close )
 	throws SQLException {
 		if ( ! user_workgroups.isEmpty() )
 			insertUser_workgroup(user_workgroups);
-		if ( user_workgroupStmt != null )
+		if ( close && user_workgroupStmt != null )
 			user_workgroupStmt.close();
 	}	
 
@@ -42211,7 +43431,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * user_workgroupCount >=  this.maxAllowedPacket ){
 			insertUser_workgroup(user_workgroups);
-			user_workgroups.clear();
 		} 
 	}
 
@@ -42316,6 +43535,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				course_scheduleStmt.setTime(offset++, course_schedule.end_time);
 		}
 		course_scheduleStmt.executeUpdate();
+		course_schedules.clear();
 		course_scheduleInserted += size;
 
 		// elapsed time in milliseconds
@@ -42354,11 +43574,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.course_scheduleId = course_scheduleId;
 		} 
 	
-	private void flushCourse_schedule(  )
+	protected void flushCourse_schedule( )
+	throws SQLException {
+		flushCourse_schedule(false);
+	}	
+
+	private void flushCourse_schedule( boolean close )
 	throws SQLException {
 		if ( ! course_schedules.isEmpty() )
 			insertCourse_schedule(course_schedules);
-		if ( course_scheduleStmt != null )
+		if ( close && course_scheduleStmt != null )
 			course_scheduleStmt.close();
 	}	
 
@@ -42389,7 +43614,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 49 * course_scheduleCount >=  this.maxAllowedPacket ){
 			insertCourse_schedule(course_schedules);
-			course_schedules.clear();
 		} 
 	}
 
@@ -42498,6 +43722,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				rrelationshipStmt.setString(offset++, rrelationship.comments);
 		}
 		rrelationshipStmt.executeUpdate();
+		rrelationships.clear();
 		rrelationshipInserted += size;
 
 		// elapsed time in milliseconds
@@ -42536,11 +43761,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.rrelationshipId = rrelationshipId;
 		} 
 	
-	private void flushRrelationship(  )
+	protected void flushRrelationship( )
+	throws SQLException {
+		flushRrelationship(false);
+	}	
+
+	private void flushRrelationship( boolean close )
 	throws SQLException {
 		if ( ! rrelationships.isEmpty() )
 			insertRrelationship(rrelationships);
-		if ( rrelationshipStmt != null )
+		if ( close && rrelationshipStmt != null )
 			rrelationshipStmt.close();
 	}	
 
@@ -42550,7 +43780,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param registry Identificador de la Persona o Empresa que tiene la Relacion
 	 * @param related_registry Identificador de la Persona o Empresa relacionada
-	 * @param relationship Identificador del Tipo de Relaci?n
+	 * @param relationship Identificador del Tipo de Relacin
 	 * @param comments Comentarios de la Relacion
 	 * @throws SQLException
 	*/
@@ -42571,7 +43801,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 114 * rrelationshipCount >=  this.maxAllowedPacket ){
 			insertRrelationship(rrelationships);
-			rrelationships.clear();
 		} 
 	}
 
@@ -42581,7 +43810,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param registry Identificador de la Persona o Empresa que tiene la Relacion
 	 * @param related_registry Identificador de la Persona o Empresa relacionada
-	 * @param relationship Identificador del Tipo de Relaci?n
+	 * @param relationship Identificador del Tipo de Relacin
 	 * @param comments Comentarios de la Relacion
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -42680,6 +43909,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				task_holderStmt.setInt(offset++, task_holder.cost_profile);
 		}
 		task_holderStmt.executeUpdate();
+		task_holders.clear();
 		task_holderInserted += size;
 
 		// elapsed time in milliseconds
@@ -42688,11 +43918,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 		
 	
-	private void flushTask_holder(  )
+	protected void flushTask_holder( )
+	throws SQLException {
+		flushTask_holder(false);
+	}	
+
+	private void flushTask_holder( boolean close )
 	throws SQLException {
 		if ( ! task_holders.isEmpty() )
 			insertTask_holder(task_holders);
-		if ( task_holderStmt != null )
+		if ( close && task_holderStmt != null )
 			task_holderStmt.close();
 	}	
 
@@ -42723,7 +43958,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 43 * task_holderCount >=  this.maxAllowedPacket ){
 			insertTask_holder(task_holders);
-			task_holders.clear();
 		} 
 	}
 
@@ -42799,6 +44033,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				web_info_pageStmt.setBoolean(offset++, web_info_page.active);
 		}
 		web_info_pageStmt.executeUpdate();
+		web_info_pages.clear();
 		web_info_pageInserted += size;
 
 		// elapsed time in milliseconds
@@ -42837,11 +44072,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.web_info_pageId = web_info_pageId;
 		} 
 	
-	private void flushWeb_info_page(  )
+	protected void flushWeb_info_page( )
+	throws SQLException {
+		flushWeb_info_page(false);
+	}	
+
+	private void flushWeb_info_page( boolean close )
 	throws SQLException {
 		if ( ! web_info_pages.isEmpty() )
 			insertWeb_info_page(web_info_pages);
-		if ( web_info_pageStmt != null )
+		if ( close && web_info_pageStmt != null )
 			web_info_pageStmt.close();
 	}	
 
@@ -42872,7 +44112,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 90 * web_info_pageCount >=  this.maxAllowedPacket ){
 			insertWeb_info_page(web_info_pages);
-			web_info_pages.clear();
 		} 
 	}
 
@@ -43001,6 +44240,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				campaignStmt.setShort(offset++, campaign.status);
 		}
 		campaignStmt.executeUpdate();
+		campaigns.clear();
 		campaignInserted += size;
 
 		// elapsed time in milliseconds
@@ -43039,26 +44279,31 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.campaignId = campaignId;
 		} 
 	
-	private void flushCampaign(  )
+	protected void flushCampaign( )
+	throws SQLException {
+		flushCampaign(false);
+	}	
+
+	private void flushCampaign( boolean close )
 	throws SQLException {
 		if ( ! campaigns.isEmpty() )
 			insertCampaign(campaigns);
-		if ( campaignStmt != null )
+		if ( close && campaignStmt != null )
 			campaignStmt.close();
 	}	
 
 	/**
 	 * Campaign
-	 * @param id Identificador unico de la Campa?a
+	 * @param id Identificador unico de la Campaa
 	 * @param domain Identificador del Dominio
-	 * @param campaign_type Identificador del Tipo de Campa?a
-	 * @param description Descripcion de la Campa?a
+	 * @param campaign_type Identificador del Tipo de Campaa
+	 * @param description Descripcion de la Campaa
 	 * @param process Identificador del Proceso
-	 * @param start_date Fecha de inicio de la Campa?a
-	 * @param end_date Fecha de finalizacion de la Campa?a
-	 * @param workgroup Grupo de Trabajo supervisor de la Campa?a
-	 * @param manual Tipo de Campa?a
-	 * @param status Estado de la Campa?a
+	 * @param start_date Fecha de inicio de la Campaa
+	 * @param end_date Fecha de finalizacion de la Campaa
+	 * @param workgroup Grupo de Trabajo supervisor de la Campaa
+	 * @param manual Tipo de Campaa
+	 * @param status Estado de la Campaa
 	 * @throws SQLException
 	*/
 	protected void insertCampaign(Integer id, Integer domain, Integer campaign_type, String description, Integer process, Date start_date, Date end_date, Integer workgroup, Boolean manual, Short status)
@@ -43082,7 +44327,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 137 * campaignCount >=  this.maxAllowedPacket ){
 			insertCampaign(campaigns);
-			campaigns.clear();
 		} 
 	}
 
@@ -43090,14 +44334,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Campaign
 	 * @param domain Identificador del Dominio
-	 * @param campaign_type Identificador del Tipo de Campa?a
-	 * @param description Descripcion de la Campa?a
+	 * @param campaign_type Identificador del Tipo de Campaa
+	 * @param description Descripcion de la Campaa
 	 * @param process Identificador del Proceso
-	 * @param start_date Fecha de inicio de la Campa?a
-	 * @param end_date Fecha de finalizacion de la Campa?a
-	 * @param workgroup Grupo de Trabajo supervisor de la Campa?a
-	 * @param manual Tipo de Campa?a
-	 * @param status Estado de la Campa?a
+	 * @param start_date Fecha de inicio de la Campaa
+	 * @param end_date Fecha de finalizacion de la Campaa
+	 * @param workgroup Grupo de Trabajo supervisor de la Campaa
+	 * @param manual Tipo de Campaa
+	 * @param status Estado de la Campaa
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -43229,6 +44473,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				fs_vatStmt.setDouble(offset++, fs_vat.prorata);
 		}
 		fs_vatStmt.executeUpdate();
+		fs_vats.clear();
 		fs_vatInserted += size;
 
 		// elapsed time in milliseconds
@@ -43267,11 +44512,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.fs_vatId = fs_vatId;
 		} 
 	
-	private void flushFs_vat(  )
+	protected void flushFs_vat( )
+	throws SQLException {
+		flushFs_vat(false);
+	}	
+
+	private void flushFs_vat( boolean close )
 	throws SQLException {
 		if ( ! fs_vats.isEmpty() )
 			insertFs_vat(fs_vats);
-		if ( fs_vatStmt != null )
+		if ( close && fs_vatStmt != null )
 			fs_vatStmt.close();
 	}	
 
@@ -43314,7 +44564,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 54 * fs_vatCount >=  this.maxAllowedPacket ){
 			insertFs_vat(fs_vats);
-			fs_vats.clear();
 		} 
 	}
 
@@ -43460,6 +44709,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_deductionStmt.setShort(offset++, contract_deduction.month);
 		}
 		contract_deductionStmt.executeUpdate();
+		contract_deductions.clear();
 		contract_deductionInserted += size;
 
 		// elapsed time in milliseconds
@@ -43498,11 +44748,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.contract_deductionId = contract_deductionId;
 		} 
 	
-	private void flushContract_deduction(  )
+	protected void flushContract_deduction( )
+	throws SQLException {
+		flushContract_deduction(false);
+	}	
+
+	private void flushContract_deduction( boolean close )
 	throws SQLException {
 		if ( ! contract_deductions.isEmpty() )
 			insertContract_deduction(contract_deductions);
-		if ( contract_deductionStmt != null )
+		if ( close && contract_deductionStmt != null )
 			contract_deductionStmt.close();
 	}	
 
@@ -43510,12 +44765,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Contract_deduction
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Deducci?n
+	 * @param type Tipo de Deduccin
 	 * @param deduction_concept Identificador unico del concepto
 	 * @param contract Contrato
 	 * @param description Descripcion
 	 * @param description_decorable 
-	 * @param expression F?rmula
+	 * @param expression Frmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
 	 * @param month Mes de la percepcion
@@ -43543,7 +44798,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 261 * contract_deductionCount >=  this.maxAllowedPacket ){
 			insertContract_deduction(contract_deductions);
-			contract_deductions.clear();
 		} 
 	}
 
@@ -43551,12 +44805,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Contract_deduction
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Deducci?n
+	 * @param type Tipo de Deduccin
 	 * @param deduction_concept Identificador unico del concepto
 	 * @param contract Contrato
 	 * @param description Descripcion
 	 * @param description_decorable 
-	 * @param expression F?rmula
+	 * @param expression Frmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
 	 * @param month Mes de la percepcion
@@ -43662,6 +44916,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				noteStmt.setString(offset++, note.note);
 		}
 		noteStmt.executeUpdate();
+		notes.clear();
 		noteInserted += size;
 
 		// elapsed time in milliseconds
@@ -43700,11 +44955,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.noteId = noteId;
 		} 
 	
-	private void flushNote(  )
+	protected void flushNote( )
+	throws SQLException {
+		flushNote(false);
+	}	
+
+	private void flushNote( boolean close )
 	throws SQLException {
 		if ( ! notes.isEmpty() )
 			insertNote(notes);
-		if ( noteStmt != null )
+		if ( close && noteStmt != null )
 			noteStmt.close();
 	}	
 
@@ -43735,7 +44995,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 113 * noteCount >=  this.maxAllowedPacket ){
 			insertNote(notes);
-			notes.clear();
 		} 
 	}
 
@@ -43769,6 +45028,184 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 113 * noteCount >=  this.maxAllowedPacket ){
 			insertNote(notes);
 			notes.clear();
+		} 
+		return id;
+	}
+
+
+	private int amortization_invoiceStmtSize = 0;
+
+	private int amortization_invoiceInserted = 0;
+
+	private List<Amortization_invoice> amortization_invoices = 
+		new LinkedList<Amortization_invoice>();
+
+	private PreparedStatement amortization_invoiceStmt = null;
+
+	public static class Amortization_invoice {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer amortization; 
+		protected Integer invoice; 
+		protected Boolean sales; 
+	}
+	
+	protected void insertAmortization_invoice( List<Amortization_invoice> amortization_invoices )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = amortization_invoices.size();
+		if ( amortization_invoiceStmtSize != size ) {
+			if ( amortization_invoiceStmt != null ) {
+				amortization_invoiceStmt.close();
+			}
+			String values = "(?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			amortization_invoiceStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO amortization_invoice (id,domain,amortization,invoice,sales)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			amortization_invoiceStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Amortization_invoice amortization_invoice : amortization_invoices) {
+			if ( amortization_invoice.id == null )
+				amortization_invoiceStmt.setNull(offset++, 4);
+			else
+				amortization_invoiceStmt.setInt(offset++, amortization_invoice.id);
+			if ( amortization_invoice.domain == null )
+				amortization_invoiceStmt.setNull(offset++, 4);
+			else
+				amortization_invoiceStmt.setInt(offset++, amortization_invoice.domain);
+			if ( amortization_invoice.amortization == null )
+				amortization_invoiceStmt.setNull(offset++, 4);
+			else
+				amortization_invoiceStmt.setInt(offset++, amortization_invoice.amortization);
+			if ( amortization_invoice.invoice == null )
+				amortization_invoiceStmt.setNull(offset++, 4);
+			else
+				amortization_invoiceStmt.setInt(offset++, amortization_invoice.invoice);
+			if ( amortization_invoice.sales == null )
+				amortization_invoiceStmt.setNull(offset++, -7);
+			else
+				amortization_invoiceStmt.setBoolean(offset++, amortization_invoice.sales);
+		}
+		amortization_invoiceStmt.executeUpdate();
+		amortization_invoices.clear();
+		amortization_invoiceInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Amortization_invoices in {} milliseconds.", size, amortization_invoiceInserted, elapsed );		
+	}
+		
+		private int amortization_invoiceId = -1;
+		
+		private void initAmortization_invoiceId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `amortization_invoice`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.amortization_invoiceId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextAmortization_invoiceId() {
+			return ++this.amortization_invoiceId;
+		} 
+
+		public void setAmortization_invoiceId(Integer amortization_invoiceId) {
+			this.amortization_invoiceId = amortization_invoiceId;
+		} 
+	
+	protected void flushAmortization_invoice( )
+	throws SQLException {
+		flushAmortization_invoice(false);
+	}	
+
+	private void flushAmortization_invoice( boolean close )
+	throws SQLException {
+		if ( ! amortization_invoices.isEmpty() )
+			insertAmortization_invoice(amortization_invoices);
+		if ( close && amortization_invoiceStmt != null )
+			amortization_invoiceStmt.close();
+	}	
+
+	/**
+	 * Amortization_invoice
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param amortization Identificador de la Ficha de Amortizacion
+	 * @param invoice Identificador de la Factura
+	 * @param sales Indica si es venta de inmovilizado o no
+	 * @throws SQLException
+	*/
+	protected void insertAmortization_invoice(Integer id, Integer domain, Integer amortization, Integer invoice, Boolean sales)
+	throws SQLException {
+
+		Amortization_invoice amortization_invoice_ = new Amortization_invoice();
+		amortization_invoice_.id = id;
+		amortization_invoice_.domain = domain;
+		amortization_invoice_.amortization = amortization;
+		amortization_invoice_.invoice = invoice;
+		amortization_invoice_.sales = sales;
+
+		amortization_invoices.add(amortization_invoice_);
+		
+		int amortization_invoiceCount = amortization_invoices.size();
+		
+		if ( 40 * amortization_invoiceCount >=  this.maxAllowedPacket ){
+			insertAmortization_invoice(amortization_invoices);
+		} 
+	}
+
+
+	/**
+	 * Amortization_invoice
+	 * @param domain Identificador del Dominio
+	 * @param amortization Identificador de la Ficha de Amortizacion
+	 * @param invoice Identificador de la Factura
+	 * @param sales Indica si es venta de inmovilizado o no
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertAmortization_invoice(Integer domain, Integer amortization, Integer invoice, Boolean sales)
+	throws SQLException {
+		int id = nextAmortization_invoiceId();
+
+		Amortization_invoice amortization_invoice_ = new Amortization_invoice();
+		amortization_invoice_.id = id;
+		amortization_invoice_.domain = domain;
+		amortization_invoice_.amortization = amortization;
+		amortization_invoice_.invoice = invoice;
+		amortization_invoice_.sales = sales;
+
+		amortization_invoices.add(amortization_invoice_);
+		
+		int amortization_invoiceCount = amortization_invoices.size();
+		
+		if ( 40 * amortization_invoiceCount >=  this.maxAllowedPacket ){
+			insertAmortization_invoice(amortization_invoices);
+			amortization_invoices.clear();
 		} 
 		return id;
 	}
@@ -43829,6 +45266,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				observationStmt.setString(offset++, observation.description);
 		}
 		observationStmt.executeUpdate();
+		observations.clear();
 		observationInserted += size;
 
 		// elapsed time in milliseconds
@@ -43867,11 +45305,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.observationId = observationId;
 		} 
 	
-	private void flushObservation(  )
+	protected void flushObservation( )
+	throws SQLException {
+		flushObservation(false);
+	}	
+
+	private void flushObservation( boolean close )
 	throws SQLException {
 		if ( ! observations.isEmpty() )
 			insertObservation(observations);
-		if ( observationStmt != null )
+		if ( close && observationStmt != null )
 			observationStmt.close();
 	}	
 
@@ -43896,7 +45339,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 276 * observationCount >=  this.maxAllowedPacket ){
 			insertObservation(observations);
-			observations.clear();
 		} 
 	}
 
@@ -43984,6 +45426,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				course_subjectStmt.setString(offset++, course_subject.description);
 		}
 		course_subjectStmt.executeUpdate();
+		course_subjects.clear();
 		course_subjectInserted += size;
 
 		// elapsed time in milliseconds
@@ -44022,11 +45465,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.course_subjectId = course_subjectId;
 		} 
 	
-	private void flushCourse_subject(  )
+	protected void flushCourse_subject( )
+	throws SQLException {
+		flushCourse_subject(false);
+	}	
+
+	private void flushCourse_subject( boolean close )
 	throws SQLException {
 		if ( ! course_subjects.isEmpty() )
 			insertCourse_subject(course_subjects);
-		if ( course_subjectStmt != null )
+		if ( close && course_subjectStmt != null )
 			course_subjectStmt.close();
 	}	
 
@@ -44051,7 +45499,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 84 * course_subjectCount >=  this.maxAllowedPacket ){
 			insertCourse_subject(course_subjects);
-			course_subjects.clear();
 		} 
 	}
 
@@ -44149,6 +45596,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				action_favoriteStmt.setInt(offset++, action_favorite.user_id);
 		}
 		action_favoriteStmt.executeUpdate();
+		action_favorites.clear();
 		action_favoriteInserted += size;
 
 		// elapsed time in milliseconds
@@ -44187,11 +45635,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.action_favoriteId = action_favoriteId;
 		} 
 	
-	private void flushAction_favorite(  )
+	protected void flushAction_favorite( )
+	throws SQLException {
+		flushAction_favorite(false);
+	}	
+
+	private void flushAction_favorite( boolean close )
 	throws SQLException {
 		if ( ! action_favorites.isEmpty() )
 			insertAction_favorite(action_favorites);
-		if ( action_favoriteStmt != null )
+		if ( close && action_favoriteStmt != null )
 			action_favoriteStmt.close();
 	}	
 
@@ -44220,7 +45673,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 50 * action_favoriteCount >=  this.maxAllowedPacket ){
 			insertAction_favorite(action_favorites);
-			action_favorites.clear();
 		} 
 	}
 
@@ -44317,6 +45769,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				loan_accountStmt.setInt(offset++, loan_account.account);
 		}
 		loan_accountStmt.executeUpdate();
+		loan_accounts.clear();
 		loan_accountInserted += size;
 
 		// elapsed time in milliseconds
@@ -44355,11 +45808,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.loan_accountId = loan_accountId;
 		} 
 	
-	private void flushLoan_account(  )
+	protected void flushLoan_account( )
+	throws SQLException {
+		flushLoan_account(false);
+	}	
+
+	private void flushLoan_account( boolean close )
 	throws SQLException {
 		if ( ! loan_accounts.isEmpty() )
 			insertLoan_account(loan_accounts);
-		if ( loan_accountStmt != null )
+		if ( close && loan_accountStmt != null )
 			loan_accountStmt.close();
 	}	
 
@@ -44386,7 +45844,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * loan_accountCount >=  this.maxAllowedPacket ){
 			insertLoan_account(loan_accounts);
-			loan_accounts.clear();
 		} 
 	}
 
@@ -44491,6 +45948,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				salary_embargoStmt.setString(offset++, salary_embargo.description);
 		}
 		salary_embargoStmt.executeUpdate();
+		salary_embargos.clear();
 		salary_embargoInserted += size;
 
 		// elapsed time in milliseconds
@@ -44529,11 +45987,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.salary_embargoId = salary_embargoId;
 		} 
 	
-	private void flushSalary_embargo(  )
+	protected void flushSalary_embargo( )
+	throws SQLException {
+		flushSalary_embargo(false);
+	}	
+
+	private void flushSalary_embargo( boolean close )
 	throws SQLException {
 		if ( ! salary_embargos.isEmpty() )
 			insertSalary_embargo(salary_embargos);
-		if ( salary_embargoStmt != null )
+		if ( close && salary_embargoStmt != null )
 			salary_embargoStmt.close();
 	}	
 
@@ -44564,7 +46027,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 119 * salary_embargoCount >=  this.maxAllowedPacket ){
 			insertSalary_embargo(salary_embargos);
-			salary_embargos.clear();
 		} 
 	}
 
@@ -44723,6 +46185,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				reservation_requestStmt.setTimestamp(offset++, reservation_request.modification_date);
 		}
 		reservation_requestStmt.executeUpdate();
+		reservation_requests.clear();
 		reservation_requestInserted += size;
 
 		// elapsed time in milliseconds
@@ -44761,11 +46224,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.reservation_requestId = reservation_requestId;
 		} 
 	
-	private void flushReservation_request(  )
+	protected void flushReservation_request( )
+	throws SQLException {
+		flushReservation_request(false);
+	}	
+
+	private void flushReservation_request( boolean close )
 	throws SQLException {
 		if ( ! reservation_requests.isEmpty() )
 			insertReservation_request(reservation_requests);
-		if ( reservation_requestStmt != null )
+		if ( close && reservation_requestStmt != null )
 			reservation_requestStmt.close();
 	}	
 
@@ -44816,7 +46284,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 346 * reservation_requestCount >=  this.maxAllowedPacket ){
 			insertReservation_request(reservation_requests);
-			reservation_requests.clear();
 		} 
 	}
 
@@ -44990,6 +46457,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				fs_prof_retentionStmt.setString(offset++, fs_prof_retention.withholding_subkey);
 		}
 		fs_prof_retentionStmt.executeUpdate();
+		fs_prof_retentions.clear();
 		fs_prof_retentionInserted += size;
 
 		// elapsed time in milliseconds
@@ -45028,11 +46496,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.fs_prof_retentionId = fs_prof_retentionId;
 		} 
 	
-	private void flushFs_prof_retention(  )
+	protected void flushFs_prof_retention( )
+	throws SQLException {
+		flushFs_prof_retention(false);
+	}	
+
+	private void flushFs_prof_retention( boolean close )
 	throws SQLException {
 		if ( ! fs_prof_retentions.isEmpty() )
 			insertFs_prof_retention(fs_prof_retentions);
-		if ( fs_prof_retentionStmt != null )
+		if ( close && fs_prof_retentionStmt != null )
 			fs_prof_retentionStmt.close();
 	}	
 
@@ -45081,7 +46554,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 253 * fs_prof_retentionCount >=  this.maxAllowedPacket ){
 			insertFs_prof_retention(fs_prof_retentions);
-			fs_prof_retentions.clear();
 		} 
 	}
 
@@ -45218,6 +46690,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				irpf_data_descendientsStmt.setBoolean(offset++, irpf_data_descendients.unique_parent);
 		}
 		irpf_data_descendientsStmt.executeUpdate();
+		irpf_data_descendientss.clear();
 		irpf_data_descendientsInserted += size;
 
 		// elapsed time in milliseconds
@@ -45256,11 +46729,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.irpf_data_descendientsId = irpf_data_descendientsId;
 		} 
 	
-	private void flushIrpf_data_descendients(  )
+	protected void flushIrpf_data_descendients( )
+	throws SQLException {
+		flushIrpf_data_descendients(false);
+	}	
+
+	private void flushIrpf_data_descendients( boolean close )
 	throws SQLException {
 		if ( ! irpf_data_descendientss.isEmpty() )
 			insertIrpf_data_descendients(irpf_data_descendientss);
-		if ( irpf_data_descendientsStmt != null )
+		if ( close && irpf_data_descendientsStmt != null )
 			irpf_data_descendientsStmt.close();
 	}	
 
@@ -45295,7 +46773,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 53 * irpf_data_descendientsCount >=  this.maxAllowedPacket ){
 			insertIrpf_data_descendients(irpf_data_descendientss);
-			irpf_data_descendientss.clear();
 		} 
 	}
 
@@ -45423,6 +46900,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				survey_workflowStmt.setTimestamp(offset++, survey_workflow.value_date);
 		}
 		survey_workflowStmt.executeUpdate();
+		survey_workflows.clear();
 		survey_workflowInserted += size;
 
 		// elapsed time in milliseconds
@@ -45461,11 +46939,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.survey_workflowId = survey_workflowId;
 		} 
 	
-	private void flushSurvey_workflow(  )
+	protected void flushSurvey_workflow( )
+	throws SQLException {
+		flushSurvey_workflow(false);
+	}	
+
+	private void flushSurvey_workflow( boolean close )
 	throws SQLException {
 		if ( ! survey_workflows.isEmpty() )
 			insertSurvey_workflow(survey_workflows);
-		if ( survey_workflowStmt != null )
+		if ( close && survey_workflowStmt != null )
 			survey_workflowStmt.close();
 	}	
 
@@ -45502,7 +46985,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 1111 * survey_workflowCount >=  this.maxAllowedPacket ){
 			insertSurvey_workflow(survey_workflows);
-			survey_workflows.clear();
 		} 
 	}
 
@@ -45652,6 +47134,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				productStmt.setBoolean(offset++, product.composition_price);
 		}
 		productStmt.executeUpdate();
+		products.clear();
 		productInserted += size;
 
 		// elapsed time in milliseconds
@@ -45690,11 +47173,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.productId = productId;
 		} 
 	
-	private void flushProduct(  )
+	protected void flushProduct( )
+	throws SQLException {
+		flushProduct(false);
+	}	
+
+	private void flushProduct( boolean close )
 	throws SQLException {
 		if ( ! products.isEmpty() )
 			insertProduct(products);
-		if ( productStmt != null )
+		if ( close && productStmt != null )
 			productStmt.close();
 	}	
 
@@ -45739,7 +47227,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 145 * productCount >=  this.maxAllowedPacket ){
 			insertProduct(products);
-			products.clear();
 		} 
 	}
 
@@ -45852,6 +47339,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				processStmt.setBoolean(offset++, process.active);
 		}
 		processStmt.executeUpdate();
+		processs.clear();
 		processInserted += size;
 
 		// elapsed time in milliseconds
@@ -45890,11 +47378,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.processId = processId;
 		} 
 	
-	private void flushProcess(  )
+	protected void flushProcess( )
+	throws SQLException {
+		flushProcess(false);
+	}	
+
+	private void flushProcess( boolean close )
 	throws SQLException {
 		if ( ! processs.isEmpty() )
 			insertProcess(processs);
-		if ( processStmt != null )
+		if ( close && processStmt != null )
 			processStmt.close();
 	}	
 
@@ -45921,7 +47414,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 50 * processCount >=  this.maxAllowedPacket ){
 			insertProcess(processs);
-			processs.clear();
 		} 
 	}
 
@@ -46041,6 +47533,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_leave_detailStmt.setShort(offset++, contract_leave_detail.status);
 		}
 		contract_leave_detailStmt.executeUpdate();
+		contract_leave_details.clear();
 		contract_leave_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -46079,11 +47572,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.contract_leave_detailId = contract_leave_detailId;
 		} 
 	
-	private void flushContract_leave_detail(  )
+	protected void flushContract_leave_detail( )
+	throws SQLException {
+		flushContract_leave_detail(false);
+	}	
+
+	private void flushContract_leave_detail( boolean close )
 	throws SQLException {
 		if ( ! contract_leave_details.isEmpty() )
 			insertContract_leave_detail(contract_leave_details);
-		if ( contract_leave_detailStmt != null )
+		if ( close && contract_leave_detailStmt != null )
 			contract_leave_detailStmt.close();
 	}	
 
@@ -46120,7 +47618,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 68 * contract_leave_detailCount >=  this.maxAllowedPacket ){
 			insertContract_leave_detail(contract_leave_details);
-			contract_leave_details.clear();
 		} 
 	}
 
@@ -46260,6 +47757,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				proposalStmt.setInt(offset++, proposal.transfer_proposal);
 		}
 		proposalStmt.executeUpdate();
+		proposals.clear();
 		proposalInserted += size;
 
 		// elapsed time in milliseconds
@@ -46298,11 +47796,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.proposalId = proposalId;
 		} 
 	
-	private void flushProposal(  )
+	protected void flushProposal( )
+	throws SQLException {
+		flushProposal(false);
+	}	
+
+	private void flushProposal( boolean close )
 	throws SQLException {
 		if ( ! proposals.isEmpty() )
 			insertProposal(proposals);
-		if ( proposalStmt != null )
+		if ( close && proposalStmt != null )
 			proposalStmt.close();
 	}	
 
@@ -46343,7 +47846,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 76 * proposalCount >=  this.maxAllowedPacket ){
 			insertProposal(proposals);
-			proposals.clear();
 		} 
 	}
 
@@ -46497,6 +47999,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				itemStmt.setString(offset++, item.barcode);
 		}
 		itemStmt.executeUpdate();
+		items.clear();
 		itemInserted += size;
 
 		// elapsed time in milliseconds
@@ -46535,11 +48038,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.itemId = itemId;
 		} 
 	
-	private void flushItem(  )
+	protected void flushItem( )
+	throws SQLException {
+		flushItem(false);
+	}	
+
+	private void flushItem( boolean close )
 	throws SQLException {
 		if ( ! items.isEmpty() )
 			insertItem(items);
-		if ( itemStmt != null )
+		if ( close && itemStmt != null )
 			itemStmt.close();
 	}	
 
@@ -46584,7 +48092,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 239 * itemCount >=  this.maxAllowedPacket ){
 			insertItem(items);
-			items.clear();
 		} 
 	}
 
@@ -46717,6 +48224,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				warehouse_transferStmt.setInt(offset++, warehouse_transfer.target_warehouse);
 		}
 		warehouse_transferStmt.executeUpdate();
+		warehouse_transfers.clear();
 		warehouse_transferInserted += size;
 
 		// elapsed time in milliseconds
@@ -46755,11 +48263,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.warehouse_transferId = warehouse_transferId;
 		} 
 	
-	private void flushWarehouse_transfer(  )
+	protected void flushWarehouse_transfer( )
+	throws SQLException {
+		flushWarehouse_transfer(false);
+	}	
+
+	private void flushWarehouse_transfer( boolean close )
 	throws SQLException {
 		if ( ! warehouse_transfers.isEmpty() )
 			insertWarehouse_transfer(warehouse_transfers);
-		if ( warehouse_transferStmt != null )
+		if ( close && warehouse_transferStmt != null )
 			warehouse_transferStmt.close();
 	}	
 
@@ -46794,7 +48307,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 74 * warehouse_transferCount >=  this.maxAllowedPacket ){
 			insertWarehouse_transfer(warehouse_transfers);
-			warehouse_transfers.clear();
 		} 
 	}
 
@@ -46854,6 +48366,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String alias; 
 		protected Short entryEnabled; 
 		protected Short level; 
+		protected Boolean active; 
+		protected String cost_center; 
 	}
 	
 	protected void insertAccount( List<Account> accounts )
@@ -46864,7 +48378,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( accountStmt != null ) {
 				accountStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -46873,7 +48387,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			accountStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO account (id,domain,code,description,alias,entryEnabled,level)"  
+				"INSERT INTO account (id,domain,code,description,alias,entryEnabled,level,active,cost_center)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			accountStmtSize = size;
@@ -46910,8 +48424,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				accountStmt.setNull(offset++, -6);
 			else
 				accountStmt.setShort(offset++, account.level);
+			if ( account.active == null )
+				accountStmt.setNull(offset++, -7);
+			else
+				accountStmt.setBoolean(offset++, account.active);
+			if ( account.cost_center == null )
+				accountStmt.setNull(offset++, 1);
+			else
+				accountStmt.setString(offset++, account.cost_center);
 		}
 		accountStmt.executeUpdate();
+		accounts.clear();
 		accountInserted += size;
 
 		// elapsed time in milliseconds
@@ -46950,11 +48473,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.accountId = accountId;
 		} 
 	
-	private void flushAccount(  )
+	protected void flushAccount( )
+	throws SQLException {
+		flushAccount(false);
+	}	
+
+	private void flushAccount( boolean close )
 	throws SQLException {
 		if ( ! accounts.isEmpty() )
 			insertAccount(accounts);
-		if ( accountStmt != null )
+		if ( close && accountStmt != null )
 			accountStmt.close();
 	}	
 
@@ -46967,9 +48495,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param alias Alias de la Cuenta
 	 * @param entryEnabled Indica si la Cuenta permite o no Apuntes
 	 * @param level Nivel de la Cuenta
+	 * @param active Indica si la Cuenta esta activo o no
+	 * @param cost_center Centro de Costo
 	 * @throws SQLException
 	*/
-	protected void insertAccount(Integer id, Integer domain, String code, String description, String alias, Short entryEnabled, Short level)
+	protected void insertAccount(Integer id, Integer domain, String code, String description, String alias, Short entryEnabled, Short level, Boolean active, String cost_center)
 	throws SQLException {
 
 		Account account_ = new Account();
@@ -46980,14 +48510,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		account_.alias = alias;
 		account_.entryEnabled = entryEnabled;
 		account_.level = level;
+		account_.active = active;
+		account_.cost_center = cost_center;
 
 		accounts.add(account_);
 		
 		int accountCount = accounts.size();
 		
-		if ( 198 * accountCount >=  this.maxAllowedPacket ){
+		if ( 230 * accountCount >=  this.maxAllowedPacket ){
 			insertAccount(accounts);
-			accounts.clear();
 		} 
 	}
 
@@ -47000,10 +48531,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param alias Alias de la Cuenta
 	 * @param entryEnabled Indica si la Cuenta permite o no Apuntes
 	 * @param level Nivel de la Cuenta
+	 * @param active Indica si la Cuenta esta activo o no
+	 * @param cost_center Centro de Costo
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertAccount(Integer domain, String code, String description, String alias, Short entryEnabled, Short level)
+	public int insertAccount(Integer domain, String code, String description, String alias, Short entryEnabled, Short level, Boolean active, String cost_center)
 	throws SQLException {
 		int id = nextAccountId();
 
@@ -47015,12 +48548,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		account_.alias = alias;
 		account_.entryEnabled = entryEnabled;
 		account_.level = level;
+		account_.active = active;
+		account_.cost_center = cost_center;
 
 		accounts.add(account_);
 		
 		int accountCount = accounts.size();
 		
-		if ( 198 * accountCount >=  this.maxAllowedPacket ){
+		if ( 230 * accountCount >=  this.maxAllowedPacket ){
 			insertAccount(accounts);
 			accounts.clear();
 		} 
@@ -47083,6 +48618,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				brandStmt.setString(offset++, brand.name);
 		}
 		brandStmt.executeUpdate();
+		brands.clear();
 		brandInserted += size;
 
 		// elapsed time in milliseconds
@@ -47121,11 +48657,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.brandId = brandId;
 		} 
 	
-	private void flushBrand(  )
+	protected void flushBrand( )
+	throws SQLException {
+		flushBrand(false);
+	}	
+
+	private void flushBrand( boolean close )
 	throws SQLException {
 		if ( ! brands.isEmpty() )
 			insertBrand(brands);
-		if ( brandStmt != null )
+		if ( close && brandStmt != null )
 			brandStmt.close();
 	}	
 
@@ -47150,7 +48691,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 84 * brandCount >=  this.maxAllowedPacket ){
 			insertBrand(brands);
-			brands.clear();
 		} 
 	}
 
@@ -47258,6 +48798,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				target_sellerStmt.setShort(offset++, target_seller.status);
 		}
 		target_sellerStmt.executeUpdate();
+		target_sellers.clear();
 		target_sellerInserted += size;
 
 		// elapsed time in milliseconds
@@ -47296,11 +48837,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.target_sellerId = target_sellerId;
 		} 
 	
-	private void flushTarget_seller(  )
+	protected void flushTarget_seller( )
+	throws SQLException {
+		flushTarget_seller(false);
+	}	
+
+	private void flushTarget_seller( boolean close )
 	throws SQLException {
 		if ( ! target_sellers.isEmpty() )
 			insertTarget_seller(target_sellers);
-		if ( target_sellerStmt != null )
+		if ( close && target_sellerStmt != null )
 			target_sellerStmt.close();
 	}	
 
@@ -47333,7 +48879,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 63 * target_sellerCount >=  this.maxAllowedPacket ){
 			insertTarget_seller(target_sellers);
-			target_sellers.clear();
 		} 
 	}
 
@@ -47454,6 +48999,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_bonusStmt.setInt(offset++, contract_bonus.bonus_concept);
 		}
 		contract_bonusStmt.executeUpdate();
+		contract_bonuss.clear();
 		contract_bonusInserted += size;
 
 		// elapsed time in milliseconds
@@ -47492,11 +49038,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.contract_bonusId = contract_bonusId;
 		} 
 	
-	private void flushContract_bonus(  )
+	protected void flushContract_bonus( )
+	throws SQLException {
+		flushContract_bonus(false);
+	}	
+
+	private void flushContract_bonus( boolean close )
 	throws SQLException {
 		if ( ! contract_bonuss.isEmpty() )
 			insertContract_bonus(contract_bonuss);
-		if ( contract_bonusStmt != null )
+		if ( close && contract_bonusStmt != null )
 			contract_bonusStmt.close();
 	}	
 
@@ -47506,7 +49057,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param contract Contrato
 	 * @param description Descripcion
-	 * @param expression F?rmula
+	 * @param expression Frmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
 	 * @param bonus_concept Concepto de bonificacion
@@ -47531,7 +49082,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 252 * contract_bonusCount >=  this.maxAllowedPacket ){
 			insertContract_bonus(contract_bonuss);
-			contract_bonuss.clear();
 		} 
 	}
 
@@ -47541,7 +49091,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param contract Contrato
 	 * @param description Descripcion
-	 * @param expression F?rmula
+	 * @param expression Frmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
 	 * @param bonus_concept Concepto de bonificacion
@@ -47602,7 +49152,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String bank_account; 
 		protected Short status; 
 		protected Short security_level; 
+		protected String remarks; 
 		protected Integer scope; 
+		protected Boolean advance; 
 		protected Boolean payroll; 
 		protected Integer finance_group; 
 	}
@@ -47615,7 +49167,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( financeStmt != null ) {
 				financeStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -47624,7 +49176,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			financeStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO finance (id,domain,payment,registry,rdocument,rdocument_type,rdocument_country,rname,amount,expenses,concept,invoice,due_date,pay_method,bank,bank_account,status,security_level,scope,payroll,finance_group)"  
+				"INSERT INTO finance (id,domain,payment,registry,rdocument,rdocument_type,rdocument_country,rname,amount,expenses,concept,invoice,due_date,pay_method,bank,bank_account,status,security_level,remarks,scope,advance,payroll,finance_group)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			financeStmtSize = size;
@@ -47705,10 +49257,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				financeStmt.setNull(offset++, -6);
 			else
 				financeStmt.setShort(offset++, finance.security_level);
+			if ( finance.remarks == null )
+				financeStmt.setNull(offset++, -1);
+			else
+				financeStmt.setString(offset++, finance.remarks);
 			if ( finance.scope == null )
 				financeStmt.setNull(offset++, 4);
 			else
 				financeStmt.setInt(offset++, finance.scope);
+			if ( finance.advance == null )
+				financeStmt.setNull(offset++, -7);
+			else
+				financeStmt.setBoolean(offset++, finance.advance);
 			if ( finance.payroll == null )
 				financeStmt.setNull(offset++, -7);
 			else
@@ -47719,6 +49279,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				financeStmt.setInt(offset++, finance.finance_group);
 		}
 		financeStmt.executeUpdate();
+		finances.clear();
 		financeInserted += size;
 
 		// elapsed time in milliseconds
@@ -47757,11 +49318,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.financeId = financeId;
 		} 
 	
-	private void flushFinance(  )
+	protected void flushFinance( )
+	throws SQLException {
+		flushFinance(false);
+	}	
+
+	private void flushFinance( boolean close )
 	throws SQLException {
 		if ( ! finances.isEmpty() )
 			insertFinance(finances);
-		if ( financeStmt != null )
+		if ( close && financeStmt != null )
 			financeStmt.close();
 	}	
 
@@ -47785,12 +49351,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param bank_account Numero de cuenta en la Entidad Bancaria del Vencimiento
 	 * @param status Estado del Vencimiento
 	 * @param security_level Nivel de seguridad del Vencimiento
+	 * @param remarks Observaciones del Vencimiento
 	 * @param scope Ambito del Vencimiento
+	 * @param advance Indica si el Vencimiento es un anticipo
 	 * @param payroll Indica si el Vencimiento es de Nominas
 	 * @param finance_group Identificador unico del Vencimiento agrupador
 	 * @throws SQLException
 	*/
-	protected void insertFinance(Integer id, Integer domain, Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, Integer scope, Boolean payroll, Integer finance_group)
+	protected void insertFinance(Integer id, Integer domain, Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, String remarks, Integer scope, Boolean advance, Boolean payroll, Integer finance_group)
 	throws SQLException {
 
 		Finance finance_ = new Finance();
@@ -47812,7 +49380,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		finance_.bank_account = bank_account;
 		finance_.status = status;
 		finance_.security_level = security_level;
+		finance_.remarks = remarks;
 		finance_.scope = scope;
+		finance_.advance = advance;
 		finance_.payroll = payroll;
 		finance_.finance_group = finance_group;
 
@@ -47822,7 +49392,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 344 * financeCount >=  this.maxAllowedPacket ){
 			insertFinance(finances);
-			finances.clear();
 		} 
 	}
 
@@ -47846,13 +49415,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param bank_account Numero de cuenta en la Entidad Bancaria del Vencimiento
 	 * @param status Estado del Vencimiento
 	 * @param security_level Nivel de seguridad del Vencimiento
+	 * @param remarks Observaciones del Vencimiento
 	 * @param scope Ambito del Vencimiento
+	 * @param advance Indica si el Vencimiento es un anticipo
 	 * @param payroll Indica si el Vencimiento es de Nominas
 	 * @param finance_group Identificador unico del Vencimiento agrupador
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertFinance(Integer domain, Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, Integer scope, Boolean payroll, Integer finance_group)
+	public int insertFinance(Integer domain, Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, String remarks, Integer scope, Boolean advance, Boolean payroll, Integer finance_group)
 	throws SQLException {
 		int id = nextFinanceId();
 
@@ -47875,7 +49446,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		finance_.bank_account = bank_account;
 		finance_.status = status;
 		finance_.security_level = security_level;
+		finance_.remarks = remarks;
 		finance_.scope = scope;
+		finance_.advance = advance;
 		finance_.payroll = payroll;
 		finance_.finance_group = finance_group;
 
@@ -47951,6 +49524,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				task_holder_workgroupStmt.setInt(offset++, task_holder_workgroup.workgroup);
 		}
 		task_holder_workgroupStmt.executeUpdate();
+		task_holder_workgroups.clear();
 		task_holder_workgroupInserted += size;
 
 		// elapsed time in milliseconds
@@ -47989,11 +49563,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.task_holder_workgroupId = task_holder_workgroupId;
 		} 
 	
-	private void flushTask_holder_workgroup(  )
+	protected void flushTask_holder_workgroup( )
+	throws SQLException {
+		flushTask_holder_workgroup(false);
+	}	
+
+	private void flushTask_holder_workgroup( boolean close )
 	throws SQLException {
 		if ( ! task_holder_workgroups.isEmpty() )
 			insertTask_holder_workgroup(task_holder_workgroups);
-		if ( task_holder_workgroupStmt != null )
+		if ( close && task_holder_workgroupStmt != null )
 			task_holder_workgroupStmt.close();
 	}	
 
@@ -48020,7 +49599,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * task_holder_workgroupCount >=  this.maxAllowedPacket ){
 			insertTask_holder_workgroup(task_holder_workgroups);
-			task_holder_workgroups.clear();
 		} 
 	}
 
@@ -48120,6 +49698,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				geozoneStmt.setBoolean(offset++, geozone.system);
 		}
 		geozoneStmt.executeUpdate();
+		geozones.clear();
 		geozoneInserted += size;
 
 		// elapsed time in milliseconds
@@ -48158,11 +49737,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.geozoneId = geozoneId;
 		} 
 	
-	private void flushGeozone(  )
+	protected void flushGeozone( )
+	throws SQLException {
+		flushGeozone(false);
+	}	
+
+	private void flushGeozone( boolean close )
 	throws SQLException {
 		if ( ! geozones.isEmpty() )
 			insertGeozone(geozones);
-		if ( geozoneStmt != null )
+		if ( close && geozoneStmt != null )
 			geozoneStmt.close();
 	}	
 
@@ -48191,7 +49775,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 55 * geozoneCount >=  this.maxAllowedPacket ){
 			insertGeozone(geozones);
-			geozones.clear();
 		} 
 	}
 
@@ -48283,6 +49866,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				pcategory_groupStmt.setString(offset++, pcategory_group.name);
 		}
 		pcategory_groupStmt.executeUpdate();
+		pcategory_groups.clear();
 		pcategory_groupInserted += size;
 
 		// elapsed time in milliseconds
@@ -48321,11 +49905,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.pcategory_groupId = pcategory_groupId;
 		} 
 	
-	private void flushPcategory_group(  )
+	protected void flushPcategory_group( )
+	throws SQLException {
+		flushPcategory_group(false);
+	}	
+
+	private void flushPcategory_group( boolean close )
 	throws SQLException {
 		if ( ! pcategory_groups.isEmpty() )
 			insertPcategory_group(pcategory_groups);
-		if ( pcategory_groupStmt != null )
+		if ( close && pcategory_groupStmt != null )
 			pcategory_groupStmt.close();
 	}	
 
@@ -48350,7 +49939,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 52 * pcategory_groupCount >=  this.maxAllowedPacket ){
 			insertPcategory_group(pcategory_groups);
-			pcategory_groups.clear();
 		} 
 	}
 
@@ -48438,6 +50026,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				segmentStmt.setString(offset++, segment.name);
 		}
 		segmentStmt.executeUpdate();
+		segments.clear();
 		segmentInserted += size;
 
 		// elapsed time in milliseconds
@@ -48476,11 +50065,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.segmentId = segmentId;
 		} 
 	
-	private void flushSegment(  )
+	protected void flushSegment( )
+	throws SQLException {
+		flushSegment(false);
+	}	
+
+	private void flushSegment( boolean close )
 	throws SQLException {
 		if ( ! segments.isEmpty() )
 			insertSegment(segments);
-		if ( segmentStmt != null )
+		if ( close && segmentStmt != null )
 			segmentStmt.close();
 	}	
 
@@ -48505,7 +50099,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 52 * segmentCount >=  this.maxAllowedPacket ){
 			insertSegment(segments);
-			segments.clear();
 		} 
 	}
 
@@ -48618,6 +50211,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				salary_deductionStmt.setDouble(offset++, salary_deduction.amount);
 		}
 		salary_deductionStmt.executeUpdate();
+		salary_deductions.clear();
 		salary_deductionInserted += size;
 
 		// elapsed time in milliseconds
@@ -48656,11 +50250,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.salary_deductionId = salary_deductionId;
 		} 
 	
-	private void flushSalary_deduction(  )
+	protected void flushSalary_deduction( )
+	throws SQLException {
+		flushSalary_deduction(false);
+	}	
+
+	private void flushSalary_deduction( boolean close )
 	throws SQLException {
 		if ( ! salary_deductions.isEmpty() )
 			insertSalary_deduction(salary_deductions);
-		if ( salary_deductionStmt != null )
+		if ( close && salary_deductionStmt != null )
 			salary_deductionStmt.close();
 	}	
 
@@ -48669,10 +50268,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param salary Recibo del pago de salarios
-	 * @param type Tipo de deducci?n Salarial
+	 * @param type Tipo de deduccin Salarial
 	 * @param deduction_concept Codigo del concepto
 	 * @param description Descripcion
-	 * @param expression F?rmula
+	 * @param expression Frmula
 	 * @param amount Importe
 	 * @throws SQLException
 	*/
@@ -48695,7 +50294,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 245 * salary_deductionCount >=  this.maxAllowedPacket ){
 			insertSalary_deduction(salary_deductions);
-			salary_deductions.clear();
 		} 
 	}
 
@@ -48704,10 +50302,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Salary_deduction
 	 * @param domain Identificador del Dominio
 	 * @param salary Recibo del pago de salarios
-	 * @param type Tipo de deducci?n Salarial
+	 * @param type Tipo de deduccin Salarial
 	 * @param deduction_concept Codigo del concepto
 	 * @param description Descripcion
-	 * @param expression F?rmula
+	 * @param expression Frmula
 	 * @param amount Importe
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -48968,6 +50566,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoiceStmt.setTimestamp(offset++, invoice.modification_date);
 		}
 		invoiceStmt.executeUpdate();
+		invoices.clear();
 		invoiceInserted += size;
 
 		// elapsed time in milliseconds
@@ -49006,11 +50605,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.invoiceId = invoiceId;
 		} 
 	
-	private void flushInvoice(  )
+	protected void flushInvoice( )
+	throws SQLException {
+		flushInvoice(false);
+	}	
+
+	private void flushInvoice( boolean close )
 	throws SQLException {
 		if ( ! invoices.isEmpty() )
 			insertInvoice(invoices);
-		if ( invoiceStmt != null )
+		if ( close && invoiceStmt != null )
 			invoiceStmt.close();
 	}	
 
@@ -49105,7 +50709,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 459 * invoiceCount >=  this.maxAllowedPacket ){
 			insertInvoice(invoices);
-			invoices.clear();
 		} 
 	}
 
@@ -49288,6 +50891,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoice_attachStmt.setDate(offset++, invoice_attach.attach_date);
 		}
 		invoice_attachStmt.executeUpdate();
+		invoice_attachs.clear();
 		invoice_attachInserted += size;
 
 		// elapsed time in milliseconds
@@ -49326,11 +50930,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.invoice_attachId = invoice_attachId;
 		} 
 	
-	private void flushInvoice_attach(  )
+	protected void flushInvoice_attach( )
+	throws SQLException {
+		flushInvoice_attach(false);
+	}	
+
+	private void flushInvoice_attach( boolean close )
 	throws SQLException {
 		if ( ! invoice_attachs.isEmpty() )
 			insertInvoice_attach(invoice_attachs);
-		if ( invoice_attachStmt != null )
+		if ( close && invoice_attachStmt != null )
 			invoice_attachStmt.close();
 	}	
 
@@ -49365,7 +50974,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 110 * invoice_attachCount >=  this.maxAllowedPacket ){
 			insertInvoice_attach(invoice_attachs);
-			invoice_attachs.clear();
 		} 
 	}
 
@@ -49528,6 +51136,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoice_detailStmt.setInt(offset++, invoice_detail.warehouse);
 		}
 		invoice_detailStmt.executeUpdate();
+		invoice_details.clear();
 		invoice_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -49566,11 +51175,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.invoice_detailId = invoice_detailId;
 		} 
 	
-	private void flushInvoice_detail(  )
+	protected void flushInvoice_detail( )
+	throws SQLException {
+		flushInvoice_detail(false);
+	}	
+
+	private void flushInvoice_detail( boolean close )
 	throws SQLException {
 		if ( ! invoice_details.isEmpty() )
 			insertInvoice_detail(invoice_details);
-		if ( invoice_detailStmt != null )
+		if ( close && invoice_detailStmt != null )
 			invoice_detailStmt.close();
 	}	
 
@@ -49580,7 +51194,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param invoice Identificador de la Factura
 	 * @param project Identificador del Proyecto
-	 * @param line Numero de l?nea del Detalle dentro de la Factura
+	 * @param line Numero de lnea del Detalle dentro de la Factura
 	 * @param item Identificador del Articulo del Detalle de Factura
 	 * @param description Descripcion del Detalle de Factura
 	 * @param quantity Cantidad del Detalle de Factura
@@ -49621,7 +51235,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 1211 * invoice_detailCount >=  this.maxAllowedPacket ){
 			insertInvoice_detail(invoice_details);
-			invoice_details.clear();
 		} 
 	}
 
@@ -49631,7 +51244,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param invoice Identificador de la Factura
 	 * @param project Identificador del Proyecto
-	 * @param line Numero de l?nea del Detalle dentro de la Factura
+	 * @param line Numero de lnea del Detalle dentro de la Factura
 	 * @param item Identificador del Articulo del Detalle de Factura
 	 * @param description Descripcion del Detalle de Factura
 	 * @param quantity Cantidad del Detalle de Factura
@@ -49740,6 +51353,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				leave_batchStmt.setShort(offset++, leave_batch.status);
 		}
 		leave_batchStmt.executeUpdate();
+		leave_batchs.clear();
 		leave_batchInserted += size;
 
 		// elapsed time in milliseconds
@@ -49778,11 +51392,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.leave_batchId = leave_batchId;
 		} 
 	
-	private void flushLeave_batch(  )
+	protected void flushLeave_batch( )
+	throws SQLException {
+		flushLeave_batch(false);
+	}	
+
+	private void flushLeave_batch( boolean close )
 	throws SQLException {
 		if ( ! leave_batchs.isEmpty() )
 			insertLeave_batch(leave_batchs);
-		if ( leave_batchStmt != null )
+		if ( close && leave_batchStmt != null )
 			leave_batchStmt.close();
 	}	
 
@@ -49809,7 +51428,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 42 * leave_batchCount >=  this.maxAllowedPacket ){
 			insertLeave_batch(leave_batchs);
-			leave_batchs.clear();
 		} 
 	}
 
@@ -49904,6 +51522,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_reservation_room_detailStmt.setInt(offset++, project_reservation_room_detail.asset_activity);
 		}
 		project_reservation_room_detailStmt.executeUpdate();
+		project_reservation_room_details.clear();
 		project_reservation_room_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -49942,11 +51561,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.project_reservation_room_detailId = project_reservation_room_detailId;
 		} 
 	
-	private void flushProject_reservation_room_detail(  )
+	protected void flushProject_reservation_room_detail( )
+	throws SQLException {
+		flushProject_reservation_room_detail(false);
+	}	
+
+	private void flushProject_reservation_room_detail( boolean close )
 	throws SQLException {
 		if ( ! project_reservation_room_details.isEmpty() )
 			insertProject_reservation_room_detail(project_reservation_room_details);
-		if ( project_reservation_room_detailStmt != null )
+		if ( close && project_reservation_room_detailStmt != null )
 			project_reservation_room_detailStmt.close();
 	}	
 
@@ -49973,7 +51597,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * project_reservation_room_detailCount >=  this.maxAllowedPacket ){
 			insertProject_reservation_room_detail(project_reservation_room_details);
-			project_reservation_room_details.clear();
 		} 
 	}
 
@@ -50068,6 +51691,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				account_entry_finance_trackingStmt.setInt(offset++, account_entry_finance_tracking.finance_tracking);
 		}
 		account_entry_finance_trackingStmt.executeUpdate();
+		account_entry_finance_trackings.clear();
 		account_entry_finance_trackingInserted += size;
 
 		// elapsed time in milliseconds
@@ -50106,11 +51730,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.account_entry_finance_trackingId = account_entry_finance_trackingId;
 		} 
 	
-	private void flushAccount_entry_finance_tracking(  )
+	protected void flushAccount_entry_finance_tracking( )
+	throws SQLException {
+		flushAccount_entry_finance_tracking(false);
+	}	
+
+	private void flushAccount_entry_finance_tracking( boolean close )
 	throws SQLException {
 		if ( ! account_entry_finance_trackings.isEmpty() )
 			insertAccount_entry_finance_tracking(account_entry_finance_trackings);
-		if ( account_entry_finance_trackingStmt != null )
+		if ( close && account_entry_finance_trackingStmt != null )
 			account_entry_finance_trackingStmt.close();
 	}	
 
@@ -50137,7 +51766,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * account_entry_finance_trackingCount >=  this.maxAllowedPacket ){
 			insertAccount_entry_finance_tracking(account_entry_finance_trackings);
-			account_entry_finance_trackings.clear();
 		} 
 	}
 
@@ -50185,7 +51813,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer id; 
 		protected Integer domain; 
 		protected Integer course; 
-		protected Integer employee; 
+		protected Integer task_holder; 
 		protected Short type; 
 	}
 	
@@ -50206,7 +51834,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			course_instructorStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO course_instructor (id,domain,course,employee,type)"  
+				"INSERT INTO course_instructor (id,domain,course,task_holder,type)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			course_instructorStmtSize = size;
@@ -50227,16 +51855,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				course_instructorStmt.setNull(offset++, 4);
 			else
 				course_instructorStmt.setInt(offset++, course_instructor.course);
-			if ( course_instructor.employee == null )
+			if ( course_instructor.task_holder == null )
 				course_instructorStmt.setNull(offset++, 4);
 			else
-				course_instructorStmt.setInt(offset++, course_instructor.employee);
+				course_instructorStmt.setInt(offset++, course_instructor.task_holder);
 			if ( course_instructor.type == null )
 				course_instructorStmt.setNull(offset++, -6);
 			else
 				course_instructorStmt.setShort(offset++, course_instructor.type);
 		}
 		course_instructorStmt.executeUpdate();
+		course_instructors.clear();
 		course_instructorInserted += size;
 
 		// elapsed time in milliseconds
@@ -50275,11 +51904,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.course_instructorId = course_instructorId;
 		} 
 	
-	private void flushCourse_instructor(  )
+	protected void flushCourse_instructor( )
+	throws SQLException {
+		flushCourse_instructor(false);
+	}	
+
+	private void flushCourse_instructor( boolean close )
 	throws SQLException {
 		if ( ! course_instructors.isEmpty() )
 			insertCourse_instructor(course_instructors);
-		if ( course_instructorStmt != null )
+		if ( close && course_instructorStmt != null )
 			course_instructorStmt.close();
 	}	
 
@@ -50288,18 +51922,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param course Identificador del Curso
-	 * @param employee Identificador del Profesor
+	 * @param task_holder Identificador del Profesor
 	 * @param type Tipo de Profesor
 	 * @throws SQLException
 	*/
-	protected void insertCourse_instructor(Integer id, Integer domain, Integer course, Integer employee, Short type)
+	protected void insertCourse_instructor(Integer id, Integer domain, Integer course, Integer task_holder, Short type)
 	throws SQLException {
 
 		Course_instructor course_instructor_ = new Course_instructor();
 		course_instructor_.id = id;
 		course_instructor_.domain = domain;
 		course_instructor_.course = course;
-		course_instructor_.employee = employee;
+		course_instructor_.task_holder = task_holder;
 		course_instructor_.type = type;
 
 		course_instructors.add(course_instructor_);
@@ -50308,7 +51942,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 43 * course_instructorCount >=  this.maxAllowedPacket ){
 			insertCourse_instructor(course_instructors);
-			course_instructors.clear();
 		} 
 	}
 
@@ -50317,12 +51950,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Course_instructor
 	 * @param domain Identificador del Dominio
 	 * @param course Identificador del Curso
-	 * @param employee Identificador del Profesor
+	 * @param task_holder Identificador del Profesor
 	 * @param type Tipo de Profesor
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertCourse_instructor(Integer domain, Integer course, Integer employee, Short type)
+	public int insertCourse_instructor(Integer domain, Integer course, Integer task_holder, Short type)
 	throws SQLException {
 		int id = nextCourse_instructorId();
 
@@ -50330,7 +51963,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		course_instructor_.id = id;
 		course_instructor_.domain = domain;
 		course_instructor_.course = course;
-		course_instructor_.employee = employee;
+		course_instructor_.task_holder = task_holder;
 		course_instructor_.type = type;
 
 		course_instructors.add(course_instructor_);
@@ -50425,6 +52058,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				item_compositionStmt.setString(offset++, item_composition.discount_expr);
 		}
 		item_compositionStmt.executeUpdate();
+		item_compositions.clear();
 		item_compositionInserted += size;
 
 		// elapsed time in milliseconds
@@ -50463,11 +52097,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.item_compositionId = item_compositionId;
 		} 
 	
-	private void flushItem_composition(  )
+	protected void flushItem_composition( )
+	throws SQLException {
+		flushItem_composition(false);
+	}	
+
+	private void flushItem_composition( boolean close )
 	throws SQLException {
 		if ( ! item_compositions.isEmpty() )
 			insertItem_composition(item_compositions);
-		if ( item_compositionStmt != null )
+		if ( close && item_compositionStmt != null )
 			item_compositionStmt.close();
 	}	
 
@@ -50502,7 +52141,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 1116 * item_compositionCount >=  this.maxAllowedPacket ){
 			insertItem_composition(item_compositions);
-			item_compositions.clear();
 		} 
 	}
 
@@ -50620,6 +52258,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				agreement_level_dataStmt.setDate(offset++, agreement_level_data.end_date);
 		}
 		agreement_level_dataStmt.executeUpdate();
+		agreement_level_datas.clear();
 		agreement_level_dataInserted += size;
 
 		// elapsed time in milliseconds
@@ -50658,11 +52297,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.agreement_level_dataId = agreement_level_dataId;
 		} 
 	
-	private void flushAgreement_level_data(  )
+	protected void flushAgreement_level_data( )
+	throws SQLException {
+		flushAgreement_level_data(false);
+	}	
+
+	private void flushAgreement_level_data( boolean close )
 	throws SQLException {
 		if ( ! agreement_level_datas.isEmpty() )
 			insertAgreement_level_data(agreement_level_datas);
-		if ( agreement_level_dataStmt != null )
+		if ( close && agreement_level_dataStmt != null )
 			agreement_level_dataStmt.close();
 	}	
 
@@ -50695,7 +52339,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 210 * agreement_level_dataCount >=  this.maxAllowedPacket ){
 			insertAgreement_level_data(agreement_level_datas);
-			agreement_level_datas.clear();
 		} 
 	}
 
@@ -50836,6 +52479,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				income_detailStmt.setInt(offset++, income_detail.purchase_detail);
 		}
 		income_detailStmt.executeUpdate();
+		income_details.clear();
 		income_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -50874,11 +52518,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.income_detailId = income_detailId;
 		} 
 	
-	private void flushIncome_detail(  )
+	protected void flushIncome_detail( )
+	throws SQLException {
+		flushIncome_detail(false);
+	}	
+
+	private void flushIncome_detail( boolean close )
 	throws SQLException {
 		if ( ! income_details.isEmpty() )
 			insertIncome_detail(income_details);
-		if ( income_detailStmt != null )
+		if ( close && income_detailStmt != null )
 			income_detailStmt.close();
 	}	
 
@@ -50921,7 +52570,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 1168 * income_detailCount >=  this.maxAllowedPacket ){
 			insertIncome_detail(income_details);
-			income_details.clear();
 		} 
 	}
 
@@ -51042,6 +52690,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				workplace_departmentStmt.setBoolean(offset++, workplace_department.active);
 		}
 		workplace_departmentStmt.executeUpdate();
+		workplace_departments.clear();
 		workplace_departmentInserted += size;
 
 		// elapsed time in milliseconds
@@ -51080,11 +52729,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.workplace_departmentId = workplace_departmentId;
 		} 
 	
-	private void flushWorkplace_department(  )
+	protected void flushWorkplace_department( )
+	throws SQLException {
+		flushWorkplace_department(false);
+	}	
+
+	private void flushWorkplace_department( boolean close )
 	throws SQLException {
 		if ( ! workplace_departments.isEmpty() )
 			insertWorkplace_department(workplace_departments);
-		if ( workplace_departmentStmt != null )
+		if ( close && workplace_departmentStmt != null )
 			workplace_departmentStmt.close();
 	}	
 
@@ -51115,7 +52769,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 50 * workplace_departmentCount >=  this.maxAllowedPacket ){
 			insertWorkplace_department(workplace_departments);
-			workplace_departments.clear();
 		} 
 	}
 
@@ -51244,6 +52897,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				rmediaStmt.setInt(offset++, rmedia.raddress);
 		}
 		rmediaStmt.executeUpdate();
+		rmedias.clear();
 		rmediaInserted += size;
 
 		// elapsed time in milliseconds
@@ -51282,11 +52936,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.rmediaId = rmediaId;
 		} 
 	
-	private void flushRmedia(  )
+	protected void flushRmedia( )
+	throws SQLException {
+		flushRmedia(false);
+	}	
+
+	private void flushRmedia( boolean close )
 	throws SQLException {
 		if ( ! rmedias.isEmpty() )
 			insertRmedia(rmedias);
-		if ( rmediaStmt != null )
+		if ( close && rmediaStmt != null )
 			rmediaStmt.close();
 	}	
 
@@ -51325,7 +52984,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 171 * rmediaCount >=  this.maxAllowedPacket ){
 			insertRmedia(rmedias);
-			rmedias.clear();
 		} 
 	}
 
@@ -51386,7 +53044,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer domain; 
 		protected Timestamp date; 
 		protected Integer seller; 
-		protected Integer project; 
+		protected Integer project_commercial; 
 		protected Integer activity; 
 		protected String comments; 
 		protected Short status; 
@@ -51414,7 +53072,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			commercial_trackingStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO commercial_tracking (id,domain,date,seller,project,activity,comments,status,next_commercial_tracking,end_date,offer,allDay,location)"  
+				"INSERT INTO commercial_tracking (id,domain,date,seller,project_commercial,activity,comments,status,next_commercial_tracking,end_date,offer,allDay,location)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			commercial_trackingStmtSize = size;
@@ -51439,10 +53097,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				commercial_trackingStmt.setNull(offset++, 4);
 			else
 				commercial_trackingStmt.setInt(offset++, commercial_tracking.seller);
-			if ( commercial_tracking.project == null )
+			if ( commercial_tracking.project_commercial == null )
 				commercial_trackingStmt.setNull(offset++, 4);
 			else
-				commercial_trackingStmt.setInt(offset++, commercial_tracking.project);
+				commercial_trackingStmt.setInt(offset++, commercial_tracking.project_commercial);
 			if ( commercial_tracking.activity == null )
 				commercial_trackingStmt.setNull(offset++, 4);
 			else
@@ -51477,6 +53135,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				commercial_trackingStmt.setString(offset++, commercial_tracking.location);
 		}
 		commercial_trackingStmt.executeUpdate();
+		commercial_trackings.clear();
 		commercial_trackingInserted += size;
 
 		// elapsed time in milliseconds
@@ -51515,11 +53174,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.commercial_trackingId = commercial_trackingId;
 		} 
 	
-	private void flushCommercial_tracking(  )
+	protected void flushCommercial_tracking( )
+	throws SQLException {
+		flushCommercial_tracking(false);
+	}	
+
+	private void flushCommercial_tracking( boolean close )
 	throws SQLException {
 		if ( ! commercial_trackings.isEmpty() )
 			insertCommercial_tracking(commercial_trackings);
-		if ( commercial_trackingStmt != null )
+		if ( close && commercial_trackingStmt != null )
 			commercial_trackingStmt.close();
 	}	
 
@@ -51529,7 +53193,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param date Fecha del Seguimiento Comercial
 	 * @param seller Identificador del Comercial
-	 * @param project Identificador del Proyecto
+	 * @param project_commercial Identificador del Proyecto
 	 * @param activity Identificador de la Actividad Comercial
 	 * @param comments Comentarios del Seguimiento Comercial
 	 * @param status Estado del Seguimiento Comercial
@@ -51540,7 +53204,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param location Ubicacion del Seguimiento Comercial
 	 * @throws SQLException
 	*/
-	protected void insertCommercial_tracking(Integer id, Integer domain, Timestamp date, Integer seller, Integer project, Integer activity, String comments, Short status, Integer next_commercial_tracking, Timestamp end_date, Integer offer, Boolean allDay, String location)
+	protected void insertCommercial_tracking(Integer id, Integer domain, Timestamp date, Integer seller, Integer project_commercial, Integer activity, String comments, Short status, Integer next_commercial_tracking, Timestamp end_date, Integer offer, Boolean allDay, String location)
 	throws SQLException {
 
 		Commercial_tracking commercial_tracking_ = new Commercial_tracking();
@@ -51548,7 +53212,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		commercial_tracking_.domain = domain;
 		commercial_tracking_.date = date;
 		commercial_tracking_.seller = seller;
-		commercial_tracking_.project = project;
+		commercial_tracking_.project_commercial = project_commercial;
 		commercial_tracking_.activity = activity;
 		commercial_tracking_.comments = comments;
 		commercial_tracking_.status = status;
@@ -51564,7 +53228,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 366 * commercial_trackingCount >=  this.maxAllowedPacket ){
 			insertCommercial_tracking(commercial_trackings);
-			commercial_trackings.clear();
 		} 
 	}
 
@@ -51574,7 +53237,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param date Fecha del Seguimiento Comercial
 	 * @param seller Identificador del Comercial
-	 * @param project Identificador del Proyecto
+	 * @param project_commercial Identificador del Proyecto
 	 * @param activity Identificador de la Actividad Comercial
 	 * @param comments Comentarios del Seguimiento Comercial
 	 * @param status Estado del Seguimiento Comercial
@@ -51586,7 +53249,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertCommercial_tracking(Integer domain, Timestamp date, Integer seller, Integer project, Integer activity, String comments, Short status, Integer next_commercial_tracking, Timestamp end_date, Integer offer, Boolean allDay, String location)
+	public int insertCommercial_tracking(Integer domain, Timestamp date, Integer seller, Integer project_commercial, Integer activity, String comments, Short status, Integer next_commercial_tracking, Timestamp end_date, Integer offer, Boolean allDay, String location)
 	throws SQLException {
 		int id = nextCommercial_trackingId();
 
@@ -51595,7 +53258,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		commercial_tracking_.domain = domain;
 		commercial_tracking_.date = date;
 		commercial_tracking_.seller = seller;
-		commercial_tracking_.project = project;
+		commercial_tracking_.project_commercial = project_commercial;
 		commercial_tracking_.activity = activity;
 		commercial_tracking_.comments = comments;
 		commercial_tracking_.status = status;
@@ -51727,6 +53390,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				raddressStmt.setString(offset++, raddress.alias);
 		}
 		raddressStmt.executeUpdate();
+		raddresss.clear();
 		raddressInserted += size;
 
 		// elapsed time in milliseconds
@@ -51765,11 +53429,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.raddressId = raddressId;
 		} 
 	
-	private void flushRaddress(  )
+	protected void flushRaddress( )
+	throws SQLException {
+		flushRaddress(false);
+	}	
+
+	private void flushRaddress( boolean close )
 	throws SQLException {
 		if ( ! raddresss.isEmpty() )
 			insertRaddress(raddresss);
-		if ( raddressStmt != null )
+		if ( close && raddressStmt != null )
 			raddressStmt.close();
 	}	
 
@@ -51816,7 +53485,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 664 * raddressCount >=  this.maxAllowedPacket ){
 			insertRaddress(raddresss);
-			raddresss.clear();
 		} 
 	}
 
@@ -51931,6 +53599,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				actionStmt.setInt(offset++, action.application);
 		}
 		actionStmt.executeUpdate();
+		actions.clear();
 		actionInserted += size;
 
 		// elapsed time in milliseconds
@@ -51969,11 +53638,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.actionId = actionId;
 		} 
 	
-	private void flushAction(  )
+	protected void flushAction( )
+	throws SQLException {
+		flushAction(false);
+	}	
+
+	private void flushAction( boolean close )
 	throws SQLException {
 		if ( ! actions.isEmpty() )
 			insertAction(actions);
-		if ( actionStmt != null )
+		if ( close && actionStmt != null )
 			actionStmt.close();
 	}	
 
@@ -52000,7 +53674,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 84 * actionCount >=  this.maxAllowedPacket ){
 			insertAction(actions);
-			actions.clear();
 		} 
 	}
 
@@ -52047,6 +53720,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	public static class Survey {
 		protected Integer id; 
 		protected Integer domain; 
+		protected Integer scope; 
 		protected Boolean active; 
 		protected Timestamp creationDate; 
 		protected String description; 
@@ -52060,7 +53734,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( surveyStmt != null ) {
 				surveyStmt.close();
 			}
-			String values = "(?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -52069,7 +53743,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			surveyStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO survey (id,domain,active,creationDate,description)"  
+				"INSERT INTO survey (id,domain,scope,active,creationDate,description)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			surveyStmtSize = size;
@@ -52086,6 +53760,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				surveyStmt.setNull(offset++, 4);
 			else
 				surveyStmt.setInt(offset++, survey.domain);
+			if ( survey.scope == null )
+				surveyStmt.setNull(offset++, 4);
+			else
+				surveyStmt.setInt(offset++, survey.scope);
 			if ( survey.active == null )
 				surveyStmt.setNull(offset++, -7);
 			else
@@ -52100,6 +53778,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				surveyStmt.setString(offset++, survey.description);
 		}
 		surveyStmt.executeUpdate();
+		surveys.clear();
 		surveyInserted += size;
 
 		// elapsed time in milliseconds
@@ -52138,11 +53817,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.surveyId = surveyId;
 		} 
 	
-	private void flushSurvey(  )
+	protected void flushSurvey( )
+	throws SQLException {
+		flushSurvey(false);
+	}	
+
+	private void flushSurvey( boolean close )
 	throws SQLException {
 		if ( ! surveys.isEmpty() )
 			insertSurvey(surveys);
-		if ( surveyStmt != null )
+		if ( close && surveyStmt != null )
 			surveyStmt.close();
 	}	
 
@@ -52150,17 +53834,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Survey
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
+	 * @param scope Identificador del Ambito
 	 * @param active Indica si el Cuestionario esta activa o no
 	 * @param creationDate Fecha de creacion del Cuestionario
 	 * @param description Descripcion del Cuestionario
 	 * @throws SQLException
 	*/
-	protected void insertSurvey(Integer id, Integer domain, Boolean active, Timestamp creationDate, String description)
+	protected void insertSurvey(Integer id, Integer domain, Integer scope, Boolean active, Timestamp creationDate, String description)
 	throws SQLException {
 
 		Survey survey_ = new Survey();
 		survey_.id = id;
 		survey_.domain = domain;
+		survey_.scope = scope;
 		survey_.active = active;
 		survey_.creationDate = creationDate;
 		survey_.description = description;
@@ -52169,9 +53855,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int surveyCount = surveys.size();
 		
-		if ( 103 * surveyCount >=  this.maxAllowedPacket ){
+		if ( 113 * surveyCount >=  this.maxAllowedPacket ){
 			insertSurvey(surveys);
-			surveys.clear();
 		} 
 	}
 
@@ -52179,19 +53864,21 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Survey
 	 * @param domain Identificador del Dominio
+	 * @param scope Identificador del Ambito
 	 * @param active Indica si el Cuestionario esta activa o no
 	 * @param creationDate Fecha de creacion del Cuestionario
 	 * @param description Descripcion del Cuestionario
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertSurvey(Integer domain, Boolean active, Timestamp creationDate, String description)
+	public int insertSurvey(Integer domain, Integer scope, Boolean active, Timestamp creationDate, String description)
 	throws SQLException {
 		int id = nextSurveyId();
 
 		Survey survey_ = new Survey();
 		survey_.id = id;
 		survey_.domain = domain;
+		survey_.scope = scope;
 		survey_.active = active;
 		survey_.creationDate = creationDate;
 		survey_.description = description;
@@ -52200,7 +53887,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int surveyCount = surveys.size();
 		
-		if ( 103 * surveyCount >=  this.maxAllowedPacket ){
+		if ( 113 * surveyCount >=  this.maxAllowedPacket ){
 			insertSurvey(surveys);
 			surveys.clear();
 		} 
@@ -52283,6 +53970,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				survey_response_detailStmt.setInt(offset++, survey_response_detail.surveyResponse);
 		}
 		survey_response_detailStmt.executeUpdate();
+		survey_response_details.clear();
 		survey_response_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -52321,11 +54009,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.survey_response_detailId = survey_response_detailId;
 		} 
 	
-	private void flushSurvey_response_detail(  )
+	protected void flushSurvey_response_detail( )
+	throws SQLException {
+		flushSurvey_response_detail(false);
+	}	
+
+	private void flushSurvey_response_detail( boolean close )
 	throws SQLException {
 		if ( ! survey_response_details.isEmpty() )
 			insertSurvey_response_detail(survey_response_details);
-		if ( survey_response_detailStmt != null )
+		if ( close && survey_response_detailStmt != null )
 			survey_response_detailStmt.close();
 	}	
 
@@ -52358,7 +54051,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 1098 * survey_response_detailCount >=  this.maxAllowedPacket ){
 			insertSurvey_response_detail(survey_response_details);
-			survey_response_details.clear();
 		} 
 	}
 
@@ -52469,6 +54161,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				raddinfoStmt.setDate(offset++, raddinfo.value_date);
 		}
 		raddinfoStmt.executeUpdate();
+		raddinfos.clear();
 		raddinfoInserted += size;
 
 		// elapsed time in milliseconds
@@ -52507,11 +54200,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.raddinfoId = raddinfoId;
 		} 
 	
-	private void flushRaddinfo(  )
+	protected void flushRaddinfo( )
+	throws SQLException {
+		flushRaddinfo(false);
+	}	
+
+	private void flushRaddinfo( boolean close )
 	throws SQLException {
 		if ( ! raddinfos.isEmpty() )
 			insertRaddinfo(raddinfos);
-		if ( raddinfoStmt != null )
+		if ( close && raddinfoStmt != null )
 			raddinfoStmt.close();
 	}	
 
@@ -52542,7 +54240,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 200 * raddinfoCount >=  this.maxAllowedPacket ){
 			insertRaddinfo(raddinfos);
-			raddinfos.clear();
 		} 
 	}
 
@@ -52646,6 +54343,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoicing_group_detailStmt.setBoolean(offset++, invoicing_group_detail.grouped);
 		}
 		invoicing_group_detailStmt.executeUpdate();
+		invoicing_group_details.clear();
 		invoicing_group_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -52684,11 +54382,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.invoicing_group_detailId = invoicing_group_detailId;
 		} 
 	
-	private void flushInvoicing_group_detail(  )
+	protected void flushInvoicing_group_detail( )
+	throws SQLException {
+		flushInvoicing_group_detail(false);
+	}	
+
+	private void flushInvoicing_group_detail( boolean close )
 	throws SQLException {
 		if ( ! invoicing_group_details.isEmpty() )
 			insertInvoicing_group_detail(invoicing_group_details);
-		if ( invoicing_group_detailStmt != null )
+		if ( close && invoicing_group_detailStmt != null )
 			invoicing_group_detailStmt.close();
 	}	
 
@@ -52717,7 +54420,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * invoicing_group_detailCount >=  this.maxAllowedPacket ){
 			insertInvoicing_group_detail(invoicing_group_details);
-			invoicing_group_details.clear();
 		} 
 	}
 
@@ -52829,6 +54531,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				commission_itemStmt.setDouble(offset++, commission_item.rate);
 		}
 		commission_itemStmt.executeUpdate();
+		commission_items.clear();
 		commission_itemInserted += size;
 
 		// elapsed time in milliseconds
@@ -52867,11 +54570,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.commission_itemId = commission_itemId;
 		} 
 	
-	private void flushCommission_item(  )
+	protected void flushCommission_item( )
+	throws SQLException {
+		flushCommission_item(false);
+	}	
+
+	private void flushCommission_item( boolean close )
 	throws SQLException {
 		if ( ! commission_items.isEmpty() )
 			insertCommission_item(commission_items);
-		if ( commission_itemStmt != null )
+		if ( close && commission_itemStmt != null )
 			commission_itemStmt.close();
 	}	
 
@@ -52904,7 +54612,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 90 * commission_itemCount >=  this.maxAllowedPacket ){
 			insertCommission_item(commission_items);
-			commission_items.clear();
 		} 
 	}
 
@@ -53005,6 +54712,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				campaign_typeStmt.setBoolean(offset++, campaign_type.active);
 		}
 		campaign_typeStmt.executeUpdate();
+		campaign_types.clear();
 		campaign_typeInserted += size;
 
 		// elapsed time in milliseconds
@@ -53043,11 +54751,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.campaign_typeId = campaign_typeId;
 		} 
 	
-	private void flushCampaign_type(  )
+	protected void flushCampaign_type( )
+	throws SQLException {
+		flushCampaign_type(false);
+	}	
+
+	private void flushCampaign_type( boolean close )
 	throws SQLException {
 		if ( ! campaign_types.isEmpty() )
 			insertCampaign_type(campaign_types);
-		if ( campaign_typeStmt != null )
+		if ( close && campaign_typeStmt != null )
 			campaign_typeStmt.close();
 	}	
 
@@ -53074,7 +54787,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 52 * campaign_typeCount >=  this.maxAllowedPacket ){
 			insertCampaign_type(campaign_types);
-			campaign_types.clear();
 		} 
 	}
 
@@ -53184,6 +54896,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				catalogue_itemStmt.setDouble(offset++, catalogue_item.discount);
 		}
 		catalogue_itemStmt.executeUpdate();
+		catalogue_items.clear();
 		catalogue_itemInserted += size;
 
 		// elapsed time in milliseconds
@@ -53222,11 +54935,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.catalogue_itemId = catalogue_itemId;
 		} 
 	
-	private void flushCatalogue_item(  )
+	protected void flushCatalogue_item( )
+	throws SQLException {
+		flushCatalogue_item(false);
+	}	
+
+	private void flushCatalogue_item( boolean close )
 	throws SQLException {
 		if ( ! catalogue_items.isEmpty() )
 			insertCatalogue_item(catalogue_items);
-		if ( catalogue_itemStmt != null )
+		if ( close && catalogue_itemStmt != null )
 			catalogue_itemStmt.close();
 	}	
 
@@ -53259,7 +54977,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 90 * catalogue_itemCount >=  this.maxAllowedPacket ){
 			insertCatalogue_item(catalogue_items);
-			catalogue_items.clear();
 		} 
 	}
 
@@ -53360,6 +55077,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				academic_skillStmt.setString(offset++, academic_skill.description);
 		}
 		academic_skillStmt.executeUpdate();
+		academic_skills.clear();
 		academic_skillInserted += size;
 
 		// elapsed time in milliseconds
@@ -53398,11 +55116,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.academic_skillId = academic_skillId;
 		} 
 	
-	private void flushAcademic_skill(  )
+	protected void flushAcademic_skill( )
+	throws SQLException {
+		flushAcademic_skill(false);
+	}	
+
+	private void flushAcademic_skill( boolean close )
 	throws SQLException {
 		if ( ! academic_skills.isEmpty() )
 			insertAcademic_skill(academic_skills);
-		if ( academic_skillStmt != null )
+		if ( close && academic_skillStmt != null )
 			academic_skillStmt.close();
 	}	
 
@@ -53429,7 +55152,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 89 * academic_skillCount >=  this.maxAllowedPacket ){
 			insertAcademic_skill(academic_skills);
-			academic_skills.clear();
 		} 
 	}
 
@@ -53554,6 +55276,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				offer_detailStmt.setShort(offset++, offer_detail.status);
 		}
 		offer_detailStmt.executeUpdate();
+		offer_details.clear();
 		offer_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -53592,11 +55315,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.offer_detailId = offer_detailId;
 		} 
 	
-	private void flushOffer_detail(  )
+	protected void flushOffer_detail( )
+	throws SQLException {
+		flushOffer_detail(false);
+	}	
+
+	private void flushOffer_detail( boolean close )
 	throws SQLException {
 		if ( ! offer_details.isEmpty() )
 			insertOffer_detail(offer_details);
-		if ( offer_detailStmt != null )
+		if ( close && offer_detailStmt != null )
 			offer_detailStmt.close();
 	}	
 
@@ -53605,9 +55333,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param id Identificador unico del Detalle de Presupuesto
 	 * @param domain Identificador del Dominio
 	 * @param offer Identificador del Presupuesto
-	 * @param line Numero de l?nea del Detalle dentro del Presupuesto
+	 * @param line Numero de lnea del Detalle dentro del Presupuesto
 	 * @param item Identificador del Articulo
-	 * @param description Descripci?n del Articulo
+	 * @param description Descripcin del Articulo
 	 * @param quantity Cantidad del Articulo
 	 * @param price Precio del Articulo
 	 * @param discount_expr Descuentos del Articulo
@@ -53635,7 +55363,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 1141 * offer_detailCount >=  this.maxAllowedPacket ){
 			insertOffer_detail(offer_details);
-			offer_details.clear();
 		} 
 	}
 
@@ -53644,9 +55371,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Offer_detail
 	 * @param domain Identificador del Dominio
 	 * @param offer Identificador del Presupuesto
-	 * @param line Numero de l?nea del Detalle dentro del Presupuesto
+	 * @param line Numero de lnea del Detalle dentro del Presupuesto
 	 * @param item Identificador del Articulo
-	 * @param description Descripci?n del Articulo
+	 * @param description Descripcin del Articulo
 	 * @param quantity Cantidad del Articulo
 	 * @param price Precio del Articulo
 	 * @param discount_expr Descuentos del Articulo
@@ -53708,6 +55435,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer enterprise_activity; 
 		protected Short ss_regime; 
 		protected Integer agreement_level_category; 
+		protected Short model; 
 	}
 	
 	protected void insertContract( List<Contract> contracts )
@@ -53718,7 +55446,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( contractStmt != null ) {
 				contractStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -53727,7 +55455,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			contractStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO contract (id,domain,person,workplace,enterprise_ccc,start_date,end_date,calendar,document,description,status,registration,seniority_date,enterprise_activity,ss_regime,agreement_level_category)"  
+				"INSERT INTO contract (id,domain,person,workplace,enterprise_ccc,start_date,end_date,calendar,document,description,status,registration,seniority_date,enterprise_activity,ss_regime,agreement_level_category,model)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			contractStmtSize = size;
@@ -53800,8 +55528,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contractStmt.setNull(offset++, 4);
 			else
 				contractStmt.setInt(offset++, contract.agreement_level_category);
+			if ( contract.model == null )
+				contractStmt.setNull(offset++, -6);
+			else
+				contractStmt.setShort(offset++, contract.model);
 		}
 		contractStmt.executeUpdate();
+		contracts.clear();
 		contractInserted += size;
 
 		// elapsed time in milliseconds
@@ -53840,11 +55573,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.contractId = contractId;
 		} 
 	
-	private void flushContract(  )
+	protected void flushContract( )
+	throws SQLException {
+		flushContract(false);
+	}	
+
+	private void flushContract( boolean close )
 	throws SQLException {
 		if ( ! contracts.isEmpty() )
 			insertContract(contracts);
-		if ( contractStmt != null )
+		if ( close && contractStmt != null )
 			contractStmt.close();
 	}	
 
@@ -53861,14 +55599,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param document Impreso (.pdf) del contrato.
 	 * @param description Descripcion
 	 * @param status Estado de notificacion del contrato
-	 * @param registration N?mero libro de matricula
+	 * @param registration Nmero libro de matricula
 	 * @param seniority_date Fecha de antiguedad
 	 * @param enterprise_activity Actividad
 	 * @param ss_regime Regimen de la Seguridad Social
 	 * @param agreement_level_category Identificador unico de la Categoria Profesional
+	 * @param model Indica el modelo de documento del contrato
 	 * @throws SQLException
 	*/
-	protected void insertContract(Integer id, Integer domain, Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, Blob document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category)
+	protected void insertContract(Integer id, Integer domain, Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, Blob document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category, Short model)
 	throws SQLException {
 
 		Contract contract_ = new Contract();
@@ -53888,14 +55627,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		contract_.enterprise_activity = enterprise_activity;
 		contract_.ss_regime = ss_regime;
 		contract_.agreement_level_category = agreement_level_category;
+		contract_.model = model;
 
 		contracts.add(contract_);
 		
 		int contractCount = contracts.size();
 		
-		if ( 190 * contractCount >=  this.maxAllowedPacket ){
+		if ( 193 * contractCount >=  this.maxAllowedPacket ){
 			insertContract(contracts);
-			contracts.clear();
 		} 
 	}
 
@@ -53912,15 +55651,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param document Impreso (.pdf) del contrato.
 	 * @param description Descripcion
 	 * @param status Estado de notificacion del contrato
-	 * @param registration N?mero libro de matricula
+	 * @param registration Nmero libro de matricula
 	 * @param seniority_date Fecha de antiguedad
 	 * @param enterprise_activity Actividad
 	 * @param ss_regime Regimen de la Seguridad Social
 	 * @param agreement_level_category Identificador unico de la Categoria Profesional
+	 * @param model Indica el modelo de documento del contrato
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertContract(Integer domain, Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, Blob document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category)
+	public int insertContract(Integer domain, Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, Blob document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category, Short model)
 	throws SQLException {
 		int id = nextContractId();
 
@@ -53941,14 +55681,247 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		contract_.enterprise_activity = enterprise_activity;
 		contract_.ss_regime = ss_regime;
 		contract_.agreement_level_category = agreement_level_category;
+		contract_.model = model;
 
 		contracts.add(contract_);
 		
 		int contractCount = contracts.size();
 		
-		if ( 190 * contractCount >=  this.maxAllowedPacket ){
+		if ( 193 * contractCount >=  this.maxAllowedPacket ){
 			insertContract(contracts);
 			contracts.clear();
+		} 
+		return id;
+	}
+
+
+	private int fs_batchStmtSize = 0;
+
+	private int fs_batchInserted = 0;
+
+	private List<Fs_batch> fs_batchs = 
+		new LinkedList<Fs_batch>();
+
+	private PreparedStatement fs_batchStmt = null;
+
+	public static class Fs_batch {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Date date; 
+		protected Short administration; 
+		protected Integer year; 
+		protected Short period; 
+		protected Short security_level; 
+		protected Short type; 
+		protected Date issue_date; 
+		protected Blob data; 
+		protected String comments; 
+	}
+	
+	protected void insertFs_batch( List<Fs_batch> fs_batchs )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = fs_batchs.size();
+		if ( fs_batchStmtSize != size ) {
+			if ( fs_batchStmt != null ) {
+				fs_batchStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			fs_batchStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO fs_batch (id,domain,date,administration,year,period,security_level,type,issue_date,data,comments)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			fs_batchStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Fs_batch fs_batch : fs_batchs) {
+			if ( fs_batch.id == null )
+				fs_batchStmt.setNull(offset++, 4);
+			else
+				fs_batchStmt.setInt(offset++, fs_batch.id);
+			if ( fs_batch.domain == null )
+				fs_batchStmt.setNull(offset++, 4);
+			else
+				fs_batchStmt.setInt(offset++, fs_batch.domain);
+			if ( fs_batch.date == null )
+				fs_batchStmt.setNull(offset++, 91);
+			else
+				fs_batchStmt.setDate(offset++, fs_batch.date);
+			if ( fs_batch.administration == null )
+				fs_batchStmt.setNull(offset++, -6);
+			else
+				fs_batchStmt.setShort(offset++, fs_batch.administration);
+			if ( fs_batch.year == null )
+				fs_batchStmt.setNull(offset++, 4);
+			else
+				fs_batchStmt.setInt(offset++, fs_batch.year);
+			if ( fs_batch.period == null )
+				fs_batchStmt.setNull(offset++, -6);
+			else
+				fs_batchStmt.setShort(offset++, fs_batch.period);
+			if ( fs_batch.security_level == null )
+				fs_batchStmt.setNull(offset++, -6);
+			else
+				fs_batchStmt.setShort(offset++, fs_batch.security_level);
+			if ( fs_batch.type == null )
+				fs_batchStmt.setNull(offset++, -6);
+			else
+				fs_batchStmt.setShort(offset++, fs_batch.type);
+			if ( fs_batch.issue_date == null )
+				fs_batchStmt.setNull(offset++, 91);
+			else
+				fs_batchStmt.setDate(offset++, fs_batch.issue_date);
+			if ( fs_batch.data == null )
+				fs_batchStmt.setNull(offset++, -4);
+			else
+				fs_batchStmt.setBlob(offset++, fs_batch.data);
+			if ( fs_batch.comments == null )
+				fs_batchStmt.setNull(offset++, -1);
+			else
+				fs_batchStmt.setString(offset++, fs_batch.comments);
+		}
+		fs_batchStmt.executeUpdate();
+		fs_batchs.clear();
+		fs_batchInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Fs_batchs in {} milliseconds.", size, fs_batchInserted, elapsed );		
+	}
+		
+		private int fs_batchId = -1;
+		
+		private void initFs_batchId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `fs_batch`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.fs_batchId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextFs_batchId() {
+			return ++this.fs_batchId;
+		} 
+
+		public void setFs_batchId(Integer fs_batchId) {
+			this.fs_batchId = fs_batchId;
+		} 
+	
+	protected void flushFs_batch( )
+	throws SQLException {
+		flushFs_batch(false);
+	}	
+
+	private void flushFs_batch( boolean close )
+	throws SQLException {
+		if ( ! fs_batchs.isEmpty() )
+			insertFs_batch(fs_batchs);
+		if ( close && fs_batchStmt != null )
+			fs_batchStmt.close();
+	}	
+
+	/**
+	 * Fs_batch
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param date Fecha de creacion del Lote
+	 * @param administration Administracion
+	 * @param year Ejercicio del Lote
+	 * @param period Periodo del Lote
+	 * @param security_level Nivel de seguridad
+	 * @param type Tipo de Declaracion/Impuesto
+	 * @param issue_date Fecha de generacion del archivo
+	 * @param data Archivo Generado
+	 * @param comments Comentarios del Lote
+	 * @throws SQLException
+	*/
+	protected void insertFs_batch(Integer id, Integer domain, Date date, Short administration, Integer year, Short period, Short security_level, Short type, Date issue_date, Blob data, String comments)
+	throws SQLException {
+
+		Fs_batch fs_batch_ = new Fs_batch();
+		fs_batch_.id = id;
+		fs_batch_.domain = domain;
+		fs_batch_.date = date;
+		fs_batch_.administration = administration;
+		fs_batch_.year = year;
+		fs_batch_.period = period;
+		fs_batch_.security_level = security_level;
+		fs_batch_.type = type;
+		fs_batch_.issue_date = issue_date;
+		fs_batch_.data = data;
+		fs_batch_.comments = comments;
+
+		fs_batchs.add(fs_batch_);
+		
+		int fs_batchCount = fs_batchs.size();
+		
+		if ( 62 * fs_batchCount >=  this.maxAllowedPacket ){
+			insertFs_batch(fs_batchs);
+		} 
+	}
+
+
+	/**
+	 * Fs_batch
+	 * @param domain Identificador del Dominio
+	 * @param date Fecha de creacion del Lote
+	 * @param administration Administracion
+	 * @param year Ejercicio del Lote
+	 * @param period Periodo del Lote
+	 * @param security_level Nivel de seguridad
+	 * @param type Tipo de Declaracion/Impuesto
+	 * @param issue_date Fecha de generacion del archivo
+	 * @param data Archivo Generado
+	 * @param comments Comentarios del Lote
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertFs_batch(Integer domain, Date date, Short administration, Integer year, Short period, Short security_level, Short type, Date issue_date, Blob data, String comments)
+	throws SQLException {
+		int id = nextFs_batchId();
+
+		Fs_batch fs_batch_ = new Fs_batch();
+		fs_batch_.id = id;
+		fs_batch_.domain = domain;
+		fs_batch_.date = date;
+		fs_batch_.administration = administration;
+		fs_batch_.year = year;
+		fs_batch_.period = period;
+		fs_batch_.security_level = security_level;
+		fs_batch_.type = type;
+		fs_batch_.issue_date = issue_date;
+		fs_batch_.data = data;
+		fs_batch_.comments = comments;
+
+		fs_batchs.add(fs_batch_);
+		
+		int fs_batchCount = fs_batchs.size();
+		
+		if ( 62 * fs_batchCount >=  this.maxAllowedPacket ){
+			insertFs_batch(fs_batchs);
+			fs_batchs.clear();
 		} 
 		return id;
 	}
@@ -53967,7 +55940,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer id; 
 		protected Integer domain; 
 		protected String description; 
-		protected Integer amortization_type; 
 		protected Date initial_date; 
 		protected Date deadline; 
 		protected Double amount; 
@@ -53989,7 +55961,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( amortizationStmt != null ) {
 				amortizationStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -53998,7 +55970,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			amortizationStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO amortization (id,domain,description,amortization_type,initial_date,deadline,amount,fee_period,sale_amount,comments,fixed_asset_account,accumulated_account,allocation_account,percentage,security_level)"  
+				"INSERT INTO amortization (id,domain,description,initial_date,deadline,amount,fee_period,sale_amount,comments,fixed_asset_account,accumulated_account,allocation_account,percentage,security_level)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			amortizationStmtSize = size;
@@ -54019,10 +55991,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				amortizationStmt.setNull(offset++, 12);
 			else
 				amortizationStmt.setString(offset++, amortization.description);
-			if ( amortization.amortization_type == null )
-				amortizationStmt.setNull(offset++, 4);
-			else
-				amortizationStmt.setInt(offset++, amortization.amortization_type);
 			if ( amortization.initial_date == null )
 				amortizationStmt.setNull(offset++, 91);
 			else
@@ -54069,6 +56037,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				amortizationStmt.setShort(offset++, amortization.security_level);
 		}
 		amortizationStmt.executeUpdate();
+		amortizations.clear();
 		amortizationInserted += size;
 
 		// elapsed time in milliseconds
@@ -54107,11 +56076,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.amortizationId = amortizationId;
 		} 
 	
-	private void flushAmortization(  )
+	protected void flushAmortization( )
+	throws SQLException {
+		flushAmortization(false);
+	}	
+
+	private void flushAmortization( boolean close )
 	throws SQLException {
 		if ( ! amortizations.isEmpty() )
 			insertAmortization(amortizations);
-		if ( amortizationStmt != null )
+		if ( close && amortizationStmt != null )
 			amortizationStmt.close();
 	}	
 
@@ -54120,7 +56094,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param description Descripcion del inmovilizado
-	 * @param amortization_type Tipo de Amortizacion
 	 * @param initial_date Fecha de inicio de la Amortizacion
 	 * @param deadline Fecha de baja de la Amortizacion
 	 * @param amount Importe a amortizar.
@@ -54134,14 +56107,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param security_level Nivel de seguridad
 	 * @throws SQLException
 	*/
-	protected void insertAmortization(Integer id, Integer domain, String description, Integer amortization_type, Date initial_date, Date deadline, Double amount, Short fee_period, Double sale_amount, String comments, Integer fixed_asset_account, Integer accumulated_account, Integer allocation_account, Double percentage, Short security_level)
+	protected void insertAmortization(Integer id, Integer domain, String description, Date initial_date, Date deadline, Double amount, Short fee_period, Double sale_amount, String comments, Integer fixed_asset_account, Integer accumulated_account, Integer allocation_account, Double percentage, Short security_level)
 	throws SQLException {
 
 		Amortization amortization_ = new Amortization();
 		amortization_.id = id;
 		amortization_.domain = domain;
 		amortization_.description = description;
-		amortization_.amortization_type = amortization_type;
 		amortization_.initial_date = initial_date;
 		amortization_.deadline = deadline;
 		amortization_.amount = amount;
@@ -54158,9 +56130,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int amortizationCount = amortizations.size();
 		
-		if ( 216 * amortizationCount >=  this.maxAllowedPacket ){
+		if ( 206 * amortizationCount >=  this.maxAllowedPacket ){
 			insertAmortization(amortizations);
-			amortizations.clear();
 		} 
 	}
 
@@ -54169,7 +56140,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Amortization
 	 * @param domain Identificador del Dominio
 	 * @param description Descripcion del inmovilizado
-	 * @param amortization_type Tipo de Amortizacion
 	 * @param initial_date Fecha de inicio de la Amortizacion
 	 * @param deadline Fecha de baja de la Amortizacion
 	 * @param amount Importe a amortizar.
@@ -54184,7 +56154,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertAmortization(Integer domain, String description, Integer amortization_type, Date initial_date, Date deadline, Double amount, Short fee_period, Double sale_amount, String comments, Integer fixed_asset_account, Integer accumulated_account, Integer allocation_account, Double percentage, Short security_level)
+	public int insertAmortization(Integer domain, String description, Date initial_date, Date deadline, Double amount, Short fee_period, Double sale_amount, String comments, Integer fixed_asset_account, Integer accumulated_account, Integer allocation_account, Double percentage, Short security_level)
 	throws SQLException {
 		int id = nextAmortizationId();
 
@@ -54192,7 +56162,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		amortization_.id = id;
 		amortization_.domain = domain;
 		amortization_.description = description;
-		amortization_.amortization_type = amortization_type;
 		amortization_.initial_date = initial_date;
 		amortization_.deadline = deadline;
 		amortization_.amount = amount;
@@ -54209,7 +56178,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int amortizationCount = amortizations.size();
 		
-		if ( 216 * amortizationCount >=  this.maxAllowedPacket ){
+		if ( 206 * amortizationCount >=  this.maxAllowedPacket ){
 			insertAmortization(amortizations);
 			amortizations.clear();
 		} 
@@ -54277,6 +56246,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				enterpriseStmt.setInt(offset++, enterprise.calendar);
 		}
 		enterpriseStmt.executeUpdate();
+		enterprises.clear();
 		enterpriseInserted += size;
 
 		// elapsed time in milliseconds
@@ -54285,11 +56255,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 		
 	
-	private void flushEnterprise(  )
+	protected void flushEnterprise( )
+	throws SQLException {
+		flushEnterprise(false);
+	}	
+
+	private void flushEnterprise( boolean close )
 	throws SQLException {
 		if ( ! enterprises.isEmpty() )
 			insertEnterprise(enterprises);
-		if ( enterpriseStmt != null )
+		if ( close && enterpriseStmt != null )
 			enterpriseStmt.close();
 	}	
 
@@ -54316,7 +56291,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * enterpriseCount >=  this.maxAllowedPacket ){
 			insertEnterprise(enterprises);
-			enterprises.clear();
 		} 
 	}
 
@@ -54392,6 +56366,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				markStmt.setDouble(offset++, mark.mark);
 		}
 		markStmt.executeUpdate();
+		marks.clear();
 		markInserted += size;
 
 		// elapsed time in milliseconds
@@ -54430,11 +56405,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.markId = markId;
 		} 
 	
-	private void flushMark(  )
+	protected void flushMark( )
+	throws SQLException {
+		flushMark(false);
+	}	
+
+	private void flushMark( boolean close )
 	throws SQLException {
 		if ( ! marks.isEmpty() )
 			insertMark(marks);
-		if ( markStmt != null )
+		if ( close && markStmt != null )
 			markStmt.close();
 	}	
 
@@ -54465,7 +56445,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 58 * markCount >=  this.maxAllowedPacket ){
 			insertMark(marks);
-			marks.clear();
 		} 
 	}
 
@@ -54574,6 +56553,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				catalogue_categoryStmt.setDouble(offset++, catalogue_category.discount);
 		}
 		catalogue_categoryStmt.executeUpdate();
+		catalogue_categorys.clear();
 		catalogue_categoryInserted += size;
 
 		// elapsed time in milliseconds
@@ -54612,11 +56592,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.catalogue_categoryId = catalogue_categoryId;
 		} 
 	
-	private void flushCatalogue_category(  )
+	protected void flushCatalogue_category( )
+	throws SQLException {
+		flushCatalogue_category(false);
+	}	
+
+	private void flushCatalogue_category( boolean close )
 	throws SQLException {
 		if ( ! catalogue_categorys.isEmpty() )
 			insertCatalogue_category(catalogue_categorys);
-		if ( catalogue_categoryStmt != null )
+		if ( close && catalogue_categoryStmt != null )
 			catalogue_categoryStmt.close();
 	}	
 
@@ -54647,7 +56632,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 68 * catalogue_categoryCount >=  this.maxAllowedPacket ){
 			insertCatalogue_category(catalogue_categorys);
-			catalogue_categorys.clear();
 		} 
 	}
 
@@ -54746,6 +56730,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				geozone_irpf_descendantStmt.setDouble(offset++, geozone_irpf_descendant.percent);
 		}
 		geozone_irpf_descendantStmt.executeUpdate();
+		geozone_irpf_descendants.clear();
 		geozone_irpf_descendantInserted += size;
 
 		// elapsed time in milliseconds
@@ -54784,11 +56769,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.geozone_irpf_descendantId = geozone_irpf_descendantId;
 		} 
 	
-	private void flushGeozone_irpf_descendant(  )
+	protected void flushGeozone_irpf_descendant( )
+	throws SQLException {
+		flushGeozone_irpf_descendant(false);
+	}	
+
+	private void flushGeozone_irpf_descendant( boolean close )
 	throws SQLException {
 		if ( ! geozone_irpf_descendants.isEmpty() )
 			insertGeozone_irpf_descendant(geozone_irpf_descendants);
-		if ( geozone_irpf_descendantStmt != null )
+		if ( close && geozone_irpf_descendantStmt != null )
 			geozone_irpf_descendantStmt.close();
 	}	
 
@@ -54815,7 +56805,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 38 * geozone_irpf_descendantCount >=  this.maxAllowedPacket ){
 			insertGeozone_irpf_descendant(geozone_irpf_descendants);
-			geozone_irpf_descendants.clear();
 		} 
 	}
 
@@ -54965,6 +56954,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				fs_mod349_detailStmt.setString(offset++, fs_mod349_detail.rectified_amount);
 		}
 		fs_mod349_detailStmt.executeUpdate();
+		fs_mod349_details.clear();
 		fs_mod349_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -55003,11 +56993,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.fs_mod349_detailId = fs_mod349_detailId;
 		} 
 	
-	private void flushFs_mod349_detail(  )
+	protected void flushFs_mod349_detail( )
+	throws SQLException {
+		flushFs_mod349_detail(false);
+	}	
+
+	private void flushFs_mod349_detail( boolean close )
 	throws SQLException {
 		if ( ! fs_mod349_details.isEmpty() )
 			insertFs_mod349_detail(fs_mod349_details);
-		if ( fs_mod349_detailStmt != null )
+		if ( close && fs_mod349_detailStmt != null )
 			fs_mod349_detailStmt.close();
 	}	
 
@@ -55056,7 +57051,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 225 * fs_mod349_detailCount >=  this.maxAllowedPacket ){
 			insertFs_mod349_detail(fs_mod349_details);
-			fs_mod349_details.clear();
 		} 
 	}
 
@@ -55183,6 +57177,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				companyStmt.setBoolean(offset++, company.e_invoice);
 		}
 		companyStmt.executeUpdate();
+		companys.clear();
 		companyInserted += size;
 
 		// elapsed time in milliseconds
@@ -55191,22 +57186,27 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 		
 	
-	private void flushCompany(  )
+	protected void flushCompany( )
+	throws SQLException {
+		flushCompany(false);
+	}	
+
+	private void flushCompany( boolean close )
 	throws SQLException {
 		if ( ! companys.isEmpty() )
 			insertCompany(companys);
-		if ( companyStmt != null )
+		if ( close && companyStmt != null )
 			companyStmt.close();
 	}	
 
 	/**
 	 * Company
-	 * @param registry Registro de la Compa?ia
+	 * @param registry Registro de la Compaia
 	 * @param domain Identificador del Dominio
-	 * @param active Indica si la Compa?ia es activa o inactiva
-	 * @param surcharge Indica si la Compa?ia tiene de recargo de equivalencia
-	 * @param withholding Indica si la Compa?ia aplica retencion de impuestos
-	 * @param e_invoice Indica si la Compa?ia desea emitir Facturas electronicas
+	 * @param active Indica si la Compaia es activa o inactiva
+	 * @param surcharge Indica si la Compaia tiene de recargo de equivalencia
+	 * @param withholding Indica si la Compaia aplica retencion de impuestos
+	 * @param e_invoice Indica si la Compaia desea emitir Facturas electronicas
 	 * @throws SQLException
 	*/
 	protected void insertCompany(Integer registry, Integer domain, Boolean active, Boolean surcharge, Boolean withholding, Boolean e_invoice)
@@ -55226,7 +57226,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 20 * companyCount >=  this.maxAllowedPacket ){
 			insertCompany(companys);
-			companys.clear();
 		} 
 	}
 
@@ -55292,6 +57291,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				account_entry_bank_statementStmt.setInt(offset++, account_entry_bank_statement.bank_statement);
 		}
 		account_entry_bank_statementStmt.executeUpdate();
+		account_entry_bank_statements.clear();
 		account_entry_bank_statementInserted += size;
 
 		// elapsed time in milliseconds
@@ -55330,11 +57330,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.account_entry_bank_statementId = account_entry_bank_statementId;
 		} 
 	
-	private void flushAccount_entry_bank_statement(  )
+	protected void flushAccount_entry_bank_statement( )
+	throws SQLException {
+		flushAccount_entry_bank_statement(false);
+	}	
+
+	private void flushAccount_entry_bank_statement( boolean close )
 	throws SQLException {
 		if ( ! account_entry_bank_statements.isEmpty() )
 			insertAccount_entry_bank_statement(account_entry_bank_statements);
-		if ( account_entry_bank_statementStmt != null )
+		if ( close && account_entry_bank_statementStmt != null )
 			account_entry_bank_statementStmt.close();
 	}	
 
@@ -55361,7 +57366,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * account_entry_bank_statementCount >=  this.maxAllowedPacket ){
 			insertAccount_entry_bank_statement(account_entry_bank_statements);
-			account_entry_bank_statements.clear();
 		} 
 	}
 
@@ -55456,6 +57460,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				profile_module_deniedStmt.setShort(offset++, profile_module_denied.module);
 		}
 		profile_module_deniedStmt.executeUpdate();
+		profile_module_denieds.clear();
 		profile_module_deniedInserted += size;
 
 		// elapsed time in milliseconds
@@ -55494,11 +57499,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.profile_module_deniedId = profile_module_deniedId;
 		} 
 	
-	private void flushProfile_module_denied(  )
+	protected void flushProfile_module_denied( )
+	throws SQLException {
+		flushProfile_module_denied(false);
+	}	
+
+	private void flushProfile_module_denied( boolean close )
 	throws SQLException {
 		if ( ! profile_module_denieds.isEmpty() )
 			insertProfile_module_denied(profile_module_denieds);
-		if ( profile_module_deniedStmt != null )
+		if ( close && profile_module_deniedStmt != null )
 			profile_module_deniedStmt.close();
 	}	
 
@@ -55525,7 +57535,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 33 * profile_module_deniedCount >=  this.maxAllowedPacket ){
 			insertProfile_module_denied(profile_module_denieds);
-			profile_module_denieds.clear();
 		} 
 	}
 
@@ -55645,6 +57654,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_reservation_service_detailStmt.setInt(offset++, project_reservation_service_detail.invoice_detail);
 		}
 		project_reservation_service_detailStmt.executeUpdate();
+		project_reservation_service_details.clear();
 		project_reservation_service_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -55683,11 +57693,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.project_reservation_service_detailId = project_reservation_service_detailId;
 		} 
 	
-	private void flushProject_reservation_service_detail(  )
+	protected void flushProject_reservation_service_detail( )
+	throws SQLException {
+		flushProject_reservation_service_detail(false);
+	}	
+
+	private void flushProject_reservation_service_detail( boolean close )
 	throws SQLException {
 		if ( ! project_reservation_service_details.isEmpty() )
 			insertProject_reservation_service_detail(project_reservation_service_details);
-		if ( project_reservation_service_detailStmt != null )
+		if ( close && project_reservation_service_detailStmt != null )
 			project_reservation_service_detailStmt.close();
 	}	
 
@@ -55724,7 +57739,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 105 * project_reservation_service_detailCount >=  this.maxAllowedPacket ){
 			insertProject_reservation_service_detail(project_reservation_service_details);
-			project_reservation_service_details.clear();
 		} 
 	}
 
@@ -55844,6 +57858,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				salary_costStmt.setString(offset++, salary_cost.cost_concept);
 		}
 		salary_costStmt.executeUpdate();
+		salary_costs.clear();
 		salary_costInserted += size;
 
 		// elapsed time in milliseconds
@@ -55882,11 +57897,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.salary_costId = salary_costId;
 		} 
 	
-	private void flushSalary_cost(  )
+	protected void flushSalary_cost( )
+	throws SQLException {
+		flushSalary_cost(false);
+	}	
+
+	private void flushSalary_cost( boolean close )
 	throws SQLException {
 		if ( ! salary_costs.isEmpty() )
 			insertSalary_cost(salary_costs);
-		if ( salary_costStmt != null )
+		if ( close && salary_costStmt != null )
 			salary_costStmt.close();
 	}	
 
@@ -55919,7 +57939,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 122 * salary_costCount >=  this.maxAllowedPacket ){
 			insertSalary_cost(salary_costs);
-			salary_costs.clear();
 		} 
 	}
 
@@ -56030,6 +58049,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_dossierStmt.setShort(offset++, project_dossier.status);
 		}
 		project_dossierStmt.executeUpdate();
+		project_dossiers.clear();
 		project_dossierInserted += size;
 
 		// elapsed time in milliseconds
@@ -56038,11 +58058,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 		
 	
-	private void flushProject_dossier(  )
+	protected void flushProject_dossier( )
+	throws SQLException {
+		flushProject_dossier(false);
+	}	
+
+	private void flushProject_dossier( boolean close )
 	throws SQLException {
 		if ( ! project_dossiers.isEmpty() )
 			insertProject_dossier(project_dossiers);
-		if ( project_dossierStmt != null )
+		if ( close && project_dossierStmt != null )
 			project_dossierStmt.close();
 	}	
 
@@ -56073,7 +58098,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 113 * project_dossierCount >=  this.maxAllowedPacket ){
 			insertProject_dossier(project_dossiers);
-			project_dossiers.clear();
 		} 
 	}
 
@@ -56139,6 +58163,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				commission_type_commissionStmt.setInt(offset++, commission_type_commission.commission);
 		}
 		commission_type_commissionStmt.executeUpdate();
+		commission_type_commissions.clear();
 		commission_type_commissionInserted += size;
 
 		// elapsed time in milliseconds
@@ -56177,11 +58202,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.commission_type_commissionId = commission_type_commissionId;
 		} 
 	
-	private void flushCommission_type_commission(  )
+	protected void flushCommission_type_commission( )
+	throws SQLException {
+		flushCommission_type_commission(false);
+	}	
+
+	private void flushCommission_type_commission( boolean close )
 	throws SQLException {
 		if ( ! commission_type_commissions.isEmpty() )
 			insertCommission_type_commission(commission_type_commissions);
-		if ( commission_type_commissionStmt != null )
+		if ( close && commission_type_commissionStmt != null )
 			commission_type_commissionStmt.close();
 	}	
 
@@ -56208,7 +58238,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * commission_type_commissionCount >=  this.maxAllowedPacket ){
 			insertCommission_type_commission(commission_type_commissions);
-			commission_type_commissions.clear();
 		} 
 	}
 
@@ -56318,6 +58347,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				inventory_detailStmt.setDouble(offset++, inventory_detail.cost);
 		}
 		inventory_detailStmt.executeUpdate();
+		inventory_details.clear();
 		inventory_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -56356,11 +58386,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.inventory_detailId = inventory_detailId;
 		} 
 	
-	private void flushInventory_detail(  )
+	protected void flushInventory_detail( )
+	throws SQLException {
+		flushInventory_detail(false);
+	}	
+
+	private void flushInventory_detail( boolean close )
 	throws SQLException {
 		if ( ! inventory_details.isEmpty() )
 			insertInventory_detail(inventory_details);
-		if ( inventory_detailStmt != null )
+		if ( close && inventory_detailStmt != null )
 			inventory_detailStmt.close();
 	}	
 
@@ -56393,7 +58428,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 85 * inventory_detailCount >=  this.maxAllowedPacket ){
 			insertInventory_detail(inventory_details);
-			inventory_details.clear();
 		} 
 	}
 
@@ -56489,6 +58523,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				scopeStmt.setString(offset++, scope.description);
 		}
 		scopeStmt.executeUpdate();
+		scopes.clear();
 		scopeInserted += size;
 
 		// elapsed time in milliseconds
@@ -56527,11 +58562,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.scopeId = scopeId;
 		} 
 	
-	private void flushScope(  )
+	protected void flushScope( )
+	throws SQLException {
+		flushScope(false);
+	}	
+
+	private void flushScope( boolean close )
 	throws SQLException {
 		if ( ! scopes.isEmpty() )
 			insertScope(scopes);
-		if ( scopeStmt != null )
+		if ( close && scopeStmt != null )
 			scopeStmt.close();
 	}	
 
@@ -56556,7 +58596,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 36 * scopeCount >=  this.maxAllowedPacket ){
 			insertScope(scopes);
-			scopes.clear();
 		} 
 	}
 
@@ -56694,6 +58733,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				target_supplierStmt.setString(offset++, target_supplier.bank_account);
 		}
 		target_supplierStmt.executeUpdate();
+		target_suppliers.clear();
 		target_supplierInserted += size;
 
 		// elapsed time in milliseconds
@@ -56732,11 +58772,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.target_supplierId = target_supplierId;
 		} 
 	
-	private void flushTarget_supplier(  )
+	protected void flushTarget_supplier( )
+	throws SQLException {
+		flushTarget_supplier(false);
+	}	
+
+	private void flushTarget_supplier( boolean close )
 	throws SQLException {
 		if ( ! target_suppliers.isEmpty() )
 			insertTarget_supplier(target_suppliers);
-		if ( target_supplierStmt != null )
+		if ( close && target_supplierStmt != null )
 			target_supplierStmt.close();
 	}	
 
@@ -56781,7 +58826,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 138 * target_supplierCount >=  this.maxAllowedPacket ){
 			insertTarget_supplier(target_suppliers);
-			target_suppliers.clear();
 		} 
 	}
 
@@ -56919,6 +58963,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_reservation_serviceStmt.setBoolean(offset++, project_reservation_service.extra);
 		}
 		project_reservation_serviceStmt.executeUpdate();
+		project_reservation_services.clear();
 		project_reservation_serviceInserted += size;
 
 		// elapsed time in milliseconds
@@ -56957,11 +59002,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.project_reservation_serviceId = project_reservation_serviceId;
 		} 
 	
-	private void flushProject_reservation_service(  )
+	protected void flushProject_reservation_service( )
+	throws SQLException {
+		flushProject_reservation_service(false);
+	}	
+
+	private void flushProject_reservation_service( boolean close )
 	throws SQLException {
 		if ( ! project_reservation_services.isEmpty() )
 			insertProject_reservation_service(project_reservation_services);
-		if ( project_reservation_serviceStmt != null )
+		if ( close && project_reservation_serviceStmt != null )
 			project_reservation_serviceStmt.close();
 	}	
 
@@ -56998,7 +59048,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 133 * project_reservation_serviceCount >=  this.maxAllowedPacket ){
 			insertProject_reservation_service(project_reservation_services);
-			project_reservation_services.clear();
 		} 
 	}
 
@@ -57103,6 +59152,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_batch_detailStmt.setInt(offset++, contract_batch_detail.contract);
 		}
 		contract_batch_detailStmt.executeUpdate();
+		contract_batch_details.clear();
 		contract_batch_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -57141,11 +59191,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.contract_batch_detailId = contract_batch_detailId;
 		} 
 	
-	private void flushContract_batch_detail(  )
+	protected void flushContract_batch_detail( )
+	throws SQLException {
+		flushContract_batch_detail(false);
+	}	
+
+	private void flushContract_batch_detail( boolean close )
 	throws SQLException {
 		if ( ! contract_batch_details.isEmpty() )
 			insertContract_batch_detail(contract_batch_details);
-		if ( contract_batch_detailStmt != null )
+		if ( close && contract_batch_detailStmt != null )
 			contract_batch_detailStmt.close();
 	}	
 
@@ -57172,7 +59227,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * contract_batch_detailCount >=  this.maxAllowedPacket ){
 			insertContract_batch_detail(contract_batch_details);
-			contract_batch_details.clear();
 		} 
 	}
 
@@ -57202,152 +59256,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 40 * contract_batch_detailCount >=  this.maxAllowedPacket ){
 			insertContract_batch_detail(contract_batch_details);
 			contract_batch_details.clear();
-		} 
-		return id;
-	}
-
-
-	private int customer_segmentStmtSize = 0;
-
-	private int customer_segmentInserted = 0;
-
-	private List<Customer_segment> customer_segments = 
-		new LinkedList<Customer_segment>();
-
-	private PreparedStatement customer_segmentStmt = null;
-
-	public static class Customer_segment {
-		protected Integer id; 
-		protected String description; 
-	}
-	
-	protected void insertCustomer_segment( List<Customer_segment> customer_segments )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = customer_segments.size();
-		if ( customer_segmentStmtSize != size ) {
-			if ( customer_segmentStmt != null ) {
-				customer_segmentStmt.close();
-			}
-			String values = "(?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			customer_segmentStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO customer_segment (id,description)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			customer_segmentStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Customer_segment customer_segment : customer_segments) {
-			if ( customer_segment.id == null )
-				customer_segmentStmt.setNull(offset++, 4);
-			else
-				customer_segmentStmt.setInt(offset++, customer_segment.id);
-			if ( customer_segment.description == null )
-				customer_segmentStmt.setNull(offset++, 12);
-			else
-				customer_segmentStmt.setString(offset++, customer_segment.description);
-		}
-		customer_segmentStmt.executeUpdate();
-		customer_segmentInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Customer_segments in {} milliseconds.", size, customer_segmentInserted, elapsed );		
-	}
-		
-		private int customer_segmentId = -1;
-		
-		private void initCustomer_segmentId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `customer_segment`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.customer_segmentId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCustomer_segmentId() {
-			return ++this.customer_segmentId;
-		} 
-
-		public void setCustomer_segmentId(Integer customer_segmentId) {
-			this.customer_segmentId = customer_segmentId;
-		} 
-	
-	private void flushCustomer_segment(  )
-	throws SQLException {
-		if ( ! customer_segments.isEmpty() )
-			insertCustomer_segment(customer_segments);
-		if ( customer_segmentStmt != null )
-			customer_segmentStmt.close();
-	}	
-
-	/**
-	 * Customer_segment
-	 * @param id Identificador unico del Segmento
-	 * @param description Descripcion del Segmento
-	 * @throws SQLException
-	*/
-	protected void insertCustomer_segment(Integer id, String description)
-	throws SQLException {
-
-		Customer_segment customer_segment_ = new Customer_segment();
-		customer_segment_.id = id;
-		customer_segment_.description = description;
-
-		customer_segments.add(customer_segment_);
-		
-		int customer_segmentCount = customer_segments.size();
-		
-		if ( 74 * customer_segmentCount >=  this.maxAllowedPacket ){
-			insertCustomer_segment(customer_segments);
-			customer_segments.clear();
-		} 
-	}
-
-
-	/**
-	 * Customer_segment
-	 * @param description Descripcion del Segmento
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCustomer_segment(String description)
-	throws SQLException {
-		int id = nextCustomer_segmentId();
-
-		Customer_segment customer_segment_ = new Customer_segment();
-		customer_segment_.id = id;
-		customer_segment_.description = description;
-
-		customer_segments.add(customer_segment_);
-		
-		int customer_segmentCount = customer_segments.size();
-		
-		if ( 74 * customer_segmentCount >=  this.maxAllowedPacket ){
-			insertCustomer_segment(customer_segments);
-			customer_segments.clear();
 		} 
 		return id;
 	}
@@ -57438,6 +59346,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				leave_batch_attachStmt.setDate(offset++, leave_batch_attach.attach_date);
 		}
 		leave_batch_attachStmt.executeUpdate();
+		leave_batch_attachs.clear();
 		leave_batch_attachInserted += size;
 
 		// elapsed time in milliseconds
@@ -57476,11 +59385,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.leave_batch_attachId = leave_batch_attachId;
 		} 
 	
-	private void flushLeave_batch_attach(  )
+	protected void flushLeave_batch_attach( )
+	throws SQLException {
+		flushLeave_batch_attach(false);
+	}	
+
+	private void flushLeave_batch_attach( boolean close )
 	throws SQLException {
 		if ( ! leave_batch_attachs.isEmpty() )
 			insertLeave_batch_attach(leave_batch_attachs);
-		if ( leave_batch_attachStmt != null )
+		if ( close && leave_batch_attachStmt != null )
 			leave_batch_attachStmt.close();
 	}	
 
@@ -57517,7 +59431,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 120 * leave_batch_attachCount >=  this.maxAllowedPacket ){
 			insertLeave_batch_attach(leave_batch_attachs);
-			leave_batch_attachs.clear();
 		} 
 	}
 
@@ -57672,6 +59585,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				agreement_paymentStmt.setString(offset++, agreement_payment.quote_expression);
 		}
 		agreement_paymentStmt.executeUpdate();
+		agreement_payments.clear();
 		agreement_paymentInserted += size;
 
 		// elapsed time in milliseconds
@@ -57710,11 +59624,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.agreement_paymentId = agreement_paymentId;
 		} 
 	
-	private void flushAgreement_payment(  )
+	protected void flushAgreement_payment( )
+	throws SQLException {
+		flushAgreement_payment(false);
+	}	
+
+	private void flushAgreement_payment( boolean close )
 	throws SQLException {
 		if ( ! agreement_payments.isEmpty() )
 			insertAgreement_payment(agreement_payments);
-		if ( agreement_paymentStmt != null )
+		if ( close && agreement_paymentStmt != null )
 			agreement_paymentStmt.close();
 	}	
 
@@ -57761,7 +59680,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 520 * agreement_paymentCount >=  this.maxAllowedPacket ){
 			insertAgreement_payment(agreement_payments);
-			agreement_payments.clear();
 		} 
 	}
 
@@ -57901,6 +59819,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				fan_batch_attachStmt.setDate(offset++, fan_batch_attach.attach_date);
 		}
 		fan_batch_attachStmt.executeUpdate();
+		fan_batch_attachs.clear();
 		fan_batch_attachInserted += size;
 
 		// elapsed time in milliseconds
@@ -57939,11 +59858,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.fan_batch_attachId = fan_batch_attachId;
 		} 
 	
-	private void flushFan_batch_attach(  )
+	protected void flushFan_batch_attach( )
+	throws SQLException {
+		flushFan_batch_attach(false);
+	}	
+
+	private void flushFan_batch_attach( boolean close )
 	throws SQLException {
 		if ( ! fan_batch_attachs.isEmpty() )
 			insertFan_batch_attach(fan_batch_attachs);
-		if ( fan_batch_attachStmt != null )
+		if ( close && fan_batch_attachStmt != null )
 			fan_batch_attachStmt.close();
 	}	
 
@@ -57980,7 +59904,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 120 * fan_batch_attachCount >=  this.maxAllowedPacket ){
 			insertFan_batch_attach(fan_batch_attachs);
-			fan_batch_attachs.clear();
 		} 
 	}
 
@@ -58085,6 +60008,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				rattach_tagStmt.setInt(offset++, rattach_tag.tag);
 		}
 		rattach_tagStmt.executeUpdate();
+		rattach_tags.clear();
 		rattach_tagInserted += size;
 
 		// elapsed time in milliseconds
@@ -58123,11 +60047,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.rattach_tagId = rattach_tagId;
 		} 
 	
-	private void flushRattach_tag(  )
+	protected void flushRattach_tag( )
+	throws SQLException {
+		flushRattach_tag(false);
+	}	
+
+	private void flushRattach_tag( boolean close )
 	throws SQLException {
 		if ( ! rattach_tags.isEmpty() )
 			insertRattach_tag(rattach_tags);
-		if ( rattach_tagStmt != null )
+		if ( close && rattach_tagStmt != null )
 			rattach_tagStmt.close();
 	}	
 
@@ -58154,7 +60083,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * rattach_tagCount >=  this.maxAllowedPacket ){
 			insertRattach_tag(rattach_tags);
-			rattach_tags.clear();
 		} 
 	}
 
@@ -58259,6 +60187,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				finance_posStmt.setString(offset++, finance_pos.xml_response);
 		}
 		finance_posStmt.executeUpdate();
+		finance_poss.clear();
 		finance_posInserted += size;
 
 		// elapsed time in milliseconds
@@ -58297,11 +60226,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.finance_posId = finance_posId;
 		} 
 	
-	private void flushFinance_pos(  )
+	protected void flushFinance_pos( )
+	throws SQLException {
+		flushFinance_pos(false);
+	}	
+
+	private void flushFinance_pos( boolean close )
 	throws SQLException {
 		if ( ! finance_poss.isEmpty() )
 			insertFinance_pos(finance_poss);
-		if ( finance_posStmt != null )
+		if ( close && finance_posStmt != null )
 			finance_posStmt.close();
 	}	
 
@@ -58332,7 +60266,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 56 * finance_posCount >=  this.maxAllowedPacket ){
 			insertFinance_pos(finance_poss);
-			finance_poss.clear();
 		} 
 	}
 
@@ -58426,6 +60359,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				auto_conceptStmt.setString(offset++, auto_concept.description);
 		}
 		auto_conceptStmt.executeUpdate();
+		auto_concepts.clear();
 		auto_conceptInserted += size;
 
 		// elapsed time in milliseconds
@@ -58464,11 +60398,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.auto_conceptId = auto_conceptId;
 		} 
 	
-	private void flushAuto_concept(  )
+	protected void flushAuto_concept( )
+	throws SQLException {
+		flushAuto_concept(false);
+	}	
+
+	private void flushAuto_concept( boolean close )
 	throws SQLException {
 		if ( ! auto_concepts.isEmpty() )
 			insertAuto_concept(auto_concepts);
-		if ( auto_conceptStmt != null )
+		if ( close && auto_conceptStmt != null )
 			auto_conceptStmt.close();
 	}	
 
@@ -58493,7 +60432,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 52 * auto_conceptCount >=  this.maxAllowedPacket ){
 			insertAuto_concept(auto_concepts);
-			auto_concepts.clear();
 		} 
 	}
 
@@ -58601,6 +60539,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				web_info_page_detailStmt.setString(offset++, web_info_page_detail.extra);
 		}
 		web_info_page_detailStmt.executeUpdate();
+		web_info_page_details.clear();
 		web_info_page_detailInserted += size;
 
 		// elapsed time in milliseconds
@@ -58639,11 +60578,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.web_info_page_detailId = web_info_page_detailId;
 		} 
 	
-	private void flushWeb_info_page_detail(  )
+	protected void flushWeb_info_page_detail( )
+	throws SQLException {
+		flushWeb_info_page_detail(false);
+	}	
+
+	private void flushWeb_info_page_detail( boolean close )
 	throws SQLException {
 		if ( ! web_info_page_details.isEmpty() )
 			insertWeb_info_page_detail(web_info_page_details);
-		if ( web_info_page_detailStmt != null )
+		if ( close && web_info_page_detailStmt != null )
 			web_info_page_detailStmt.close();
 	}	
 
@@ -58676,7 +60620,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 550 * web_info_page_detailCount >=  this.maxAllowedPacket ){
 			insertWeb_info_page_detail(web_info_page_details);
-			web_info_page_details.clear();
 		} 
 	}
 
@@ -58782,6 +60725,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				pos_shift_countStmt.setDouble(offset++, pos_shift_count.amount);
 		}
 		pos_shift_countStmt.executeUpdate();
+		pos_shift_counts.clear();
 		pos_shift_countInserted += size;
 
 		// elapsed time in milliseconds
@@ -58820,11 +60764,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.pos_shift_countId = pos_shift_countId;
 		} 
 	
-	private void flushPos_shift_count(  )
+	protected void flushPos_shift_count( )
+	throws SQLException {
+		flushPos_shift_count(false);
+	}	
+
+	private void flushPos_shift_count( boolean close )
 	throws SQLException {
 		if ( ! pos_shift_counts.isEmpty() )
 			insertPos_shift_count(pos_shift_counts);
-		if ( pos_shift_countStmt != null )
+		if ( close && pos_shift_countStmt != null )
 			pos_shift_countStmt.close();
 	}	
 
@@ -58853,7 +60802,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 55 * pos_shift_countCount >=  this.maxAllowedPacket ){
 			insertPos_shift_count(pos_shift_counts);
-			pos_shift_counts.clear();
 		} 
 	}
 
@@ -58945,6 +60893,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				job_typeStmt.setString(offset++, job_type.description);
 		}
 		job_typeStmt.executeUpdate();
+		job_types.clear();
 		job_typeInserted += size;
 
 		// elapsed time in milliseconds
@@ -58983,11 +60932,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.job_typeId = job_typeId;
 		} 
 	
-	private void flushJob_type(  )
+	protected void flushJob_type( )
+	throws SQLException {
+		flushJob_type(false);
+	}	
+
+	private void flushJob_type( boolean close )
 	throws SQLException {
 		if ( ! job_types.isEmpty() )
 			insertJob_type(job_types);
-		if ( job_typeStmt != null )
+		if ( close && job_typeStmt != null )
 			job_typeStmt.close();
 	}	
 
@@ -59012,7 +60966,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 84 * job_typeCount >=  this.maxAllowedPacket ){
 			insertJob_type(job_types);
-			job_types.clear();
 		} 
 	}
 
@@ -59105,6 +61058,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				tariffStmt.setString(offset++, tariff.name);
 		}
 		tariffStmt.executeUpdate();
+		tariffs.clear();
 		tariffInserted += size;
 
 		// elapsed time in milliseconds
@@ -59143,11 +61097,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.tariffId = tariffId;
 		} 
 	
-	private void flushTariff(  )
+	protected void flushTariff( )
+	throws SQLException {
+		flushTariff(false);
+	}	
+
+	private void flushTariff( boolean close )
 	throws SQLException {
 		if ( ! tariffs.isEmpty() )
 			insertTariff(tariffs);
-		if ( tariffStmt != null )
+		if ( close && tariffStmt != null )
 			tariffStmt.close();
 	}	
 
@@ -59174,7 +61133,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 60 * tariffCount >=  this.maxAllowedPacket ){
 			insertTariff(tariffs);
-			tariffs.clear();
 		} 
 	}
 
@@ -59294,6 +61252,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_batch_attachStmt.setDate(offset++, contract_batch_attach.attach_date);
 		}
 		contract_batch_attachStmt.executeUpdate();
+		contract_batch_attachs.clear();
 		contract_batch_attachInserted += size;
 
 		// elapsed time in milliseconds
@@ -59332,11 +61291,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.contract_batch_attachId = contract_batch_attachId;
 		} 
 	
-	private void flushContract_batch_attach(  )
+	protected void flushContract_batch_attach( )
+	throws SQLException {
+		flushContract_batch_attach(false);
+	}	
+
+	private void flushContract_batch_attach( boolean close )
 	throws SQLException {
 		if ( ! contract_batch_attachs.isEmpty() )
 			insertContract_batch_attach(contract_batch_attachs);
-		if ( contract_batch_attachStmt != null )
+		if ( close && contract_batch_attachStmt != null )
 			contract_batch_attachStmt.close();
 	}	
 
@@ -59373,7 +61337,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 120 * contract_batch_attachCount >=  this.maxAllowedPacket ){
 			insertContract_batch_attach(contract_batch_attachs);
-			contract_batch_attachs.clear();
 		} 
 	}
 
@@ -59478,6 +61441,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				enterprise_agreementStmt.setInt(offset++, enterprise_agreement.agreement);
 		}
 		enterprise_agreementStmt.executeUpdate();
+		enterprise_agreements.clear();
 		enterprise_agreementInserted += size;
 
 		// elapsed time in milliseconds
@@ -59516,11 +61480,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.enterprise_agreementId = enterprise_agreementId;
 		} 
 	
-	private void flushEnterprise_agreement(  )
+	protected void flushEnterprise_agreement( )
+	throws SQLException {
+		flushEnterprise_agreement(false);
+	}	
+
+	private void flushEnterprise_agreement( boolean close )
 	throws SQLException {
 		if ( ! enterprise_agreements.isEmpty() )
 			insertEnterprise_agreement(enterprise_agreements);
-		if ( enterprise_agreementStmt != null )
+		if ( close && enterprise_agreementStmt != null )
 			enterprise_agreementStmt.close();
 	}	
 
@@ -59547,7 +61516,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * enterprise_agreementCount >=  this.maxAllowedPacket ){
 			insertEnterprise_agreement(enterprise_agreements);
-			enterprise_agreements.clear();
 		} 
 	}
 
@@ -59677,6 +61645,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoice_addressStmt.setInt(offset++, invoice_address.geozone);
 		}
 		invoice_addressStmt.executeUpdate();
+		invoice_addresss.clear();
 		invoice_addressInserted += size;
 
 		// elapsed time in milliseconds
@@ -59715,11 +61684,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.invoice_addressId = invoice_addressId;
 		} 
 	
-	private void flushInvoice_address(  )
+	protected void flushInvoice_address( )
+	throws SQLException {
+		flushInvoice_address(false);
+	}	
+
+	private void flushInvoice_address( boolean close )
 	throws SQLException {
 		if ( ! invoice_addresss.isEmpty() )
 			insertInvoice_address(invoice_addresss);
-		if ( invoice_addressStmt != null )
+		if ( close && invoice_addressStmt != null )
 			invoice_addressStmt.close();
 	}	
 
@@ -59760,7 +61734,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 250 * invoice_addressCount >=  this.maxAllowedPacket ){
 			insertInvoice_address(invoice_addresss);
-			invoice_addresss.clear();
 		} 
 	}
 
@@ -59894,6 +61867,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				message_logStmt.setString(offset++, message_log.username);
 		}
 		message_logStmt.executeUpdate();
+		message_logs.clear();
 		message_logInserted += size;
 
 		// elapsed time in milliseconds
@@ -59932,11 +61906,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.message_logId = message_logId;
 		} 
 	
-	private void flushMessage_log(  )
+	protected void flushMessage_log( )
+	throws SQLException {
+		flushMessage_log(false);
+	}	
+
+	private void flushMessage_log( boolean close )
 	throws SQLException {
 		if ( ! message_logs.isEmpty() )
 			insertMessage_log(message_logs);
-		if ( message_logStmt != null )
+		if ( close && message_logStmt != null )
 			message_logStmt.close();
 	}	
 
@@ -59973,7 +61952,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 222 * message_logCount >=  this.maxAllowedPacket ){
 			insertMessage_log(message_logs);
-			message_logs.clear();
 		} 
 	}
 
@@ -60078,6 +62056,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				campaign_projectStmt.setInt(offset++, campaign_project.project);
 		}
 		campaign_projectStmt.executeUpdate();
+		campaign_projects.clear();
 		campaign_projectInserted += size;
 
 		// elapsed time in milliseconds
@@ -60116,19 +62095,24 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.campaign_projectId = campaign_projectId;
 		} 
 	
-	private void flushCampaign_project(  )
+	protected void flushCampaign_project( )
+	throws SQLException {
+		flushCampaign_project(false);
+	}	
+
+	private void flushCampaign_project( boolean close )
 	throws SQLException {
 		if ( ! campaign_projects.isEmpty() )
 			insertCampaign_project(campaign_projects);
-		if ( campaign_projectStmt != null )
+		if ( close && campaign_projectStmt != null )
 			campaign_projectStmt.close();
 	}	
 
 	/**
 	 * Campaign_project
-	 * @param id Identificador unico de la Relacion de Campa?as y Expedientes
+	 * @param id Identificador unico de la Relacion de Campaas y Expedientes
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campa?a
+	 * @param campaign Identificador de la Campaa
 	 * @param project Identificador del Expediente
 	 * @throws SQLException
 	*/
@@ -60147,7 +62131,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * campaign_projectCount >=  this.maxAllowedPacket ){
 			insertCampaign_project(campaign_projects);
-			campaign_projects.clear();
 		} 
 	}
 
@@ -60155,7 +62138,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Campaign_project
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campa?a
+	 * @param campaign Identificador de la Campaa
 	 * @param project Identificador del Expediente
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -60242,6 +62225,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				applicationStmt.setBoolean(offset++, application.contratable);
 		}
 		applicationStmt.executeUpdate();
+		applications.clear();
 		applicationInserted += size;
 
 		// elapsed time in milliseconds
@@ -60280,11 +62264,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.applicationId = applicationId;
 		} 
 	
-	private void flushApplication(  )
+	protected void flushApplication( )
+	throws SQLException {
+		flushApplication(false);
+	}	
+
+	private void flushApplication( boolean close )
 	throws SQLException {
 		if ( ! applications.isEmpty() )
 			insertApplication(applications);
-		if ( applicationStmt != null )
+		if ( close && applicationStmt != null )
 			applicationStmt.close();
 	}	
 
@@ -60311,7 +62300,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 202 * applicationCount >=  this.maxAllowedPacket ){
 			insertApplication(applications);
-			applications.clear();
 		} 
 	}
 
@@ -60416,6 +62404,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_calendar_eventStmt.setDouble(offset++, contract_calendar_event.duration);
 		}
 		contract_calendar_eventStmt.executeUpdate();
+		contract_calendar_events.clear();
 		contract_calendar_eventInserted += size;
 
 		// elapsed time in milliseconds
@@ -60454,11 +62443,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.contract_calendar_eventId = contract_calendar_eventId;
 		} 
 	
-	private void flushContract_calendar_event(  )
+	protected void flushContract_calendar_event( )
+	throws SQLException {
+		flushContract_calendar_event(false);
+	}	
+
+	private void flushContract_calendar_event( boolean close )
 	throws SQLException {
 		if ( ! contract_calendar_events.isEmpty() )
 			insertContract_calendar_event(contract_calendar_events);
-		if ( contract_calendar_eventStmt != null )
+		if ( close && contract_calendar_eventStmt != null )
 			contract_calendar_eventStmt.close();
 	}	
 
@@ -60489,7 +62483,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 65 * contract_calendar_eventCount >=  this.maxAllowedPacket ){
 			insertContract_calendar_event(contract_calendar_events);
-			contract_calendar_events.clear();
 		} 
 	}
 
@@ -60633,6 +62626,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				rdir_staffStmt.setBoolean(offset++, rdir_staff.representative_labor);
 		}
 		rdir_staffStmt.executeUpdate();
+		rdir_staffs.clear();
 		rdir_staffInserted += size;
 
 		// elapsed time in milliseconds
@@ -60671,11 +62665,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.rdir_staffId = rdir_staffId;
 		} 
 	
-	private void flushRdir_staff(  )
+	protected void flushRdir_staff( )
+	throws SQLException {
+		flushRdir_staff(false);
+	}	
+
+	private void flushRdir_staff( boolean close )
 	throws SQLException {
 		if ( ! rdir_staffs.isEmpty() )
 			insertRdir_staff(rdir_staffs);
-		if ( rdir_staffStmt != null )
+		if ( close && rdir_staffStmt != null )
 			rdir_staffStmt.close();
 	}	
 
@@ -60720,7 +62719,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 231 * rdir_staffCount >=  this.maxAllowedPacket ){
 			insertRdir_staff(rdir_staffs);
-			rdir_staffs.clear();
 		} 
 	}
 
@@ -60903,6 +62901,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				taskStmt.setShort(offset++, task.repeat_period);
 		}
 		taskStmt.executeUpdate();
+		tasks.clear();
 		taskInserted += size;
 
 		// elapsed time in milliseconds
@@ -60941,11 +62940,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.taskId = taskId;
 		} 
 	
-	private void flushTask(  )
+	protected void flushTask( )
+	throws SQLException {
+		flushTask(false);
+	}	
+
+	private void flushTask( boolean close )
 	throws SQLException {
 		if ( ! tasks.isEmpty() )
 			insertTask(tasks);
-		if ( taskStmt != null )
+		if ( close && taskStmt != null )
 			taskStmt.close();
 	}	
 
@@ -61000,7 +63004,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 253 * taskCount >=  this.maxAllowedPacket ){
 			insertTask(tasks);
-			tasks.clear();
 		} 
 	}
 
@@ -61148,6 +63151,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_reservation_divertStmt.setInt(offset++, project_reservation_divert.response_user);
 		}
 		project_reservation_divertStmt.executeUpdate();
+		project_reservation_diverts.clear();
 		project_reservation_divertInserted += size;
 
 		// elapsed time in milliseconds
@@ -61186,11 +63190,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.project_reservation_divertId = project_reservation_divertId;
 		} 
 	
-	private void flushProject_reservation_divert(  )
+	protected void flushProject_reservation_divert( )
+	throws SQLException {
+		flushProject_reservation_divert(false);
+	}	
+
+	private void flushProject_reservation_divert( boolean close )
 	throws SQLException {
 		if ( ! project_reservation_diverts.isEmpty() )
 			insertProject_reservation_divert(project_reservation_diverts);
-		if ( project_reservation_divertStmt != null )
+		if ( close && project_reservation_divertStmt != null )
 			project_reservation_divertStmt.close();
 	}	
 
@@ -61227,7 +63236,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 83 * project_reservation_divertCount >=  this.maxAllowedPacket ){
 			insertProject_reservation_divert(project_reservation_diverts);
-			project_reservation_diverts.clear();
 		} 
 	}
 
@@ -61332,6 +63340,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				agreementStmt.setString(offset++, agreement.description);
 		}
 		agreementStmt.executeUpdate();
+		agreements.clear();
 		agreementInserted += size;
 
 		// elapsed time in milliseconds
@@ -61370,11 +63379,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.agreementId = agreementId;
 		} 
 	
-	private void flushAgreement(  )
+	protected void flushAgreement( )
+	throws SQLException {
+		flushAgreement(false);
+	}	
+
+	private void flushAgreement( boolean close )
 	throws SQLException {
 		if ( ! agreements.isEmpty() )
 			insertAgreement(agreements);
-		if ( agreementStmt != null )
+		if ( close && agreementStmt != null )
 			agreementStmt.close();
 	}	
 
@@ -61401,7 +63415,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 94 * agreementCount >=  this.maxAllowedPacket ){
 			insertAgreement(agreements);
-			agreements.clear();
 		} 
 	}
 
@@ -61621,6 +63634,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				offerStmt.setString(offset++, offer.external_reference);
 		}
 		offerStmt.executeUpdate();
+		offers.clear();
 		offerInserted += size;
 
 		// elapsed time in milliseconds
@@ -61659,11 +63673,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.offerId = offerId;
 		} 
 	
-	private void flushOffer(  )
+	protected void flushOffer( )
+	throws SQLException {
+		flushOffer(false);
+	}	
+
+	private void flushOffer( boolean close )
 	throws SQLException {
 		if ( ! offers.isEmpty() )
 			insertOffer(offers);
-		if ( offerStmt != null )
+		if ( close && offerStmt != null )
 			offerStmt.close();
 	}	
 
@@ -61740,7 +63759,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 276 * offerCount >=  this.maxAllowedPacket ){
 			insertOffer(offers);
-			offers.clear();
 		} 
 	}
 
@@ -61885,6 +63903,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				asset_featureStmt.setInt(offset++, asset_feature.feature);
 		}
 		asset_featureStmt.executeUpdate();
+		asset_features.clear();
 		asset_featureInserted += size;
 
 		// elapsed time in milliseconds
@@ -61923,11 +63942,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.asset_featureId = asset_featureId;
 		} 
 	
-	private void flushAsset_feature(  )
+	protected void flushAsset_feature( )
+	throws SQLException {
+		flushAsset_feature(false);
+	}	
+
+	private void flushAsset_feature( boolean close )
 	throws SQLException {
 		if ( ! asset_features.isEmpty() )
 			insertAsset_feature(asset_features);
-		if ( asset_featureStmt != null )
+		if ( close && asset_featureStmt != null )
 			asset_featureStmt.close();
 	}	
 
@@ -61954,7 +63978,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 40 * asset_featureCount >=  this.maxAllowedPacket ){
 			insertAsset_feature(asset_features);
-			asset_features.clear();
 		} 
 	}
 
@@ -62069,6 +64092,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_embargoStmt.setString(offset++, contract_embargo.description);
 		}
 		contract_embargoStmt.executeUpdate();
+		contract_embargos.clear();
 		contract_embargoInserted += size;
 
 		// elapsed time in milliseconds
@@ -62107,11 +64131,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.contract_embargoId = contract_embargoId;
 		} 
 	
-	private void flushContract_embargo(  )
+	protected void flushContract_embargo( )
+	throws SQLException {
+		flushContract_embargo(false);
+	}	
+
+	private void flushContract_embargo( boolean close )
 	throws SQLException {
 		if ( ! contract_embargos.isEmpty() )
 			insertContract_embargo(contract_embargos);
-		if ( contract_embargoStmt != null )
+		if ( close && contract_embargoStmt != null )
 			contract_embargoStmt.close();
 	}	
 
@@ -62146,7 +64175,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 257 * contract_embargoCount >=  this.maxAllowedPacket ){
 			insertContract_embargo(contract_embargos);
-			contract_embargos.clear();
 		} 
 	}
 
@@ -62254,6 +64282,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				account_helperStmt.setInt(offset++, account_helper.balancing_account);
 		}
 		account_helperStmt.executeUpdate();
+		account_helpers.clear();
 		account_helperInserted += size;
 
 		// elapsed time in milliseconds
@@ -62292,11 +64321,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.account_helperId = account_helperId;
 		} 
 	
-	private void flushAccount_helper(  )
+	protected void flushAccount_helper( )
+	throws SQLException {
+		flushAccount_helper(false);
+	}	
+
+	private void flushAccount_helper( boolean close )
 	throws SQLException {
 		if ( ! account_helpers.isEmpty() )
 			insertAccount_helper(account_helpers);
-		if ( account_helperStmt != null )
+		if ( close && account_helperStmt != null )
 			account_helperStmt.close();
 	}	
 
@@ -62325,7 +64359,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 50 * account_helperCount >=  this.maxAllowedPacket ){
 			insertAccount_helper(account_helpers);
-			account_helpers.clear();
 		} 
 	}
 
@@ -62442,6 +64475,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				system_dataStmt.setString(offset++, system_data.comments);
 		}
 		system_dataStmt.executeUpdate();
+		system_datas.clear();
 		system_dataInserted += size;
 
 		// elapsed time in milliseconds
@@ -62480,11 +64514,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.system_dataId = system_dataId;
 		} 
 	
-	private void flushSystem_data(  )
+	protected void flushSystem_data( )
+	throws SQLException {
+		flushSystem_data(false);
+	}	
+
+	private void flushSystem_data( boolean close )
 	throws SQLException {
 		if ( ! system_datas.isEmpty() )
 			insertSystem_data(system_datas);
-		if ( system_dataStmt != null )
+		if ( close && system_dataStmt != null )
 			system_dataStmt.close();
 	}	
 
@@ -62519,7 +64558,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 200 * system_dataCount >=  this.maxAllowedPacket ){
 			insertSystem_data(system_datas);
-			system_datas.clear();
 		} 
 	}
 
@@ -62617,6 +64655,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				bank_conceptStmt.setString(offset++, bank_concept.name);
 		}
 		bank_conceptStmt.executeUpdate();
+		bank_concepts.clear();
 		bank_conceptInserted += size;
 
 		// elapsed time in milliseconds
@@ -62655,11 +64694,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.bank_conceptId = bank_conceptId;
 		} 
 	
-	private void flushBank_concept(  )
+	protected void flushBank_concept( )
+	throws SQLException {
+		flushBank_concept(false);
+	}	
+
+	private void flushBank_concept( boolean close )
 	throws SQLException {
 		if ( ! bank_concepts.isEmpty() )
 			insertBank_concept(bank_concepts);
-		if ( bank_conceptStmt != null )
+		if ( close && bank_conceptStmt != null )
 			bank_conceptStmt.close();
 	}	
 
@@ -62684,7 +64728,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 52 * bank_conceptCount >=  this.maxAllowedPacket ){
 			insertBank_concept(bank_concepts);
-			bank_concepts.clear();
 		} 
 	}
 
@@ -62782,6 +64825,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				course_academicskillStmt.setInt(offset++, course_academicskill.weight);
 		}
 		course_academicskillStmt.executeUpdate();
+		course_academicskills.clear();
 		course_academicskillInserted += size;
 
 		// elapsed time in milliseconds
@@ -62820,11 +64864,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.course_academicskillId = course_academicskillId;
 		} 
 	
-	private void flushCourse_academicskill(  )
+	protected void flushCourse_academicskill( )
+	throws SQLException {
+		flushCourse_academicskill(false);
+	}	
+
+	private void flushCourse_academicskill( boolean close )
 	throws SQLException {
 		if ( ! course_academicskills.isEmpty() )
 			insertCourse_academicskill(course_academicskills);
-		if ( course_academicskillStmt != null )
+		if ( close && course_academicskillStmt != null )
 			course_academicskillStmt.close();
 	}	
 
@@ -62853,7 +64902,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 50 * course_academicskillCount >=  this.maxAllowedPacket ){
 			insertCourse_academicskill(course_academicskills);
-			course_academicskills.clear();
 		} 
 	}
 
@@ -62960,6 +65008,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				enterprise_cccStmt.setInt(offset++, enterprise_ccc.geozone);
 		}
 		enterprise_cccStmt.executeUpdate();
+		enterprise_cccs.clear();
 		enterprise_cccInserted += size;
 
 		// elapsed time in milliseconds
@@ -62998,11 +65047,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.enterprise_cccId = enterprise_cccId;
 		} 
 	
-	private void flushEnterprise_ccc(  )
+	protected void flushEnterprise_ccc( )
+	throws SQLException {
+		flushEnterprise_ccc(false);
+	}	
+
+	private void flushEnterprise_ccc( boolean close )
 	throws SQLException {
 		if ( ! enterprise_cccs.isEmpty() )
 			insertEnterprise_ccc(enterprise_cccs);
-		if ( enterprise_cccStmt != null )
+		if ( close && enterprise_cccStmt != null )
 			enterprise_cccStmt.close();
 	}	
 
@@ -63033,7 +65087,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 54 * enterprise_cccCount >=  this.maxAllowedPacket ){
 			insertEnterprise_ccc(enterprise_cccs);
-			enterprise_cccs.clear();
 		} 
 	}
 
@@ -63157,6 +65210,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				targetStmt.setInt(offset++, target.scope);
 		}
 		targetStmt.executeUpdate();
+		targets.clear();
 		targetInserted += size;
 
 		// elapsed time in milliseconds
@@ -63165,11 +65219,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 		
 	
-	private void flushTarget(  )
+	protected void flushTarget( )
+	throws SQLException {
+		flushTarget(false);
+	}	
+
+	private void flushTarget( boolean close )
 	throws SQLException {
 		if ( ! targets.isEmpty() )
 			insertTarget(targets);
-		if ( targetStmt != null )
+		if ( close && targetStmt != null )
 			targetStmt.close();
 	}	
 
@@ -63206,7 +65265,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 49 * targetCount >=  this.maxAllowedPacket ){
 			insertTarget(targets);
-			targets.clear();
 		} 
 	}
 
@@ -63277,6 +65335,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				mk_campaignStmt.setInt(offset++, mk_campaign.scope);
 		}
 		mk_campaignStmt.executeUpdate();
+		mk_campaigns.clear();
 		mk_campaignInserted += size;
 
 		// elapsed time in milliseconds
@@ -63315,11 +65374,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.mk_campaignId = mk_campaignId;
 		} 
 	
-	private void flushMk_campaign(  )
+	protected void flushMk_campaign( )
+	throws SQLException {
+		flushMk_campaign(false);
+	}	
+
+	private void flushMk_campaign( boolean close )
 	throws SQLException {
 		if ( ! mk_campaigns.isEmpty() )
 			insertMk_campaign(mk_campaigns);
-		if ( mk_campaignStmt != null )
+		if ( close && mk_campaignStmt != null )
 			mk_campaignStmt.close();
 	}	
 
@@ -63327,8 +65391,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Mk_campaign
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param active Indica si la Campa?a esta activa o no
-	 * @param description Descripcion de la Campa?a
+	 * @param active Indica si la Campaa esta activa o no
+	 * @param description Descripcion de la Campaa
 	 * @param scope Identificador del Ambito
 	 * @throws SQLException
 	*/
@@ -63348,7 +65412,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 94 * mk_campaignCount >=  this.maxAllowedPacket ){
 			insertMk_campaign(mk_campaigns);
-			mk_campaigns.clear();
 		} 
 	}
 
@@ -63356,8 +65419,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Mk_campaign
 	 * @param domain Identificador del Dominio
-	 * @param active Indica si la Campa?a esta activa o no
-	 * @param description Descripcion de la Campa?a
+	 * @param active Indica si la Campaa esta activa o no
+	 * @param description Descripcion de la Campaa
 	 * @param scope Identificador del Ambito
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -63460,6 +65523,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				irpf_data_ascendantsStmt.setShort(offset++, irpf_data_ascendants.another_descendient);
 		}
 		irpf_data_ascendantsStmt.executeUpdate();
+		irpf_data_ascendantss.clear();
 		irpf_data_ascendantsInserted += size;
 
 		// elapsed time in milliseconds
@@ -63498,11 +65562,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.irpf_data_ascendantsId = irpf_data_ascendantsId;
 		} 
 	
-	private void flushIrpf_data_ascendants(  )
+	protected void flushIrpf_data_ascendants( )
+	throws SQLException {
+		flushIrpf_data_ascendants(false);
+	}	
+
+	private void flushIrpf_data_ascendants( boolean close )
 	throws SQLException {
 		if ( ! irpf_data_ascendantss.isEmpty() )
 			insertIrpf_data_ascendants(irpf_data_ascendantss);
-		if ( irpf_data_ascendantsStmt != null )
+		if ( close && irpf_data_ascendantsStmt != null )
 			irpf_data_ascendantsStmt.close();
 	}	
 
@@ -63535,7 +65604,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 46 * irpf_data_ascendantsCount >=  this.maxAllowedPacket ){
 			insertIrpf_data_ascendants(irpf_data_ascendantss);
-			irpf_data_ascendantss.clear();
 		} 
 	}
 
@@ -63701,6 +65769,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				bank_statementStmt.setString(offset++, bank_statement.comments);
 		}
 		bank_statementStmt.executeUpdate();
+		bank_statements.clear();
 		bank_statementInserted += size;
 
 		// elapsed time in milliseconds
@@ -63739,11 +65808,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.bank_statementId = bank_statementId;
 		} 
 	
-	private void flushBank_statement(  )
+	protected void flushBank_statement( )
+	throws SQLException {
+		flushBank_statement(false);
+	}	
+
+	private void flushBank_statement( boolean close )
 	throws SQLException {
 		if ( ! bank_statements.isEmpty() )
 			insertBank_statement(bank_statements);
-		if ( bank_statementStmt != null )
+		if ( close && bank_statementStmt != null )
 			bank_statementStmt.close();
 	}	
 
@@ -63751,7 +65825,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Bank_statement
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param rbank Identificador de Banco de la Compa?ia
+	 * @param rbank Identificador de Banco de la Compaia
 	 * @param lot_number Numero de lote
 	 * @param operation_date Fecha de operacion
 	 * @param common_concept Concepto comun
@@ -63796,7 +65870,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 200 * bank_statementCount >=  this.maxAllowedPacket ){
 			insertBank_statement(bank_statements);
-			bank_statements.clear();
 		} 
 	}
 
@@ -63804,7 +65877,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Bank_statement
 	 * @param domain Identificador del Dominio
-	 * @param rbank Identificador de Banco de la Compa?ia
+	 * @param rbank Identificador de Banco de la Compaia
 	 * @param lot_number Numero de lote
 	 * @param operation_date Fecha de operacion
 	 * @param common_concept Concepto comun
@@ -63977,6 +66050,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				hotelStmt.setBoolean(offset++, hotel.active);
 		}
 		hotelStmt.executeUpdate();
+		hotels.clear();
 		hotelInserted += size;
 
 		// elapsed time in milliseconds
@@ -64015,11 +66089,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.hotelId = hotelId;
 		} 
 	
-	private void flushHotel(  )
+	protected void flushHotel( )
+	throws SQLException {
+		flushHotel(false);
+	}	
+
+	private void flushHotel( boolean close )
 	throws SQLException {
 		if ( ! hotels.isEmpty() )
 			insertHotel(hotels);
-		if ( hotelStmt != null )
+		if ( close && hotelStmt != null )
 			hotelStmt.close();
 	}	
 
@@ -64070,7 +66149,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 269 * hotelCount >=  this.maxAllowedPacket ){
 			insertHotel(hotels);
-			hotels.clear();
 		} 
 	}
 
@@ -64194,6 +66272,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				item_alternativeStmt.setShort(offset++, item_alternative.priority);
 		}
 		item_alternativeStmt.executeUpdate();
+		item_alternatives.clear();
 		item_alternativeInserted += size;
 
 		// elapsed time in milliseconds
@@ -64232,11 +66311,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.item_alternativeId = item_alternativeId;
 		} 
 	
-	private void flushItem_alternative(  )
+	protected void flushItem_alternative( )
+	throws SQLException {
+		flushItem_alternative(false);
+	}	
+
+	private void flushItem_alternative( boolean close )
 	throws SQLException {
 		if ( ! item_alternatives.isEmpty() )
 			insertItem_alternative(item_alternatives);
-		if ( item_alternativeStmt != null )
+		if ( close && item_alternativeStmt != null )
 			item_alternativeStmt.close();
 	}	
 
@@ -64265,7 +66349,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 43 * item_alternativeCount >=  this.maxAllowedPacket ){
 			insertItem_alternative(item_alternatives);
-			item_alternatives.clear();
 		} 
 	}
 
@@ -64392,6 +66475,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				userStmt.setShort(offset++, user.toolbar);
 		}
 		userStmt.executeUpdate();
+		users.clear();
 		userInserted += size;
 
 		// elapsed time in milliseconds
@@ -64430,11 +66514,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.userId = userId;
 		} 
 	
-	private void flushUser(  )
+	protected void flushUser( )
+	throws SQLException {
+		flushUser(false);
+	}	
+
+	private void flushUser( boolean close )
 	throws SQLException {
 		if ( ! users.isEmpty() )
 			insertUser(users);
-		if ( userStmt != null )
+		if ( close && userStmt != null )
 			userStmt.close();
 	}	
 
@@ -64447,8 +66536,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param enterprise Identificador de la Empresa
 	 * @param registry Identificador del Registry
 	 * @param active Indica si el Usuario esta activo o no
-	 * @param password Contrase?a del Usuario
-	 * @param passwordExpiration Fecha de Expiracion de la Contrase?a
+	 * @param password Contrasea del Usuario
+	 * @param passwordExpiration Fecha de Expiracion de la Contrasea
 	 * @param toolbar Tipo de Barra de Herramientas del Usuario
 	 * @throws SQLException
 	*/
@@ -64473,7 +66562,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 261 * userCount >=  this.maxAllowedPacket ){
 			insertUser(users);
-			users.clear();
 		} 
 	}
 
@@ -64486,8 +66574,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param enterprise Identificador de la Empresa
 	 * @param registry Identificador del Registry
 	 * @param active Indica si el Usuario esta activo o no
-	 * @param password Contrase?a del Usuario
-	 * @param passwordExpiration Fecha de Expiracion de la Contrase?a
+	 * @param password Contrasea del Usuario
+	 * @param passwordExpiration Fecha de Expiracion de la Contrasea
 	 * @param toolbar Tipo de Barra de Herramientas del Usuario
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -64580,6 +66668,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				app_paramStmt.setString(offset++, app_param.value);
 		}
 		app_paramStmt.executeUpdate();
+		app_params.clear();
 		app_paramInserted += size;
 
 		// elapsed time in milliseconds
@@ -64618,11 +66707,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			this.app_paramId = app_paramId;
 		} 
 	
-	private void flushApp_param(  )
+	protected void flushApp_param( )
+	throws SQLException {
+		flushApp_param(false);
+	}	
+
+	private void flushApp_param( boolean close )
 	throws SQLException {
 		if ( ! app_params.isEmpty() )
 			insertApp_param(app_params);
-		if ( app_paramStmt != null )
+		if ( close && app_paramStmt != null )
 			app_paramStmt.close();
 	}	
 
@@ -64649,7 +66743,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		if ( 116 * app_paramCount >=  this.maxAllowedPacket ){
 			insertApp_param(app_params);
-			app_params.clear();
 		} 
 	}
 
@@ -64686,330 +66779,331 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	protected void finish() 
 	throws SQLException {
-		flushDb_version();
-		flushPcategory();
-		flushItem_addinfo();
-		flushAgreement_data();
-		flushWarehouse();
-		flushCustomer();
-		flushPos();
-		flushMessage_content();
-		flushApplication_user_profile();
-		flushInvoice_tax();
-		flushReservation_request_guest();
-		flushContract_attach();
-		flushIattach();
-		flushTas_item();
-		flushPayment_concept();
-		flushCost_profile();
-		flushRole();
-		flushFeature();
-		flushSalary();
-		flushCommission();
-		flushSupplier();
-		flushSignature();
-		flushUser_scope();
-		flushContact_detail();
-		flushAsset();
-		flushItem_warehouse();
-		flushPos_shift();
-		flushRnote();
-		flushFavorite();
-		flushDaily_tracking();
-		flushLoan();
-		flushProject();
-		flushQuestion_value();
-		flushFs_mod347_detail();
-		flushWeb_info_style();
-		flushSalary_payment();
-		flushContract_data();
-		flushEnterprise_data();
-		flushFs_renting_detail();
-		flushMk_action();
-		flushProfile_action_denied();
-		flushProposal_detail();
-		flushFs_vat_detail();
-		flushOffer_detail_commission();
-		flushFavorite_category();
-		flushGeozone_irpf_handicap();
-		flushProject_type();
-		flushBalance_detail();
-		flushInvoice_tax_account();
-		flushFs_mod347();
-		flushProduct_account();
-		flushPcategory_tree();
-		flushAccount_entry_detail();
-		flushGeozone_irpf();
-		flushTariff_catalogue();
-		flushAmortization_detail();
-		flushDomain();
-		flushNotice();
-		flushFs_mod349();
-		flushSalary_bonus();
-		flushCertifica2_batch_attach();
-		flushProcess_task();
-		flushBonus_concept();
-		flushAmortization_type();
-		flushDelivery_detail();
-		flushPayroll_workplace();
-		flushCatalogue();
-		flushAction_entry();
-		flushAbsence();
-		flushSystem_payment();
-		flushApplication_user();
-		flushItem_tariff();
-		flushCno();
-		flushAccount_entry_fbatch();
-		flushSeller();
-		flushOffer_attach();
-		flushProject_reservation();
-		flushProcess_detail();
-		flushRelationship();
-		flushAccount_entry_invoice();
-		flushTax_account();
-		flushInventory();
-		flushCommercial_term();
-		flushOffer_term();
-		flushCommercial_activity();
-		flushRsegment();
-		flushDomain_application_module();
-		flushProject_tas();
-		flushProcess_transition_type();
-		flushDeduction_concept();
-		flushCertifica2_batch_detail();
-		flushContract_batch();
-		flushQuality_skill();
-		flushBalance();
-		flushQualification();
-		flushTax_detail();
-		flushSupplier_account();
-		flushBank();
-		flushActivity_type();
-		flushCourse_evaluation();
-		flushIrpf_data();
-		flushProcess_detail_transition();
-		flushCustomer_fee();
-		flushPurchase_detail();
-		flushPm_type_detail();
-		flushHoliday_detail();
-		flushTarget_item();
-		flushAgreement_level_category();
-		flushAgreement_extra();
-		flushHoliday();
-		flushPm_type_detail_account();
-		flushCommission_category();
-		flushAcademic_year();
-		flushBank_concept_account();
-		flushCreditor_account();
-		flushFinance_tracking();
-		flushRattach();
-		flushLeave_batch_detail();
-		flushSales_detail();
-		flushProject_attach();
-		flushContact_data();
-		flushSystem_deduction();
-		flushMake();
-		flushRoom();
-		flushRbank_account();
-		flushModel();
-		flushCnae();
-		flushFan_batch_detail();
-		flushDepartment();
-		flushTarget_profile();
-		flushPurchase();
-		flushDomain_application();
-		flushWeb_info();
-		flushBank_statement_link();
-		flushCourse_alumn();
-		flushApplication_role();
-		flushFan_batch();
-		flushFs_renting();
-		flushWarehouse_transfer_detail();
-		flushQuestion();
-		flushRecord_data();
-		flushAlumn_loan();
-		flushProfile();
-		flushCalendar();
-		flushAsset_activity();
-		flushProject_reservation_guest();
-		flushCalendar_period();
-		flushSystem_cost();
-		flushFbatch();
-		flushCertifica2_batch();
-		flushInvoice_detail_account();
-		flushCommission_type();
-		flushAlarm();
-		flushPay_method();
-		flushWorkactivity();
-		flushProject_commercial();
-		flushCnae2009();
-		flushCourse_observation();
-		flushSalary_data();
-		flushReservation_request_room();
-		flushProfile_role();
-		flushSurvey_response();
-		flushEvaluation_observation();
-		flushPerson();
-		flushInstructor();
-		flushContract_payment();
-		flushIrpf_regularization();
-		flushCashflow_forecast();
-		flushAccount_entry();
-		flushTag();
-		flushGeotree();
-		flushItem_supplier();
-		flushCustomer_account();
-		flushSurvey_question();
-		flushCourse();
-		flushStock();
-		flushRbank();
-		flushRpaymethod();
-		flushSales();
-		flushIncome();
-		flushEnterprise_activity();
-		flushCertifica2_batch_data();
-		flushWeb_info_page_resource();
-		flushCnae2009_rate();
-		flushFbatch_detail();
-		flushContract_leave();
-		flushCalendar_holiday();
-		flushWorkgroup();
-		flushIrpf_result();
-		flushCategory();
-		flushMk_action_target();
-		flushTax();
-		flushSession();
-		flushInvoicing_group();
-		flushProject_activity();
-		flushRegistry();
-		flushMail_account();
-		flushCreditor();
-		flushDelivery();
-		flushAccount_period();
-		flushMk_template();
-		flushSeries();
-		flushFs_vat_declaration();
-		flushCourse_level();
-		flushWorkplace();
-		flushProject_reservation_room();
-		flushAction_denied();
-		flushAgreement_level();
-		flushContact();
-		flushUser_workgroup();
-		flushCourse_schedule();
-		flushRrelationship();
-		flushTask_holder();
-		flushWeb_info_page();
-		flushCampaign();
-		flushFs_vat();
-		flushContract_deduction();
-		flushNote();
-		flushObservation();
-		flushCourse_subject();
-		flushAction_favorite();
-		flushLoan_account();
-		flushSalary_embargo();
-		flushReservation_request();
-		flushFs_prof_retention();
-		flushIrpf_data_descendients();
-		flushSurvey_workflow();
-		flushProduct();
-		flushProcess();
-		flushContract_leave_detail();
-		flushProposal();
-		flushItem();
-		flushWarehouse_transfer();
-		flushAccount();
-		flushBrand();
-		flushTarget_seller();
-		flushContract_bonus();
-		flushFinance();
-		flushTask_holder_workgroup();
-		flushGeozone();
-		flushPcategory_group();
-		flushSegment();
-		flushSalary_deduction();
-		flushInvoice();
-		flushInvoice_attach();
-		flushInvoice_detail();
-		flushLeave_batch();
-		flushProject_reservation_room_detail();
-		flushAccount_entry_finance_tracking();
-		flushCourse_instructor();
-		flushItem_composition();
-		flushAgreement_level_data();
-		flushIncome_detail();
-		flushWorkplace_department();
-		flushRmedia();
-		flushCommercial_tracking();
-		flushRaddress();
-		flushAction();
-		flushSurvey();
-		flushSurvey_response_detail();
-		flushRaddinfo();
-		flushInvoicing_group_detail();
-		flushCommission_item();
-		flushCampaign_type();
-		flushCatalogue_item();
-		flushAcademic_skill();
-		flushOffer_detail();
-		flushContract();
-		flushAmortization();
-		flushEnterprise();
-		flushMark();
-		flushCatalogue_category();
-		flushGeozone_irpf_descendant();
-		flushFs_mod349_detail();
-		flushCompany();
-		flushAccount_entry_bank_statement();
-		flushProfile_module_denied();
-		flushProject_reservation_service_detail();
-		flushSalary_cost();
-		flushProject_dossier();
-		flushCommission_type_commission();
-		flushInventory_detail();
-		flushScope();
-		flushTarget_supplier();
-		flushProject_reservation_service();
-		flushContract_batch_detail();
-		flushCustomer_segment();
-		flushLeave_batch_attach();
-		flushAgreement_payment();
-		flushFan_batch_attach();
-		flushRattach_tag();
-		flushFinance_pos();
-		flushAuto_concept();
-		flushWeb_info_page_detail();
-		flushPos_shift_count();
-		flushJob_type();
-		flushTariff();
-		flushContract_batch_attach();
-		flushEnterprise_agreement();
-		flushInvoice_address();
-		flushMessage_log();
-		flushCampaign_project();
-		flushApplication();
-		flushContract_calendar_event();
-		flushRdir_staff();
-		flushTask();
-		flushProject_reservation_divert();
-		flushAgreement();
-		flushOffer();
-		flushAsset_feature();
-		flushContract_embargo();
-		flushAccount_helper();
-		flushSystem_data();
-		flushBank_concept();
-		flushCourse_academicskill();
-		flushEnterprise_ccc();
-		flushTarget();
-		flushMk_campaign();
-		flushIrpf_data_ascendants();
-		flushBank_statement();
-		flushHotel();
-		flushItem_alternative();
-		flushUser();
-		flushApp_param();
+		flushDb_version(true);
+		flushPcategory(true);
+		flushItem_addinfo(true);
+		flushAgreement_data(true);
+		flushWarehouse(true);
+		flushCustomer(true);
+		flushPos(true);
+		flushMessage_content(true);
+		flushApplication_user_profile(true);
+		flushInvoice_tax(true);
+		flushReservation_request_guest(true);
+		flushContract_attach(true);
+		flushIattach(true);
+		flushTas_item(true);
+		flushPayment_concept(true);
+		flushCost_profile(true);
+		flushRole(true);
+		flushFeature(true);
+		flushSalary(true);
+		flushCommission(true);
+		flushSupplier(true);
+		flushSignature(true);
+		flushUser_scope(true);
+		flushContact_detail(true);
+		flushAsset(true);
+		flushItem_warehouse(true);
+		flushPos_shift(true);
+		flushRnote(true);
+		flushFavorite(true);
+		flushDaily_tracking(true);
+		flushLoan(true);
+		flushProject(true);
+		flushQuestion_value(true);
+		flushFs_mod347_detail(true);
+		flushWeb_info_style(true);
+		flushSalary_payment(true);
+		flushContract_data(true);
+		flushEnterprise_data(true);
+		flushFs_renting_detail(true);
+		flushMk_action(true);
+		flushProfile_action_denied(true);
+		flushProposal_detail(true);
+		flushFs_vat_detail(true);
+		flushOffer_detail_commission(true);
+		flushFavorite_category(true);
+		flushGeozone_irpf_handicap(true);
+		flushProject_type(true);
+		flushBalance_detail(true);
+		flushInvoice_tax_account(true);
+		flushFs_mod347(true);
+		flushProduct_account(true);
+		flushPcategory_tree(true);
+		flushAccount_entry_detail(true);
+		flushGeozone_irpf(true);
+		flushTariff_catalogue(true);
+		flushAmortization_detail(true);
+		flushDomain(true);
+		flushNotice(true);
+		flushFs_mod349(true);
+		flushSalary_bonus(true);
+		flushCertifica2_batch_attach(true);
+		flushProcess_task(true);
+		flushBonus_concept(true);
+		flushAmortization_type(true);
+		flushDelivery_detail(true);
+		flushPayroll_workplace(true);
+		flushCatalogue(true);
+		flushFs_batch_detail(true);
+		flushAction_entry(true);
+		flushAbsence(true);
+		flushSystem_payment(true);
+		flushApplication_user(true);
+		flushItem_tariff(true);
+		flushCno(true);
+		flushAccount_entry_fbatch(true);
+		flushSeller(true);
+		flushOffer_attach(true);
+		flushProject_reservation(true);
+		flushProcess_detail(true);
+		flushRelationship(true);
+		flushAccount_entry_invoice(true);
+		flushTax_account(true);
+		flushInventory(true);
+		flushCommercial_term(true);
+		flushOffer_term(true);
+		flushCommercial_activity(true);
+		flushRsegment(true);
+		flushDomain_application_module(true);
+		flushProject_tas(true);
+		flushProcess_transition_type(true);
+		flushDeduction_concept(true);
+		flushCertifica2_batch_detail(true);
+		flushContract_batch(true);
+		flushQuality_skill(true);
+		flushBalance(true);
+		flushQualification(true);
+		flushTax_detail(true);
+		flushSupplier_account(true);
+		flushBank(true);
+		flushActivity_type(true);
+		flushCourse_evaluation(true);
+		flushIrpf_data(true);
+		flushProcess_detail_transition(true);
+		flushCustomer_fee(true);
+		flushPurchase_detail(true);
+		flushPm_type_detail(true);
+		flushHoliday_detail(true);
+		flushTarget_item(true);
+		flushAgreement_level_category(true);
+		flushAgreement_extra(true);
+		flushHoliday(true);
+		flushPm_type_detail_account(true);
+		flushCommission_category(true);
+		flushAcademic_year(true);
+		flushBank_concept_account(true);
+		flushCreditor_account(true);
+		flushFinance_tracking(true);
+		flushRattach(true);
+		flushLeave_batch_detail(true);
+		flushSales_detail(true);
+		flushProject_attach(true);
+		flushContact_data(true);
+		flushSystem_deduction(true);
+		flushMake(true);
+		flushRoom(true);
+		flushRbank_account(true);
+		flushModel(true);
+		flushCnae(true);
+		flushFan_batch_detail(true);
+		flushDepartment(true);
+		flushTarget_profile(true);
+		flushPurchase(true);
+		flushDomain_application(true);
+		flushWeb_info(true);
+		flushBank_statement_link(true);
+		flushCourse_alumn(true);
+		flushApplication_role(true);
+		flushFan_batch(true);
+		flushFs_renting(true);
+		flushWarehouse_transfer_detail(true);
+		flushQuestion(true);
+		flushRecord_data(true);
+		flushAlumn_loan(true);
+		flushProfile(true);
+		flushCalendar(true);
+		flushAsset_activity(true);
+		flushProject_reservation_guest(true);
+		flushCalendar_period(true);
+		flushSystem_cost(true);
+		flushFbatch(true);
+		flushCertifica2_batch(true);
+		flushInvoice_detail_account(true);
+		flushCommission_type(true);
+		flushAlarm(true);
+		flushPay_method(true);
+		flushWorkactivity(true);
+		flushProject_commercial(true);
+		flushCnae2009(true);
+		flushCourse_observation(true);
+		flushSalary_data(true);
+		flushReservation_request_room(true);
+		flushProfile_role(true);
+		flushSurvey_response(true);
+		flushEvaluation_observation(true);
+		flushPerson(true);
+		flushContract_payment(true);
+		flushIrpf_regularization(true);
+		flushCashflow_forecast(true);
+		flushAccount_entry(true);
+		flushTag(true);
+		flushGeotree(true);
+		flushItem_supplier(true);
+		flushCustomer_account(true);
+		flushSurvey_question(true);
+		flushCourse(true);
+		flushStock(true);
+		flushRbank(true);
+		flushRpaymethod(true);
+		flushSales(true);
+		flushIncome(true);
+		flushEnterprise_activity(true);
+		flushCertifica2_batch_data(true);
+		flushWeb_info_page_resource(true);
+		flushCnae2009_rate(true);
+		flushFbatch_detail(true);
+		flushContract_leave(true);
+		flushCalendar_holiday(true);
+		flushWorkgroup(true);
+		flushIrpf_result(true);
+		flushCategory(true);
+		flushMk_action_target(true);
+		flushTax(true);
+		flushSession(true);
+		flushInvoicing_group(true);
+		flushProject_activity(true);
+		flushRegistry(true);
+		flushMail_account(true);
+		flushCreditor(true);
+		flushDelivery(true);
+		flushAccount_period(true);
+		flushMk_template(true);
+		flushSeries(true);
+		flushFs_vat_declaration(true);
+		flushCourse_level(true);
+		flushWorkplace(true);
+		flushProject_reservation_room(true);
+		flushAction_denied(true);
+		flushAgreement_level(true);
+		flushContact(true);
+		flushUser_workgroup(true);
+		flushCourse_schedule(true);
+		flushRrelationship(true);
+		flushTask_holder(true);
+		flushWeb_info_page(true);
+		flushCampaign(true);
+		flushFs_vat(true);
+		flushContract_deduction(true);
+		flushNote(true);
+		flushAmortization_invoice(true);
+		flushObservation(true);
+		flushCourse_subject(true);
+		flushAction_favorite(true);
+		flushLoan_account(true);
+		flushSalary_embargo(true);
+		flushReservation_request(true);
+		flushFs_prof_retention(true);
+		flushIrpf_data_descendients(true);
+		flushSurvey_workflow(true);
+		flushProduct(true);
+		flushProcess(true);
+		flushContract_leave_detail(true);
+		flushProposal(true);
+		flushItem(true);
+		flushWarehouse_transfer(true);
+		flushAccount(true);
+		flushBrand(true);
+		flushTarget_seller(true);
+		flushContract_bonus(true);
+		flushFinance(true);
+		flushTask_holder_workgroup(true);
+		flushGeozone(true);
+		flushPcategory_group(true);
+		flushSegment(true);
+		flushSalary_deduction(true);
+		flushInvoice(true);
+		flushInvoice_attach(true);
+		flushInvoice_detail(true);
+		flushLeave_batch(true);
+		flushProject_reservation_room_detail(true);
+		flushAccount_entry_finance_tracking(true);
+		flushCourse_instructor(true);
+		flushItem_composition(true);
+		flushAgreement_level_data(true);
+		flushIncome_detail(true);
+		flushWorkplace_department(true);
+		flushRmedia(true);
+		flushCommercial_tracking(true);
+		flushRaddress(true);
+		flushAction(true);
+		flushSurvey(true);
+		flushSurvey_response_detail(true);
+		flushRaddinfo(true);
+		flushInvoicing_group_detail(true);
+		flushCommission_item(true);
+		flushCampaign_type(true);
+		flushCatalogue_item(true);
+		flushAcademic_skill(true);
+		flushOffer_detail(true);
+		flushContract(true);
+		flushFs_batch(true);
+		flushAmortization(true);
+		flushEnterprise(true);
+		flushMark(true);
+		flushCatalogue_category(true);
+		flushGeozone_irpf_descendant(true);
+		flushFs_mod349_detail(true);
+		flushCompany(true);
+		flushAccount_entry_bank_statement(true);
+		flushProfile_module_denied(true);
+		flushProject_reservation_service_detail(true);
+		flushSalary_cost(true);
+		flushProject_dossier(true);
+		flushCommission_type_commission(true);
+		flushInventory_detail(true);
+		flushScope(true);
+		flushTarget_supplier(true);
+		flushProject_reservation_service(true);
+		flushContract_batch_detail(true);
+		flushLeave_batch_attach(true);
+		flushAgreement_payment(true);
+		flushFan_batch_attach(true);
+		flushRattach_tag(true);
+		flushFinance_pos(true);
+		flushAuto_concept(true);
+		flushWeb_info_page_detail(true);
+		flushPos_shift_count(true);
+		flushJob_type(true);
+		flushTariff(true);
+		flushContract_batch_attach(true);
+		flushEnterprise_agreement(true);
+		flushInvoice_address(true);
+		flushMessage_log(true);
+		flushCampaign_project(true);
+		flushApplication(true);
+		flushContract_calendar_event(true);
+		flushRdir_staff(true);
+		flushTask(true);
+		flushProject_reservation_divert(true);
+		flushAgreement(true);
+		flushOffer(true);
+		flushAsset_feature(true);
+		flushContract_embargo(true);
+		flushAccount_helper(true);
+		flushSystem_data(true);
+		flushBank_concept(true);
+		flushCourse_academicskill(true);
+		flushEnterprise_ccc(true);
+		flushTarget(true);
+		flushMk_campaign(true);
+		flushIrpf_data_ascendants(true);
+		flushBank_statement(true);
+		flushHotel(true);
+		flushItem_alternative(true);
+		flushUser(true);
+		flushApp_param(true);
 		Statement stmt = null; 
 		try {
 			stmt = 
@@ -65199,6 +67293,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initCatalogueId();
 		initMaxAllowedPacket();
+		initFs_batch_detailId();
+		initMaxAllowedPacket();
 		initAction_entryId();
 		initMaxAllowedPacket();
 		initAbsenceId();
@@ -65387,7 +67483,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initEvaluation_observationId();
 		initMaxAllowedPacket();
 		initMaxAllowedPacket();
-		initMaxAllowedPacket();
 		initContract_paymentId();
 		initMaxAllowedPacket();
 		initIrpf_regularizationId();
@@ -65492,6 +67587,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initNoteId();
 		initMaxAllowedPacket();
+		initAmortization_invoiceId();
+		initMaxAllowedPacket();
 		initObservationId();
 		initMaxAllowedPacket();
 		initCourse_subjectId();
@@ -65592,6 +67689,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initContractId();
 		initMaxAllowedPacket();
+		initFs_batchId();
+		initMaxAllowedPacket();
 		initAmortizationId();
 		initMaxAllowedPacket();
 		initMaxAllowedPacket();
@@ -65624,8 +67723,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initProject_reservation_serviceId();
 		initMaxAllowedPacket();
 		initContract_batch_detailId();
-		initMaxAllowedPacket();
-		initCustomer_segmentId();
 		initMaxAllowedPacket();
 		initLeave_batch_attachId();
 		initMaxAllowedPacket();
@@ -65702,6 +67799,630 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 	}
 	
+	protected void syncIds() 
+	throws SQLException {
+		flushPcategory();
+		initPcategoryId();
+		flushItem_addinfo();
+		initItem_addinfoId();
+		flushAgreement_data();
+		initAgreement_dataId();
+		flushWarehouse();
+		initWarehouseId();
+		flushPos();
+		initPosId();
+		flushMessage_content();
+		initMessage_contentId();
+		flushApplication_user_profile();
+		initApplication_user_profileId();
+		flushInvoice_tax();
+		initInvoice_taxId();
+		flushReservation_request_guest();
+		initReservation_request_guestId();
+		flushContract_attach();
+		initContract_attachId();
+		flushIattach();
+		initIattachId();
+		flushTas_item();
+		initTas_itemId();
+		flushPayment_concept();
+		initPayment_conceptId();
+		flushCost_profile();
+		initCost_profileId();
+		flushRole();
+		initRoleId();
+		flushFeature();
+		initFeatureId();
+		flushSalary();
+		initSalaryId();
+		flushCommission();
+		initCommissionId();
+		flushSignature();
+		initSignatureId();
+		flushUser_scope();
+		initUser_scopeId();
+		flushContact_detail();
+		initContact_detailId();
+		flushAsset();
+		initAssetId();
+		flushItem_warehouse();
+		initItem_warehouseId();
+		flushPos_shift();
+		initPos_shiftId();
+		flushRnote();
+		initRnoteId();
+		flushFavorite();
+		initFavoriteId();
+		flushDaily_tracking();
+		initDaily_trackingId();
+		flushLoan();
+		initLoanId();
+		flushProject();
+		initProjectId();
+		flushQuestion_value();
+		initQuestion_valueId();
+		flushFs_mod347_detail();
+		initFs_mod347_detailId();
+		flushWeb_info_style();
+		initWeb_info_styleId();
+		flushSalary_payment();
+		initSalary_paymentId();
+		flushContract_data();
+		initContract_dataId();
+		flushEnterprise_data();
+		initEnterprise_dataId();
+		flushFs_renting_detail();
+		initFs_renting_detailId();
+		flushMk_action();
+		initMk_actionId();
+		flushProfile_action_denied();
+		initProfile_action_deniedId();
+		flushProposal_detail();
+		initProposal_detailId();
+		flushFs_vat_detail();
+		initFs_vat_detailId();
+		flushOffer_detail_commission();
+		initOffer_detail_commissionId();
+		flushFavorite_category();
+		initFavorite_categoryId();
+		flushGeozone_irpf_handicap();
+		initGeozone_irpf_handicapId();
+		flushProject_type();
+		initProject_typeId();
+		flushBalance_detail();
+		initBalance_detailId();
+		flushInvoice_tax_account();
+		initInvoice_tax_accountId();
+		flushFs_mod347();
+		initFs_mod347Id();
+		flushProduct_account();
+		initProduct_accountId();
+		flushPcategory_tree();
+		initPcategory_treeId();
+		flushAccount_entry_detail();
+		initAccount_entry_detailId();
+		flushGeozone_irpf();
+		initGeozone_irpfId();
+		flushTariff_catalogue();
+		initTariff_catalogueId();
+		flushAmortization_detail();
+		initAmortization_detailId();
+		flushDomain();
+		initDomainId();
+		flushNotice();
+		initNoticeId();
+		flushFs_mod349();
+		initFs_mod349Id();
+		flushSalary_bonus();
+		initSalary_bonusId();
+		flushCertifica2_batch_attach();
+		initCertifica2_batch_attachId();
+		flushProcess_task();
+		initProcess_taskId();
+		flushBonus_concept();
+		initBonus_conceptId();
+		flushAmortization_type();
+		initAmortization_typeId();
+		flushDelivery_detail();
+		initDelivery_detailId();
+		flushPayroll_workplace();
+		initPayroll_workplaceId();
+		flushCatalogue();
+		initCatalogueId();
+		flushFs_batch_detail();
+		initFs_batch_detailId();
+		flushAction_entry();
+		initAction_entryId();
+		flushAbsence();
+		initAbsenceId();
+		flushSystem_payment();
+		initSystem_paymentId();
+		flushApplication_user();
+		initApplication_userId();
+		flushItem_tariff();
+		initItem_tariffId();
+		flushCno();
+		initCnoId();
+		flushAccount_entry_fbatch();
+		initAccount_entry_fbatchId();
+		flushOffer_attach();
+		initOffer_attachId();
+		flushProcess_detail();
+		initProcess_detailId();
+		flushRelationship();
+		initRelationshipId();
+		flushAccount_entry_invoice();
+		initAccount_entry_invoiceId();
+		flushTax_account();
+		initTax_accountId();
+		flushInventory();
+		initInventoryId();
+		flushCommercial_term();
+		initCommercial_termId();
+		flushOffer_term();
+		initOffer_termId();
+		flushCommercial_activity();
+		initCommercial_activityId();
+		flushRsegment();
+		initRsegmentId();
+		flushDomain_application_module();
+		initDomain_application_moduleId();
+		flushProcess_transition_type();
+		initProcess_transition_typeId();
+		flushDeduction_concept();
+		initDeduction_conceptId();
+		flushCertifica2_batch_detail();
+		initCertifica2_batch_detailId();
+		flushContract_batch();
+		initContract_batchId();
+		flushQuality_skill();
+		initQuality_skillId();
+		flushBalance();
+		initBalanceId();
+		flushQualification();
+		initQualificationId();
+		flushTax_detail();
+		initTax_detailId();
+		flushSupplier_account();
+		initSupplier_accountId();
+		flushBank();
+		initBankId();
+		flushActivity_type();
+		initActivity_typeId();
+		flushCourse_evaluation();
+		initCourse_evaluationId();
+		flushIrpf_data();
+		initIrpf_dataId();
+		flushProcess_detail_transition();
+		initProcess_detail_transitionId();
+		flushCustomer_fee();
+		initCustomer_feeId();
+		flushPurchase_detail();
+		initPurchase_detailId();
+		flushPm_type_detail();
+		initPm_type_detailId();
+		flushHoliday_detail();
+		initHoliday_detailId();
+		flushTarget_item();
+		initTarget_itemId();
+		flushAgreement_level_category();
+		initAgreement_level_categoryId();
+		flushAgreement_extra();
+		initAgreement_extraId();
+		flushHoliday();
+		initHolidayId();
+		flushPm_type_detail_account();
+		initPm_type_detail_accountId();
+		flushCommission_category();
+		initCommission_categoryId();
+		flushAcademic_year();
+		initAcademic_yearId();
+		flushBank_concept_account();
+		initBank_concept_accountId();
+		flushCreditor_account();
+		initCreditor_accountId();
+		flushFinance_tracking();
+		initFinance_trackingId();
+		flushRattach();
+		initRattachId();
+		flushLeave_batch_detail();
+		initLeave_batch_detailId();
+		flushSales_detail();
+		initSales_detailId();
+		flushProject_attach();
+		initProject_attachId();
+		flushContact_data();
+		initContact_dataId();
+		flushSystem_deduction();
+		initSystem_deductionId();
+		flushMake();
+		initMakeId();
+		flushRbank_account();
+		initRbank_accountId();
+		flushModel();
+		initModelId();
+		flushCnae();
+		initCnaeId();
+		flushFan_batch_detail();
+		initFan_batch_detailId();
+		flushDepartment();
+		initDepartmentId();
+		flushTarget_profile();
+		initTarget_profileId();
+		flushPurchase();
+		initPurchaseId();
+		flushDomain_application();
+		initDomain_applicationId();
+		flushWeb_info();
+		initWeb_infoId();
+		flushBank_statement_link();
+		initBank_statement_linkId();
+		flushCourse_alumn();
+		initCourse_alumnId();
+		flushApplication_role();
+		initApplication_roleId();
+		flushFan_batch();
+		initFan_batchId();
+		flushFs_renting();
+		initFs_rentingId();
+		flushWarehouse_transfer_detail();
+		initWarehouse_transfer_detailId();
+		flushQuestion();
+		initQuestionId();
+		flushRecord_data();
+		initRecord_dataId();
+		flushAlumn_loan();
+		initAlumn_loanId();
+		flushProfile();
+		initProfileId();
+		flushCalendar();
+		initCalendarId();
+		flushAsset_activity();
+		initAsset_activityId();
+		flushProject_reservation_guest();
+		initProject_reservation_guestId();
+		flushCalendar_period();
+		initCalendar_periodId();
+		flushSystem_cost();
+		initSystem_costId();
+		flushFbatch();
+		initFbatchId();
+		flushCertifica2_batch();
+		initCertifica2_batchId();
+		flushInvoice_detail_account();
+		initInvoice_detail_accountId();
+		flushCommission_type();
+		initCommission_typeId();
+		flushAlarm();
+		initAlarmId();
+		flushPay_method();
+		initPay_methodId();
+		flushWorkactivity();
+		initWorkactivityId();
+		flushCnae2009();
+		initCnae2009Id();
+		flushCourse_observation();
+		initCourse_observationId();
+		flushSalary_data();
+		initSalary_dataId();
+		flushReservation_request_room();
+		initReservation_request_roomId();
+		flushProfile_role();
+		initProfile_roleId();
+		flushSurvey_response();
+		initSurvey_responseId();
+		flushEvaluation_observation();
+		initEvaluation_observationId();
+		flushContract_payment();
+		initContract_paymentId();
+		flushIrpf_regularization();
+		initIrpf_regularizationId();
+		flushCashflow_forecast();
+		initCashflow_forecastId();
+		flushAccount_entry();
+		initAccount_entryId();
+		flushTag();
+		initTagId();
+		flushGeotree();
+		initGeotreeId();
+		flushItem_supplier();
+		initItem_supplierId();
+		flushCustomer_account();
+		initCustomer_accountId();
+		flushSurvey_question();
+		initSurvey_questionId();
+		flushCourse();
+		initCourseId();
+		flushStock();
+		initStockId();
+		flushRbank();
+		initRbankId();
+		flushRpaymethod();
+		initRpaymethodId();
+		flushSales();
+		initSalesId();
+		flushIncome();
+		initIncomeId();
+		flushEnterprise_activity();
+		initEnterprise_activityId();
+		flushCertifica2_batch_data();
+		initCertifica2_batch_dataId();
+		flushWeb_info_page_resource();
+		initWeb_info_page_resourceId();
+		flushCnae2009_rate();
+		initCnae2009_rateId();
+		flushFbatch_detail();
+		initFbatch_detailId();
+		flushContract_leave();
+		initContract_leaveId();
+		flushCalendar_holiday();
+		initCalendar_holidayId();
+		flushWorkgroup();
+		initWorkgroupId();
+		flushIrpf_result();
+		initIrpf_resultId();
+		flushCategory();
+		initCategoryId();
+		flushMk_action_target();
+		initMk_action_targetId();
+		flushTax();
+		initTaxId();
+		flushSession();
+		initSessionId();
+		flushInvoicing_group();
+		initInvoicing_groupId();
+		flushProject_activity();
+		initProject_activityId();
+		flushRegistry();
+		initRegistryId();
+		flushMail_account();
+		initMail_accountId();
+		flushDelivery();
+		initDeliveryId();
+		flushAccount_period();
+		initAccount_periodId();
+		flushMk_template();
+		initMk_templateId();
+		flushSeries();
+		initSeriesId();
+		flushFs_vat_declaration();
+		initFs_vat_declarationId();
+		flushCourse_level();
+		initCourse_levelId();
+		flushWorkplace();
+		initWorkplaceId();
+		flushProject_reservation_room();
+		initProject_reservation_roomId();
+		flushAction_denied();
+		initAction_deniedId();
+		flushAgreement_level();
+		initAgreement_levelId();
+		flushContact();
+		initContactId();
+		flushUser_workgroup();
+		initUser_workgroupId();
+		flushCourse_schedule();
+		initCourse_scheduleId();
+		flushRrelationship();
+		initRrelationshipId();
+		flushWeb_info_page();
+		initWeb_info_pageId();
+		flushCampaign();
+		initCampaignId();
+		flushFs_vat();
+		initFs_vatId();
+		flushContract_deduction();
+		initContract_deductionId();
+		flushNote();
+		initNoteId();
+		flushAmortization_invoice();
+		initAmortization_invoiceId();
+		flushObservation();
+		initObservationId();
+		flushCourse_subject();
+		initCourse_subjectId();
+		flushAction_favorite();
+		initAction_favoriteId();
+		flushLoan_account();
+		initLoan_accountId();
+		flushSalary_embargo();
+		initSalary_embargoId();
+		flushReservation_request();
+		initReservation_requestId();
+		flushFs_prof_retention();
+		initFs_prof_retentionId();
+		flushIrpf_data_descendients();
+		initIrpf_data_descendientsId();
+		flushSurvey_workflow();
+		initSurvey_workflowId();
+		flushProduct();
+		initProductId();
+		flushProcess();
+		initProcessId();
+		flushContract_leave_detail();
+		initContract_leave_detailId();
+		flushProposal();
+		initProposalId();
+		flushItem();
+		initItemId();
+		flushWarehouse_transfer();
+		initWarehouse_transferId();
+		flushAccount();
+		initAccountId();
+		flushBrand();
+		initBrandId();
+		flushTarget_seller();
+		initTarget_sellerId();
+		flushContract_bonus();
+		initContract_bonusId();
+		flushFinance();
+		initFinanceId();
+		flushTask_holder_workgroup();
+		initTask_holder_workgroupId();
+		flushGeozone();
+		initGeozoneId();
+		flushPcategory_group();
+		initPcategory_groupId();
+		flushSegment();
+		initSegmentId();
+		flushSalary_deduction();
+		initSalary_deductionId();
+		flushInvoice();
+		initInvoiceId();
+		flushInvoice_attach();
+		initInvoice_attachId();
+		flushInvoice_detail();
+		initInvoice_detailId();
+		flushLeave_batch();
+		initLeave_batchId();
+		flushProject_reservation_room_detail();
+		initProject_reservation_room_detailId();
+		flushAccount_entry_finance_tracking();
+		initAccount_entry_finance_trackingId();
+		flushCourse_instructor();
+		initCourse_instructorId();
+		flushItem_composition();
+		initItem_compositionId();
+		flushAgreement_level_data();
+		initAgreement_level_dataId();
+		flushIncome_detail();
+		initIncome_detailId();
+		flushWorkplace_department();
+		initWorkplace_departmentId();
+		flushRmedia();
+		initRmediaId();
+		flushCommercial_tracking();
+		initCommercial_trackingId();
+		flushRaddress();
+		initRaddressId();
+		flushAction();
+		initActionId();
+		flushSurvey();
+		initSurveyId();
+		flushSurvey_response_detail();
+		initSurvey_response_detailId();
+		flushRaddinfo();
+		initRaddinfoId();
+		flushInvoicing_group_detail();
+		initInvoicing_group_detailId();
+		flushCommission_item();
+		initCommission_itemId();
+		flushCampaign_type();
+		initCampaign_typeId();
+		flushCatalogue_item();
+		initCatalogue_itemId();
+		flushAcademic_skill();
+		initAcademic_skillId();
+		flushOffer_detail();
+		initOffer_detailId();
+		flushContract();
+		initContractId();
+		flushFs_batch();
+		initFs_batchId();
+		flushAmortization();
+		initAmortizationId();
+		flushMark();
+		initMarkId();
+		flushCatalogue_category();
+		initCatalogue_categoryId();
+		flushGeozone_irpf_descendant();
+		initGeozone_irpf_descendantId();
+		flushFs_mod349_detail();
+		initFs_mod349_detailId();
+		flushAccount_entry_bank_statement();
+		initAccount_entry_bank_statementId();
+		flushProfile_module_denied();
+		initProfile_module_deniedId();
+		flushProject_reservation_service_detail();
+		initProject_reservation_service_detailId();
+		flushSalary_cost();
+		initSalary_costId();
+		flushCommission_type_commission();
+		initCommission_type_commissionId();
+		flushInventory_detail();
+		initInventory_detailId();
+		flushScope();
+		initScopeId();
+		flushTarget_supplier();
+		initTarget_supplierId();
+		flushProject_reservation_service();
+		initProject_reservation_serviceId();
+		flushContract_batch_detail();
+		initContract_batch_detailId();
+		flushLeave_batch_attach();
+		initLeave_batch_attachId();
+		flushAgreement_payment();
+		initAgreement_paymentId();
+		flushFan_batch_attach();
+		initFan_batch_attachId();
+		flushRattach_tag();
+		initRattach_tagId();
+		flushFinance_pos();
+		initFinance_posId();
+		flushAuto_concept();
+		initAuto_conceptId();
+		flushWeb_info_page_detail();
+		initWeb_info_page_detailId();
+		flushPos_shift_count();
+		initPos_shift_countId();
+		flushJob_type();
+		initJob_typeId();
+		flushTariff();
+		initTariffId();
+		flushContract_batch_attach();
+		initContract_batch_attachId();
+		flushEnterprise_agreement();
+		initEnterprise_agreementId();
+		flushInvoice_address();
+		initInvoice_addressId();
+		flushMessage_log();
+		initMessage_logId();
+		flushCampaign_project();
+		initCampaign_projectId();
+		flushApplication();
+		initApplicationId();
+		flushContract_calendar_event();
+		initContract_calendar_eventId();
+		flushRdir_staff();
+		initRdir_staffId();
+		flushTask();
+		initTaskId();
+		flushProject_reservation_divert();
+		initProject_reservation_divertId();
+		flushAgreement();
+		initAgreementId();
+		flushOffer();
+		initOfferId();
+		flushAsset_feature();
+		initAsset_featureId();
+		flushContract_embargo();
+		initContract_embargoId();
+		flushAccount_helper();
+		initAccount_helperId();
+		flushSystem_data();
+		initSystem_dataId();
+		flushBank_concept();
+		initBank_conceptId();
+		flushCourse_academicskill();
+		initCourse_academicskillId();
+		flushEnterprise_ccc();
+		initEnterprise_cccId();
+		flushMk_campaign();
+		initMk_campaignId();
+		flushIrpf_data_ascendants();
+		initIrpf_data_ascendantsId();
+		flushBank_statement();
+		initBank_statementId();
+		flushHotel();
+		initHotelId();
+		flushItem_alternative();
+		initItem_alternativeId();
+		flushUser();
+		initUserId();
+		flushApp_param();
+		initApp_paramId();
+	}
+
 	protected static void debug(String format, Object ... args){
 		LOGGER.debug(format, args);
 	}

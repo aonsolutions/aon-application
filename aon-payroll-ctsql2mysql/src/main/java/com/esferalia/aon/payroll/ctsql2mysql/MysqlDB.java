@@ -37,6 +37,7 @@ public class MysqlDB extends DefaultMysqlDB{
 	
 	// --------------------------------------------------------------
 	private String 			passwdHash = null;
+	private String 			domainName = null;
 	private List<String>	cifs = null;
 	private Date			fromDate = null;		
 	private File			imagesDir = null;
@@ -63,6 +64,10 @@ public class MysqlDB extends DefaultMysqlDB{
 	
 	public void setPasswdHash(String passwdHash) {
 		this.passwdHash = passwdHash;
+	}
+	
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
 	}
 	
 	public void write(CtsqlDB ctsqlReader) throws SQLException {
@@ -93,7 +98,8 @@ public class MysqlDB extends DefaultMysqlDB{
 					myAgreement,
 					myCalendar,
 					imagesDir,
-					passwdHash);
+					passwdHash,
+					domainName);
 		MyContract myContract= 
 			new MyContract(this, 
 					myEnterprise, 
@@ -108,6 +114,8 @@ public class MysqlDB extends DefaultMysqlDB{
 					myEnterprise, 
 					fromDate);
 		
+		// TODO : Here we must create domain for this consultancy.
+		
 		ctsqlReader.visitPais(this);
 		ctsqlReader.visitTipdoc(this);
 		ctsqlReader.visit(myHoliday);
@@ -116,10 +124,12 @@ public class MysqlDB extends DefaultMysqlDB{
 		ctsqlReader.visit(myConcept);
 		ctsqlReader.visit(myAgreement);
 		ctsqlReader.visit(myCalendar);
+		
 		ctsqlReader.visit(myEnterprise);
 		ctsqlReader.visit(myContract);
 		ctsqlReader.visit(myFsProfRetention);
 		
+
 		finish();
 		//ctsqlReader.visit(new MyTraverse());
 	}
@@ -150,6 +160,7 @@ public class MysqlDB extends DefaultMysqlDB{
 					myAgreement,
 					imagesDir,
 					passwdHash,
+					domainName,
 					fromDate,
 					cifs);
 		
@@ -230,10 +241,10 @@ public class MysqlDB extends DefaultMysqlDB{
             if ( line.hasOption(helpOption.getOpt()) )
             	helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
             
-//            String url = line.getOptionValue(ctsqlURLOption.getOpt(), 
-//            		"jdbc:mysql://127.0.0.1:3306/aon_master");
             String url = line.getOptionValue(ctsqlURLOption.getOpt(), 
-            		"jdbc:mysql://194.30.98.127:3306/tadsr800-aonsolutions-net");
+            		"jdbc:mysql://127.0.0.1:3306/aon_master");
+//            String url = line.getOptionValue(ctsqlURLOption.getOpt(), 
+//            		"jdbc:mysql://194.30.98.127:3306/tadsr800-aonsolutions-net");
             String user = line.getOptionValue(ctsqlUserOption.getOpt(), "dbuser");
             String passwd = line.getOptionValue(ctsqlPasswdOption.getOpt(), "serubd2000");
 
@@ -263,6 +274,7 @@ public class MysqlDB extends DefaultMysqlDB{
         } 
 
 	}
-
+	
+	
 
 }

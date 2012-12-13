@@ -26,7 +26,7 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabdto;
 public class MyTraverse extends DefaultCtsqlDBVisitor {
 
     final static Logger LOGGER =
-            LoggerFactory.getLogger(DefaultCtsqlDBVisitor.class);
+            LoggerFactory.getLogger("DefaultCtsqlDBVisitor");
     
     
     protected void info(String format, Object ... args){

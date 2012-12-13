@@ -7,12 +7,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -24,13 +21,12 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.codec.binary.Base64;
 
+import com.code.aon.common.enumeration.Country;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.dbutils.AonSQLException;
-import com.code.aon.dbutils.AonSQLFile;
-import com.code.aon.dbutils.AonSQLScript;
 import com.code.aon.master.VersionManager;
 
 
@@ -75,7 +71,9 @@ public class Ctsql2Mysql
 	private String mysqlUser;
 	private String mysqlPasswd;
 	private boolean dryRun;
-	private String domain;
+	private String domainName;
+	private String domainUser;
+	private String domainPasswd;
 	
 	private String passwdHash;
 	private Date fromDate;
@@ -176,13 +174,27 @@ public class Ctsql2Mysql
     	OptionBuilder.withDescription(  "clave genérica para todos los usuarios" );
     	Option passwdOption = OptionBuilder.create( "passwd" );
 
-    	OptionBuilder.isRequired(false);
+    	OptionBuilder.isRequired(true);
     	OptionBuilder.hasArg(true);
     	OptionBuilder.withArgName( "dominio" );
     	OptionBuilder.withType(String.class);
     	OptionBuilder.withDescription(  "dominio" );
     	Option domainOption = OptionBuilder.create( "domain" );
     	
+    	OptionBuilder.isRequired(false);
+    	OptionBuilder.hasArg(true);
+    	OptionBuilder.withArgName( "user" );
+    	OptionBuilder.withType(String.class);
+    	OptionBuilder.withDescription(  "Parent domain admin user" );
+    	Option domainUserOption = OptionBuilder.create( "domainUser" );
+
+    	OptionBuilder.isRequired(false);
+    	OptionBuilder.hasArg(true);
+    	OptionBuilder.withArgName( "clave" );
+    	OptionBuilder.withType(String.class);
+    	OptionBuilder.withDescription(  "Parent domain admin password" );
+    	Option domainPasswdOption = OptionBuilder.create( "domainPasswd" );
+
     	options.addOption(helpOption);
     	options.addOption(dryRunOption);
     	options.addOption(ctsqlURLOption);
@@ -196,6 +208,9 @@ public class Ctsql2Mysql
     	options.addOption(domainOption);
     	options.addOption(imagesDirOption);
     	options.addOption(enterprisesOption);
+    	options.addOption(domainUserOption);
+    	options.addOption(domainPasswdOption);
+
     	
     	CommandLineParser parser = new PosixParser();   
 
@@ -220,7 +235,9 @@ public class Ctsql2Mysql
             
             dryRun=  line.hasOption(dryRunOption.getOpt());
 			
-            domain = line.getOptionValue(domainOption.getOpt());
+            domainName = line.getOptionValue(domainOption.getOpt());
+            domainUser = line.getOptionValue(domainUserOption.getOpt(),"toledo");
+            domainPasswd = line.getOptionValue(domainPasswdOption.getOpt(),"t0l3d0");
 
             String fromString = line.getOptionValue(fromDateOption.getOpt());
             if ( fromString != null ) {
@@ -257,6 +274,16 @@ public class Ctsql2Mysql
 		return true;
 	}
 	
+	protected Integer newDomain(MysqlDB mysqlDB) throws IOException, InterruptedException, SQLException, AonSQLException{
+		
+		return mysqlDB.newConsultancyDomain(
+				domainName, 
+				domainUser, 
+				domainPasswd
+				); 
+	}
+	
+	
 	protected Connection getCtsqlConnection() throws SQLException {
 		return DriverManager.getConnection(ctsqlURL, ctsqlUser, ctsqlPasswd);
 	}
@@ -280,30 +307,16 @@ public class Ctsql2Mysql
 
 			Connection connection = 
 					DriverManager.getConnection(mysqlServerURL, mysqlUser, mysqlPasswd);
-			
-			URL createURL = getCreateScript();
-            AonSQLFile sqlCreateFile = 
-            		new AonSQLFile(createURL.openStream());
-            sqlCreateFile.setDbName(dbName);
-            sqlCreateFile.setFileName( createURL.getFile());
-            AonSQLScript script = new AonSQLScript(sqlCreateFile, connection);
-            script.execute();
             
             VersionManager versionManager = new VersionManager();
+            versionManager.createDatabase(connection, dbName);
             versionManager.uptodateDatabase(connection);
-            
-            if ( domain != null ) {
-	            PreparedStatement stmt = 
-	            		connection.prepareStatement("UPDATE domain SET name=?");
-	            stmt.setString(1, domain);
-	            stmt.execute();
-            }
             
 			return connection;
 		}
 	}
 
-	protected void transfer() throws ClassNotFoundException, SQLException, java.text.ParseException, AonSQLException, IOException {
+	protected void transfer() throws ClassNotFoundException, SQLException, java.text.ParseException, AonSQLException, IOException, InterruptedException {
 		if ( ctsqlURL == null ){
 			return;
 		}
@@ -315,8 +328,8 @@ public class Ctsql2Mysql
 	        ctsqlConnection = getCtsqlConnection();  
 	        	
 	        mysqlConnection =  getMysqlConnectionEx();
-	
 	        mysqlConnection.setAutoCommit(false);
+	
 	        
 	        MysqlDB mysqlWriter = new MysqlDB(mysqlConnection);
 	        
@@ -324,7 +337,28 @@ public class Ctsql2Mysql
 	        mysqlWriter.setFromDate(fromDate);
 	        mysqlWriter.setImagesDir(imagesDir);
 	        mysqlWriter.setPasswdHash(passwdHash);
+	        mysqlWriter.setDomainName(domainName);
 	        
+	        Integer domain = newDomain(mysqlWriter);
+	        mysqlWriter.setDefaultDomain(domain);
+			MysqlDB.info("ctsql2mysql[{}] : Default domain {}", 
+					domain, domainName);	        
+	        
+			/*
+			Integer registry = mysqlWriter.insertEnterprise(
+					domain,
+					null, //TODO: Consultancy document number. 
+					Country.ES,
+					null, //TODO: Consultancy name.
+					Country.ES,
+					null, //TODO: Consultancy alias.	
+					null, 
+					DefaultMysqlDB.enum2short(CustomerStatus.ACTIVE));
+			
+			// TODO: Company ... related entries, like 'logo'
+			mysqlWriter.insertCompany(registry, domain, false, false, false, false);
+			*/
+			
 	        CtsqlDB ctsqlReader = new CtsqlDB(ctsqlConnection);
 	        mysqlWriter.write(ctsqlReader);
 	        
@@ -340,7 +374,7 @@ public class Ctsql2Mysql
         }
 	}
 	
-	public static void main( String[] args ) throws SQLException, ClassNotFoundException, java.text.ParseException, AonSQLException, IOException
+	public static void main( String[] args ) throws SQLException, ClassNotFoundException, java.text.ParseException, AonSQLException, IOException, InterruptedException
     {
 		new Ctsql2Mysql(args).transfer();
     }

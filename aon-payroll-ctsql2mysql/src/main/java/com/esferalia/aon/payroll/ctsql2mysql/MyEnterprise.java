@@ -50,6 +50,7 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprdom;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empresa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprnif;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractMysqlDB.Domain;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractMysqlDB.Rattach;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.CNAENotFoundException;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.InvalidFaxException;
@@ -144,6 +145,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 	final static int 	COMPANY_REGISTRY 	= 1;
 	
 	private String								passwdHash;
+	private String								domainSuffix;
 
 	private Integer 							scopeId;
 	
@@ -159,9 +161,6 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 	private Map<String, Integer> 				customerChilds;
 	private Integer 							customerId;
 	
-	private Integer								profileId;
-	private Integer								domainApplicationId;
-
 	private Map<Integer, Activity> 				activities ;
 	private Map<Integer, Map<Integer, Integer>> cnae_activity ;
 	private Map<Integer, Map<Integer, Integer>> raddresses ;
@@ -173,12 +172,13 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 	private Map<Integer, Map<RegistryAttachmentType, List<String>>>		images;
 	
 
-	public MyEnterprise(DefaultMysqlDB mysqlDB, IAgreements agreements, ICalendars calendars, File logosAndSignaturesDir, String passwdHash ) {
+	public MyEnterprise(DefaultMysqlDB mysqlDB, IAgreements agreements, ICalendars calendars, File logosAndSignaturesDir, String passwdHash, String domainSuffix ) {
 		this.mysqlDB = mysqlDB;
 		this.agreements = agreements;
 		this.calendars = calendars;
 		this.logosAndSignaturesDir = logosAndSignaturesDir;
 		this.passwdHash = passwdHash;
+		this.domainSuffix = domainSuffix;
 		this.activities = new HashMap<Integer, Activity>();
 		this.cifs= new HashMap<String, Integer>();
 		this.enterprises = new HashMap<Integer, Enterprise>();
@@ -195,10 +195,6 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 
 	protected void init(AbstractCtsqlDB ctsqlDB)
 			throws SQLException {
-		this.domainApplicationId = 
-				mysqlDB.getDomainApplicationId("aon-employee");
-		this.profileId = 
-				mysqlDB.getProfileId("aon-employee", "Administrador");
 		
 	}
 
@@ -280,7 +276,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 						MysqlDB.enum2short(RegistryType.LEGAL), 
 						Country.ES.getValue(),
 						DefaultMysqlDB.enum2short(SecurityLevel.OFFICIAL));
-				mysqlDB.insertCustomer(registry,null, false, false,null,status, null, scopeId,false, true,true);
+				mysqlDB.insertCustomer(registry,null, false, false,null,status, /*null,*/ scopeId,false, true,true);
 			}
 			
 			Integer group = mysqlDB.insertInvoicing_group(registry);
@@ -298,6 +294,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		
 		
 	}
+
 	
 	@Override
 	public void visitRel_emp_cli(Emprnif emprnif, Cliente cliente) throws SQLException {
@@ -318,8 +315,41 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 
 		String name = emprnif.getDescripcion();
 		String doc = emprnif.getNumdoc();
+		
+		StringBuffer domainNameBuff = new StringBuffer();
+		for ( int i = 0 ; i < name.length(); i++){
+			char ch = name.charAt(i);
+			if ( "?,".indexOf(ch) != -1 ) break;
+			if ( ". ".indexOf(ch) != -1 ) continue;
+			domainNameBuff.append(Character.toLowerCase(ch));
+		}
+		String domainName = domainNameBuff.toString();
+		
+		
+		int MaxLength = 64 - ( this.domainSuffix.length() +1 );
 
+		if ( domainName.length() > MaxLength )
+		{
+			
+			String truncated = domainName.substring(0,MaxLength-1);
+			MysqlDB.warn("emprnif[{}]: Domain name too long '{}' . Truncated '{}'.", 
+					emprnif.getCdg(), domainName, truncated );
+			domainName = truncated;
+		}
+		
+		Integer domain ;
+		try {
+			domain = mysqlDB.newEnterpriseDomain( String.format("%s.%s", domainName, this.domainSuffix ) , mysqlDB.getDefaultDomain() );
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (InterruptedException e1) {
+			throw new RuntimeException(e1);
+		}
+		
+		
+		
 		registry = mysqlDB.insertEnterprise(
+				domain,
 				doc, 
 				docCountry,
 				name, 
@@ -328,11 +358,15 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 				scopeId,
 				status);
 		
+		// TODO: Company ... related entries, like 'logo'
+		mysqlDB.insertCompany(registry, domain, true, true, true, true);
+
 		String nroDocRep = emprnif.getNrodocrep();
 		String represantante = emprnif.getRepresentante();
 		if ( represantante != null && nroDocRep != null ) {
 			mysqlDB.insertRdir_staff(
 					registry, 
+					domain,
 					nroDocRep, 
 					represantante, 
 					false, 						// shareholder, 
@@ -374,6 +408,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		
 		Integer userId = 
 			mysqlDB.insertUser(
+				domain,
 				name, 
 				doc, 
 				registry, 
@@ -382,25 +417,40 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 				passwd,
 				null,
 				(short) 0);
+		Integer applicationId = 
+				mysqlDB.getApplicationId("aon-aio");
+
+		Integer domainApplicationId = 
+				mysqlDB.getDomainApplicationId(domain, applicationId);
+		Integer  profileId = 
+				mysqlDB.getProfileId(null, applicationId, "Administrador");
+
 		int applicationUserId = 
 				mysqlDB.insertApplication_user(
+						domain,
 						userId, 				
 						domainApplicationId, 	 
 						true 					// active
 						);
 				mysqlDB.insertApplication_user_profile(
+						domain,
 						applicationUserId, 
 						profileId);
 		
-		mysqlDB.insertUser_scope(userId, this.scopeId);
+		mysqlDB.insertUser_scope(domain, userId, this.scopeId);
 		
 		emprnif.visitEmpract_emprnif(this);
+
 	}
 	
 	@Override
 	public void visitEmprbanc_cliente(Emprban emprban, Cliente cliente)
 			throws SQLException {
-		Integer bankId = mysqlDB.getBankId(emprban.getCodent());
+		
+		
+		Integer bankId = mysqlDB.getBankId(mysqlDB.getDefaultDomain(),
+				emprban.getCodent());
+		
 		if ( bankId == null ) {
 			Emprbanc_entidad emprbanc_entidad = 
 				new Emprbanc_entidad();
@@ -503,9 +553,8 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 
 		if ( ccc != null ){
 			String provincia = ccc.substring(0, 2) ;
-			try { 
-				geozone = Integer.parseInt(provincia);
-			} catch (NumberFormatException e) {
+			geozone = mysqlDB.getGeoZone(provincia);
+			if ( geozone == null ){
 				MysqlDB.error("emprecc[{}] : Invalid CCC {}", emprccc.getCdg(), ccc);
 				return ;
 			}

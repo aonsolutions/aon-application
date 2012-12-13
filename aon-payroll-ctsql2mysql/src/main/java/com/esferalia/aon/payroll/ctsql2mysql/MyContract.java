@@ -61,6 +61,7 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractMysqlDB.Salary_embargo;
 import com.esferalia.aon.payroll.ctsql2mysql.IConcepts.Bonus;
 import com.esferalia.aon.payroll.ctsql2mysql.IConcepts.Concept;
 import com.esferalia.aon.payroll.ctsql2mysql.MyAgreement.PercepPercnivComparator;
+import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -179,10 +180,6 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 	
 	private DefaultMysqlDB 	mysqlDB;
 	private AbstractCtsqlDB ctsqlDB;
-	
-	private Integer 		irpfConceptId;
-	private Integer			profileId;
-	private Integer			domainApplicationId;
 	
 	private List<ContractPorCot> 		contractPorCots;
 	private Map<String, List<Percents>> quotePercents;
@@ -396,12 +393,6 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 	
 	protected void init(AbstractCtsqlDB ctsqlDB)
 			throws SQLException {
-		this.irpfConceptId = 
-				mysqlDB.getDeductionConceptId("IRPF");
-		this.domainApplicationId = 
-				mysqlDB.getDomainApplicationId("aon-employee");
-		this.profileId = 
-				mysqlDB.getProfileId("aon-employee", "Invitado");
 		this.ctsqlDB = ctsqlDB;
 		
 		this.delayCodCmos = getDelaysCodComs();
@@ -652,7 +643,8 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 					seniorityDate,
 					activityId,
 					enum2short(ssRegimeType),
-					this.agreementCategoryId);
+					this.agreementCategoryId,
+					null);
 		
 		String ingEspEmp = 
 			enterprises.getIngEspEmp(emprper.getCodact());
@@ -736,13 +728,26 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 						passwd,
 						null,
 						(short) 0);
+			
+			Integer domainId = 
+					mysqlDB.getDomainForEnterprisePk(enterprise);
+			
+			Integer applicationId = 
+					mysqlDB.getApplicationId("aon-aio");
+			Integer domainApplicationId = 
+					mysqlDB.getDomainApplicationId(domainId, applicationId);
+			Integer profileId = 
+					mysqlDB.getProfileId( null , applicationId, "Invitado");
+
 			int applicationUserId = 
 					mysqlDB.insertApplication_user(
+							domainId,
 							userId, 				
 							domainApplicationId, 	 
 							true 					// active
 							);
 			mysqlDB.insertApplication_user_profile(
+					domainId,
 					applicationUserId, 
 					profileId);
 		}
@@ -962,6 +967,9 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 			} // Si existe sobreescribimos lashoras semanales ....
 		} // Contrato a tiempo parcial 
 		
+		Integer desmpConceptId = 
+				mysqlDB.getDeductionConceptId(mysqlDB.getDefaultDomain(), "DESMP");
+
 		Percents newPercents = 
 			getPercents(indefinite, fulltime);
 		Percents oldPercents = 
@@ -969,7 +977,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 		if ( oldPercents != null && oldPercents.employee != newPercents.employee) {
 			mysqlDB.insertContract_deduction(
 					enum2short(DeductionType.UNEMPLOYMENT), 
-					mysqlDB.getDeductionConceptId("DESMP"), 
+					desmpConceptId, 
 					this.contractId, 
 					null, 
 					(short)1, 

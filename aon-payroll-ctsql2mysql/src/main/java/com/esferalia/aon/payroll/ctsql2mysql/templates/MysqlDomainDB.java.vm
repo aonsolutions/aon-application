@@ -24,7 +24,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.LinkedList;
+import java.util.HashMap;
 
 import java.io.Reader;
 
@@ -45,20 +47,92 @@ import org.slf4j.LoggerFactory;
 *********************************************************************
 */
 
-public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
+public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 
 	public AbstractDomainMysqlDB( Connection mysqlConnection) 
 	throws SQLException {
 		super(mysqlConnection);
 	}
 	
-
+	protected abstract Integer getDefaultDomain() ; 
+	
 #foreach($table in $tables)
 #set($hasDomain = false)
 #foreach ($column in $table.columns)
 #if ($column.name.equals("domain") )#set($hasDomain = true)#end
 #end
 #if ($hasDomain )
+	
+	private Map<Integer,Integer> ${table.name}Domains = new HashMap<Integer,Integer>();
+
+#set($colCount = 0)
+	protected Integer getDomainFor${table}Pk($table.pkColumns.get(0).javaClass $table.pkColumns.get(0).name){
+		return ${table.name}Domains.get($table.pkColumns.get(0).name);
+	}
+	
+	/**
+	 * $table
+#foreach ($parent in $table.parents)
+#if (!$parent.table.name.equals("domain"))
+#foreach ($fk in $parent.fkColumns)
+	 * @param $fk.name $fk.remarks
+#end
+#end
+#end
+	 * @returns domain's ID
+	*/
+#set($colCount = 0)
+	protected Integer getDomainFor$table(#foreach ($parent in $table.parents)
+#if (!$parent.table.name.equals("domain") )#foreach ($column in $parent.fkColumns) #if( $colCount > 0 ), #end$column.javaClass $column.name #set($colCount = $colCount + 1)#end#end
+#end){
+		Integer domain = null;
+#if( $colCount > 0 )
+#foreach ($parent in $table.parents)
+#if (!$parent.table.name.equals("domain") )
+#foreach ($col in $parent.table.columns)
+#if ($col.name.equals("domain") )
+#set($colCount = 0)
+#foreach ($column in $parent.fkColumns)
+			if ( ( domain = getDomainFor${parent.table}Pk( $column.name ) ) != null )
+				return domain;
+#end
+#end
+#end
+#end
+#end
+#end
+		return domain;
+	}
+
+	/**
+	 * $table
+#foreach ($column in $table.columns)
+#if (!$column.name.equals("domain"))
+	 * @param $column.name $column.remarks
+#end
+#end
+#if($table.isAutoIncrement())
+	 * @returns auto-generated key
+#end
+	 * @throws SQLException
+	*/
+#set($colCount = 0)
+	public #if($table.isAutoIncrement())int#{else}void#end insert$table(#foreach ($column in $table.columns)
+#if (!$column.name.equals("domain") && !$column.isAutoIncrement() )#if( $colCount > 0 ), #end$column.javaClass $column.name #set($colCount = $colCount + 1)#end
+#end)
+	throws SQLException {
+#set($colCount = 0)
+		Integer domain = getDomainFor$table(#foreach ($parent in $table.parents)#if (!$parent.table.name.equals("domain") )#foreach ($column in $parent.fkColumns) #if( $colCount > 0 ), #end$column.name #set($colCount = $colCount + 1)#end#end#end);
+#set($colCount = 0)
+		#if($table.isAutoIncrement())Integer $table.pkColumns.get(0).name = #end super.insert$table( #foreach ($column in $table.columns)#if (!$column.isAutoIncrement() )#if( $colCount > 0 ), #end#if($column.name.equals("domain"))domain != null ? domain : getDefaultDomain()#{else}$column.name#end#set($colCount = $colCount + 1)#end#end );
+		if ( domain != null ) { 
+			${table.name}Domains.put($table.pkColumns.get(0).name, domain);
+		}
+#if($table.isAutoIncrement())
+		return id;
+#end
+	}
+
 	/**
 	 * $table
 #foreach ($column in $table.columns)
@@ -70,12 +144,17 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @throws SQLException
 	*/
 #set($colCount = 0)
-	protected #if($table.isAutoIncrement())int#{else}void#end insert$table(#foreach ($column in $table.columns)
-#if (!$column.name.equals("domain") && !$column.isAutoIncrement() )#if( $colCount > 0 ), #end$column.javaClass $column.name #set($colCount = $colCount + 1)#end
+	public #if($table.isAutoIncrement())int#{else}void#end insert$table(#foreach ($column in $table.columns)
+#if (!$column.isAutoIncrement() )#if( $colCount > 0 ), #end$column.javaClass $column.name #set($colCount = $colCount + 1)#end
 #end)
 	throws SQLException {
 #set($colCount = 0)
-		#if($table.isAutoIncrement())return#end super.insert$table( #foreach ($column in $table.columns)#if (!$column.isAutoIncrement() )#if( $colCount > 0 ), #end#if($column.name.equals("domain"))1#{else}$column.name#end#set($colCount = $colCount + 1)#end#end );
+		#if($table.isAutoIncrement())Integer $table.pkColumns.get(0).name = #end super.insert$table(#foreach ($column in $table.columns)
+#if (!$column.isAutoIncrement() )#if( $colCount > 0 ), #end$column.name#set($colCount = $colCount + 1)#end
+#end);
+		${table.name}Domains.put($table.pkColumns.get(0).name, domain );
+		#if($table.isAutoIncrement())return $table.pkColumns.get(0).name;
+#end
 	}
 #end
 
