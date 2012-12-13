@@ -19,12 +19,18 @@
 		<field name="evaluation" class="java.lang.Integer"/>
 		<field name="absenceDate" class="java.util.Date"/>
 		<field name="comments" class="java.lang.String"/>
+		<group name="evaluationGroup">
+			<groupExpression><![CDATA[$F{evaluation}]]></groupExpression>
+		</group>
 	</subDataset>
 	<subDataset name="OBSERVATIONS_SDS">
 		<field name="courseAlumn" class="com.code.aon.academy.CourseAlumn"/>
 		<field name="comments" class="java.lang.String"/>
 		<field name="evaluation" class="java.lang.Integer"/>
 		<field name="id" class="java.lang.Integer"/>
+		<group name="evaluationGroup">
+			<groupExpression><![CDATA[$F{evaluation}]]></groupExpression>
+		</group>
 	</subDataset>
 	<subDataset name="AVERAGE_MARKS_SDS">
 		<field name="mark" class="com.code.aon.academy.Mark"/>
@@ -374,148 +380,6 @@
 					</whenNoDataCell>
 				</crosstab>
 			</elementGroup>
-			<crosstab>
-				<reportElement key="crosstab-2" positionType="Float" x="0" y="89" width="535" height="25"/>
-				<crosstabDataset>
-					<dataset>
-						<datasetRun subDataset="ABSENCES_SDS">
-							<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-							<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{absences})]]></dataSourceExpression>
-						</datasetRun>
-					</dataset>
-				</crosstabDataset>
-				<crosstabHeaderCell>
-					<cellContents mode="Transparent">
-						<box>
-							<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						</box>
-					</cellContents>
-				</crosstabHeaderCell>
-				<rowGroup name="evaluation" width="95">
-					<bucket class="java.lang.Integer">
-						<bucketExpression><![CDATA[$F{evaluation}]]></bucketExpression>
-					</bucket>
-					<crosstabRowHeader>
-						<cellContents mode="Transparent">
-							<box>
-								<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-								<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-								<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-								<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							</box>
-							<textField isBlankWhenNull="false">
-								<reportElement key="textField-18" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="12" width="95" height="13"/>
-								<box>
-									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-									<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-								</box>
-								<textElement textAlignment="Center" verticalAlignment="Top">
-									<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$V{evaluation} + "º " + $R{mark_evaluation}]]></textFieldExpression>
-							</textField>
-							<textField isBlankWhenNull="false">
-								<reportElement key="textField-18" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="95" height="12"/>
-								<box>
-									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-									<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-								</box>
-								<textElement textAlignment="Center" verticalAlignment="Top">
-									<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$R{absence_absences}]]></textFieldExpression>
-							</textField>
-						</cellContents>
-					</crosstabRowHeader>
-					<crosstabTotalRowHeader>
-						<cellContents/>
-					</crosstabTotalRowHeader>
-				</rowGroup>
-				<columnGroup name="courseAlumn" height="0">
-					<bucket class="java.lang.Integer">
-						<bucketExpression><![CDATA[$F{courseAlumn}.getId()]]></bucketExpression>
-					</bucket>
-					<crosstabColumnHeader>
-						<cellContents/>
-					</crosstabColumnHeader>
-					<crosstabTotalColumnHeader>
-						<cellContents/>
-					</crosstabTotalColumnHeader>
-				</columnGroup>
-				<measure name="absenceDate_First" class="java.lang.String">
-					<measureExpression><![CDATA[($F{absenceDate}!=null)?new SimpleDateFormat("dd/MM/yy").format($F{absenceDate}) + "; ":"(" + $F{comments} + ") - "]]></measureExpression>
-				</measure>
-				<crosstabCell width="440" height="25">
-					<cellContents mode="Transparent">
-						<box>
-							<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-							<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-							<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-							<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-						</box>
-						<textField isBlankWhenNull="false">
-							<reportElement key="textField" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="440" height="25"/>
-							<box>
-								<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-								<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-								<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-								<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							</box>
-							<textElement textAlignment="Left" verticalAlignment="Top">
-								<font size="8"/>
-							</textElement>
-							<textFieldExpression><![CDATA[$V{absenceDate_First}]]></textFieldExpression>
-						</textField>
-					</cellContents>
-				</crosstabCell>
-				<crosstabCell width="0" height="25" columnTotalGroup="courseAlumn">
-					<cellContents mode="Transparent">
-						<box>
-							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						</box>
-					</cellContents>
-				</crosstabCell>
-				<crosstabCell width="440" height="0" rowTotalGroup="evaluation">
-					<cellContents mode="Transparent">
-						<box>
-							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						</box>
-					</cellContents>
-				</crosstabCell>
-				<crosstabCell width="0" height="0" rowTotalGroup="evaluation" columnTotalGroup="courseAlumn">
-					<cellContents mode="Transparent">
-						<box>
-							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						</box>
-					</cellContents>
-				</crosstabCell>
-				<whenNoDataCell>
-					<cellContents mode="Transparent">
-						<box>
-							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-							<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						</box>
-					</cellContents>
-				</whenNoDataCell>
-			</crosstab>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-18" positionType="Float" x="5" y="42" width="522" height="10">
 					<printWhenExpression><![CDATA[$P{encode}]]></printWhenExpression>
@@ -531,148 +395,6 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{qualifications}]]></textFieldExpression>
 			</textField>
-			<crosstab>
-				<reportElement key="crosstab-3" positionType="Float" x="0" y="119" width="535" height="50"/>
-				<crosstabDataset>
-					<dataset>
-						<datasetRun subDataset="OBSERVATIONS_SDS">
-							<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-							<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{observations})]]></dataSourceExpression>
-						</datasetRun>
-					</dataset>
-				</crosstabDataset>
-				<crosstabHeaderCell>
-					<cellContents mode="Transparent">
-						<box>
-							<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-							<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-							<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-							<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						</box>
-					</cellContents>
-				</crosstabHeaderCell>
-				<rowGroup name="evaluation" width="95">
-					<bucket class="java.lang.Integer">
-						<bucketExpression><![CDATA[$F{evaluation}]]></bucketExpression>
-					</bucket>
-					<crosstabRowHeader>
-						<cellContents mode="Transparent">
-							<box>
-								<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-								<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-								<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-								<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							</box>
-							<textField isBlankWhenNull="false">
-								<reportElement key="textField-18" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="12" width="95" height="38"/>
-								<box>
-									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-									<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-								</box>
-								<textElement textAlignment="Center" verticalAlignment="Top">
-									<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$V{evaluation} + "º " + $R{mark_evaluation}]]></textFieldExpression>
-							</textField>
-							<textField isBlankWhenNull="false">
-								<reportElement key="textField-18" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="95" height="12"/>
-								<box>
-									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-									<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-								</box>
-								<textElement textAlignment="Center" verticalAlignment="Top">
-									<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$R{evaluation_observation_comments}]]></textFieldExpression>
-							</textField>
-						</cellContents>
-					</crosstabRowHeader>
-					<crosstabTotalRowHeader>
-						<cellContents/>
-					</crosstabTotalRowHeader>
-				</rowGroup>
-				<columnGroup name="alumn" height="0" headerPosition="Center">
-					<bucket class="java.lang.Integer">
-						<bucketExpression><![CDATA[$F{courseAlumn}.getId()]]></bucketExpression>
-					</bucket>
-					<crosstabColumnHeader>
-						<cellContents/>
-					</crosstabColumnHeader>
-					<crosstabTotalColumnHeader>
-						<cellContents/>
-					</crosstabTotalColumnHeader>
-				</columnGroup>
-				<measure name="comments_First" class="java.lang.String">
-					<measureExpression><![CDATA[$F{comments}]]></measureExpression>
-				</measure>
-				<crosstabCell width="440" height="50">
-					<cellContents mode="Transparent">
-						<box>
-							<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-							<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-							<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-							<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-						</box>
-						<textField isBlankWhenNull="false">
-							<reportElement key="textField" x="0" y="0" width="440" height="50"/>
-							<box>
-								<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-								<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-								<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-								<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							</box>
-							<textElement textAlignment="Left" verticalAlignment="Top">
-								<font size="8"/>
-							</textElement>
-							<textFieldExpression><![CDATA[$V{comments_First}]]></textFieldExpression>
-						</textField>
-					</cellContents>
-				</crosstabCell>
-				<crosstabCell width="0" height="50" columnTotalGroup="alumn">
-					<cellContents mode="Transparent">
-						<box>
-							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-							<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						</box>
-					</cellContents>
-				</crosstabCell>
-				<crosstabCell width="440" height="0" rowTotalGroup="evaluation">
-					<cellContents mode="Transparent">
-						<box>
-							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-							<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						</box>
-					</cellContents>
-				</crosstabCell>
-				<crosstabCell width="0" height="0" rowTotalGroup="evaluation" columnTotalGroup="alumn">
-					<cellContents mode="Transparent">
-						<box>
-							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-							<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						</box>
-					</cellContents>
-				</crosstabCell>
-				<whenNoDataCell>
-					<cellContents mode="Transparent">
-						<box>
-							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-							<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						</box>
-					</cellContents>
-				</whenNoDataCell>
-			</crosstab>
 			<crosstab>
 				<reportElement key="crosstab-4" positionType="Float" x="0" y="53" width="535" height="15">
 					<printWhenExpression><![CDATA[$P{withAverageMark}]]></printWhenExpression>
@@ -871,6 +593,125 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{finalMark}]]></textFieldExpression>
 			</textField>
+			<componentElement>
+				<reportElement key="table" positionType="Float" x="0" y="88" width="535" height="25" isRemoveLineWhenBlank="true"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="ABSENCES_SDS">
+						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{absences})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:columnGroup width="535">
+						<jr:groupHeader groupName="evaluationGroup">
+							<jr:cell height="13" rowSpan="1">
+								<textField isBlankWhenNull="false">
+									<reportElement key="textField-18" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="534" height="13"/>
+									<box bottomPadding="0">
+										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+										<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+										<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+										<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{absence_absences} + " "
++ $F{evaluation} + "º " + $R{mark_evaluation}]]></textFieldExpression>
+								</textField>
+							</jr:cell>
+						</jr:groupHeader>
+						<jr:column width="70">
+							<jr:groupHeader groupName="evaluationGroup">
+								<jr:cell height="0" rowSpan="1"/>
+							</jr:groupHeader>
+							<jr:detailCell height="13" rowSpan="1">
+								<textField pattern="dd/MM/yy" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="70" height="13">
+										<printWhenExpression><![CDATA[($F{absenceDate}!=null) ||
+($F{absenceDate}==null && $V{evaluationGroup_COUNT}==1)]]></printWhenExpression>
+									</reportElement>
+									<box leftPadding="2">
+										<topPen lineWidth="0.25"/>
+										<leftPen lineWidth="0.25"/>
+										<bottomPen lineWidth="0.25"/>
+										<rightPen lineWidth="0.25"/>
+									</box>
+									<textElement textAlignment="Center">
+										<font size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{absenceDate}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="465">
+							<jr:groupHeader groupName="evaluationGroup">
+								<jr:cell height="0" rowSpan="1"/>
+							</jr:groupHeader>
+							<jr:detailCell height="13" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="464" height="13">
+										<printWhenExpression><![CDATA[($F{absenceDate}!=null) ||   ($F{absenceDate}==null && $V{evaluationGroup_COUNT}==1)]]></printWhenExpression>
+									</reportElement>
+									<box leftPadding="2">
+										<topPen lineWidth="0.25"/>
+										<leftPen lineWidth="0.25"/>
+										<bottomPen lineWidth="0.25"/>
+										<rightPen lineWidth="0.25"/>
+									</box>
+									<textElement>
+										<font size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{comments}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:columnGroup>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement key="table" positionType="Float" x="0" y="120" width="535" height="50" isRemoveLineWhenBlank="true"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="OBSERVATIONS_SDS">
+						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{observations})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="534">
+						<jr:tableHeader height="0" rowSpan="1"/>
+						<jr:tableFooter height="0" rowSpan="1"/>
+						<jr:groupHeader groupName="evaluationGroup">
+							<jr:cell height="13" rowSpan="1">
+								<textField isBlankWhenNull="false">
+									<reportElement key="textField-18" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="534" height="13"/>
+									<box bottomPadding="0">
+										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+										<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+										<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+										<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$R{evaluation_observation_comments} + " "
++ $F{evaluation} + "º " + $R{mark_evaluation}]]></textFieldExpression>
+								</textField>
+							</jr:cell>
+						</jr:groupHeader>
+						<jr:columnFooter height="0" rowSpan="1"/>
+						<jr:detailCell height="13" rowSpan="1">
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="534" height="13" isPrintWhenDetailOverflows="true"/>
+								<box leftPadding="2">
+									<topPen lineWidth="0.25"/>
+									<leftPen lineWidth="0.25"/>
+									<bottomPen lineWidth="0.25"/>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textElement>
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{comments}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
 		</band>
 	</detail>
 	<columnFooter>
