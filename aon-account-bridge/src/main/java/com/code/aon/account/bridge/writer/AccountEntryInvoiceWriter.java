@@ -151,7 +151,7 @@ public class AccountEntryInvoiceWriter {
 
 		double total = getPriceStrategy().getTotalPrice(invoice, invoice);
 		boolean ignoreTaxFree = !invoice.isSales() && (invoice.isIntracommunity() || invoice.isOtherISP());
-		List<TaxBreakDown> taxBreakDownList = getPriceStrategy().getTaxBreakDowns(invoice, invoice, true);
+		List<TaxBreakDown> taxBreakDownList = getPriceStrategy().getTaxBreakDowns(invoice, invoice, ignoreTaxFree);
 		Map<Account, Double> retentionQuotas = obtainRetentionQuotasPerAccount(taxBreakDownList, invoice);
 		Map<Account, Double> taxQuotas = obtainTaxQuotasPerAccount(taxBreakDownList, invoice, ignoreTaxFree);
 		Map<Account, Double> bases = obtainBasesPerAccount(invoice);
