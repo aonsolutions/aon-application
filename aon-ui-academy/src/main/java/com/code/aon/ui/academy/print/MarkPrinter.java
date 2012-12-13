@@ -284,18 +284,23 @@ public class MarkPrinter implements ICollectionProvider{
 			List<Absence> absencesLst = new ArrayList<Absence>();
 			for(int i=1; i<=evaluation.intValue(); i++){
 				Criteria criteria = new Criteria();
+				criteria.addBetweenExpression(absenceBean.getFieldName(IEntityAlias.ABSENCE_ABSENCE_DATE), courseAlumn.getCourse().getStartDate(), courseAlumn.getCourse().getEndDate());
 				Expression evalExp = ExpressionUtilities.getEqualExpression(absenceBean.getFieldName(IEntityAlias.ABSENCE_EVALUATION), new Integer(i));
 				criteria.addExpression(ExpressionUtilities.getAndExpression(courseAlumnExp, evalExp));
+				criteria.addOrder(absenceBean.getFieldName(IEntityAlias.ABSENCE_ABSENCE_DATE));
 				Iterator iter = absenceBean.getList(criteria).iterator();
-
-				Absence emptyAbsence = new Absence();
-				emptyAbsence.setCourseAlumn(courseAlumn);
-				emptyAbsence.setEvaluation(i);
-				emptyAbsence.setAbsenceDate(null);
-				emptyAbsence.setComments(Integer.toString(absenceBean.getCount(criteria)));
-				absencesLst.add(emptyAbsence);
-				while (iter.hasNext()){
-					absencesLst.add((Absence)iter.next());
+				
+				if(absenceBean.getCount(criteria)==0){
+					Absence emptyAbsence = new Absence();
+					emptyAbsence.setCourseAlumn(courseAlumn);
+					emptyAbsence.setEvaluation(i);
+					emptyAbsence.setAbsenceDate(null);
+					emptyAbsence.setComments(Integer.toString(absenceBean.getCount(criteria)));
+					absencesLst.add(emptyAbsence);
+				} else {
+					while (iter.hasNext()){
+						absencesLst.add((Absence)iter.next());
+					}
 				}
 			}
 			return absencesLst;
@@ -317,13 +322,16 @@ public class MarkPrinter implements ICollectionProvider{
 				criteria.addExpression(ExpressionUtilities.getAndExpression(courseAlumnExp, evalExp));
 				Iterator iter = observationBean.getList(criteria).iterator();
 
-				EvaluationObservation emptyObservation = new EvaluationObservation();
-				emptyObservation.setCourseAlumn(courseAlumn);
-				emptyObservation.setEvaluation(i);
-				emptyObservation.setComments("");
-				observationsLst.add(emptyObservation);
-				while (iter.hasNext()){
-					observationsLst.add((EvaluationObservation)iter.next());
+				if(observationBean.getCount(criteria)==0){
+					EvaluationObservation emptyObservation = new EvaluationObservation();
+					emptyObservation.setCourseAlumn(courseAlumn);
+					emptyObservation.setEvaluation(i);
+					emptyObservation.setComments("");
+					observationsLst.add(emptyObservation);
+				} else {
+					while (iter.hasNext()){
+						observationsLst.add((EvaluationObservation)iter.next());
+					}
 				}
 			}
 			return observationsLst;
