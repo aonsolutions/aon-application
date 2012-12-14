@@ -933,7 +933,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Date startDate = rs.getDate(tableCol(CONTRACT,
 					ContractColumns.START_DATE));
-			employee.setStartDate(new Date(startDate.getTime()));
+			if ( startDate != null ) {
+				employee.setStartDate(new Date(startDate.getTime()));
+			}
 			
 			Date endDate = rs.getDate(tableCol(CONTRACT,
 					ContractColumns.END_DATE));
