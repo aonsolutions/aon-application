@@ -210,6 +210,7 @@
 			<value>#{customerAbsenceChildListener}</value>
 			<value>#{customerAlumnLoanChildListener}</value>
 			<value>#{customerAlumnCourseChildListener}</value>
+			<value>#{alumnControllerListener}</value>
 			<!--  aon.ui.customer -->
 			<value>#{customerPersonListener}</value>
 		</list-entries>

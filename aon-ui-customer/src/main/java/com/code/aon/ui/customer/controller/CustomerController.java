@@ -8,6 +8,7 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.finance.InvoicingGroup;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.controller.RegistryController;
@@ -21,7 +22,12 @@ public class CustomerController extends RegistryController implements ICustomerC
     private static final String MSG_KEY_PREFIX = "aon_customer_report";
 
     private InvoicingGroup invoicingGroup;
+
     private boolean showAlumnData;
+    
+    private boolean showAlumnUpdateConfirmWindow;
+
+    private Integer courseAlumnCount;
 
     public InvoicingGroup getInvoicingGroup() {
     	return invoicingGroup;
@@ -37,6 +43,22 @@ public class CustomerController extends RegistryController implements ICustomerC
 
 	public void setShowAlumnData(boolean showAlumnData) {
 		this.showAlumnData = showAlumnData;
+	}
+	
+	public boolean isShowAlumnUpdateConfirmWindow() {
+		return showAlumnUpdateConfirmWindow;
+	}
+
+	public void setShowAlumnUpdateConfirmWindow(boolean showAlumnUpdateConfirmWindow) {
+		this.showAlumnUpdateConfirmWindow = showAlumnUpdateConfirmWindow;
+	}
+
+	public Integer getCourseAlumnCount() {
+		return courseAlumnCount;
+	}
+
+	public void setCourseAlumnCount(Integer courseAlumnCount) {
+		this.courseAlumnCount = courseAlumnCount;
 	}
 
 	public String getReportTitle(){
@@ -57,5 +79,23 @@ public class CustomerController extends RegistryController implements ICustomerC
 			customerController.onLoad(event, getInvoicingGroup().getId(), CUSTOMER_FORM_NAME, CUSTOMER_CONTROLLER_NAME + ".select");
 		}
 	}
+
+	@Override
+	public void accept(ActionEvent event) {
+		Customer customer = (Customer) getTo();
+		if(isShowAlumnData() && customer.getStatus()==CustomerStatus.INACTIVE && getCourseAlumnCount()>0 ){
+			setShowAlumnUpdateConfirmWindow(true);
+		} else {
+			super.accept(event);
+		}
+	}
+	public void acceptOnly(ActionEvent event) {
+		setCourseAlumnCount(0);
+		super.accept(event);
+	}
+	public void acceptAndUpdate(ActionEvent event) {
+		super.accept(event);
+	}
+	
 
 }

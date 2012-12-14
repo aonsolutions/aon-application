@@ -1163,6 +1163,15 @@
 	</managed-bean>
 	
 	<!-- ========================================================== -->
+	<!-- ================== OPTIONAL LISTENER ===================== -->
+	<!-- ========================================================== -->
+	<managed-bean>
+		<managed-bean-name>alumnControllerListener</managed-bean-name>
+	    <managed-bean-class>com.code.aon.ui.academy.event.AlumnControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<!-- ========================================================== -->
 	<!-- ======================= REPORT =========================== -->
 	<!-- ========================================================== -->
 	<managed-bean>

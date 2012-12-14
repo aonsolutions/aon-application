@@ -440,6 +440,11 @@
 				</ui:include>
 				<aon:lookupButtonPopup lookup="#{courseLookup}" />				
 			</c:if>
+			<c:if test="#{customer.showAlumnData}">
+				<ui:include src="/com/code/aon/ui/academy/facelet/alumn/modalAlumnGroupConfirm.xhtml">
+					<ui:param name="controller" value="#{customer}" />
+				</ui:include>
+			</c:if>
 		</c:if>
 	</ui:define>
 </ui:composition>
