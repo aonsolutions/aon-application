@@ -14,15 +14,10 @@
 			template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 			<ui:param name="toolbarTitle"
 				value="#{companyBundle.company_workplace}" />
-			<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+			<ui:param name="toolbarDescription" value="#{payrollWorkPlace.to.description}" />
 
 
 			<ui:define name="toolbarContent">
-				<aon:commandButton id="Workplace-Save" value="#{bundle.aon_accept}"
-					reRender="workPlaceMainGrid"
-					styleClass="aon-finding-toolbar-item aon-icon-accept">
-					<aon:actionListener method="#{payrollWorkPlace.accept}" />
-				</aon:commandButton>
 			</ui:define>
 
 		</ui:decorate>

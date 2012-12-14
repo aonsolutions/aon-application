@@ -95,6 +95,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	public List<Salary> getSalaries(Employee employee)
 			throws IllegalArgumentException {
 		try {
+			initFacesContext();
 			Connection connection = getConnection();
 			if (employee != null) {
 				return getSalaries(connection, employee.getId());
@@ -107,6 +108,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();
 		}
 	}
 

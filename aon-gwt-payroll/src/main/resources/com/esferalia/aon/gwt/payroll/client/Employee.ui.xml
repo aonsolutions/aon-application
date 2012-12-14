@@ -61,7 +61,7 @@
 
 		</g:west>
 		<g:center>
-			<employee:EmployeeDetail ui:field='employeeDetail' />
+			<employee:DetailPanel ui:field='employeeDetail' />
 		</g:center>
 	</g:SplitLayoutPanel>
 

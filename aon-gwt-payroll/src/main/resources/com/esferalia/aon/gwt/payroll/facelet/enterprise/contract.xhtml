@@ -24,12 +24,6 @@
 
 
 			<ui:define name="toolbarContent">
-				<aon:commandButton id="Contract-Save" value="#{bundle.aon_accept}"
-					reRender="contractMainGrid"
-					styleClass="aon-finding-toolbar-item aon-icon-accept">
-					<aon:actionListener method="#{person.accept}" />
-					<aon:actionListener method="#{contract.accept}" />
-				</aon:commandButton>
 			</ui:define>
 
 		</ui:decorate>
@@ -56,27 +50,12 @@
 						</aon:div>
 					</aon:div>
 
-					<aon:div styleClass="aon-group">
-						<aon:div styleClass="aon-group-title">
-							<aon:outputText value="#{payrollBundle.payroll_person_data}" />
-						</aon:div>
-						<aon:div styleClass="aon-group-body">
-							<aon:div styleClass="aon-group-body-internal">
-								<ui:include
-									src="/com/code/aon/ui/registry/facelet/person/formContent.xhtml">
-									<ui:param name="controller" value="#{person}" />
-								</ui:include>
-							</aon:div>
-						</aon:div>
-					</aon:div>
 
 				</aon:panelGrid>
 			</aon:div>
 
 		</aon:div>
 	</aon:form>
-
-	<aon:lookupButtonPopup lookup="#{agreementLookup}" />
 
 	<ui:include
 		src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />

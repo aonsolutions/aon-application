@@ -68,7 +68,7 @@ public class AonBeanSelectorFilter implements Filter {
 			if (id != null && controller != null) {
 				try {
 					controller.onLoad(null, Integer.parseInt(id), null, null);
-				} catch (ManagerBeanException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

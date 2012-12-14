@@ -2,21 +2,22 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-rich-components">
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	>
 
 	<ui:include
 		src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
 
 
-	<aon:form>
+
+	<aon:form id="enterpriseReadOnlyForm" >
 		<ui:decorate
 			template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 			
 			<ui:param name="toolbarTitle"
 				value="#{companyBundle.company_enterprise_module}" />
 			
-			<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
-
+			<ui:param name="toolbarDescription" value="#{enterprise.to.registry.name}" />
 
 			<ui:define name="toolbarContent">
 			</ui:define>
@@ -44,12 +45,6 @@
 		</aon:div>
 	</aon:form>
 
-
-	<aon:lookupButtonPopup lookup="#{agreementLookup}" />
-	<aon:lookupButtonPopup lookup="#{calendarLookup}" />
-
-	<ui:include
-		src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 
 </ui:composition>
 
