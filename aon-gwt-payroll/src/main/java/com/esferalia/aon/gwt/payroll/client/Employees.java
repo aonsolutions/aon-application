@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.List;
 
-import com.code.aon.ui.registry.controller.PersonController;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -21,7 +20,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 
@@ -57,17 +55,15 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 	private Images images;
 	private EmployeesServiceAsync employeesService;
 
-	private EmployeeDetail employeeDetail;
+	private DetailPanel detailPanel;
 
 	private JSF jsf;
 	private Documents documents;
-	private SalaryDraft salaryDraft;
 
 	public Employees() {
 
 		jsf = new JSF();
 		documents = new Documents();
-		salaryDraft = new SalaryDraft();
 
 		images = GWT.create(Images.class);
 		tree = new Tree(images);
@@ -83,8 +79,8 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		employeesService.getEnterprise(this);
 	}
 
-	public void setEmployeeDetail(EmployeeDetail employeeDetail) {
-		this.employeeDetail = employeeDetail;
+	public void setDetailPanel(DetailPanel employeeDetail) {
+		this.detailPanel = employeeDetail;
 	}
 
 	@Override
@@ -128,10 +124,6 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 					enterpriseCosts.size(), images.costs());
 			workplaceCostsItem.setUserObject(workplaceReports);
 
-			TreeItem workplaceSalariesItem = addImageItem(workplaceItem,
-					"Nominas", workplaceCosts.size(), images.salaries());
-			workplaceSalariesItem.setUserObject(new SalaryCostDocuments(
-					workplaceCosts));
 
 			for (Employee employee : employees) {
 				String fullName = employee.getFullname();
@@ -143,9 +135,6 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 
 				addImageItem(employeeItem, "Nominas", 0, images.salaries());
 
-				TreeItem salaryDraftItem = addImageItem(employeeItem,
-						"Borrador", 0, images.draft());
-
 				com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft = 
 						new com.esferalia.aon.gwt.payroll.shared.SalaryDraft();
 				salaryDraft.setEmployee(employee);
@@ -155,8 +144,6 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 				salaryDraft.setEndDate(DateUtils.getLastDayOfMonth());
 				salaryDraft.setIssueDate(salaryDraft.getEndDate());
 
-				salaryDraftItem.setUserObject(new SalaryDraftDocument(
-						salaryDraft));
 
 			}
 		}
@@ -200,10 +187,6 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 			onDocumentsSelected((ISpinnable<IDocument>) userObject);
 			return;
 		}
-		if (userObject instanceof SalaryDraftDocument) {
-			onSalaryDraftSelected((SalaryDraftDocument) userObject);
-			return;
-		}
 
 	}
 
@@ -242,34 +225,29 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 
 	private void onEnterpriseSelected(Enterprise enterprise) {
 		jsf.setUrl(GWT.getHostPageBaseURL()
-				+ "/com/esferalia/aon/gwt/payroll/facelet/employee/enterprise.jsf");
-		employeeDetail.setWidget(jsf);
+				+ "/com/esferalia/aon/gwt/payroll/facelet/enterprise/enterprise.jsf");
+		detailPanel.setWidget(jsf);
 	}
 
 	private void onWorkplaceSelected(Workplace workplace) {
 		jsf.setUrl(GWT.getHostPageBaseURL()
-				+ "/com/esferalia/aon/gwt/payroll/facelet/employee/workplace.jsf"
+				+ "/com/esferalia/aon/gwt/payroll/facelet/enterprise/workplace.jsf"
 				+ "?controller=payrollWorkPlace&payrollWorkPlace_id="
 				+ workplace.getId());
-		employeeDetail.setWidget(jsf);
+		detailPanel.setWidget(jsf);
 	}
 
 	private void onEmployeeSelected(Employee employee) {
 		jsf.setUrl(GWT.getHostPageBaseURL()
-				+ "/com/esferalia/aon/gwt/payroll/facelet/employee/contract.jsf"
+				+ "/com/esferalia/aon/gwt/payroll/facelet/enterprise/contract.jsf"
 				+ "?controller=contract&contract_id=" + employee.getId()
 				+ "&controller=person&person_id=" + employee.getPerson());
-		employeeDetail.setWidget(jsf);
+		detailPanel.setWidget(jsf);
 	}
 
 	private void onDocumentsSelected(ISpinnable<IDocument> docs) {
-		employeeDetail.setWidget(documents);
+		detailPanel.setWidget(documents);
 		documents.setDocuments(docs);
-	}
-
-	private void onSalaryDraftSelected(SalaryDraftDocument draft) {
-		employeeDetail.setWidget(salaryDraft);
-		salaryDraft.setSalaryDraft(draft);
 	}
 
 	/**

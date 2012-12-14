@@ -66,10 +66,10 @@
 										</aon:commandLink>
 									</aon:div>		
 	
-									<aon:div styleClass="aon-direct-access-list-element" rendered="#{gwt.enabled}" >
-										<aon:commandLink id="gwt_integral" 
-											action="gwt_enterprise_formTree" 
-											value="#{gwt.menuIntegral}">
+									<aon:div styleClass="aon-direct-access-list-element" >
+										<aon:commandLink id="gwt_enterprise" 
+											action="gwt_enterprise_site"
+											value="#{gwtPayrollBundle.menu_enterprise_site}">
 											<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
 											<aon:actionListener method="#{enterprise.onEditSearch}" />
 										</aon:commandLink>

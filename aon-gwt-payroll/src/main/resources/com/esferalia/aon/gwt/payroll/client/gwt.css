@@ -4,6 +4,12 @@ body,table td,select,button {
 	font: 12px/1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
 }
 
+a, a:hover, a:visited {
+    color: #000000;
+    text-decoration: none;
+}
+
+
 /* Dialog boxes */
 .dialogTopLeftInner,.dialogMiddleLeftInner,.dialogBottomLeftInner,.dialogTopRightInner,.dialogMiddleRightInner,.dialogBottomRightInner
 	{

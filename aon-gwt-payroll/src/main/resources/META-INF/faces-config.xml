@@ -4,6 +4,10 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
 	<application>
+		<resource-bundle>
+			<base-name>com.esferalia.aon.gwt.payroll.i18n.messages</base-name>
+			<var>gwtPayrollBundle</var>
+		</resource-bundle>
 	</application>
 
 	
@@ -16,13 +20,20 @@
 	</managed-bean>
 
 	<!-- =================== Enterprise Tree  ========================== -->
-	<navigation-rule>
+	<!-- navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_enterprise_formTree</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/employee/tree.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
+	</navigation-rule-->
 	
+	<!-- =================== Enterprise Site  ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_enterprise_site</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/enterprise/site.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
 			
 </faces-config>

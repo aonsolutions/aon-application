@@ -7,29 +7,22 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EmployeeDetail extends ResizeComposite {
+public class DetailPanel extends ResizeComposite {
 
-	interface Binder extends UiBinder<Widget, EmployeeDetail> { }
+	interface Binder extends UiBinder<Widget, DetailPanel> { }
 	private static final Binder binder = GWT.create(Binder.class);
 
-	//@UiField Documents reports;
 	
 	@UiField SimpleLayoutPanel panel;
 	
-	;
-	
-	public EmployeeDetail() {
+	public DetailPanel() {
 		initWidget(binder.createAndBindUi(this));
 		
 	}
 	
-	/*
-	public Documents getSalaryReceipt() {
-		return reports;
-	}
-	*/
 	
 	public void setWidget(Widget w){
+		panel.setWidget(null);
 		panel.setWidget(w);
 	}
 }

@@ -1,12 +1,14 @@
+/**
+ * 
+ */
 package com.esferalia.aon.gwt.payroll.client;
-
-import static com.google.gwt.dom.client.Style.Unit.PX;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.resources.client.ClientBundle;
@@ -20,56 +22,53 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import static com.google.gwt.dom.client.Style.Unit.PX;
+
 /**
- * Entry point classes define <code>onModuleLoad()</code>.
+ * @author rtrepiana
+ *
  */
-public class Employee implements EntryPoint {
+public class EnterpriseSite implements EntryPoint {
 
 	interface GWTResources extends ClientBundle {
 		@NotStrict
 		@Source("gwt.css")
 		CssResource css();
 
-		@Source("richCss/images/aon-header/aon-menuBar.png")
+		@Source("aon-menuBar.png")
 		ImageResource menuBar();
 	}
 
-	interface Binder extends UiBinder<Widget, Employee> {
+	interface Binder extends UiBinder<Widget, EnterpriseSite> {
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
 
 	@UiField Employees employees;
-	@UiField EmployeeDetail employeeDetail;
+	@UiField DetailPanel detailPanel;
 
-	/**
-	 * This method constructs the application user interface by instantiating
-	 * controls and hooking up event handler.
+	/* (non-Javadoc)
+	 * @see com.google.gwt.core.client.EntryPoint#onModuleLoad()
 	 */
+	@Override
 	public void onModuleLoad() {
-		
-		//Window.alert("This method constructs the application user interface by instantiating controls and hooking up event handler.");
-		
 		// Inject rich styles.
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
 
-		// Get rid of scrollbars, and clear out the window's built-in margin,
-		// because we want to take advantage of the entire client area.
-		// Window.enableScrolling(false);
-		// Window.setMargin("0px");
 
 		// Add the outer panel to the RootLayoutPanel, so that it will be
 		// displayed.
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
-		// RootPanel root = RootPanel.get("rootPanel");
 		root.add(ui);
 		
+		employees.setDetailPanel(detailPanel);
 
-		employees.setEmployeeDetail(employeeDetail);
+
 	}
+	
 
 	/**
 	 * Fetches a parameter passed to the module's nocache script.
@@ -98,45 +97,7 @@ public class Employee implements EntryPoint {
 		}
 		return null;
 	}-*/;
+	
 
-	public static class RootLayoutPanel extends LayoutPanel {
-
-		public static RootLayoutPanel get(String id) {
-			RootLayoutPanel rootLayoutPanel = new RootLayoutPanel();
-			RootPanel.get(id).add(rootLayoutPanel);
-			return rootLayoutPanel;
-		}
-
-		private RootLayoutPanel() {
-			Window.addResizeHandler(new ResizeHandler() {
-				public void onResize(ResizeEvent event) {
-					RootLayoutPanel.this.onResize();
-				}
-			});
-		}
-
-		@Override
-		protected void onLoad() {
-			super.onLoad();
-			fillParent();
-		}
-
-		private void fillParent() {
-			
-			Element elem = getElement();
-			Element parent = elem.getParentElement();
-			
-			int top = parent.getOffsetTop();
-			int left = parent.getOffsetLeft();
-			
-			Style style = elem.getStyle();
-			style.setPosition(Position.ABSOLUTE);
-			style.setLeft(left, PX);
-			style.setTop(top, PX);
-			style.setRight(0, PX);
-			style.setBottom(0, PX);
-		}
-
-	}
 
 }
