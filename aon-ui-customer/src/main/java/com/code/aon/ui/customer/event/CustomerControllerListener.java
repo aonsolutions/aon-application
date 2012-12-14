@@ -18,6 +18,13 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class CustomerControllerListener extends ControllerAdapter {
 
 	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		CustomerController controller = (CustomerController)event.getController();
+		controller.setShowAlumnData(false);
+	}
+	
+	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		CustomerController controller = (CustomerController)event.getController();
 		try {

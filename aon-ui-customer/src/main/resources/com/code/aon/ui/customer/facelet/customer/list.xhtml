@@ -12,10 +12,13 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{customerBundle.customer_module}" />
+				<ui:param name="toolbarTitle" value="#{customer.showAlumnData?academyBundle.academy_alumns:customerBundle.customer_module}" />
 				<ui:param name="controller" value="#{customer}" />
 				<ui:define name="additionalToolbarContent">
+					<!--  
 					<c:if test="#{aonConfiguration.bean.customer.showCourse}">
+					-->
+					<c:if test="#{customer.showAlumnData}">
 						<aon:htmlCommandLink id="alumnReport-excel-report" value="&#160;" 
 							target="_new" rendered="#{!customer.new}"
 							action="#{report.onExecute}"
@@ -35,7 +38,10 @@
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
 					</c:if>
+					<!--  
 					<c:if test="#{!aonConfiguration.bean.customer.showCourse}">
+					-->
+					<c:if test="#{!customer.showAlumnData}">
 						<aon:htmlCommandLink id="customerReport-excel-report" value="&#160;" 
 							target="_new" rendered="#{!customer.new}"
 							action="#{report.onExecute}"
@@ -54,15 +60,15 @@
 							<f:param name="reportKey" value="customerReport" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
-						<aon:htmlCommandLink id="customerDetailExcelReport-excel-report" 
-							value="#{bundle.aon_detailed_listing}" 
-							target="_new" rendered="#{!customer.new}"
-							actionListener="#{customer.onDetailReport}"
-							disabled="#{customer.to != null}"
-							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-excel">
-						</aon:htmlCommandLink>
 					</c:if>
+					<aon:htmlCommandLink id="customerDetailExcelReport-excel-report" 
+						value="#{bundle.aon_detailed_listing}" 
+						target="_new" rendered="#{!customer.new}"
+						actionListener="#{customer.onDetailReport}"
+						disabled="#{customer.to != null}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
+					</aon:htmlCommandLink>
 				</ui:define>
 			</ui:decorate>
 

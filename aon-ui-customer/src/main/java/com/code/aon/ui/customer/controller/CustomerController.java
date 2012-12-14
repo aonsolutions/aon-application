@@ -21,6 +21,7 @@ public class CustomerController extends RegistryController implements ICustomerC
     private static final String MSG_KEY_PREFIX = "aon_customer_report";
 
     private InvoicingGroup invoicingGroup;
+    private boolean showAlumnData;
 
     public InvoicingGroup getInvoicingGroup() {
     	return invoicingGroup;
@@ -29,8 +30,16 @@ public class CustomerController extends RegistryController implements ICustomerC
     public void setInvoicingGroup(InvoicingGroup invoicingGroup) {
     	this.invoicingGroup = invoicingGroup;
     }
+    
+	public boolean isShowAlumnData() {
+		return showAlumnData;
+	}
 
-    public String getReportTitle(){
+	public void setShowAlumnData(boolean showAlumnData) {
+		this.showAlumnData = showAlumnData;
+	}
+
+	public String getReportTitle(){
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX);
