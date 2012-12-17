@@ -19,6 +19,7 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 	protected Integer domainId;
 	private boolean domainManagementAvailable;
 	private boolean disableDomainManagement;
+	private boolean enableHeredity;
 	protected int type;
 	private Integer parentDomainId;
 	private Collection<Integer> domainFilter;
@@ -61,6 +62,14 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 	}
 
 	@Override
+	public boolean isEnableHeredity() {
+		return enableHeredity;
+	}
+
+	public void setEnableHeredity(boolean enableHeredity) {
+		this.enableHeredity = enableHeredity;
+	}
+
 	public boolean isParentDomain() {
 		return this.parentDomainId == null;
 	}
@@ -97,7 +106,7 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 		this.parentDomainId = null;
 		domainManagementAvailable = false;
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(DOMAIN_CLASS_NAME);
-		String q = "SELECT d.parent,d.domainManagement,d.disableDomainManagement,d.type FROM domain d"
+		String q = "SELECT d.parent,d.domainManagement,d.disableDomainManagement,d.enableHeredity,d.type FROM domain d"
 				+ " WHERE d.id = " + domainId
 				+ " AND d.active = 1";
 		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
@@ -105,13 +114,15 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 				.addScalar("parent", Hibernate.INTEGER)
 				.addScalar("domainManagement", Hibernate.BOOLEAN)
 				.addScalar("disableDomainManagement", Hibernate.BOOLEAN)
+				.addScalar("enableHeredity", Hibernate.BOOLEAN)
 				.addScalar("type", Hibernate.INTEGER)
 				.uniqueResult();
 		if (! ArrayUtils.isEmpty(arr) ) {
 			parentDomainId = (Integer) arr[0]; 
 			domainManagementAvailable = (Boolean) arr[1];
 			disableDomainManagement = (Boolean) arr[2];
-			type = (Integer) arr[3];
+			enableHeredity = (Boolean) arr[3];
+			type = (Integer) arr[4];
 		}
 	}
 	

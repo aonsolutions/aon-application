@@ -26,7 +26,7 @@
 				styleClass="aon-top-menu-item" />
 		</c:if>
 
-		<c:if test="#{domainSwitcher.domainManagementAvailable and (!domainSwitcher.disableDomainManagement)}">
+		<c:if test="#{domainSwitcher.domainManagementAvailable and (aonRole.sysAdmin or !domainSwitcher.disableDomainManagement)}">
 			<c:if test="#{aonRole.admin}">
 				<aon:commandLink id="enterprise"
 					value="#{bundle.aon_module_enterprise}"

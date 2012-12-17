@@ -11,16 +11,12 @@ import javax.faces.model.SelectItem;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.domain.DomainManager;
-import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.User;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddInfo;
@@ -268,7 +264,7 @@ public class RegistryCollectionsController {
 	public List<SelectItem> getCategories() throws ManagerBeanException {
 		List<SelectItem> users = new LinkedList<SelectItem>();
 		IManagerBean categoryBean = BeanManager.getManagerBean(Category.class);
-		Criteria criteria = getDomainCriteria(categoryBean.getFieldName(IEntityAlias.CATEGORY_DOMAIN));
+		Criteria criteria = new Criteria();
 		criteria.addOrder(categoryBean.getFieldName(IEntityAlias.CATEGORY_NAME));
 		Iterator<?> iter = categoryBean.getList(criteria).iterator();
 		while(iter.hasNext()){
@@ -303,7 +299,7 @@ public class RegistryCollectionsController {
     public List<SelectItem> getTags() throws ManagerBeanException {
     	List<SelectItem> tags = new LinkedList<SelectItem>();
     	IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
-    	Criteria criteria = getDomainCriteria(tagBean.getFieldName(IEntityAlias.TAG_DOMAIN));
+    	Criteria criteria = new Criteria();
     	criteria.addOrder(tagBean.getFieldName(IEntityAlias.TAG_NAME));
     	Iterator<?> iter = tagBean.getList(criteria).iterator();
     	while(iter.hasNext()){
@@ -313,19 +309,5 @@ public class RegistryCollectionsController {
     	}
     	return tags;
     }    
-    
-    private Criteria getDomainCriteria( String alias ) {
-    	Criteria criteria = new Criteria();
-    	criteria.setSkipDomainFilter(true);
-    	Integer domainId = DomainManager.getCurrentDomain();
-    	Expression expression = ExpressionUtilities.getEqualExpression(alias, domainId);
-    	Integer parentDomainId = AdminUtil.getParentDomain(domainId);
-    	if ( parentDomainId != null ) {
-    		Expression expr2 = ExpressionUtilities.getEqualExpression(alias, parentDomainId);
-    		expression = ExpressionUtilities.getOrExpression(expression, expr2);
-    	}
-    	criteria.addExpression(expression);
-    	return criteria;
-    }
     
 }

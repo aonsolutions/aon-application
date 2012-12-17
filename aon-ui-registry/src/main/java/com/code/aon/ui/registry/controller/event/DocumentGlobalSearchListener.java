@@ -22,6 +22,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.config.util.UserUtils;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -68,7 +69,7 @@ public class DocumentGlobalSearchListener extends CorporateIdentitySearchListene
 	}
 
 	private Expression getCurrentDomainExpression() throws ManagerBeanException {
-		Expression expr1 = DomainManager.getCurrentDomainExpression(getFieldName(REGISTRY_ATTACHMENT_DOMAIN));
+		Expression expr1 = DomainManager.getCurrentDomainExpression(RegistryAttachment.class);
 		Expression expr2 = UserUtils.getInstance().getNullableScopeExpression(getFieldName(REGISTRY_ATTACHMENT_SCOPE_ID));
 		return ExpressionUtilities.getAndExpression(expr1, expr2);		
 	}

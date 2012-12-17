@@ -30,7 +30,10 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.dao.hibernate.TypeResolver;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.domain.IDomain;
 import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
@@ -1430,5 +1433,21 @@ public class BasicController extends AbstractPojoController implements IControll
 		this.checkList.clear();
 		this.checkList.addAll(list);
 	}	
-		
+
+	/**
+	 * Return true if an object representing the data for the currently selected row
+	 * index of the model associated to controller is editable.
+	 * 
+	 * @return boolean
+	 */
+	public boolean isEditableSelectedTo() {
+		if ( this.model.isRowAvailable() ) {
+			Object object = this.model.getRowData();
+			if ( object.getClass().isAnnotationPresent(Heritable.class) ) {
+				return ((IDomain) object).getDomain() == DomainManager.getCurrentDomain();
+			}
+		}
+		return true;
+	}
+	
 }

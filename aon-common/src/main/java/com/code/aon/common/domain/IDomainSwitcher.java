@@ -9,9 +9,10 @@ public interface IDomainSwitcher {
 	void addDomainChangeListener( IDomainChangeListener listener);
 	void fireBeforeDomainChanged(Integer oldDomain, Integer newDomain);
 	void fireAfterDomainChanged(Integer oldDomain, Integer newDomain);
-	boolean isParentDomain();
+	Integer getParentDomainId();
 	boolean isDomainManagementAvailable();
 	boolean isDisableDomainManagement();
+	boolean isEnableHeredity();
 	Collection<Integer> getDomainFilter();
 	
 	

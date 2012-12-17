@@ -165,7 +165,7 @@
 									<aon:outputText value="#{bundle.aon_security}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-									<c:if test="#{aonRole.admin and (!domainSwitcher.disableDomainManagement)}">
+									<c:if test="#{aonRole.sysAdmin or (aonRole.admin and !domainSwitcher.disableDomainManagement)}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="adminDomain"
 												action="adminDomain_form"

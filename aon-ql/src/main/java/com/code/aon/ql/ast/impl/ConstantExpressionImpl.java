@@ -1,5 +1,10 @@
 package com.code.aon.ql.ast.impl;
 
+import java.util.Collection;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.ql.ast.ConstantExpression;
 import com.code.aon.ql.ast.CriterionVisitor;
 
@@ -75,7 +80,13 @@ public class ConstantExpressionImpl implements ConstantExpression {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@SuppressWarnings("rawtypes")
 	public String toString() {
+		if ( this.data.getClass().isArray() ) {
+			return ArrayUtils.toString(this.data);
+		} else if ( this.data.getClass().isAssignableFrom(Collection.class) ) {
+			return StringUtils.join((Collection) this.data, ",");
+		}
 		return this.data.toString();
 	}
 

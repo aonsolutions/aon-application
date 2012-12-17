@@ -8,8 +8,9 @@ public interface IDomainProvider {
 	public boolean accept();
 	public Integer getCurrentDomain();
 	public Integer getUserDomain();
-	public boolean isParentDomain();
+	public Integer getParentDomain();
 	public boolean isDomainManagementAvailable();
+	public boolean isEnableHeredity();
 	public Collection<Integer> getDomainFilter();
 	
 }

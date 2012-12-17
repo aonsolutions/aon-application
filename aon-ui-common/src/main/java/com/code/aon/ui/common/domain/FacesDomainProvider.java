@@ -30,12 +30,6 @@ public class FacesDomainProvider implements IDomainProvider {
 	}
 
 	@Override
-	public boolean isParentDomain() {
-		IDomainSwitcher d = (IDomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER_CONTROLLER);
-		return d.isParentDomain();
-	}
-
-	@Override
 	public boolean isDomainManagementAvailable() {
 		IDomainSwitcher d = (IDomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER_CONTROLLER);
 		return d.isDomainManagementAvailable();
@@ -47,4 +41,16 @@ public class FacesDomainProvider implements IDomainProvider {
 		return d.getDomainFilter();
 	}
 
+	@Override
+	public Integer getParentDomain() {
+		IDomainSwitcher d = (IDomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER_CONTROLLER);
+		return d.getParentDomainId();
+	}
+
+	@Override
+	public boolean isEnableHeredity() {
+		IDomainSwitcher d = (IDomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER_CONTROLLER);
+		return d.isEnableHeredity();
+	}
+	
 }

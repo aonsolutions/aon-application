@@ -436,6 +436,18 @@ public class ExpressionUtilities {
 	 * Returns an in expression for the given identifier and data.
 	 * 
 	 * @param identifier
+	 * @param data
+	 * @return a <code>RelationalExpression</code>.
+	 */
+	@SuppressWarnings("rawtypes")
+	public static RelationalExpression getInExpression(String identifier, Object[] data) {
+		return getRelationalExpression(identifier, data, RelationalType.IN);
+	}
+	
+	/**
+	 * Returns an in expression for the given identifier and data.
+	 * 
+	 * @param identifier
 	 * @param expression
 	 * @return a <code>RelationalExpression</code>.
 	 */

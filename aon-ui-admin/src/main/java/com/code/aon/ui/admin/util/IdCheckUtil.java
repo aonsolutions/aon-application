@@ -71,8 +71,8 @@ public class IdCheckUtil {
 			criteria.setSkipDomainFilter(true);
 			String field = controller.getFieldName(domainAlias);
 			Expression expr1 = ExpressionUtilities.getEqualExpression(field, DomainManager.getCurrentDomain());
-			if (! DomainManager.isParentDomain() ) {
-				DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+			if (! ds.isParentDomain() ) {
 				Expression expr2 = ExpressionUtilities.getEqualExpression(field, ds.getParentDomain());
 				expr1 = ExpressionUtilities.getOrExpression(expr1, expr2);
 			}			

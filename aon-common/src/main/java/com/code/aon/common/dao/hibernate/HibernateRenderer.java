@@ -537,7 +537,11 @@ public class HibernateRenderer implements CriterionVisitor {
 					this.criterion = Restrictions.ge(propertyId, value);
 					break;
 				case IN:
-					this.criterion = Restrictions.in(propertyId, (Collection) value);
+					if ( value.getClass().isArray() ) {
+						this.criterion = Restrictions.in(propertyId, (Object[]) value);
+					} else {
+						this.criterion = Restrictions.in(propertyId, (Collection) value);	
+					}
 					break;
 			}
 		}

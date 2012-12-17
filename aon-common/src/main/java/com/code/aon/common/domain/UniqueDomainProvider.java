@@ -29,11 +29,6 @@ public class UniqueDomainProvider implements IDomainProvider {
 	}
 
 	@Override
-	public boolean isParentDomain() {
-		return true;
-	}
-
-	@Override
 	public boolean isDomainManagementAvailable() {
 		return false;
 	}
@@ -42,4 +37,15 @@ public class UniqueDomainProvider implements IDomainProvider {
 	public Collection<Integer> getDomainFilter() {
 		return null;
 	}
+
+	@Override
+	public Integer getParentDomain() {
+		return null;
+	}
+
+	@Override
+	public boolean isEnableHeredity() {
+		return false;
+	}
+	
 }

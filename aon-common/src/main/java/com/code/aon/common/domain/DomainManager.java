@@ -5,13 +5,14 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.code.aon.common.annotations.Heritable;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 
 
 public class DomainManager {
 	
-//	private static final String COMPANY = "company.";
+	private static final String DOMAIN_PROPERTY = ".domain";
 
 	private static DomainManager domainManager;
 	
@@ -74,11 +75,6 @@ public class DomainManager {
 		ensureCurrentDomain();
 		return getDomainProvider().getCurrentDomain();
 	}
-
-	public synchronized static boolean isParentDomain() {
-		ensureCurrentDomain();
-		return getDomainProvider().isParentDomain();
-	}
 	
 	public synchronized static boolean isDomainManagementAvailable() {
 		ensureCurrentDomain();
@@ -91,21 +87,16 @@ public class DomainManager {
 		return (current != userDomain); 
 	}
 
-	public synchronized static Expression getCurrentDomainExpression(String alias) {
-		Expression exp = null;
-//		if ( isParentFilterApplicable(alias) ) {
-//			exp = ExpressionUtilities.getInExpression(alias, getDomainProvider().getDomainFilter());
-//		} else {
-			exp = ExpressionUtilities.getEqualExpression(alias, getCurrentDomain());
-//		}
-		return exp;
+	public synchronized static Expression getCurrentDomainExpression(Class<?> entityClass) {
+		String alias = entityClass.getSimpleName() + DOMAIN_PROPERTY;
+		if ( (getDomainProvider().getParentDomain() != null) &&
+				getDomainProvider().isEnableHeredity() && 
+				entityClass.isAnnotationPresent(Heritable.class) ) {
+			Object[] values = new Object[]{getDomainProvider().getParentDomain(), getCurrentDomain()};
+			return ExpressionUtilities.getInExpression(alias, values);
+		}
+		return ExpressionUtilities.getEqualExpression(alias, getCurrentDomain());
 	}
-	
-//	private static boolean isParentFilterApplicable(String alias) {
-//		return ( !StringUtils.startsWithIgnoreCase(alias, COMPANY)
-//				&& DomainManager.isParentDomain() 
-//				&& DomainManager.isDomainManagementAvailable());
-//	}
 
 	public synchronized static String getSQLWhereClause(String columnidentifier) {
 		// TODO esta clausula, debería completarse con los dominios 

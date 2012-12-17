@@ -11,7 +11,7 @@
 			columnClasses=", #{columnClasses},">
 	
 			<aon:rowSelector id="#{dataTableId}-select" 
-				toggleOnClick="#{controller.to == null and !skipLineEdition}"
+				toggleOnClick="#{(controller.to == null) and controller.editableSelectedTo and !skipLineEdition}"
 				action="#{rowSelectorAction}" immediate="#{rowSelectorImmediate}"
 				actionListener="#{rowSelectorActionListener}" reRender="#{rowSelectorReRender}"
 				focus="#{(focusOnSelect != null)?(focusOnSelect):''}"/>
