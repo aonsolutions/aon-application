@@ -2043,7 +2043,7 @@
 			<property-name>aliasMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>ContractCalendarEvent_contract_id</key>
+					<key>ContractData_contract_id</key>
 					<value>id</value>
 				</map-entry>
 			</map-entries>
@@ -2059,7 +2059,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.payroll.ContractCalendarEvent</value>
+			<value>com.esferalia.aon.payroll.ContractData</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -2067,7 +2067,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>ContractCalendarEvent_date</value>
+			<value>ContractData_startDate</value>
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
