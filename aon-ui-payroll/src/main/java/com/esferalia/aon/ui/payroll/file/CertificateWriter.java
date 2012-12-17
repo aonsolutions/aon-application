@@ -507,7 +507,9 @@ public class CertificateWriter {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
 			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), period.getStart());
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), period.getEnd());
+			if(period.getEnd()!=null){
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), period.getEnd());
+			}
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
 				if(data.getExpression()!=null){

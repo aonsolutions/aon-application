@@ -12,21 +12,13 @@
 		<ui:param name="skipNewButton" value="#{true}" />
 	</ui:include>
 
-	<c:if test="#{!skipEnterpriseLookup}" >
-		<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-			<ui:param name="lookupTo" value="#{contractSearch.enterprise}" />
-			<ui:param name="skipNewButton" value="#{true}" />
-			<ui:param name="lookupReRender" value="Contract_workPlace" />
-		</ui:include>
-	
-		<aon:outputLabel for="Contract_workPlace"  
-			value="#{companyBundle.company_workplace}" />
-		<aon:selectOneMenu id="Contract_workPlace" disabled="#{contractSearch.enterprise.id==null}"
-			value="#{contractSearch.workPlace}" >
-			<f:selectItem itemLabel=" - " itemValue="#{null}"  />
-			<f:selectItems value="#{contractSearch.workPlaces}"  />
-		</aon:selectOneMenu>
-	</c:if>
+	<aon:outputLabel for="Contract_workPlace"  
+		value="#{companyBundle.company_workplace}" />
+	<aon:selectOneMenu id="Contract_workPlace"
+		value="#{contractSearch.workPlace}" >
+		<f:selectItem itemLabel=" - " itemValue="#{null}"  />
+		<f:selectItems value="#{contractSearch.workPlaces}"  />
+	</aon:selectOneMenu>
 									
 	<aon:outputLabel value="#{bundle.aon_start_date}" />
 	<aon:div>

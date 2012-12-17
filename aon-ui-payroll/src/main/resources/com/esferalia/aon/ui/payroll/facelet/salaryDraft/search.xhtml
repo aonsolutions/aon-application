@@ -26,13 +26,6 @@
 						<ui:param name="skipNewButton" value="#{true}" />
 					</ui:include>
 
-					<c:if test="#{aonConfiguration.bean.salaryDraft.showEnterpriseInSearch}">
-						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-							<ui:param name="lookupTo" value="#{salaryDraftSearch.enterprise}" />
-							<ui:param name="skipNewButton" value="#{true}" />
-						</ui:include>
-					</c:if>
-					
 					<aon:outputLabel for="SalaryDraft_month" value="#{bundle.aon_month}"/>
 					<aon:selectOneMenu id="SalaryDraft_month" value="#{salaryDraft.month}" >
 						<f:selectItems value="#{commonCollections.months}"  />

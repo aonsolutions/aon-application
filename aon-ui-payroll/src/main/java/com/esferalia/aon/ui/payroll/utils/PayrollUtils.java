@@ -16,6 +16,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.company.Enterprise;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -54,9 +56,14 @@ public class PayrollUtils {
 		return calculateSalary(contract, startCal.getTime(), endCal.getTime());
 	}
 
+		
 	public ISalary calculateSalary(Contract contract, Date startDate, Date endDate) {
+		return calculateSalary(contract, startDate, endDate, SalaryType.SALARY);
+	}
+	
+	public ISalary calculateSalary(Contract contract, Date startDate, Date endDate, SalaryType salaryType) {
 		try {
-			ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(startDate, endDate, SalaryType.SALARY);
+			ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(startDate, endDate, salaryType);
 			return ctx.getSalaryProxy().getSalary();
 		} catch (SalaryException e) {
 			// sigue ...
@@ -69,13 +76,24 @@ public class PayrollUtils {
 	}
 	
 	public ISalary getBeforeDateSalary(Contract contract, Date beforeDate) {
+		return getSalary(contract, null, beforeDate);
+	}
+	
+	public ISalary getSalary(Contract contract, Date startDate, Date endDate) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
-			if(beforeDate != null){
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SALARY);
+			if(startDate != null){
 				Calendar cal = Calendar.getInstance();
-				cal.setTime(beforeDate);
+				cal.setTime(startDate);
+				cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
+				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE), cal.getTime());
+			}
+			if(endDate != null){
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(endDate);
 				cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
 				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), cal.getTime());
 			}
@@ -209,6 +227,29 @@ public class PayrollUtils {
 			return map;
 		}
 		return map;
+	}
+	
+	public Enterprise getCurrentDomainEnterprise(){
+		try {
+			DomainManager.getCurrentDomain();
+			IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_DOMAIN), DomainManager.getCurrentDomain());
+			if( bean.getCount(criteria)>1 ){
+				String msg = "Imposible obtener los datos de empresa. [getCurrentDomainEnterprise]";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} else if( bean.getCount(criteria)<1 ) {
+				String msg = "Los datos de empresa no son correctos.[getCurrentDomainEnterprise]";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} else {
+				return (Enterprise) bean.getList(criteria).get(0);
+			}
+		} catch (ManagerBeanException e) {
+			// NADA. se devuelve nulo
+		}
+		return null;
 	}
 	
 }

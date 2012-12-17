@@ -781,6 +781,14 @@
 		<column name="reason" type="com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason"/>
 		<column name="prior_in_ceuta_melilla" exclude="true"/>
 		<column name="prior_deduct_home_loan" exclude="true"/>
+		<column name="paid_irpf" type="java.lang.Double"/>
+		<column name="paid_remuneration" type="java.lang.Double"/>
+		<column name="prior_annual_irpf" type="java.lang.Double"/>
+		<column name="prior_annual_remuneration" type="java.lang.Double"/>
+		<column name="prior_base_irpf" type="java.lang.Double"/>
+		<column name="prior_irpf" type="java.lang.Double"/>
+		<column name="prior_minimun_personal_family" type="java.lang.Double"/>
+		<column name="prior_deduct_home_loan_amount" type="java.lang.Double"/>
 	</table>
 
 	<table name="irpf_result">

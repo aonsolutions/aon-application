@@ -32,11 +32,6 @@
 					</aon:outputText>
 				</aon:div>	
 				
-				<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-					<ui:param name="lookupTo" value="#{certifica2Batch.to.enterprise}" />
-					<ui:param name="skipNewButton" value="#{true}" />
-				</ui:include>
-				
 				<aon:outputLabel value="#{bundle.aon_status}" />
 				<aon:outputText value="#{certifica2Batch.to.status}" />
 				
@@ -63,10 +58,8 @@
 				<ui:param name="controller" value="#{certifica2List}" />
 				<ui:param name="searchReRender" value="listToolBarDiv, listDataDiv" />
 			</ui:include>
-			
-			<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 		</ui:define>
-		
+	
 	</ui:decorate>
 
 </ui:composition>

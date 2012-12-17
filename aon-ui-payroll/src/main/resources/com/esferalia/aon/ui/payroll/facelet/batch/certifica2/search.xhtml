@@ -21,11 +21,6 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{certifica2Batch}" />
 				<ui:define name="searchContent">
-				
-					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{controller.enterprise}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-					</ui:include>
 								
 					<aon:outputLabel value="#{bundle.aon_date}" />
 					<aon:div>

@@ -18,67 +18,41 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.company.Enterprise;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Certifica2Batch;
 import com.esferalia.aon.payroll.Certifica2BatchAttachment;
 import com.esferalia.aon.payroll.Certifica2BatchData;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
-import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.Certifica2BatchAttachmentType;
-import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.salary.ISalary;
-import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.batch.Certifica2ListController.RemesableContract;
 import com.esferalia.aon.ui.payroll.file.CertificateWriter;
-
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class Certifica2BatchController extends BasicController {
-	
-	private final static Logger LOGGER = LoggerFactory.getLogger(Certifica2BatchController.class);
-	
+
 	private CertificateWriter certificateWriter;
 	private FileOutput fileOutput;
 	private boolean recorded;
-	
-	private Enterprise enterprise;
-
-	public Enterprise getEnterprise() {
-		try {
-			if(enterprise == null){
-				IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
-				enterprise = (Enterprise) bean.createNewTo();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> error on getEnterprise: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
-		return enterprise;
-	}
-
-	public void setEnterprise(Enterprise enterprise) {
-		this.enterprise = enterprise;
-	}
+	private PayrollUtils utils;
 	
 	private CertificateWriter getCertificateWriter() {
 		if (certificateWriter == null) {
@@ -103,13 +77,23 @@ public class Certifica2BatchController extends BasicController {
 		this.recorded = recorded;
 	}
 
-	@SuppressWarnings("unchecked")
+	public PayrollUtils getUtils() {
+		if(utils==null){
+			utils = new PayrollUtils();
+		}
+		return utils;
+	}
+
+	public void setUtils(PayrollUtils utils) {
+		this.utils = utils;
+	}
+
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
         IManagerBean contractBean = BeanManager.getManagerBean(Contract.class);
 		IManagerBean certifica2BatchDetailBean = BeanManager.getManagerBean(Certifica2BatchDetail.class);
 		Certifica2ListController listController = (Certifica2ListController) FormUtil.getController(IPayrollConstants.CERTIFICA2_LIST_CONTROLLER_NAME);
         checkAllSuspensionCauses(listController.getRemesableContracts(), listController.getCheckHandler().getCheckedList());
-		Iterator iterator = listController.getCheckHandler().getCheckedList().iterator();
+		Iterator<Object> iterator = listController.getCheckHandler().getCheckedList().iterator();
 		
 		
 		
@@ -208,12 +192,11 @@ public class Certifica2BatchController extends BasicController {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
 		IManagerBean certifica2BatchDetailBean = BeanManager.getManagerBean(Certifica2BatchDetail.class);
 		IManagerBean contractBean = BeanManager.getManagerBean(Contract.class);
         BatchDetailController certifica2BatchDetailController = (BatchDetailController)FormUtil.getController(IPayrollConstants.CERTIFICA2_BATCH_DETAIL_CONTROLLER_NAME);
-		Iterator iterator = certifica2BatchDetailController.getCheckHandler().getCheckedList().iterator();
+		Iterator<Object> iterator = certifica2BatchDetailController.getCheckHandler().getCheckedList().iterator();
         while(iterator.hasNext()){
         	Certifica2BatchDetail certifica2BatchDetail = (Certifica2BatchDetail) iterator.next();
         	certifica2BatchDetail.getContract().setStatus(ContractStatus.PENDING);
@@ -242,24 +225,6 @@ public class Certifica2BatchController extends BasicController {
 		list.onEditSearch(event);
 	}
 	
-	@Override
-	public void onSelect(ActionEvent event) {
-		super.onSelect(event);
-		onInit(event);
-	}
-	
-	@Override
-	public void onAccept(ActionEvent event) {
-		Certifica2Batch b = (Certifica2Batch) getTo();
-		b.setStatus(FileStatus.PENDING);
-		super.onAccept(event);
-		try {
-			onSearchContracts(event);
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage("error on onAccept ["+e.getMessage()+"]");
-		}
-	}
-	
 	public void onInit(ActionEvent event) {
 		try {
 			onSearchContracts(event);
@@ -269,18 +234,8 @@ public class Certifica2BatchController extends BasicController {
 		}
 	}
 
-	@Override
-	public void onReset(ActionEvent event) {
-		setRecorded(false);
-		super.onReset(event);
-		Certifica2Batch b = (Certifica2Batch) getTo();
-		b.setStatus(FileStatus.PENDING);
-	}
-
 	public void onCreateDisk(ActionEvent event) {
 		try {
-//			String loggedUser = AonUtil.getRemoteUser();
-//			loggedUser = StringUtils.substringBefore(loggedUser, "@");
 			for (Certifica2BatchDetail d : getCertifica2DetailList()) {
 				for (Certifica2BatchData data : getDetailDataList(d)) {
 					data.setCertifica2BatchDetail(d);
@@ -336,7 +291,8 @@ public class Certifica2BatchController extends BasicController {
 			eDate.setTime(new Date(calFin.getTimeInMillis()));
 			sDate.set(Calendar.DAY_OF_MONTH, 1);
 			eDate.set(Calendar.DAY_OF_MONTH, sDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-			nomina = getCurrentSalary(detail.getContract(), SalaryType.SALARY, sDate.getTime(), eDate.getTime());
+//			nomina = getCurrentSalary(detail.getContract(), SalaryType.SALARY, sDate.getTime(), eDate.getTime());
+			nomina = getUtils().getSalary(detail.getContract(),  sDate.getTime(), eDate.getTime());
 			calFin.add(Calendar.DATE, -calFin.get(Calendar.DAY_OF_MONTH));
 			if(nomina != null) {
 				Double baseCg = nomina.getCommonBase();
@@ -371,24 +327,24 @@ public class Certifica2BatchController extends BasicController {
 		return cotizacionList;
 	}
 	
-	private Salary getCurrentSalary(Contract contract, SalaryType type, Date startDate, Date endDate){
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), type);
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE), startDate);
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), endDate);
-			
-			List<ITransferObject> salaryList = bean.getList(criteria);
-			if(!salaryList.isEmpty()){
-				return (Salary) salaryList.get(0);
-			} 
-		} catch (ManagerBeanException e) {
-			// NADA, que siga generando el fichero
-		} 
-		return null;
-	}
+//	private Salary getCurrentSalary(Contract contract, SalaryType type, Date startDate, Date endDate){
+//		try {
+//			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+//			Criteria criteria = new Criteria();
+//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
+//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), type);
+//			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE), startDate);
+//			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), endDate);
+//			
+//			List<ITransferObject> salaryList = bean.getList(criteria);
+//			if(!salaryList.isEmpty()){
+//				return (Salary) salaryList.get(0);
+//			} 
+//		} catch (ManagerBeanException e) {
+//			// NADA, que siga generando el fichero
+//		} 
+//		return null;
+//	}
 	
 	public void changeBatchStatus(FileStatus status) {
 		Certifica2Batch b = (Certifica2Batch) getTo();
@@ -420,21 +376,5 @@ public class Certifica2BatchController extends BasicController {
 		}
 		return list;
 	}
-	
-	@Override
-	public void onSearch(ActionEvent event) {
-		try {
-			if ((getEnterprise() != null) && (getEnterprise().getId() != null)) {
-				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CERTIFICA2BATCH_ENTERPRISE_ID), getEnterprise().getId());			
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onSearch exception: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
-		super.onSearch(event);
-	}
-	
-	
 
 }

@@ -15,16 +15,6 @@
 	</aon:selectOneRadio>
 	
 	<c:if test="#{paymentUpdate.employeeView}">
-		<c:if test="#{aonConfiguration.bean.paymentUpdate.showEnterpriseInSearch}">				
-			<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-				<ui:param name="lookupTo" value="#{paymentUpdate.enterprise}" />
-				<ui:param name="skipNewButton" value="#{true}" />
-				<ui:param name="idRequired" value="#{true}" />
-				<ui:param name="lookupReRender" value="paymentUpdateSearch" />
-				<aon:methodParam name="lookupChangeListener" 
-					value="#{paymentUpdate.refreshVariables}" type="lookupChangeListener" />
-			</ui:include>
-		</c:if>
 		
 		<aon:outputLabel for="enterprise_workPlace" styleClass="aon-margin-left aon-margin-right" 
 			value="#{companyBundle.company_workplace}" />

@@ -415,7 +415,6 @@ public abstract class AbstractVariableHandler {
 		}
 		if (expression instanceof Date) {
 			Date date = (Date) expression;
-//			AonUtil.getMessage("aon_date_pattern");
 			String pattern = AonUtil.getMessage("aon_date_pattern");
 			return new SimpleDateFormat(pattern).format(date);
 		}

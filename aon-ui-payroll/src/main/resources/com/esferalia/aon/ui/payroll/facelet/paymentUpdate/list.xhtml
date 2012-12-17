@@ -20,7 +20,7 @@
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="paymentUpdate-save"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						value="#{bundle.aon_accept}"
+						value="#{bundle.aon_save}"
 						onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
 						actionListener="#{paymentUpdate.onSave}" />
 						
@@ -31,26 +31,6 @@
 						actionListener="#{paymentUpdate.onSearch}" />
 				</ui:define>
 			</ui:decorate>
-			
-			<!--  
-			<aon:div styleClass="aon-scroll-area">
-				<aon:panelCollapsible>
-					
-					<f:facet name="header" >
-						<aon:div styleClass="aon-panelGrid-search-info">
-							<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
-						</aon:div>			
-					</f:facet>
-					
-					
-				</aon:panelCollapsible>
-					<aon:div styleClass="aon-panelGrid-search">
-						<aon:panelGrid columns="2" >
-							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentUpdate/search_content.xhtml" />
-						</aon:panelGrid>
-					</aon:div>
-			</aon:div>
-			-->
 			
 			<aon:div styleClass="aon-scroll-area">
 				<aon:div styleClass="aon-panelGrid-search">

@@ -116,8 +116,8 @@
 	</bean>
 
 	<bean class="com.code.aon.company.Enterprise" sqlName="enterprise">
-		<alias names="id,registry_id,scope_id,registry_name,registry_document,registry_documentCountry,registry_documentType"/>
-		<hibernate names="id,registry.id,scope.id,registry.name,registry.document,registry.documentCountry,registry.documentType"/>
+		<alias names="domain,id,registry_id,scope_id,registry_name,registry_document,registry_documentCountry,registry_documentType"/>
+		<hibernate names="domain,id,registry.id,scope.id,registry.name,registry.document,registry.documentCountry,registry.documentType"/>
 	</bean>
 	
 	<!-- ** AON CONFIG  **************************************************** -->

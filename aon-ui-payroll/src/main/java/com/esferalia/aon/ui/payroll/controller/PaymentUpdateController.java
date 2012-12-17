@@ -38,7 +38,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -391,19 +390,8 @@ public class PaymentUpdateController {
 	
 	private void init(){
 		try {
-			if ( AonUtil.isBeanValue(IPayrollConstants.PAYMENT_UPDATE_CONTROLLER, IPayrollConstants.SHOW_ENTERPRISE_IN_SEARCH) ) {
-				CompanyCollectionsController collections = new CompanyCollectionsController();
-				if(collections.getCurrentUserEnterprisesCount()==1){
-					setEnterprise((Enterprise) collections.getCurrentUserEnterprises().get(0).getValue());
-				} else {
-					IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
-					setEnterprise((Enterprise) bean.createNewTo());
-				}
-				setContract((Contract) BeanManager.getManagerBean(Contract.class).createNewTo());
-			} else {
-				IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
-				setEnterprise((Enterprise) bean.get(UserUtils.getInstance().getLoggedUser().getEnterprise()));
-			}
+			setContract((Contract) BeanManager.getManagerBean(Contract.class).createNewTo());
+			setEnterprise(getUtils().getCurrentDomainEnterprise());
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible realizar la búsqueda de los datos. [" + e.getMessage()+"]";
 			AonUtil.addErrorMessage(msg);
@@ -555,8 +543,6 @@ public class PaymentUpdateController {
 					for (PaymentUpdate pu: dataList) {
 						for(IVariableData var: pu.getMap().values()){
 							if( StringUtils.isNotBlank(var.getExpression()) && isVariableValueChanged(pu.getContract(), var) ){
-//							manageChangedContractData( pu.getContract(), var );
-//							bean.insertOrUpdate( (ContractData)var );	
 								
 								if( var.getStartDate()==null ) {
 									var.setStartDate(getStartDate());
@@ -624,29 +610,7 @@ public class PaymentUpdateController {
 		}
 	}
 
-	private void manageChangedContractData(Contract contract, IVariableData var) throws ManagerBeanException {
-		if( var.getStartDate()==null ) {
-			var.setStartDate(getStartDate());
-		}
-		if( var.getEndDate()==null  ){
-			var.setEndDate(getEndDate());
-		}
-		if( DateUtils.isSameDay(var.getStartDate(),getStartDate()) && DateUtils.isSameDay(var.getEndDate(),getEndDate()) ){
-			var = obtainExistingContractData(contract, var);
-		} else if( var.getId()!=null ){
-			var = createContractData(contract, var);
-		}
-	}
 	private boolean isVariableValueChanged(Contract contract, IVariableData var) throws SalaryException {
-//		ContractData data = null;
-//		try {
-//			List<ITransferObject> list = getUtils().getContractDataList(contract, getStartDate(), getEndDate(), var.getName());
-//			data = (ContractData) list.get(0);
-//		} catch (ManagerBeanException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
 		ContractData data = getContractContext(contract, var.getName(), getStartDate(), getEndDate());
 		if( data==null || data.getExpression()==null || !data.getExpression().equals(var.getExpression()) ){
 			return true;

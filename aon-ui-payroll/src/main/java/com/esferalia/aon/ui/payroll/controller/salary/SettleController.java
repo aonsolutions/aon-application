@@ -21,20 +21,20 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class SettleController {
 	
@@ -151,6 +151,11 @@ public class SettleController {
 						} else if(ap.getName().equals(PayrollAppParamsController.SETTLE_COMPENSATION_CONCEPT)){
 							setCompensationConcept(pc);
 						}
+					} else {
+						String msg = "No se han definido los conceptos de finiquito.";
+						LOGGER.error(">>>> initializeConcepts ",msg);
+						AonUtil.addErrorMessage(msg);
+						throw new AbortProcessingException(msg);
 					}
 				}
 			} else {
@@ -211,10 +216,9 @@ public class SettleController {
 		try {
 			Contract contract = getParams().getContract();
 			Date endDate = getParams().getSuspensionDate();
-			int year = CommonUtil.getYear(endDate);
-			int month = CommonUtil.getMonth(endDate);
-			ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(year, Month.values()[month], SalaryType.SETTLE);
-			settle = (Salary) ctx.getSalaryProxy().getSalary();
+			
+			PayrollUtils utils = new PayrollUtils();
+			settle = (Salary) utils.calculateSalary(contract, endDate);
 			settle.setNonEstructuralOvertimeBase(0.0);
 			settle.setTotalIrpf(0.0);
 			settle.setContract(contract);

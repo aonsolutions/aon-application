@@ -15,7 +15,6 @@ import org.apache.commons.lang.time.DateUtils;
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.entity.master.ContractDB;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;

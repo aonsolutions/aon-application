@@ -1,9 +1,11 @@
 package com.esferalia.aon.ui.payroll.event.salary;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -13,8 +15,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class SalarySearchListener extends ControllerSearchListener {
 
 	private Person person;
-	
-	private Enterprise enterprise;
+	private Date startDate;
+	private Date endDate;
 	
 	public Person getPerson() {
 		return person;
@@ -24,20 +26,31 @@ public class SalarySearchListener extends ControllerSearchListener {
 		this.person = person;
 	}
 	
-	public Enterprise getEnterprise() {
-		return enterprise;
+	public Date getStartDate() {
+		return startDate;
 	}
 
-	public void setEnterprise(Enterprise enterprise) {
-		this.enterprise = enterprise;
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 
 	@Override
 	protected void init() throws ManagerBeanException {
 		IManagerBean personBean = BeanManager.getManagerBean(Person.class);
 		setPerson((Person) personBean.createNewTo());
-		IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
-		setEnterprise((Enterprise) enterpriseBean.createNewTo());
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
+		setStartDate(cal.getTime());
+		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		setEndDate(cal.getTime());
 	}
 	
 	@Override
@@ -45,9 +58,8 @@ public class SalarySearchListener extends ControllerSearchListener {
 		if ((getPerson() != null) && (getPerson().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.SALARY_CONTRACT_PERSON_ID), getPerson().getId());			
 		}
-		if ((getEnterprise() != null) && (getEnterprise().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());			
-		}
+		criteria.addGreaterThanOrEqualExpression((getFieldName(IEntityAlias.SALARY_START_DATE)), getStartDate());			
+		criteria.addLessThanOrEqualExpression((getFieldName(IEntityAlias.SALARY_END_DATE)), getEndDate());			
 	}
 
 }

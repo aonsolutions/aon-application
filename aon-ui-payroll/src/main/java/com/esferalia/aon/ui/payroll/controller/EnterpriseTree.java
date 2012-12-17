@@ -349,6 +349,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		Criteria criteria = new Criteria();
 		String enterpriseId = bean.getFieldName(IEntityAlias.WORK_PLACE_ENTERPRISE_ID);
 		criteria.addEqualExpression(enterpriseId, enterprise.getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.WORK_PLACE_DESCRIPTION));
 		List<ITransferObject> list = bean.getList(criteria);
 		for( ITransferObject to : list ) {
 			WorkPlace wp = (WorkPlace) to;
