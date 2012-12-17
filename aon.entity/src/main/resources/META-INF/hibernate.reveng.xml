@@ -24,8 +24,6 @@
 	<!--  TABLAS DUDOSAS -->
 	<!--  ************** -->
 	<table-filter match-name="instructor" exclude="true" />
-	<table-filter match-name="project_dossier" exclude="true" />
-	<table-filter match-name="workactivity" exclude="true" />
 	<table-filter match-name="enterprise_agreement" exclude="true" />
 	
 	<!--  *********************************** -->
@@ -587,6 +585,22 @@
 		<column name="rectified_year" type="java.lang.Integer"/>
 		<column name="rectified_period" type="com.code.aon.fiscal.enumeration.Period"/>		
 		<column name="rectified_amount" type="java.lang.Double"/>
+	</table>
+
+	<table name="fs_model" class="com.esferalia.aon.entity.master.FiscalModel">
+		<column name="administration" type="com.code.aon.config.enumeration.Administration"/>
+		<column name="period" type="com.code.aon.fiscal.enumeration.Period"/>		
+		<column name="year" type="java.lang.Integer"/>
+		<column name="comments" type="text"/>
+		<column name="model" type="com.code.aon.fiscal.enumeration.FiscalModelType"/>
+		<column name="status" type="com.code.aon.fiscal.enumeration.FiscalModelStatus"/>
+	</table>
+
+	<table name="fs_model_detail" class="com.esferalia.aon.entity.master.FiscalModelDetail">
+		<column name="adj_amount" property="adjustAmount"/>
+		<column name="acu_amount" property="accumulatedAmount"/>
+		<column name="dec_amount" property="declaredAmount"/>
+		<column name="res_amount" property="resultAmount"/>
 	</table>
 
 	<table name="fs_prof_retention" class="com.esferalia.aon.entity.master.ProfessionalRetention">

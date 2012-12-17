@@ -315,6 +315,8 @@ public class AonExporter extends GenericExporter{
 		//AON-FISCAL  	
 		map.put("FiscalBatch","com.code.aon.fiscal.FiscalBatch");
 		map.put("FiscalBatchDetail","com.code.aon.fiscal.FiscalBatchDetail");
+		map.put("FiscalModel","com.code.aon.fiscal.FiscalModel");
+		map.put("FiscalModelDetail","com.code.aon.fiscal.FiscalModelDetail");
 		map.put("Mod347","com.code.aon.fiscal.Mod347");
 		map.put("Mod347Detail","com.code.aon.fiscal.Mod347Detail");
 		map.put("Mod349","com.code.aon.fiscal.Mod349");

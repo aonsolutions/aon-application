@@ -187,6 +187,8 @@
 		<!-- AON-FISCAL Mapping files -->
 		<mapping class="com.code.aon.fiscal.FiscalBatch"/>
 		<mapping class="com.code.aon.fiscal.FiscalBatchDetail"/>
+		<mapping class="com.code.aon.fiscal.FiscalModel"/>
+		<mapping class="com.code.aon.fiscal.FiscalModelDetail"/>
 		<mapping class="com.code.aon.fiscal.Mod347"/>
 		<mapping class="com.code.aon.fiscal.Mod347Detail"/>
 		<mapping class="com.code.aon.fiscal.Mod349"/>
