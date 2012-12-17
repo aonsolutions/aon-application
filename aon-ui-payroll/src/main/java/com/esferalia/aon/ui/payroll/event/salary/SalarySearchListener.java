@@ -58,8 +58,12 @@ public class SalarySearchListener extends ControllerSearchListener {
 		if ((getPerson() != null) && (getPerson().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.SALARY_CONTRACT_PERSON_ID), getPerson().getId());			
 		}
-		criteria.addGreaterThanOrEqualExpression((getFieldName(IEntityAlias.SALARY_START_DATE)), getStartDate());			
-		criteria.addLessThanOrEqualExpression((getFieldName(IEntityAlias.SALARY_END_DATE)), getEndDate());			
+		if(getStartDate()!=null){
+			criteria.addGreaterThanOrEqualExpression((getFieldName(IEntityAlias.SALARY_START_DATE)), getStartDate());			
+		}
+		if(getEndDate()!=null){
+			criteria.addLessThanOrEqualExpression((getFieldName(IEntityAlias.SALARY_END_DATE)), getEndDate());			
+		}
 	}
 
 }
