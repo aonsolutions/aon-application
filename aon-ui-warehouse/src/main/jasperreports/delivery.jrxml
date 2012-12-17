@@ -539,7 +539,9 @@
 + ((org.apache.commons.lang.ArrayUtils.getLength($V{cellulars})>1)?(" - " + ($V{cellulars}[1]).trim()):(""))]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-44" positionType="Float" x="525" y="215" width="13" height="14"/>
+				<reportElement key="textField-44" positionType="Float" x="525" y="215" width="13" height="14">
+					<printWhenExpression><![CDATA[new Boolean($F{customer}.isDeliveryValuated())]]></printWhenExpression>
+				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -552,7 +554,9 @@
 				<textFieldExpression><![CDATA["€"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-44" positionType="Float" x="463" y="215" width="62" height="14"/>
+				<reportElement key="textField-44" positionType="Float" x="463" y="215" width="62" height="14">
+					<printWhenExpression><![CDATA[new Boolean($F{customer}.isDeliveryValuated())]]></printWhenExpression>
+				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -565,7 +569,9 @@
 				<textFieldExpression><![CDATA[new Double($P{PriceStrategy}.getTotalPrice((com.code.aon.product.strategy.ICalculableContainer)$V{currentDelivery}, (com.code.aon.registry.ITaxInfo)$V{currentDelivery}.getCustomer()))]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-43" positionType="Float" mode="Opaque" x="463" y="201" width="75" height="14" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-43" positionType="Float" mode="Opaque" x="463" y="201" width="75" height="14" forecolor="#FFFFFF" backcolor="#000000">
+					<printWhenExpression><![CDATA[new Boolean($F{customer}.isDeliveryValuated())]]></printWhenExpression>
+				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
