@@ -78,10 +78,6 @@ a, a:hover, a:visited {
 .gwt-SplitLayoutPanel-VDragger {
 	cursor: row-resize;
 }
-
-
-/* MenuBar */
-
 @sprite .gwt-MenuBar-horizontal {
 	gwt-image: "menuBar"; 
 } 
@@ -103,19 +99,20 @@ a, a:hover, a:visited {
     font-family: arial,verdana,"sans-serif";
     font-size: 1em;
     font-weight: bold;
-    padding: 3px 7px 4px 7px;
+    padding: 4px 5px 4px 5px;
     text-transform: uppercase;
 }
 
 .gwt-MenuBar-vertical .gwt-MenuItemSeparator .menuSeparatorInner {
-	border: 0px;
 	height: 1px;
-	margin: 2px 0px;
+	padding: 0px;
+	border: 0px;
+	border-top: 1px solid #e5e5e5;
 }
 
 .gwt-MenuBar-vertical .gwt-MenuItem {
 	min-width :125px;
-	padding: 4px 40px 4px 20px;
+	padding: 4px 40px 4px 2px;
 }
 
 .gwt-MenuBar .gwt-MenuItem:hover,
@@ -123,25 +120,18 @@ a, a:hover, a:visited {
 .gwt-MenuBar-vertical .subMenuIcon-selected	{
 	border: none;
 	background: #EBEBEF;
-
 }
 
 .gwt-MenuBar-horizontal .gwt-MenuItem:hover,
 .gwt-MenuBar-horizontal .gwt-MenuItem-selected {
 	background-color: #FFFFFF;
 	border: 1px solid #FFFFFF;
-	box-shadow: 2px 2px 5px 1px #BBBBBB;
 }
 
 .gwt-MenuBarPopup {
-	margin : 0px;
 	background: white;
-	border-right: 1px solid #EBEBEF;
-	border-left: 1px solid #EBEBEF;
-	border-bottom: 1px solid #EBEBEF;
-	padding: 4px 0px;
-	box-shadow: 2px 2px 5px 1px #EBEBEF;
-
+	border: 1px solid #EBEBEF;
+	box-shadow: 3px 3px 3px #EBEBEF;
 }
 
 .gwt-MenuBarPopup .menuPopupTopLeft,
@@ -153,7 +143,7 @@ a, a:hover, a:visited {
 .gwt-MenuBarPopup .menuPopupBottomCenter,
 .gwt-MenuBarPopup .menuPopupBottomRight
 	{
-	display: none;
+	background: none;
 }
 
 

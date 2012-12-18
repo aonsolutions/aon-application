@@ -575,85 +575,29 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			String sql = "SELECT * " + " FROM "
 
 					+ REGISTRY
-					+ ", "
-					+ ENTERPRISE
+					+ ", " 	+ ENTERPRISE
 					// + ", " + WORKPLACE
-					+ " LEFT JOIN "
-					+ WORKPLACE
-					+ " ON ( "
-					+ ENTERPRISE
-					+ "."
-					+ EnterpriseColumns.REGISTRY
-					+ " = "
-					+ WORKPLACE
-					+ "."
-					+ WorkplaceColumns.ENTERPRISE
-					+ " )"
+					+ " LEFT JOIN " + WORKPLACE + " ON ( " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = " + WORKPLACE + "." + WorkplaceColumns.ENTERPRISE+ " )"
 					// + ", " + RADDRESS
-					+ " LEFT JOIN "
-					+ RADDRESS
-					+ " ON ( "
-					+ WORKPLACE
-					+ "."
-					+ WorkplaceColumns.ADDRESS
-					+ " = "
-					+ RADDRESS
-					+ "."
-					+ RaddressColumns.ID
-					+ ")"
+					+ " LEFT JOIN " + RADDRESS + " ON ( " + WORKPLACE + "." + WorkplaceColumns.ADDRESS + " = " + RADDRESS + "." + RaddressColumns.ID + ")"
 					// + ", " + CONTRACT
-					+ " LEFT JOIN " + CONTRACT
-					+ " ON ( "
-					+ WORKPLACE
-					+ "."
-					+ WorkplaceColumns.ID
-					+ " = "
-					+ CONTRACT
-					+ "."
-					+ ContractColumns.WORKPLACE
-					+ ")"
+					+ " LEFT JOIN " + CONTRACT + " ON ( " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + CONTRACT + "." + ContractColumns.WORKPLACE + ")"
 					// + ", " + PERSON
-					+ " LEFT JOIN " + PERSON + " ON ( " + CONTRACT + "."
-					+ ContractColumns.PERSON
-					+ " = "
-					+ PERSON
-					+ "."
-					+ PersonColumns.REGISTRY
-					+ ")"
+					+ " LEFT JOIN " + PERSON + " ON ( " + CONTRACT + "." + ContractColumns.PERSON + " = " + PERSON + "." + PersonColumns.REGISTRY + ")"
 
-					+ " WHERE "
-					+ REGISTRY
-					+ "."
-					+ RegistryColumns.ID
-					+ " = ?"
-					+ " AND "
-					+ REGISTRY
-					+ "."
-					+ RegistryColumns.ID
-					+ " = "
-					+ ENTERPRISE
-					+ "."
-					+ EnterpriseColumns.REGISTRY
+					+ " WHERE " + REGISTRY + "." + RegistryColumns.ID + " = ?"
+					+ " AND " + REGISTRY + "." + RegistryColumns.ID + " = " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY
+					+ " AND ( " + CONTRACT + "." + ContractColumns.ID + " ) IN ( SELECT " + SALARY + "." + SalaryColumns.CONTRACT + " FROM " + SALARY + ") "
+					
+					//+ " AND ( " + CONTRACT + "." + ContractColumns.END_DATE + " IS NULL" 
+					//+ " OR " + CONTRACT + "." + ContractColumns.END_DATE + " >= ? )" 
 
-					// + " AND " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY
-					// + " = " + WORKPLACE + "." + WorkplaceColumns.ENTERPRISE
-					// + " AND " + WORKPLACE + "." + WorkplaceColumns.ADDRESS +
-					// " = " + RADDRESS + "." + RaddressColumns.ID
-					// + " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = "
-					// + CONTRACT + "." + ContractColumns.WORKPLACE
-					// + " AND " + CONTRACT + "." + ContractColumns.PERSON +
-					// " = " + PERSON + "."+ PersonColumns.REGISTRY
-
-					+ " AND ( " + CONTRACT + "." + ContractColumns.END_DATE
-					+ " IS NULL" + " OR " + CONTRACT + "."
-					+ ContractColumns.END_DATE + " >= ? )" + " ORDER BY "
-					+ WORKPLACE + "." + WorkplaceColumns.ID + " ," + PERSON
-					+ "." + PersonColumns.FIRST_SURNAME;
+					+ " ORDER BY " + WORKPLACE + "." + WorkplaceColumns.ID + " ," + PERSON + "." + PersonColumns.FIRST_SURNAME;
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, registryID);
 
-			stmt.setDate(2, getMonthStartDate());
+			//stmt.setDate(2, getMonthStartDate());
 			rs = stmt.executeQuery();
 
 			EnterpriseHandler enterpriseHandler = new EnterpriseHandler();

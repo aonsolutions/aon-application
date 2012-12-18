@@ -1,5 +1,9 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import java.util.Date;
+
+import com.google.gwt.i18n.shared.DateTimeFormat;
+
 
 public class StringUtils {
 	
@@ -7,8 +11,12 @@ public class StringUtils {
 		return str == null || str.isEmpty();
 	}
 
+	public static String capitalize(String str) {
+		return capitalize(str, null);
+	}
+
 	public static String capitalize(String str, String delimiters) {
-		if ( isEmpty(str) || isEmpty(delimiters)){
+		if ( isEmpty(str) ){
 			return str;
 		}
 		
@@ -32,7 +40,7 @@ public class StringUtils {
 	}
 	
 	public static String capitalizeFully(String str, String delimiters) {
-		if ( isEmpty(str) || isEmpty(delimiters)){
+		if ( isEmpty(str) ){
 			return str;
 		}
 		str = str.toLowerCase();
@@ -40,7 +48,7 @@ public class StringUtils {
 	}
 	
 	private static boolean isDelimiter(char ch, String delimiters) {
-		return delimiters.indexOf(ch) != -1;
+		return delimiters != null ? ( delimiters.indexOf(ch) != -1 ) : false;
 	}
 	
 
@@ -54,5 +62,6 @@ public class StringUtils {
 	    msg.append(split[split.length - 1]);
 	    return msg.toString();
 	 }
+	
 	
 }

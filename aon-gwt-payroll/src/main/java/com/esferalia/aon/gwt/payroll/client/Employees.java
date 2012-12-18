@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -9,49 +11,50 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.http.client.URL;
-import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.Widget;
 
-public class Employees extends Composite implements AsyncCallback<Enterprise>,
+public class Employees extends ResizeComposite implements AsyncCallback<Enterprise>,
 		OpenHandler<TreeItem>, SelectionHandler<TreeItem> {
 
-	/**
-	 * Specifies the images that will be bundled for this Composite and specify
-	 * that tree's images should also be included in the same bundle.
-	 */
-	public interface Images extends ClientBundle, Tree.Resources {
-		ImageResource draft();
-
-		ImageResource data();
-
-		ImageResource calendar();
-
-		ImageResource enterprise();
-
-		ImageResource workplace();
-
-		ImageResource costs();
-
-		ImageResource salaries();
-
-		ImageResource employee();
-
-		@Source("noimage.png")
-		ImageResource treeLeaf();
+	interface Listener {
+		void onMinimize();
+		void onMaximize();
+	}
+	
+	interface Binder extends UiBinder<Widget, Employees> {
 	}
 
-	private Tree tree;
+	private static final Binder binder = GWT.create(Binder.class);
+
+	@UiField Tree tree;
+	@UiField Button viewButton;
+	@UiField Button minimizeButton;
+	@UiField Button maximizeButton;
+	
 	private Images images;
 	private EmployeesServiceAsync employeesService;
 
@@ -59,23 +62,44 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 
 	private JSF jsf;
 	private Documents documents;
+	
+	private List<Listener> listeners ;
+	
 
 	public Employees() {
 
 		jsf = new JSF();
 		documents = new Documents();
-
 		images = GWT.create(Images.class);
-		tree = new Tree(images);
+
+		listeners = new LinkedList<Employees.Listener>();
 
 		// Create a remote service proxy to talk to the server-side Employees
 		// service.
 		employeesService = GWT.create(EmployeesService.class);
-		initWidget(tree);
+		
+		
+		initWidget(binder.createAndBindUi(this));
+
 
 		tree.addOpenHandler(this);
 		tree.addSelectionHandler(this);
-
+		
+		initViewBUtton();
+		
+		minimizeButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onMinimize();
+			}
+		});
+		maximizeButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onMaximize();
+			}
+		});
+		
 		employeesService.getEnterprise(this);
 	}
 
@@ -87,6 +111,14 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 	public void onFailure(Throwable caught) {
 		// TODO Auto-generated method stub
 		Window.alert(caught.getLocalizedMessage());
+	}
+	
+	public void addListener(Listener listener) {
+		listeners.add(listener);
+	}
+	
+	public void removeListener(Listener listener) {
+		listeners.remove(listener);
 	}
 
 	@Override
@@ -101,7 +133,7 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		tree.addItem(enterpriseItem);
 
 		List<Cost> enterpriseCosts = enterprise.getCosts();
-		ISpinnable<IDocument> documents = new CostDocuments(enterpriseCosts);
+		ISpinnable<IDocument> documents = new CostDocuments(enterpriseCosts, employeesService);
 		TreeItem enterpriseCostsItem = addImageItem(enterpriseItem, "Costos",
 				enterpriseCosts.size(), images.costs());
 		enterpriseCostsItem.setUserObject(documents);
@@ -118,7 +150,7 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 
 			List<Cost> workplaceCosts = workplace.getCosts();
 			ISpinnable<IDocument> workplaceReports = new CostDocuments(
-					workplaceCosts);
+					workplaceCosts, employeesService);
 
 			TreeItem workplaceCostsItem = addImageItem(workplaceItem, "Costos",
 					enterpriseCosts.size(), images.costs());
@@ -128,21 +160,16 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 			for (Employee employee : employees) {
 				String fullName = employee.getFullname();
 				// fullName = StringUtils.capitalizeFully(fullName, DELIMITERS);
+				
+				
+				boolean active = isActive(employee); 
+				
 				TreeItem employeeItem = addImageItem(workplaceItem, fullName,
-						0 /* Not show number of childs */, images.employee());
+						0 /* Not show number of childs */, active ? images.employee() : images.oldemployee());
 
 				employeeItem.setUserObject(employee);
 
 				addImageItem(employeeItem, "Nominas", 0, images.salaries());
-
-				com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft = 
-						new com.esferalia.aon.gwt.payroll.shared.SalaryDraft();
-				salaryDraft.setEmployee(employee);
-				salaryDraft.setType(Salary.Type.SALARY);
-
-				salaryDraft.setStartDate(DateUtils.getFirstDayOfMonth());
-				salaryDraft.setEndDate(DateUtils.getLastDayOfMonth());
-				salaryDraft.setIssueDate(salaryDraft.getEndDate());
 
 
 			}
@@ -270,153 +297,107 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		return AbstractImagePrototype.create(imageProto).getHTML() + " "
 				+ title + (childs > 0 ? " (" + childs + ")" : "");
 	}
-
-	private class CostDocuments extends AbstractSpinnable<IDocument> implements
-			IDocument {
-
-		private List<Cost> costs;
-
-		public CostDocuments(List<Cost> costs) {
-			this.costs = costs;
-			first();
-		}
-
-		@Override
-		public int size() {
-			return costs.size();
-		}
-
-		@Override
-		public IDocument current() {
-			return this;
-		}
-
-		@Override
-		public void print() {
-			download();
-		}
-
-		@Override
-		public void download() {
-			download("pdf");
-		}
-
-		@Override
-		public void download(String format) {
-			Cost cost = costs.get(currentIndex());
-			String printURL = URL.encode(GWT.getModuleBaseURL() + "cost/"
-					+ cost.getMonth() + "_" + cost.getYear() + "_"
-					+ cost.getEnterpriseId() + "_" + cost.getWorkplaceId()
-					+ "." + format);
-			Window.open(printURL, "_blank", null);
-		}
-
-		@Override
-		public void getAsHTML(int zoom, AsyncCallback<String> callback) {
-			Cost cost = costs.get(currentIndex());
-			employeesService.getCostReceiptHTML(cost, zoom, callback);
-		}
-
-		@Override
-		public String[] getSupportedFormats() {
-			return new String[] { "xls" };
+	
+	protected void onMinimize() {
+		for (Listener listener : listeners) {
+			listener.onMinimize();
 		}
 	}
 
-	private class SalaryCostDocuments extends AbstractSpinnable<IDocument>
-			implements IDocument {
-
-		private List<Cost> costs;
-
-		public SalaryCostDocuments(List<Cost> costs) {
-			this.costs = costs;
-			first();
+	protected void onMaximize() {
+		for (Listener listener : listeners) {
+			listener.onMaximize();
 		}
+	}
+	
+	private void initViewBUtton() {
+		viewButton.addClickHandler(new ClickHandler() {
+			
+			private PopupPanel popup = 
+					new PopupPanel();
+			
+			private boolean oldVisible = true; 
+			private boolean newVisible = true; 
+			
+			
+			{
+				MenuBar menuBar = new MenuBar(true);
+				menuBar.addItem(new MenuItem("Antiguos Empleados", 
+						new Command() {
+							@Override
+							public void execute() {
+								setOldEmployeesVisible(oldVisible = !oldVisible);
+								popup.hide();
+							}
+						}));
+				menuBar.addItem(new MenuItem("Empleados Actuales", 
+						new Command() {
+							@Override
+							public void execute() {
+								setNewEmployeesVisible(newVisible = !newVisible);
+								popup.hide();
+							}
+						}));
+				popup.add(menuBar);
+				popup.setStyleName("gwt-MenuBarPopup");
+				popup.setAutoHideEnabled(true);
+			}
+			
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				int left = viewButton.getAbsoluteLeft();
+				int top = viewButton.getAbsoluteTop() + viewButton.getOffsetHeight();
+				popup.setPopupPosition(left, top);
+				popup.show();
+			}
+		});
+		
+	}
 
-		@Override
-		public int size() {
-			return costs.size();
+	private void setOldEmployeesVisible(boolean visible) {
+		for ( int i = 0; i < tree.getItemCount(); i++ ){
+			setOldEmployeesVisible(tree.getItem(i), visible);
 		}
-
-		@Override
-		public IDocument current() {
-			return this;
-		}
-
-		@Override
-		public void print() {
-			download();
-		}
-
-		@Override
-		public void download() {
-			download("pdf");
-		}
-
-		@Override
-		public void download(String format) {
-			Cost cost = costs.get(currentIndex());
-			String printURL = URL.encode(GWT.getModuleBaseURL() + "salary/"
-					+ cost.getMonth() + "_" + cost.getYear() + "_"
-					+ cost.getEnterpriseId() + "_" + cost.getWorkplaceId()
-					+ "." + format);
-			Window.open(printURL, "_blank", null);
-		}
-
-		@Override
-		public void getAsHTML(int zoom, AsyncCallback<String> callback) {
-			Cost cost = costs.get(currentIndex());
-			employeesService.getSalaryReceiptHTML(cost, zoom, callback);
-		}
-
-		@Override
-		public String[] getSupportedFormats() {
-			return new String[] {};
+	}
+	
+	private void setNewEmployeesVisible(boolean visible) {
+		for ( int i = 0; i < tree.getItemCount(); i++ ){
+			setNewEmployeesVisible(tree.getItem(i), visible);
 		}
 	}
 
-	private class SalaryDraftDocument implements ISalaryDraft {
-
-		private com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft;
-
-		public SalaryDraftDocument(
-				com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft) {
-			this.salaryDraft = salaryDraft;
-		}
-
-		@Override
-		public void print() {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void download() {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void download(String format) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public String[] getSupportedFormats() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public void getAsHTML(int zoom, AsyncCallback<String> callback) {
-			employeesService.getSalaryDraftReceiptHTML(salaryDraft, zoom,
-					callback);
+	private void setOldEmployeesVisible( TreeItem treeItem, boolean visible ){
+		
+		Object userObject = treeItem.getUserObject();
+		if ( userObject instanceof Employee ) {
+			if ( !isActive(((Employee) userObject)) ) {
+				treeItem.setVisible(visible);
+			}
 		}
 		
-		@Override
-		public com.esferalia.aon.gwt.payroll.shared.SalaryDraft getSalaryDraft() {
-			return salaryDraft;
+		for ( int i = 0; i < treeItem.getChildCount(); i++ ){
+			setOldEmployeesVisible(treeItem.getChild(i), visible);
 		}
+	}
+
+	private void setNewEmployeesVisible( TreeItem treeItem, boolean visible ){
+		
+		Object userObject = treeItem.getUserObject();
+		if ( userObject instanceof Employee ) {
+			if ( isActive(((Employee) userObject)) ) {
+				treeItem.setVisible(visible);
+			}
+		}
+		
+		for ( int i = 0; i < treeItem.getChildCount(); i++ ){
+			setNewEmployeesVisible(treeItem.getChild(i), visible);
+		}
+	}
+	
+	private static boolean isActive(Employee employee) {
+		Date firsDayOfMonth = DateUtils.getFirstDayOfMonth();
+		return DateUtils.isAfterOrEquals(employee.getEndDate(), firsDayOfMonth);
+		
 	}
 }

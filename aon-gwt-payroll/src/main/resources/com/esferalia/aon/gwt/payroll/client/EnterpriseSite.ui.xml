@@ -1,5 +1,5 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:payroll='urn:import:com.esferalia.aon.gwt.payroll.client'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
 	<!-- GIFs needed for ie6 work arounds. Can't use <ui:image>, it makes PNGs -->
 	<ui:data field='employeesgroupIe6Data' src='employeesgroup_ie6.gif' />
@@ -55,10 +55,10 @@
 		repeatStyle='Horizontal' />
 
 
-	<g:SplitLayoutPanel>
+	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
 		<g:west size='275'>
 
-			<g:StackLayoutPanel unit='EM'>
+			<g:StackLayoutPanel unit='EM' ui:field="explorer">
 
 				<g:stack ui:field="employeesStack" >
 					<g:header size='3'>									
@@ -67,9 +67,7 @@
 							EMPLEADOS
 						</div>
 					</g:header>
-					<g:ScrollPanel>
-						<payroll:Employees ui:field='employees' />
-					</g:ScrollPanel>
+					<employee:Employees ui:field='employees' />
 				</g:stack>
 				<g:stack ui:field="salariesStack" >
 					<g:header size='3'>									
@@ -79,6 +77,7 @@
 						</div>
 					</g:header>
 					<g:ScrollPanel>
+						<employee:Salaries ui:field='salaries' />
 					</g:ScrollPanel>
 				</g:stack>
 
@@ -87,7 +86,7 @@
 
 		</g:west>
 		<g:center>
-			<payroll:DetailPanel ui:field='detailPanel' />
+			<employee:DetailPanel ui:field='detailPanel' />
 		</g:center>
 	</g:SplitLayoutPanel>
 

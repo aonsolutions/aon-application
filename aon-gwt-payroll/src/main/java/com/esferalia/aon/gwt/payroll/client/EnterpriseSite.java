@@ -3,6 +3,7 @@
  */
 package com.esferalia.aon.gwt.payroll.client;
 
+import com.esferalia.aon.gwt.payroll.client.Employees.Listener;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -16,10 +17,14 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.StackLayoutPanel;
+import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import static com.google.gwt.dom.client.Style.Unit.PX;
@@ -44,8 +49,11 @@ public class EnterpriseSite implements EntryPoint {
 
 	private static final Binder binder = GWT.create(Binder.class);
 
+	@UiField Salaries salaries;
 	@UiField Employees employees;
+	@UiField StackLayoutPanel explorer;
 	@UiField DetailPanel detailPanel;
+	@UiField SplitLayoutPanel splitLayoutPanel;
 
 	/* (non-Javadoc)
 	 * @see com.google.gwt.core.client.EntryPoint#onModuleLoad()
@@ -65,8 +73,23 @@ public class EnterpriseSite implements EntryPoint {
 		root.add(ui);
 		
 		employees.setDetailPanel(detailPanel);
-
-
+		
+		salaries.setDetailPanel(detailPanel);
+		
+		employees.addListener(new Listener() {
+			
+			@Override
+			public void onMinimize() {
+				splitLayoutPanel.setWidgetSize(explorer, 0);
+			}
+			
+			@Override
+			public void onMaximize() {
+				double detailWidth = detailPanel.getOffsetWidth();
+				double explorerWidth = splitLayoutPanel.getWidgetSize(explorer);
+				splitLayoutPanel.setWidgetSize(explorer,  detailWidth + explorerWidth );
+			}
+		});
 	}
 	
 

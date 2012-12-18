@@ -14,12 +14,31 @@ public class DateUtils {
 		return date.getYear() + 1900;
 	}
 
+	public static Date getDate (int month, int year ) {
+		Date date = new Date();
+		date.setHours(0);
+		date.setMinutes(0);
+		date.setSeconds(0);
+		date.setDate(1);
+		date.setMonth(month);
+		date.setYear(year - 1900);
+		return date;
+	}
+
 	public static Date getFirstDayOfMonth ( ) {
 		return getFirstDayOfMonth(new Date());
 	}
 
 	public static Date getLastDayOfMonth ( ) {
 		return getLastDayOfMonth(new Date());
+	}
+
+	public static boolean isAfterOrEquals(Date a, Date b ) {
+		if ( a == null ) 
+			return true;
+		if ( b == null ) 
+			return false; // a != null
+		return a.after(b) || a.equals(b); 
 	}
 
 	public static Date after(Date a, Date b ) {
@@ -41,6 +60,8 @@ public class DateUtils {
 			return a ;
 		return b;
 	}
+	
+	
 	
 	public static Date getFirstDayOfMonth ( Date date ) {
 		Date firstDayOfMonth = CalendarUtil.copyDate(date);
