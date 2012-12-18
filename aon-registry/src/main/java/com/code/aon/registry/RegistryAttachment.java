@@ -21,6 +21,7 @@ import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.IScopable;
 import com.code.aon.ql.Criteria;
@@ -29,6 +30,7 @@ import com.esferalia.aon.entity.master.RegistryAttachmentDB;
 
 @Entity
 @Table(name="rattach")
+@Heritable
 public class RegistryAttachment extends RegistryAttachmentDB implements IAttachment,IScopable {
 
 	private static final long serialVersionUID = 1L;

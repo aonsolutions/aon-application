@@ -8,7 +8,7 @@
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 		<ui:define name="toolbarContent">
-			<c:if test="#{!skipSaveButton}">		
+			<c:if test="#{!skipSaveButton and controller.editableTo}">		
 				<aon:commandButton id="#{toolbarID}-save"
 					title="#{bundle.aon_key_save_accelerator}"
 					value="#{bundle.aon_save}" reRender="#{saveButtonReRender}"
@@ -30,7 +30,7 @@
 					confirmAction="#{cancelAction}"
 					accesskey="#{bundle.aon_key_cancel}" />
 			</c:if>								
-			<c:if test="#{!skipRemoveButton}">				
+			<c:if test="#{!skipRemoveButton and controller.editableTo}">				
 				<aon:confirmButton id="#{toolbarID}-remove"
 					title="#{bundle.aon_key_remove_accelerator}"
 					value="#{bundle.aon_remove}" reRender="#{removeButtonReRender}"

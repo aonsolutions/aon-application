@@ -220,6 +220,7 @@ public class CorporateIdentity implements ICollectionProvider{
         return bean.getList(criteria);
 	}
 
+	@Override
 	public Collection getCollection() {
 		try {
 			return getCollection(false);
@@ -229,6 +230,7 @@ public class CorporateIdentity implements ICollectionProvider{
 		return null;
 	}
 
+	@Override
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		if (! forceRefresh) {
 			List<IdentityReport> list = new LinkedList<IdentityReport>();

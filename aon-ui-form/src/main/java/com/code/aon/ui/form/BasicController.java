@@ -1434,6 +1434,13 @@ public class BasicController extends AbstractPojoController implements IControll
 		this.checkList.addAll(list);
 	}	
 
+	private boolean isCurrentDomainTo( Object object ) {
+		if ( object.getClass().isAnnotationPresent(Heritable.class) ) {
+			return ((IDomain) object).getDomain() == DomainManager.getCurrentDomain();
+		}
+		return true;
+	}
+	
 	/**
 	 * Return true if an object representing the data for the currently selected row
 	 * index of the model associated to controller is editable.
@@ -1442,12 +1449,19 @@ public class BasicController extends AbstractPojoController implements IControll
 	 */
 	public boolean isEditableSelectedTo() {
 		if ( this.model.isRowAvailable() ) {
-			Object object = this.model.getRowData();
-			if ( object.getClass().isAnnotationPresent(Heritable.class) ) {
-				return ((IDomain) object).getDomain() == DomainManager.getCurrentDomain();
-			}
+			return isCurrentDomainTo(this.model.getRowData());
 		}
 		return true;
+	}
+
+	/**
+	 * Return true if an object representing the data for the currently selected row
+	 * index of the model associated to controller is editable.
+	 * 
+	 * @return boolean
+	 */
+	public boolean isEditableTo() {
+		return isCurrentDomainTo(getTo());
 	}
 	
 }
