@@ -31,6 +31,7 @@ import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
@@ -312,12 +313,12 @@ public class EnterpriseController extends RegistryController implements ICompany
 	
 	public void onActivate(ActionEvent event) {
 		Enterprise enterprise = (Enterprise) getTo();
-		DomainSwitcher switcher = (DomainSwitcher) AonUtil.getRegisteredBean("domainSwitcher");
+		DomainSwitcher switcher = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
 		switcher.select(enterprise.getDomain(), null );
 	}
 	
 	public boolean isDomainEnterprise() {
-		DomainSwitcher switcher = (DomainSwitcher) AonUtil.getRegisteredBean("domainSwitcher");
+		DomainSwitcher switcher = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
 		return (switcher.isParentDomain() && switcher.isDomainManagementAvailable());
 	}
 	

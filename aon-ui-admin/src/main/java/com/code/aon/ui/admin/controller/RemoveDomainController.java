@@ -19,6 +19,7 @@ import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Domain;
 import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DataSourceUtil;
@@ -91,7 +92,7 @@ public class RemoveDomainController {
 	
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getDomains() {
-		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean( IAdminConstants.DOMAIN_SWITCHER_CONTROLLER_NAME);
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
 		List<Domain> domains = (List<Domain>) ds.getModel().getWrappedData();
 		List<SelectItem> items = new LinkedList<SelectItem>();
 		for (Domain domain : domains) {
@@ -203,7 +204,7 @@ public class RemoveDomainController {
 				AonUtil.addErrorMessage("Se ha producido un error durante la creación del dominio.");
 			}
 			setDomain(null);
-			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean( IAdminConstants.DOMAIN_SWITCHER_CONTROLLER_NAME);
+			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
 			ds.onEditSearch(null);
 		} catch (Exception e) {
 			e.printStackTrace();

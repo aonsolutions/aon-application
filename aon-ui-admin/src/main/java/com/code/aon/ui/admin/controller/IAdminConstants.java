@@ -8,7 +8,6 @@ public interface IAdminConstants {
 	// Controllers
 	String ADMIN_CONTROLLER_NAME = "adminMain";
 	String DOMAIN_CONTROLLER_NAME = "adminDomain";
-	String DOMAIN_SWITCHER_CONTROLLER_NAME = "domainSwitcher";
 	String APPLICATION_PROFILE_CONTROLLER_NAME = "applicationProfile";
 	String DOMAIN_APPLICATION_PROFILE_CONTROLLER_NAME = "domainApplicationProfile";
 	String DOMAIN_APPLICATION_CONTROLLER_NAME = "domainApplication";

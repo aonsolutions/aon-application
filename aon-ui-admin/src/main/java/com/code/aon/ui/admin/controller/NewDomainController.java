@@ -25,6 +25,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Domain;
 import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DataSourceUtil;
@@ -299,7 +300,7 @@ public class NewDomainController {
 				query.executeUpdate();
 				tx.commit();
 			}
-			DomainSwitcher switcher = (DomainSwitcher) AonUtil.getRegisteredBean(IAdminConstants.DOMAIN_SWITCHER_CONTROLLER_NAME);
+			DomainSwitcher switcher = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
 			switcher.select(id, getDomainDescription() );
 		}
 	}

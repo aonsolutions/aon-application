@@ -85,7 +85,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	}
 
 	public String getBeanName() {
-		return "domainSwitcher";
+		return ConfigConstants.DOMAIN_SWITCHER;
 	}
 	
 	public String getDomainName() {

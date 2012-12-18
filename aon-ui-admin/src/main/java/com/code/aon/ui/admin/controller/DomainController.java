@@ -187,6 +187,7 @@ public class DomainController extends BasicController {
 			}
 			if ( isConsultancyParent() ) {
 				list.remove(Module.DOCUMENT);
+				list.remove(Module.PAYROLL);
 				if ( hasModule(getParentDomain(), Module.FISCAL) ) {
 					list.add(Module.MANAGEMENT);
 					list.add(Module.TREASURY);									
