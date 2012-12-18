@@ -10,9 +10,8 @@
 	<ui:define name="content">
 		<aon:form id="calendarSearch">
 
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_holiday}" />
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_festivities_module}" />
 				<ui:param name="controller" value="#{holiday}" />
 			</ui:include>
 
@@ -28,6 +27,7 @@
 					
 				</ui:define>
 			</ui:decorate>
+			
 		</aon:form>
 	</ui:define>
 

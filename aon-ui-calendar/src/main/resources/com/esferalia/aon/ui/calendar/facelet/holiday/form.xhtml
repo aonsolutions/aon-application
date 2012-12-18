@@ -11,16 +11,22 @@
 
 	<ui:define name="content">
 		<aon:form id="calendarForm">
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle"
-					value="#{calendarBundle.aon_calendar_holiday}" />
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_festivities_module}" />
 				<ui:param name="skipSearchButton" value="true" />
 				<ui:param name="controller" value="#{holiday}" />
 			</ui:decorate>
 			<aon:div styleClass="aon-scroll-area">
 
 				<aon:panelGrid columns="2">
+					<aon:outputLabel value="#{calendarBundle.aon_calendar_inherit_from}" />
+					<ui:include src="/com/esferalia/aon/ui/calendar/facelet/holiday/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{holiday.to.holiday}" />
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="skipGoToButton" value="true" />
+					</ui:include>
+
 					<aon:outputLabel value="#{bundle.aon_year}" />
 					<rich:inputNumberSpinner value="#{holiday.year}" 
 						inputSize="4" minValue="2000" maxValue="2100"
@@ -37,14 +43,7 @@
 						value="#{holiday.to.description}" required="true" />
 					
 					<aon:outputLabel value="#{calendarBundle.aon_calendar_editable}" />
-					<aon:selectBooleanCheckbox value="#{holiday.to.editable}">
-					</aon:selectBooleanCheckbox>
-
-					<ui:include src="/com/esferalia/aon/ui/calendar/facelet/holiday/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{holiday.to.holiday}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-						<ui:param name="skipGoToButton" value="true" />
-					</ui:include>
+					<aon:selectBooleanCheckbox value="#{holiday.to.editable}" />
 				</aon:panelGrid>
 
 				<c:if test="#{!holiday.new}">

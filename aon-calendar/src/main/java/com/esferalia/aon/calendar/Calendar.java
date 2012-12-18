@@ -3,11 +3,13 @@ package com.esferalia.aon.calendar;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.entity.master.CalendarDB;
 
 @Entity
 @Table(name="calendar")
+@Heritable
 public class Calendar extends CalendarDB {
 	
 	private static final long serialVersionUID = 1L;

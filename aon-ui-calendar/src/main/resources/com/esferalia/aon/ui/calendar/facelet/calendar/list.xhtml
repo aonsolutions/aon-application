@@ -9,9 +9,8 @@
 
 	<ui:define name="content">
 		<aon:form id="calendarList">
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_menu}"  />
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_calendar_module}"  />
 				<ui:param name="controller" value="#{calendar}" />
 			</ui:decorate>
 			<aon:div styleClass="aon-scroll-area">

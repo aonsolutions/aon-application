@@ -10,19 +10,15 @@
 	<ui:define name="content">
 		<aon:form id="calendarSearch">
 
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_menu}" />
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_calendar_module}" />
 				<ui:param name="controller" value="#{calendar}" />
 			</ui:include>
 
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{calendar}" />
 				<ui:define name="searchContent">
-				
 					<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/search_content.xhtml" />
-						
 				</ui:define>
 			</ui:decorate>
 			

@@ -245,19 +245,19 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-query aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{calendarBundle.aon_calendar_menu}" />
+								<aon:outputText value="#{calendarBundle.aon_calendar_nemu_group}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="calendar" action="#{calendar.initialAction}"
-										value="#{calendarBundle.aon_calendar_generic_menu}">
+										value="#{calendarBundle.aon_calendar_calendar_module}">
 										<aon:actionListener method="#{calendar.onEditSearch}" />
 										<aon:actionListener method="#{calendar.onInitialize}" />
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="holiday" action="#{holiday.initialAction}"
-										value="#{calendarBundle.aon_calendar_holiday}" />
+										value="#{calendarBundle.aon_calendar_festivities_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>

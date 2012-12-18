@@ -9,11 +9,12 @@
 
 	<ui:define name="content">
 		<aon:form id="holidayList">
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_holiday}"  />
+			
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_festivities_module}" />
 				<ui:param name="controller" value="#{holiday}" />
 			</ui:decorate>
+			
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{holiday}" />
@@ -29,6 +30,7 @@
 					</ui:define>
 				</ui:decorate>			
 			</aon:div>
+			
 		</aon:form>
 	</ui:define>
 </ui:composition>

@@ -12,9 +12,8 @@
 	<ui:define name="content">
 		<aon:form id="calendarForm">
 			<aon:methodParam name="removeAction" value="#{calendar.backAction}" />
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_menu}" />
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_calendar_module}" />
 				<ui:param name="controller" value="#{calendar}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:htmlCommandLink id="calendarReport_list" value="#{bundle.aon_report}"
@@ -35,8 +34,10 @@
 				
 					<aon:panelGrid columns="2" id="calendar_data" style="width:100%;">
 						
+						<aon:outputLabel value="#{calendarBundle.aon_calendar_inherit_from}" />
 						<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{calendar.to.calendar}" />
+							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="skipNewButton" value="#{true}" />
 						</ui:include>
 							
@@ -101,8 +102,6 @@
 		</aon:form>
 
 		<aon:lookupButtonPopup lookup="#{holidayLookup}" />
-		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
-		<aon:lookupButtonPopup lookup="#{contractLookup}" />
 		<aon:lookupButtonPopup lookup="#{calendarLookup}" />
 		
 	</ui:define>
