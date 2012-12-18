@@ -21,7 +21,25 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{fanBatch}" />
 				<ui:define name="searchContent">
+				
+				<aon:outputLabel value="#{payrollBundle.fanBatch_liquidation_period}" />
+				<aon:div>
+					<aon:outputLabel for="FanBatch_date-from" styleClass="aon-form-date-label aon-margin-right"
+						value="#{bundle.aon_date_from}" />
+					<aon:selectInputDate id="FanBatch_date-from"
+						valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+				
+					<aon:outputLabel for="FanBatch_date-to" styleClass="aon-form-date-label aon-margin-right"
+						value="#{bundle.aon_date_to}" />
+					<aon:selectInputDate id="FanBatch_date-to"
+						valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+				</aon:div>
 								
+<!--  
 				<aon:outputLabel value="#{bundle.aon_start_date}" />
 				<aon:div>
 					<aon:outputLabel for="Fan_startDate-From" styleClass="aon-form-date-label"
@@ -55,6 +73,7 @@
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 				</aon:div>
+-->
 										
 				</ui:define>
 			</ui:decorate>

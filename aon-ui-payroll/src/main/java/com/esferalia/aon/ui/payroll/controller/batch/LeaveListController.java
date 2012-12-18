@@ -9,15 +9,14 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.enumeration.ContractLeaveStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -27,7 +26,6 @@ public class LeaveListController extends BasicController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(LeaveListController.class);
 
 	private LeaveReportType[] reportTypes = { LeaveReportType.LEAVE,LeaveReportType.CONFIRM, LeaveReportType.DISCHARGE };
-	private Enterprise enterprise;
 	private Person person;
 	private BatchListCheckHandler checkHandler;
 	
@@ -50,25 +48,7 @@ public class LeaveListController extends BasicController {
 	public void setReportTypes(LeaveReportType[] reportTypes) {
 		this.reportTypes = reportTypes;
 	}
-
-	public Enterprise getEnterprise() {
-		try {
-			if(enterprise == null){
-				IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
-				enterprise = (Enterprise) bean.createNewTo();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> error on getEnterprise: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
-		return enterprise;
-	}
-
-	public void setEnterprise(Enterprise enterprise) {
-		this.enterprise = enterprise;
-	}
-
+	
 	public Person getPerson() {
 		try {
 			if(person == null){
@@ -96,9 +76,6 @@ public class LeaveListController extends BasicController {
 			getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_STATUS),ContractLeaveStatus.BATCHED);
 			if ((getPerson() != null) && (getPerson().getId() != null)) {
 				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_CONTRACT_PERSON_ID), getPerson().getId());			
-			}
-			if ((getEnterprise() != null) && (getEnterprise().getId() != null)) {
-				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());			
 			}
 			
 			Expression expr = null;

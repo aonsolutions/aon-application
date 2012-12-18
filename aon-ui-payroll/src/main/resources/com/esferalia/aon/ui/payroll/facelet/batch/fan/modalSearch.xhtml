@@ -8,15 +8,9 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 	
-	
 	<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/modalSearch.xhtml">
 
 		<ui:define name="modalContent" >
-
-			<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-				<ui:param name="lookupTo" value="#{controller.enterprise}" />
-				<ui:param name="skipNewButton" value="#{true}" />
-			</ui:include>
 			
 			<aon:outputLabel for="EnterpriseCCC_type" value="#{bundle.aon_type}" />
 			<aon:selectOneMenu id="EnterpriseCCC_type" converter="aon.EnumConverter"
@@ -34,13 +28,8 @@
 		</ui:define>
 		
 		<ui:define name="afterFormContent" >
-<!--  
-			<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
--->
 		</ui:define>
 	
 	</ui:decorate>
-	
-
 
 </ui:composition>

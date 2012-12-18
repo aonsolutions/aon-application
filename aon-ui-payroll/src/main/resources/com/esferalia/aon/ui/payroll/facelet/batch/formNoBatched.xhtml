@@ -45,7 +45,9 @@
 
 	<aon:div id="listDataDiv">
 		<aon:dataTable id="listData" value="#{controllerList.model}"
-			var="to" rows="20" rendered="#{controllerList.model.rowCount > 0}" >			
+			var="to" rows="20" rendered="#{controllerList.model.rowCount > 0}" >	
+			
+			<aon:rowSelector id="noBatched-select" toggleOnClick="#{false}"/>		
 
 			<aon:column styleClass="aon-editDataTable-iconColumn">
 				<f:facet name="header">

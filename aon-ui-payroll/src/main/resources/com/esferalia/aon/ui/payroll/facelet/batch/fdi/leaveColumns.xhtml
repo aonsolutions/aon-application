@@ -4,6 +4,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 			
 	<aon:column styleClass="aon-editDataTable-iconColumn">
@@ -18,14 +20,16 @@
 			rendered="#{to.contractLeaveDetail.type=='CONFIRM'}"/>
 	</aon:column>
 
-	<aon:column style="font-size: 0.8em;" styleClass="aon-editDataTable-textColumn aon-width-auto, aon-nowrap">
-		<f:facet name="header">
-			<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
-		</f:facet>
-		<aon:outputText value="#{to.contractLeaveDetail.contractLeave.contract.workPlace.enterprise.registry.fullName}">
-			<aon:abbreviateConverter maxWidth="50" />
-		</aon:outputText>
-	</aon:column>
+	<c:if test="#{showEnterpriseColumn}"> 
+		<aon:column style="font-size: 0.8em;" styleClass="aon-editDataTable-textColumn aon-width-auto, aon-nowrap">
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
+			</f:facet>
+			<aon:outputText value="#{to.contractLeaveDetail.contractLeave.contract.workPlace.enterprise.registry.fullName}">
+				<aon:abbreviateConverter maxWidth="50" />
+			</aon:outputText>
+		</aon:column>
+	</c:if>
 
 	<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 		<f:facet name="header">
@@ -73,7 +77,8 @@
 		<f:facet name="header">
 			<aon:outputText value="#{payrollBundle.payroll_leaveBatch_confirm_date}" />
 		</f:facet>
-		<aon:outputText value="#{to.contractLeaveDetail.date}" >
+		<aon:outputText rendered="#{to.contractLeaveDetail.confirm}"
+			value="#{to.contractLeaveDetail.date}" >
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>
@@ -90,10 +95,39 @@
 		<f:facet name="header">
 			<aon:outputText value="#{payrollBundle.payroll_contractLeave_relapse}" />
 		</f:facet>
-		<aon:outputText value="&#160;" style="padding-left: 15px;"
-			styleClass="aon-icon-check" rendered="#{to.contractLeaveDetail.contractLeave.parent.id==null}" />
-		<aon:outputText value="&#160;" style="padding-left: 15px;"
-			styleClass="aon-icon-checked" rendered="#{to.contractLeaveDetail.contractLeave.parent.id!=null}" />
+		<aon:div>
+			<aon:outputText value="&#160;" style="padding-left: 15px;"
+				styleClass="aon-icon-check" rendered="#{to.contractLeaveDetail.contractLeave.parent.id==null}" />
+			<aon:outputText value="&#160;" style="padding-left: 15px;"
+				styleClass="aon-icon-checked" rendered="#{to.contractLeaveDetail.contractLeave.parent.id!=null}" />
+			<aon:div style="display: inline;" rendered="#{to.contractLeaveDetail.contractLeave.parent.id!=null}">
+				<aon:outputText	value="&#160;" styleClass="aon-margin-left aon-icon-commandButton aon-icon-info" />
+				<rich:toolTip showEvent="onclick" hideEvent="onmouseout" direction="auto">
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_contractLeave_previous_leave}" />
+					</f:facet>
+					<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-70, aon-noborder aon-bold aon-text-left">
+						<aon:outputText value="#{bundle.aon_period}" styleClass="aon-margin-left" />
+						<aon:div>
+							<aon:outputText value="#{bundle.aon_date_from}" styleClass="aon-italic" />
+							<aon:outputText value="#{to.contractLeaveDetail.contractLeave.parent.startDate}" styleClass="aon-margin-left">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							<aon:outputText value="#{bundle.aon_date_to}" styleClass="aon-margin-left aon-italic" />
+							<aon:outputText value="#{to.contractLeaveDetail.contractLeave.parent.endDate}" styleClass="aon-margin-left">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:div>
+						<aon:outputText value="#{payrollBundle.payroll_contractLeave_type}" styleClass="aon-margin-left" />
+						<aon:outputText value="#{to.contractLeaveDetail.contractLeave.parent.type}" />
+						<aon:outputText value="#{bundle.aon_description}" styleClass="aon-margin-left" />
+						<aon:outputText value="#{to.contractLeaveDetail.contractLeave.parent.description}" />
+					</aon:panelGrid>
+				</rich:toolTip>
+			</aon:div>
+		</aon:div>
 	</aon:column>
 	
 	<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">

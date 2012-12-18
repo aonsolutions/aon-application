@@ -8,7 +8,7 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 	
 	<aon:column alias="Contract.person.registry.surname,Contract.person.registry.name"
-		styleClass="aon-editDataTable-textColumn">
+		styleClass="aon-editDataTable-textColumn aon-width-width">
 		<f:facet name="header">
 			<aon:outputText value="#{registryBundle.registry_person}" />
 		</f:facet>
@@ -17,7 +17,7 @@
 		</aon:div>
 	</aon:column>
 
-	<c:if test="#{!skipEnterpriseColumn}">		
+	<c:if test="#{showEnterpriseColumn}">		
 		<aon:column alias="Contract.workPlace.enterprise.registry.surname,Contract.workPlace.enterprise.registry.name"
 			styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
@@ -28,21 +28,9 @@
 			</aon:div>
 		</aon:column>
 	</c:if>
-
-<!--  
-	<aon:column alias="Contract.contractType.description"
-		styleClass="aon-editDataTable-textColumn">
-		<f:facet name="header">
-			<aon:outputText value="#{payrollBundle.payroll_contractType}" />
-		</f:facet>
-		<aon:div styleClass="aon-nowrap">
-			<aon:outputText value="#{to.contract.contractType.description}"/>
-		</aon:div>
-	</aon:column>
--->
 			
 	<aon:column alias="Contract.ccc.activity.description"
-		styleClass="aon-editDataTable-textColumn">
+		styleClass="aon-editDataTable-textColumn aon-width-100">
 		<f:facet name="header">
 			<aon:outputText value="#{companyBundle.company_activity}" />
 		</f:facet>
@@ -52,7 +40,7 @@
 	</aon:column>
 	
 	<aon:column alias="Contract.startDate"
-		styleClass="aon-editDataTable-textColumn">
+		styleClass="aon-editDataTable-textColumn aon-width-100">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_start_date}" />
 		</f:facet>
@@ -68,7 +56,6 @@
 		</f:facet>
 		<aon:outputText value="#{to.contract.status}"  />
 	</aon:column>
-
 	
 </ui:composition>
 

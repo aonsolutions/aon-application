@@ -66,12 +66,11 @@ public class LeaveBatchController extends BasicController {
 		this.recorded = recorded;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
         IManagerBean contractLeaveDetailBean = BeanManager.getManagerBean(ContractLeaveDetail.class);
 		IManagerBean leaveBatchDetailBean = BeanManager.getManagerBean(LeaveBatchDetail.class);
         LeaveListController leaveController = (LeaveListController) FormUtil.getController(IPayrollConstants.LEAVE_LIST_CONTROLLER_NAME);
-        Iterator iterator = leaveController.getCheckHandler().getCheckedList().iterator();
+        Iterator<Object> iterator = leaveController.getCheckHandler().getCheckedList().iterator();
         while (iterator.hasNext()) {
 			ContractLeaveDetail detail = (ContractLeaveDetail) iterator.next();
             detail.setStatus(ContractLeaveStatus.BATCHED);
@@ -86,12 +85,11 @@ public class LeaveBatchController extends BasicController {
         onSearchLeaves(event);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
 		IManagerBean leaveBatchDetailBean = BeanManager.getManagerBean(LeaveBatchDetail.class);
 		IManagerBean contractLeaveDetailBean = BeanManager.getManagerBean(ContractLeaveDetail.class);
         BatchDetailController leaveBatchDetailController = (BatchDetailController)FormUtil.getController(IPayrollConstants.LEAVE_BATCH_DETAIL_CONTROLLER_NAME);
-		Iterator iterator = leaveBatchDetailController.getCheckHandler().getCheckedList().iterator();
+		Iterator<Object> iterator = leaveBatchDetailController.getCheckHandler().getCheckedList().iterator();
         while(iterator.hasNext()){
         	LeaveBatchDetail leaveBatchDetail = (LeaveBatchDetail) iterator.next();
         	leaveBatchDetail.getContractLeaveDetail().setStatus(ContractLeaveStatus.PENDING);

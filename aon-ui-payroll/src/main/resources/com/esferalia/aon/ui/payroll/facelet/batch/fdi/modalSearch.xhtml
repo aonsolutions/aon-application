@@ -15,11 +15,6 @@
 				<ui:param name="lookupTo" value="#{controller.person}" />
 				<ui:param name="skipNewButton" value="#{true}" />
 			</ui:include>
-		
-			<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-				<ui:param name="lookupTo" value="#{controller.enterprise}" />
-				<ui:param name="skipNewButton" value="#{true}" />
-			</ui:include>
 			
 			<aon:outputLabel for="LeaveBatch_detailType"
 				value="#{payrollBundle.payroll_leaveBatch_pending_report_type}" />
@@ -31,7 +26,6 @@
 		
 		<ui:define name="afterFormContent" >
 			<aon:lookupButtonPopup lookup="#{personLookup}" />
-			<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 		</ui:define>
 		
 	</ui:decorate>

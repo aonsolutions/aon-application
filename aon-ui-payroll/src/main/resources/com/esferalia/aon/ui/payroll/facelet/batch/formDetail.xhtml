@@ -33,8 +33,10 @@
 	
 	<aon:div id="detailDataDiv">
 		<aon:dataTable id="batchDetailData" value="#{controllerDetail.model}"
-			var="to" rows="20" rendered="#{controllerDetail.model.rowCount > 0}" >			
-
+			var="to" rows="20" rendered="#{controllerDetail.model.rowCount > 0}" >
+			
+			<aon:rowSelector id="batchDetail-select" toggleOnClick="#{false}"/>
+			
 			<c:if test="#{!controller.recorded}" >
 				<aon:column styleClass="aon-editDataTable-iconColumn">
 					<f:facet name="header">
