@@ -8,6 +8,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
@@ -16,6 +17,7 @@ import com.esferalia.aon.entity.master.PersonDB;
 
 @Entity
 @Table(name="person")
+@Heritable
 public class Person extends PersonDB implements IRegistry {
 
 	private static final long serialVersionUID = 1L;
