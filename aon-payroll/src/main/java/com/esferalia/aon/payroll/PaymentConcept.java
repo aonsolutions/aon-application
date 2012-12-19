@@ -5,12 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.entity.master.PaymentConceptDB;
 import com.esferalia.aon.payroll.enumeration.QuoteType;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
 
 @Entity
 @Table(name="payment_concept")
+@Heritable
 public class PaymentConcept extends PaymentConceptDB {
 	
 	private static final long serialVersionUID = 1L;
