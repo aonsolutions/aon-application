@@ -119,6 +119,11 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 		Double totalIrpf = toDouble(nomina.getImporte_irpf());
 		
+		
+		java.sql.Date issueDate = nomina.getFecemi() ;
+		if ( issueDate == null) 
+			issueDate = nomina.getFecfin();
+		
 		this.salaryId = mysqlDB.insertSalary(enum2short(type), contractId,
 				nomina.getFecini(), nomina.getFecfin(),
 				rel_epp_emp.getEmprnif_Descripcion(), nomina.getLocalidad(),
@@ -132,7 +137,8 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				nomina.getNummat(),
 				nomina.getDiasnomina(), // TODO: Dias efectivos ..
 				totalPayment, totalDeduction, totalLiquid, totalEnterprise,
-				nomina.getFecemi(), renumeration, proExtBase, itBase,
+				issueDate , 
+				renumeration, proExtBase, itBase,
 				rawCgcBase, cgcBase, hextraBase, nonHextraBase, cgpBase,
 				moneyIrpfBase, kindIrpfBase, irpfBase, ssContributions, totalIrpf, 
 				nomina.getFeccobreal());
@@ -342,6 +348,10 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		
 		Double totalIrpf = toDouble(nominaex.getImpirpf());
 		
+		java.sql.Date issueDate = nominaex.getFecemi() ;
+		if ( issueDate == null) 
+			issueDate = nominaex.getFecfin();
+
 		this.salaryId = mysqlDB.insertSalary(enum2short(SalaryType.EXTRA),
 				contractId, nominaex.getFecini(), nominaex.getFecfin(),
 				rel_epp_emp.getEmprnif_Descripcion(), nominaex.getLocalidad(),
@@ -353,7 +363,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				nominaex.getNummat(),
 				0, // TODO: Dias efectivos ..
 				totalPayment, totalDeduction, totalLiquid, 0.00,
-				nominaex.getFecemi(), 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,
+				issueDate, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,
 				0.00, baseIRPF, 0.00, baseIRPF, 0.00, totalIrpf,
 				nominaex.getFeccobreal());
 
@@ -509,6 +519,11 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		}
 		
 		Double totalIrpf = toDouble(finiquito.getImporte_irpf());
+
+		java.sql.Date issuDate = finiquito.getFeccobreal() ;
+		if ( issuDate == null) 
+			issuDate = finiquito.getFecbaj();
+		
 		
 		this.salaryId = mysqlDB.insertSalary(enum2short(type), 
 				contractId,
@@ -530,7 +545,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				totalDeduction, 
 				totalLiquid, 
 				totalEnterprise,
-				finiquito.getFeccobreal(),
+				issuDate,
 				totalPayment, // renumeration,
 				0.00, // proExtBase,
 				0.00, // itBase,
