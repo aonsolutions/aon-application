@@ -60,10 +60,14 @@ public class AuditController {
 
 	private void initShowPayrollPortal() throws ManagerBeanException {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		if ( ds.isChildDomain() ) {
+		if ( ds.isChildDomain() && (!ds.isParentDomainUserInChildDomain()) ) {
 			DomainType parentType = AuditManager.getDomainType(ds.getParentDomainId());
 			if ( parentType == DomainType.CONSULTANCY ) {
-				this.showPayrollPortal = ! AuditManager.hasModule(ds.getDomainId(), application.getId(), Module.PAYROLL);
+				if ( ds.getType() == DomainType.CONSULTANCY ) {
+					this.showPayrollPortal = ! AuditManager.hasModule(ds.getDomainId(), application.getId(), Module.PAYROLL);					
+				} else {
+					this.showPayrollPortal = true;
+				}
 			}
 		}
 	}	
