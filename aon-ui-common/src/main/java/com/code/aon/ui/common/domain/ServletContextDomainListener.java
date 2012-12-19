@@ -14,7 +14,7 @@ public class ServletContextDomainListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
 		FacesDomainProvider facesDomainProvider = new FacesDomainProvider();
-		DomainManager.addDomainProvider( facesDomainProvider );
+		DomainManager.setDomainProvider( facesDomainProvider );
 	}
 
 }

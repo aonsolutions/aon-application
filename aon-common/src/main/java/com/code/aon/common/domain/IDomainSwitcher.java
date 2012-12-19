@@ -1,6 +1,5 @@
 package com.code.aon.common.domain;
 
-import java.util.Collection;
 
 public interface IDomainSwitcher {
 
@@ -13,8 +12,5 @@ public interface IDomainSwitcher {
 	boolean isDomainManagementAvailable();
 	boolean isDisableDomainManagement();
 	boolean isEnableHeredity();
-	Collection<Integer> getDomainFilter();
-	
-	
 
 }

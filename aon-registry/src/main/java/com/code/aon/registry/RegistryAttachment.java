@@ -30,7 +30,7 @@ import com.esferalia.aon.entity.master.RegistryAttachmentDB;
 
 @Entity
 @Table(name="rattach")
-@Heritable
+@Heritable(force=true)
 public class RegistryAttachment extends RegistryAttachmentDB implements IAttachment,IScopable {
 
 	private static final long serialVersionUID = 1L;

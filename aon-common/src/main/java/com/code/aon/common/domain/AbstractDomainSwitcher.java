@@ -1,7 +1,6 @@
 package com.code.aon.common.domain;
 
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,7 +21,6 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 	private boolean enableHeredity;
 	protected int type;
 	private Integer parentDomainId;
-	private Collection<Integer> domainFilter;
 	
 	@Override
 	public Integer getDomainId() {
@@ -39,7 +37,6 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 		fireBeforeDomainChanged(oldDomainId, domainId);
 		this.domainId = domainId;
 		initializeDomain();
-		initializeDomainFilter();
 		fireAfterDomainChanged(oldDomainId, domainId);
 	}
 	
@@ -124,22 +121,6 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 			enableHeredity = (Boolean) arr[3];
 			type = (Integer) arr[4];
 		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	private void initializeDomainFilter() {
-		String sessionFactoryName = HibernateUtil.getSessionFactoryName(DOMAIN_CLASS_NAME);
-		String q = "SELECT id FROM domain d"
-				+ " WHERE d.id = " + this.domainId
-				+ " OR d.parent = " + this.domainId
-				+ " AND d.active = 1";
-		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
-		domainFilter = query.addScalar("id", Hibernate.INTEGER).list();
-	}
-	
-	@Override
-	public Collection<Integer> getDomainFilter() {
-		return domainFilter;
 	}
 	
 }

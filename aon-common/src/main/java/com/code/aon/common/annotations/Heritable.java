@@ -13,4 +13,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Heritable {
 
+	boolean force() default false;
+	
 }

@@ -1461,7 +1461,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @return boolean
 	 */
 	public boolean isEditableTo() {
-		return isCurrentDomainTo(getTo());
+		return isNew() || isCurrentDomainTo(getTo());
 	}
 	
 }
