@@ -6052,6 +6052,74 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	
+	private Map<Integer,Integer> fs_modelDomains = new HashMap<Integer,Integer>();
+
+	protected Integer getDomainForFs_modelPk(Integer id){
+		return fs_modelDomains.get(id);
+	}
+	
+	/**
+	 * Fs_model
+	 * @returns domain's ID
+	*/
+	protected Integer getDomainForFs_model(){
+		Integer domain = null;
+		return domain;
+	}
+
+	/**
+	 * Fs_model
+	 * @param id Identificador unico
+	 * @param year Ejercicio de la Declaracion
+	 * @param period Periodo de la Declaracion
+	 * @param administration Administracion
+	 * @param status Estado de la Declaracion
+	 * @param security_level Nivel de seguridad
+	 * @param complementary Declaracion complementaria
+	 * @param replacement Declaracion sustitutiva
+	 * @param model Tipo de modelo
+	 * @param number Numero de Declaracion
+	 * @param replaced_number Numero de Declaracion complementada o sustituida
+	 * @param comments Comentarios de la Declaracion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertFs_model(Integer year, Short period, Short administration, Short status, Short security_level, Boolean complementary, Boolean replacement, String model, Integer number, Integer replaced_number, String comments)
+	throws SQLException {
+		Integer domain = getDomainForFs_model();
+		Integer id =  super.insertFs_model( domain != null ? domain : getDefaultDomain(), year, period, administration, status, security_level, complementary, replacement, model, number, replaced_number, comments );
+		if ( domain != null ) { 
+			fs_modelDomains.put(id, domain);
+		}
+		return id;
+	}
+
+	/**
+	 * Fs_model
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param year Ejercicio de la Declaracion
+	 * @param period Periodo de la Declaracion
+	 * @param administration Administracion
+	 * @param status Estado de la Declaracion
+	 * @param security_level Nivel de seguridad
+	 * @param complementary Declaracion complementaria
+	 * @param replacement Declaracion sustitutiva
+	 * @param model Tipo de modelo
+	 * @param number Numero de Declaracion
+	 * @param replaced_number Numero de Declaracion complementada o sustituida
+	 * @param comments Comentarios de la Declaracion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertFs_model(Integer domain, Integer year, Short period, Short administration, Short status, Short security_level, Boolean complementary, Boolean replacement, String model, Integer number, Integer replaced_number, String comments)
+	throws SQLException {
+		Integer id =  super.insertFs_model(domain, year, period, administration, status, security_level, complementary, replacement, model, number, replaced_number, comments);
+		fs_modelDomains.put(id, domain );
+		return id;
+	}
+
+	
 	private Map<Integer,Integer> process_detail_transitionDomains = new HashMap<Integer,Integer>();
 
 	protected Integer getDomainForProcess_detail_transitionPk(Integer id){
@@ -9313,66 +9381,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	
-	private Map<Integer,Integer> workactivityDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForWorkactivityPk(Integer id){
-		return workactivityDomains.get(id);
-	}
-	
-	/**
-	 * Workactivity
-	 * @param enterpriseCCC Cuenta de Cotizaciùn asociada a la Actividad
-	 * @param workplace Identificador del Centro de Trabajo
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForWorkactivity( Integer enterpriseCCC , Integer workplace){
-		Integer domain = null;
-			if ( ( domain = getDomainForEnterprise_cccPk( enterpriseCCC ) ) != null )
-				return domain;
-			if ( ( domain = getDomainForWorkplacePk( workplace ) ) != null )
-				return domain;
-		return domain;
-	}
-
-	/**
-	 * Workactivity
-	 * @param id Identificador unico de la Actividad
-	 * @param description Descripcion de la Actividad
-	 * @param workplace Identificador del Centro de Trabajo
-	 * @param enterpriseCCC Cuenta de Cotizaciùn asociada a la Actividad
-	 * @param active Indica si la Actividad esta activa o no
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertWorkactivity(String description, Integer workplace, Integer enterpriseCCC, Boolean active)
-	throws SQLException {
-		Integer domain = getDomainForWorkactivity( enterpriseCCC , workplace);
-		Integer id =  super.insertWorkactivity( domain != null ? domain : getDefaultDomain(), description, workplace, enterpriseCCC, active );
-		if ( domain != null ) { 
-			workactivityDomains.put(id, domain);
-		}
-		return id;
-	}
-
-	/**
-	 * Workactivity
-	 * @param id Identificador unico de la Actividad
-	 * @param domain Identificador del Dominio
-	 * @param description Descripcion de la Actividad
-	 * @param workplace Identificador del Centro de Trabajo
-	 * @param enterpriseCCC Cuenta de Cotizaciùn asociada a la Actividad
-	 * @param active Indica si la Actividad esta activa o no
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertWorkactivity(Integer domain, String description, Integer workplace, Integer enterpriseCCC, Boolean active)
-	throws SQLException {
-		Integer id =  super.insertWorkactivity(domain, description, workplace, enterpriseCCC, active);
-		workactivityDomains.put(id, domain );
-		return id;
-	}
-
-	
 	private Map<Integer,Integer> project_commercialDomains = new HashMap<Integer,Integer>();
 
 	protected Integer getDomainForProject_commercialPk(Integer project){
@@ -11072,6 +11080,69 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	throws SQLException {
 		Integer id =  super.insertCertifica2_batch_data(domain, certifica2_batch_detail, year, month, contribution_days, cgc_contribution_base, unemployment_contribution_base, comments);
 		certifica2_batch_dataDomains.put(id, domain );
+		return id;
+	}
+
+	
+	private Map<Integer,Integer> fs_model_detailDomains = new HashMap<Integer,Integer>();
+
+	protected Integer getDomainForFs_model_detailPk(Integer id){
+		return fs_model_detailDomains.get(id);
+	}
+	
+	/**
+	 * Fs_model_detail
+	 * @param fs_model Identificador de la Declaracion
+	 * @returns domain's ID
+	*/
+	protected Integer getDomainForFs_model_detail( Integer fs_model){
+		Integer domain = null;
+			if ( ( domain = getDomainForFs_modelPk( fs_model ) ) != null )
+				return domain;
+		return domain;
+	}
+
+	/**
+	 * Fs_model_detail
+	 * @param id Identificador unico
+	 * @param fs_model Identificador de la Declaracion
+	 * @param type Clave de la Declaracion
+	 * @param acu_amount Importe acumulado
+	 * @param dec_amount Importe declarado
+	 * @param res_amount Importe resultado
+	 * @param adj_amount Importe ajustado
+	 * @param amount Importe
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertFs_model_detail(Integer fs_model, String type, Double acu_amount, Double dec_amount, Double res_amount, Double adj_amount, Double amount)
+	throws SQLException {
+		Integer domain = getDomainForFs_model_detail( fs_model);
+		Integer id =  super.insertFs_model_detail( domain != null ? domain : getDefaultDomain(), fs_model, type, acu_amount, dec_amount, res_amount, adj_amount, amount );
+		if ( domain != null ) { 
+			fs_model_detailDomains.put(id, domain);
+		}
+		return id;
+	}
+
+	/**
+	 * Fs_model_detail
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param fs_model Identificador de la Declaracion
+	 * @param type Clave de la Declaracion
+	 * @param acu_amount Importe acumulado
+	 * @param dec_amount Importe declarado
+	 * @param res_amount Importe resultado
+	 * @param adj_amount Importe ajustado
+	 * @param amount Importe
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertFs_model_detail(Integer domain, Integer fs_model, String type, Double acu_amount, Double dec_amount, Double res_amount, Double adj_amount, Double amount)
+	throws SQLException {
+		Integer id =  super.insertFs_model_detail(domain, fs_model, type, acu_amount, dec_amount, res_amount, adj_amount, amount);
+		fs_model_detailDomains.put(id, domain );
 		return id;
 	}
 
@@ -17301,62 +17372,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		salary_costDomains.put(id, domain );
 		return id;
 	}
-
-	
-	private Map<Integer,Integer> project_dossierDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForProject_dossierPk(Integer project){
-		return project_dossierDomains.get(project);
-	}
-	
-	/**
-	 * Project_dossier
-	 * @param customer Identificador del Cliente
-	 * @param project Identificador unico del Expediente
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForProject_dossier( Integer customer , Integer project){
-		Integer domain = null;
-			if ( ( domain = getDomainForCustomerPk( customer ) ) != null )
-				return domain;
-			if ( ( domain = getDomainForProjectPk( project ) ) != null )
-				return domain;
-		return domain;
-	}
-
-	/**
-	 * Project_dossier
-	 * @param project Identificador unico del Expediente
-	 * @param customer Identificador del Cliente
-	 * @param number Numero de Expediente
-	 * @param location Ubicacion del Expediente
-	 * @param status Estado del Expediente
-	 * @throws SQLException
-	*/
-	public void insertProject_dossier(Integer project, Integer customer, String number, String location, Short status)
-	throws SQLException {
-		Integer domain = getDomainForProject_dossier( customer , project);
-		 super.insertProject_dossier( project, domain != null ? domain : getDefaultDomain(), customer, number, location, status );
-		if ( domain != null ) { 
-			project_dossierDomains.put(project, domain);
-		}
-	}
-
-	/**
-	 * Project_dossier
-	 * @param project Identificador unico del Expediente
-	 * @param domain Identificador del Dominio
-	 * @param customer Identificador del Cliente
-	 * @param number Numero de Expediente
-	 * @param location Ubicacion del Expediente
-	 * @param status Estado del Expediente
-	 * @throws SQLException
-	*/
-	public void insertProject_dossier(Integer project, Integer domain, Integer customer, String number, String location, Short status)
-	throws SQLException {
-		 super.insertProject_dossier(project, domain, customer, number, location, status);
-		project_dossierDomains.put(project, domain );
-			}
 
 	
 	private Map<Integer,Integer> commission_type_commissionDomains = new HashMap<Integer,Integer>();
