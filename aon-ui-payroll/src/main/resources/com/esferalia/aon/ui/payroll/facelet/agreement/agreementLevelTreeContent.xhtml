@@ -6,30 +6,24 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:methodParam name="resetAction" value="agreement_tree" />
-	<aon:methodParam name="saveAction" value="agreement_tree" />
-	<aon:methodParam name="removeAction" value="agreement_tree" />
+	<aon:methodParam name="saveAction" value="agreement_formTree" />
+	<aon:methodParam name="removeAction" value="agreement_formTree" />
+	<aon:methodParam name="resetAction" value="agreementLevel_formTree" />
+	<aon:methodParam name="backAction" value="agreement_list" />
+	<aon:methodParam name="cancelAction" value="agreement_formTree" />
+	
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 		<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_agreementLevel_module}" />
 		<ui:param name="controller" value="#{agreementLevel}" />
 		<ui:param name="skipSearchButton" value="true" />
-		<ui:param name="skipBackButton" value="true" />
 		<ui:param name="skipSpin" value="true" />
 	</ui:decorate>
 	
 	<aon:div styleClass="aon-scroll-area">
 		<aon:panelGrid columns="2" dir="true" width="100%">
-
-			<aon:outputLabel value="#{bundle.aon_id}" rendered="#{!agreementLevel.new}"/>
-			<aon:outputText value="#{agreementLevel.to.id}" rendered="#{!agreementLevel.new}"/>
-
 			<aon:outputLabel value="#{payrollBundle.payroll_agreement}" rendered="#{!agreementLevel.new}"/>
-			<aon:div rendered="#{!agreementLevel.new}">
-				<aon:outputText value="#{agreementLevel.to.agreement.id}" />
-				<aon:outputText value=" - " />
-				<aon:outputText value="#{agreementLevel.to.agreement.description}" />
-			</aon:div>
-
+			<aon:outputText value="#{agreementLevel.to.agreement.description}" rendered="#{!agreementLevel.new}"/>
+			
 			<aon:outputLabel for="AgreementLevel_description"
 				value="#{bundle.aon_description}" />
 			<aon:inputText id="AgreementLevel_description"

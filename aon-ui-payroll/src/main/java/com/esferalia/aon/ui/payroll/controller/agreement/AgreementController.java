@@ -29,6 +29,9 @@ public class AgreementController extends BasicController implements IVariablesHa
 
 	@Override
 	public String formAction() {
+		if(isNew()){
+			return super.formAction();
+		}
 		return (formAction != null) ? formAction : getBeanName()+FORM_TREE_SUFFIX;	
 	}
 	

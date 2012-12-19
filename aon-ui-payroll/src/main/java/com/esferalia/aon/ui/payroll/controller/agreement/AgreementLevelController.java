@@ -1,12 +1,8 @@
 package com.esferalia.aon.ui.payroll.controller.agreement;
 
-
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -14,9 +10,7 @@ import com.code.aon.ui.form.LinesController;
 import com.esferalia.aon.ui.payroll.controller.IVariablesHandler;
 
 public class AgreementLevelController extends LinesController implements IVariablesHandler{
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(AgreementLevelController.class.getName());
-		
+	
 	private boolean modalPanelVisible;
 	
 	private AgreementLevelVariableHandler handler;

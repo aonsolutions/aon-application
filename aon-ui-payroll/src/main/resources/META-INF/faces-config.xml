@@ -2871,13 +2871,7 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/agreement/treeContent.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	<!-- =================== AgreementLevel ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>agreementLevel_form</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/agreementLevel/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
+	
 	<!-- =================== Contract ========================== -->
 	<navigation-rule>
 		<navigation-case>

@@ -9,14 +9,15 @@
 	
 	<ui:define name="content">
 		<aon:form id="agreementForm">
+
 			<aon:methodParam name="saveAction" value="agreement_formTree" />
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_agreement_module}" />
 				<ui:param name="controller" value="#{agreement}" />
-				<ui:param name="skipBackButton" value="true" />
 			</ui:decorate>
+
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="2" dir="true" width="100%">
+				<aon:panelGrid columns="2" dir="true" >
 		
 					<aon:outputLabel value="#{bundle.aon_id}" />
 					<aon:outputText value="#{agreement.to.id}" />
@@ -25,9 +26,19 @@
 						value="#{bundle.aon_description}" />
 					<aon:inputText id="Agreement_description"
 						value="#{agreement.to.description}" size="64" maxlength="64" />
+						
+					<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{agreement.to.calendar}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="lookupInputSuggestSize" value="40" />
+					</ui:include>
 				</aon:panelGrid>
 			</aon:div>
+
 		</aon:form>
+		
+		<aon:lookupButtonPopup lookup="#{calendarLookup}" />
+		
 	</ui:define>
 	
 </ui:composition>

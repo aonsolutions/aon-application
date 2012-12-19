@@ -6,12 +6,14 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.entity.master.AgreementPaymentDB;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
 @Entity
 @Table(name="agreement_payment")
+@Heritable
 public class AgreementPayment extends AgreementPaymentDB implements IContractPayment  {
 
 	private static final long serialVersionUID = 1L;

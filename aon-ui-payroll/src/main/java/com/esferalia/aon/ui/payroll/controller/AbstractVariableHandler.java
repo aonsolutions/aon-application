@@ -26,6 +26,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.annotations.Heritable;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.domain.IDomain;
 import com.code.aon.common.enumeration.IResourceable;
 import com.code.aon.common.enumeration.IStringEnum;
 import com.code.aon.common.util.CommonUtil;
@@ -297,6 +300,20 @@ public abstract class AbstractVariableHandler {
 	public void reloadData( ActionEvent event ) {
 		onChangeLastPeriod(event);
 		initializeVariables(event);
+	}
+	
+	private boolean isCurrentDomainTo( Object object ) {
+		if ( object.getClass().isAnnotationPresent(Heritable.class) ) {
+			return ((IDomain) object).getDomain() == DomainManager.getCurrentDomain();
+		}
+		return true;
+	}
+	
+	public boolean isEditableSelectedTo() {
+		if ( this.variablesModel!=null && this.variablesModel.isRowAvailable() ) {
+			return isCurrentDomainTo(((VariableData)this.variablesModel.getRowData()).getVariableData());
+		}
+		return true;
 	}
 	
 	public abstract void initializeVariables(ActionEvent event);

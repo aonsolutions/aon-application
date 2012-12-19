@@ -20,6 +20,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.annotations.Heritable;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.domain.IDomain;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -40,6 +43,7 @@ import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.enumeration.QuoteType;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.ui.payroll.controller.IPaymentHandler;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.IVariablesHandler;
@@ -282,7 +286,17 @@ public class AgreementPaymentController extends LinesController implements IVari
 	}
 	
 	public boolean isReadOnly(){
-		return false;
+		if ( this.getPaymentsModel().isRowAvailable() ) {
+			return !isCurrentDomainTo(this.getPaymentsModel().getRowData());
+		}
+		return true;
+	}
+	
+	private boolean isCurrentDomainTo( Object object ) {
+		if ( object.getClass().isAnnotationPresent(Heritable.class) ) {
+			return ((IDomain) object).getDomain() == DomainManager.getCurrentDomain();
+		}
+		return true;
 	}
 	
 	private void initialiceConcepts() {
@@ -354,18 +368,41 @@ public class AgreementPaymentController extends LinesController implements IVari
 	public void onEdit(ActionEvent event) {
 		IContractPayment row = (IContractPayment) getPaymentsModel().getRowData();
 		try {
-			this.select(event, (ITransferObject) row);
+			if(!isReadOnly()){
+				this.select(event, (ITransferObject) row);
+			} else {
+				super.onReset(event);
+				IController master = FormUtil.getController("agreement");
+				Agreement agreement = (Agreement) master.getTo();
+				AgreementPayment payment = (AgreementPayment) this.getTo();
+				payment.setAgreement(agreement);
+				payment.setType(row.getType());
+				payment.setDescription(row.getDescription());
+				payment.setExpression(row.getExpression());
+				payment.setIrpfExpression(row.getIrpfExpression());
+				payment.setQuoteExpression(row.getQuoteExpression());
+				payment.setStartDate(row.getStartDate());
+				payment.setEndDate(row.getEndDate());
+				payment.setMonth(row.getMonth());
+				payment.setDescriptionDecorable(row.isDescriptionDecorable());
+				payment.setSalaryType(row.getSalaryType());
+				if(row.getScope()==ExpressionScope.AGREEMENT){
+					AgreementPayment ap = (AgreementPayment) row;
+					payment.setPaymentConcept(ap.getPaymentConcept());
+				} 
+			}
 			initializeVariables(event);
 			setAgreementExtra(null);
 			if(isSalaryExtra()){
 				searchAgreementExtra();
 			}
+			reset(true);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible seleccionar la percepcion";
+			LOGGER.error(msg);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
-		reset(true);
 	}
 
 	public void onSave(ActionEvent event) {
@@ -517,7 +554,7 @@ public class AgreementPaymentController extends LinesController implements IVari
 	@Override
 	public String getExpression() {
 		AgreementPayment p = ((AgreementPayment) getTo());
-		return StringUtils.isNotBlank(p.getExpression()) ? p.getExpression() : p.getPaymentConcept().getExpression();
+		return StringUtils.isNotBlank(p.getExpression()) ? p.getExpression() : (p.getPaymentConcept()!=null?p.getPaymentConcept().getExpression():null);
 	}
 	@Override
 	public String getQuoteExpression() {

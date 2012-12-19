@@ -12,12 +12,14 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.entity.master.AgreementExtraDB;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext.DateFormatException;
 
 @Entity
 @Table(name="agreement_extra")
+@Heritable
 public class AgreementExtra extends AgreementExtraDB  {
 
 	private static final long serialVersionUID = 1L;

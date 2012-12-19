@@ -8,39 +8,41 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/com/esferalia/aon/ui/payroll/facelet/agreement/treeTemplate.xhtml">
 
-		<ui:define name="treeContent">
-			<aon:form id="agreementForm">
-				<c:if test="#{agreementTree.agreementSelected}">
-					<ui:include src="agreementTreeContent.xhtml" />
+	<ui:define name="treeContent">
+		<aon:form id="agreementForm">
+			<c:if test="#{agreementTree.agreementSelected}">
+				<ui:include src="agreementTreeContent.xhtml" />
+			</c:if>
+			<c:if test="#{agreementTree.agreementLevelSelected}">
+				<ui:include src="agreementLevelTreeContent.xhtml" />
+			</c:if>
+		</aon:form>
+		
+		<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/payment/modalPayment.xhtml">
+			<ui:param name="controller" value="#{agreementPayment}" />
+			<ui:param name="skipCurrentMonth" value="#{true}" />
+			<ui:param name="skipSearchOption" value="#{false}" />
+			<ui:param name="contextDisabled" value="#{true}" />
+			<ui:param name="container" value="agreementPaymentGrid" />
+			<ui:param name="skipResult" value="#{true}" />
+			
+			<ui:define name="afterFormContent">
+				<c:if test="#{agreementPayment.salaryExtra}" >
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/extra/form_content.xhtml" >
+						<ui:param name="to" value="#{agreementPayment.agreementExtra}" />
+					</ui:include>
 				</c:if>
-				<c:if test="#{agreementTree.agreementLevelSelected}">
-					<ui:include src="agreementLevelTreeContent.xhtml" />
-				</c:if>
-			</aon:form>
+			</ui:define>
 			
-			<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/payment/modalPayment.xhtml">
-				<ui:param name="controller" value="#{agreementPayment}" />
-				<ui:param name="skipCurrentMonth" value="#{true}" />
-				<ui:param name="skipSearchOption" value="#{false}" />
-				<ui:param name="contextDisabled" value="#{true}" />
-				<ui:param name="container" value="agreementPaymentGrid" />
-				<ui:param name="skipResult" value="#{true}" />
-				
-				<ui:define name="afterFormContent">
-					<c:if test="#{agreementPayment.salaryExtra}" >
-						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/extra/form_content.xhtml" >
-							<ui:param name="to" value="#{agreementPayment.agreementExtra}" />
-						</ui:include>
-					</c:if>
-				</ui:define>
-				
-			</ui:decorate>
-			
-			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/helper/modalHelper.xhtml">
-				<ui:param name="controller" value="#{(agreementTree.agreementSelected)?(agreement):(agreementLevel)}" />
-				<ui:param name="container" value="agreementForm" />
-			</ui:include>
-			
-		</ui:define>
+		</ui:decorate>
+		
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/helper/modalHelper.xhtml">
+			<ui:param name="controller" value="#{(agreementTree.agreementSelected)?(agreement):(agreementLevel)}" />
+			<ui:param name="container" value="agreementForm" />
+		</ui:include>
+		
+		<aon:lookupButtonPopup lookup="#{calendarLookup}" />
+		
+	</ui:define>
 
 </ui:composition>

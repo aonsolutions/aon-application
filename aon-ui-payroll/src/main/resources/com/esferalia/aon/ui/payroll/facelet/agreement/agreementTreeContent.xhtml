@@ -6,37 +6,35 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:methodParam name="saveAction" value="agreement_tree" />
-	<aon:methodParam name="removeAction" value="agreement_list" />
+	<aon:methodParam name="saveAction" value="agreement_formTree" />
+	<aon:methodParam name="resetAction" default="agreement_form"/>
+	
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 		<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_agreement_module}" />
 		<ui:param name="controller" value="#{agreement}" />
-		<ui:param name="skipSearchButton" value="true" />
-		<ui:param name="skipResetButton" value="true" />
-		<ui:param name="skipBackButton" value="true" />
-		<ui:param name="skipSpin" value="true" />
-		
 		<ui:define name="beforeSpinToolbarContent">
 			<aon:commandButton id="AgreementLevel-reset"
 				title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
 				value="#{payrollBundle.payroll_agreementLevel_new}" 
-				reRender="aonContent"
+				action="agreementLevel_form"
 				styleClass="aon-finding-toolbar-item aon-icon-reset" >
 				<aon:actionListener method="#{agreementLevel.onReset}" />
 			</aon:commandButton>		
 		</ui:define>
-		
 	</ui:decorate>
+
 	<aon:div styleClass="aon-scroll-area">
 		<aon:panelGrid columns="2" dir="true" width="100%" style="aon-margin-bottom">
-
-			<aon:outputLabel value="#{bundle.aon_id}" />
-			<aon:outputText value="#{agreement.to.id}" />
-
 			<aon:outputLabel for="Agreement_description"
 				value="#{bundle.aon_description}" />
-			<aon:inputText id="Agreement_description"
+			<aon:inputText id="Agreement_description" required="true"
 				value="#{agreement.to.description}" size="64" maxlength="64" />
+				
+			<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{agreement.to.calendar}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+				<ui:param name="lookupInputSuggestSize" value="40" />
+			</ui:include>	
 		</aon:panelGrid>
 		
 		<c:if test="#{!agreement.new}">
