@@ -13,6 +13,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Formula;
 
@@ -54,7 +55,7 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 	
 	@Transient
 	public String getSizeToDisplay() {
-		return FileUtils.byteCountToDisplaySize(getSize());
+		return FileUtils.byteCountToDisplaySize(ArrayUtils.getLength(getData()));
 	}
 
 	@Override
