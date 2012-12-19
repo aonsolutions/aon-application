@@ -14,6 +14,20 @@
 					<aon:outputText value="#{financeBundle.finance_finances}" />
 				</f:facet>
 
+				<aon:div styleClass="aon-bold aon-margin-bottom"
+					rendered="#{!invoiceController.readOnly and financeController.advancedFinancesAvailable}">
+					<aon:outputText styleClass="aon-icon-info" style="padding-left: 1.3em;"
+						value="#{financeBundle.finance_advances_available}" />
+					<aon:commandLink id="AdvanceFinances-import"
+						value="#{bundle.aon_import}"
+						styleClass="aon-label-info"
+						style="margin-left:5px; text-decoration:underline;"
+						actionListener="#{financeController.onImportAdvances}"
+						reRender="#{dataTableId}"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+				</aon:div>
+
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 					<ui:param name="dataTableId" value="invoiceFinances" />
@@ -23,7 +37,7 @@
 					<ui:param name="showDataScroller" value="false" />
 					<ui:param name="skipResetButton" value="#{invoiceController.readOnly}" />
 					<ui:param name="skipLineEdition" value="#{true}" />
-					<ui:param name="skipRemoveButton" value="#{invoiceController.readOnly and controller.model.rowCount > 1}" />
+					<ui:param name="skipRemoveButton" value="#{(invoiceController.readOnly and controller.model.rowCount > 1) or financeController.to.advance}" />
 					<ui:param name="removeButtonReRender" value="menuExt,invoiceReferenceCodeDiv" />
 					<ui:define name="beginFormListContent">
 						<aon:commandLink id="#{dataTableId}-selectButton"
@@ -31,6 +45,7 @@
 							immediate="true" ajaxSingle="true" requestDelay="100"
 							rendered="#{financeController.modelToEditable}"
 							actionListener="#{financeController.onSelect}"
+							reRender="menuExt"
 							onkeyup="#{dataTableId}KeyUp(this)"
 							onfocus="#{dataTableId}SelectRow(this)"
 							onblur="#{dataTableId}DeselectRow(this)"
@@ -262,10 +277,16 @@
 
 					<ui:define name="endFormListContent">
 						<aon:commandLink id="finance_link" immediate="true"
-							styleClass="aon-button-goto" style="padding-right: 20px;"
+							styleClass="aon-button-goto" style="padding-right: 10px;"
 							value="&#160;" title="#{bundle.aon_go}" 
 							actionListener="#{financeController.onLoadFinance}"
 							action="finance_form"
+							reRender="aonContent" />
+						<aon:commandLink id="finance_exclude" immediate="true"
+							styleClass="aon-icon-exclude" style="padding-right: 10px;"
+							value="&#160;" title="#{financeBundle.finance_exclude_advance}" 
+							rendered="#{!invoiceController.readOnly and formList and to.advance}"
+							actionListener="#{financeController.onExcludeAdvance}"
 							reRender="aonContent" />
 					</ui:define>
 

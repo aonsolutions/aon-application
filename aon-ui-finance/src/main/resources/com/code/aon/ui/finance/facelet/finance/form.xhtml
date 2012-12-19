@@ -74,10 +74,9 @@
 									<aon:outputText value="#{financeBundle.finance_agrupation_finance}" />
 								</aon:div>
 								<aon:div>
-									<aon:outputText value="#{finance.to.referenceCode}"
-										rendered="#{finance.to.emptyInvoice}" />
 									<aon:div rendered="#{!finance.to.emptyInvoice}"> 
-										<aon:outputText value="#{finance.to.referenceCode}"
+										<aon:outputText styleClass="aon-bold"
+											value="#{finance.to.referenceCode}"
 											rendered="#{!finance.to.emptyInvoice}" />
 										<aon:outputText styleClass="aon-italic aon-margin-left"
 											value="(#{bundle.aon_date}: "
@@ -110,6 +109,14 @@
 							</aon:div> 		
 						
 							<aon:div>
+								<aon:selectBooleanCheckbox id="Finance_advance"
+									value="#{finance.to.advance}"
+									rendered="#{!finance.payment}"
+									disabled="#{!finance.to.emptyInvoice or !finance.pending}" />
+								<aon:outputText styleClass="aon-italic aon-margin-right"
+									value="#{financeBundle.finance_advance}"
+									rendered="#{!finance.payment}" />
+
 								<c:if test="#{aonRole.confidentiality}">
 									<aon:selectBooleanCheckbox id="Finance_securityLevel"
 										value="#{finance.to.confidential}"
@@ -121,22 +128,24 @@
 										value="&#160;" title="#{bundle.aon_confidential}"
 										rendered="#{(!finance.to.emptyInvoice or !finance.pending) and finance.to.confidential}" />
 								</c:if>
-
-								<aon:outputText styleClass="aon-margin-left"
-									value="#{finance.to.financeStatus}" />
 							</aon:div>
 						</aon:panelGrid>
 									
 					</aon:div>					
-					
+
 					<aon:outputLabel for="Finance_dueDate"
 						value="#{financeBundle.finance_finance_date}" />
-					<aon:selectInputDate id="Finance_dueDate" 
-						value="#{finance.to.dueDate}"
-						disabled="#{!finance.pending and !finance.returned}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
-					
+					<aon:div>
+						<aon:selectInputDate id="Finance_dueDate" 
+							value="#{finance.to.dueDate}"
+							disabled="#{!finance.pending and !finance.returned}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+						<aon:outputText styleClass="aon-margin-left"
+							value="#{finance.to.financeStatus}"
+							rendered="#{!finance.new}" />
+					</aon:div>
+
 					<aon:outputLabel for="Finance_concept" 
 						value="#{financeBundle.finance_invoice_document_number}" />
 					<aon:div> 
@@ -189,7 +198,7 @@
 							reRender="paymentTypeDiv">
 							<f:selectItem itemLabel="#{financeBundle.finance_expense}" itemValue="false" />
 							<f:selectItem itemLabel="#{financeBundle.finance_purchase}" itemValue="true" />
-						</aon:selectOneRadio>				
+						</aon:selectOneRadio>
 					</aon:div>
 					<aon:div id="paymentTypeDiv" rendered="#{finance.to.payment}">
 						<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">

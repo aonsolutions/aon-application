@@ -12,14 +12,17 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.Finance;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
@@ -28,6 +31,7 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceFinanceController extends LinesController implements IFinanceConstants {
 
@@ -183,6 +187,52 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 		rBank.setBankAccount(finance.getBankAccount());
 		rBank = (RegistryBank)rBankBean.insert(rBank);
 		setRegistryBank(rBank);
+	}
+
+	public boolean isAdvancedFinancesAvailable() throws ManagerBeanException {
+		Invoice invoice = (Invoice)getMasterController().getTo();
+
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_REGISTRY_ID), invoice.getRegistry().getId());
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAYMENT), !invoice.isSales());
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_SECURITY_LEVEL), invoice.getSecurityLevel());
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_ADVANCE), true);
+		criteria.addNullExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID));
+		return (financeBean.getCount(criteria) > 0);
+	}
+
+	public void onImportAdvances(ActionEvent event) throws ManagerBeanException {
+		Invoice invoice = (Invoice)getMasterController().getTo();
+
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_REGISTRY_ID), invoice.getRegistry().getId());
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAYMENT), !invoice.isSales());
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_SECURITY_LEVEL), invoice.getSecurityLevel());
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_ADVANCE), true);
+		criteria.addNullExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID));
+		for (ITransferObject ito : financeBean.getList(criteria)) {
+			Finance finance = (Finance)ito;
+			finance.setInvoice(invoice);
+			finance.setRemarks("[" + finance.getConcept() + "]" + "\n" + ((finance.getRemarks() == null) ? "" : finance.getRemarks()));
+			financeBean.update(finance);
+		}
+		onSearch(event);
+	}
+
+	public void onExcludeAdvance(ActionEvent event) throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {  
+			Finance finance = (Finance)getModel().getRowData();
+			finance.setInvoice(null);
+			if (finance.getRemarks() != null && finance.getRemarks().indexOf("[") >= 0 && finance.getRemarks().indexOf("]") >= 0) {
+				finance.setConcept(finance.getRemarks().substring(finance.getRemarks().indexOf("[")+1, finance.getRemarks().indexOf("]")));
+				finance.setRemarks(finance.getRemarks().substring(finance.getRemarks().indexOf("]")+1));
+			}
+			getManagerBean().update(finance);
+
+			onSearch(event);
+		}
 	}
 
 	public void onLoadFinance(ActionEvent event) throws ManagerBeanException {

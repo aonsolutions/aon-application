@@ -38,6 +38,7 @@
 							immediate="true" ajaxSingle="true" requestDelay="100"
 							rendered="#{!invoiceController.readOnly and detailController.editable}"
 							actionListener="#{detailController.onSelect}"
+							reRender="menuExt"
 							onkeyup="#{dataTableId}KeyUp(this)"
 							onfocus="#{dataTableId}SelectRow(this)"
 							onblur="#{dataTableId}DeselectRow(this)"

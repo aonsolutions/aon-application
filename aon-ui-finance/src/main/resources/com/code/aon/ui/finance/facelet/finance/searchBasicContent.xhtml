@@ -123,6 +123,14 @@
 		<f:selectItems value="#{companyCollections.allCompanyBanks}" />
 	</aon:selectOneMenu>
 
+	<aon:outputLabel for="Finance_advance"
+		value="#{financeBundle.finance_advance}" />
+	<aon:selectOneRadio id="Finance_advance"
+		valueChangeListener="#{controller.addExpression}">
+		<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+		<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+	</aon:selectOneRadio>				
+
 	<c:if test="#{aonRole.confidentiality}">
 		<aon:outputLabel for="Finance_securityLevel"
 			value="#{bundle.aon_confidential}" />

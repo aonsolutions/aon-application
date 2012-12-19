@@ -37,7 +37,7 @@
 							<aon:div style="width:99%">
 								<aon:div id="importFileToolBar" styleClass="aon-toolbar">
 									<aon:commandButton id="importFile-payment"
-										value="#{financeBundle.finance_bank_statement_import}"
+										value="#{bundle.aon_import}"
 										disabled="#{bankStatement.aonFile == null}"
 										reRender="showImportFileWindow,bankStatementList"
 										actionListener="#{bankStatement.onImportFile}"

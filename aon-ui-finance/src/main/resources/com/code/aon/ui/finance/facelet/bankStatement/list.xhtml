@@ -38,8 +38,8 @@
 							action="#{controller.backAction}"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:commandButton id="BankStatement-import"
-							value="#{financeBundle.finance_bank_statement_import}"
-							title="#{financeBundle.finance_bank_statement_import}"
+							value="#{bundle.aon_import}"
+							title="#{bundle.aon_import}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 							rendered="#{!controller.new and controller.to == null}"
 							actionListener="#{controller.onImportFileShow}"

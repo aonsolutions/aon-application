@@ -245,6 +245,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
 		criteria.addNotEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
+		criteria.addNotEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_ADVANCE), true);
 		if (financeBean.getCount(criteria) == 0) {
 			return true;
 		}
@@ -255,6 +256,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_INVOICE_ID), invoice.getId());
+		criteria.addNotEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_ADVANCE), true);
 		for (ITransferObject ito : financeTrackingBean.getList(criteria)) {
 			financeTrackingBean.remove((FinanceTracking)ito);
 		}
@@ -265,7 +267,17 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
 		for (ITransferObject ito : financeBean.getList(criteria)) {
-			financeBean.remove((Finance)ito);
+			Finance finance = (Finance)ito;
+			if (finance.isAdvance()) {
+				finance.setInvoice(null);
+				if (finance.getRemarks() != null && finance.getRemarks().indexOf("[") >= 0 && finance.getRemarks().indexOf("]") >= 0) {
+					finance.setConcept(finance.getRemarks().substring(finance.getRemarks().indexOf("[")+1, finance.getRemarks().indexOf("]")));
+					finance.setRemarks(finance.getRemarks().substring(finance.getRemarks().indexOf("]")+1));
+				}
+				financeBean.update(finance);
+			} else {
+				financeBean.remove(finance);
+			}
 		}
 	}
 

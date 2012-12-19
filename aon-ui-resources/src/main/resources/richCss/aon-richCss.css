@@ -375,34 +375,37 @@ color:#000;
 .aon-icon-removed{
 	background:transparent url(images/aon-icon/aon-icon-removed.png) scroll left center no-repeat;
  }
+.aon-icon-exclude{
+	background:transparent url(images/aon-icon/aon-icon-exclude.png) scroll left center no-repeat;
+ }
 .aon-icon-search{
 	background:transparent url(images/aon-icon/aon-icon-search.png) scroll left center no-repeat;
-  }
+ }
  .aon-icon-advanced-search{
 	background:transparent url(images/aon-icon/aon-icon-advanced-search.png) scroll left center no-repeat;	
  }
  .aon-icon-index{
 	background:transparent url(images/aon-icon/aon-icon-index.png) scroll left center no-repeat;	
  }
-.aon-icon-reset{
+ .aon-icon-reset{
 	background:transparent url(images/aon-icon/aon-icon-reset.png) scroll left center no-repeat;
  }
-.aon-icon-tree{
+ .aon-icon-tree{
    background:transparent url(images/aon-icon/aon-icon-tree.png) scroll left center no-repeat;
-  }
-.aon-icon-lookup{
+ }
+ .aon-icon-lookup{
    background:transparent url(images/aon-icon/aon-icon-lookup.png) scroll left center no-repeat;
  } 
-.aon-icon-refresh{
+ .aon-icon-refresh{
 	background:transparent url(images/aon-icon/aon-icon-refresh.png) scroll left center no-repeat;
  }
-.aon-icon-attach-file{
+ .aon-icon-attach-file{
 	background:transparent url(images/aon-icon/aon-icon-attach-file.png) scroll left center no-repeat;	
  }
-.aon-icon-attach-file-disabled{
+ .aon-icon-attach-file-disabled{
 	background:transparent url(images/aon-icon/aon-icon-attach-file-disabled.png) scroll left center no-repeat;	
  }
-.aon-icon-mail-save{
+ .aon-icon-mail-save{
 	background:transparent url(images/aon-icon/aon-icon-mail-save.png) scroll left center no-repeat;	
  }
  .aon-icon-mail-move{
@@ -411,7 +414,7 @@ color:#000;
  .aon-icon-printer{
 	background:transparent url(images/aon-icon/aon-icon-printer.png) scroll left center no-repeat;	
  }
-  .aon-icon-ambito{
+ .aon-icon-ambito{
 	background:transparent url(images/aon-icon/aon-icon-ambito.png) scroll left center no-repeat;	
  }
  .aon-icon-group{
@@ -429,7 +432,7 @@ color:#000;
  .aon-icon-exit{
 	background:transparent url(images/aon-icon/aon-icon-exit.png) scroll left center no-repeat;	
  }
-  .aon-icon-file-exit{
+ .aon-icon-file-exit{
 	background:transparent url(images/aon-icon/aon-icon-file-exit.png) scroll left center no-repeat;	
  }
  .aon-icon-file-entrance{
@@ -446,16 +449,16 @@ color:#000;
  }
  .aon-icon-transfer{
 	background:transparent url(images/aon-icon/aon-icon-transfer.png) scroll left center no-repeat;
-  }
+ }
  .aon-icon-zip{
 	background:transparent url(images/aon-icon/aon-icon-zip.png) scroll left center no-repeat;
-  }
+ }
  .aon-icon-sincronize{
 	background:transparent url(images/aon-icon/aon-icon-sincronize.png) scroll left center no-repeat;
-  }
+ }
  .aon-icon-new-phone{
 	background:transparent url(images/aon-icon/aon-icon-new-phone.png) scroll left center no-repeat;
-  }
+ }
  .aon-icon-predetermine{
 	background:transparent url(images/aon-icon/aon-icon-predetermine.png) scroll left center no-repeat;	
  }
@@ -471,7 +474,7 @@ color:#000;
  .aon-icon-wrong{
 	background:transparent url(images/aon-icon/aon-icon-wrong.png) scroll left center no-repeat;	
  }
-.aon-icon-pay{
+ .aon-icon-pay{
 	background:transparent url(images/aon-icon/aon-icon-pay.png) scroll left center no-repeat;	
  }
  .aon-icon-return{
