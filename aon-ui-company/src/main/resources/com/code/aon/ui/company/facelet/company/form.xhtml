@@ -263,9 +263,8 @@
 						
 						<c:if test="#{companyCustomize.show}">
 							<aon:panelTab label="#{bundle.aon_oem}">
-								<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
-									<ui:param name="controller" value="#{companyCertificate}" />
-									<ui:param name="skipCategoryColumn" value="#{true}" />
+								<ui:include src="/com/code/aon/ui/company/facelet/companyCustomize/tab_grid.xhtml">
+									<ui:param name="controller" value="#{companyCustomize}" />
 								</ui:include>
 							</aon:panelTab>
 						</c:if>

@@ -55,10 +55,6 @@ public class RegistryAttachControllerListener extends AttachmentControllerListen
 			} else {
 				criteria.addEqualExpression(id, registry.getId());	
 			}
-			if ( raController.getType() != null ) {
-				String type = raController.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
-				criteria.addEqualExpression(type, raController.getType());
-			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException("Error after edit search",e);
 		}
