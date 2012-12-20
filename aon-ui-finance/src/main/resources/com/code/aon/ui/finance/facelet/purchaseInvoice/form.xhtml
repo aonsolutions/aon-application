@@ -21,7 +21,7 @@
 					<ui:param name="skipSaveButton" value="#{purchaseInvoice.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{!purchaseInvoice.removable or !purchaseInvoiceFinance.allPending}" />
 					<ui:param name="saveButtonReRender" value="purchaseInvoiceForm" />
-					<ui:param name="showMoreMenu" value="#{true}" />
+					<ui:param name="showMoreMenu" value="#{!purchaseInvoice.new and purchaseInvoiceDetail.to == null}" />
 					<ui:define name="beforeSpinToolbarContent">
 						<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 							<aon:commandButton value="&#160;" id="email"
@@ -33,7 +33,7 @@
 						</c:if>						
 						<aon:htmlCommandLink id="purchaseInvoice-report"
 							value="#{financeBundle.finance_invoice}" target="_new" 
-							rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and purchaseInvoiceDetail.to == null and !purchaseInvoice.accountSource}"
+							rendered="#{!purchaseInvoice.accountSource and purchaseInvoiceDetail.model.rowCount > 0 and purchaseInvoiceDetail.to == null}"
 							action="#{purchaseInvoiceSigner.onReport}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
@@ -44,7 +44,7 @@
 						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
 							<aon:menuItem id="incomeTransfer"
 								value="#{financeBundle.finance_invoice_deliveries}"
-								immediate="#{true}" rendered="#{!purchaseInvoice.new and !purchaseInvoice.recorded}"
+								immediate="#{true}" rendered="#{!purchaseInvoice.readOnly}"
 								iconClass="aon-icon-sincronize"
 								actionListener="#{purchaseInvoice.onIncomeTransferShow}"
 								reRender="showIncomeTransferWindow">
@@ -56,7 +56,7 @@
 							value="#{bundle.aon_key_finance_description}"
 							title="#{bundle.aon_key_finance_accelerator}"
 							actionListener="#{purchaseInvoice.generateFinances}"
-							rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and (!purchaseInvoice.recorded or purchaseInvoiceFinance.model.rowCount == 0)}"
+							rendered="#{purchaseInvoice.toInvoiceTotalPrice != 0 and (!purchaseInvoice.recorded or purchaseInvoiceFinance.model.rowCount == 0)}"
 							iconClass="aon-icon-tree"
 							accesskey="#{bundle.aon_key_finance}">
 							<f:setPropertyActionListener target="#{purchaseInvoice.backActionListener}"
@@ -68,7 +68,7 @@
 							<aon:menuItem id="record"
 								value="#{financeBundle.finance_record}"
 								actionListener="#{purchaseInvoice.onRecordInvoice}"
-								rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and !purchaseInvoice.recorded}"
+								rendered="#{!purchaseInvoice.recorded and purchaseInvoiceDetail.model.rowCount > 0}"
 								iconClass="aon-icon-task-assume"
 								reRender="purchaseInvoiceForm" 
 								onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -84,14 +84,13 @@
 					     </c:if>
 						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signMenuItem.xhtml">
 							<ui:param name="signController" value="#{purchaseInvoiceSigner}" />
-							<ui:param name="skipSignButton" value="#{purchaseInvoice.new or purchaseInvoice.to.signed or (!certificate.signable) or (!purchaseInvoice.attachmentAvailable)}" />
-							<ui:param name="skipCancelSignButton" value="#{purchaseInvoice.new or (!purchaseInvoice.to.signed) or (!purchaseInvoice.attachmentAvailable)}" />
+							<ui:param name="skipSignButton" value="#{purchaseInvoice.signed or !certificate.signable or !purchaseInvoice.attachmentAvailable}" />
+							<ui:param name="skipCancelSignButton" value="#{!purchaseInvoice.signed or !purchaseInvoice.attachmentAvailable}" />
 							<ui:param name="signButtonReRender" value="purchaseInvoiceForm" />
 						</ui:include>
-						
-						
+
 						<rich:menuSeparator id="actionMenuSeparator" />
-						
+
 						<aon:menuItem id="newProject-button"
 							value="#{(projectButtonLabel!=null)?(projectButtonLabel):(projectBundle.project_project)}"
 							iconClass="aon-icon-statistics"
@@ -104,7 +103,6 @@
 						</aon:menuItem>
 						<aon:menuItem id="documents"
 							value="#{bundle.aon_documents}"
-							rendered="#{!purchaseInvoice.new}"
 							iconClass="aon-icon-payroll"
 							reRender="showDocumentWindow">
 							<f:setPropertyActionListener target="#{purchaseInvoice.showDocumentWindow}"
@@ -112,7 +110,6 @@
 						</aon:menuItem>						
 						<aon:menuItem id="comments"
 							value="#{bundle.aon_comment}"
-							rendered="#{!purchaseInvoice.new}"
 							iconClass="aon-icon-notes"
 							reRender="showCommentsWindow">
 							<f:setPropertyActionListener target="#{purchaseInvoice.showCommentsWindow}"
@@ -120,18 +117,15 @@
 						</aon:menuItem>		
 						<aon:menuItem id="remarks"
 							value="#{bundle.aon_remark}"
-							rendered="#{!purchaseInvoice.new}"
 							iconClass="aon-icon-notes"
 							reRender="showRemarksWindow">
 							<f:setPropertyActionListener target="#{purchaseInvoice.showRemarksWindow}"
 								value="#{true}" />							
 						</aon:menuItem>		
-						
 						<c:if test="#{aonRole.accountingOperator}">
 							<rich:menuSeparator id="invoiceAddsMenuSeparator1" />
 							<aon:menuItem id="fiscalInformation"
 								value="#{financeBundle.finance_fiscal_information}"
-								rendered="#{!purchaseInvoice.new}"
 								iconClass="aon-icon-info"
 								reRender="showFiscalInformationWindow">
 								<f:setPropertyActionListener target="#{purchaseInvoice.showFiscalInformationWindow}"
@@ -140,15 +134,14 @@
 						</c:if>
 
 						<rich:menuSeparator id="invoiceAddsMenuSeparator" />
+
 						<aon:menuItem id="audit-info"
 							value="#{bundle.aon_audit}"
-							rendered="#{!purchaseInvoice.new}"
 							iconClass="aon-icon-audit"
 							reRender="showAuditInfoWindow">
 							<f:setPropertyActionListener target="#{purchaseInvoice.showAuditInfoWindow}"
 								value="#{true}" />							
 						</aon:menuItem>
-						
 					</ui:define>
 				</ui:decorate>
 			</aon:div>
@@ -395,9 +388,9 @@
 						</aon:div>
 					</aon:div>
 					<aon:inputTextarea id="Invoice_comments" cols="145" rows="2"
+						value="#{purchaseInvoice.to.comments}"
 						rendered="#{!empty purchaseInvoice.to.comments}"
-						disabled="#{purchaseInvoice.readOnly}"
-						value="#{purchaseInvoice.to.comments}" />
+						disabled="#{purchaseInvoice.readOnly}" />
 
 					<aon:div rendered="#{!empty purchaseInvoice.to.remarks}">
 						<aon:outputLabel for="Invoice_remarks"
@@ -408,27 +401,11 @@
 						</aon:div>
 					</aon:div>
 					<aon:inputTextarea id="Invoice_remarks" cols="145" rows="2"
+						value="#{purchaseInvoice.to.remarks}"
 						rendered="#{!empty purchaseInvoice.to.remarks}"
-						disabled="#{purchaseInvoice.readOnly}"
-						value="#{purchaseInvoice.to.remarks}" />
+						disabled="#{purchaseInvoice.readOnly}" />
 
 				</aon:panelGrid>
-
-				<!--  
-				<aon:panelGrid columns="4" style="width: 100%;"
-					columnClasses="aon-panelGrid-odd aon-width-140,
-						aon-panelGrid-even aon-width-500,
-						aon-panelGrid-odd aon-width-100,
-						aon-panelGrid-even aon-width-auto">
-
-					<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}"
-						rendered="#{!purchaseInvoice.new}" />
-					<aon:outputText styleClass="aon-bold"
-						value="#{purchaseInvoice.to.documentNumber}"
-						rendered="#{!purchaseInvoice.new}" />
-
-				</aon:panelGrid>
-				-->
 
 				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/form_detail.xhtml">
 					<ui:param name="invoiceController" value="#{purchaseInvoice}" />

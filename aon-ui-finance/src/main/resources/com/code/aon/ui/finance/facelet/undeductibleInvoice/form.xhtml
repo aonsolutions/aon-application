@@ -21,13 +21,13 @@
 					<ui:param name="skipSaveButton" value="#{undeductibleInvoice.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{!undeductibleInvoice.removable or !undeductibleInvoiceFinance.allPending}" />
 					<ui:param name="saveButtonReRender" value="undeductibleInvoiceForm" />
-					<ui:param name="showMoreMenu" value="#{true}" />					
+					<ui:param name="showMoreMenu" value="#{!undeductibleInvoice.new and undeductibleInvoiceDetail.to == null}" />
 					<ui:define name="moreMenuContent">					
 						<aon:menuItem id="finances"
 							value="#{bundle.aon_key_finance_description}"
 							title="#{bundle.aon_key_finance_accelerator}"
 							actionListener="#{undeductibleInvoice.generateFinances}"
-							rendered="#{undeductibleInvoiceDetail.model.rowCount > 0 and (!undeductibleInvoice.recorded or undeductibleInvoiceFinance.model.rowCount == 0)}"
+							rendered="#{undeductibleInvoice.toInvoiceTotalPrice != 0 and (!undeductibleInvoice.recorded or undeductibleInvoiceFinance.model.rowCount == 0)}"
 							styleClass="aon-icon-tree"
 							accesskey="#{bundle.aon_key_finance}">
 							<f:setPropertyActionListener target="#{undeductibleInvoice.backActionListener}"
@@ -39,7 +39,7 @@
 							<aon:menuItem id="record"
 								value="#{financeBundle.finance_record}"
 								actionListener="#{undeductibleInvoice.onRecordInvoice}"
-								rendered="#{undeductibleInvoiceDetail.model.rowCount > 0 and !undeductibleInvoice.recorded}"
+								rendered="#{!undeductibleInvoice.recorded and undeductibleInvoiceDetail.model.rowCount > 0}"
 								styleClass="aon-icon-task-assume"
 								reRender="undeductibleInvoiceForm" 
 								onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -55,8 +55,8 @@
 						</c:if>
 						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signMenuItem.xhtml">
 							<ui:param name="signController" value="#{undeductibleInvoiceSigner}" />
-							<ui:param name="skipSignButton" value="#{undeductibleInvoice.new or undeductibleInvoice.to.signed or (!certificate.signable) or (!undeductibleInvoice.attachmentAvailable)}" />
-							<ui:param name="skipCancelSignButton" value="#{undeductibleInvoice.new or (!undeductibleInvoice.to.signed) or (!undeductibleInvoice.attachmentAvailable)}" />
+							<ui:param name="skipSignButton" value="#{undeductibleInvoice.signed or !certificate.signable or !undeductibleInvoice.attachmentAvailable}" />
+							<ui:param name="skipCancelSignButton" value="#{!undeductibleInvoice.signed or !undeductibleInvoice.attachmentAvailable}" />
 							<ui:param name="signButtonReRender" value="undeductibleInvoiceForm" />
 						</ui:include>
 						
@@ -74,7 +74,6 @@
 						</aon:menuItem>
 						<aon:menuItem id="documents"
 							value="#{bundle.aon_documents}"
-							rendered="#{!undeductibleInvoice.new}"
 							iconClass="aon-icon-payroll"
 							reRender="showDocumentWindow">
 							<f:setPropertyActionListener target="#{undeductibleInvoice.showDocumentWindow}"
@@ -82,7 +81,6 @@
 						</aon:menuItem>						
 						<aon:menuItem id="comments"
 							value="#{bundle.aon_comment}"
-							rendered="#{!undeductibleInvoice.new}"
 							iconClass="aon-icon-notes"
 							reRender="showCommentsWindow">
 							<f:setPropertyActionListener target="#{undeductibleInvoice.showCommentsWindow}"
@@ -90,18 +88,15 @@
 						</aon:menuItem>		
 						<aon:menuItem id="remarks"
 							value="#{bundle.aon_remark}"
-							rendered="#{!undeductibleInvoice.new}"
 							iconClass="aon-icon-notes"
 							reRender="showRemarksWindow">
 							<f:setPropertyActionListener target="#{undeductibleInvoice.showRemarksWindow}"
 								value="#{true}" />							
 						</aon:menuItem>		
-						
 						<c:if test="#{aonRole.accountingOperator}">
 							<rich:menuSeparator id="invoiceAddsMenuSeparator1" />
 							<aon:menuItem id="fiscalInformation"
 								value="#{financeBundle.finance_fiscal_information}"
-								rendered="#{!undeductibleInvoice.new}"
 								iconClass="aon-icon-info"
 								reRender="showFiscalInformationWindow">
 								<f:setPropertyActionListener target="#{undeductibleInvoice.showFiscalInformationWindow}"
@@ -110,9 +105,9 @@
 						</c:if>
 
 						<rich:menuSeparator id="invoiceAddsMenuSeparator" />
+
 						<aon:menuItem id="audit-info"
 							value="#{bundle.aon_audit}"
-							rendered="#{!undeductibleInvoice.new}"
 							iconClass="aon-icon-audit"
 							reRender="showAuditInfoWindow">
 							<f:setPropertyActionListener target="#{undeductibleInvoice.showAuditInfoWindow}"
@@ -399,9 +394,9 @@
 						</aon:div>
 					</aon:div>
 					<aon:inputTextarea id="Invoice_comments" cols="145" rows="2"
+						value="#{undeductibleInvoice.to.comments}"
 						rendered="#{!empty undeductibleInvoice.to.comments}"
-						disabled="#{undeductibleInvoice.readOnly}"
-						value="#{undeductibleInvoice.to.comments}" />
+						disabled="#{undeductibleInvoice.readOnly}" />
 
 					<aon:div rendered="#{!empty undeductibleInvoice.to.remarks}">
 						<aon:outputLabel for="Invoice_remarks"
@@ -412,9 +407,9 @@
 						</aon:div>
 					</aon:div>
 					<aon:inputTextarea id="Invoice_remarks" cols="145" rows="2"
+						value="#{undeductibleInvoice.to.remarks}"
 						rendered="#{!empty undeductibleInvoice.to.remarks}"
-						disabled="#{undeductibleInvoice.readOnly}"
-						value="#{undeductibleInvoice.to.remarks}" />
+						disabled="#{undeductibleInvoice.readOnly}" />
 
 				</aon:panelGrid>
 

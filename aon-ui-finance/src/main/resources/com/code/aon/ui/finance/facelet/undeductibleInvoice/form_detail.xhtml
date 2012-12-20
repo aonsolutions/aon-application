@@ -22,7 +22,7 @@
 					<ui:param name="showNote" value="false" />
 					<ui:param name="showDataScroller" value="false" />
 					<ui:param name="skipResetButton" value="#{invoiceController.readOnly}" />
-					<ui:param name="skipLineEdition" value="true" />
+					<ui:param name="skipLineEdition" value="#{true}" />
 					<ui:param name="rowSelectorReRender" value="menuExt" />
 					<ui:param name="resetButtonReRender" value="menuExt" />
 					<ui:param name="newCancelButtonReRender" value="menuExt" />
@@ -30,14 +30,15 @@
 					<ui:param name="newSaveButtonReRender" value="menuExt,Invoice_total,financeContainer" />
 					<ui:param name="saveButtonReRender" value="menuExt,Invoice_total,financeContainer" />
 					<ui:param name="removeButtonReRender" value="menuExt,Invoice_total,financeContainer" />
-					<ui:param name="focusOnAdd" value="InvoiceDetail_item-New" />
-					<ui:param name="focusOnSelect" value="InvoiceDetail_item" />
+					<ui:param name="focusOnAdd" value="Item_id-New" />
+					<ui:param name="focusOnSelect" value="Item_id" />
 					<ui:define name="beginFormListContent">
 						<aon:commandLink id="#{dataTableId}-selectButton"
 							styleClass="aon-table-row-link" value="&#160;"
 							immediate="true" ajaxSingle="true" requestDelay="100"
 							rendered="#{!invoiceController.readOnly and detailController.editable}"
 							actionListener="#{detailController.onSelect}"
+							reRender="menuExt"
 							onkeyup="#{dataTableId}KeyUp(this)"
 							onfocus="#{dataTableId}SelectRow(this)"
 							onblur="#{dataTableId}DeselectRow(this)"
