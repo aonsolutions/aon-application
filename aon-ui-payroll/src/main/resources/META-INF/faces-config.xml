@@ -925,10 +925,6 @@
 			<value>contractBatchDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>20</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>ContractBatchDetail_contract_person_firstSurname</value>
 		</managed-property>
@@ -1097,10 +1093,6 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>leaveBatchDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -1278,10 +1270,6 @@
 			<value>fanBatchDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>20</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>FanBatchDetail_id</value>
 		</managed-property>
@@ -1457,10 +1445,6 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>certifica2BatchDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
