@@ -14,7 +14,6 @@ import com.aeat.jaxb.TipoRetenedorSalida2011;
 import com.aeat.jaxb.TipoRetenidoError2011;
 import com.aeat.jaxb.TipoRetenidoSalida2011;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -24,7 +23,6 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.IrpfDraftController;
-import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
 
 public class IrpfTestLauncher extends AbstractIrpfLauncher {
 	

@@ -37,8 +37,9 @@
 							<a4j:support event="onchange" reRender="salaryLauncherLaunchContent" ajaxSingle="true"/>
 						</aon:selectOneMenu>
 						<aon:outputText value="&#160;" />
-						<aon:outputText value="&#160;" />
-						
+						<aon:div>
+							<ui:insert name="addOnsFirstRow"/>
+						</aon:div>
 						
 						<aon:outputLabel for="Month" value="#{bundle.aon_month}" />
 						<h:panelGrid columns="3"  >
@@ -54,7 +55,9 @@
 				   			</rich:inputNumberSpinner>
 						</h:panelGrid>
 						<aon:outputText value="&#160;" />
-						<aon:outputText value="&#160;" />
+						<aon:div>
+							<ui:insert name="addOnsSecondRow"/>
+						</aon:div>
 						
 						<ui:insert name="addOnsCriteria"/>
 	
@@ -62,21 +65,17 @@
 							<ui:param name="lookupTo" value="#{salaryLauncher.params.person}" />
 							<ui:param name="skipNewButton" value="#{true}" />
 						</ui:include>
-						
 						<aon:outputText value="&#160;" />
-						<aon:div>
-							<ui:insert name="addOnsFirstRow"/>
-						</aon:div>
-	
+						<aon:outputText value="&#160;" />
+						
+						<!--  
 						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{salaryLauncher.params.enterprise}" />
 							<ui:param name="skipNewButton" value="#{true}" />
 						</ui:include>
-						
 						<aon:outputText value="&#160;" />
-						<aon:div>
-							<ui:insert name="addOnsSecondRow"/>
-						</aon:div>
+						<aon:outputText value="&#160;" />
+						-->
 						
 						<aon:outputText value="&#160;" />
 						<aon:div >

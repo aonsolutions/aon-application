@@ -20,7 +20,7 @@ public class SalaryLauncherParams {
 	private static final String ENTERPRISE_ALIAS = "enterprise_registry.id";
 	private static final String PERSON_ALIAS = "person_registry.id";
 
-	private Enterprise enterprise;
+//	private Enterprise enterprise;
 	private Person person;
 	private Month issueMonth;
 	private int issueYear;
@@ -32,13 +32,13 @@ public class SalaryLauncherParams {
 		initialize();
 	}
 
-	public Enterprise getEnterprise() {
-		return enterprise;
-	}
-
-	public void setEnterprise(Enterprise enterprise) {
-		this.enterprise = enterprise;
-	}
+//	public Enterprise getEnterprise() {
+//		return enterprise;
+//	}
+//
+//	public void setEnterprise(Enterprise enterprise) {
+//		this.enterprise = enterprise;
+//	}
 
 	public Person getPerson() {
 		return person;
@@ -142,7 +142,7 @@ public class SalaryLauncherParams {
 			IManagerBean personBean = BeanManager.getManagerBean(Person.class);
 			setPerson((Person) personBean.createNewTo());
 			IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
-			setEnterprise((Enterprise) enterpriseBean.createNewTo());
+//			setEnterprise((Enterprise) enterpriseBean.createNewTo());
 		} catch (ManagerBeanException e) {
 			String msg = "Error de inicializazión";
 			AonUtil.addErrorMessage(msg);
@@ -157,10 +157,10 @@ public class SalaryLauncherParams {
 
 	public Criteria getCriteria() {
 		Criteria criteria = new Criteria();
-		if (getEnterprise() != null && getEnterprise().getId() != null) {
-			criteria = new Criteria();
-			criteria.addEqualExpression(ENTERPRISE_ALIAS, getEnterprise().getId());
-		}
+//		if (getEnterprise() != null && getEnterprise().getId() != null) {
+//			criteria = new Criteria();
+//			criteria.addEqualExpression(ENTERPRISE_ALIAS, getEnterprise().getId());
+//		}
 		if (getPerson() != null && getPerson().getId() != null) {
 			criteria = criteria == null ? new Criteria() : criteria;
 			criteria.addEqualExpression(PERSON_ALIAS, getPerson().getId());

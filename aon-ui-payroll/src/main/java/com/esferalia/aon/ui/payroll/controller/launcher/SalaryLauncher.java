@@ -1,7 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller.launcher;
 
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.Date;
@@ -21,13 +20,12 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -108,9 +106,6 @@ public class SalaryLauncher extends AbstractSalaryLauncher{
 			if(getParams().getPerson()!=null && getParams().getPerson().getId()!=null){
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_PERSON_ID), getParams().getPerson().getId());
 			}
-			if(getParams().getEnterprise()!=null && getParams().getEnterprise().getId()!=null){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID), getParams().getEnterprise().getId());
-			}
 			if(getParams().getStartDate()!=null){
 				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), getParams().getStartDate());
 			}
@@ -134,10 +129,7 @@ public class SalaryLauncher extends AbstractSalaryLauncher{
 	@Override
 	protected void execute(SalaryLauncherParams parameters) throws SalaryException {
 		try {
-
-			String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());
-			Connection connection = HibernateUtil.getSQLConnection(sessionFactory);
-			SQLSalaryBuilder salaryBuilder = new SQLSalaryBuilder(connection);
+			SQLSalaryBuilder salaryBuilder = new SQLSalaryBuilder(getConnection());
 			listener = new ListSalaryBuilderListener();
 			listener.setDebugEnabled(isDebugEnabled());
 			listener.setSaveLog(isSaveLog());

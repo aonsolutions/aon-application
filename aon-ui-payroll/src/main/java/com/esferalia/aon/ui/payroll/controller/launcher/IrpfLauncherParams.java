@@ -7,8 +7,6 @@ import javax.faces.event.AbortProcessingException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.Month;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
@@ -22,19 +20,10 @@ public class IrpfLauncherParams {
 	final static String PERSON_REGISTRY_COLUMN_NAME = "person.registry";
 
 	private Date date;
-	private Enterprise enterprise;
 	private Person person;
 	
 	public IrpfLauncherParams() {
 		initialize();
-	}
-
-	public Enterprise getEnterprise() {
-		return enterprise;
-	}
-
-	public void setEnterprise(Enterprise enterprise) {
-		this.enterprise = enterprise;
 	}
 
 	public Person getPerson() {
@@ -60,7 +49,6 @@ public class IrpfLauncherParams {
 			IManagerBean personBean = BeanManager.getManagerBean(Person.class);
 			setPerson((Person) personBean.createNewTo());
 			IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
-			setEnterprise((Enterprise) enterpriseBean.createNewTo());
 		} catch (ManagerBeanException e) {
 			String msg = "Error de inicializazión";
 			AonUtil.addErrorMessage(msg);
@@ -71,10 +59,6 @@ public class IrpfLauncherParams {
 
 	public Criteria getCriteria() {
 		Criteria criteria = new Criteria();
-		if (getEnterprise() != null && getEnterprise().getId() != null) {
-			criteria = new Criteria();
-			criteria.addEqualExpression(ENTERPRISE_ALIAS, getEnterprise().getId());
-		}
 		if (getPerson() != null && getPerson().getId() != null) {
 			criteria = criteria == null ? new Criteria() : criteria;
 			criteria.addEqualExpression(PERSON_ALIAS, getPerson().getId());

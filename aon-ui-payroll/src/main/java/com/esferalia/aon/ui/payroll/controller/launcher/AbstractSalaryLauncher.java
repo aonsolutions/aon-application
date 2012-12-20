@@ -18,12 +18,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -35,41 +30,29 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
-import com.code.aon.common.AonException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Order;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.IContractBonus;
-import com.esferalia.aon.payroll.calculator.IContractCost;
-import com.esferalia.aon.payroll.calculator.IContractDeduction;
-import com.esferalia.aon.payroll.calculator.IContractEmbargo;
-import com.esferalia.aon.payroll.calculator.IContractPayment;
-import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLExtraSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester.UnExpectedValue;
-import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.sql.SQLConstants;
-import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.CustomerColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
-import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryBuilderListenerLevel;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
-import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.launcher.ListSalaryBuilderListener.LogMessage;
 
@@ -84,6 +67,9 @@ public abstract class AbstractSalaryLauncher
 	private SalaryLauncherParams params;
 	
 	protected ListSalaryBuilderListener listener;
+	
+	private Connection connection;
+	private Criteria criteria;
 
 	public void onStart(ActionEvent event) {
 		setParams(null);
@@ -178,8 +164,13 @@ public abstract class AbstractSalaryLauncher
 			throw new AbortProcessingException("Imposible descargar fichero");
 		}
 	}
-
+	
 	public void onExecute(ActionEvent event) {
+		String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+		connection = HibernateUtil.getSQLConnection(sessionFactory);
+		
+		buildCriteria();
+		
 		setPollEnabled(true);
 		TestThread thread =  
 			new TestThread();
@@ -187,8 +178,7 @@ public abstract class AbstractSalaryLauncher
 	}
 	
 	protected Connection getConnection(){
-		String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());
-		return  HibernateUtil.getSQLConnection(sessionFactory);
+		return connection;
 	}
 	
 	
@@ -269,8 +259,10 @@ public abstract class AbstractSalaryLauncher
 	}
 	
 	protected Criteria getCriteria() {
-		Criteria criteria = new Criteria();
-		
+		return criteria;
+	}
+	protected Criteria buildCriteria() {
+		criteria = new Criteria();
 		
 		Expression customerActive = 
 			ExpressionUtilities.getEqualExpression(SQLConstants.CUSTOMER + "." + CustomerColumns.STATUS, 
@@ -286,11 +278,10 @@ public abstract class AbstractSalaryLauncher
 					params.getPerson().getId());
 		}
 
-		if (params.getEnterprise() != null && params.getEnterprise().getId() != null ) {
-			criteria.addEqualExpression(
-					SQLContractSalaryCalculatorContext.ENTERPRISE_REGISTRY + "." + RegistryColumns.ID, 
-					params.getEnterprise().getId());
-		}
+		criteria.addEqualExpression(
+				SQLConstants.CONTRACT + "." + RegistryColumns.DOMAIN, 
+				DomainManager.getCurrentDomain());
+		
 		return criteria;
 	}
 

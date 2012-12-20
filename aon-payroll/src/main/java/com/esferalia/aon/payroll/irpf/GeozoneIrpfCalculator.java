@@ -52,7 +52,7 @@ public class GeozoneIrpfCalculator extends IrpfCalculator {
 		+ "FROM geozone_irpf"
 		+ ", geozone_irpf_descendant"
 		+ " WHERE geozone_irpf.id = geozone_irpf_descendant.geozone_irpf "
-		+ " AND geozone_irpf.geozone = ?" 
+		+ " AND geozone_irpf.geozone_code = ?" 
 		+ " AND geozone_irpf.start_date <= ?"
 		+ " AND ( geozone_irpf.end_date >= ? OR geozone_irpf.end_date IS NULL )"
 		+ " ORDER BY geozone_irpf.amount, geozone_irpf_descendant.descendant";
@@ -62,7 +62,7 @@ public class GeozoneIrpfCalculator extends IrpfCalculator {
 		+ "FROM geozone_irpf"
 		+ ", geozone_irpf_handicap"
 		+ " WHERE geozone_irpf.id = geozone_irpf_handicap.geozone_irpf "
-		+ " AND geozone_irpf.geozone = ?" 
+		+ " AND geozone_irpf.geozone_code = ?" 
 		+ " AND geozone_irpf.start_date <= ?"
 		+ " AND ( geozone_irpf.end_date >= ? OR geozone_irpf.end_date IS NULL )"
 		+ " ORDER BY geozone_irpf.amount, geozone_irpf_handicap.handicap";

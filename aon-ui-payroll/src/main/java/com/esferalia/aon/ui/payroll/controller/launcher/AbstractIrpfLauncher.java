@@ -25,6 +25,7 @@ import javax.faces.event.ActionEvent;
 import com.aeat.jaxb.TipoRetenedorError2011;
 import com.aeat.jaxb.TipoRetenidoError2011;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
@@ -46,7 +47,8 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHandler{
 	
 	{
-		Connection connection = getConnection();
+		String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+		Connection connection = HibernateUtil.getSQLConnection(sessionFactory);
 		Date date = Calendar.getInstance().getTime();
 		try {
 			IrpfCalculator.registerCalculator(Administration.ALAVA, 
@@ -198,6 +200,8 @@ public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHan
 	
 	private SQLAEAT2011Factory sqlaeat2011Factory; 
 	
+	private Connection connection;
+	private Criteria criteria;
 	
 	private int warns = 0;
 	private int errors = 0;
@@ -291,6 +295,11 @@ public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHan
 	}
 
 	public void onExecute(ActionEvent event) {
+		String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+		connection = HibernateUtil.getSQLConnection(sessionFactory);
+		
+		buildCriteria();
+		
 		setPollEnabled(true);
 		TestThread thread =  
 			new TestThread();
@@ -341,9 +350,8 @@ public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHan
 	public abstract void onWarn(TipoRetenedorError2011 retenedorError2011,
 			TipoRetenidoError2011 retenidoError2011) ;
 	
-	protected static Connection getConnection(){
-		String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());
-		return  HibernateUtil.getSQLConnection(sessionFactory);
+	protected Connection getConnection(){
+		return connection;
 	}
 	
 	
@@ -358,9 +366,12 @@ public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHan
 		
 		return sqlaeat2011Factory;
 	}
-
+	
 	protected Criteria getCriteria() {
-		Criteria criteria = new Criteria();
+		return criteria;
+	}
+	protected Criteria buildCriteria() {
+		criteria = new Criteria();
 		
 		
 		Expression customerActive = 
@@ -376,12 +387,10 @@ public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHan
 					SQLContractSalaryCalculatorContext.PERSON_REGISTRY + "." + RegistryColumns.ID, 
 					params.getPerson().getId());
 		}
-
-		if (params.getEnterprise() != null && params.getEnterprise().getId() != null ) {
-			criteria.addEqualExpression(
-					SQLContractSalaryCalculatorContext.ENTERPRISE_REGISTRY + "." + RegistryColumns.ID, 
-					params.getEnterprise().getId());
-		}
+		
+		criteria.addEqualExpression(
+				SQLConstants.CONTRACT + "." + RegistryColumns.DOMAIN, 
+				DomainManager.getCurrentDomain());
 		return criteria;
 	}
 

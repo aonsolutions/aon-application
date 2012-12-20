@@ -39,24 +39,15 @@
 							popupDateFormat="#{bundle.aon_date_pattern}">
 						</aon:selectInputDate>
 						<aon:outputText value="&#160;" />
-						<aon:outputText value="&#160;" />
+						<aon:div>
+							<ui:insert name="addOnsFirstRow"/>
+						</aon:div>
 						
 						
 						<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{irpfLauncher.params.person}" />
 							<ui:param name="skipNewButton" value="#{true}" />
 						</ui:include>
-						
-						<aon:outputText value="&#160;" />
-						<aon:div>
-							<ui:insert name="addOnsFirstRow"/>
-						</aon:div>
-	
-						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-							<ui:param name="lookupTo" value="#{irpfLauncher.params.enterprise}" />
-							<ui:param name="skipNewButton" value="#{true}" />
-						</ui:include>
-						
 						<aon:outputText value="&#160;" />
 						<aon:div>
 							<ui:insert name="addOnsSecondRow"/>
