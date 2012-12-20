@@ -172,7 +172,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 	private String obtainFeeDescription(CustomerFee customerFee, InvoicingGroup group, InvoicingParameters params) {
 		String description = customerFee.getDescription();
 		if (description.indexOf("${MONTH}") > 0) {
-			description = description.replace("${MONTH}", params.getMonth().getName(Locale.getDefault()).toUpperCase());
+			description = description.replace("${MONTH}", params.getMonth().getName(Locale.ROOT).toUpperCase());
 		}
 		if (description.indexOf("${YEAR}") > 0) {
 			description = description.replace("${YEAR}", Integer.toString(params.getYear()));
