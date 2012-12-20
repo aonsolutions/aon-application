@@ -122,7 +122,7 @@ a, a:hover, a:visited {
 .gwt-MenuBar-vertical .gwt-MenuItem-selected,
 .gwt-MenuBar-vertical .subMenuIcon-selected	{
 	border: none;
-	background: #EBEBEF;
+	background-color: #EBEBEF;
 
 }
 
@@ -155,6 +155,23 @@ a, a:hover, a:visited {
 	{
 	display: none;
 }
+
+
+@sprite .aon-MenuItemCheckYes {
+	gwt-image: "checkYes"; 
+}
+
+@sprite .aon-MenuItemCheckYes:hover {
+	gwt-image: "checkYes" !important; 
+}
+
+
+.aon-MenuItemCheckYes,
+.aon-MenuItemCheckYes:hover {
+	background-position: left;	
+	background-repeat:  no-repeat;
+}
+
 
 
 /*

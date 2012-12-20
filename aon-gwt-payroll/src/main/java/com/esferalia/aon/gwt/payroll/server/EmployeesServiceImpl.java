@@ -87,6 +87,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return getEnterprise(registryID, connection);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
 		} finally {
 			releaseFacesContext();
 		}
@@ -587,17 +590,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 					+ " WHERE " + REGISTRY + "." + RegistryColumns.ID + " = ?"
 					+ " AND " + REGISTRY + "." + RegistryColumns.ID + " = " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY
-					+ " AND ( " + CONTRACT + "." + ContractColumns.ID + " ) IN ( SELECT " + SALARY + "." + SalaryColumns.CONTRACT + " FROM " + SALARY + ") "
 					
-					//+ " AND ( " + CONTRACT + "." + ContractColumns.END_DATE + " IS NULL" 
-					//+ " OR " + CONTRACT + "." + ContractColumns.END_DATE + " >= ? )" 
+					//+ " AND ( " + CONTRACT + "." + ContractColumns.ID + " ) IN "
+					//+ " ( SELECT " + SALARY + "." + SalaryColumns.CONTRACT + " FROM " + SALARY + " WHERE " + SALARY + "." + SalaryColumns.END_DATE + " >= ? ) "
+					
+					+ " AND ( " + CONTRACT + "." + ContractColumns.END_DATE + " IS NULL" 
+					+ " OR " + CONTRACT + "." + ContractColumns.END_DATE + " >= ? )" 
 
 					+ " ORDER BY " + WORKPLACE + "." + WorkplaceColumns.ID + " ," + PERSON + "." + PersonColumns.FIRST_SURNAME;
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, registryID);
 
-			//stmt.setDate(2, getMonthStartDate());
+			stmt.setDate(2, getDefaultStartDate());
 			rs = stmt.executeQuery();
 
 			EnterpriseHandler enterpriseHandler = new EnterpriseHandler();
@@ -901,6 +906,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	private static java.sql.Date getMonthStartDate() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.DAY_OF_MONTH, 1);
+
+		return new java.sql.Date(calendar.getTimeInMillis());
+	}
+
+	private static java.sql.Date getDefaultStartDate() {
+		Calendar calendar = Calendar.getInstance();
+		
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH);
+		calendar.set(Calendar.YEAR, year - ( month < 2 ? 2 : 1 ) );
 
 		return new java.sql.Date(calendar.getTimeInMillis());
 	}

@@ -42,6 +42,9 @@ public class EnterpriseSite implements EntryPoint {
 
 		@Source("aon-menuBar.png")
 		ImageResource menuBar();
+
+		@Source("checkyes.png")
+		ImageResource checkYes();
 	}
 
 	interface Binder extends UiBinder<Widget, EnterpriseSite> {

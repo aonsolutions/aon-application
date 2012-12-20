@@ -316,28 +316,41 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 			private PopupPanel popup = 
 					new PopupPanel();
 			
+			
 			private boolean oldVisible = true; 
 			private boolean newVisible = true; 
 			
+			private MenuItem oldMenuItem;
+			private MenuItem newMenuItem;
 			
 			{
 				MenuBar menuBar = new MenuBar(true);
-				menuBar.addItem(new MenuItem("Antiguos Empleados", 
+				
+				oldMenuItem = new MenuItem("Antiguos Empleados", 
 						new Command() {
-							@Override
-							public void execute() {
-								setOldEmployeesVisible(oldVisible = !oldVisible);
-								popup.hide();
-							}
-						}));
-				menuBar.addItem(new MenuItem("Empleados Actuales", 
+					@Override
+					public void execute() {
+						setOldEmployeesVisible(oldVisible = !oldVisible);
+						oldMenuItem.setStyleName("aon-MenuItemCheckYes", oldVisible);
+						popup.hide();
+					}
+				});
+				oldMenuItem.setStyleName("aon-MenuItemCheckYes", oldVisible);
+				menuBar.addItem(oldMenuItem);
+				
+				newMenuItem = new MenuItem("Empleados Actuales", 
 						new Command() {
-							@Override
-							public void execute() {
-								setNewEmployeesVisible(newVisible = !newVisible);
-								popup.hide();
-							}
-						}));
+					@Override
+					public void execute() {
+						setNewEmployeesVisible(newVisible = !newVisible);
+						newMenuItem.setStyleName("aon-MenuItemCheckYes", newVisible);
+						popup.hide();
+					}
+				});
+				newMenuItem.setStyleName("aon-MenuItemCheckYes", newVisible);
+
+				menuBar.addItem(newMenuItem);
+
 				popup.add(menuBar);
 				popup.setStyleName("gwt-MenuBarPopup");
 				popup.setAutoHideEnabled(true);
