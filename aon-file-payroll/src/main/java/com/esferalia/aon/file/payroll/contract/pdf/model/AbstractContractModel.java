@@ -250,18 +250,20 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 		/* 
 		 * Contract ccc fields
 		 */
-		setPdfFieldValue(CCC_REG1,null);
-		setPdfFieldValue(CCC_REG2,null);
-		setPdfFieldValue(CCC_REG3,null);
-		setPdfFieldValue(CCC_REG4,null);
-		setPdfFieldValue(CCC_PROV1,null);
-		setPdfFieldValue(CCC_PROV2,null);
-		setPdfFieldValue(CCC_NISS,contract.getEnterpriseCCC().getCcc());
-		setPdfFieldValue(CCC_CONTROL_DIGIT1,null);
-		setPdfFieldValue(CCC_CONTROL_DIGIT2,null);
-		setPdfFieldValue(CCC_ACTIVITY,contract.getEnterpriseCCC().getActivity().getDescription());
-		setPdfFieldValue(CCC_ACTIVITY_CODE1,null);
-		setPdfFieldValue(CCC_ACTIVITY_CODE2,null);
+		if(contract.getEnterpriseCCC()!=null){
+			setPdfFieldValue(CCC_REG1,null);
+			setPdfFieldValue(CCC_REG2,null);
+			setPdfFieldValue(CCC_REG3,null);
+			setPdfFieldValue(CCC_REG4,null);
+			setPdfFieldValue(CCC_PROV1,null);
+			setPdfFieldValue(CCC_PROV2,null);
+			setPdfFieldValue(CCC_NISS,contract.getEnterpriseCCC().getCcc());
+			setPdfFieldValue(CCC_CONTROL_DIGIT1,null);
+			setPdfFieldValue(CCC_CONTROL_DIGIT2,null);
+			setPdfFieldValue(CCC_ACTIVITY,contract.getEnterpriseCCC().getActivity().getDescription());
+			setPdfFieldValue(CCC_ACTIVITY_CODE1,null);
+			setPdfFieldValue(CCC_ACTIVITY_CODE2,null);
+		}
 		/* 
 		 * Contract workplace fields
 		 */
