@@ -24,7 +24,7 @@
 
 	   @url salariesgroupIe6 salariesgroupIe6Data;
 
-	   .employeesIcon {
+	   .salariesIcon {
 	     background-image: salariesgroupIe6;
 	     width: 31px;
 	     height: 22px;
