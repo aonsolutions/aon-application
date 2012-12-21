@@ -51,7 +51,7 @@ public class AgreeementSalaryTableController extends ControllerAdapter implement
 	private DataModel salaryRows;
 	private Set<String> variables;
 	
-	private int pageLimit = BasicController.LIMIT;
+	private int pageLimit = AonUtil.getConfigurationController().getPageLimit();
 	
 	public static class SalaryRow {
 		

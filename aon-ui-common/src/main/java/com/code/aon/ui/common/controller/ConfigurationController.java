@@ -64,6 +64,10 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	private static final String AON_CONFIG_XML = "/WEB-INF/aon-config.xml";
 	
 	private static final String CONFIG_SHCHEMA = "config.xsd";
+	
+    public static final int DEFAULT_PAGE_LIMIT = 20;	
+
+    public static final int DEFAULT_LINES_PAGE_LIMIT = 10;
 
 	/** The all style sheets. */
 	private List<String> styleSheets;
@@ -80,6 +84,10 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	private LocaleElement[] locales;
 	
 	private AuthPrincipal principal;
+	
+	private int pageLimit = DEFAULT_PAGE_LIMIT;
+	
+	private int linesPageLimit = DEFAULT_LINES_PAGE_LIMIT;
 	
 	/**
 	 * The Constructor.
@@ -107,7 +115,23 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 		}
 		return BasicPrincipal.getAuthPrincipal();
 	}
-	
+
+	public int getPageLimit() {
+		return pageLimit;
+	}
+
+	public void setPageLimit(int pageLimit) {
+		this.pageLimit = pageLimit;
+	}
+
+	public int getLinesPageLimit() {
+		return linesPageLimit;
+	}
+
+	public void setLinesPageLimit(int linesPageLimit) {
+		this.linesPageLimit = linesPageLimit;
+	}
+
 	public AuthPrincipal getAuthPrincipal() {
 		return this.principal;
 	}

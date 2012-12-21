@@ -28,7 +28,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -42,7 +41,7 @@ public class BatchDocument {
 	
 	private Set<IAttachment> documents;
 	
-	private int pageLimit = BasicController.LIMIT;
+	private int pageLimit = AonUtil.getConfigurationController().getPageLimit();
 	
 	private String beanName;
 	

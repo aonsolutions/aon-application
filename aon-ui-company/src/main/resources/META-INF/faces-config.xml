@@ -1349,10 +1349,6 @@
 			<value>enterpriseRAttach</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>10</value>
-		</managed-property>
-		<managed-property>
 			<property-name>type</property-name>
 			<value>#{registryCollections.registryAttachmentTypes[5].value}</value>
 		</managed-property>

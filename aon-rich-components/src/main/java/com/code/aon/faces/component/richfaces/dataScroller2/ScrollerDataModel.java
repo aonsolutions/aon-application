@@ -1,6 +1,7 @@
 package com.code.aon.faces.component.richfaces.dataScroller2;
 
 import javax.el.ValueExpression;
+import javax.faces.component.UIData;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
@@ -15,14 +16,19 @@ public class ScrollerDataModel extends DataModel {
 
 	private ValueExpression page;
 	
-	private int pageSize;
+	private UIData table;
 
 	private int maxPages;
+	
+	private boolean hidePageSizeSelector;
 
 	public ScrollerDataModel(DataModel model) {
 		this.maxPages = 5;
-		this.pageSize = 0;
 		setModel(model);
+	}
+	
+	public void setTable(UIData table) {
+		this.table = table;
 	}
 
 	public DataModel getModel() {
@@ -79,12 +85,16 @@ public class ScrollerDataModel extends DataModel {
 	}
 
 	public int getPageSize() {
-		return pageSize;
+		return table.getRows();
 	}
-
-	public void setPageSize(int pageSize) {
-		this.pageSize = pageSize;
-	}
+	
+	public void setPageSize( int pageSize ) {
+		ValueExpression ve = table.getValueExpression("rows");
+		if ( ve != null ) {
+			ve.setValue(FacesContext.getCurrentInstance().getELContext(), pageSize);
+			setCurrentPage(0);
+		}
+	}	
 
 	public int getMaxPages() {
 		return maxPages;
@@ -215,4 +225,12 @@ public class ScrollerDataModel extends DataModel {
 		return Math.min(getNumberOfPages(), getMaxPages());
 	}
 
+	public boolean isHidePageSizeSelector() {
+		return hidePageSizeSelector;
+	}
+
+	public void setHidePageSizeSelector(boolean hidePageSizeSelector) {
+		this.hidePageSizeSelector = hidePageSizeSelector;
+	}
+	
 }

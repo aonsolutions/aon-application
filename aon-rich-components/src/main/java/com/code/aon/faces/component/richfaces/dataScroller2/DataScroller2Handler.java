@@ -13,7 +13,6 @@ import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.code.aon.faces.component.richfaces.form.FormHandler;
 import com.code.aon.faces.component.util.FaceletUtil;
-import com.code.aon.faces.controller.IRichConstants;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
 import com.sun.facelets.tag.TagAttribute;
@@ -44,6 +43,8 @@ public class DataScroller2Handler extends TagHandler implements IRichFacesTags {
    	
    	private static final String PAGE = "page";
    	
+   	private static final String HIDE_PAGE_SIZE_SELECTOR = "hidePageSizeSelector";
+   	
 	private TagAttribute forTag;
 
 	/**
@@ -57,7 +58,6 @@ public class DataScroller2Handler extends TagHandler implements IRichFacesTags {
 		forTag = getRequiredAttribute(FOR);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private UIData getDataTable( FaceletContext ctx, UIComponent parent ) {
 		String id = forTag.getValue(ctx);
 		UIData table = (UIData) ComponentSupport.findChild( parent, id );
@@ -66,14 +66,6 @@ public class DataScroller2Handler extends TagHandler implements IRichFacesTags {
 			table = FormHandler.getDataTableMap(root).get( id );
 		}
 		return table;
-	}
-	
-	private int getPageSize( FaceletContext ctx, UIData table ) {
-		int rows = 0;
-		if ( table != null ) {
-			rows = table.getRows();
-		}
-		return rows;
 	}
 	
 	private String getScrollerModelId( FaceletContext ctx ) {
@@ -105,7 +97,11 @@ public class DataScroller2Handler extends TagHandler implements IRichFacesTags {
 		} else {
 			scrollerModel.setModel( model );
 		}		
-		scrollerModel.setPageSize( getPageSize(ctx, table) );		
+		scrollerModel.setTable( table );		
+		TagAttribute hideTag = getAttribute(HIDE_PAGE_SIZE_SELECTOR);
+		if ( hideTag != null ) {
+			scrollerModel.setHidePageSizeSelector(hideTag.getBoolean(ctx));
+		}		
 		return scrollerModel;
 	}
 	

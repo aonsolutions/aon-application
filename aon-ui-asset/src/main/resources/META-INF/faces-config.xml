@@ -167,10 +167,6 @@
 			<value>com.code.aon.asset.AssetActivity</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>15</value>
-		</managed-property>
-		<managed-property>
 			<property-name>beanName</property-name>
 			<value>activityLines</value>
 		</managed-property>
@@ -231,10 +227,6 @@
 			<value>com.code.aon.asset.AssetFeature</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>15</value>
-		</managed-property>
-		<managed-property>
 			<property-name>beanName</property-name>
 			<value>assetFeature</value>
 		</managed-property>
@@ -273,10 +265,6 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.asset.AssetActivity</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>

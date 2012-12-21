@@ -66,9 +66,6 @@ public class BasicController extends AbstractPojoController implements IControll
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicController.class);
 	
-	/** Default limit of rows to be load from de data source. */
-    public static final int LIMIT = 20;	
-
 	private Criteria criteria = new Criteria();
 
 	private ITransferObject to;
@@ -81,9 +78,9 @@ public class BasicController extends AbstractPojoController implements IControll
 	private boolean queryOnStartUP;
 
 	/** Represent a manager of listeners */
-	protected ControllerListenerSupport controllerListenerSupport;
+	private ControllerListenerSupport controllerListenerSupport;
 
-	private int pageLimit = LIMIT;
+	private Integer pageLimit;
 
 	private int selectedIndex;
 
@@ -149,7 +146,14 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @return int
 	 */
 	public int getPageLimit() {
+		if ( pageLimit == null ) {
+			return getDefaultPageLimit();
+		}
 		return pageLimit;
+	}
+	
+	protected int getDefaultPageLimit() {
+		return AonUtil.getConfigurationController().getPageLimit();
 	}
 
 	/**
@@ -1317,14 +1321,14 @@ public class BasicController extends AbstractPojoController implements IControll
 	public String initialAction(){
 		try {
 			initializeModel();
-			if(getRowCount()==0){
+			if (getRowCount()==0) {
 				onReset(null);
 				return formAction();
-			} else if(getRowCount()==1){
+			} else if (getRowCount()==1) {
 				getModel().setRowIndex(0);
 				select(null);
 				return formAction();
-			} else if(getRowCount()<LIMIT){
+			} else if ( (getPageLimit()==-1) || (getRowCount()<getPageLimit()) ) {
 				return listAction();
 			} else {
 				return searchAction();

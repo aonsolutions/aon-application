@@ -442,10 +442,6 @@
 			<value>supplierRAttach</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>10</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
 		</managed-property>

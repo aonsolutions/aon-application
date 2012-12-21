@@ -109,4 +109,9 @@ public class CorporateIdentityController extends RegistryAttachController {
 		bd.addToBatch( (IAttachment) getSelectedTO() );
 	}
 	
+	@Override
+	protected int getDefaultPageLimit() {
+		return AonUtil.getConfigurationController().getPageLimit();
+	}	
+	
 }

@@ -858,10 +858,6 @@
 			<value>creditorRAttach</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>10</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
 		</managed-property>
@@ -1936,10 +1932,6 @@
 			<value>saleInvoiceAttach</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>10</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>InvoiceAttachment_type,InvoiceAttachment_description</value>
 		</managed-property>
@@ -2370,10 +2362,6 @@
 			<value>purchaseInvoiceAttach</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>10</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>InvoiceAttachment_type,InvoiceAttachment_description</value>
 		</managed-property>
@@ -2793,10 +2781,6 @@
 			<value>expenseInvoiceAttach</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>10</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>InvoiceAttachment_type,InvoiceAttachment_description</value>
 		</managed-property>
@@ -3210,10 +3194,6 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>undeductibleInvoiceAttach</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>

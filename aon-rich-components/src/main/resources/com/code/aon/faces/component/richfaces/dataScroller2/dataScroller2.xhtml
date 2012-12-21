@@ -18,17 +18,17 @@
 	</aon:div>
 
 	<aon:div styleClass="aon-dataScroller2" rendered="#{model.rowCount>0}">					
-	    <aon:panelGrid id="#{dataTable}MessageDataScroller" columns="2" columnClasses="aon-dataScroller2-text,aon-dataScroller2-buttons">
-			<aon:div>
+	    <aon:panelGrid id="#{dataTable}MessageDataScroller"
+	    	columns="3" columnClasses="aon-dataScroller2-text aon-nowrap,aon-width-all,aon-dataScroller2-text aon-nowrap aon-float-right">
+			<aon:panelGroup>
 				<aon:outputFormat value="#{bundle.aon_scroll}">
 					<f:param value="#{model.first+1}" />
 					<f:param value="#{model.last}" />
 					<f:param value="#{model.rowCount}" />
 				</aon:outputFormat>
-			</aon:div>
-			<c:if test="#{model.showControls}">
-				<aon:div>
-	
+			</aon:panelGroup>
+			<aon:panelGroup>
+				<c:if test="#{model.showControls}">	
 					<aon:commandButton id="#{dataTable}FirstScroll" ajaxSingle="true" process="#{dataTable}"
 						disabled="#{!model.previousNeeded}" actionListener="#{model.first}"
 						oncomplete="#{oncomplete}" requestDelay="100" eventsQueue="aon_ds"
@@ -83,9 +83,24 @@
 							<aon:actionHotKey key="end" disableInInput="true" />
 						</c:if>
 					</aon:commandButton>
-					
-				</aon:div>
-			</c:if>
+				</c:if>					
+			</aon:panelGroup>
+			<aon:panelGroup>
+				<c:if test="#{!model.hidePageSizeSelector and model.showControls}">
+					<aon:outputText styleClass="aon-margin-right"
+						value="#{bundle.aon_row_number}"/>
+					<aon:selectOneMenu value="#{model.pageSize}" >
+						<f:selectItem itemLabel="10" itemValue="10" />		
+						<f:selectItem itemLabel="15" itemValue="15" />
+						<f:selectItem itemLabel="20" itemValue="20" />
+						<f:selectItem itemLabel="25" itemValue="25" />
+						<f:selectItem itemLabel="50" itemValue="50" />
+						<f:selectItem itemLabel="100" itemValue="100" />
+						<a4j:support event="onchange" ajaxSingle="true" 
+							reRender="#{dataTable},#{dataTable}MessageDataScroller"/>				
+					</aon:selectOneMenu>
+				</c:if>			
+			</aon:panelGroup>	
 		</aon:panelGrid>	
 	</aon:div>
 

@@ -17,6 +17,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * LinesController is used to implement child Controllers.
@@ -34,6 +35,11 @@ public class LinesController extends BasicController {
 
 	/** cascade delete. */
 	private boolean cascadeDelete;
+
+	@Override
+	protected int getDefaultPageLimit() {
+		return AonUtil.getConfigurationController().getLinesPageLimit();
+	}
 
 	/**
 	 * Sets the master controller name.

@@ -199,10 +199,6 @@
 			<value>projectCommercialAttach</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>10</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>ProjectAttachment_description</value>
 		</managed-property>
@@ -1017,10 +1013,6 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>targetRAttach</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>

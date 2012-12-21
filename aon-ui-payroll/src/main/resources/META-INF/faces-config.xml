@@ -325,10 +325,6 @@
 			<value>contractAttach</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>10</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>ContractAttachment_attachDate</value>
 		</managed-property>
@@ -815,10 +811,6 @@
 			<value>contractGenerationAttach</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>10</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>ContractAttachment_attachDate</value>
 		</managed-property>
@@ -980,10 +972,6 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>contractBatchAttach</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -1150,10 +1138,6 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>leaveBatchAttach</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -1327,10 +1311,6 @@
 			<value>fanBatchAttach</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>10</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>FanBatchAttachment_attachDate desc</value>
 		</managed-property>
@@ -1502,10 +1482,6 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>certifica2BatchAttach</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
