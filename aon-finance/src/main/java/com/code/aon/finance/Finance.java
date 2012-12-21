@@ -35,7 +35,7 @@ public class Finance extends FinanceDB implements IBankAccountContainer, IScopab
 	private RegistryDocument registryFullDocument;
 
     public Finance() {
-		setDueDate( new Date() );
+		setDueDate(new Date());
 	}
     
 	@Transient
@@ -43,7 +43,7 @@ public class Finance extends FinanceDB implements IBankAccountContainer, IScopab
 		try {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression("Finance.financeGroup.id", getId());
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_GROUP_ID), getId());
 			criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_DUE_DATE));
 	        return financeBean.getList(criteria);
 		} catch (ManagerBeanException e) {

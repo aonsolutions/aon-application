@@ -11,11 +11,10 @@
 	<aon:panelGroup id="investmentContainer">
 		<c:if test="#{invoiceController.new}">
 			<aon:selectBooleanCheckbox id="Invoice_investment"
-				value="#{invoiceController.to.investment}"/>
+				value="#{invoiceController.to.investment}" ajaxSingle="true" />
 			<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
 				value="#{financeBundle.finance_invoice_investment}"/>
 		</c:if>
-	
 		
 		<c:if test="#{!invoiceController.new}">
 			<c:if test="#{!invoiceController.amortizationForm}">

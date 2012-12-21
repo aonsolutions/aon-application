@@ -99,8 +99,6 @@ public class BankStatementLink extends BankStatementLinkDB {
 		} else if (isFinanceBatch()) {
 			return Integer.toString(((FinanceBatch)getSourceTo()).getId());
 		} else if (isBankConcept()) {
-			// Para evitar el NullPointer en el caso de que se haya borrado el concepto bancario
-			// una vez se ha punteado la linea de extracto. 
 			BankConcept bankConcept = (BankConcept)getSourceTo();
 			if (bankConcept != null) {
 				Account bankConceptAccount = bankConcept.getAccount();
@@ -118,8 +116,6 @@ public class BankStatementLink extends BankStatementLinkDB {
 		} else if (isFinanceBatch()) {
 			return ((FinanceBatch)getSourceTo()).getDescription();
 		} else if (isBankConcept()) {
-			// Para evitar el NullPointer en el caso de que se haya borrado el concepto bancario
-			// una vez se ha punteado la linea de extracto
 			BankConcept bankConcept = (BankConcept)getSourceTo();
 			if (bankConcept != null) {
 				return bankConcept.getName();

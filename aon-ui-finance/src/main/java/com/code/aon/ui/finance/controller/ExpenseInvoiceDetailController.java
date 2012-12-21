@@ -1,16 +1,22 @@
 package com.code.aon.ui.finance.controller;
 
-import java.util.Date;
-
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tax;
+import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
+import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Registry;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 
@@ -31,7 +37,7 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 	}	
 
 	public void itemChanged(Item item) throws ManagerBeanException {
-		Date taxDate = ((Invoice)getMasterController().getTo()).getIssueDate();
+		Invoice invoice = (Invoice)getMasterController().getTo();
 		Tax vat = item.getProduct().getVat();
 		Tax retention = item.getProduct().getRetention();
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
@@ -39,13 +45,31 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 		invoiceDetail.setDescription(item.getProduct().getName() + (item.getDetail() !=null ? " " + item.getDetail() : ""));
 		invoiceDetail.setQuantity(1);
 		if (vat == null || invoiceDetail.getVatPercent() != vat.getPercentage()) {
-			invoiceDetail.setVatPercent(vat != null ? getTaxPercent(vat, taxDate, false) : 0);
+			invoiceDetail.setVatPercent(vat != null ? getTaxPercent(vat, invoice.getIssueDate(), false) : 0);
 			invoiceDetail.setVatQuota(getVatQuota(invoiceDetail));
 		}
 		if (retention == null || invoiceDetail.getRetentionPercent() != retention.getPercentage()) {
-			invoiceDetail.setRetentionPercent(retention != null ? getTaxPercent(retention, taxDate, false) : 0);
+			invoiceDetail.setRetentionPercent(retention != null ? getTaxPercent(retention, invoice.getIssueDate(), false) : 0);
 			invoiceDetail.setRetentionQuota(getRetentionQuota(invoiceDetail));
 		}
+
+		if (invoice.getRegistry() == null || invoice.getRegistry().getId() == null) {
+			((ExpenseInvoiceController)getMasterController()).creditorChanged(obtainExpenseLastCreditor(item));
+		}
+	}
+
+	private Creditor obtainExpenseLastCreditor(Item item) throws ManagerBeanException {
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_ID), item.getId());
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_TYPE), InvoiceType.EXPENSES);
+		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ISSUE_DATE), false);
+		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), false);
+		for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
+			Registry creditor = ((InvoiceDetail)ito).getInvoice().getRegistry();
+			return (Creditor)BeanManager.getManagerBean(Creditor.class).get(creditor.getId());
+		}
+		return null;
 	}
 
 	public void onTaxableBaseChanged(ValueChangeEvent event) {

@@ -9,14 +9,13 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.enumeration.TaxType;
-import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
-import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.finance.IFinanceMessages;
+import com.code.aon.ui.finance.controller.ExpenseInvoiceController;
 import com.code.aon.ui.finance.controller.ExpenseInvoiceDetailController;
 import com.code.aon.ui.finance.controller.InvoiceDetailController;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -48,7 +47,7 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 		ExpenseInvoiceDetailController controller = (ExpenseInvoiceDetailController)event.getController();
 		controller.setTotalChanged(0);
 		try {
-			Item item = obtainCreditorLastExpense((Invoice)controller.getMasterController().getTo(), ((InvoiceDetail)controller.getTo()).getLine());
+			Item item = ((ExpenseInvoiceController)controller.getMasterController()).obtainCreditorLastExpense(((InvoiceDetail)controller.getTo()).getLine());
 			if (item != null) {
 				controller.itemChanged(item);
 			}
@@ -92,21 +91,6 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		afterSaveExpenseDetail((ExpenseInvoiceDetailController)event.getController());
 		super.afterBeanUpdated(event);
-	}
-
-	private Item obtainCreditorLastExpense(Invoice invoice, int line) throws ManagerBeanException {
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_REGISTRY_ID), invoice.getRegistry().getId());
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_TYPE), InvoiceType.EXPENSES);
-		criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		criteria.addLessThanOrEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE), line);
-		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ISSUE_DATE), false);
-		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE), false);
-		for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
-			return ((InvoiceDetail)ito).getItem();
-		}
-		return null;
 	}
 
 	private void beforeSaveExpenseDetail(ExpenseInvoiceDetailController controller) {
