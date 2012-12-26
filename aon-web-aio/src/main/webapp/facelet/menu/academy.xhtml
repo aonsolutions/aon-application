@@ -27,7 +27,8 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="customer-academy" 
-										action="customer_search-academy" actionListener="#{customer.onEditSearch}"
+										action="customer_search-academy"
+										actionListener="#{customer.onEditSearch}"
 										value="#{academyBundle.academy_alumns}" >
 										<f:setPropertyActionListener target="#{customer.showAlumnData}" value="#{true}" />
 									</aon:commandLink>

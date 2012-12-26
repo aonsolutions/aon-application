@@ -27,42 +27,41 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="reservation_request" 
-										action="reservationRequest_search" actionListener="#{reservationRequest.onEditSearch}"
-										value="#{pmsBundle.pms_reservation_request_module}">
-									</aon:commandLink>
+										action="reservationRequest_search"
+										actionListener="#{reservationRequest.onEditSearch}"
+										value="#{pmsBundle.pms_reservation_request_module}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="reservation" 
-										action="reservation_list" actionListener="#{reservation.onLoad}"
-										value="#{pmsBundle.pms_reservation_module}">
-									</aon:commandLink>
+										action="reservation_list"
+										actionListener="#{reservation.onLoad}"
+										value="#{pmsBundle.pms_reservation_module}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="reservation-search"
-										action="reservation_search" actionListener="#{reservation.onEditSearch}"
-										value="#{pmsBundle.pms_reservation_search_module}">
-									</aon:commandLink>
+										action="reservation_search"
+										actionListener="#{reservation.onEditSearch}"
+										value="#{pmsBundle.pms_reservation_search_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="reservationIO" 
-										value="#{pmsBundle.pms_reservationIO_module}"
-										action="reservationIO_search" >
-										<aon:actionListener method="#{reservationIO.onInit}" />
-									</aon:commandLink>
+										action="reservationIO_search"
+										actionListener="#{reservationIO.onInit}"
+										value="#{pmsBundle.pms_reservationIO_module}" />
 								</aon:div>
 								<c:if test="#{pmsCollections.currentUserServiceHotelsCount > 0}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="serviceInvoice" 
-											action="serviceInvoice_list" actionListener="#{serviceInvoice.onLoad}"
-											value="#{pmsBundle.pms_service_invoice_module}">
-										</aon:commandLink>
+											action="serviceInvoice_list"
+											actionListener="#{serviceInvoice.onLoad}"
+											value="#{pmsBundle.pms_service_invoice_module}" />
 									</aon:div>
 								</c:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="rack"
-										action="rack_search" actionListener="#{rack.onEditSearch}"
-										value="#{pmsBundle.pms_rack_module}">
-									</aon:commandLink>
+										action="rack_search"
+										actionListener="#{rack.onEditSearch}"
+										value="#{pmsBundle.pms_rack_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
@@ -77,16 +76,16 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="divert" 
 										value="#{pmsBundle.pms_divert_module}"
-										action="divert_grid" >
-										<aon:actionListener method="#{divert.onEditSearch}" />
+										action="divert_grid"
+										actionListener="#{divert.onEditSearch}">
 										<aon:actionListener method="#{divert.onSearch}" />
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="divertReception" 
 										value="#{pmsBundle.pms_divertReception_module}"
-										action="divertReception_list" >
-										<aon:actionListener method="#{divertReception.onEditSearch}" />
+										action="divertReception_list" 
+										actionListener="#{divertReception.onEditSearch}" >
 										<aon:actionListener method="#{divertReception.onSearch}" />
 									</aon:commandLink>
 								</aon:div>
@@ -103,16 +102,15 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="room"
-											action="room_search" actionListener="#{room.onEditSearch}"
-											value="#{pmsBundle.pms_room_module}">
-										</aon:commandLink>
+											action="room_search"
+											actionListener="#{room.onEditSearch}"
+											value="#{pmsBundle.pms_room_module}" />
 									</aon:div>
 									<c:if test="#{aonRole.admin}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="feature" 
 												value="#{assetBundle.asset_feature_module}"
-												action="feature_grid" >
-											</aon:commandLink>
+												action="feature_grid" />
 										</aon:div>
 									</c:if>
 								</aon:div>
@@ -132,36 +130,36 @@
 								<c:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="pos" 
-											action="pos_search" actionListener="#{pos.onEditSearch}"
-											value="#{pmsBundle.pms_pos_module}">
-										</aon:commandLink>
+											action="pos_search"
+											actionListener="#{pos.onEditSearch}"
+											value="#{pmsBundle.pms_pos_module}" />
 									</aon:div>
 								</c:if>
 								<c:if test="#{aonRole.admin or aonRole.config or aonRole.saleOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="posShift" 
-											action="posShift_search" actionListener="#{posShift.onEditSearch}"
-											value="#{pmsBundle.pms_posShift_module}">
-										</aon:commandLink>
+											action="posShift_search"
+											actionListener="#{posShift.onEditSearch}"
+											value="#{pmsBundle.pms_posShift_module}" />
 									</aon:div>
 								</c:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="pos_opening" 
-										action="posOpening_form" actionListener="#{posOpening.onInit}"
-										value="#{pmsBundle.pms_posOpening_module}">
-									</aon:commandLink>
+										action="posOpening_form"
+										actionListener="#{posOpening.onInit}"
+										value="#{pmsBundle.pms_posOpening_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="pos_closing" 
-										action="posClosing_form" 
-										value="#{pmsBundle.pms_posCashCount_module}">
-										<aon:actionListener method="#{posClosing.onInit}" />
-									</aon:commandLink>
+										action="posClosing_form"
+										actionListener="#{posClosing.onInit}" 
+										value="#{pmsBundle.pms_posCashCount_module}" />
 								</aon:div>
 								<c:if test="#{aonRole.financeOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="pos_finance_bath" 
-											action="posFinance_search" actionListener="#{posFinance.onEditSearch}"
+											action="posFinance_search"
+											actionListener="#{posFinance.onEditSearch}"
 											value="#{pmsBundle.pms_posFinance_module}" />
 									</aon:div>
 								</c:if>
@@ -177,9 +175,9 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="workPlanning" 
-										action="workPlanning_search" actionListener="#{workPlanning.onInit}"
-										value="#{pmsBundle.pms_workPlanning_module}">
-									</aon:commandLink>
+										action="workPlanning_search"
+										actionListener="#{workPlanning.onInit}"
+										value="#{pmsBundle.pms_workPlanning_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
@@ -193,15 +191,15 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="boardList" 
-										action="boardList_list" actionListener="#{boardList.onInit}"
-										value="#{pmsBundle.pms_boardList_module}">
-									</aon:commandLink>
+										action="boardList_list"
+										actionListener="#{boardList.onInit}"
+										value="#{pmsBundle.pms_boardList_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="boardBooking" 
-										action="boardBooking_search" actionListener="#{boardBooking.onInit}"
-										value="#{pmsBundle.pms_boardBooking_module}">
-									</aon:commandLink>
+										action="boardBooking_search"
+										actionListener="#{boardBooking.onInit}"
+										value="#{pmsBundle.pms_boardBooking_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
@@ -215,21 +213,21 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="roomBooking" 
-										action="roomBooking_search" actionListener="#{roomBooking.onInit}"
-										value="#{pmsBundle.pms_roomBooking_module}">
-									</aon:commandLink>
+										action="roomBooking_search"
+										actionListener="#{roomBooking.onInit}"
+										value="#{pmsBundle.pms_roomBooking_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="emptyRoomList"
-										action="emptyRoom_search" actionListener="#{emptyRoom.onInit}"
-										value="#{pmsBundle.pms_emptyRoom_module}">
-									</aon:commandLink>
+										action="emptyRoom_search"
+										actionListener="#{emptyRoom.onInit}"
+										value="#{pmsBundle.pms_emptyRoom_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="hotelGuestList"
-										action="hotelGuest_search" actionListener="#{hotelGuest.onInit}"
-										value="#{pmsBundle.pms_hotelGuest_module}">
-									</aon:commandLink>
+										action="hotelGuest_search"
+										actionListener="#{hotelGuest.onInit}"
+										value="#{pmsBundle.pms_hotelGuest_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>

@@ -76,13 +76,14 @@
 									<aon:outputText value="#{financeBundle.finance_statement_menu}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="bankStatement"
-											value="#{financeBundle.finance_bank_statement_module}"
-											rendered="#{bankStatement.availableRegistryBanks > 0}"
-											actionListener="#{bankStatement.onEditSearch}"
-											action="bankStatement_search" />
-									</aon:div>
+									<c:if test="#{bankStatement.availableRegistryBanks > 0}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="bankStatement"
+												action="bankStatement_search"
+												actionListener="#{bankStatement.onEditSearch}"
+												value="#{financeBundle.finance_bank_statement_module}"/>
+										</aon:div>
+									</c:if>
 									<c:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="bankConcept"
@@ -106,15 +107,15 @@
 									<aon:div styleClass="aon-direct-access-list">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="cashFlowForecast"
-												value="#{financeBundle.finance_cashflow_forecast_module}"
+												action="cashFlowForecast_search"
 												actionListener="#{cashFlowForecast.onEditSearch}"
-												action="cashFlowForecast_search" />
+												value="#{financeBundle.finance_cashflow_forecast_module}"/>
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="cashFlowForecastReport"
-												value="#{financeBundle.finance_cashflow_forecast_report_module}"
+												action="cashFlowForecastReport_search"
 												actionListener="#{cashFlowForecastReport.onEditSearch}"
-												action="cashFlowForecastReport_search" />
+												value="#{financeBundle.finance_cashflow_forecast_report_module}"/>
 										</aon:div>
 									</aon:div>
 								</aon:panelGrid>
@@ -128,16 +129,19 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="corporateIdentityReceipt" action="corporateIdentity_receipt"
+										<aon:commandLink id="corporateIdentityReceipt"
+											action="corporateIdentity_receipt"
 											actionListener="#{corporateIdentity.onInit}"
 											value="#{registryBundle.registry_corporateIdentity_receipt}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="checks" action="util_checking"
+										<aon:commandLink id="checks"
+											action="util_checking"
 											value="#{financeBundle.finance_checking_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="checks2" action="invoice_checking"
+										<aon:commandLink id="checks2"
+											action="invoice_checking"
 											value="#{financeBundle.finance_invoice_checking_module}" />
 									</aon:div>
 									<c:if test="#{domainSwitcher.type == 'HOTEL'}">

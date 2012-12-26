@@ -28,7 +28,8 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="fiscalBatch" 
-										action="fiscalBatch_search" actionListener="#{fiscalBatch.onEditSearch}"
+										action="fiscalBatch_search"
+										actionListener="#{fiscalBatch.onEditSearch}"
 										value="#{fiscalBundle.fiscal_batch_module}" />
 								</aon:div>
 							</aon:div>
@@ -44,7 +45,8 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="vatTax" 
-											action="vatTax_search" actionListener="#{vatTax.onEditSearch}"
+											action="vatTax_search"
+											actionListener="#{vatTax.onEditSearch}"
 											value="#{fiscalBundle.fiscal_model_303_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -64,22 +66,26 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="mod111" 
-											action="mod111_search" actionListener="#{mod111.onEditSearch}"
+											action="mod111_search"
+											actionListener="#{mod111.onEditSearch}"
 											value="#{fiscalBundle.fiscal_model_111_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="mod115" 
-											action="mod115_search" actionListener="#{mod115.onEditSearch}"
+											action="mod115_search"
+											actionListener="#{mod115.onEditSearch}"
 											value="#{fiscalBundle.fiscal_model_115_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="mod123" 
-											action="mod123_search" actionListener="#{mod123.onEditSearch}"
+											action="mod123_search"
+											actionListener="#{mod123.onEditSearch}"
 											value="#{fiscalBundle.fiscal_model_123_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="mod130" 
-											action="mod130_search" actionListener="#{mod130.onEditSearch}"
+											action="mod130_search"
+											actionListener="#{mod130.onEditSearch}"
 											value="#{fiscalBundle.fiscal_model_130_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -89,7 +95,8 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="renting" 
-											action="renting_search" actionListener="#{renting.onEditSearch}"
+											action="renting_search"
+											actionListener="#{renting.onEditSearch}"
 											style="color:red;"
 											value="VIEJO - #{fiscalBundle.fiscal_model_115_180_module}" />
 									</aon:div>
@@ -104,17 +111,20 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="mod_340_report" 
-											action="mod340_search" actionListener="#{mod340.onReset}"
+											action="mod340_search"
+											actionListener="#{mod340.onReset}"
 											value="#{fiscalBundle.fiscal_model_340_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="mod347_report" 
-											action="mod347_list" actionListener="#{mod347.onEditSearch}"
+											action="mod347_list"
+											actionListener="#{mod347.onEditSearch}"
 											value="#{fiscalBundle.fiscal_mod347_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="mod349_report" 
-											action="mod349_list" actionListener="#{mod349.onEditSearch}" 
+											action="mod349_list"
+											actionListener="#{mod349.onEditSearch}" 
 											value="#{fiscalBundle.fiscal_model_349_module}" />
 									</aon:div>																
 								</aon:div>
@@ -173,7 +183,8 @@
 											value="#{accountingBundle.accounting_default_params_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="fiscalParams" action="fiscalParams"
+										<aon:commandLink id="fiscalParams"
+											action="fiscalParams"
 											actionListener="#{fiscalParams.onLoad}"
 											value="#{fiscalBundle.fiscal_parameters_module}" />
 									</aon:div>
@@ -241,27 +252,27 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleInvoiceRecorder-fiscal"
-											value="#{financeBundle.finance_sale_invoice_recording_module}"
+											action="saleInvoiceRecorder_search-fiscal"
 											actionListener="#{saleInvoiceRecorder.onEditSearch}"
-											action="saleInvoiceRecorder_search-fiscal" />
+											value="#{financeBundle.finance_sale_invoice_recording_module}"/>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseInvoiceRecorder-fiscal"
-											value="#{financeBundle.finance_purchase_invoice_recording_module}"
+											action="purchaseInvoiceRecorder_search-fiscal"
 											actionListener="#{purchaseInvoiceRecorder.onEditSearch}"
-											action="purchaseInvoiceRecorder_search-fiscal" />
+											value="#{financeBundle.finance_purchase_invoice_recording_module}"/>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="expenseInvoiceRecorder-fiscal"
-											value="#{financeBundle.finance_expense_invoice_recording_module}"
+											action="expenseInvoiceRecorder_search-fiscal"
 											actionListener="#{expenseInvoiceRecorder.onEditSearch}"
-											action="expenseInvoiceRecorder_search-fiscal" />
+											value="#{financeBundle.finance_expense_invoice_recording_module}"/>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="undeductibleInvoiceRecorder-fiscal"
-											value="#{financeBundle.finance_undeductible_invoice_recording_module}"
+											action="undeductibleInvoiceRecorder_search-fiscal"
 											actionListener="#{undeductibleInvoiceRecorder.onEditSearch}"
-											action="undeductibleInvoiceRecorder_search-fiscal" />
+											value="#{financeBundle.finance_undeductible_invoice_recording_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="financeTrackingEntry-fiscal"

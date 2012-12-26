@@ -28,18 +28,21 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="commercialOperation"
-											action="projectCommercial_search" actionListener="#{projectCommercial.onEditSearch}"
+											action="projectCommercial_search"
+											actionListener="#{projectCommercial.onEditSearch}"
 											value="#{commercialBundle.commercial_operation_module}" />
 									</aon:div>															
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="commercialTracking"
-											action="commercialTracking_search" actionListener="#{commercialTracking.onEditSearch}"
+											action="commercialTracking_search"
+											actionListener="#{commercialTracking.onEditSearch}"
 											value="#{commercialBundle.commercial_tracking_module}" />
 									</aon:div>
 									<c:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="commercialActivity"
-												action="commercialActivity" actionListener="#{commercialActivity.onSearch}" 
+												action="commercialActivity"
+												actionListener="#{commercialActivity.onSearch}" 
 												value="#{commercialBundle.commercial_activity_module}" />
 										</aon:div>
 									</c:if>
@@ -56,18 +59,21 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="offer" 
-										action="offer_search" actionListener="#{offer.onEditSearch}"
+										action="offer_search"
+										actionListener="#{offer.onEditSearch}"
 										value="#{commercialBundle.commercial_offer_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="sales-commercial" 
-										action="sales_search-commercial" actionListener="#{sales.onEditSearch}"
+										action="sales_search-commercial"
+										actionListener="#{sales.onEditSearch}"
 										value="#{salesBundle.sales_module}" />
 								</aon:div>
 								<c:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="commercialTerm"
-											action="commercialTerm" actionListener="#{commercialTerm.onSearch}" 
+											action="commercialTerm"
+											actionListener="#{commercialTerm.onSearch}" 
 											value="#{commercialBundle.commercial_term_module}" />
 									</aon:div>
 								</c:if>
@@ -168,35 +174,35 @@
 		
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="sellerControl2"
-											value="#{statBundle.seller_stat_control_seller}"
-											action="commercial_search_view-seller">
-											<aon:actionListener method="#{commercialStat.onReset}" />
+											action="commercial_search_view-seller"
+											actionListener="#{commercialStat.onReset}"
+											value="#{statBundle.seller_stat_control_seller}">
 											<aon:actionListener method="#{commercialStat.onSellerType}" />
 										</aon:commandLink>
 									</aon:div>
 		
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="sellerControl3"
-											value="#{statBundle.seller_stat_control_target}"
-											action="commercial_search_view-target">
-											<aon:actionListener method="#{commercialStat.onReset}" />
+											action="commercial_search_view-target"
+											actionListener="#{commercialStat.onReset}"
+											value="#{statBundle.seller_stat_control_target}">
 											<aon:actionListener method="#{commercialStat.onTargetType}" />
 										</aon:commandLink>
 									</aon:div>
 		
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="sellerControl4"
-											value="#{statBundle.seller_stat_control_product}"
-											action="commercial_search_view-product">
-											<aon:actionListener method="#{commercialStat.onReset}" />
+											action="commercial_search_view-product"
+											actionListener="#{commercialStat.onReset}"
+											value="#{statBundle.seller_stat_control_product}">
 											<aon:actionListener method="#{commercialStat.onProductType}" />
 										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="sellerControl5"
-											value="#{statBundle.seller_stat_control_category}"
-											action="commercial_search_view-category">
-											<aon:actionListener method="#{commercialStat.onReset}" />
+											action="commercial_search_view-category"
+											actionListener="#{commercialStat.onReset}"
+											value="#{statBundle.seller_stat_control_category}">
 											<aon:actionListener method="#{commercialStat.onCategoryType}" />
 										</aon:commandLink>
 									</aon:div>
@@ -212,42 +218,41 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="statCategory"
-											value="#{statBundle.stat_report_commercial_category}"
-											action="commercial_category_stat_search">
-											<aon:actionListener method="#{commercialStat.onReset}" />
+											action="commercial_category_stat_search"
+											actionListener="#{commercialStat.onReset}"
+											value="#{statBundle.stat_report_commercial_category}">
 											<aon:actionListener method="#{commercialStat.onCategoryType}" />
 										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="statZone"
-											value="#{statBundle.stat_report_commercial_geozone}"
 											action="commercial_geozone_stat_search"
-											>
-											<aon:actionListener method="#{commercialStat.onReset}" />
+											actionListener="#{commercialStat.onReset}"
+											value="#{statBundle.stat_report_commercial_geozone}">
 											<aon:actionListener method="#{commercialStat.onGeozoneType}" />
 										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="statSeller"
-											value="#{statBundle.stat_report_commercial_seller}"
-											action="commercial_seller_stat_search">
-											<aon:actionListener method="#{commercialStat.onReset}" />
+											action="commercial_seller_stat_search"
+											actionListener="#{commercialStat.onReset}"
+											value="#{statBundle.stat_report_commercial_seller}">
 											<aon:actionListener method="#{commercialStat.onSellerType}" />
 										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="statTarget"
-											value="#{statBundle.stat_report_commercial_target}"
-											action="commercial_target_stat_search">
-											<aon:actionListener method="#{commercialStat.onReset}" />
+											action="commercial_target_stat_search"
+											actionListener="#{commercialStat.onReset}"
+											value="#{statBundle.stat_report_commercial_target}">
 											<aon:actionListener method="#{commercialStat.onTargetType}" />
 										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="statProduct"
-											value="#{statBundle.stat_report_commercial_product}"
-											action="commercial_product_stat_search">
-											<aon:actionListener method="#{commercialStat.onReset}" />
+											action="commercial_product_stat_search"
+											actionListener="#{commercialStat.onReset}"
+											value="#{statBundle.stat_report_commercial_product}">
 											<aon:actionListener method="#{commercialStat.onProductType}" />
 										</aon:commandLink>
 									</aon:div>
@@ -265,22 +270,26 @@
 								<aon:div styleClass="aon-direct-access-list">			
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="commercial-commision-calculation"
-											action="commissionCalculation" actionListener="#{commissionCalculation.onInitialize}" 
+											action="commissionCalculation"
+											actionListener="#{commissionCalculation.onInitialize}" 
 											value="#{commercialBundle.commercial_commission_calculation_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="offer-detail-commision" 
-											action="offerDetailCommission_search" actionListener="#{offerDetailCommission.onEditSearch}"
+											action="offerDetailCommission_search"
+											actionListener="#{offerDetailCommission.onEditSearch}"
 											value="#{commercialBundle.commercial_commission_control_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="commission-type" 
-											action="commissionType_list" actionListener="#{commissionType.onSearch}"
+											action="commissionType_list"
+											actionListener="#{commissionType.onSearch}"
 											value="#{commercialBundle.commercial_commission_type_module}" />
 									</aon:div>									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="commission" 
-											action="commission_search" actionListener="#{commission.onEditSearch}"
+											action="commission_search"
+											actionListener="#{commission.onEditSearch}"
 											value="#{commercialBundle.commercial_commission_module}" />
 									</aon:div>
 								</aon:div>

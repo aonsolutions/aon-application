@@ -27,7 +27,7 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="corporateDocuments" 
-										action="corporateIdentityAttach_list" immediate="true"
+										action="corporateIdentityAttach_list"
 										actionListener="#{corporateIdentityAttach.onEditSearch}"
 										value="#{bundle.aon_documents}">
 										<f:setPropertyActionListener value="#{false}"
@@ -37,14 +37,13 @@
 								</aon:div>							
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="batchDocument" 
-										action="batchDocument_form" immediate="true"
-										value="#{registryBundle.registry_batch_document}">
-									</aon:commandLink>
+										action="batchDocument_form"
+										value="#{registryBundle.registry_batch_document}"/>
 								</aon:div>					
 								<c:if test="#{aonRole.documentManager and domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="documentMassiveUpload" 
-											action="corporateIdentityAttach_form" immediate="true"
+											action="corporateIdentityAttach_form"
 											value="#{registryBundle.registry_document_massive_upload}">
 											<f:setPropertyActionListener value="#{true}"
 												target="#{corporateIdentityAttach.massiveUpload}"  />
@@ -55,10 +54,9 @@
 								<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="documentGlobal" 
-											action="documentGlobal_search" immediate="true"
+											action="documentGlobal_search"
 											actionListener="#{documentGlobal.onEditSearch}"
-											value="#{registryBundle.registry_document_global_search}">
-										</aon:commandLink>
+											value="#{registryBundle.registry_document_global_search}"/>
 									</aon:div>					
 								</c:if>								
 							</aon:div>
@@ -77,17 +75,15 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="tag" 
-											action="tag_form" immediate="true" 
+											action="tag_form" 
 											actionListener="#{tag.onCancel}"
-											value="#{registryBundle.registry_tag_module}">
-										</aon:commandLink>		
+											value="#{registryBundle.registry_tag_module}"/>	
 									</aon:div>								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="category" 
-											action="category_form" immediate="true"
+											action="category_form"
 											actionListener="#{category.onCancel}" 
-											value="#{registryBundle.registry_category_module}">
-										</aon:commandLink>		
+											value="#{registryBundle.registry_category_module}"/>	
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>

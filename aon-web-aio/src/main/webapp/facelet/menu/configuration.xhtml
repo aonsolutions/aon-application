@@ -57,9 +57,9 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="company" 
-											action="company" actionListener="#{company.onLoad}"
-											value="#{companyBundle.company_data_module}">
-										</aon:commandLink>
+											action="company"
+											actionListener="#{company.onLoad}"
+											value="#{companyBundle.company_data_module}" />
 									</aon:div>
 									<c:if test="#{domainSwitcher.type == 'HOTEL'}">
 										<aon:div styleClass="aon-direct-access-list-element">
@@ -101,33 +101,35 @@
 										<c:if test="#{aonRole.saleOperator}">
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="customer-configuration"
-													action="customer_search-configuration" actionListener="#{customer.onEditSearch}"
+													action="customer_search-configuration"
+													actionListener="#{customer.onEditSearch}"
 													value="#{customerBundle.customer_module}" />
 											</aon:div>
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="aon_invoicing_group-configuration"
-													value="#{financeBundle.finance_invoicing_group_module}"
-													action="invoicingGroup_list-configuration" />
+													action="invoicingGroup_list-configuration"
+													value="#{financeBundle.finance_invoicing_group_module}" />
 											</aon:div>
 										</c:if>
 										<c:if test="#{aonRole.purchaseOperator}">
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="supplier-configuration" 
-													action="supplier_search-configuration" actionListener="#{supplier.onEditSearch}"
-													value="#{supplierBundle.supplier_module}" >
-												</aon:commandLink>
+													action="supplier_search-configuration"
+													actionListener="#{supplier.onEditSearch}"
+													value="#{supplierBundle.supplier_module}" />
 											</aon:div>
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="creditor-configuration" 
-													action="creditor_search-configuration" actionListener="#{creditor.onEditSearch}"
-													value="#{financeBundle.finance_creditor_module}" >
-												</aon:commandLink>
+													action="creditor_search-configuration"
+													actionListener="#{creditor.onEditSearch}"
+													value="#{financeBundle.finance_creditor_module}" />
 											</aon:div>
 										</c:if>
 										<c:if test="#{aonRole.productOperator}">
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="item-configuration" 
-													action="item_search" actionListener="#{item.onEditSearch}"
+													action="item_search"
+													actionListener="#{item.onEditSearch}"
 													value="#{productBundle.product_module}" />
 											</aon:div>
 										</c:if>
@@ -206,8 +208,7 @@
 											<aon:commandLink id="domains"
 												action="domains"
 												actionListener="#{domains.onInit}"
-												value="#{configBundle.config_domains}" >
-											</aon:commandLink>						
+												value="#{configBundle.config_domains}" />						
 										</aon:div>
 									</c:if>									
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -303,12 +304,14 @@
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="tariff-configuration" 
-												action="tariff_list-configuration" actionListener="#{tariff.onSearch}"
+												action="tariff_list-configuration"
+												actionListener="#{tariff.onSearch}"
 												value="#{productBundle.product_tariff_module}" />
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="catalogue-configuration" 
-												action="catalogue_search-configuration" actionListener="#{catalogue.onEditSearch}"
+												action="catalogue_search-configuration"
+												actionListener="#{catalogue.onEditSearch}"
 												value="#{productBundle.product_catalogue_module}" />
 										</aon:div>
 									</aon:div>

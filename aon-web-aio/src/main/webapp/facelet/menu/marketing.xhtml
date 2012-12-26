@@ -45,12 +45,14 @@
 							<aon:div styleClass="aon-direct-access-list">	
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="marketingCampaign"
-										action="marketingCampaign_list" actionListener="#{marketingCampaign.onSearch}"
+										action="marketingCampaign_list"
+										actionListener="#{marketingCampaign.onSearch}"
 										value="#{marketingBundle.marketing_campaign_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="communicationCenter"
-										action="communicationCenter" actionListener="#{communicationCenter.onInit}"
+										action="communicationCenter"
+										actionListener="#{communicationCenter.onInit}"
 										value="#{commercialBundle.commercial_communication_center_module}" />										
 								</aon:div>
 							</aon:div>
@@ -68,28 +70,29 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="question"
-											action="question_list" actionListener="#{question.onEditSearch}"
+											action="question_list"
+											actionListener="#{question.onEditSearch}"
 											value="#{commercialBundle.commercial_question_module}" >
 											<aon:actionListener method="#{question.onSearch}" />
 										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="surveyResponse"
-											action="surveyResponse_list" actionListener="#{surveyResponse.onSearch}"
+											action="surveyResponse_list"
+											actionListener="#{surveyResponse.onSearch}"
 											value="#{marketingBundle.marketing_survey_response_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="survey"
-											action="survey_list" actionListener="#{survey.onEditSearch}" 
+											action="survey_list"
+											actionListener="#{survey.onEditSearch}" 
 											value="#{marketingBundle.marketing_survey_module}" >
 											<aon:actionListener method="#{survey.onSearch}" />
 										</aon:commandLink>
 									</aon:div>								
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>
 
-						<c:if test="#{aonRole.config}">
 							<aon:panelGrid id="group_marketing_templates"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-general">

@@ -104,15 +104,29 @@ public class MenuParser {
 		return null;
 	}	
 	
+	private String stripExpression( String value ) {
+		return StringUtils.removeEnd(StringUtils.removeStart(value, "#{"), "}");
+	}
+	
+	private String getAndExpression( String value, String newValue ) {
+		if ( StringUtils.isEmpty(value) ) {
+			return newValue;
+		}
+		String e1 = stripExpression(value);
+		String e2 = stripExpression(newValue);
+		return "#{(" + e1 + ") and (" + e2 + ")}";
+	}
+	
 	private String getRendered( Element element ) {
+		String value = null;
 		Element parent = element.getParent();
 		while ( parent != null ) {
 			if ( C_IF.equals(parent.getQualifiedName()) ) {
-				return parent.attributeValue(TEST_ATTRIBUTE);
+				value = getAndExpression(value, parent.attributeValue(TEST_ATTRIBUTE));
 			}
 			parent = parent.getParent();
 		}
-		return null;
+		return value;
 	}
 
 	private Element getPanelGrid( Element element ) {

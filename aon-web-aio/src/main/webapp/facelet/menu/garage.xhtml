@@ -27,7 +27,8 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="projectTas" 
-										action="projectTas_search" actionListener="#{projectTas.onEditSearch}"
+										action="projectTas_search"
+										actionListener="#{projectTas.onEditSearch}"
 										value="#{tasBundle.tas_projectTas_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -49,24 +50,28 @@
 								<c:if test="#{aonRole.commercialOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="offer-garage" 
-											action="offer_search-garage" actionListener="#{offer.onEditSearch}"
+											action="offer_search-garage"
+											actionListener="#{offer.onEditSearch}"
 											value="#{commercialBundle.commercial_offer_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="target-garage" 
-											action="target_search" actionListener="#{target.onEditSearch}"
+											action="target_search"
+											actionListener="#{target.onEditSearch}"
 											value="#{commercialBundle.commercial_target_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="seller-garage" 
-											action="seller_search" actionListener="#{seller.onEditSearch}"
+											action="seller_search"
+											actionListener="#{seller.onEditSearch}"
 											value="#{sellerBundle.seller_module}" />
 									</aon:div>
 								</c:if>
 								<c:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="commercialTerm-garage"
-											action="commercialTerm-garage" actionListener="#{commercialTerm.onSearch}" 
+											action="commercialTerm-garage"
+											actionListener="#{commercialTerm.onSearch}" 
 											value="#{commercialBundle.commercial_term_module}" />
 									</aon:div>
 								</c:if>								
@@ -86,17 +91,20 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="make" 
-											action="make_form" actionListener="#{make.onSearch}"
+											action="make_form"
+											actionListener="#{make.onSearch}"
 											value="#{tasBundle.tas_makes_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="model" 
-											action="model_form" actionListener="#{model.onSearch}"
+											action="model_form"
+											actionListener="#{model.onSearch}"
 											value="#{tasBundle.tas_models_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="tasItem" 
-											action="tasItem_search" actionListener="#{tasItem.onEditSearch}"
+											action="tasItem_search"
+											actionListener="#{tasItem.onEditSearch}"
 											value="#{tasBundle.tas_tasItem_module}" />
 									</aon:div>
 								</aon:div>
@@ -130,7 +138,8 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="audabridgeParams" action="audabridgeParams"
+										<aon:commandLink id="audabridgeParams"
+											action="audabridgeParams"
 											actionListener="#{audabridgeParams.onLoad}"
 											value="#{audabridgeBundle.audabridge_parameters_module}" />
 									</aon:div>

@@ -26,7 +26,8 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountEntry" action="accountEntry_search"
+									<aon:commandLink id="accountEntry"
+										action="accountEntry_search"
 										actionListener="#{accountEntry.onEditSearch}"
 										value="#{accountingBundle.accounting_entry_module}" />
 								</aon:div>
@@ -61,7 +62,8 @@
 								</aon:div>
 
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="salaryEntry" action="account_salary_entry"
+									<aon:commandLink id="salaryEntry"
+										action="account_salary_entry"
 										actionListener="#{salaryEntry.onReset}"
 										value="#{accountingBundle.accounting_salary_entry_module}" />
 								</aon:div>
@@ -107,12 +109,14 @@
 										value="#{accountingBundle.accounting_loan_fee_entry_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="loanEntry" action="account_loan_entry"
+									<aon:commandLink id="loanEntry"
+										action="account_loan_entry"
 										actionListener="#{loanEntry.onReset}"
 										value="#{accountingBundle.accounting_loan_entry_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="loan" action="loan_search"
+									<aon:commandLink id="loan"
+										action="loan_search"
 										actionListener="#{loan.onEditSearch}"
 										value="#{accountingBundle.accounting_loan_management_module}" />
 								</aon:div>
@@ -127,7 +131,8 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="amortization" action="amortization_list"
+									<aon:commandLink id="amortization"
+										action="amortization_list"
 										value="#{accountingBundle.accounting_amortization_form_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -169,13 +174,15 @@
 								</aon:div>
 
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="trialBalance-report" action="trialBalance_search-Report"
+									<aon:commandLink id="trialBalance-report"
+										action="trialBalance_search-Report"
 										actionListener="#{trialBalance.onReset}"
 										value="#{accountingBundle.accounting_trial_balance_module}" />
 								</aon:div>
 
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="journal-Report" action="journal_search-Report"
+									<aon:commandLink id="journal-Report"
+										action="journal_search-Report"
 										actionListener="#{journalReport.onEditSearch}"
 										value="#{accountingBundle.accounting_journal_module}" />
 								</aon:div>
@@ -190,17 +197,20 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="journal-Balance" action="journal_search-Balance"
+									<aon:commandLink id="journal-Balance"
+										action="journal_search-Balance"
 										actionListener="#{journalReport.onEditSearch}"
 										value="#{accountingBundle.accounting_journal_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="ledger" action="ledger_search"
+									<aon:commandLink id="ledger"
+										action="ledger_search"
 										actionListener="#{ledgerReport.onEditSearch}"
 										value="#{accountingBundle.accounting_ledger_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="official-trialBalance-Balance" action="officialTrialBalance_search"
+									<aon:commandLink id="official-trialBalance-Balance"
+										action="officialTrialBalance_search"
 										actionListener="#{officialTrialBalance.onReset}"
 										value="#{accountingBundle.accounting_trial_balance_module}" />
 								</aon:div>
@@ -269,7 +279,8 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="account" action="account_list"
+									<aon:commandLink id="account"
+										action="account_list"
 										value="#{accountBundle.account_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -279,11 +290,13 @@
 								</aon:div>
 								<c:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="autConcept" action="autConcept"
+										<aon:commandLink id="autConcept"
+											action="autConcept"
 											value="#{accountingBundle.accounting_aut_concept_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="costCenter" action="costCenter"
+										<aon:commandLink id="costCenter"
+											action="costCenter"
 											value="#{accountingBundle.accounting_cost_center_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -334,7 +347,8 @@
 								</aon:div>
  -->
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountCheck" action="check_form"
+									<aon:commandLink id="accountCheck"
+										action="check_form"
 										actionListener="#{accountCheck.onInitialize}"
 										value="#{accountingBundle.accounting_check_balance_module}" />
 								</aon:div>
@@ -380,27 +394,27 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleInvoiceRecorder-accounting"
-											value="#{financeBundle.finance_sale_invoice_recording_module}"
+											action="saleInvoiceRecorder_search-accounting"
 											actionListener="#{saleInvoiceRecorder.onEditSearch}"
-											action="saleInvoiceRecorder_search-accounting" />
+											value="#{financeBundle.finance_sale_invoice_recording_module}"/>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseInvoiceRecorder-accounting"
-											value="#{financeBundle.finance_purchase_invoice_recording_module}"
+											action="purchaseInvoiceRecorder_search-accounting"										
 											actionListener="#{purchaseInvoiceRecorder.onEditSearch}"
-											action="purchaseInvoiceRecorder_search-accounting" />
+											value="#{financeBundle.finance_purchase_invoice_recording_module}"/>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="expenseInvoiceRecorder-accounting"
-											value="#{financeBundle.finance_expense_invoice_recording_module}"
+											action="expenseInvoiceRecorder_search-accounting"
 											actionListener="#{expenseInvoiceRecorder.onEditSearch}"
-											action="expenseInvoiceRecorder_search-accounting" />
+											value="#{financeBundle.finance_expense_invoice_recording_module}"/>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="undeductibleInvoiceRecorder-accounting"
-											value="#{financeBundle.finance_undeductible_invoice_recording_module}"
+											action="undeductibleInvoiceRecorder_search-accounting"
 											actionListener="#{undeductibleInvoiceRecorder.onEditSearch}"
-											action="undeductibleInvoiceRecorder_search-accounting" />
+											value="#{financeBundle.finance_undeductible_invoice_recording_module}"/>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="financeTrackingEntry-accounting"
