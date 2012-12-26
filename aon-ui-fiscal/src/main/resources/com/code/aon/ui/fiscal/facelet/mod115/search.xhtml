@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="rentingForm" styleClass="aon-form">
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_model_115_module_abbr}" />
+				<ui:param name="controller" value="#{mod115}" />
+			</ui:include>
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="controller" value="#{mod115}" />
+
+				<ui:define name="searchContent">
+					<aon:outputLabel for="Mod115_year" value="#{bundle.aon_year}" />
+					<aon:inputText id="Mod115_year" size="5"
+						valueChangeListener="#{mod115.addExpression}" />
+
+					<aon:outputLabel for="Mod115_period"
+						value="#{fiscalBundle.fiscal_period}" />
+					<aon:selectOneMenu id="Mod115_period"
+						valueChangeListener="#{mod115.addEqualExpression}"
+						converter="aon.EnumConverter">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{fiscalCollections.periods}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Mod115_status"
+						value="#{bundle.aon_status}" />
+					<aon:selectOneRadio id="Mod115_status"
+						valueChangeListener="#{mod115.addEqualExpression}"
+						converter="aon.EnumConverter">
+						<f:selectItem value="#{null}" itemLabel="#{bundle.aon_all}" />
+						<f:selectItems value="#{fiscalCollections.fiscalModelStatuses}" />
+					</aon:selectOneRadio>
+				</ui:define>
+				
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>

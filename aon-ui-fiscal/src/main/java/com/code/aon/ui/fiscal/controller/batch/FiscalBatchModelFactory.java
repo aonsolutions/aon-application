@@ -1,5 +1,6 @@
 package com.code.aon.ui.fiscal.controller.batch;
 
+import com.code.aon.common.AonException;
 import com.code.aon.fiscal.enumeration.FiscalBatchType;
 
 public class FiscalBatchModelFactory {
@@ -18,9 +19,19 @@ public class FiscalBatchModelFactory {
 	}
 
 	
-	public IFiscalBatchModel getFiscalBatchModel(FiscalBatchType mod303) {
-		// TODO register Models and return appropiate
-		return new Mod303BatchModel();
+	public IFiscalBatchModel getFiscalBatchModel(FiscalBatchType type) throws AonException {
+		if (type == FiscalBatchType.MOD303) {
+			return new Mod303BatchModel();	
+		} else if (type == FiscalBatchType.MOD111) {
+			return new Mod111BatchModel();
+		} else if (type == FiscalBatchType.MOD115) {
+			return new Mod115BatchModel();
+		} else if (type == FiscalBatchType.MOD123) {
+			return new Mod123BatchModel();
+		} else if (type == FiscalBatchType.MOD130) {
+			return new Mod130BatchModel();
+		}
+		throw new AonException("Imposible recuperar las declaraciones del tipo " + type);
 	}
 
 }

@@ -13,6 +13,9 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_renting_module}" />
 				<ui:param name="controller" value="#{renting}" />
+				<ui:param name="skipRemoveButton" value="#{true}" />
+				<ui:param name="skipSaveButton" value="#{true}" />
+				<ui:param name="skipResetButton" value="#{true}" />
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">

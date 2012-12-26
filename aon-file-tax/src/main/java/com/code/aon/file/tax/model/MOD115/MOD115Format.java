@@ -1,52 +1,59 @@
 package com.code.aon.file.tax.model.MOD115;
 
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.config.enumeration.Administration;
+
 public enum MOD115Format {
 
-	ALAVA_2010(2010
-			,"Alava"
-			,"/com/code/aon/file/tax/model/MOD115/xml/2010_ALAVA_Declaration.xml"),
-	BIZKAIA_2010(2010
-			,"Bizkaia"
-			,"/com/code/aon/file/tax/model/MOD115/xml/2010_ALAVA_Declaration.xml"),
-	GIPUZKOA_2010(2010
-			,"Gipuzkoa"
-			,"/com/code/aon/file/tax/model/MOD115/xml/2010_ALAVA_Declaration.xml"),
-	NAVARRA_2010(2010
-			,"Navarra"
-			,"/com/code/aon/file/tax/model/MOD115/xml/2010_ALAVA_Declaration.xml"),
-	AEAT_2010(2010
-			,"AEAT"
-			,"/com/code/aon/file/tax/model/MOD115/xml/2010_ALAVA_Declaration.xml");
+	ALAVA_2011(2011
+			,Administration.ALAVA
+			,MimeType.MIME_XML
+			,Alava2011MOD115Factory.class),
+	AEAT_2011(2011
+			,Administration.COMMON_TERRITORY
+			,MimeType.MIME_TXT
+			,Aeat2011MOD115Factory.class);
 
 	private Integer year;
-	private String description;
-	private String declarationMetadataResource;
+	private MimeType mimeType;
+	private Administration administration;
+	private Class<? extends IMOD115Factory> factory;
 
 
-	private MOD115Format(Integer year,String description,String declarationMetadataResource)	{
+	private MOD115Format(Integer year,Administration administration,MimeType mimeType,Class<? extends IMOD115Factory> factory)	{
 		this.year = year;
-		this.description = description;
-		this.declarationMetadataResource = declarationMetadataResource;
+		this.mimeType = mimeType;		
+		this.administration = administration;
+		this.factory = factory;
 	}
 
-	public String getDescription() {
-		return description;
+	public Administration getAdministration() {
+		return administration;
 	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
 	public Integer getYear() {
 		return year;
 	}
-	public void setYear(Integer year) {
-		this.year = year;
+	public MimeType getMimeType() {
+		return mimeType;
+	}
+	public Class<? extends IMOD115Factory> getFactory() {
+		return factory;
 	}
 	
-	public String getDeclarationMetadataResource() {
-		return declarationMetadataResource;
-	}
-	public void setDeclarationMetadataResource(String declarationMetadataResource) {
-		this.declarationMetadataResource = declarationMetadataResource;
+	
+	public synchronized static MOD115Format getFormat(Administration administration, int year) {
+		MOD115Format format = null;
+		for (MOD115Format f : MOD115Format.values()) {
+			if (f.getAdministration() == administration && year >= f.getYear()) {
+				format = f;
+				break;
+			}
+		}
+		if (format == null) {
+			String msg = "La generación de archivos para la administracion "
+					+ administration + " no está aún implementada.";
+			throw new IllegalArgumentException(msg);
+		}
+		return format;
 	}
 }

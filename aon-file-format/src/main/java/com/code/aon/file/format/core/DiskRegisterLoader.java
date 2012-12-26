@@ -29,9 +29,15 @@ public class DiskRegisterLoader {
 			SAXParser parser = FACTORY.newSAXParser();
 			parser.parse(input,new DiskRegisterHandler(manager));
 		}
-		catch (SAXException e) {}
-		catch (ParserConfigurationException e) {}
-		catch (IOException e) {}
+		catch (SAXException e) {
+			e.printStackTrace();
+		}
+		catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

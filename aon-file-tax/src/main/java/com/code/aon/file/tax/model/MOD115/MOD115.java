@@ -1,62 +1,41 @@
 package com.code.aon.file.tax.model.MOD115;
 
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.PrintWriter;
+import java.util.LinkedList;
+import java.util.List;
 
-import com.code.aon.file.format.core.DiskRegisterLoader;
-import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
-import com.code.aon.file.tax.model.MOD115.check.CheckDeclaration;
 import com.code.aon.file.tax.model.MOD115.data.Declaration;
 
-public class MOD115 extends AbstractFileFiller{
-
-	private static String DECLARATION = "DECLARATION";
+public class MOD115 {
 	
-	private Declaration declaration;
-	
-	public MOD115(Declaration declaration, MOD115Format format,String filePath) throws FileNotFoundException, UnsupportedEncodingException {
-		super(filePath);
-		if (declaration == null)  {
-			throw new IllegalArgumentException("Declaration can not be null!");
+	public List<Exception> create(List<Declaration> declarations, MOD115Format format,PrintWriter writer) {
+		if (declarations == null || declarations.size() == 0 )  {
+			throw new IllegalArgumentException("Declarations can not be null!");
 		}
 		if (format == null)  {
 			throw new IllegalArgumentException("Format can not be null!");
 		}
-		
-		this.declaration = declaration;
-		
-		InputStream input = MOD115.class.getResourceAsStream(format.getDeclarationMetadataResource());
-		DiskRegisterLoader.load(input, manager);
-	}
-
-	public ArrayList<Exception> create() {
+		List<Exception> exceptions = new LinkedList<Exception>();
 		try{
-			Map<String,Object> properties = new HashMap<String,Object>();
-			properties.put(MOD115.DECLARATION, declaration);
-			
-			if (CheckDeclaration.parse(declaration,exceptions)==false) {
-				throw new Fd0Exception( "ABORTED: ",declaration.toString());
+			MOD115FactoryManager factoryManger = MOD115FactoryManager.getInstance();
+			IMOD115Factory factory = factoryManger.getFactory(format);
+			if (factory == null) {
+				throw new IllegalArgumentException("No se encontró un formateador válido para " + format);
 			}
-			
-			createLine("Declaration",properties);
-
+			exceptions.addAll( factory.createDocument(declarations, writer ) );
 		} catch (Exception ex) {
 			if ( ex instanceof Fd0Exception ) {
 				exceptions.add (ex);
 			} 
 			else {
-				Fd0Exception e = new Fd0Exception( ex.getMessage(),declaration.toString());
+				ex.printStackTrace();
+				Fd0Exception e = new Fd0Exception( ex.getMessage()," ");
 				exceptions.add (e);
 			}
 		}
-		output.flush();
-		writeErrorsFile();
+		writer.flush();
 		return exceptions;
 	}
 }

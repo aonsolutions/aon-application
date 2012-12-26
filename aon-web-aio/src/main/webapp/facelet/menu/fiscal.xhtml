@@ -63,24 +63,35 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<a4j:commandLink ajaxSingle="true" immediate="true"
-											onclick="alert('#{appBundle.aio_not_yet}');return false;" 
-											value="#{fiscalBundle.fiscal_model_110_111_190_module}" />
+										<aon:commandLink id="mod111" 
+											action="mod111_search" actionListener="#{mod111.onEditSearch}"
+											value="#{fiscalBundle.fiscal_model_111_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="renting" 
-											action="renting_search" actionListener="#{renting.onEditSearch}"
-											value="#{fiscalBundle.fiscal_model_115_180_module}" />
+										<aon:commandLink id="mod115" 
+											action="mod115_search" actionListener="#{mod115.onEditSearch}"
+											value="#{fiscalBundle.fiscal_model_115_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<a4j:commandLink ajaxSingle="true" immediate="true"
-											onclick="alert('#{appBundle.aio_not_yet}');return false;" 
-											value="#{fiscalBundle.fiscal_model_123_193_module}" />
+										<aon:commandLink id="mod123" 
+											action="mod123_search" actionListener="#{mod123.onEditSearch}"
+											value="#{fiscalBundle.fiscal_model_123_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="mod130" 
+											action="mod130_search" actionListener="#{mod130.onEditSearch}"
+											value="#{fiscalBundle.fiscal_model_130_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<a4j:commandLink ajaxSingle="true" immediate="true"
 											onclick="alert('#{appBundle.aio_not_yet}');return false;" 
 											value="#{fiscalBundle.fiscal_model_184_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="renting" 
+											action="renting_search" actionListener="#{renting.onEditSearch}"
+											style="color:red;"
+											value="VIEJO - #{fiscalBundle.fiscal_model_115_180_module}" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>	
@@ -93,7 +104,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="mod_340_report" 
-											action="model340_search" actionListener="#{model340.onReset}"
+											action="mod340_search" actionListener="#{mod340.onReset}"
 											value="#{fiscalBundle.fiscal_model_340_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -120,32 +131,6 @@
 											onclick="alert('#{appBundle.aio_not_yet}');return false;" 
 											value="#{fiscalBundle.fiscal_model_200_module}"/>
 									</aon:div>																
-								</aon:div>
-							</aon:panelGrid>
-							<aon:panelGrid id="group_fiscal_reports"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-payroll aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{accountingBundle.menu_reports_annual}"/>
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="report_template"
-											action="reportAttach_form"
-											actionListener="#{reportAttach.onSearch}"
-											value="#{accountingBundle.accounting_reports_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="report_launcher"
-											action="reports_launcher"
-											actionListener="#{reportsLauncher.onReset}"
-											value="#{accountingBundle.accounting_reports_launcher_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<a4j:commandLink ajaxSingle="true" immediate="true"
-											onclick="alert('#{appBundle.aio_not_yet}');return false;" 
-											value="Memoria normalizada" />
-									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
@@ -216,6 +201,33 @@
 											action="annualFinancialStatements_search"
 											actionListener="#{annualFinancialStatements.onReset}"
 											value="#{accountingBundle.accounting_annual_financial_statements_module}" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+
+							<aon:panelGrid id="group_fiscal_reports"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-payroll aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{accountingBundle.menu_reports_annual}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="report_template"
+											action="reportAttach_form"
+											actionListener="#{reportAttach.onSearch}"
+											value="#{accountingBundle.accounting_reports_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="report_launcher"
+											action="reports_launcher"
+											actionListener="#{reportsLauncher.onReset}"
+											value="#{accountingBundle.accounting_reports_launcher_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<a4j:commandLink ajaxSingle="true" immediate="true"
+											onclick="alert('#{appBundle.aio_not_yet}');return false;" 
+											value="Memoria normalizada" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>

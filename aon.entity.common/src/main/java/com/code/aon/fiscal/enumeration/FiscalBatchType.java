@@ -8,9 +8,11 @@ import com.code.aon.common.enumeration.IResourceable;
 public enum FiscalBatchType implements IResourceable {
 
 	MOD303( true )
+	,MOD111( true )
+	,MOD115( true )
+	,MOD123( true )
+	,MOD130( true )
 //	,MOD390( false )
-//	,MOD111( true )
-//	,MOD115( true )
 //	,MOD347( false )
 //	,MOD349( true )
 	;

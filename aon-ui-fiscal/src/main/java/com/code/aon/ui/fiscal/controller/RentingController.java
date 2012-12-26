@@ -14,12 +14,9 @@ import org.apache.commons.io.IOUtils;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
-import com.code.aon.file.tax.model.MOD115.MOD115Format;
 import com.code.aon.fiscal.Renting;
 import com.code.aon.fiscal.enumeration.RentingStatus;
 import com.code.aon.fiscal.renting.RentingProvider;
-import com.code.aon.ui.finance.IFinanceMessages;
-import com.code.aon.ui.fiscal.file.MOD115Writer;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -87,18 +84,7 @@ public class RentingController extends BasicController {
 	}
 
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
-		MOD115Writer mod115Writer = new MOD115Writer();
-		Renting renting = (Renting) getTo();
-		setFileOutput( mod115Writer.createMOD115(renting,getFormat(renting)) );
-        if (getFileOutput() != null) {
-        	if (getFileOutput().getErrors().size() > 0) {
-        		AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_DISK_ERROR);
-            }
-        }
-	}
-	
-	private MOD115Format getFormat(Renting renting) {
-		return MOD115Format.ALAVA_2010;  // TODO Identificar formato.
+		AonUtil.addErrorMessage("Funcionalidad no soportada");
 	}
 
 	public void downloadDisk(ActionEvent event) throws ManagerBeanException {

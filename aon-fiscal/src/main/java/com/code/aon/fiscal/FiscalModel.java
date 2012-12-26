@@ -36,4 +36,8 @@ public class FiscalModel extends FiscalModelDB {
 		return (getStatus() == FiscalModelStatus.FINISHED);
 	}
 
+	@Transient
+	public boolean isExtraDeclaration() {
+		return (isReplacement() || isComplementary());
+	}
 }

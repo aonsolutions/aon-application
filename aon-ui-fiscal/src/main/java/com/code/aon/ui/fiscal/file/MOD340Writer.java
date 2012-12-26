@@ -24,7 +24,7 @@ import com.code.aon.file.tax.model.MOD340.data.Deponent;
 import com.code.aon.file.tax.model.MOD340.data.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.util.FinanceUtil;
-import com.code.aon.fiscal.model340.Model340Parameters;
+import com.code.aon.fiscal.mod340.Model340Parameters;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;

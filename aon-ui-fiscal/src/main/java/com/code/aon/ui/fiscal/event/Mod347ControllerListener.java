@@ -6,7 +6,7 @@ import com.code.aon.fiscal.Mod347;
 import com.code.aon.fiscal.enumeration.Mod347Status;
 import com.code.aon.fiscal.mod347.Mod347Manager;
 import com.code.aon.fiscal.mod347.Mod347Parameters;
-import com.code.aon.ui.fiscal.controller.Mod347Controller;
+import com.code.aon.ui.fiscal.controller.mod347.Mod347Controller;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;

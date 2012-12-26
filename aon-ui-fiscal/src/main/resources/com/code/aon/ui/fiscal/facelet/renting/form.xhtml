@@ -15,9 +15,13 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_renting_module}" />
 				<ui:param name="controller" value="#{renting}" />
-				<ui:param name="skipRemoveButton" value="#{renting.to.finished}" />
+				
+				<ui:param name="skipRemoveButton" value="#{true}" />
+				<ui:param name="skipSaveButton" value="#{true}" />
+				<ui:param name="skipResetButton" value="#{true}" />
 				
 				<ui:define name="beforeSpinToolbarContent">
+<!-- 				
 					<aon:commandButton id="#{toolbarID}-finish"
 						value="#{fiscalBundle.fiscal_finish}"
 						actionListener="#{renting.onFinish}"
@@ -45,7 +49,7 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="rentingReport" />
 					</aon:htmlCommandLink>
-					
+ -->					
 				</ui:define>
 			</ui:decorate>
 
@@ -123,6 +127,7 @@
 					</aon:div>
 					
 					<aon:div>
+<!-- 					
 						<aon:commandButton id="gen-disk"
 							value="#{financeBundle.finance_create_disk}"
 							actionListener="#{renting.onCreateDisk}"
@@ -137,6 +142,7 @@
 							actionListener="#{renting.downloadDisk}"
 							rendered="#{!renting.new and renting.fileOutput!=null}"
 							styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
+ -->
 					</aon:div>
 										
 					<aon:outputLabel for="Renting_registryBank_id" value="#{configBundle.config_bank_account}" />

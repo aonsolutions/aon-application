@@ -12,6 +12,8 @@ import javax.faces.model.SelectItem;
 import com.code.aon.file.tax.model.MOD340.MOD340Format;
 import com.code.aon.file.tax.model.MOD347.MOD347Format;
 import com.code.aon.fiscal.enumeration.FiscalBatchType;
+import com.code.aon.fiscal.enumeration.FiscalModelStatus;
+import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 import com.code.aon.fiscal.enumeration.Mod347Type;
 import com.code.aon.fiscal.enumeration.Mod349Type;
@@ -27,27 +29,20 @@ import com.code.aon.fiscal.enumeration.WithholdingStatus;
 public class FiscalCollectionsController {
 
 	private List<SelectItem> rentingStatuses;
-
 	private List<SelectItem> withholdingDetailKeys;
-
 	private List<SelectItem> withholdingStatuses;
-
 	private List<SelectItem> vatTaxStatuses;
 	private List<SelectItem> vatTaxDeclarationStatuses;
-
 	private List<SelectItem> vatTypes;
 	private List<SelectItem> invoiceOrders;
 	private List<SelectItem> periods;
-	
 	private List<SelectItem> mod347Formats;
 	private List<SelectItem> mod347Types;
-
 	private List<SelectItem> mod349Statuses;
 	private List<SelectItem> mod349Types;	
-
 	private List<SelectItem> mod340Formats;
-	
 	private List<SelectItem> fiscalBatchTypes;
+	private List<SelectItem> fiscalModelStatuses;
 
 	public List<SelectItem> getRentingStatuses() {
 		if (rentingStatuses == null) {
@@ -227,6 +222,32 @@ public class FiscalCollectionsController {
 			}
 		}
 		return mod349Types;
+	}
+	
+	public List<SelectItem> getFiscalModelStatuses() {
+		if (fiscalModelStatuses == null) {
+			fiscalModelStatuses = new LinkedList<SelectItem>();
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			for (FiscalModelStatus status : FiscalModelStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				fiscalModelStatuses.add(item);
+			}
+		}
+		return fiscalModelStatuses;
+	}
+	
+	public FiscalModelType getModel111() {
+		return FiscalModelType.M111;
+	}
+	public FiscalModelType getModel115() {
+		return FiscalModelType.M115;
+	}
+	public FiscalModelType getModel123() {
+		return FiscalModelType.M123;
+	}
+	public FiscalModelType getModel130() {
+		return FiscalModelType.M130;
 	}
 
 }

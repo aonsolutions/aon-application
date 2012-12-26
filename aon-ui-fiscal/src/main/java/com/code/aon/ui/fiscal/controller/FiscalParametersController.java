@@ -26,6 +26,7 @@ public class FiscalParametersController {
 	
 	public static final String FS_DEFAULT_YEAR = "FS_DEFAULT_YEAR";
 	public static final String FS_DEFAULT_ADMINISTRATION = "FS_DEFAULT_ADMINISTRATION";
+	public static final String FS_ADMINISTRATION_CODE = "FS_ADMINISTRATION_CODE";
 	public static final String FS_TAX_REFUND_REGISTRY = "FS_TAX_REFUND_REGISTRY";
 
 	private Map<String, ApplicationParameter> parameters;
@@ -59,7 +60,10 @@ public class FiscalParametersController {
 	}
 
 	private void loadDefaultParameters() throws ManagerBeanException {
-		String[] keys = {FS_DEFAULT_ADMINISTRATION,FS_DEFAULT_YEAR,FS_TAX_REFUND_REGISTRY};
+		String[] keys = {FS_DEFAULT_ADMINISTRATION
+						,FS_DEFAULT_YEAR
+						,FS_ADMINISTRATION_CODE
+						,FS_TAX_REFUND_REGISTRY};
 		for (String key : keys) {
 			if (!parameters.containsKey(key)) {
 				ApplicationParameter p = new ApplicationParameter();
@@ -89,6 +93,13 @@ public class FiscalParametersController {
 		getParameters().get(FS_DEFAULT_YEAR).setValue(defaultYear);
 	}
 	
+	public String getAdministrationCode() {
+		return getParameters().get(FS_ADMINISTRATION_CODE).getValue(); 
+	}
+	public void setAdministrationCode(String defaultYear) {
+		getParameters().get(FS_ADMINISTRATION_CODE).setValue(defaultYear);
+	}
+
 	public boolean isTaxRefundRegistry() {
 		String value = getParameters().get(FS_TAX_REFUND_REGISTRY).getValue();
 		return (value!=null && "1".equals(value)); 
@@ -111,7 +122,10 @@ public class FiscalParametersController {
 	public void setDefaultAdministration(Administration defaultAdministration) {
 		getParameters().get(FS_DEFAULT_ADMINISTRATION).setValue(defaultAdministration ==null?null:Integer.toString(defaultAdministration.ordinal()));
 	}
-	
+
+	public boolean isCommonTerritoryDefaultAdministration() {
+		return (getDefaultAdministration() == Administration.COMMON_TERRITORY);
+	}
 	
 	public void onLoad(ActionEvent event) {
 		try {
