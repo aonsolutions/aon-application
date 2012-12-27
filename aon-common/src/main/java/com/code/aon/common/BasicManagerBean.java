@@ -33,7 +33,7 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(BasicManagerBean.class);
 	
-	private Stack<Class> pojoDependences;
+	private Stack<Class<? extends ITransferObject>> pojoDependences;
 
 	/**
 	 * Construct a BasicManagerBean.
@@ -49,9 +49,9 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 	 * 
 	 * @return Stack<Class>
 	 */
-	private Stack<Class> getPojoDependences() {
+	private Stack<Class<? extends ITransferObject>> getPojoDependences() {
 		if (pojoDependences == null) {
-			pojoDependences = new Stack<Class>();
+			pojoDependences = new Stack<Class<? extends ITransferObject>>();
 		}
 		return pojoDependences;
 	}
@@ -76,21 +76,16 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 						.getName()) == null));
 	}
 	
-	/**
-	 * Initialize POJO.
-	 * 
-	 * @param to
-	 * @throws ManagerBeanException
-	 */
+	@Override
 	public void initializePOJO(ITransferObject to) throws ManagerBeanException {
 		try {
-			Class clazz = to.getClass();
+			Class<? extends ITransferObject> clazz = to.getClass();
 			LOGGER.debug("Initializing " + clazz.getName());
 			getPojoDependences().push(clazz);
 			PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(clazz);
 			LOGGER.debug("Found " + pds.length + " properties");
 			for (PropertyDescriptor pd : pds) {
-				Class fieldClass = pd.getPropertyType();
+				Class<?> fieldClass = pd.getPropertyType();
 				String name = pd.getName();
 				if (needInitialize(to, pd)) {
 					if (ITransferObject.class.isAssignableFrom(fieldClass)) {
@@ -123,6 +118,7 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 		}
 	}
 	
+	@Override
 	public ITransferObject createNewTo() throws ManagerBeanException {
 		try {
 			ITransferObject to = getDao().newTo();
@@ -151,10 +147,11 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 				&& (!pd.getReadMethod().isAnnotationPresent(Cascade.class));
 	}
 	
-	@SuppressWarnings("unchecked")
+	@Override
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void restoreNullSubPOJOs(ITransferObject to) throws ManagerBeanException {
 		try {
-			Class clazz = to.getClass();
+			Class<? extends ITransferObject> clazz = to.getClass();
 			LOGGER.debug("Restoring null values on " + clazz.getName());
 			PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(clazz);
 			LOGGER.debug("Found " + pds.length + " properties");
@@ -189,10 +186,7 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 		}
 	}
 	
-	/* 
-	 * (non-Javadoc)
-	 * @see com.code.aon.common.IManagerBean#remove(com.code.aon.common.ITransferObject)
-	 */
+	@Override
 	public boolean remove(ITransferObject to) throws ManagerBeanException {
 		try {
 			ManagerBeanEvent evt = new ManagerBeanEvent( to );
@@ -207,10 +201,22 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.code.aon.common.IManagerBean#update(com.code.aon.common.ITransferObject)
-	 */
+	@Override
+	public boolean remove(Serializable pk) throws ManagerBeanException {
+		try {
+			ManagerBeanEvent evt = new ManagerBeanEvent( pk );
+			fireVetoableBeanRemoved(evt);
+			boolean ret = getDao().remove(pk);
+			fireBeanRemoved(evt);
+			return ret;
+		} catch (DAOException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (ManagerBeanVetoListenerException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		}
+	}
+	
+	@Override
 	public ITransferObject update(ITransferObject to) throws ManagerBeanException {
 		try {
 			ManagerBeanEvent evt = new ManagerBeanEvent( to );
@@ -225,10 +231,7 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.code.aon.common.IManagerBean#insert(com.code.aon.common.ITransferObject)
-	 */
+	@Override
 	public ITransferObject insert(ITransferObject to)
 			throws ManagerBeanException {
 		try {
@@ -244,10 +247,7 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.code.aon.common.IManagerBean#insert(com.code.aon.common.ITransferObject)
-	 */
+	@Override
 	public ITransferObject insertOrUpdate(ITransferObject to)
 			throws ManagerBeanException {
 		try {
@@ -263,14 +263,10 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.code.aon.common.IManagerBean#insert(com.code.aon.common.ITransferObject)
-	 */
+	@Override
 	public ITransferObject replicate(ITransferObject to, ReplicationMode mode)
 			throws ManagerBeanException {
 		try {
-			ManagerBeanEvent evt = new ManagerBeanEvent( to );
 			ITransferObject ret = getDao().replicate(to, mode);
 			return ret;
 		} catch (DAOException e) {

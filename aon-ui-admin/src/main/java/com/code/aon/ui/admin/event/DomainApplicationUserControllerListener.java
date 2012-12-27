@@ -94,7 +94,7 @@ public class DomainApplicationUserControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		DomainApplicationUserController dauc = (DomainApplicationUserController) event.getController();
 		try {		
-			dauc.removeUserProfiles( dauc.getApplicationUser() );
+			DomainApplicationUserController.removeUserProfiles( dauc.getApplicationUser() );
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );

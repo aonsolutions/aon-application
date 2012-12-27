@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionDenied;
 import com.code.aon.audit.DomainApplicationModule;
+import com.code.aon.audit.IAction;
 import com.code.aon.audit.ProfileActionDenied;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
@@ -210,8 +211,8 @@ public class ActionDeniedController implements IAuditConstants {
 		return map;		
 	}
 	
-	private Map<String,ITransferObject> getDeniedActions( User user ) {
-		Map<String,ITransferObject> map = new HashMap<String, ITransferObject>();
+	private Map<String,IAction> getDeniedActions( User user ) {
+		Map<String,IAction> map = new HashMap<String, IAction>();
 		map.putAll(getUserDeniedActions(user));
 		map.putAll(getProfileDeniedActions(user));
 		return map;
@@ -305,23 +306,17 @@ public class ActionDeniedController implements IAuditConstants {
 		return this.deniedActionsMap.values();
 	}
 	
-	private List<ApplicationOption> getOptions( Map<String,? extends ITransferObject> deniedActions ) {
+	private List<ApplicationOption> getOptions( Map<String,? extends IAction> deniedActions ) {
 		List<ApplicationOption> list = new ArrayList<ApplicationOption>();
 		if (! deniedActions.isEmpty() ) {
 			Map<String,ApplicationOption> options = getOptionController().getOptionMap();
-			for( Map.Entry<String,? extends ITransferObject> entry : deniedActions.entrySet() ) {
+			for( Map.Entry<String,? extends IAction> entry : deniedActions.entrySet() ) {
 				String action = entry.getKey();
 				ApplicationOption option = options.get(action);
 				if ( (option != null) && (!isDeniedOption(option)) ) {
 					list.add(option);
 				} else {
-					try {
-						IManagerBean bean = BeanManager.getManagerBean(entry.getValue().getClass());
-						bean.remove(entry.getValue());
-						LOGGER.warn( "ActionDenied removed, action {}", action );
-					} catch (ManagerBeanException e) {
-						LOGGER.error( "Error removing action denied " + entry.getValue(), e);
-					}
+					AuditManager.removeAction(entry.getValue().getAction().getId());
 				}
 			}
 		}

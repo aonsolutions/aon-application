@@ -98,7 +98,7 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 	 * (non-Javadoc)
 	 * @see com.code.aon.common.AbstractFieldMapper#getFieldMap()
 	 */
-	protected Map getFieldMap() {
+	protected Map<String,String> getFieldMap() {
 		return this.entry.getHibernateMap();
 	}
 
@@ -152,7 +152,7 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
     		entityCriteria.add(Expression.in(id, idlist));
     		return entityCriteria.list();
     	} else {
-    		return Collections.EMPTY_LIST;
+    		return Collections.emptyList();
     	}    	
     }
     
@@ -206,13 +206,17 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 
 	@Override
 	public boolean remove(ITransferObject t) throws DAOException {
+		return remove( getId(t) ); 
+	}
+
+	@Override
+	public boolean remove(Serializable pk) throws DAOException {
         Session session = sessionManager.getSession();
 		boolean removed = false;
 		try {
 			if (sessionManager.mustBeginTransaction()) {
 				session.beginTransaction();	
 			}
-			Serializable pk = getId( t );
 			Object to = session.get(this.entry.getPojo(), pk);
 			if (to != null) {
 				session.delete(to);
@@ -237,7 +241,7 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 		}
 		return removed;
 	}
-
+	
 	@Override
 	public ITransferObject update(ITransferObject to) throws DAOException {
         Session session = sessionManager.getSession();

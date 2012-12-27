@@ -148,6 +148,17 @@ public interface IDAO {
 	boolean remove(ITransferObject to) throws DAOException;
 
 	/**
+	 * Remove the Transfer Object.
+	 * 
+	 * @param id the id
+	 * 
+	 * @return <code>true</code> if something was removed.
+	 * 
+	 * @throws DAOException the DAO exception
+	 */
+	boolean remove(Serializable id) throws DAOException;
+	
+	/**
 	 * Return the field name for the alias passed by parameter.
 	 * 
 	 * @param alias the alias

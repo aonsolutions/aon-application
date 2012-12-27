@@ -312,12 +312,16 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	
 	@Override
 	public boolean remove(ITransferObject to) throws DAOException {
-		try {
-			Name dn = getDN(to);			
+		return remove( getDN(to) );
+	}
+
+	@Override
+	public boolean remove(Serializable pk) throws DAOException {
+		try {		
 			if ( this.metadata.getRemoveMethod() != null ) {
-				this.metadata.getRemoveMethod().invoke( null, this, dn);
+				this.metadata.getRemoveMethod().invoke(null, this, pk);
 			} else {
-				getLdapSession().deleteDepth(dn, true);
+				getLdapSession().deleteDepth((Name)pk, true);
 			}
 		} catch ( Throwable e ) {
 			throw new DAOException( "Error in remove of " + metadata.getMainObjectClass(), e );
@@ -326,7 +330,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		}
 		return true;
 	}
-
+	
 	private Name getDN( Criteria criteria ) {
 		return this.baseDN;
 	}

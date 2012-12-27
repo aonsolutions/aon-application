@@ -7,7 +7,7 @@ import com.esferalia.aon.entity.master.ActionEntryDB;
 
 @Entity
 @Table(name="action_entry")
-public class ActionEntry extends ActionEntryDB {
+public class ActionEntry extends ActionEntryDB implements IAction {
 
 	private static final long serialVersionUID = 1L;
    

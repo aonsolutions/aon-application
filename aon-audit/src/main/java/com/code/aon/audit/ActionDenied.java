@@ -7,7 +7,7 @@ import com.esferalia.aon.entity.master.ActionDeniedDB;
 
 @Entity
 @Table(name="action_denied")
-public class ActionDenied extends ActionDeniedDB {
+public class ActionDenied extends ActionDeniedDB implements IAction {
 
 	private static final long serialVersionUID = 1L;
 	

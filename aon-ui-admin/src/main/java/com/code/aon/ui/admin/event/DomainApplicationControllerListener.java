@@ -20,6 +20,7 @@ import com.code.aon.ui.admin.controller.AdminMainController;
 import com.code.aon.ui.admin.controller.ApplicationProfileController;
 import com.code.aon.ui.admin.controller.DomainApplicationController;
 import com.code.aon.ui.admin.controller.DomainApplicationUserController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -63,7 +64,7 @@ public class DomainApplicationControllerListener extends ControllerAdapter {
 		try {		
 			DomainApplicationUserController dausc = (DomainApplicationUserController) AonUtil.getRegisteredBean(APPLICATION_USER_CONTROLLER_NAME);
 			dausc.removeApplicationUsers( APPLICATION_USER_DOMAIN_APPLICATION_ID, da.getId() );
-			AdminMainController.removeLines(DomainApplicationModule.class, da.getId(), DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID);
+			FormUtil.remove(DomainApplicationModule.class, da.getId(), DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID);
 			removeProfiles(da);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);

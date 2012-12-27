@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.audit.ActionEntry;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ui.audit.ApplicationOption;
+import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 
@@ -75,6 +76,7 @@ public class ActionMoreUsedController implements IAuditConstants {
 	        	.add( Restrictions.eq("aeAction.menu", Boolean.TRUE) )
 	        	.setProjection( Projections.projectionList()
 	        		.add( Projections.countDistinct("id").as("aeRowCount") )
+	        		.add( Projections.groupProperty("aeAction.id") ) 
 	        		.add( Projections.groupProperty("aeAction.name") ) )
 	        		.addOrder( Order.desc("aeRowCount") );
 	        if ( maxResults > 0 ) {
@@ -86,15 +88,15 @@ public class ActionMoreUsedController implements IAuditConstants {
 	        	Map<String,ApplicationOption> options = getOptionController().getOptionMap();
 		        for( Object o : actions ) {
 		        	Object[] array = (Object[]) o; 
-		        	String action = (String) array[1];
-					ApplicationOption option = options.get(action);
+		        	String actionName = (String) array[2];
+					ApplicationOption option = options.get(actionName);
 					if ( option != null ) {
 						if (option.isRendered() && (!getDeniedController().isDenied(option)) ) {
 							ActionMoreUsed ams = new ActionMoreUsed( (Integer) array[0], option );
 							list.add( ams );
 						}
 					} else {
-						LOGGER.warn( "Action {} not found in the menu", action );
+						AuditManager.removeAction( (Integer) array[1] );
 					}
 		        }	        	
 	        }

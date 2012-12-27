@@ -1,5 +1,7 @@
 package com.code.aon.common;
 
+import java.io.Serializable;
+
 import com.code.aon.common.dao.hibernate.ReplicationMode;
 
 /**
@@ -46,6 +48,15 @@ public interface IManagerBean extends IFinderBean {
      */
     boolean remove(ITransferObject to) throws ManagerBeanException;
 
+    /**
+     * Remove from the data source, the <code>ITransferObject</code>.
+     * 
+     * @param pk Primary key of Transfer Object to remove.
+     * @return <code>true</code> if it has removed.
+     * @throws ManagerBeanException if an unexpected error occurs.
+     */
+    boolean remove(Serializable pk) throws ManagerBeanException;
+    
     /**
      * Update the <code>ITransferObject</code>.
      * 

@@ -7,7 +7,7 @@ import com.esferalia.aon.entity.master.ProfileActionDeniedDB;
 
 @Entity
 @Table(name="profile_action_denied")
-public class ProfileActionDenied extends ProfileActionDeniedDB {
+public class ProfileActionDenied extends ProfileActionDeniedDB implements IAction {
 
 	private static final long serialVersionUID = 1L;
 	

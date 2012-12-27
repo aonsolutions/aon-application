@@ -251,9 +251,9 @@ public class ApplicationProfileController extends LinesController {
 	}
 
 	public static void removeLines( Profile profile ) throws ManagerBeanException {
-		AdminMainController.removeLines(ProfileRole.class, profile.getId(), PROFILE_ROLE_PROFILE_ID);
-		AdminMainController.removeLines(ProfileModuleDenied.class, profile.getId(), PROFILE_MODULE_DENIED_PROFILE_ID);
-		AdminMainController.removeLines(ProfileActionDenied.class, profile.getId(), PROFILE_ACTION_DENIED_PROFILE_ID);		
+		FormUtil.remove(ProfileRole.class, profile.getId(), PROFILE_ROLE_PROFILE_ID);
+		FormUtil.remove(ProfileModuleDenied.class, profile.getId(), PROFILE_MODULE_DENIED_PROFILE_ID);
+		FormUtil.remove(ProfileActionDenied.class, profile.getId(), PROFILE_ACTION_DENIED_PROFILE_ID);		
 	}
 	
 }

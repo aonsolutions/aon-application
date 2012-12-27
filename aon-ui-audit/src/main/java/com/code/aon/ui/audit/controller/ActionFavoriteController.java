@@ -22,6 +22,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.ApplicationOption;
+import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.audit.controller.ActionMoreUsedController.ActionMoreUsed;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
@@ -150,15 +151,15 @@ public class ActionFavoriteController implements IAuditConstants {
 			if (! actionFavorites.isEmpty() ) {
 				Map<String,ApplicationOption> options = getOptionController().getOptionMap();
 				for( ITransferObject to : actionFavorites ) {
-					String action = ((ActionFavorite) to).getAction().getName();
+					ActionFavorite af = (ActionFavorite) to;
+					String action = af.getAction().getName();
 					ApplicationOption option = options.get(action);
 					if ( (option != null) && (!getDeniedController().isDenied(option)) ) {
 						if ( option.isRendered() ) {
 							this.favorites.add(option);	
 						}
 					} else {
-						bean.remove(to);
-						LOGGER.warn( "{} favorite removed", action );
+						AuditManager.removeAction(af.getAction().getId());
 					}
 				}
 			}

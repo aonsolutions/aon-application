@@ -13,8 +13,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
+import com.code.aon.audit.ActionDenied;
 import com.code.aon.audit.ActionEntry;
+import com.code.aon.audit.ActionFavorite;
 import com.code.aon.audit.DomainApplicationModule;
+import com.code.aon.audit.ProfileActionDenied;
 import com.code.aon.audit.Session;
 import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.audit.enumeration.Module;
@@ -34,6 +37,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.common.controller.DomainResolver;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -234,6 +238,20 @@ public class AuditManager implements IAuditConstants {
 		}
 		list.add(Module.DOCUMENT);
 		return list;
+	}
+	
+	public static void removeAction( Integer id ) {
+		try {
+			FormUtil.remove(ActionFavorite.class, id, true, IEntityAlias.ACTION_FAVORITE_ACTION_ID);
+			FormUtil.remove(ActionDenied.class, id, true, IEntityAlias.ACTION_DENIED_ACTION_ID);
+			FormUtil.remove(ProfileActionDenied.class, id, true, IEntityAlias.PROFILE_ACTION_DENIED_ACTION_ID);
+			FormUtil.remove(ActionEntry.class, id, true, IEntityAlias.ACTION_ENTRY_ACTION_ID);
+			IManagerBean bean = BeanManager.getManagerBean(Action.class);
+			bean.remove(id);
+			LOGGER.warn( "Action not in menu, removed: {}", id );
+		} catch ( Throwable th ) {
+			LOGGER.error( "Error deleting action {}. " + th.getMessage(), th );
+		}
 	}
 	
 }
