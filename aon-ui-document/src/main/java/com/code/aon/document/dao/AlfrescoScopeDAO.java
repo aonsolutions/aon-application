@@ -140,5 +140,10 @@ public class AlfrescoScopeDAO implements IDAO  {
 	public ITransferObject newTo() throws DAOException {
 		return new AlfrescoGroup();
 	}
+
+	@Override
+	public boolean remove(Serializable arg0) throws DAOException {
+		throw new UnsupportedOperationException("Not supported!");
+	}
 	
 }
