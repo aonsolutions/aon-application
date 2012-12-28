@@ -67,7 +67,7 @@
 	<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
 		<aon:outputLabel for="InvoiceDetail_workPlace" value="#{companyBundle.company_workplace}" />
 		<aon:selectOneMenu id="InvoiceDetail_workPlace"
-			value="#{expenseInvoiceDetail.to.workPlace}">
+			value="#{expenseInvoiceDetail.to.workPlace}" ajaxSingle="true">
 			<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 		</aon:selectOneMenu>
 	</c:if>
@@ -81,6 +81,6 @@
 		</aon:div>
 	</aon:div>
 	<aon:inputTextarea id="Invoice_comments" cols="85" rows="4"
-		value="#{expenseInvoice.to.comments}" />
+		value="#{expenseInvoice.to.comments}" ajaxSingle="true" />
 
 </ui:composition>

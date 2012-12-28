@@ -81,6 +81,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private String invoiceDetailControllerName;
 	private String invoiceFinanceControllerName;
 	private IPriceStrategy priceStrategy;
+	private int financeGenerationMode;
 	private FinanceGenerator financeGenerator;
 	private AccountEntryInvoiceWriter accountWriter;
 	private List<SelectItem> addresses;
@@ -89,19 +90,19 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private boolean showProjectWindow;
 	private boolean showNewProjectWindow;
 	private boolean showDetailProjectWindow;
-	private boolean showRectificationWindow;
 	private boolean showDocumentWindow;
 	private boolean showCommentsWindow;
 	private boolean showRemarksWindow;
 	private boolean showAuditInfoWindow;
 	private boolean showFiscalInformationWindow;
+	private boolean showAmortizationWindow;
+	private boolean showRectificationWindow;
 	private String rectificationSeries;
 	private int rectificationNumber;
 	private Date rectificationDate;
 	private String rectificationCause;
-	private FinanceEmailUtil emailController;
 	private double totalInvoiceAmount;
-	private boolean showAmortizationWindow;
+	private FinanceEmailUtil emailController;
 	
 	public InvoiceController() {
 		this.emailController = new FinanceEmailUtil();
@@ -142,6 +143,20 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return priceStrategy;
 	}
 
+	public int getFinanceGenerationMode() {
+		return financeGenerationMode;
+	}
+
+	public void setFinanceGenerationMode(int financeGenerationMode) {
+		this.financeGenerationMode = financeGenerationMode;
+	}
+
+	public void onFinanceGenerationModeChanged(ValueChangeEvent event) {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			setFinanceGenerationMode((Integer)event.getNewValue());
+		}
+	}
+
 	public FinanceGenerator getFinanceGenerator() {
 		if (financeGenerator == null) {
 			financeGenerator = new FinanceGenerator();
@@ -169,14 +184,6 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			return addresses.size();
 		}
 		return 0;
-	}
-	
-	public double getTotalInvoiceAmount() {
-		return totalInvoiceAmount;
-	}
-
-	public void setTotalInvoiceAmount(double totalInvoiceAmount) {
-		this.totalInvoiceAmount = totalInvoiceAmount;
 	}
 	
 	public void loadAddresses(Integer id) throws ManagerBeanException {
@@ -292,14 +299,6 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		this.showDetailProjectWindow = value;
 	}
 
-	public boolean isShowAmortizationWindow() {
-		return showAmortizationWindow;
-	}
-
-	public void setShowAmortizationWindow(boolean value) {
-		this.showAmortizationWindow = value;
-	}
-
 	public void addInvoiceProject(ActionEvent event) throws ManagerBeanException {
 		linkProject(getInvoice().getProject(), true);
 
@@ -350,14 +349,6 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		}
 	}
 	
-	public boolean isShowRectificationWindow() {
-		return showRectificationWindow;
-	}
-
-	public void setShowRectificationWindow(boolean value) {
-		this.showRectificationWindow = value;
-	}
-	
 	public boolean isShowDocumentWindow() {
 		return showDocumentWindow;
 	}
@@ -398,6 +389,22 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		this.showFiscalInformationWindow = showFiscalInformationWindow;
 	}
 
+	public boolean isShowAmortizationWindow() {
+		return showAmortizationWindow;
+	}
+
+	public void setShowAmortizationWindow(boolean value) {
+		this.showAmortizationWindow = value;
+	}
+
+	public boolean isShowRectificationWindow() {
+		return showRectificationWindow;
+	}
+
+	public void setShowRectificationWindow(boolean value) {
+		this.showRectificationWindow = value;
+	}
+	
 	public String getRectificationSeries() {
 		return rectificationSeries;
 	}
@@ -462,6 +469,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return SALE_INVOICE_FORM_NAME;
 	}
 
+	public double getTotalInvoiceAmount() {
+		return totalInvoiceAmount;
+	}
+
+	public void setTotalInvoiceAmount(double totalInvoiceAmount) {
+		this.totalInvoiceAmount = totalInvoiceAmount;
+	}
+	
 	public void onDateChanged(ActionEvent event) {
 		getInvoice().setTaxDate(getInvoice().getIssueDate());
 	}
@@ -892,11 +907,9 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		amortization.setAmount(invoice.getTaxableBase());
 		amortization.setConfidential(invoice.isConfidential());
 		amortization.setInitialDate(invoice.getIssueDate());
-		
 	}
 	
 	public void acceptAmortization(ActionEvent event) {
-
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();

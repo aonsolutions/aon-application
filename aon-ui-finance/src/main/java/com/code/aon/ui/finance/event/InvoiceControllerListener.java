@@ -54,6 +54,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 
 			invoiceController.loadAddresses(null);
 			invoiceController.loadProjects(null);
+			invoiceController.setFinanceGenerationMode(0);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}

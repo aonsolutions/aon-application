@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:outputLabel for="InvoiceFinance_generationMode" value="#{financeBundle.finance_finance}" />
+	<aon:selectOneRadio id="InvoiceFinance_generationMode"
+		value="#{expenseInvoice.financeGenerationMode}"
+		valueChangeListener="#{expenseInvoice.onFinanceGenerationModeChanged}"
+	 	reRender="expenseInvoiceForm">
+		<f:selectItem itemLabel="Automatico" itemValue="0" />
+		<f:selectItem itemLabel="Manual" itemValue="1" />
+		<f:selectItem itemLabel="No Generar" itemValue="-1" />
+	</aon:selectOneRadio>				
+
+	<aon:outputLabel for="Finance_DueDate" value="#{financeBundle.finance_finance_date}"
+		rendered="#{expenseInvoice.financeGenerationMode == 1}" />
+	<aon:selectInputDate id="Finance_DueDate"
+		value="#{expenseInvoiceFinance.to.dueDate}" ajaxSingle="true"
+		inputSize="8" required="true"
+		rendered="#{expenseInvoice.financeGenerationMode == 1}"
+		timeZone="#{timeZoneController.timeZone}"
+		popupDateFormat="#{bundle.aon_date_pattern}" />
+
+	<aon:outputLabel for="Finance_PayMethod" value="#{configBundle.config_pay_method}"
+		rendered="#{expenseInvoice.financeGenerationMode == 1}" />
+	<aon:selectOneMenu id="Finance_PayMethod"
+		value="#{expenseInvoiceFinance.to.payMethod}"
+		rendered="#{expenseInvoice.financeGenerationMode == 1}"
+		valueChangeListener="#{expenseInvoiceFinance.onPayMethodChanged}"
+		reRender="InvoiceFinance_bankAccount_panel">
+		<f:selectItems value="#{configCollections.payMethods}" />
+	</aon:selectOneMenu>
+
+	<aon:div rendered="#{expenseInvoice.financeGenerationMode == 1}">
+		<aon:outputLabel for="Bank_id" value="#{configBundle.config_bank}" />
+		<aon:outputText value=" - #{configBundle.config_bank_account}" />
+	</aon:div>
+	<aon:div id="InvoiceFinance_bankAccount_panel" styleClass="aon-nowrap" rendered="#{expenseInvoice.financeGenerationMode == 1}">
+		<aon:panelGroup id="InvoiceFinance_bankAccount" rendered="#{expenseInvoiceFinance.showBankManualInput}">
+			<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
+				<ui:param name="lookupTo" value="#{expenseInvoiceFinance.to.bank}" />
+				<ui:param name="skipLabel" value="#{true}" />
+				<ui:param name="lookupRendered" value="#{formEdit}" />
+				<ui:param name="lookupReRender" value="InvoiceFinance_bankAccount" />
+				<aon:methodParam name="lookupChangeListener"
+					value="#{expenseInvoiceFinance.onBankChanged}" type="lookupChangeListener" />
+			</ui:include>								
+			<aon:inputText id="RegistryBank_office"
+				value="#{expenseInvoiceFinance.to.bankAccount.office}"
+				size="3" maxlength="4">
+				<f:validateLength minimum="4" maximum="4" />
+				<a4j:support event="onchange" reRender="createBankContainer" />
+			</aon:inputText>
+			<aon:inputText id="RegistryBank_control"
+				value="#{expenseInvoiceFinance.to.bankAccount.control}"
+				size="1" maxlength="2">
+				<f:validateLength minimum="2" maximum="2" />
+				<a4j:support event="onchange" reRender="createBankContainer" />
+			</aon:inputText>
+			<aon:inputText id="RegistryBank_account"
+				value="#{expenseInvoiceFinance.to.bankAccount.account}"
+				size="8" maxlength="10">
+				<f:validateLength minimum="10" maximum="10" />
+				<a4j:support event="onchange" reRender="createBankContainer" />
+			</aon:inputText>
+			<aon:panelGroup id="createBankContainer">
+				<aon:commandButton id="createBank" value=""
+					reRender="InvoiceFinance_bankAccount"
+					rendered="#{expenseInvoiceFinance.bankCreationEnabled}"
+					ajaxSingle="true"
+					actionListener="#{expenseInvoiceFinance.onAddRBank}"
+					onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{expenseInvoiceFinance.to.registryName}?')) return false;"	
+					styleClass="aon-editDataTable-button aon-lookupButton-new" />
+			</aon:panelGroup>
+			<aon:commandLink id="bankAccount_hide_manualInput" ajaxSingle="true"
+				rendered="#{expenseInvoiceFinance.showBankManualInput and expenseInvoiceFinance.allBanksCount>0}"  
+				reRender="InvoiceFinance_bankAccount_panel"
+				styleClass="aon-icon-edit-end aon-margin-left" style="padding-right: 20px;padding-top: 0px;"
+				value="&#160;" title="#{bundle.aon_key_cancel_line_description}" >
+				<f:setPropertyActionListener target="#{expenseInvoiceFinance.showBankManualInput}"
+					value="#{false}" />
+			</aon:commandLink>
+		</aon:panelGroup>
+		<aon:div style="font-size:0.9em;" styleClass="aon-italic">
+			<aon:selectOneMenu id="Finance_RegistryBank"
+				rendered="#{!expenseInvoiceFinance.showBankManualInput}"
+				reRender="InvoiceFinance_bankAccount"
+				value="#{expenseInvoiceFinance.registryBank}"
+				valueChangeListener="#{expenseInvoiceFinance.onRBankChanged}">
+				<f:selectItem value="#{null}" />
+				<f:selectItems value="#{expenseInvoiceFinance.allBanks}" />
+			</aon:selectOneMenu>
+			<aon:commandLink id="bankAccount_show_manualInput" ajaxSingle="true"
+				rendered="#{!expenseInvoiceFinance.showBankManualInput}"  
+				reRender="InvoiceFinance_bankAccount_panel"
+				styleClass="aon-icon-edit-add aon-margin-left" style="padding-right: 20px;padding-top: 0px;"
+				value="&#160;" title="#{bundle.aon_edit}" >
+				<f:setPropertyActionListener target="#{expenseInvoiceFinance.showBankManualInput}"
+					value="#{true}" />
+			</aon:commandLink>
+		</aon:div>
+	</aon:div>
+
+</ui:composition>

@@ -11,7 +11,17 @@ import com.code.aon.ui.form.event.ControllerListenerException;
  * It handles the relation between master and child controllers.
  */
 public class LinesControllerListener extends MasterControllerListener {
-	
+
+	private boolean simultaneousEdition;
+
+	/**
+	 * Simultaneous edition is used when master and child are edited in new status simultaneously.
+	 * 
+	 */
+	public void setSimultaneousEdition(boolean simultaneousEdition) {
+		this.simultaneousEdition = simultaneousEdition;
+	}
+
 	/**
 	 * Gets the lines(child) controller.
 	 * 
@@ -26,6 +36,14 @@ public class LinesControllerListener extends MasterControllerListener {
 	 */
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		if (simultaneousEdition) {
+			LinesController childController = getLinesController();
+			childController.setModel(null);
+			if (childController.getTo() != null) {
+				childController.onAccept(null);
+			}
+		}
+
 		try {
 			updateDetailCriteria( event.getController(), false );
 			getLinesController().saveModel( event.getController().getTo() );
@@ -41,6 +59,10 @@ public class LinesControllerListener extends MasterControllerListener {
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		getLinesController().initModel();
 		super.afterBeanCreated(event);
+
+		if (simultaneousEdition) {
+			getLinesController().onReset(null);
+		}
 	}
 
 	/* (non-Javadoc)

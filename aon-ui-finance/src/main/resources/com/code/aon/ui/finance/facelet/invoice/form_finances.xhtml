@@ -63,14 +63,16 @@
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
-							<aon:selectInputDate id="Finance_DueDate" rendered="#{formEdit}"
-								value="#{controller.to.dueDate}" inputSize="8"
+							<aon:selectInputDate id="Finance_DueDate"
+								value="#{controller.to.dueDate}" rendered="#{formEdit}"
+								inputSize="8" required="true"
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}" />
 							<f:facet name="footer">
 								<aon:selectInputDate id="Finance_DueDate-New"
-									rendered="#{formNew}" value="#{controller.to.dueDate}"
-									inputSize="8" timeZone="#{timeZoneController.timeZone}"
+									value="#{controller.to.dueDate}" rendered="#{formNew}" 
+									inputSize="8" required="true"
+									timeZone="#{timeZoneController.timeZone}"
 									popupDateFormat="#{bundle.aon_date_pattern}" />
 							</f:facet>
 						</aon:column>
