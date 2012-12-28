@@ -1,10 +1,14 @@
 package com.code.aon.ui.audit.controller;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -13,6 +17,8 @@ import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.util.Classpath;
+import com.code.aon.ui.audit.ActionSource;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.OptionGroup;
@@ -25,11 +31,23 @@ public class MenuParser {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MenuParser.class);
 	
+	private static final String FACES_CONFIG_FILE = "faces-config.xml";
+	
+	private static final String NAVIGATON_CASE = "/faces-config/*[name()='navigation-rule']/*[name()='navigation-case']";
+	
+	private static final String FROM_OUTCOME = "from-outcome";
+	
+	private static final String TO_VIEW_ID = "to-view-id";
+	
 	private static final String MENU_TEMPLATE_PATH = "/facelet/homepage/menu.xhtml";
 	
 	public static final String AON_COMMAND_LINK = "aon:commandLink";
 		
 	private static final String AON_OUTPUTTEXT = "aon:outputText";
+	
+	private static final String AON_ACTION_LISTENER = "aon:actionListener";
+	
+	private static final String F_SET_PROPERTY_ACTION_LISTENER = "f:setPropertyActionListener";
 
 	private static final String C_IF = "c:if";
 	
@@ -51,6 +69,8 @@ public class MenuParser {
 	
 	private static final String HEADER_CLASS_ATTRIBUTE = "headerClass";
 	
+	private static final String ACTION_LISTENER_ATTRIBUTE = "actionListener";
+	
 	private static final String RENDERED_ATTRIBUTE = "rendered";
 	
 	private static final String TEST_ATTRIBUTE = "test";
@@ -58,6 +78,10 @@ public class MenuParser {
 	private static final String STYLE_CLASS_ATTRIBUTE = "styleClass";
 	
 	private static final String ID_ATTRIBUTE = "id";
+	
+	private static final String METHOD_ATTRIBUTE = "method";
+	
+	private static final String TARGET_ATTRIBUTE = "target";
 	
 	private static final String CATEGORY_EXPRESSION = "#{category}";
 	
@@ -77,19 +101,21 @@ public class MenuParser {
 		this.resolver = new DefaultResourceResolver();
 	}
 	
-	private Document getDocument( String path ) {
+	private Document getDocument( URL url ) {
 	    SAXReader reader = new SAXReader();
         Document document = null;
 		try {
-			URL url = resolver.resolveUrl(path);
 			document = reader.read(url);
 		} catch (DocumentException e) {
-			LOGGER.error( "Error parsing " + path, e );
+			LOGGER.error( "Error parsing " + url, e );
 		}
 		return document;
 	}
-	
 
+	private Document getDocument( String path ) {
+		return getDocument( resolver.resolveUrl(path) );
+	}
+	
 	private String getPath( String action ) {
 		ApplicationAssociate associate = ApplicationAssociate.getInstance(
 				FacesContext.getCurrentInstance().getExternalContext());
@@ -149,6 +175,7 @@ public class MenuParser {
 		if ( document != null ) {
 			parseMenu( document );
 		}		
+		parseFacesConfigs();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -277,6 +304,23 @@ public class MenuParser {
 		return StringUtils.contains(element.attributeValue(ID_ATTRIBUTE), CATEGORY_EXPRESSION);
 	}
 	
+	@SuppressWarnings("unchecked")
+	private void parseActionSources( ApplicationOption option, Element element ) {
+		List<Element> list = element.elements();
+		for ( Element child : list ) {
+			String name = child.getQualifiedName();
+			if ( AON_ACTION_LISTENER.equals(name) ) {
+				ActionSource as = new ActionSource(child.attributeValue(METHOD_ATTRIBUTE));
+				option.getActionSources().add(as);
+			} else if ( F_SET_PROPERTY_ACTION_LISTENER.equals(name) ) {
+				String target = child.attributeValue(TARGET_ATTRIBUTE);
+				String value = child.attributeValue(VALUE_ATTRIBUTE);
+				ActionSource as = new ActionSource(target, value);
+				option.getActionSources().add(as);
+			}
+        }	
+	}	
+	
 	private ApplicationOption getApplicationOption( Element element ) {
 		ApplicationOption option = null;
 		String action = getAction(element);
@@ -297,6 +341,12 @@ public class MenuParser {
 				option.setRendered(rendered);
 				element.addAttribute(RENDERED_ATTRIBUTE, rendered);
 			}
+			String actionListener = element.attributeValue(ACTION_LISTENER_ATTRIBUTE);
+			if (! StringUtils.isEmpty(actionListener) ) {
+				ActionSource as = new ActionSource(actionListener);
+				option.getActionSources().add(as);
+			}		
+			parseActionSources( option, element );
 			option.setGroup( getOptionGroup(element) );
 			option.setDescription( element.attributeValue(VALUE_ATTRIBUTE) );
 			element.addAttribute(ID_ATTRIBUTE, ApplicationOption.ID_PATTERN);
@@ -335,6 +385,54 @@ public class MenuParser {
 			LOGGER.error( "Duplicated id {}", id );
 		}				
 		option.getGroup().addOption(option);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void parseFacesConfig( Document document, Map<String,String> viewIdMap ) {
+		List<Element> list = document.selectNodes(NAVIGATON_CASE );
+		for ( Element element : list ) {
+			Element action = element.element(FROM_OUTCOME);
+			if ( action != null ) {
+				String actionName = action.getText();
+				if (! StringUtils.isEmpty(actionName) ) {
+					Element viewId = element.element(TO_VIEW_ID);
+					if ( viewId != null ) {
+						String viewIdValue = viewId.getText();
+						if (! StringUtils.isEmpty(viewIdValue) ) {
+							viewIdMap.put(actionName, viewIdValue);
+						}
+					}	
+				}	
+			}
+        }		
+	}
+	
+	private void parseFacesConfigs() {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        try {
+	        URL[] urls = Classpath.search(cl, "META-INF/", FACES_CONFIG_FILE);
+	        if (! ArrayUtils.isEmpty(urls) ) {
+	        	Map<String,String> viewIdMap = new HashMap<String, String>();
+		        for (URL url : urls) {
+		            try {
+		            	LOGGER.info("Faces config URL: {}", url);
+		        		Document document = getDocument(url);
+		        		if ( document != null ) {
+		        			parseFacesConfig( document, viewIdMap );
+		        		}		
+		            } catch (Exception e) {
+		                LOGGER.error("Error Loading Faces Config: {} {}",url, e.getMessage());
+		            }
+		        }	        	
+		        for( ApplicationOption option : controller.getOptionMap().values() ) {
+					String name = StringUtils.substringBefore(option.getAction(), "-");
+					String viewId = viewIdMap.get(name);
+					option.setViewId(viewId);
+		        }
+	        }
+		} catch (IOException e) {
+        	LOGGER.error("Error searching report config files", e);
+        }
 	}
 	
 }

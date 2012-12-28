@@ -3,6 +3,8 @@ package com.code.aon.ui.audit;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -42,6 +44,14 @@ public class ApplicationOption {
 	
 	private String xml;	
 	
+	private String viewId;
+	
+	private List<ActionSource> actionSources;
+	
+	public ApplicationOption() {
+		this.actionSources = new LinkedList<ActionSource>();
+	}
+
 	/**
 	 * Gets the action.
 	 * 
@@ -174,6 +184,18 @@ public class ApplicationOption {
 	 */
 	public void setXml(String xml) {
 		this.xml = xml;
+	}
+
+	public String getViewId() {
+		return viewId;
+	}
+
+	public void setViewId(String viewId) {
+		this.viewId = viewId;
+	}
+	
+	public List<ActionSource> getActionSources() {
+		return actionSources;
 	}
 
 	@Override

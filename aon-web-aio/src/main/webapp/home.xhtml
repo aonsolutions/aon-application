@@ -8,7 +8,7 @@
 
 	<ui:define name="mainContent">
 		<c:if test="#{(!userUtils.passwordExpired) and (company.model.rowCount > 0)}">
-			<a4j:include id="aonContent" ajaxRendered="false" viewId="/homepage.xhtml" />
+			<a4j:include id="aonContent" ajaxRendered="false" viewId="#{desktop.homepage}" />
 		</c:if>
 		<c:if test="#{userUtils.passwordExpired and (company.model.rowCount > 0)}">
 			<a4j:include id="aonContent" ajaxRendered="false"

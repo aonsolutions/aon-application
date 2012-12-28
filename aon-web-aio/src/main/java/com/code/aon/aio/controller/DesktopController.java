@@ -2,10 +2,12 @@ package com.code.aon.aio.controller;
 
 
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
+import static com.code.aon.ui.audit.controller.IAuditConstants.APPLICATION_OPTION_CONTROLLER_NAME;
 import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_ABSENCE;
 import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_COURSE;
 import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_LOAN;
 import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_PERSON;
+import static com.code.aon.ui.groupware.controller.IGroupWareConstants.NOTE_CONTROLLER_NAME;
 import static com.code.aon.ui.product.controller.IItemConstants.SHOW_SALES_PRICE;
 import static com.code.aon.ui.tas.controller.ITasConstants.SHOW_TAS_DATA;
 
@@ -34,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.aio.DesktopNoticeSummary;
 import com.code.aon.aio.TaskInfo;
+import com.code.aon.audit.Action;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -53,7 +56,10 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.audit.ActionSource;
+import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
+import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -74,11 +80,11 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class DesktopController {
 
+	private static final String HOMEPAGE_DESKTOP = "/homepage.xhtml";
+
 	private final static Logger LOGGER = LoggerFactory.getLogger(DesktopController.class);
 
 	private static final int UPDATE_CONNECTION_TIMEOUT = 5000;
-
-	private static final String NOTE_CONTROLLER_NAME = "note";
 	
     private ListDataModel recentNoteModel;
     
@@ -89,6 +95,8 @@ public class DesktopController {
     private TaskHolder taskHolder;
     
     private boolean checkUpdateURL = true;
+    
+    private ApplicationOption homepagOption;
 
     public DesktopController() {
 		try {
@@ -99,6 +107,7 @@ public class DesktopController {
 			initGarage();
 			initAcademy();
 			initHotel();
+			initHomepage();
 	    } catch (ManagerBeanException e) {
 	    	e.printStackTrace();
 	    	LOGGER.error( e.getMessage(), e );
@@ -359,6 +368,35 @@ public class DesktopController {
 		if (! adc.isDeniedModule(Module.HOTEL.getName()) ) {
 			AonUtil.setBeanValue(IItemConstants.PRODUCT, SHOW_SALES_PRICE, Boolean.TRUE);
 		}
+	}
+	
+	private ApplicationOption getOption( Action action ) {
+		ApplicationOptionController aoc = (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		ApplicationOption option = aoc.getOptionMap().get(action.getName());
+		if ( (option != null) && (option.getViewId() != null) ) {
+			return option;
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unused")
+	private void initHomepage() throws ManagerBeanException {
+		Action action = null;
+		if ( action != null ) {
+			this.homepagOption = getOption(action);
+		}
+	}
+	
+	public String getHomepage() {
+		String value = HOMEPAGE_DESKTOP;
+		if ( this.homepagOption != null ) {
+			for( ActionSource as : this.homepagOption.getActionSources() ) {
+				as.execute();
+			}
+			value = this.homepagOption.getViewId();
+			this.homepagOption = null;
+		}
+		return value;
 	}
 	
 }
