@@ -268,20 +268,20 @@
 		<hibernate names="description,id,level.id,level.agreement.id"/>
 	</bean>
 	<bean class="com.esferalia.aon.payroll.Contract">
-		<alias     names="contractType_id,endDate,enterpriseCCC_id,id,person_id,person_registry_document,person_registry_name,person_firstSurname,person_secondSurname,startDate,status,workPlace_id,workPlace_enterprise_id,workPlace_enterprise_registry_name,registration,seniorityDate"/>
-		<hibernate names="contractType.id,endDate,enterpriseCCC.id,id,person.id,person.registry.document,person.registry.name,person.firstSurname,person.secondSurname,startDate,status,workPlace.id,workPlace.enterprise.id,workPlace.enterprise.registry.name,registration,seniorityDate"/>
+		<alias     names="contractType_id,domain,endDate,enterpriseCCC_id,id,person_id,person_registry_document,person_registry_name,person_firstSurname,person_secondSurname,startDate,status,workPlace_id,workPlace_enterprise_id,workPlace_enterprise_registry_name,registration,seniorityDate"/>
+		<hibernate names="contractType.id,domain,endDate,enterpriseCCC.id,id,person.id,person.registry.document,person.registry.name,person.firstSurname,person.secondSurname,startDate,status,workPlace.id,workPlace.enterprise.id,workPlace.enterprise.registry.name,registration,seniorityDate"/>
 	</bean>
 	<bean class="com.esferalia.aon.payroll.ContractLeaveDetail">
-		<alias     names="cias,collegeNumber,confirmOrder,contractLeave_id,contractLeave_contract_person_id,contractLeave_contract_workPlace_enterprise_id,date,id,status,type"/>
-		<hibernate names="cias,collegeNumber,confirmOrder,contractLeave.id,contractLeave.contract.person.id,contractLeave.contract.workPlace.enterprise.id,date,id,status,type"/>
+		<alias     names="cias,collegeNumber,confirmOrder,contractLeave_id,contractLeave_contract_person_id,contractLeave_contract_workPlace_enterprise_id,date,domain,id,status,type"/>
+		<hibernate names="cias,collegeNumber,confirmOrder,contractLeave.id,contractLeave.contract.person.id,contractLeave.contract.workPlace.enterprise.id,date,domain,id,status,type"/>
 	</bean>
 	<bean class="com.esferalia.aon.payroll.Certifica2Batch" sqlName="certifica2_batch">
 		<alias 	   names="date,enterprise_id,enterprise_registry_name,id,sign,status" />
 		<hibernate names="date,enterprise.id,enterprise.registry.name,id,sign,status" />
 	</bean>
 	<bean class="com.esferalia.aon.payroll.EnterpriseCCC">
-		<alias names="activity_id,ccc,geozone_id,id,type,activity_enterprise_id"/>
-		<hibernate names="activity.id,ccc,geozone.id,id,type,activity.enterprise.id"/>
+		<alias names="activity_id,ccc,domain,geozone_id,id,type,activity_enterprise_id"/>
+		<hibernate names="activity.id,ccc,domain,geozone.id,id,type,activity.enterprise.id"/>
 	</bean>
 	<bean class="com.esferalia.aon.payroll.GeozoneIrpfDescendant">
 		<alias names="descendant,geozoneIrpf_amount,geozoneIrpf_endDate,geozoneIrpf_startDate,geozoneIrpf_id,geozoneIrpf_geozoneCode,id,percent"/>
@@ -296,8 +296,8 @@
 		<hibernate names="id,agreement.id,calendar.id,enterpriseActivity.id,workPlace.id,workPlace.enterprise.id"/>
 	</bean>
 	<bean class="com.esferalia.aon.payroll.Salary">
-		<alias     names="id,address,broadcastDate,category,commonBase,contract_id,contract_person_id,contract_workPlace_id,contract_workPlace_enterprise_id,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
-		<hibernate names="id,address,broadcastDate,category,commonBase,contract.id,contract.person.id,contract.workPlace.id,contract.workPlace.enterprise.id,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
+		<alias     names="id,address,broadcastDate,category,commonBase,contract_id,contract_person_id,contract_workPlace_id,contract_workPlace_enterprise_id,domain,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
+		<hibernate names="id,address,broadcastDate,category,commonBase,contract.id,contract.person.id,contract.workPlace.id,contract.workPlace.enterprise.id,domain,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
 	</bean>
 
 	<!-- ** AON PMS  **************************************************** -->
