@@ -8,62 +8,62 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
-	<aon:div styleClass="aon-panelGrid-search"
-		style="width: 100%; margin-bottom:10px; padding-top:10px;">
-		
-		<aon:panelGrid columns="3" 
-			columnClasses="aon-panelGrid-odd aon-width-100
-						,aon-panelGrid-even aon-width-auto
-						,aon-panelGrid-even aon-width-auto">
-			
+	<aon:div styleClass="aon-group aon-panelGrid-search">
+		<aon:div styleClass="aon-group-title">
 			<aon:outputText value="#{payrollBundle.payroll_data_filter}" styleClass="aon-bold" />
+		</aon:div>
+		<aon:div styleClass="aon-group-body" >	
 			
-			<aon:selectOneRadio value="#{controller.handler.searchCurrentVariables}" style="display:inline;">
-				<f:selectItem itemLabel="#{payrollBundle.payroll_current}" itemValue="#{true}" />
-				<f:selectItem itemLabel="#{payrollBundle.payroll_historyc}" itemValue="#{false}" />
-				<a4j:support event="onclick" reRender="#{controller.beanName}VarContainer" ignoreDupResponses="true" >
-					<aon:actionListener method="#{controller.handler.reloadData}" />
-				</a4j:support>
-			</aon:selectOneRadio>
-			
-			<aon:div>
-			
-				<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
-					value="#{bundle.aon_end_date}:" />
+			<aon:panelGrid columns="3" 
+				columnClasses="aon-panelGrid-odd aon-width-100, aon-panelGrid-even aon-width-auto, aon-panelGrid-even aon-width-auto">
+				
+				<aon:selectOneRadio value="#{controller.variableFilter.searchCurrentVariables}" style="display:inline;">
+					<f:selectItem itemLabel="#{payrollBundle.payroll_current}" itemValue="#{true}" />
+					<f:selectItem itemLabel="#{payrollBundle.payroll_historyc}" itemValue="#{false}" />
+					<a4j:support event="onclick" reRender="#{controller.beanName}VarContainer" ignoreDupResponses="true" >
+						<aon:actionListener method="#{controller.reloadData}" />
+						<aon:actionListener method="#{controller.variableFilter.onChangeSearchCurrent}" />
+					</a4j:support>
+				</aon:selectOneRadio>
+				
+				<aon:div>
+					<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
+						value="#{bundle.aon_end_date}:" />
+					<aon:selectOneMenu 
+						styleClass="aon-margin-right"
+						disabled="#{controller.variableFilter.searchCurrentVariables}"
+						value="#{controller.variableFilter.inactiveLastPeriod}" >
+						<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
+						<a4j:support event="onchange" reRender="#{controller.beanName}VarContainer" ignoreDupResponses="true" >
+							<aon:actionListener method="#{controller.variableFilter.onChangeLastPeriod}" />
+							<aon:actionListener method="#{controller.reloadData}" />
+						</a4j:support>
+					</aon:selectOneMenu>
+					<aon:selectInputDate  
+						disabled="#{!(!controller.variableFilter.searchCurrentVariables and controller.variableFilter.inactiveLastPeriod=='MANUAL')}"
+						value="#{controller.variableFilter.inactiveDate}"
+						inputSize="10" renderAsPopup="true" enableManualInput="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}">
+						<a4j:support event="onchanged" reRender="#{controller.beanName}VarContainer" ignoreDupResponses="true">
+							<aon:actionListener method="#{controller.reloadData}" />
+						</a4j:support>
+					</aon:selectInputDate>
+				</aon:div>
+				
 				<aon:selectOneMenu 
 					styleClass="aon-margin-right"
-					disabled="#{controller.handler.searchCurrentVariables}"
-					value="#{controller.handler.inactiveLastPeriod}" >
-					<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
-					<a4j:support event="onchange" reRender="#{controller.beanName}VarContainer" ignoreDupResponses="true" >
-						<aon:actionListener method="#{controller.handler.onChangeLastPeriod}" />
-						<aon:actionListener method="#{controller.handler.reloadData}" />
-					</a4j:support>
-				</aon:selectOneMenu>
-				<aon:selectInputDate  
-					disabled="#{!(!controller.handler.searchCurrentVariables and controller.handler.inactiveLastPeriod=='MANUAL')}"
-					value="#{controller.handler.inactiveDate}"
-					inputSize="10" renderAsPopup="true" enableManualInput="true"
-					timeZone="#{timeZoneController.timeZone}"
-					popupDateFormat="#{bundle.aon_date_pattern}">
-					<a4j:support event="onchanged" reRender="#{controller.beanName}VarContainer" ignoreDupResponses="true">
-						<aon:actionListener method="#{controller.handler.reloadData}" />
-					</a4j:support>
-				</aon:selectInputDate>
-				<aon:selectOneMenu 
-					styleClass="aon-margin-right"
-					disabled="#{controller.handler.searchCurrentVariables}"
-					value="#{controller.handler.variableFilter}" >
+					value="#{controller.variableFilter.selectedVariableFilter}" >
 					<f:selectItem itemLabel=" - " value="#{null}" />
-					<f:selectItems value="#{controller.handler.variablesFilterList}" />
+					<f:selectItems value="#{controller.variableFilter.availableVariables}" />
 					<a4j:support event="onchange" reRender="#{controller.beanName}VarContainer" ignoreDupResponses="true" >
-						<aon:actionListener method="#{controller.handler.reloadData}" />
+						<aon:actionListener method="#{controller.reloadData}" />
 					</a4j:support>
 				</aon:selectOneMenu>
-			</aon:div>
-		
-		</aon:panelGrid>
-		
-	</aon:div>	
+			
+			</aon:panelGrid>
+			
+		</aon:div>
+	</aon:div> 
 		
 </ui:composition>

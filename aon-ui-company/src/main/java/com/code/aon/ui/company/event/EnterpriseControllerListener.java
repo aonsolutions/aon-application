@@ -44,6 +44,7 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 			controller.initMainWorkPlace();			
 			controller.initMainDirStaff();			
 			controller.initLogo();
+			controller.initSignature();
 			loadEnterpriseParams();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
@@ -69,6 +70,7 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 		try {
 			controller.saveMainAddress();
 			controller.saveLogo();
+			controller.saveSignature();
 			acceptEnterpriseParams();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);

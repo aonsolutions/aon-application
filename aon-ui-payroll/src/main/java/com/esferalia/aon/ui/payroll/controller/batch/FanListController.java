@@ -12,6 +12,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -20,6 +21,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.FanBatchDetail;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class FanListController extends BasicController {
 
@@ -59,6 +61,14 @@ public class FanListController extends BasicController {
 		BatchDetailController controller = (BatchDetailController) FormUtil.getController(IPayrollConstants.FAN_BATCH_DETAIL_CONTROLLER_NAME);
 		List<ITransferObject> list = controller.getWrappedList();
 		try {
+			PayrollUtils utils = new PayrollUtils();
+			
+			clearCriteria();
+			if(DomainManager.isDomainManagementAvailable()){
+				getCriteria().setSkipDomainFilter( true );
+				getCriteria().addInExpression(getFieldName(IEntityAlias.ENTERPRISE_CCC_DOMAIN), utils.getCurrentChildDomainIds());
+			}
+			
 			IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
 			if(list!=null && !list.isEmpty()){
 				for(ITransferObject to: list){

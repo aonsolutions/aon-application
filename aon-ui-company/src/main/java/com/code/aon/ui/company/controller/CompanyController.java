@@ -19,29 +19,54 @@ import com.code.aon.common.util.AonFile;
  */
 public class CompanyController extends CompanyParentController {
 
-	/** The uploaded file. */
-	private AonFile aonFile;
+	/** The uploaded logo file. */
+	private AonFile logoFile;
+
+	/** The uploaded signature file. */
+	private AonFile signatureFile;
 
 	/**
-	 * Gets the uploaded file.
+	 * Gets the uploaded logo file.
 	 * 
 	 * @return the file
 	 */
+	public AonFile getLogoFile() {
+		return this.logoFile;
+	}
 	public AonFile getAonFile() {
-		return this.aonFile;
+		return this.logoFile;
 	}
 
 	/**
-	 * Sets the file.
+	 * Sets the logo file.
 	 * 
 	 * @param file
 	 *            the file
 	 */
-	public void setAonFile(AonFile aonFile) {
-		this.aonFile = aonFile;
+	public void setLogoFile(AonFile logoFile) {
+		this.logoFile = logoFile;
 	}
 
-	public void fileUploaded(UploadEvent event) {
+	/**
+	 * Gets the uploaded signature file.
+	 * 
+	 * @return the file
+	 */
+	public AonFile getSignatureFile() {
+		return this.signatureFile;
+	}
+	
+	/**
+	 * Sets the signature file.
+	 * 
+	 * @param file
+	 *            the file
+	 */
+	public void setSignatureFile(AonFile signatureFile) {
+		this.signatureFile = signatureFile;
+	}
+
+	public void logoFileUploaded(UploadEvent event) {
 		try {
 			UploadItem item = event.getUploadItem();
 			AonFile f = new AonFile();
@@ -53,7 +78,25 @@ public class CompanyController extends CompanyParentController {
 			}
 			f.setFileName( item.getFileName() );
 			f.setMimeType( MimeType.get(item.getContentType()) );
-			setAonFile(f);
+			setLogoFile(f);
+		} catch (IOException e) {
+			throw new AbortProcessingException(e.getMessage());
+		}
+	}
+
+	public void signatureFileUploaded(UploadEvent event) {
+		try {
+			UploadItem item = event.getUploadItem();
+			AonFile f = new AonFile();
+			File file = item.getFile();
+			if (file != null) {
+				FileInputStream in = new FileInputStream(file);
+				byte[] data = IOUtils.toByteArray(in);
+				f.setData(data);
+			}
+			f.setFileName( item.getFileName() );
+			f.setMimeType( MimeType.get(item.getContentType()) );
+			setSignatureFile(f);
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
 		}
@@ -65,8 +108,8 @@ public class CompanyController extends CompanyParentController {
 	 * @throws IOException
 	 */
 	public void createCurrentLogoContent(OutputStream out, Object data) throws IOException {
-		if (getAonFile() != null && getAonFile().getData() != null) {
-			out.write(getAonFile().getData());
+		if (getLogoFile() != null && getLogoFile().getData() != null) {
+			out.write(getLogoFile().getData());
 		}
 	}
 
@@ -76,16 +119,27 @@ public class CompanyController extends CompanyParentController {
 	 * @throws IOException
 	 */
 	public void createLogoContent(OutputStream out, Object data) throws IOException {
-		if (getAttach() != null) {
-			out.write(getAttach().getData());
+		if (getLogoAttach() != null) {
+			out.write(getLogoAttach().getData());
 		}
 	}
 	
 	public String getLogoMimeType() {
-		if ( getAttach()!= null && getAttach().getMimeType() != null ) {
-			return getAttach().getMimeType().getName();
+		if ( getLogoAttach()!= null && getLogoAttach().getMimeType() != null ) {
+			return getLogoAttach().getMimeType().getName();
 		}
 		return "*";	
+	}
+
+	/**
+	 * @param out
+	 * @param data
+	 * @throws IOException
+	 */
+	public void createCurrentSignatureContent(OutputStream out, Object data) throws IOException {
+		if (getSignatureFile() != null && getSignatureFile().getData() != null) {
+			out.write(getSignatureFile().getData());
+		}
 	}
 
 }

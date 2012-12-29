@@ -9,7 +9,6 @@ import java.util.Set;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +22,12 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementData;
 import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.SystemData;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.ui.payroll.controller.AbstractVariableHandler;
@@ -47,8 +46,8 @@ public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 		Agreement agreement = payment.getAgreement();
 		List<IVariableData> dataList;
 		try {
-			setVariablesModel(null);
-			setUndefinedVariablesModel(null);
+			getVariablesModel().setWrappedData(null);
+			getUndefinedVariablesModel().setWrappedData(null);
 			if(payment.getExpression()!=null || payment.getPaymentConcept().getExpression()!=null){
 				dataList = new LinkedList<IVariableData>();
 				Set<String> vl = ExpressionContext.getVariables(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression());
@@ -79,9 +78,9 @@ public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 						}
 					}
 				}
-				setVariablesModel(new ListDataModel(dataList));
+				getVariablesModel().setWrappedData(dataList);
 				if(!undefined.isEmpty()){
-					setUndefinedVariablesModel(new ListDataModel(undefined));
+					getUndefinedVariablesModel().setWrappedData(undefined);
 				}
 			}
 		} catch (ManagerBeanException e) {

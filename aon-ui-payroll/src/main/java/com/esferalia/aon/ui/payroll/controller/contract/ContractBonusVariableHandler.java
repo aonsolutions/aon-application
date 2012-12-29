@@ -45,8 +45,8 @@ public class ContractBonusVariableHandler extends ContractDetailVariableHandler 
 		Contract contract = bonus.getContract();
 		List<IVariableData> dataList;
 		try {
-			setVariablesModel(null);
-			setUndefinedVariablesModel(null);
+			getVariablesModel().setWrappedData(null);
+			getUndefinedVariablesModel().setWrappedData(null);
 			if(bonus.getExpression()!=null || bonus.getBonusConcept().getExpression()!=null){
 				dataList = new LinkedList<IVariableData>();
 				Set<String> vl = ExpressionContext.getVariables(
@@ -86,9 +86,9 @@ public class ContractBonusVariableHandler extends ContractDetailVariableHandler 
 						}
 					}
 				}
-				setVariablesModel(new ListDataModel(dataList));
+				getVariablesModel().setWrappedData(dataList);
 				if(!undefined.isEmpty()){
-					setUndefinedVariablesModel(new ListDataModel(undefined));
+					getUndefinedVariablesModel().setWrappedData(undefined);
 				}
 			}
 		} catch (SalaryException e) {

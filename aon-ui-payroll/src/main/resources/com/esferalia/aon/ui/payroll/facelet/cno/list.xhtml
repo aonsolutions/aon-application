@@ -45,6 +45,7 @@
 						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 							<ui:param name="controller" value="#{cno}" />
 							<ui:param name="skipSelectButton" value="true" />
+							<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
 							<ui:define name="columns">
 								<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 									<f:facet name="header">

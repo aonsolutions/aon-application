@@ -17,6 +17,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ql.Criteria;
@@ -65,12 +66,11 @@ public class ContractBatchController extends BasicController {
 		this.recorded = recorded;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
         IManagerBean contractBean = BeanManager.getManagerBean(Contract.class);
 		IManagerBean contractBatchDetailBean = BeanManager.getManagerBean(ContractBatchDetail.class);
         ContractListController listController = (ContractListController) FormUtil.getController(IPayrollConstants.CONTRACT_LIST_CONTROLLER_NAME);
-        Iterator iterator = listController.getCheckHandler().getCheckedList().iterator();
+        Iterator<Object> iterator = listController.getCheckHandler().getCheckedList().iterator();
         while (iterator.hasNext()) {
 			Contract contract = (Contract) iterator.next();
             contract.setStatus(ContractStatus.PROCESSED);
@@ -85,12 +85,11 @@ public class ContractBatchController extends BasicController {
         onSearchContracts(event);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
 		IManagerBean contractBatchDetailBean = BeanManager.getManagerBean(ContractBatchDetail.class);
 		IManagerBean contractBean = BeanManager.getManagerBean(Contract.class);
         BatchDetailController contractBatchDetailController = (BatchDetailController)FormUtil.getController(IPayrollConstants.CONTRACT_BATCH_DETAIL_CONTROLLER_NAME);
-		Iterator iterator = contractBatchDetailController.getCheckHandler().getCheckedList().iterator();
+		Iterator<Object> iterator = contractBatchDetailController.getCheckHandler().getCheckedList().iterator();
         while(iterator.hasNext()){
         	ContractBatchDetail contractBatchDetail = (ContractBatchDetail) iterator.next();
         	contractBatchDetail.getContract().setStatus(ContractStatus.PENDING);
@@ -203,6 +202,12 @@ public class ContractBatchController extends BasicController {
 
 	private List<Contract> getContractList() {
 		LinesController controller = (LinesController)FormUtil.getController(IPayrollConstants.CONTRACT_BATCH_DETAIL_CONTROLLER_NAME);
+		try {
+			controller.getCriteria().setSkipDomainFilter(DomainManager.isDomainManagementAvailable());
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		List<Contract> list = new LinkedList<Contract>();
 		for(ITransferObject to: controller.getWrappedList()){
 			ContractBatchDetail detail = (ContractBatchDetail) to;

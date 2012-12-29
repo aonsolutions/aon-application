@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Enterprise;
+import com.code.aon.config.Domain;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -38,6 +40,10 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 
 
 public class PayrollUtils {
+	
+	// //////////////////////////////////
+	// SALARY METHODS
+	// //////////////////////////////////
 	
 	/**
 	 * Calculate the salary of the complete month of the param date
@@ -110,6 +116,36 @@ public class PayrollUtils {
 		return null;
 	}
 	
+	// //////////////////////////////////
+	// PAYMENT METHODS
+	// //////////////////////////////////
+
+	public List<ITransferObject> getContractPaymentList(Contract contract, Date startDate, Date endDate) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(ContractPayment.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());			
+		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), endDate);			
+		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE), startDate);
+		Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE));
+		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+		return bean.getList(criteria);
+	}
+	public List<ITransferObject> getAgreementPaymentList(Contract contract, Date startDate, Date endDate) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(AgreementPayment.class);
+		Criteria criteria = null;
+		criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_AGREEMENT_ID), contract.getAgreementLevelCategory().getLevel().getAgreement().getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_START_DATE), false);
+		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE), new Date());
+		Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE));
+		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+		return bean.getList(criteria);
+	}
+	
+	// //////////////////////////////////
+	// VARIABLE METHODS (*_data)
+	// //////////////////////////////////
+	
 	public Set<String> getContractVariableList(Contract contract, Date startDate, Date endDate){
 		try {
 			Set<String> vl = new HashSet<String>();
@@ -147,27 +183,6 @@ public class PayrollUtils {
 		return vl;
 	}
 	
-	public List<ITransferObject> getContractPaymentList(Contract contract, Date startDate, Date endDate) throws ManagerBeanException{
-		IManagerBean bean = BeanManager.getManagerBean(ContractPayment.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());			
-		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), endDate);			
-		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE), startDate);
-		Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE));
-		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-		return bean.getList(criteria);
-	}
-	public List<ITransferObject> getAgreementPaymentList(Contract contract, Date startDate, Date endDate) throws ManagerBeanException{
-		IManagerBean bean = BeanManager.getManagerBean(AgreementPayment.class);
-		Criteria criteria = null;
-		criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_AGREEMENT_ID), contract.getAgreementLevelCategory().getLevel().getAgreement().getId());
-		criteria.addOrder(bean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_START_DATE), false);
-		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE), new Date());
-		Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE));
-		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-		return bean.getList(criteria);
-	}
 	public List<ITransferObject> getContractDataList(Contract contract, Date startDate, Date endDate, String variableName) throws ManagerBeanException{
 		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 		Criteria criteria = new Criteria();
@@ -229,18 +244,17 @@ public class PayrollUtils {
 		return map;
 	}
 	
+	// //////////////////////////////////
+	// DOMAIN METHODS
+	// //////////////////////////////////
+	
 	public Enterprise getCurrentDomainEnterprise(){
 		try {
-			DomainManager.getCurrentDomain();
 			IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_DOMAIN), DomainManager.getCurrentDomain());
-			if( bean.getCount(criteria)>1 ){
-				String msg = "Imposible obtener los datos de empresa. [getCurrentDomainEnterprise]";
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg);
-			} else if( bean.getCount(criteria)<1 ) {
-				String msg = "Los datos de empresa no son correctos.[getCurrentDomainEnterprise]";
+			if( bean.getCount(criteria)<1 ) {
+				String msg = "No hay datos de empresa definidos.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			} else {
@@ -250,6 +264,24 @@ public class PayrollUtils {
 			// NADA. se devuelve nulo
 		}
 		return null;
+	}
+	
+	public List<Integer> getCurrentChildDomainIds(){
+		List<Integer> idList = new LinkedList<Integer>();
+		if( DomainManager.isDomainManagementAvailable() ){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_PARENT_ID), DomainManager.getCurrentDomain());
+				List<ITransferObject> list = bean.getList(criteria);
+				for(ITransferObject to: list){
+					idList.add(((Domain)to).getId());
+				}
+			} catch (ManagerBeanException e) {
+				// NADA. se devuelve vacio
+			}
+		} 
+		return idList;
 	}
 	
 }

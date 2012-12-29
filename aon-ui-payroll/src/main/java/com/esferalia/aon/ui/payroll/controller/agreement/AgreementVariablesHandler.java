@@ -39,27 +39,27 @@ public class AgreementVariablesHandler extends AbstractVariableHandler{
 
 	@Override
 	public void initializeVariables(ActionEvent event) {
-		setVariablesModel(null);
+		getVariablesModel().setWrappedData(null);
+		getUndefinedVariablesModel().setWrappedData(null);
 		try {
 			Agreement agreement = ((Agreement) getController().getTo());
-			setUndefinedVariablesModel(null);
 			IManagerBean bean = BeanManager.getManagerBean(AgreementData.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_DATA_AGREEMENT_ID), agreement.getId());
 			criteria.addOrder(bean.getFieldName(IEntityAlias.AGREEMENT_DATA_NAME));
-			if(isSearchCurrentVariables()){
+			if(getVariableFilter().isSearchCurrentVariables()){
 				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_DATA_END_DATE), new Date());
 				Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.AGREEMENT_DATA_END_DATE));
 				criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 			} else {
-				if(getInactiveDate()!=null){
-					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_DATA_END_DATE), getInactiveDate());
+				if(getVariableFilter().getInactiveDate()!=null){
+					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_DATA_END_DATE), getVariableFilter().getInactiveDate());
 					Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.AGREEMENT_DATA_END_DATE));
 					criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 				}
 			}
-			if(!StringUtils.isEmpty(getVariableFilter())){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_DATA_NAME), getVariableFilter());
+			if(!StringUtils.isEmpty(getVariableFilter().getSelectedVariableFilter())){
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_DATA_NAME), getVariableFilter().getSelectedVariableFilter());
 			}
 			List<IVariableData> dataList = null;
 			dataList = new LinkedList<IVariableData>();
@@ -71,7 +71,7 @@ public class AgreementVariablesHandler extends AbstractVariableHandler{
 					dataList.add(data);
 				}
 			}
-			setVariablesModel(new ListDataModel(dataList));
+			getVariablesModel().setWrappedData(dataList);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible cargar las variables del convenio (" + e.getMessage() +")";
 			LOGGER.error(msg);

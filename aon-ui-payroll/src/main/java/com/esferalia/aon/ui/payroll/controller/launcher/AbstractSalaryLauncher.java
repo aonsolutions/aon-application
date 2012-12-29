@@ -55,6 +55,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.launcher.ListSalaryBuilderListener.LogMessage;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public abstract class AbstractSalaryLauncher 
 	implements SalaryTypeVisitor<ISQLContractSalaryCalculatorContext>{
@@ -166,10 +167,10 @@ public abstract class AbstractSalaryLauncher
 	}
 	
 	public void onExecute(ActionEvent event) {
+		buildCriteria();
+
 		String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());
 		connection = HibernateUtil.getSQLConnection(sessionFactory);
-		
-		buildCriteria();
 		
 		setPollEnabled(true);
 		TestThread thread =  
@@ -278,9 +279,15 @@ public abstract class AbstractSalaryLauncher
 					params.getPerson().getId());
 		}
 
-		criteria.addEqualExpression(
-				SQLConstants.CONTRACT + "." + RegistryColumns.DOMAIN, 
-				DomainManager.getCurrentDomain());
+		if ( DomainManager.isDomainManagementAvailable() ){
+			PayrollUtils utils = new PayrollUtils();
+			criteria.setSkipDomainFilter( true );
+			criteria.addInExpression(SQLConstants.CONTRACT + "." + RegistryColumns.DOMAIN, utils.getCurrentChildDomainIds());
+		} else {
+			criteria.addEqualExpression(
+					SQLConstants.CONTRACT + "." + RegistryColumns.DOMAIN, 
+					DomainManager.getCurrentDomain());
+		}
 		
 		return criteria;
 	}

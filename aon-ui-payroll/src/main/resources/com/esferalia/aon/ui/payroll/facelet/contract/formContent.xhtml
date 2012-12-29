@@ -8,7 +8,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components" >
 
 	<aon:panelGrid columns="2" 
-		columnClasses="aon-panelGrid-odd aon-width-200, aon-panelGrid-even aon-width-auto" >
+		columnClasses="aon-panelGrid-odd aon-width-180, aon-panelGrid-even aon-width-auto" >
 	
 		<aon:outputLabel for="ssRegime"
 			value="#{payrollBundle.payroll_contract_regime}" />
@@ -21,16 +21,16 @@
 		<aon:outputLabel for="workPlace" styleClass="aon-italic aon-margin-left"
 			style="font-size: 0.9em" value="#{companyBundle.company_workplace}" />
 		<aon:selectOneMenu id="workPlace" required="true"
-			disabled="#{contract.enterprise==null or contract.enterprise.id==null}"
 			value="#{contract.to.workPlace}" >
+			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{contract.workPlaces}" />
 		</aon:selectOneMenu>
 		
 		<aon:outputLabel for="enterpriseActivities" value="#{companyBundle.company_activity}" 
 			style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 		<aon:selectOneMenu id="enterpriseActivities"
-			disabled="#{contract.enterprise==null or contract.enterprise.id==null}"
 			value="#{contract.to.activity}" >
+			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{contract.activities}" />
 			<a4j:support event="onchange" actionListener="#{contract.onActivityChanged}" ajaxSingle="true" reRender="enterpriseCCCs"/>
 		</aon:selectOneMenu>
@@ -38,8 +38,8 @@
 		<aon:outputLabel for="enterpriseCCCs" value="#{companyBundle.company_enterprise_ccc}"
 			style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 		<aon:selectOneMenu id="enterpriseCCCs"
-			disabled="#{contract.to.activity==null or contract.to.activity.id==null}"
 			value="#{contract.to.enterpriseCCC}" >
+			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{contract.enterpriseCCCs}" />
 		</aon:selectOneMenu>
 		
@@ -80,26 +80,23 @@
 				rendered="#{contract.to.seniorityDateDifferent}" />
 		</aon:panelGroup>
 		
-		<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/agreement/lookup.xhtml" >
-			<ui:param name="lookupTo" value="#{contract.agreement}" />
-			<ui:param name="skipNewButton" value="#{true}" />
-			<ui:param name="lookupInputSuggestSize" value="40" />
-			<ui:param name="lookupReRender" value="agreementLevelCategory" />
-			<ui:define name="afterLookupContent">
-				<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
-					title="#{payrollBundle.payroll_contract_no_category_selected}"
-					styleClass="aon-icon-info aon-margin-left"
-					rendered="#{contract.agreement.id!=null and contract.to.agreementLevelCategory.id==null}" />
-			</ui:define>
-		</ui:decorate>
-		
 		<aon:outputLabel for="agreementLevelCategory" 
 			value="#{payrollBundle.payroll_agreementLevel_category}" />
-		<aon:selectOneMenu id="agreementLevelCategory"
-			value="#{contract.to.agreementLevelCategory}" >
-			<f:selectItem itemLabel="-" value="#{null}" />
-			<f:selectItems value="#{contract.agreementLevelCategories}" />
-		</aon:selectOneMenu>
+		<aon:div>
+			<aon:methodParam name="lookupChangeListener" value="#{contract.onChangeAgreement}" type="lookupChangeListener" />
+			<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/agreement/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.agreement}" />
+				<ui:param name="skipInputText" value="#{true}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+				<ui:param name="lookupInputSuggestSize" value="30" />
+				<ui:param name="lookupReRender" value="agreementLevelCategory" />
+			</ui:decorate>
+			<aon:selectOneMenu id="agreementLevelCategory" styleClass="aon-margin-left"
+				value="#{contract.to.agreementLevelCategory}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{contract.agreementLevelCategories}" />
+			</aon:selectOneMenu>
+		</aon:div>
 
 	</aon:panelGrid>
 

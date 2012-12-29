@@ -80,8 +80,11 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	public static final String INVOICE_PRINT_REPORT_KEY = "invoicePrint";
 	
-	/** The attach. */
-	private RegistryAttachment attach;
+	/** The logo attach. */
+	private RegistryAttachment logoAttach;
+
+	/** The signature attach. */
+	private RegistryAttachment signatureAttach;
 	
 	/** The phone. */
 	private RegistryMedia phone;
@@ -148,23 +151,40 @@ public class CompanyParentController extends BasicController implements ICompany
     }
     
 	/**
-	 * Gets the RegistryAttach.
+	 * Gets the logo RegistryAttach.
 	 * 
-	 * @return the attachment
+	 * @return the logo attachment
 	 */
-	public RegistryAttachment getAttach() {
-		return attach;
+	public RegistryAttachment getLogoAttach() {
+		return logoAttach;
 	}
 
+	/**
+	 * Sets the logo RegistryAttach.
+	 * 
+	 * @param attach the logo attachment
+	 */
+	public void setLogoAttach(RegistryAttachment logoAttach) {
+		this.logoAttach = logoAttach;
+		updateBigLogo(logoAttach);
+	}
 
 	/**
-	 * Sets the RegistryAttach.
+	 * Gets the signature RegistryAttach.
 	 * 
-	 * @param attach the attachment
+	 * @return the signature attachment
 	 */
-	public void setAttach(RegistryAttachment attach) {
-		this.attach = attach;
-		updateBigLogo(attach);
+	public RegistryAttachment getSignatureAttach() {
+		return signatureAttach;
+	}
+	
+	/**
+	 * Sets the signature RegistryAttach.
+	 * 
+	 * @param attach the signature attachment
+	 */
+	public void setSignatureAttach(RegistryAttachment signatureAttach) {
+		this.signatureAttach = signatureAttach;
 	}
 
 	/**
@@ -303,12 +323,12 @@ public class CompanyParentController extends BasicController implements ICompany
 	}
 
 	/**
-	 * Checks if an image is attached.
+	 * Checks if a logo image is attached.
 	 * 
-	 * @return true, if an image is attached
+	 * @return true, if a logo image is attached
 	 */
-	public boolean isImageAttached(){
-		if(this.attach != null){
+	public boolean isLogoImageAttached(){
+		if(this.logoAttach != null){
 			return true;
 		}
 		return false;
@@ -530,6 +550,30 @@ public class CompanyParentController extends BasicController implements ICompany
 		criteria.addEqualExpression(alias, ((Company)this.getTo()).getId());
 		String type = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
 		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
+		Iterator<ITransferObject> iter = registryAttachBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return (RegistryAttachment)iter.next();
+		}
+		return null;
+	}
+	
+	/**
+	 * Obtains company signature.
+	 * 
+	 * @return the registry attachment
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	public RegistryAttachment obtainCompanySignature() throws ManagerBeanException {
+		if(this.getTo() == null){
+			this.onLoad();
+		}
+		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
+		Criteria criteria = new Criteria();
+		String alias = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
+		criteria.addEqualExpression(alias, ((Company)this.getTo()).getId());
+		String type = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
+		criteria.addEqualExpression(type, RegistryAttachmentType.SIGNATURE);
 		Iterator<ITransferObject> iter = registryAttachBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			return (RegistryAttachment)iter.next();

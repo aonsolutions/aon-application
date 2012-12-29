@@ -9,9 +9,7 @@ import java.util.Set;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,28 +17,19 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementData;
-import com.esferalia.aon.payroll.AgreementPayment;
-import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.ContractData;
-import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.SystemPayment;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.ui.payroll.controller.AbstractVariableHandler;
-import com.esferalia.aon.ui.payroll.controller.AbstractVariableHandler.VariableData;
 import com.esferalia.aon.ui.payroll.controller.agreement.AgreementPaymentVariablesHandler;
 
 public class SystemPaymentVariableHandler extends AbstractVariableHandler {
@@ -54,11 +43,10 @@ public class SystemPaymentVariableHandler extends AbstractVariableHandler {
 	@Override
 	public void initializeVariables(ActionEvent event) {
 		SystemPayment payment = (SystemPayment)getController().getTo();
-//		Agreement agreement = payment.getAgreement();
 		List<IVariableData> dataList;
 		try {
-			setVariablesModel(null);
-			setUndefinedVariablesModel(null);
+			getVariablesModel().setWrappedData(null);
+			getUndefinedVariablesModel().setWrappedData(null);
 			if(payment.getExpression()!=null || payment.getPaymentConcept().getExpression()!=null){
 				dataList = new LinkedList<IVariableData>();
 				Set<String> vl = ExpressionContext.getVariables(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression());
@@ -78,7 +66,6 @@ public class SystemPaymentVariableHandler extends AbstractVariableHandler {
 							startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
 							endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
 							AgreementData data = new AgreementData();
-//							data.setAgreement(agreement);
 							data.setName(s);
 							data.setStartDate(startCal.getTime());
 							if(!isSystemVariable(data)){
@@ -89,9 +76,9 @@ public class SystemPaymentVariableHandler extends AbstractVariableHandler {
 						}
 					}
 				}
-				setVariablesModel(new ListDataModel(dataList));
+				getVariablesModel().setWrappedData(dataList);
 				if(!undefined.isEmpty()){
-					setUndefinedVariablesModel(new ListDataModel(undefined));
+					getUndefinedVariablesModel().setWrappedData(undefined);
 				}
 			}
 		} catch (ManagerBeanException e) {

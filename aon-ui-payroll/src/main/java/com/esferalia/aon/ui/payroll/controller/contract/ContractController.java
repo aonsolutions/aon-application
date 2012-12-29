@@ -254,8 +254,6 @@ public class ContractController extends BasicController implements IVariablesHan
 
 	private void loadWorkPlaces() {
 		setWorkPlaces(new LinkedList<SelectItem>());
-		Contract contract = (Contract) getTo();
-		contract.setWorkPlace(null);
 		if (getEnterprise() != null) {
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
@@ -268,23 +266,18 @@ public class ContractController extends BasicController implements IVariablesHan
 					SelectItem item = new SelectItem(w, name);
 					getWorkPlaces().add(item);
 				}
-				if ( list.size() > 0 ) {
-					contract.setWorkPlace((WorkPlace)list.get(0));
-					loadWorkplaceAgreement(null);
-				}
 			} catch (ManagerBeanException e) {
 				String msg = "Imposible cargar los Centros de Trabajo de la empresa. (" + e.getMessage() +")";
 				LOGGER.error(msg);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg,e);
 			}						
+			loadWorkplaceAgreement(null);
 		}
 	}
 
 	private void loadActivities() {
 		setActivities( new LinkedList<SelectItem>());
-		Contract contract = (Contract) getTo();
-		contract.setActivity(null);
 		if (getEnterprise() != null) {
 			try {
 				IManagerBean ecBean = BeanManager.getManagerBean(EnterpriseActivity.class);
@@ -299,10 +292,6 @@ public class ContractController extends BasicController implements IVariablesHan
 						getActivities().add(item);
 					}
 				}
-				if ( ecList.size() > 0 ) {
-					contract.setActivity((EnterpriseActivity)ecList.get(0));
-				}
-				
 			} catch (ManagerBeanException e) {
 				String msg = "Imposible cargar las Actividades de la empresa. (" + e.getMessage() +")";
 				LOGGER.error(msg);
@@ -313,14 +302,8 @@ public class ContractController extends BasicController implements IVariablesHan
 	}
 
 	private void loadEnterpriseCCCs() {
-//		IrpfResult i;
-//		i.g
-//		IrpfRegularization r;
-//		r.g
-		
 		setEnterpriseCCCs( new LinkedList<SelectItem>());
 		Contract contract = (Contract) getTo();
-		contract.setEnterpriseCCC(null);
 		if (contract.getActivity() != null && contract.getActivity().getId() != null) {
 			try {
 				IManagerBean ecBean = BeanManager.getManagerBean(EnterpriseCCC.class);
@@ -333,10 +316,6 @@ public class ContractController extends BasicController implements IVariablesHan
 					SelectItem item = new SelectItem(ccc, name);
 					getEnterpriseCCCs().add(item);
 				}
-				if ( ecList.size() > 0 ) {
-					contract.setEnterpriseCCC((EnterpriseCCC)ecList.get(0));
-				}
-				
 			} catch (ManagerBeanException e) {
 				String msg = "Imposible cargar los CCC de la empresa. (" + e.getMessage() +")";
 				LOGGER.error(msg);
@@ -349,14 +328,16 @@ public class ContractController extends BasicController implements IVariablesHan
 	public void loadWorkplaceAgreement(ActionEvent event){
 		Contract contract = (Contract) getTo(); 
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
-			Criteria  criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), contract.getWorkPlace().getId());
-			List<ITransferObject> list = bean.getList(criteria);
-			if(!list.isEmpty()){
-				PayrollWorkPlace pw = (PayrollWorkPlace) list.get(0);
-				if(pw.getAgreement()!=null){
-					setAgreement(pw.getAgreement());
+			if ( contract.getWorkPlace()!=null && contract.getWorkPlace().getId()!=null ) {
+				IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
+				Criteria  criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), contract.getWorkPlace().getId());
+				List<ITransferObject> list = bean.getList(criteria);
+				if(!list.isEmpty()){
+					PayrollWorkPlace pw = (PayrollWorkPlace) list.get(0);
+					if(pw.getAgreement()!=null){
+						setAgreement(pw.getAgreement());
+					}
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -617,7 +598,7 @@ public class ContractController extends BasicController implements IVariablesHan
 				criteria.addEqualExpression(cBean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_AGREEMENT_ID), getAgreement().getId());
 				for (ITransferObject to : cBean.getList(criteria)) {
 					AgreementLevelCategory alc = (AgreementLevelCategory) to;
-					String name = alc.getLevel().getDescription()+" - "+alc.getDescription();
+					String name = alc.getLevel().getDescription() + (alc.getDescription()!=null?" - "+alc.getDescription():"");
 					SelectItem item = new SelectItem(alc, name);
 					list.add(item);
 				}
@@ -626,6 +607,13 @@ public class ContractController extends BasicController implements IVariablesHan
 			// NADA, no se cargan datos del convenio
 		}
 		return list;
+	}
+	
+	public void onChangeAgreement(LookupChangeEvent event){
+		if (event.getNewValue() == null || event.getNewValue().equals("")) {
+			Contract contract = (Contract) getTo();
+			contract.setAgreementLevelCategory(null);
+		}
 	}
 	
 	public void onChangeAgreementLevelCategory(ActionEvent event){

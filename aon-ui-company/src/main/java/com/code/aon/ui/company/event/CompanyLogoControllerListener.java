@@ -33,7 +33,7 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyLogoControllerListener.class.getName());
 
 	private void checkAonFile( CompanyController companyController ) throws ControllerListenerException {
-		AonFile aonFile = companyController.getAonFile();
+		AonFile aonFile = companyController.getLogoFile();
 		if ( ArrayUtils.isEmpty(aonFile.getData()) ) {
 			FacesMessage message = MessageFactory.getMessage( UIInput.REQUIRED_MESSAGE_ID, AonUtil.getMessage("aon_fileupload_element") );
 			throw new ControllerListenerException( message.getSummary() );									
@@ -54,10 +54,10 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		CompanyController companyController = (CompanyController) event.getController();
-		if (companyController.getAonFile() != null) {
+		if (companyController.getLogoFile() != null) {
 			checkAonFile(companyController);
 			try {
-				AonFile aonFile = companyController.getAonFile();
+				AonFile aonFile = companyController.getLogoFile();
 				RegistryAttachment attach = new RegistryAttachment();
 				attach.setRegistryAttachmentType(RegistryAttachmentType.LOGO);
 				attach.setCategory(null);
@@ -67,7 +67,7 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 				MimeType mt = CompanyImagesController.getMimeType(aonFile.getFileName(), aonFile.getData());
 				attach.setMimeType(mt);
 				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-				companyController.setAttach((RegistryAttachment) attachBean.insert(attach));
+				companyController.setLogoAttach((RegistryAttachment) attachBean.insert(attach));
 			} catch (ManagerBeanException e) {
 				LOGGER.error("Error updating logo", e);
 			}
@@ -86,10 +86,10 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		CompanyController companyController = (CompanyController) event.getController();
-		if (companyController.getAonFile() != null) {
+		if (companyController.getLogoFile() != null) {
 			checkAonFile(companyController);
 			try {
-				AonFile aonFile = companyController.getAonFile();
+				AonFile aonFile = companyController.getLogoFile();
 				RegistryAttachment attach = companyController.obtainCompanyLogo();				
 				if (attach == null) {
 					attach = new RegistryAttachment();
@@ -103,9 +103,9 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 				attach.setMimeType(mt);
 				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 				if (attach.getId() == null) {
-					companyController.setAttach((RegistryAttachment) attachBean.insert(attach));
+					companyController.setLogoAttach((RegistryAttachment) attachBean.insert(attach));
 				} else {
-					companyController.setAttach((RegistryAttachment) attachBean.update(attach));
+					companyController.setLogoAttach((RegistryAttachment) attachBean.update(attach));
 				}
 			} catch (ManagerBeanException e) {
 				LOGGER.error("Error updating logo", e);
@@ -119,14 +119,14 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 		try {
 			RegistryAttachment companyLogo = companyController.obtainCompanyLogo();
 			if (companyLogo != null) {
-				companyController.setAttach(companyLogo);
+				companyController.setLogoAttach(companyLogo);
 
 				AonFile f = new AonFile();
 				f.setKey(companyLogo.getId());
 				f.setData(companyLogo.getData());
 				f.setFileName(companyLogo.getDescription());
 				f.setMimeType(companyLogo.getMimeType());
-				companyController.setAonFile(f);
+				companyController.setLogoFile(f);
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );

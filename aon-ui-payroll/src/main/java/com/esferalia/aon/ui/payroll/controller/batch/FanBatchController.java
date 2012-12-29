@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -18,21 +17,22 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.FanBatch;
 import com.esferalia.aon.payroll.FanBatchAttachment;
 import com.esferalia.aon.payroll.FanBatchDetail;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.FanBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
+import com.esferalia.aon.payroll.enumeration.LiquidationType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.FANWriter;
 
@@ -42,30 +42,6 @@ public class FanBatchController extends BasicController {
 	private FANWriter fanWriter;
 	private FileOutput fileOutput;
 	private boolean recorded;
-	
-	private Calendar batchDate;
-	
-	public Integer getYear() {
-		if(batchDate==null){
-			batchDate = Calendar.getInstance();
-		}
-		return batchDate.get(Calendar.YEAR);
-	}
-	public void setYear(Integer year) {
-		batchDate.set(Calendar.YEAR, year);
-		((FanBatch)getTo()).setDate(batchDate.getTime());
-	}
-
-	public Month getMonth() {
-		if(batchDate==null){
-			batchDate = Calendar.getInstance();
-		}
-		return Month.getMonthByValue(batchDate.get(Calendar.MONTH));
-	}
-	public void setMonth(Month month) {
-		batchDate.set(Calendar.MONTH, month.getValue());
-		((FanBatch)getTo()).setDate(batchDate.getTime());
-	}
 
 	private FANWriter getFANWriter() {
 		if (fanWriter == null) {
@@ -90,11 +66,10 @@ public class FanBatchController extends BasicController {
 		this.recorded = recorded;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
 		IManagerBean fanBatchDetailBean = BeanManager.getManagerBean(FanBatchDetail.class);
         FanListController listController = (FanListController) FormUtil.getController(IPayrollConstants.FAN_LIST_CONTROLLER_NAME);
-        Iterator iterator = listController.getCheckHandler().getCheckedList().iterator();
+        Iterator<Object> iterator = listController.getCheckHandler().getCheckedList().iterator();
         while (iterator.hasNext()) {
 			EnterpriseCCC ccc = (EnterpriseCCC) iterator.next();
             FanBatchDetail fanBatchDetail = new FanBatchDetail();
@@ -107,11 +82,10 @@ public class FanBatchController extends BasicController {
         onSearchCCCs(event);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
 		IManagerBean fanBatchDetailBean = BeanManager.getManagerBean(FanBatchDetail.class);
         BatchDetailController fanBatchDetailController = (BatchDetailController)FormUtil.getController(IPayrollConstants.FAN_BATCH_DETAIL_CONTROLLER_NAME);
-		Iterator iterator = fanBatchDetailController.getCheckHandler().getCheckedList().iterator();
+		Iterator<Object> iterator = fanBatchDetailController.getCheckHandler().getCheckedList().iterator();
         while(iterator.hasNext()){
         	FanBatchDetail fanBatchDetail = (FanBatchDetail) iterator.next();
         	fanBatchDetailBean.remove(fanBatchDetail);
@@ -128,7 +102,6 @@ public class FanBatchController extends BasicController {
 	
 	public void onSearchCCCs(ActionEvent event) throws ManagerBeanException {
 		FanListController list = (FanListController) FormUtil.getController(IPayrollConstants.FAN_LIST_CONTROLLER_NAME);
-		list.clearCriteria();
 		list.onSearch(event);
 	}
 	
@@ -158,8 +131,6 @@ public class FanBatchController extends BasicController {
 	public void onInit(ActionEvent event) {
 		try {
 			onSearchCCCs(event);
-			batchDate = Calendar.getInstance(); 
-			batchDate.setTime(((FanBatch)getTo()).getDate());
 			checkDiskCreated();
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("error on onInit ["+e.getMessage()+"]");
@@ -172,31 +143,35 @@ public class FanBatchController extends BasicController {
 		super.onReset(event);
 		FanBatch b = (FanBatch) getTo();
 		b.setStatus(FileStatus.PENDING);
+		b.setDate(new Date());
+		b.setLiquidationType(LiquidationType.L00);
 	}
 
 	public void onCreateDisk(ActionEvent event) {
 		try {
-			File file = getFANWriter().createFAN(getEnterpriseCCCList(),((FanBatch)getTo()).getLiquidationType(), getYear(), getMonth(), getMonth()).getFile();
+			FanBatch batch = (FanBatch) getTo();
+//			File file = getFANWriter().createFAN(getEnterpriseCCCList(),((FanBatch)getTo()).getLiquidationType(), batch.getYear(), batch.getMonth(), batch.getMonth()).getFile();
+			File file = null;
 			IManagerBean bean = BeanManager.getManagerBean(FanBatchAttachment.class);
-			if (file != null) {
+//			if (file != null) {
 				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				FanBatchAttachment attach;
-				attach = new FanBatchAttachment();
-				attach.setFanBatch( (FanBatch) getTo());
-				attach.setMimeType(MimeType.MIME_TXT);
-				attach.setDescription(getFANWriter().getEti().getFichero());
-				attach.setSize(null);
-				attach.setAttachmentType(FanBatchAttachmentType.FAN_DOCUMENT);
-				attach.setScope(null);
-				attach.setData(data);
-				attach.setAttachDate(new Date());
-				bean.insertOrUpdate(attach);
-				setRecorded(true);
-				changeBatchStatus(FileStatus.GENERATED);
-				FanBatchAttachController controller = (FanBatchAttachController) FormUtil.getController("fanBatchAttach");
-				controller.initializeModel();
-			}
+//				byte[] data = IOUtils.toByteArray(in);
+//				FanBatchAttachment attach;
+//				attach = new FanBatchAttachment();
+//				attach.setFanBatch( (FanBatch) getTo());
+//				attach.setMimeType(MimeType.MIME_TXT);
+//				attach.setDescription(getFANWriter().getEti().getFichero());
+//				attach.setSize(null);
+//				attach.setAttachmentType(FanBatchAttachmentType.FAN_DOCUMENT);
+//				attach.setScope(null);
+//				attach.setData(data);
+//				attach.setAttachDate(new Date());
+//				bean.insertOrUpdate(attach);
+//				setRecorded(true);
+//				changeBatchStatus(FileStatus.GENERATED);
+//				FanBatchAttachController controller = (FanBatchAttachController) FormUtil.getController("fanBatchAttach");
+//				controller.initializeModel();
+//			}
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("error on generateFanFile ["+e.getMessage()+"]");
 		} catch (FileNotFoundException e) {

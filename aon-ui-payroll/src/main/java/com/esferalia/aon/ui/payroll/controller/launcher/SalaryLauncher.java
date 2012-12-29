@@ -20,6 +20,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -30,6 +31,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class SalaryLauncher extends AbstractSalaryLauncher{
 	
@@ -111,6 +113,11 @@ public class SalaryLauncher extends AbstractSalaryLauncher{
 			}
 			if(getParams().getEndDate()!=null){
 				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), getParams().getEndDate());
+			}
+			if(DomainManager.isDomainManagementAvailable()){
+				PayrollUtils utils = new PayrollUtils();
+				criteria.setSkipDomainFilter( true );
+				criteria.addInExpression(bean.getFieldName(IEntityAlias.SALARY_DOMAIN), utils.getCurrentChildDomainIds());
 			}
 			setExistingSalaries(bean.getList(criteria));
 		} catch (ManagerBeanException e) {

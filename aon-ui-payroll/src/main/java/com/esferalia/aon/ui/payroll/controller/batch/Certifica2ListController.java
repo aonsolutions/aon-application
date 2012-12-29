@@ -14,18 +14,16 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.Certifica2Batch;
-import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
-import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class Certifica2ListController extends BasicController {
 
@@ -140,12 +138,19 @@ public class Certifica2ListController extends BasicController {
 		getCheckHandler().clearCheckedList();
 		remesableContracts = new HashMap<Integer, RemesableContract>();
 		setSuspensionCauseForAll(null);
-		IController controller = FormUtil.getController(IPayrollConstants.CERTIFICA2_BATCH_CONTROLLER_NAME);
 		try {
+			PayrollUtils utils = new PayrollUtils();
+			
+			clearCriteria();
+			if(DomainManager.isDomainManagementAvailable()){
+				getCriteria().setSkipDomainFilter( true );
+				getCriteria().addInExpression(getFieldName(IEntityAlias.CONTRACT_DOMAIN), utils.getCurrentChildDomainIds());
+			}
+			
 			getCriteria().addNotNullExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE));
 			getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.CONTRACT_STATUS), ContractStatus.BATCHED);
 //			getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_STATUS), ContractStatus.PENDING);
-			getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), ((Certifica2Batch)controller.getTo()).getEnterprise().getId());
+//			getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), ((Certifica2Batch)controller.getTo()).getEnterprise().getId());
 			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_END_DATE), false);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSearch exception: ",e);

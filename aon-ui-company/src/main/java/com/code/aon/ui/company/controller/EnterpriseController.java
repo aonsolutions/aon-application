@@ -22,6 +22,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.ql.Criteria;
@@ -50,9 +51,13 @@ public class EnterpriseController extends RegistryController implements ICompany
 	
 	private String treeTemplateSuffix;
 	
-	private AonFile aonFile;
+	private AonFile logoFile;
+
+	private AonFile signatureFile;
 	
-	private RegistryAttachment attach;
+	private RegistryAttachment logoAttach;
+	
+	private RegistryAttachment signatureAttach;
 	
 	private String formAction;
 	
@@ -157,7 +162,8 @@ public class EnterpriseController extends RegistryController implements ICompany
     	this.showActivityNode = false;
     	setWorkplace(null);
     	setDirStaff(null);
-    	setAonFile(null);
+    	setLogoFile(null);
+    	setSignatureFile(null);
     	this.info.reset();
 	}
     
@@ -216,56 +222,109 @@ public class EnterpriseController extends RegistryController implements ICompany
     	return ((Enterprise)this.getTo()).getRegistry().getType()==RegistryType.LEGAL;
     }
  
-	public AonFile getAonFile() {
-		return this.aonFile;
+	public AonFile getLogoFile() {
+		return this.logoFile;
 	}
 
-	public void setAonFile(AonFile aonFile) {
-		this.aonFile = aonFile;
+	public void setLogoFile(AonFile logoFile) {
+		this.logoFile = logoFile;
 	}
 	
+	public AonFile getSignatureFile() {
+		return signatureFile;
+	}
+
+	public void setSignatureFile(AonFile signatureFile) {
+		this.signatureFile = signatureFile;
+	}
+
 	public void initLogo() throws ManagerBeanException {
-		setAonFile(null);
+		Company company  = (Company) ((CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME)).getTo();
+		setLogoFile(null);
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
 		String alias = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
-		criteria.addEqualExpression(alias, getEnterprise().getId());
+//		criteria.addEqualExpression(alias, getEnterprise().getRegistry().getId());
+		criteria.addEqualExpression(alias, company.getRegistry().getId());
 		String type = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
 		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {
-			attach = (RegistryAttachment) list.get(0);
+			logoAttach = (RegistryAttachment) list.get(0);
 			AonFile f = new AonFile();
-			f.setKey(attach.getId());
-			f.setData(attach.getData());
-			f.setFileName(attach.getDescription());
-			f.setMimeType(attach.getMimeType());
-			setAonFile(f);
+			f.setKey(logoAttach.getId());
+			f.setData(logoAttach.getData());
+			f.setFileName(logoAttach.getDescription());
+			f.setMimeType(logoAttach.getMimeType());
+			setLogoFile(f);
 		} else {
-			attach = new RegistryAttachment();
-			attach.setRegistryAttachmentType(RegistryAttachmentType.LOGO);
-			attach.setRegistry( getEnterprise().getRegistry() );
-			attach.setDescription("aon-logo");
+			logoAttach = new RegistryAttachment();
+			logoAttach.setRegistryAttachmentType(RegistryAttachmentType.LOGO);
+			logoAttach.setRegistry( getEnterprise().getRegistry() );
+			logoAttach.setDescription("aon-logo");
+		}
+	}	
+
+	public void initSignature() throws ManagerBeanException {
+		Company company  = (Company) ((CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME)).getTo();
+		setSignatureFile(null);
+		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+		Criteria criteria = new Criteria();
+		String alias = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
+//		criteria.addEqualExpression(alias, getEnterprise().getRegistry().getId());
+		criteria.addEqualExpression(alias, company.getRegistry().getId());
+		String type = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
+		criteria.addEqualExpression(type, RegistryAttachmentType.SIGNATURE);
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			signatureAttach = (RegistryAttachment) list.get(0);
+			AonFile f = new AonFile();
+			f.setKey(signatureAttach.getId());
+			f.setData(signatureAttach.getData());
+			f.setFileName(signatureAttach.getDescription());
+			f.setMimeType(signatureAttach.getMimeType());
+			setSignatureFile(f);
+		} else {
+			signatureAttach = new RegistryAttachment();
+			signatureAttach.setRegistryAttachmentType(RegistryAttachmentType.SIGNATURE);
+			signatureAttach.setRegistry( getEnterprise().getRegistry() );
+			signatureAttach.setDescription("aon-signature");
 		}
 	}	
 	
     public void saveLogo() throws ManagerBeanException {
-    	if (getAonFile() != null && getAonFile().getData() != null) {
-			attach.setData(getAonFile().getData());
-			MimeType mt = CompanyImagesController.getMimeType(getAonFile().getFileName(), getAonFile().getData());
-			attach.setMimeType(mt);
+    	if (getLogoFile() != null && getLogoFile().getData() != null) {
+			logoAttach.setData(getLogoFile().getData());
+			MimeType mt = CompanyImagesController.getMimeType(getLogoFile().getFileName(), getLogoFile().getData());
+			logoAttach.setMimeType(mt);
 			IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
-			bean.insertOrUpdate(attach);
+			bean.insertOrUpdate(logoAttach);
+    	}
+    }	
+
+    public void saveSignature() throws ManagerBeanException {
+    	if (getSignatureFile() != null && getSignatureFile().getData() != null) {
+    		signatureAttach.setData(getSignatureFile().getData());
+    		MimeType mt = CompanyImagesController.getMimeType(getSignatureFile().getFileName(), getSignatureFile().getData());
+    		signatureAttach.setMimeType(mt);
+    		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+    		bean.insertOrUpdate(signatureAttach);
     	}
     }	
     
 	public void createCurrentLogoContent(OutputStream out, Object data) throws IOException {
-		if (getAonFile() != null && getAonFile().getData() != null) {
-			out.write(getAonFile().getData());
+		if (getLogoFile() != null && getLogoFile().getData() != null) {
+			out.write(getLogoFile().getData());
+		}
+	}
+
+	public void createCurrentSignatureContent(OutputStream out, Object data) throws IOException {
+		if (getSignatureFile() != null && getSignatureFile().getData() != null) {
+			out.write(getSignatureFile().getData());
 		}
 	}
  
-	public void fileUploaded(UploadEvent event) {
+	public void logoFileUploaded(UploadEvent event) {
 		try {
 			UploadItem item = event.getUploadItem();
 			AonFile f = new AonFile();
@@ -278,7 +337,26 @@ public class EnterpriseController extends RegistryController implements ICompany
 			}
 			f.setFileName( item.getFileName() );
 			f.setMimeType( MimeType.get(item.getContentType()) );
-			setAonFile(f);
+			setLogoFile(f);
+		} catch (IOException e) {
+			throw new AbortProcessingException(e.getMessage());
+		}
+	}
+
+	public void signatureFileUploaded(UploadEvent event) {
+		try {
+			UploadItem item = event.getUploadItem();
+			AonFile f = new AonFile();
+			File file = item.getFile();
+			if (file != null) {
+				FileInputStream in = new FileInputStream(file);
+				byte[] data = IOUtils.toByteArray(in);
+				f.setData(data);
+				file.delete();
+			}
+			f.setFileName( item.getFileName() );
+			f.setMimeType( MimeType.get(item.getContentType()) );
+			setSignatureFile(f);
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
 		}

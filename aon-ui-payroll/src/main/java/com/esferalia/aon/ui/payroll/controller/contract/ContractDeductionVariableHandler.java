@@ -45,8 +45,8 @@ public class ContractDeductionVariableHandler extends ContractDetailVariableHand
 		Contract contract = deduction.getContract();
 		List<IVariableData> dataList;
 		try {
-			setVariablesModel(null);
-			setUndefinedVariablesModel(null);
+			getVariablesModel().setWrappedData(null);
+			getUndefinedVariablesModel().setWrappedData(null);
 			if(deduction.getExpression()!=null || deduction.getDeductionConcept().getExpression()!=null){
 				dataList = new LinkedList<IVariableData>();
 				Set<String> vl = ExpressionContext.getVariables(deduction.getExpression()==null?deduction.getDeductionConcept().getExpression():deduction.getExpression());
@@ -85,9 +85,9 @@ public class ContractDeductionVariableHandler extends ContractDetailVariableHand
 						}
 					}
 				}
-				setVariablesModel( new ListDataModel(dataList) );
+				getVariablesModel().setWrappedData(dataList);
 				if(!undefined.isEmpty()){
-					setUndefinedVariablesModel( new ListDataModel(undefined) );
+					getUndefinedVariablesModel().setWrappedData(undefined);
 				}
 			}
 		} catch (SalaryException e) {

@@ -48,8 +48,8 @@ public class ContractPaymentVariableHandler extends ContractDetailVariableHandle
 		Month month = ((ContractDetailVariableController) getController()).getMonth();
 		List<IVariableData> dataList;
 		try {
-			setVariablesModel(null);
-			setUndefinedVariablesModel(null);
+			getVariablesModel().setWrappedData(null);
+			getUndefinedVariablesModel().setWrappedData(null);
 			if(StringUtils.isNotBlank(payment.getExpression()) || StringUtils.isNotBlank(payment.getPaymentConcept().getExpression()) ){
 				dataList = new LinkedList<IVariableData>();
 				Set<String> vl = ExpressionContext.getVariables(StringUtils.isBlank(payment.getExpression())?payment.getPaymentConcept().getExpression():payment.getExpression());
@@ -92,9 +92,9 @@ public class ContractPaymentVariableHandler extends ContractDetailVariableHandle
 						}
 					}
 				}
-				setVariablesModel(new ListDataModel(dataList));
+				getVariablesModel().setWrappedData(dataList);
 				if(!undefined.isEmpty()){
-					setUndefinedVariablesModel(new ListDataModel(undefined));
+					getUndefinedVariablesModel().setWrappedData(undefined);
 				}
 			}
 		} catch (SalaryException e) {

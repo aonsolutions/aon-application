@@ -3,7 +3,6 @@ package com.esferalia.aon.ui.payroll.controller;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +38,7 @@ import com.code.aon.ql.ast.impl.ConstantExpressionImpl;
 import com.code.aon.ql.ast.impl.RelationalExpressionImpl;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -51,14 +51,13 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.payroll.enumeration.ContractModelCode;
-import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.payroll.enumeration.VariableType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 
-public abstract class AbstractVariableHandler {
+public abstract class AbstractVariableHandler implements IVariableFilter{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractVariableHandler.class.getName());
 	
@@ -66,9 +65,9 @@ public abstract class AbstractVariableHandler {
 	private DataModel variablesModel;
 	private DataModel undefinedVariablesModel;
 	
-	private Date inactiveDate;
-	private InactiveLastPeriod inactiveLastPeriod;
-	private Boolean searchCurrentVariables;
+//	private Date inactiveDate;
+//	private InactiveLastPeriod inactiveLastPeriod;
+//	private Boolean searchCurrentVariables;
 	private boolean isNew;
 	
 	private IController controller;
@@ -128,22 +127,26 @@ public abstract class AbstractVariableHandler {
 	public void setController(IController controller) {
 		this.controller = controller;
 	}
+	
+	public String getBeanName(){
+		return ((BasicController)getController()).getBeanName();
+	}
 
-	public boolean isSearchCurrentVariables() {
-		if(searchCurrentVariables == null){
-			searchCurrentVariables = true;
-		}
-		return searchCurrentVariables;
-	}
-	public void setSearchCurrentVariables(boolean searchCurrentVariables) {
-		this.searchCurrentVariables = searchCurrentVariables;
-	}
-	public InactiveLastPeriod getInactiveLastPeriod() {
-		return inactiveLastPeriod;
-	}
-	public void setInactiveLastPeriod(InactiveLastPeriod inactiveLastPeriod) {
-		this.inactiveLastPeriod = inactiveLastPeriod;
-	}
+//	public boolean isSearchCurrentVariables() {
+//		if(searchCurrentVariables == null){
+//			searchCurrentVariables = true;
+//		}
+//		return searchCurrentVariables;
+//	}
+//	public void setSearchCurrentVariables(boolean searchCurrentVariables) {
+//		this.searchCurrentVariables = searchCurrentVariables;
+//	}
+//	public InactiveLastPeriod getInactiveLastPeriod() {
+//		return inactiveLastPeriod;
+//	}
+//	public void setInactiveLastPeriod(InactiveLastPeriod inactiveLastPeriod) {
+//		this.inactiveLastPeriod = inactiveLastPeriod;
+//	}
 
 	public boolean isNew() {
 		return isNew;
@@ -152,12 +155,12 @@ public abstract class AbstractVariableHandler {
 		this.isNew = isNew;
 	}
 
-	public Date getInactiveDate() {
-		return inactiveDate;
-	}
-	public void setInactiveDate(Date inactiveDate) {
-		this.inactiveDate = inactiveDate;
-	}
+//	public Date getInactiveDate() {
+//		return inactiveDate;
+//	}
+//	public void setInactiveDate(Date inactiveDate) {
+//		this.inactiveDate = inactiveDate;
+//	}
 	
 	public VariableData getData() {
 		return data;
@@ -167,6 +170,9 @@ public abstract class AbstractVariableHandler {
 	}
 	
 	public DataModel getVariablesModel() {
+		if(variablesModel==null){
+			variablesModel = new ListDataModel();
+		}
 		return variablesModel;
 	}
 
@@ -174,6 +180,9 @@ public abstract class AbstractVariableHandler {
 		this.variablesModel = variablesModel;
 	}
 	public DataModel getUndefinedVariablesModel() {
+		if(undefinedVariablesModel==null){
+			undefinedVariablesModel = new ListDataModel();
+		}
 		return undefinedVariablesModel;
 	}
 	public void setUndefinedVariablesModel(DataModel undefinedVariablesModel) {
@@ -297,8 +306,9 @@ public abstract class AbstractVariableHandler {
 		return list;
 	}
 	
+	@Override
 	public void reloadData( ActionEvent event ) {
-		onChangeLastPeriod(event);
+		getVariableFilter().onChangeLastPeriod(event);
 		initializeVariables(event);
 	}
 	
@@ -328,57 +338,74 @@ public abstract class AbstractVariableHandler {
 	//******************************************************
 	// VARIABLEs FILTER
 	//******************************************************
-	public void onChangeInactiveDate( ActionEvent event ) {
-		if(getInactiveDate()==null && getInactiveLastPeriod()!=InactiveLastPeriod.ALL){
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.MONTH, -1);
-			setInactiveDate(cal!=null?cal.getTime():null);
-		}
-	}
+//	public void onChangeInactiveDate( ActionEvent event ) {
+//		if(getInactiveDate()==null && getInactiveLastPeriod()!=InactiveLastPeriod.ALL){
+//			Calendar cal = Calendar.getInstance();
+//			cal.add(Calendar.MONTH, -1);
+//			setInactiveDate(cal!=null?cal.getTime():null);
+//		}
+//	}
+//	
+//	public void onChangeLastPeriod( ActionEvent event ) {
+//		Calendar cal = Calendar.getInstance();
+//		cal.set(Calendar.DAY_OF_MONTH, 1);
+//		if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_MONTH){
+//			cal.add(Calendar.MONTH, -1);
+//		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_QUARTER){
+//			cal.add(Calendar.MONTH, -3);
+//		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_SEMESTER){
+//			cal.add(Calendar.MONTH, -6);
+//		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_YEAR){
+//			cal.add(Calendar.YEAR, -1);
+//		} else if(getInactiveLastPeriod()==InactiveLastPeriod.ALL){
+//			cal = null;
+//		}
+//		setInactiveDate(cal!=null?cal.getTime():null);
+//	}
+//	
+//	private String selectedVariableFilter;
+//	
+//	@SuppressWarnings("unchecked")
+//	public List<SelectItem> getAvailableVariables(){
+//		List<SelectItem> list = new LinkedList<SelectItem>();
+//		if(getVariablesModel()!=null){
+//			for(VariableData data: (List<VariableData>)getVariablesModel().getWrappedData()){
+//				String name = data.getName();
+//				SelectItem item = new SelectItem(name, name);
+//				list.add(item);
+//			}
+//		}
+//		if(getUndefinedVariablesModel()!=null){
+//			for(VariableData data: (List<VariableData>)getUndefinedVariablesModel().getWrappedData()){
+//				String name = data.getName();
+//				SelectItem item = new SelectItem(name, name);
+//				list.add(item);
+//			}
+//		}
+//		return list;
+//	}
+//	
+//	public String getSelectedVariableFilter() {
+//		return selectedVariableFilter;
+//	}
+//	public void setSelectedVariableFilter(String selectedVariableFilter) {
+//		this.selectedVariableFilter = selectedVariableFilter;
+//	}
 	
-	public void onChangeLastPeriod( ActionEvent event ) {
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.DAY_OF_MONTH, 1);
-		if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_MONTH){
-			cal.add(Calendar.MONTH, -1);
-		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_QUARTER){
-			cal.add(Calendar.MONTH, -3);
-		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_SEMESTER){
-			cal.add(Calendar.MONTH, -6);
-		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_YEAR){
-			cal.add(Calendar.YEAR, -1);
-		} else if(getInactiveLastPeriod()==InactiveLastPeriod.ALL){
-			cal = null;
-		}
-		setInactiveDate(cal!=null?cal.getTime():null);
-	}
+	private VariableFilter variableFilter;
 	
-	private String variableFilter;
-	
-	@SuppressWarnings("unchecked")
-	public List<SelectItem> getVariablesFilterList(){
-		List<SelectItem> list = new LinkedList<SelectItem>();
-		if(getVariablesModel()!=null){
-			for(VariableData data: (List<VariableData>)getVariablesModel().getWrappedData()){
-				String name = data.getName();
-				SelectItem item = new SelectItem(name, name);
-				list.add(item);
+	public VariableFilter getVariableFilter() {
+		try {
+			if( variableFilter == null ){
+				variableFilter = new VariableFilter(getVariablesModel(), getUndefinedVariablesModel());
 			}
+		} catch (Exception e) {
+			// NADA, el modelo es nulo
 		}
-		if(getUndefinedVariablesModel()!=null){
-			for(VariableData data: (List<VariableData>)getUndefinedVariablesModel().getWrappedData()){
-				String name = data.getName();
-				SelectItem item = new SelectItem(name, name);
-				list.add(item);
-			}
-		}
-		return list;
-	}
-	
-	public String getVariableFilter() {
 		return variableFilter;
 	}
-	public void setVariableFilter(String variableFilter) {
+
+	public void setVariableFilter(VariableFilter variableFilter) {
 		this.variableFilter = variableFilter;
 	}
 

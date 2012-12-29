@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.person.Person;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -20,6 +21,7 @@ import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.enumeration.ContractLeaveStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class LeaveListController extends BasicController {
 
@@ -70,6 +72,14 @@ public class LeaveListController extends BasicController {
 	public void onSearch(ActionEvent event) {
 		getCheckHandler().clearCheckedList();
 		try {
+			PayrollUtils utils = new PayrollUtils();
+			
+			clearCriteria();
+			if(DomainManager.isDomainManagementAvailable()){
+				getCriteria().setSkipDomainFilter( true );
+				getCriteria().addInExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_DOMAIN), utils.getCurrentChildDomainIds());
+			}
+			
 			LeaveBatchController controller = (LeaveBatchController) FormUtil.getController(IPayrollConstants.LEAVE_BATCH_CONTROLLER_NAME);
 			LeaveBatch batch = (LeaveBatch) controller.getTo();
 			getCriteria().addLessThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_DATE), batch.getDate());

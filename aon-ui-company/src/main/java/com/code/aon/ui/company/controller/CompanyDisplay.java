@@ -132,7 +132,7 @@ public class CompanyDisplay {
 	
 	public void update( ActionEvent event ) {
 		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		update( (Company) controller.getTo(), controller.getAttach());
+		update( (Company) controller.getTo(), controller.getLogoAttach());
 	}
 	
 	private void init( String host, boolean skipLdap, Properties dbProperties ) {

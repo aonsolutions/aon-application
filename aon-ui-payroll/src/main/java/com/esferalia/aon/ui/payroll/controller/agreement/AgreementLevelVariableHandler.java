@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -22,11 +21,11 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.SystemData;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.payroll.controller.AbstractVariableHandler;
 
 public class AgreementLevelVariableHandler extends AbstractVariableHandler{
@@ -39,27 +38,27 @@ public class AgreementLevelVariableHandler extends AbstractVariableHandler{
 	
 	@Override
 	public void initializeVariables(ActionEvent event) {
-		setVariablesModel(null);
+		getVariablesModel().setWrappedData(null);
+		getUndefinedVariablesModel().setWrappedData(null);
 		try {
 			AgreementLevel agreementLevel = ((AgreementLevel)getController().getTo());
-			setUndefinedVariablesModel(null);
 			IManagerBean bean = BeanManager.getManagerBean(AgreementLevelData.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID), agreementLevel.getId());
 			criteria.addOrder(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_START_DATE), false);
-			if(isSearchCurrentVariables()){
+			if(getVariableFilter().isSearchCurrentVariables()){
 				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_END_DATE), new Date());
 				Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_END_DATE));
 				criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 			} else {
-				if(getInactiveDate()!=null){
-					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_END_DATE), getInactiveDate());
+				if(getVariableFilter().getInactiveDate()!=null){
+					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_END_DATE), getVariableFilter().getInactiveDate());
 					Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_END_DATE));
 					criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 				}
 			}
-			if(!StringUtils.isEmpty(getVariableFilter())){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_NAME), getVariableFilter());
+			if(!StringUtils.isEmpty(getVariableFilter().getSelectedVariableFilter())){
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_NAME), getVariableFilter().getSelectedVariableFilter());
 			}
 			List<IVariableData> dataList = new LinkedList<IVariableData>();
 			List<ITransferObject> list = bean.getList(criteria);
@@ -70,7 +69,7 @@ public class AgreementLevelVariableHandler extends AbstractVariableHandler{
 					dataList.add(data);
 				}
 			}
-			setVariablesModel(new ListDataModel(dataList));
+			getVariablesModel().setWrappedData(dataList);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible cargar las variables del convenio (" + e.getMessage() +")";
 			LOGGER.error(msg);

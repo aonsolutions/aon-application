@@ -9,11 +9,13 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.person.Person;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class ContractListController extends BasicController {
 
@@ -54,6 +56,14 @@ public class ContractListController extends BasicController {
 	public void onSearch(ActionEvent event) {
 		getCheckHandler().clearCheckedList();
 		try {
+			PayrollUtils utils = new PayrollUtils();
+			
+			clearCriteria();
+			if(DomainManager.isDomainManagementAvailable()){
+				getCriteria().setSkipDomainFilter( true );
+				getCriteria().addInExpression(getFieldName(IEntityAlias.CONTRACT_DOMAIN), utils.getCurrentChildDomainIds());
+			}
+			
 //			ContractBatchController controller = (ContractBatchController) FormUtil.getController(IPayrollConstants.CONTRACT_BATCH_CONTROLLER_NAME);
 //			ContractBatch batch = (ContractBatch) controller.getTo();
 //			getCriteria().addLessThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_DATE), batch.getDate());

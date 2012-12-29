@@ -70,6 +70,7 @@ public interface ICompanyController extends IController {
 	boolean isWebDirty();
 	RegistryMedia getWeb();
 	boolean isAddressDirty();
-	void setAttach(RegistryAttachment obtainRegistryAttachment);
+	void setLogoAttach(RegistryAttachment obtainRegistryAttachment);
+	void setSignatureAttach(RegistryAttachment obtainRegistryAttachment);
 
 }

@@ -12,8 +12,9 @@
 		rendered="#{controller.handler.variablesModel!=null}">
 
 		<c:if test="#{showVariableFilter}" >
-			<ui:include 
-				src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid_filter.xhtml" />
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid_filter.xhtml" >
+				<ui:param name="controller" value="#{controller.handler}" />
+			</ui:include>
 		</c:if>
 		
 		<aon:editDataTable id="#{controller.beanName}VariablesList"
@@ -107,7 +108,7 @@
 		</aon:editDataTable>
 		<aon:dataScroller2 for="#{controller.beanName}VariablesList" showNote="false" />
 		
-		<c:if test="#{controller.handler.undefinedVariablesModel!=null}" >
+		<c:if test="#{controller.handler.undefinedVariablesModel.rowCount>0}" >
 			<ui:include 
 				src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid_undefined.xhtml" >
 				<ui:param name="controller" value="#{controller}" />
