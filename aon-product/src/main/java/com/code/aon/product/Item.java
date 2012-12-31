@@ -15,6 +15,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tax;
 import com.code.aon.product.enumeration.ProductStatus;
@@ -25,6 +26,7 @@ import com.esferalia.aon.entity.master.ItemDB;
 
 @Entity
 @Table(name="item")
+@Heritable
 public class Item extends ItemDB implements IPriceable {
 
 	private static final long serialVersionUID = -2720748805321005422L;

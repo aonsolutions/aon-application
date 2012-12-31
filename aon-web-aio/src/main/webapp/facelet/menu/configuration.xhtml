@@ -89,7 +89,6 @@
 							</aon:panelGrid>
 						</c:if>
 						
-						<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
 							<c:if test="#{aonRole.saleOperator or aonRole.purchaseOperator or aonRole.productOperator or aonRole.commercialOperator}">
 								<aon:panelGrid id="group_configuration_masters"
 									styleClass="aon-width-all" columnClasses="aon-padding"
@@ -98,66 +97,71 @@
 										<aon:outputText value="#{bundle.aon_master_tables}" />
 									</f:facet>
 									<aon:div styleClass="aon-direct-access-list">
-										<c:if test="#{aonRole.saleOperator}">
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="customer-configuration"
-													action="customer_search-configuration"
-													actionListener="#{customer.onEditSearch}"
-													value="#{customerBundle.customer_module}" />
-											</aon:div>
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="aon_invoicing_group-configuration"
-													action="invoicingGroup_list-configuration"
-													value="#{financeBundle.finance_invoicing_group_module}" />
-											</aon:div>
+										<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
+											<c:if test="#{aonRole.saleOperator}">
+												<aon:div styleClass="aon-direct-access-list-element">
+													<aon:commandLink id="customer-configuration"
+														action="customer_search-configuration"
+														actionListener="#{customer.onEditSearch}"
+														value="#{customerBundle.customer_module}" />
+												</aon:div>
+												<aon:div styleClass="aon-direct-access-list-element">
+													<aon:commandLink id="aon_invoicing_group-configuration"
+														action="invoicingGroup_list-configuration"
+														value="#{financeBundle.finance_invoicing_group_module}" />
+												</aon:div>
+											</c:if>
+											<c:if test="#{aonRole.purchaseOperator}">
+												<aon:div styleClass="aon-direct-access-list-element">
+													<aon:commandLink id="supplier-configuration" 
+														action="supplier_search-configuration"
+														actionListener="#{supplier.onEditSearch}"
+														value="#{supplierBundle.supplier_module}" />
+												</aon:div>
+												<aon:div styleClass="aon-direct-access-list-element">
+													<aon:commandLink id="creditor-configuration" 
+														action="creditor_search-configuration"
+														actionListener="#{creditor.onEditSearch}"
+														value="#{financeBundle.finance_creditor_module}" />
+												</aon:div>
+											</c:if>
 										</c:if>
-										<c:if test="#{aonRole.purchaseOperator}">
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="supplier-configuration" 
-													action="supplier_search-configuration"
-													actionListener="#{supplier.onEditSearch}"
-													value="#{supplierBundle.supplier_module}" />
-											</aon:div>
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="creditor-configuration" 
-													action="creditor_search-configuration"
-													actionListener="#{creditor.onEditSearch}"
-													value="#{financeBundle.finance_creditor_module}" />
-											</aon:div>
+										<c:if test="#{!domainSwitcher.parentDomain or domainSwitcher.domainManagementAvailable}">
+											<c:if test="#{aonRole.productOperator}">
+												<aon:div styleClass="aon-direct-access-list-element">
+													<aon:commandLink id="item-configuration" 
+														action="item_search"
+														actionListener="#{item.onEditSearch}"
+														value="#{productBundle.product_module}" />
+												</aon:div>
+											</c:if>
+											<c:if test="#{aonRole.productOperator or aonRole.purchaseOperator}">
+												<aon:div styleClass="aon-direct-access-list-element">
+													<aon:commandLink id="expenseItem-configuration" 
+														action="expenseItem-configuration" 
+														value="#{productBundle.product_expense_module}" />
+												</aon:div>
+											</c:if>
 										</c:if>
-										<c:if test="#{aonRole.productOperator}">
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="item-configuration" 
-													action="item_search"
-													actionListener="#{item.onEditSearch}"
-													value="#{productBundle.product_module}" />
-											</aon:div>
-										</c:if>
-										<c:if test="#{aonRole.productOperator or aonRole.purchaseOperator}">
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="expenseItem-configuration" 
-													action="expenseItem-configuration" 
-													value="#{productBundle.product_expense_module}" />
-											</aon:div>
-										</c:if>
-										<c:if test="#{aonRole.commercialOperator}">
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="target-configuration" 
-													action="target_search-configuration" 
-													actionListener="#{target.onEditSearch}"
-													value="#{commercialBundle.commercial_target_module}" />
-											</aon:div>
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="seller-configuration" 
-													action="seller_search-configuration" 
-													actionListener="#{seller.onEditSearch}"
-													value="#{sellerBundle.seller_module}" />
-											</aon:div>
+										<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
+											<c:if test="#{aonRole.commercialOperator}">
+												<aon:div styleClass="aon-direct-access-list-element">
+													<aon:commandLink id="target-configuration" 
+														action="target_search-configuration" 
+														actionListener="#{target.onEditSearch}"
+														value="#{commercialBundle.commercial_target_module}" />
+												</aon:div>
+												<aon:div styleClass="aon-direct-access-list-element">
+													<aon:commandLink id="seller-configuration" 
+														action="seller_search-configuration" 
+														actionListener="#{seller.onEditSearch}"
+														value="#{sellerBundle.seller_module}" />
+												</aon:div>
+											</c:if>
 										</c:if>
 									</aon:div>
 								</aon:panelGrid>
 							</c:if>
-						</c:if>
 
 						<c:if test="#{aonRole.admin}">
 							<aon:panelGrid id="group_configuration_security"
