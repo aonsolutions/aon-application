@@ -237,7 +237,7 @@
 					</aon:panelGroup>
 
 					<aon:panelGroup>
-						<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+						<c:if test="#{!domainSwitcher.parentDomain or domainSwitcher.domainManagementAvailable}">
 							<c:if test="#{aonRole.config}">												
 								<aon:panelGrid id="group_management_tables"
 									styleClass="aon-width-all" columnClasses="aon-padding"
