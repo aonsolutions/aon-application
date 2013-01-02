@@ -10,9 +10,11 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
+import com.code.aon.config.Domain;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -29,20 +31,8 @@ public class AccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			throw new ManagerBeanVetoListenerException("Todos los caracteres de la cuenta deben ser numéricos.");
     	}
     	checkValidLength(to);
-		try {
-			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE),to.getCode());
-			List<ITransferObject> list =  accountBean.getList(criteria);
-			Iterator<ITransferObject> iterator = list.iterator();
-			if (iterator.hasNext()) {
-				Account duplicate = (Account) iterator.next();
-				throw new ManagerBeanVetoListenerException("No se puede crear la cuenta (" + to.getFullDescription() 
-						+ ") porque ya existe una cuenta con el mismo CCC (" + duplicate.getFullDescription() + ")");	
-			}
-		} catch (ManagerBeanException e) {
-			throw new ManagerBeanVetoListenerException("No se pudo chequear la existencia de la cuenta contable.");
-		}
+    	checkValidCode(to);
+    	
     	
     	int level = (to.getCode().length() > 4) ? 5 : to.getCode().length();
     	to.setLevel(level);
@@ -53,7 +43,54 @@ public class AccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     	}
     }
 	
-    @Override
+    private void checkValidCode(Account to) throws ManagerBeanVetoListenerException {
+		try {
+			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE),to.getCode());
+			List<ITransferObject> list =  accountBean.getList(criteria);
+			if (list != null && list.size() > 0) {
+				Account duplicate = (Account) list.get(0);
+				throw new ManagerBeanVetoListenerException("No se puede crear la cuenta (" + to.getFullDescription() 
+						+ ") porque ya existe una cuenta con el mismo código (" + duplicate.getFullDescription() + ")");	
+			}
+			
+			int currentDomain = DomainManager.getCurrentDomain();
+			IManagerBean domainBean = BeanManager.getManagerBean(Domain.class);
+			Domain domain = (Domain) domainBean.get(currentDomain);
+			if (domain == null) {
+				throw new ManagerBeanVetoListenerException("No se puede crear la cuenta (" + to.getFullDescription() 
+						+ ") porque ya es imposible identificar el dominio en curso.");	
+			}
+			// Si estamos grabando una cuenta en un dominio padre, se chequea que no exista el 
+			// código en ningún dominio hijo con la propiedad "heridity" habilitada.
+			if ( domain.isDomainManagement() ) {
+				Criteria c = new Criteria();
+				c.addEqualExpression(domainBean.getFieldName(IEntityAlias.DOMAIN_PARENT_ID), currentDomain);
+				c.addEqualExpression(domainBean.getFieldName(IEntityAlias.DOMAIN_ENABLE_HEREDITY), true);
+				List<ITransferObject> domains = domainBean.getList(c);
+				Criteria childCriteria;
+				for (ITransferObject d : domains) {
+					Domain child = (Domain) d;
+					childCriteria = new Criteria();
+					childCriteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_DOMAIN),child.getId());
+					childCriteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE),to.getCode());
+					childCriteria.setSkipDomainFilter(true);
+					List<ITransferObject> accounts =  accountBean.getList(childCriteria);
+					if (accounts != null && accounts.size() > 0) {
+						Account duplicate = (Account) accounts.get(0);
+						throw new ManagerBeanVetoListenerException("No se puede crear la cuenta (" + to.getFullDescription() 
+								+ ") porque ya existe una cuenta con el mismo código "
+								+ " en el dominio '"+child.getName()+" " + child.getDescription() +"'");	
+					}
+				}
+			}
+		} catch (ManagerBeanException e) {
+			throw new ManagerBeanVetoListenerException("No se pudo chequear la existencia de la cuenta contable.");
+		}
+	}
+
+	@Override
     public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	Account to = (Account)evt.getTo();
     	checkValidLength(to);
