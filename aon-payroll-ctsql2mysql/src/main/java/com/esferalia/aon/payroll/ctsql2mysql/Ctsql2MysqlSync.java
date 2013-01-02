@@ -41,8 +41,7 @@ public class Ctsql2MysqlSync {
 	 */
 	public static void main(String[] args) throws SQLException {
 		Ctsql2Mysql ctsql2Mysql = new Ctsql2Mysql(args);
-1
-Ctsql2MysqlSync.sync(ctsql2Mysql);
+		Ctsql2MysqlSync.sync(ctsql2Mysql);
 	}
 
 }

@@ -284,6 +284,10 @@ public class Ctsql2Mysql
 				); 
 	}
 	
+	public String getCtsqlURL() {
+		return ctsqlURL;
+	}
+	
 	
 	protected Connection getCtsqlConnection() throws SQLException {
 		return DriverManager.getConnection(ctsqlURL, ctsqlUser, ctsqlPasswd);
