@@ -1,4 +1,4 @@
-package com.code.aon.ui.company.controller;
+package com.esferalia.aon.ui.payroll.controller;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -10,6 +10,8 @@ import java.util.TreeMap;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -17,10 +19,12 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseData;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.Agreement;
 
 public class EnterpriseParamsController {
 	
@@ -77,7 +81,7 @@ public class EnterpriseParamsController {
 	public void onLoad(ActionEvent event) {
 		try {
 			loadParameters();
-			loadAgreement();
+			loadAgreementData();
 		} catch (ManagerBeanException e) {
 			String msg = "Unable to load defaultParameters";
 			AonUtil.addErrorMessage(msg);
@@ -131,45 +135,53 @@ public class EnterpriseParamsController {
 	}
 	
 	
-	//TODO repatriar, esto solo es para salir del paso 
-	private EnterpriseData agreement;
+	//TODO necesario mientras el convenio este dentro del proyecto payroll 
+	private EnterpriseData agreementData;
+	private Agreement agreement;
 	private static final String AGREEMENT = "agreement";
 	
-	public EnterpriseData getAgreement() {
+	public EnterpriseData getAgreementData() {
+		return agreementData;
+	}
+	public void setAgreementData(EnterpriseData agreementData) {
+		this.agreementData = agreementData;
+	}
+	public Agreement getAgreement() {
 		return agreement;
 	}
-
-	public void setAgreement(EnterpriseData agreement) {
+	public void setAgreement(Agreement agreement) {
 		this.agreement = agreement;
 	}
 
 	private void acceptAgreement() throws ManagerBeanException{
-		EnterpriseData data = new EnterpriseData();
 		IController controller = FormUtil.getController(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
-		data.setId(getAgreement().getId());
-		data.setEnterprise((Enterprise) controller.getTo());
-		data.setDomain(data.getEnterprise().getDomain());
-		data.setName(AGREEMENT);
-		data.setExpression(getAgreement().getExpression().toString());
+		getAgreementData().setEnterprise((Enterprise) controller.getTo());
+		getAgreementData().setName(AGREEMENT);
+		String id = (getAgreement()!=null && getAgreement().getId()!=null)?getAgreement().getId().toString():"";
+		getAgreementData().setExpression(id);
 		IManagerBean bean = BeanManager.getManagerBean(EnterpriseData.class);
-		setAgreement((EnterpriseData) bean.insertOrUpdate(data));
-		
+		bean.insertOrUpdate(getAgreementData());
 	}
 
-	private void loadAgreement() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(EnterpriseData.class);
+	private void loadAgreementData() throws ManagerBeanException {
+		IManagerBean dataBean = BeanManager.getManagerBean(EnterpriseData.class);
 		IController controller = FormUtil.getController(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_DATA_NAME), AGREEMENT);
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_DATA_ENTERPRISE_ID), ((Enterprise) controller.getTo()).getId());
-		List<ITransferObject> list = bean.getList(criteria);
+		criteria.addEqualExpression(dataBean.getFieldName(IEntityAlias.ENTERPRISE_DATA_NAME), AGREEMENT);
+		criteria.addEqualExpression(dataBean.getFieldName(IEntityAlias.ENTERPRISE_DATA_ENTERPRISE_ID), ((Enterprise) controller.getTo()).getId());
+		List<ITransferObject> list = dataBean.getList(criteria);
+		IManagerBean agreementBean = BeanManager.getManagerBean(Agreement.class);
 		if(list.isEmpty()){
-			setAgreement(new EnterpriseData());
+			setAgreementData(new EnterpriseData());
+			setAgreement((Agreement) agreementBean.createNewTo());
 		} else {
-			setAgreement(((EnterpriseData)list.get(0)));
+			setAgreementData((EnterpriseData)list.get(0));
+			if(StringUtils.isBlank(getAgreementData().getExpression())){
+				setAgreement((Agreement) agreementBean.createNewTo());
+			} else {
+				setAgreement((Agreement) agreementBean.get(Integer.parseInt(getAgreementData().getExpression())));
+			}
 		}
 	}
-	
-	
 	
 }

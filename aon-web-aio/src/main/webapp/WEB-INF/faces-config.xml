@@ -342,6 +342,7 @@
 			<value>#{enterpriseTreeControllerListener}</value>
 			<value>#{enterpriseActivityChildListener}</value>
 			<value>#{payrollWorkPlaceChildListener}</value>
+			<value>#{enterpriseParamsControllerListener}</value>
 			<!--  aon.ui.payroll -->
 			<value>#{enterpriseSearchEx}</value>			
 		</list-entries>

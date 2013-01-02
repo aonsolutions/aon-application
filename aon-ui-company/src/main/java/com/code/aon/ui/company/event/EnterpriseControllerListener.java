@@ -10,12 +10,9 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.company.controller.EnterpriseController;
-import com.code.aon.ui.company.controller.EnterpriseParamsController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 
 /**
  * Listener added to the EnterpriseController
@@ -45,7 +42,6 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 			controller.initMainDirStaff();			
 			controller.initLogo();
 			controller.initSignature();
-			loadEnterpriseParams();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
@@ -71,7 +67,6 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 			controller.saveMainAddress();
 			controller.saveLogo();
 			controller.saveSignature();
-			acceptEnterpriseParams();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
@@ -86,16 +81,6 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 		IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
 		bean.insert( workPlace );
 		return workPlace;
-	}
-	
-	private void loadEnterpriseParams(){
-		EnterpriseParamsController controller = (EnterpriseParamsController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_PARAMS_CONTROLLER_NAME);
-		controller.onLoad(null);
-	}
-	
-	private void acceptEnterpriseParams(){
-		EnterpriseParamsController controller = (EnterpriseParamsController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_PARAMS_CONTROLLER_NAME);
-		controller.onAccept(null);
 	}
 	
 }

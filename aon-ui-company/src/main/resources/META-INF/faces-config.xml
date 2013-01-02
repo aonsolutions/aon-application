@@ -1454,36 +1454,6 @@
 		</managed-property>				
 	</managed-bean>
 	
-	<!-- **** ENTERPRISE PARAMETERS **** --> 
-	<managed-bean>
-		<managed-bean-name>enterpriseParams</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.company.controller.EnterpriseParamsController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>defaultParameters</property-name>
-			<map-entries>
-				<key-class>java.lang.String</key-class>
-				<value-class>java.lang.String</value-class>
-				<map-entry>
-					<key>PAY_REPORT_salary_PAY</key>
-					<value>[NULL]</value>
-				</map-entry>
-				<map-entry>
-					<key>PAY_REPORT_salaryDraft_PAY</key>
-					<value>[NULL]</value>
-				</map-entry>
-				<map-entry>
-					<key>PAY_REPORT_enterpriseSalary_PAY</key>
-					<value>[NULL]</value>
-				</map-entry>
-				<map-entry>
-					<key>PAY_salarySendingMethod_PAY</key>
-					<value>[NULL]</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUPS ========================== -->
 	<!-- ========================================================== -->
