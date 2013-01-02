@@ -61,6 +61,15 @@
 											value="#{payrollBundle.payroll_contractLeave_module}"/>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element" >
+										<aon:commandLink id="gwt_employee" 
+											action="gwt_employee_tree"
+											value="#{gwtPayrollBundle.menu_employee_tree}">
+											<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
+											<aon:actionListener method="#{enterprise.onEditSearch}" />
+										</aon:commandLink>
+									</aon:div>							
+
+									<aon:div styleClass="aon-direct-access-list-element" >
 										<aon:commandLink id="gwt_enterprise" 
 											action="gwt_enterprise_site"
 											actionListener="#{enterprise.onTreeViewSelect}"
