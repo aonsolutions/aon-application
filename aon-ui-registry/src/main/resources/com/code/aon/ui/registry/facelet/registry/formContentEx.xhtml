@@ -48,23 +48,9 @@
 					</aon:div>
 					<aon:div styleClass="aon-group-body"> 
 						<aon:div styleClass="aon-group-body-internal">
-							<aon:panelGrid columns="4" style="width:100%">
-								<aon:outputLabel for="attach_file"
-									value="#{companyBundle.company_logo}" />
-								<a4j:region>
-									<h:panelGrid id="attachGrid" columns="2">
-										<ui:insert name="logoPanel"/>
-									</h:panelGrid>
-								</a4j:region>
-			
-								<aon:outputLabel for="signatureAttach_file"
-									value="#{companyBundle.company_signature}" />
-								<a4j:region>
-									<h:panelGrid id="signatureAttachGrid" columns="2">
-										<ui:insert name="signaturePanel"/>
-									</h:panelGrid>
-								</a4j:region>
-							</aon:panelGrid>
+						
+							<ui:insert name="logoAndSignaturePanel"/>
+							
 						</aon:div>
 					</aon:div>
 				</aon:div>			
