@@ -5,10 +5,12 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.entity.master.ItemAddInfoDB;
 
 @Entity
 @Table(name="item_addinfo")
+@Heritable
 public class ItemAddInfo extends ItemAddInfoDB {
 
 	private static final long serialVersionUID = 1L;

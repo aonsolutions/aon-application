@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tax;
 import com.code.aon.product.enumeration.ItemTariffType;
@@ -12,6 +13,7 @@ import com.esferalia.aon.entity.master.ItemTariffDB;
 
 @Entity
 @Table(name="item_tariff")
+@Heritable
 public class ItemTariff extends ItemTariffDB implements IPriceable {
 
 	private static final long serialVersionUID = 1L;

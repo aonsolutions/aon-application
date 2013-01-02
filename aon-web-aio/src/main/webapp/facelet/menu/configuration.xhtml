@@ -293,7 +293,7 @@
 							</c:if>
 						</c:if>
 		
-						<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
+						<c:if test="#{!domainSwitcher.parentDomain or domainSwitcher.domainManagementAvailable}">
 							<c:if test="#{aonRole.config}">												
 								<aon:panelGrid id="group_prodyct_tables"
 									styleClass="aon-width-all" columnClasses="aon-padding"
@@ -326,7 +326,11 @@
 										</aon:div>
 									</aon:div>
 								</aon:panelGrid>
+							</c:if>
+						</c:if>
 								
+						<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
+							<c:if test="#{aonRole.config}">												
 								<aon:panelGrid id="group_main_parameters"
 									styleClass="aon-width-all" columnClasses="aon-padding"
 									headerClass="aon-direct-access-panel aon-icon-config">

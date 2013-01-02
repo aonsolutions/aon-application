@@ -4,11 +4,13 @@ package com.code.aon.product;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.entity.master.CatalogueItemDB;
 
 @Entity
 @Table(name="catalogue_item")
+@Heritable
 public class CatalogueItem extends CatalogueItemDB {
 
 	private static final long serialVersionUID = 1L;
