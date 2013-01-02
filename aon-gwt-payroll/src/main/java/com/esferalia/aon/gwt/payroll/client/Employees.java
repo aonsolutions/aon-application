@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -41,8 +42,12 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 		OpenHandler<TreeItem>, SelectionHandler<TreeItem> {
 
 	interface Listener {
-		void onMinimize();
-		void onMaximize();
+		void onEmployeeSelected(Employee employee);
+		void onEnterpriseSelected(Enterprise enterprise);
+		void onWorkplaceSelected(Workplace workplace);
+		void onDocumentsSelected(ISpinnable<IDocument> docs);
+		void onSalaryDratSelected(SalaryDraftDocument salaryDraftDocument);
+		
 	}
 	
 	interface Binder extends UiBinder<Widget, Employees> {
@@ -52,24 +57,17 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 
 	@UiField Tree tree;
 	@UiField Button viewButton;
-	@UiField Button minimizeButton;
-	@UiField Button maximizeButton;
 	
 	private Images images;
-	private EmployeesServiceAsync employeesService;
-
-	private DetailPanel detailPanel;
-
-	private JSF jsf;
-	private Documents documents;
-	
 	private List<Listener> listeners ;
+	private EmployeesServiceAsync employeesService;
+	
+	
+	private boolean isExtended = false;
 	
 
 	public Employees() {
 
-		jsf = new JSF();
-		documents = new Documents();
 		images = GWT.create(Images.class);
 
 		listeners = new LinkedList<Employees.Listener>();
@@ -87,26 +85,17 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 		
 		initViewBUtton();
 		
-		minimizeButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onMinimize();
-			}
-		});
-		maximizeButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onMaximize();
-			}
-		});
-		
 		employeesService.getEnterprise(this);
 	}
-
-	public void setDetailPanel(DetailPanel employeeDetail) {
-		this.detailPanel = employeeDetail;
+	
+	public boolean isExtended() {
+		return isExtended;
 	}
-
+	
+	public void setExtended(boolean isExtended) {
+		this.isExtended = isExtended;
+	}
+	
 	@Override
 	public void onFailure(Throwable caught) {
 		// TODO Auto-generated method stub
@@ -168,9 +157,25 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 						0 /* Not show number of childs */, active ? images.employee() : images.oldemployee());
 
 				employeeItem.setUserObject(employee);
-
+				
 				addImageItem(employeeItem, "Nominas", 0, images.salaries());
+				
+				if ( isExtended ) {
+					TreeItem salaryDraftItem = addImageItem(employeeItem, "Borrador", 0, images.draft() );
+					SalaryDraft salaryDraft = new SalaryDraft();
+					salaryDraft.setEmployee(employee);
 
+					Date startDate = DateUtils.getFirstDayOfMonth();
+					Date endDate = DateUtils.getLastDayOfMonth();
+					Date issueDate = DateUtils.getLastDayOfMonth();
+					
+					salaryDraft.setStartDate(startDate);
+					salaryDraft.setEndDate(endDate);
+					salaryDraft.setIssueDate(issueDate);
+					
+					SalaryDraftDocument salaryDraftDocument = new SalaryDraftDocument(salaryDraft, employeesService);
+					salaryDraftItem.setUserObject(salaryDraftDocument);
+				}
 
 			}
 		}
@@ -208,6 +213,10 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 		}
 		if (userObject instanceof Employee) {
 			onEmployeeSelected((Employee) userObject);
+			return;
+		}
+		if (userObject instanceof SalaryDraftDocument) {
+			onSalaryDraftSelected((SalaryDraftDocument) userObject);
 			return;
 		}
 		if (userObject instanceof ISpinnable<?>) {
@@ -251,30 +260,33 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 	}
 
 	private void onEnterpriseSelected(Enterprise enterprise) {
-		jsf.setUrl(GWT.getHostPageBaseURL()
-				+ "/com/esferalia/aon/gwt/payroll/facelet/enterprise/enterprise.jsf");
-		detailPanel.setWidget(jsf);
+		for (Listener listener : listeners) {
+			listener.onEnterpriseSelected(enterprise);
+		}
 	}
 
 	private void onWorkplaceSelected(Workplace workplace) {
-		jsf.setUrl(GWT.getHostPageBaseURL()
-				+ "/com/esferalia/aon/gwt/payroll/facelet/enterprise/workplace.jsf"
-				+ "?controller=payrollWorkPlace&payrollWorkPlace_id="
-				+ workplace.getId());
-		detailPanel.setWidget(jsf);
+		for (Listener listener : listeners) {
+			listener.onWorkplaceSelected(workplace);
+		}
 	}
 
 	private void onEmployeeSelected(Employee employee) {
-		jsf.setUrl(GWT.getHostPageBaseURL()
-				+ "/com/esferalia/aon/gwt/payroll/facelet/enterprise/contract.jsf"
-				+ "?controller=contract&contract_id=" + employee.getId()
-				+ "&controller=person&person_id=" + employee.getPerson());
-		detailPanel.setWidget(jsf);
+		for (Listener listener : listeners) {
+			listener.onEmployeeSelected(employee);
+		}
 	}
 
 	private void onDocumentsSelected(ISpinnable<IDocument> docs) {
-		detailPanel.setWidget(documents);
-		documents.setDocuments(docs);
+		for (Listener listener : listeners) {
+			listener.onDocumentsSelected(docs);
+		}
+	}
+
+	private void onSalaryDraftSelected(SalaryDraftDocument salaryDraftDocument) {
+		for (Listener listener : listeners) {
+			listener.onSalaryDratSelected(salaryDraftDocument);
+		}
 	}
 
 	/**
@@ -296,18 +308,6 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 			int childs) {
 		return AbstractImagePrototype.create(imageProto).getHTML() + " "
 				+ title + (childs > 0 ? " (" + childs + ")" : "");
-	}
-	
-	protected void onMinimize() {
-		for (Listener listener : listeners) {
-			listener.onMinimize();
-		}
-	}
-
-	protected void onMaximize() {
-		for (Listener listener : listeners) {
-			listener.onMaximize();
-		}
 	}
 	
 	private void initViewBUtton() {

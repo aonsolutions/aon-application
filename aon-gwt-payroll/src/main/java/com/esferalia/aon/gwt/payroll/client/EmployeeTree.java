@@ -1,11 +1,7 @@
-/**
- * 
- */
 package com.esferalia.aon.gwt.payroll.client;
 
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
-import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -15,15 +11,12 @@ import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * @author rtrepiana
- * 
+ * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class EnterpriseSite implements EntryPoint, Employees.Listener {
+public class EmployeeTree implements EntryPoint, Employees.Listener {
 
 	interface GWTResources extends ClientBundle {
 		@NotStrict
@@ -35,85 +28,92 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 
 		@Source("checkyes.png")
 		ImageResource checkYes();
+
 	}
 
-	interface Binder extends UiBinder<Widget, EnterpriseSite> {
+	interface Binder extends UiBinder<Widget, EmployeeTree> {
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
 
 	@UiField
-	Salaries salaries;
-	@UiField
 	Employees employees;
 	@UiField
-	StackLayoutPanel explorer;
-	@UiField
-	DetailPanel detailPanel;
-	@UiField
-	SplitLayoutPanel splitLayoutPanel;
+	DetailPanel employeeDetail;
 
 	private JSF jsf;
 	private Documents documents;
+	private SalaryDraft salaryDraft;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.google.gwt.core.client.EntryPoint#onModuleLoad()
+	/**
+	 * This method constructs the application user interface by instantiating
+	 * controls and hooking up event handler.
 	 */
-	@Override
 	public void onModuleLoad() {
+
+		// Window.alert("This method constructs the application user interface by instantiating controls and hooking up event handler.");
+
 		// Inject rich styles.
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
 
+		// Get rid of scrollbars, and clear out the window's built-in margin,
+		// because we want to take advantage of the entire client area.
+		// Window.enableScrolling(false);
+		// Window.setMargin("0px");
+
 		// Add the outer panel to the RootLayoutPanel, so that it will be
 		// displayed.
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		// RootPanel root = RootPanel.get("rootPanel");
 		root.add(ui);
-
-		salaries.setDetailPanel(detailPanel);
 
 		jsf = new JSF();
 		documents = new Documents();
+		salaryDraft = new SalaryDraft();
+
 		employees.addListener(this);
+
 	}
 
 	@Override
 	public void onEnterpriseSelected(Enterprise enterprise) {
 		jsf.setUrl(GWT.getHostPageBaseURL()
-				+ "/com/esferalia/aon/gwt/payroll/facelet/enterprise/enterprise.jsf");
-		detailPanel.setWidget(jsf);
+				+ "/com/esferalia/aon/gwt/payroll/facelet/employee/enterprise.jsf");
+		employeeDetail.setWidget(jsf);
 	}
 
 	@Override
 	public void onWorkplaceSelected(Workplace workplace) {
 		jsf.setUrl(GWT.getHostPageBaseURL()
-				+ "/com/esferalia/aon/gwt/payroll/facelet/enterprise/workplace.jsf"
+				+ "/com/esferalia/aon/gwt/payroll/facelet/employee/workplace.jsf"
 				+ "?controller=payrollWorkPlace&payrollWorkPlace_id="
 				+ workplace.getId());
-		detailPanel.setWidget(jsf);
+		employeeDetail.setWidget(jsf);
 	}
 
 	@Override
 	public void onEmployeeSelected(Employee employee) {
 		jsf.setUrl(GWT.getHostPageBaseURL()
-				+ "/com/esferalia/aon/gwt/payroll/facelet/enterprise/contract.jsf"
+				+ "/com/esferalia/aon/gwt/payroll/facelet/employee/contract.jsf"
 				+ "?controller=contract&contract_id=" + employee.getId()
 				+ "&controller=person&person_id=" + employee.getPerson());
-		detailPanel.setWidget(jsf);
+		employeeDetail.setWidget(jsf);
 	}
 
 	@Override
 	public void onDocumentsSelected(ISpinnable<IDocument> docs) {
-		detailPanel.setWidget(documents);
+		employeeDetail.setWidget(documents);
 		documents.setDocuments(docs);
 	}
 
 	@Override
 	public void onSalaryDratSelected( SalaryDraftDocument salaryDraftDocument) {
-		// TODO Auto-generated method stub
+		employeeDetail.setWidget(salaryDraft);
+		salaryDraft.setSalaryDraft(salaryDraftDocument);
+		
 	}
+
 }

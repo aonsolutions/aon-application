@@ -66,7 +66,7 @@ public class SalaryDraft extends ResizeComposite {
 	HTML container;
 
 	private int zoom = DEFAULT_ZOOM;
-	private ISalaryDraft salaryDraft;
+	private SalaryDraftDocument draftDocument;
 
 	public SalaryDraft() {
 		initWidget(binder.createAndBindUi(this));
@@ -74,19 +74,18 @@ public class SalaryDraft extends ResizeComposite {
 		initDateListBox();
 	}
 
-	public void setSalaryDraft(ISalaryDraft salaryDraft) {
-		this.salaryDraft = salaryDraft;
+	public void setSalaryDraft(SalaryDraftDocument draftDocument) {
+		this.draftDocument = draftDocument;
 		onSalaryDraftChanged();
 	}
 
 	private void onSalaryDraftChanged() {
-
 		getAsHTML();
 		syncStartDateBox();
 	}
 
 	private void getAsHTML() {
-		salaryDraft.getAsHTML(zoom, new AsyncCallback<String>() {
+		draftDocument.getAsHTML(zoom, new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String html) {
 				container.setHTML(html);
@@ -105,7 +104,7 @@ public class SalaryDraft extends ResizeComposite {
 		
 		dateListBox.clear();
 		
-		com.esferalia.aon.gwt.payroll.shared.SalaryDraft draft = salaryDraft
+		com.esferalia.aon.gwt.payroll.shared.SalaryDraft draft = draftDocument
 				.getSalaryDraft();
 
 		Employee employee = draft.getEmployee();
@@ -154,9 +153,9 @@ public class SalaryDraft extends ResizeComposite {
 				Date date = DATE_FORMAT.parse(text);
 				Date startDate = DateUtils.getFirstDayOfMonth(date);
 				Date endDate = DateUtils.getLastDayOfMonth(date);
-				salaryDraft.getSalaryDraft().setStartDate(startDate);
-				salaryDraft.getSalaryDraft().setEndDate(endDate);
-				salaryDraft.getSalaryDraft().setIssueDate(endDate);
+				draftDocument.getSalaryDraft().setStartDate(startDate);
+				draftDocument.getSalaryDraft().setEndDate(endDate);
+				draftDocument.getSalaryDraft().setIssueDate(endDate);
 				getAsHTML();
 			}
 		});
@@ -174,7 +173,7 @@ public class SalaryDraft extends ResizeComposite {
 				String name = 
 						salaryTypeListBox.getValue(selectedIndex);
 				Salary.Type type = Salary.Type.valueOf(name);
-				salaryDraft.getSalaryDraft().setType(type);
+				draftDocument.getSalaryDraft().setType(type);
 				getAsHTML();
 			}
 		});

@@ -51,9 +51,7 @@
 							EMPLEADOS
 						</div>
 					</g:header>
-					<g:ScrollPanel>
-						<employee:Employees ui:field='employees' />
-					</g:ScrollPanel>
+					<employee:Employees ui:field='employees' extended="true"/>
 				</g:stack>
 
 			</g:StackLayoutPanel>
