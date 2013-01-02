@@ -350,7 +350,8 @@ public class SummaryProvider {
 			}
 		}
 		buf.append(" WHERE a.entryEnabled = 1");
-		buf.append(" AND " + DomainManager.getSQLWhereClause("a.domain"));
+		buf.append(" AND " + DomainManager.getSQLWhereClause("a.domain",Account.class));
+		
 		if (!StringUtils.isEmpty(params.getAccountExpression())) {
 			buf.append(" AND ");
 			buf.append(params.getAccountSQLExpression("a.code"));

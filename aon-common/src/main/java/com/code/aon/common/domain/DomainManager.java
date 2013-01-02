@@ -70,10 +70,29 @@ public class DomainManager {
 		return ExpressionUtilities.getEqualExpression(alias, getCurrentDomain());
 	}
 
+
 	public synchronized static String getSQLWhereClause(String columnidentifier) {
-		// TODO esta clausula, debería completarse con los dominios 
-		// parents o como quiera que se haga cuando se piense.
-		return (" " + columnidentifier + " = " + getCurrentDomain() + " ");
+		return getSQLWhereClause(columnidentifier,false);
+	}
+	public synchronized static String getSQLWhereClause(String columnidentifier, Class<?> entityClass) {
+		return getSQLWhereClause(columnidentifier,isHeritable(entityClass));
+	}
+	public synchronized static String getSQLWhereClause(String columnidentifier, boolean heritable) {
+		String defaultReturn = (" " + columnidentifier + " = " + getCurrentDomain() + " "); 
+		if (heritable && getDomainProvider().isEnableHeredity() ) {
+			Integer parent = getDomainProvider().getParentDomain();
+			if (parent == null) {
+				return defaultReturn;
+			}
+			return (" " 
+					+ columnidentifier
+					+ " IN ( " 
+					+ parent.toString()
+					+","
+					+ getCurrentDomain() 
+					+ ") ");
+		}
+		return defaultReturn;
 	}
 
 	public synchronized static String getStaticSQLWhereClause(String columnidentifier) {
