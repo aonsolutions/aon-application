@@ -85,10 +85,11 @@ public class Ctsql2Mysql
 		parseArgs(args);
 	}
 	
-	protected String getCtsqlURL() {
-		return ctsqlURL;
+	protected File getImagesDir() {
+		return imagesDir;
 	}
-
+	
+	
 	protected boolean parseArgs(String[] args ) {
     	
     	Options options = new Options();
