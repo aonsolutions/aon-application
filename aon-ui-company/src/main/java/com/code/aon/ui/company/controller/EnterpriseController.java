@@ -244,7 +244,6 @@ public class EnterpriseController extends RegistryController implements ICompany
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
 		String alias = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
-//		criteria.addEqualExpression(alias, getEnterprise().getRegistry().getId());
 		criteria.addEqualExpression(alias, company.getRegistry().getId());
 		String type = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
 		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
@@ -271,7 +270,6 @@ public class EnterpriseController extends RegistryController implements ICompany
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
 		String alias = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
-//		criteria.addEqualExpression(alias, getEnterprise().getRegistry().getId());
 		criteria.addEqualExpression(alias, company.getRegistry().getId());
 		String type = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
 		criteria.addEqualExpression(type, RegistryAttachmentType.SIGNATURE);
