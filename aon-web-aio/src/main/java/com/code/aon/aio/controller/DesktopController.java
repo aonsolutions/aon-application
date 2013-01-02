@@ -29,6 +29,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -36,7 +37,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.aio.DesktopNoticeSummary;
 import com.code.aon.aio.TaskInfo;
-import com.code.aon.audit.Action;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -44,6 +44,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.config.User;
 import com.code.aon.groupware.Note;
 import com.code.aon.groupware.Task;
 import com.code.aon.groupware.TaskHolder;
@@ -61,6 +62,8 @@ import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
+import com.code.aon.ui.common.LocaleElement;
+import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.controller.ConfigConstants;
@@ -107,7 +110,7 @@ public class DesktopController {
 			initGarage();
 			initAcademy();
 			initHotel();
-			initHomepage();
+			initUser();
 	    } catch (ManagerBeanException e) {
 	    	e.printStackTrace();
 	    	LOGGER.error( e.getMessage(), e );
@@ -370,20 +373,37 @@ public class DesktopController {
 		}
 	}
 	
-	private ApplicationOption getOption( Action action ) {
+	private ApplicationOption getOption( String actionName ) {
 		ApplicationOptionController aoc = (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
-		ApplicationOption option = aoc.getOptionMap().get(action.getName());
+		ApplicationOption option = aoc.getOptionMap().get(actionName);
 		if ( (option != null) && (option.getViewId() != null) ) {
-			return option;
+			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+			if (! adc.isDenied(option) ) {
+				return option;	
+			}
 		}
 		return null;
 	}
 
-	@SuppressWarnings("unused")
-	private void initHomepage() throws ManagerBeanException {
-		Action action = null;
-		if ( action != null ) {
-			this.homepagOption = getOption(action);
+	private void initUser() throws ManagerBeanException {
+		User user = UserUtils.getInstance().getLoggedUser();
+		if ( user.getInitAction() != null ) {
+			this.homepagOption = getOption(user.getInitAction());
+		}
+		ConfigurationController cc = AonUtil.getConfigurationController();
+		if (! StringUtils.isEmpty(user.getLocale()) ) {
+			for( LocaleElement element : cc.getLocales() ) {
+				if ( StringUtils.equals(element.getId(), user.getLocale()) ) {
+					element.changeLanguage();
+					break;
+				}
+			}
+		}
+		if ( user.getPageLimit() != null ) {
+			cc.setPageLimit(user.getPageLimit());
+		}
+		if ( user.getLinesPageLimit() != null ) {
+			cc.setPageLimit(user.getLinesPageLimit());
 		}
 	}
 	

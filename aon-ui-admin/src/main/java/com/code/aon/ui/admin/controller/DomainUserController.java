@@ -10,12 +10,14 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.USER_DUPLICATED;
 import static com.code.aon.ui.config.controller.ConfigConstants.CHANGE_PASSWORD;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -39,6 +41,7 @@ import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.UserApplicationInfo;
 import com.code.aon.ui.admin.util.IdCheckUtil;
+import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.config.controller.BasicChangePasswordController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -59,6 +62,8 @@ public class DomainUserController extends BasicController {
 	private IdCheckUtil idCheck;
 	
 	private List<UserApplicationInfo> applicationInfos;
+	
+	private List<SelectItem> actionList;
 	
 	public DomainUserController() {
 		this.idCheck = new IdCheckUtil(this, IEntityAlias.USER_LOGIN, USER_DUPLICATED);
@@ -294,6 +299,20 @@ public class DomainUserController extends BasicController {
 				uai.unregister();
 			}
 		}
+	}	
+
+	public void updateActionList( List<ApplicationOption> options ) {
+		actionList = new LinkedList<SelectItem>();
+		for( ApplicationOption option : options ) {
+			String name = StringUtils.abbreviate(option.getDescription(), 60) + " (" + option.getGroup().getCategory().getName() + ")";
+			SelectItem item = new SelectItem(option.getAction(), name);
+			actionList.add(item);
+		}
+		AonUtil.sortSelectItems(actionList);
+	}
+	
+	public List<SelectItem> getActionList() {
+        return actionList;
 	}	
 	
 }

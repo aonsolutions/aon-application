@@ -86,16 +86,11 @@
 				</c:if>					
 			</aon:panelGroup>
 			<aon:panelGroup>
-				<c:if test="#{!model.hidePageSizeSelector and model.showControls}">
+				<c:if test="#{!model.hidePageSizeSelector}">
 					<aon:outputText styleClass="aon-margin-right"
 						value="#{bundle.aon_row_number}"/>
 					<aon:selectOneMenu value="#{model.pageSize}" >
-						<f:selectItem itemLabel="10" itemValue="10" />		
-						<f:selectItem itemLabel="15" itemValue="15" />
-						<f:selectItem itemLabel="20" itemValue="20" />
-						<f:selectItem itemLabel="25" itemValue="25" />
-						<f:selectItem itemLabel="50" itemValue="50" />
-						<f:selectItem itemLabel="100" itemValue="100" />
+						<f:selectItems value="#{commonCollections.pageLimits}" />
 						<a4j:support event="onchange" ajaxSingle="true" 
 							reRender="#{dataTable},#{dataTable}MessageDataScroller"/>				
 					</aon:selectOneMenu>

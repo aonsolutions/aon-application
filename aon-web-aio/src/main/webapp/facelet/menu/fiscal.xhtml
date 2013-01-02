@@ -157,14 +157,14 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="account"
-											action="account_list"
+										<aon:commandLink id="account-fiscal"
+											action="account_list-fiscal"
 											value="#{accountBundle.account_module}" />
 									</aon:div>
 									<c:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="autConcept"
-												action="autConcept"
+											<aon:commandLink id="autConcept-fiscal"
+												action="autConcept-fiscal"
 												value="#{accountingBundle.accounting_aut_concept_module}" />
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">

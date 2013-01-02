@@ -15,6 +15,10 @@ public class LocaleElement {
 		this.locale = locale;
 	}
 
+	public String getId() {
+		return locale.toString();
+	}
+	
 	public String getDisplayName() {
 		return this.locale.getDisplayLanguage(AonUtil.getCurrentLocale());
 	}
@@ -24,7 +28,11 @@ public class LocaleElement {
 	}
 
 	public void onChangeLanguage( ActionEvent event ) {
-		FacesContext.getCurrentInstance().getViewRoot().setLocale( locale );
+		changeLanguage();
+	}
+	
+	public void changeLanguage() {
+		FacesContext.getCurrentInstance().getViewRoot().setLocale( locale );		
 	}
 	
 }

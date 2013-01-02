@@ -31,6 +31,7 @@ public class CommonCollections {
 	private List<SelectItem> confidentialValues;
 	private List<SelectItem> mimeTypes;
 	private List<SelectItem> weekDays;
+	private List<SelectItem> pageLimits;
 	
 	/**
      * Get year months.
@@ -170,4 +171,22 @@ public class CommonCollections {
 		return weekDays;
 	}	
 
+	/**
+     * Get page limits.
+     * 
+     * @return the page limits
+     */
+	public List<SelectItem> getPageLimits() {
+    	if ( pageLimits == null ) {
+    		pageLimits = new LinkedList<SelectItem>();
+   			pageLimits.add( new SelectItem(10, "10") );
+   			pageLimits.add( new SelectItem(15, "15") );
+   			pageLimits.add( new SelectItem(20, "20") );
+   			pageLimits.add( new SelectItem(25, "25") );
+   			pageLimits.add( new SelectItem(50, "50") );
+   			pageLimits.add( new SelectItem(100, "100") );
+        }
+        return pageLimits;
+	}
+	
 }

@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -17,6 +18,7 @@ import java.util.Map;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.XMLConstants;
@@ -82,6 +84,8 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	private String application;
 	
 	private LocaleElement[] locales;
+	
+	private List<SelectItem> localeList;
 	
 	private AuthPrincipal principal;
 	
@@ -385,6 +389,17 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	
 	public LocaleElement[] getLocales() {
 		return locales;
+	}
+
+	public List<SelectItem> getLocaleList() {
+    	if ( localeList == null ) {
+    		localeList = new LinkedList<SelectItem>();
+    		for( LocaleElement element : getLocales() ) {
+	            SelectItem item = new SelectItem(element.getId(), element.getDisplayName());
+	            localeList.add( item );
+    		}
+        }
+        return localeList;
 	}
 	
 	private class LogErrorHandler implements ErrorHandler {
