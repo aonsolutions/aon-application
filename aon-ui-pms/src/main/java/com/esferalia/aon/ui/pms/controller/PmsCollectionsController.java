@@ -11,6 +11,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.enumeration.PayMethodType;
@@ -155,14 +156,19 @@ public class PmsCollectionsController {
 
 	public List<SelectItem> getRoomItems() throws ManagerBeanException {
 		List<SelectItem> roomItems = new LinkedList<SelectItem>();
-		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), new Integer(1));
-		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
-		for (ITransferObject ito : itemBean.getList(criteria)) {
-			Item item = (Item)ito;
-			SelectItem roomItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
-			roomItems.add(roomItem);
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), IReservationConstants.ROOM_CATEGORY);
+		for (ITransferObject ito : appParamBean.getList(criteria)) {
+			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), new Integer(((ApplicationParameter)ito).getValue()));
+			criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
+			for (ITransferObject itr : itemBean.getList(criteria)) {
+				Item item = (Item)itr;
+				SelectItem roomItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
+				roomItems.add(roomItem);
+			}
 		}
 		return roomItems;
 	}
