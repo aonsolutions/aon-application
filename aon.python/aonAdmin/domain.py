@@ -412,12 +412,12 @@ class Domain(object):
         stmt = db.cursor()
         if self.is_verbose_enabled():
             print "\tTrying to insert domain (",self.get_domain_name(),",",self.get_domain_description(),",",self.get_domain_parent_id(),",",self.get_domain_suffix(),")",  
-        stmt.execute("INSERT INTO domain (name,description,parent,domainManagement,userManagement,subDomainSuffix,maxDocumentSize,maxTotalDocumentSize,maxDefinedUsers,owner) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        stmt.execute("INSERT INTO domain (name,description,parent,domainManagement,enableHeredity,subDomainSuffix,maxDocumentSize,maxTotalDocumentSize,maxDefinedUsers,owner) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                        ,(self.get_domain_name()
                          ,self.get_domain_description()
                          ,self.get_domain_parent_id()
                          ,self.get_domain_type().is_multidomain()
-                         ,1
+                         ,0
                          ,self.get_domain_suffix()
                          ,0
                          ,0
