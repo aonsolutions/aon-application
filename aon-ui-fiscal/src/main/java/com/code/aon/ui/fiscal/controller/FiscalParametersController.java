@@ -16,6 +16,7 @@ import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.registry.enumeration.TaxRegime;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -28,6 +29,7 @@ public class FiscalParametersController {
 	public static final String FS_DEFAULT_ADMINISTRATION = "FS_DEFAULT_ADMINISTRATION";
 	public static final String FS_ADMINISTRATION_CODE = "FS_ADMINISTRATION_CODE";
 	public static final String FS_TAX_REFUND_REGISTRY = "FS_TAX_REFUND_REGISTRY";
+	public static final String FS_TAX_REGIME = "FS_TAX_REGIME";
 
 	private Map<String, ApplicationParameter> parameters;
 	private IManagerBean managerBean;
@@ -63,7 +65,8 @@ public class FiscalParametersController {
 		String[] keys = {FS_DEFAULT_ADMINISTRATION
 						,FS_DEFAULT_YEAR
 						,FS_ADMINISTRATION_CODE
-						,FS_TAX_REFUND_REGISTRY};
+						,FS_TAX_REFUND_REGISTRY
+						,FS_TAX_REGIME};
 		for (String key : keys) {
 			if (!parameters.containsKey(key)) {
 				ApplicationParameter p = new ApplicationParameter();
@@ -108,6 +111,21 @@ public class FiscalParametersController {
 		getParameters().get(FS_TAX_REFUND_REGISTRY).setValue(taxRefundRegistry?"1":"0");
 	}
 	
+	public TaxRegime getTaxRegime() {
+		String value = getParameters().get(FS_TAX_REGIME).getValue();
+		TaxRegime taxRegime = null;
+		try {
+			int v = Integer.parseInt(value);
+			taxRegime = TaxRegime.values()[v];
+		} catch (NumberFormatException e) {
+			
+		}
+		return taxRegime==null?TaxRegime.EDN:taxRegime; 
+	}
+	public void setTaxRegime(TaxRegime taxRegime) {
+		getParameters().get(FS_TAX_REGIME).setValue(taxRegime==null?null:Integer.toString(taxRegime.ordinal()));
+	}
+
 	public Administration getDefaultAdministration() {
 		String value = getParameters().get(FS_DEFAULT_ADMINISTRATION).getValue();
 		Administration adm = null;

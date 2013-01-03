@@ -40,11 +40,13 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RecordData;
+import com.code.aon.registry.enumeration.TaxRegime;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.AccountRegeneratorController;
 import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -148,19 +150,28 @@ public class AccountingBookController implements ICollectionProvider{
 	}
 
 	private void initializeModel() {
+		FiscalParametersController fpc = (FiscalParametersController) AonUtil.getRegisteredBean(IAccountingConstants.FISCAL_PARAMETERS_CONTROLLER);
+		TaxRegime taxRegime = fpc.getTaxRegime();
 		List<AccountingBook> books = new LinkedList<AccountingBook>();  
-		books.add( new AccountingBook( 1, 0, 1,MimeType.MIME_PDF,BookType.DIARIO	,false));
-		books.add( new AccountingBook( 2, 1, 1,MimeType.MIME_PDF,BookType.MAYOR	,true ));
-		books.add( new AccountingBook( 2, 2, 1,MimeType.MIME_PDF,BookType.BAL_SUMS1,true ));
-		books.add( new AccountingBook( 2, 3, 1,MimeType.MIME_PDF,BookType.BAL_SUMS2,true ));
-		books.add( new AccountingBook( 2, 4, 1,MimeType.MIME_PDF,BookType.BAL_SUMS3,true ));
-		books.add( new AccountingBook( 2, 5, 1,MimeType.MIME_PDF,BookType.BAL_SUMS4,true ));
-		books.add( new AccountingBook( 2, 6, 1,MimeType.MIME_PDF,BookType.IVAR		,true ));
-		books.add( new AccountingBook( 2, 7, 1,MimeType.MIME_PDF,BookType.IVAS		,true ));
-		books.add( new AccountingBook( 2, 8, 1,MimeType.MIME_PDF,BookType.IVAI		,true ));
-		books.add( new AccountingBook( 2, 9, 1,MimeType.MIME_PDF,BookType.PER_GAN	,true ));
-		books.add( new AccountingBook( 2,10, 1,MimeType.MIME_PDF,BookType.BALANCES	,true ));
-		books.add( new AccountingBook( 2,11, 1,MimeType.MIME_PDF,BookType.BALANCES	,true ));
+		if (taxRegime == TaxRegime.EDS || taxRegime == TaxRegime.MODULES) {
+			books.add( new AccountingBook( 1, 0, 1,MimeType.MIME_PDF,BookType.IVAR		,true ));
+			books.add( new AccountingBook( 1, 1, 1,MimeType.MIME_PDF,BookType.IVAS		,true ));
+			books.add( new AccountingBook( 1, 2, 1,MimeType.MIME_PDF,BookType.IVAI		,true ));
+			books.add( new AccountingBook( 2, 3, 1,MimeType.MIME_PDF,BookType.PER_GAN	,true ));
+		} else {
+			books.add( new AccountingBook( 1, 0, 1,MimeType.MIME_PDF,BookType.DIARIO	,false));
+			books.add( new AccountingBook( 2, 1, 1,MimeType.MIME_PDF,BookType.MAYOR		,true ));
+			books.add( new AccountingBook( 2, 2, 1,MimeType.MIME_PDF,BookType.BAL_SUMS1	,true ));
+			books.add( new AccountingBook( 2, 3, 1,MimeType.MIME_PDF,BookType.BAL_SUMS2	,true ));
+			books.add( new AccountingBook( 2, 4, 1,MimeType.MIME_PDF,BookType.BAL_SUMS3	,true ));
+			books.add( new AccountingBook( 2, 5, 1,MimeType.MIME_PDF,BookType.BAL_SUMS4	,true ));
+			books.add( new AccountingBook( 2, 6, 1,MimeType.MIME_PDF,BookType.IVAR		,true ));
+			books.add( new AccountingBook( 2, 7, 1,MimeType.MIME_PDF,BookType.IVAS		,true ));
+			books.add( new AccountingBook( 2, 8, 1,MimeType.MIME_PDF,BookType.IVAI		,true ));
+			books.add( new AccountingBook( 2, 9, 1,MimeType.MIME_PDF,BookType.PER_GAN	,true ));
+			books.add( new AccountingBook( 2,10, 1,MimeType.MIME_PDF,BookType.BALANCES	,true ));
+			books.add( new AccountingBook( 2,11, 1,MimeType.MIME_PDF,BookType.BALANCES	,true ));
+		}
 		setModel( new ListDataModel(books));
 	}
 	

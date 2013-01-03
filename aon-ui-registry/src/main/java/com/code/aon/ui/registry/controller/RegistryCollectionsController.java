@@ -31,6 +31,7 @@ import com.code.aon.registry.enumeration.NoteType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.registry.enumeration.StreetType;
+import com.code.aon.registry.enumeration.TaxRegime;
 import com.esferalia.aon.entity.IEntityAlias;
 
 /**
@@ -48,6 +49,7 @@ public class RegistryCollectionsController {
 	private List<SelectItem> registryAttachmentTypes;
 	private List<SelectItem> noteTypes;
 	private List<SelectItem> documentTypes;
+	private List<SelectItem> taxRegimes;
 	private RegistryBank rBank; // No Borrar. Euke.
 								// Se utiliza como selector 
 								// en la pantalla de alta de vencimientos.
@@ -185,7 +187,20 @@ public class RegistryCollectionsController {
 		return documentTypes;
 	}
 	
-    public List<SelectItem> getSegments() throws ManagerBeanException{
+	public List<SelectItem> getTaxRegimes() {
+		if ( taxRegimes == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			taxRegimes = new LinkedList<SelectItem>();
+			for( TaxRegime taxRegime : TaxRegime.values() ) {
+					String name = taxRegime.getName(locale);
+					SelectItem item = new SelectItem(taxRegime, name);
+					taxRegimes.add(item);
+			}
+		}
+		return taxRegimes;
+	}
+
+	public List<SelectItem> getSegments() throws ManagerBeanException{
     	return getSegments(false);
     }
 

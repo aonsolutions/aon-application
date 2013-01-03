@@ -37,6 +37,7 @@ public interface IAccountingConstants {
 	String OFFICIAL_TRIAL_BALANCE_CONTROLLER = "officialTrialBalance";
 	String VAT_REPORT_CONTROLLER = "vatReport";
 	String BALANCE_SHEET_CONTROLLER = "balanceSheet";
+	String FISCAL_PARAMETERS_CONTROLLER = "fiscalParams";
 	
 	// NAVIGATION KEYS
 	String ACCOUNT_ENTRY_FORM_NAVKEY = "accountEntry_form";

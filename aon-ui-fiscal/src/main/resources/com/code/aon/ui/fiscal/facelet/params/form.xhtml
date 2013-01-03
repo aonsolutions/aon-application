@@ -33,6 +33,13 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="paramsContainer" columns="2">
 
+					<aon:outputLabel for="tax_regime"
+						value="#{fiscalBundle.fiscal_tax_regime}" />
+					<aon:selectOneMenu id="tax_regime"
+						value="#{fiscalParams.taxRegime}">
+						<f:selectItems value="#{registryCollections.taxRegimes}" />
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="default_period"
 						value="#{fiscalBundle.fiscal_parameters_year}" />
 					<aon:selectOneMenu id="default_period" value="#{fiscalParams.defaultYear}">
