@@ -22,7 +22,9 @@
 		<aon:methodParam name="resetActionListener" default="#{controller.onReset}" type="actionListener" />
 		<aon:methodParam name="resetAction" default="#{controller.beanName}_form" resolve="true" />			
 		<aon:methodParam name="backActionListener" default="#{controller.onBackActionListener}" type="actionListener" />
-		<aon:methodParam name="backAction" default="#{controller.backAction}" />									
+		<aon:methodParam name="backAction" default="#{controller.backAction}" />		
+		
+		<aon:valueParam name="skipEditTo" default="#{!controller.editableTo}" testValue="true" />							
 	</ui:include>
 	
 </ui:composition>

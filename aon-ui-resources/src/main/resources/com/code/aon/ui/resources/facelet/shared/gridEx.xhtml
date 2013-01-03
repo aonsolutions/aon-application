@@ -23,6 +23,9 @@
 						<aon:outputText value="&#160;" />
 					</f:facet>
 					<aon:div rendered="#{formList}" layout="none">
+						<aon:outputText value="&#160;" rendered="#{!controller.editableSelectedTo}"
+							title="#{bundle.aon_inherited_row}"
+							styleClass="aon-icon2 aon-icon-shield" />														
 						<ui:insert name="beginFormListContent"/>
 					</aon:div>					
 					<aon:div rendered="#{formEdit}" layout="none">

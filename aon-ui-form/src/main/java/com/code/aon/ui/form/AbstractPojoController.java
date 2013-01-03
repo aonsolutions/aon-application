@@ -8,7 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.dao.hibernate.TypeResolver;
 import com.code.aon.ui.util.AonUtil;
 
@@ -29,6 +31,8 @@ public class AbstractPojoController {
 	private String beanName;
 
 	private String pojo;
+	
+	private boolean heritable;
 
 	/**
 	 * Empty constructor.
@@ -62,6 +66,7 @@ public class AbstractPojoController {
 	 */
 	public void setPojo(String bean) {
 		this.pojo = bean;
+		this.heritable = calculateHeritable(bean);
 	}
 
 	/**
@@ -150,4 +155,19 @@ public class AbstractPojoController {
 		AonUtil.addErrorMessage(message);
 	}
 
+	public boolean isHeritable() {
+		return heritable;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private boolean calculateHeritable( String pojo ) {
+		try {
+			Class<? extends ITransferObject> pojoClass = (Class<? extends ITransferObject>) Class.forName( getPojo() );
+			return pojoClass.isAnnotationPresent(Heritable.class);
+		} catch (ClassNotFoundException e) {
+			LOGGER.error( e.getMessage(), e );
+		}
+		return false;		
+	}
+	
 }

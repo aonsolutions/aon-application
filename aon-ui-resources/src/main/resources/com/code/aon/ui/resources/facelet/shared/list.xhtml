@@ -20,6 +20,7 @@
 		<aon:methodParam name="rowSelectorActionListener" default="#{controller.onSelect}" type="actionListener" />
 		
 		<aon:valueParam name="selectButtonRendered" default="#{true}" />
+		<aon:valueParam name="skipEditSelectedTo" default="#{!controller.editableSelectedTo}" testValue="true" />
 	</ui:include>
 	
 </ui:composition>

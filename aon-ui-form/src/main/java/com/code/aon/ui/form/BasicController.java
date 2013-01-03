@@ -1439,7 +1439,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	}	
 
 	private boolean isCurrentDomainTo( Object object ) {
-		if ( object.getClass().isAnnotationPresent(Heritable.class) ) {
+		if ( isHeritable() ) {
 			return ((IDomain) object).getDomain() == DomainManager.getCurrentDomain();
 		}
 		return true;
