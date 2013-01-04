@@ -107,9 +107,9 @@ public class ItemLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		IManagerBean paBean = BeanManager.getManagerBean(ProductAccount.class);
 		Item item = new Item();
 		item.setBarcode(loaded.getCodigoBarras());
-		item.setPrice(loaded.getPrecioVentaBase());
-		item.setPurchasePrice(loaded.getPrecioCompra());
-		item.setProfitPercent(loaded.getBeneficioSobreCompra());
+		item.setPrice(loaded.getPrecioVentaBase()==null?0.0:loaded.getPrecioVentaBase());
+		item.setPurchasePrice(loaded.getPrecioCompra()==null?0.0:loaded.getPrecioCompra());
+		item.setProfitPercent(loaded.getBeneficioSobreCompra()==null?0.0:loaded.getBeneficioSobreCompra());
 		item.setStatus( ProductStatus.ACTIVE );
 		
 		Product product = new Product ();

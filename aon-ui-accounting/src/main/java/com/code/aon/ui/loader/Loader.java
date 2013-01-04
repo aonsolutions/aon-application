@@ -341,7 +341,12 @@ public class Loader implements ILoaderEngine {
 			Object data = parseData(i, cols[x], c );
 			if (target != null) {
 				try {
-					BeanUtils.setProperty(target, c.getName(), data);
+					if (c.getType() == 3 && data == null) {
+						// Para evitar la excepcion "No value specified for 'Date'"
+						// que lanza BeanUtils para las fecha nulas.
+					} else {
+						BeanUtils.setProperty(target, c.getName(), data);
+					}
 				} catch (IllegalAccessException e) {
 					raiseException(i, e.getMessage());
 				} catch (InvocationTargetException e) {
