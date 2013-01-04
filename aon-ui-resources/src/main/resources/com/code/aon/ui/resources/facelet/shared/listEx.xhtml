@@ -18,7 +18,7 @@
 			<aon:column styleClass="aon-editDataTable-iconColumn">
 				<aon:commandLink id="#{dataTableId}-selectButton" 
 					styleClass="aon-icon2 #{(skipEditSelectedTo)?'aon-icon-shield':'aon-icon-rowSelector'}"
-					title="#{(skipEditSelectedTo)?bundle.aon_inherited_row:bundle.aon_selectMsg}"
+					title="#{(skipEditSelectedTo)?(bundle.aon_inherited_row):(bundle.aon_selectMsg)}"
 					value="&#160;" immediate="true" ajaxSingle="true" requestDelay="100"
 					action="#{rowSelectorAction}"
 					actionListener="#{rowSelectorActionListener}"
