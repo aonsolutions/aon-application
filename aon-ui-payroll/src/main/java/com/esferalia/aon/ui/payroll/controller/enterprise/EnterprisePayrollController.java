@@ -13,14 +13,16 @@ import com.code.aon.company.Enterprise;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class EnterprisePayrollController {
+	
+	private final int NAME_LENGHT_100 = 100;
 	
 	private boolean showActivityNode;
 	private EnterpriseActivity activity;	
@@ -88,11 +90,18 @@ public class EnterprisePayrollController {
     	criteria.addOrder(bean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_TYPE));
     	for (ITransferObject to : bean.getList(criteria)) {
     		EnterpriseActivity a = (EnterpriseActivity)to;
-    		String label = a.getDescription();
+    		String label = getAbbreviatedSelectItemLabel(a.getDescription(), NAME_LENGHT_100);
     		list.add(new SelectItem(a, label));
     	}
     	return list;
-    }	    
+    }
+    
+    private String getAbbreviatedSelectItemLabel(String name, int lenght) {
+		if(name.length()>lenght){
+			return name.substring(0, lenght)+"...";
+		}
+		return name;
+	}
 
 	private void loadMainActivity() throws ManagerBeanException {
 		IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);
