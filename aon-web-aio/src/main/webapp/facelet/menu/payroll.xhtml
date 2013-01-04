@@ -135,22 +135,22 @@
 								</aon:div>
 								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="profRetention" 
-											action="profRetention_search" 
-											actionListener="#{profRetention.onEditSearch}"
-											value="#{fiscalBundle.fiscal_professional_retention_module}"/>
+										<aon:commandLink id="expenseInvoiceManagement"
+											action="expenseInvoice_search"
+											actionListener="#{expenseInvoice.onEditSearch}"
+											value="#{fiscalBundle.fiscal_professional_retention_module}(#{financeBundle.finance_expense_invoice_management_module})" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="model110" 
-											action="withholdingReport_search" 
-											actionListener="#{withholdingReport.onReset}"
-											value="#{fiscalBundle.fiscal_withholding_module}"/>
+										<aon:commandLink id="mod111" 
+											action="mod111_search"
+											actionListener="#{mod111.onEditSearch}"
+											value="#{fiscalBundle.fiscal_model_111_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="irpfData"
+										<aon:commandLink id="mod145"
 											action="irpfData_search"
 											actionListener="#{irpfData.onEditSearch}"
-											value="#{payrollBundle.payroll_irpfData_module}">
+											value="#{payrollBundle.payroll_model_145_module}">
 											<aon:actionListener method="#{contract.onEditSearch}" />
 										</aon:commandLink>
 									</aon:div>
