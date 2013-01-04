@@ -126,22 +126,20 @@
 												</aon:div>
 											</c:if>
 										</c:if>
-										<c:if test="#{!domainSwitcher.parentDomain or domainSwitcher.domainManagementAvailable}">
-											<c:if test="#{aonRole.productOperator}">
-												<aon:div styleClass="aon-direct-access-list-element">
-													<aon:commandLink id="item-configuration" 
-														action="item_search"
-														actionListener="#{item.onEditSearch}"
-														value="#{productBundle.product_module}" />
-												</aon:div>
-											</c:if>
-											<c:if test="#{aonRole.productOperator or aonRole.purchaseOperator}">
-												<aon:div styleClass="aon-direct-access-list-element">
-													<aon:commandLink id="expenseItem-configuration" 
-														action="expenseItem-configuration" 
-														value="#{productBundle.product_expense_module}" />
-												</aon:div>
-											</c:if>
+										<c:if test="#{aonRole.productOperator}">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="item-configuration" 
+													action="item_search"
+													actionListener="#{item.onEditSearch}"
+													value="#{productBundle.product_module}" />
+											</aon:div>
+										</c:if>
+										<c:if test="#{aonRole.productOperator or aonRole.purchaseOperator}">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="expenseItem-configuration" 
+													action="expenseItem-configuration" 
+													value="#{productBundle.product_expense_module}" />
+											</aon:div>
 										</c:if>
 										<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
 											<c:if test="#{aonRole.commercialOperator}">
