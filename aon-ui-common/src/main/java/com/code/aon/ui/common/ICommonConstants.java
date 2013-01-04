@@ -62,6 +62,14 @@ public interface ICommonConstants {
 	
 	String ACTIVE = "aon_active";
 	
+	String SUPPORT_TELEPHONE_NUMBER2 = "aon_support_telephone_number2";
+
+	String SUPPORT_SEND_EMAIL = "aon_support_send_email";
+
+	String SUPPORT_TELEPHONE_NUMBER = "aon_support_telephone_number";
+
+	String APPLICATION_TITLE = "aon_application_title";
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************

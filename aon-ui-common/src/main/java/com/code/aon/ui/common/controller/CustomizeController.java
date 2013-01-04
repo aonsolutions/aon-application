@@ -3,12 +3,16 @@ package com.code.aon.ui.common.controller;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_COLOR;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_ID;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_TITLE;
+import static com.code.aon.ui.common.ICommonConstants.APPLICATION_TITLE;
 import static com.code.aon.ui.common.ICommonConstants.FAVICON_NAME;
 import static com.code.aon.ui.common.ICommonConstants.HEADER_LOGO_NAME;
 import static com.code.aon.ui.common.ICommonConstants.LOGIN_LOGO_NAME;
 import static com.code.aon.ui.common.ICommonConstants.STATUS_FAILED_NAME;
 import static com.code.aon.ui.common.ICommonConstants.STATUS_START_NAME;
 import static com.code.aon.ui.common.ICommonConstants.STATUS_STOP_NAME;
+import static com.code.aon.ui.common.ICommonConstants.SUPPORT_SEND_EMAIL;
+import static com.code.aon.ui.common.ICommonConstants.SUPPORT_TELEPHONE_NUMBER;
+import static com.code.aon.ui.common.ICommonConstants.SUPPORT_TELEPHONE_NUMBER2;
 import static com.code.aon.ui.common.ICommonConstants.TOOLBAR_LOGO_NAME;
 
 import java.io.InputStream;
@@ -34,6 +38,7 @@ import org.hibernate.cfg.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DataSourceUtil;
 
@@ -102,9 +107,9 @@ public class CustomizeController {
 	private String statusFailedStyle;
 	
 	public CustomizeController() {
-		this.applicationTitle = AonUtil.getMessage("appBundle", "aon_application_title" );
-		this.supportTelephone = AonUtil.getMessage("aon_support_telephone_number" );
-		this.supportEmail = AonUtil.getMessage("aon_support_send_email" );
+		this.applicationTitle = AonUtil.getMessage("appBundle", APPLICATION_TITLE );
+		this.supportTelephone = AonUtil.getMessage(SUPPORT_TELEPHONE_NUMBER) + " . " + AonUtil.getMessage(SUPPORT_TELEPHONE_NUMBER2);
+		this.supportEmail = AonUtil.getMessage(SUPPORT_SEND_EMAIL);
 		this.favicon = FAVICON_DEFAULT;
 		this.loginLogo = LOGIN_LOGO_DEFAULT;
 		this.headerLogo = HEADER_LOGO_DEFAULT;

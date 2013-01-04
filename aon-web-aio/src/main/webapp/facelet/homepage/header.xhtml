@@ -63,11 +63,7 @@
 				<aon:div styleClass="aon-float-right">
 					<aon:div styleClass="aon-header-menu-item aon-nowrap">
 						<c:if test="#{loggedUser.logged}">		
-							<aon:div styleClass="aon-padding-right" layout="inline">
-								<aon:outputText value="#{loggedUser.loggedUserName}"
-									styleClass="aon-padding-left aon-padding-right" />
-							</aon:div>
-							<aon:outputText value="#{loggedUser.companyName}" />
+							<aon:outputText value="#{loggedUser.loggedUserName} . #{loggedUser.companyName}" />
 						</c:if>		
 					</aon:div>
 				</aon:div>
