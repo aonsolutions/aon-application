@@ -241,56 +241,54 @@
 					</aon:panelGroup>
 
 					<aon:panelGroup>
-						<c:if test="#{!domainSwitcher.parentDomain or domainSwitcher.domainManagementAvailable}">
-							<c:if test="#{aonRole.config}">												
-								<aon:panelGrid id="group_management_tables"
-									styleClass="aon-width-all" columnClasses="aon-padding"
-									headerClass="aon-direct-access-panel aon-icon-config">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_management_auxiliaries_tables}" />
-									</f:facet>
-									<aon:div styleClass="aon-direct-access-list">
+						<c:if test="#{aonRole.config}">												
+							<aon:panelGrid id="group_management_tables"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-config">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_management_auxiliaries_tables}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="payMethod-configuration"
+											action="payMethod-configuration"
+											value="#{configBundle.config_paymethod_module}" />
+									</aon:div>								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="bank-configuration"
+											action="bank-configuration"
+											value="#{configBundle.config_bank_module}" />
+									</aon:div>
+									<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="payMethod-configuration"
-												action="payMethod-configuration"
-												value="#{configBundle.config_paymethod_module}" />
+											<aon:commandLink id="series-configuration" 
+												action="series-configuration" 
+												value="#{configBundle.config_series_module}" />
 										</aon:div>								
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="bank-configuration"
-												action="bank-configuration"
-												value="#{configBundle.config_bank_module}" />
-										</aon:div>
-										<c:if test="#{!domainSwitcher.parentDomain}">
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="series-configuration" 
-													action="series-configuration" 
-													value="#{configBundle.config_series_module}" />
-											</aon:div>								
-										</c:if>	
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="tax-configuration" 
-												action="tax_list-configuration" 
-												value="#{configBundle.config_tax_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="geotreeParent_list-configuration" 
-												action="geotreeParent_list-configuration" 
-												actionListener="#{geotreeParent.onSearch}"
-												value="#{geozoneBundle.geozone_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="segment_form-configuration" 
-												action="segment_form-configuration" 
-												value="#{registryBundle.registry_segment_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="relationship" 
-												action="relationship_form" 
-												value="#{registryBundle.registry_relationship_module}" />
-										</aon:div>								
-									</aon:div>							
-								</aon:panelGrid>
-							</c:if>
+									</c:if>	
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="tax-configuration" 
+											action="tax_list-configuration" 
+											value="#{configBundle.config_tax_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="geotreeParent_list-configuration" 
+											action="geotreeParent_list-configuration" 
+											actionListener="#{geotreeParent.onSearch}"
+											value="#{geozoneBundle.geozone_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="segment_form-configuration" 
+											action="segment_form-configuration" 
+											value="#{registryBundle.registry_segment_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="relationship" 
+											action="relationship_form" 
+											value="#{registryBundle.registry_relationship_module}" />
+									</aon:div>								
+								</aon:div>							
+							</aon:panelGrid>
 						</c:if>
 		
 						<c:if test="#{!domainSwitcher.parentDomain or domainSwitcher.domainManagementAvailable}">
