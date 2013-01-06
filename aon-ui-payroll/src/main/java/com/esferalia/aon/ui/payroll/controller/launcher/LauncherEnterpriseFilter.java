@@ -1,7 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller.launcher;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,14 +39,14 @@ public class LauncherEnterpriseFilter {
 
 	private DataModel availableModel;
 	
-	@SuppressWarnings("unchecked")
 	public LauncherEnterpriseFilter(){
 		PayrollUtils utils = new PayrollUtils();
 		setAvailableList(new ArrayList<Enterprise>());
-		getAvailableList().addAll((Collection<? extends Enterprise>) utils.getCurrentChildEnterprises());
+		for(ITransferObject to: utils.getCurrentChildEnterprises()){
+			getAvailableList().add((Enterprise) to);
+		}
 		setAvailableModel(new ListDataModel(getAvailableList()));
 		setIncludedList(new ArrayList<Enterprise>());
-//		getIncludedList().addAll((Collection<? extends Enterprise>) utils.getCurrentChildEnterprises());
 		setIncludedModel(new ListDataModel(getIncludedList()));
 	}
 	
@@ -241,7 +240,9 @@ public class LauncherEnterpriseFilter {
 			criteria.addOrder(bean.getFieldName(IEntityAlias.ENTERPRISE_REGISTRY_NAME));
 			criteria.setSkipDomainFilter(true);
 			getAvailableList().clear();
-			getAvailableList().addAll((Collection<? extends Enterprise>) bean.getList(criteria));
+			for(ITransferObject to: bean.getList(criteria)){
+				getAvailableList().add((Enterprise) to);
+			}
 			getAvailableModel().setWrappedData(getAvailableList());
 		} catch (ManagerBeanException e) {
 			// NADA. se devuelve vacio
