@@ -8,13 +8,15 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 	
-	<aon:column alias="Contract.workPlace.enterprise.registry.name"
-		styleClass="aon-editDataTable-textColumn">
-		<f:facet name="header">
-			<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
-		</f:facet>
-		<aon:outputText value="#{to.workPlace.enterprise.registry.fullName}" />
-	</aon:column>
+	<c:if test="#{showEnterpriseColumn}">
+		<aon:column alias="Contract.workPlace.enterprise.registry.surname,Contract.workPlace.enterprise.registry.name"
+			styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
+			</f:facet>
+			<aon:outputText value="#{to.workPlace.enterprise.registry.fullName}" />
+		</aon:column>
+	</c:if>
 	
 	<aon:column alias="Contract.enterpriseCCC.ccc"
 		styleClass="aon-editDataTable-textColumn">

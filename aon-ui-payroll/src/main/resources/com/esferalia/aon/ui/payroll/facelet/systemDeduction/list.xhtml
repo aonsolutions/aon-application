@@ -50,7 +50,11 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_concept}" />
 							</f:facet>
-							<aon:outputText value="#{to.deductionConcept.description}" />
+							<aon:div>
+								<aon:outputText value="#{to.deductionConcept.code}" />
+								<aon:outputText value="&#160;-&#160;" />
+								<aon:outputText value="#{to.deductionConcept.description}" />
+							</aon:div>
 						</aon:column>
 
 						<aon:column alias="systemDeduction.type"
@@ -66,7 +70,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_description}" />
 							</f:facet>
-							<aon:outputText value="#{to.description}" />
+							<aon:outputText value="#{to.fullDescription}" />
 						</aon:column>
 						
 					</ui:define>

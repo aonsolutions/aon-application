@@ -308,7 +308,6 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 	
 	@Override
 	public void reloadData( ActionEvent event ) {
-		getVariableFilter().onChangeLastPeriod(event);
 		initializeVariables(event);
 	}
 	

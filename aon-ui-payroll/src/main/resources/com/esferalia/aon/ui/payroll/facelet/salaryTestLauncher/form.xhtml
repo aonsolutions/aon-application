@@ -19,27 +19,35 @@
 				<aon:outputText value="#{message.enterpriseName} " 
 					rendered="#{message.contractId!=null}" />
 								
-				<aon:commandLink  
-					rendered="#{message.contractId!=null}"
-					style="display: inline; text-decoration:underline;"
-					action="salaryDraft_form" >
-					<aon:outputText value="#{message.employeeName} " />
-					<f:setPropertyActionListener value="#{message}" 
-					target="#{salaryTestLauncher.message}" />
-					<f:setPropertyActionListener value="#{message.contractId}" 
-					target="#{salaryTestLauncher.contractId}" />
-					<aon:actionListener method="#{salaryTestLauncher.onSalaryDraft}" />
-				</aon:commandLink>	
+				<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
+					<aon:outputText  
+						rendered="#{message.contractId!=null}"
+						style="display: inline; text-decoration:underline;"
+						value="#{message.employeeName} " />
+				</c:if>
+				<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
+					<aon:commandLink  
+						rendered="#{message.contractId!=null}"
+						style="display: inline; text-decoration:underline;"
+						action="salaryDraft_form" >
+						<aon:outputText value="#{message.employeeName} " />
+						<f:setPropertyActionListener value="#{message}" 
+						target="#{salaryTestLauncher.message}" />
+						<f:setPropertyActionListener value="#{message.contractId}" 
+						target="#{salaryTestLauncher.contractId}" />
+						<aon:actionListener method="#{salaryTestLauncher.onSalaryDraft}" />
+					</aon:commandLink>	
+				</c:if>
 								
 				<aon:outputText styleClass="lst lst_#{message.level}" value="#{message.msg}" />
 			</ui:define>			
 
 			<ui:define name="launchButton" >
-					<aon:commandButton id="launchSalaries"
+				<aon:commandButton id="launchSalaries"
 					value="#{payrollBundle.payroll_launch}" 
-					styleClass="aon-search-lookup-button"
 					disabled="#{salaryLauncher.pollEnabled}"
-					actionListener="#{salaryLauncher.onLaunch}">
+					actionListener="#{salaryLauncher.onLaunch}"
+					styleClass="aon-finding-toolbar-item aon-icon-accept">
 				</aon:commandButton>
 			</ui:define>			
 

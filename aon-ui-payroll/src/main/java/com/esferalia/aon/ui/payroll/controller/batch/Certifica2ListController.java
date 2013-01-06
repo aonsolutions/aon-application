@@ -150,7 +150,9 @@ public class Certifica2ListController extends BasicController {
 			getCriteria().addNotNullExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE));
 			getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.CONTRACT_STATUS), ContractStatus.BATCHED);
 //			getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_STATUS), ContractStatus.PENDING);
-//			getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), ((Certifica2Batch)controller.getTo()).getEnterprise().getId());
+			if(getEnterprise()!=null && getEnterprise().getId()!=null){
+				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());
+			}
 			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_END_DATE), false);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSearch exception: ",e);
@@ -158,10 +160,6 @@ public class Certifica2ListController extends BasicController {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 		super.onSearch(event);
-	}
-	
-	public boolean isAnyEmpleadoSelected(){
-		return !getCheckHandler().getCheckedList().isEmpty();
 	}
 	
 	public void onApplyAllSuspensionCause(ActionEvent event) {

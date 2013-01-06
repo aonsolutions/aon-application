@@ -44,7 +44,7 @@
 											value="#{bundle.aon_accept}" 
 											styleClass="aon-search-lookup-button"
 											disabled="#{salaryLauncher.pollEnabled}"
-											reRender="poll,launchSalaries,messagesContainer"
+											reRender="poll,launchSalaries,messagesContainer,salaryLauncherForm"
 											actionListener="#{salaryLauncher.onExecute}">
 											<rich:componentControl for="launcherModalPanel" event="onclick" operation="hide"/>																					
 											<f:setPropertyActionListener target="#{salaryLauncher.showLauncherConfirmWindow}"

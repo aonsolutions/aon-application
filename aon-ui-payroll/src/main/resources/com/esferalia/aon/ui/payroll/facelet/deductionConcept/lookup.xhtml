@@ -6,6 +6,8 @@
 	
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
 		<ui:param name="lookupBean" value="#{deductionConceptLookup}" />
+		<ui:param name="lookupInputSize" value="10"/>
+		<ui:param name="lookupInputMaxLength" value="15"/>
 		<ui:param name="controller" value="#{deductionConcept}" />
 		<ui:param name="lookupInputValue" value="#{lookupTo.code}"/>
 		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.description}" />

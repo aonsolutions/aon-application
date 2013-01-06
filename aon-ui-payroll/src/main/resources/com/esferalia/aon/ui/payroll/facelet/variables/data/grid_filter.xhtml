@@ -21,8 +21,8 @@
 					<f:selectItem itemLabel="#{payrollBundle.payroll_current}" itemValue="#{true}" />
 					<f:selectItem itemLabel="#{payrollBundle.payroll_historyc}" itemValue="#{false}" />
 					<a4j:support event="onclick" reRender="#{controller.beanName}VarContainer" ignoreDupResponses="true" >
-						<aon:actionListener method="#{controller.reloadData}" />
 						<aon:actionListener method="#{controller.variableFilter.onChangeSearchCurrent}" />
+						<aon:actionListener method="#{controller.reloadData}" />
 					</a4j:support>
 				</aon:selectOneRadio>
 				

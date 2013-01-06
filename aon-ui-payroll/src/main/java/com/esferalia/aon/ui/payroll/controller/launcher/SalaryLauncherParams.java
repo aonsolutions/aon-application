@@ -1,12 +1,15 @@
 package com.esferalia.aon.ui.payroll.controller.launcher;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
@@ -20,25 +23,25 @@ public class SalaryLauncherParams {
 	private static final String ENTERPRISE_ALIAS = "enterprise_registry.id";
 	private static final String PERSON_ALIAS = "person_registry.id";
 
-//	private Enterprise enterprise;
 	private Person person;
 	private Month issueMonth;
 	private int issueYear;
 	private SalaryType salaryType;
 	private Date startDate;
 	private Date endDate;
-
+	private LauncherEnterpriseFilter enterpriseFilter;
+	
 	public SalaryLauncherParams() {
 		initialize();
 	}
 
-//	public Enterprise getEnterprise() {
-//		return enterprise;
-//	}
-//
-//	public void setEnterprise(Enterprise enterprise) {
-//		this.enterprise = enterprise;
-//	}
+	public LauncherEnterpriseFilter getEnterpriseFilter() {
+		return enterpriseFilter;
+	}
+
+	public void setEnterpriseFilter(LauncherEnterpriseFilter enterpriseFilter) {
+		this.enterpriseFilter = enterpriseFilter;
+	}
 
 	public Person getPerson() {
 		return person;
@@ -138,11 +141,12 @@ public class SalaryLauncherParams {
 	}
 
 	public void initialize() {
+		if(DomainManager.isDomainManagementAvailable()){
+			setEnterpriseFilter(new LauncherEnterpriseFilter());
+		}
 		try {
 			IManagerBean personBean = BeanManager.getManagerBean(Person.class);
 			setPerson((Person) personBean.createNewTo());
-			IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
-//			setEnterprise((Enterprise) enterpriseBean.createNewTo());
 		} catch (ManagerBeanException e) {
 			String msg = "Error de inicializazión";
 			AonUtil.addErrorMessage(msg);
@@ -157,14 +161,19 @@ public class SalaryLauncherParams {
 
 	public Criteria getCriteria() {
 		Criteria criteria = new Criteria();
-//		if (getEnterprise() != null && getEnterprise().getId() != null) {
-//			criteria = new Criteria();
-//			criteria.addEqualExpression(ENTERPRISE_ALIAS, getEnterprise().getId());
-//		}
 		if (getPerson() != null && getPerson().getId() != null) {
 			criteria = criteria == null ? new Criteria() : criteria;
 			criteria.addEqualExpression(PERSON_ALIAS, getPerson().getId());
 		}
+		List<Integer> enterpriseIds = new ArrayList<Integer>();
+		if( !getEnterpriseFilter().getIncludedList().isEmpty() ){
+			for(Enterprise enterprise: getEnterpriseFilter().getIncludedList()){
+				enterpriseIds.add(enterprise.getId());
+			}
+			criteria.addInExpression(ENTERPRISE_ALIAS, enterpriseIds);
+		}
 		return criteria;
 	}
+
+	
 }

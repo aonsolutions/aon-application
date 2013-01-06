@@ -23,6 +23,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ql.Criteria;
@@ -99,9 +100,6 @@ public class Certifica2BatchController extends BasicController {
 		
 		for(Certifica2ListController.RemesableContract remesable: listController.getRemesableContracts().values()){
 			Map<String, String> contractData = getContractDataMap(remesable.getContract());
-			Contract contract = (Contract) iterator.next();
-            contract.setStatus(ContractStatus.BATCHED);
-            contractBean.update(contract);
 			Certifica2BatchDetail certifica2BatchDetail = new Certifica2BatchDetail();
 			certifica2BatchDetail.setContract(remesable.getContract());
 			certifica2BatchDetail.setCcc(remesable.getContract().getEnterpriseCCC().getCcc());
@@ -145,6 +143,10 @@ public class Certifica2BatchController extends BasicController {
 //			detalle.setSalaryPeriodEndDate;
 			certifica2BatchDetail.setSalaryProcessingDays("00000");
 			certifica2BatchDetailBean.insert(certifica2BatchDetail);
+
+			Contract contract = (Contract) iterator.next();
+			contract.setStatus(ContractStatus.BATCHED);
+			contractBean.update(contract);
 		}
         listController.getCheckHandler().clearCheckedList();
         listController.getRemesableContracts().clear();
@@ -160,6 +162,13 @@ public class Certifica2BatchController extends BasicController {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
 			criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
+			
+			PayrollUtils utils = new PayrollUtils();
+			if(DomainManager.isDomainManagementAvailable()){
+				getCriteria().setSkipDomainFilter( true );
+				getCriteria().addInExpression(getFieldName(IEntityAlias.CONTRACT_DOMAIN), utils.getCurrentChildDomainIds());
+			}
+			
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
 				if(data.getExpression()!=null){

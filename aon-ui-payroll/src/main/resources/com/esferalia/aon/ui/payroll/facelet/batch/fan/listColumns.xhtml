@@ -6,6 +6,18 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
+
+	<c:if test="#{showEnterpriseColumn}">
+		<aon:column alias="EnterpriseCCC.activity.enterprise.registry.surname,FanBatchDetail.ccc.activity.enterprise.registry.name"
+			styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{companyBundle.company_enterprise}" />
+			</f:facet>
+			<aon:div styleClass="aon-nowrap">
+				<aon:outputText value="#{to.activity.enterprise.registry.fullName}"/>
+			</aon:div>
+		</aon:column>
+	</c:if>
 			
 	<aon:column alias="EnterpriseCCC.ccc"
 		styleClass="aon-editDataTable-textColumn">
@@ -34,16 +46,6 @@
 		</f:facet>
 		<aon:div styleClass="aon-nowrap">
 			<aon:outputText value="#{to.geozone.name}"/>
-		</aon:div>
-	</aon:column>
-
-	<aon:column alias="EnterpriseCCC.activity.enterprise.registry.surname,EnterpriseCCC.activity.enterprise.registry.name"
-		styleClass="aon-editDataTable-textColumn">
-		<f:facet name="header">
-			<aon:outputText value="#{companyBundle.company_enterprise}" />
-		</f:facet>
-		<aon:div styleClass="aon-nowrap">
-			<aon:outputText value="#{to.activity.enterprise.registry.fullName}"/>
 		</aon:div>
 	</aon:column>
 

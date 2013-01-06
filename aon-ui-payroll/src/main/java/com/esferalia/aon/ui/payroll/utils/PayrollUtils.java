@@ -283,5 +283,21 @@ public class PayrollUtils {
 		} 
 		return idList;
 	}
+
+	public List<ITransferObject> getCurrentChildEnterprises(){
+		if( DomainManager.isDomainManagementAvailable() ){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
+				Criteria criteria = new Criteria();
+				criteria.addInExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_DOMAIN), getCurrentChildDomainIds());
+				criteria.addOrder(bean.getFieldName(IEntityAlias.ENTERPRISE_REGISTRY_NAME));
+				criteria.setSkipDomainFilter(true);
+				return bean.getList(criteria);
+			} catch (ManagerBeanException e) {
+				// NADA. se devuelve vacio
+			}
+		} 
+		return null;
+	}
 	
 }

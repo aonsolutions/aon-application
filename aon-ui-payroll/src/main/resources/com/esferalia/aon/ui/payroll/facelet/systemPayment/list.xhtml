@@ -52,7 +52,11 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_concept}" />
 							</f:facet>
-							<aon:outputText value="#{to.paymentConcept.description}" />
+							<aon:div>
+								<aon:outputText value="#{to.paymentConcept.code}" />
+								<aon:outputText value="&#160;-&#160;" />
+								<aon:outputText value="#{to.paymentConcept.description}" />
+							</aon:div>
 						</aon:column>
 
 						<aon:column alias="systemPayment.type"
@@ -68,7 +72,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_description}" />
 							</f:facet>
-							<aon:outputText value="#{to.description}" />
+							<aon:outputText value="#{to.fullDescription}" />
 						</aon:column>
 						
 					</ui:define>

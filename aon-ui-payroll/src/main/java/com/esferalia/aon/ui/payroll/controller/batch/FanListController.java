@@ -13,6 +13,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.company.Enterprise;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -27,8 +28,27 @@ public class FanListController extends BasicController {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(FanListController.class);
 
+	private Enterprise enterprise;
 	private GeoZone geozone;
 	private BatchListCheckHandler checkHandler;
+	
+	public Enterprise getEnterprise() {
+		try {
+			if(enterprise == null){
+				IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
+				enterprise = (Enterprise) bean.createNewTo();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> error on getEnterprise: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+		return enterprise;
+	}
+
+	public void setEnterprise(Enterprise enterprise) {
+		this.enterprise = enterprise;
+	}
 	
 	public BatchListCheckHandler getCheckHandler() {
 		if(checkHandler == null){
@@ -79,6 +99,10 @@ public class FanListController extends BasicController {
 			if(getGeozone()!=null){
 				getCriteria().addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_GEOZONE_ID), getGeozone().getId());
 			}
+			if(getEnterprise()!=null && getEnterprise().getId()!=null){
+				getCriteria().addEqualExpression(getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());			
+			}
+			
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSearch exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());

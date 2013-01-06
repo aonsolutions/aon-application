@@ -20,7 +20,19 @@
     	
 		<aon:form id="salaryLauncherForm">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" />
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:define name="beforeToolbarContent">
+					<aon:commandButton id="salaryLauncher-clear"
+						value="#{bundle.aon_clear}"
+						type="reset" ajaxSingle="true"
+						reRender="salaryLauncherForm"
+						actionListener="#{salaryLauncher.onClear}"
+						styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+				</ui:define>
+				<ui:define name="toolbarContent">
+					<ui:insert name="launchButton"/>
+				</ui:define>
+			</ui:decorate>
 			
 			<aon:div styleClass="aon-scroll-area">
 			
@@ -29,17 +41,14 @@
 						<aon:outputText value="#{payrollBundle.payroll_launch_info}" styleClass="aon-panelGrid-search-info-internal"/>
 					</aon:div>			
 			
-					<aon:panelGrid id="salaryLauncherLaunchContent" columns="4">
-		
+					<aon:panelGrid columns="4">
+					
 						<aon:outputLabel for="salaryType" value="#{bundle.aon_type}" />
 						<aon:selectOneMenu id="salaryType" value="#{salaryLauncher.params.salaryType}">
 							<f:selectItems value="#{salaryLauncher.salaryTypes}" />
 							<a4j:support event="onchange" reRender="salaryLauncherLaunchContent" ajaxSingle="true"/>
 						</aon:selectOneMenu>
-						<aon:outputText value="&#160;" />
-						<aon:div>
-							<ui:insert name="addOnsFirstRow"/>
-						</aon:div>
+						<ui:insert name="addOnsFirstRow"/>
 						
 						<aon:outputLabel for="Month" value="#{bundle.aon_month}" />
 						<h:panelGrid columns="3"  >
@@ -54,38 +63,27 @@
 				   				<a4j:support event="onchange" reRender="salaryPeriod" ajaxSingle="true"/>
 				   			</rich:inputNumberSpinner>
 						</h:panelGrid>
-						<aon:outputText value="&#160;" />
-						<aon:div>
-							<ui:insert name="addOnsSecondRow"/>
-						</aon:div>
+						<ui:insert name="addOnsSecondRow"/>
 						
 						<ui:insert name="addOnsCriteria"/>
 	
-						<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
-							<ui:param name="lookupTo" value="#{salaryLauncher.params.person}" />
-							<ui:param name="skipNewButton" value="#{true}" />
-						</ui:include>
-						<aon:outputText value="&#160;" />
-						<aon:outputText value="&#160;" />
-						
-						<!--  
-						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-							<ui:param name="lookupTo" value="#{salaryLauncher.params.enterprise}" />
-							<ui:param name="skipNewButton" value="#{true}" />
-						</ui:include>
-						<aon:outputText value="&#160;" />
-						<aon:outputText value="&#160;" />
-						-->
-						
-						<aon:outputText value="&#160;" />
-						<aon:div >
-							<ui:insert name="launchButton"/>	 
-						</aon:div>
-						<aon:outputText value="&#160;" />
-						<aon:outputText value="&#160;" />
-	 				</aon:panelGrid>
+						<c:if test="#{!(domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable)}">
+							<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{salaryLauncher.params.person}" />
+								<ui:param name="skipNewButton" value="#{true}" />
+							</ui:include>
+							<aon:outputText value="&#160;" />
+							<aon:outputText value="&#160;" />
+						</c:if>
+							
+					</aon:panelGrid>
 				</aon:div>
 				
+				<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
+					<c:if test="#{salaryLauncher.messages == null}">
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryLauncher/enterpriseFilter.xhtml" />
+					</c:if>
+				</c:if>
 				
 				<aon:div id="messagesContainer" >
 					<c:if test="#{salaryLauncher.messages != null}">
@@ -127,7 +125,15 @@
 		</aon:form>
 		
 		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryLauncher/modalSearch.xhtml">
+			<ui:param name="controller" value="#{salaryLauncher}" />
+			<ui:param name="searchReRender" value="salaryLauncherForm" />
+		</ui:include>
 		
 	</ui:define>
 </ui:composition>

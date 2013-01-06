@@ -15,20 +15,22 @@
 		
 		<ui:define name="afterToolbarContent" >
 			<aon:commandButton id="apply"
-				disabled="#{!certifica2List.anyEmpleadoSelected}"
+				rendered="#{certifica2List.checkHandler.checkedCount > 0}"
 				value="#{payrollBundle.payroll_apply_to_all}"
 				styleClass="aon-icon-commandButton aon-icon-accept aon-margin-left" >
 				<aon:actionListener method="#{certifica2List.onApplyAllSuspensionCause}" />
 			</aon:commandButton>
-			<rich:inplaceSelect rendered="#{certifica2List.anyEmpleadoSelected}" 
-			 	id="suspensionCauseApplyAll"
+			<rich:inplaceSelect id="suspensionCauseApplyAll"
+				rendered="#{certifica2List.checkHandler.checkedCount > 0}" 
 			 	value="#{certifica2List.suspensionCauseForAll}"
 			 	listHeight="300px" listWidth="300px"
 			 	style="margin-left: 10px; width:300px; overflow:hidden; white-space:normal; border-bottom-style:none; cursor: pointer;"
 				defaultLabel="#{payrollBundle.payroll_causes}" >
 				<f:selectItems value="#{payrollCollections.suspensionCauses}" />
 			</rich:inplaceSelect>
-			<aon:outputText value="&#160;" styleClass="aon-finding-toolbar-item"/>
+			<aon:outputText value="&#160;"
+				rendered="#{certifica2List.checkHandler.checkedCount > 0}" 
+				styleClass="aon-finding-toolbar-item"/>
 		</ui:define>
 		
 		<ui:define name="listDataColumns" >

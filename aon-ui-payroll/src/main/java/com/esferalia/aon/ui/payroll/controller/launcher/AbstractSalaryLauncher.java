@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
@@ -34,6 +35,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.company.Enterprise;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
@@ -71,6 +73,8 @@ public abstract class AbstractSalaryLauncher
 	
 	private Connection connection;
 	private Criteria criteria;
+	
+	private boolean showEnterpriseSearchWindow;
 
 	public void onStart(ActionEvent event) {
 		setParams(null);
@@ -78,6 +82,14 @@ public abstract class AbstractSalaryLauncher
 		setSaveLog(false);
 		setDebugEnabled(false);
 		setPollEnabled(false);
+	}
+
+	public boolean isShowEnterpriseSearchWindow() {
+		return showEnterpriseSearchWindow;
+	}
+
+	public void setShowEnterpriseSearchWindow(boolean showEnterpriseSearchWindow) {
+		this.showEnterpriseSearchWindow = showEnterpriseSearchWindow;
 	}
 
 	public final boolean isSaveLog() {
@@ -123,6 +135,10 @@ public abstract class AbstractSalaryLauncher
 	public void setListener(ListSalaryBuilderListener listener) {
 		this.listener = listener;
 	}
+	
+	public void clearMessages() {
+		setListener(null);
+	}
 
 	public List<LogMessage> getMessages() {
 		return listener != null ? listener.getList() : null;
@@ -164,6 +180,10 @@ public abstract class AbstractSalaryLauncher
 		} catch (IOException e) {
 			throw new AbortProcessingException("Imposible descargar fichero");
 		}
+	}
+	
+	public void onClear(ActionEvent event) {
+		clearMessages();
 	}
 	
 	public void onExecute(ActionEvent event) {
@@ -280,9 +300,18 @@ public abstract class AbstractSalaryLauncher
 		}
 
 		if ( DomainManager.isDomainManagementAvailable() ){
-			PayrollUtils utils = new PayrollUtils();
+//			PayrollUtils utils = new PayrollUtils();
 			criteria.setSkipDomainFilter( true );
-			criteria.addInExpression(SQLConstants.CONTRACT + "." + RegistryColumns.DOMAIN, utils.getCurrentChildDomainIds());
+//			criteria.addInExpression(SQLConstants.CONTRACT + "." + RegistryColumns.DOMAIN, utils.getCurrentChildDomainIds());
+			if(!getParams().getEnterpriseFilter().getIncludedList().isEmpty()){
+				List<Integer> selectedList = new LinkedList<Integer>();
+				for(Enterprise enterprise: getParams().getEnterpriseFilter().getIncludedList()){
+					selectedList.add(enterprise.getDomain());
+				}
+				criteria.addInExpression(SQLConstants.CONTRACT + "." + RegistryColumns.DOMAIN, selectedList);
+			} else {
+				criteria.addNullExpression(SQLConstants.CONTRACT + "." + RegistryColumns.DOMAIN);
+			}
 		} else {
 			criteria.addEqualExpression(
 					SQLConstants.CONTRACT + "." + RegistryColumns.DOMAIN, 

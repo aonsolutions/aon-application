@@ -74,7 +74,7 @@ public class SalaryLauncher extends AbstractSalaryLauncher{
 	public void onExecute(ActionEvent event) {
 		if(isExistSalariesToOverride()){
 			try {
-				removeSalaryes();
+				removeSalaries();
 			} catch (ManagerBeanException e) {
 				String msg = "No se han podido borrar las nominas existentes";
 				LOGGER.error(msg);
@@ -85,7 +85,7 @@ public class SalaryLauncher extends AbstractSalaryLauncher{
 		super.onExecute(event);
 	}
 	
-	private void removeSalaryes() throws ManagerBeanException {
+	private void removeSalaries() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 		for(ITransferObject to: getExistingSalaries()){
 			bean.remove(to);

@@ -10,6 +10,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -22,6 +23,7 @@ public class ContractListController extends BasicController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(ContractListController.class);
 
 	private Person person;
+	private Enterprise enterprise;
 	private BatchListCheckHandler checkHandler;
 	
 	public BatchListCheckHandler getCheckHandler() {
@@ -52,6 +54,24 @@ public class ContractListController extends BasicController {
 	public void setPerson(Person person) {
 		this.person = person;
 	}
+	
+	public Enterprise getEnterprise() {
+		try {
+			if(enterprise == null){
+				IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
+				enterprise = (Enterprise) bean.createNewTo();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> error on getEnterprise: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+		return enterprise;
+	}
+
+	public void setEnterprise(Enterprise enterprise) {
+		this.enterprise = enterprise;
+	}
 
 	public void onSearch(ActionEvent event) {
 		getCheckHandler().clearCheckedList();
@@ -70,6 +90,9 @@ public class ContractListController extends BasicController {
 			getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.CONTRACT_STATUS),ContractStatus.PROCESSED);
 			if ((getPerson() != null) && (getPerson().getId() != null)) {
 				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_PERSON_ID), getPerson().getId());			
+			}
+			if(getEnterprise()!=null && getEnterprise().getId()!=null){
+				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());			
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSearch exception: ",e);

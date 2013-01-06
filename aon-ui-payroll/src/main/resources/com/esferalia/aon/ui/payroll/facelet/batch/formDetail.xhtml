@@ -8,34 +8,37 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 	
-	<c:if test="#{!controller.recorded}" >
-		<aon:div styleClass="aon-toolbar" >
-			<aon:commandButton title="#{bundle.aon_check_all}"
-				styleClass="aon-finding-toolbar-item aon-icon-checkAll"
-				value="#{bundle.aon_check_all}"
-				actionListener="#{controllerDetail.checkHandler.checkAll}" reRender="detailDataDiv"
-				onclick="Richfaces.showModalPanel('waitProccess')" 
-	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
-			<aon:commandButton title="#{bundle.aon_uncheck_all}"
-				styleClass="aon-finding-toolbar-item aon-icon-checkNone"
-				value="#{bundle.aon_uncheck_all}"
-				actionListener="#{controllerDetail.checkHandler.checkNone}" reRender="detailDataDiv"
-				onclick="Richfaces.showModalPanel('waitProccess')" 
-	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
-			<aon:commandButton title="#{payrollBundle.payroll_remove_batch}"
-				styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
-				value="#{payrollBundle.payroll_remove_batch}"
-				actionListener="#{controller.onRemoveSelected}" reRender="batchForm, batchPanelTabSet"
-				onclick="Richfaces.showModalPanel('waitProccess')" 
-	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
-		</aon:div>
-	</c:if>
-	
 	<aon:div id="detailDataDiv">
+		<c:if test="#{!controller.recorded}" >
+			<aon:div id="detailToolBarDiv" styleClass="aon-toolbar" >
+				<aon:commandButton title="#{bundle.aon_check_all}"
+					styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+					value="#{bundle.aon_check_all}"
+					actionListener="#{controllerDetail.checkHandler.checkAll}" reRender="detailDataDiv"
+					onclick="Richfaces.showModalPanel('waitProccess')" 
+		     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+				<aon:commandButton title="#{bundle.aon_uncheck_all}"
+					styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+					value="#{bundle.aon_uncheck_all}"
+					actionListener="#{controllerDetail.checkHandler.checkNone}" reRender="detailDataDiv"
+					onclick="Richfaces.showModalPanel('waitProccess')" 
+		     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+				<aon:commandButton title="#{payrollBundle.payroll_remove_batch}"
+					styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
+					value="#{payrollBundle.payroll_remove_batch}"
+					rendered="#{controllerDetail.checkHandler.checkedCount > 0}"
+					actionListener="#{controller.onRemoveSelected}" reRender="batchForm, batchPanelTabSet"
+					onclick="Richfaces.showModalPanel('waitProccess')" 
+		     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+			</aon:div>
+		</c:if>
+	
 		<aon:dataTable id="batchDetailData" value="#{controllerDetail.model}"
 			var="to" rows="20" rendered="#{controllerDetail.model.rowCount > 0}" >
 			
 			<aon:rowSelector id="batchDetail-select" toggleOnClick="#{false}"/>
+			
+			<ui:param name="showEnterpriseColumn" value="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}" />
 			
 			<c:if test="#{!controller.recorded}" >
 				<aon:column styleClass="aon-editDataTable-iconColumn">
@@ -44,7 +47,9 @@
 					</f:facet>
 					<aon:selectBooleanCheckbox id="Included_Row_checked"
 						value="#{controllerDetail.checkHandler.rowChecked}"
-						valueChangeListener="#{controllerDetail.checkHandler.rowSelected}" />	
+						valueChangeListener="#{controllerDetail.checkHandler.rowSelected}" >
+						<a4j:support event="onclick" reRender="detailDataDiv, #{checkReRender}" />
+					</aon:selectBooleanCheckbox>	
 				</aon:column>
 			</c:if>
 			

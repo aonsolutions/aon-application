@@ -10,6 +10,7 @@ import javax.faces.event.ValueChangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -83,13 +84,16 @@ public class BatchListCheckHandler {
 		return checks;
 	}
 
+	public int getCheckedCount() {
+		return checks!=null?checks.size():0;
+	}
+
 	public void clearCheckedList() {
 		checks = new ArrayList<Object>();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void checkAll(ActionEvent event) throws ManagerBeanException {
-		Iterator iterator = getController().getManagerBean().getList(getController().getCriteria()).iterator();
+		Iterator<ITransferObject> iterator = getController().getManagerBean().getList(getController().getCriteria()).iterator();
 		while (iterator.hasNext()) {
 			Object o = iterator.next();
 			if (!checks.contains(o)) {
