@@ -289,40 +289,38 @@
 							</aon:panelGrid>
 						</c:if>
 		
-						<c:if test="#{!domainSwitcher.parentDomain or domainSwitcher.domainManagementAvailable}">
-							<c:if test="#{aonRole.config}">												
-								<aon:panelGrid id="group_prodyct_tables"
-									styleClass="aon-width-all" columnClasses="aon-padding"
-									headerClass="aon-direct-access-panel aon-icon-config">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_product_auxiliaries_tables}" />
-									</f:facet>
-									<aon:div styleClass="aon-direct-access-list">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="productCategory-configuration" 
-												action="productCategory-configuration"
-												value="#{productBundle.product_category_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="brand-configuration"
-												action="brand-configuration"
-												value="#{productBundle.product_brand_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="tariff-configuration" 
-												action="tariff_list-configuration"
-												actionListener="#{tariff.onSearch}"
-												value="#{productBundle.product_tariff_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="catalogue-configuration" 
-												action="catalogue_search-configuration"
-												actionListener="#{catalogue.onEditSearch}"
-												value="#{productBundle.product_catalogue_module}" />
-										</aon:div>
+						<c:if test="#{aonRole.config}">												
+							<aon:panelGrid id="group_prodyct_tables"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-config">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_product_auxiliaries_tables}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="productCategory-configuration" 
+											action="productCategory-configuration"
+											value="#{productBundle.product_category_module}" />
 									</aon:div>
-								</aon:panelGrid>
-							</c:if>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="brand-configuration"
+											action="brand-configuration"
+											value="#{productBundle.product_brand_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="tariff-configuration" 
+											action="tariff_list-configuration"
+											actionListener="#{tariff.onSearch}"
+											value="#{productBundle.product_tariff_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="catalogue-configuration" 
+											action="catalogue_search-configuration"
+											actionListener="#{catalogue.onEditSearch}"
+											value="#{productBundle.product_catalogue_module}" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
 						</c:if>
 								
 						<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
