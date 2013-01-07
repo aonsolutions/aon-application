@@ -1055,7 +1055,7 @@ CREATE TABLE `agreement_data` (
 CREATE TABLE `payment_concept` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `code` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo',
+  `code` varchar(15) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo',
   `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   `type` tinyint(2) DEFAULT NULL COMMENT 'Tipo de Percepcion Salarial',
   `description_decorable` tinyint(2) NOT NULL DEFAULT '0',
@@ -2741,7 +2741,7 @@ CREATE TABLE `contract_data` (
 CREATE TABLE `deduction_concept` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `code` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo',
+  `code` varchar(15) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo',
   `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   `type` tinyint(2) DEFAULT NULL COMMENT 'Tipo de Deduccion Salarial',
   `description_decorable` tinyint(2) DEFAULT '0',
@@ -7076,7 +7076,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.6.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.7.0');
 
 COMMIT;
 
