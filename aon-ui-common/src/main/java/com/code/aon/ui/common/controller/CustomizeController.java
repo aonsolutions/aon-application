@@ -38,7 +38,6 @@ import org.hibernate.cfg.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DataSourceUtil;
 
@@ -246,6 +245,18 @@ public class CustomizeController {
 		return _default;
 	}
 	
+	
+	private String getMD5( Object value ) {
+		if ( value != null ) {
+			if ( value instanceof byte[] ) {
+				return new String( (byte[]) value);
+			} else {
+				return value.toString();
+			}			
+		}
+		return null;
+	}
+	
 	private String getImageRef( Connection connection, String name ) {
 		String ref = null;
 		QueryRunner run = new QueryRunner();
@@ -253,7 +264,7 @@ public class CustomizeController {
 			ResultSetHandler<Object[]> h = new ArrayHandler();
 			Object[] values = run.query( connection, "SELECT id, MD5(data) FROM rattach WHERE registry = ? and description = ? and type = 2", h, this.companyId, name);
 			if (! ArrayUtils.isEmpty(values) ) {
-				ref = AON_DOCUMENTS_PREFFIX + values[0] + "-" + new String((byte[]) values[1]);
+				ref = AON_DOCUMENTS_PREFFIX + values[0] + "-" + getMD5(values[1]);
 			}
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
