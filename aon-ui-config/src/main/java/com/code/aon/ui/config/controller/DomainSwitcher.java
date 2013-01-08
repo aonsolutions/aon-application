@@ -246,7 +246,8 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 			&& !StringUtils.startsWith(className, "com.code.aon.ui.resources.bean.ResourceResolver")
 			&& !StringUtils.startsWith(className, "com.code.aon.ui.common.controller.LoggedUser")
 			&& !StringUtils.equals(className, this.getClass().getName()))
-			|| StringUtils.startsWith(className, "com.esferalia.aon") );
+			|| StringUtils.startsWith(className, "com.esferalia.aon")
+			|| StringUtils.endsWith(key, "OptionalListeners") );
 	}
 	
 	public DomainType getType() {
