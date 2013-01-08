@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>7.7.1</version>
+		<version>7.8-SNAPSHOT</version>
 	</parent>
 	<artifactId>aon-aio</artifactId>
 	<packaging>war</packaging>
@@ -15,9 +15,9 @@
 	</properties>
 
 	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.7.x/aon-web-aio</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.7.x/aon-web-aio</connection>
-		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.7.x/aon-web-aio</url>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-web-aio</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-web-aio</connection>
+		<url>http://dev.esferalia.com/websvn/wsvn/aon-web-aio</url>
 	</scm>
 	
 	<build>
