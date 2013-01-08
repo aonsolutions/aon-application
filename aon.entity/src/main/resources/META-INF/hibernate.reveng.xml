@@ -170,7 +170,6 @@
 		<column name="common_concept" type="com.code.aon.finance.enumeration.StatementConcept"/>
 		<column name="reliability" type="com.code.aon.finance.enumeration.StatementReliability"/>
 		<column name="comments" type="text"/>
-		<column name="document" type="int"/>
 	</table>
 
 	<table name="bank_statement_link">

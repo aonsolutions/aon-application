@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.7.1
+# Version: 7.7.0
 # Created by: girazu
-# Creation Date: 08/01/2013 11:35
+# Creation Date: 08/01/2013 11:30
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -478,7 +478,7 @@ CREATE TABLE `bank_statement` (
   `own_concept` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Concepto propio',
   `payment` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si es un pago',
   `amount` double(15,2) NOT NULL DEFAULT '0.00' COMMENT 'Importe',
-  `document` varchar(10) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de documento',
+  `document` int(4) DEFAULT '0' COMMENT 'Numero de documento',
   `reference1` varchar(12) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Referencia 1',
   `reference2` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Referencia 2',
   `description` varchar(80) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
@@ -7076,7 +7076,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.7.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.7.0');
 
 COMMIT;
 

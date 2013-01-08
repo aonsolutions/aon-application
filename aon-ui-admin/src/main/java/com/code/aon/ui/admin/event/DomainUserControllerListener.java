@@ -8,6 +8,7 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.USER_WORK_GROUP_E
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,9 @@ import com.code.aon.audit.ActionDenied;
 import com.code.aon.audit.ActionEntry;
 import com.code.aon.audit.ActionFavorite;
 import com.code.aon.audit.Session;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
@@ -25,6 +29,8 @@ import com.code.aon.groupware.Favorite;
 import com.code.aon.groupware.FavoriteCategory;
 import com.code.aon.groupware.Note;
 import com.code.aon.groupware.Notice;
+import com.code.aon.groupware.TaskHolder;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.controller.AdminMainController;
 import com.code.aon.ui.admin.controller.DomainApplicationUserController;
 import com.code.aon.ui.admin.controller.DomainUserController;
@@ -110,6 +116,7 @@ public class DomainUserControllerListener extends ControllerAdapter {
 			FormUtil.remove(FavoriteCategory.class, id, IEntityAlias.FAVORITE_CATEGORY_USER_ID);
 			FormUtil.remove(Note.class, id, IEntityAlias.NOTE_OWNER_ID);
 			FormUtil.remove(Notice.class, id, IEntityAlias.NOTICE_SENDER_ID, IEntityAlias.NOTICE_RECIPIENT_ID);
+			resetTaskHolder(id);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
@@ -159,5 +166,15 @@ public class DomainUserControllerListener extends ControllerAdapter {
 		UserWorkGroupController uwgc = (UserWorkGroupController) AonUtil.getRegisteredBean(USER_WORK_GROUP_EX_CONTROLLER_NAME);
 		uwgc.init(user);
 	}	
+	
+	private void resetTaskHolder( Serializable id ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(TaskHolder.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TASK_HOLDER_USER_ID), id);
+		for( ITransferObject to : bean.getList(criteria) ) {
+			((TaskHolder) to).setUser(null);
+			bean.update(to);
+		}
+	}
 	
 }

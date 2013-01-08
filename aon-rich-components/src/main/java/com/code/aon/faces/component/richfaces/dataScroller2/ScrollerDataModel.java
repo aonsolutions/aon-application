@@ -6,7 +6,12 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ScrollerDataModel extends DataModel {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ScrollerDataModel.class);
 
 	private DataModel model;
 
@@ -91,8 +96,12 @@ public class ScrollerDataModel extends DataModel {
 	public void setPageSize( int pageSize ) {
 		ValueExpression ve = table.getValueExpression("rows");
 		if ( ve != null ) {
-			ve.setValue(FacesContext.getCurrentInstance().getELContext(), pageSize);
-			setCurrentPage(0);
+			try {
+				ve.setValue(FacesContext.getCurrentInstance().getELContext(), pageSize);
+				setCurrentPage(0);				
+			} catch ( Throwable th ) {
+				LOGGER.error( "Error setting page size. " + th.getMessage(), th );
+			}
 		}
 	}	
 
