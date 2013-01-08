@@ -575,7 +575,7 @@ public class BankStatementController extends BasicController implements IFinance
 		bankStatement.setOwnConcept(line.substring(24,27));
 		bankStatement.setPayment(line.substring(27, 28).equals("1"));
 		bankStatement.setAmount(Double.parseDouble(line.substring(28, 42)) / 100);
-		bankStatement.setDocument(line.substring(42, 52));
+		//bankStatement.setDocument(line.substring(42, 52));
 		bankStatement.setReference1(line.substring(52, 64));
 		bankStatement.setReference2(line.substring(64, 80));
 		bankStatement.setDescription(line.substring(52, 80));
@@ -641,7 +641,7 @@ public class BankStatementController extends BasicController implements IFinance
 		bankStatement.setOwnConcept(null);
 		bankStatement.setPayment(payment);
 		bankStatement.setAmount(amount);
-		bankStatement.setDocument(null);
+		//bankStatement.setDocument(null);
 		bankStatement.setReference1(null);
 		bankStatement.setReference2(null);
 		bankStatement.setDescription((description.length() > 80) ? description.substring(0, 80) : description);
