@@ -71,21 +71,6 @@
 						disabled="#{!domainUser.userActivable}" 
 						value="#{domainUser.to.active}" />
 												
-					<aon:outputText for="User_initAction"
-						value="#{adminBundle.admin_user_init_action}"/>
-					<aon:selectOneMenu id="User_initAction" 
-						value="#{domainUser.to.initAction}" >
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{domainUser.actionList}" />
-					</aon:selectOneMenu>			
-																	
-					<aon:outputLabel for="User_toolbar"
-						value="#{adminBundle.admin_user_toolbar}" />
-					<aon:selectOneMenu id="User_toolbar" 
-						value="#{domainUser.to.toolbar}">
-						<f:selectItems value="#{configCollections.toolbars}" />
-					</aon:selectOneMenu>						
-						
 					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{domainUserSearch.enterprise}" />
 						<ui:param name="skipNewButton" value="#{true}" />
@@ -114,6 +99,23 @@
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{commonCollections.pageLimits}" />
 					</aon:selectOneMenu>
+					
+					<c:if test="#{!domainUser.new}" >
+						<aon:outputText for="User_initAction"
+							value="#{adminBundle.admin_user_init_action}"/>
+						<aon:selectOneMenu id="User_initAction" 
+							value="#{domainUser.to.initAction}" >
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{domainUser.actionList}" />
+						</aon:selectOneMenu>
+					</c:if>			
+																	
+					<aon:outputLabel for="User_toolbar"
+						value="#{adminBundle.admin_user_toolbar}" />
+					<aon:selectOneMenu id="User_toolbar" 
+						value="#{domainUser.to.toolbar}">
+						<f:selectItems value="#{configCollections.toolbars}" />
+					</aon:selectOneMenu>											
 
 					<c:if test="#{aonRole.sysAdmin}" >						
 						<aon:outputLabel for="User_passwordExpiration"
