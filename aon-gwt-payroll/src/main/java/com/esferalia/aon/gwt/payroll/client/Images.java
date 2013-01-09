@@ -20,6 +20,8 @@ public interface Images extends ClientBundle, Tree.Resources {
 
 	ImageResource workplace();
 
+	ImageResource ine();
+
 	ImageResource costs();
 
 	ImageResource salaries();

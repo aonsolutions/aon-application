@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -14,7 +15,6 @@ import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -23,13 +23,10 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -44,7 +41,10 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 	interface Listener {
 		void onEmployeeSelected(Employee employee);
 		void onEnterpriseSelected(Enterprise enterprise);
+		void onActivitySelected(Activity activity);
 		void onWorkplaceSelected(Workplace workplace);
+		void onCostsSelected(CostDocuments docs);
+		void onSalariesSelected(SalaryDocuments docs);
 		void onDocumentsSelected(ISpinnable<IDocument> docs);
 		void onSalaryDratSelected(SalaryDraftDocument salaryDraftDocument);
 		
@@ -57,13 +57,16 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 
 	@UiField Tree tree;
 	@UiField Button viewButton;
+	@UiField Button collapseAllButton;
 	
 	private Images images;
 	private List<Listener> listeners ;
 	private EmployeesServiceAsync employeesService;
 	
 	
-	private boolean isExtended = false;
+	private boolean formers = true; 
+	private boolean currents = true; 
+	private boolean extended = false;
 	
 
 	public Employees() {
@@ -83,17 +86,30 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 		tree.addOpenHandler(this);
 		tree.addSelectionHandler(this);
 		
-		initViewBUtton();
+		initViewButton();
+		
+		collapseAllButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				collapse();
+			}
+		});
+		
+		
 		
 		employeesService.getEnterprise(this);
 	}
 	
 	public boolean isExtended() {
-		return isExtended;
+		return extended;
 	}
 	
 	public void setExtended(boolean isExtended) {
-		this.isExtended = isExtended;
+		this.extended = isExtended;
+	}
+	
+	public void setFormers(boolean formers) {
+		this.formers = formers;
 	}
 	
 	@Override
@@ -126,6 +142,17 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 		TreeItem enterpriseCostsItem = addImageItem(enterpriseItem, "Costos",
 				enterpriseCosts.size(), images.costs());
 		enterpriseCostsItem.setUserObject(documents);
+		
+		if ( extended ) {
+			List<Activity> activities = enterprise.getActivities();
+			for (Activity activity : activities) {
+				String description = activity.getDescription();
+				TreeItem activityItem = addImageItem(enterpriseItem, description,
+						0, images.ine());
+				activityItem.setUserObject(activity);			
+			}
+		}
+		
 
 		for (Workplace workplace : workplaces) {
 
@@ -147,11 +174,11 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 
 
 			for (Employee employee : employees) {
+				boolean active = isActive(employee);
+				
 				String fullName = employee.getFullname();
 				// fullName = StringUtils.capitalizeFully(fullName, DELIMITERS);
 				
-				
-				boolean active = isActive(employee); 
 				
 				TreeItem employeeItem = addImageItem(workplaceItem, fullName,
 						0 /* Not show number of childs */, active ? images.employee() : images.oldemployee());
@@ -160,11 +187,13 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 				
 				addImageItem(employeeItem, "Nominas", 0, images.salaries());
 				
-				if ( isExtended ) {
+				if ( extended ) {
 					TreeItem salaryDraftItem = addImageItem(employeeItem, "Borrador", 0, images.draft() );
 					SalaryDraft salaryDraft = new SalaryDraft();
 					salaryDraft.setEmployee(employee);
-
+					
+					// TODO : This must not be here... and it's wrong.
+					// TODO : It doesn't care about employee start and end dates.
 					Date startDate = DateUtils.getFirstDayOfMonth();
 					Date endDate = DateUtils.getLastDayOfMonth();
 					Date issueDate = DateUtils.getLastDayOfMonth();
@@ -175,7 +204,12 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 					
 					SalaryDraftDocument salaryDraftDocument = new SalaryDraftDocument(salaryDraft, employeesService);
 					salaryDraftItem.setUserObject(salaryDraftDocument);
+				
+					//TreeItem dataItem = addImageItem(employeeItem, "Datos Económicos", 0, images.data() );
+
 				}
+				
+				employeeItem.setVisible(active ? currents : formers );
 
 			}
 		}
@@ -219,6 +253,18 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 			onSalaryDraftSelected((SalaryDraftDocument) userObject);
 			return;
 		}
+		if (userObject instanceof Activity) {
+			onActivitySelected((Activity) userObject);
+			return;
+		}
+		if (userObject instanceof CostDocuments) {
+			onCostsSelected((CostDocuments) userObject);
+			return;
+		}
+		if (userObject instanceof SalaryDocuments) {
+			onSalariesSelected((SalaryDocuments) userObject);
+			return;
+		}
 		if (userObject instanceof ISpinnable<?>) {
 			onDocumentsSelected((ISpinnable<IDocument>) userObject);
 			return;
@@ -252,7 +298,7 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 									images.salaries(), "Nominas",
 									salaries.size()));
 						}
-						ISpinnable<IDocument> documents = new SalaryDocuments(
+						SalaryDocuments documents = new SalaryDocuments(
 								salaries, employeesService);
 						salariesItem.setUserObject(documents);
 					}
@@ -277,6 +323,18 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 		}
 	}
 
+	private void onCostsSelected(CostDocuments docs) {
+		for (Listener listener : listeners) {
+			listener.onCostsSelected(docs);
+		}
+	}
+
+	private void onSalariesSelected(SalaryDocuments docs) {
+		for (Listener listener : listeners) {
+			listener.onSalariesSelected(docs);
+		}
+	}
+
 	private void onDocumentsSelected(ISpinnable<IDocument> docs) {
 		for (Listener listener : listeners) {
 			listener.onDocumentsSelected(docs);
@@ -286,6 +344,12 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 	private void onSalaryDraftSelected(SalaryDraftDocument salaryDraftDocument) {
 		for (Listener listener : listeners) {
 			listener.onSalaryDratSelected(salaryDraftDocument);
+		}
+	}
+
+	private void onActivitySelected(Activity activity) {
+		for (Listener listener : listeners) {
+			listener.onActivitySelected(activity);
 		}
 	}
 
@@ -310,46 +374,43 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 				+ title + (childs > 0 ? " (" + childs + ")" : "");
 	}
 	
-	private void initViewBUtton() {
+	private void initViewButton() {
 		viewButton.addClickHandler(new ClickHandler() {
 			
 			private PopupPanel popup = 
 					new PopupPanel();
 			
 			
-			private boolean oldVisible = true; 
-			private boolean newVisible = true; 
-			
-			private MenuItem oldMenuItem;
-			private MenuItem newMenuItem;
+			private MenuItem formerMenuItem;
+			private MenuItem currentMenuItem;
 			
 			{
 				MenuBar menuBar = new MenuBar(true);
 				
-				oldMenuItem = new MenuItem("Antiguos Empleados", 
+				formerMenuItem = new MenuItem("Antiguos Empleados", 
 						new Command() {
 					@Override
 					public void execute() {
-						setOldEmployeesVisible(oldVisible = !oldVisible);
-						oldMenuItem.setStyleName("aon-MenuItemCheckYes", oldVisible);
+						setFormerEmployeesVisible(formers = !formers);
+						formerMenuItem.setStyleName("aon-MenuItemCheckYes", formers);
 						popup.hide();
 					}
 				});
-				oldMenuItem.setStyleName("aon-MenuItemCheckYes", oldVisible);
-				menuBar.addItem(oldMenuItem);
+				formerMenuItem.setStyleName("aon-MenuItemCheckYes", formers);
+				menuBar.addItem(formerMenuItem);
 				
-				newMenuItem = new MenuItem("Empleados Actuales", 
+				currentMenuItem = new MenuItem("Empleados Actuales", 
 						new Command() {
 					@Override
 					public void execute() {
-						setNewEmployeesVisible(newVisible = !newVisible);
-						newMenuItem.setStyleName("aon-MenuItemCheckYes", newVisible);
+						setCurrentEmployeesVisible(currents = !currents);
+						currentMenuItem.setStyleName("aon-MenuItemCheckYes", currents);
 						popup.hide();
 					}
 				});
-				newMenuItem.setStyleName("aon-MenuItemCheckYes", newVisible);
+				currentMenuItem.setStyleName("aon-MenuItemCheckYes", currents);
 
-				menuBar.addItem(newMenuItem);
+				menuBar.addItem(currentMenuItem);
 
 				popup.add(menuBar);
 				popup.setStyleName("gwt-MenuBarPopup");
@@ -368,44 +429,83 @@ public class Employees extends ResizeComposite implements AsyncCallback<Enterpri
 		
 	}
 
-	private void setOldEmployeesVisible(boolean visible) {
+	private void setFormerEmployeesVisible(boolean visible) {
 		for ( int i = 0; i < tree.getItemCount(); i++ ){
-			setOldEmployeesVisible(tree.getItem(i), visible);
+			setFormerEmployeesVisible(tree.getItem(i), visible);
 		}
 	}
 	
-	private void setNewEmployeesVisible(boolean visible) {
+	private void setCurrentEmployeesVisible(boolean visible) {
 		for ( int i = 0; i < tree.getItemCount(); i++ ){
-			setNewEmployeesVisible(tree.getItem(i), visible);
+			setCurrentEmployeesVisible(tree.getItem(i), visible);
 		}
 	}
 
-	private void setOldEmployeesVisible( TreeItem treeItem, boolean visible ){
+	private int setFormerEmployeesVisible( TreeItem treeItem, boolean visible ){
 		
 		Object userObject = treeItem.getUserObject();
 		if ( userObject instanceof Employee ) {
 			if ( !isActive(((Employee) userObject)) ) {
 				treeItem.setVisible(visible);
 			}
+			return treeItem.isVisible() ? 1 : 0;
 		}
 		
+		int visibles = 0;
 		for ( int i = 0; i < treeItem.getChildCount(); i++ ){
-			setOldEmployeesVisible(treeItem.getChild(i), visible);
+			visibles += setFormerEmployeesVisible(treeItem.getChild(i), visible);
 		}
+
+		if ( userObject instanceof Workplace ) {
+			
+			treeItem.setHTML(imageItemHTML(
+					images.workplace(), 
+					((Workplace)userObject).getDescription(),
+					visibles));
+		}
+		
+		return visibles;
+	
 	}
 
-	private void setNewEmployeesVisible( TreeItem treeItem, boolean visible ){
+	private int setCurrentEmployeesVisible( TreeItem treeItem, boolean visible ){
 		
 		Object userObject = treeItem.getUserObject();
 		if ( userObject instanceof Employee ) {
 			if ( isActive(((Employee) userObject)) ) {
 				treeItem.setVisible(visible);
 			}
+			return treeItem.isVisible() ? 1 : 0;
 		}
 		
+		int visibles = 0;
 		for ( int i = 0; i < treeItem.getChildCount(); i++ ){
-			setNewEmployeesVisible(treeItem.getChild(i), visible);
+			visibles += setCurrentEmployeesVisible(treeItem.getChild(i), visible);
 		}
+
+		if ( userObject instanceof Workplace ) {
+			
+			treeItem.setHTML(imageItemHTML(
+					images.workplace(), 
+					((Workplace)userObject).getDescription(),
+					visibles));
+		}
+		
+		return visibles;
+	}
+	
+	private void collapse() {
+		for ( int i = 0; i < tree.getItemCount(); i++ ){
+			collapse(tree.getItem(i));
+		}
+	}
+	
+	private void collapse(TreeItem treeItem ) {
+		for ( int i = 0; i < treeItem.getChildCount(); i++ ){
+			TreeItem child = treeItem.getChild(i);
+			collapse(child);
+		}
+		treeItem.setState(false);
 	}
 	
 	private static boolean isActive(Employee employee) {

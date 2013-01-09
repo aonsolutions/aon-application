@@ -11,11 +11,16 @@
 			gwt-image: 'view';
 		}
 
+		@sprite .collpaseAllButton {
+			float: right;
+			gwt-image: 'collapseall';
+		}
 	
 	</ui:style>
 	
 	
 	<ui:image field='view' src='view.png' />
+	<ui:image field='collapseall' src='collapseall.png' />
 	
 	
 	
@@ -23,6 +28,7 @@
 	  <g:north size='26'>
 	  	<g:FlowPanel styleName="gwt-MenuBar-horizontal" ui:field="buttonBar" >
 	  		<g:Button styleName="gwt-MenuItem {style.viewButton}" ui:field="viewButton" ></g:Button>
+	  		<g:Button styleName="gwt-MenuItem {style.collpaseAllButton}" ui:field="collapseAllButton" ></g:Button>
 	  	</g:FlowPanel>
 	  </g:north>
 	

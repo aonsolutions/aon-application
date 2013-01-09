@@ -19,6 +19,20 @@
 			<g:FlowPanel>
 
 				<g:MenuBar >
+					<g:MenuItem text="Archivo">
+						<g:MenuBar vertical="true">
+							<g:MenuItem ui:field="downloadMenuItem"  text="Descargar" />
+							<!--  g:MenuItem text="Descargar como..." >
+								<g:MenuBar vertical="true" >
+									<g:MenuItem text="PDF" />
+								</g:MenuBar>
+							</g:MenuItem-->
+							<!--  g:MenuItem text="Enviar por correo electrónico al trabajador" /-->
+							<!--   g:MenuItem text="Enviar por correo electrónico como archivo adjunto..." /-->
+							<g:MenuItem styleName="gwt-MenuItemSeparator"><div class="menuSeparatorInner"></div></g:MenuItem> 
+							<g:MenuItem ui:field="printMenuItem" text="Imprimir..." />
+						</g:MenuBar>
+					</g:MenuItem>
 					<g:MenuItem text="Ver">
 						<g:MenuBar vertical="true">
 							<g:MenuItem ui:field="reduceMenuItem" text="Reducir" />
@@ -31,7 +45,7 @@
 					<g:HorizontalPanel >
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal" >
-								<g:Label styleName="aon-outputText">Borrador</g:Label>
+								<g:Label styleName="aon-outputText">Nominas</g:Label>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-subtitle">
@@ -41,7 +55,7 @@
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-								<g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" enabled="false"/>
+								<g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" />
 								<g:ListBox ui:field='salaryTypeListBox' styleName=''  />
 								<g:ListBox ui:field='dateListBox' styleName=''  />
 								<!--  g:ListBox ui:field='endDateBox' styleName=''  /-->

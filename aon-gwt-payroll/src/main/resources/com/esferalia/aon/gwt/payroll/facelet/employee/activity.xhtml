@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:include
+		src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
+
+
+	<aon:form>
+		<ui:decorate
+			template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+			<ui:param name="toolbarTitle"
+				value="#{companyBundle.company_activity}" />
+			<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+
+
+			<ui:define name="toolbarContent">
+				<aon:commandButton id="Activity-Save" value="#{bundle.aon_accept}"
+					reRender="ActivityMainGrid"
+					styleClass="aon-finding-toolbar-item aon-icon-accept">
+					<aon:actionListener method="#{enterpriseActivity.accept}" />
+				</aon:commandButton>
+			</ui:define>
+
+		</ui:decorate>
+
+		<aon:div
+			style="overflow: auto; position: absolute; left: 0px; top: 2em; right: 0px; bottom: 0px;">
+
+			<aon:div style="position: relative">
+
+				<aon:panelGrid id="activityMainGrid" columns="1" cellspacing="10"
+					styleClass="aon-panelGrid-formatting" columnClasses="aon-width-all">
+
+					<aon:div styleClass="aon-scroll-area">
+						<aon:panelGrid id="dataTable" columns="2">
+
+							<aon:outputLabel for="EnterpriseActivity_description"
+								value="#{bundle.aon_description}" />
+							<aon:inputText id="EnterpriseActivity_description" size="32"
+								maxlength="32" value="#{enterpriseActivity.to.description}"
+								required="true" />
+
+							<aon:outputLabel for="EnterpriseActivity_type"
+								value="#{bundle.aon_type}" />
+							<aon:selectOneMenu id="EnterpriseActivity_type" required="true"
+								value="#{enterpriseActivity.to.type}">
+								<f:selectItems
+									value="#{payrollCollections.enterpriseActivityTypes}" />
+							</aon:selectOneMenu>
+
+							<ui:include
+								src="/com/code/aon/ui/config/facelet/cnae2009/lookup.xhtml">
+								<ui:param name="lookupTo"
+									value="#{enterpriseActivity.to.cnae2009}" />
+							</ui:include>
+						</aon:panelGrid>
+
+						<aon:div>
+							<aon:div styleClass="aon-form-group"
+								rendered="#{!enterpriseActivity.new}">
+								<aon:div styleClass="aon-form-group-title">
+									<aon:div styleClass="aon-form-group-title-internal">
+										<aon:outputLabel for="enterpriseCCCData"
+											value="#{companyBundle.company_enterprise_ccc}" />
+									</aon:div>
+								</aon:div>
+
+								<ui:include
+									src="/com/esferalia/aon/ui/payroll/facelet/enterpriseCCC/tab_grid.xhtml">
+									<ui:param name="controller" value="#{enterpriseCCC}" />
+								</ui:include>
+							</aon:div>
+						</aon:div>
+
+					</aon:div>
+				</aon:panelGrid>
+
+			</aon:div>
+
+		</aon:div>
+	</aon:form>
+
+
+	<ui:include
+		src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+
+</ui:composition>

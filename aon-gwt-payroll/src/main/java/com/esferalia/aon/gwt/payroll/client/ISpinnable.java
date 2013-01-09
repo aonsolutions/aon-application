@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 public interface ISpinnable<E> {
 	
 	E current();
-	int currentIndex();
+	int getCurrentIndex();
 	int size();
 	boolean hasPrevious();
 	void first();

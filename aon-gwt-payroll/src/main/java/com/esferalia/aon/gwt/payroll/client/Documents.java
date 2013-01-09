@@ -161,7 +161,7 @@ public class Documents extends ResizeComposite {
 
 		setVisible(excelButton, support(document, "xls"));
 		
-		text.setText( ( documents.currentIndex() + 1 ) + " de " + documents.size() );
+		text.setText( ( documents.getCurrentIndex() + 1 ) + " de " + documents.size() );
 		
 		getAsHTML();
 	}

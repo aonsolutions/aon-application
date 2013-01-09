@@ -49,14 +49,14 @@ class SalaryDocuments extends AbstractSpinnable<IDocument>
 	
 	@Override
 	public void download(String format) {
-		Salary salary = salaries.get(currentIndex());
+		Salary salary = salaries.get(getCurrentIndex());
 		String printURL = URL.encode(GWT.getModuleBaseURL() + "salary/" + salary.getId() + "." + format );
 		Window.open(printURL, "_blank", null);
 	}
 	
 	@Override
 	public void getAsHTML(int zoom, AsyncCallback<String> callback) {
-		Salary salary = salaries.get(currentIndex());
+		Salary salary = salaries.get(getCurrentIndex());
 		employeesService.getSalaryReceiptHTML(salary, zoom, callback);
 	}
 	
@@ -66,4 +66,12 @@ class SalaryDocuments extends AbstractSpinnable<IDocument>
 		return new String [] {};
 	}
 	
+	public List<Salary> getSalaries() {
+		return salaries;
+	}
+	
+	
+	public void setCurrent(Salary salary) {
+		setCurrentIndex( salaries.indexOf(salary) );
+	}
 }

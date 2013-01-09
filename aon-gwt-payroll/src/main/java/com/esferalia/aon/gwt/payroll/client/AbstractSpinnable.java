@@ -3,46 +3,54 @@ package com.esferalia.aon.gwt.payroll.client;
 
 public abstract class AbstractSpinnable<E  extends IDocument> implements ISpinnable<E> {
 	
-	private int current ;
-	
-	@Override
-	public final int currentIndex() {
-		return current;
-	}
+	private int currentIndex ;
 	
 	@Override
 	public final void first() {
-		current = size() > 0 ? 0 : -1; ;
+		currentIndex = size() > 0 ? 0 : -1; ;
 	}
 	
 	@Override
 	public final void last() {
-		current = size() -1;
+		currentIndex = size() -1;
 	}
 	
 	@Override
 	public final void next() {
 		if ( hasNext () ){
-			current++;
+			currentIndex++;
 		}
 	}
 
 	@Override
 	public final void previous() {
 		if ( hasPrevious () ){
-			current--;
+			currentIndex--;
 		}
 	}
 
 	@Override
 	public final boolean hasNext() {
-		return current + 1 < size();
+		return currentIndex + 1 < size();
 	}
 
 	@Override
 	public final boolean hasPrevious() {
-		return current > 0;
+		return currentIndex > 0;
 	}
 	
-
+	@Override
+	public final int getCurrentIndex() {
+		return currentIndex;
+	}
+	
+	public void setCurrentIndex(int currentIndex) {
+		if ( currentIndex < 0 ) 
+			throw new IndexOutOfBoundsException();
+		if ( currentIndex >= size() ) 
+			throw new IndexOutOfBoundsException();
+		
+		this.currentIndex = currentIndex;
+	}
+	
 }

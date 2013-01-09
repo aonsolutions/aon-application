@@ -16,6 +16,7 @@ public class Enterprise implements Serializable{
 	
 	private String 			name;
 	private List<Cost>		costs;
+	private List<Activity>	activities;
 	private List<Workplace> workplaces;
 	
 	public Enterprise() {
@@ -54,5 +55,20 @@ public class Enterprise implements Serializable{
 	public void addWorkplace(Workplace workplace ) {
 		workplaces.add(workplace);
 	}
+	
+	public List<Activity> getActivities() {
+		return activities;
+	}
+	
+	
+	public void setActivities(List<Activity> activities) {
+		this.activities = activities;
+	}
+	
+	public void addActivity(Activity activity ) {
+		activities.add(activity);
+	}
+	
+	
 	
 }

@@ -51,7 +51,7 @@
 							EMPLEADOS
 						</div>
 					</g:header>
-					<employee:Employees ui:field='employees' extended="true"/>
+					<employee:Employees ui:field='employees' extended="true" formers="false"/>
 				</g:stack>
 
 			</g:StackLayoutPanel>

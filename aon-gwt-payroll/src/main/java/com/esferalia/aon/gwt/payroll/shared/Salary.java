@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -14,6 +16,22 @@ public class Salary implements Serializable {
 		SETTLE,
 		DELAY,
 		NOT_ENJOYED_VACATIONS;
+		
+		
+		public String getDescription(){
+			return DESCRIPTIONS.get(this);
+		}
+
+		static Map<Type, String> DESCRIPTIONS = 
+				new HashMap<Salary.Type, String>() {
+			{
+				put(SALARY,"Nomina");
+				put(EXTRA,"Extra");
+				put(SETTLE,"Finiquito");
+				put(DELAY,"Atrasos");
+				put(NOT_ENJOYED_VACATIONS,"Vacaciones no disfrutadas");
+			}
+		};
 	}
 
 	private int id ;

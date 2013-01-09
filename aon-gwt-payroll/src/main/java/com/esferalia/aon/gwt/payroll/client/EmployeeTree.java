@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -43,6 +44,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 
 	private JSF jsf;
 	private Documents documents;
+	private Cost cost;
+	private Salary salary;
 	private SalaryDraft salaryDraft;
 
 	/**
@@ -71,6 +74,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		root.add(ui);
 
 		jsf = new JSF();
+		cost = new Cost();
+		salary = new Salary();
 		documents = new Documents();
 		salaryDraft = new SalaryDraft();
 
@@ -102,7 +107,19 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 				+ "&controller=person&person_id=" + employee.getPerson());
 		employeeDetail.setWidget(jsf);
 	}
-
+	
+	@Override
+	public void onSalariesSelected(SalaryDocuments docs) {
+		employeeDetail.setWidget(salary);
+		salary.setSalaryDocuments(docs);
+	}	
+	
+	@Override
+	public void onCostsSelected(CostDocuments docs) {
+		employeeDetail.setWidget(cost);
+		cost.setCostDocuments(docs);
+	}
+	
 	@Override
 	public void onDocumentsSelected(ISpinnable<IDocument> docs) {
 		employeeDetail.setWidget(documents);
@@ -115,5 +132,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		salaryDraft.setSalaryDraft(salaryDraftDocument);
 		
 	}
-
+	
+	@Override
+	public void onActivitySelected(Activity activity) {
+		jsf.setUrl(GWT.getHostPageBaseURL()
+				+ "/com/esferalia/aon/gwt/payroll/facelet/employee/activity.jsf"
+				+ "?controller=enterpriseActivity&enterpriseActivity_id=" + activity.getId() );
+		employeeDetail.setWidget(jsf);
+	}
 }

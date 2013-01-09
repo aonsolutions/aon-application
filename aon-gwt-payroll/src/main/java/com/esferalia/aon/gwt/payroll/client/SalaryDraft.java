@@ -12,6 +12,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -31,6 +32,9 @@ public class SalaryDraft extends ResizeComposite {
 
 	private static final int DATE_DROP_RANGE = 12;
 
+	private static final int ZOOM_STEP = 20;
+	private static final int MIN_ZOOM =  25;
+	private static final int MAX_ZOOM =  500;
 	private static final int DEFAULT_ZOOM = 135;
 	
 	private static final DateTimeFormat DATE_FORMAT = 
@@ -42,13 +46,6 @@ public class SalaryDraft extends ResizeComposite {
 
 	private static final Binder binder = GWT.create(Binder.class);
 
-	@UiField
-	Button printButton;
-
-	@UiField
-	MenuItem printMenuItem;
-	@UiField
-	MenuItem downloadMenuItem;
 
 	@UiField
 	MenuItem reduceMenuItem;
@@ -66,12 +63,32 @@ public class SalaryDraft extends ResizeComposite {
 	HTML container;
 
 	private int zoom = DEFAULT_ZOOM;
+
 	private SalaryDraftDocument draftDocument;
 
 	public SalaryDraft() {
 		initWidget(binder.createAndBindUi(this));
 		initSalaryTypeListBox();
 		initDateListBox();
+
+		
+		reduceMenuItem.setCommand(new Command() {
+			
+			@Override
+			public void execute() {
+				zoom = Math.max(MIN_ZOOM, zoom - ZOOM_STEP);
+				getAsHTML();
+			}
+		});
+
+		enlargeMenuItem.setCommand(new Command() {
+			
+			@Override
+			public void execute() {
+				zoom = Math.min(MAX_ZOOM, zoom + ZOOM_STEP);
+				getAsHTML();
+			}
+		});
 	}
 
 	public void setSalaryDraft(SalaryDraftDocument draftDocument) {

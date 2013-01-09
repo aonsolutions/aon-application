@@ -3,6 +3,7 @@
  */
 package com.esferalia.aon.gwt.payroll.client;
 
+import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -54,6 +55,8 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	SplitLayoutPanel splitLayoutPanel;
 
 	private JSF jsf;
+	private Cost cost;
+	private Salary salary;
 	private Documents documents;
 
 	/*
@@ -77,6 +80,8 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		salaries.setDetailPanel(detailPanel);
 
 		jsf = new JSF();
+		cost = new Cost();
+		salary = new Salary();
 		documents = new Documents();
 		employees.addListener(this);
 	}
@@ -106,12 +111,30 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		detailPanel.setWidget(jsf);
 	}
 
+	
+	@Override
+	public void onSalariesSelected(SalaryDocuments docs) {
+		detailPanel.setWidget(salary);
+		salary.setSalaryDocuments(docs);
+	}
+	
+	@Override
+	public void onCostsSelected(CostDocuments docs) {
+		detailPanel.setWidget(cost);
+		cost.setCostDocuments(docs);
+	}
+
 	@Override
 	public void onDocumentsSelected(ISpinnable<IDocument> docs) {
 		detailPanel.setWidget(documents);
 		documents.setDocuments(docs);
 	}
-
+	
+	@Override
+	public void onActivitySelected(Activity activity) {
+		// TODO Auto-generated method stub
+	}
+	
 	@Override
 	public void onSalaryDratSelected( SalaryDraftDocument salaryDraftDocument) {
 		// TODO Auto-generated method stub

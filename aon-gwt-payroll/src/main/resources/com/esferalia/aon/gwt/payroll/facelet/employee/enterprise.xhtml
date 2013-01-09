@@ -22,6 +22,15 @@
 					styleClass="aon-finding-toolbar-item aon-icon-accept">
 					<aon:actionListener method="#{enterprise.accept}" />
 				</aon:commandButton>
+
+                <aon:commandButton id="Contract-reset" ajaxSingle="true"
+                        title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+                        value="#{payrollBundle.payroll_contract_new}"
+                        reRender="#{contract.beanName}ModalContainer"
+                        styleClass="aon-finding-toolbar-item aon-icon-reset" >
+                        <aon:actionListener method="#{contract.onShowNewContractModal}" />
+                </aon:commandButton>
+
 			</ui:define>
 
 		</ui:decorate>

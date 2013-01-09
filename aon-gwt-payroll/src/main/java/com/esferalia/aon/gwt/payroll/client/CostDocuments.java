@@ -42,7 +42,7 @@ public class CostDocuments extends AbstractSpinnable<IDocument> implements
 
 	@Override
 	public void download(String format) {
-		Cost cost = costs.get(currentIndex());
+		Cost cost = costs.get(getCurrentIndex());
 		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost/"
 				+ cost.getMonth() + "_" + cost.getYear() + "_"
 				+ cost.getEnterpriseId() + "_" + cost.getWorkplaceId()
@@ -52,12 +52,21 @@ public class CostDocuments extends AbstractSpinnable<IDocument> implements
 
 	@Override
 	public void getAsHTML(int zoom, AsyncCallback<String> callback) {
-		Cost cost = costs.get(currentIndex());
+		Cost cost = costs.get(getCurrentIndex());
 		employeesService.getCostReceiptHTML(cost, zoom, callback);
 	}
 
 	@Override
 	public String[] getSupportedFormats() {
 		return new String[] { "xls" };
+	}
+	
+	
+	public List<Cost> getCosts() {
+		return costs;
+	}
+	
+	public void setCurrent(Cost cost){
+		setCurrentIndex(costs.indexOf(cost));
 	}
 }
