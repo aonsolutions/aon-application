@@ -94,14 +94,16 @@ public class ScrollerDataModel extends DataModel {
 	}
 	
 	public void setPageSize( int pageSize ) {
-		ValueExpression ve = table.getValueExpression("rows");
-		if ( ve != null ) {
-			try {
-				ve.setValue(FacesContext.getCurrentInstance().getELContext(), pageSize);
-				setCurrentPage(0);				
-			} catch ( Throwable th ) {
-				LOGGER.error( "Error setting page size. " + th.getMessage(), th );
-			}
+		if ( pageSize != getPageSize() ) {
+			ValueExpression ve = table.getValueExpression("rows");
+			if ( ve != null ) {
+				try {
+					ve.setValue(FacesContext.getCurrentInstance().getELContext(), pageSize);
+					setCurrentPage(0);				
+				} catch ( Throwable th ) {
+					LOGGER.error( "Error setting page size. " + th.getMessage(), th );
+				}
+			}			
 		}
 	}	
 
