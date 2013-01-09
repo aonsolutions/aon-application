@@ -101,20 +101,20 @@ public class AonDomainDuplicate implements Constants {
 		INTERNAL_REFERENCES_TABLES.put(APP_PARAM_TABLE_NAME,APP_PARAM_REFERENCES);
 	}
 
-	private DatabaseMetaData metaData;
 	private Map<String,TableInfo> tables;
 	private Connection connection;
 	private Integer sourceDomain;
-	private String domainName;
-	private String domainDescription;
 	private Integer newDomain;
 	
-	public AonDomainDuplicate(Connection connection,Integer sourceDomain, String domainName, String domainDescription) {
+	public AonDomainDuplicate(Connection connection) throws AonSQLException {
 		this.connection = connection;
-		this.sourceDomain = sourceDomain;
-		this.domainName = domainName;
-		this.domainDescription = domainDescription;
 		this.tables = new LinkedHashMap<String, TableInfo>();
+		try {
+			DatabaseMetaData metaData = connection.getMetaData();
+			resolveTables(metaData);
+		} catch ( SQLException e ) {
+			throw new AonSQLException("Error iniciando la duplicación de dominios", e);
+		}
 	}
 
 	private void executeStatement( String statement ) {
@@ -129,7 +129,7 @@ public class AonDomainDuplicate implements Constants {
 		}
 	}
 	
-	private boolean isMergeableTable(String tableName) throws AonSQLException {
+	private boolean isMergeableTable(DatabaseMetaData metaData, String tableName) throws AonSQLException {
 		if ( ArrayUtils.contains(NO_MERGE_TABLES, tableName) ) {
 			return false;
 		}
@@ -147,7 +147,7 @@ public class AonDomainDuplicate implements Constants {
 	}
 
 
-	private void addTable(String table, Stack<String> stack ) throws AonSQLException {
+	private void addTable(DatabaseMetaData metaData, String table, Stack<String> stack ) throws AonSQLException {
 		if (!tables.containsKey(table) && !stack.contains(table)) {
 			stack.push(table);
 			TableInfo tableInfo = new TableInfo(table, metaData);
@@ -156,14 +156,14 @@ public class AonDomainDuplicate implements Constants {
 				rs = metaData.getImportedKeys(null, null, table);
 				while (rs.next()) {
 					String fkTable = rs.getString(PKTABLE_NAME);
-					if (isMergeableTable(fkTable)) {
-						addTable(fkTable, stack);	
+					if (isMergeableTable(metaData, fkTable)) {
+						addTable(metaData, fkTable, stack);	
 					}
 				}
 				if (INTERNAL_REFERENCES_TABLES.containsKey(table)) {
 					for (String referencedTable : INTERNAL_REFERENCES_TABLES.get(table).getFkTables() ) {
-						if (isMergeableTable(referencedTable)) {
-							addTable(referencedTable, stack);	
+						if (isMergeableTable(metaData, referencedTable)) {
+							addTable(metaData, referencedTable, stack);	
 						}
 					}
 				}
@@ -177,9 +177,9 @@ public class AonDomainDuplicate implements Constants {
 		}
 	}
 	
-	private void resolveTables() throws AonSQLException {
+	private void resolveTables( DatabaseMetaData metaData ) throws AonSQLException {
 		Stack<String> stack = new Stack<String>();
-		addTable(DOMAIN_TABLE_NAME, stack);
+		addTable(metaData, DOMAIN_TABLE_NAME, stack);
 		ResultSet rs = null;
 		try {
 	        rs = metaData.getTables(null, null, null, new String[]{TABLE});
@@ -187,8 +187,8 @@ public class AonDomainDuplicate implements Constants {
         		LOGGER.debug("Construyendo el orden de inserción");
                 do {
                 	String tableName = rs.getString(TABLE_NAME);
-                    if (isMergeableTable(tableName)) {
-                    	addTable(tableName, stack);
+                    if (isMergeableTable(metaData, tableName)) {
+                    	addTable(metaData, tableName, stack);
                     } else {
                     	LOGGER.debug("Ignorando la tabla {}", tableName);    	
             		}
@@ -204,18 +204,17 @@ public class AonDomainDuplicate implements Constants {
 		LOGGER.debug("Numero de tablas: ", tables.size() );
 	}
 	
-	public void execute() throws AonSQLException {
+	public Integer execute(Integer sourceDomain, String domainName, String domainDescription) throws AonSQLException {
 		try {
-			this.metaData = connection.getMetaData();
-			
-			resolveTables();
+			this.newDomain = null;
+			this.sourceDomain = sourceDomain;
 
             connection.setAutoCommit(false);
             
             executeStatement(SET_FOREIGN_KEY_CHECKS_0);
             LOGGER.debug("Claves refereciales deshabilitadas");
             
-            mergeDomain();
+            mergeDomain(domainName, domainDescription);
 
             List<TableInfo> tables = new ArrayList<TableInfo>(this.tables.values());
             tables.remove(this.tables.get(DOMAIN_TABLE_NAME));
@@ -246,10 +245,11 @@ public class AonDomainDuplicate implements Constants {
 			executeStatement(SET_FOREIGN_KEY_CHECKS_1);
 			LOGGER.debug("Claves refereciales habilitadas");
 		}
+		return this.newDomain;
 	}
 
 	private void updateBankStatementLink() throws SQLException {
-		TableInfo t = new TableInfo(BANK_STATEMENT_LINK_TABLE_NAME, this.metaData); 
+		TableInfo t = this.tables.get(BANK_STATEMENT_LINK_TABLE_NAME); 
         String updateStatement = "UPDATE bank_statement_link SET source_id=? where id = ?";
 		String selectStatement = "SELECT id,source,source_id from bank_statement_link WHERE source IN (0,1) AND source_id IS NOT NULL AND domain = " + newDomain;
         PreparedStatement update = null; 
@@ -280,7 +280,7 @@ public class AonDomainDuplicate implements Constants {
 		}					
 	}
 	
-	private void updateNewDomain() throws AonSQLException {
+	private void updateNewDomain( String domainName, String domainDescription ) throws AonSQLException {
 		PreparedStatement ps = null;
 		try {
 	        String stmt = "UPDATE domain SET name = ?, description=? where id = ?";
@@ -296,11 +296,11 @@ public class AonDomainDuplicate implements Constants {
 		}					
 	}
 
-	private void mergeDomain() throws AonSQLException {
+	private void mergeDomain( String domainName, String domainDescription ) throws AonSQLException {
 		TableInfo tableInfo = tables.get(DOMAIN_TABLE_NAME); 
 		merge( tableInfo );
 		this.newDomain = tableInfo.getNewKey(sourceDomain);
-		updateNewDomain();
+		updateNewDomain( domainName, domainDescription );
 	}
 	
 	private void merge(TableInfo t) throws AonSQLException {
@@ -504,8 +504,8 @@ public class AonDomainDuplicate implements Constants {
 		Connection connection  = null ;
 		try {
 			connection = DriverManager.getConnection(url, user, password);
-			AonDomainDuplicate dup = new AonDomainDuplicate(connection, sourceDomain, domainName, domainDescription );
-			dup.execute();
+			AonDomainDuplicate dup = new AonDomainDuplicate(connection);
+			dup.execute(sourceDomain, domainName, domainDescription);
 		} catch (Throwable e) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {

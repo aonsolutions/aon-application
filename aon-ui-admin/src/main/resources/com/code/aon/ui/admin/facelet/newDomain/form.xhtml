@@ -17,19 +17,19 @@
 				<ui:param name="toolbarTitle" value="#{adminBundle.admin_new_domain}" />
 				<ui:param name="controller" value="#{adminNewDomain}" />
 				<ui:define name="toolbarContent">
-					<!-- Se utliza un <h:commandButton por la navegacion al action index -->
-					<h:commandButton id="newDomainAccept" 
+					<aon:commandButton id="newDomainAccept" 
 						value="#{bundle.aon_accept}" 
 						actionListener="#{adminNewDomain.onSave}"
 						action="start"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')"						
 						styleClass="aon-finding-toolbar-item aon-icon-accept"/>
 				</ui:define>
 			</ui:decorate>
 
 			<aon:div id="domainFormContainer" styleClass="aon-scroll-area">
 
-				<aon:panelGrid columns="2"
-					styleClass="aon-width-all"
+				<aon:panelGrid columns="2" styleClass="aon-width-all"
 					columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-auto">
 				
 					<aon:div>
@@ -42,25 +42,25 @@
 						value="#{adminNewDomain.password}" size="20" maxlength="20" />
 					
 					<aon:div>
-						<aon:outputLabel for="Domain_name" value="#{adminBundle.admin_new_domain_name}" />
+						<aon:outputLabel for="NewDomain_name" value="#{adminBundle.admin_new_domain_name}" />
 						<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
 							<aon:outputText value="#{adminBundle.admin_new_domain_name_help}"/>
 						</aon:div>
 					</aon:div>
 					<aon:div id="domainNameContainer">
-						<aon:inputText id="Domain_name" required="true" size="20" maxlength="20" 
+						<aon:inputText id="NewDomain_name" required="true" size="20" maxlength="20" 
 							value="#{adminNewDomain.domainName}" />
 						<aon:outputText value="#{adminNewDomain.domainSuffix}"
 								styleClass="aon-bold" style="margin-left: 5px;"/>
 					</aon:div>
  
 					<aon:div>
-						<aon:outputLabel for="Domain_description" value="#{adminBundle.admin_new_domain_description}" />
+						<aon:outputLabel for="NewDomain_description" value="#{adminBundle.admin_new_domain_description}" />
 						<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
 							<aon:outputText value="#{adminBundle.admin_new_domain_description_help}"/>
 						</aon:div>
 					</aon:div>
-					<aon:inputText id="Domain_description" required="true" size="40" maxlength="64" 
+					<aon:inputText id="NewDomain_description" required="true" size="40" maxlength="64" 
 						value="#{adminNewDomain.domainDescription}" />
  
 					<aon:div>
@@ -69,35 +69,28 @@
 							<aon:outputText value="#{adminBundle.admin_new_domain_defaults_help}"/>
 						</aon:div>
 					</aon:div>
-					<aon:selectOneMenu id="Domain_loadDefaults" required="true"
-						 disabled="true"
-						 value="#{adminNewDomain.loadDefaultValuesEnabled}">
-						<f:selectItem itemValue="#{true}" itemLabel="#{adminBundle.admin_new_domain_defaults_1}" />
-						<f:selectItem itemValue="#{false}" itemLabel="#{adminBundle.admin_new_domain_defaults_2}" />
-					</aon:selectOneMenu>
-				</aon:panelGrid>
-				
-				<aon:div styleClass="aon-margin-top aon-padding aon-text-center aon-width-all" 
-					rendered="#{adminNewDomain.success}">
-
-					<!-- Se utliza un <h:commandButton por la navegacion al action index -->
-					<h:commandButton id="configureNewDomain" immediate="true"
-						value="{#adminBunlde.admin_new_domain_configure} '#{adminNewDomain.domainDescription}'" 
-						actionListener="#{adminNewDomain.onConfigure}"
-						action="index"
-						styleClass="aon-commandButton aon-icon-commandButton aon-icon-config aon-bold">
-					</h:commandButton>
+					<aon:div id="defaultValuesDiv">
+						<aon:selectOneMenu id="Domain_loadDefaults"
+							required="true" reRender="defaultValuesDiv" 
+							value="#{adminNewDomain.loadDefaultValuesEnabled}">
+							<f:selectItem itemValue="#{true}" itemLabel="#{adminBundle.admin_new_domain_defaults_1}" />
+							<f:selectItem itemValue="#{false}" itemLabel="#{adminBundle.admin_new_domain_defaults_2}" />
+						</aon:selectOneMenu>				
+						<aon:div rendered="#{!adminNewDomain.loadDefaultValuesEnabled}" styleClass="aon-margin-top">	
+							<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{adminNewDomain.templateDomain}" />
+								<ui:param name="idRequired" value="#{true}" />
+								<ui:param name="skipLabel" value="#{true}" />							
+								<ui:param name="lookupControllerListener" value="#{adminNewDomain.templateDomainFilter}" />
+							</ui:include>
+						</aon:div>
+					</aon:div>
 					
-				</aon:div>
-				
-				<aon:div styleClass="aon-margin-top"
-					style="background-color:#444444; color: #DDDDDD;font-family: Monospace; padding: 5px;" 
-					rendered="#{!adminNewDomain.success and adminNewDomain.output != null}">
-					<aon:outputText value="#{adminNewDomain.output}"
-						escape="false"/>
-				</aon:div>
+				</aon:panelGrid>
 				
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{domainLookup}" />
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 </ui:composition>
