@@ -116,10 +116,6 @@ public class AonDomainDuplicate implements Constants {
 		this.domainDescription = domainDescription;
 		this.tables = new LinkedHashMap<String, TableInfo>();
 	}
-	
-	private Connection getSourceConnection() {
-		return this.connection;
-	}
 
 	private void executeStatement( String statement ) {
 		Statement s = null;
@@ -133,7 +129,7 @@ public class AonDomainDuplicate implements Constants {
 		}
 	}
 	
-	private boolean isMergeableTable(String tableName) {
+	private boolean isMergeableTable(String tableName) throws AonSQLException {
 		if ( ArrayUtils.contains(NO_MERGE_TABLES, tableName) ) {
 			return false;
 		}
@@ -143,7 +139,7 @@ public class AonDomainDuplicate implements Constants {
 			rs = metaData.getColumns(null, null, tableName, DOMAIN_COLUMN_NAME);
 			mergeable = rs.next();
 		} catch (SQLException e) {
-			LOGGER.error( e.getMessage(), e );
+			throw new AonSQLException("Error analizando la tabla " + tableName, e);
 		} finally {
 			DbUtils.closeQuietly(rs);
 		}			
@@ -151,7 +147,7 @@ public class AonDomainDuplicate implements Constants {
 	}
 
 
-	private void addTable(String table, Stack<String> stack ) {
+	private void addTable(String table, Stack<String> stack ) throws AonSQLException {
 		if (!tables.containsKey(table) && !stack.contains(table)) {
 			stack.push(table);
 			TableInfo tableInfo = new TableInfo(table, metaData);
@@ -172,7 +168,7 @@ public class AonDomainDuplicate implements Constants {
 					}
 				}
 			} catch (SQLException e) {
-				LOGGER.error( e.getMessage(), e );
+				throw new AonSQLException("Error obteniendo información de la tabla " + table, e);
 			} finally {
 				DbUtils.closeQuietly(rs);
 			}			
@@ -181,27 +177,27 @@ public class AonDomainDuplicate implements Constants {
 		}
 	}
 	
-	private void resolveTables() {
+	private void resolveTables() throws AonSQLException {
 		Stack<String> stack = new Stack<String>();
 		addTable(DOMAIN_TABLE_NAME, stack);
 		ResultSet rs = null;
 		try {
 	        rs = metaData.getTables(null, null, null, new String[]{TABLE});
 	        if ( rs.next() ) {
-        		LOGGER.debug("Construyendo el orden de inserción!");
+        		LOGGER.debug("Construyendo el orden de inserción");
                 do {
                 	String tableName = rs.getString(TABLE_NAME);
                     if (isMergeableTable(tableName)) {
                     	addTable(tableName, stack);
                     } else {
-                    	LOGGER.info("Ignorando la tabla {}",tableName);    	
+                    	LOGGER.debug("Ignorando la tabla {}", tableName);    	
             		}
                 } while (rs.next());
 	        } else {
-	        	LOGGER.error("No existen tablas en la BD origen!");
+	        	LOGGER.error("No existen tablas en la BD origen");
 	        }
 		} catch (SQLException e) {
-			LOGGER.error( e.getMessage(), e );
+			throw new AonSQLException(e.getMessage() , e);
 		} finally {
 			DbUtils.closeQuietly(rs);
 		}
@@ -242,7 +238,9 @@ public class AonDomainDuplicate implements Constants {
 			} catch ( SQLException sqle ) {
 				LOGGER.error( sqle.getMessage(), sqle );
 			}
-            LOGGER.error( e.getMessage(), e );
+			if ( e instanceof AonSQLException ) {
+				throw (AonSQLException) e;
+			}
 			throw new AonSQLException(e.getMessage() , e);
 		} finally {
 			executeStatement(SET_FOREIGN_KEY_CHECKS_1);
@@ -275,8 +273,6 @@ public class AonDomainDuplicate implements Constants {
 				update.setInt(2, id);
 				update.execute();
 			}
-		} catch (SQLException e) {
-			LOGGER.error( e.getMessage(), e );
 		} finally {
 			DbUtils.closeQuietly(rs);
 			DbUtils.closeQuietly(select);
@@ -284,7 +280,7 @@ public class AonDomainDuplicate implements Constants {
 		}					
 	}
 	
-	private void updateNewDomain() {
+	private void updateNewDomain() throws AonSQLException {
 		PreparedStatement ps = null;
 		try {
 	        String stmt = "UPDATE domain SET name = ?, description=? where id = ?";
@@ -294,43 +290,44 @@ public class AonDomainDuplicate implements Constants {
 	        ps.setInt(3, newDomain);
 	        ps.execute();
 		} catch (SQLException e) {
-			LOGGER.error( e.getMessage(), e );
+			throw new AonSQLException("Error actualizando la información del nuevo dominio", e);
 		} finally {
 			DbUtils.closeQuietly(ps);
 		}					
 	}
 
-	private void mergeDomain() {
+	private void mergeDomain() throws AonSQLException {
 		TableInfo tableInfo = tables.get(DOMAIN_TABLE_NAME); 
 		merge( tableInfo );
 		this.newDomain = tableInfo.getNewKey(sourceDomain);
 		updateNewDomain();
 	}
 	
-	private void merge(TableInfo t) {
-		String sentence = t.getSelectStatement(this.sourceDomain);
+	private void merge(TableInfo t) throws AonSQLException {
 		PreparedStatement select = null;
 		ResultSet rs = null;
 		PreparedStatement insert = null;
 		try {
-			select = getSourceConnection().prepareStatement(sentence,t.getSelectColumns());
-			String insertStmt = t.getInsertStatement();
-			insert = connection.prepareStatement(insertStmt,t.isAutoincrementPK()?Statement.RETURN_GENERATED_KEYS:Statement.NO_GENERATED_KEYS); 
+			String sentence = t.getSelectStatement(this.sourceDomain);
+			select = connection.prepareStatement(sentence,t.getSelectColumns());
 			rs = select.executeQuery();
-			int i = 0;
-			while (rs.next()) {
-				i++;
-				if (i % 1000 == 0) {
-					LOGGER.debug( "Table {}, {} rows inserted",t.getName(), i);
+			if ( rs.next() ) {
+				String insertStmt = t.getInsertStatement();
+				insert = connection.prepareStatement(insertStmt,t.isAutoincrementPK()?Statement.RETURN_GENERATED_KEYS:Statement.NO_GENERATED_KEYS); 
+				int i = 0;
+				do {
+					i++;
+					insert(insert,rs,t);					
+				} while (rs.next());				
+				LOGGER.info( "Table {}, TOTAL {} rows inserted",t.getName(), i);
+				if (t.isRecursive()) {
+					updateReferences(t);
 				}
-				insert(insert,rs,t);
-			}
-			LOGGER.debug( "Table {}, TOTAL {} rows inserted",t.getName(), i);
-			if (t.isRecursive()) {
-				updateReferences(t);
+			} else {
+				LOGGER.info( "Table {} is empty", t.getName() );
 			}
 		} catch (SQLException e) {
-			LOGGER.error( e.getMessage(), e );
+			throw new AonSQLException("Error duplicando la tabla " + t.getName(), e);
 		} finally {
 			DbUtils.closeQuietly(rs);
 			DbUtils.closeQuietly(select);
@@ -338,7 +335,7 @@ public class AonDomainDuplicate implements Constants {
 		}			
 	}
 	
-	private void updateReferences(TableInfo t) {
+	private void updateReferences(TableInfo t) throws SQLException {
 		for (int i = 0 ;i < t.getFkTables().length; i++  ) {
 			String fkTable = t.getFkTables()[i];
 			if (t.getName().equals(fkTable) ) {
@@ -360,11 +357,9 @@ public class AonDomainDuplicate implements Constants {
 							update.setInt(1, newValue);	
 							update.setInt(2, id);
 							update.execute();
-							LOGGER.info( " Recursive {} id {} ---> {} updated!", new Object[]{t.getName(), id, newValue});
+							LOGGER.debug( " Recursive {} id {} ---> {} updated", new Object[]{t.getName(), id, newValue});
 						}
 					}
-				} catch (SQLException e) {
-					LOGGER.error( e.getMessage(), e );
 				} finally {
 					DbUtils.closeQuietly(rs);
 					DbUtils.closeQuietly(select);
@@ -374,7 +369,7 @@ public class AonDomainDuplicate implements Constants {
 		}
 	}
 	
-	private void updateKey(TableInfo t, PreparedStatement insert, int id ) {
+	private void updateKey(TableInfo t, PreparedStatement insert, int id ) throws SQLException {
 		ResultSet rs = null;
 		try {
 			rs = insert.getGeneratedKeys();
@@ -382,8 +377,6 @@ public class AonDomainDuplicate implements Constants {
 				Integer newId = rs.getInt(1);
 				t.put(id, newId);
 			}					
-		} catch (SQLException e) {
-			LOGGER.error( e.getMessage(), e );
 		} finally {
 			DbUtils.closeQuietly(rs);
 		}
@@ -407,7 +400,7 @@ public class AonDomainDuplicate implements Constants {
 						AonInternalReference air = INTERNAL_REFERENCES_TABLES.get(t.getName());
 						if (air.getColumn().equals(column)) {
 							Object discriminator = rs.getObject( air.getDiscriminatorColumn() );
-							String fkTable = getReferencedTable( t.getName(), discriminator, air );
+							String fkTable = getReferencedTable( air, discriminator );
 							if (fkTable != null) {
 								Integer valueInteger = getInteger(value);
 								value = getReferenceValue(t, valueInteger, column, fkTable);
@@ -449,7 +442,7 @@ public class AonDomainDuplicate implements Constants {
 		return valueInteger;
 	}
 
-	private String getReferencedTable(String table, Object discriminator, AonInternalReference air) {
+	private String getReferencedTable(AonInternalReference air, Object discriminator) {
 		int z = ArrayUtils.indexOf(air.getDiscriminators(), discriminator);
 		if (z != -1) {
 			return air.getFkTables()[z];	
@@ -458,11 +451,11 @@ public class AonDomainDuplicate implements Constants {
 	}
 
 	private Integer ensureValueId(String fkTable, Integer value) throws SQLException {
-		String sentence = "SELECT id FROM "  +fkTable+ " WHERE id = " + value; 
+		String sentence = "SELECT id FROM " + fkTable + " WHERE id = " + value; 
 		Statement s = null;
 		ResultSet rs = null;
 		try {
-			s = getSourceConnection().createStatement();
+			s = connection.createStatement();
 			rs = s.executeQuery(sentence);
 			if (rs.next()) {
 				return getInteger(rs.getObject(1));
@@ -487,7 +480,7 @@ public class AonDomainDuplicate implements Constants {
 				newValue = ensureValueId(fkTable, value);
 			}
 			if ( newValue == null ) {
-				LOGGER.error( "Reference ({},{}-{}) for {} not found", new Object[]{t.getName(),column, value, fkTable} );
+				LOGGER.warn( "Reference ({},{}-{}) for {} not found", new Object[]{t.getName(),column, value, fkTable} );
 			}
 			if (t.getPkColumn().equals(column)) {
 				t.put((Integer) value, newValue);
@@ -500,11 +493,11 @@ public class AonDomainDuplicate implements Constants {
 	public static void main(String[] args) {
 		DbUtils.loadDriver("org.gjt.mm.mysql.Driver");
 		
-		Integer sourceDomain = 6;
+		Integer sourceDomain = 611;
 		String domainName = "test.aonsolutions.dev";
 		String domainDescription = "PRUEBA de PLANTILLA";
 		
-		String url = "jdbc:mysql://volga:3306/aimar-esferalia-com";
+		String url = "jdbc:mysql://volga:3306/pro-aonsolutions-net";
 		String user = "dbuser";
 		String password = "serubd2000";
 		
