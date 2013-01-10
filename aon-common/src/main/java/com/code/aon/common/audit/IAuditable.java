@@ -3,6 +3,8 @@ package com.code.aon.common.audit;
 import java.util.Date;
 
 public interface IAuditable {
+	
+	String AUTH_PRINCIPAL_PROVIDER = "com.code.aon.AuthPrincipalProvider";
 
 	String getCreationUser();
 	void setCreationUser(String creationUser);

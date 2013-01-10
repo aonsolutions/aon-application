@@ -15,9 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.bean.BeanConfigParser;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.Classpath;
+import com.code.aon.ui.common.AuthPrincipalProvider;
 import com.code.aon.ui.common.hibernate.DefaultSessionFactoryNameProvider;
 
 /**
@@ -70,6 +72,7 @@ public class BeanRegisterContextListener implements ServletContextListener {
 		HibernateUtil.setSessionFactoryNameProvider(DefaultSessionFactoryNameProvider.getInstance());
 		// Tomcat, empty numbers and booleans as null
 		System.setProperty("org.apache.el.parser.COERCE_TO_ZERO", "false");
+		System.setProperty(IAuditable.AUTH_PRINCIPAL_PROVIDER, AuthPrincipalProvider.class.getName());
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         try {
 	        URL[] urls = Classpath.search(cl, "META-INF/", CONFIG_FILE);
