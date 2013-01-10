@@ -86,6 +86,11 @@
 			size="6" />
 	</aon:div>
 
+	<aon:outputLabel value="#{financeBundle.finance_total_amount}" />
+	<aon:inputText id="Invoice_total"
+		valueChangeListener="#{controller.addExpression}"
+		size="10" />
+
 	<c:if test="#{aonRole.confidentiality}">
 		<aon:outputLabel for="Invoice_securityLevel"
 			value="#{bundle.aon_confidential}" />
