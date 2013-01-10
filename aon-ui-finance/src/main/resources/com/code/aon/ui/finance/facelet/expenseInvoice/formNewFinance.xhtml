@@ -24,7 +24,16 @@
 		inputSize="8" required="true"
 		rendered="#{expenseInvoice.financeGenerationMode == 1}"
 		timeZone="#{timeZoneController.timeZone}"
-		popupDateFormat="#{bundle.aon_date_pattern}" />
+		popupDateFormat="#{bundle.aon_date_pattern}">
+		<a4j:support ajaxSingle="true" event="oninputchange"
+			actionListener="#{expenseInvoice.onDateChanged}"
+			reRender="Invoice_taxDate"
+			focus="Creditor_id" />
+		<a4j:support ajaxSingle="true" event="onchanged"
+			actionListener="#{expenseInvoice.onDateChanged}"
+			reRender="Invoice_taxDate"
+			focus="Creditor_id" />
+	</aon:selectInputDate>
 
 	<aon:outputLabel for="Finance_PayMethod" value="#{configBundle.config_pay_method}"
 		rendered="#{expenseInvoice.financeGenerationMode == 1}" />
