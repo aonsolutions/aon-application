@@ -89,11 +89,11 @@ public class ScrollerDataModel extends DataModel {
 		getModel().setWrappedData(data);
 	}
 
-	public int getPageSize() {
+	public Integer getPageSize() {
 		return table.getRows();
 	}
 	
-	public void setPageSize( int pageSize ) {
+	public void setPageSize( Integer pageSize ) {
 		if ( pageSize != getPageSize() ) {
 			ValueExpression ve = table.getValueExpression("rows");
 			if ( ve != null ) {

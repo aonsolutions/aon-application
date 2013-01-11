@@ -223,10 +223,9 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			}
 			ITaxInfo taxInfo = (ITaxInfo)bean.get(invoice.getRegistry().getId());
 
-			invoice.setWithholding((type == InvoiceType.SALES) ? company.isWithholding() && taxInfo.isWithholding() : taxInfo.isWithholding());
-			invoice.setSurcharge((type == InvoiceType.SALES) ? taxInfo.isSurcharge() : (type == InvoiceType.PURCHASE) ? company.isSurcharge() : false);
-			invoice.setTaxFree(taxInfo.isTaxFree());
 			invoice.setTransaction(taxInfo.getTransaction());
+			invoice.setSurcharge((type == InvoiceType.SALES) ? taxInfo.isSurcharge() : (type == InvoiceType.PURCHASE) ? company.isSurcharge() : false);
+			invoice.setWithholding((type == InvoiceType.SALES) ? company.isWithholding() && taxInfo.isWithholding() : taxInfo.isWithholding());
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		}

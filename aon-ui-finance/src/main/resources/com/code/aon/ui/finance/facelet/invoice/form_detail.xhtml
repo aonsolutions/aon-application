@@ -218,15 +218,15 @@
 												<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 											</aon:outputText>
 										</aon:div>
-										<aon:div styleClass="aon-nowrap" rendered="#{!invoiceController.to.taxFree}">
+										<aon:div styleClass="aon-nowrap" rendered="#{!invoiceController.to.vatFree}">
 											<aon:outputText style="font-size: 0.8em; font-style: italic;" 
 												value="I.V.A. #{controller.vatPercent}%" />
 										</aon:div>
-										<aon:div styleClass="aon-nowrap" rendered="#{invoiceController.to.surcharge}">
+										<aon:div styleClass="aon-nowrap" rendered="#{!invoiceController.to.vatFree and invoiceController.to.surcharge}">
 											<aon:outputText style="font-size: 0.8em; font-style: italic;" styleClass="aon-nowrap"
 												value="R.E. #{controller.surchargePercent}%" />
 										</aon:div>
-										<aon:div styleClass="aon-nowrap" rendered="#{invoiceController.to.withholding}">
+										<aon:div styleClass="aon-nowrap" rendered="#{!invoiceController.to.retentionFree and invoiceController.to.withholding}">
 											<aon:outputText style="font-size: 0.8em; font-style: italic;" styleClass="aon-nowrap"
 												value="I.R.P.F. #{controller.retentionPercent}%" />
 										</aon:div>

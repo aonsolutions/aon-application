@@ -2,7 +2,6 @@ package com.code.aon.product.strategy;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -55,18 +54,16 @@ public class BasicPriceStrategy implements IPriceStrategy {
 				Expression nullExpr = ExpressionUtilities.getNullExpression(tariffCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_END_DATE));
 				criteria.addExpression(ExpressionUtilities.getOrExpression(dateExpr, nullExpr));
 				criteria.addOrder(tariffCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_START_DATE), false);
-				Iterator<ITransferObject> iterator = tariffCatalogueBean.getList(criteria).iterator();
-				while (iterator.hasNext()) {
-					TariffCatalogue tariffCatalogue = (TariffCatalogue)iterator.next();
+				for (ITransferObject ito : tariffCatalogueBean.getList(criteria)) {
+					TariffCatalogue tariffCatalogue = (TariffCatalogue)ito;
 
 					criteria = new Criteria();
 					criteria.addEqualExpression(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID), tariffCatalogue.getCatalogue().getId());
 					criteria.addEqualExpression(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_ID), calc.getItem().getId());
 					criteria.addLessThanOrEqualExpression(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_QUANTITY), calc.getQuantity());
 					criteria.addOrder(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_QUANTITY), false);
-					Iterator<ITransferObject> itemIterator = catalogueItemBean.getList(criteria, 0, 1).iterator();
-					if (itemIterator.hasNext()) {
-						CatalogueItem catalogueItem = (CatalogueItem)itemIterator.next();
+					for (ITransferObject itr : catalogueItemBean.getList(criteria, 0, 1)) {
+						CatalogueItem catalogueItem = (CatalogueItem)itr;
 						calc.getDiscountExpression().setDiscountExpr(Double.toString(catalogueItem.getDiscount()));
 						return (catalogueItem.getPrice() > 0)?catalogueItem.getPrice():getUnitPrice(calc);
 					}
@@ -76,9 +73,8 @@ public class BasicPriceStrategy implements IPriceStrategy {
 					criteria.addEqualExpression(catalogueCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_CATEGORY_ID), calc.getItem().getProduct().getCategory().getId());
 					criteria.addLessThanOrEqualExpression(catalogueCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_QUANTITY), calc.getQuantity());
 					criteria.addOrder(catalogueCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_QUANTITY), false);
-					Iterator<ITransferObject> categoryIterator = catalogueCategoryBean.getList(criteria, 0, 1).iterator();
-					if (categoryIterator.hasNext()) {
-						CatalogueCategory catalogueCategory = (CatalogueCategory)categoryIterator.next();
+					for (ITransferObject itr : catalogueCategoryBean.getList(criteria, 0, 1)) {
+						CatalogueCategory catalogueCategory = (CatalogueCategory)itr;
 						calc.getDiscountExpression().setDiscountExpr(Double.toString(catalogueCategory.getDiscount()));
 						return getUnitPrice(calc);
 					}
@@ -88,9 +84,8 @@ public class BasicPriceStrategy implements IPriceStrategy {
 				criteria = new Criteria();
 				criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_ITEM_ID), calc.getItem().getId());
 				criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_TARIFF_ID), tariff.getId());
-				iterator = itemTariffBean.getList(criteria).iterator();
-				if (iterator.hasNext()) {
-					ItemTariff itemTariff = (ItemTariff)iterator.next();
+				for (ITransferObject itr : itemTariffBean.getList(criteria)) {
+					ItemTariff itemTariff = (ItemTariff)itr;
 					return itemTariff.getPrice();
 				}
 			}
@@ -124,12 +119,10 @@ public class BasicPriceStrategy implements IPriceStrategy {
 		return CommonUtil.round(price, 4);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public double getTaxableBase(ICalculableContainer icc) {
 		double taxableBase = 0;
-		Iterator<ITransferObject> iterator = icc.getDetailList().iterator();
-		while (iterator.hasNext()) {
-			ICalculable calc = (ICalculable)iterator.next();
+		for (Object obj : icc.getDetailList()) {
+			ICalculable calc = (ICalculable)obj;
 			taxableBase = CommonUtil.round(taxableBase + getBasePrice(calc), 4);
 		}
 		if (icc.getDiscountExpression().getDiscounts() != null) {
@@ -143,64 +136,56 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	@Override
 	public List<TaxBreakDown> getTaxBreakDowns(ICalculableContainer icc, ITaxInfo iti, boolean ignoreTaxFree) {
 		List<TaxBreakDown> taxBreakDowns = new LinkedList<TaxBreakDown>();
-		if (ignoreTaxFree || !iti.isTaxFree()) {
-			Iterator<ITransferObject> iter = icc.getDetailList().iterator();
-			Map<Integer, TaxBreakDown> map = new HashMap<Integer, TaxBreakDown>();
-			while (iter.hasNext()) {
-				ICalculable calc = (ICalculable)iter.next();
-				if (calc.getItem() != null && calc.getItem().getId() != null) {
-					Tax vat = calc.getItem().getProduct().getVat();
-					if (vat != null && vat.getId() != null) {
-						TaxBreakDown vatBreakDown;
-						if (map.containsKey(vat.getId())) {
-							vatBreakDown = map.get(vat.getId());
-						} else {
-							vatBreakDown = getTaxBreakDownObject(icc.getDate(), vat);
-						}
-						vatBreakDown.setBase(CommonUtil.round(vatBreakDown.getBase() + getBasePrice(calc), 4)); 
-						map.put(vat.getId(), vatBreakDown);
+		Map<Integer, TaxBreakDown> map = new HashMap<Integer, TaxBreakDown>();
+		for (Object obj : icc.getDetailList()) {
+			ICalculable calc = (ICalculable)obj;
+			if (calc.getItem() != null && calc.getItem().getId() != null) {
+				Tax vat = calc.getItem().getProduct().getVat();
+				if ((ignoreTaxFree || !iti.isVatFree()) && vat != null && vat.getId() != null) {
+					TaxBreakDown vatBreakDown;
+					if (map.containsKey(vat.getId())) {
+						vatBreakDown = map.get(vat.getId());
+					} else {
+						vatBreakDown = getTaxBreakDownObject(icc.getDate(), vat);
 					}
+					vatBreakDown.setBase(CommonUtil.round(vatBreakDown.getBase() + getBasePrice(calc), 4)); 
+					map.put(vat.getId(), vatBreakDown);
+				}
 
-					Tax retention = calc.getItem().getProduct().getRetention();
-					if (iti.isWithholding() && retention != null && retention.getId() != null) {
-						TaxBreakDown retentionBreakDown;
-						if (map.containsKey(retention.getId())) {
-							retentionBreakDown = map.get(retention.getId());
-						} else {
-							retentionBreakDown = getTaxBreakDownObject(icc.getDate(), retention);
-						}
-						retentionBreakDown.setBase(CommonUtil.round(retentionBreakDown.getBase() + getBasePrice(calc), 4)); 
-						map.put(retention.getId(), retentionBreakDown);
+				Tax retention = calc.getItem().getProduct().getRetention();
+				if ((ignoreTaxFree || !iti.isRetentionFree())&& iti.isWithholding() && retention != null && retention.getId() != null) {
+					TaxBreakDown retentionBreakDown;
+					if (map.containsKey(retention.getId())) {
+						retentionBreakDown = map.get(retention.getId());
+					} else {
+						retentionBreakDown = getTaxBreakDownObject(icc.getDate(), retention);
 					}
+					retentionBreakDown.setBase(CommonUtil.round(retentionBreakDown.getBase() + getBasePrice(calc), 4)); 
+					map.put(retention.getId(), retentionBreakDown);
 				}
 			}
+		}
 
-			Iterator<TaxBreakDown> iterator = map.values().iterator();
-			while (iterator.hasNext()) {
-				TaxBreakDown tbd = iterator.next();
-				tbd.setTaxQuota(CommonUtil.round(tbd.getBase() * tbd.getTaxPercent()/100));
-				if (iti.isSurcharge()) {
-					tbd.setSurchargeQuota(CommonUtil.round(tbd.getBase() * tbd.getSurchargePercent() / 100));
-				} else{
-					tbd.setSurchargeQuota(0.0);
-					tbd.setSurchargePercent(0.0);
-				}
-				taxBreakDowns.add(tbd);
+		for (TaxBreakDown taxBreakDown : map.values()) {
+			taxBreakDown.setTaxQuota(CommonUtil.round(taxBreakDown.getBase() * taxBreakDown.getTaxPercent() / 100));
+			if (iti.isSurcharge()) {
+				taxBreakDown.setSurchargeQuota(CommonUtil.round(taxBreakDown.getBase() * taxBreakDown.getSurchargePercent() / 100));
+			} else{
+				taxBreakDown.setSurchargeQuota(0.0);
+				taxBreakDown.setSurchargePercent(0.0);
 			}
+			taxBreakDowns.add(taxBreakDown);
 		}
 		return taxBreakDowns;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<TaxBreakDown> getTaxBreakDowns(ICalculableContainer icc, ITaxInfo iti) {
 		return getTaxBreakDowns(icc,iti,false);
 	}
 
 	public double getTotalVatQuota(ICalculableContainer icc, ITaxInfo iti) {
 		double total = 0;
-		Iterator<TaxBreakDown> iterator = getTaxBreakDowns(icc, iti).iterator();
-		while (iterator.hasNext()) {
-			TaxBreakDown taxBreakDown = iterator.next();
+		for (TaxBreakDown taxBreakDown : getTaxBreakDowns(icc, iti)) {
 			if (taxBreakDown.getTaxType().equals(TaxType.VAT)) {
 				total += taxBreakDown.getTaxQuota();
 				total += taxBreakDown.getSurchargeQuota();
@@ -211,9 +196,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	
 	public double getTotalRetentionQuota(ICalculableContainer icc, ITaxInfo iti) {
 		double total = 0;
-		Iterator<TaxBreakDown> iterator = getTaxBreakDowns(icc, iti).iterator();
-		while (iterator.hasNext()) {
-			TaxBreakDown taxBreakDown = iterator.next();
+		for (TaxBreakDown taxBreakDown : getTaxBreakDowns(icc, iti)) {
 			if (taxBreakDown.getTaxType().equals(TaxType.RETENTION)) {
 				total += taxBreakDown.getTaxQuota();
 			}
@@ -223,9 +206,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 
 	public double getTotalPrice(ICalculableContainer icc, ITaxInfo iti) {
 		double total = getTaxableBase(icc);
-		Iterator<TaxBreakDown> iterator = getTaxBreakDowns(icc, iti).iterator();
-		while (iterator.hasNext()) {
-			TaxBreakDown taxBreakDown = iterator.next();
+		for (TaxBreakDown taxBreakDown : getTaxBreakDowns(icc, iti)) {
 			if (taxBreakDown.getTaxType().equals(TaxType.VAT)) {
 				total += taxBreakDown.getTaxQuota();
 				total += taxBreakDown.getSurchargeQuota();
@@ -266,9 +247,8 @@ public class BasicPriceStrategy implements IPriceStrategy {
 			criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), tax.getId());
 			criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), date);
 			criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), date);
-			Iterator<ITransferObject> iterator = taxDetailBean.getList(criteria).iterator();
-			if (iterator.hasNext()) {
-				return (TaxDetail)iterator.next();
+			for (ITransferObject ito : taxDetailBean.getList(criteria)) {
+				return (TaxDetail)ito;
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error obtaining taxDetail for tax with id= " + tax.getId(), e);

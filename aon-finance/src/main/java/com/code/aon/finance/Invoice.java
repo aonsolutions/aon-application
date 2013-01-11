@@ -68,41 +68,6 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		setUpdateEnabled(true);
 	}
 
-	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
-	@OrderBy("line")
-	public Set<InvoiceDetail> getLines() {
-		return this.lines;
-	}
-	public void setLines(Set<InvoiceDetail> lines) {
-		this.lines = lines;
-	}
-
-	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
-	@OrderBy()
-	public Set<Finance> getFinances() {
-		return this.finances;
-	}
-	public void setFinances(Set<Finance> finances) {
-		this.finances = finances;
-	}
-
-	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
-	public Set<InvoiceAddress> getAddresses() {
-		return addresses;
-	}
-	public void setAddresses(Set<InvoiceAddress> addresses) {
-		this.addresses = addresses;
-	}
-
-	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
-	@LazyCollection(LazyCollectionOption.EXTRA)
-	public Set<InvoiceAttachment> getAttachments() {
-		return attachments;
-	}
-	public void setAttachments(Set<InvoiceAttachment> attachments) {
-		this.attachments = attachments;
-	}
-
     @Formula("year(issue_date)")
 	public int getIssueYear() {
 	 return issueYear;	
@@ -143,19 +108,50 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		this.updateEnabled = updateEnabled;
 	}
 
-	@Transient
-	public Date getDate() {
-		return getIssueDate();
+	@Formula("(select COUNT(*) from invoice_attach ia where id = ia.invoice)")
+	public boolean isAttachmentAvailable() {
+		return attachmentAvailable;
 	}
 	
-	@Transient
-	public IAddress getAddress() {
-		for (IAddress iAddress : getAddresses()) {
-			return iAddress;
-		}
-		return getRegistryAddress();
+	public void setAttachmentAvailable(boolean customer) {
+		this.attachmentAvailable = customer;
 	}
-	
+
+	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
+	@OrderBy("line")
+	public Set<InvoiceDetail> getLines() {
+		return this.lines;
+	}
+	public void setLines(Set<InvoiceDetail> lines) {
+		this.lines = lines;
+	}
+
+	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
+	@OrderBy()
+	public Set<Finance> getFinances() {
+		return this.finances;
+	}
+	public void setFinances(Set<Finance> finances) {
+		this.finances = finances;
+	}
+
+	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
+	public Set<InvoiceAddress> getAddresses() {
+		return addresses;
+	}
+	public void setAddresses(Set<InvoiceAddress> addresses) {
+		this.addresses = addresses;
+	}
+
+	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
+	@LazyCollection(LazyCollectionOption.EXTRA)
+	public Set<InvoiceAttachment> getAttachments() {
+		return attachments;
+	}
+	public void setAttachments(Set<InvoiceAttachment> attachments) {
+		this.attachments = attachments;
+	}
+
 	@Transient
 	public List<ITransferObject> getDetailList() {
 		try {
@@ -187,6 +183,21 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	}
 
 	@Transient
+	public boolean isVatFree() {
+		return (getTransaction() != InvoiceTransactionType.NATIONAL);
+	}
+
+	@Transient
+	public boolean isRetentionFree() {
+		return (getTransaction() != InvoiceTransactionType.NATIONAL && getTransaction() != InvoiceTransactionType.OTHER_ISP);
+	}
+	
+	@Transient
+	public Date getDate() {
+		return getIssueDate();
+	}
+	
+	@Transient
 	public String getDocumentNumber() {
 		return FinanceUtil.getDocumentNumber(getType(), getSeries(), getNumber());
 	}
@@ -199,6 +210,7 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		registryDocument.setCountry(getRegistryDocumentCountry());
 		return registryDocument.isValid();
 	}
+
 	@Transient
 	public boolean isRegistryDocumentValidable() {
 		RegistryDocument registryDocument = new RegistryDocument();
@@ -208,6 +220,14 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		return registryDocument.isValidable();
 	}
 
+	@Transient
+	public IAddress getAddress() {
+		for (IAddress iAddress : getAddresses()) {
+			return iAddress;
+		}
+		return getRegistryAddress();
+	}
+	
 	@Transient
 	public DiscountExpression getDiscountExpression() {
 		return new DiscountExpression("0.0");
@@ -277,6 +297,7 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	public boolean isRectified() {
 		return (getRectificationType() == RectificationType.RECTIFIED);
 	}
+
 	@Transient
 	public List<Invoice> getRectificationInvoices() throws ManagerBeanException {
 		if (isRectified()) {
@@ -297,6 +318,7 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 			return null;
 		}
 	}
+
 	@Transient
 	public String getRectificationInvoicesString() throws ManagerBeanException {
 		String rectificationInvoiceStr = "";
@@ -353,15 +375,6 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 			LOGGER.error("Error obtaining invoiceDetail list", e);
 		}
 		return false;
-	}
-
-	@Formula("(select COUNT(*) from invoice_attach ia where id = ia.invoice)")
-	public boolean isAttachmentAvailable() {
-		return attachmentAvailable;
-	}
-	
-	public void setAttachmentAvailable(boolean customer) {
-		this.attachmentAvailable = customer;
 	}
 
 }

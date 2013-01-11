@@ -20,112 +20,57 @@ import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 
-/**
- * Transfer Object that represents the company.
- * 
- * @author Consulting & Development. Iñaki Ayerbe - 15-nov-2005
- * @since 1.0
- */
 @Entity
 @Table(name="company")
 @PrimaryKeyJoinColumn(name="registry")
-public class Company extends Registry implements ITaxInfo,IDomain {
+public class Company extends Registry implements ITaxInfo, IDomain {
 
 	private static final long serialVersionUID = -4187068086094343444L;
 
-	/** Indicates if the company is active or not. */
+    private int domain;
 	private boolean active;    
-
-	/** Indicates if a surcharge has to be applied to the company. */
     private boolean surcharge;
-
-	/** Indicates if a holding has to be applied to the company. */
     private boolean withholding;
-
-	/** Indicates if the company works with e-Invoice. */
     private boolean eInvoice;
     
-    private int domain;
-    
-	/**
-	 * Checks if is active.
-	 * 
-	 * @return true, if is active
-	 */
+	@Column(name="domain", nullable=false)
+	public int getDomain() {
+		return this.domain;
+	}
+	public void setDomain(int domain) {
+		this.domain = domain;
+	}
+
     @Column(nullable=true)
 	public boolean isActive() {
 		return active;
 	}
-
-	/**
-	 * Sets if is active.
-	 * 
-	 * @param active the active
-	 */
 	public void setActive(boolean active) {
 		this.active = active;
 	}
 
-	/**
-	 * Checks if a surcharge has to be applied to the company. 
-	 * 
-	 * @return true, if is surcharge
-	 */
 	@Column(nullable=true)
 	public boolean isSurcharge() {
 		return surcharge;
 	}
-
-	/**
-	 * Sets if a surcharge has to be applied to the company. 
-	 * 
-	 * @param surcharge the surcharge
-	 */
 	public void setSurcharge(boolean surcharge) {
 		this.surcharge = surcharge;
 	}
 	
-	/**
-	 * Checks if a surcharge has to be applied to the company. 
-	 * 
-	 * @return true, if is surcharge
-	 */
 	@Column(nullable=true)
 	public boolean isWithholding() {
 		return withholding;
 	}
-
-	/**
-	 * Sets if a surcharge has to be applied to the company. 
-	 * 
-	 * @param surcharge the surcharge
-	 */
 	public void setWithholding(boolean withholding) {
 		this.withholding = withholding;
 	}
 	
-	/**
-	 * Checks if is e invoice.
-	 * 
-	 * @return true, if is e invoice
-	 */
 	@Column(name="e_invoice", nullable=true)
 	public boolean isEInvoice() {
 		return eInvoice;
 	}
-
-	/**
-	 * Sets the e invoice.
-	 * 
-	 * @param invoice the new e invoice
-	 */
 	public void setEInvoice(boolean invoice) {
 		eInvoice = invoice;
-	}
-
-	@Transient
-	public boolean isTaxFree() {
-		return (getTransaction() != InvoiceTransactionType.NATIONAL);
 	}
 
 	@Transient
@@ -133,12 +78,14 @@ public class Company extends Registry implements ITaxInfo,IDomain {
 		return InvoiceTransactionType.NATIONAL;
 	}
 	
-	@Column(name="domain", nullable=false)
-	public int getDomain() {
-		return this.domain;
+	@Transient
+	public boolean isVatFree() {
+		return false;
 	}
-	public void setDomain(int domain) {
-		this.domain = domain;
+
+	@Transient
+	public boolean isRetentionFree() {
+		return false;
 	}
 
 	@Override
@@ -151,6 +98,7 @@ public class Company extends Registry implements ITaxInfo,IDomain {
 			return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(this.active, o.active)
+				.append(this.domain, o.domain)
 				.append(this.eInvoice, o.eInvoice)
 				.append(this.surcharge, o.surcharge)
 				.append(this.withholding, o.withholding)
@@ -164,6 +112,7 @@ public class Company extends Registry implements ITaxInfo,IDomain {
 		return new HashCodeBuilder()
 			.appendSuper(super.hashCode())
 			.append(active)
+			.append(domain)
 			.append(eInvoice)
 			.append(surcharge)
 			.append(withholding)

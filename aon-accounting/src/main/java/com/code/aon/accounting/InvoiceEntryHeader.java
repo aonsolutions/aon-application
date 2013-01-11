@@ -33,7 +33,6 @@ public class InvoiceEntryHeader implements ITransferObject {
 	private String series;
 	private int number;
 	private String referenceCode;
-    private boolean taxFree;
     private boolean surcharge;
     private boolean withholding;
 	private Account account;
@@ -244,14 +243,6 @@ public class InvoiceEntryHeader implements ITransferObject {
 	}
 	public void setRetPercent(Double retPercent) {
 		this.retPercent = retPercent;
-	}
-
-	public boolean isTaxFree() {
-		return taxFree;
-	}
-
-	public void setTaxFree(boolean taxFree) {
-		this.taxFree = taxFree;
 	}
 
 	public boolean isSurcharge() {

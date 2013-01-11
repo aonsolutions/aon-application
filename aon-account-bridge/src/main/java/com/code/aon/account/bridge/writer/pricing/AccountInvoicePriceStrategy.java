@@ -48,7 +48,6 @@ public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 		if (breakDown.getTaxType() == TaxType.VAT && invoiceType != InvoiceType.SALES &&
 				(tran == InvoiceTransactionType.INTRACOMMUNITY ||
 				tran == InvoiceTransactionType.OTHER_ISP) ) {
-			invoiceType = InvoiceType.PURCHASE;
 			breakDown.setBalancingAccount(obtainTaxAccount(breakDown.getTaxType(), InvoiceType.SALES, invoiceDetail));
 		}
 	}

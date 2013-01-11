@@ -29,7 +29,7 @@ public class CustomerFeePreInvoicingDAO implements IInvoicingDAO {
 	private PreInvoice currentPreInvoice;
 	private IPriceStrategy priceStrategy;
 	
-	public CustomerFeePreInvoicingDAO(){
+	public CustomerFeePreInvoicingDAO() {
 		preInvoicingCollection = new ArrayList<PreInvoice>();
 	}
 
@@ -56,6 +56,7 @@ public class CustomerFeePreInvoicingDAO implements IInvoicingDAO {
 	public void createFinances(Invoice invoice, IPayMethod payMethod) {
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Collection getCollection(){
 		return preInvoicingCollection;
 	}
@@ -63,9 +64,9 @@ public class CustomerFeePreInvoicingDAO implements IInvoicingDAO {
 	private void fillTaxInfo(Invoice invoice) {
 		Company company = obtainCompany();
 		Customer customer = obtainCustomer(invoice.getRegistry());
-		invoice.setWithholding(company.isWithholding() && customer.isWithholding());
+		invoice.setTransaction(customer.getTransaction());
 		invoice.setSurcharge(customer.isSurcharge());
-		invoice.setTaxFree(customer.isTaxFree());
+		invoice.setWithholding(company.isWithholding() && customer.isWithholding());
 	}
 
 	private Company obtainCompany() {
