@@ -11,7 +11,7 @@
 			columnClasses=", #{columnClasses},">
 	
 			<aon:rowSelector id="#{dataTableId}-select" 
-				toggleOnClick="#{(controller.to == null) and controller.editableSelectedTo and !skipLineEdition}"
+				toggleOnClick="#{(controller.to == null) and !skipEditSelectedTo and !skipLineEdition}"
 				action="#{rowSelectorAction}" immediate="#{rowSelectorImmediate}"
 				actionListener="#{rowSelectorActionListener}" reRender="#{rowSelectorReRender}"
 				focus="#{(focusOnSelect != null)?(focusOnSelect):''}"/>
@@ -23,7 +23,7 @@
 						<aon:outputText value="&#160;" />
 					</f:facet>
 					<aon:div rendered="#{formList}" layout="none">
-						<aon:outputText value="&#160;" rendered="#{!controller.editableSelectedTo}"
+						<aon:outputText value="&#160;" rendered="#{skipEditSelectedTo}"
 							title="#{bundle.aon_inherited_row}"
 							styleClass="aon-icon2 aon-icon-shield" />														
 						<ui:insert name="beginFormListContent"/>

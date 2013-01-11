@@ -37,6 +37,7 @@
 		<aon:methodParam name="cancelNewActionListener" default="#{controller.onCancel}" type="actionListener" />
 		<aon:methodParam name="cancelNewAction" default="" />			
 
+		<aon:valueParam name="skipEditSelectedTo" default="#{!controller.editableSelectedTo}" testValue="true" />
 	</ui:include>
 	
 </ui:composition>
