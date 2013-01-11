@@ -37,6 +37,15 @@ public class Target extends TargetDB implements ITaxInfo, IRegistry, IScopable {
     	setStatus(TargetStatus.ACTIVE);
 	}
 
+	@Formula("(select COUNT(*) from customer c where registry = c.registry)")
+	public boolean isCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(boolean customer) {
+		this.customer = customer;
+	}
+		
 	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})	
 	public Set<TargetItem> getItems() {
 		return items;
@@ -83,16 +92,13 @@ public class Target extends TargetDB implements ITaxInfo, IRegistry, IScopable {
 	}
 	
 	@Transient
-	public boolean isTaxFree() {
+	public boolean isVatFree() {
 		return (getTransaction() != InvoiceTransactionType.NATIONAL);
 	}
-
-	@Formula("(select COUNT(*) from customer c where registry = c.registry)")
-	public boolean isCustomer() {
-		return customer;
+	
+	@Transient
+	public boolean isRetentionFree() {
+		return (getTransaction() != InvoiceTransactionType.NATIONAL && getTransaction() != InvoiceTransactionType.OTHER_ISP);
 	}
-	public void setCustomer(boolean customer) {
-		this.customer = customer;
-	}
-		
+	
 }

@@ -13,11 +13,11 @@ public class PreInvoice extends Invoice {
 
 	private List<PreInvoiceDetail> details;
 	
-	public PreInvoice(){
+	public PreInvoice() {
 		this.details = new LinkedList<PreInvoiceDetail>();
 	}
 	
-	public PreInvoice(Invoice invoice){
+	public PreInvoice(Invoice invoice) {
 		this.setId(invoice.getId());
 		this.setIssueDate(invoice.getIssueDate());
 		this.setNumber(invoice.getNumber());
@@ -31,14 +31,14 @@ public class PreInvoice extends Invoice {
 		this.setSeries(invoice.getSeries());
 		this.setStatus(invoice.getStatus());
 		this.setSurcharge(invoice.isSurcharge());
-		this.setTaxFree(invoice.isTaxFree());
-		this.setWithholding(invoice.isWithholding());
+		this.setTransaction(invoice.getTransaction());
 		this.setType(invoice.getType());
+		this.setWithholding(invoice.isWithholding());
 		this.details = new LinkedList<PreInvoiceDetail>();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List getDetailList() {
 		return details;
 	}
@@ -48,4 +48,5 @@ public class PreInvoice extends Invoice {
 		preInvoiceDetail.addInvoiceTaxes(detail);
 		details.add(preInvoiceDetail);
 	}
+
 }

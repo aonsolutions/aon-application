@@ -39,13 +39,18 @@ public class Creditor extends CreditorDB implements ITaxInfo, IScopable, IRegist
 	}
 
 	@Transient
-	public boolean isTaxFree() {
-		return (getTransaction() != InvoiceTransactionType.NATIONAL);
-	}
-
-	@Transient
 	public boolean isSurcharge() {
 		return false;
 	}
 
+	@Transient
+	public boolean isVatFree() {
+		return (getTransaction() != InvoiceTransactionType.NATIONAL);
+	}
+
+	@Transient
+	public boolean isRetentionFree() {
+		return (getTransaction() != InvoiceTransactionType.NATIONAL && getTransaction() != InvoiceTransactionType.OTHER_ISP);
+	}
+	
 }

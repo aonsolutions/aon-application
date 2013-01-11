@@ -412,7 +412,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		getHeader().setRegistry(new Registry());
 		getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
 		getHeader().setInvestment(false);
-		getHeader().setTaxFree(false);
 		getHeader().setWithholding(false);
 		getHeader().setSurcharge(false);
 		
@@ -1097,7 +1096,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		invoice.setInvestment(getHeader().isInvestment());
 		invoice.setTransaction(getHeader().getTransaction());
 		invoice.setWithholding(getHeader().isWithholding());
-		invoice.setTaxFree(getHeader().isTaxFree());
 		invoice.setSurcharge(getHeader().isSurcharge());
 		return invoice;
 	}
@@ -1343,21 +1341,18 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 					getHeader().setRegistry( customer.getRegistry());
 					getHeader().setWithholding(company.isWithholding() && customer.isWithholding());
 					getHeader().setSurcharge(customer.isSurcharge());
-					getHeader().setTaxFree(customer.isTaxFree());
 					getHeader().setTransaction( customer.getTransaction() );
 				} else if (isPurchase()) {
 					Supplier supplier = (Supplier) event.getNewValue();
 					getHeader().setRegistry( supplier.getRegistry());
 					getHeader().setWithholding(supplier.isWithholding());
 					getHeader().setSurcharge(company.isSurcharge());
-					getHeader().setTaxFree(supplier.isTaxFree());
 					getHeader().setTransaction( supplier.getTransaction() );
 				} else if (isExpense()) {
 					Creditor creditor = (Creditor) event.getNewValue();
 					getHeader().setRegistry(creditor.getRegistry());
 					getHeader().setWithholding(creditor.isWithholding());
 					getHeader().setSurcharge(false);
-					getHeader().setTaxFree(creditor.isTaxFree());
 					getHeader().setTransaction( creditor.getTransaction() );
 				}
 				
@@ -1391,7 +1386,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				getHeader().setName(null);
 				getHeader().setWithholding(false);
 				getHeader().setSurcharge(false);
-				getHeader().setTaxFree(false);
+				getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
 				getHeader().setAccount( null );
 			}
 		} catch (ManagerBeanException e) {
@@ -1571,7 +1566,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			getHeader().setRegistry(accountEntryInvoice.getInvoice().getRegistry());
 			getHeader().setWithholding(accountEntryInvoice.getInvoice().isWithholding());
 			getHeader().setSurcharge(accountEntryInvoice.getInvoice().isSurcharge());
-			getHeader().setTaxFree(accountEntryInvoice.getInvoice().isTaxFree());
 			getHeader().setInvestment(accountEntryInvoice.getInvoice().isInvestment());
 			getHeader().setTransaction(accountEntryInvoice.getInvoice().getTransaction());
 			getHeader().setAccountEntryId(entry.getId());

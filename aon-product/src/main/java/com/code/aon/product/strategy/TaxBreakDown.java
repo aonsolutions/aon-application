@@ -77,4 +77,12 @@ public class TaxBreakDown {
 		this.balancingAccount = balancingAccount;
 	}
 
+	public boolean isVat() {
+		return (getTaxType() == TaxType.VAT);
+	}
+
+	public boolean isRetention() {
+		return (getTaxType() == TaxType.RETENTION);
+	}
+
 }

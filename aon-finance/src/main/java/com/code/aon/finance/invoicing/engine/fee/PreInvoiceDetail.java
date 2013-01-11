@@ -42,8 +42,10 @@ public class PreInvoiceDetail extends InvoiceDetail {
 	}
 	
 	public void addInvoiceTaxes(InvoiceDetail detail) throws ManagerBeanException{
-		addTax(detail, detail.getItem().getProduct().getVat());
-		if (detail.getInvoice().isWithholding() && detail.getItem().getProduct().getRetention() != null) {
+		if (!detail.getInvoice().isVatFree() && detail.getItem().getProduct().getVat() != null) {
+			addTax(detail, detail.getItem().getProduct().getVat());
+		}
+		if (!detail.getInvoice().isRetentionFree() && detail.getInvoice().isWithholding() && detail.getItem().getProduct().getRetention() != null) {
 			addTax(detail, detail.getItem().getProduct().getRetention());
 		}
 	}
@@ -55,20 +57,11 @@ public class PreInvoiceDetail extends InvoiceDetail {
 		InvoiceTax invoiceTax = new InvoiceTax();
 		invoiceTax.setInvoiceDetail(detail);
 		invoiceTax.setTaxType(tax.getType());
-		double surcharge = 0.0;
-		double percentage = 0.0;
-		if (!detail.getInvoice().isTaxFree()) {
-			percentage = tax.getPercentage();
-			if (detail.getInvoice().isSurcharge()) {
-				surcharge = tax.getSurcharge();
-			}
-		}
-		invoiceTax.setPercentage(percentage);
-		invoiceTax.setSurcharge(surcharge);
+		invoiceTax.setPercentage(tax.getPercentage());
+		invoiceTax.setSurcharge((detail.getInvoice().isSurcharge()) ? tax.getSurcharge() : 0.0);
 		this.taxList.add(invoiceTax);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Tax obtainTax(Integer id, Date date) throws ManagerBeanException {
 		IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
     	Criteria criteria = new Criteria();
@@ -87,8 +80,7 @@ public class PreInvoiceDetail extends InvoiceDetail {
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List getTaxBreakDowns() {
+	public List<TaxBreakDown> getTaxBreakDowns() {
 		List<TaxBreakDown> taxBreakDowns = new LinkedList<TaxBreakDown>();
 		for (ITransferObject ito : taxList) {
 			InvoiceTax invoiceTax = (InvoiceTax)ito;

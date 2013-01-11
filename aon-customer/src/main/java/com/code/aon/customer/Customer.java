@@ -30,11 +30,6 @@ public class Customer extends CustomerDB implements ITaxInfo,IScopable,IRegistry
     	setStatus(CustomerStatus.ACTIVE);
     }
 
-	@Transient
-	public boolean isTaxFree() {
-		return (getTransaction() != InvoiceTransactionType.NATIONAL);
-	}
-	
 	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
 	public Set<RegistryAttachment> getDocuments() {
 		return documents;
@@ -43,4 +38,14 @@ public class Customer extends CustomerDB implements ITaxInfo,IScopable,IRegistry
 		this.documents = documents;
 	}	
 
+	@Transient
+	public boolean isVatFree() {
+		return (getTransaction() != InvoiceTransactionType.NATIONAL);
+	}
+	
+	@Transient
+	public boolean isRetentionFree() {
+		return (getTransaction() != InvoiceTransactionType.NATIONAL && getTransaction() != InvoiceTransactionType.OTHER_ISP);
+	}
+	
 }

@@ -30,21 +30,27 @@ public class Supplier extends SupplierDB implements ITaxInfo, IScopable, IRegist
     	setStatus(SupplierStatus.ACTIVE);
 	}
 
-	@Transient
-	public boolean isSurcharge() {
-		return false;
-	}
-	@Transient
-	public boolean isTaxFree() {
-		return (getTransaction() != InvoiceTransactionType.NATIONAL);
-	}
 	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
 	public Set<RegistryAttachment> getDocuments() {
 		return documents;
 	}
-	
 	public void setDocuments(Set<RegistryAttachment> documents) {
 		this.documents = documents;
 	}	
 
+	@Transient
+	public boolean isSurcharge() {
+		return false;
+	}
+
+	@Transient
+	public boolean isVatFree() {
+		return (getTransaction() != InvoiceTransactionType.NATIONAL);
+	}
+	
+	@Transient
+	public boolean isRetentionFree() {
+		return (getTransaction() != InvoiceTransactionType.NATIONAL && getTransaction() != InvoiceTransactionType.OTHER_ISP);
+	}
+	
 }

@@ -40,18 +40,18 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 	@Override
 	public List<TaxBreakDown> getTaxBreakDowns(ICalculableContainer icc, ITaxInfo iti, boolean ignoreTaxFree) {
 		List<TaxBreakDown> taxBreakDowns = new LinkedList<TaxBreakDown>();
-		if (ignoreTaxFree || !iti.isTaxFree()) {
-			Map<TaxKey, TaxBreakDown> map = new HashMap<TaxKey, TaxBreakDown>();
-			for (Object obj : icc.getDetailList()) {
-				InvoiceDetail invoiceDetail = (InvoiceDetail)obj;
-				for (TaxBreakDown breakDown : invoiceDetail.getTaxBreakDowns()) {
+		Map<TaxKey, TaxBreakDown> map = new HashMap<TaxKey, TaxBreakDown>();
+		for (Object obj : icc.getDetailList()) {
+			InvoiceDetail invoiceDetail = (InvoiceDetail)obj;
+			for (TaxBreakDown breakDown : invoiceDetail.getTaxBreakDowns()) {
+				if (ignoreTaxFree || ((!breakDown.isVat() || !iti.isVatFree()) && (!breakDown.isRetention() || !iti.isRetentionFree()))) {
 					setTaxBreakDownAddInfo(breakDown, invoiceDetail);
 					TaxKey key = new TaxKey();
 					key.setType(breakDown.getTaxType());
 					key.setPercent(breakDown.getTaxPercent());
 					TaxBreakDown mapBreakDown;
 					if (map.containsKey(key)) {
-						mapBreakDown  = map.get(key);
+						mapBreakDown = map.get(key);
 						mapBreakDown.setBase(mapBreakDown.getBase() + breakDown.getBase());
 						mapBreakDown.setTaxQuota(mapBreakDown.getTaxQuota() + breakDown.getTaxQuota());
 						mapBreakDown.setSurchargeQuota(mapBreakDown.getSurchargeQuota() + breakDown.getSurchargeQuota());
@@ -61,20 +61,21 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 					map.put(key, mapBreakDown);
 				}
 			}
-			for (TaxBreakDown breakDown : map.values()) {
-				if (breakDown.getTaxQuota() == 0) {
-					breakDown.setTaxQuota(CommonUtil.round(breakDown.getBase() * breakDown.getTaxPercent()/100));
-				}
-				if (iti.isSurcharge()) {
-					if (breakDown.getSurchargeQuota() == 0) {
-						breakDown.setSurchargeQuota(CommonUtil.round(breakDown.getBase() * breakDown.getSurchargePercent()/100));
-					}
-				} else {
-					breakDown.setSurchargeQuota(0.0);
-					breakDown.setSurchargePercent(0.0);
-				}
-				taxBreakDowns.add(breakDown);
+		}
+
+		for (TaxBreakDown breakDown : map.values()) {
+			if (breakDown.getTaxQuota() == 0) {
+				breakDown.setTaxQuota(CommonUtil.round(breakDown.getBase() * breakDown.getTaxPercent() / 100));
 			}
+			if (iti.isSurcharge()) {
+				if (breakDown.getSurchargeQuota() == 0) {
+					breakDown.setSurchargeQuota(CommonUtil.round(breakDown.getBase() * breakDown.getSurchargePercent() / 100));
+				}
+			} else {
+				breakDown.setSurchargeQuota(0.0);
+				breakDown.setSurchargePercent(0.0);
+			}
+			taxBreakDowns.add(breakDown);
 		}
 		return taxBreakDowns;
 	}
