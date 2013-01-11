@@ -110,7 +110,8 @@ public class CompanyDocumentServlet extends HttpServlet {
 		RegistryAttachment attachment = null;
 		boolean companyLogo = false;
 		Integer attachmentId = null;
-		String value = StringUtils.substringAfterLast(req.getRequestURI(), "/");
+		String uri = StringUtils.substringBefore(req.getRequestURI(), ";");
+		String value = StringUtils.substringAfterLast(uri, "/");
 		if ( StringUtils.equals(COMPANY_LOGO, value) ) {
 			companyLogo = true;
 		} else {
