@@ -481,7 +481,7 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		if (mailConfig.getMailAccountCount() > 0) {
 			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 			messageController.initNewMessage();
-			emailUtil.initMessageController(messageController, (Delivery) getTo());
+			emailUtil.initMessageController(messageController, (Delivery) getTo(), getReportTemplate());
 			messageController.setShowNewMessageWindow(true);
 		} else {
 			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);

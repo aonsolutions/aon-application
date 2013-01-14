@@ -13,14 +13,12 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.warehouse.Delivery;
 
 public class WarehouseEmailUtil extends CompanyEmailUtil implements IWarehouseMessages {
-
-	private static final String REPORT_KEY = "delivery";
-
-	public void initMessageController( MessageController messageController, Delivery delivery ) throws ManagerBeanException, IOException, ReportException {
+	
+	public void initMessageController( MessageController messageController, Delivery delivery, String reportKey ) throws ManagerBeanException, IOException, ReportException {
 		String[] emails = getAdministrativeEmails( delivery.getCustomer().getRegistry() );
 		initMessageController(messageController, emails, getEmailBody(delivery));
 		messageController.setSubject( getEmailSubject(delivery) );
-		messageController.addAttachment( getReport(delivery, REPORT_KEY) );
+		messageController.addAttachment( getReport(delivery, reportKey) );
 	}
 	
 	public String getEmailSubject( Delivery delivery ) {
