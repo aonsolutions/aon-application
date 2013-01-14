@@ -171,5 +171,10 @@ public class ItemLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		}
 		return null;
 	}
+
+	@Override
+	public void validate(LoaderParams params) throws AonException {
+		// Nothing to validate.
+	}
 	
 }

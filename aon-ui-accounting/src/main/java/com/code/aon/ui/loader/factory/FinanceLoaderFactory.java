@@ -202,4 +202,8 @@ public class FinanceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		finance = (Finance) bean.insert(finance);
 		return finance.getId();
 	}
+	@Override
+	public void validate(LoaderParams params) throws AonException {
+		// Nothing to validate.
+	}
 }

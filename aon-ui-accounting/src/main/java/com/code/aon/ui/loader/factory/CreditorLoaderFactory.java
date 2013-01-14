@@ -211,4 +211,8 @@ public class CreditorLoaderFactory extends RegistryLoaderFactory implements ILoa
 		}
 		return null;
 	}
+	@Override
+	public void validate(LoaderParams params) throws AonException {
+		// Nothing to validate.
+	}
 }

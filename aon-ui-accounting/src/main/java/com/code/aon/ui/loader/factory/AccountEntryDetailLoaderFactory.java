@@ -137,5 +137,11 @@ public class AccountEntryDetailLoaderFactory implements ILoaderFactory<ILoadedPo
 		}
 		return null;
 	}
+	@Override
+	public void validate(LoaderParams params) throws AonException {
+		if (params.getAccountPeriod() == null) {
+			throw new AonException("No se ha definido un ejercicio contable");
+		}
+	}
 	
 }

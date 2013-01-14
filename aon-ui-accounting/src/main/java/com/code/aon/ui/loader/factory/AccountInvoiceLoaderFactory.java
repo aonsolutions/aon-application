@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -74,6 +75,7 @@ public class AccountInvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	
 	private ILoaderEngine engine;
 	private Map<String, Column[]> columns;
+	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
 
 	public AccountInvoiceLoaderFactory() {
 	}
@@ -120,6 +122,13 @@ public class AccountInvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	public Integer insert(LoaderParams params,ILoadedPojo loadedPojo) throws AonException {
 		return insertInvoice(params,loadedPojo);
 	}
+	
+	public AccountEntryInvoiceWriter getAccountEntryInvoiceWriter() {
+		if (accountEntryInvoiceWriter == null) {
+			accountEntryInvoiceWriter = new AccountEntryInvoiceWriter();
+		}
+		return accountEntryInvoiceWriter;
+	}
 
 	private Integer insertInvoice(LoaderParams params,ILoadedPojo loadedPojo) throws AonException {
 		LoadedAccountInvoice loaded = (LoadedAccountInvoice) loadedPojo;
@@ -129,122 +138,13 @@ public class AccountInvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			engine.insertAonEntity(params, detail);	
 		}
 		engine.insertAonEntity(params, loaded.getLoadedFinance());
+		if (StringUtils.isNotBlank( loaded.getArticulo())) {
+			Invoice invoice = (Invoice) get(params, loaded); 
+			getAccountEntryInvoiceWriter().recordInvoice(invoice);		
+		}
 		return invoiceId; 
-		
-/*		
-		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
-		Invoice invoice = new Invoice();
-		InvoiceType type = InvoiceType.values()[loaded.getTipo()];
-		if (type == InvoiceType.SALES ) {
-			Series series = ensureInvoiceSeries(params,loaded.getSerie() ); 
-			invoice.setSeries( series.getCode() );
-			invoice.setNumber( loaded.getNumero() );
-		} else {
-			invoice.setReferenceCode(StringUtils.abbreviate(loaded.getReferencia(),16));
-		}
-		invoice.setType(type);
-		Registry registry = obtainRegistry(params, type , loaded);
-		invoice.setRegistry(registry);
-		invoice.setRegistryDocument(loaded.getDocumento());
-		invoice.setRegistryDocumentType(DocumentType.values()[loaded.getTipoDocumento()]);
-		invoice.setRegistryDocumentCountry(Country.valueOf( loaded.getPaisDocumento()));
-		invoice.setRegistryName(loaded.getRazonSocial());
-		invoice.setIssueDate(loaded.getFechaFactura());
-		invoice.setTaxDate(loaded.getFechaIva());
-		invoice.setInvestment( loaded.isInvestment() );
-		invoice.setTransaction(loaded.getInvoiceTransactionType());
-		invoice.setComments(loaded.getComentario());
-		Date now = new Date();
-		invoice.setRemarks("Importada de fichero " + params.getDateFormatter().format(now) + " - " + params.getTimeFormatter().format(now));
-		invoice.setStatus(InvoiceStatus.PENDING);
-		invoice.setTaxableBase(loaded.getTotalBaseImponible());
-		invoice.setVatQuota(loaded.getTotalCuotaIVA());
-		invoice.setRetentionQuota(loaded.getCuotaIRPF()==null?0:loaded.getCuotaIRPF());
-		invoice.setTotal(loaded.getTotalFactura());
-		invoice.setUpdateEnabled(false);
-		invoice = (Invoice) bean.insert(invoice);
-		if (StringUtils.isNotBlank(loaded.getCuenta())) {
-			invoice.setStatus(InvoiceStatus.SCORED);
-		}
-		invoice = (Invoice) bean.insert(invoice);
-		if (invoice.getStatus() == InvoiceStatus.SCORED) {
-			// TODO Crear factory para apuntes.
-			insertInvoiceAccountEntry(params,invoice, loaded);
-		} 
-		return invoice.getId();
-*/		
 	}
-/*
-	private Series ensureInvoiceSeries(LoaderParams params,String serie) throws ManagerBeanException {
-		if (StringUtils.isNotBlank(serie)) {
-			IManagerBean bean = BeanManager.getManagerBean(Series.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SERIES_CODE), serie);
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SERIES_ACTIVE), true);
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SERIES_INVOICE), true);
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SERIES_SCOPE_ID), params.getScope().getId());
-			List<ITransferObject> list = bean.getList(criteria);
-			if ( list.size() > 0 ) {
-				Series series = (Series) list.get(0);
-				return series;
-			}
-			Series series = new Series();
-			series.setCode(serie);
-			series.setDescription(serie);
-			series.setInvoice(true);
-			series.setActive(true);
-			series.setScope( params.getScope() );
-			series.setSecurityLevel( params.getSecurityLevel() );
-			series = (Series) bean.insert(series);
-			return series;
-		}
-		return null;
-	}
-
-	private void insertInvoiceAccountEntry(LoaderParams params,Invoice invoice,LoadedAccountInvoice loaded) throws AonException {
-		IManagerBean invoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
-
-		LoadedAccountEntry loadedAccountEntry = loaded.getLoadedAccountEntry();
-		Integer entryId =  engine.insertAonEntity(params, loadedAccountEntry);
-		AccountEntry entry = (AccountEntry) engine.get(ASI, entryId); 
-		
-		AccountEntryInvoice aei = new AccountEntryInvoice();
-		aei.setAccountEntry(entry);
-		aei.setInvoice(invoice);
-		invoiceBean.insert(aei);
-		
-		String prefix = (invoice.getType() == InvoiceType.SALES) ? "N/Fra" : "S/Fra";
-		if (invoice.getTotal() < 0) {
-			prefix += " " + "ABONO";
-		}
-		prefix += ": ";
-		String concept = StringUtils.abbreviate(prefix + invoice.getReferenceCode(), 32); 
-		
-		LoadedAccountEntryDetail loadedAccountEntryDetail = loaded.getLoadedAccountEntryDetail();
-		loadedAccountEntryDetail.setDocumento(invoice.getDocumentNumber());
-		loadedAccountEntryDetail.setEntry( entry );
-		loadedAccountEntryDetail.setConcepto( concept );
-		engine.ensureAonEntity(params, loadedAccountEntryDetail);
-	}
-
-	private Registry obtainRegistry(LoaderParams params,InvoiceType type, LoadedAccountInvoice loaded) throws AonException {
-		IRegistry r = null;
-		if ( type == InvoiceType.SALES ) {
-			LoadedCustomer loadedCustomer = loaded.getLoadedCustomer();
-			Customer customer = (Customer) engine.ensureAonEntity(params,loadedCustomer);
-			r = customer.getRegistry();
-		} else if ( type == InvoiceType.PURCHASE ) {
-			LoadedSupplier loadedSupplier = loaded.getLoadedSupplier();
-			Supplier supplier = (Supplier) engine.ensureAonEntity(params,loadedSupplier);
-			r = supplier.getRegistry();
-		} else if ( type == InvoiceType.EXPENSES || type == InvoiceType.UNDEDUCTIBLE) {
-			LoadedCreditor loadedCreditor= loaded.getLoadedCreditor();
-			Creditor creditor = (Creditor) engine.ensureAonEntity(params,loadedCreditor);
-			r = creditor.getRegistry();
-		}
-		return r.getRegistry();
-	}
-*/	
+	
 	@Override
 	public ITransferObject get(LoaderParams params, ILoadedPojo loadedPojo) throws AonException {
 		LoadedAccountInvoice loaded = (LoadedAccountInvoice) loadedPojo;
@@ -259,5 +159,11 @@ public class AccountInvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			return (Invoice) list.get(0);
 		}
 		return null;
+	}
+	@Override
+	public void validate(LoaderParams params) throws AonException {
+		if (params.getAccountPeriod() == null) {
+			throw new AonException("No se ha definido un ejercicio contable");
+		}
 	}
 }

@@ -32,6 +32,7 @@ public interface ILoaderFactory<E extends ILoadedPojo> {
 	public Integer insert(LoaderParams params,E loaded) throws AonException;
 	
 	public ITransferObject get(Integer id) throws AonException;
-	public ITransferObject get(LoaderParams params, ILoadedPojo loadedPojo) throws AonException; 
+	public ITransferObject get(LoaderParams params, ILoadedPojo loadedPojo) throws AonException;
+	public void validate(LoaderParams params) throws AonException;
 
 }

@@ -188,4 +188,9 @@ public class TargetLoaderFactory extends RegistryLoaderFactory implements ILoade
 		}
 		return null;
 	}
+	
+	@Override
+	public void validate(LoaderParams params) throws AonException {
+		// Nothing to validate.
+	}
 }

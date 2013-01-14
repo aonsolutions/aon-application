@@ -238,6 +238,11 @@ public class Loader implements ILoaderEngine {
 						if (!getFactoryManager().accept( entity )) {
 							raiseException(i, "La entidad " + entity+" no está soportada.");
 						}
+						try {
+							getFactoryManager().validate( params );
+						} catch (AonException e) {
+							raiseException(i, e.getMessage());
+						}
 						ILoaderFactory<ILoadedPojo> factory = getFactoryManager().getFactory(entity);
 						ILoadedPojo loaded = factory.getTargetBean();
 						parseLine(i,loaded,getColumns().get(entity),StringUtils.substringAfter(line, getSep()));
@@ -417,6 +422,9 @@ public class Loader implements ILoaderEngine {
 			entityIds = new HashMap<String, Integer>();
 			getIds().put(key,entityIds);	
 		}
+		if (StringUtils.isBlank(identifier)) {
+			identifier = Integer.toString(id);
+		}
 		entityIds.put(identifier, id);
 	}
 	
@@ -437,8 +445,8 @@ public class Loader implements ILoaderEngine {
 		if (to == null) {
 			to = factory.get(params, loadedPojo);
 			if (to == null) {
-				insertAonEntity(params, loadedPojo);
-				to = getAonEntity(key, identifier);
+				Integer id = insertAonEntity(params, loadedPojo);
+				to = getAonEntity(key, StringUtils.isBlank(identifier)?Integer.toString(id):identifier);
 			}
 		}
 		return to;

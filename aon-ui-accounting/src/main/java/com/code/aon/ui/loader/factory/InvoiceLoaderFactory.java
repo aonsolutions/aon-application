@@ -165,12 +165,11 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			}
 			loaded.setCuenta(account.getCode());
 		}
-		if (StringUtils.isNotBlank(loaded.getCuenta())) {
+		if (!loaded.isFromLoadedInvoiceAccountWithProduct()) {
 			invoice.setStatus(InvoiceStatus.SCORED);
 		}
 		invoice = (Invoice) bean.insert(invoice);
 		if (invoice.getStatus() == InvoiceStatus.SCORED) {
-			// TODO Crear factory para apuntes.
 			insertInvoiceAccountEntry(params,invoice, loaded);
 		} 
 		return invoice.getId();
@@ -259,6 +258,10 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			return (Invoice) list.get(0);
 		}
 		return null;
+	}
+	@Override
+	public void validate(LoaderParams params) throws AonException {
+		// Nothing to validate.
 	}
 	
 }

@@ -328,7 +328,7 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			product.setCode(loaded.getArticulo());
 			product.setName(loaded.getConcepto());
 			product.setVat( obtainTax( params, TaxType.VAT, loaded ) );
-			if (loaded.getPorcentajeIrpf() != 0) {
+			if (loaded.getPorcentajeIrpf() != null && loaded.getPorcentajeIrpf() != 0) {
 				product.setRetention(obtainTax( params,  TaxType.RETENTION, loaded ) );
 			}
 			product.setCategory( params.getCategory() );
@@ -351,7 +351,7 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TAX_TYPE), type);
 		if (type == TaxType.VAT) {
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TAX_PERCENTAGE), loaded.getPorcentajeIva());
-			if ( loaded.getRe() != 0) {
+			if ( loaded.getRe() != null && loaded.getRe() != 0) {
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TAX_SURCHARGE), loaded.getRe());	
 			}
 		} else {
@@ -388,6 +388,11 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			return ((AccountEntryInvoice) list.get(0)).getAccountEntry();	
 		} 
 		return null;
+	}
+
+	@Override
+	public void validate(LoaderParams params) throws AonException {
+		// Nothing to validate.
 	}
 	
 }

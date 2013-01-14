@@ -42,8 +42,11 @@ public class AccountEntryLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	}
 	
 	@Override
-	public boolean accept(String obj) {
-		return StringUtils.equals(obj,ASI);
+	public boolean accept(String key) {
+		if (StringUtils.equals(key,ASI)) {
+			return true;	
+		}
+		return false;
 	}
 
 	@Override
@@ -100,6 +103,12 @@ public class AccountEntryLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			return (AccountEntry) list.get(0);
 		}
 		return null;
+	}
+	@Override
+	public void validate(LoaderParams params) throws AonException {
+		if (params.getAccountPeriod() == null) {
+			throw new AonException("No se ha definido un ejercicio contable");
+		}
 	}
 	
 }

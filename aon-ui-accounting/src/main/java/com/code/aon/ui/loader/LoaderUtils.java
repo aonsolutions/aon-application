@@ -77,27 +77,27 @@ public class LoaderUtils {
 		if (list != null && list.size() > 0) {
 			return (Account) list.get(0);	
 		} 
-		if (StringUtils.isNotBlank(description)) {
-			Account account = new Account();
-			account.setCode(accountCode);
-			account.setDescription(description);
-			int l = 0;
-			if (StringUtils.length(accountCode) == 9) {
-				l = 4;
-			} else if (StringUtils.length(accountCode) == 4) {
-				l = 3;
-			} if (StringUtils.length(accountCode) == 3) {
-				l = 2;
-			} if (StringUtils.length(accountCode) == 2) {
-				l = 1;
-			}
-			if (l > 1) {
-				String lowLevelAccount = StringUtils.substring(accountCode, 0,l); 
-				ensureAccount(lowLevelAccount,description);
-			}
-			return (Account) bean.insert(account);
+		if (StringUtils.isBlank(description)) {
+			description = "Cuenta: " + accountCode;
 		}
-		return null;
+		Account account = new Account();
+		account.setCode(accountCode);
+		account.setDescription(description);
+		int l = 0;
+		if (StringUtils.length(accountCode) == 9) {
+			l = 4;
+		} else if (StringUtils.length(accountCode) == 4) {
+			l = 3;
+		} if (StringUtils.length(accountCode) == 3) {
+			l = 2;
+		} if (StringUtils.length(accountCode) == 2) {
+			l = 1;
+		}
+		if (l > 1) {
+			String lowLevelAccount = StringUtils.substring(accountCode, 0,l); 
+			ensureAccount(lowLevelAccount,description);
+		}
+		return (Account) bean.insert(account);
 	}
 
 	public Period getAccountPeriod(Date date) throws ManagerBeanException {

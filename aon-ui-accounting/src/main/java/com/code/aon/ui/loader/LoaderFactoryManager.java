@@ -3,6 +3,7 @@ package com.code.aon.ui.loader;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.code.aon.common.AonException;
 import com.code.aon.ui.loader.factory.AccountEntryDetailLoaderFactory;
 import com.code.aon.ui.loader.factory.AccountEntryLoaderFactory;
 import com.code.aon.ui.loader.factory.AccountInvoiceLoaderFactory;
@@ -65,6 +66,13 @@ public class LoaderFactoryManager {
 			}
 		}
 		return null;
+	}
+
+	public void validate(LoaderParams params) throws AonException {
+		for (ILoaderFactory<ILoadedPojo> f : getFactories()) {
+			f.validate(params);
+		}
+		
 	}
 	
 }
