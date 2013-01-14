@@ -3,12 +3,13 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.4641000000000006"/>
-	<property name="ireport.x" value="14"/>
+	<property name="ireport.x" value="142"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
+	<parameter name="valuated" class="java.lang.Boolean"/>
 	<field name="delivery" class="com.code.aon.warehouse.Delivery"/>
 	<field name="item" class="com.code.aon.product.Item"/>
 	<field name="description" class="java.lang.String"/>
@@ -39,7 +40,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{tas_projectTas} + ": " + ((com.code.aon.tas.ProjectTas)$F{delivery}.getSpecificProject()).getReferenceCode()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{tas_projectTas} + ": " + ((com.code.aon.tas.ProjectTas)$F{delivery}.getSpecificProject()).getReferenceCode()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 					<reportElement key="textField-1" positionType="Float" x="100" y="0" width="50" height="14">
@@ -54,7 +55,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.util.Date"><![CDATA[$F{delivery}.getProject().getDate()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{delivery}.getProject().getDate()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement key="textField-1" x="150" y="0" width="166" height="14">
@@ -69,7 +70,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{tas_tasItem} + ": " + ((com.code.aon.tas.ProjectTas)$F{delivery}.getSpecificProject()).getTasItem().getModel().getFullName()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{tas_tasItem} + ": " + ((com.code.aon.tas.ProjectTas)$F{delivery}.getSpecificProject()).getTasItem().getModel().getFullName()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement key="textField-1" x="316" y="0" width="123" height="14">
@@ -84,7 +85,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{tas_publicCode} + ": " + ((com.code.aon.tas.ProjectTas)$F{delivery}.getSpecificProject()).getTasItem().getPublicCode()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{tas_publicCode} + ": " + ((com.code.aon.tas.ProjectTas)$F{delivery}.getSpecificProject()).getTasItem().getPublicCode()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement key="textField-1" x="439" y="0" width="96" height="14">
@@ -99,7 +100,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{tas_odometer_abrv} + ": " + ((com.code.aon.tas.ProjectTas)$F{delivery}.getSpecificProject()).getCounter()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{tas_odometer_abrv} + ": " + ((com.code.aon.tas.ProjectTas)$F{delivery}.getSpecificProject()).getCounter()]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -122,7 +123,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8" isItalic="true" isUnderline="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{item}.getProduct().getType().getName($P{REPORT_LOCALE}) + ":"]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{item}.getProduct().getType().getName($P{REPORT_LOCALE}) + ":"]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -149,7 +150,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_description}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_description}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-7" mode="Opaque" x="461" y="0" width="74" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -162,7 +163,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_total}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-8" mode="Opaque" x="426" y="0" width="35" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -175,7 +176,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_discount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_discount}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-9" mode="Opaque" x="372" y="0" width="54" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -188,7 +189,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_price}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_price}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-10" mode="Opaque" x="317" y="0" width="55" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -201,7 +202,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_quantity}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_quantity}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -218,11 +219,11 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
 				<reportElement key="textField-4" x="426" y="0" width="35" height="14">
-					<printWhenExpression><![CDATA[new Boolean(!$F{discountExpression}.getDiscountExpr().equals("0.0"))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean(!$F{discountExpression}.getDiscountExpr().equals("0.0"))&&$P{valuated}.booleanValue()]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -233,11 +234,11 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{discountExpression}.getDiscountExpr()+" %"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{discountExpression}.getDiscountExpr()+" %"]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00##" isBlankWhenNull="true">
 				<reportElement key="textField-5" x="461" y="0" width="74" height="14">
-					<printWhenExpression><![CDATA[new Boolean($F{quantity}.doubleValue() != 0.0 || $F{price}.doubleValue() != 0.0)]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($F{quantity}.doubleValue() != 0.0 || $F{price}.doubleValue() != 0.0)&&$P{valuated}.booleanValue()]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -248,11 +249,11 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$V{taxableBase}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{taxableBase}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00##" isBlankWhenNull="true">
 				<reportElement key="textField-3" x="372" y="0" width="54" height="14">
-					<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)&&$P{valuated}.booleanValue()]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -263,7 +264,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{price}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{price}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
 				<reportElement key="textField-2" x="317" y="0" width="55" height="14">
@@ -278,7 +279,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{quantity}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band/>
