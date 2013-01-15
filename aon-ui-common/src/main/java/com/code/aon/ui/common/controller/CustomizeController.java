@@ -17,8 +17,6 @@ import static com.code.aon.ui.common.ICommonConstants.TOOLBAR_LOGO_NAME;
 
 import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -34,10 +32,10 @@ import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.hibernate.cfg.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.util.ConnectionProvider;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DataSourceUtil;
 
@@ -148,20 +146,11 @@ public class CustomizeController {
 		}
 	}	
 
-	private Connection getConnection( Properties dbProperties ) throws SQLException {
-		DbUtils.loadDriver(dbProperties.getProperty(Environment.DRIVER));
-		String url = dbProperties.getProperty(Environment.URL);
-		String user = dbProperties.getProperty(Environment.USER);
-		String password = dbProperties.getProperty(Environment.PASS);
-		Connection connection = DriverManager.getConnection(url, user, password);
-		return connection;	
-	}
-	
 	private String getValue( Connection connection, String name ) {
 		QueryRunner run = new QueryRunner();
 		try {
-			ResultSetHandler<Object> h = new ScalarHandler();
-			return (String) run.query( connection, "SELECT value FROM app_param WHERE domain = ? and name = ?", h, domainId, name);
+			ResultSetHandler<String> h = new ScalarHandler<String>();
+			return run.query( connection, "SELECT value FROM app_param WHERE domain = ? and name = ?", h, domainId, name);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		}		
@@ -171,11 +160,12 @@ public class CustomizeController {
 	private Integer getCompanyId( Connection connection ) {
 		QueryRunner run = new QueryRunner();
 		try {
-			ResultSetHandler<Object> h = new ScalarHandler();
-			String value = (String) run.query( connection, "SELECT value FROM app_param WHERE domain = ? and name = ?", h, domainId, AON_CUSTOMIZE_ID);
+			ResultSetHandler<String> hs = new ScalarHandler<String>();
+			String value = run.query( connection, "SELECT value FROM app_param WHERE domain = ? and name = ?", hs, domainId, AON_CUSTOMIZE_ID);
 			if (! StringUtils.isEmpty(value) ) {
 				Integer id = NumberUtils.toInt(value);
-				Long count = (Long) run.query( connection, "SELECT count(id) FROM registry WHERE id = ?", h, id);
+				ResultSetHandler<Long> hl = new ScalarHandler<Long>();
+				Long count = run.query( connection, "SELECT count(id) FROM registry WHERE id = ?", hl, id);
 				if ( count > 0 ) {
 					return id;
 				}
@@ -189,8 +179,8 @@ public class CustomizeController {
 	private Integer getCompanyDomain( Connection connection ) {
 		QueryRunner run = new QueryRunner();
 		try {
-			ResultSetHandler<Object> h = new ScalarHandler();
-			return (Integer) run.query( connection, "SELECT domain FROM registry WHERE id = ?", h, this.companyId);
+			ResultSetHandler<Integer> h = new ScalarHandler<Integer>();
+			return run.query( connection, "SELECT domain FROM registry WHERE id = ?", h, this.companyId);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		}		
@@ -214,8 +204,8 @@ public class CustomizeController {
 	private void updateSupportTelephone( Connection connection ) {
 		QueryRunner run = new QueryRunner();
 		try {
-			ResultSetHandler<Object> h = new ScalarHandler();
-			String value = (String) run.query( connection, "SELECT value FROM rmedia WHERE registry = ? and media = 1", h, this.companyId);
+			ResultSetHandler<String> h = new ScalarHandler<String>();
+			String value = run.query( connection, "SELECT value FROM rmedia WHERE registry = ? and media = 1", h, this.companyId);
 			if (! StringUtils.isEmpty(value) ) {
 				this.supportTelephone = value;
 			}
@@ -227,8 +217,8 @@ public class CustomizeController {
 	private void updateSupportEmail( Connection connection ) {
 		QueryRunner run = new QueryRunner();
 		try {
-			ResultSetHandler<Object> h = new ScalarHandler();
-			String value = (String) run.query( connection, "SELECT value FROM rmedia WHERE registry = ? and media = 4", h, this.companyId);
+			ResultSetHandler<String> h = new ScalarHandler<String>();
+			String value = run.query( connection, "SELECT value FROM rmedia WHERE registry = ? and media = 4", h, this.companyId);
 			if (! StringUtils.isEmpty(value) ) {
 				this.supportEmail = value;
 			}
@@ -276,7 +266,7 @@ public class CustomizeController {
 		Connection connection = null;
 		try {
 			Properties dbProperties = DataSourceUtil.getDBProperties();
-			connection = getConnection(dbProperties);
+			connection =  ConnectionProvider.getConnection(dbProperties);
 			if ( connection != null ) {
 				this.domainId = DataSourceUtil.getDomain(connection, AonUtil.getServerName(), AonUtil.isSkipLdap() );
 				if (this.domainId != null) {

@@ -15,24 +15,26 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{adminBundle.admin_remove_domain}" />
-				<ui:param name="controller" value="#{adminRemoveDomain}" />
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="removeDomainAccept" 
-						value="#{bundle.aon_remove}" 
-						actionListener="#{adminRemoveDomain.onRemove}"
-						reRender="domainFormContainer"
-						disabled="#{adminRemoveDomain.domain == null}"
-						onclick="if (!confirm('#{bundle.aon_remove}?'))  return false;"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"/>
+					<aon:confirmButton id="removeDomainAccept"
+						title="#{bundle.aon_key_remove_accelerator}"
+						value="#{bundle.aon_remove}"
+						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						confirmTitle="#{bundle.aon_confirm_title}"
+						confirmMessage="#{bundle.aon_remove_confirm}"
+						confirmActionListener="#{adminRemoveDomain.onRemove}"
+						confirmOnClick="Richfaces.showModalPanel('waitProccess')"
+						confirmOnComplete="Richfaces.hideModalPanel('waitProccess')"
+						accesskey="#{bundle.aon_key_remove}" />				
 				</ui:define>
 			</ui:decorate>
 
-			<aon:div id="domainFormContainer" styleClass="aon-scroll-area">
+			<aon:div styleClass="aon-scroll-area">
 
 				<aon:div id="domainRemoveWarning" styleClass="aon-scroll-area aon-text-center">
 					<aon:div styleClass="aon-margin-bottom aon-padding aon-bold"
 						 style="color:red; font-size: 1.4em; border: solid 1px red;"
-						 rendered="#{adminRemoveDomain.domain != null}">
+						 rendered="#{adminRemoveDomain.domain.id != null}">
 						<aon:outputText value="#{adminBundle.admin_remove_domain_warning}"/>
 						<aon:outputText value="&#160;"/>
 						<aon:div>
@@ -41,40 +43,26 @@
 					</aon:div>
 				</aon:div>
 
-				<aon:panelGrid columns="2"
-					styleClass="aon-width-all"
-					columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-auto">
+				<aon:panelGrid columns="2">
+				
+					<aon:outputLabel value="#{adminBundle.admin_remove_domain_domain}" for="Domain_id"/>
+					<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{adminRemoveDomain.domain}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="skipLabel" value="#{true}" />							
+						<ui:param name="lookupReRender" value="domainRemoveWarning" /> 
+						<ui:param name="lookupControllerListener" value="#{adminRemoveDomain.domainFilter}" />
+					</ui:include>
 				
 					<aon:outputLabel value="#{securityBundle.aon_security_user_password}" for="passwd"/>
 					<aon:inputSecret id="passwd" required="true" styleClass="aon-inputText"
 						value="#{adminRemoveDomain.password}" size="20" maxlength="20" />
 
-					<aon:outputLabel value="#{adminBundle.admin_remove_domain_domain}" for="domain"/>
-					<aon:div id="domainSelection">
-						<aon:selectOneMenu id="domain" required="true"
-							reRender="removeDomainAccept, domainSelection, domainRemoveWarning"
-							value="#{adminRemoveDomain.domain}">
-							<f:selectItem itemLabel="-" value="#{null}" />
-							<f:selectItems value="#{adminRemoveDomain.domains}" />
-						</aon:selectOneMenu>
-						<aon:outputText value="#{adminRemoveDomain.domain.name}" 
-							rendered="#{adminRemoveDomain.domain != null}"
-							styleClass="aon-margin-left aon-bold" />
-					</aon:div>						
-
-					<aon:outputLabel for="Domain_name" value="#{adminBundle.admin_remove_domain_name}" />
-					<aon:inputText id="Domain_name" required="true" size="50" maxlength="64" 
-						value="#{adminRemoveDomain.domainName}" />
 				</aon:panelGrid>
-				
-				<aon:div styleClass="aon-margin-top"
-					style="background-color:#DDDDDD; font-family: Monospace; padding: 5px;" 
-					rendered="#{adminRemoveDomain.output != null}">
-					<aon:outputText value="#{adminRemoveDomain.output}"
-						escape="false"/>
-				</aon:div>
 				
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{domainLookup}" />
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />		
 	</ui:define>
 </ui:composition>

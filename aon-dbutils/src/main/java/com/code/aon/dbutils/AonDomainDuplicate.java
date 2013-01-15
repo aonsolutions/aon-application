@@ -25,8 +25,6 @@ public class AonDomainDuplicate implements Constants {
 	
 	private static final String TABLE = "TABLE";
 	private static final String TABLE_NAME = "TABLE_NAME";
-	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
-	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
 
 	private static final String[] NO_MERGE_TABLES = new String[] {
 		SESSION_TABLE_NAME, ACTION_ENTRY_TABLE_NAME, DOMAIN_TABLE_NAME

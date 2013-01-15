@@ -39,8 +39,11 @@ public interface IAdminConstants {
 	String WRONG_MAIL_ACCOUNT = "admin_wrong_mail_account";
 	String NEED_MAIL_ACCOUNT = "admin_need_mail_account";
 	String NEW_PASSWORD_ERROR = "admin_new_passwd_error";
+	String INVALID_PASSWORD = "admin_invalid_password";
 	String USER_DUPLICATED = "admin_user_duplicated_login";
 	String DOMAIN_NAME_DUPLICATED = "admin_domain_duplicated_name";
+	String DOMAIN_INVALID_NAME = "admin_domain_invalid_name";
+	String DOMAIN_INVALID_SUFFIX = "admin_domain_invalid_suffix";
 	String DOMAIN_MANAGEMENT = "admin_domain_management";
 	
 	String EMPLOYEE_PORTAL = "admin_employee_portal";

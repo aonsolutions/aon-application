@@ -1,7 +1,12 @@
 package com.code.aon.ui.admin.controller;
 
+import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_SUFFIX;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_NAME_DUPLICATED;
+import static com.code.aon.ui.admin.controller.IAdminConstants.INVALID_PASSWORD;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -12,15 +17,16 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.cfg.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
+import com.code.aon.common.util.ConnectionProvider;
 import com.code.aon.config.Application;
 import com.code.aon.config.Domain;
 import com.code.aon.config.DomainApplication;
@@ -98,23 +104,14 @@ public class NewDomainController {
 		this.templateDomain = templateDomain;
 	}
 	
-	private Connection getConnection( Properties dbProperties ) throws SQLException {
-		DbUtils.loadDriver(dbProperties.getProperty(Environment.DRIVER));
-		String url = dbProperties.getProperty(Environment.URL);
-		String user = dbProperties.getProperty(Environment.USER);
-		String password = dbProperties.getProperty(Environment.PASS);
-		Connection connection = DriverManager.getConnection(url, user, password);
-		return connection;	
-	}	
-
 	public void onInit( ActionEvent event) {
 		setDomainName(null);
 		setDomainDescription(null);
 		setPassword(null);
 		setLoadDefaultValuesEnabled(true);
-		setTemplateDomain(new Domain());
 		
 		try {
+			setTemplateDomain((Domain)BeanManager.getManagerBean(Domain.class).createNewTo());
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 			Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
 			if (StringUtils.isNotBlank( domain.getSubDomainSuffix() )) {
@@ -126,7 +123,7 @@ public class NewDomainController {
 				setDomainSuffix( "." + getDomainSuffix());
 			}
 		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage("No se pudo recuperar el sufijo del dominio padre. Escriba el nombre completo.");
+			AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, DOMAIN_INVALID_SUFFIX);
 		}	
 	}
 	
@@ -138,20 +135,27 @@ public class NewDomainController {
 		return bean.getCount(criteria) > 0;
 	}
 	
+	public static void validateUserPassword( String password ) {
+		User user = UserUtils.getInstance().getLoggedUser();
+		String sent_passwd  = AdminUtil.encodeSHA(password);
+		if (!StringUtils.equals(user.getPassword(), sent_passwd)) {
+			String message = AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, INVALID_PASSWORD);
+			throw new AbortProcessingException(message);
+		}			
+	}
+	
 	public void onSave( ActionEvent event) {
 		String domainFinalName = getDomainName() + getDomainSuffix(); 
 		Pattern p = Pattern.compile("[A-Z\\d][A-Z\\d.-]{1,61}[A-Z\\d]$",Pattern.CASE_INSENSITIVE);
 		Matcher m = p.matcher(domainFinalName);
 		if (!m.matches() ) {
-			String message = "El formato del nombre del dominio no es válido, debe comenzar y terminar por una letra o número. Solo puede contener letras, números y los caracteres '-' (guión) o '.' (punto).";
-			AonUtil.addErrorMessage(message);
+			String message = AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, DOMAIN_INVALID_NAME);
 			throw new AbortProcessingException(message);
 		}
 		
 		try {
 			if ( existsDomainName(domainFinalName) ) {
-				String message = "Ya existe un dominio '" + domainFinalName + "'";
-				AonUtil.addErrorMessage(message);
+				String message = AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, DOMAIN_NAME_DUPLICATED, domainFinalName);
 				throw new AbortProcessingException(message);			
 			}			
 		} catch ( ManagerBeanException e ) {
@@ -159,13 +163,7 @@ public class NewDomainController {
 			throw new AbortProcessingException(e.getMessage());			
 		}
 		
-		User user = UserUtils.getInstance().getLoggedUser();
-		String sent_passwd  = AdminUtil.encodeSHA(getPassword());
-		if (!StringUtils.equals(user.getPassword(), sent_passwd)) {
-			String msg = "La contraseña no es correcta.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}	
+		validateUserPassword(getPassword());
 		
 		Integer newDomainId = null;
 		try {			
@@ -205,12 +203,12 @@ public class NewDomainController {
 		return domain.getId();
 	}
 	
-	private Integer duplicateDomain(Integer parent, String name, String description) throws AonSQLException, SQLException {
+	private Integer duplicateDomain(Integer parent, String name, String description) throws AonSQLException, SQLException, AonException {
 		Integer newDomainId = null;
 		Connection connection = null;
 		try {			
 			Properties properties = DataSourceUtil.getDBProperties();
-			connection = getConnection(properties);				
+			connection = ConnectionProvider.getConnection(properties);				
 			AonDomainDuplicate add = new AonDomainDuplicate(connection);
 			newDomainId = add.execute(getTemplateDomain().getId(), name, description);
 		} finally {
@@ -233,7 +231,7 @@ public class NewDomainController {
 						String active = controller.getFieldName(IEntityAlias.DOMAIN_ACTIVE);
 						controller.getCriteria().addEqualExpression(active, Boolean.TRUE);
 					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering offer", e);
+						LOGGER.error("Error filtering domain", e);
 					}
 				}
 			};
