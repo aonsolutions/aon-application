@@ -207,28 +207,13 @@ public class Salary extends ResizeComposite {
 		
 		salaries = getSalaries(type);
 		
-		SalaryComparator salaryComparator = new SalaryComparator();
-		
-		Collections.sort(salaries, salaryComparator);
-
+		int index = 0;
 		for (com.esferalia.aon.gwt.payroll.shared.Salary salary : salaries) {
-			dateListBox.addItem(DATE_FORMAT.format(salary.getIssueDate()));
-		}
-		
-		
-		int index = Collections.binarySearch(salaries, currentSalary, salaryComparator);
-		if ( index < 0 ) {
-			// index = (-(insertion_point) - 1)
-			// index + 1  = -insertion_point
-			// insertion_point = -index -1)
-			index = -index -1;
-
-			int count = dateListBox.getItemCount();
-			if ( index >= count ){ 
-				index = count -1;
+			dateListBox.addItem(DATE_FORMAT.format(salary.getEndDate()));
+			if ( salary.getEndDate().before(currentSalary.getEndDate()) ){
+				index ++;
 			}
 		}
-		
 		
 		dateListBox.setSelectedIndex(index);
 	}
@@ -253,14 +238,6 @@ public class Salary extends ResizeComposite {
 		}
 		
 		return salaries;
-	}
-	
-	private static class SalaryComparator implements Comparator<com.esferalia.aon.gwt.payroll.shared.Salary> {
-		@Override
-		public int compare(com.esferalia.aon.gwt.payroll.shared.Salary s1,
-				com.esferalia.aon.gwt.payroll.shared.Salary s2) {
-			return s1.getIssueDate().compareTo(s2.getIssueDate());
-		}
 	}
 	
 

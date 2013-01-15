@@ -1,12 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.google.gwt.core.client.GWT;
@@ -41,6 +35,7 @@ public class Cost extends ResizeComposite {
 	interface Binder extends UiBinder<Widget, Cost> {
 	}
 
+
 	private static final Binder binder = GWT.create(Binder.class);
 
 	@UiField
@@ -67,8 +62,6 @@ public class Cost extends ResizeComposite {
 	private int zoom = DEFAULT_ZOOM;
 
 	private CostDocuments costDocuments;
-
-	private List<com.esferalia.aon.gwt.payroll.shared.Cost> costs;
 
 	public Cost() {
 		initWidget(binder.createAndBindUi(this));
@@ -133,7 +126,10 @@ public class Cost extends ResizeComposite {
 			}
 		});
 	}
-
+	
+	/**
+	 * 
+	 */
 	public void setCostDocuments(CostDocuments costDocuments) {
 		this.costDocuments = costDocuments;
 		onCostDocumentsChanged();
@@ -160,52 +156,21 @@ public class Cost extends ResizeComposite {
 	}
 
 	private void onSalaryDateChanged() {
-		com.esferalia.aon.gwt.payroll.shared.Cost currentCost = 
-				costs.get(dateListBox.getSelectedIndex());
-		costDocuments.setCurrent(currentCost);
+		int selected = dateListBox.getSelectedIndex();
+		costDocuments.setCurrentIndex(selected);
 		getAsHTML();
 	}
 	
 
 	private void syncCostDateListBox() {
 		dateListBox.clear();
-
-		com.esferalia.aon.gwt.payroll.shared.Cost currentCost = getCurrentCost();
-
-		costs = getCosts();
-		
-		CostComparator costComparator = new CostComparator();
-		
-		Collections.sort(costs, costComparator);
-
-		for (com.esferalia.aon.gwt.payroll.shared.Cost cost : costs) {
+		for (com.esferalia.aon.gwt.payroll.shared.Cost cost : costDocuments.getCosts()) {
 			Date date = DateUtils.getDate(cost.getMonth(), cost.getYear());
 			dateListBox.addItem(DATE_FORMAT.format(date));
 		}
-		
-		int index = Collections.binarySearch(costs, currentCost, costComparator);
-		
-		dateListBox.setSelectedIndex(index);
+		dateListBox.setSelectedIndex(costDocuments.getCurrentIndex());
 	}
 	
-	
-	private com.esferalia.aon.gwt.payroll.shared.Cost getCurrentCost() {
-		return costDocuments.getCosts().get(costDocuments.getCurrentIndex());
-	}
-	
-	private List<com.esferalia.aon.gwt.payroll.shared.Cost> getCosts(){
-		return costDocuments.getCosts();
-	}
-	
-	
-	private static class CostComparator implements Comparator<com.esferalia.aon.gwt.payroll.shared.Cost> {
-		@Override
-		public int compare(com.esferalia.aon.gwt.payroll.shared.Cost c1,
-				com.esferalia.aon.gwt.payroll.shared.Cost c2) {
-			int compare = c1.getYear() - c2.getYear();
-			return compare == 0 ? c1.getMonth() - c1.getMonth() : compare ;
-		}
-	}
 	
 
 }

@@ -30,6 +30,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		@Source("checkyes.png")
 		ImageResource checkYes();
 
+		@Source("button.png")
+		ImageResource button();
+
 	}
 
 	interface Binder extends UiBinder<Widget, EmployeeTree> {

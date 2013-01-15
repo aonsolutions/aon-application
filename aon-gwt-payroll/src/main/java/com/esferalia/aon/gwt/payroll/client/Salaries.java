@@ -78,11 +78,8 @@ public class Salaries extends Composite implements AsyncCallback<Enterprise>,
 		enterpriseItem.setUserObject(enterprise);
 		tree.addItem(enterpriseItem);
 
-		List<Cost> enterpriseCosts = enterprise.getCosts();
-		ISpinnable<IDocument> documents = new CostDocuments(enterpriseCosts, employeesService);
 		TreeItem enterpriseCostsItem = addImageItem(enterpriseItem, "Costos",
-				enterpriseCosts.size(), images.costs());
-		enterpriseCostsItem.setUserObject(documents);
+				0, images.costs());
 
 		for (Workplace workplace : workplaces) {
 
@@ -92,24 +89,9 @@ public class Salaries extends Composite implements AsyncCallback<Enterprise>,
 					0, images.workplace());
 			workplaceItem.setUserObject(workplace);
 
-			List<Cost> workplaceCosts = workplace.getCosts();
-			ISpinnable<IDocument> workplaceReports = new CostDocuments(
-					workplaceCosts, employeesService);
-
 			TreeItem workplaceCostsItem = addImageItem(workplaceItem, "Costos",
-					enterpriseCosts.size(), images.costs());
-			workplaceCostsItem.setUserObject(workplaceReports);
+					0, images.costs());
 
-			for (Cost cost : workplaceCosts) {
-				Date date = DateUtils.getDate(cost.getMonth(), cost.getYear());
-				String title = StringUtils
-						.capitalize(MONTH_FORMAT.format(date));
-
-				TreeItem salariesItem = addImageItem(workplaceItem, title, 0,
-						images.calendar());
-				salariesItem.setUserObject(new SalaryCostDocuments(cost));
-								
-			}
 
 		}
 

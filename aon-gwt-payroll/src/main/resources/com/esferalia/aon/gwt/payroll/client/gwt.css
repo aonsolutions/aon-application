@@ -44,7 +44,6 @@ a, a:hover, a:visited {
 	background-color: #000;
 	opacity: 0.3;
 	filter: literal("alpha(opacity=30)");
-	z-index: 2;
 }
 
 /* GWT Tree */
@@ -119,6 +118,7 @@ a, a:hover, a:visited {
 }
 
 .gwt-MenuBar .gwt-MenuItem:hover,
+.gwt-MenuBar .gwt-MenuItem-selected,
 .gwt-MenuBar-vertical .gwt-MenuItem-selected,
 .gwt-MenuBar-vertical .subMenuIcon-selected	{
 	border: none;
@@ -173,22 +173,142 @@ a, a:hover, a:visited {
 }
 
 
-
-/*
-@sprite .gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader {
-	gwt-image: "menuBar"; 
-} 
-
-.gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader {
+.aon-CustomDialogTopLeft ,
+.aon-CustomDialogTopCenter ,
+.aon-CustomDialogTopRight,
+.aon-CustomDialogMiddleLeft ,
+.aon-CustomDialogMiddleCenter ,
+.aon-CustomDialogMiddleRight,
+.aon-CustomDialogBottomLeft ,
+.aon-CustomDialogBottomCenter ,
+.aon-CustomDialogBottomRight {
+	margin: 0px;
+	padding: 0px;
 	border: none;
-	cursor: pointer;
-	font-size: 10px;
-	font-weight: bold;
-	background-size:cover;
-	background-repeat: repeat-x;
-	text-transform: uppercase;
+	background: none;
 }
-*/
+
+.gwt-PopupPanelGlass {
+    background-color: #D0D0D0;
+    opacity: 0.5;
+}
+
+.gwt-PopupPanel {
+    padding: 1px;
+	border: 1px solid  #C4C0B9;
+    box-shadow: 2px 2px 5px 1px #BBBBBB;
+}
+
+.gwt-Button{
+	margin: 0px;
+	border : none;
+	color: #000000;
+	font-weight: bold;
+	padding: 3px 5px 6px 5px;
+	
+}
+
+@sprite .gwt-Button{
+	gwt-image : 'button';
+	background-repeat: no-repeat;
+	background-attachment:scroll;
+	background-color: trasparent;
+	background-position: center;
+	color: #000000;
+	font-weight: bold;
+}
+
+.gwt-DateBox{
+	padding: 2px;	
+}
+
+/* DatePicker */
+
+.gwt-DatePicker {
+	border: 1px solid #D4CFC7;
+}
+
+.datePickerMonthSelector  { 
+	background-color: #D4CFC7;	
+}
+
+.datePickerDays,
+td.datePickerMonth,
+.datePickerNextButton ,
+.datePickerPreviousButton { 
+    color: #000000;
+    font-family: Arial,Verdana,sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+
+.datePickerDay, 
+.datePickerWeekdayLabel, 
+.datePickerWeekendLabel {
+    color: #000000;
+    font-size: 12px;
+    font-weight: normal;
+	font-family: Arial,Verdana,sans-serif;
+}
+
+/* label over weekdays */
+.datePickerWeekdayLabel {
+    background: none repeat scroll 0 0 #F1EEE9;
+}
+
+/* label over weekends */
+.datePickerWeekendLabel {
+	color: red;
+    background: none repeat scroll 0 0 #F1EEE9;
+}
+
+/* a weekeend day  */
+.datePickerDayIsWeekend {
+	color :  #FF7800 ;
+    background: none repeat scroll 0 0 #FFEBDA;
+}
+
+/* a day in another month  */
+.datePickerDayIsFiller {
+	color : #A0A0A0;
+}
+
+
+.datePickerDayIsHighlighted {
+	border-color: #FFEBDA;
+	background-color: #F1EEE9;
+}
+
+/* today  */ 
+.datePickerDayIsToday {
+	background: none;
+	border-color: #FFEBDA;
+	font-weight: bold;
+	border-color: #C4C0B9;
+	background-color: #FF7800;
+}
+
+/* the selected day */ 
+.datePickerDayIsValue {
+	border-color: #C4C0B9;
+	background-color: #D4CFC7;
+    font-weight: bold;
+	background: none repeat scroll 0 0 #D4CFC7;
+}
+
+
+.gwt-TextBox {
+	padding: 2px;
+}
+
+.gwt-TextBox:focus,
+.gwt-TextArea:focus,
+.gwt-DateBox:focus {
+	background-color: #FBEDB6
+	
+}
+
 
 .gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader {
 	border: none;

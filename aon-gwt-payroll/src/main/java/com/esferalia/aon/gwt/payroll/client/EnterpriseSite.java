@@ -12,6 +12,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -36,6 +37,10 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 
 		@Source("checkyes.png")
 		ImageResource checkYes();
+		
+		@Source("button.png")
+		ImageResource button();
+		
 	}
 
 	interface Binder extends UiBinder<Widget, EnterpriseSite> {

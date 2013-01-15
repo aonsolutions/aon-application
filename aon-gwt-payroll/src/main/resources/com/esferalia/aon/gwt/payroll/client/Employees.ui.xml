@@ -33,7 +33,7 @@
 	  </g:north>
 	
 	  <g:center>
-	    <g:ScrollPanel>
+	    <g:ScrollPanel ui:field="scrollPanel" >
 	      <g:Tree ui:field="tree"/>
 	    </g:ScrollPanel>
 	  </g:center>

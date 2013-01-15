@@ -87,6 +87,13 @@ public class DateUtils {
 		return lastDayOfMonth;
 	}
 	
+	public static boolean equals(Date d1, Date d2) {
+		if ( d1 == d2 )
+			return true;
+		if ( d1 != null )
+			return d1.equals(d2);
+		return d2.equals(d2);
+	}
 
 	
 }

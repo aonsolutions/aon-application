@@ -15,12 +15,10 @@ public class Enterprise implements Serializable{
 	private int			id;
 	
 	private String 			name;
-	private List<Cost>		costs;
 	private List<Activity>	activities;
 	private List<Workplace> workplaces;
 	
 	public Enterprise() {
-		costs = new LinkedList<Cost>();
 		workplaces = new LinkedList<Workplace>();
 	}
 	
@@ -40,13 +38,6 @@ public class Enterprise implements Serializable{
 		this.name = name;
 	}
 	
-	public List<Cost> getCosts() {
-		return costs;
-	}
-	
-	public void setCosts(List<Cost> costs) {
-		this.costs = costs;
-	}
 	
 	public List<Workplace> getWorkplaces() {
 		return workplaces;

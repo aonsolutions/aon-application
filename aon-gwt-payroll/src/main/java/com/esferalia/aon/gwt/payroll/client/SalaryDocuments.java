@@ -24,7 +24,7 @@ class SalaryDocuments extends AbstractSpinnable<IDocument>
 	public SalaryDocuments(List<Salary> salaries, EmployeesServiceAsync employeesService) {
 		this.salaries = salaries;
 		this.employeesService = employeesService;
-		first();
+		last();
 	}
 
 	@Override

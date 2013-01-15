@@ -3,12 +3,11 @@ package com.esferalia.aon.gwt.payroll.server;
 import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
+import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.PERSON;
-import static com.esferalia.aon.payroll.sql.SQLConstants.RADDRESS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.REGISTRY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
-import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE_ACTIVITY;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
@@ -31,8 +30,11 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
@@ -40,23 +42,20 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
-import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseActivityColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.RaddressColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
@@ -66,8 +65,6 @@ import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
-import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * The server side implementation of the RPC service.
@@ -122,6 +119,49 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	public List<Employee> getEmployees(int workplaceId, Date fromDate, String pattern, int offset, int limit )
+			throws IllegalArgumentException {
+		try {
+			initFacesContext();
+			Connection connection = getConnection();
+			return getEmployees(connection, workplaceId, fromDate, pattern, offset, limit );
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} catch (com.code.aon.ql.util.ExpressionException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();
+		}
+	}
+	
+	
+	public List<Cost> getWorkplaceCosts(int workplaceId)
+			throws IllegalArgumentException {
+		try {
+			initFacesContext();
+			Connection connection = getConnection();
+			return getWorkplaceCosts(connection, workplaceId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();
+		}
+	}
+	
+	public List<Cost> getEnterpriseCosts(int enterpriseId)
+			throws IllegalArgumentException {
+		try {
+			initFacesContext();
+			Connection connection = getConnection();
+			return getEnterpriseCosts(connection, enterpriseId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();
+		}
+	}
+	
+	
 	public String getSalaryReceiptHTML(Salary salary, int zoom)
 			throws IllegalArgumentException {
 
@@ -441,7 +481,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			String sql = "SELECT * " + " FROM " + SALARY + " WHERE " + SALARY
 					+ "." + SalaryColumns.CONTRACT + " = ?" + " ORDER BY "
-					+ SALARY + "." + SalaryColumns.CHARGE_DATE + " DESC";
+					+ SALARY + "." + SalaryColumns.END_DATE + " ASC";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, contractId);
@@ -474,6 +514,69 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	private static List<Employee> getEmployees(Connection connection,
+			Integer workplaceId, Date endDate, String pattern, int offset, int limit ) throws SQLException, 
+			com.code.aon.ql.util.ExpressionException {
+ 
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+
+		try {
+			
+			
+			String sql = "SELECT * " 
+					+ " FROM "  + CONTRACT  
+					+ " ," + PERSON 
+					+ " WHERE " +  ContractColumns.PERSON + " = " + PersonColumns.REGISTRY  
+					+ " AND " + ContractColumns.WORKPLACE + " = ? "
+					+ " AND ( " + ContractColumns.END_DATE + " IS NULL  " 
+					+ 		" OR " + ContractColumns.END_DATE + " >= ? )";
+			if ( pattern != null ) {
+				Criteria surnameCriteria = new Criteria();
+				surnameCriteria.addExpression(ExpressionUtilities.getExpression(pattern, PersonColumns.FIRST_SURNAME));
+				sql = CriteriaUtilities.toSQLString(surnameCriteria, sql);
+			}
+
+			sql += " ORDER BY " + PersonColumns.FIRST_SURNAME
+					+ " ," + PersonColumns.SECOND_SURNAME 
+					+ " ," + ContractColumns.START_DATE + " DESC "
+					+ " LIMIT ?, ? ";
+
+			stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, workplaceId);
+			stmt.setDate(2, new java.sql.Date( endDate.getTime() ) );
+
+			stmt.setInt(3, offset);
+			stmt.setInt(4, limit);
+
+			rs = stmt.executeQuery();
+
+			List<Employee> employees = new LinkedList<Employee>();
+			while (rs.next()) {
+				Employee employee = new Employee();
+				employee.setId(rs.getInt(ContractColumns.ID));
+				employee.setStartDate(rs.getDate(ContractColumns.START_DATE));
+				employee.setEndDate(rs.getDate(ContractColumns.END_DATE));
+
+				employee.setPerson(rs.getInt(PersonColumns.REGISTRY));
+				employee.setName(rs.getString(PersonColumns.NAME));
+				employee.setFirstSurname(rs.getString(PersonColumns.FIRST_SURNAME));
+				employee.setSecondSurName(rs.getString(PersonColumns.SECOND_SURNAME));
+				employees.add(employee);
+			}
+
+			return employees;
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (stmt != null) {
+				rs.close();
+			}
+		}
+	}
+
+
 	private static List<Cost> getEnterpriseCosts(Connection connection,
 			Integer enterpriseId) throws SQLException {
 
@@ -484,19 +587,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			String yearCol = "YEAR";
 			String monthCol = "MONTH";
 
+			// We asume that one enterprise one domain. This way SELECT it's more clear.
 			String sql = "SELECT" + " MONTH(" + SALARY + "."
 					+ SalaryColumns.CHARGE_DATE + ") " + monthCol + ", YEAR("
 					+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol
-					+ " FROM " + ENTERPRISE + ", " + WORKPLACE + ", "
-					+ CONTRACT + ", " + SALARY + " WHERE" + " " + ENTERPRISE
-					+ "." + EnterpriseColumns.REGISTRY + " = " + WORKPLACE
-					+ "." + WorkplaceColumns.ENTERPRISE + " AND " + WORKPLACE
-					+ "." + WorkplaceColumns.ID + " = " + CONTRACT + "."
-					+ ContractColumns.WORKPLACE + " AND " + CONTRACT + "."
-					+ ContractColumns.ID + " = " + SALARY + "."
-					+ SalaryColumns.CONTRACT + " AND " + ENTERPRISE + "."
-					+ EnterpriseColumns.REGISTRY + " = ?" + " GROUP BY 1, 2"
-					+ " ORDER BY 2 DESC , 1 DESC";
+					+ " FROM " + ENTERPRISE + ", " + SALARY 
+					+ " WHERE " + ENTERPRISE + "." + EnterpriseColumns.DOMAIN + " = " + SALARY + "." + SalaryColumns.DOMAIN
+					+ " AND " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = ?" 
+					+ " GROUP BY 1, 2"
+					+ " ORDER BY 2 , 1 ASC ";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, enterpriseId);
@@ -554,7 +653,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					+ " AND " + CONTRACT + "." + ContractColumns.ID + " = "
 					+ SALARY + "." + SalaryColumns.CONTRACT + " AND "
 					+ WORKPLACE + "." + WorkplaceColumns.ID + " = ?"
-					+ " GROUP BY 1, 2" + " ORDER BY 2 DESC , 1 DESC";
+					+ " GROUP BY 1, 2" 
+					+ " ORDER BY 2 , 1 ASC ";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, workplaceId);
@@ -635,78 +735,33 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
-
+		
 		try {
-			String sql = "SELECT * " + " FROM "
-
-					+ REGISTRY
-					+ ", "
-					+ ENTERPRISE
-					
-					// + ", " + WORKPLACE
+			String sql = "SELECT * " 
+					+ " FROM " + REGISTRY
+					+ ", " + ENTERPRISE
 					+ " LEFT JOIN " + WORKPLACE + " ON ( " + ENTERPRISE+ "." + EnterpriseColumns.REGISTRY + " = "+ WORKPLACE + "." + WorkplaceColumns.ENTERPRISE + " )"
-					// + ", " + RADDRESS
-					+ " LEFT JOIN " + RADDRESS + " ON ( " + WORKPLACE + "." + WorkplaceColumns.ADDRESS + " = " + RADDRESS + "." + RaddressColumns.ID + ")"
-					// + ", " + CONTRACT
-					+ " LEFT JOIN " + CONTRACT + " ON ( " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + CONTRACT + "." + ContractColumns.WORKPLACE  + ")"
-					// + ", " + PERSON
-					+ " LEFT JOIN " + PERSON + " ON ( " + CONTRACT + "." + ContractColumns.PERSON + " = " + PERSON + "." + PersonColumns.REGISTRY + ")"
-
-					+ " WHERE " 
-					+ REGISTRY + "." + RegistryColumns.ID + " = ?"
-					+ " AND " + REGISTRY
-					+ "."
-					+ RegistryColumns.ID
-					+ " = "
-					+ ENTERPRISE
-					+ "."
-					+ EnterpriseColumns.REGISTRY
-
-					// + " AND ( " + CONTRACT + "." + ContractColumns.ID +
-					// " ) IN "
-					// + " ( SELECT " + SALARY + "." + SalaryColumns.CONTRACT +
-					// " FROM " + SALARY + " WHERE " + SALARY + "." +
-					// SalaryColumns.END_DATE + " >= ? ) "
-
-					+ " AND ( " + CONTRACT + "." + ContractColumns.END_DATE
-					+ " IS NULL" + " OR " + CONTRACT + "."
-					+ ContractColumns.END_DATE + " >= ? )"
-
-					+ " ORDER BY " + WORKPLACE + "." + WorkplaceColumns.ID
-					+ " ," + PERSON + "." + PersonColumns.FIRST_SURNAME;
+					+ " WHERE " + REGISTRY + "." + RegistryColumns.ID + " = ?"
+					+ " AND " + REGISTRY + "." + RegistryColumns.ID + " = " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY
+					;
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, registryID);
-
-			stmt.setDate(2, getDefaultStartDate());
-			rs = stmt.executeQuery();
-
+			
+			rs  = stmt.executeQuery();
+			
 			EnterpriseHandler enterpriseHandler = new EnterpriseHandler();
 
 			WorkplaceHandler workplaceHandler = new WorkplaceHandler(
 					enterpriseHandler);
-
-			EmployeeHandler employeeHandler = new EmployeeHandler(
-					workplaceHandler);
-
-			groups(rs, enterpriseHandler, workplaceHandler, employeeHandler);
+			
+			groups(rs, enterpriseHandler, workplaceHandler);
 
 			Enterprise enterprise = enterpriseHandler.getEnterprise();
 
-			List<Cost> enterpriseCosts = getEnterpriseCosts(connection,
-					enterprise.getId());
-			enterprise.setCosts(enterpriseCosts);
-
-			List<Workplace> workplaces = enterprise.getWorkplaces();
-			for (Workplace workplace : workplaces) {
-				List<Cost> workplaceCosts = getWorkplaceCosts(connection,
-						workplace.getId());
-				workplace.setCosts(workplaceCosts);
-			}
-			
 			List<Activity> activities = getEnterpriseActivities(connection, enterprise.getId());
 			enterprise.setActivities(activities);
-
+			
 			return enterprise;
 		} finally {
 			if (rs != null) {
@@ -736,8 +791,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					+ ContractColumns.PERSON + " = ? " + " AND " + WORKPLACE
 					+ "." + WorkplaceColumns.ENTERPRISE + " = ? " + " AND "
 					+ SALARY + "." + SalaryColumns.CHARGE_DATE + " <= ? "
-					+ " ORDER BY " + SALARY + "." + SalaryColumns.CHARGE_DATE
-					+ " DESC";
+					+ " ORDER BY " + SALARY + "." + SalaryColumns.END_DATE
+					+ " ASC ";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, personId);
@@ -945,8 +1000,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			workplace = new Workplace();
 			workplace
 					.setId(rs.getInt(tableCol(WORKPLACE, WorkplaceColumns.ID)));
-			workplace.setAddress(rs.getString(tableCol(RADDRESS,
-					RaddressColumns.ADDRESS)));
 			workplace.setDescription(rs.getString(tableCol(WORKPLACE,
 					WorkplaceColumns.DESCRIPTION)));
 
@@ -955,42 +1008,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	private static class EmployeeHandler extends AbstractHandler {
-
-		private WorkplaceHandler workplaceHandler;
-
-		public EmployeeHandler(WorkplaceHandler workplaceHandler) {
-			super(CONTRACT, ContractColumns.ID);
-			this.workplaceHandler = workplaceHandler;
-		}
-
-		@Override
-		public void beginGroup(ResultSet rs) throws SQLException {
-			Employee employee = new Employee();
-			employee.setId(rs.getInt(tableCol(CONTRACT, ContractColumns.ID)));
-
-			Date startDate = rs.getDate(tableCol(CONTRACT,
-					ContractColumns.START_DATE));
-			if (startDate != null) {
-				employee.setStartDate(new Date(startDate.getTime()));
-			}
-
-			Date endDate = rs.getDate(tableCol(CONTRACT,
-					ContractColumns.END_DATE));
-			if (endDate != null) {
-				employee.setEndDate(new Date(endDate.getTime()));
-			}
-			employee.setPerson(rs.getInt(tableCol(PERSON,
-					PersonColumns.REGISTRY)));
-			employee.setName(rs.getString(tableCol(PERSON, PersonColumns.NAME)));
-			employee.setFirstSurname(rs.getString(tableCol(PERSON,
-					PersonColumns.FIRST_SURNAME)));
-			employee.setSecondSurName(rs.getString(tableCol(PERSON,
-					PersonColumns.SECOND_SURNAME)));
-
-			workplaceHandler.getWorkplace().addEmployee(employee);
-		}
-	}
 
 	private static java.sql.Date getMonthStartDate() {
 		Calendar calendar = Calendar.getInstance();
