@@ -9,13 +9,13 @@ public enum SaleInvoiceTemplate implements IResourceable {
 
 	DEFAULT("saleInvoice"),
 	
-	TEMPLATE1("saleInvoiceTemplate2"),
+	STANDARD_01("saleInvoiceTemplate2"),
 	
-	TEMPLATE2("saleInvoiceTemplate3"),
+	STANDARD_02("saleInvoiceTemplate3"),
 	
-	PROF01("saleInvoiceTemplate1"),
+	PROFESSIONAL_01("saleInvoiceTemplate1"),
 	
-	PROF02("saleInvoiceTemplate4"),
+	PROFESSIONAL_02("saleInvoiceTemplate4"),
 	
 	GTA("saleInvoiceGta"),
 	
