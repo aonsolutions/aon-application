@@ -292,8 +292,7 @@ public class FinanceController extends FinanceListController {
 			finance.setRegistryDocumentCountry(registry.getRegistry().getDocumentCountry());
 		}
 		if(isFinanceGroup()){
-			FinanceGroupListController groupListController = (FinanceGroupListController) AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_GROUP_LIST_CONTROLLER_NAME);
-			groupListController.init();
+			refreshFinanceGroupList();
 			finance.setAmount(0.0);
 		}
 	}
@@ -697,6 +696,7 @@ public class FinanceController extends FinanceListController {
 	
 	public void onShowFinanceGroupWindow(ActionEvent event) throws ManagerBeanException{
 		refreshFinanceList();
+		refreshFinanceGroupList();
 		setShowFinanceGroupWindow(true);
 	}
 	
@@ -784,8 +784,14 @@ public class FinanceController extends FinanceListController {
 		return list.isEmpty()?null:(FinanceTracking)list.get(0);
 	}
 
+	private void refreshFinanceGroupList() throws ManagerBeanException {
+		FinanceGroupListController groupListController = (FinanceGroupListController) AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_GROUP_LIST_CONTROLLER_NAME);
+		groupListController.init();
+	}
+	
 	private void refreshFinanceList() throws ManagerBeanException {
 		FinanceListController controller = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
+		controller.clearCheckedFinances();
 		controller.clearCriteria();
 		controller.getCriteria().addEqualExpression(controller.getFieldName(IEntityAlias.FINANCE_REGISTRY_ID), ((Finance)getTo()).getRegistry().getId());
 		Expression expr1 = ExpressionUtilities.getEqualExpression(controller.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);

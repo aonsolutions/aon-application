@@ -68,7 +68,6 @@
 													<aon:commandButton title="#{financeBundle.finance_remove_batch}"
 														styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
 														value="#{financeBundle.finance_remove_group}"
-														rendered="#{financeGroupList.checkedCount > 0}"
 														actionListener="#{finance.onUngroupSelected}" reRender="financeBatchForm,fGroupPanelTabSet"
 														onclick="Richfaces.showModalPanel('waitProccess')" 
 											     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
@@ -147,25 +146,23 @@
 										</c:if>
 					
 										<aon:panelTab id="financeTab" label="#{financeBundle.finance_not_grouped_finances}">
-											<aon:div id="financeToolBarDiv" styleClass="aon-toolbar">
+											<aon:div id="financeToolBarDiv" styleClass="aon-toolbar"
+												rendered="#{financeList.model.rowCount > 0}">
 												<aon:commandButton title="#{bundle.aon_check_all}"
 													styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 													value="#{bundle.aon_check_all}"
-													rendered="#{financeList.model.rowCount > 0}"
 													actionListener="#{financeList.checkAll}" reRender="financeToolBarDiv,financeDataDiv"
 													onclick="Richfaces.showModalPanel('waitProccess')" 
 										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 												<aon:commandButton title="#{bundle.aon_uncheck_all}"
 													styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 													value="#{bundle.aon_uncheck_all}"
-													rendered="#{financeList.model.rowCount > 0}"
 													actionListener="#{financeList.checkNone}" reRender="financeToolBarDiv,financeDataDiv"
 													onclick="Richfaces.showModalPanel('waitProccess')" 
 										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
-												<aon:commandButton title="#{financeBundle.finance_add_batch}"
+												<aon:commandButton title="#{financeBundle.finance_add_group}"
 													styleClass="aon-finding-toolbar-item aon-icon-newFolder"
 													value="#{financeBundle.finance_add_group}"
-													rendered="#{financeList.checkedCount > 0}"
 													actionListener="#{finance.onGroupSelected}" reRender="financeBatchForm,fGroupPanelTabSet"
 													onclick="Richfaces.showModalPanel('waitProccess')" 
 			     									oncomplete="Richfaces.hideModalPanel('waitProccess')" />
@@ -183,7 +180,7 @@
 															<aon:outputText value="#{financeList.checkedCount}" />
 														</f:facet>
 														<aon:selectBooleanCheckbox id="Included_Row_checked"
-															value="#{financeList.rowChecked}"
+															value="#{financeList.rowChecked}" ajaxSingle="true"
 															valueChangeListener="#{financeList.rowSelected}"
 															reRender="showFinanceGroupWindow" />	
 													</aon:column>
