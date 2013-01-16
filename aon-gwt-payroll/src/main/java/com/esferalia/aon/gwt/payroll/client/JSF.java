@@ -40,6 +40,7 @@ public class JSF extends HTML {
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
 				URL.encode(url));
 		try {
+			AON.start();
 			builder.sendRequest(null, new RequestCallback() {
 
 				@Override
@@ -50,9 +51,11 @@ public class JSF extends HTML {
 
 						String html = response.getText();
 						JSF.this.setHTML(html);
+						AON.stop();
 					} else {
 						// Handle the error. Can get the status text from
 						// response.getStatusText()
+						AON.fail();
 					}
 				}
 
@@ -61,6 +64,7 @@ public class JSF extends HTML {
 					// TODO Auto-generated method stub
 					// Couldn't connect to server (could be timeout, SOP
 					// violation, etc.)
+					AON.fail();
 					Window.alert(t.getLocalizedMessage());
 				}
 			});

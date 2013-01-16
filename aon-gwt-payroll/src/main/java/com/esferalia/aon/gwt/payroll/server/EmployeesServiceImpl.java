@@ -523,7 +523,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		try {
 			
-			
 			String sql = "SELECT * " 
 					+ " FROM "  + CONTRACT  
 					+ " ," + PERSON 

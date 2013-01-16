@@ -49,8 +49,6 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	private static final Binder binder = GWT.create(Binder.class);
 
 	@UiField
-	Salaries salaries;
-	@UiField
 	Employees employees;
 	@UiField
 	StackLayoutPanel explorer;
@@ -81,8 +79,6 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		// displayed.
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
-
-		salaries.setDetailPanel(detailPanel);
 
 		jsf = new JSF();
 		cost = new Cost();

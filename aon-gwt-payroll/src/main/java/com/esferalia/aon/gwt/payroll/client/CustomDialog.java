@@ -248,7 +248,7 @@ public class CustomDialog extends PopupPanel implements
 	public CustomDialog() {
 		initWidget();
 		setGlassEnabled(true);
-		setAnimationEnabled(true);
+		setAnimationEnabled(false);
 
 	}
 

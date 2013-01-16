@@ -114,7 +114,8 @@ public class Employees extends ResizeComposite implements
 
 		// Create a remote service proxy to talk to the server-side Employees
 		// service.
-		employeesService = GWT.create(EmployeesService.class);
+		EmployeesServiceAsync employeesServiceRaw = GWT.create(EmployeesService.class);
+		employeesService = new EmployeesServiceAsyncDecorator(employeesServiceRaw);
 
 		initWidget(binder.createAndBindUi(this));
 
@@ -223,6 +224,7 @@ public class Employees extends ResizeComposite implements
 	// From SelectionHandler<TreeItem>
 	@Override
 	public void onSelection(SelectionEvent<TreeItem> event) {
+
 		TreeItem item = event.getSelectedItem();
 		Object userObject = item.getUserObject();
 		// TODO : I know that's so ugly and not Object oriented. But
@@ -230,37 +232,29 @@ public class Employees extends ResizeComposite implements
 		// to change ( even improve ) it soon.
 		if (userObject instanceof Enterprise) {
 			onEnterpriseSelected((Enterprise) userObject);
-			return;
 		}
-		if (userObject instanceof Workplace) {
+		else if (userObject instanceof Workplace) {
 			onWorkplaceSelected((Workplace) userObject);
-			return;
 		}
-		if (userObject instanceof Employee) {
+		else if (userObject instanceof Employee) {
 			onEmployeeSelected((Employee) userObject);
-			return;
 		}
-		if (userObject instanceof SalaryDraftDocument) {
+		else if (userObject instanceof SalaryDraftDocument) {
 			onSalaryDraftSelected((SalaryDraftDocument) userObject);
-			return;
 		}
-		if (userObject instanceof Activity) {
+		else if (userObject instanceof Activity) {
 			onActivitySelected((Activity) userObject);
-			return;
 		}
-		if (userObject instanceof CostDocuments) {
+		else if (userObject instanceof CostDocuments) {
 			onCostsSelected((CostDocuments) userObject);
-			return;
 		}
-		if (userObject instanceof SalaryDocuments) {
+		else if (userObject instanceof SalaryDocuments) {
 			onSalariesSelected((SalaryDocuments) userObject);
-			return;
 		}
-		if (userObject instanceof ISpinnable<?>) {
+		else if (userObject instanceof ISpinnable<?>) {
 			onDocumentsSelected((ISpinnable<IDocument>) userObject);
-			return;
 		}
-
+		
 	}
 
 	@Override
@@ -631,7 +625,7 @@ public class Employees extends ResizeComposite implements
 						boolean nameChanged = 
 								! StringUtils.equalsIgnoreCase(namePattern, newNamePattern) ;
 
-						boolean dateChanged = DateUtils.equals(fromDate, newFromDate) ;
+						boolean dateChanged = ! DateUtils.equals(fromDate, newFromDate) ;
 						
 						if ( nameChanged || dateChanged ) {
 							fromDate = newFromDate;

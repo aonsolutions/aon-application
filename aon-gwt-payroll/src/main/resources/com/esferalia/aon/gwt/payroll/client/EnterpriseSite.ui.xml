@@ -69,18 +69,6 @@
 					</g:header>
 					<employee:Employees ui:field='employees' />
 				</g:stack>
-				<g:stack ui:field="salariesStack" >
-					<g:header size='3'>									
-						<div class='{style.stackHeader}'>
-							<div class='{style.salariesIcon}' />
-							NOMINAS
-						</div>
-					</g:header>
-					<g:ScrollPanel>
-						<employee:Salaries ui:field='salaries' />
-					</g:ScrollPanel>
-				</g:stack>
-
 			</g:StackLayoutPanel>
 
 

@@ -92,7 +92,7 @@ public class DateUtils {
 			return true;
 		if ( d1 != null )
 			return d1.equals(d2);
-		return d2.equals(d2);
+		return d2.equals(d1);
 	}
 
 	
