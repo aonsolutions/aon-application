@@ -65,7 +65,7 @@ public class AccountInvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		,new Column(FRA_CTB,"totalFactura"		,1,17	,false	,null)
 		,new Column(FRA_CTB,"articulo"			,2,15	,false	,null)
 		,new Column(FRA_CTB,"concepto"			,2,64	,false	,null)
-		,new Column(FRA_CTB,"cuentaExplotacion"	,2,9	,false	,null)
+		,new Column(FRA_CTB,"cuentaExplotacion"	,2,9	,true	,null)
 		,new Column(FRA_CTB,"cuentaIva"			,2,9	,false	,null)
 		,new Column(FRA_CTB,"cuentaIrpf"		,2,9	,false	,null)
 		,new Column(FRA_CTB,"fechaVto"			,3,10	,false	,null)
