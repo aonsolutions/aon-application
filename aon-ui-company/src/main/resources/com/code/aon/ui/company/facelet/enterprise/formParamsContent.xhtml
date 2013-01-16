@@ -28,6 +28,7 @@
 		
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/lookup.xhtml" >
 			<ui:param name="lookupTo" value="#{enterpriseParams.agreement}" />
+			<ui:param name="lookupSuffix" value="-enterpriseParam" />
 			<ui:param name="skipNewButton" value="#{true}" />
 			<ui:param name="lookupInputSuggestSize" value="40" />
 		</ui:include>

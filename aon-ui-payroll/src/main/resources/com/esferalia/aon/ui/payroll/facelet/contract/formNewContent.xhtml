@@ -10,16 +10,6 @@
 	<aon:div id="contract_new_panel">
 
 		<aon:panelGrid columns="2" style="width: 80%;" >
-
-			<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-				<ui:param name="lookupTo" value="#{contract.enterprise}" />
-				<ui:param name="skipNewButton" value="#{true}" />
-				<ui:param name="lookupReRender" value="contract_new_panel" />
-				<ui:param name="idRequired" value="#{true}" />
-				<ui:param name="lookupDisabled" value="#{enterpriseLookupDisabled}" />
-				<aon:methodParam name="lookupChangeListener" 
-					value="#{contract.onEnterpriseChanged}" type="lookupChangeListener" />
-			</ui:include>
 			
 			<aon:outputLabel for="workPlace" styleClass="aon-italic aon-margin-left"
 				style="font-size: 0.9em" value="#{companyBundle.company_workplace}" />

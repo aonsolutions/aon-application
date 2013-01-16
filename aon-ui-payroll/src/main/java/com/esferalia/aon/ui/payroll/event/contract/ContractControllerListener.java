@@ -12,24 +12,24 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
-import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class ContractControllerListener extends ControllerAdapter{
 	
@@ -52,12 +52,10 @@ public class ContractControllerListener extends ControllerAdapter{
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
-		Contract contract = (Contract) controller.getTo(); 
+		Contract contract = (Contract) controller.getTo();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Person.class);
 			contract.setPerson((Person) bean.createNewTo());
-			bean = BeanManager.getManagerBean(Enterprise.class);
-			controller.setEnterprise((Enterprise) bean.createNewTo());
 			bean = BeanManager.getManagerBean(CNO.class);
 			controller.getParams().setCno((CNO) bean.createNewTo());
 			bean = BeanManager.getManagerBean(Agreement.class);
@@ -67,6 +65,8 @@ public class ContractControllerListener extends ControllerAdapter{
 			LOGGER.error(msg);
 			throw new ControllerListenerException(msg,e);
 		}
+		PayrollUtils utils = new PayrollUtils();
+		controller.setEnterprise(utils.getCurrentDomainEnterprise());
 		controller.setWorkPlaces(null);
 		controller.setActivities(null);
 		controller.setEnterpriseCCCs(null);

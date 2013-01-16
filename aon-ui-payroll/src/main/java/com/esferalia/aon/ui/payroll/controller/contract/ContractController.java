@@ -292,6 +292,13 @@ public class ContractController extends BasicController implements IVariablesHan
 						getActivities().add(item);
 					}
 				}
+				if( !getActivities().isEmpty() ){
+					Contract contract = (Contract) getTo();
+					contract.setActivity((EnterpriseActivity)getActivities().get(0).getValue());
+					BasicController controller = (BasicController) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_CCC_CONTROLLER);
+					controller.onSelectFirst(null);
+					contract.setEnterpriseCCC((EnterpriseCCC) controller.getTo());
+				}
 			} catch (ManagerBeanException e) {
 				String msg = "Imposible cargar las Actividades de la empresa. (" + e.getMessage() +")";
 				LOGGER.error(msg);

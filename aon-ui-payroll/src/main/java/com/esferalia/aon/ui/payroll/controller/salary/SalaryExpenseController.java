@@ -19,6 +19,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -84,6 +85,9 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 	}
 
 	public Month getMonth() {
+		if(month==null){
+			month = Month.getMonthByValue(CommonUtil.getMonth(Calendar.getInstance().getTime()));
+		}
 		return month;
 	}
 
@@ -92,6 +96,9 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 	}
 
 	public Integer getYear() {
+		if(year==null){
+			year = CommonUtil.getYear(Calendar.getInstance().getTime());
+		}
 		return year;
 	}
 
