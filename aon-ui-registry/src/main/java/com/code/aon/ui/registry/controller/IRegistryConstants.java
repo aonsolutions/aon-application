@@ -45,6 +45,8 @@ public interface IRegistryConstants {
 	
 	String PERSON_CONTROLLER_NAME = "person";
 	
+	String PERSON_FORM_CONTROLLER_NAME = "personForm";
+	
 	String DOCUMENT_MANAGER_CONTROLLER_NAME = "documentManager";
 	
 	String CORPORATE_IDENTITY_ATTACHMENT_CONTROLLER_NAME = "corporateIdentityAttach";

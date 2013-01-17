@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
@@ -15,13 +16,60 @@
 				<f:facet name="header">
 					<aon:outputLabel for="EnterpriseCCC_ccc" value="#{bundle.aon_value}" />
 				</f:facet>
-				<aon:outputText value="#{to.ccc}"
-					rendered="#{formList}" />
-				<aon:inputText id="EnterpriseCCC_ccc" value="#{to.ccc}"
-					rendered="#{formEdit}" required="true" maxlength="11" size="12" />
+				<aon:panelGroup rendered="#{formList}">
+					<aon:outputText value="#{to.ccc}" />
+					<aon:outputText 
+						rendered="#{to.validSSNumber}"
+						styleClass="aon-icon-predetermine"
+						style="padding-left: 15px;"
+						value="&#160;" />
+					<aon:outputText 
+						rendered="#{not empty to.ccc and !to.validSSNumber}"
+						styleClass="aon-icon-exception"
+						style="padding-left: 15px;"
+						value="&#160;" />
+				</aon:panelGroup>
+				<aon:panelGroup id="EnterpriseCCC_SSNumberPanel" rendered="#{formEdit}">
+					<aon:inputText id="EnterpriseCCC_ccc" value="#{to.ccc}"
+						required="true" maxlength="11" size="12" >
+						<f:validateLength minimum="1" maximum="11" />
+						<a4j:support event="onchange"
+							actionListener="#{controller.onChangeCcc}" 
+							reRender="EnterpriseCCC_SSNumberPanel, RegistryAddress_geozone" 
+							ajaxSingle="true" />
+					</aon:inputText>
+					<aon:outputText 
+						rendered="#{to.validSSNumber}"
+						styleClass="aon-icon-predetermine"
+						style="padding-left: 15px;"
+						value="&#160;" />
+					<aon:outputText 
+						rendered="#{not empty to.ccc and !to.validSSNumber}"
+						styleClass="aon-icon-exception"
+						style="padding-left: 15px;"
+						value="&#160;" />
+				</aon:panelGroup>
 				<f:facet name="footer">
-					<aon:inputText id="EnterpriseCCC_ccc-New" value="#{controller.to.ccc}"
-						rendered="#{formNew}" required="true" maxlength="11" size="12" />
+					<aon:panelGroup id="EnterpriseCCC_SSNumberPanel-New" rendered="#{formNew}">
+						<aon:inputText id="EnterpriseCCC_ccc-New" value="#{controller.to.ccc}"
+							required="true" maxlength="11" size="12" >
+							<f:validateLength minimum="1" maximum="11" />
+							<a4j:support event="onchange"
+								actionListener="#{controller.onChangeCcc}" 
+								reRender="EnterpriseCCC_SSNumberPanel-New, RegistryAddress_geozone-New" 
+								ajaxSingle="true" />
+						</aon:inputText>
+						<aon:outputText 
+							rendered="#{controller.to.validSSNumber}"
+							styleClass="aon-icon-predetermine"
+							style="padding-left: 15px;"
+							value="&#160;" />
+						<aon:outputText 
+							rendered="#{not empty controller.to.ccc and !controller.to.validSSNumber}"
+							styleClass="aon-icon-exception"
+							style="padding-left: 15px;"
+							value="&#160;" />
+					</aon:panelGroup>
 				</f:facet>
 			</aon:column>
 			

@@ -8,7 +8,10 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
-	<aon:panelGrid rendered="#{formEdit or formNew}" columns="2" columnClasses="aon-noborder, aon-noborder">
+	<aon:panelGrid columns="2" 
+		rendered="#{formEdit or formNew}" 
+		columnClasses="aon-noborder, aon-noborder">
+		
 		<aon:div rendered="#{formEdit}" style="display: inline;" >
 			<aon:commandButton id="#{inputTextId}_variableExpressionEditor#{editorSuffix}"
 				title="#{(controller.handler.data.enableExpressionEditor)?(payrollBundle.payroll_variable_manual_edit_cancel):(payrollBundle.payroll_variable_manual_edit)}" 
@@ -20,7 +23,7 @@
 		</aon:div>
 			
 		<aon:inputText id="#{inputTextId}_DOUBLE#{editorSuffix}" required="#{required}"
-			rendered="#{variableType=='DOUBLE'}"
+			rendered="#{variableType=='DOUBLE'}" 
 			value="#{controller.handler.expression}" maxlength="128" size="16">
 			<f:validateDoubleRange />
 		</aon:inputText>
@@ -36,7 +39,7 @@
 		</h:selectBooleanCheckbox>
 	
 		<aon:inputText id="#{inputTextId}_STRING#{editorSuffix}" required="#{required}"
-			rendered="#{variableType=='STRING'}" 
+			rendered="#{variableType=='STRING'}" onblur="toUpperCase(this);"
 			value="#{controller.handler.expression}" maxlength="128" size="32" >
 			<f:validateLength maximum="128"/>		
 		</aon:inputText>
@@ -49,7 +52,7 @@
 			popupDateFormat="#{bundle.aon_date_pattern}" />
 	
 		<aon:inputText id="#{inputTextId}_EXPRESSION#{editorSuffix}" required="#{required}"
-			rendered="#{variableType=='EXPRESSION'}" 
+			rendered="#{variableType=='EXPRESSION'}" onblur="toUpperCase(this);"
 			value="#{controller.handler.expression}" maxlength="128" size="32">
 		</aon:inputText>
 	
@@ -89,7 +92,7 @@
 		</aon:selectOneMenu>
 	
 		<aon:inputText id="#{inputTextId}#{editorSuffix}" required="#{required}"
-			rendered="#{variableType=='UNKNOWN' or variableType==null}" ajaxSingle="true"
+			rendered="#{variableType=='UNKNOWN' or variableType==null}" onblur="toUpperCase(this);"
 			value="#{controller.handler.expression}" size="32" maxlength="128" >
 			<f:validateLength maximum="128"/>
 		</aon:inputText>

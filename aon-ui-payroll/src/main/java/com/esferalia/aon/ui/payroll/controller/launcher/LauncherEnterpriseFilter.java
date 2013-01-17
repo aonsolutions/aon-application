@@ -9,15 +9,12 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.company.controller.EnterpriseController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
@@ -225,24 +222,42 @@ public class LauncherEnterpriseFilter {
 	public void onSearchAvailableEnterprises(ActionEvent event) {
 		try {
 			PayrollUtils utils = new PayrollUtils();
-			IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
-			Criteria criteria = new Criteria();
-			criteria.addInExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_DOMAIN), utils.getCurrentChildDomainIds());
-			if(StringUtils.isNotBlank(getName())){
-				criteria.addExpression(ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_REGISTRY_NAME), "%"+getName()+"%"));
-			}
-			if(StringUtils.isNotBlank(getAlias())){
-				criteria.addExpression(ExpressionUtilities.getLikeExpression("Enterprise.registry.alias", "%"+getAlias()+"%"));
-			}
-			if(StringUtils.isNotBlank(getDocument())){
-				criteria.addExpression(ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_REGISTRY_DOCUMENT), "%"+getDocument()+"%"));
-			}
-			criteria.addOrder(bean.getFieldName(IEntityAlias.ENTERPRISE_REGISTRY_NAME));
-			criteria.setSkipDomainFilter(true);
+//			IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
+//			Criteria criteria = new Criteria();
+//			criteria.addInExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_DOMAIN), utils.getCurrentChildDomainIds());
+//			if(StringUtils.isNotBlank(getName())){
+//				criteria.addExpression(ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_REGISTRY_NAME), "%"+getName()+"%"));
+//			}
+//			if(StringUtils.isNotBlank(getAlias())){
+//				criteria.addExpression(ExpressionUtilities.getLikeExpression("Enterprise.registry.alias", "%"+getAlias()+"%"));
+//			}
+//			if(StringUtils.isNotBlank(getDocument())){
+//				criteria.addExpression(ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_REGISTRY_DOCUMENT), "%"+getDocument()+"%"));
+//			}
+//			criteria.addOrder(bean.getFieldName(IEntityAlias.ENTERPRISE_REGISTRY_NAME));
+//			criteria.setSkipDomainFilter(true);
+//			getAvailableList().clear();
+//			for(ITransferObject to: bean.getList(criteria)){
+//				getAvailableList().add((Enterprise) to);
+//			}
+			
+			
+			EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
+			
+			controller.getManagerBean();
+			
+//			controller.getCriteria().addInExpression(controller.getFieldName(IEntityAlias.ENTERPRISE_DOMAIN), utils.getCurrentChildDomainIds());
+//			controller.getCriteria().addOrder(controller.getFieldName(IEntityAlias.ENTERPRISE_REGISTRY_NAME));
+//			controller.getCriteria().setSkipDomainFilter(true);
+			controller.onEditSearch(event);
+			controller.onSearch(event);
 			getAvailableList().clear();
-			for(ITransferObject to: bean.getList(criteria)){
+			for(ITransferObject to: controller.getWrappedList()){
 				getAvailableList().add((Enterprise) to);
 			}
+			
+			
+			
 			getAvailableModel().setWrappedData(getAvailableList());
 		} catch (ManagerBeanException e) {
 			// NADA. se devuelve vacio

@@ -71,20 +71,23 @@
 						title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
 						reRender="#{controller.beanName}VarContainer, #{container}"
 						actionListener="#{controller.handler.onSaveVariable}"
-						styleClass="aon-editDataTable-button aon-icon-accept" />
+						styleClass="aon-editDataTable-button aon-icon-accept"
+						accesskey="#{bundle.aon_key_save_line}" />
 					<aon:commandButton id="paymentVarCancel"
 						title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
 						reRender="#{controller.beanName}VarContainer, #{container}"
 						actionListener="#{controller.handler.onCancelVariable}"
 						immediate="true"
-						styleClass="aon-editDataTable-button aon-icon-cancel" />
+						styleClass="aon-editDataTable-button aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel_line}" />
 					<aon:commandButton id="paymentVarRemove"
 						title="#{bundle.aon_remove} (#{bundle.aon_key_remove_line_accelerator})"
 						rendered="#{controller.handler.data.id!=null}"
 						reRender="#{controller.beanName}VarContainer, #{container}"
 						actionListener="#{controller.handler.onRemoveVariable}"
 						styleClass="aon-editDataTable-button aon-icon-delete"
-						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
+						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
+							accesskey="#{bundle.aon_key_remove_line}" />
 				</aon:div>
 				<f:facet name="footer">
 					<aon:div >			
@@ -93,14 +96,16 @@
 							rendered="#{to==null and controller.handler.new}"
 							reRender="#{controller.beanName}VarContainer, #{container}"
 							actionListener="#{controller.handler.onSaveVariable}"
-							styleClass="aon-editDataTable-button aon-icon-accept" />
+							styleClass="aon-editDataTable-button aon-icon-accept"
+							accesskey="#{bundle.aon_key_save_line}" />
 						<aon:commandButton id="paymentVarCancel-New"
 							title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
 							rendered="#{to==null and controller.handler.new}"
 							reRender="#{controller.beanName}VarContainer, #{container}"
 							actionListener="#{controller.handler.onCancelVariable}"
 							immediate="true"
-							styleClass="aon-editDataTable-button aon-icon-cancel" />
+							styleClass="aon-editDataTable-button aon-icon-cancel"
+							accesskey="#{bundle.aon_key_cancel_line}" />
 					</aon:div>
 				</f:facet>
 			</aon:column>

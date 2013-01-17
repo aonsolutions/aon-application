@@ -221,6 +221,7 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 			} else {
 				data = ((VariableData) getVariablesModel().getRowData()).getVariableData(); 
 			}
+			beforeVariableSaved();
 			data.setName(getData().getName());
 			data.setExpression(getData().getExpression());
 			data.setStartDate(getData().getStartDate());
@@ -239,6 +240,17 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 		initializeVariables(event);
 	}
 	
+	private void beforeVariableSaved() {
+		if(StringUtils.contains(getData().getName()," ")){
+			getData().setName(StringUtils.replace(getData().getName(), " ", ""));
+		}
+		if(getData().getStartDate().after(getData().getEndDate())){
+			String msg = "La fecha inicial no puede ser posterior a la fecha final";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+
 	private void afterVariableSaved() {
 		try {
 			if(this.contractModelCode!=null && getVariableManagerBean().getPOJOClass().equals(ContractData.class)){

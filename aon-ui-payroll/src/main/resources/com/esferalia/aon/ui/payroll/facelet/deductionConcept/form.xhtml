@@ -19,57 +19,12 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="dataTable" columns="2" >
-					
-					<aon:outputLabel for="DeductionConcept_code"
-						value="#{bundle.aon_id}" />
-					<aon:inputText id="DeductionConcept_code" size="15" maxlength="15"
-						value="#{deductionConcept.to.code}" />
-
-					<aon:outputLabel for="DeductionConcept_type"
-						value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="DeductionConcept_type" 
-						value="#{deductionConcept.to.type}">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{payrollCollections.deductionTypes}" />
-					</aon:selectOneMenu>	
-
-					<aon:outputLabel for="DeductionConcept_description"
-						value="#{bundle.aon_description}" />
-					<aon:inputText id="DeductionConcept_description" size="64" maxlength="64"
-						value="#{deductionConcept.to.description}" />
-
-					<aon:outputText value="&#160;"/>
-					<aon:panelGroup>
-						<aon:selectBooleanCheckbox id="DeductionConcept_decorateDescription" value="#{deductionConcept.to.descriptionDecorable}" />
-						<aon:outputLabel for="DeductionConcept_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
-					</aon:panelGroup>
-
-					<aon:outputLabel for="DeductionConcept_expression"
-						value="#{payrollBundle.payroll_salary_expression}" />
-					<aon:inputTextarea id="DeductionConcept_expression" cols="60" rows="3" maxlength="128"
-						value="#{deductionConcept.to.expression}">
-						<f:validateLength maximum="128"/>
-						<a4j:region>
-							<rich:suggestionbox id="DeductionConcept_expression_suggestion"
-								for="DeductionConcept_expression"
-								onselect="suggestionBoxActive=false;"
-								suggestionAction="#{deductionConcept.expressionContext}" var="exp"
-								similarityGroupingId=""
-								tokens=" +-/*%(){}[]"
-								fetchValue="#{exp}"
-								immediate="true" limitToList="true" ajaxSingle="true"
-								eventsQueue="deductionConcept_expressionSug" ignoreDupResponses="true"
-								requestDelay="100" width="500" height="100"
-								nothingLabel="#{bundle.aon_search_no_results}">
-								<aon:column>
-									<aon:outputText value="#{exp}" styleClass="aon-bold"/>
-								</aon:column>
-							</rich:suggestionbox>
-						</a4j:region>
-					</aon:inputTextarea>
-				</aon:panelGrid>
-
+			
+				<ui:include
+					src="/com/esferalia/aon/ui/payroll/facelet/deductionConcept/formContent.xhtml">
+					<ui:param name="controller" value="#{deductionConcept}" />
+				</ui:include>
+			
 			</aon:div>
 		</aon:form>
 	</ui:define>

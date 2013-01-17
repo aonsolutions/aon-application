@@ -16,7 +16,7 @@
 		<aon:outputText value="#{to.name}" rendered="#{formList}" />
 		<aon:div rendered="#{formEdit}" > 
 			<aon:inputText id="#{controller.beanName}_name" required="true"
-				size="16" 
+				size="16" onblur="toUpperCase(this);" 
 				value="#{controller.handler.data.name}"  
 				disabled="#{controller.handler.data.id==null}" >
 				<a4j:support event="onchange" reRender="#{controller.beanName}VarContainer" ajaxSingle="true" />
@@ -32,7 +32,7 @@
 		<f:facet name="footer">
 			<aon:div rendered="#{formNew}" > 
 				<aon:inputText id="#{controller.beanName}_name-New" required="true"
-					size="16" 
+					size="16" onblur="toUpperCase(this);" 
 					value="#{controller.handler.data.name}"  
 					disabled="#{controller.handler.data.id!=null}" >
 					<a4j:support event="onchange" reRender="newVariableEditor" ajaxSingle="true" />
@@ -81,14 +81,14 @@
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>		
 		<aon:selectInputDate id="#{controller.beanName}_startDate" rendered="#{formEdit}"
-			required="true"
+			required="true" direction="top-left"
 			inputSize="10" renderAsPopup="true" enableManualInput="true" 
 			value="#{controller.handler.data.startDate}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 		<f:facet name="footer">
 			<aon:selectInputDate id="#{controller.beanName}_startDate-New" rendered="#{formNew}"
-				required="true"
+				required="true" direction="top-left"
 				inputSize="10" renderAsPopup="true" enableManualInput="true" 
 				value="#{controller.handler.data.startDate}"
 				timeZone="#{timeZoneController.timeZone}"
@@ -105,14 +105,14 @@
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>		
 		<aon:selectInputDate id="#{controller.beanName}_endDate" rendered="#{formEdit}"
-			value="#{controller.handler.data.endDate}" 
+			value="#{controller.handler.data.endDate}" direction="top-left"
 			inputSize="10" renderAsPopup="true" enableManualInput="true"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}">
 		</aon:selectInputDate>
 		<f:facet name="footer">
 			<aon:selectInputDate id="#{controller.beanName}_endDate-New" rendered="#{formNew}"
-				value="#{controller.handler.data.endDate}"
+				value="#{controller.handler.data.endDate}" direction="top-left"
 				inputSize="10" renderAsPopup="true" enableManualInput="true"
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}"/>
