@@ -1,5 +1,7 @@
 package com.code.aon.ui.admin.controller;
 
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -15,12 +17,12 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.common.domain.IDomainProvider;
 import com.code.aon.common.util.ConnectionProvider;
 import com.code.aon.config.Domain;
 import com.code.aon.dbutils.AonDomainRemove;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -37,6 +39,7 @@ public class RemoveDomainController {
 	private Domain domain;
 	private String password;
 	private IControllerListener domainFilter;
+	private boolean domainDisabled;
 	
 	public Domain getDomain() {
 		return domain;
@@ -52,17 +55,27 @@ public class RemoveDomainController {
 		this.password = password;
 	}
 	
-	public void onInit( ActionEvent event) throws ManagerBeanException {
-		reset();
+	public boolean isDomainDisabled() {
+		return domainDisabled;
 	}
 	
-	private void reset() {
-		setPassword(null);
+	public void setDomainDisabled(boolean domainDisabled) {
+		this.domainDisabled = domainDisabled;
+	}
+
+	public void onInit( ActionEvent event) {
 		try {
-			setDomain((Domain)BeanManager.getManagerBean(Domain.class).createNewTo());
+			Domain domain = (Domain)BeanManager.getManagerBean(Domain.class).createNewTo();
+			reset(domain);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}					
+	}
+	
+	public void reset( Domain domain ) {
+		setPassword(null);
+		setDomain(domain);
+		setDomainDisabled(false);
 	}
 	
 	private void removeDomain(Integer domain) throws AonSQLException, SQLException, AonException {
@@ -82,7 +95,9 @@ public class RemoveDomainController {
 		
 		try {			
 			removeDomain(domain.getId());
-			reset();
+			onInit(event);
+			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+			ds.setModel(null);			
 		} catch (Throwable e) {
 			LOGGER.error(">>>> onRemove: ", e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -101,12 +116,9 @@ public class RemoveDomainController {
 						Criteria criteria = controller.getCriteria();
 						criteria.setSkipDomainFilter(true);
 						criteria.addEqualExpression(controller.getFieldName(IEntityAlias.DOMAIN_ACTIVE), Boolean.TRUE);
-						IDomainProvider provider = DomainManager.getDomainProvider();
-						criteria.addNotEqualExpression(controller.getFieldName(IEntityAlias.DOMAIN_ID), provider.getCurrentDomain());
-						Integer parentId = provider.getParentDomain();
-						if ( parentId != null ) {
-							criteria.addEqualExpression(controller.getFieldName(IEntityAlias.DOMAIN_PARENT_ID), parentId);
-						}
+						Integer domainId = DomainManager.getCurrentDomain();
+						criteria.addNotEqualExpression(controller.getFieldName(IEntityAlias.DOMAIN_ID), domainId);
+						criteria.addEqualExpression(controller.getFieldName(IEntityAlias.DOMAIN_PARENT_ID), domainId);
 					} catch (ManagerBeanException e) {
 						LOGGER.error("Error filtering domain", e);
 					}

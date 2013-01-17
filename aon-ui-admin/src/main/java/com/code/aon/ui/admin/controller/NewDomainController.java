@@ -2,10 +2,12 @@ package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_NAME;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_SUFFIX;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_NAME_DUPLICATED;
 import static com.code.aon.ui.admin.controller.IAdminConstants.INVALID_PASSWORD;
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
+import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -34,9 +36,12 @@ import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.dbutils.AonDomainDuplicate;
 import com.code.aon.dbutils.AonSQLException;
+import com.code.aon.dbutils.AonSQLFile;
+import com.code.aon.dbutils.AonSQLScript;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.master.IConstants;
+import com.code.aon.master.VersionManager;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.IController;
@@ -56,8 +61,11 @@ public class NewDomainController {
 	private String domainDescription;
 	private String domainSuffix;
 	private String password;
+	private Domain parentDomain;
 	private Domain templateDomain;
 	private boolean loadDefaultValuesEnabled;
+	private boolean domainManagement;
+	private DomainType type;
 	
 	private IControllerListener templateDomainFilter;
 	
@@ -104,28 +112,60 @@ public class NewDomainController {
 		this.templateDomain = templateDomain;
 	}
 	
+	public boolean isDomainManagement() {
+		return domainManagement;
+	}
+
+	public void setDomainManagement(boolean domainManagement) {
+		this.domainManagement = domainManagement;
+	}
+
+	public DomainType getType() {
+		return type;
+	}
+
+	public void setType(DomainType type) {
+		this.type = type;
+	}
+
+	public Domain getParentDomain() {
+		return parentDomain;
+	}
+	
+	public void setParentDomain(Domain parentDomain) {
+		this.parentDomain = parentDomain;
+	}
+
 	public void onInit( ActionEvent event) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+			Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
+			reset( domain, domain );
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}	
+	}
+	
+	public void reset( Domain parentDomain, Domain suffixDomain ) throws ManagerBeanException {
 		setDomainName(null);
 		setDomainDescription(null);
 		setPassword(null);
 		setLoadDefaultValuesEnabled(true);
-		
-		try {
-			setTemplateDomain((Domain)BeanManager.getManagerBean(Domain.class).createNewTo());
-			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
-			Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
-			if (StringUtils.isNotBlank( domain.getSubDomainSuffix() )) {
-				setDomainSuffix( domain.getSubDomainSuffix() );	
+		setDomainManagement(false);
+		setType(DomainType.ENTERPRISE);
+		setParentDomain(parentDomain);
+		setTemplateDomain((Domain)BeanManager.getManagerBean(Domain.class).createNewTo());
+		if ( suffixDomain != null ) {
+			if (StringUtils.isNotBlank( suffixDomain.getSubDomainSuffix() )) {
+				setDomainSuffix( suffixDomain.getSubDomainSuffix() );	
 			} else {
-				setDomainSuffix( StringUtils.substringAfter(domain.getName(), "." ));
+				setDomainSuffix( StringUtils.substringAfter(suffixDomain.getName(), "." ));
 			}
 			if (!StringUtils.startsWith(getDomainSuffix(), ".")) {
 				setDomainSuffix( "." + getDomainSuffix());
-			}
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, DOMAIN_INVALID_SUFFIX);
-		}	
-	}
+			}				
+		}		
+	}	
 	
 	private boolean existsDomainName( String name ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
@@ -145,10 +185,10 @@ public class NewDomainController {
 	}
 	
 	public void onSave( ActionEvent event) {
-		String domainFinalName = getDomainName() + getDomainSuffix(); 
+		String domainFinalName = getDomainName() + StringUtils.defaultString(getDomainSuffix()); 
 		Pattern p = Pattern.compile("[A-Z\\d][A-Z\\d.-]{1,61}[A-Z\\d]$",Pattern.CASE_INSENSITIVE);
 		Matcher m = p.matcher(domainFinalName);
-		if (!m.matches() ) {
+		if ( (!m.matches()) || (domainFinalName.length() > 64) ) {
 			String message = AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, DOMAIN_INVALID_NAME);
 			throw new AbortProcessingException(message);
 		}
@@ -165,34 +205,53 @@ public class NewDomainController {
 		
 		validateUserPassword(getPassword());
 		
-		Integer newDomainId = null;
+		
 		try {			
 			if ( isLoadDefaultValuesEnabled() ) {
-				newDomainId = createDomain(DomainManager.getCurrentDomain(), domainFinalName, getDomainDescription());
+				Integer newDomain = createDomain(domainFinalName, getDomainDescription());
+				insertDefaults(newDomain);
 			} else {
-				newDomainId = duplicateDomain(getTemplateDomain().getId(), domainFinalName, getDomainDescription());
+				duplicateDomain(getTemplateDomain().getId(), domainFinalName, getDomainDescription());
 			}
-			if ( newDomainId != null ) {
-				DomainSwitcher switcher = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
-				switcher.select(newDomainId, getDomainDescription() );				
-			}
+			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+			ds.setModel(null);			
 		} catch (Throwable e) {
 			LOGGER.error(">>>> onSave: ", e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
+	
+	private void insertDefaults( Integer domain ) throws AonSQLException, AonException, IOException {
+		Connection connection = null;
+		try {			
+			String scriptName = IConstants.INSERT_DOMAIN_DEFAULTS_SCRIPT;
+			if ( getParentDomain() != null ) {
+				scriptName = IConstants.INSERT_DOMAIN_FROM_PARENT_DEFAULTS_SCRIPT;
+			}
+			URL script = VersionManager.getScript(scriptName);
+			AonSQLFile file = new AonSQLFile(script.openStream());
+			file.setFileName(scriptName);
+			Properties properties = DataSourceUtil.getDBProperties();
+			connection = ConnectionProvider.getConnection(properties);
+			AonSQLScript sqlScript = new AonSQLScript(file, connection);
+			sqlScript.setDomain(domain);
+			sqlScript.execute();
+		} finally {
+			DbUtils.closeQuietly(connection);
+		}
+	}		
 
-	private Integer createDomain(Integer parent, String name, String description) throws ManagerBeanException {
+	private Integer createDomain(String name, String description) throws ManagerBeanException {
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();		
 		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 		Domain domain = new Domain();
-		Domain parentDomain = (Domain) bean.get(parent); 
-		domain.setParent( parentDomain );
-		domain.setOwner( principal.getShortName() + "@" + parentDomain.getName() );
+		domain.setDomainManagement( isDomainManagement() );
+		domain.setType( getType() );
+		domain.setParent( getParentDomain() );
+		domain.setOwner( principal.getShortName() + "@" + principal.getDomain() );
 		domain.setName(name);
 		domain.setDescription(description);
-		domain.setType(DomainType.ENTERPRISE);
 		domain.setEnableHeredity(true);
 		bean.insert(domain);
 		DomainApplication da = new DomainApplication(); 
@@ -200,7 +259,7 @@ public class NewDomainController {
 		da.setApplication(application);
 		da.setDomain(domain.getId());
 		BeanManager.getManagerBean(DomainApplication.class).insert(da);
-		return domain.getId();
+		return domain.getId();		
 	}
 	
 	private Integer duplicateDomain(Integer parent, String name, String description) throws AonSQLException, SQLException, AonException {
@@ -214,7 +273,7 @@ public class NewDomainController {
 		} finally {
 			DbUtils.closeQuietly(connection);
 		}
-		return newDomainId;
+		return newDomainId;		
 	}
 	
 	public IControllerListener getTemplateDomainFilter() {
@@ -225,9 +284,15 @@ public class NewDomainController {
 						throws ControllerListenerException {
 					IController controller = event.getController();
 					try {					
-						controller.getCriteria().setSkipDomainFilter(true);
-						String parent = controller.getFieldName(IEntityAlias.DOMAIN_PARENT_ID);
-						controller.getCriteria().addEqualExpression(parent, DomainManager.getCurrentDomain());
+						controller.getCriteria().setSkipDomainFilter(true);						
+						if ( parentDomain != null ) {
+							String parent = controller.getFieldName(IEntityAlias.DOMAIN_PARENT_ID);
+							controller.getCriteria().addEqualExpression(parent, parentDomain.getId());							
+						} else {
+							controller.getCriteria().addNullExpression("Domain.parent");
+						}
+						String type = controller.getFieldName(IEntityAlias.DOMAIN_TYPE);
+						controller.getCriteria().addNotEqualExpression(type, DomainType.ADMIN);
 						String active = controller.getFieldName(IEntityAlias.DOMAIN_ACTIVE);
 						controller.getCriteria().addEqualExpression(active, Boolean.TRUE);
 					} catch (ManagerBeanException e) {

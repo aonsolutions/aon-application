@@ -8,6 +8,9 @@ public interface IConstants {
 	String INSERT_DEFAULT_SCRIPT = "aon";
 	String SCRIPT_SUFFIX = ".sql";	
 	String DATABASE_VERSION_STMT = "SELECT version_number FROM db_version";
+	
+	String INSERT_DOMAIN_DEFAULTS_SCRIPT = INSERT_SCRIPT_PREFIX + "aon.domain.sql";
+	String INSERT_DOMAIN_FROM_PARENT_DEFAULTS_SCRIPT = INSERT_SCRIPT_PREFIX + "aon.domain.from.parent.sql";
 
 	// Este array deber�a ser din�mico, es decir, si se encuentra la manera de leer
 	// el paquete "com/code/aon/master/create", se podr�an sacar las versiones  

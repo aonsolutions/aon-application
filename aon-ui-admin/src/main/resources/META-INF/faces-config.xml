@@ -58,6 +58,35 @@
 			com.code.aon.ui.admin.controller.DomainsController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.Domain</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>domains</value>
+		</managed-property>								
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Domain_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Domain_parent</key>
+					<value>null</value>
+				</map-entry>
+				<map-entry>
+					<key>Domain_id</key>
+					<value>! #{domainSwitcher.domainId}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>							
 	</managed-bean>	
 
 	<!-- ************* DOMAIN ***************** -->
@@ -433,10 +462,6 @@
 		<navigation-case>
 			<from-outcome>adminDomain_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/admin/facelet/adminDomain/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>domains</from-outcome>
-			<to-view-id>/com/code/aon/ui/admin/facelet/domains/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>		
 		

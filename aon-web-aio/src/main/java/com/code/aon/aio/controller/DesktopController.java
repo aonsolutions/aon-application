@@ -3,6 +3,11 @@ package com.code.aon.aio.controller;
 
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.APPLICATION_OPTION_CONTROLLER_NAME;
+import static com.code.aon.ui.audit.controller.IAuditConstants.COMPANY_ENTERPRISE_ACTION;
+import static com.code.aon.ui.audit.controller.IAuditConstants.CONFIGURATION_CATEGORY;
+import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_CONFIG_SECURITY;
+import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_ABSENCE;
 import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_COURSE;
 import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_LOAN;
@@ -45,6 +50,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.User;
+import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.groupware.Note;
 import com.code.aon.groupware.Task;
 import com.code.aon.groupware.TaskHolder;
@@ -67,6 +73,7 @@ import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
@@ -84,6 +91,14 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class DesktopController {
 
 	private static final String HOMEPAGE_DESKTOP = "/homepage.xhtml";
+	
+	private static final String DESKTOP_TEMPLATE = "/facelet/homepage/desktop.xhtml";
+	
+	private static final String ADMIN_TEMPLATE = "/com/code/aon/ui/admin/facelet/domains/list.xhtml";
+	
+	private static final String NEW_COMPANY_TEMPLATE = "/com/code/aon/ui/company/facelet/company/form.xhtml";
+	
+	private static final String PASSWORD_EXPIRED_TEMPLATE = "/com/code/aon/ui/config/facelet/changePassword/expiredPasswordContent.xhtml";
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DesktopController.class);
 
@@ -100,19 +115,26 @@ public class DesktopController {
     private boolean checkUpdateURL = true;
     
     private ApplicationOption homepagOption;
+    
+    private boolean adminDomain;
 
     public DesktopController() {
 		try {
-	        AuthPrincipal principal = AonUtil.getAuthPrincipal();
-			updateRecentNoteModel(principal);
-			updateNoticeSummaryModel(principal);
-			initTask();
-			initGarage();
-			initAcademy();
-			initHotel();
+			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+			this.adminDomain = ds.getType() == DomainType.ADMIN;
+			if ( this.adminDomain ) {
+				initAdminDomain();
+			} else {
+		        AuthPrincipal principal = AonUtil.getAuthPrincipal();
+				updateRecentNoteModel(principal);
+				updateNoticeSummaryModel(principal);
+				initTask();
+				initGarage();
+				initAcademy();
+				initHotel();				
+			}
 			initUser();
 	    } catch (ManagerBeanException e) {
-	    	e.printStackTrace();
 	    	LOGGER.error( e.getMessage(), e );
 	        throw new AbortProcessingException("Error initing desktop models", e);
 		}
@@ -163,7 +185,7 @@ public class DesktopController {
         return noticeSummaryList;
     }
 
-    private void updateRecentNoteModel( AuthPrincipal principal ) throws ManagerBeanException {
+	private void updateRecentNoteModel( AuthPrincipal principal ) throws ManagerBeanException {
     	IManagerBean noteBean = BeanManager.getManagerBean(Note.class);
     	Criteria criteria = new Criteria();    	criteria.addEqualExpression(noteBean.getFieldName(IEntityAlias.NOTE_OWNER_ID), principal.getUserId());
     	criteria.addOrder(noteBean.getFieldName(IEntityAlias.NOTE_DATE), false);
@@ -332,15 +354,18 @@ public class DesktopController {
     }
     
 	public boolean isHideHeaderContent() {
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		boolean hide = companyController.isHideHeaderContent();
-		if (! hide) {
-			if ( UserUtils.getInstance().isPasswordExpired() ) {
-				companyController.setHideHeaderContent(true);
-				return true;
-			}			
+		if (! adminDomain ) {
+			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+			boolean hide = companyController.isHideHeaderContent();
+			if (! hide) {
+				if ( UserUtils.getInstance().isPasswordExpired() ) {
+					companyController.setHideHeaderContent(true);
+					return true;
+				}			
+			}
+			return hide;			
 		}
-		return hide;
+		return false;
 	}
  
 	private void initGarage() {
@@ -407,7 +432,15 @@ public class DesktopController {
 		}
 	}
 	
-	public String getHomepage() {
+	private void initAdminDomain() {
+		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+		String[] categories = new String[]{CONFIGURATION_CATEGORY};
+		String[] groups = new String[]{GROUP_CONFIG_SECURITY};
+		adc.enableOnly(categories, groups, COMPANY_ENTERPRISE_ACTION);
+		AonUtil.getRoleManager().setSysAdmin();
+	}
+	
+	private String getHomepage() {
 		String value = HOMEPAGE_DESKTOP;
 		if ( this.homepagOption != null ) {
 			for( ActionSource as : this.homepagOption.getActionSources() ) {
@@ -417,6 +450,30 @@ public class DesktopController {
 			this.homepagOption = null;
 		}
 		return value;
+	}
+	
+	private boolean hasCompany() {
+		CompanyController company = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+		try {
+			return company.getModel().getRowCount() > 0;
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return false;
+	}
+	
+	public String getViewId() {
+		if ( !(adminDomain || hasCompany()) ) {
+			return NEW_COMPANY_TEMPLATE;
+		}
+		if ( UserUtils.getInstance().isPasswordExpired() ) {
+			return PASSWORD_EXPIRED_TEMPLATE;
+		}
+		return getHomepage();
+	}
+	
+	public String getTemplate() {
+		return adminDomain ?  ADMIN_TEMPLATE : DESKTOP_TEMPLATE;
 	}
 	
 }

@@ -49,7 +49,8 @@
 					<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{adminRemoveDomain.domain}" />
 						<ui:param name="idRequired" value="#{true}" />
-						<ui:param name="skipLabel" value="#{true}" />							
+						<ui:param name="skipLabel" value="#{true}" />					
+						<ui:param name="lookupDisabled" value="#{adminRemoveDomain.domainDisabled}" />		
 						<ui:param name="lookupReRender" value="domainRemoveWarning" /> 
 						<ui:param name="lookupControllerListener" value="#{adminRemoveDomain.domainFilter}" />
 					</ui:include>

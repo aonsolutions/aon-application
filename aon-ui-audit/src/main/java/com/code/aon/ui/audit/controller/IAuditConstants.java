@@ -35,5 +35,15 @@ public interface IAuditConstants {
 	
 	// Messages
 	String AUDIT_LEVEL = "audit_audit_level";
+	
+	// Menu IDs
+	String ENTERPRISE_CATEGORY = "enterprise";
+	String CONFIGURATION_CATEGORY = "configuration";
+	
+	String GROUP_CONFIG_COMPANY = "group_config_company";
+	String GROUP_CONFIG_SECURITY = "group_configuration_security";
+	String GROUP_ENTERPRISE_SECURITY = "group_enterprise_security";
+	
+	String COMPANY_ENTERPRISE_ACTION = "company-enterprise";	
 
 }

@@ -7,17 +7,7 @@
 	template="/facelet/templates/aon.ui.main.xhtml">
 
 	<ui:define name="mainContent">
-		<c:if test="#{(!userUtils.passwordExpired) and (company.model.rowCount > 0)}">
-			<a4j:include id="aonContent" ajaxRendered="false" viewId="#{desktop.homepage}" />
-		</c:if>
-		<c:if test="#{userUtils.passwordExpired and (company.model.rowCount > 0)}">
-			<a4j:include id="aonContent" ajaxRendered="false"
-				viewId="/com/code/aon/ui/config/facelet/changePassword/expiredPasswordContent.xhtml" />
-		</c:if>
-		<c:if test="#{company.model.rowCount == 0}" >
-			<a4j:include id="aonContent" ajaxRendered="false"
-				viewId="/com/code/aon/ui/company/facelet/company/form.xhtml" />
-		</c:if>     		
+		<a4j:include id="aonContent" ajaxRendered="false" viewId="#{desktop.viewId}" />
 	</ui:define>
 
 </ui:composition>

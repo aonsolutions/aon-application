@@ -1,69 +1,65 @@
 package com.code.aon.ui.admin.controller;
 
+import static com.code.aon.ui.admin.controller.IAdminConstants.NEW_DOMAIN_CONTROLLER_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.REMOVE_DOMAIN_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
+import static com.code.aon.ui.audit.controller.IAuditConstants.CONFIGURATION_CATEGORY;
+import static com.code.aon.ui.audit.controller.IAuditConstants.ENTERPRISE_CATEGORY;
+import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_CONFIG_COMPANY;
+import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_CONFIG_SECURITY;
+import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_ENTERPRISE_SECURITY;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Domain;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.config.controller.DomainSwitcher;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class DomainsController {
+public class DomainsController extends BasicController {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainsController.class);
 	
-	private DataModel model;
 	private String filter;
 	private String modelFilter;
 	
-	public String getBeanName() {
-		return IAdminConstants.DOMAINS_CONTROLLER_NAME;
-	}	
-	
-	public void setModel(DataModel model) {
-		this.model = model;
-	}
-	
-	public DataModel getModel() throws ManagerBeanException {
-		if ( (model == null) || (!StringUtils.equals(modelFilter, filter)) ) {
-			LOGGER.info( "modelFilter: {}, filter; {}", modelFilter, filter );
-			initializeModel();
+	public void onChangeFilter( ActionEvent event ) {
+		if ( (!StringUtils.equals(modelFilter, filter)) ) {
+			try {
+				OrderByList orderByList = getCriteria().getOrderByList();
+				clearCriteria();
+				Criteria criteria = getCriteria();
+				String descriptionAlias = getFieldName(IEntityAlias.DOMAIN_DESCRIPTION);
+				if (! StringUtils.isEmpty(filter) ) {
+					String nameAlias = getFieldName(IEntityAlias.DOMAIN_NAME);
+					String text = "%" + this.filter + "%";
+					Expression e1 = ExpressionUtilities.getLikeExpression(nameAlias, text);
+					Expression e2 = ExpressionUtilities.getLikeExpression(descriptionAlias, text);
+					criteria.addExpression( ExpressionUtilities.getOrExpression(e1, e2) );			
+				}
+				criteria.setOrderByList(orderByList);
+				setCriteria(criteria);
+				initializeModel();
+				this.modelFilter = this.filter;
+			} catch (ManagerBeanException e) {
+				LOGGER.error( e.getMessage(), e );
+			}
 		}
-		return model;
-	}
-	
-	private void initializeModel() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
-		Criteria criteria = new Criteria();
-		String descriptionAlias = bean.getFieldName(IEntityAlias.DOMAIN_DESCRIPTION);
-		if (! StringUtils.isEmpty(filter) ) {
-			String nameAlias = bean.getFieldName(IEntityAlias.DOMAIN_NAME);
-			String text = "%" + this.filter + "%";
-			Expression e1 = ExpressionUtilities.getLikeExpression(nameAlias, text);
-			Expression e2 = ExpressionUtilities.getLikeExpression(descriptionAlias, text);
-			criteria.addExpression( ExpressionUtilities.getOrExpression(e1, e2) );			
-		}
-		criteria.addOrder(descriptionAlias);
-		LOGGER.info("search: {}", criteria );
-		setModel(new ListDataModel(bean.getList(criteria)));
-		this.modelFilter = this.filter;
 	}
 	
 	public String getFilter() {
@@ -73,24 +69,47 @@ public class DomainsController {
 	public void setFilter(String filter) {
 		this.filter = filter;
 	}
-	
-	public void onInit(ActionEvent event) {
-		this.model = null;
-		this.modelFilter = null;
-		this.filter = null;
-	}
 
-	public void onSelect(ActionEvent event) throws ManagerBeanException {
-		Domain domain = (Domain) getModel().getRowData();
+	@Override
+	public void onSelect(ActionEvent event) {
+		Domain domain = (Domain) getSelectedTO();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		ds.select(domain.getId(), domain.getDescription());
+		ds.setParentDomain(domain.getId());
 		AonUtil.getRoleManager().setSysAdmin();
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		if (! ObjectUtils.equals( principal.getDomainId(), domain.getId()) )  {
 			ds.setDomainManagementAvailable(true);
 			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
-			adc.enableOnlyConfig();			
+			String[] categories = new String[]{ENTERPRISE_CATEGORY, CONFIGURATION_CATEGORY};
+			String[] groups = new String[]{GROUP_ENTERPRISE_SECURITY, GROUP_CONFIG_SECURITY, GROUP_CONFIG_COMPANY};
+			adc.enableOnly(categories, groups);			
 		}
+	}
+
+	public int getCurrentDomainChildNumber() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			Domain domain = (Domain) getSelectedTO();
+			Criteria criteria = new Criteria();
+			criteria.setSkipDomainFilter(true);
+			criteria.addEqualExpression(getFieldName(IEntityAlias.DOMAIN_PARENT_ID), domain.getId());
+			return getManagerBean().getCount(criteria);
+		}
+		return 0;
+	}
+
+	public void onNewDomain( ActionEvent event) throws ManagerBeanException {
+		NewDomainController ndc = (NewDomainController) AonUtil.getRegisteredBean(NEW_DOMAIN_CONTROLLER_NAME);
+		Domain domain = (Domain) getManagerBean().get(DomainManager.getCurrentDomain());
+		ndc.reset( null, domain );
+		setModel(null);
+	}
+	
+	public void onRemoveDomain( ActionEvent event) throws ManagerBeanException {
+		RemoveDomainController rdc = (RemoveDomainController) AonUtil.getRegisteredBean(REMOVE_DOMAIN_CONTROLLER_NAME);
+		rdc.reset( (Domain) getSelectedTO() );
+		rdc.setDomainDisabled(true);
+		setModel(null);
 	}
 	
 }

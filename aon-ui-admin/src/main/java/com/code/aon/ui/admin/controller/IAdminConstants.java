@@ -18,6 +18,8 @@ public interface IAdminConstants {
 	String DOMAIN_APPLICATION_MODULE_CONTROLLER_NAME = "domainApplicationModule";
 	String PROFILE_ACTION_DENIED_CONTROLLER_NAME = "profileActionDenied";
 	String DOMAINS_CONTROLLER_NAME = "domains";
+	String NEW_DOMAIN_CONTROLLER_NAME = "adminNewDomain";
+	String REMOVE_DOMAIN_CONTROLLER_NAME = "adminRemoveDomain";
 	
 	// Properties
 	String ADVANCED_MODE_USER = "advancedMode_user";
@@ -43,7 +45,6 @@ public interface IAdminConstants {
 	String USER_DUPLICATED = "admin_user_duplicated_login";
 	String DOMAIN_NAME_DUPLICATED = "admin_domain_duplicated_name";
 	String DOMAIN_INVALID_NAME = "admin_domain_invalid_name";
-	String DOMAIN_INVALID_SUFFIX = "admin_domain_invalid_suffix";
 	String DOMAIN_MANAGEMENT = "admin_domain_management";
 	
 	String EMPLOYEE_PORTAL = "admin_employee_portal";

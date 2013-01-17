@@ -18,8 +18,8 @@
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="newDomainAccept" 
 						value="#{bundle.aon_accept}" 
+						action="home"
 						actionListener="#{adminNewDomain.onSave}"
-						action="start"
 						onclick="Richfaces.showModalPanel('waitProccess')"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')"						
 						styleClass="aon-finding-toolbar-item aon-icon-accept"/>
@@ -46,11 +46,13 @@
 							<aon:outputText value="#{adminBundle.admin_new_domain_name_help}"/>
 						</aon:div>
 					</aon:div>
-					<aon:div id="domainNameContainer">
-						<aon:inputText id="NewDomain_name" required="true" size="20" maxlength="20" 
+					<aon:div>
+						<aon:inputText id="NewDomain_name" required="true"
+							size="40" maxlength="64" 
 							value="#{adminNewDomain.domainName}" />
 						<aon:outputText value="#{adminNewDomain.domainSuffix}"
-								styleClass="aon-bold" style="margin-left: 5px;"/>
+							rendered="#{adminNewDomain.domainSuffix != null}" 
+							styleClass="aon-bold" style="margin-left: 5px;"/>
 					</aon:div>
  
 					<aon:div>
@@ -75,14 +77,30 @@
 							<f:selectItem itemValue="#{true}" itemLabel="#{adminBundle.admin_new_domain_defaults_1}" />
 							<f:selectItem itemValue="#{false}" itemLabel="#{adminBundle.admin_new_domain_defaults_2}" />
 						</aon:selectOneMenu>				
-						<aon:div rendered="#{!adminNewDomain.loadDefaultValuesEnabled}" styleClass="aon-margin-top">	
-							<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
-								<ui:param name="lookupTo" value="#{adminNewDomain.templateDomain}" />
-								<ui:param name="idRequired" value="#{true}" />
-								<ui:param name="skipLabel" value="#{true}" />							
-								<ui:param name="lookupControllerListener" value="#{adminNewDomain.templateDomainFilter}" />
-							</ui:include>
-						</aon:div>
+						<c:if test="#{adminNewDomain.loadDefaultValuesEnabled and (adminNewDomain.parentDomain == null)}">
+							<aon:div styleClass="aon-margin-top">
+								<aon:outputLabel for="Domain_domainManagement"
+									value="#{adminBundle.admin_domain_domainManagement}" />
+								<aon:selectBooleanCheckbox id="Domain_domainManagement"
+									value="#{adminNewDomain.domainManagement}" required="true" />
+								<aon:outputLabel for="Domain_type" style="margin-left:1em;"
+									value="#{adminBundle.admin_domain_type}" />
+								<aon:selectOneMenu id="Domain_type" 
+									value="#{adminNewDomain.type}" required="true" >
+									<f:selectItems value="#{adminCollections.newDomainTypes}" />
+								</aon:selectOneMenu>
+							</aon:div>		
+						</c:if>
+						<c:if test="#{!adminNewDomain.loadDefaultValuesEnabled}">
+							<aon:div  styleClass="aon-margin-top">	
+								<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
+									<ui:param name="lookupTo" value="#{adminNewDomain.templateDomain}" />
+									<ui:param name="idRequired" value="#{true}" />
+									<ui:param name="skipLabel" value="#{true}" />							
+									<ui:param name="lookupControllerListener" value="#{adminNewDomain.templateDomainFilter}" />
+								</ui:include>
+							</aon:div>
+						</c:if>
 					</aon:div>
 					
 				</aon:panelGrid>

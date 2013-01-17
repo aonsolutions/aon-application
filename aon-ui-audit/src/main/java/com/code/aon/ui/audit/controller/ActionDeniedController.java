@@ -1,5 +1,13 @@
 package com.code.aon.ui.audit.controller;
 
+import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
+import static com.code.aon.ui.audit.controller.IAuditConstants.APPLICATION_OPTION_CONTROLLER_NAME;
+import static com.code.aon.ui.audit.controller.IAuditConstants.AUDIT_CONTROLLER_NAME;
+import static com.code.aon.ui.audit.controller.IAuditConstants.CONFIGURATION_CATEGORY;
+import static com.code.aon.ui.audit.controller.IAuditConstants.ENTERPRISE_CATEGORY;
+import static com.code.aon.ui.audit.controller.IAuditConstants.MODULES_ENABLED;
+import static com.code.aon.ui.audit.controller.IAuditConstants.PROFILE_DENIED_ACTIONS_ENABLED;
+
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,19 +64,11 @@ import com.esferalia.aon.entity.IEntityAlias;
 /**
  * The Class FavoriteOptionController.
  */
-public class ActionDeniedController implements IAuditConstants {
+public class ActionDeniedController {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ActionDeniedController.class);
 	
-	private final static String ENTERPRISE_CATEGORY = "enterprise";
-	private final static String CONFIGURATION_CATEGORY = "configuration";
-
 	private final static String[] SKIP_CATEGORIES = new String[]{ENTERPRISE_CATEGORY,CONFIGURATION_CATEGORY};
-	
-	private final static String GROUP_CONFIG_COMPANY = "group_config_company";
-	private final static String GROUP_CONFIG_SECURITY = "group_configuration_security";
-	
-	private final static String[] CONFIG_GROUPS = new String[]{GROUP_CONFIG_COMPANY,GROUP_CONFIG_SECURITY};
 	
 	private Map<String,ApplicationOption> deniedActionsMap;
 	
@@ -504,20 +504,26 @@ public class ActionDeniedController implements IAuditConstants {
 		return skipManagedBean;
 	}
 	
-	public void enableOnlyConfig() {
+	public void enableOnly( String[] categories, String[] groups, String ... disableOptionIds ) {
 		this.deniedActionsMap.clear();
 		this.deniedActionsMap.clear();
 		for( ApplicationCategory category : getOptionController().getCategories() ) {
-			if ( CONFIGURATION_CATEGORY.equals(category.getAlias()) ) {
+			if ( ArrayUtils.contains(categories, category.getAlias()) ) {
 				for( OptionGroup group : category.getGroups() ) {
-					if (! ArrayUtils.contains(CONFIG_GROUPS, group.getId()) ) {
+					if (! ArrayUtils.contains(groups, group.getId()) ) {
 						for( ApplicationOption option : group.getOptions() ) {
 							this.deniedActionsMap.put(option.getAction(), option);
 						}
 					}
-				}				
-			} else if (! ENTERPRISE_CATEGORY.equals(category.getAlias()) ) {
-				this.deniedModulesMap.put(category.getAlias(), category);	
+				}								
+			} else {
+				this.deniedModulesMap.put(category.getAlias(), category);
+			}
+		}
+		for( String optionId : disableOptionIds ) {
+			ApplicationOption option = getOptionController().getOptionMap().get(optionId);
+			if ( option != null ) {
+				this.deniedActionsMap.put(option.getAction(), option);
 			}
 		}
 	}

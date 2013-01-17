@@ -30,7 +30,12 @@ public enum DomainType implements IResourceable {
 	/**
      * HOTEL 
      */
-	HOTEL;   
+	HOTEL,
+	
+	/**
+     * ADMIN 
+     */
+	ADMIN;   
     
 	/** Message file base path. */
 	private static final String BASE_NAME = "com.code.aon.config.i18n.messages";

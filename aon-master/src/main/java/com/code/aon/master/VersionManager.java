@@ -43,7 +43,7 @@ public class VersionManager {
 		return getScript(name);
 	}
 
-	public URL getScript(String name) {
+	public static URL getScript(String name) {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		return cl.getResource(name);
 	}

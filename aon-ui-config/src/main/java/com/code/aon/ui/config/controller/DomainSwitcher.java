@@ -124,10 +124,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	}
 	
 	public boolean isParentDomainUserInChildDomain() {
-		if (! isParentDomain() ) {
-			return DomainManager.isParentDomainUserInChildDomain();
-		}
-		return false;
+		return DomainManager.isParentDomainUserInChildDomain();
 	}
 
 	public DataModel getModel() {
@@ -209,6 +206,10 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 		select(getParentDomain(), null);
 	}
 
+	public void onUpperDomain(ActionEvent event){
+		select(AonUtil.getAuthPrincipal().getDomainId(), null);
+	}
+	
 	public void select(Integer id, String name){
 		super.setDomainId(id);
 		setDomainName(name);
@@ -266,7 +267,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 
 	public boolean isEnabledGoToParent() {
 		if ( isParentDomainUserInChildDomain() ) {
-			return ObjectUtils.equals(getParentDomainId(), AonUtil.getAuthPrincipal().getDomainId());
+			return ! ObjectUtils.equals(getDomainId(), AonUtil.getAuthPrincipal().getDomainId());
 		}
 		return false;
 	}
