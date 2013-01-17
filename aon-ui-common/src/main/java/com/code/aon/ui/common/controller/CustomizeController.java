@@ -105,7 +105,7 @@ public class CustomizeController {
 	
 	public CustomizeController() {
 		this.applicationTitle = AonUtil.getMessage("appBundle", APPLICATION_TITLE );
-		this.supportTelephone = AonUtil.getMessage(SUPPORT_TELEPHONE_NUMBER) + " . " + AonUtil.getMessage(SUPPORT_TELEPHONE_NUMBER2);
+		this.supportTelephone = AonUtil.getMessage(SUPPORT_TELEPHONE_NUMBER) + " · " + AonUtil.getMessage(SUPPORT_TELEPHONE_NUMBER2);
 		this.supportEmail = AonUtil.getMessage(SUPPORT_SEND_EMAIL);
 		this.favicon = FAVICON_DEFAULT;
 		this.loginLogo = LOGIN_LOGO_DEFAULT;
