@@ -62,7 +62,7 @@ public class SalaryExporterServlet extends HttpServlet {
 			
 			OutputStream os = resp.getOutputStream();
 			
-			int enterpriseId = -1;//TODO: AonServletUtils.getEnterpriseID(req.getSession());
+			int enterpriseId = AonServletUtils.getEnterpriseID();
 			String salaryReport = AonServletUtils.getSalaryReport(enterpriseId); 
 			
 			reportManager.execute(os, salaryReport);
