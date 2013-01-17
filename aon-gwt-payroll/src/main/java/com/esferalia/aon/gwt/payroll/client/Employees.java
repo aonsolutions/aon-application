@@ -200,7 +200,9 @@ public class Employees extends ResizeComposite implements
 
 		enterpriseItem.setState(true, true);
 		tree.setSelectedItem(enterpriseItem, true);
-
+		
+		scrollPanel.scrollToLeft();
+		
 		initViewButton();
 
 	}
