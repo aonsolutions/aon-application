@@ -65,12 +65,15 @@
 														actionListener="#{financeGroupList.checkNone}" reRender="fGroupDetailToolBarDiv,fGroupDetailDataDiv"
 														onclick="Richfaces.showModalPanel('waitProccess')" 
 											     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
-													<aon:commandButton title="#{financeBundle.finance_remove_batch}"
-														styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
-														value="#{financeBundle.finance_remove_group}"
-														actionListener="#{finance.onUngroupSelected}" reRender="financeBatchForm,fGroupPanelTabSet"
-														onclick="Richfaces.showModalPanel('waitProccess')" 
-											     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+													<aon:div id="removeButton" style="display:inline;" >
+														<aon:commandButton title="#{financeBundle.finance_remove_batch}"
+															styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
+															value="#{financeBundle.finance_remove_group}"
+															rendered="#{not empty financeGroupList.checkedFinances}"
+															actionListener="#{finance.onUngroupSelected}" reRender="financeBatchForm,fGroupPanelTabSet"
+															onclick="Richfaces.showModalPanel('waitProccess')" 
+												     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+													</aon:div>
 												</aon:div>
 												<aon:div id="fGroupDetailDataDiv">
 													<aon:dataTable id="fGroupDetailData" value="#{financeGroupList.model}"
@@ -82,12 +85,18 @@
 														
 														<aon:column>
 															<f:facet name="header">
-																<aon:outputText value="#{financeGroupList.checkedCount}" />
+																<aon:outputText id="groupedCheckedCount" value="#{financeGroupList.checkedCount}" />
 															</f:facet>
 															<aon:selectBooleanCheckbox id="Included_Row_checked"
 																value="#{financeGroupList.rowChecked}"
-																valueChangeListener="#{financeGroupList.rowSelected}"
-																reRender="showFinanceGroupWindow" />	
+																valueChangeListener="#{financeGroupList.rowSelected}" >
+																<a4j:support event="onclick" 
+																	ajaxSingle="true"
+																	ignoreDumpResponses="true"
+																	limitToList="true"
+																	eventsQueue="availableFinances"
+																	reRender="groupedCheckedCount, removeButton" />
+															</aon:selectBooleanCheckbox>	
 														</aon:column>
 												
 														<aon:column>
@@ -160,12 +169,15 @@
 													actionListener="#{financeList.checkNone}" reRender="financeToolBarDiv,financeDataDiv"
 													onclick="Richfaces.showModalPanel('waitProccess')" 
 										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
-												<aon:commandButton title="#{financeBundle.finance_add_group}"
-													styleClass="aon-finding-toolbar-item aon-icon-newFolder"
-													value="#{financeBundle.finance_add_group}"
-													actionListener="#{finance.onGroupSelected}" reRender="financeBatchForm,fGroupPanelTabSet"
-													onclick="Richfaces.showModalPanel('waitProccess')" 
-			     									oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+												<aon:div id="addButton" style="display:inline;" >
+													<aon:commandButton title="#{financeBundle.finance_add_group}"
+														styleClass="aon-finding-toolbar-item aon-icon-newFolder"
+														value="#{financeBundle.finance_add_group}"
+														rendered="#{not empty financeList.checkedFinances}"
+														actionListener="#{finance.onGroupSelected}" reRender="financeBatchForm,fGroupPanelTabSet"
+														onclick="Richfaces.showModalPanel('waitProccess')" 
+				     									oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+												</aon:div>
 											</aon:div>								
 											<aon:div id="financeDataDiv">
 												<aon:dataTable id="financeData" value="#{financeList.model}"
@@ -177,12 +189,18 @@
 													
 													<aon:column>
 														<f:facet name="header">
-															<aon:outputText value="#{financeList.checkedCount}" />
+															<aon:outputText id="availableCheckedCount" value="#{financeList.checkedCount}" />
 														</f:facet>
 														<aon:selectBooleanCheckbox id="Included_Row_checked"
-															value="#{financeList.rowChecked}" ajaxSingle="true"
-															valueChangeListener="#{financeList.rowSelected}"
-															reRender="showFinanceGroupWindow" />	
+															value="#{financeList.rowChecked}" 
+															valueChangeListener="#{financeList.rowSelected}" >
+															<a4j:support event="onclick"
+																ajaxSingle="true"
+																ignoreDumpResponses="true"
+																limitToList="true"
+																eventsQueue="availableFinances"
+																reRender="availableCheckedCount, addButton" />
+														</aon:selectBooleanCheckbox>	
 													</aon:column>
 													
 													<aon:column>
