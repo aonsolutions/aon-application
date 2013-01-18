@@ -12,9 +12,9 @@
 		value="#{expenseInvoice.financeGenerationMode}"
 		valueChangeListener="#{expenseInvoice.onFinanceGenerationModeChanged}"
 	 	reRender="expenseInvoiceForm">
-		<f:selectItem itemLabel="Automatico" itemValue="0" />
-		<f:selectItem itemLabel="Manual" itemValue="1" />
-		<f:selectItem itemLabel="No Generar" itemValue="-1" />
+		<f:selectItem itemLabel="#{financeBundle.finance_automatic}" itemValue="0" />
+		<f:selectItem itemLabel="#{financeBundle.finance_manual}" itemValue="1" />
+		<f:selectItem itemLabel="#{financeBundle.finance_not_generate}" itemValue="-1" />
 	</aon:selectOneRadio>				
 
 	<aon:outputLabel for="Finance_DueDate" value="#{financeBundle.finance_finance_date}"
@@ -46,7 +46,7 @@
 	</aon:selectOneMenu>
 
 	<aon:div rendered="#{expenseInvoice.financeGenerationMode == 1}">
-		<aon:outputLabel for="Bank_id" value="#{configBundle.config_bank}" />
+		<aon:outputLabel for="Bank_id-Invoice" value="#{configBundle.config_bank}" />
 		<aon:outputText value=" - #{configBundle.config_bank_account}" />
 	</aon:div>
 	<aon:div id="InvoiceFinance_bankAccount_panel" styleClass="aon-nowrap" rendered="#{expenseInvoice.financeGenerationMode == 1}">
@@ -54,7 +54,7 @@
 			<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
 				<ui:param name="lookupTo" value="#{expenseInvoiceFinance.to.bank}" />
 				<ui:param name="skipLabel" value="#{true}" />
-				<ui:param name="lookupRendered" value="#{formEdit}" />
+				<ui:param name="lookupSuffix" value="-Invoice" />
 				<ui:param name="lookupReRender" value="InvoiceFinance_bankAccount" />
 				<aon:methodParam name="lookupChangeListener"
 					value="#{expenseInvoiceFinance.onBankChanged}" type="lookupChangeListener" />
