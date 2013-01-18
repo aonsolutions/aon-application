@@ -3,28 +3,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-  <application>
-    <resource-bundle>
-      <base-name>com.code.aon.ui.account.bridge.i18n.messages</base-name>
-      <var>accountBridgeBundle</var>
-    </resource-bundle>
-  </application>
-
-	<managed-bean>
-		<managed-bean-name>accountBridgeCollections</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.account.bridge.controller.AccountBridgeCollectionsController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>productAccountListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.account.bridge.event.ProductAccountListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
+	<application>
+	    <resource-bundle>
+	      <base-name>com.code.aon.ui.account.bridge.i18n.messages</base-name>
+	      <var>accountBridgeBundle</var>
+	    </resource-bundle>
+	</application>
 
 	<managed-bean>
 		<managed-bean-name>accountControllerCascadeListener</managed-bean-name>
@@ -74,22 +58,6 @@
 		</managed-property>
 	</managed-bean>
 
-	<managed-bean>
-		<managed-bean-name>taxAccountListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.account.bridge.event.TaxAccountListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>bankConceptAccountListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.account.bridge.event.BankConceptAccountListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
 	<!-- ************************************** -->
 	<!-- ********** MANTO. CUENTAS ************ -->
 	<!-- ************************************** -->
@@ -123,9 +91,7 @@
 				<value>#{accountManagerCreditorListener}</value>
 				<value>#{accountManagerSupplierListener}</value>
 				<value>#{accountManagerRegistryBankListener}</value>
-				<value>#{accountManagerTaxListener}</value>
 				<value>#{accountManagerLoanListener}</value>
-				<value>#{accountManagerProductListener}</value>
 				<value>#{accountManagerPayMethodTypeListener}</value>
 			</list-entries>
 		</managed-property>
@@ -338,56 +304,6 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>accountManagerTaxListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>accountManagerTax</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>TaxAccount_account_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>accountManagerTax</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.account.bridge.TaxAccount</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>accountManagerTax</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>accountManager</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>account.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>		
-	</managed-bean>
-
-	<managed-bean>
 		<managed-bean-name>accountManagerLoanListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
@@ -437,57 +353,6 @@
 		</managed-property>		
 	</managed-bean>
 
-	<managed-bean>
-		<managed-bean-name>accountManagerProductListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>accountManagerProduct</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>ProductAccount_account_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>accountManagerProduct</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.account.bridge.controller.ProductAccountManager</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.account.bridge.ProductAccount</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>accountManagerProduct</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>accountManager</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>account.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>		
-	</managed-bean>
-
-	
 	<managed-bean>
 		<managed-bean-name>accountManagerPayMethodTypeListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>

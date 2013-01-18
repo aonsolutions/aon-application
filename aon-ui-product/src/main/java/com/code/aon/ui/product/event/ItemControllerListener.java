@@ -28,6 +28,10 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
     @Override
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
     	Item item = (Item)event.getController().getTo();
+        item.setStatus(ProductStatus.ACTIVE);
+        item.getProduct().setType(ProductType.COMMERCIAL_PRODUCT);
+        item.getProduct().setInventoriable(false);
+        item.getProduct().setComposition(false);
     	try {
             ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
         	List<?> vats = collections.getVatTaxes();
@@ -38,39 +42,57 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
         } catch (ManagerBeanException e) {
             throw new ControllerListenerException(e.getMessage(), e);
         }
-        item.setStatus(ProductStatus.ACTIVE);
-        item.getProduct().setType(ProductType.COMMERCIAL_PRODUCT);
-        item.getProduct().setInventoriable(false);
-        item.getProduct().setComposition(false);
     }
 
-	@Override
+    @Override
+    public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		try {
+			Item item = (Item)event.getController().getTo();
+
+			IManagerBean productBean = BeanManager.getManagerBean(Product.class);
+			productBean.initializePOJO(item.getProduct());
+		} catch (ManagerBeanException e) {
+            throw new ControllerListenerException(e.getMessage(), e);
+		}
+    }
+
+    @Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		if (event.getController().isNew()) {
-			try {
-				IManagerBean productBean = BeanManager.getManagerBean(Product.class);
-				Item item = (Item)event.getController().getTo();
-				if (item.getStatus() == null) {
-					item.setStatus(ProductStatus.ACTIVE);
-				}
-				Product product = item.getProduct();
-				product.setStatus(item.getStatus());
-				if (product.getBrand() != null && product.getBrand().getId() == null) {
-					product.setBrand(null);
-				}
-				if (product.getVat() == null || product.getVat().getId() == null) {
-					ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
-		        	List<?> vats = collections.getVatTaxes();
-		        	if (vats.size() > 0) {
-		        		Tax vat = (Tax)((SelectItem)vats.get(0)).getValue();
-		        		item.getProduct().setVat(vat);
-		        	}
-				}
-				product = (Product) productBean.insert(item.getProduct());
-				item.setProduct(product);
-			} catch (ManagerBeanException e) {
-                throw new ControllerListenerException(e.getMessage(), e);
+		try {
+			Item item = (Item)event.getController().getTo();
+			if (item.getStatus() == null) {
+				item.setStatus(ProductStatus.ACTIVE);
 			}
+			item.getProduct().setStatus(item.getStatus());
+			if (item.getProduct().getVat() == null || item.getProduct().getVat().getId() == null) {
+				ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+	        	List<?> vats = collections.getVatTaxes();
+	        	if (vats.size() > 0) {
+	        		Tax vat = (Tax)((SelectItem)vats.get(0)).getValue();
+	        		item.getProduct().setVat(vat);
+	        	}
+			}
+
+			IManagerBean productBean = BeanManager.getManagerBean(Product.class);
+			productBean.restoreNullSubPOJOs(item.getProduct());
+		} catch (ManagerBeanException e) {
+            throw new ControllerListenerException(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		try {
+			Item item = (Item)event.getController().getTo();
+			if (item.getStatus() == null) {
+				item.setStatus(ProductStatus.ACTIVE);
+			}
+			item.getProduct().setStatus(item.getStatus());
+
+			IManagerBean productBean = BeanManager.getManagerBean(Product.class);
+			productBean.restoreNullSubPOJOs(item.getProduct());
+		} catch (ManagerBeanException e) {
+            throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 

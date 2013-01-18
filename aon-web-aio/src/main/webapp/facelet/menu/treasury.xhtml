@@ -69,30 +69,23 @@
 								</aon:div>
 							</aon:panelGrid>
 	
-							<aon:panelGrid id="group_treasury_bank_statement"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-statement aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{financeBundle.finance_statement_menu}" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<c:if test="#{bankStatement.availableRegistryBanks > 0}">
+							<c:if test="#{bankStatement.availableRegistryBanks > 0}">
+								<aon:panelGrid id="group_treasury_bank_statement"
+									styleClass="aon-width-all" columnClasses="aon-padding"
+									headerClass="aon-icon-statement aon-direct-access-panel">
+									<f:facet name="header">
+										<aon:outputText value="#{financeBundle.finance_statement_menu}" />
+									</f:facet>
+									<aon:div styleClass="aon-direct-access-list">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="bankStatement"
 												action="bankStatement_search"
 												actionListener="#{bankStatement.onEditSearch}"
 												value="#{financeBundle.finance_bank_statement_module}"/>
 										</aon:div>
-									</c:if>
-									<c:if test="#{aonRole.config}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="bankConcept"
-												action="bankConcept" 
-												value="#{financeBundle.finance_bank_concept_module}" />
-										</aon:div>
-									</c:if>
-								</aon:div>
-							</aon:panelGrid>
+									</aon:div>
+								</aon:panelGrid>
+							</c:if>
 	
 						</aon:panelGroup>
 	

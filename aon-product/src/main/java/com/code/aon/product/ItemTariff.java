@@ -48,7 +48,7 @@ public class ItemTariff extends ItemTariffDB implements IPriceable {
 	}
 	public double getSalesPrice(double price) {
 		double vatQuota = (getVat() != null) ? CommonUtil.round(price * getVat().getPercentage() / 100) : 0;
-		double retentionQuota = (getRetention() != null) ? CommonUtil.round(price * getRetention().getPercentage() / 100) : 0;
+		double retentionQuota = (getItem().getProduct().isWithholding()) ? CommonUtil.round(price * getRetention().getPercentage() / 100) : 0;
 		return CommonUtil.round(CommonUtil.round(price) + vatQuota - retentionQuota);
 	}
 	public void setSalesPrice(double salesPrice) {
@@ -61,6 +61,6 @@ public class ItemTariff extends ItemTariffDB implements IPriceable {
 
 	@Transient
 	public Tax getRetention() {
-		return getItem().getProduct().getRetention();
+		return (getItem().getProduct().isWithholding()) ? getItem().getProduct().getRetention() : null;
 	}
 }

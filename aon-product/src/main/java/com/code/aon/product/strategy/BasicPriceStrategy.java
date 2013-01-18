@@ -152,8 +152,8 @@ public class BasicPriceStrategy implements IPriceStrategy {
 					map.put(vat.getId(), vatBreakDown);
 				}
 
-				Tax retention = calc.getItem().getProduct().getRetention();
-				if ((ignoreTaxFree || !iti.isRetentionFree())&& iti.isWithholding() && retention != null && retention.getId() != null) {
+				if ((ignoreTaxFree || !iti.isRetentionFree()) && iti.isWithholding() && calc.getItem().getProduct().isWithholding()) {
+					Tax retention = calc.getItem().getProduct().getRetention();
 					TaxBreakDown retentionBreakDown;
 					if (map.containsKey(retention.getId())) {
 						retentionBreakDown = map.get(retention.getId());

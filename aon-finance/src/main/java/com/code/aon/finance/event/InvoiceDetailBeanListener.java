@@ -44,7 +44,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			InvoiceTax detailVat = getInvoiceTax(detail, detail.getItem().getProduct().getVat());
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 			invoiceTaxBean.insert(detailVat);
-			if (detail.getInvoice().isWithholding() && detail.getItem().getProduct().getRetention() != null) {
+			if (detail.getInvoice().isWithholding() && detail.getItem().getProduct().isWithholding()) {
 				InvoiceTax detailRetention = getInvoiceTax(detail, detail.getItem().getProduct().getRetention());
 				invoiceTaxBean.insert(detailRetention);
 			}
@@ -86,7 +86,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 				InvoiceTax detailVat = getInvoiceTax(detail, detail.getItem().getProduct().getVat());
 				IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 				invoiceTaxBean.insert(detailVat);
-				if (detail.getInvoice().isWithholding() && detail.getItem().getProduct().getRetention() != null) {
+				if (detail.getInvoice().isWithholding() && detail.getItem().getProduct().isWithholding()) {
 					InvoiceTax detailRetention = getInvoiceTax(detail, detail.getItem().getProduct().getRetention());
 					invoiceTaxBean.insert(detailRetention);
 				}

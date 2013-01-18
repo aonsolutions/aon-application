@@ -48,7 +48,7 @@
 									<f:facet name="header">
 										<aon:outputLabel for="Account_id" value="#{financeBundle.finance_account}" />
 									</f:facet>
-									<aon:outputText value="#{bankConcept.account.fullDescription}" rendered="#{formList}" />
+									<aon:outputText value="#{to.account.fullDescription}" rendered="#{formList}" />
 									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 										<ui:param name="lookupTo" value="#{bankConcept.to.account}" />
 										<ui:param name="lookupRendered" value="#{formEdit}" />

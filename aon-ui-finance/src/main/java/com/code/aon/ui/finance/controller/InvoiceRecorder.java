@@ -10,8 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.bridge.ProductAccount;
-import com.code.aon.account.bridge.enumeration.ProductAccountType;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.AccountHelper;
@@ -28,7 +26,6 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
-import com.code.aon.product.Item;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
@@ -222,7 +219,6 @@ public class InvoiceRecorder implements ITransferObject {
 
 	private void checkExpenseAccount() throws ManagerBeanException {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		IManagerBean productAccountBean = BeanManager.getManagerBean(ProductAccount.class);
 		IManagerBean accountHelperBean = BeanManager.getManagerBean(AccountHelper.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
@@ -231,18 +227,12 @@ public class InvoiceRecorder implements ITransferObject {
 		for (ITransferObject to: list) {
 			InvoiceDetail invoiceDetail = (InvoiceDetail) to;
 			if (invoiceDetail.getItem() != null) {
-				Item item = invoiceDetail.getItem();
-				if (item.getProduct().getType() == ProductType.EXPENSE) {
-					Integer productId = item.getProduct().getId();
-					criteria = new Criteria();
-					criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_PRODUCT_ID), productId);
-					criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_TYPE), ProductAccountType.PURCHASE);
-					List<ITransferObject> expenseAccountList = productAccountBean.getList(criteria);
-					if (expenseAccountList == null || expenseAccountList.size() == 0) {
+				Account expenseAccount = invoiceDetail.getItem().getProduct().getPurchaseAccount();
+				if (invoiceDetail.getItem().getProduct().getType() == ProductType.EXPENSE) {
+					if (expenseAccount == null || expenseAccount.getId() == null) {
 						wrong = true;
 						addMessage("El gasto: \"" + invoiceDetail.getDescription() + "\" no tiene cuenta contable asociada.");			
 					} else {
-						ProductAccount expenseAccount = (ProductAccount) expenseAccountList.get(0);
 						Criteria c = new Criteria();
 						c.addEqualExpression(accountHelperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_ACCOUNT_CODE), getAccount().getCode());
 						c.addOrder(accountHelperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_COUNTER), false);
@@ -255,7 +245,7 @@ public class InvoiceRecorder implements ITransferObject {
 								first = ah;
 							}
 							Account balancingAccount = ah.getBalancingAccount();
-							if (balancingAccount.equals(expenseAccount.getAccount()) ) {
+							if (balancingAccount.equals(expenseAccount) ) {
 								used = true;
 								break;
 							}

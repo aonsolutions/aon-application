@@ -140,7 +140,7 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		Invoice invoice = (Invoice)getMasterController().getTo();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
 		Item item = invoiceDetail.getItem();
-		if (item != null && item.getId() != null && item.getProduct().getRetention() != null && item.getProduct().getRetention().getId() != null) {
+		if (item != null && item.getId() != null && item.getProduct().isWithholding()) {
 			return getTaxPercent(item.getProduct().getRetention(), invoice.getIssueDate(), false);
 		}
 		return 0;

@@ -1,11 +1,8 @@
 package com.code.aon.account.bridge.event;
 
-
-
 import java.util.List;
 
 import com.code.aon.account.bridge.PayMethodTypeDetailAccount;
-import com.code.aon.account.bridge.ProductAccount;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -66,7 +63,7 @@ public class PayMethodTypeDetailAccountBeanVetoListener extends ManagerBeanVetoL
 			}
 			List<ITransferObject> list = bean.getList(c);
 			if (list.size() > 0 ) {
-				ProductAccount dup = (ProductAccount) list.get(0);
+				PayMethodTypeDetailAccount dup = (PayMethodTypeDetailAccount) list.get(0);
 				StringBuilder sb = new StringBuilder();
 				sb.append("El tipo de pago ");
 				sb.append(payMethodTypeDetailAccount.getPayMethodTypeDetail().getDescription());

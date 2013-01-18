@@ -739,7 +739,7 @@
 	<!--  **** EXPENSE ITEM ****	-->
 	<managed-bean>
 		<managed-bean-name>expenseItem</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.product.controller.ExpenseItemController 
+		<managed-bean-class>com.code.aon.ui.form.BasicController 
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -774,16 +774,6 @@
 				<value>#{expenseItemControllerListener}</value>
 			</list-entries>
 		</managed-property>
-		<managed-property>
-			<property-name>optionalListenerClasses</property-name>
-			<value>#{expenseItemOptionalListeners}</value>
-		</managed-property>		
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>expenseItemOptionalListeners</managed-bean-name>
-	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
@@ -817,7 +807,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Item_product_category_name,Item_product_name,Item_product_code</value>
+			<value>Item_product_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>suggestAlias</property-name>

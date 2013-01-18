@@ -3300,7 +3300,7 @@
 	<!--  **** BANK CONCEPT ****	-->
 	<managed-bean>
 		<managed-bean-name>bankConcept</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.finance.controller.BankConceptController 
+		<managed-bean-class>com.code.aon.ui.form.BasicController 
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -3319,16 +3319,6 @@
 			<property-name>defaultOrder</property-name>
 			<value>BankConcept_name</value>
 		</managed-property>
-		<managed-property>
-			<property-name>optionalListenerClasses</property-name>
-			<value>#{bankConceptOptionalListeners}</value>
-		</managed-property>		
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>bankConceptOptionalListeners</managed-bean-name>
-	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************* BANK STATEMENT ***************** -->

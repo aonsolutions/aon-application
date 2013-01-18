@@ -9,7 +9,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import com.code.aon.account.Account;
 import com.esferalia.aon.entity.master.ProductDB;
 
 @Entity
@@ -18,27 +17,7 @@ public class Product extends ProductDB {
 	
 	private static final long serialVersionUID = 1L;
 
-    private Account salesAccount;
-    private Account purchaseAccount;
 	private Set<Item> items = new HashSet<Item>();
-
-	@Transient
-	public Account getSalesAccount() {
-		return salesAccount;
-	}
-
-	public void setSalesAccount(Account salesAccount) {
-		this.salesAccount = salesAccount;
-	}
-
-	@Transient
-	public Account getPurchaseAccount() {
-		return purchaseAccount;
-	}
-
-	public void setPurchaseAccount(Account purchaseAccount) {
-		this.purchaseAccount = purchaseAccount;
-	}
 
     @OneToMany(mappedBy="product")
 	public Set<Item> getItems() {
@@ -53,6 +32,11 @@ public class Product extends ProductDB {
 	public void addItems(Item item) {
 		item.setProduct( this );
 		this.items.add( item );
+	}
+
+	@Transient
+	public boolean isWithholding() {
+		return (getRetention() != null && getRetention().getId() != null);
 	}
 
 }

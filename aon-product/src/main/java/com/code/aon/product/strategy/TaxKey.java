@@ -6,9 +6,7 @@ import com.code.aon.config.enumeration.TaxType;
 public class TaxKey {
 
 	private TaxType type;
-
 	private double percent;
-
 	private Account account;
 
 	public TaxType getType() {

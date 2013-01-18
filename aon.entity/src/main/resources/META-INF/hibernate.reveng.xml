@@ -1094,21 +1094,23 @@
 	<table name="product">
 		<column name="status" type="com.code.aon.product.enumeration.ProductStatus"/>
 		<column name="type" type="com.code.aon.product.enumeration.ProductType"/>
+		<foreign-key constraint-name="FK_PRODUCT_PCATEGORY">
+			<many-to-one property="category" />
+		</foreign-key>
 		<foreign-key constraint-name="FK_PRODUCT_TAX_VAT">
 			<many-to-one property="vat" />
 		</foreign-key>
 		<foreign-key constraint-name="FK_PRODUCT_TAX_RETENTION">
 			<many-to-one property="retention" />
 		</foreign-key>
-		<foreign-key constraint-name="FK_PRODUCT_PCATEGORY">
-			<many-to-one property="category" />
+		<foreign-key constraint-name="FK_PRODUCT_ACCOUNT_SALES">
+			<many-to-one property="salesAccount" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_PRODUCT_ACCOUNT_PURCHASE">
+			<many-to-one property="purchaseAccount" />
 		</foreign-key>
 	</table>
 	
-	<table name="product_account">
-		<column name="type" type="com.code.aon.account.bridge.enumeration.ProductAccountType"/>
-	</table>
-
 	<table name="profile_module_denied" >
 		<column name="module" type="com.code.aon.audit.enumeration.Module"/>	
 	</table>
@@ -1536,10 +1538,12 @@
 		<column name="tax_type" property="type" type="com.code.aon.config.enumeration.TaxType" /> 
 		<column name="vat_deduction_type" property="vatDeductionType" type="com.code.aon.config.enumeration.VatDeductionType" /> 
 		<column name="withholding_type" property="withholdingType" type="com.code.aon.config.enumeration.WithholdingType" /> 
-	</table>
-	
-	<table name="tax_account">
-		<column name="type" type="com.code.aon.account.bridge.enumeration.TaxAccountType"/>
+		<foreign-key constraint-name="FK_TAX_ACCOUNT_SALES">
+			<many-to-one property="salesAccount" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_TAX_ACCOUNT_PURCHASE">
+			<many-to-one property="purchaseAccount" />
+		</foreign-key>
 	</table>
 	
 	<table name="user">

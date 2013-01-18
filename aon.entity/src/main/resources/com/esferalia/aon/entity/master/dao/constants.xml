@@ -48,11 +48,6 @@
 		<hibernate names="account.id,invoiceTax.id,invoiceTax.invoiceDetail.invoice.id,id" />
 	</bean>
 
-	<bean class="com.code.aon.account.bridge.ProductAccount" sqlName="product_account">
-		<alias names="account_id,product_id,product_name,type,id" />
-		<hibernate names="account.id,product.id,product.name,type,id" />
-	</bean>
-	
 	<!-- ** AON ASSET **************************************************** -->
 	<bean class="com.code.aon.asset.AssetActivity" sqlName="asset_activity">
 		<alias names="asset_id,asset_name,date,comments,fromTime,holder,id,status,toTime" />
@@ -159,8 +154,8 @@
 	</bean>
 
 	<bean class="com.code.aon.finance.Invoice" sqlName="invoice">
-		<alias names="id,series,number,referenceCode,project,project_id,registry_id,registryAddress_id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,taxFree,surcharge,withholding,comments,remarks,investment,transaction,signed,scope_id,service,rectificationType,rectificationInvoice,rectificationInvoice_id,advance,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,modificationUser,modificationDate" />
-		<hibernate names="id,series,number,referenceCode,project,project.id,registry.id,registryAddress.id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,taxFree,surcharge,withholding,comments,remarks,investment,transaction,signed,scope.id,service,rectificationType,rectificationInvoice,rectificationInvoice.id,advance,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,modificationUser,modificationDate" />
+		<alias names="id,series,number,referenceCode,project,project_id,registry_id,registryAddress_id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,surcharge,withholding,comments,remarks,investment,transaction,signed,scope_id,service,rectificationType,rectificationInvoice,rectificationInvoice_id,advance,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,modificationUser,modificationDate" />
+		<hibernate names="id,series,number,referenceCode,project,project.id,registry.id,registryAddress.id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,surcharge,withholding,comments,remarks,investment,transaction,signed,scope.id,service,rectificationType,rectificationInvoice,rectificationInvoice.id,advance,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,modificationUser,modificationDate" />
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoiceDetail" sqlName="invoice_detail">
@@ -372,8 +367,8 @@
 	</bean>
 
 	<bean class="com.code.aon.product.Product" sqlName="product">
-		<alias names="brand_id,product_category_id,code,composition,compositionPrice,id,inventoriable,name,retention_id,status,type,vat_id" />
-		<hibernate names="brand.id,category.id,code,composition,compositionPrice,id,inventoriable,name,retention.id,status,type,vat.id" />
+		<alias names="brand_id,product_category_id,code,composition,compositionPrice,id,inventoriable,name,purchaseAccount_id,retention_id,salesAccount_id,status,type,vat_id" />
+		<hibernate names="brand.id,category.id,code,composition,compositionPrice,id,inventoriable,name,purchaseAccount.id,retention.id,salesAccount.id,status,type,vat.id" />
 	</bean>
 	
 	<bean class="com.code.aon.product.ProductCategory" sqlName="pcategory">

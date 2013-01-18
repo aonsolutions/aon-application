@@ -73,8 +73,8 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	public Company getCompany() {
 		if (company == null) {
-			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			setCompany( companyController.obtainCompany() );
+			CompanyController companyController = (CompanyController)AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+			setCompany(companyController.obtainCompany());
 		}
 		return company;
 	}

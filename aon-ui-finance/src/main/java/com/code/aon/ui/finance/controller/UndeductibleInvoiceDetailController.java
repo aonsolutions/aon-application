@@ -7,8 +7,6 @@ import java.util.List;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.bridge.ProductAccount;
-import com.code.aon.account.bridge.enumeration.ProductAccountType;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountHelper;
 import com.code.aon.common.BeanManager;
@@ -71,7 +69,8 @@ public class UndeductibleInvoiceDetailController extends InvoiceDetailController
 			for (ITransferObject helperTo : helperList) {
 				AccountHelper helper = (AccountHelper) helperTo;
 
-				IManagerBean pAccountBean = BeanManager.getManagerBean(ProductAccount.class);
+
+				/*IManagerBean pAccountBean = BeanManager.getManagerBean(ProductAccount.class);
 				criteria = new Criteria();
 				criteria.addEqualExpression(pAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_ACCOUNT_ID), helper.getBalancingAccount().getId());
 				criteria.addEqualExpression(pAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_TYPE), ProductAccountType.PURCHASE);
@@ -91,7 +90,7 @@ public class UndeductibleInvoiceDetailController extends InvoiceDetailController
 						SelectItem selectItem = new SelectItem(item, item.getProduct().getName());
 						recordedItemList.add(selectItem);
 					}
-				}
+				}*/
 			}
 		}
 

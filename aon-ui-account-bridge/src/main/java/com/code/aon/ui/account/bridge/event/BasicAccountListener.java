@@ -81,7 +81,11 @@ public class BasicAccountListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		setAccount(new Account());
+		try {
+			setAccount((Account)BeanManager.getManagerBean(Account.class).createNewTo());
+		} catch (ManagerBeanException ex) {
+			throw new ControllerListenerException(ex.getMessage(), ex);
+		}
 	}
 
 	@Override

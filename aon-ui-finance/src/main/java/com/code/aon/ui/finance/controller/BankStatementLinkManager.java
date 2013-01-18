@@ -13,7 +13,6 @@ import javax.faces.model.ListDataModel;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.bridge.BankConceptAccount;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -435,11 +434,11 @@ public class BankStatementLinkManager implements IFinanceConstants {
 
 		BankConcept bankConcept = null;
 		if (to.getSource() == StatementLinkSource.BANK_CONCEPT) {
-			IManagerBean bankConceptAccBean = BeanManager.getManagerBean(BankConceptAccount.class);
+			IManagerBean bankConceptBean = BeanManager.getManagerBean(BankConcept.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bankConceptAccBean.getFieldName(IEntityAlias.BANK_CONCEPT_ACCOUNT_ACCOUNT_ID), bankAccount.getId());
-			for (ITransferObject ito : bankConceptAccBean.getList(criteria)) {
-				bankConcept = ((BankConceptAccount)ito).getBankConcept();
+			criteria.addEqualExpression(bankConceptBean.getFieldName(IEntityAlias.BANK_CONCEPT_ACCOUNT_ID), bankAccount.getId());
+			for (ITransferObject ito : bankConceptBean.getList(criteria)) {
+				bankConcept = (BankConcept)ito;
 				break;
 			}
 		}

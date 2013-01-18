@@ -57,10 +57,11 @@
 		</aon:selectOneMenu>
 		<aon:panelGroup id="Item_product_retention_percentage">
 			<aon:outputLabel styleClass="aon-margin-left aon-italic"
-				value="#{controller.to.product.retention.percentage}">
+				value="#{controller.to.product.retention.percentage}"
+				rendered="#{controller.to.product.withholding}">
 				<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 			</aon:outputLabel>
-			<aon:outputLabel value="%" rendered="#{controller.to.product.retention!=null}" />
+			<aon:outputLabel value="%" rendered="#{controller.to.product.withholding}" />
 		</aon:panelGroup>
 	</aon:div>
 

@@ -8,8 +8,6 @@ import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.bridge.ProductAccount;
-import com.code.aon.account.bridge.enumeration.ProductAccountType;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -104,7 +102,6 @@ public class ItemLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	public Integer insert(LoaderParams params,ILoadedPojo loadedPojo) throws AonException {
 		LoadedItem loaded = (LoadedItem) loadedPojo;
 		IManagerBean bean = BeanManager.getManagerBean(Item.class);
-		IManagerBean paBean = BeanManager.getManagerBean(ProductAccount.class);
 		Item item = new Item();
 		item.setBarcode(loaded.getCodigoBarras());
 		item.setPrice(loaded.getPrecioVentaBase()==null?0.0:loaded.getPrecioVentaBase());
@@ -131,30 +128,23 @@ public class ItemLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			product.setVat(vat);	
 		}
 
-		item.setProduct(product);
-		item = (Item) bean.insert(item);
 		if (StringUtils.isNotBlank( loaded.getCuentaVenta())) {
-			ProductAccount productAccount = new ProductAccount();
-			productAccount.setProduct(item.getProduct());
-			productAccount.setType(ProductAccountType.SALES);
 			Account account = getLoaderUtils().ensureAccount(loaded.getCuentaVenta(), null);
 			if (account == null) {
 				account = getLoaderUtils().ensureAccount(loaded.getCuentaVenta(), loaded.getNombre());	
 			}
-			productAccount.setAccount(account);
-			paBean.insert(productAccount);	
+			product.setSalesAccount(account);
 		}
 		if (StringUtils.isNotBlank( loaded.getCuentaCompra())) {
-			ProductAccount productAccount = new ProductAccount();
-			productAccount.setProduct(item.getProduct());
-			productAccount.setType(ProductAccountType.PURCHASE);
 			Account account = getLoaderUtils().ensureAccount(loaded.getCuentaCompra(), null);
 			if (account == null) {
 				account = getLoaderUtils().ensureAccount(loaded.getCuentaCompra(), loaded.getNombre());	
 			}
-			productAccount.setAccount(account);
-			paBean.insert(productAccount);	
+			product.setPurchaseAccount(account);
 		}
+
+		item.setProduct(product);
+		item = (Item) bean.insert(item);
 		return item.getId();
 	}
 

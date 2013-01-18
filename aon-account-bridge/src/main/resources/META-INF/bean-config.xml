@@ -69,24 +69,10 @@
 		</vetoListeners>
 	</bean>
 
-	<bean description="Control de enlace entre Tax y Account">
-		<pojo>com.code.aon.account.bridge.TaxAccount</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.account.bridge.event.TaxAccountBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
 	<bean description="Control de enlace entre Loan y Account">
 		<pojo>com.code.aon.account.bridge.LoanAccount</pojo>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.account.bridge.event.LoanAccountBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
-	<bean description="Control de enlace entre Product y Account">
-		<pojo>com.code.aon.account.bridge.ProductAccount</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.account.bridge.event.ProductAccountBeanVetoListener</vetoListener>
 		</vetoListeners>
 	</bean>
 

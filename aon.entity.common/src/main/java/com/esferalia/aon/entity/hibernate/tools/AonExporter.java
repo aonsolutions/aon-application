@@ -201,17 +201,14 @@ public class AonExporter extends GenericExporter{
 		map.put("AccountEntryFinanceBatch","com.code.aon.account.bridge.AccountEntryFinanceBatch");
 		map.put("AccountEntryFinanceTracking","com.code.aon.account.bridge.AccountEntryFinanceTracking");
 		map.put("AccountEntryInvoice","com.code.aon.account.bridge.AccountEntryInvoice");
-		map.put("BankConceptAccount","com.code.aon.account.bridge.BankConceptAccount");		
 		map.put("CreditorAccount","com.code.aon.account.bridge.CreditorAccount");
 		map.put("CustomerAccount","com.code.aon.account.bridge.CustomerAccount");
 		map.put("InvoiceDetailAccount","com.code.aon.account.bridge.InvoiceDetailAccount");
 		map.put("InvoiceTaxAccount","com.code.aon.account.bridge.InvoiceTaxAccount");
 		map.put("LoanAccount","com.code.aon.account.bridge.LoanAccount");
 		map.put("PayMethodTypeDetailAccount","com.code.aon.account.bridge.PayMethodTypeDetailAccount");		
-		map.put("ProductAccount","com.code.aon.account.bridge.ProductAccount");		
 		map.put("RegistryBankAccount","com.code.aon.account.bridge.RegistryBankAccount");
 		map.put("SupplierAccount","com.code.aon.account.bridge.SupplierAccount");		
-		map.put("TaxAccount","com.code.aon.account.bridge.TaxAccount");		
 
 		//AON-ASSET   
 		map.put("Asset","com.code.aon.asset.Asset");

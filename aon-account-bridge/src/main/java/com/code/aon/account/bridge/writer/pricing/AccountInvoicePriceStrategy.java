@@ -1,18 +1,11 @@
 package com.code.aon.account.bridge.writer.pricing;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.bridge.TaxAccount;
-import com.code.aon.account.bridge.enumeration.TaxAccountType;
 import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.util.AccountingUtil;
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
@@ -22,8 +15,6 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.TaxBreakDown;
-import com.code.aon.ql.Criteria;
-import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 	
@@ -54,22 +45,11 @@ public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 
 	private Account obtainTaxAccount(TaxType taxType, InvoiceType invoiceType, InvoiceDetail invoiceDetail) {
 		Item item = invoiceDetail.getItem();
-		
 		if (item != null && item.getId() != null) {
 			Tax tax = (taxType.equals(TaxType.RETENTION)) ? item.getProduct().getRetention() : item.getProduct().getVat();
-			TaxAccountType taxAccountType = (invoiceType.equals(InvoiceType.SALES)) ? TaxAccountType.SALES : TaxAccountType.PURCHASE;
-			try {
-				IManagerBean taxAccountBean = BeanManager.getManagerBean(TaxAccount.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(taxAccountBean.getFieldName(IEntityAlias.TAX_ACCOUNT_TAX_ID), tax.getId());
-				criteria.addEqualExpression(taxAccountBean.getFieldName(IEntityAlias.TAX_ACCOUNT_TYPE), taxAccountType);
-				List<ITransferObject> list = taxAccountBean.getList(criteria);
-				if (list != null && list.size() > 0) {
-					TaxAccount taxAccount = (TaxAccount) list.get(0);
-					return taxAccount.getAccount();
-				}
-			} catch (ManagerBeanException e) {
-				LOGGER.error("Error obtaining Tax Account", e);
+			Account taxAccount = (invoiceType.equals(InvoiceType.SALES)) ? tax.getSalesAccount() : tax.getPurchaseAccount();
+			if (taxAccount != null && taxAccount.getId() != null) {
+				return taxAccount;
 			}
 		}
 		

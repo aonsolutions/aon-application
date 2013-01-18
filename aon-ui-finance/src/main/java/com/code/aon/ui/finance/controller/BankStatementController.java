@@ -26,7 +26,6 @@ import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryBankStatement;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
-import com.code.aon.account.bridge.BankConceptAccount;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.account.bridge.writer.FinanceRecordingTo;
 import com.code.aon.accounting.AccountEntry;
@@ -995,11 +994,11 @@ public class BankStatementController extends BasicController implements IFinance
 				Account linkedAccount = getWriter().obtainPaymentAccount(link.getBankStatement().getRegistryBank(), null);
 				BankConcept linkedBankConcept = null;
 				if (link.getSource() == StatementLinkSource.BANK_CONCEPT) {
-					IManagerBean bankConceptAccBean = BeanManager.getManagerBean(BankConceptAccount.class);
+					IManagerBean bankConceptBean = BeanManager.getManagerBean(BankConcept.class);
 					criteria = new Criteria();
-					criteria.addEqualExpression(bankConceptAccBean.getFieldName(IEntityAlias.BANK_CONCEPT_ACCOUNT_ACCOUNT_ID), linkedAccount.getId());
-					for (ITransferObject ito : bankConceptAccBean.getList(criteria)) {
-						linkedBankConcept = ((BankConceptAccount)ito).getBankConcept();
+					criteria.addEqualExpression(bankConceptBean.getFieldName(IEntityAlias.BANK_CONCEPT_ACCOUNT_ID), linkedAccount.getId());
+					for (ITransferObject ito : bankConceptBean.getList(criteria)) {
+						linkedBankConcept = (BankConcept)ito;
 						break;
 					}
 				}
@@ -1283,12 +1282,11 @@ public class BankStatementController extends BasicController implements IFinance
 
 	private List<BankConcept> getRelatedBankConcepts(Account account) throws ManagerBeanException {
 		List<BankConcept> bankConcepts = new LinkedList<BankConcept>();
-		IManagerBean bankConceptAccBean = BeanManager.getManagerBean(BankConceptAccount.class);
+		IManagerBean bankConceptBean = BeanManager.getManagerBean(BankConcept.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bankConceptAccBean.getFieldName(IEntityAlias.BANK_CONCEPT_ACCOUNT_ACCOUNT_ID), account.getId());
-		for (ITransferObject ito : bankConceptAccBean.getList(criteria)) {
-			BankConceptAccount bankConceptAccount = (BankConceptAccount)ito;
-			bankConcepts.add(bankConceptAccount.getBankConcept());
+		criteria.addEqualExpression(bankConceptBean.getFieldName(IEntityAlias.BANK_CONCEPT_ACCOUNT_ID), account.getId());
+		for (ITransferObject ito : bankConceptBean.getList(criteria)) {
+			bankConcepts.add((BankConcept)ito);
 		}
 		return bankConcepts;
 	}
@@ -1467,15 +1465,9 @@ public class BankStatementController extends BasicController implements IFinance
 					}
 				} else {
 					if (statementLink.getSource() == StatementLinkSource.BANK_CONCEPT) {
-						IManagerBean conceptAccountBean = BeanManager.getManagerBean(BankConceptAccount.class);
-						String conceptAlias = conceptAccountBean.getFieldName(IEntityAlias.BANK_CONCEPT_ACCOUNT_BANK_CONCEPT_ID);
 						BankConcept concept = (BankConcept)statementLink.getSourceTo();
-						Criteria criteria = new Criteria();
-						criteria.addEqualExpression(conceptAlias, concept.getId());
-						Iterator<ITransferObject> iterator = conceptAccountBean.getList(criteria).iterator();
-						if (iterator.hasNext()) {
-							BankConceptAccount conceptAccount = (BankConceptAccount)iterator.next();
-							accountMap.put(conceptAccount.getAccount(), new Double(statementLink.getAmount()));
+						if (concept.getAccount() != null && concept.getAccount().getId() != null) {
+							accountMap.put(concept.getAccount(), new Double(statementLink.getAmount()));
 						} else {
 							getErrors().put(statement.getId(), "El Concepto " + concept.getName() + " no tiene Cuenta Contable asociada.");
 						}

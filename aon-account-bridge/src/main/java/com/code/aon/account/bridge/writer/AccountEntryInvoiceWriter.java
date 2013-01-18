@@ -12,8 +12,6 @@ import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.InvoiceTaxAccount;
-import com.code.aon.account.bridge.ProductAccount;
-import com.code.aon.account.bridge.enumeration.ProductAccountType;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.writer.pricing.AccountInvoicePriceStrategy;
 import com.code.aon.accounting.AccountEntry;
@@ -36,7 +34,6 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.enumeration.InvoiceStatus;
-import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
@@ -130,16 +127,16 @@ public class AccountEntryInvoiceWriter {
 		entry.setJournal(null);
 		AccountEntryType accountEntryType = null;
 		Account account = null;
-		if (invoice.getType() == InvoiceType.SALES) {
+		if (invoice.isSales()) {
 			accountEntryType = AccountEntryType.SALES_INVOICE;
 			account = getAccountBridgeUtil().obtainCustomerAccount(invoice.getRegistry());
-		} else if (invoice.getType() == InvoiceType.PURCHASE) {
+		} else if (invoice.isPurchase()) {
 			accountEntryType = AccountEntryType.PURCHASE_INVOICE;
 			account = getAccountBridgeUtil().obtainSupplierAccount(invoice.getRegistry());
-		} else if (invoice.getType() == InvoiceType.EXPENSES) {
+		} else if (invoice.isExpense()) {
 			accountEntryType = AccountEntryType.EXPENSE_INVOICE;
 			account = getAccountBridgeUtil().obtainCreditorAccount(invoice.getRegistry());
-		} else if (invoice.getType() == InvoiceType.UNDEDUCTIBLE) {
+		} else if (invoice.isUndeductibleExpense()) {
 			accountEntryType = AccountEntryType.EXPENSES;
 			account = getAccountBridgeUtil().obtainCreditorAccount(invoice.getRegistry());
 		}
@@ -228,26 +225,17 @@ public class AccountEntryInvoiceWriter {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 		List<ITransferObject> list = invoiceDetailBean.getList(criteria); 
-		for (ITransferObject to : list ) {
+		for (ITransferObject to : list) {
 			InvoiceDetail invoiceDetail = (InvoiceDetail) to;
 			Account account = null;
 			if (invoiceDetail.getItem() != null) {
-				Integer productId = invoiceDetail.getItem().getProduct().getId();
-				ProductAccountType type = (invoice.getType().equals(InvoiceType.SALES)) ? ProductAccountType.SALES : ProductAccountType.PURCHASE;
-				IManagerBean productAccountBean = BeanManager.getManagerBean(ProductAccount.class);
-				criteria = new Criteria();
-				criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_PRODUCT_ID), productId);
-				criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_TYPE), type);
-				List<ITransferObject> palist = productAccountBean.getList(criteria);
-				if (palist != null && palist.size() > 0 ) {
-					account = ((ProductAccount) palist.get(0)).getAccount();
-				}
+				account = (invoice.isSales()) ? invoiceDetail.getItem().getProduct().getSalesAccount() : invoiceDetail.getItem().getProduct().getPurchaseAccount();
 				if (account == null && invoiceDetail.getItem().getProduct().getType() == ProductType.EXPENSE) {
 					throw new ManagerBeanException("El gasto \"" + invoiceDetail.getDescription() + "\" no tiene cuenta contable asociada.");
 				}
 			}
 			if (account == null) {
-				account = (invoice.getType().equals(InvoiceType.SALES)) ? obtainSalesDefaultAccount() : obtainPurchaseDefaultAccount();
+				account = (invoice.isSales()) ? obtainSalesDefaultAccount() : obtainPurchaseDefaultAccount();
 			}
 			double base = invoiceDetail.getTaxableBase();
 			base += (basesPerAccount.containsKey(account)) ? basesPerAccount.get(account).doubleValue() : 0;
@@ -374,7 +362,7 @@ public class AccountEntryInvoiceWriter {
 	}
 
 	public String obtainConcept(Invoice invoice, double total) {
-		String prefix = (invoice.getType().equals(InvoiceType.SALES)) ? N_FRA : S_FRA;
+		String prefix = (invoice.isSales()) ? N_FRA : S_FRA;
 		if (total < 0) {
 			prefix += " " + ABONO;
 		}

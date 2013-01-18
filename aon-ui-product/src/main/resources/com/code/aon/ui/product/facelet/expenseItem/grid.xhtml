@@ -37,11 +37,13 @@
 									rendered="#{formList}" />
 								<aon:inputText id="ExpenseItem_product_code" rendered="#{formEdit}"
 									value="#{expenseItem.to.product.code}" required="true"
-									size="10" maxlength="15" />
+									size="10" maxlength="15"
+									onblur="toUpperCase(this);" />
 								<f:facet name="footer">
 									<aon:inputText id="ExpenseItem_product_code-New" rendered="#{formNew}"
 										value="#{expenseItem.to.product.code}" required="true"
-										size="15" maxlength="15" />
+										size="15" maxlength="15"
+										onblur="toUpperCase(this);" />
 								</f:facet>
 							</aon:column>
 	
@@ -120,11 +122,11 @@
 							<c:if test="#{aonRole.accountingOperator}">
 								<aon:column>
 									<f:facet name="header">
-										<aon:outputLabel for="Account_id_Purchase" value="#{productBundle.product_expense_account}" />
+										<aon:outputLabel for="Account_id-Purchase" value="#{productBundle.product_expense_account}" />
 									</f:facet>
 									<aon:div style="width: 90%;" rendered="#{formList}" ajaxRendered="true">
-										<aon:outputText value="#{expenseItem.account.code}" />
-										<rich:toolTip value="#{expenseItem.account.description}"
+										<aon:outputText value="#{to.product.purchaseAccount.code}" />
+										<rich:toolTip value="#{to.product.purchaseAccount.description}"
 											hideEvent="onmouseout" showDelay="200">
 										</rich:toolTip>
 									</aon:div>

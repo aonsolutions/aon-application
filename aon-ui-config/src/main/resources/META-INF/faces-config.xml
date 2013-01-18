@@ -349,17 +349,7 @@
 				<value>#{taxDetailListener}</value>
 			</list-entries>
 		</managed-property>
-		<managed-property>
-			<property-name>optionalListenerClasses</property-name>
-			<value>#{taxOptionalListeners}</value>
-		</managed-property>		
 	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>taxOptionalListeners</managed-bean-name>
-	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>	
 
 	<managed-bean>
 		<managed-bean-name>taxDetailListener</managed-bean-name>

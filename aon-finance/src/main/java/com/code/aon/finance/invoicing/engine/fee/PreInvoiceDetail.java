@@ -45,7 +45,7 @@ public class PreInvoiceDetail extends InvoiceDetail {
 		if (!detail.getInvoice().isVatFree() && detail.getItem().getProduct().getVat() != null) {
 			addTax(detail, detail.getItem().getProduct().getVat());
 		}
-		if (!detail.getInvoice().isRetentionFree() && detail.getInvoice().isWithholding() && detail.getItem().getProduct().getRetention() != null) {
+		if (!detail.getInvoice().isRetentionFree() && detail.getInvoice().isWithholding() && detail.getItem().getProduct().isWithholding()) {
 			addTax(detail, detail.getItem().getProduct().getRetention());
 		}
 	}
