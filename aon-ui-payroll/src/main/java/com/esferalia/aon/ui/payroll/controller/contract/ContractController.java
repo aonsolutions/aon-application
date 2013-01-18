@@ -251,6 +251,16 @@ public class ContractController extends BasicController implements IVariablesHan
 	public void onActivityChanged( ActionEvent event ) {
 		setEnterpriseCCCs(null);
 	}
+	
+	public void onWorkPlaceChanged( ActionEvent event ) {
+		Contract contract = (Contract) getTo();
+		contract.setActivity(null);
+		contract.setEnterpriseCCC(null);
+		loadActivities();
+		loadEnterpriseCCCs();
+		
+		loadWorkplaceAgreement(event);
+	}
 
 	private void loadWorkPlaces() {
 		setWorkPlaces(new LinkedList<SelectItem>());
@@ -266,6 +276,10 @@ public class ContractController extends BasicController implements IVariablesHan
 					SelectItem item = new SelectItem(w, name);
 					getWorkPlaces().add(item);
 				}
+				if( !getWorkPlaces().isEmpty() ){
+					Contract contract = (Contract) getTo();
+					contract.setWorkPlace((WorkPlace) getWorkPlaces().get(0).getValue());
+				}
 			} catch (ManagerBeanException e) {
 				String msg = "Imposible cargar los Centros de Trabajo de la empresa. (" + e.getMessage() +")";
 				LOGGER.error(msg);
@@ -280,20 +294,20 @@ public class ContractController extends BasicController implements IVariablesHan
 		setActivities( new LinkedList<SelectItem>());
 		if (getEnterprise() != null) {
 			try {
-				IManagerBean ecBean = BeanManager.getManagerBean(EnterpriseActivity.class);
+				Contract contract = (Contract) getTo();
+				IManagerBean pwBean = BeanManager.getManagerBean(PayrollWorkPlace.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(ecBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
-				List<ITransferObject> ecList = ecBean.getList(criteria);
-				for(ITransferObject to: ecList){
-					EnterpriseActivity ea = (EnterpriseActivity) to;
-					if(ea.getCnae2009()!=null){
-						String name = ea.getDescription() + " - (" + ea.getCnae2009().getCode() + ") " + ea.getCnae2009().getTitle();
-						SelectItem item = new SelectItem(ea, name);
+				criteria.addEqualExpression(pwBean.getFieldName(IEntityAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), contract.getWorkPlace().getId());
+				List<ITransferObject> pwList = pwBean.getList(criteria);
+				for(ITransferObject to: pwList){
+					PayrollWorkPlace pw = (PayrollWorkPlace) to;
+					if(pw.getEnterpriseActivity().getCnae2009()!=null){
+						String name = pw.getEnterpriseActivity().getDescription() + " - (" + pw.getEnterpriseActivity().getCnae2009().getCode() + ") " + pw.getEnterpriseActivity().getCnae2009().getTitle();
+						SelectItem item = new SelectItem(pw.getEnterpriseActivity(), name);
 						getActivities().add(item);
 					}
 				}
 				if( !getActivities().isEmpty() ){
-					Contract contract = (Contract) getTo();
 					contract.setActivity((EnterpriseActivity)getActivities().get(0).getValue());
 					BasicController controller = (BasicController) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_CCC_CONTROLLER);
 					controller.onSelectFirst(null);

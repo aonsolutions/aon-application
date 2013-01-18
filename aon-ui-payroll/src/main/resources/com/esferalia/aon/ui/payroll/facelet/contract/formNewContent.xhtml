@@ -17,7 +17,7 @@
 				disabled="#{contract.enterprise==null or contract.enterprise.id==null}"
 				value="#{contract.to.workPlace}" >
 				<f:selectItems value="#{contract.workPlaces}" />
-				<a4j:support event="onchange" actionListener="#{contract.loadWorkplaceAgreement}" ajaxSingle="true" reRender="contract_new_panel" />
+				<a4j:support event="onchange" actionListener="#{contract.onWorkPlaceChanged}" ajaxSingle="true" reRender="contract_new_panel" />
 			</aon:selectOneMenu>
 			
 			<aon:outputLabel for="enterpriseActivities" value="#{companyBundle.company_activity}" 
