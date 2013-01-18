@@ -24,6 +24,7 @@
 
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
+    	<mapping class="com.code.aon.account.Account"/>
     	<mapping class="com.code.aon.asset.Asset"/>
     	<mapping class="com.code.aon.asset.AssetActivity"/>
     	<mapping class="com.code.aon.asset.AssetFeature"/>
