@@ -154,8 +154,8 @@ public class Mod111Manager extends FiscalModelManager implements IFiscalModelMan
 					receiverDocuments.add(document);
 					mod111.ensureDetail(calculator.getKeyForReceivers()).addAccumulatedAmount(1);
 				}
-				mod111.ensureDetail(calculator.getKeyForPerception()).addAccumulatedAmount(quota);
-				mod111.ensureDetail(calculator.getKeyForWitholding()).addAccumulatedAmount(base);
+				mod111.ensureDetail(calculator.getKeyForPerception()).addAccumulatedAmount(base);
+				mod111.ensureDetail(calculator.getKeyForWitholding()).addAccumulatedAmount(quota);
 				mod111.ensureDetail(calculator.getKeyForInKindPerception()).addAccumulatedAmount(inKindBase);
 				System.out.println("2.- "+ document +mod111.getDetail(calculator.getKeyForReceivers()).getAccumulatedAmount());
 			}
