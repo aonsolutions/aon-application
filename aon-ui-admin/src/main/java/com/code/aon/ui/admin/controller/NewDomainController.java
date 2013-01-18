@@ -4,6 +4,7 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_NAME_DUPLICATED;
 import static com.code.aon.ui.admin.controller.IAdminConstants.INVALID_PASSWORD;
+import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_ID;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.IOException;
@@ -30,10 +31,12 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.common.util.ConnectionProvider;
 import com.code.aon.config.Application;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Domain;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.dbutils.AonDomainDuplicate;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.AonSQLFile;
@@ -210,6 +213,7 @@ public class NewDomainController {
 			if ( isLoadDefaultValuesEnabled() ) {
 				Integer newDomain = createDomain(domainFinalName, getDomainDescription());
 				insertDefaults(newDomain);
+				copyCustomizeId(newDomain);
 			} else {
 				duplicateDomain(getTemplateDomain().getId(), domainFinalName, getDomainDescription());
 			}
@@ -220,6 +224,17 @@ public class NewDomainController {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
+	}
+	
+	private void copyCustomizeId( Integer newDomain ) {
+		String idValue = AppParamUtil.getValue(AON_CUSTOMIZE_ID);
+		if (! StringUtils.isEmpty(idValue) ) {
+			ApplicationParameter ap = new ApplicationParameter();
+			ap.setName(AON_CUSTOMIZE_ID);
+			ap.setValue(idValue);
+			ap.setDomain(newDomain);
+			AppParamUtil.insertParameter(ap);
+		}		
 	}
 	
 	private void insertDefaults( Integer domain ) throws AonSQLException, AonException, IOException {

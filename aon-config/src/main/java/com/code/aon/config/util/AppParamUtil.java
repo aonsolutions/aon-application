@@ -42,7 +42,6 @@ public class AppParamUtil {
 					bean.remove(ap);
 				}
 			} else {
-				ap.setValue(ap.getValue());
 				bean.insertOrUpdate( ap );
 			}
 			return ap;

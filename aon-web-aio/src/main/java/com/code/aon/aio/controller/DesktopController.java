@@ -3,9 +3,11 @@ package com.code.aon.aio.controller;
 
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.APPLICATION_OPTION_CONTROLLER_NAME;
-import static com.code.aon.ui.audit.controller.IAuditConstants.COMPANY_ENTERPRISE_ACTION;
 import static com.code.aon.ui.audit.controller.IAuditConstants.CONFIGURATION_CATEGORY;
+import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_CONFIG_COMPANY;
 import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_CONFIG_SECURITY;
+import static com.code.aon.ui.audit.controller.IAuditConstants.MAIL_ACCOUNT_ACTION;
+import static com.code.aon.ui.audit.controller.IAuditConstants.SIGNATURE_ACTION;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_ABSENCE;
@@ -354,18 +356,15 @@ public class DesktopController {
     }
     
 	public boolean isHideHeaderContent() {
-		if (! adminDomain ) {
-			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			boolean hide = companyController.isHideHeaderContent();
-			if (! hide) {
-				if ( UserUtils.getInstance().isPasswordExpired() ) {
-					companyController.setHideHeaderContent(true);
-					return true;
-				}			
-			}
-			return hide;			
+		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		boolean hide = companyController.isHideHeaderContent();
+		if (! hide) {
+			if ( UserUtils.getInstance().isPasswordExpired() ) {
+				companyController.setHideHeaderContent(true);
+				return true;
+			}			
 		}
-		return false;
+		return hide;			
 	}
  
 	private void initGarage() {
@@ -435,8 +434,8 @@ public class DesktopController {
 	private void initAdminDomain() {
 		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 		String[] categories = new String[]{CONFIGURATION_CATEGORY};
-		String[] groups = new String[]{GROUP_CONFIG_SECURITY};
-		adc.enableOnly(categories, groups, COMPANY_ENTERPRISE_ACTION);
+		String[] groups = new String[]{GROUP_CONFIG_SECURITY, GROUP_CONFIG_COMPANY};
+		adc.enableOnly(categories, groups, MAIL_ACCOUNT_ACTION, SIGNATURE_ACTION);
 		AonUtil.getRoleManager().setSysAdmin();
 	}
 	
@@ -463,7 +462,7 @@ public class DesktopController {
 	}
 	
 	public String getViewId() {
-		if ( !(adminDomain || hasCompany()) ) {
+		if ( !hasCompany() ) {
 			return NEW_COMPANY_TEMPLATE;
 		}
 		if ( UserUtils.getInstance().isPasswordExpired() ) {

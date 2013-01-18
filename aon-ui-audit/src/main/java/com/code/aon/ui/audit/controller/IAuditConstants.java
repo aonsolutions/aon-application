@@ -44,6 +44,7 @@ public interface IAuditConstants {
 	String GROUP_CONFIG_SECURITY = "group_configuration_security";
 	String GROUP_ENTERPRISE_SECURITY = "group_enterprise_security";
 	
-	String COMPANY_ENTERPRISE_ACTION = "company-enterprise";	
+	String MAIL_ACCOUNT_ACTION = "mailAccount_list-enterprise";	
+	String SIGNATURE_ACTION = "signature_list-enterprise";
 
 }
