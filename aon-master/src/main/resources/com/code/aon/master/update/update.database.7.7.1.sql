@@ -35,6 +35,9 @@ DROP TABLE `product_account`;
 DROP TABLE `tax_account`;
 DROP TABLE `bank_concept_account`;
 
+ALTER TABLE `salary_payment` MODIFY `payment_concept` varchar(15) collate latin1_spanish_ci default NULL COMMENT 'Codigo del concepto';
+ALTER TABLE `salary_deduction` MODIFY `deduction_concept` varchar(15) collate latin1_spanish_ci default NULL COMMENT 'Codigo del concepto'; 
+
 
 UPDATE `db_version` SET `version_number` = '7.8.0';
 
