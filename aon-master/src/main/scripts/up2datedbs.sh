@@ -24,7 +24,7 @@
 CLASSPATH=/usr/share/java/mysql-connector-java.jar
 CLASSPATH=$CLASSPATH:/usr/share/java/aon-dbutils.jar:/usr/share/java/aon-master.jar
 CLASSPATH=$CLASSPATH:/usr/share/java/slf4j/jcl.jar:/usr/share/java/slf4j/api.jar
-CLASSPATH=$CLASSPATH:/usr/share/java/commons-logging.jar:/usr/share/java/commons-lang.jar
+CLASSPATH=$CLASSPATH:/usr/share/java/commons-dbutils.jar:/usr/share/java/commons-logging.jar:/usr/share/java/commons-lang.jar
 
 
 ERR=1
