@@ -122,17 +122,26 @@
 									<sources>
 										<source>
 											<location>target</location>
-											<includes>
-												
-<include>${project.artifactId}-${project.version}.jar</include>
+											<includes>												
+												<include>${project.artifactId}-${project.version}.jar</include>
 											</includes>
 										</source>
 										<softlinkSource>
 											
-<location>/usr/share/java/${project.artifactId}-${project.version}.jar</location>
+											<location>${project.artifactId}-${project.version}.jar</location>
 											<destination>${project.artifactId}.jar</destination>
 										</softlinkSource>
+										<softlinkSource>											
+											<location>commons-dbutils-1.5.jar</location>
+											<destination>commons-dbutils.jar</destination>
+										</softlinkSource>
 									</sources>
+									<dependency>
+										<includes>
+											<include>commons-dbutils:commons-dbutils:1.5</include>
+										</includes>
+									</dependency>
+
                                                                 </mapping>
                                                         </mappings>
                                                         <!--mappings>                                                   
