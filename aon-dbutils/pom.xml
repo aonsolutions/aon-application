@@ -128,11 +128,11 @@
 										</source>
 										<softlinkSource>
 											
-											<location>${project.artifactId}-${project.version}.jar</location>
+											<location>/usr/share/java/${project.artifactId}-${project.version}.jar</location>
 											<destination>${project.artifactId}.jar</destination>
 										</softlinkSource>
 										<softlinkSource>											
-											<location>commons-dbutils-1.5.jar</location>
+											<location>/usr/share/java/commons-dbutils-1.5.jar</location>
 											<destination>commons-dbutils.jar</destination>
 										</softlinkSource>
 									</sources>
