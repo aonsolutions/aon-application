@@ -11,24 +11,16 @@
 
 		<aon:form id="streetTypeList">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_mode_module}" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_code_module}" />
 			</ui:include>			
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 			
-				<aon:dataTable id="contractModelList" value="#{contractModel.model}" var="to">
-					
+				<aon:dataTable id="contractCodelList" value="#{contractCode.model}" var="to">
+
 					<aon:rowSelector id="contractCodelList-select" toggleOnClick="#{false}" />
 					
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
-						<aon:htmlCommandLink styleClass="aon-icon-pdf" style="padding-left: 15px;" 
-							target="_blank" value="&#160;"
-							rendered="#{contractModel.pdfEnabled}"
-							actionListener="#{contractModel.onDownloadContract}">
-						</aon:htmlCommandLink>
-					</aon:column>
-
 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 						<f:facet name="header">
 							<aon:outputLabel value="#{bundle.aon_id}" />

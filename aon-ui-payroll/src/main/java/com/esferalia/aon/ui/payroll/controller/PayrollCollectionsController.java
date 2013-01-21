@@ -254,11 +254,9 @@ public class PayrollCollectionsController {
 			contractCodes = new LinkedList<SelectItem>();
 			ContractCode[] codes = ContractCode.values();
 			for (ContractCode cc : codes) {
-				if(cc==ContractCode.C100){
-					String name = cc.getName(locale);
-					SelectItem item = new SelectItem(cc, name);
-					contractCodes.add(item);
-				}
+				String name = cc.getValue() + cc.getName(locale);
+				SelectItem item = new SelectItem(cc, name);
+				contractCodes.add(item);
 			}
 		}
 		return contractCodes;

@@ -23,6 +23,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryAddress;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
@@ -213,10 +214,10 @@ public class ContractContrataController {
 		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME);
 		List<SelectItem> towns = new LinkedList<SelectItem>();
 		try {
-			String geozone = getHandler().getParams().getContract().getPerson().getRegistry().getDefaultAddress().getGeozone().getCode();
+			RegistryAddress address = getHandler().getParams().getContract().getPerson().getRegistry().getDefaultAddress();
 			TreeSet<String> tree = new TreeSet<String>(bundle.keySet());
 			for(String key: tree){
-				if(key.startsWith(geozone)){
+				if(address==null || key.startsWith(address.getGeozone().getCode())){
 					String name = bundle.getString(key);
 					SelectItem item = new SelectItem(key, name);
 					towns.add(item);

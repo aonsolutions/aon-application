@@ -4,6 +4,8 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -18,6 +20,7 @@ import org.apache.commons.io.IOUtils;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.Classpath;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollCollectionsController;
@@ -28,8 +31,12 @@ public class ContractModelController {
 
 	public DataModel getModel() {
 		if (model == null) {
-			PayrollCollectionsController pcc = (PayrollCollectionsController) AonUtil.getRegisteredBean("payrollCollections");
-			model = new ListDataModel( pcc.getContractModels() ); 
+			List<ContractModel> list = new LinkedList<ContractModel>();
+			ContractModel[] models = ContractModel.values();
+			for (ContractModel model : models) {
+				list.add(model);
+			}
+			model = new ListDataModel( list ); 
 		}
 		return model;
 	}

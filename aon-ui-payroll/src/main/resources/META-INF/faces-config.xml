@@ -264,6 +264,12 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractModelController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	<!-- ************ CONTRACT CODE ************** -->
+	<managed-bean>
+		<managed-bean-name>contractCode</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractCodeController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	<!-- ************ CONTRACT ************** -->
 	<managed-bean>
 		<managed-bean-name>contract</managed-bean-name>
@@ -2345,6 +2351,18 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{agreementLevelCategoryControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>agreementLevelCategoryControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.agreement.AgreementLevelCategoryControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<!-- ************ AGREEMENT LEVEL DATA LISTENER ************** -->
 	<managed-bean>
@@ -3085,12 +3103,18 @@
 		</navigation-case>
 	</navigation-rule>
 	<!--
-		=================== Contract Tracking Management==========================
+		=================== Auxiliar Tables - Viewer ==========================
 	-->
-	<navigation-rule id="contractOptions">
+	<navigation-rule>
 		<navigation-case>
 			<from-outcome>contractOption_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractOption/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contractCode_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractCode/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- =================== System Cost ========================== -->

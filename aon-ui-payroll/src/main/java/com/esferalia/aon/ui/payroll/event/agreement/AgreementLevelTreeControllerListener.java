@@ -20,16 +20,7 @@ import com.esferalia.aon.ui.payroll.controller.agreement.AgreementTreeType;
 
 public class AgreementLevelTreeControllerListener extends ControllerAdapter{
 
-	private void loadTree() {
-		try {
-			AgreementTree tree = (AgreementTree) AonUtil.getRegisteredBean(IPayrollConstants.AGREEMENT_TREE_CONTROLLER_NAME);
-			tree.loadTree();
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible cargar el convenio. [" + e.getMessage() + "]";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		}
-	}
+	
 	@Override
 	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		loadTree();
@@ -41,7 +32,20 @@ public class AgreementLevelTreeControllerListener extends ControllerAdapter{
 	}
 	
 	@Override
+	public void afterBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		loadTree();
+	}
+	
+	@Override
+	public void afterBeanCanceled(ControllerEvent event)
+			throws ControllerListenerException {
+		loadTree();
+	}
+	
+	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		loadTree();
 		AgreementTree tree = (AgreementTree) AonUtil.getRegisteredBean(IPayrollConstants.AGREEMENT_TREE_CONTROLLER_NAME);
 		ITransferObject to = event.getController().getTo();
 		if (tree.isAgreementSelected()) {
@@ -60,6 +64,17 @@ public class AgreementLevelTreeControllerListener extends ControllerAdapter{
 		AgreementLevel al = (AgreementLevel) event.getController().getTo();
 		AgreementTree tree = (AgreementTree) AonUtil.getRegisteredBean(IPayrollConstants.AGREEMENT_TREE_CONTROLLER_NAME);
 		tree.select(al);
+	}
+	
+	private void loadTree() {
+		try {
+			AgreementTree tree = (AgreementTree) AonUtil.getRegisteredBean(IPayrollConstants.AGREEMENT_TREE_CONTROLLER_NAME);
+			tree.loadTree();
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible cargar el convenio. [" + e.getMessage() + "]";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
 	}
 	
 }

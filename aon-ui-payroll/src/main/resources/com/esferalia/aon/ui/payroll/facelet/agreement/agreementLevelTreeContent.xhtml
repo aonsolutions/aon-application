@@ -51,6 +51,11 @@
 						<aon:methodParam name="resetAction" value="" />
 						<aon:methodParam name="saveAction" value="" />
 						<aon:methodParam name="removeAction"  value="" />
+
+						<ui:param name="saveButtonReRender"  value="agreementTreePanel" />
+						<ui:param name="removeButtonReRender"  value="agreementTreePanel" />
+						<ui:param name="newSaveButtonReRender"  value="agreementTreePanel" />
+						
 						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 							<ui:param name="controller" value="#{agreementLevelCategory}" />
 							<ui:define name="columns">
