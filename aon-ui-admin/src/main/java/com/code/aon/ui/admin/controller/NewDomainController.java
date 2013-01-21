@@ -264,7 +264,7 @@ public class NewDomainController {
 		domain.setDomainManagement( isDomainManagement() );
 		domain.setType( getType() );
 		domain.setParent( getParentDomain() );
-		domain.setOwner( principal.getShortName() + "@" + principal.getDomain() );
+		domain.setOwner( principal.getShortName() );
 		domain.setName(name);
 		domain.setDescription(description);
 		domain.setEnableHeredity(true);
