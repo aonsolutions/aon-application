@@ -3,6 +3,7 @@ package com.code.aon.ui.common.controller;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_COLOR;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_ID;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_TITLE;
+import static com.code.aon.ui.common.ICommonConstants.AON_HIDE_TRADEMARK;
 import static com.code.aon.ui.common.ICommonConstants.APPLICATION_TITLE;
 import static com.code.aon.ui.common.ICommonConstants.FAVICON_NAME;
 import static com.code.aon.ui.common.ICommonConstants.HEADER_LOGO_NAME;
@@ -102,6 +103,8 @@ public class CustomizeController {
 	private String statusStopStyle;
 	
 	private String statusFailedStyle;
+	
+	private boolean hideTrademark;
 	
 	public CustomizeController() {
 		this.applicationTitle = AonUtil.getMessage("appBundle", APPLICATION_TITLE );
@@ -226,6 +229,13 @@ public class CustomizeController {
 			LOGGER.error(e.getMessage(), e);
 		}		
 	}
+	
+	private void updateHideTrademark( Connection connection ) {
+		String value = getValue( connection, AON_HIDE_TRADEMARK);
+		if (! StringUtils.isEmpty(value) ) {
+			this.hideTrademark = Boolean.valueOf(value);
+		}
+	}	
 
 	private String getStatusStyle( Connection connection, String name, String _default ) {
 		String ref = getImageRef(connection, name);
@@ -289,6 +299,7 @@ public class CustomizeController {
 		updateSupportTelephone(connection);
 		updateSupportEmail(connection);
 		updateFontStyle(connection);
+		updateHideTrademark(connection);
 		this.favicon = StringUtils.defaultIfEmpty(getImageRef(connection, FAVICON_NAME), this.favicon);
 		this.loginLogo = StringUtils.defaultIfEmpty(getImageRef(connection, LOGIN_LOGO_NAME), this.loginLogo);
 		this.headerLogo = StringUtils.defaultIfEmpty(getImageRef(connection, HEADER_LOGO_NAME), this.headerLogo);
@@ -360,6 +371,10 @@ public class CustomizeController {
 
 	public String getStatusFailedStyle() {
 		return statusFailedStyle;
+	}
+
+	public boolean isHideTrademark() {
+		return hideTrademark;
 	}
 	
 }
