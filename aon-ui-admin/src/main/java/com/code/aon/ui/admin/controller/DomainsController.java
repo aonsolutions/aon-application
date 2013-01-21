@@ -12,14 +12,16 @@ import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Domain;
+import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
@@ -76,15 +78,16 @@ public class DomainsController extends BasicController {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		ds.select(domain.getId(), domain.getDescription());
 		ds.setParentDomain(domain.getId());
+		ds.setDomainManagementAvailable(true);
+		setConfigurationMenu();
+	}
+	
+	private void setConfigurationMenu() {
 		AonUtil.getRoleManager().setSysAdmin();
-		AuthPrincipal principal = AonUtil.getAuthPrincipal();
-		if (! ObjectUtils.equals( principal.getDomainId(), domain.getId()) )  {
-			ds.setDomainManagementAvailable(true);
-			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
-			String[] categories = new String[]{ENTERPRISE_CATEGORY, CONFIGURATION_CATEGORY};
-			String[] groups = new String[]{GROUP_ENTERPRISE_SECURITY, GROUP_CONFIG_SECURITY, GROUP_CONFIG_COMPANY};
-			adc.enableOnly(categories, groups);			
-		}
+		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+		String[] categories = new String[]{ENTERPRISE_CATEGORY, CONFIGURATION_CATEGORY};
+		String[] groups = new String[]{GROUP_ENTERPRISE_SECURITY, GROUP_CONFIG_SECURITY, GROUP_CONFIG_COMPANY};
+		adc.enableOnly(categories, groups);					
 	}
 
 	public int getCurrentDomainChildNumber() throws ManagerBeanException {
@@ -110,6 +113,24 @@ public class DomainsController extends BasicController {
 		rdc.reset( (Domain) getSelectedTO() );
 		rdc.setDomainDisabled(true);
 		setModel(null);
+	}
+
+	private boolean isAdminDomain() throws ManagerBeanException {
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
+		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+		Domain domain = (Domain) bean.get(principal.getDomainId());
+		return ( domain.getType() == DomainType.ADMIN );
+	}
+	
+	public void onSelectChildDomain( ActionEvent event) throws ManagerBeanException {
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		if ( ds.getModel().isRowAvailable() ) {
+			Domain domain = (Domain) ds.getModel().getRowData();
+			ds.select(domain.getId(), domain.getDescription());
+			if ( isAdminDomain() ) {
+				setConfigurationMenu();
+			}
+		}
 	}
 	
 }

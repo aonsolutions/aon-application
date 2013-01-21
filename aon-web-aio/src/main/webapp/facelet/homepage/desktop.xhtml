@@ -208,10 +208,7 @@
 									<aon:outputText value="#{configBundle.config_domain_module}" styleClass="aon-portlet-title-text aon-icon aon-icon-company"/>
 								</aon:div>
 								<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
-									<ui:include src="/com/code/aon/ui/config/facelet/domain/selection_listContent.xhtml" >
-										<ui:param name="domainSwitcherRows" value="15" />
-										<aon:methodParam name="rowSelectorAction" default="start" resolve="false" />										
-									</ui:include>
+									<ui:include src="/com/code/aon/ui/config/facelet/domain/selection_listContent.xhtml" />
 								</aon:div>
 							</aon:div>
 						</c:if>

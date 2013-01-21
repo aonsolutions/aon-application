@@ -197,11 +197,6 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 		setFilteredModel(null);
 	}
 	
-	public void onSelect(ActionEvent event){
-		Domain domain = (Domain) getModel().getRowData();
-		select(domain.getId(), domain.getDescription());
-	}
-
 	public void onParentDomain(ActionEvent event){
 		select(getParentDomain(), null);
 	}
