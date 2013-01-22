@@ -9,9 +9,9 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showEnterpriseSearchWindow">
-		<c:if test="#{controller.showEnterpriseSearchWindow}">
+		<c:if test="#{enterpriseList.showSearchWindow}">
 			<rich:modalPanel id="enterpriseSearchModalPanel" minHeight="440"
-				minWidth="750" rendered="#{controller.showEnterpriseSearchWindow}"
+				minWidth="750" rendered="#{enterpriseList.showSearchWindow}"
 				showWhenRendered="true" zindex="100" style="overflow:auto;">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -25,7 +25,7 @@
 							reRender="showListSearchWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{controller.showEnterpriseSearchWindow}"
+								target="#{enterpriseList.showSearchWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
@@ -38,14 +38,15 @@
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="listSearch-search"
 										value="#{bundle.aon_search}"
-										reRender="availableListContent"
-										actionListener="#{controller.params.enterpriseFilter.onSearchAvailableEnterprises}"
+										reRender="#{searchReRender}"
+										actionListener="#{filter.onSearchAvailableEnterprises}"
 										styleClass="aon-finding-toolbar-item aon-icon-search">
 										<rich:componentControl for="enterpriseSearchModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener
-											target="#{controller.showEnterpriseSearchWindow}"
+											target="#{enterpriseList.showSearchWindow}"
 											value="#{false}" />
+										<aon:actionHotKey key="return" />
 									</aon:commandButton>
 									<aon:commandButton id="listSearch-cancel"
 										value="#{bundle.aon_cancel}"
@@ -53,47 +54,20 @@
 										immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel">
 										<f:setPropertyActionListener
-											target="#{controller.showEnterpriseSearchWindow}"
+											target="#{enterpriseList.showSearchWindow}"
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
-									<!--  
-								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 									
-									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
-									
-										<aon:outputLabel for="Enterprise_registry_name"
-											styleClass="aon-outputLabel aon-nowrap"
-											value="#{bundle.aon_company_name}" />
-										<aon:inputText id="Enterprise_registry_name" size="40"
-											value="#{controller.params.enterpriseFilter.name}" />
-									
-										<aon:outputLabel for="Enterprise_registry_alias"
-											styleClass="aon-outputLabel aon-nowrap"
-											value="#{bundle.aon_company_alias}" />
-										<aon:inputText id="Enterprise_registry_alias" size="40"
-											value="#{controller.params.enterpriseFilter.alias}" />
-											
-										<aon:outputLabel for="Enterprise_registry_document"
-											value="#{bundle.aon_document}" />
-										<aon:inputText id="Enterprise_registry_document" size="12"
-											value="#{controller.params.enterpriseFilter.document}" />
-
-									</aon:panelGrid>
-									-->
-									
-									<ui:decorate
-										template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-										<ui:param name="controller" value="#{enterprise}" />
-												<ui:param name="skipSearchButton" value="#{true}" />
-										<ui:define name="searchContent">
-											<ui:include src="/com/code/aon/ui/company/facelet/enterprise/searchContent.xhtml" />
-										</ui:define>
-									</ui:decorate>
-									
-								<!--  
-								</aon:div>
-								-->
+								<ui:decorate
+									template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+									<ui:param name="controller" value="#{enterprise}" />
+									<ui:param name="skipSearchButton" value="#{true}" />
+									<ui:define name="searchContent">
+										<ui:include src="/com/code/aon/ui/company/facelet/enterprise/searchContent.xhtml" />
+									</ui:define>
+								</ui:decorate>
+								
 							</aon:div>
 						</aon:div>
 					</aon:div>

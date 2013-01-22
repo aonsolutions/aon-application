@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:div id="enterpriseListDataDiv">
+		<aon:div id="enterpriseListToolBarDiv" styleClass="aon-toolbar">
+			<aon:commandButton title="#{bundle.aon_check_all}"
+				styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+				value="#{bundle.aon_check_all}"
+				rendered="#{controllerList.model.rowCount > 0}"
+				actionListener="#{controllerList.checkAll}" reRender="enterpriseListDataDiv"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+			<aon:commandButton title="#{bundle.aon_uncheck_all}"
+				styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+				value="#{bundle.aon_uncheck_all}"
+				rendered="#{controllerList.model.rowCount > 0}"
+				actionListener="#{controllerList.checkNone}" reRender="enterpriseListDataDiv"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+			<aon:commandButton title="#{payrollBundle.payroll_refine_search}"
+				styleClass="aon-finding-toolbar-item aon-icon-search"
+				value="#{payrollBundle.payroll_refine_search}"
+				actionListener="#{controllerList.onEditSearch}" 
+				reRender="showEnterpriseSearchWindow">
+				<f:setPropertyActionListener target="#{controllerList.showSearchWindow}"
+					value="#{true}" />
+			</aon:commandButton>
+			<aon:div id="addButton" style="display:inline;" >
+				<aon:commandButton title="#{payrollBundle.payroll_include}"
+					styleClass="aon-finding-toolbar-item aon-icon-newFolder"
+					value="#{payrollBundle.payroll_include}"
+					rendered="#{controllerList.checkedCount > 0}"
+					actionListener="#{controller.onAddAvailable}" reRender="enterpriseTabSet"
+					onclick="Richfaces.showModalPanel('waitProccess')" 
+		     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+		     </aon:div>
+	     </aon:div>
+
+		<aon:dataTable id="listData" value="#{controllerList.model}"
+			var="to" rows="20" rendered="#{controllerList.model.rowCount > 0}" >	
+			
+			<aon:rowSelector id="noBatched-select" toggleOnClick="#{false}"/>
+
+			<aon:column styleClass="aon-editDataTable-iconColumn">
+				<f:facet name="header">
+					<aon:outputText id="availableCheckedCount" value="#{controllerList.checkedCount}" />
+				</f:facet>
+				<aon:selectBooleanCheckbox id="Available_Row_checked"
+					value="#{controllerList.rowChecked}"
+					valueChangeListener="#{controllerList.rowSelected}" >
+					<a4j:support event="onclick" 
+						ajaxSingle="true"
+						ignoreDumpResponses="true"
+						limitToList="true"
+						eventsQueue="availableEnterprises"
+						reRender="availableCheckedCount, addButton" />
+				</aon:selectBooleanCheckbox>	
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_company_document}" />
+				</f:facet>
+				<aon:outputText value="#{to.registry.document}" />
+			</aon:column>
+		
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_company_name}" />
+				</f:facet>
+				<aon:div styleClass="aon-nowrap">
+					<aon:outputText value="#{to.registry.fullName}"/>
+				</aon:div>
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_company_alias}" />
+				</f:facet>
+				<aon:outputText value="#{to.registry.alias}" />
+			</aon:column>
+
+		</aon:dataTable>
+		
+		<aon:dataScroller2 for="listData" showNote="true" />
+	</aon:div>
+	
+</ui:composition>

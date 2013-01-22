@@ -14,7 +14,7 @@
 	 	<a4j:region>
         	<h:form>
             	<a4j:poll id="poll" interval="500" enabled="#{salaryLauncher.pollEnabled}" 
-            		reRender="poll,launchSalaries,messagesContainer" />
+            		reRender="poll,salaryLauncher-clear,launchSalaries,messagesContainer" />
         	</h:form>
     	</a4j:region>
     	
@@ -24,6 +24,7 @@
 				<ui:define name="beforeToolbarContent">
 					<aon:commandButton id="salaryLauncher-clear"
 						value="#{bundle.aon_clear}"
+						disabled="#{salaryLauncher.pollEnabled}"
 						type="reset" ajaxSingle="true"
 						reRender="salaryLauncherForm"
 						actionListener="#{salaryLauncher.onClear}"
@@ -81,7 +82,7 @@
 				
 				<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
 					<c:if test="#{salaryLauncher.messages == null}">
-						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryLauncher/enterpriseFilter.xhtml" />
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryLauncher/enterpriseFilter/form.xhtml" />
 					</c:if>
 				</c:if>
 				
@@ -130,9 +131,9 @@
 		
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryLauncher/modalSearch.xhtml">
-			<ui:param name="controller" value="#{salaryLauncher}" />
-			<ui:param name="searchReRender" value="salaryLauncherForm" />
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryLauncher/enterpriseFilter/modalSearch.xhtml">
+			<ui:param name="filter" value="#{salaryLauncher.params.enterpriseFilter}" />
+			<ui:param name="searchReRender" value="enterpriseListDataDiv" />
 		</ui:include>
 		
 	</ui:define>
