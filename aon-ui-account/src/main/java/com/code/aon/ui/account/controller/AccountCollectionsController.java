@@ -279,7 +279,7 @@ public class AccountCollectionsController {
 	private List<SelectItem> getFixedAssetAccountsExtended(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "20*|21*");
+		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "20*|21*|22*");
 		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED), new Boolean(true));
 		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
@@ -294,7 +294,7 @@ public class AccountCollectionsController {
 	private List<SelectItem> getAccumulatedDepreciationAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "280*|281*");
+		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "280*|281*|282*");
 		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED), new Boolean(false));
 		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_LEVEL), new Integer(4));
 		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
@@ -311,7 +311,7 @@ public class AccountCollectionsController {
 	private List<SelectItem> getAmortizationAllocationAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "680*|681*");
+		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "680*|681*|682*");
 		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED), new Boolean(false));
 		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_LEVEL), new Integer(4));
 		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
@@ -407,3 +407,5 @@ public class AccountCollectionsController {
 		}
 	}
 }
+
+
