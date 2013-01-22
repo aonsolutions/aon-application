@@ -832,6 +832,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
+	<!--  **** ENTERPRISE LIST **** -->
+	<managed-bean>
+		<managed-bean-name>enterpriseList</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.company.controller.EnterpriseListController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!--  **** ENTERPRISE **** -->
 	<managed-bean>
 		<managed-bean-name>enterprise</managed-bean-name>
@@ -859,7 +866,6 @@
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{enterpriseSearch}</value>
 				<value>#{enterpriseForm}</value>
-				<value>#{enterpriseScopeListener}</value>
 				<value>#{enterpriseControllerListener}</value>				
 				<value>#{enterpriseWorkPlaceChildListener}</value>
 				<value>#{enterpriseMediaListener}</value>

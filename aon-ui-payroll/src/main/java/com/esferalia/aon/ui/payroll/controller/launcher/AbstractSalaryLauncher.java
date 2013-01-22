@@ -57,7 +57,6 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.launcher.ListSalaryBuilderListener.LogMessage;
-import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public abstract class AbstractSalaryLauncher 
 	implements SalaryTypeVisitor<ISQLContractSalaryCalculatorContext>{
@@ -74,22 +73,12 @@ public abstract class AbstractSalaryLauncher
 	private Connection connection;
 	private Criteria criteria;
 	
-	private boolean showEnterpriseSearchWindow;
-
 	public void onStart(ActionEvent event) {
 		setParams(null);
 		setListener(null);
 		setSaveLog(false);
 		setDebugEnabled(false);
 		setPollEnabled(false);
-	}
-
-	public boolean isShowEnterpriseSearchWindow() {
-		return showEnterpriseSearchWindow;
-	}
-
-	public void setShowEnterpriseSearchWindow(boolean showEnterpriseSearchWindow) {
-		this.showEnterpriseSearchWindow = showEnterpriseSearchWindow;
 	}
 
 	public final boolean isSaveLog() {
@@ -300,14 +289,12 @@ public abstract class AbstractSalaryLauncher
 		}
 
 		if ( DomainManager.isDomainManagementAvailable() ){
-//			PayrollUtils utils = new PayrollUtils();
-			criteria.setSkipDomainFilter( true );
-//			criteria.addInExpression(SQLConstants.CONTRACT + "." + RegistryColumns.DOMAIN, utils.getCurrentChildDomainIds());
 			if(!getParams().getEnterpriseFilter().getIncludedList().isEmpty()){
 				List<Integer> selectedList = new LinkedList<Integer>();
 				for(Enterprise enterprise: getParams().getEnterpriseFilter().getIncludedList()){
 					selectedList.add(enterprise.getDomain());
 				}
+				criteria.setSkipDomainFilter( true );
 				criteria.addInExpression(SQLConstants.CONTRACT + "." + RegistryColumns.DOMAIN, selectedList);
 			} else {
 				criteria.addNullExpression(SQLConstants.CONTRACT + "." + RegistryColumns.DOMAIN);

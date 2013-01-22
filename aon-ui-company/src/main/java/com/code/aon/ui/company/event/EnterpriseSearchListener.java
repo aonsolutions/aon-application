@@ -23,9 +23,7 @@ public class EnterpriseSearchListener extends RegistrySearchListener {
 
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
-		
 		super.completeCriteria(criteria);
-		
 		if(DomainManager.isDomainManagementAvailable()){
 			criteria.setSkipDomainFilter( true );
 			criteria.addInExpression(getFieldName(IEntityAlias.ENTERPRISE_DOMAIN), getCurrentChildDomainIds());
