@@ -7,6 +7,7 @@ public class Stat {
 	private String name;
 	private double amount;
 	private double numInvoice;
+	private double productCount;
 	private double averageAmount;
 	
 
@@ -48,6 +49,14 @@ public class Stat {
 
 	public void setAmount(double amount) {
 		this.amount = amount;
+	}
+
+	public double getProductCount() {
+		return productCount;
+	}
+
+	public void setProductCount(double productCount) {
+		this.productCount = productCount;
 	}
 
 }

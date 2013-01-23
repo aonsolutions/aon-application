@@ -52,6 +52,7 @@ public class StatEngineController {
 	private Integer year;
 	private Double totalAmount;
 	private Integer numInvoices;
+	private Integer numProducts;
 	private Double promAmount;
 	private DataModel yearStatModel;
 	private DataModel monthStatModel;
@@ -382,6 +383,14 @@ public class StatEngineController {
 
 	public void setNumInvoices(Integer numInvoices) {
 		this.numInvoices = numInvoices;
+	}
+
+	public Integer getNumProducts() {
+		return numProducts;
+	}
+	
+	public void setNumProducts(Integer numProducts) {
+		this.numProducts = numProducts;
 	}
 
 	public Double getPromAmount() {
@@ -1145,12 +1154,14 @@ public class StatEngineController {
 		int i = 0;
 		setTotalAmount(0.00);
 		setNumInvoices(0);
+		setNumProducts(0);
 		setPromAmount(0.00);
 
 		while (i < list.size()) {
 
 			totalAmount += list.get(i).getAmount();
 			numInvoices += (int) list.get(i).getNumInvoice();
+			numProducts += (int) list.get(i).getProductCount();
 
 			i++;
 		}

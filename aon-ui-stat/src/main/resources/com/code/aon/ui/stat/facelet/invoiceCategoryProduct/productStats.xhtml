@@ -14,6 +14,7 @@
 	<aon:methodParam name="backMethod" value="#{stat.onCategoryStats}"	type="actionListener" />
 	<aon:methodParam name="lastColumnAction" value="#{stat.onProductRegistryStats}" type="actionListener" />
 	<aon:methodParam  name="customerFacelet" value="category_customer_list" />	
+	<ui:param name="showProductCountColumn" value="true" />
 	<ui:param name="showLastColumn" value="true" />
 	<c:if test="#{stat.invoiceType==1}">
 		<ui:param name="lastColumnName" value="#{statBundle.stat_show_clients}" />
