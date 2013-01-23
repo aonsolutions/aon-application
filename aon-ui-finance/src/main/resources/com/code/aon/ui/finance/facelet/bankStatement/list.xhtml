@@ -586,13 +586,17 @@
 												title="#{financeBundle.finance_record}"
 												rendered="#{to.checked}" 
 												actionListener="#{controller.onRecordBankStatement}"
-												reRender="#{dataTableId}" />
+												reRender="#{dataTableId}"
+												onclick="Richfaces.showModalPanel('waitProccess')"
+												oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 											<aon:commandButton id="BankStatement-unrecordCurrent"
 												value="&#160;" styleClass="aon-icon-task-liberate aon-noborder"
 												title="#{financeBundle.finance_unrecord}"
 												rendered="#{to.recorded}" 
 												actionListener="#{controller.onUnrecordBankStatement}"
-												reRender="#{dataTableId}" />
+												reRender="#{dataTableId}"
+												onclick="Richfaces.showModalPanel('waitProccess')"
+												oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 											<aon:div style="display:inline; cursor:pointer;" rendered="#{!empty to.comments}">
 												<aon:outputText value="&#160;" styleClass="aon-icon-comment-red" 
 													style="padding-left:10px" />
