@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -18,10 +19,19 @@
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{customerLookup}" />
-		<aon:lookupButtonPopup lookup="#{creditorLookup}" />
-		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<c:if test="#{searchController.sales}">
+			<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		</c:if>
+		<c:if test="#{searchController.purchase}">
+			<aon:lookupButtonPopup lookup="#{supplierLookup}" />		
+		</c:if>
+		<c:if test="#{!(searchController.sales or searchController.purchase)}">
+			<aon:lookupButtonPopup lookup="#{creditorLookup}" />
+			<aon:lookupButtonPopup lookup="#{expenseItemLookup}" />
+		</c:if>
+		<c:if test="#{searchController.sales or searchController.purchase}">
+			<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		</c:if>
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
-		<aon:lookupButtonPopup lookup="#{supplierLookup}" />		
 	</ui:define>
 </ui:composition>

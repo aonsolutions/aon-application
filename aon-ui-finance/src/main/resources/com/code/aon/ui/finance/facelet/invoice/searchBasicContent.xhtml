@@ -37,7 +37,7 @@
 	<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
 		<ui:param name="lookupTo" value="#{searchController.registry}" />
 		<ui:param name="lookupForRegistry" value="#{true}" />
-		<ui:param name="lookupRendered" value="#{searchController.expenses}" />
+		<ui:param name="lookupRendered" value="#{searchController.expenses or searchController.undeductible}" />
 		<ui:param name="lookupSuffix" value="Invoice" />
 		<ui:param name="skipNewButton" value="#{true}" />
 	</ui:include>
