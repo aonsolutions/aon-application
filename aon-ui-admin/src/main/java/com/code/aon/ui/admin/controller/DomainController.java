@@ -22,6 +22,7 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_TYPE;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_URL;
 import static com.code.aon.ui.audit.controller.IAuditConstants.AUDIT_LEVEL;
 import static com.code.aon.ui.common.ICommonConstants.ACTIVE;
+import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_HERITABLE_ID;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_ID;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_OEM;
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
@@ -112,6 +113,8 @@ public class DomainController extends BasicController {
 	private boolean OEM;
 	
 	private Domain OEMDomain;
+	
+	private Domain heritableOEMDomain;
 	
 	private IControllerListener parentDomainFilter;
 	
@@ -294,39 +297,50 @@ public class DomainController extends BasicController {
 	public void setOEM(boolean oEM) {
 		OEM = oEM;
 	}
-
-	public void initOEM() throws ManagerBeanException {
-		String oemValue = AppParamUtil.getValue(AON_CUSTOMIZE_OEM);
-		this.OEM = StringUtils.equals(oemValue, Boolean.TRUE.toString());
-		this.OEMDomain = null;
-		String idValue = AppParamUtil.getValue(AON_CUSTOMIZE_ID);
+	
+	private Domain getOEMDomain( String paramName ) throws ManagerBeanException {
+		Domain domain = null;
+		String idValue = AppParamUtil.getValue(paramName);
 		if (! StringUtils.isEmpty(idValue) ) {
 			Integer id = NumberUtils.toInt(idValue);
 			Company company = (Company) BeanManager.getManagerBean(Company.class).get(id);
 			if ( company != null ) {
-				this.OEMDomain = (Domain) BeanManager.getManagerBean(Domain.class).get(company.getDomain());
+				domain = (Domain) BeanManager.getManagerBean(Domain.class).get(company.getDomain());
 			}
 		}
-		if ( this.OEMDomain == null ) {
-			this.OEMDomain = (Domain) BeanManager.getManagerBean(Domain.class).createNewTo();
+		if ( domain == null ) {
+			domain = (Domain) BeanManager.getManagerBean(Domain.class).createNewTo();
 		}
+		return domain;
 	}
 
-	public void saveOEM() throws ManagerBeanException {
-		AppParamUtil.insertParameter(AON_CUSTOMIZE_OEM, String.valueOf(isOEM()) );
-		String customizeId = null;
-		if ( (this.OEMDomain != null) && (this.OEMDomain.getId() != null) ) {
+	public void initOEM() throws ManagerBeanException {
+		String oemValue = AppParamUtil.getValue(AON_CUSTOMIZE_OEM);
+		this.OEM = StringUtils.equals(oemValue, Boolean.TRUE.toString());
+		this.OEMDomain = getOEMDomain(AON_CUSTOMIZE_ID);
+		this.heritableOEMDomain = getOEMDomain(AON_CUSTOMIZE_HERITABLE_ID);
+	}
+
+	private void saveOEMDomain( String paramName, Domain domain) throws ManagerBeanException {
+		String id = null;
+		if ( (domain != null) && (domain.getId() != null) ) {
 			IManagerBean bean = BeanManager.getManagerBean(Company.class);
 			Criteria criteria = new Criteria();
 			criteria.setSkipDomainFilter(true);
-			criteria.addEqualExpression("Company.domain", this.OEMDomain.getId());
+			criteria.addEqualExpression("Company.domain", domain.getId());
 			List<ITransferObject> list = bean.getList(criteria);
 			if (! list.isEmpty()) {
 				Company company = (Company) list.get(0);
-				customizeId = String.valueOf(company.getId());
+				id = String.valueOf(company.getId());
 			}
 		}
-		AppParamUtil.insertParameter(AON_CUSTOMIZE_ID, customizeId);
+		AppParamUtil.insertParameter(paramName, id);
+	}		
+	
+	public void saveOEM() throws ManagerBeanException {
+		AppParamUtil.insertParameter(AON_CUSTOMIZE_OEM, String.valueOf(isOEM()) );
+		saveOEMDomain(AON_CUSTOMIZE_ID, this.OEMDomain);
+		saveOEMDomain(AON_CUSTOMIZE_HERITABLE_ID, this.heritableOEMDomain);
 	}	
 
 	public void domainNameCheck(FacesContext context, UIComponent component, Object value) throws ManagerBeanException {
@@ -350,6 +364,14 @@ public class DomainController extends BasicController {
 		OEMDomain = oEMDomain;
 	}
 	
+	public Domain getHeritableOEMDomain() {
+		return heritableOEMDomain;
+	}
+
+	public void setHeritableOEMDomain(Domain heritableOEMDomain) {
+		this.heritableOEMDomain = heritableOEMDomain;
+	}
+
 	public void updateDocumental() throws ManagerBeanException {
 		DocumentManager dm = (DocumentManager) AonUtil.getRegisteredBean(IRegistryConstants.DOCUMENT_MANAGER_CONTROLLER_NAME);
 		dm.updateLimits(getManagerBean(), getDomain());

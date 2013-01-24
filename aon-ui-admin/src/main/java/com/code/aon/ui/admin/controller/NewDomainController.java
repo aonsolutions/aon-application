@@ -4,6 +4,7 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_NAME_DUPLICATED;
 import static com.code.aon.ui.admin.controller.IAdminConstants.INVALID_PASSWORD;
+import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_HERITABLE_ID;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_ID;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
@@ -227,13 +228,14 @@ public class NewDomainController {
 	}
 	
 	private void copyCustomizeId( Integer newDomain ) {
-		String idValue = AppParamUtil.getValue(AON_CUSTOMIZE_ID);
+		String idValue = AppParamUtil.getValue(AON_CUSTOMIZE_HERITABLE_ID);
 		if (! StringUtils.isEmpty(idValue) ) {
-			ApplicationParameter ap = new ApplicationParameter();
-			ap.setName(AON_CUSTOMIZE_ID);
-			ap.setValue(idValue);
-			ap.setDomain(newDomain);
-			AppParamUtil.insertParameter(ap);
+			ApplicationParameter ap1 = new ApplicationParameter(AON_CUSTOMIZE_ID, idValue);
+			ap1.setDomain(newDomain);
+			AppParamUtil.insertParameter(ap1);
+			ApplicationParameter ap2 = new ApplicationParameter(AON_CUSTOMIZE_HERITABLE_ID, idValue);
+			ap2.setDomain(newDomain);
+			AppParamUtil.insertParameter(ap2);
 		}		
 	}
 	

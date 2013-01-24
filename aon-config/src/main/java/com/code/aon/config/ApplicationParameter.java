@@ -15,6 +15,14 @@ public class ApplicationParameter extends ApplicationParameterDB {
 	
 	private String defaultValue;
 	private boolean systemParameter = false;
+	
+	public ApplicationParameter() {
+	}
+
+	public ApplicationParameter(String name, String value) {
+		setName(name);
+		setValue(value);
+	}
 
 	@Transient
 	public String getDefaultValue() {

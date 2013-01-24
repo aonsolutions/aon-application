@@ -109,6 +109,12 @@
 							<ui:param name="lookupControllerListener" value="#{adminDomain.OEMDomainFilter}" />
 						</ui:include>
 								
+						<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{adminDomain.heritableOEMDomain}" />
+							<ui:param name="lookupLabel" value="#{bundle.aon_heritable_oem_template}" />							
+							<ui:param name="lookupSuffix" value="-HeritableOEM" />
+							<ui:param name="lookupControllerListener" value="#{adminDomain.OEMDomainFilter}" />
+						</ui:include>
 					</c:if>
 					
 				</aon:panelGrid>
