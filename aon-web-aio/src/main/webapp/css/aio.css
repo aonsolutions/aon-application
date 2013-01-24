@@ -69,10 +69,6 @@
  }
  
  /*** ESTILOS DE LA CONTA - PENDIENTE PASAR AL CSS STANDARD *******/
- .aon-commandButton{
-	padding:0 0.5em 0 1.5em !important;
-}
-
 #aon-content .aon-table-header-link:hover {
 	text-decoration: underline;
 }

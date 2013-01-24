@@ -61,6 +61,19 @@ public class AppParamUtil {
 		return insertParameter(ap);
     }	
 
+	public static boolean removeParameter( String name ) {
+		ApplicationParameter ap = getParameter(name);
+		if ( ap != null ) {
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
+				return bean.remove(ap);
+			} catch (ManagerBeanException e) {
+				LOGGER.error( e.getMessage(), e );
+			}
+		}	
+		return false;
+    }	
+	
 	public static String getValue( String name ) {
 		ApplicationParameter ap = getParameter(name);
 		if ( ap != null ) {

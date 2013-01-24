@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -15,6 +16,8 @@ import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +34,8 @@ public class Util {
 	private static final String DB_SEP = "`";
 	
 	public static final String MYSQL = "mysql";
+	
+	private String AON_SUPPORT_ENABLED = "AON_SUPPORT_ENABLED";
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(Util.class);
 	
@@ -128,7 +133,7 @@ public class Util {
 		}
 		QueryRunner run = new QueryRunner();
 		try {
-			ResultSetHandler<List<Object>> h = new ColumnListHandler();
+			ResultSetHandler<List<Object>> h = new ColumnListHandler<Object>();
 			List<Object> result = run.query( connection,
 					"SELECT t.TABLE_SCHEMA FROM INFORMATION_SCHEMA.TABLES as t " +
 					"WHERE t.TABLE_NAME = 'domain'", h);
@@ -162,8 +167,8 @@ public class Util {
 	private long getDomainCount() {
 		QueryRunner run = new QueryRunner();
 		try {
-			ResultSetHandler<Object> h = new ScalarHandler();
-			return (Long) run.query( connection, "SELECT count(id) FROM domain", h); 
+			ResultSetHandler<Long> h = new ScalarHandler<Long>();
+			return run.query( connection, "SELECT count(id) FROM domain", h); 
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		}		
@@ -173,8 +178,8 @@ public class Util {
 	private Integer getDefaultDomainId() {
 		QueryRunner run = new QueryRunner();
 		try {
-			ResultSetHandler<Object> h = new ScalarHandler();
-			return (Integer) run.query( connection, "SELECT id FROM domain", h); 
+			ResultSetHandler<Integer> h = new ScalarHandler<Integer>();
+			return run.query( connection, "SELECT id FROM domain", h); 
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		}		
@@ -184,8 +189,8 @@ public class Util {
 	private Integer findDomainId( String domainName ) {
 		QueryRunner run = new QueryRunner();
 		try {
-			ResultSetHandler<Object> h = new ScalarHandler();
-			return (Integer) run.query( connection, "SELECT id FROM domain WHERE name =?", h, domainName);
+			ResultSetHandler<Integer> h = new ScalarHandler<Integer>();
+			return run.query( connection, "SELECT id FROM domain WHERE name =?", h, domainName);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		}		
@@ -201,6 +206,43 @@ public class Util {
 		}
 		return domainId;
 	}	
+	
+	private Integer getAdminDomain() {
+		QueryRunner run = new QueryRunner();
+		try {
+			ResultSetHandler<Integer> h = new ScalarHandler<Integer>();
+			return run.query( connection, "SELECT id FROM domain where type=5", h); 
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
+		return null;			
+	}		
+
+	public boolean isSupportEnabled( Integer domainId ) {
+		QueryRunner run = new QueryRunner();
+		try {
+			ResultSetHandler<String> h = new ScalarHandler<String>();
+			String value = run.query( connection,
+					"SELECT value FROM app_param where domain=? and name=?", h, domainId, AON_SUPPORT_ENABLED);
+			if ( value != null ) {
+				Date date = new Date( NumberUtils.toLong(value) );
+				if ( DateUtils.isSameDay(date, new Date()) ) {
+					return true;
+				}				
+			}
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
+		return false;					
+	}
+	
+	public User getUserOfAdminDomain( String userName ) {
+		Integer adminDomaindId = getAdminDomain();
+		if ( adminDomaindId != null ) {
+			return getUser(adminDomaindId, userName);
+		}
+		return null;
+	}
 	
 	private User getUser( Integer domainId, String userName ) {
 		QueryRunner run = new QueryRunner();
@@ -228,8 +270,8 @@ public class Util {
 		QueryRunner run = new QueryRunner();
 		try {
 			LOGGER.debug( "application name: {}", applicationName );
-			ResultSetHandler<Object> h = new ScalarHandler();
-			return (Integer) run.query( connection,
+			ResultSetHandler<Integer> h = new ScalarHandler<Integer>();
+			return run.query( connection,
 				    "SELECT id FROM application WHERE name =?", h, applicationName); 
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);

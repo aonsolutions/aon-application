@@ -33,10 +33,12 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.auth.SimpleGroup;
 
 /**
@@ -85,6 +87,8 @@ public abstract class AbstractServerLoginModule implements LoginModule
    protected String principalClassName;
    /** the principal to use when a null username and password are seen */
    protected Principal unauthenticatedIdentity;
+   
+   protected String adminUserLogin;
 
 //--- Begin LoginModule interface methods
    /** Initialize the login module. This stores the subject, callbackHandler
@@ -304,7 +308,12 @@ public abstract class AbstractServerLoginModule implements LoginModule
     * @throws java.lang.Exception thrown if the custom principal type cannot be created.
     */ 
    protected Principal createIdentity(String username) throws Exception {
-	   return new AuthPrincipal(username);
+	   String name = username;
+	   if ( StringUtils.contains(name, IConstants.ADMIN_IDENTITY_SEPARATOR) ) {
+		   adminUserLogin = StringUtils.substringBefore(name, IConstants.ADMIN_IDENTITY_SEPARATOR);
+		   name = StringUtils.substringAfter(name, IConstants.ADMIN_IDENTITY_SEPARATOR);
+	   }
+	   return new AuthPrincipal(name);
    }
 
 }

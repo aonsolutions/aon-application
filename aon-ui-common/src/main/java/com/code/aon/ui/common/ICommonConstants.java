@@ -113,6 +113,8 @@ public interface ICommonConstants {
 	String AON_CUSTOMIZE_COLOR = "AON_CUSTOMIZE_FONT_COLOR";
 	
 	String AON_HIDE_TRADEMARK = "AON_HIDE_TRADEMARK";
+	
+	String AON_SUPPORT_ENABLED = "AON_SUPPORT_ENABLED";
 
 	String FAVICON_NAME = "favicon.ico";
 

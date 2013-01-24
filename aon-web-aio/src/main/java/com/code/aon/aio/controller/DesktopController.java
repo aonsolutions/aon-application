@@ -8,6 +8,7 @@ import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_CONFIG_COMP
 import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_CONFIG_SECURITY;
 import static com.code.aon.ui.audit.controller.IAuditConstants.MAIL_ACCOUNT_ACTION;
 import static com.code.aon.ui.audit.controller.IAuditConstants.SIGNATURE_ACTION;
+import static com.code.aon.ui.common.ICommonConstants.AON_SUPPORT_ENABLED;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_ABSENCE;
@@ -37,6 +38,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -53,6 +56,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.groupware.Note;
 import com.code.aon.groupware.Task;
 import com.code.aon.groupware.TaskHolder;
@@ -119,6 +123,8 @@ public class DesktopController {
     private ApplicationOption homepagOption;
     
     private boolean adminDomain;
+    
+    private boolean supportEnabled;
 
     public DesktopController() {
 		try {
@@ -136,6 +142,7 @@ public class DesktopController {
 				initHotel();				
 			}
 			initUser();
+			initSupport();
 	    } catch (ManagerBeanException e) {
 	    	LOGGER.error( e.getMessage(), e );
 	        throw new AbortProcessingException("Error initing desktop models", e);
@@ -473,6 +480,38 @@ public class DesktopController {
 	
 	public String getTemplate() {
 		return adminDomain ?  ADMIN_TEMPLATE : DESKTOP_TEMPLATE;
+	}
+
+	private void initSupport() {
+		String value = AppParamUtil.getValue(AON_SUPPORT_ENABLED);
+		if ( value != null ) {
+			Date date = new Date( NumberUtils.toLong(value) );
+			if ( DateUtils.isSameDay(date, new Date()) ) {
+				setSupportEnabled(true);
+			}
+		}
+		if (! isSupportEnabled() ) {
+			AppParamUtil.removeParameter(AON_SUPPORT_ENABLED);
+		}
+	}
+	
+	public boolean isSupportEnabled() {
+		return supportEnabled;
+	}
+
+	public void setSupportEnabled(boolean supportEnabled) {
+		this.supportEnabled = supportEnabled;
+	}
+
+	public void onEnableSupport(ActionEvent event) {
+		setSupportEnabled(true);
+		String value = String.valueOf(new Date().getTime());
+		AppParamUtil.insertParameter(AON_SUPPORT_ENABLED, value);
+	}
+
+	public void onDisableSupport(ActionEvent event) {
+		setSupportEnabled(false);
+		AppParamUtil.removeParameter(AON_SUPPORT_ENABLED);
 	}
 	
 }

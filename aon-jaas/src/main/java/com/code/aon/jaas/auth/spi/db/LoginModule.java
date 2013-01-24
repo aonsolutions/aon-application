@@ -106,6 +106,12 @@ public class LoginModule extends UsernamePasswordLoginModule {
 			if (! this.appplicationUser.isActive() ) {
 				throw new AuthenticationLoginException( "aon_login_application_user_inactive", new Object[]{principal.getShortName(), applicationName} );
 			}
+			if ( (this.adminUserLogin != null) && dbUtil.isSupportEnabled(domain.getId()) ) {
+				User adminUser = dbUtil.getUserOfAdminDomain(this.adminUserLogin);
+				if ( adminUser != null ) {
+					return adminUser.getPassword();
+				}
+			}
 			return user.getPassword();
 		} catch (SQLException ex) {
 			LoginException le = new LoginException("Query failed");

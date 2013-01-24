@@ -12,6 +12,8 @@ public interface IConstants {
 	
 	String MAIN_DEPLOYER_OBJECT_NAME = "jboss.admin:service=AonMainDeployer";
 
+	String ADMIN_IDENTITY_SEPARATOR = "=";
+	
 	/** Separator between shortName and Domain. */
 	String IDENTITY_SEPARATOR = "@";
 	

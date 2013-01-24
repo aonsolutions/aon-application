@@ -277,6 +277,25 @@
 									<f:param name="email" value="#{customize.supportEmail}" />
 								</aon:commandLink>							    
 							</aon:div>
+					        <aon:div styleClass="aon-margin-top" style="font-size: 1.1em;">
+					        	<aon:outputText value="Acceso de Soporte Remoto" />
+								<aon:div id="remoteSupport" style="text-transform:uppercase;font-weight: bold;">
+									<aon:outputText
+										style="#{(desktop.supportEnabled)?'color:red;':'color:green;'}"
+										value="[ #{(desktop.supportEnabled)?(bundle.aon_active):(bundle.aon_inactive)} ]" />
+									<aon:div styleClass="aon-margin-top aon-margin-bottom">
+										<aon:commandButton value="#{bundle.aon_activate}"
+											actionListener="#{desktop.onEnableSupport}"
+											reRender="remoteSupport"
+											rendered="#{!desktop.supportEnabled}" />
+										<aon:commandButton value="#{bundle.aon_deactivate}"
+											actionListener="#{desktop.onDisableSupport}"
+											reRender="remoteSupport"
+											rendered="#{desktop.supportEnabled}" />
+									</aon:div>
+								</aon:div>
+							</aon:div>
+							
 						</aon:div>
 						<!-- fin soporte -->
 					</aon:div>
