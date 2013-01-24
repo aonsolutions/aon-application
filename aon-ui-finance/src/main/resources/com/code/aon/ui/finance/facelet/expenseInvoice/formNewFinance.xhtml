@@ -25,14 +25,8 @@
 		rendered="#{expenseInvoice.financeGenerationMode == 1}"
 		timeZone="#{timeZoneController.timeZone}"
 		popupDateFormat="#{bundle.aon_date_pattern}">
-		<a4j:support ajaxSingle="true" event="oninputchange"
-			actionListener="#{expenseInvoice.onDateChanged}"
-			reRender="Invoice_taxDate"
-			focus="Creditor_id" />
-		<a4j:support ajaxSingle="true" event="onchanged"
-			actionListener="#{expenseInvoice.onDateChanged}"
-			reRender="Invoice_taxDate"
-			focus="Creditor_id" />
+		<a4j:support ajaxSingle="true" event="oninputchange" />
+		<a4j:support ajaxSingle="true" event="onchanged" />
 	</aon:selectInputDate>
 
 	<aon:outputLabel for="Finance_PayMethod" value="#{configBundle.config_pay_method}"
@@ -98,7 +92,6 @@
 		<aon:div style="font-size:0.9em;" styleClass="aon-italic">
 			<aon:selectOneMenu id="Finance_RegistryBank"
 				rendered="#{!expenseInvoiceFinance.showBankManualInput}"
-				reRender="InvoiceFinance_bankAccount"
 				value="#{expenseInvoiceFinance.registryBank}"
 				valueChangeListener="#{expenseInvoiceFinance.onRBankChanged}">
 				<f:selectItem value="#{null}" />

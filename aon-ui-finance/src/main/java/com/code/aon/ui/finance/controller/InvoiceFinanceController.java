@@ -38,19 +38,20 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 	private RegistryBank registryBank;
 	private boolean showBankManualInput;
 
-	public boolean isShowBankManualInput() throws ManagerBeanException {
-		return showBankManualInput;
-	}
-
-	public void setShowBankManualInput(boolean showBankManualInput) {
-		this.showBankManualInput = showBankManualInput;
-	}
 	public RegistryBank getRegistryBank() {
 		return registryBank;
 	}
 
 	public void setRegistryBank(RegistryBank registryBank) {
 		this.registryBank = registryBank;
+	}
+
+	public boolean isShowBankManualInput() throws ManagerBeanException {
+		return showBankManualInput;
+	}
+
+	public void setShowBankManualInput(boolean showBankManualInput) {
+		this.showBankManualInput = showBankManualInput;
 	}
 
 	public boolean isModelToEditable() throws ManagerBeanException{
@@ -98,7 +99,7 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 		finance.setBankAccount(new BankAccount());
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Bank bank = (Bank) event.getNewValue();
-			finance.getBankAccount().setEntity(bank.getCode());			
+			finance.getBankAccount().setEntity(bank.getCode());
 		}
 	}
 	
@@ -107,7 +108,7 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			RegistryBank rbank = (RegistryBank) event.getNewValue();
 			finance.setBank(rbank.getBank());
-			finance.setBankAccount(rbank.getBankAccount());			
+			finance.setBankAccount(rbank.getBankAccount());
 
 			setRegistryBank(rbank);
 		} else {

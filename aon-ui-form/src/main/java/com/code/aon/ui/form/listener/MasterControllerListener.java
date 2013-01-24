@@ -72,7 +72,6 @@ public class MasterControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		IController detail = getDetailController();
 		ITransferObject to = master.getTo();
-		// Criteria criteria = new Criteria();
 		try {
 			detail.clearCriteria();
 			Criteria criteria = detail.getCriteria();

@@ -95,7 +95,9 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 
 	private void beforeSaveExpenseDetail(ExpenseInvoiceDetailController controller) {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
-		if (invoiceDetail.getTaxableBase() == 0 && controller.getTotalChanged() != 0) {
+		if (invoiceDetail.getTaxableBase() != 0 && controller.getTotalChanged() == 0) {
+			controller.taxableBaseChanged(invoiceDetail);
+		} else if (invoiceDetail.getTaxableBase() == 0 && controller.getTotalChanged() != 0) {
 			controller.totalChanged(invoiceDetail);
 		}
 		invoiceDetail.setQuantity(1);

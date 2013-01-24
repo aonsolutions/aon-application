@@ -42,7 +42,7 @@ public class ItemPricesManager {
 			if (profit == CommonUtil.round((price / profitablePrice - 1) * 100, 3)) {
 				return price;
 			} else {
-				price = CommonUtil.truncate(profitablePrice * (1 + profit / 100), i);
+				price = CommonUtil.floor(profitablePrice * (1 + profit / 100), i);
 				if (profit == CommonUtil.round((price / profitablePrice - 1) * 100, 3)) {
 					return price;
 				}
@@ -105,11 +105,21 @@ public class ItemPricesManager {
 		for (int i=precision; i<=4; i++) {
 			price = CommonUtil.round(salesPrice / (1 + vatPercent / 100 - retentionPercent / 100), i);
 			if (salesPrice == priceable.getSalesPrice(price)) {
-				return price;
+				break;
 			} else {
-				price = CommonUtil.truncate(salesPrice / (1 + vatPercent / 100 - retentionPercent / 100), i);
+				price = CommonUtil.ceil(salesPrice / (1 + vatPercent / 100 - retentionPercent / 100), i);
 				if (salesPrice == priceable.getSalesPrice(price)) {
-					return price;
+					break;
+				} else {
+					price = CommonUtil.floor(salesPrice / (1 + vatPercent / 100 - retentionPercent / 100), i);
+					if (salesPrice == priceable.getSalesPrice(price)) {
+						break;
+					} else if (i < 4) {
+						price = CommonUtil.round(price + 5 / Math.pow(10, i+1), i+1);
+						if (salesPrice == priceable.getSalesPrice(price)) {
+							break;
+						}
+					}
 				}
 			}
 		}

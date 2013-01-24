@@ -42,7 +42,7 @@ public class CommonUtil {
 	}
 
 	/**
-	 * Trunca un valor decimal a la precision requerida
+	 * Redondea a la baja un valor decimal a la precision requerida
 	 * 
 	 * @param value
 	 *            el valor a truncar
@@ -51,20 +51,46 @@ public class CommonUtil {
 	 *            la precision de la parte decimal
 	 * @return double el valor truncado
 	 */
-	public static double truncate(double value, int precision) {
+	public static double floor(double value, int precision) {
 		return Math.floor(value * Math.pow(10, precision)) / Math.pow(10, precision);
 	}
 
 	/**
-	 * Trunca un valor decimal a 2 digitos en la parte decimal
+	 * Redondea a la baja un valor decimal a 2 digitos en la parte decimal
 	 * 
 	 * @param value
 	 *            el valor a truncar
 	 * 
 	 * @return double el valor tuncado
 	 */
-	public static double truncate(double value) {
-		return truncate(value, 2);
+	public static double floor(double value) {
+		return floor(value, 2);
+	}
+
+	/**
+	 * Redondea al alta un valor decimal a la precision requerida
+	 * 
+	 * @param value
+	 *            el valor a truncar
+	 * 
+	 * @param precision
+	 *            la precision de la parte decimal
+	 * @return double el valor truncado
+	 */
+	public static double ceil(double value, int precision) {
+		return Math.ceil(value * Math.pow(10, precision)) / Math.pow(10, precision);
+	}
+
+	/**
+	 * Redondea al alta un valor decimal a 2 digitos en la parte decimal
+	 * 
+	 * @param value
+	 *            el valor a truncar
+	 * 
+	 * @return double el valor tuncado
+	 */
+	public static double ceil(double value) {
+		return ceil(value, 2);
 	}
 
 	/**

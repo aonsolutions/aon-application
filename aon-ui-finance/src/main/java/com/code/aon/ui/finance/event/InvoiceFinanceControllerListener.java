@@ -52,12 +52,11 @@ public class InvoiceFinanceControllerListener extends ControllerAdapter {
 			RegistryPayMethod rPayMethod = obtainRegistryPayMethod(finance.getRegistry());
 			if (rPayMethod != null) {
 				finance.setPayMethod(rPayMethod.getPayment());
-				finance.setBank(rPayMethod.getRegistryBank() == null ? new Bank() : rPayMethod.getBank());
-				finance.setBankAccount(rPayMethod.getRegistryBank() == null ? new BankAccount() : rPayMethod.getBankAccount());
-
-				financeController.setRegistryBank(rPayMethod.getRegistryBank());
-				financeController.setShowBankManualInput(true);
+				finance.setBank((rPayMethod.getRegistryBank()==null) ? new Bank() : rPayMethod.getBank());
+				finance.setBankAccount((rPayMethod.getRegistryBank()==null) ? new BankAccount() : rPayMethod.getBankAccount());
 			}
+			financeController.setRegistryBank((rPayMethod==null) ? null : rPayMethod.getRegistryBank());
+			financeController.setShowBankManualInput(false);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -66,22 +65,19 @@ public class InvoiceFinanceControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		InvoiceFinanceController financeController = (InvoiceFinanceController)event.getController();
-		financeController.setRegistryBank(null);
 		Finance finance = (Finance)financeController.getTo();
-		financeController.setShowBankManualInput(finance.getBank()!=null && finance.getBank().getId()!=null);
 		try {
+			financeController.setRegistryBank(null);
 			if (StringUtils.isNotEmpty(finance.getBankAccount().getValue())) {
-				for (SelectItem item : financeController.getAllBanks()) {
-					RegistryBank rBank = (RegistryBank)item.getValue();
-					BankAccount bankAccount = rBank.getBankAccount();
-					if (bankAccount!= null) {
-						if (StringUtils.equals(finance.getBankAccount().getValue(), bankAccount.getValue())) {
-							financeController.setRegistryBank(rBank);
-							break;
-						}
+				for (SelectItem selectItem : financeController.getAllBanks()) {
+					RegistryBank rBank = (RegistryBank)selectItem.getValue();
+					if (finance.getBankAccount().getValue().equals(rBank.getBankAccount().getValue())) {
+						financeController.setRegistryBank(rBank);
+						break;
 					}
 				}
 			}
+			financeController.setShowBankManualInput(financeController.getRegistryBank() == null && StringUtils.isNotEmpty(finance.getBankAccount().getValue()));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}

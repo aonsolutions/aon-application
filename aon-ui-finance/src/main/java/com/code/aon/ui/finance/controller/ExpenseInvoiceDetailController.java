@@ -130,11 +130,25 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 			if (getTotalChanged() == getTotal(taxableBase, vatQuota, retentionQuota)) {
 				break;
 			} else {
-				taxableBase = CommonUtil.truncate(getTotalChanged() / ( 1 + vatPercent / 100 - retentionPercent / 100), i);
+				taxableBase = CommonUtil.ceil(getTotalChanged() / ( 1 + vatPercent / 100 - retentionPercent / 100), i);
 				vatQuota = getQuota(taxableBase, vatPercent);
 				retentionQuota = getQuota(taxableBase, retentionPercent);
 				if (getTotalChanged() == getTotal(taxableBase, vatQuota, retentionQuota)) {
 					break;
+				} else {
+					taxableBase = CommonUtil.floor(getTotalChanged() / ( 1 + vatPercent / 100 - retentionPercent / 100), i);
+					vatQuota = getQuota(taxableBase, vatPercent);
+					retentionQuota = getQuota(taxableBase, retentionPercent);
+					if (getTotalChanged() == getTotal(taxableBase, vatQuota, retentionQuota)) {
+						break;
+					} else if (i < 4) {
+						taxableBase = CommonUtil.round(taxableBase + 5 / Math.pow(10, i+1), i+1);
+						vatQuota = getQuota(taxableBase, vatPercent);
+						retentionQuota = getQuota(taxableBase, retentionPercent);
+						if (getTotalChanged() == getTotal(taxableBase, vatQuota, retentionQuota)) {
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -170,7 +184,7 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 	}
 
 	private double getTotal(double taxableBase, double vatQuota, double retentionQuota) {
-		return CommonUtil.round(taxableBase + vatQuota - retentionQuota, 4);
+		return CommonUtil.round(taxableBase + vatQuota - retentionQuota);
 	}
 
 }

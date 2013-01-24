@@ -36,19 +36,20 @@ public class LinesControllerListener extends MasterControllerListener {
 	 */
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		updateDetailCriteria( event.getController(), false );
+
 		if (simultaneousEdition) {
 			LinesController childController = getLinesController();
 			childController.setModel(null);
 			if (childController.getTo() != null) {
 				childController.onAccept(null);
 			}
-		}
-
-		try {
-			updateDetailCriteria( event.getController(), false );
-			getLinesController().saveModel( event.getController().getTo() );
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException( e.getMessage(), e );
+		} else {
+			try {
+				getLinesController().saveModel( event.getController().getTo() );
+			} catch (ManagerBeanException e) {
+				throw new ControllerListenerException( e.getMessage(), e );
+			}
 		}
 	}
 

@@ -17,6 +17,7 @@ public class InvoiceFinanceLinesListener extends LinesControllerListener {
 		if (invoiceController.getFinanceGenerationMode() == 1 && invoice.getTotal() != 0) {
 			Finance finance = (Finance)getLinesController().getTo();
 			if (finance != null) {
+				finance.setInvoice(invoice);
 				finance.setAmount(invoice.getTotal());
 			}
 		} else {
