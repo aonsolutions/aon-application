@@ -43,6 +43,16 @@
 					    </aon:outputLink>
 					</aon:div>
 				</aon:column>
+				<aon:column styleClass="aon-editDataTable-iconColumn">				
+					<aon:outputText value="&#160;"
+						rendered="#{to.enableHeredity}"
+						title="#{bundle.aon_domian_enableHeredity}"
+						styleClass="aon-icon2 aon-icon-enableHeredity" />														
+					<aon:outputText value="&#160;"
+						rendered="#{!to.enableHeredity}"
+						title="#{bundle.aon_domian_disableHeredity}"
+						styleClass="aon-icon2 aon-icon-disableHeredity" />														
+				</aon:column>
 			</ui:define>
 		</ui:decorate>
 	</aon:div>

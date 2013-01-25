@@ -2666,6 +2666,12 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-shield{
 	background:transparent url(images/aon-icon/aon-icon-shield.png) no-repeat scroll center left;
 }
+.aon-icon-enableHeredity{
+	background:transparent url(images/aon-icon/aon-icon-enableHeredity.png) no-repeat scroll center left;
+}
+.aon-icon-disableHeredity{
+	background:transparent url(images/aon-icon/aon-icon-disableHeredity.png) no-repeat scroll center left;
+}
 .aon-subTable-column{
 	padding-left: 10px; 
 	border: none; 
