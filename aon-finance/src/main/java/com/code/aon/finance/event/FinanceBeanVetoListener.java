@@ -48,6 +48,9 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		if (finance.getAmount() == 0) {
 			throw new ManagerBeanVetoListenerException("El importe del vencimiento no puede ser 0.0");
 		}
+		if (!finance.isEmptyInvoice() && (finance.getRegistry() == null || finance.getRegistry().getId() == null)) {
+			finance.setRegistry(finance.getInvoice().getRegistry());
+		}
 		if (StringUtils.isEmpty(finance.getRegistryName())) {
 			finance.setRegistryName((!finance.isEmptyInvoice()) ? finance.getInvoice().getRegistryName() : finance.getRegistry().getFullName());
 		}
