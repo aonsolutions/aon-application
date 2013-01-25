@@ -99,6 +99,7 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 		finance.setBankAccount(new BankAccount());
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Bank bank = (Bank) event.getNewValue();
+			finance.setBank(bank);
 			finance.getBankAccount().setEntity(bank.getCode());
 		}
 	}
@@ -123,24 +124,28 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 		Finance finance = (Finance) getTo();
 		if (finance != null && finance.getPayMethod() != null) {
 			if (useRegistryBanks(finance.getInvoice().getType() == InvoiceType.SALES, finance.getPayMethod().getType())) {
-				RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
-				return c.getAllRegistryBanks(finance.getRegistry());
+				RegistryCollectionsController registryColls = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
+				return registryColls.getAllRegistryBanks(finance.getInvoice().getRegistry());
 			} 
-			CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
-			return c.getAllCompanyBanks();
+			CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+			return companyColls.getAllCompanyBanks();
 		}
 		return new LinkedList<SelectItem>();
 	}
 	
+	public int getAllBanksCount() throws ManagerBeanException {
+		return getAllBanks().size();
+	}
+
 	public List<SelectItem> getActiveBanks() throws ManagerBeanException {
 		Finance finance = (Finance) getTo();
 		if (finance != null && finance.getPayMethod() != null) {
 			if (useRegistryBanks(finance.getInvoice().getType() == InvoiceType.SALES, finance.getPayMethod().getType())) {
-				RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
-				return c.getActiveRegistryBanks(finance.getRegistry());
+				RegistryCollectionsController registryColls = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
+				return registryColls.getActiveRegistryBanks(finance.getInvoice().getRegistry());
 			} 
-			CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
-			return c.getActiveCompanyBanks();
+			CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+			return companyColls.getActiveCompanyBanks();
 		}
 		return new LinkedList<SelectItem>();
 	}
@@ -148,12 +153,17 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 	public int getActiveBanksCount() throws ManagerBeanException {
 		return getActiveBanks().size();
 	}
-	public int getAllBanksCount() throws ManagerBeanException {
-		return getAllBanks().size();
-	}
 
 	private boolean useRegistryBanks(boolean sales, PayMethodType payMethodType) {
 		return ((sales && payMethodType == PayMethodType.NEGOTIABLE_DOCUMENT) || (!sales && payMethodType == PayMethodType.BANK_TRANSFER));	
+	}
+
+	public void onBankManualInput(ActionEvent event) throws ManagerBeanException {
+		Finance finance = (Finance) getTo();
+		finance.setBank(new Bank());
+		finance.setBankAccount(new BankAccount());
+
+		setRegistryBank(null);
 	}
 
 	public boolean isBankCreationEnabled() throws ManagerBeanException {
@@ -168,24 +178,22 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 		for (SelectItem item : getAllBanks()) {
 			RegistryBank rBank = (RegistryBank)item.getValue();
 			BankAccount bankAccount = rBank.getBankAccount();
-			if (bankAccount != null) {
-				if (StringUtils.equals(finance.getBankAccount().getValue(), bankAccount.getValue())) {
-					return false;
-				}
+			if (bankAccount != null && StringUtils.equals(finance.getBankAccount().getValue(), bankAccount.getValue())) {
+				return false;
 			}
 		}
-
 		return true;
 	}
 
-	public void onAddRBank(ActionEvent event) throws ManagerBeanException {
+	public void onAddRegistryBank(ActionEvent event) throws ManagerBeanException {
 		Finance finance = (Finance) getTo();
 
 		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		RegistryBank rBank = new RegistryBank();
-		rBank.setRegistry(finance.getRegistry());
+		rBank.setRegistry(finance.getInvoice().getRegistry());
 		rBank.setBank(finance.getBank());
 		rBank.setBankAccount(finance.getBankAccount());
+		rBank.setActive(true);
 		rBank = (RegistryBank)rBankBean.insert(rBank);
 		setRegistryBank(rBank);
 	}

@@ -142,7 +142,7 @@
 											reRender="InvoiceFinance_bankAccount"
 											rendered="#{controller.bankCreationEnabled}"
 											ajaxSingle="true"
-											actionListener="#{controller.onAddRBank}"
+											actionListener="#{controller.onAddRegistryBank}"
 											onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{controller.to.registryName}?')) return false;"	
 											styleClass="aon-editDataTable-button aon-lookupButton-new" />
 									</aon:panelGroup>
@@ -209,7 +209,7 @@
 												reRender="InvoiceFinance_bankAccount_panel-New"
 												rendered="#{controller.bankCreationEnabled}"
 												ajaxSingle="true"
-												actionListener="#{controller.onAddRBank}"
+												actionListener="#{controller.onAddRegistryBank}"
 												onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{controller.to.registryName}?')) return false;"	
 												styleClass="aon-editDataTable-button aon-lookupButton-new" />
 										</aon:panelGroup>

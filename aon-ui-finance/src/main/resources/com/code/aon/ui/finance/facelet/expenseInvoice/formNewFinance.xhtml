@@ -11,7 +11,7 @@
 	<aon:selectOneRadio id="InvoiceFinance_generationMode"
 		value="#{expenseInvoice.financeGenerationMode}"
 		valueChangeListener="#{expenseInvoice.onFinanceGenerationModeChanged}"
-	 	reRender="expenseInvoiceForm">
+	 	ajaxSingle="true" reRender="expenseInvoiceForm">
 		<f:selectItem itemLabel="#{financeBundle.finance_automatic}" itemValue="0" />
 		<f:selectItem itemLabel="#{financeBundle.finance_manual}" itemValue="1" />
 		<f:selectItem itemLabel="#{financeBundle.finance_not_generate}" itemValue="-1" />
@@ -20,7 +20,7 @@
 	<aon:outputLabel for="Finance_DueDate" value="#{financeBundle.finance_finance_date}"
 		rendered="#{expenseInvoice.financeGenerationMode == 1}" />
 	<aon:selectInputDate id="Finance_DueDate"
-		value="#{expenseInvoiceFinance.to.dueDate}" ajaxSingle="true"
+		value="#{expenseInvoiceFinance.to.dueDate}"
 		inputSize="8" required="true"
 		rendered="#{expenseInvoice.financeGenerationMode == 1}"
 		timeZone="#{timeZoneController.timeZone}"
@@ -35,7 +35,7 @@
 		value="#{expenseInvoiceFinance.to.payMethod}"
 		rendered="#{expenseInvoice.financeGenerationMode == 1}"
 		valueChangeListener="#{expenseInvoiceFinance.onPayMethodChanged}"
-		reRender="InvoiceFinance_bankAccount_panel">
+		ajaxSingle="true" reRender="InvoiceFinance_bankAccount_div">
 		<f:selectItems value="#{configCollections.payMethods}" />
 	</aon:selectOneMenu>
 
@@ -43,7 +43,7 @@
 		<aon:outputLabel for="Bank_id-Invoice" value="#{configBundle.config_bank}" />
 		<aon:outputText value=" - #{configBundle.config_bank_account}" />
 	</aon:div>
-	<aon:div id="InvoiceFinance_bankAccount_panel" styleClass="aon-nowrap" rendered="#{expenseInvoice.financeGenerationMode == 1}">
+	<aon:div id="InvoiceFinance_bankAccount_div" styleClass="aon-nowrap" rendered="#{expenseInvoice.financeGenerationMode == 1}">
 		<aon:panelGroup id="InvoiceFinance_bankAccount" rendered="#{expenseInvoiceFinance.showBankManualInput}">
 			<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
 				<ui:param name="lookupTo" value="#{expenseInvoiceFinance.to.bank}" />
@@ -53,55 +53,61 @@
 				<aon:methodParam name="lookupChangeListener"
 					value="#{expenseInvoiceFinance.onBankChanged}" type="lookupChangeListener" />
 			</ui:include>								
-			<aon:inputText id="RegistryBank_office"
+			<aon:inputText id="BankAccount_office"
 				value="#{expenseInvoiceFinance.to.bankAccount.office}"
 				size="3" maxlength="4">
 				<f:validateLength minimum="4" maximum="4" />
-				<a4j:support event="onchange" reRender="createBankContainer" />
+				<a4j:support ajaxSingle="true" event="onchange"
+					reRender="CreateBank_panel" />
 			</aon:inputText>
-			<aon:inputText id="RegistryBank_control"
+			<aon:inputText id="BankAccount_control"
 				value="#{expenseInvoiceFinance.to.bankAccount.control}"
 				size="1" maxlength="2">
 				<f:validateLength minimum="2" maximum="2" />
-				<a4j:support event="onchange" reRender="createBankContainer" />
+				<a4j:support ajaxSingle="true" event="onchange"
+					reRender="CreateBank_panel" />
 			</aon:inputText>
-			<aon:inputText id="RegistryBank_account"
+			<aon:inputText id="BankAccount_account"
 				value="#{expenseInvoiceFinance.to.bankAccount.account}"
 				size="8" maxlength="10">
 				<f:validateLength minimum="10" maximum="10" />
-				<a4j:support event="onchange" reRender="createBankContainer" />
+				<a4j:support ajaxSingle="true" event="onchange" 
+					reRender="CreateBank_panel" />
 			</aon:inputText>
-			<aon:panelGroup id="createBankContainer">
-				<aon:commandButton id="createBank" value=""
-					reRender="InvoiceFinance_bankAccount"
+			<aon:panelGroup id="CreateBank_panel">
+				<aon:commandButton id="CreateBank"
+					value="&#160;" title="#{configBundle.config_bank_creation} #{expenseInvoice.to.registryName}"
+					styleClass="aon-editDataTable-button aon-lookupButton-new"
 					rendered="#{expenseInvoiceFinance.bankCreationEnabled}"
-					ajaxSingle="true"
-					actionListener="#{expenseInvoiceFinance.onAddRBank}"
-					onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{expenseInvoiceFinance.to.registryName}?')) return false;"	
-					styleClass="aon-editDataTable-button aon-lookupButton-new" />
+					onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{expenseInvoice.to.registryName}?')) return false;"	
+					actionListener="#{expenseInvoiceFinance.onAddRegistryBank}"
+					ajaxSingle="true" reRender="InvoiceFinance_bankAccount" />
 			</aon:panelGroup>
-			<aon:commandLink id="bankAccount_hide_manualInput" ajaxSingle="true"
-				rendered="#{expenseInvoiceFinance.showBankManualInput and expenseInvoiceFinance.allBanksCount>0}"  
-				reRender="InvoiceFinance_bankAccount_panel"
-				styleClass="aon-icon-edit-end aon-margin-left" style="padding-right: 20px;padding-top: 0px;"
-				value="&#160;" title="#{bundle.aon_key_cancel_line_description}" >
+			<aon:commandLink id="BankAccount_hide_bank_manual"
+				value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
+				styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
+				rendered="#{expenseInvoiceFinance.showBankManualInput}"  
+				actionListener="#{expenseInvoiceFinance.onBankManualInput}"
+				ajaxSingle="true" reRender="InvoiceFinance_bankAccount_div">
 				<f:setPropertyActionListener target="#{expenseInvoiceFinance.showBankManualInput}"
 					value="#{false}" />
 			</aon:commandLink>
 		</aon:panelGroup>
-		<aon:div style="font-size:0.9em;" styleClass="aon-italic">
+		<aon:div>
 			<aon:selectOneMenu id="Finance_RegistryBank"
-				rendered="#{!expenseInvoiceFinance.showBankManualInput}"
 				value="#{expenseInvoiceFinance.registryBank}"
-				valueChangeListener="#{expenseInvoiceFinance.onRBankChanged}">
+				rendered="#{!expenseInvoiceFinance.showBankManualInput}"
+				valueChangeListener="#{expenseInvoiceFinance.onRBankChanged}"
+				ajaxSingle="true" reRender="Finance_RegistryBank">
 				<f:selectItem value="#{null}" />
-				<f:selectItems value="#{expenseInvoiceFinance.allBanks}" />
+				<f:selectItems value="#{expenseInvoiceFinance.activeBanks}" />
 			</aon:selectOneMenu>
-			<aon:commandLink id="bankAccount_show_manualInput" ajaxSingle="true"
+			<aon:commandLink id="BankAccount_show_bank_manual"
+				value="&#160;" title="#{bundle.aon_edit}"
+				styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
 				rendered="#{!expenseInvoiceFinance.showBankManualInput}"  
-				reRender="InvoiceFinance_bankAccount_panel"
-				styleClass="aon-icon-edit-add aon-margin-left" style="padding-right: 20px;padding-top: 0px;"
-				value="&#160;" title="#{bundle.aon_edit}" >
+				actionListener="#{expenseInvoiceFinance.onBankManualInput}"
+				ajaxSingle="true" reRender="InvoiceFinance_bankAccount_div">
 				<f:setPropertyActionListener target="#{expenseInvoiceFinance.showBankManualInput}"
 					value="#{true}" />
 			</aon:commandLink>

@@ -184,7 +184,7 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 	}
 
 	private double getTotal(double taxableBase, double vatQuota, double retentionQuota) {
-		return CommonUtil.round(taxableBase + vatQuota - retentionQuota);
+		return CommonUtil.round(taxableBase + vatQuota - retentionQuota, 4);
 	}
 
 }

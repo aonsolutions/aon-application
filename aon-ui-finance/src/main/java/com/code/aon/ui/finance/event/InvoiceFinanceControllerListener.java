@@ -12,6 +12,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
+import com.code.aon.config.PayMethod;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.FinanceStatus;
@@ -50,11 +51,10 @@ public class InvoiceFinanceControllerListener extends ControllerAdapter {
 			finance.setAmount(CommonUtil.round(invoiceController.getToInvoiceTotalPrice() - invoiceController.getToInvoiceFinanceTotal()));
 
 			RegistryPayMethod rPayMethod = obtainRegistryPayMethod(finance.getRegistry());
-			if (rPayMethod != null) {
-				finance.setPayMethod(rPayMethod.getPayment());
-				finance.setBank((rPayMethod.getRegistryBank()==null) ? new Bank() : rPayMethod.getBank());
-				finance.setBankAccount((rPayMethod.getRegistryBank()==null) ? new BankAccount() : rPayMethod.getBankAccount());
-			}
+			finance.setPayMethod((rPayMethod==null) ? new PayMethod() : rPayMethod.getPayment());
+			finance.setBank((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? new Bank() : rPayMethod.getBank());
+			finance.setBankAccount((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? new BankAccount() : rPayMethod.getBankAccount());
+
 			financeController.setRegistryBank((rPayMethod==null) ? null : rPayMethod.getRegistryBank());
 			financeController.setShowBankManualInput(false);
 		} catch (ManagerBeanException e) {

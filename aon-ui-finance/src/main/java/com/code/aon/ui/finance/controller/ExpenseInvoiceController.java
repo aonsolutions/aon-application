@@ -11,12 +11,17 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.config.Bank;
+import com.code.aon.config.BankAccount;
+import com.code.aon.config.PayMethod;
 import com.code.aon.finance.Creditor;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.util.CreditorValidationManager;
@@ -72,6 +77,16 @@ public class ExpenseInvoiceController extends InvoiceController implements IFina
 					detailController.itemChanged(item);
 				}
 			}
+
+			InvoiceFinanceController financeController = (InvoiceFinanceController)FormUtil.getController(getInvoiceFinanceControllerName());
+			Finance finance = (Finance)financeController.getTo();
+			RegistryPayMethod rPayMethod = creditor.getRegistry().getPayMethod();
+			finance.setPayMethod((rPayMethod==null) ? new PayMethod() : rPayMethod.getPayment());
+			finance.setBank((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? new Bank() : rPayMethod.getBank());
+			finance.setBankAccount((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? new BankAccount() : rPayMethod.getBankAccount());
+
+			financeController.setRegistryBank((rPayMethod==null) ? null : rPayMethod.getRegistryBank());
+			financeController.setShowBankManualInput(false);
 		}
 	}
 
