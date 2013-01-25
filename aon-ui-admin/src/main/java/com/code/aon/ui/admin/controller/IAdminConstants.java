@@ -47,7 +47,6 @@ public interface IAdminConstants {
 	String DOMAIN_INVALID_NAME = "admin_domain_invalid_name";
 	String DOMAIN_MANAGEMENT = "admin_domain_management";
 	
-	String EMPLOYEE_PORTAL = "admin_employee_portal";
 	String AON_PLATFORM = "admin_aon_plataform";
 	
 	String MAIL_ACCOUNT_ENTERPRISE_TITLE = "admin_mailAccount_enterprise"; 

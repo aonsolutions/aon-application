@@ -26,7 +26,9 @@ import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_HERITABLE_ID
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_ID;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_OEM;
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
+import static com.code.aon.ui.common.ICommonConstants.MODULE_MANAGEMENT_FINANCE;
 import static com.code.aon.ui.common.ICommonConstants.NO;
+import static com.code.aon.ui.common.ICommonConstants.PORTAL_FISCAL;
 import static com.code.aon.ui.common.ICommonConstants.YES;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_EMAIL_BODY_HEADER;
 
@@ -77,6 +79,7 @@ import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.admin.DomainApplicationInfo;
 import com.code.aon.ui.admin.DomainInfo;
 import com.code.aon.ui.admin.DomainModuleInfo;
+import com.code.aon.ui.admin.DomainModuleInfoManagement;
 import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.common.controller.LoggedUser;
@@ -167,11 +170,6 @@ public class DomainController extends BasicController {
 		Domain parent = getParentDomain();
 		return (parent != null) && (parent.getType()  == DomainType.CONSULTANCY);
 	}
-
-	private boolean hasModule( Domain domain, Module module ) throws ManagerBeanException {
-		Application application = DomainApplicationInfo.getApplication(AON_AIO_APPLICATION);
-		return AuditManager.hasModule(domain.getId(), application.getId(), module);			
-	}
 	
 	private List<Module> getDisabledModules() throws ManagerBeanException {
 		List<Module> list = new LinkedList<Module>();
@@ -191,14 +189,26 @@ public class DomainController extends BasicController {
 			if ( isConsultancyParent() ) {
 				list.remove(Module.DOCUMENT);
 				list.remove(Module.PAYROLL);
-				if ( hasModule(getParentDomain(), Module.FISCAL) ) {
-					list.add(Module.MANAGEMENT);
-					list.add(Module.TREASURY);									
-				}								
 			}
 		}
 		return list;
-	}	
+	}
+	
+	private void joinManagementTreasury() throws ManagerBeanException {
+		DomainModuleInfo management = this.aioInfo.getModuleInfo(Module.MANAGEMENT);
+		DomainModuleInfo treasury = this.aioInfo.getModuleInfo(Module.TREASURY);
+		if ( (management != null) && (treasury != null) ) {
+			DomainModuleInfoManagement dmim = new DomainModuleInfoManagement(management, treasury);
+			this.aioInfo.getApplicationModules().remove(management);
+			this.aioInfo.getApplicationModules().remove(treasury);
+			this.aioInfo.getApplicationModules().add(dmim);
+			if ( isConsultancyParent() ) {
+				dmim.setDescription(AonUtil.getMessage(PORTAL_FISCAL));
+			} else {
+				dmim.setDescription(AonUtil.getMessage(MODULE_MANAGEMENT_FINANCE));				
+			}
+		}
+	}
 	
 	private void updateModules( DomainApplicationInfo appInfo ) throws ManagerBeanException {
 		List<Module> disabledModules = getDisabledModules();
@@ -221,6 +231,7 @@ public class DomainController extends BasicController {
 				LOGGER.debug( "Removed from list: {}", info );
 			}
 		}
+		joinManagementTreasury();
 		appInfo.updateApplicationModules();
 		appInfo.sortApplicationModules();
 		if (! AonUtil.getRoleManager().isSysAdmin() ) {

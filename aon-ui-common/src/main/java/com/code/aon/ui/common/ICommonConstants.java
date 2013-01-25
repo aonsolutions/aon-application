@@ -70,6 +70,10 @@ public interface ICommonConstants {
 
 	String APPLICATION_TITLE = "aon_application_title";
 	
+	String MODULE_MANAGEMENT_FINANCE = "aon_module_management_finance";
+	
+	String PORTAL_FISCAL = "aon_fiscal_portal";
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************

@@ -4,10 +4,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.enumeration.Module;
@@ -20,12 +16,9 @@ import com.code.aon.config.Domain;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.controller.IAdminConstants;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainApplicationInfo {
-
-	private final static Logger LOGGER = LoggerFactory.getLogger(DomainApplicationInfo.class);
 	
 	private boolean checked;
 	
@@ -96,11 +89,7 @@ public class DomainApplicationInfo {
 
 	public void removeModuleInfo( DomainModuleInfo info ) throws ManagerBeanException {
 		this.applicationModules.remove(info);
-		IManagerBean damBean = BeanManager.getManagerBean(DomainApplicationModule.class);
-		if ( info.getApplicationModule() != null ) {
-			damBean.remove(info.getApplicationModule());	
-			LOGGER.info( "Removed: {}", info.getApplicationModule() );
-		}			
+		info.remove();
 	}
 	
 	public void register() throws ManagerBeanException {
@@ -121,25 +110,8 @@ public class DomainApplicationInfo {
 	}
 	
 	public void updateApplicationModules() throws ManagerBeanException {
-		IManagerBean damBean = BeanManager.getManagerBean(DomainApplicationModule.class);
 		for( DomainModuleInfo dmi: getApplicationModules() ) {
-			DomainApplicationModule dam = dmi.getApplicationModule();
-			if ( dmi.isChecked() ) {
-				if ( (dam == null) && (getDomainApplication() != null) ) {
-					dam = new DomainApplicationModule();
-					dam.setDomainApplication(getDomainApplication());
-					dam.setModule(dmi.getModule());
-					damBean.insert(dam);
-					dmi.setApplicationModule(dam);
-					LOGGER.info( "Added: {}", dam );
-				}
-			} else {
-				if ( dam != null ) {
-					damBean.remove(dam);
-					dmi.setApplicationModule(null);
-					LOGGER.info( "Removed: {}", dam );
-				}
-			}
+			dmi.update(getDomainApplication());
 		}		
 	}
 
@@ -188,11 +160,10 @@ public class DomainApplicationInfo {
 	}
 
 	public void sortApplicationModules() {
-		final Locale locale = AonUtil.getCurrentLocale();
     	Comparator<DomainModuleInfo> comparator = new Comparator<DomainModuleInfo>() {
 			@Override
 			public int compare(DomainModuleInfo o1, DomainModuleInfo o2) {
-				return o1.getModule().getName(locale).compareTo(o2.getModule().getName(locale));
+				return o1.getDescription().compareTo(o2.getDescription());
 			}	    		
 		};
     	Collections.sort( getApplicationModules(), comparator );					
