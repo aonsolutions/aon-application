@@ -11,6 +11,7 @@ import javax.persistence.Transient;
 
 import com.code.aon.common.enumeration.IResourceable;
 import com.esferalia.aon.entity.master.SalaryPaymentDB;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.payment.IPayment;
@@ -50,5 +51,20 @@ public class SalaryPayment extends SalaryPaymentDB implements IPayment, IExpress
 				System.out.println ( propertyDescriptor.getPropertyType() );
 		}
 		
+	}
+	
+	// TODO 
+	private PaymentType paymentType;
+	
+	@Transient
+	public PaymentType getPaymentType() {
+		if(this.getType()!=null){
+			paymentType = this.getType();
+		}
+		return paymentType;
+	}
+	public void setPaymentType(PaymentType paymentType) {
+		this.paymentType = paymentType;
+		this.setType(paymentType);
 	}
 }
