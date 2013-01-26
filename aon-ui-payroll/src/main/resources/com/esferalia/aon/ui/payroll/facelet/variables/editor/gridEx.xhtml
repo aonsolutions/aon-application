@@ -39,7 +39,7 @@
 		</h:selectBooleanCheckbox>
 	
 		<aon:inputText id="#{inputTextId}_STRING#{editorSuffix}" required="#{required}"
-			rendered="#{variableType=='STRING'}" onblur="toUpperCase(this);"
+			rendered="#{variableType=='STRING'}" 
 			value="#{controller.handler.expression}" maxlength="128" size="32" >
 			<f:validateLength maximum="128"/>		
 		</aon:inputText>
@@ -52,7 +52,7 @@
 			popupDateFormat="#{bundle.aon_date_pattern}" />
 	
 		<aon:inputText id="#{inputTextId}_EXPRESSION#{editorSuffix}" required="#{required}"
-			rendered="#{variableType=='EXPRESSION'}" onblur="toUpperCase(this);"
+			rendered="#{variableType=='EXPRESSION'}" 
 			value="#{controller.handler.expression}" maxlength="128" size="32">
 		</aon:inputText>
 	
@@ -92,7 +92,7 @@
 		</aon:selectOneMenu>
 	
 		<aon:inputText id="#{inputTextId}#{editorSuffix}" required="#{required}"
-			rendered="#{variableType=='UNKNOWN' or variableType==null}" onblur="toUpperCase(this);"
+			rendered="#{variableType=='UNKNOWN' or variableType==null}" 
 			value="#{controller.handler.expression}" size="32" maxlength="128" >
 			<f:validateLength maximum="128"/>
 		</aon:inputText>

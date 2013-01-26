@@ -244,7 +244,13 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 		if(StringUtils.contains(getData().getName()," ")){
 			getData().setName(StringUtils.replace(getData().getName(), " ", ""));
 		}
-		if(getData().getStartDate().after(getData().getEndDate())){
+		getData().setName(getData().getName().toUpperCase());
+		if( getData().getVariableType()==VariableType.EXPRESSION
+				|| getData().getVariableType()==VariableType.STRING
+				|| getData().getVariableType()==VariableType.UNKNOWN ){
+			getData().setExpression(getData().getExpression().toUpperCase());
+		}
+		if(getData().getEndDate()!=null && getData().getStartDate().after(getData().getEndDate())){
 			String msg = "La fecha inicial no puede ser posterior a la fecha final";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
