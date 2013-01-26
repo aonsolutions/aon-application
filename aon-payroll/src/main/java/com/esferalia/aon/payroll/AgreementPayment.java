@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.entity.master.AgreementPaymentDB;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
 @Entity
@@ -44,6 +45,21 @@ public class AgreementPayment extends AgreementPaymentDB implements IContractPay
 	@Transient
 	public boolean isReadOnly() {
 		return false;
+	}
+	
+	// TODO 
+	private PaymentType paymentType;
+	
+	@Transient
+	public PaymentType getPaymentType() {
+		if(this.getType()!=null){
+			paymentType = this.getType();
+		}
+		return paymentType;
+	}
+	public void setPaymentType(PaymentType paymentType) {
+		this.paymentType = paymentType;
+		this.setType(paymentType);
 	}
 
 }

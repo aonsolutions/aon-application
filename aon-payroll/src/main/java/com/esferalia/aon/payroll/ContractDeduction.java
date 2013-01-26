@@ -9,6 +9,8 @@ import org.apache.commons.lang.math.NumberUtils;
 
 import com.esferalia.aon.entity.master.ContractDeductionDB;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
+import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
 @Entity
@@ -50,6 +52,21 @@ public class ContractDeduction extends ContractDeductionDB implements IContractD
 	@Transient
 	public boolean isReadOnly() {
 		return false;
+	}
+	
+	// TODO 
+	private DeductionType deductionType;
+	
+	@Transient
+	public DeductionType getDeductionType() {
+		if(this.getType()!=null){
+			deductionType = this.getType();
+		}
+		return deductionType;
+	}
+	public void setDeductionType(DeductionType deductionType) {
+		this.deductionType = deductionType;
+		this.setType(deductionType);
 	}
 
 }

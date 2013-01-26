@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.entity.master.SystemDeductionDB;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 
 @Entity
 @Table(name="system_deduction")
@@ -22,6 +23,21 @@ public class SystemDeduction extends SystemDeductionDB {
 				getDescription():
 				getDeductionConcept().getCode()+ " - " + (StringUtils.isEmpty(getDescription())?getDeductionConcept().getDescription():
 					getDescription());
+	}
+	
+	// TODO 
+	private DeductionType deductionType;
+	
+	@Transient
+	public DeductionType getDeductionType() {
+		if(this.getType()!=null){
+			deductionType = this.getType();
+		}
+		return deductionType;
+	}
+	public void setDeductionType(DeductionType deductionType) {
+		this.deductionType = deductionType;
+		this.setType(deductionType);
 	}
 
 }
