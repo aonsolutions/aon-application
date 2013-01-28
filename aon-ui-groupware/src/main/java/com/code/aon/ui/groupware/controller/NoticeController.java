@@ -34,8 +34,11 @@ import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.webmail.db.MailAccount;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.sun.faces.util.MessageFactory;
 
@@ -205,10 +208,10 @@ public class NoticeController extends BasicController implements IAonObjectClass
 		String SEP = "";
 		try {
 			for (User user : getSelectedUsers()) {
-				String userEmail = getLdapUserMail(domain, user.getLogin());
-				if (userEmail != null) {
+				String userEmail = getUserMail(domain, user);
+				if (! StringUtils.isEmpty(userEmail) ) {
 					mailList += SEP + userEmail;
-					SEP = ", ";
+					SEP = ", ";					
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -221,14 +224,28 @@ public class NoticeController extends BasicController implements IAonObjectClass
 		resetSMS();
 		try {
 			for (User user : getSelectedUsers()) {
-				String userSMS = getLdapUserSMS(domain, user.getLogin());
-				if (userSMS != null) {
+				String userSMS = getUserSMS(domain, user);
+				if (! StringUtils.isEmpty(userSMS) ) {
 					this.recipients.add(userSMS);
 				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error retrieving cellulars", e);
 		}
+	}
+
+	private String getUserSMS(String domain, User user) {
+		if ( AonUtil.isSkipLdap() ) {
+			return getDBUserSMS(user);
+		}
+		return getLdapUserSMS(domain, user.getLogin());
+	}
+	
+	private String getUserMail(String domain, User user) {
+		if ( AonUtil.isSkipLdap() ) {
+			return getDBUserMail(user);
+		}
+		return getLdapUserMail(domain, user.getLogin());
 	}
 
 	private String getLdapUserMail(String domain, String username) {
@@ -258,6 +275,23 @@ public class NoticeController extends BasicController implements IAonObjectClass
 		return email;
 	}
 
+	private String getDBUserMail( User user ) {
+		try {
+			IManagerBean  bean = BeanManager.getManagerBean(MailAccount.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.MAIL_ACCOUNT_USER_ID), user.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.MAIL_ACCOUNT_DEFAULT_ACCOUNT), Boolean.TRUE);
+			List<ITransferObject> list = bean.getList(criteria);
+			if (! list.isEmpty() ) {
+				MailAccount mailAccount = (MailAccount) list.get(0);
+				return mailAccount.getEmail();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}
+		return null;
+	}
+	
 	private String getLdapUserSMS(String domain, String username) {
 		Name userDN = NameResolver.getUserDN(domain, username);
 		BasicLdap ldap = new BasicLdap();
@@ -274,6 +308,25 @@ public class NoticeController extends BasicController implements IAonObjectClass
 		return sms;
 	}
 
+	private String getDBUserSMS(User user) {
+		try {
+			if ( user.getRegistry() != null ) {
+				IManagerBean  bean = BeanManager.getManagerBean(RegistryMedia.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), user.getRegistry());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), MediaType.CELLULAR);
+				List<ITransferObject> list = bean.getList(criteria);
+				if (! list.isEmpty() ) {
+					RegistryMedia registryMedia = (RegistryMedia) list.get(0);
+					return registryMedia.getValue();
+				}				
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}
+		return null;
+	}
+	
 	public boolean isSendMail() {
 		return sendMail;
 	}
