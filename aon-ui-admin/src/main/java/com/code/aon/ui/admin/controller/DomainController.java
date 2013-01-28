@@ -44,6 +44,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
@@ -125,6 +126,14 @@ public class DomainController extends BasicController {
 	
 	private DomainInfo currentDomainInfo;
 	
+	private List<SelectItem> payrollModules;
+	
+	private List<SelectItem> documentModules;
+	
+	private Module payrollModule;
+	
+	private Module documentModule;
+	
 	private AdminMainController getAdmin() {
 		return (AdminMainController) AonUtil.getRegisteredBean(ADMIN_CONTROLLER_NAME);
 	}
@@ -162,11 +171,16 @@ public class DomainController extends BasicController {
 		}
 	}
 
+	public void onPortalDocumentalChanged( ActionEvent event ) {
+		documental.setChecked(getDocumentModule() == Module.DOCUMENT);
+		onDocumentalChanged(event);
+	}
+	
 	public List<DomainApplicationInfo> getApplicationInfos() {
 		return applicationInfos;
 	}
 	
-	private boolean isConsultancyParent() throws ManagerBeanException {
+	public boolean isConsultancyParent() throws ManagerBeanException {
 		Domain parent = getParentDomain();
 		return (parent != null) && (parent.getType()  == DomainType.CONSULTANCY);
 	}
@@ -210,6 +224,35 @@ public class DomainController extends BasicController {
 		}
 	}
 	
+	private void initPortalModules() throws ManagerBeanException {
+		setDocumentModule(null);
+		setPayrollModule(null);
+		if ( isConsultancyParent() ) {
+			DomainModuleInfo document = this.aioInfo.getModuleInfo(Module.DOCUMENT);
+			document.setRendered(false);
+			DomainModuleInfo documentPortal = this.aioInfo.getModuleInfo(Module.DOCUMENT_PORTAL);
+			documentPortal.setRendered(false);
+			if ( document.isChecked() ) {				
+				setDocumentModule(Module.DOCUMENT);
+				documentPortal.setChecked(false);
+			}
+			if ( documentPortal.isChecked() ) {
+				setDocumentModule(Module.DOCUMENT_PORTAL);
+			}
+			DomainModuleInfo payroll = this.aioInfo.getModuleInfo(Module.PAYROLL);
+			payroll.setRendered(false);
+			DomainModuleInfo payrollPortal = this.aioInfo.getModuleInfo(Module.PAYROLL_PORTAL);
+			payrollPortal.setRendered(false);
+			if ( payroll.isChecked() ) {				
+				setPayrollModule(Module.PAYROLL);
+				payrollPortal.setChecked(false);
+			}
+			if ( payrollPortal.isChecked() ) {
+				setPayrollModule(Module.PAYROLL_PORTAL);
+			}
+		}
+	}
+	
 	private void updateModules( DomainApplicationInfo appInfo ) throws ManagerBeanException {
 		List<Module> disabledModules = getDisabledModules();
 		for( Module module : disabledModules ) {
@@ -232,6 +275,7 @@ public class DomainController extends BasicController {
 			}
 		}
 		joinManagementTreasury();
+		initPortalModules();
 		appInfo.updateApplicationModules();
 		appInfo.sortApplicationModules();
 		if (! AonUtil.getRoleManager().isSysAdmin() ) {
@@ -250,8 +294,32 @@ public class DomainController extends BasicController {
 		this.applicationInfos.add(this.aioInfo);
 		updateModules(this.aioInfo);
 	}
+	
+	private void updatePortalModules() throws ManagerBeanException {
+		if ( isConsultancyParent() ) {
+			DomainModuleInfo document = this.aioInfo.getModuleInfo(Module.DOCUMENT);
+			DomainModuleInfo documentPortal = this.aioInfo.getModuleInfo(Module.DOCUMENT_PORTAL);
+			document.setChecked(false);
+			documentPortal.setChecked(false);
+			if ( getDocumentModule() == Module.DOCUMENT ) {
+				document.setChecked(true);
+			} else if ( getDocumentModule() == Module.DOCUMENT_PORTAL ) {
+				documentPortal.setChecked(true);
+			}
+			DomainModuleInfo payroll = this.aioInfo.getModuleInfo(Module.PAYROLL);
+			DomainModuleInfo payrollPortal = this.aioInfo.getModuleInfo(Module.PAYROLL_PORTAL);
+			payroll.setChecked(false);
+			payrollPortal.setChecked(false);
+			if ( getPayrollModule() == Module.PAYROLL ) {
+				payroll.setChecked(true);
+			} else if ( getPayrollModule() == Module.PAYROLL_PORTAL ) {
+				payrollPortal.setChecked(true);
+			}
+		}
+	}	
 
 	public void saveApplications() throws ManagerBeanException {
+		updatePortalModules();
 		for( DomainApplicationInfo dai : this.applicationInfos ) {
 			if ( dai.isChecked() ) {
 				dai.register();
@@ -593,5 +661,41 @@ public class DomainController extends BasicController {
 		}
 		this.currentDomainInfo = di;
 	}
+
+	public Module getPayrollModule() {
+		return payrollModule;
+	}
+
+	public void setPayrollModule(Module payrollModule) {
+		this.payrollModule = payrollModule;
+	}
 	
+	public List<SelectItem> getPayrollModules() {
+		if ( payrollModules == null ) {
+			Locale locale = AonUtil.getCurrentLocale();
+			payrollModules = new LinkedList<SelectItem>();
+			payrollModules.add(new SelectItem(Module.PAYROLL_PORTAL, Module.PAYROLL_PORTAL.getName(locale)));		
+			payrollModules.add(new SelectItem(Module.PAYROLL, Module.PAYROLL.getName(locale)));
+		}
+		return payrollModules;
+	}
+
+	public Module getDocumentModule() {
+		return documentModule;
+	}
+
+	public void setDocumentModule(Module documentModule) {
+		this.documentModule = documentModule;
+	}	
+	
+	public List<SelectItem> getDocumentModules() {
+		if ( documentModules == null ) {
+			Locale locale = AonUtil.getCurrentLocale();
+			documentModules = new LinkedList<SelectItem>();
+			documentModules.add(new SelectItem(Module.DOCUMENT_PORTAL, Module.DOCUMENT_PORTAL.getName(locale)));		
+			documentModules.add(new SelectItem(Module.DOCUMENT, Module.DOCUMENT.getName(locale)));			
+		}
+		return documentModules;
+	}	
+		
 }

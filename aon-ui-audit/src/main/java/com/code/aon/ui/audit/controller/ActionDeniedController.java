@@ -269,17 +269,10 @@ public class ActionDeniedController {
 						moduleSet.add(Module.MANAGEMENT);
 						moduleSet.add(Module.TREASURY);
 					}
-				} else {
-					if ( AuditManager.hasModule(parentDomainId, applicationId, Module.FISCAL) ) {					
-						moduleSet.add(Module.MANAGEMENT);
-						moduleSet.add(Module.TREASURY);
-					}					
-					if ( AuditManager.hasModule(parentDomainId, applicationId, Module.PAYROLL) ) {					
-						moduleSet.add(Module.PAYROLL);
-					}					
-					if ( AuditManager.hasModule(parentDomainId, applicationId, Module.DOCUMENT) ) {					
-						moduleSet.add(Module.DOCUMENT);
-					}					
+				}
+				if ( moduleSet.contains(Module.DOCUMENT_PORTAL) ) {
+					moduleSet.remove(Module.DOCUMENT_PORTAL);
+					moduleSet.add(Module.DOCUMENT);
 				}
 			}
 			for( Module module : moduleSet ) {
@@ -390,7 +383,7 @@ public class ActionDeniedController {
 
 	public void renderedModule( UIComponent component, UIComponent parent ) {
 		if ( component.isRendered() ) {
-			String id = component.getId();
+			String id = StringUtils.removeStart(component.getId(), MenuParser.MENU_ACTION_PREFFIX);
 			if ( isDeniedModule(id) ) {
 				component.setRendered(false);
 			}				

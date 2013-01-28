@@ -226,6 +226,16 @@ public class AuditManager implements IAuditConstants {
 					list.add(Module.PAYROLL);
 					break;
 			}
+			Integer parentDomainId = AdminUtil.getParentDomain(domainId);
+			if ( parentDomainId != null)  {
+				if (AuditManager.getDomainType(parentDomainId) == DomainType.CONSULTANCY) {
+					list.add(Module.PAYROLL_PORTAL);
+					list.add(Module.DOCUMENT_PORTAL);
+					if (! list.contains(Module.PAYROLL) ) {
+						list.add(Module.PAYROLL);
+					}
+				}
+			}			
 		}
 		list.add(Module.DOCUMENT);
 		return list;

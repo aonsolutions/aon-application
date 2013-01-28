@@ -10,7 +10,7 @@
 
 	<aon:div styleClass="aon-scroll-area">
 		<a4j:region>
-			<aon:dataTable id="applicationsTable" var="appInfo"
+			<aon:dataTable id="applicationsTable" var="appInfo" styleClass="aon-width-all"
 				value="#{adminDomain.applicationInfos}">
 				
 				<aon:column styleClass=" aon-width-200 aon-editDataTable-textColumn aon-vertical-align-top" >
@@ -25,9 +25,37 @@
 					<f:facet name="header">
 						<aon:outputText value="#{adminBundle.admin_modules}" />
 					</f:facet>
+					<c:if test="#{adminDomain.consultancyParent}">
+						<a4j:region>
+							<h:panelGrid id="payrollModuleDiv" columns="2" >
+								<aon:selectOneRadio value="#{adminDomain.payrollModule}">
+									<f:selectItems value="#{adminDomain.payrollModules}" />
+								</aon:selectOneRadio>		
+								<aon:commandButton reRender="payrollModuleDiv"
+									styleClass="aon-editDataTable-button aon-icon-delete" >
+									<f:setPropertyActionListener target="#{adminDomain.payrollModule}" value="#{null}" />
+								</aon:commandButton>
+							</h:panelGrid>
+						</a4j:region>
+						<a4j:region>
+							<h:panelGrid id="documentModuleDiv" columns="2" >
+								<aon:selectOneRadio value="#{adminDomain.documentModule}">
+									<f:selectItems value="#{adminDomain.documentModules}" />
+									<a4j:support event="onchange" ajaxSingle="true"
+										actionListener="#{adminDomain.onPortalDocumentalChanged}"
+										reRender="Domain_maxTotalDocumentSize" />									
+								</aon:selectOneRadio>		
+								<aon:commandButton reRender="documentModuleDiv,Domain_maxTotalDocumentSize"
+									styleClass="aon-editDataTable-button aon-icon-delete" >
+									<f:setPropertyActionListener target="#{adminDomain.documentModule}" value="#{null}" />
+									<aon:actionListener method="#{adminDomain.onPortalDocumentalChanged}" />
+								</aon:commandButton>
+							</h:panelGrid>
+						</a4j:region>
+					</c:if>
 					<a4j:repeat value="#{appInfo.applicationModules}"
 						rendered="#{appInfo.checked}" var="appModule">
-						<aon:div>
+						<aon:div rendered="#{appModule.rendered}">
 							<aon:selectBooleanCheckbox value="#{appModule.checked}"
 								disabled="#{appModule.disabled}" >
 								<a4j:support event="onchange" ajaxSingle="true"

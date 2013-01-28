@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.audit.enumeration.AuditLevel;
@@ -34,7 +33,7 @@ public class AuditCollectionsController {
 	 */
 	public List<SelectItem> getAuditLevels() {
 		if ( auditLevels == null ) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			auditLevels = new LinkedList<SelectItem>();
 			for (AuditLevel auditLevel : AuditLevel.values()) {
 				String name = auditLevel.getName(locale);
@@ -52,12 +51,12 @@ public class AuditCollectionsController {
 	 */
 	public List<SelectItem> getModules() {
 		if ( modules == null ) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			modules = new LinkedList<SelectItem>();
 			for (Module module : Module.values()) {
 				String name = module.getName(locale);
 				SelectItem item = new SelectItem(module, name);
-				modules.add(item);
+				modules.add(item);					
 			}
 			AonUtil.sortSelectItems(modules);
 		}

@@ -26,12 +26,16 @@ public class DomainModuleInfo {
 	
 	private boolean disabled;
 	
+	private boolean rendered;
+	
 	private String description;
 
 	public DomainModuleInfo() {
+		this.rendered = true;
 	}
 
 	public DomainModuleInfo(Module module) {
+		this();
 		this.module = module;
 		Locale locale = AonUtil.getCurrentLocale();
 		this.description = module.getName(locale);
@@ -59,6 +63,14 @@ public class DomainModuleInfo {
 
 	public Module getModule() {
 		return module;
+	}
+
+	public boolean isRendered() {
+		return rendered;
+	}
+
+	public void setRendered(boolean rendered) {
+		this.rendered = rendered;
 	}
 
 	public String getDescription() {
@@ -104,7 +116,9 @@ public class DomainModuleInfo {
 		return new ToStringBuilder(this)
 			.append("module", module)
 			.append("checked", checked)
+			.append("description", description)
 			.append("disabled", disabled)
+			.append("rendered", rendered)
 			.append("applicationModule", applicationModule != null ? applicationModule.getId() : null)
 			.toString();
 	}

@@ -85,7 +85,7 @@ public class MenuParser {
 	
 	private static final String CATEGORY_EXPRESSION = "#{category}";
 	
-	private static final String MENU_ACTION_PREFFIX = "menu_";
+	public static final String MENU_ACTION_PREFFIX = "menu_";
 	
 	private ApplicationOptionController controller;
 	
@@ -187,10 +187,10 @@ public class MenuParser {
 	}
 
 	private void parseCategory( Element element ) {
-		String action = getAction(element);
-		if ( StringUtils.startsWith(action, MENU_ACTION_PREFFIX) ) {
+		String id = getId(element);
+		if ( StringUtils.startsWith(id, MENU_ACTION_PREFFIX) ) {
 			String categoryName = element.attributeValue(VALUE_ATTRIBUTE);
-			String alias = StringUtils.substringAfter(action, MENU_ACTION_PREFFIX);
+			String alias = StringUtils.substringAfter(id, MENU_ACTION_PREFFIX);
 			category = new ApplicationCategory(categoryName, alias);
 			String styleClass = element.attributeValue(STYLE_CLASS_ATTRIBUTE);
 			if (! StringUtils.isEmpty(styleClass) ) {
@@ -201,10 +201,13 @@ public class MenuParser {
 				category.setRendered(rendered);
 			}
 			controller.addCategory(category);
-			String viewId = getPath(action);
-			Document document = getDocument(viewId);
-			if ( document != null ) {
-				parseTemplate(document);
+			String action = getAction(element);
+			if ( StringUtils.startsWith(action, MENU_ACTION_PREFFIX) ) {
+				String viewId = getPath(action);
+				Document document = getDocument(viewId);
+				if ( document != null ) {
+					parseTemplate(document);
+				}
 			}
 		}
 	}

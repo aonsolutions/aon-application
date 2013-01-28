@@ -122,10 +122,12 @@ public class ApplicationProfileController extends LinesController {
 		Profile profile = (Profile) getTo();
 		Locale locale = AonUtil.getCurrentLocale();
 		for( Module module : Module.values() ) {
-			SelectTransferObject<Module,ProfileModuleDenied> item = new SelectTransferObject<Module, ProfileModuleDenied>(module);
-			item.setTo( getProfileModuleDenied(profile, module) );
-			item.setLabel( module.getName(locale) );
-			this.deniedModules.add(item);
+			if ( module != Module.DOCUMENT_PORTAL ) {
+				SelectTransferObject<Module,ProfileModuleDenied> item = new SelectTransferObject<Module, ProfileModuleDenied>(module);
+				item.setTo( getProfileModuleDenied(profile, module) );
+				item.setLabel( module.getName(locale) );
+				this.deniedModules.add(item);				
+			}
 		}
 		Collections.sort( this.deniedModules, SelectTransferObject.getComparator() );
 	}
