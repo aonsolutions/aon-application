@@ -132,5 +132,15 @@ public class DomainsController extends BasicController {
 			}
 		}
 	}
+
+	public void onParentDomain(ActionEvent event) throws ManagerBeanException {
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		if ( ds.getModel().isRowAvailable() ) {
+			ds.select(ds.getParentDomain(), null);
+			if ( isAdminDomain() ) {
+				setConfigurationMenu();
+			}
+		}
+	}
 	
 }

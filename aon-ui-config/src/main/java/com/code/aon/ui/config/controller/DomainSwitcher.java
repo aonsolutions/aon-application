@@ -197,10 +197,6 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 		setFilteredModel(null);
 	}
 	
-	public void onParentDomain(ActionEvent event){
-		select(getParentDomain(), null);
-	}
-
 	public void onUpperDomain(ActionEvent event){
 		select(AonUtil.getAuthPrincipal().getDomainId(), null);
 	}
