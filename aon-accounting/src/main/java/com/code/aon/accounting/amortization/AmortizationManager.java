@@ -190,9 +190,9 @@ public class AmortizationManager {
 		if (a.getInitialDate() == null) {
 			throw new IllegalArgumentException("Initial Date can not be null");
 		}
-		if (a.getAmortizationType() == null) {
-			throw new IllegalArgumentException("Amortization Type can not be null");
-		}
+//		if (a.getAmortizationType() == null) {
+//			throw new IllegalArgumentException("Amortization Type can not be null");
+//		}
 		if (a.getAmount() == null) {
 			throw new IllegalArgumentException("Amount can not be null");
 		}
