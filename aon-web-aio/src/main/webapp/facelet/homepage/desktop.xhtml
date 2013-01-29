@@ -200,11 +200,6 @@
 						<c:if test="#{!domainSwitcher.childDomain and domainSwitcher.domainCount > 0}">
 							<aon:div styleClass="aon-portlet">
 								<aon:div styleClass="aon-portlet-title">
-									<aon:div styleClass="aon-portlet-title-buttons">
-										<aon:commandLink id="newDomainDesktop" actionListener="#{adminNewDomain.onInit}" action="newDomain_form">
-												<aon:outputText value="&#160;"  styleClass="aon-icon-portlet aon-icon-new"/>
-										</aon:commandLink>
-									</aon:div>
 									<aon:outputText value="#{configBundle.config_domain_module}" styleClass="aon-portlet-title-text aon-icon aon-icon-company"/>
 								</aon:div>
 								<aon:div styleClass="aon-portlet-body aon-box-outstanding2">

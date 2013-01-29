@@ -1713,6 +1713,7 @@ color:#000;
 	border-bottom:#717e88 1px solid;
 	background:#d7d7d6 url(images/aon-header/aon-menuBar.png) scroll left top repeat-x;
 	font-size:11px;
+	height: 28px;
 	}
 .aon-menuBar-content{
 	padding:0;

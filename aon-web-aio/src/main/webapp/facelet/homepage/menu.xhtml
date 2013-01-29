@@ -115,11 +115,13 @@
 				styleClass="aon-top-menu-item" />
 		</c:if>
 		
-		<aon:commandLink id="menu_configuration"
-			value="#{bundle.aon_module_configuration}"
-			action="menu_configuration" immediate="true"
-			styleClass="aon-top-menu-item" />
-
+		<c:if test="#{!((domainSwitcher.type == 'ADMIN') and !aonRole.admin)}">		
+			<aon:commandLink id="menu_configuration"
+				value="#{bundle.aon_module_configuration}"
+				action="menu_configuration" immediate="true"
+				styleClass="aon-top-menu-item" />
+		</c:if>
+		
 		<rich:jQuery timing="onload"
 			selector="body" query="removeClass('aon-overflow-hidden')" />						
 	</ui:define>

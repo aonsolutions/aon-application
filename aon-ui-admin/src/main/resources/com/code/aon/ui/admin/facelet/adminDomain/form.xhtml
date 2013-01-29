@@ -33,14 +33,14 @@
 							
 					<aon:outputLabel for="Domain_type"
 						value="#{adminBundle.admin_domain_type}" />
-					<c:if test="#{!aonRole.sysAdmin}">
+					<c:if test="#{(!aonRole.sysAdmin) or (domainSwitcher.type == 'ADMIN')}">
 						<aon:inputText id="Domain_type" size="60" disabled="true"
 							value="#{adminDomain.to.type}" />
 					</c:if>
-					<c:if test="#{aonRole.sysAdmin}">						
+					<c:if test="#{aonRole.sysAdmin and (domainSwitcher.type != 'ADMIN')}">						
 						<aon:selectOneMenu id="Domain_type" 
 							value="#{adminDomain.to.type}">
-							<f:selectItems value="#{adminCollections.domainTypes}" />
+							<f:selectItems value="#{adminCollections.newDomainTypes}" />
 						</aon:selectOneMenu>		
 					</c:if>						
 

@@ -443,7 +443,6 @@ public class DesktopController {
 		String[] categories = new String[]{CONFIGURATION_CATEGORY};
 		String[] groups = new String[]{GROUP_CONFIG_SECURITY, GROUP_CONFIG_COMPANY};
 		adc.enableOnly(categories, groups, MAIL_ACCOUNT_ACTION, SIGNATURE_ACTION);
-		AonUtil.getRoleManager().setSysAdmin();
 	}
 	
 	private String getHomepage() {
