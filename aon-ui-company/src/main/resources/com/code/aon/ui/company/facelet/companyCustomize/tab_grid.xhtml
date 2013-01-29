@@ -9,32 +9,16 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<aon:div styleClass="aon-scroll-area">
-
-		<aon:panelGrid columns="4" styleClass="aon-margin-bottom"
-			columnClasses="aon-panelGrid-odd aon-width-auto, aon-panelGrid-even aon-width-auto,
-					aon-panelGrid-odd aon-width-120, aon-panelGrid-even aon-width-auto">
-			
-			<aon:outputLabel for="CompanyCustomize_title"
-				value="#{companyBundle.company_oem_title}" />
-			<aon:inputText id="CompanyCustomize_title"
-				value="#{controller.title}" maxlength="64" size="25" />
-
-			<aon:outputLabel for="CompanyCustomize_color"
-				value="#{companyBundle.company_oem_color}" />
-			<rich:colorPicker id="CompanyCustomize_color"
-				value="#{controller.color}" colorMode="rgb" />
-			
-		</aon:panelGrid>
-				
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 			<ui:param name="skipResetButton" value="#{controller.model.rowCount &gt; 6}" />
 			<ui:param name="showDataScroller" value="#{false}" />
 			<ui:define name="columns">
 			
-				<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.description"
+				<aon:column sortable="#{sortColumns}" alias="RegistryAttachment.description"
 					styleClass="aon-editDataTable-textColumn aon-width-200 aon-nowrap">
 					<f:facet name="header">
-						<aon:outputLabel for="#{controller.beanName}_description" value="#{bundle.aon_description}" />
+						<aon:outputLabel for="#{controller.beanName}_description-New"
+							value="#{bundle.aon_description}" />
 					</f:facet>
 					<aon:outputText value="#{to.description}" />
 					<f:facet name="footer">
@@ -43,17 +27,15 @@
 							value="#{controller.to.description}">
 							<f:selectItem itemLabel="-" value="#{null}" />
 							<f:selectItems value="#{controller.images}" />
+							<a4j:support event="onchange" status="aonStatus" ajaxSingle="true" />							
 						</aon:selectOneMenu>	
 					</f:facet>
 				</aon:column>
-	 
-	 			<ui:insert name="additionalColumns"/>
 	 			
 	 			<ui:include src="/com/code/aon/faces/attachment/fileColumn.xhtml" />
 			
 			</ui:define>
 		</ui:decorate>
-	
 	</aon:div>
 	
 </ui:composition>

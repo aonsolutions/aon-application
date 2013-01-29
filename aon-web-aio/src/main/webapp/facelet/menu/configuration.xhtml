@@ -61,6 +61,14 @@
 											actionListener="#{company.onLoad}"
 											value="#{companyBundle.company_data_module}" />
 									</aon:div>
+									<c:if test="#{companyCustomize.show}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="companyCustomize" 
+												action="companyCustomize"
+												actionListener="#{companyCustomize.onInit}"
+												value="#{bundle.aon_oem}" />
+										</aon:div>
+									</c:if>
 									<c:if test="#{domainSwitcher.type == 'HOTEL'}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="hotel" 

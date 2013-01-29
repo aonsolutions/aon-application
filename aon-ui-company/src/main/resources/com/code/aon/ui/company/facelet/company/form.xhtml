@@ -278,14 +278,6 @@
 								</ui:include>
 							</aon:panelTab>
 						</c:if>
-						
-						<c:if test="#{companyCustomize.show}">
-							<aon:panelTab label="#{bundle.aon_oem}">
-								<ui:include src="/com/code/aon/ui/company/facelet/companyCustomize/tab_grid.xhtml">
-									<ui:param name="controller" value="#{companyCustomize}" />
-								</ui:include>
-							</aon:panelTab>
-						</c:if>
 
 						<c:if test="#{company.printSaleInvoiceFooter}">
 							<aon:panelTab label="#{companyBundle.company_saleInvoice_footer_text}">

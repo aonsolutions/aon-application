@@ -2,6 +2,8 @@ package com.code.aon.ui.common.controller;
 
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_COLOR;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_ID;
+import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_SUPPORT_EMAIL;
+import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_SUPPORT_PHONE;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_TITLE;
 import static com.code.aon.ui.common.ICommonConstants.AON_HIDE_TRADEMARK;
 import static com.code.aon.ui.common.ICommonConstants.APPLICATION_TITLE;
@@ -205,29 +207,17 @@ public class CustomizeController {
 	}
 	
 	private void updateSupportTelephone( Connection connection ) {
-		QueryRunner run = new QueryRunner();
-		try {
-			ResultSetHandler<String> h = new ScalarHandler<String>();
-			String value = run.query( connection, "SELECT value FROM rmedia WHERE registry = ? and media = 1", h, this.companyId);
-			if (! StringUtils.isEmpty(value) ) {
-				this.supportTelephone = value;
-			}
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-		}		
+		String value = getValue( connection, AON_CUSTOMIZE_SUPPORT_PHONE);
+		if (! StringUtils.isEmpty(value) ) {
+			this.supportTelephone = value;
+		}
 	}
 
 	private void updateSupportEmail( Connection connection ) {
-		QueryRunner run = new QueryRunner();
-		try {
-			ResultSetHandler<String> h = new ScalarHandler<String>();
-			String value = run.query( connection, "SELECT value FROM rmedia WHERE registry = ? and media = 4", h, this.companyId);
-			if (! StringUtils.isEmpty(value) ) {
-				this.supportEmail = value;
-			}
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-		}		
+		String value = getValue( connection, AON_CUSTOMIZE_SUPPORT_EMAIL);
+		if (! StringUtils.isEmpty(value) ) {
+			this.supportEmail = value;
+		}
 	}
 	
 	private void updateHideTrademark( Connection connection ) {

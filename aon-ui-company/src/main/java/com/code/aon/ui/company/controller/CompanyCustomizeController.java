@@ -2,6 +2,8 @@ package com.code.aon.ui.company.controller;
 
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_COLOR;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_OEM;
+import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_SUPPORT_EMAIL;
+import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_SUPPORT_PHONE;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_TITLE;
 import static com.code.aon.ui.common.ICommonConstants.FAVICON_NAME;
 import static com.code.aon.ui.common.ICommonConstants.HEADER_LOGO_NAME;
@@ -16,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,26 +31,31 @@ import com.code.aon.ui.registry.controller.RegistryAttachController;
 
 public class CompanyCustomizeController extends RegistryAttachController {
 	
-	private boolean show;
-	
 	private String title;
 	
 	private String color;
+	
+	private String supportPhone;
+	
+	private String supportEmail;
 
-	public void init() {
-		String value = AppParamUtil.getValue(AON_CUSTOMIZE_OEM);
-		this.show = StringUtils.equals(value, Boolean.TRUE.toString());
-		setTitle( AppParamUtil.getValue(AON_CUSTOMIZE_TITLE) );;
+	public void onInit( ActionEvent event ) {
+		setTitle( AppParamUtil.getValue(AON_CUSTOMIZE_TITLE) );
 		setColor( AppParamUtil.getValue(AON_CUSTOMIZE_COLOR) );
+		setSupportPhone( AppParamUtil.getValue(AON_CUSTOMIZE_SUPPORT_PHONE) );
+		setSupportEmail( AppParamUtil.getValue(AON_CUSTOMIZE_SUPPORT_EMAIL) );
 	}
 
-	public void save() {
+	public void onSave( ActionEvent event ) {
 		AppParamUtil.insertParameter(AON_CUSTOMIZE_TITLE, getTitle());
 		AppParamUtil.insertParameter(AON_CUSTOMIZE_COLOR, getColor());
+		AppParamUtil.insertParameter(AON_CUSTOMIZE_SUPPORT_PHONE, getSupportPhone());
+		AppParamUtil.insertParameter(AON_CUSTOMIZE_SUPPORT_EMAIL, getSupportEmail());
 	}
 	
 	public boolean isShow() {
-		return show;
+		String value = AppParamUtil.getValue(AON_CUSTOMIZE_OEM);
+		return StringUtils.equals(value, Boolean.TRUE.toString());
 	}
 
 	public String getTitle() {
@@ -66,6 +74,22 @@ public class CompanyCustomizeController extends RegistryAttachController {
 		this.color = color;
 	}
 	
+	public String getSupportPhone() {
+		return supportPhone;
+	}
+
+	public void setSupportPhone(String suportPhone) {
+		this.supportPhone = suportPhone;
+	}
+
+	public String getSupportEmail() {
+		return supportEmail;
+	}
+
+	public void setSupportEmail(String suportEmail) {
+		this.supportEmail = suportEmail;
+	}
+
 	@SuppressWarnings("unchecked")
 	private Set<String> getCurrentValues() throws ManagerBeanException {
 		Set<String> values = new HashSet<String>();
