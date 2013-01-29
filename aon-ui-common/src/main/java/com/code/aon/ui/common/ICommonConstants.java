@@ -72,8 +72,6 @@ public interface ICommonConstants {
 	
 	String MODULE_MANAGEMENT_FINANCE = "aon_module_management_finance";
 	
-	String PORTAL_FISCAL = "aon_fiscal_portal";
-	
 	// ************************************************************
 	// BEAN
 	// ************************************************************

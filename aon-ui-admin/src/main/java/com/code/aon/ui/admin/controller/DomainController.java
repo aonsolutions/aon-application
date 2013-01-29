@@ -28,7 +28,6 @@ import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_OEM;
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.MODULE_MANAGEMENT_FINANCE;
 import static com.code.aon.ui.common.ICommonConstants.NO;
-import static com.code.aon.ui.common.ICommonConstants.PORTAL_FISCAL;
 import static com.code.aon.ui.common.ICommonConstants.YES;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_EMAIL_BODY_HEADER;
 
@@ -109,7 +108,13 @@ public class DomainController extends BasicController {
 	private DomainApplicationInfo aioInfo;
 	
 	private DomainModuleInfo documental;
+	
+	private DomainModuleInfo documentPortal;
 
+	private DomainModuleInfo payroll;
+	
+	private DomainModuleInfo payrollPortal;
+	
 	private List<DomainApplicationInfo> applicationInfos;
 	
 	private DomainApplication domainApplication;
@@ -166,13 +171,13 @@ public class DomainController extends BasicController {
 	}
 
 	public void onDocumentalChanged( ActionEvent event ) {
-		if (! documental.isChecked() ) {
+		if (! getDocumental().isChecked() ) {
 			getDomain().setMaxTotalDocumentSize(DEFAULT_MAX_TOTAL_DOCUMENT_SIZE);
 		}
 	}
 
 	public void onPortalDocumentalChanged( ActionEvent event ) {
-		documental.setChecked(getDocumentModule() == Module.DOCUMENT);
+		getDocumental().setChecked(getDocumentModule() == Module.DOCUMENT);
 		onDocumentalChanged(event);
 	}
 	
@@ -216,32 +221,38 @@ public class DomainController extends BasicController {
 			this.aioInfo.getApplicationModules().remove(management);
 			this.aioInfo.getApplicationModules().remove(treasury);
 			this.aioInfo.getApplicationModules().add(dmim);
-			if ( isConsultancyParent() ) {
-				dmim.setDescription(AonUtil.getMessage(PORTAL_FISCAL));
-			} else {
-				dmim.setDescription(AonUtil.getMessage(MODULE_MANAGEMENT_FINANCE));				
-			}
+			dmim.setDescription(AonUtil.getMessage(MODULE_MANAGEMENT_FINANCE));				
 		}
+	}
+	
+	public boolean isShowDocumentSelection() {
+		return (documental != null) && (documentPortal != null);
+	}
+
+	public boolean isShowPayrollSelection() {
+		return (payroll != null) && (payrollPortal != null);
 	}
 	
 	private void initPortalModules() throws ManagerBeanException {
 		setDocumentModule(null);
 		setPayrollModule(null);
-		if ( isConsultancyParent() ) {
-			DomainModuleInfo document = this.aioInfo.getModuleInfo(Module.DOCUMENT);
-			document.setRendered(false);
-			DomainModuleInfo documentPortal = this.aioInfo.getModuleInfo(Module.DOCUMENT_PORTAL);
+		this.documental = this.aioInfo.getModuleInfo(Module.DOCUMENT);
+		this.documentPortal = this.aioInfo.getModuleInfo(Module.DOCUMENT_PORTAL);
+		this.payroll = this.aioInfo.getModuleInfo(Module.PAYROLL);
+		this.payrollPortal = this.aioInfo.getModuleInfo(Module.PAYROLL_PORTAL);		
+		if ( isShowDocumentSelection() ) {
+			getDocumental().setRendered(false);
 			documentPortal.setRendered(false);
-			if ( document.isChecked() ) {				
+			if ( getDocumental().isChecked() ) {				
 				setDocumentModule(Module.DOCUMENT);
 				documentPortal.setChecked(false);
 			}
 			if ( documentPortal.isChecked() ) {
 				setDocumentModule(Module.DOCUMENT_PORTAL);
 			}
-			DomainModuleInfo payroll = this.aioInfo.getModuleInfo(Module.PAYROLL);
+		}
+		if ( isShowPayrollSelection() ) {		
 			payroll.setRendered(false);
-			DomainModuleInfo payrollPortal = this.aioInfo.getModuleInfo(Module.PAYROLL_PORTAL);
 			payrollPortal.setRendered(false);
 			if ( payroll.isChecked() ) {				
 				setPayrollModule(Module.PAYROLL);
@@ -290,24 +301,21 @@ public class DomainController extends BasicController {
 		this.applicationInfos = new LinkedList<DomainApplicationInfo>();
 		this.aioInfo = DomainApplicationInfo.getApplicationInfos(getDomain(), AON_AIO_APPLICATION);
 		this.aioInfo.setDescription(AonUtil.getMessage(BUNDLE_NAME, AON_PLATFORM));
-		this.documental = this.aioInfo.getModuleInfo(Module.DOCUMENT);
 		this.applicationInfos.add(this.aioInfo);
 		updateModules(this.aioInfo);
 	}
 	
 	private void updatePortalModules() throws ManagerBeanException {
-		if ( isConsultancyParent() ) {
-			DomainModuleInfo document = this.aioInfo.getModuleInfo(Module.DOCUMENT);
-			DomainModuleInfo documentPortal = this.aioInfo.getModuleInfo(Module.DOCUMENT_PORTAL);
-			document.setChecked(false);
+		if ( isShowDocumentSelection()) {
+			getDocumental().setChecked(false);
 			documentPortal.setChecked(false);
 			if ( getDocumentModule() == Module.DOCUMENT ) {
-				document.setChecked(true);
+				getDocumental().setChecked(true);
 			} else if ( getDocumentModule() == Module.DOCUMENT_PORTAL ) {
 				documentPortal.setChecked(true);
 			}
-			DomainModuleInfo payroll = this.aioInfo.getModuleInfo(Module.PAYROLL);
-			DomainModuleInfo payrollPortal = this.aioInfo.getModuleInfo(Module.PAYROLL_PORTAL);
+		}
+		if ( isShowPayrollSelection() ) {
 			payroll.setChecked(false);
 			payrollPortal.setChecked(false);
 			if ( getPayrollModule() == Module.PAYROLL ) {

@@ -194,50 +194,53 @@ public class AuditManager implements IAuditConstants {
 	public static List<Module> getVisibleModules( Integer domainId, Integer applicationId ) throws ManagerBeanException {
 		List<Module> list = new LinkedList<Module>();
 		DomainType type = AuditManager.getDomainType(domainId);
-		if ( DomainManager.isDomainManagementAvailable() && (type == DomainType.CONSULTANCY)) {
-			list.add(Module.FISCAL);
-			list.add(Module.PAYROLL);
-		} else {
-			list.add(Module.ACCOUNTING);
-			list.add(Module.COMMERCIAL);
-			list.add(Module.GROUPWARE);
-			list.add(Module.MANAGEMENT);
-			list.add(Module.MARKETING);
-			list.add(Module.TREASURY);
-			list.add(Module.INFOWEB);
-			switch ( type ) {
-				case ENTERPRISE:
-					list.add(Module.WAREHOUSE);
-					break;
-				case GARAGE:
-					list.add(Module.GARAGE);
-					list.add(Module.WAREHOUSE);
-					break;
-				case ACADEMY:
-					list.add(Module.ACADEMY);
-					list.add(Module.WAREHOUSE);
-					break;
-				case HOTEL:
-					list.add(Module.HOTEL);
-					list.add(Module.WAREHOUSE);
-					break;
-				case CONSULTANCY:
-					list.add(Module.FISCAL);
-					list.add(Module.PAYROLL);
-					break;
-			}
-			Integer parentDomainId = AdminUtil.getParentDomain(domainId);
-			if ( parentDomainId != null)  {
-				if (AuditManager.getDomainType(parentDomainId) == DomainType.CONSULTANCY) {
-					list.add(Module.PAYROLL_PORTAL);
-					list.add(Module.DOCUMENT_PORTAL);
-					if (! list.contains(Module.PAYROLL) ) {
+		if ( type != DomainType.ADMIN ) {
+			if ( DomainManager.isDomainManagementAvailable() && (type == DomainType.CONSULTANCY)) {
+				list.add(Module.FISCAL);
+				list.add(Module.PAYROLL);
+			} else {
+				list.add(Module.ACCOUNTING);
+				list.add(Module.COMMERCIAL);
+				list.add(Module.GROUPWARE);
+				list.add(Module.MANAGEMENT);
+				list.add(Module.MARKETING);
+				list.add(Module.TREASURY);
+				list.add(Module.INFOWEB);
+				switch ( type ) {
+					case ENTERPRISE:
+						list.add(Module.WAREHOUSE);
+						break;
+					case GARAGE:
+						list.add(Module.GARAGE);
+						list.add(Module.WAREHOUSE);
+						break;
+					case ACADEMY:
+						list.add(Module.ACADEMY);
+						list.add(Module.WAREHOUSE);
+						break;
+					case HOTEL:
+						list.add(Module.HOTEL);
+						list.add(Module.WAREHOUSE);
+						break;
+					case CONSULTANCY:
+						list.add(Module.FISCAL);
 						list.add(Module.PAYROLL);
-					}
+						break;
 				}
-			}			
+				Integer parentDomainId = AdminUtil.getParentDomain(domainId);
+				if ( parentDomainId != null)  {
+					if (AuditManager.getDomainType(parentDomainId) == DomainType.CONSULTANCY) {
+						if (AuditManager.hasModule(parentDomainId, applicationId, Module.PAYROLL) ) {
+							list.add(Module.PAYROLL_PORTAL);
+						}
+						if (AuditManager.hasModule(parentDomainId, applicationId, Module.DOCUMENT) ) {
+							list.add(Module.DOCUMENT_PORTAL);
+						}
+					}
+				}			
+			}
+			list.add(Module.DOCUMENT);
 		}
-		list.add(Module.DOCUMENT);
 		return list;
 	}
 	
