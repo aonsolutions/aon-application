@@ -68,6 +68,7 @@ public class NewDomainController {
 	private Domain parentDomain;
 	private Domain templateDomain;
 	private boolean loadDefaultValuesEnabled;
+	private boolean enableHeredity;
 	private boolean domainManagement;
 	private DomainType type;
 	
@@ -131,6 +132,14 @@ public class NewDomainController {
 	public void setType(DomainType type) {
 		this.type = type;
 	}
+	
+	public boolean isEnableHeredity() {
+		return enableHeredity;
+	}
+
+	public void setEnableHeredity(boolean enableHeredity) {
+		this.enableHeredity = enableHeredity;
+	}
 
 	public Domain getParentDomain() {
 		return parentDomain;
@@ -156,6 +165,7 @@ public class NewDomainController {
 		setPassword(null);
 		setLoadDefaultValuesEnabled(true);
 		setDomainManagement(false);
+		setEnableHeredity(parentDomain != null);
 		setType(DomainType.ENTERPRISE);
 		setParentDomain(parentDomain);
 		setTemplateDomain((Domain)BeanManager.getManagerBean(Domain.class).createNewTo());
@@ -213,7 +223,9 @@ public class NewDomainController {
 		try {			
 			if ( isLoadDefaultValuesEnabled() ) {
 				Integer newDomain = createDomain(domainFinalName, getDomainDescription());
-				insertDefaults(newDomain);
+				if (! isEnableHeredity() ) {
+					insertDefaults(newDomain);	
+				}
 				copyCustomizeId(newDomain);
 			} else {
 				duplicateDomain(getTemplateDomain().getId(), domainFinalName, getDomainDescription());
@@ -269,7 +281,7 @@ public class NewDomainController {
 		domain.setOwner( principal.getShortName() );
 		domain.setName(name);
 		domain.setDescription(description);
-		domain.setEnableHeredity(true);
+		domain.setEnableHeredity( isEnableHeredity() );
 		bean.insert(domain);
 		DomainApplication da = new DomainApplication(); 
 		Application application = (Application) BeanManager.getManagerBean(Application.class).get(principal.getApplicationId());
