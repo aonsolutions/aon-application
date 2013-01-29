@@ -43,7 +43,6 @@ public class AlumnControllerListener extends ControllerAdapter {
 				throw new ControllerListenerException();
 			}
 		}
-		controller.setShowAlumnData(true);
 	}
 	
 	private List<ITransferObject> obtainCaurseAlumnList() throws ManagerBeanException{
