@@ -301,7 +301,7 @@ public class ContractController extends BasicController implements IVariablesHan
 				List<ITransferObject> pwList = pwBean.getList(criteria);
 				for(ITransferObject to: pwList){
 					PayrollWorkPlace pw = (PayrollWorkPlace) to;
-					if(pw.getEnterpriseActivity().getCnae2009()!=null){
+					if(pw.getEnterpriseActivity()!=null && pw.getEnterpriseActivity().getCnae2009()!=null){
 						String name = pw.getEnterpriseActivity().getDescription() + " - (" + pw.getEnterpriseActivity().getCnae2009().getCode() + ") " + pw.getEnterpriseActivity().getCnae2009().getTitle();
 						SelectItem item = new SelectItem(pw.getEnterpriseActivity(), name);
 						getActivities().add(item);
