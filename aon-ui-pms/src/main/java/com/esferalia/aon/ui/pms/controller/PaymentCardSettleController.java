@@ -653,7 +653,7 @@ public class PaymentCardSettleController {
 			if ((bank).length() > 10) {
 				bank = StringUtils.substring(bank, 0, 10);
 			}
-			if ((agency).length() > 22) {
+			if ((agency).length() > 21) {
 				agency = StringUtils.substring(agency, 0, 21);
 			}
 		}
