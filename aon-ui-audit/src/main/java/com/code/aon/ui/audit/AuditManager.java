@@ -232,6 +232,9 @@ public class AuditManager implements IAuditConstants {
 					if (AuditManager.getDomainType(parentDomainId) == DomainType.CONSULTANCY) {
 						if (AuditManager.hasModule(parentDomainId, applicationId, Module.PAYROLL) ) {
 							list.add(Module.PAYROLL_PORTAL);
+							if (! list.contains(Module.PAYROLL) ) {
+								list.add(Module.PAYROLL);
+							}
 						}
 						if (AuditManager.hasModule(parentDomainId, applicationId, Module.DOCUMENT) ) {
 							list.add(Module.DOCUMENT_PORTAL);
