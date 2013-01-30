@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core">
 	
@@ -19,6 +20,9 @@
 						<aon:outputText style="#{customize.fontStyle}"
 							value=" / #{customize.applicationTitle}"/>
 					</aon:div>
+					<rich:jQuery name="hideErrorDiv" selector=".aon-errors"
+						timing="onJScall" query="hide()" />		
+					
 					<aon:div styleClass="aon-login-box">
 						<aon:outputText value="#{securityBundle.aon_login_label}" styleClass="aon-login-help"/>
 						<ui:insert name="error"/>
@@ -33,7 +37,7 @@
 							
 							<aon:outputText value="&#160;" />
 							<input id="login_btn" name="login_btn" type="submit" value="#{securityBundle.aon_login_validate}" 
-									onclick="concatHost();" class="aon-login-button"/>
+									onclick="hideErrorDiv();concatHost();" class="aon-login-button"/>
 										
 						</aon:panelGrid>
 						<input type="hidden" id="login_domain" name="login_domain"
