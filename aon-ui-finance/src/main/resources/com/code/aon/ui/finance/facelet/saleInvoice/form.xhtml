@@ -549,8 +549,8 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalRemarks.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
-		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAuditInfo.xhtml">
-			<ui:param name="invoiceController" value="#{saleInvoice}" />
+		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+			<ui:param name="auditableController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalFiscalInfo.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />

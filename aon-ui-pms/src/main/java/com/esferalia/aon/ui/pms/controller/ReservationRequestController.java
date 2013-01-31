@@ -32,6 +32,7 @@ public class ReservationRequestController extends BasicController implements IPm
 	private ReservationRequestGuest requestGuest;
 	private boolean skipResetAvailabilityMap;
 	private boolean showConfirmWindow;
+	private boolean showAuditInfoWindow;
 	
 	public String getSelectedTab() {
 		return selectedTab;
@@ -71,6 +72,14 @@ public class ReservationRequestController extends BasicController implements IPm
 	public void setShowConfirmWindow(boolean showConfirmWindow) {
 		this.showConfirmWindow = showConfirmWindow;
 	}
+	
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}	
 
 	public void onStartDateChanged(ActionEvent event) {
 		ReservationRequest request = (ReservationRequest)getTo();

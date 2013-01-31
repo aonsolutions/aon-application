@@ -476,8 +476,8 @@
 			<ui:param name="projectController" value="#{project}" />
 			<ui:param name="skipRegistryLookup" value="true" />
 		</ui:include>
-		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAuditInfo.xhtml">
-			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
+		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+			<ui:param name="auditableController" value="#{purchaseInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalFiscalInfo.xhtml">
 			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
