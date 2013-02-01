@@ -12,7 +12,7 @@
 
 		<aon:form id="domainForm">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{adminBundle.admin_domain_management}" />
 				<ui:param name="controller" value="#{adminDomain}" />
 				<ui:param name="skipResetButton" value="#{true}" />
@@ -20,7 +20,16 @@
 				<ui:param name="skipBackButton" value="#{true}" />
 				<ui:param name="skipSearchButton" value="#{true}" />
 				<ui:param name="skipSaveButton" value="#{!(adminMain.termsOfServiceAccepted or aonRole.sysAdmin)}" />
-			</ui:include>
+				<ui:define name="beforeSpinToolbarContent">				
+					<aon:commandButton id="audit-info"
+						value="#{bundle.aon_audit}"
+						styleClass="aon-finding-toolbar-item aon-icon-audit"
+						reRender="showAuditInfoWindow">
+						<f:setPropertyActionListener target="#{adminDomain.showAuditInfoWindow}"
+							value="#{true}" />							
+					</aon:commandButton>	
+				</ui:define>				
+			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 
@@ -187,5 +196,8 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{domainLookup}" />
+		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+			<ui:param name="auditableController" value="#{adminDomain}" />
+		</ui:include>		
 	</ui:define>
 </ui:composition>

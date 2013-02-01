@@ -139,6 +139,8 @@ public class DomainController extends BasicController {
 	
 	private Module documentModule;
 	
+	private boolean showAuditInfoWindow;
+	
 	private AdminMainController getAdmin() {
 		return (AdminMainController) AonUtil.getRegisteredBean(ADMIN_CONTROLLER_NAME);
 	}
@@ -705,5 +707,13 @@ public class DomainController extends BasicController {
 		}
 		return documentModules;
 	}	
-		
+
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
 }
