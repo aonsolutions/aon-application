@@ -17,6 +17,7 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.StringUtils;
@@ -26,12 +27,16 @@ import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.auth.SimpleGroup;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.auth.spi.UsernamePasswordLoginModule;
+import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 
 public class LoginModule extends UsernamePasswordLoginModule {
 
 	private Util dbUtil;
 	private String dataBaseName;
 	private BasicInfo appplicationUser;
+	
+	private String domainName;
+	private String contextPath;
 
 	/**
 	 * Initialize this LoginModule.
@@ -48,6 +53,9 @@ public class LoginModule extends UsernamePasswordLoginModule {
 	public void initialize(Subject subject, CallbackHandler callbackHandler,
 			Map sharedState, Map options) {
 		super.initialize(subject, callbackHandler, sharedState, options);
+		HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
+		this.contextPath = request.getContextPath();
+		this.domainName = request.getServerName();
 		initConnection();
 	}
 
@@ -65,7 +73,6 @@ public class LoginModule extends UsernamePasswordLoginModule {
 
 		try {
 			mainConnection = dbUtil.createConnection(Util.MYSQL);
-			String domainName = principal.getDomain();
 			Domain domain = dbUtil.getDomain(domainName);
 			if ( domain == null ) {
 				throw new AuthenticationLoginException( "aon_login_err_2", domainName );
@@ -77,7 +84,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 			this.dataBaseName = domain.getDataBaseName();
 			connection = dbUtil.createConnection(this.dataBaseName);
 			dbUtil.setConnection(connection);
-			String applicationName = StringUtils.substringAfter( principal.getContext(), "/" );
+			String applicationName = StringUtils.substringAfter( contextPath, "/" );
 			Integer applicationId = dbUtil.getApplicationId(applicationName);
 			if ( applicationId == null ) {
 				throw new AuthenticationLoginException( "aon_login_application_not_found", applicationName );
