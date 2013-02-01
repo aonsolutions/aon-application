@@ -44,7 +44,10 @@ public class Mod347Manager {
 			Mod347 mod347 = params.getMod347();
 			String sessionName = HibernateUtil.getSessionFactoryName(Mod347Detail.class.getName());
 			ps1 = HibernateUtil.getSQLConnection(sessionName).prepareStatement(
-					"SELECT geozone.code FROM raddress,geozone WHERE raddress.registry = ? AND raddress.type = 0",
+					"SELECT geozone.code FROM raddress,geozone WHERE "
+					+DomainManager.getSQLWhereClause("raddress.domain")
+					+" AND raddress.geozone = geozone.id"
+					+" AND raddress.registry = ? AND raddress.type = 0",
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(getSentence(params),
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
