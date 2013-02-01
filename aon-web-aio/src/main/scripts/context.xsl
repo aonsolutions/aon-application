@@ -31,6 +31,7 @@
                 type="com.code.aon.bridge.jmx.mbean.core.TomcatConsoleAdminFactory"
                 factory="org.apache.naming.factory.BeanFactory" />
 
+		<Valve className="com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve" /> 
                 </xsl:copy>
         </xsl:template>
 
