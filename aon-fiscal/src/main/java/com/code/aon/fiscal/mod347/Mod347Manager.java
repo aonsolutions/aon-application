@@ -27,7 +27,6 @@ public class Mod347Manager {
 	private static final String DOCUMENT_ALIAS = "document";
 	private static final String NAME_ALIAS = "name";
 	private static final String COUNTRY_ALIAS = "country";
-	private static final String PROVINCE_ALIAS = "province";
 	private static final String AMOUNT_ALIAS = "amount";
 	private static final String FIRST_QUARTER_ALIAS = "firstQuarter";
 	private static final String SECOND_QUARTER_ALIAS = "secondQuarter";
@@ -37,9 +36,16 @@ public class Mod347Manager {
 	public Mod347 generateDetails(Mod347Parameters params) throws ManagerBeanException {
 		PreparedStatement ps = null; 
 		ResultSet rs = null;
+		
+		PreparedStatement ps1 = null;
+		ResultSet rs1 = null;
+		
 		try {
 			Mod347 mod347 = params.getMod347();
 			String sessionName = HibernateUtil.getSessionFactoryName(Mod347Detail.class.getName());
+			ps1 = HibernateUtil.getSQLConnection(sessionName).prepareStatement(
+					"SELECT geozone.code FROM raddress,geozone WHERE raddress.registry = ? AND raddress.type = 0",
+					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(getSentence(params),
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
@@ -58,18 +64,28 @@ public class Mod347Manager {
 				if (StringUtils.length(detail.getDocument()) > 9) {
 					detail.setDocument( StringUtils.substring(detail.getDocument(), 0,9));
 				}
-				detail.setRegistry(rs.getInt( REGISTRY_ALIAS ));
+				int registry = rs.getInt( REGISTRY_ALIAS );
+				detail.setRegistry(registry);
 				detail.setName(rs.getString(NAME_ALIAS));
 				Country country = Country.valueOf( rs.getString(COUNTRY_ALIAS) ); 
 				detail.setCountry( country );
+
 				Province province = null;
 				if (country == Country.ES) {
-					int prov = rs.getInt( PROVINCE_ALIAS );
-					try {
-						province = Province.values()[prov];
-					} catch (ArrayIndexOutOfBoundsException e) {
-						province = Province.DESCONOCIDO;
+					ps1.setInt(1,registry);
+					rs1 = ps1.executeQuery();
+					if (rs1.next()) {
+						String prov = rs1.getString(1);
+						try {
+							int p = Integer.parseInt(prov); 
+							province = Province.values()[p];
+						} catch (NumberFormatException e) {
+							province = Province.DESCONOCIDO;
+						} catch (ArrayIndexOutOfBoundsException e) {
+							province = Province.DESCONOCIDO;
+						}
 					}
+					rs1.close();
 				} else {
 					province = Province.NO_RESIDENTE;
 				}
@@ -85,6 +101,18 @@ public class Mod347Manager {
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
+			if (rs1 != null) {
+				try {
+					rs1.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (ps1 != null) {
+				try {
+					ps1.close();
+				} catch (SQLException e) {
+				}
+			}
 			if (rs != null) {
 				try {
 					rs.close();
@@ -114,8 +142,6 @@ public class Mod347Manager {
 		buf.append(NAME_ALIAS);
 		buf.append(",MIN(r.nationality) ");
 		buf.append(COUNTRY_ALIAS);
-		buf.append(",IF(giz.id IS NOT null,giz.id,IF(gz.id IS NOT null,gz.id,gz2.id)) ");
-		buf.append(PROVINCE_ALIAS);
 		buf.append(",SUM( " + sumOp + " ) ");
 		buf.append(AMOUNT_ALIAS);
 		buf.append(",SUM( IF(QUARTER(i.issue_date)=1,(" + sumOp + "),0)) ");
@@ -130,19 +156,6 @@ public class Mod347Manager {
 		buf.append(" INNER JOIN invoice i ON (id.invoice = i.id) ");
 		buf.append(" INNER JOIN registry r ON (r.id = i.registry) ");
 		buf.append(" LEFT OUTER JOIN invoice_tax it ON it.invoice_detail = id.id ");
-				
-		// PRIORIDAD 1. Buscamos la provincia en las direcciones de la factura. 
-		buf.append(" LEFT OUTER JOIN invoice_address ia ON ia.invoice = i.id ");
-		buf.append(" LEFT OUTER JOIN geozone giz ON ia.geozone = giz.id ");
-
-		// PRIORIDAD 2. Buscamos la provincia en la direccion de raddress asignada a la factura.		
-		buf.append(" LEFT OUTER JOIN raddress ra ON ra.id = i.raddress  ");
-		buf.append(" LEFT OUTER JOIN geozone gz ON ra.geozone = gz.id ");
-
-		// PRIORIDAD 3. Buscamos la provincia en la direccion principal de raddress.		
-		buf.append(" LEFT OUTER JOIN raddress ra2 ON ra2.registry = i.registry AND ra2.type = 0 ");
-		buf.append(" LEFT OUTER JOIN geozone gz2 ON ra2.geozone = gz2.id ");
-				
 		buf.append(" WHERE i.id=i.id");
 		buf.append(" AND " + DomainManager.getSQLWhereClause("i.domain"));
 		buf.append(" AND " + (params.isTaxDateEnabled()?"i.tax_date":"i.issue_date") +" >= ?");
