@@ -198,6 +198,8 @@ public class AuditManager implements IAuditConstants {
 			if ( DomainManager.isDomainManagementAvailable() && (type == DomainType.CONSULTANCY)) {
 				list.add(Module.FISCAL);
 				list.add(Module.PAYROLL);
+				list.add(Module.PAYROLL_PORTAL);
+				list.add(Module.DOCUMENT_PORTAL);
 			} else {
 				list.add(Module.ACCOUNTING);
 				list.add(Module.COMMERCIAL);
@@ -230,13 +232,13 @@ public class AuditManager implements IAuditConstants {
 				Integer parentDomainId = AdminUtil.getParentDomain(domainId);
 				if ( parentDomainId != null)  {
 					if (AuditManager.getDomainType(parentDomainId) == DomainType.CONSULTANCY) {
-						if (AuditManager.hasModule(parentDomainId, applicationId, Module.PAYROLL) ) {
-							list.add(Module.PAYROLL_PORTAL);
-							if (! list.contains(Module.PAYROLL) ) {
-								list.add(Module.PAYROLL);
-							}
+						if ( !list.contains(Module.PAYROLL) && AuditManager.hasModule(parentDomainId, applicationId, Module.PAYROLL) ) {
+							list.add(Module.PAYROLL);
 						}
-						if (AuditManager.hasModule(parentDomainId, applicationId, Module.DOCUMENT) ) {
+						if (AuditManager.hasModule(parentDomainId, applicationId, Module.PAYROLL_PORTAL) ) {
+							list.add(Module.PAYROLL_PORTAL);
+						}
+						if (AuditManager.hasModule(parentDomainId, applicationId, Module.DOCUMENT_PORTAL) ) {
 							list.add(Module.DOCUMENT_PORTAL);
 						}
 					}

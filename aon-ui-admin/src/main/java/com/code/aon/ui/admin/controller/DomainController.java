@@ -30,6 +30,7 @@ import static com.code.aon.ui.common.ICommonConstants.MODULE_MANAGEMENT_FINANCE;
 import static com.code.aon.ui.common.ICommonConstants.NO;
 import static com.code.aon.ui.common.ICommonConstants.YES;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_EMAIL_BODY_HEADER;
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,6 +85,7 @@ import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -210,6 +212,8 @@ public class DomainController extends BasicController {
 			if ( isConsultancyParent() ) {
 				list.remove(Module.DOCUMENT);
 				list.remove(Module.PAYROLL);
+				list.remove(Module.DOCUMENT_PORTAL);
+				list.remove(Module.PAYROLL_PORTAL);
 			}
 		}
 		return list;
@@ -228,11 +232,19 @@ public class DomainController extends BasicController {
 	}
 	
 	public boolean isShowDocumentSelection() {
-		return (documental != null) && (documentPortal != null);
+		if ( (documental != null) && (documentPortal != null) ) {
+			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+			return ds.isChildDomain();
+		}
+		return false;
 	}
 
 	public boolean isShowPayrollSelection() {
-		return (payroll != null) && (payrollPortal != null);
+		if ( (payroll != null) && (payrollPortal != null) ) {
+			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+			return ds.isChildDomain();
+		}
+		return false;
 	}
 	
 	private void initPortalModules() throws ManagerBeanException {
