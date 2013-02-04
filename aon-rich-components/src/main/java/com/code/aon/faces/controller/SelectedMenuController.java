@@ -71,7 +71,7 @@ public class SelectedMenuController {
 			if ( expression != null ) {
 				String action = expression.getExpressionString();
 				String last = getLastMenuAction();
-				if ( StringUtils.equals(last, action) ) {
+				if ( StringUtils.equals(last, action) && (component instanceof HtmlAjaxCommandLink) ) {
 					HtmlAjaxCommandLink commandLink = (HtmlAjaxCommandLink) component;
 					String styleClass = commandLink.getStyleClass();
 					styleClass = StringUtils.join(new String[]{SELECTED_CLASS, styleClass}, " ");
