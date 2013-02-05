@@ -2,17 +2,11 @@ package com.esferalia.aon.ui.payroll.controller.salary;
 
 import java.util.Date;
 
-import javax.faces.event.AbortProcessingException;
-
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.DismissCause;
 import com.esferalia.aon.salary.ISalary;
-import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
-import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class SettleParams {
 	
@@ -42,20 +36,11 @@ public class SettleParams {
 		this.contract = contract;
 		this.seniorityDate = contract.getSeniorityDate();
 		this.suspensionDate = contract.getEndDate();
-		try {
-			ISalary salary;
-			int year = CommonUtil.getYear(contract.getEndDate()!=null?contract.getEndDate():new Date());
-			int month = CommonUtil.getMonth(contract.getEndDate()!=null?contract.getEndDate():new Date());
-			ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(year, Month.values()[month-1], SalaryType.SALARY);
-			salary = (ISalary) ctx.getSalaryProxy().getSalary();
-			// TODO ******* revisar el calculo del salario diario *******  
-			dayAmount = CommonUtil.round(salary.getCommonBase()/30);
-			vacationDayAmount = CommonUtil.round(salary.getCommonBase()/30);
-		} catch (SalaryException e) {
-			// como tratar esto?
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage());
-		}
+		PayrollUtils utils = new PayrollUtils();
+		ISalary salary = utils.calculateSalary(contract, contract.getEndDate()!=null?contract.getEndDate():new Date());
+		// FIXME ******* revisar el calculo del salario diario *******  
+		dayAmount = CommonUtil.round(salary.getCommonBase()/30);
+		vacationDayAmount = CommonUtil.round(salary.getCommonBase()/30);
 	}
 	
 	public Contract getContract() {

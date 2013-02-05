@@ -15,7 +15,7 @@
 		<aon:div styleClass="aon-group-body" >	
 			
 			<aon:panelGrid columns="3" 
-				columnClasses="aon-panelGrid-odd aon-width-100, aon-panelGrid-even aon-width-auto, aon-panelGrid-even aon-width-auto">
+				columnClasses="aon-panelGrid-odd aon-width-100, aon-panelGrid-even aon-width-300, aon-panelGrid-even aon-width-auto">
 				
 				<aon:selectOneRadio value="#{controller.variableFilter.searchCurrentVariables}" style="display:inline;">
 					<f:selectItem itemLabel="#{payrollBundle.payroll_current}" itemValue="#{true}" />
@@ -26,7 +26,7 @@
 					</a4j:support>
 				</aon:selectOneRadio>
 				
-				<aon:div>
+				<aon:div styleClass="aon-nowrap">
 					<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
 						value="#{bundle.aon_end_date}:" />
 					<aon:selectOneMenu 

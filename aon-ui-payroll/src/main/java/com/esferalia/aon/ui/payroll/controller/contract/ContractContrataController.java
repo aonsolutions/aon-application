@@ -99,15 +99,15 @@ public class ContractContrataController {
 				 || code.equals(ContractCode.C289.getValue())
 				 || code.equals(ContractCode.C309.getValue())
 				 || code.equals(ContractCode.C389.getValue()) ){
-			String msg = "Transformacion de contrato no implementado para generar el fichero contrat@";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
+//			String msg = "Transformacion de contrato no implementado para generar el fichero contrat@";
+//			AonUtil.addErrorMessage(msg);
+//			throw new AbortProcessingException(msg);
 		}
 		if( code.equals(ContractCode.C408.getValue())
 				 || code.equals(ContractCode.C418.getValue())
 				 || code.equals(ContractCode.C508.getValue())
 				 || code.equals(ContractCode.C518.getValue()) ){
-			String msg = "Contrato no implementado para generar el fichero contrat@";
+			String msg = "PRorroga de contrato no implementado para generar el fichero contrat@";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}

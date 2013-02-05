@@ -1,4 +1,4 @@
-package com.esferalia.aon.file.payroll.contracta;
+package com.esferalia.aon.file.payroll.contrata;
 
 
 import com.esferalia.aon.file.payroll.contract.model.IContratoType;

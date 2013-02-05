@@ -15,7 +15,7 @@
 				<ui:param name="toolbarDescription" value="#{(enterprise.new)?(bundle.aon_reset):(bundle.aon_editing)}" />
 				<ui:define name="toolbarContent">
 					<c:if test="#{enterprise.new}" >
-						<aon:commandButton id="save"
+						<aon:commandButton id="enterprise-save"
 							value="#{bundle.aon_save}" reRender="aonHeader,aonContent"
 							action="home" actionListener="#{enterprise.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
@@ -24,13 +24,21 @@
 						</aon:commandButton>
 					</c:if>
 					<c:if test="#{!enterprise.new}" >
-						<aon:commandButton id="save"
+						<aon:commandButton id="enterprise-save"
 							value="#{bundle.aon_save}"
 							action="company_form" actionListener="#{enterprise.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}" >
 							<aon:actionListener method="#{companyDisplay.update}" />
 						</aon:commandButton>
+						<aon:commandButton id="enterprise-back"
+							title="#{bundle.aon_key_cancel_accelerator}"
+							value="#{bundle.aon_back}" 
+							rendered="#{!enterprise.new and enterprise.treeView}" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							actionListener="#{enterprise.onBackActionListener}"
+							action="#{enterprise.backAction}"
+							accesskey="#{bundle.aon_key_cancel}" />
 					</c:if>
 				</ui:define>				
 			</ui:decorate>

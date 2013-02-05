@@ -45,6 +45,7 @@ public interface IPayrollConstants {
 	String CERTIFICATE_FILE_WIZARD = "certifica2FileWizard";
 	String CONTRACT_CONTROLLER = "contract";
 	String CONTRACT_ATTACH_CONTROLLER = "contractAttach";
+	String CONTRACT_BATCH_ATTACH_CONTROLLER_NAME = "contractBatchAttach";
 	String CONTRACT_BATCH_CONTROLLER_NAME = "contractBatch";
 	String CONTRACT_BATCH_DETAIL_CONTROLLER_NAME = "contractBatchDetail";
 	String CONTRACT_LIST_CONTROLLER_NAME = "contractList";
@@ -56,6 +57,10 @@ public interface IPayrollConstants {
 	String CONTRACT_GENERATION_WIZARD_CONTROLLER = "contractGenerationWizard";
 	String CONTRACT_LEAVE_CONTROLLER_NAME = "contractLeave";
 	String CONTRACT_SEARCH_LISTENER_NAME = "contractSearch";
+	String CONTRATA_BATCH_ATTACH_CONTROLLER_NAME = "contrataBatchAttach";
+	String CONTRATA_BATCH_CONTROLLER_NAME = "contrataBatch";
+	String CONTRATA_BATCH_DETAIL_CONTROLLER_NAME = "contrataBatchDetail";
+	String CONTRATA_LIST_CONTROLLER_NAME = "contrataList";
 	String ENTERPRISE_CONTROLLER="enterprise";
 	String ENTERPRISE_DIR_STAFF_CONTROLLER="enterpriseDirStaff";
 	String ENTERPRISE_ACTIVITY_CONTROLLER = "enterpriseActivity";

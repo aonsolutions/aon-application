@@ -20,19 +20,17 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchAttachment;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.enumeration.ContractLeaveStatus;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
-import com.esferalia.aon.payroll.enumeration.LeaveBatchAttachmentType;
+import com.esferalia.aon.payroll.enumeration.PayrollBatchAttachmentType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.FDIWriter;
 
@@ -162,7 +160,7 @@ public class LeaveBatchController extends BasicController {
 				attach.setMimeType(MimeType.MIME_TXT);
 				attach.setDescription(getFDIWriter().getEti().getFichero());
 				attach.setSize(null);
-				attach.setAttachmentType(LeaveBatchAttachmentType.FDI_DOCUMENT);
+				attach.setAttachmentType(PayrollBatchAttachmentType.GENERATED_DOCUMENT);
 				attach.setScope(null);
 				attach.setData(data);
 				attach.setAttachDate(new Date());
@@ -190,12 +188,8 @@ public class LeaveBatchController extends BasicController {
 	}
 
 	private void checkDiskCreated() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(LeaveBatchAttachment.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.LEAVE_BATCH_ATTACHMENT_LEAVE_BATCH_ID), ((LeaveBatch)getTo()).getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.LEAVE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), LeaveBatchAttachmentType.FDI_DOCUMENT);
-		List<ITransferObject> list = bean.getList(criteria);
-		if(!list.isEmpty()){
+		LinesController controller = (LinesController)FormUtil.getController(IPayrollConstants.LEAVE_BATCH_DETAIL_CONTROLLER_NAME);
+		if(controller.getRowCount()>0){
 			setRecorded(true);
 		} else {
 			setRecorded(false);

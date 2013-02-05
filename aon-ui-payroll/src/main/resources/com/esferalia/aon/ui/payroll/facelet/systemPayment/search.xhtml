@@ -33,6 +33,13 @@
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{payrollCollections.paymentTypes}" />
 					</aon:selectOneMenu>	
+					
+					<aon:outputLabel for="systemPayment_salaryType" 
+						value="#{payrollBundle.payroll_salary_type}" />
+					<aon:selectOneMenu id="systemPayment_salaryType" 
+						valueChangeListener="#{systemPayment.addEqualExpression}">
+						<f:selectItems value="#{payrollCollections.salaryTypes}" />
+					</aon:selectOneMenu>
 
 					<aon:outputLabel for="systemPayment_description"
 						value="#{bundle.aon_description}" />

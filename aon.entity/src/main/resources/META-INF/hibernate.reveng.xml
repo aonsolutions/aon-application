@@ -230,11 +230,6 @@
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
 	</table>
 
-	<table name="certifica2_batch_attach" class="com.esferalia.aon.entity.master.Certifica2BatchAttachment">
-		<column name="type" property="attachmentType" type="com.esferalia.aon.payroll.enumeration.Certifica2BatchAttachmentType"/>
-		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
-	</table>
-
 	<table name="certifica2_batch_data">
 		<column name="year" type="java.lang.Integer"/>
 		<column name="month" type="java.lang.Integer"/>
@@ -334,11 +329,6 @@
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
 	</table>
 
-	<table name="contract_batch_attach" class="com.esferalia.aon.entity.master.ContractBatchAttachment">
-		<column name="type" property="attachmentType" type="com.esferalia.aon.payroll.enumeration.ContractBatchAttachmentType"/>
-		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
-	</table>
-
 	<table name="contract_calendar_event">
 		<column name="type" type="com.esferalia.aon.payroll.enumeration.ContractCalendarEventType"/>
 	</table>
@@ -371,6 +361,10 @@
 		<column name="salary_type" type="com.esferalia.aon.salary.enumeration.SalaryType"/>
 		<column name="month" type="com.code.aon.common.enumeration.Month"/>
 		<column name="description_decorable" type="boolean" />
+	</table>
+	
+	<table name="contrata_batch">
+		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
 	</table>
 
 	<table name="course">
@@ -496,11 +490,6 @@
 	<table name="fan_batch">
 		<column name="liquidation_type" type="com.esferalia.aon.payroll.enumeration.LiquidationType"/>
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
-	</table>
-
-	<table name="fan_batch_attach" class="com.esferalia.aon.entity.master.FanBatchAttachment">
-		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
-		<column name="type" property="attachmentType" type="com.esferalia.aon.payroll.enumeration.FanBatchAttachmentType"/>
 	</table>
 
 	<table name="fan_batch_detail">
@@ -890,11 +879,6 @@
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
 	</table>
 	
-	<table name="leave_batch_attach" class="com.esferalia.aon.entity.master.LeaveBatchAttachment">
-		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
-		<column name="type" property="attachmentType" type="com.esferalia.aon.payroll.enumeration.LeaveBatchAttachmentType"/>
-	</table>
-	
 	<table name="loan">
 		<column name="status" type="com.code.aon.accounting.enumeration.LoanStatus"/>
 		<column name="fee_amount" type="java.lang.Double"/>
@@ -1010,6 +994,13 @@
 		<column name="term_general" property="general" />
 		<column name="description" type="text"/>
 		<column name="line" type="int"/>
+	</table>
+	
+	<table name="payroll_batch_attach" class="com.esferalia.aon.entity.master.PayrollBatchAttachment">
+		<column name="type" property="attachmentType" type="com.esferalia.aon.payroll.enumeration.PayrollBatchAttachmentType"/>
+		<column name="source_batch" type="java.lang.Integer"/>
+		<column name="source_type" type="com.esferalia.aon.payroll.enumeration.BatchType" exclude="true"/>
+		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 	</table>
 	
 	<table name="question">

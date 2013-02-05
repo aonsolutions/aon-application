@@ -19,30 +19,20 @@ import com.esferalia.aon.payroll.Certifica2Batch;
 import com.esferalia.aon.payroll.Certifica2BatchAttachment;
 import com.esferalia.aon.payroll.Certifica2BatchData;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
-import com.esferalia.aon.payroll.enumeration.Certifica2BatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
+import com.esferalia.aon.payroll.enumeration.PayrollBatchAttachmentType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class Certifica2BatchAttachController extends BatchAttachController {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(Certifica2BatchAttachController.class);
 	private final static String QUERY = "select sum(length(data)) from Certifica2BatchAttachment";
-
-	private Certifica2BatchAttachmentType type;
-	
-	public Certifica2BatchAttachmentType getType() {
-		return type;
-	}
-	
-	public void setType(Certifica2BatchAttachmentType type) {
-		this.type = type;
-	}
 	
 	@Override
 	public void onRemove(ActionEvent event) {
 		BatchDetailController detailController = (BatchDetailController) FormUtil.getController(IPayrollConstants.CERTIFICA2_BATCH_DETAIL_CONTROLLER_NAME);
 		Certifica2BatchAttachment attach = (Certifica2BatchAttachment)this.getTo();
-		if(attach.getAttachmentType() == Certifica2BatchAttachmentType.CERTIFICA2_DOCUMENT){
+		if(attach.getAttachmentType() == PayrollBatchAttachmentType.GENERATED_DOCUMENT){
 			Certifica2BatchController batchController = (Certifica2BatchController) FormUtil.getController(IPayrollConstants.CERTIFICA2_BATCH_CONTROLLER_NAME);
 			batchController.changeBatchStatus(FileStatus.PENDING);
 			batchController.setRecorded(false);

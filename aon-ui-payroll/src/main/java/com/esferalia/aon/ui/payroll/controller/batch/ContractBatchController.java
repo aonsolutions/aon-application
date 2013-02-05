@@ -20,7 +20,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
@@ -29,10 +28,9 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBatch;
 import com.esferalia.aon.payroll.ContractBatchAttachment;
 import com.esferalia.aon.payroll.ContractBatchDetail;
-import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.payroll.enumeration.ContractBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
+import com.esferalia.aon.payroll.enumeration.PayrollBatchAttachmentType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.AFIWriter;
 
@@ -160,7 +158,7 @@ public class ContractBatchController extends BasicController {
 				attach.setMimeType(MimeType.MIME_TXT);
 				attach.setDescription(getAFIWriter().getEti().getFichero());
 				attach.setSize(null);
-				attach.setAttachmentType(ContractBatchAttachmentType.AFI_DOCUMENT);
+				attach.setAttachmentType(PayrollBatchAttachmentType.GENERATED_DOCUMENT);
 				attach.setScope(null);
 				attach.setData(data);
 				attach.setAttachDate(new Date());
@@ -188,12 +186,8 @@ public class ContractBatchController extends BasicController {
 	}
 
 	private void checkDiskCreated() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(ContractBatchAttachment.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_BATCH_ATTACHMENT_CONTRACT_BATCH_ID), ((ContractBatch)getTo()).getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_BATCH_ATTACHMENT_ATTACHMENT_TYPE), ContractBatchAttachmentType.AFI_DOCUMENT);
-		List<ITransferObject> list = bean.getList(criteria);
-		if(!list.isEmpty()){
+		LinesController controller = (LinesController)FormUtil.getController(IPayrollConstants.CONTRACT_BATCH_ATTACH_CONTROLLER_NAME);
+		if(controller.getRowCount()>0){
 			setRecorded(true);
 		} else {
 			setRecorded(false);

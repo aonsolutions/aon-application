@@ -8,57 +8,57 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 	
 	<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/form.xhtml">
-		<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_certifica2BatchWizard_module}" />
-		<ui:param name="controller" value="#{certifica2Batch}" />
-		<ui:param name="controllerDetail" value="#{certifica2BatchDetail}" />
-		<ui:param name="controllerAttach" value="#{certifica2BatchAttach}" />
+		<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contrataBatchWizard_module}" />
+		<ui:param name="controller" value="#{contrataBatch}" />
+		<ui:param name="controllerDetail" value="#{contrataBatchDetail}" />
+		<ui:param name="controllerAttach" value="#{contrataBatchAttach}" />
 		
 		<ui:define name="batchContent" >
 			<aon:panelGrid id="dataTable" columns="2" style="width: 30%;"
 				columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto">
 
 				<aon:outputLabel value="#{bundle.aon_id}" />
-				<aon:outputText value="#{certifica2Batch.to.id}" />
-				
-				<aon:outputLabel for="Certifica2Batch_date" value="#{bundle.aon_date}" />
+				<aon:outputText value="#{contrataBatch.to.id}" />
+
+				<aon:outputLabel for="ContrataBatch_date" value="#{bundle.aon_date}" />
 				<aon:div>
-					<aon:selectInputDate id="Certifica2Batch_date" rendered="#{!certifica2Batch.recorded}"
-						value="#{certifica2Batch.to.date}" required="true"
+					<aon:selectInputDate id="ContrataBatch_date" rendered="#{!contrataBatch.recorded}"
+						value="#{contrataBatch.to.date}" required="true"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
-					<aon:outputText value="#{certifica2Batch.to.date}" rendered="#{certifica2Batch.recorded}" >
+					<aon:outputText value="#{contrataBatch.to.date}" rendered="#{contrataBatch.recorded}" >
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
 				</aon:div>	
-				
+
 				<aon:outputLabel value="#{bundle.aon_status}" />
-				<aon:outputText value="#{certifica2Batch.to.status}" />
+				<aon:outputText value="#{contrataBatch.to.status}" />
 				
 			</aon:panelGrid>
 		</ui:define>
 		
 		<ui:define name="batchedTabContent" >
-			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/certifica2/formDetail.xhtml" />
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/contrata/formDetail.xhtml" />
 		</ui:define>
 		
 		<ui:define name="noBatchedTabContent" >
-			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/certifica2/formNoBatched.xhtml" />
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/contrata/formNoBatched.xhtml" />
 		</ui:define>
 		
 		<ui:define name="documentTabContent" >
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/formDocument.xhtml" >
-				<ui:param name="controllerAttach" value="#{certifica2BatchAttach}" />
+				<ui:param name="controllerAttach" value="#{contrataBatchAttach}" />
 			</ui:include>
 		</ui:define>
 		
 		<ui:define name="afterFormContent" >
-			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/certifica2/modalSearch.xhtml">
-				<ui:param name="controller" value="#{certifica2List}" />
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/contrata/modalSearch.xhtml">
+				<ui:param name="controller" value="#{contrataList}" />
 				<ui:param name="searchReRender" value="listToolBarDiv, listDataDiv" />
 			</ui:include>
 		</ui:define>
-	
+		
 	</ui:decorate>
 
 </ui:composition>

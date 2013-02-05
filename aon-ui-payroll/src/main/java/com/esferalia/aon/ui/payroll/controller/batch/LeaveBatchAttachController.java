@@ -7,23 +7,12 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.ui.form.FormUtil;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
-import com.esferalia.aon.payroll.enumeration.LeaveBatchAttachmentType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class LeaveBatchAttachController extends BatchAttachController {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(LeaveBatchAttachController.class);
 	private final static String QUERY = "select sum(length(data)) from LeaveBatchAttachment";
-
-	private LeaveBatchAttachmentType type;
-	
-	public LeaveBatchAttachmentType getType() {
-		return type;
-	}
-	
-	public void setType(LeaveBatchAttachmentType type) {
-		this.type = type;
-	}
 	
 	@Override
 	public void onRemove(ActionEvent event) {

@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.ActionEvent;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -13,8 +15,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
-import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 
 public abstract class AbstractConceptController extends BasicController {
@@ -64,5 +66,6 @@ public abstract class AbstractConceptController extends BasicController {
 		Collections.sort(list);
 		return list;
 	}
+	
 	
 }

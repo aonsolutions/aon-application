@@ -20,10 +20,8 @@ import com.esferalia.aon.payroll.enumeration.AgeGroup;
 import com.esferalia.aon.payroll.enumeration.BasicCopySignatureType;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.CNO;
-import com.esferalia.aon.payroll.enumeration.Certifica2BatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.CollectiveReductionCode;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
-import com.esferalia.aon.payroll.enumeration.ContractBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCalendarEventType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractDuration;
@@ -43,17 +41,16 @@ import com.esferalia.aon.payroll.enumeration.EmployeeType;
 import com.esferalia.aon.payroll.enumeration.EmploymentProgram;
 import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 import com.esferalia.aon.payroll.enumeration.FamilySituation;
-import com.esferalia.aon.payroll.enumeration.FanBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.payroll.enumeration.InterimCause;
 import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
-import com.esferalia.aon.payroll.enumeration.LeaveBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.LiquidationType;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.OtherLaws;
+import com.esferalia.aon.payroll.enumeration.PayrollBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.payroll.enumeration.QuoteType;
 import com.esferalia.aon.payroll.enumeration.ResearchEmployee;
@@ -120,11 +117,8 @@ public class PayrollCollectionsController {
 	private List<SelectItem> taxationTypes;
 	private List<SelectItem> quoteTypes;
 	private List<SelectItem> reportTypes;
-	private List<SelectItem> leaveBatchAttachTypes;
-	private List<SelectItem> contractBatchAttachTypes;
-	private List<SelectItem> fanBatchAttachTypes;
-	private List<SelectItem> certifica2BatchAttachTypes;
-
+	private List<SelectItem> payrollBatchAttachTypes;
+	
 	private List<SelectItem> liquidationTypes;
 	private List<SelectItem> interimCauses;
 	private List<SelectItem> researchEmployers;
@@ -715,7 +709,7 @@ public class PayrollCollectionsController {
 				List<SelectItem> subList = new ArrayList<SelectItem>();
 				for( ContractModelCode o : ContractModelCode.values() ) {
 					if ( o.getModel() == type.getModel() ) {
-						String name = getAbbreviatedSelectItemLabel(o.getCode().getName(locale), NAME_LENGHT_80);
+						String name = getAbbreviatedSelectItemLabel(o.getCode().getValue()+" - "+o.getCode().getName(locale), NAME_LENGHT_80);
 						SelectItem item = new SelectItem(o, name);
 						subList.add(item);
 					}
@@ -817,56 +811,17 @@ public class PayrollCollectionsController {
 		return reportTypes;
 	}
 	
-	public List<SelectItem> getLeaveBatchAttachTypes() {
-		if (leaveBatchAttachTypes == null) {
+	public List<SelectItem> getBatchAttachTypes() {
+		if (payrollBatchAttachTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			leaveBatchAttachTypes = new LinkedList<SelectItem>();
-			for( LeaveBatchAttachmentType type : LeaveBatchAttachmentType.values() ) {
+			payrollBatchAttachTypes = new LinkedList<SelectItem>();
+			for( PayrollBatchAttachmentType type : PayrollBatchAttachmentType.values() ) {
 				String name = type.getName(locale);
 				SelectItem item = new SelectItem(type, name);
-				leaveBatchAttachTypes.add(item);			
+				payrollBatchAttachTypes.add(item);			
 			}
 		}
-		return leaveBatchAttachTypes;
-	}
-	
-	public List<SelectItem> getContractBatchAttachTypes() {
-		if (contractBatchAttachTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			contractBatchAttachTypes = new LinkedList<SelectItem>();
-			for( ContractBatchAttachmentType type : ContractBatchAttachmentType.values() ) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				contractBatchAttachTypes.add(item);			
-			}
-		}
-		return contractBatchAttachTypes;
-	}
-	
-	public List<SelectItem> getFanBatchAttachTypes() {
-		if (fanBatchAttachTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			fanBatchAttachTypes = new LinkedList<SelectItem>();
-			for( FanBatchAttachmentType type : FanBatchAttachmentType.values() ) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				fanBatchAttachTypes.add(item);			
-			}
-		}
-		return fanBatchAttachTypes;
-	}
-	
-	public List<SelectItem> getCertifica2BatchAttachTypes() {
-		if (certifica2BatchAttachTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			certifica2BatchAttachTypes = new LinkedList<SelectItem>();
-			for( Certifica2BatchAttachmentType type : Certifica2BatchAttachmentType.values() ) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				certifica2BatchAttachTypes.add(item);			
-			}
-		}
-		return certifica2BatchAttachTypes;
+		return payrollBatchAttachTypes;
 	}
 	
 	public List<SelectItem> getLiquidationTypes() {

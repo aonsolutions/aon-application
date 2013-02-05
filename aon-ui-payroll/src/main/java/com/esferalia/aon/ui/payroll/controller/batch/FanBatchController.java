@@ -11,26 +11,19 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.io.IOUtils;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.domain.DomainManager;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.FanBatch;
 import com.esferalia.aon.payroll.FanBatchAttachment;
 import com.esferalia.aon.payroll.FanBatchDetail;
-import com.esferalia.aon.payroll.enumeration.FanBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.LiquidationType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -190,12 +183,8 @@ public class FanBatchController extends BasicController {
 	}
 
 	private void checkDiskCreated() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(FanBatchAttachment.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FAN_BATCH_ATTACHMENT_FAN_BATCH_ID), ((FanBatch)getTo()).getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FAN_BATCH_ATTACHMENT_ATTACHMENT_TYPE), FanBatchAttachmentType.FAN_DOCUMENT);
-		List<ITransferObject> list = bean.getList(criteria);
-		if(!list.isEmpty()){
+		LinesController controller = (LinesController)FormUtil.getController(IPayrollConstants.FAN_BATCH_DETAIL_CONTROLLER_NAME);
+		if(controller.getRowCount()>0){
 			setRecorded(true);
 		} else {
 			setRecorded(false);

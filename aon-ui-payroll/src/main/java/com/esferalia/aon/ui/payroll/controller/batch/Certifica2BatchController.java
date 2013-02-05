@@ -38,10 +38,10 @@ import com.esferalia.aon.payroll.Certifica2BatchData;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
-import com.esferalia.aon.payroll.enumeration.Certifica2BatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
+import com.esferalia.aon.payroll.enumeration.PayrollBatchAttachmentType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.batch.Certifica2ListController.RemesableContract;
@@ -261,10 +261,10 @@ public class Certifica2BatchController extends BasicController {
 				Certifica2BatchAttachment attach;
 				attach = new Certifica2BatchAttachment();
 				attach.setCertifica2Batch((Certifica2Batch) getTo());
-				attach.setMimeType(MimeType.MIME_TXT);
+				attach.setMimeType(MimeType.MIME_XML);
 				attach.setDescription(getCertificateWriter().getCertificate().getFile());
 				attach.setSize(null);
-				attach.setAttachmentType(Certifica2BatchAttachmentType.CERTIFICA2_DOCUMENT);
+				attach.setAttachmentType(PayrollBatchAttachmentType.GENERATED_DOCUMENT);
 				attach.setScope(null);
 				attach.setData(data);
 				attach.setAttachDate(new Date());
@@ -364,12 +364,8 @@ public class Certifica2BatchController extends BasicController {
 	}
 
 	private void checkDiskCreated() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchAttachment.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_ATTACHMENT_CERTIFICA2BATCH_ID), ((Certifica2Batch)getTo()).getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_ATTACHMENT_ATTACHMENT_TYPE), Certifica2BatchAttachmentType.CERTIFICA2_DOCUMENT);
-		List<ITransferObject> list = bean.getList(criteria);
-		if(!list.isEmpty()){
+		LinesController controller = (LinesController)FormUtil.getController(IPayrollConstants.CERTIFICA2_BATCH_DETAIL_CONTROLLER_NAME);
+		if(controller.getRowCount()>0){
 			setRecorded(true);
 		} else {
 			setRecorded(false);

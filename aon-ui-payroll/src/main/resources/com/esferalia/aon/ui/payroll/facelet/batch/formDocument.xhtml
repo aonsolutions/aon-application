@@ -24,13 +24,13 @@
 					<aon:selectOneMenu id="#{controllerAttach.beanName}_attachmentType" rendered="#{formEdit}"
 						value="#{controllerAttach.to.attachmentType}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{batchAttachTypes}" />
+						<f:selectItems value="#{payrollCollections.batchAttachTypes}" />						
 					</aon:selectOneMenu>
 					<f:facet name="footer">
 						<aon:selectOneMenu id="#{controllerAttach.beanName}_attachmentType-New" rendered="#{formNew}"
 							value="#{controllerAttach.to.attachmentType}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
-							<f:selectItems value="#{batchAttachTypes}" />
+							<f:selectItems value="#{payrollCollections.batchAttachTypes}" />						
 						</aon:selectOneMenu>
 					</f:facet>
 				</aon:column>

@@ -19,6 +19,13 @@ import com.esferalia.aon.ui.payroll.controller.agreement.AgreementPaymentControl
 public class AgreementPaymentControllerListener extends ControllerAdapter{
 	
 	@Override
+	public void afterModelInitialized(ControllerEvent event)
+			throws ControllerListenerException {
+		AgreementPaymentController controller = (AgreementPaymentController) this.getController();
+		controller.setModalPanelVisible(false);
+	}
+	
+	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		AgreementPaymentController controller = (AgreementPaymentController) event.getController();
 		AgreementPayment ap = (AgreementPayment) controller.getTo();

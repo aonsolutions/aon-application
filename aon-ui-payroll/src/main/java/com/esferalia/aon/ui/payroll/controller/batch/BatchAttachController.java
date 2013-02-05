@@ -3,15 +3,25 @@ package com.esferalia.aon.ui.payroll.controller.batch;
 import org.slf4j.Logger;
 
 import com.code.aon.faces.controller.AttachmentController;
+import com.esferalia.aon.payroll.enumeration.PayrollBatchAttachmentType;
 
 public abstract class BatchAttachController extends AttachmentController {
 	
 	private boolean show;
+	private PayrollBatchAttachmentType type;
 	
 	public BatchAttachController() {
 		this.show = true;
 	}
 
+	public PayrollBatchAttachmentType getType() {
+		return type;
+	}
+	
+	public void setType(PayrollBatchAttachmentType type) {
+		this.type = type;
+	}
+	
 	public boolean isShow() {
 		return show;
 	}

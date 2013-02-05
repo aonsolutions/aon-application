@@ -5,10 +5,11 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.payroll.DeductionConcept;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 
-public class PaymentConceptControllerListener extends ControllerAdapter{
+public class DeductionConceptControllerListener extends ControllerAdapter{
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
@@ -29,11 +30,11 @@ public class PaymentConceptControllerListener extends ControllerAdapter{
 	}
 		
 	private void manageName(){
-		PaymentConcept pc = (PaymentConcept) this.getController().getTo();
-		if(StringUtils.contains(pc.getCode()," ")){
-			pc.setCode(StringUtils.replace(pc.getCode(), " ", ""));
+		DeductionConcept dc = (DeductionConcept) this.getController().getTo();
+		if(StringUtils.contains(dc.getCode()," ")){
+			dc.setCode(StringUtils.replace(dc.getCode(), " ", ""));
 		}
-		pc.setCode(pc.getCode().toUpperCase());
+		dc.setCode(dc.getCode().toUpperCase());
 	}
     
 }

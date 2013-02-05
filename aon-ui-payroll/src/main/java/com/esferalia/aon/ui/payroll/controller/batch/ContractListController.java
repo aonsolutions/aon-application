@@ -87,7 +87,7 @@ public class ContractListController extends BasicController {
 //			ContractBatchController controller = (ContractBatchController) FormUtil.getController(IPayrollConstants.CONTRACT_BATCH_CONTROLLER_NAME);
 //			ContractBatch batch = (ContractBatch) controller.getTo();
 //			getCriteria().addLessThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_DATE), batch.getDate());
-			getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.CONTRACT_STATUS),ContractStatus.PROCESSED);
+//			getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.CONTRACT_STATUS),ContractStatus.PROCESSED);
 			if ((getPerson() != null) && (getPerson().getId() != null)) {
 				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_PERSON_ID), getPerson().getId());			
 			}
