@@ -39,7 +39,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import com.code.aon.common.util.BasicPrincipal;
+import com.code.aon.common.util.PrincipalUtil;
 import com.code.aon.common.util.Classpath;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.IAonObjectClasses;
@@ -117,7 +117,7 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 		if ( principal instanceof AuthPrincipal ) {
 			return (AuthPrincipal) principal;
 		}
-		return BasicPrincipal.getAuthPrincipal();
+		return PrincipalUtil.getAuthPrincipal();
 	}
 
 	public int getPageLimit() {

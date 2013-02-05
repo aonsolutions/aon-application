@@ -29,7 +29,6 @@ public interface IAdminConstants {
 	String ADMIN_USER = "admin";
 	String GENERAL_SCOPE = "GENERAL";
 	String DEFAULT_SUBDOMAIN_SUFFIX = "aonsolutions.es";
-	String AON_AIO_APPLICATION = "aon-aio";
 	String AON_EMPLOYEE_APPLICATION = "aon-employee";
 	
 	String USER_TABLE = "user";

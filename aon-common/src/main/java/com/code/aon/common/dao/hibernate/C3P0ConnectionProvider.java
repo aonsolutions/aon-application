@@ -10,7 +10,7 @@ import org.hibernate.connection.DatasourceConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.util.BasicPrincipal;
+import com.code.aon.common.util.PrincipalUtil;
 import com.code.aon.common.util.ConnectionProvider;
 import com.code.aon.jaas.auth.AuthPrincipal;
 
@@ -43,7 +43,9 @@ public class C3P0ConnectionProvider extends org.hibernate.connection.C3P0Connect
 
 		AuthPrincipal principal = getAuthPrincipal();
 		if ( principal != null ) {
-			Properties connectionProperties = ConnectionProvider.getDBProperties(principal);
+			String domain = principal.getDomain();
+			String application = principal.getContext();
+			Properties connectionProperties = ConnectionProvider.getDBProperties(domain, application);
 			LOGGER.info( "Connection properties: {}", connectionProperties );
 			props.putAll( connectionProperties );
 			super.configure(props);						
@@ -54,7 +56,7 @@ public class C3P0ConnectionProvider extends org.hibernate.connection.C3P0Connect
 	}
 	
 	protected AuthPrincipal getAuthPrincipal() {
-		return BasicPrincipal.getAuthPrincipal();
+		return PrincipalUtil.getAuthPrincipal();
 	}
 	
 	@Override

@@ -1,7 +1,6 @@
 package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_NAME;
-import static com.code.aon.ui.admin.controller.IAdminConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.admin.controller.IAdminConstants.AON_PLATFORM;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_DISPLAY_NAME;
@@ -22,6 +21,7 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_TYPE;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_URL;
 import static com.code.aon.ui.audit.controller.IAuditConstants.AUDIT_LEVEL;
 import static com.code.aon.ui.common.ICommonConstants.ACTIVE;
+import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_HERITABLE_ID;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_ID;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_OEM;

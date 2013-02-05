@@ -135,5 +135,7 @@ public interface ICommonConstants {
 	String STATUS_STOP_NAME = "aon-status-stop";
 
 	String STATUS_FAILED_NAME = "aon-status-failed";
+
+	String AON_AIO_APPLICATION = "aon-aio";
 	
 }

@@ -17,11 +17,10 @@
 		<meta http-equiv="Pragma" content="no-cache" />
 		<meta http-equiv="Cache-Control" content="no-store" />
 		<a4j:loadStyle src="/aonResource/com/code/aon/ui/resources/facelet/login/css/login-aon.css"/>
-		<a4j:loadScript src="/aonResource/com/code/aon/ui/resources/facelet/login/js/Login.js"/>		
 		<link rel="shortcut icon" type="image/x-icon" href="#{customize.favicon}" />
 	</head>
 
-	<body id="aon-body" onload="loadInnerWindow();">
+	<body id="aon-body">
 		<c:if test="#{dbUptodate.uptodate and dbUptodate.connectionAvailable}">
 			<ui:include src="/com/code/aon/ui/dbutils/facelet/uptodate/uptodatePanel.xhtml" />
 		</c:if>	

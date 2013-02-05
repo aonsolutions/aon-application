@@ -1,5 +1,7 @@
 package com.code.aon.jaas.auth.spi.db;
 
+import static com.code.aon.jaas.auth.IConstants.DEFAULT_CONTEXT_PATH;
+
 import java.security.Principal;
 import java.security.acl.Group;
 import java.sql.Connection;
@@ -54,7 +56,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 			Map sharedState, Map options) {
 		super.initialize(subject, callbackHandler, sharedState, options);
 		HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
-		this.contextPath = request.getContextPath();
+		this.contextPath = StringUtils.defaultIfEmpty(request.getContextPath(), DEFAULT_CONTEXT_PATH);
 		this.domainName = request.getServerName();
 		initConnection();
 	}
@@ -80,6 +82,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 			if (! domain.isActive() ) {
 				throw new AuthenticationLoginException( "aon_login_domain_inactive", domain.getName() );	
 			}
+			principal.setDomain(domainName);
 			principal.setDomainId(domain.getId());
 			this.dataBaseName = domain.getDataBaseName();
 			connection = dbUtil.createConnection(this.dataBaseName);
@@ -89,6 +92,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 			if ( applicationId == null ) {
 				throw new AuthenticationLoginException( "aon_login_application_not_found", applicationName );
 			}
+			principal.setContext(applicationName);
 			principal.setApplicationId(applicationId);
 			User user = dbUtil.getUser(domain, principal.getShortName());
 			if ( user == null ) {

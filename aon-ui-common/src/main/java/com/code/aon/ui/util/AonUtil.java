@@ -1,5 +1,6 @@
 package com.code.aon.ui.util;
 
+import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.common.ICommonConstants.AON_ROLE_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.CONFIGURATION_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.SKIP_LDAP;
@@ -227,7 +228,7 @@ public class AonUtil {
 	public static String getContextPath() {
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		ExternalContext ec = ctx.getExternalContext();
-		return ec.getRequestContextPath();
+		return StringUtils.defaultIfEmpty(ec.getRequestContextPath(), AON_AIO_APPLICATION);
 	}
 
 	/**

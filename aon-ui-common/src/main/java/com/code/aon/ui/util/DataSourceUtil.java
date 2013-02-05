@@ -9,9 +9,7 @@ import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.common.util.ConnectionProvider;
-import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.controller.DomainResolver;
 
 /**
@@ -41,12 +39,11 @@ public class DataSourceUtil {
 	public static Properties getDBProperties( String server, String context, boolean skipLdap ) {
     	String domain = DomainResolver.getDomain(server, skipLdap);
     	String application = DomainResolver.getApplication(context);
-    	BasicPrincipal bp = new BasicPrincipal(domain, application);
-    	return ConnectionProvider.getDBProperties(new AuthPrincipal(bp.getName()));
+    	return ConnectionProvider.getDBProperties(domain, application);
 	}	
  
 	public static Integer getDomain( Connection connection, String host, boolean skipLdap ) throws SQLException {
-		ResultSetHandler<Object> h = new ScalarHandler();
+		ResultSetHandler<Object> h = new ScalarHandler<Object>();
 		QueryRunner run = new QueryRunner();
 		Long count = (Long) run.query( connection, "SELECT count(id) FROM domain", h); 
 		if ( count == 1 ) {

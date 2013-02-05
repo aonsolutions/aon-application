@@ -1,5 +1,7 @@
 package com.code.aon.ui.admin;
 
+import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -15,7 +17,6 @@ import com.code.aon.config.Application;
 import com.code.aon.config.Domain;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.admin.controller.IAdminConstants;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainApplicationInfo {
@@ -176,7 +177,7 @@ public class DomainApplicationInfo {
 		dai.setDomainApplication(da);
 		dai.setChecked( (da != null) && da.isActive() );
 		List<DomainModuleInfo> modules = new LinkedList<DomainModuleInfo>();
-		if ( IAdminConstants.AON_AIO_APPLICATION.equals(applicationName) ) {
+		if ( AON_AIO_APPLICATION.equals(applicationName) ) {
 			for( Module module : Module.values() ) {
 				DomainModuleInfo dmi = new DomainModuleInfo(module);
 				if ( da != null ) {

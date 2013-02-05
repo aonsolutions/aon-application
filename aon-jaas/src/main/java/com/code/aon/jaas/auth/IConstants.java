@@ -28,6 +28,9 @@ public interface IConstants {
 	
 	/** Default domain name. */
 	String DEFAULT_DOMAIN_NAME = "localhost";
+
+	/** Default context path. */
+	String DEFAULT_CONTEXT_PATH = "/aon-aio";
 	
 	String BASE64_ENCODING = "BASE64";
 	

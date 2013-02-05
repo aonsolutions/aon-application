@@ -1,14 +1,12 @@
 package com.code.aon.jaas.auth;
 
+import static com.code.aon.jaas.auth.IConstants.CONTEXT_SEPARATOR;
+import static com.code.aon.jaas.auth.IConstants.IDENTITY_SEPARATOR;
+
 import java.io.Serializable;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.security.Principal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import sun.net.util.IPAddressUtil;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Esta clase implementa el interfaz <code>Principal</code> y representa un usuario.
@@ -26,11 +24,7 @@ import sun.net.util.IPAddressUtil;
 public class AuthPrincipal implements Principal, Serializable {
 
 	private static final long serialVersionUID = 1L;
-    /** Obtiene un logger apropiado. */
-	private final static Logger LOGGER = LoggerFactory.getLogger(AuthPrincipal.class);
 
-	/** Principal name. ej: shortName@domain/context */
-    private String name;
     /** Principal shortName */
     private String shortName;
     /** Principal domain. ej: code.es */
@@ -47,18 +41,11 @@ public class AuthPrincipal implements Principal, Serializable {
      * <p>
      * @param name nombre del usuario.
 	 */
-	public AuthPrincipal(String name) {
-        if (name == null) {
+	public AuthPrincipal(String shortName) {
+        if (shortName == null) {
             throw new NullPointerException("illegal null input");
         }
-        this.name = name;
-        try {
-	        this.shortName = user(name);
-	        this.domain = domain(name);
-	        this.context = context(name);
-        } catch(IndexOutOfBoundsException e) {
-        	this.shortName = name;
-        }
+        this.shortName = shortName;
 	}
 
     /**
@@ -68,7 +55,7 @@ public class AuthPrincipal implements Principal, Serializable {
      * @see java.security.Principal#getName()
      */
     public String getName() {
-        return name;
+    	return shortName + IDENTITY_SEPARATOR + domain + CONTEXT_SEPARATOR + context;
     }
 
 	/**
@@ -99,7 +86,7 @@ public class AuthPrincipal implements Principal, Serializable {
      * @see java.security.Principal#toString()
      */
     public String toString() {
-        return name;
+        return getName();
     }
 
     /**
@@ -117,75 +104,11 @@ public class AuthPrincipal implements Principal, Serializable {
             return false;
         }
         String anotherName = ((Principal) o).getName();
-        boolean equals = false;
-        if (name == null) {
-            equals = anotherName == null;
-        } else {
-            equals = name.equals(anotherName);
-        }
-
-        return equals;
+        return StringUtils.equals(getName(), anotherName);
     }
 
-    /*(non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     public int hashCode() {
-        return name.hashCode();
-    }
-
-    /**
-     * Returns user: <b>shortName</b>@domain/context
-     * 
-     * @param value
-     * @return
-     */
-    private String user(String value) {
-        return value.substring( 0, value.lastIndexOf(IConstants.IDENTITY_SEPARATOR) );    	
-    }
-    
-    /**
-     * Checks if is iP address.
-     * 
-     * @param host the host
-     * 
-     * @return true, if is iP address
-     */
-    private boolean isIPAddress( String host ) {
-    	return IPAddressUtil.isIPv4LiteralAddress(host) || IPAddressUtil.isIPv6LiteralAddress(host);
-    }    
-
-    /**
-     * Returns user domain: user@<b>domain</b>/context
-     * 
-     * @param value
-     * @return
-     */
-    private String domain(String value) {
-    	String _domain = value.substring( value.indexOf(IConstants.IDENTITY_SEPARATOR) + 1, value.indexOf(IConstants.CONTEXT_SEPARATOR) ); 
-		try {
-			InetAddress thisIp = InetAddress.getLocalHost();
-			LOGGER.debug( "Principal Domain: {} InetAddress[{}, {}, {}]",
-							new Object[] {_domain, thisIp.getCanonicalHostName(), thisIp.getHostAddress(), thisIp.getHostName()} );
-			if ( (_domain != null) && isIPAddress(_domain) ) {
-				if ( thisIp.getHostAddress().equals(_domain) || IConstants.DEFAULT_DOMAIN_IP.equals(_domain) ) {
-					_domain = IConstants.DEFAULT_DOMAIN_NAME;
-				}
-			}
-		} catch(UnknownHostException e) {
-			LOGGER.warn( e.getMessage(), e );
-		}
-    	return _domain; 
-    }
-
-    /**
-     * Returns user context: user@domain/<b>context</b>
-     * 
-     * @param value
-     * @return
-     */
-    private String context(String value) {
-    	return value.substring( value.indexOf(IConstants.CONTEXT_SEPARATOR) );
+        return getName().hashCode();
     }
 
 	public Integer getDomainId() {
@@ -218,6 +141,14 @@ public class AuthPrincipal implements Principal, Serializable {
 
 	public void setUserDomainId(Integer userDomainId) {
 		this.userDomainId = userDomainId;
+	}
+
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
+
+	public void setContext(String context) {
+		this.context = context;
 	}
 	
 }

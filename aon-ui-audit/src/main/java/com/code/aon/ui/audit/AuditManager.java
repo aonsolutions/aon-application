@@ -36,7 +36,6 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
-import com.code.aon.ui.common.controller.DomainResolver;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -52,17 +51,9 @@ public class AuditManager implements IAuditConstants {
 	
 	public static final String AUDIT_SESSION_MANAGER_BEAN = "com.code.aon.audit.session.managerBean";
 	
-	public static Application getApplication( String context ) throws ManagerBeanException {
-		String name = DomainResolver.getApplication( context );
+	public static Application getApplication( AuthPrincipal principal ) throws ManagerBeanException {
 		IManagerBean applicationBean = BeanManager.getManagerBean(Application.class);
-		String field = applicationBean.getFieldName(IEntityAlias.APPLICATION_NAME);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression( field, name );
-		List<ITransferObject> list = applicationBean.getList(criteria);
-		if (! list.isEmpty() ) {
-			return (Application) list.get(0);
-		}
-		return null;
+		return (Application) applicationBean.get(principal.getApplicationId());
 	}
 	
 	private static User getUser( Integer userId ) {
@@ -149,7 +140,7 @@ public class AuditManager implements IAuditConstants {
 		try {
 			LOGGER.info( "Domain {}", domain );
 			LOGGER.info( "Principal {}", principal );
-			Application application = AuditManager.getApplication(request.getContextPath());
+			Application application = AuditManager.getApplication(principal);
 			LOGGER.info( "Application {}", application );
 			User user = AuditManager.getUser( principal.getUserId() );
 			if ( user != null ) {
