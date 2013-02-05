@@ -28,7 +28,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.company.Enterprise;
 import com.code.aon.file.format.output.FileOutput;
@@ -350,9 +349,9 @@ public class FanBatchWizard {
 		try {
 			FacesContext faces = FacesContext.getCurrentInstance();
 			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
-			String fileName = getFANWriter().getEti().getFichero() + ".FAN";
-			response.setContentType(MimeType.MIME_TXT.getName());
-			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
+//			String fileName = getFANWriter().getEti().getFichero() + ".FAN";
+//			response.setContentType(MimeType.MIME_TXT.getName());
+//			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
 
 			ServletOutputStream output = response.getOutputStream();
 			InputStream input = new FileInputStream(getFileOutput().getFile());
