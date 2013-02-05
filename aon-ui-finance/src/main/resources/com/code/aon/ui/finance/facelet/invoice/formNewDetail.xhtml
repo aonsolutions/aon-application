@@ -8,49 +8,49 @@
 
 	<aon:outputLabel for="Item_id" value="#{bundle.aon_concept}" />
 	<aon:div>
-		<ui:include src="/com/code/aon/ui/finance/facelet/expenseInvoice/formItem.xhtml">
-			<ui:param name="controller" value="#{expenseInvoiceDetail}" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formItem.xhtml">
+			<ui:param name="controller" value="#{detailController}" />
 			<ui:param name="itemRendered" value="#{true}" />
 			<ui:param name="itemDescriptionGroup" value="invoiceDetailItemDescription" />
-			<ui:param name="itemReRender" value="expenseInvoiceForm" />
+			<ui:param name="itemReRender" value="#{formName}" />
 		</ui:include>
 	</aon:div>
 
 	<aon:outputLabel for="InvoiceDetail_taxableBase" value="#{bundle.aon_taxable_base}" />
 	<aon:inputText id="InvoiceDetail_taxableBase"
-		value="#{expenseInvoiceDetail.to.taxableBase}"
-		valueChangeListener="#{expenseInvoiceDetail.onTaxableBaseChanged}"
+		value="#{detailController.to.taxableBase}"
+		valueChangeListener="#{detailController.onTaxableBaseChanged}"
 		ajaxSingle="true" reRender="invoiceDetailTaxQuota,InvoiceDetail_total" 
 		required="true" size="5" focus="InvoiceDetail_vatQuota" />
 
 	<aon:outputLabel for="InvoiceDetail_vatQuota" value="#{bundle.aon_vat}" />
 	<aon:div id="invoiceDetailTaxQuota">
 		<aon:inputText id="InvoiceDetail_vatQuota"
-			value="#{expenseInvoiceDetail.to.vatQuota}"
-			disabled="#{expenseInvoiceDetail.to.item.vat.percentage == 0}"
-			valueChangeListener="#{expenseInvoiceDetail.onVatQuotaChanged}"
+			value="#{detailController.to.vatQuota}"
+			disabled="#{detailController.to.item.vat.percentage == 0}"
+			valueChangeListener="#{detailController.onVatQuotaChanged}"
 			ajaxSingle="true" reRender="InvoiceDetail_vatPercent,InvoiceDetail_total"
 			required="true" size="5"
-			focus="#{expenseInvoice.creditorWithholding ? 'InvoiceDetail_retentionQuota' : 'InvoiceDetail_total'}" />
+			focus="#{invoiceController.to.withholding ? 'InvoiceDetail_retentionQuota' : 'InvoiceDetail_total'}" />
 		<aon:outputText id="InvoiceDetail_vatPercent"
 			styleClass="aon-bold aon-padding-left"
-			value="#{expenseInvoiceDetail.to.vatPercent}">
+			value="#{detailController.to.vatPercent}">
 			<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 		</aon:outputText>
 		<aon:outputText styleClass="aon-bold" style="padding-left: 3px;" value="%" />
 
-		<c:if test="#{expenseInvoice.creditorWithholding}">
+		<c:if test="#{invoiceController.to.withholding}">
 			<aon:outputLabel for="InvoiceDetail_retentionQuota" value="#{bundle.aon_retention}"
 				styleClass="aon-padding-left aon-padding-right" />
 			<aon:inputText id="InvoiceDetail_retentionQuota"
-				value="#{expenseInvoiceDetail.to.retentionQuota}"
-				disabled="#{expenseInvoiceDetail.to.item.retention == null or expenseInvoiceDetail.to.item.retention.percentage == 0}"
-				valueChangeListener="#{expenseInvoiceDetail.onRetentionQuotaChanged}"
+				value="#{detailController.to.retentionQuota}"
+				disabled="#{detailController.to.item.retention == null or detailController.to.item.retention.percentage == 0}"
+				valueChangeListener="#{detailController.onRetentionQuotaChanged}"
 				ajaxSingle="true" reRender="InvoiceDetail_retentionPercent,InvoiceDetail_total"
 				required="true" size="5" focus="InvoiceDetail_total" />
 			<aon:outputText id="InvoiceDetail_retentionPercent"
 				styleClass="aon-bold aon-padding-left"
-				value="#{expenseInvoiceDetail.to.retentionPercent}">
+				value="#{detailController.to.retentionPercent}">
 				<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 			</aon:outputText>
 			<aon:outputText styleClass="aon-bold" style="padding-left: 3px;" value="%" />
@@ -59,15 +59,15 @@
 
 	<aon:outputLabel for="InvoiceDetail_total" value="#{bundle.aon_total}" />
 	<aon:inputText id="InvoiceDetail_total"
-		value="#{expenseInvoiceDetail.toInvoiceDetailTotal}"
-		valueChangeListener="#{expenseInvoiceDetail.onTotalChanged}"
+		value="#{detailController.toInvoiceDetailTotal}"
+		valueChangeListener="#{detailController.onTotalChanged}"
 		ajaxSingle="true" reRender="InvoiceDetail_taxableBase,invoiceDetailTaxQuota" 
 		required="true" size="5" />
 
 	<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
 		<aon:outputLabel for="InvoiceDetail_workPlace" value="#{companyBundle.company_workplace}" />
 		<aon:selectOneMenu id="InvoiceDetail_workPlace"
-			value="#{expenseInvoiceDetail.to.workPlace}" ajaxSingle="true">
+			value="#{detailController.to.workPlace}" ajaxSingle="true">
 			<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 		</aon:selectOneMenu>
 	</c:if>
@@ -81,6 +81,6 @@
 		</aon:div>
 	</aon:div>
 	<aon:inputTextarea id="Invoice_comments" cols="85" rows="4"
-		value="#{expenseInvoice.to.comments}" ajaxSingle="true" />
+		value="#{invoiceController.to.comments}" ajaxSingle="true" />
 
 </ui:composition>

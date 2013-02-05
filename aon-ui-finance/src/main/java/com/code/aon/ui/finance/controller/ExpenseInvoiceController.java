@@ -61,11 +61,14 @@ public class ExpenseInvoiceController extends InvoiceController implements IFina
 
 	public void creditorChanged(Creditor creditor) throws ManagerBeanException {
 		isBlocked(creditor);
-		getInvoice().setRegistryName(creditor.getRegistry().getFullName());
-		getInvoice().setRegistryDocument(creditor.getRegistry().getDocument());
-		getInvoice().setRegistryDocumentType(creditor.getRegistry().getDocumentType());
-		getInvoice().setRegistryDocumentCountry(creditor.getRegistry().getDocumentCountry());
-		getInvoice().setRegistry(creditor.getRegistry());
+		Invoice invoice = getInvoice();
+		invoice.setRegistryName(creditor.getRegistry().getFullName());
+		invoice.setRegistryDocument(creditor.getRegistry().getDocument());
+		invoice.setRegistryDocumentType(creditor.getRegistry().getDocumentType());
+		invoice.setRegistryDocumentCountry(creditor.getRegistry().getDocumentCountry());
+		invoice.setRegistry(creditor.getRegistry());
+		invoice.setTransaction(creditor.getTransaction());
+		invoice.setWithholding(creditor.isWithholding());
 		loadAddresses(creditor.getId());
 
 		if (isNew()) {
@@ -107,15 +110,6 @@ public class ExpenseInvoiceController extends InvoiceController implements IFina
 			return ((InvoiceDetail)ito).getItem();
 		}
 		return null;
-	}
-
-	public boolean isCreditorWithholding() throws ManagerBeanException {
-		Invoice invoice = getInvoice();
-		if (invoice.getRegistry() != null && invoice.getRegistry().getId() != null) {
-			Creditor creditor = (Creditor)BeanManager.getManagerBean(Creditor.class).get(invoice.getRegistry().getId());
-			return (creditor != null) ? creditor.isWithholding() : false;
-		}
-		return false;
 	}
 
 	@Override

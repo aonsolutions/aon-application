@@ -128,7 +128,13 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<c:if test="#{expenseInvoice.new}">
-					<ui:include src="/com/code/aon/ui/finance/facelet/expenseInvoice/formNewContent.xhtml" />
+					<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formNewContent.xhtml">
+						<ui:param name="invoiceController" value="#{expenseInvoice}" />
+						<ui:param name="addressController" value="#{expenseInvoiceAddress}" />
+						<ui:param name="detailController" value="#{expenseInvoiceDetail}" />
+						<ui:param name="financeController" value="#{expenseInvoiceFinance}" />
+						<ui:param name="formName" value="expenseInvoiceForm" />
+					</ui:include>
 				</c:if>			
 				<c:if test="#{!expenseInvoice.new}">
 					<aon:panelGrid id="dataTable" columns="4" styleClass="aon-width-all"
@@ -137,7 +143,13 @@
 							aon-panelGrid-odd aon-width-100,
 							aon-panelGrid-even aon-width-auto">
 
-						<ui:include	src="/com/code/aon/ui/finance/facelet/expenseInvoice/formContent.xhtml" />
+						<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formContent.xhtml">
+							<ui:param name="invoiceController" value="#{expenseInvoice}" />
+							<ui:param name="addressController" value="#{expenseInvoiceAddress}" />
+							<ui:param name="detailController" value="#{expenseInvoiceDetail}" />
+							<ui:param name="financeController" value="#{expenseInvoiceFinance}" />
+							<ui:param name="formName" value="expenseInvoiceForm" />
+						</ui:include>
 					</aon:panelGrid>
 
 					<aon:div styleClass="aon-margin-top">
