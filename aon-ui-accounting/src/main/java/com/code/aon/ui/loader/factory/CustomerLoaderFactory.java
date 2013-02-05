@@ -6,8 +6,6 @@ import java.util.Map;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.account.Account;
-import com.code.aon.account.bridge.CustomerAccount;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -121,6 +119,10 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 		customer.setWithholding(loaded.isWithholding());
 		customer.setDeliveryGrouped(loaded.isDeliveryGrouped());
 		customer.setStatus(CustomerStatus.ACTIVE);
+		if (StringUtils.isNotBlank(loaded.getCuenta())) {
+			customer.setAccount(getLoaderUtils().ensureAccount(loaded.getCuenta(), customer.getRegistry().getName()));
+
+		}
 		customer = (Customer) bean.insert(customer);
 
 		if (StringUtils.isNotBlank(loaded.getTipoVia())
@@ -158,21 +160,9 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 		if (rbank != null || StringUtils.isNotBlank(loaded.getFormaPago())) {
 			insertRegistryPayMethod(params,customer.getRegistry(),rbank,loaded);
 		}
-		if (StringUtils.isNotBlank(loaded.getCuenta())) {
-			insertRegistryCustomerAccount( params, customer, loaded);
-		}
 		return customer.getId();
 	}
 
-	private void insertRegistryCustomerAccount(LoaderParams params,Customer customer, LoadedCustomer loaded) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(CustomerAccount.class);
-		CustomerAccount ca = new CustomerAccount();
-		Account account = getLoaderUtils().ensureAccount(loaded.getCuenta(), customer.getRegistry().getName());
-		ca.setCustomer(customer);
-		ca.setAccount(account);
-		bean.insert(ca);
-	}
-	
 	@Override
 	public ITransferObject get(LoaderParams params, ILoadedPojo loadedPojo) throws AonException {
 		LoadedCustomer loaded = (LoadedCustomer) loadedPojo;
@@ -204,16 +194,17 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 	}
 	
 	private Customer searchCustomerByAccount(LoaderParams params, LoadedCustomer loaded) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(CustomerAccount.class);
+		IManagerBean bean = BeanManager.getManagerBean(Customer.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression("CustomerAccount.account.code", loaded.getCuenta());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CUSTOMER_ACCOUNT_CODE), loaded.getCuenta());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CUSTOMER_STATUS), CustomerStatus.ACTIVE);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CUSTOMER_SCOPE_ID), params.getScope().getId());
 		List<ITransferObject> list = bean.getList(criteria); 
 		if ( list.size() > 0 ) {
 			if ( list.size() > 1 ) {
 				throw new ManagerBeanException("Existe más de un cliente vinculado a la cuenta " + loaded.getCuenta());
 			}
-			CustomerAccount customerAccount = (CustomerAccount) list.get(0); 
-			return customerAccount.getCustomer();
+			return (Customer) list.get(0);
 		}
 		return null;
 	}

@@ -46,15 +46,15 @@
 						</ui:include>
 					</aon:panelGrid>
 				
-					<aon:panelGrid id="infoDataTable" styleClass="aon-margin-top"
-						columns="2" style="width: 100%;"
+					<aon:panelGrid id="infoDataTable"
+						styleClass="aon-margin-top aon-width-all" columns="2"
 						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-auto">
 	
 						<c:if test="#{!creditor.new and aonRole.accountingOperator and aonConfiguration.bean.creditor.showAccount}">
 							<aon:outputLabel for="Account_id" value="#{accountBundle.account_accounting}" />
 							<aon:panelGrid id="accountContainer" columns="2" columnClasses="none,none">
 								<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
-									<ui:param name="lookupTo" value="#{creditorAccount.account}" />
+									<ui:param name="lookupTo" value="#{creditor.to.account}" />
 									<ui:param name="lookupReRender" value="accountLookupButtons" />
 								</ui:include>
 								<aon:div id="accountLookupButtons">
@@ -63,18 +63,18 @@
 										title="#{accountBundle.account_synchronize}"
 										style="border: #808080 1px solid;"
 										styleClass="aon-finding-toolbar-item aon-icon-refresh"
-										rendered="#{creditorAccount.accountSynchronizable}"
-										reRender="accountContainer"
-										actionListener="#{creditorAccount.onAccountSynchronize}">
+										rendered="#{creditor.accountSynchronizable}"
+										actionListener="#{creditor.onAccountSynchronize}"
+										reRender="accountContainer">
 									</aon:commandButton>
 									<aon:commandButton
 										value="#{accountBundle.account_new_account}" 
 										title="#{accountBundle.account_new_account}"
 										style="border: #808080 1px solid;"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
-										rendered="#{creditorAccount.account == null or creditorAccount.emptyAccount}"
-										reRender="accountContainer"
-										actionListener="#{creditorAccount.onNewAccount}">
+										rendered="#{creditor.to.account == null or creditor.to.account.id == null}"
+										actionListener="#{creditor.onNewAccount}"
+										reRender="accountContainer">
 									</aon:commandButton>
 								</aon:div>
 							</aon:panelGrid>

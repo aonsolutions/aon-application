@@ -158,7 +158,7 @@ public class ExpenseEntryController {
 		if (getEntry().getDeposit() == 0 && getEntry().getRegistryBank() != null) {
 			account = getAccountBridgeUtil().obtainRBankAccount(getEntry().getRegistryBank());
 		} else if (getEntry().getDeposit() == 1 && getEntry().getPayMethodTypeDetail() != null) {
-			account = getAccountBridgeUtil().obtainPayMethodTypeDetailAccount(getEntry().getPayMethodTypeDetail());
+			account = getEntry().getPayMethodTypeDetail().getAccount();
 		}
 		return (account!=null) ? account : getAccountingUtil().obtainCashAccount();
 	}

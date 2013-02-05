@@ -4,22 +4,66 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
 
+import com.code.aon.account.Account;
+import com.code.aon.account.bridge.util.AccountBridgeUtil;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.finance.Creditor;
 import com.code.aon.ui.registry.controller.RegistryController;
+import com.code.aon.ui.util.AonUtil;
 
-/**
- * Controller used in the creditor maintenance.
- */
 public class CreditorController extends RegistryController {
-	/** Message file base path. */
-    private static final String BASE_NAME = "com.code.aon.ui.registry.i18n.messages";
-    /** Message key prefix. */
+
+	private static final String BASE_NAME = "com.code.aon.ui.registry.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_creditor_report";
 	
-	public String getReportTitle(){
+	public boolean isAccountSynchronizable() {
+		return isAccountSynchronizable((Creditor)getTo());
+	}
+
+	protected boolean isAccountSynchronizable(Creditor creditor) {
+		Account account = creditor.getAccount();
+		return (account != null && account.getId() != null && !creditor.getRegistry().getFullName().equals(account.getDescription()));
+	}
+
+	public void onAccountSynchronize(ActionEvent event) {
+		onAccountSynchronize((Creditor)getTo());
+	}
+
+	protected void onAccountSynchronize(Creditor creditor) {
+		try {
+			creditor.getAccount().setDescription(creditor.getRegistry().getFullName());
+			creditor.getAccount().setAlias(creditor.getRegistry().getAlias());
+			BeanManager.getManagerBean(Account.class).update(creditor.getAccount());
+		} catch (ManagerBeanException ex) {
+			String msg = "No se pudo sincronizar la Cuenta Contable. " + ex.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, ex);
+		}
+	}
+
+	public void onNewAccount(ActionEvent event) {
+		onNewAccount((Creditor)getTo());
+	}
+
+	protected void onNewAccount(Creditor creditor) {
+		try {
+			AccountBridgeUtil accountBridgeUtil = new AccountBridgeUtil();
+			creditor.setAccount(accountBridgeUtil.obtainNewCreditorAccount(creditor));
+		} catch (ManagerBeanException ex) {
+			String msg = "No se pudo crear la Cuenta Contable. " + ex.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, ex);
+		}
+	}
+
+    public String getReportTitle(){
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX);
 	}
-	
+
 }

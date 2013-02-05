@@ -1,7 +1,6 @@
 package com.code.aon.ui.accounting.controller;
 
 import java.util.Date;
-import java.util.Iterator;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -10,13 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.bridge.LoanAccount;
 import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
@@ -34,23 +30,9 @@ public class LoanController extends BasicController{
 
 	public Account getRelatedAccount() throws ManagerBeanException {
 		Loan loan = (Loan) getTo();
-		return (loan != null)?obtainLoanAccount( loan ):null;	
+		return (loan!=null) ? loan.getAccount() : null;	
 	}
 	
-
-	/* NO se llama a AccountUtil porque este aquí no se genera si no existe */	
-	private Account obtainLoanAccount(Loan loan) throws ManagerBeanException {
-		IManagerBean loanAccountBean = BeanManager.getManagerBean(LoanAccount.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(loanAccountBean.getFieldName(IEntityAlias.LOAN_ACCOUNT_LOAN_ID), loan.getId());
-		Iterator<?> iter = loanAccountBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			LoanAccount loanAccount = (LoanAccount)iter.next();
-			return loanAccount.getAccount();
-		}
-		return null;
-	}
-
 	public Double getOutstandingBalance() {
 		try {
 			SummaryProvider sp = new SummaryProvider();

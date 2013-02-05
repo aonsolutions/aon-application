@@ -54,7 +54,7 @@
 							<aon:outputLabel for="Account_id" value="#{accountBundle.account_accounting}" />
 							<aon:panelGrid id="accountContainer" columns="2" columnClasses="none,none">
 								<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
-									<ui:param name="lookupTo" value="#{supplierAccount.account}" />
+									<ui:param name="lookupTo" value="#{supplier.to.account}" />
 									<ui:param name="lookupReRender" value="accountLookupButtons" />
 								</ui:include>
 								<aon:div id="accountLookupButtons">
@@ -63,24 +63,24 @@
 										title="#{accountBundle.account_synchronize}"
 										style="border: #808080 1px solid;"
 										styleClass="aon-finding-toolbar-item aon-icon-refresh"
-										rendered="#{supplierAccount.accountSynchronizable}"
-										reRender="accountContainer"
-										actionListener="#{supplierAccount.onAccountSynchronize}">
+										rendered="#{supplier.accountSynchronizable}"
+										actionListener="#{supplier.onAccountSynchronize}"
+										reRender="accountContainer">
 									</aon:commandButton>
 									<aon:commandButton
 										value="#{accountBundle.account_new_account}" 
 										title="#{accountBundle.account_new_account}"
 										style="border: #808080 1px solid;"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
-										rendered="#{supplierAccount.account == null or supplierAccount.emptyAccount}"
-										reRender="accountContainer"
-										actionListener="#{supplierAccount.onNewAccount}">
+										rendered="#{supplier.to.account == null or supplier.to.account.id == null}"
+										actionListener="#{supplier.onNewAccount}"
+										reRender="accountContainer">
 									</aon:commandButton>
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
 					</aon:panelGrid>
-				
+
 					<aon:panelTabSet id="supplierTab" selectedTab="#{supplier.selectedTab}">
 						<aon:panelTab id="address" label="#{registryBundle.registry_address_module}">
 							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">

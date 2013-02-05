@@ -515,6 +515,39 @@
 		</managed-property>
 	</managed-bean>	
 
+	<!-- ********** SUPPLIER ACCOUNT CHECKER ************ -->
+	<managed-bean>
+		<managed-bean-name>supplierAccountChecker</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.supplier.controller.SupplierAccountCheckerController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>supplierAccountChecker</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.supplier.Supplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Supplier_registry_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{supplierAccountCheckerSearch}</value>
+				<value>#{supplierScopeListener}</value>				
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>supplierAccountCheckerSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.supplier.event.SupplierAccountCheckerSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUP =========================== -->
 	<!-- ========================================================== -->
@@ -575,6 +608,7 @@
 
 	<!--  ********* NAVIGATION ***************** -->
 	<navigation-rule>
+		<!-- =================== Supplier ========================== -->
 		<navigation-case>
 			<from-outcome>supplier_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/supplier/facelet/supplier/form.xhtml</to-view-id>
@@ -586,6 +620,15 @@
 		<navigation-case>
 			<from-outcome>supplier_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/supplier/facelet/supplier/search.xhtml</to-view-id>
+		</navigation-case>
+		<!-- =================== SupplierAccountChecker ========================== -->
+		<navigation-case>
+			<from-outcome>supplierAccountChecker_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/supplier/facelet/accountChecker/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>supplierAccountChecker_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/supplier/facelet/accountChecker/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

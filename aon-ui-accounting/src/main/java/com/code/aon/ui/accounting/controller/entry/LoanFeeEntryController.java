@@ -1,7 +1,6 @@
 package com.code.aon.ui.accounting.controller.entry;
 
 import java.util.Date;
-import java.util.Iterator;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -10,11 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.bridge.LoanAccount;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.LoanFeeEntry;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
@@ -132,7 +129,7 @@ public class LoanFeeEntryController {
 		// Primer Apunte
 		AccountEntryDetail detail = new AccountEntryDetail();
 		Account rBankAccount = getAccountBridgeUtil().obtainRBankAccount(getEntry().getLoan().getRegistryBank());
-		Account loanAccount = obtainLoanAccount(getEntry().getLoan());
+		Account loanAccount = getEntry().getLoan().getAccount();
 		detail.setAccount(rBankAccount);
 		detail.setAccountEntry(entry);
 		detail.setConcept(getEntry().getDescription());
@@ -169,19 +166,6 @@ public class LoanFeeEntryController {
 		}
 	}
 	
-	/* NO se llama a AccountUtil porque este aquí no se genera si no existe */	
-	private Account obtainLoanAccount(Loan loan) throws ManagerBeanException {
-		IManagerBean loanAccountBean = BeanManager.getManagerBean(LoanAccount.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(loanAccountBean.getFieldName(IEntityAlias.LOAN_ACCOUNT_LOAN_ID), loan.getId());
-		Iterator<?> iter = loanAccountBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			LoanAccount loanAccount = (LoanAccount)iter.next();
-			return loanAccount.getAccount();
-		}
-		return null;
-	}
-	
 	private void loadAccountEntryController(AccountEntry entry) throws ManagerBeanException {
 		AccountEntryController entryController = (AccountEntryController)FormUtil.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 		Criteria criteria = new Criteria();
@@ -194,7 +178,7 @@ public class LoanFeeEntryController {
 
 	
 	public Account getRelatedAccount() throws ManagerBeanException {
-		return obtainLoanAccount( getEntry().getLoan() );	
+		return getEntry().getLoan().getAccount();	
 	}
 	
 	public Double getOutstandingBalance() {

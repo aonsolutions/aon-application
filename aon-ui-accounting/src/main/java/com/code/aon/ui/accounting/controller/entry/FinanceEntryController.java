@@ -417,7 +417,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		if (getDeposit() == 0 && getRegistryBank() != null) {
 			account = getAccountBridgeUtil().obtainRBankAccount(getRegistryBank());
 		} else if (getDeposit() == 1 && getPayMethodTypeDetail() != null) {
-			account = getAccountBridgeUtil().obtainPayMethodTypeDetailAccount(getPayMethodTypeDetail());
+			account = getPayMethodTypeDetail().getAccount();
 		}
 		return (account!=null) ? account : getAccountingUtil().obtainCashAccount();
 	}
@@ -696,10 +696,10 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 			if (accountEntryDetail.getAccount().getCode().substring(0, 3).equals(AccountConstants.CASH_ACCOUNT_PREFIX.substring(0, 3))) {
 				setDeposit(1);
 				setRegistryBank(null);
-				setPayMethodTypeDetail(getAccountBridgeUtil().obtainPayMethodTypeDetail(accountEntryDetail.getAccount().getCode()));
+				setPayMethodTypeDetail(getAccountBridgeUtil().obtainPayMethodTypeDetail(accountEntryDetail.getAccount()));
 			} else {
 				setDeposit(0);
-				setRegistryBank(getAccountBridgeUtil().obtainRBank(accountEntryDetail.getAccount().getCode()));
+				setRegistryBank(getAccountBridgeUtil().obtainRBank(accountEntryDetail.getAccount()));
 				setPayMethodTypeDetail(null);
 			}
 

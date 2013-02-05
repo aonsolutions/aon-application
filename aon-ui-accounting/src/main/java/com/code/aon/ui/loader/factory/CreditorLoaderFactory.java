@@ -6,8 +6,6 @@ import java.util.Map;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.account.Account;
-import com.code.aon.account.bridge.CreditorAccount;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -118,6 +116,9 @@ public class CreditorLoaderFactory extends RegistryLoaderFactory implements ILoa
 		creditor.setTransaction(loaded.getInvoiceTransactionType());
 		creditor.setWithholding(loaded.isWithholding());
 		creditor.setStatus(CreditorStatus.ACTIVE);
+		if (StringUtils.isNotBlank(loaded.getCuenta())) {
+			creditor.setAccount(getLoaderUtils().ensureAccount(loaded.getCuenta(), creditor.getRegistry().getName()));
+		}
 		creditor = (Creditor) bean.insert(creditor);
 		
 		
@@ -156,21 +157,9 @@ public class CreditorLoaderFactory extends RegistryLoaderFactory implements ILoa
 		if (rbank != null || StringUtils.isNotBlank(loaded.getFormaPago())) {
 			insertRegistryPayMethod(params,creditor.getRegistry(),rbank,loaded);
 		}
-		if (StringUtils.isNotBlank(loaded.getCuenta())) {
-			insertRegistryCreditorAccount( params, creditor, loaded);
-		}
 		return creditor.getId();
 	}
 
-	private void insertRegistryCreditorAccount(LoaderParams params,Creditor creditor, LoadedCreditor loaded) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(CreditorAccount.class);
-		CreditorAccount ca = new CreditorAccount();
-		Account account = getLoaderUtils().ensureAccount(loaded.getCuenta(), creditor.getRegistry().getName());
-		ca.setCreditor(creditor);
-		ca.setAccount(account);
-		bean.insert(ca);
-	}
-	
 	@Override
 	public ITransferObject get(LoaderParams params, ILoadedPojo loadedPojo) throws AonException {
 		LoadedCreditor loaded = (LoadedCreditor) loadedPojo;
@@ -198,16 +187,17 @@ public class CreditorLoaderFactory extends RegistryLoaderFactory implements ILoa
 	}
 	
 	private Creditor searchCreditorByAccount(LoaderParams params, LoadedCreditor loaded) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(CreditorAccount.class);
+		IManagerBean bean = BeanManager.getManagerBean(Creditor.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression("CreditorAccount.account.code", loaded.getCuenta());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CREDITOR_ACCOUNT_CODE), loaded.getCuenta());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CREDITOR_STATUS), CreditorStatus.ACTIVE);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CREDITOR_SCOPE_ID), params.getScope().getId());
 		List<ITransferObject> list = bean.getList(criteria); 
 		if ( list.size() > 0 ) {
 			if ( list.size() > 1 ) {
 				throw new ManagerBeanException("Existe más de un acreedor vinculado a la cuenta " + loaded.getCuenta());
 			}
-			CreditorAccount creditorAccount = (CreditorAccount) list.get(0); 
-			return creditorAccount.getCreditor();
+			return (Creditor) list.get(0);
 		}
 		return null;
 	}

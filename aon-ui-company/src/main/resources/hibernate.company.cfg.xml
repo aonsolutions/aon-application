@@ -11,6 +11,9 @@
 
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 		
+		<!-- AON-ACCOUNT Mapping files -->
+		<mapping class="com.code.aon.account.Account"/>
+
 		<!-- AON-COMPANY Mapping files -->	
 		<mapping class="com.code.aon.company.Company"/>
 

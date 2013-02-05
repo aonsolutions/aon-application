@@ -1055,8 +1055,6 @@
 		<column name="type" type="com.code.aon.config.enumeration.PayMethodType" /> 
 	</table>
 	
-	<table name="pm_type_detail_account" class="com.esferalia.aon.entity.master.PayMethodTypeDetailAccount" />
-	
 	<table name="pos_shift">
 		<column name="shift" type="com.esferalia.aon.pms.enumeration.Shift"/>
 		<column name="remarks" type="text"/>
@@ -1250,8 +1248,6 @@
 		<column name="bank_account" type="com.code.aon.config.BankAccount"/>
 	</table>
 	
-	<table name="rbank_account" class="com.esferalia.aon.entity.master.RegistryBankAccount" />
-
 	<table name="rdir_staff" class="com.esferalia.aon.entity.master.RegistryDirStaff">
 		<column name="shareholder" property="shareHolder" />
 		<column name="share_number" type="int"/>

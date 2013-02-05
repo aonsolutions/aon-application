@@ -6,8 +6,6 @@ import java.util.Map;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.account.Account;
-import com.code.aon.account.bridge.SupplierAccount;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -117,6 +115,9 @@ public class SupplierLoaderFactory extends RegistryLoaderFactory implements ILoa
 		supplier.setTransaction(loaded.getInvoiceTransactionType());
 		supplier.setWithholding(loaded.isWithholding());
 		supplier.setStatus(SupplierStatus.ACTIVE);
+		if (StringUtils.isNotBlank(loaded.getCuenta())) {
+			supplier.setAccount(getLoaderUtils().ensureAccount(loaded.getCuenta(), supplier.getRegistry().getName()));
+		}
 		supplier = (Supplier) bean.insert(supplier);
 		
 		if (StringUtils.isNotBlank(loaded.getTipoVia())
@@ -154,19 +155,7 @@ public class SupplierLoaderFactory extends RegistryLoaderFactory implements ILoa
 		if (rbank != null && StringUtils.isNotBlank(loaded.getFormaPago())) {
 			insertRegistryPayMethod(params,supplier.getRegistry(),rbank,loaded);
 		}
-		if (StringUtils.isNotBlank(loaded.getCuenta())) {
-			insertRegistrySupplierAccount( params, supplier, loaded);
-		}
 		return supplier.getId();
-	}
-
-	private void insertRegistrySupplierAccount(LoaderParams params, Supplier supplier, LoadedSupplier loaded) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(SupplierAccount.class);
-		SupplierAccount ca = new SupplierAccount();
-		Account account = getLoaderUtils().ensureAccount(loaded.getCuenta(), supplier.getRegistry().getName());
-		ca.setSupplier(supplier);
-		ca.setAccount(account);
-		bean.insert(ca);
 	}
 
 	@Override
@@ -196,16 +185,17 @@ public class SupplierLoaderFactory extends RegistryLoaderFactory implements ILoa
 	}
 	
 	private Supplier searchSupplierByAccount(LoaderParams params, LoadedSupplier loaded) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(SupplierAccount.class);
+		IManagerBean bean = BeanManager.getManagerBean(Supplier.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression("SupplierAccount.account.code", loaded.getCuenta());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_ACCOUNT_CODE), loaded.getCuenta());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_STATUS), SupplierStatus.ACTIVE);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_SCOPE_ID), params.getScope().getId());
 		List<ITransferObject> list = bean.getList(criteria); 
 		if ( list.size() > 0 ) {
 			if ( list.size() > 1 ) {
 				throw new ManagerBeanException("Existe más de un proveedor vinculado a la cuenta " + loaded.getCuenta());
 			}
-			SupplierAccount supplierAccount = (SupplierAccount) list.get(0); 
-			return supplierAccount.getSupplier();
+			return (Supplier) list.get(0);
 		}
 		return null;
 	}

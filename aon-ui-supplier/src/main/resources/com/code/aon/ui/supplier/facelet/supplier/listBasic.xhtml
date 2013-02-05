@@ -2,15 +2,22 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:h="http://java.sun.com/jsf/html">
+	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:column alias="Supplier.id"
 		styleClass="aon-editDataTable-numberColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_id}" />
 		</f:facet>
-		<h:outputText value="#{to.id}" />
+		<aon:outputText value="#{to.id}" />
+	</aon:column>
+
+	<aon:column alias="Supplier.registry.document"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_document}" />
+		</f:facet>
+		<aon:outputText value="#{to.registry.document}" />
 	</aon:column>
 
 	<aon:column alias="Supplier.registry.name"
@@ -18,15 +25,9 @@
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_company_name}" />
 		</f:facet>
-		<aon:outputText value="#{to.registry.fullName}" />
-	</aon:column>
-
-	<aon:column alias="Supplier.registry.alias"
-		styleClass="aon-editDataTable-textColumn">
-		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_company_alias}" />
-		</f:facet>
-		<aon:outputText value="#{to.registry.alias}" />
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.registry.fullName}"/>
+		</aon:div>
 	</aon:column>
 
 </ui:composition>

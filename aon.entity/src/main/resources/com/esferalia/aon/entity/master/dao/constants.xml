@@ -138,14 +138,14 @@
 			
 	<!-- ** AON CUSTOMER  **************************************************** -->
 	<bean class="com.code.aon.customer.Customer">
-		<alias names="id,domain,registry_id,status,surcharge,tariff_id,registry_name,registry_alias,registry_document,withholding,transaction,scope_id,eInvoice,deliveryGrouped,deliveryValuated"/>
-		<hibernate names="id,domain,registry.id,status,surcharge,tariff.id,registry.name,registry.alias,registry.document,withholding,transaction,scope.id,eInvoice,deliveryGrouped,deliveryValuated"/>
+		<alias names="id,domain,registry_id,status,surcharge,tariff_id,registry_name,registry_alias,registry_document,withholding,transaction,scope_id,eInvoice,deliveryGrouped,deliveryValuated,account,account_id,account_code"/>
+		<hibernate names="id,domain,registry.id,status,surcharge,tariff.id,registry.name,registry.alias,registry.document,withholding,transaction,scope.id,eInvoice,deliveryGrouped,deliveryValuated,account,account.id,account.code"/>
 	</bean>
 
 	<!-- ** AON FINANCE  **************************************************** -->
 	<bean class="com.code.aon.finance.Creditor">
-		<alias names="id,registry_id,status,registry_name,registry_alias,registry_document,withholding,transaction,scope_id"/>
-		<hibernate names="id,registry.id,status,registry.name,registry.alias,registry.document,withholding,transaction,scope.id"/>
+		<alias names="id,registry_id,status,registry_name,registry_alias,registry_document,withholding,transaction,scope_id,account,account_id,account_code"/>
+		<hibernate names="id,registry.id,status,registry.name,registry.alias,registry.document,withholding,transaction,scope.id,account,account.id,account.code"/>
 	</bean>
 	
 	<bean class="com.code.aon.finance.CustomerFee" sqlName="customer_fee">
@@ -407,8 +407,8 @@
 	
 	<!-- ** AON SUPPLIER   **************************************************** -->
 	<bean class="com.code.aon.supplier.Supplier" sqlName="supplier">
-		<alias names="id,registry_alias,registry_document,registry_id,registry_name,registry_type,scope_id,status,withholding,transaction" />
-		<hibernate names="id,registry.alias,registry.document,registry.id,registry.name,registry.type,scope.id,status,withholding,transaction" />
+		<alias names="id,registry_alias,registry_document,registry_id,registry_name,registry_type,scope_id,status,withholding,transaction,account,account_id,account_code" />
+		<hibernate names="id,registry.alias,registry.document,registry.id,registry.name,registry.type,scope.id,status,withholding,transaction,account,account.id,account.code" />
 	</bean>
 	
 	<!-- ** AON TAS   **************************************************** -->

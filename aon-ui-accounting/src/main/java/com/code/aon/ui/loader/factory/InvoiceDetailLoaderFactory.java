@@ -8,12 +8,8 @@ import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.IAccount;
 import com.code.aon.account.bridge.AccountEntryInvoice;
-import com.code.aon.account.bridge.CreditorAccount;
-import com.code.aon.account.bridge.CustomerAccount;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
-import com.code.aon.account.bridge.SupplierAccount;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.enumeration.AccountEntryType;
@@ -26,6 +22,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.customer.Customer;
+import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
@@ -36,6 +34,7 @@ import com.code.aon.product.Product;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.loader.Column;
 import com.code.aon.ui.loader.ILoaderEngine;
 import com.code.aon.ui.loader.ILoaderFactory;
@@ -281,25 +280,12 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	}	
 
 	private Account getBalancingAccount(Invoice invoice) throws ManagerBeanException {
-		IManagerBean bean = null;
-		String alias = null;
 		if (invoice.getType() == InvoiceType.SALES) {
-			bean = BeanManager.getManagerBean(CustomerAccount.class);
-			alias = bean.getFieldName(IEntityAlias.CUSTOMER_ACCOUNT_CUSTOMER_ID);
+			return ((Customer)BeanManager.getManagerBean(Customer.class).get(invoice.getRegistry().getId())).getAccount();
 		} else if (invoice.getType() == InvoiceType.PURCHASE) {
-			bean = BeanManager.getManagerBean(SupplierAccount.class);
-			alias = bean.getFieldName(IEntityAlias.SUPPLIER_ACCOUNT_SUPPLIER_ID);
+			return ((Supplier)BeanManager.getManagerBean(Supplier.class).get(invoice.getRegistry().getId())).getAccount();
 		} else if (invoice.getType() == InvoiceType.EXPENSES || invoice.getType() == InvoiceType.UNDEDUCTIBLE) {
-			bean = BeanManager.getManagerBean(CreditorAccount.class);
-			alias = bean.getFieldName(IEntityAlias.CREDITOR_ACCOUNT_CREDITOR_ID);
-		}
-		if (bean !=  null){
-			Criteria c = new Criteria();
-			c.addEqualExpression(alias, invoice.getRegistry().getId());
-			List<ITransferObject> list = bean.getList(c);
-			if (list != null && list.size() > 0) {
-				return (Account) ((IAccount) list.get(0)).getAccount();
-			}
+			return ((Creditor)BeanManager.getManagerBean(Creditor.class).get(invoice.getRegistry().getId())).getAccount();
 		}
 		return null;
 	}

@@ -3,10 +3,6 @@ package com.code.aon.ui.account.bridge.event;
 import java.util.Iterator;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.bridge.CreditorAccount;
-import com.code.aon.account.bridge.CustomerAccount;
-import com.code.aon.account.bridge.RegistryBankAccount;
-import com.code.aon.account.bridge.SupplierAccount;
 import com.code.aon.account.bridge.util.AccountConstants;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.common.BeanManager;
@@ -67,7 +63,7 @@ public class AccountControllerCascadeListener extends ControllerAdapter {
 	private void removeRelatedLinkTable(Account account) throws ManagerBeanException {
 		if(account.getCode().length() >= 5){
 			String prefix = account.getCode().substring(0, 5);
-			if(prefix.equals(AccountConstants.BANK_ACCOUNT_PREFIX)){
+			/*if(prefix.equals(AccountConstants.BANK_ACCOUNT_PREFIX)){
 				IManagerBean bankAccountBean = BeanManager.getManagerBean(RegistryBankAccount.class);
 				deleteLink(bankAccountBean, IEntityAlias.REGISTRY_BANK_ACCOUNT_ACCOUNT_ID, account.getId());
 			}else if(prefix.equals(AccountConstants.CUSTOMER_ACCOUNT_PREFIX)){
@@ -80,6 +76,14 @@ public class AccountControllerCascadeListener extends ControllerAdapter {
 				IManagerBean creditorAccountBean = BeanManager.getManagerBean(CreditorAccount.class);
 				deleteLink(creditorAccountBean, IEntityAlias.CREDITOR_ACCOUNT_ACCOUNT_ID, account.getId());
 			} 
+			IManagerBean productAccountBean = BeanManager.getManagerBean(ProductAccount.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_ACCOUNT_ID), account.getId());
+			List<?> list = productAccountBean.getList(criteria);
+			Iterator<?> iter = list.iterator();
+			while (iter.hasNext()) {
+				productAccountBean.remove( (ITransferObject) iter.next() );
+			}*/
 		}
 	}
 

@@ -734,7 +734,7 @@ public class AccountEntryFinanceWriter {
 		if (registryBank != null) {
 			account = getAccountBridgeUtil().obtainRBankAccount(registryBank);
 		} else if (payMethodTypeDetail != null) {
-			account = getAccountBridgeUtil().obtainPayMethodTypeDetailAccount(payMethodTypeDetail);
+			account = payMethodTypeDetail.getAccount();
 		}
 		return (account!=null) ? account : getAccountingUtil().obtainCashAccount();
 	}
