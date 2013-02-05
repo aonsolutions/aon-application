@@ -254,6 +254,9 @@
 		<mapping class="com.esferalia.aon.payroll.ContractLeave"/>
 		<mapping class="com.esferalia.aon.payroll.ContractLeaveDetail"/>
 		<mapping class="com.esferalia.aon.payroll.ContractPayment"/>
+		<mapping class="com.esferalia.aon.payroll.ContrataBatch"/>
+		<mapping class="com.esferalia.aon.payroll.ContrataBatchAttachment"/>
+		<mapping class="com.esferalia.aon.payroll.ContrataBatchDetail"/>
 		<mapping class="com.esferalia.aon.payroll.DeductionConcept"/>
 		<mapping class="com.esferalia.aon.payroll.EnterpriseActivity"/>
 		<mapping class="com.esferalia.aon.payroll.EnterpriseCCC"/>
