@@ -11,23 +11,23 @@ import com.code.aon.common.ManagerBeanException;
 
 @Entity
 @Table(name="payroll_batch_attach")
-@DiscriminatorValue(value="0")
-public class LeaveBatchAttachment extends PayrollBatchAttachment {
+@DiscriminatorValue(value="4")
+public class ContrataBatchAttachment extends PayrollBatchAttachment {
 
 	private static final long serialVersionUID = 1L;
-
+	
 	@Transient
-	public LeaveBatch getLeaveBatch() {
-		return obtainLeaveBatch(getSourceBatch());
+	public ContrataBatch getContrataBatch() {
+		return obtainContrataBatch(getSourceBatch());
 	}
-	public void setLeaveBatch(LeaveBatch to) {
+	public void setContrataBatch(ContrataBatch to) {
 		setSourceBatch(to.getId());
 	}
 
-	private LeaveBatch obtainLeaveBatch(Integer sourceBatch) {
+	private ContrataBatch obtainContrataBatch(Integer sourceBatch) {
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(LeaveBatch.class);
-			return (LeaveBatch) bean.get(sourceBatch);
+			IManagerBean bean = BeanManager.getManagerBean(ContrataBatch.class);
+			return (ContrataBatch) bean.get(sourceBatch);
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -35,5 +35,4 @@ public class LeaveBatchAttachment extends PayrollBatchAttachment {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
 }

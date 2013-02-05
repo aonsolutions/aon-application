@@ -1,33 +1,38 @@
 package com.esferalia.aon.payroll;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import org.hibernate.annotations.Formula;
-
-import com.code.aon.common.IAttachment;
-import com.code.aon.config.IScopable;
-import com.esferalia.aon.entity.master.Certifica2BatchAttachmentDB;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
 
 @Entity
-@Table(name="certifica2_batch_attach")
-public class Certifica2BatchAttachment extends Certifica2BatchAttachmentDB implements IAttachment, IScopable {
+@Table(name="payroll_batch_attach")
+@DiscriminatorValue(value="3")
+public class Certifica2BatchAttachment extends PayrollBatchAttachment {
 
 	private static final long serialVersionUID = 1L;
-
-	private Integer size;
 	
-	@Formula("LENGTH(data)")
-	public Integer getSize() {
-		return size;
+	@Transient
+	public Certifica2Batch getCertifica2Batch() {
+		return obtainCertifica2Batch(getSourceBatch());
 	}
-	public void setSize(Integer size) {
-		this.size = size;
-	}
-	
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
+	public void setCertifica2Batch(Certifica2Batch to) {
+		setSourceBatch(to.getId());
 	}
 
+	private Certifica2Batch obtainCertifica2Batch(Integer sourceBatch) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Certifica2Batch.class);
+			return (Certifica2Batch) bean.get(sourceBatch);
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

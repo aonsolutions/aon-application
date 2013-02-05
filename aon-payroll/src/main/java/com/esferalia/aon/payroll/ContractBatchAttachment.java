@@ -1,33 +1,38 @@
 package com.esferalia.aon.payroll;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import org.hibernate.annotations.Formula;
-
-import com.code.aon.common.IAttachment;
-import com.code.aon.config.IScopable;
-import com.esferalia.aon.entity.master.ContractBatchAttachmentDB;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
 
 @Entity
-@Table(name="contract_batch_attach")
-public class ContractBatchAttachment extends ContractBatchAttachmentDB implements IAttachment, IScopable {
+@Table(name="payroll_batch_attach")
+@DiscriminatorValue(value="2")
+public class ContractBatchAttachment extends PayrollBatchAttachment {
 
 	private static final long serialVersionUID = 1L;
-
-	private Integer size;
-
-	@Formula("LENGTH(data)")
-	public Integer getSize() {
-		return size;
-	}
-	public void setSize(Integer size) {
-		this.size = size;
-	}
 	
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
+	@Transient
+	public ContractBatch getContractBatch() {
+		return obtainContractBatch(getSourceBatch());
+	}
+	public void setContractBatch(ContractBatch to) {
+		setSourceBatch(to.getId());
 	}
 
+	private ContractBatch obtainContractBatch(Integer sourceBatch) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractBatch.class);
+			return (ContractBatch) bean.get(sourceBatch);
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
