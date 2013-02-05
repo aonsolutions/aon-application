@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,7 +136,7 @@ public class AonSQLScript {
 			connection = DriverManager.getConnection(url, user, password);
 			File file = new File("/tmp/t4/aimar-esferalia-com.sql");
 			BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
-			AonSQLFile sqlFile = new AonSQLFile(in);
+			AonSQLFile sqlFile = new AonSQLFile(in, CharEncoding.ISO_8859_1);
 			AonSQLScript script = new AonSQLScript(sqlFile, connection);
 			script.execute();
 			sqlFile.close();
