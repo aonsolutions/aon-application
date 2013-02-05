@@ -1,14 +1,15 @@
 package com.code.aon.ui.audit.controller;
 
-import javax.faces.context.FacesContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Application;
 import com.code.aon.ui.audit.AuditManager;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * @author atellitu
@@ -36,9 +37,10 @@ public class AuditController {
 	}
 	
 	private void init() {
-		String context = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
 		try {
-			this.application = AuditManager.getApplication(context);
+			Integer appId = AonUtil.getAuthPrincipal().getApplicationId();			
+			IManagerBean bean = BeanManager.getManagerBean(Application.class);
+			this.application = (Application) bean.get(appId);
 			LOGGER.info( "Using {}", application );
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error on init", e );
