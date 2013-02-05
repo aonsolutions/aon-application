@@ -15,18 +15,25 @@ public class AgreementLevelCategoryControllerListener extends ControllerAdapter{
 	@Override
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-		loadTree();
+		reloadLevelNode();
 	}
 	
 	@Override
-	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		loadTree();
+	public void afterBeanUpdated(ControllerEvent event) 
+			throws ControllerListenerException {
+		reloadLevelNode();
 	}
 	
-	private void loadTree() {
+	@Override
+	public void afterBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		reloadLevelNode();
+	}
+
+	private void reloadLevelNode() {
 		try {
 			AgreementTree tree = (AgreementTree) AonUtil.getRegisteredBean(IPayrollConstants.AGREEMENT_TREE_CONTROLLER_NAME);
-			tree.loadTree();
+			tree.reloadLevelNode();
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible cargar el convenio. [" + e.getMessage() + "]";
 			AonUtil.addErrorMessage(msg);

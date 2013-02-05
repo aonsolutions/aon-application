@@ -80,12 +80,12 @@
 		<aon:panelGrid columnClasses="aon-panelGrid-even aon-noborder aon-vertical-align-top, aon-panelGrid-even aon-noborder aon-vertical-align-top" columns="2">
 			<aon:outputText value="#{controller.to.paymentConcept.expression}" />
 			<aon:commandButton id="ContractPayment_expression_edit-button"
-				title="#{(controller.enableExpressionEdition)?(payrollBundle.payroll_variable_manual_edit_cancel):(payrollBundle.payroll_variable_manual_edit)}" 
+				title="#{payrollBundle.payroll_variable_manual_edit}" 
 				value="&#160;" ajaxSingle="true"
 				rendered="#{aonRole.admin}"
 				reRender="#{controller.beanName}ModalForm"
 				actionListener="#{controller.onSelectExpressionEdition}"
-				styleClass="aon-icon-commandButton #{(controller.enableExpressionEdition)?('aon-icon-cancel'):('aon-icon-edit')}" />
+				styleClass="aon-icon-commandButton aon-icon-edit" />
 		</aon:panelGrid>
 	</c:if>
 	
@@ -123,30 +123,39 @@
 		
 		<c:if test="#{aonRole.admin}">
 			<aon:outputLabel for="ContractPayment_expression" value="#{payrollBundle.payroll_salary_expression}" />
-			<aon:inputTextarea id="ContractPayment_expression" cols="60" rows="3" maxlength="128"
-				value="#{controller.expression}" >
-				<f:validateLength maximum="128"/>
-				<c:if test="#{!contextDisabled}">
-					<a4j:region>
-						<rich:suggestionbox id="ContractPayment_expression_suggestion"
-							for="ContractPayment_expression"
-							onselect="suggestionBoxActive=false;"
-							suggestionAction="#{controller.expressionContext}" var="exp"
-							similarityGroupingId=""
-							tokens=" +-/*%()"
-							fetchValue="#{exp.name}"
-							immediate="true" limitToList="true" ajaxSingle="true"
-							eventsQueue="ContractPayment_expressionSug" ignoreDupResponses="true"
-							requestDelay="100" width="500" height="200"
-							nothingLabel="#{bundle.aon_search_no_results}">
-							<aon:column>
-								<aon:outputText value="#{exp.name}" styleClass="aon-bold"/>
-								<aon:outputText value=" (#{exp.expression})"/>
-							</aon:column>
-						</rich:suggestionbox>
-					</a4j:region>
-				</c:if>
-			</aon:inputTextarea>
+			<aon:panelGroup>
+				<aon:inputTextarea id="ContractPayment_expression" cols="60" rows="3" maxlength="128"
+					value="#{controller.expression}" >
+					<f:validateLength maximum="128"/>
+					<c:if test="#{!contextDisabled}">
+						<a4j:region>
+							<rich:suggestionbox id="ContractPayment_expression_suggestion"
+								for="ContractPayment_expression"
+								onselect="suggestionBoxActive=false;"
+								suggestionAction="#{controller.expressionContext}" var="exp"
+								similarityGroupingId=""
+								tokens=" +-/*%()"
+								fetchValue="#{exp.name}"
+								immediate="true" limitToList="true" ajaxSingle="true"
+								eventsQueue="ContractPayment_expressionSug" ignoreDupResponses="true"
+								requestDelay="100" width="500" height="200"
+								nothingLabel="#{bundle.aon_search_no_results}">
+								<aon:column>
+									<aon:outputText value="#{exp.name}" styleClass="aon-bold"/>
+									<aon:outputText value=" (#{exp.expression})"/>
+								</aon:column>
+							</rich:suggestionbox>
+						</a4j:region>
+					</c:if>
+				</aon:inputTextarea>
+				<aon:commandButton id="ContractPayment_expression_cancel_edit-button"
+					title="#{payrollBundle.payroll_variable_manual_edit_cancel}" 
+					value="&#160;" ajaxSingle="true"
+					rendered="#{aonRole.admin and controller.to.paymentConcept.id!=null}"
+					reRender="#{controller.beanName}ModalForm"
+					actionListener="#{controller.onSelectExpressionEdition}"
+					styleClass="aon-icon-commandButton aon-icon-cancel" />
+			</aon:panelGroup>
 			
 			<aon:outputLabel for="ContractPayment_irpf_expression"
 				value="#{payrollBundle.payroll_salary_irpf_expression}" />

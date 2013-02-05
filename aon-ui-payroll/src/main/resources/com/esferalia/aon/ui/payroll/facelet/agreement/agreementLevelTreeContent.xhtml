@@ -6,11 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:methodParam name="saveAction" value="agreement_formTree" />
-	<aon:methodParam name="removeAction" value="agreement_formTree" />
-	<aon:methodParam name="resetAction" value="agreementLevel_formTree" />
 	<aon:methodParam name="backAction" value="agreement_list" />
-	<aon:methodParam name="cancelAction" value="agreement_formTree" />
 	
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 		<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_agreementLevel_module}" />
@@ -40,41 +36,14 @@
 				<aon:panelTab id="levelData" disabled="#{agreementLevel.model==null}"
 					actionListener="#{agreementLevel.onShowVariables}"
 					label="#{payrollBundle.payroll_agreement_data}">
-					<ui:include 
-						src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid.xhtml" >
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid.xhtml" >
 						<ui:param name="controller" value="#{agreementLevel}" />
 						<ui:param name="showVariableFilter" value="true" />
 					</ui:include>
 				</aon:panelTab>
 
 				<aon:panelTab id="category" label="#{payrollBundle.payroll_agreementLevel_category}">
-						<aon:methodParam name="resetAction" value="" />
-						<aon:methodParam name="saveAction" value="" />
-						<aon:methodParam name="removeAction"  value="" />
-
-						<ui:param name="saveButtonReRender"  value="agreementTreePanel" />
-						<ui:param name="removeButtonReRender"  value="agreementTreePanel" />
-						<ui:param name="newSaveButtonReRender"  value="agreementTreePanel" />
-						
-						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-							<ui:param name="controller" value="#{agreementLevelCategory}" />
-							<ui:define name="columns">
-								<aon:column styleClass="aon-editDataTable-textColumn">
-									<f:facet name="header">
-										<aon:outputLabel for="EnterpriseActivityCategory_description" value="#{bundle.aon_description}" />
-									</f:facet>
-									<aon:outputText value="#{to.description}" rendered="#{formList}" />
-									<aon:inputText id="EnterpriseActivityCategory_description"
-										value="#{controller.to.description}"
-										rendered="#{formEdit}" required="true" maxlength="64" size="64" />
-									<f:facet name="footer">
-										<aon:inputText id="EnterpriseActivityCategory_description-New"
-											value="#{controller.to.description}"
-											rendered="#{formNew}" required="true" maxlength="64" size="64" />
-									</f:facet>
-								</aon:column>
-							</ui:define>
-						</ui:decorate>
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/agreementLevelCategory.xhtml" />
 				</aon:panelTab>
 				
 			</aon:panelTabSet>

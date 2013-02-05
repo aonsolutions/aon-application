@@ -17,11 +17,11 @@
 			<aon:panelGrid columns="3" 
 				columnClasses="aon-panelGrid-odd aon-width-100, aon-panelGrid-even aon-width-auto, aon-panelGrid-even aon-width-auto">
 	
-				<aon:selectOneRadio value="#{agreementTree.searchCurrent}" style="display:inline;">
+				<aon:selectOneRadio value="#{agreementPayment.searchCurrent}" style="display:inline;">
 					<f:selectItem itemLabel="#{payrollBundle.payroll_current}" itemValue="#{true}" />
 					<f:selectItem itemLabel="#{payrollBundle.payroll_historyc}" itemValue="#{false}" />
 					<a4j:support event="onclick" reRender="agreementForm, agreementPayments, agreementPaymentGrid" ignoreDupResponses="true" >
-						<aon:actionListener method="#{agreementTree.reloadPaymentsData}" />
+						<aon:actionListener method="#{agreementPayment.reloadPaymentsData}" />
 					</a4j:support>
 				</aon:selectOneRadio>
 				
@@ -30,22 +30,22 @@
 						value="#{bundle.aon_end_date}:" />
 					<aon:selectOneMenu 
 						styleClass="aon-margin-right"
-						disabled="#{agreementTree.searchCurrent}"
-						value="#{agreementTree.inactiveLastPeriod}" >
+						disabled="#{agreementPayment.searchCurrent}"
+						value="#{agreementPayment.inactiveLastPeriod}" >
 						<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
 						<a4j:support event="onchange" reRender="agreementForm, agreementPayments, agreementPaymentGrid" ignoreDupResponses="true" >
-							<aon:actionListener method="#{agreementTree.onChangeLastPeriod}" />
-							<aon:actionListener method="#{agreementTree.reloadPaymentsData}" />
+							<aon:actionListener method="#{agreementPayment.onChangeLastPeriod}" />
+							<aon:actionListener method="#{agreementPayment.reloadPaymentsData}" />
 						</a4j:support>
 					</aon:selectOneMenu>
 					<aon:selectInputDate  
-						disabled="#{!(!agreementTree.searchCurrent and agreementTree.inactiveLastPeriod=='MANUAL')}"
-						value="#{agreementTree.inactiveDate}"
+						disabled="#{!(!agreementPayment.searchCurrent and agreementPayment.inactiveLastPeriod=='MANUAL')}"
+						value="#{agreementPayment.inactiveDate}"
 						inputSize="10" renderAsPopup="true" enableManualInput="true"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}">
 						<a4j:support event="onchanged" reRender="agreementForm, agreementPayments, agreementPaymentGrid" ignoreDupResponses="true" >
-							<aon:actionListener method="#{agreementTree.reloadPaymentsData}" />
+							<aon:actionListener method="#{agreementPayment.reloadPaymentsData}" />
 						</a4j:support>
 					</aon:selectInputDate>
 				</aon:panelGroup>

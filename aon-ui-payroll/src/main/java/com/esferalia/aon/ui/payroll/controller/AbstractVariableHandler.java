@@ -213,7 +213,7 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 	}
 	
 	public void onSaveVariable(ActionEvent event) {
-		handleDataExpression();
+		beforeVariableSaved(event);
 		try {
 			IVariableData data = null;
 			if(isNew()){
@@ -221,26 +221,21 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 			} else {
 				data = ((VariableData) getVariablesModel().getRowData()).getVariableData(); 
 			}
-			beforeVariableSaved();
 			data.setName(getData().getName());
 			data.setExpression(getData().getExpression());
 			data.setStartDate(getData().getStartDate());
 			data.setEndDate(getData().getEndDate());
-			ITransferObject d = getVariableManagerBean().insertOrUpdate((ITransferObject) data);
-			afterVariableSaved();
-			d.toString();
+			getVariableManagerBean().insertOrUpdate((ITransferObject) data);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible guardar la variable (" + e.getMessage() +")";
 			LOGGER.error(msg);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		}
-		setNew(false);
-		initEditor();
-		initializeVariables(event);
+		afterVariableSaved(event);
 	}
 	
-	private void beforeVariableSaved() {
+	private void beforeVariableSaved(ActionEvent event) {
 		if(StringUtils.contains(getData().getName()," ")){
 			getData().setName(StringUtils.replace(getData().getName(), " ", ""));
 		}
@@ -255,9 +250,10 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+		handleDataExpression();
 	}
 
-	private void afterVariableSaved() {
+	private void afterVariableSaved(ActionEvent event) {
 		try {
 			if(this.contractModelCode!=null && getVariableManagerBean().getPOJOClass().equals(ContractData.class)){
 				ContractController controller = (ContractController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
@@ -271,6 +267,9 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 			LOGGER.error(msg);
 			AonUtil.addErrorMessage(msg);
 		}
+		setNew(false);
+		initEditor();
+		initializeVariables(event);
 	}
 
 	public void onCancelVariable(ActionEvent event) {

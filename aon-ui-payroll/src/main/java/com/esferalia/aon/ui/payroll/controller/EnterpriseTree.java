@@ -14,6 +14,8 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.richfaces.component.UITree;
 import org.richfaces.component.state.TreeState;
 import org.richfaces.event.NodeExpandedEvent;
@@ -29,10 +31,15 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.CriteriaUtilities;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -48,13 +55,13 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.ContractEmbargo;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
@@ -241,6 +248,13 @@ public class EnterpriseTree implements ICompanyConstants {
 			return new EnterpriseTreeData( c.getId(), c.getPerson().getFullName(), EnterpriseTreeType.CONTRACT);
 		}
 	}
+	private EnterpriseTreeData getTreeData( Integer id, String fullName, Date endDate ) {
+		if(endDate!=null && endDate.before(new Date())){
+			return new EnterpriseTreeData( id, fullName, EnterpriseTreeType.END_CONTRACT);
+		} else {
+			return new EnterpriseTreeData( id, fullName, EnterpriseTreeType.CONTRACT);
+		}
+	}
 	
 	private void addMainNode( TreeNode<EnterpriseTreeData> contractNode ) {
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
@@ -299,6 +313,47 @@ public class EnterpriseTree implements ICompanyConstants {
 		criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_PERSON_FIRST_SURNAME));
 		criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_PERSON_SECOND_SURNAME));
 		criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_PERSON_REGISTRY_NAME));
+		
+		
+//		String name = HibernateUtil.getSessionFactoryName();
+//		Session session = HibernateUtil.getSession(name);		
+////		try {
+////			CriteriaUtilities.toHibernateCriteria(criteria, session, "Contract");
+////		} catch (DAOException e) {
+////			// TODO Auto-generated catch block
+////			e.printStackTrace();
+////		}
+//		String select = "select contract.id, contract.person, contract.endDate " 
+//				+" from Contract as contract "
+//				+" where " + DomainManager.getSQLWhereClause("contract.domain")  
+//				+" and contract.workPlace = :workPlace "  
+////				+" group by notice.type " 
+////				+" order by notice.type"
+//				;
+//		Query query = session.createQuery(select);
+//        query.setInteger("workPlace", workPlace.getId());
+//		Iterator<?> iterator = query.list().iterator();
+//        int count = 0;
+//		while (iterator.hasNext()) {
+//			Object[] obj = (Object[])iterator.next();
+//			Integer id = (Integer)obj[0];
+//			Person person = (Person)obj[1];
+//			Date endDate = (Date)obj[2];
+//			count++;
+//          
+//			TreeNodeImpl<EnterpriseTreeData> contractNode = new TreeNodeImpl<EnterpriseTreeData>();
+//			EnterpriseTreeData etd = getTreeData(id, person.getFullName(), endDate);
+//			contractNode.setData(etd);
+//			workPlaceNode.addChild( etd.getKey(), contractNode );
+//			addMainNode(contractNode);
+//			addSalaryNode(contractNode);
+//			addSalaryDraftNode(contractNode);
+//			addIrpfNode(contractNode);
+//			addIrpfDraftNode(contractNode);
+//			addDocumentNode(contractNode);
+//		}
+//		workPlaceNode.getData().setCount(count);
+		
 		List<ITransferObject> list = bean.getList(criteria);
 		for( ITransferObject to : list ) {
 			Contract contract = (Contract) to;

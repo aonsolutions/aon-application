@@ -40,6 +40,7 @@ import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.payroll.enumeration.QuoteType;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -70,9 +71,10 @@ public class AgreementPaymentController extends LinesController implements IVari
 	
 	private AgreementPaymentVariablesHandler handler;
 	
-	// PERIOD FOR DATA FILTER
+	// PAYMENTS FILTER
 	private boolean searchCurrent;
 	private Date inactiveDate;
+	private InactiveLastPeriod inactiveLastPeriod;
 	
 	
 	@Override
@@ -178,6 +180,12 @@ public class AgreementPaymentController extends LinesController implements IVari
 	}
 	public void setSearchCurrent(boolean searchCurrent) {
 		this.searchCurrent = searchCurrent;
+	}
+	public InactiveLastPeriod getInactiveLastPeriod() {
+		return inactiveLastPeriod;
+	}
+	public void setInactiveLastPeriod(InactiveLastPeriod inactiveLastPeriod) {
+		this.inactiveLastPeriod = inactiveLastPeriod;
 	}
 	
 	public AgreementPaymentVariablesHandler getHandler() {
@@ -372,7 +380,7 @@ public class AgreementPaymentController extends LinesController implements IVari
 				this.select(event, (ITransferObject) row);
 			} else {
 				super.onReset(event);
-				IController master = FormUtil.getController("agreement");
+				IController master = FormUtil.getController(IPayrollConstants.AGREEMENT_CONTROLLER_NAME);
 				Agreement agreement = (Agreement) master.getTo();
 				AgreementPayment payment = (AgreementPayment) this.getTo();
 				payment.setAgreement(agreement);
@@ -453,12 +461,6 @@ public class AgreementPaymentController extends LinesController implements IVari
 		setModalPanelVisible(panelVisible);
 	}
 	
-	@Override
-	public void onSelect(ActionEvent event) {
-		super.onSelect(event);
-		
-	}
-	
 	public void onSelectExpressionEdition(ActionEvent event){
 		setEnableExpressionEdition( !isEnableExpressionEdition() );
 	}
@@ -485,6 +487,44 @@ public class AgreementPaymentController extends LinesController implements IVari
 		return bean.getList(criteria);
 	}
 	
+	/*
+	 * PAYMENTS FILTER
+	 */
+	public void onChangeLastPeriod( ActionEvent event ) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_MONTH){
+			cal.add(Calendar.MONTH, -1);
+		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_QUARTER){
+			cal.add(Calendar.MONTH, -3);
+		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_SEMESTER){
+			cal.add(Calendar.MONTH, -6);
+		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_YEAR){
+			cal.add(Calendar.YEAR, -1);
+		} else if(getInactiveLastPeriod()==InactiveLastPeriod.ALL){
+			cal = null;
+		}
+		setInactiveDate(cal!=null?cal.getTime():null);
+	}
+	
+	public void onChangeInactiveDate( ActionEvent event ) {
+		if( getInactiveDate()==null && getInactiveLastPeriod()!=InactiveLastPeriod.ALL){
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.MONTH, -1);
+			setInactiveDate(cal!=null?cal.getTime():null);
+		}
+	}
+	
+	public void reloadPaymentsData(ActionEvent event) {
+		setSearchCurrent(isSearchCurrent());
+		setInactiveDate(getInactiveDate());
+		setPaymentsModel(null);
+	}
+	
+	
+	/*
+	 * EXTRA PAYMENT
+	 */
 	private void searchAgreementExtra(){
 		setIssueMonth(null);
 		AgreementPayment ap = (AgreementPayment) this.getTo();
@@ -531,6 +571,8 @@ public class AgreementPaymentController extends LinesController implements IVari
 		}
 		return daysList;
 	}
+	
+	
 	
 	@Override
 	public List<?> expressionContext(Object suggest) {
