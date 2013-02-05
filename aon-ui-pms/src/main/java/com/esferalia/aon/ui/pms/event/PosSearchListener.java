@@ -29,11 +29,13 @@ public class PosSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
-		PmsCollectionsController collections = (PmsCollectionsController) AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
 		if (getHotel() != null && getHotel().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.POS_WORK_PLACE_ID), getHotel().getWorkPlace().getId());			
 		} else {
-			criteria.addInExpression(getFieldName(IEntityAlias.POS_WORK_PLACE_ID), collections.getCurrentUserHotelIds());			
+			PmsCollectionsController collections = (PmsCollectionsController) AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+			if (collections.getCurrentUserHotelsCount() > 0) {
+				criteria.addInExpression(getFieldName(IEntityAlias.POS_WORK_PLACE_ID), collections.getCurrentUserHotelIds());
+			}
 		}
 	}
 
