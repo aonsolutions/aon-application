@@ -175,7 +175,7 @@ public abstract class ContractDetailVariableController extends BasicController i
 			endCal.set(Calendar.MONTH, month.ordinal());
 			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
 			ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) getContract().getSalaryCalculatorContext(startCal.getTime(), endCal.getTime(), getSalaryType());
-			List<ITimedObject<Object>> list = ctx.getExpressionContext().eval(getExpression(), startCal.getTime(), endCal.getTime());
+			List<ITimedResult<Object>> list = ctx.getExpressionContext().eval(getExpression(), startCal.getTime(), endCal.getTime());
 			if( !list.isEmpty() && list.get(0).getValue()!=null ){
 				return new Double(list.get(0).getValue().toString());
 			}
