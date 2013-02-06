@@ -15,6 +15,7 @@
 			showSalesData="false"
 			showDeliveryData="false"
 			showInvoiceData="true"
+			showPosData="true"
 			showTasData="false"
 		/>
 	</config:config>	

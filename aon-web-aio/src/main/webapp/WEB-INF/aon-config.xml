@@ -9,6 +9,7 @@
 			showSalesData="true"
 			showDeliveryData="true"
 			showInvoiceData="true"
+			showPosData="true"
 			showTasData="false"
 		/>
 	</config:config>	
