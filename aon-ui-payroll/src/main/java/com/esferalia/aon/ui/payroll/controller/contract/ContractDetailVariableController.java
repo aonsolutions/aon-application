@@ -22,7 +22,7 @@ import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.ITimedObject;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.AbstractVariableHandler;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
