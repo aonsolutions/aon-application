@@ -11,7 +11,7 @@
 	<ui:define name="content">
 
 		<aon:form id="fiscalMenu">
-		
+
 			<aon:div styleClass="aon-scroll-area">		
 		
 				<h:panelGrid columns="2" styleClass="aon-width-all" cellspacing="15"
@@ -27,7 +27,8 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="fiscalBatch" 
+									<aon:commandLink id="fiscalBatch"
+										onclick="alert('#{rich:element('fiscalMenu')}')" 
 										action="fiscalBatch_search"
 										actionListener="#{fiscalBatch.onEditSearch}"
 										value="#{fiscalBundle.fiscal_batch_module}" />
@@ -50,9 +51,16 @@
 											value="#{fiscalBundle.fiscal_model_303_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<a4j:commandLink ajaxSingle="true" immediate="true"
-											onclick="alert('#{appBundle.aio_not_yet}');return false;" 
-											value="#{fiscalBundle.fiscal_model_310_391_module}" />
+										<aon:commandLink id="fiscalActivity" 
+											action="fiscalActivity_list"
+											actionListener="#{fiscalActivity.onSearch}"
+											value="#{fiscalBundle.fiscal_activities_modules}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="mod310" 
+											action="mod310_search"
+											actionListener="#{mod310.onEditSearch}"
+											value="#{fiscalBundle.fiscal_model_310_module}" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>

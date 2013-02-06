@@ -61,12 +61,12 @@
 											value="#{payrollBundle.payroll_contractLeave_module}"/>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element" >
-										<aon:commandLink id="gwt_employee" 
+										<h:commandLink id="gwt_employee" target="_new" 
 											action="gwt_employee_tree"
 											value="#{gwtPayrollBundle.menu_employee_tree}">
 											<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
 											<aon:actionListener method="#{enterprise.onEditSearch}" />
-										</aon:commandLink>
+										</h:commandLink>
 									</aon:div>							
 
 									<aon:div styleClass="aon-direct-access-list-element" >
@@ -134,12 +134,6 @@
 										value="#{payrollBundle.payroll_irpfTestLauncher_module}"/>
 								</aon:div>
 								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="expenseInvoiceManagement"
-											action="expenseInvoice_search"
-											actionListener="#{expenseInvoice.onEditSearch}"
-											value="#{fiscalBundle.fiscal_professional_retention_module}(#{financeBundle.finance_expense_invoice_management_module})" />
-									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="payroll_mod111" 
 											action="mod111_search"

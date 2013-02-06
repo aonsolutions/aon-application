@@ -161,23 +161,6 @@
 
 	<context-param>
 		<description>
-			This parameter specifies a class that implements the
-			SerializationProvider SPI. This implementation represents a
-			hook the
-			JSF implementation will use in order to allow the
-			use of alternate
-			Serialization implementations. See the
-			documentation of the interface
-			for more details
-		</description>
-		<param-name>com.sun.faces.serializationProvider</param-name>
-		<param-value>
-			org.jboss.web.jsf.integration.serialization.JBossSerializationProvider
-		</param-value>
-	</context-param>
-
-	<context-param>
-		<description>
 			When true JSF makes sure all managed beans
 			components,validators,
 			etc can be instantiated by the runtime

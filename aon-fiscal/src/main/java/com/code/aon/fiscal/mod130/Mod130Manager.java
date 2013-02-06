@@ -209,9 +209,9 @@ public class Mod130Manager extends FiscalModelManager implements IFiscalModelMan
 		double c13 = 0;
 		if ( CommonUtil.round(previousC03 + previousC08) <= 12000 ) {
 			if ( CommonUtil.round(previousC03 + previousC08) <= 8000 ) {
-				c13 = 400.0;		
+				c13 = CommonUtil.round( -400.0 / 4 );		
 			} else {
-				c13 = CommonUtil.round(400.0 - ((previousC03 + previousC08 - 8000) * 0.1));
+				c13 = CommonUtil.round( (-400.0 - ((previousC03 + previousC08 - 8000) * 0.1)) / 4);
 			}
 		}
 		mod130.ensureDetail(Mod130Key.C13).addAccumulatedAmount(c13);

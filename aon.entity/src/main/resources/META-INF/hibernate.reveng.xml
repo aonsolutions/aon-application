@@ -527,6 +527,13 @@
 		<column name="type" type="com.code.aon.finance.enumeration.FinanceTrackingType"/>
 	</table>
 
+	<table name="fs_activity" class="com.esferalia.aon.entity.master.FiscalActivity" />
+	
+	<table name="fs_activity_info" class="com.esferalia.aon.entity.master.FiscalActivityInfo">
+		<column name="info_key" type="com.code.aon.fiscal.enumeration.FiscalActivityInfoKey"/>
+		<column name="type" type="com.code.aon.fiscal.enumeration.FiscalActivityInfoType"/>
+	</table>
+	
 	<table name="fs_batch" class="com.esferalia.aon.entity.master.FiscalBatch">
 		<column name="administration" type="com.code.aon.config.enumeration.Administration"/>
 		<column name="period" type="com.code.aon.fiscal.enumeration.Period"/>		
@@ -589,16 +596,6 @@
 		<column name="acu_amount" property="accumulatedAmount"/>
 		<column name="dec_amount" property="declaredAmount"/>
 		<column name="res_amount" property="resultAmount"/>
-	</table>
-
-	<table name="fs_prof_retention" class="com.esferalia.aon.entity.master.ProfessionalRetention">
-		<column name="withholding_key" property="key" type="com.code.aon.fiscal.enumeration.WithholdingDetailKey"/>
-		<column name="withholding_subkey" property="subkey" type="com.code.aon.fiscal.enumeration.WithholdingDetailSubkey"/>
-		<column name="document_type" type="com.code.aon.registry.enumeration.DocumentType"/>
-		<column name="document_country" type="com.code.aon.common.enumeration.Country"/>
-		<column name="taxable_base" type="java.lang.Double" />
-		<column name="percent" type="java.lang.Double" />
-		<column name="quota" type="java.lang.Double" />
 	</table>
 
 	<table name="fs_renting" class="com.esferalia.aon.entity.master.Renting">

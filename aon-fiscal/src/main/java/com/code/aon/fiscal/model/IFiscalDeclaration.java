@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.code.aon.common.AonException;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.IFiscalModelKey;
@@ -17,7 +18,7 @@ public interface IFiscalDeclaration {
 	List<? extends IFiscalModelKey> getKeys();
 	IFiscalModelKey getKey(String value);
 	
-	void initializeDetails();
+	void initializeDetails() throws ManagerBeanException;
 	
 	void addDetail(FiscalModelDetail detail);
 	FiscalModelDetail getDetail(IFiscalModelKey key);

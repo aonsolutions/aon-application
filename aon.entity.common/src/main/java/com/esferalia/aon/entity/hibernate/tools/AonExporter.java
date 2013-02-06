@@ -304,6 +304,8 @@ public class AonExporter extends GenericExporter{
 		map.put("InvoicingGroupDetail","com.code.aon.finance.InvoicingGroupDetail");
 
 		//AON-FISCAL  	
+		map.put("FiscalActivity","com.code.aon.fiscal.FiscalActivity");
+		map.put("FiscalActivityInfo","com.code.aon.fiscal.FiscalActivityInfo");
 		map.put("FiscalBatch","com.code.aon.fiscal.FiscalBatch");
 		map.put("FiscalBatchDetail","com.code.aon.fiscal.FiscalBatchDetail");
 		map.put("FiscalModel","com.code.aon.fiscal.FiscalModel");
@@ -312,7 +314,6 @@ public class AonExporter extends GenericExporter{
 		map.put("Mod347Detail","com.code.aon.fiscal.Mod347Detail");
 		map.put("Mod349","com.code.aon.fiscal.Mod349");
 		map.put("Mod349Detail","com.code.aon.fiscal.Mod349Detail");
-		map.put("ProfessionalRetention","com.code.aon.fiscal.ProfessionalRetention");
 		map.put("Renting","com.code.aon.fiscal.Renting");
 		map.put("RentingDetail","com.code.aon.fiscal.RentingDetail");
 		map.put("VatTax","com.code.aon.fiscal.VatTax");

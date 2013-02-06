@@ -176,6 +176,8 @@
 		<mapping class="com.code.aon.finance.InvoicingGroupDetail"/>
 
 		<!-- AON-FISCAL Mapping files -->
+		<mapping class="com.code.aon.fiscal.FiscalActivity"/>
+		<mapping class="com.code.aon.fiscal.FiscalActivityInfo"/>
 		<mapping class="com.code.aon.fiscal.FiscalBatch"/>
 		<mapping class="com.code.aon.fiscal.FiscalBatchDetail"/>
 		<mapping class="com.code.aon.fiscal.FiscalModel"/>
@@ -184,7 +186,6 @@
 		<mapping class="com.code.aon.fiscal.Mod347Detail"/>
 		<mapping class="com.code.aon.fiscal.Mod349"/>
 		<mapping class="com.code.aon.fiscal.Mod349Detail"/>
-		<mapping class="com.code.aon.fiscal.ProfessionalRetention"/>
 		<mapping class="com.code.aon.fiscal.Renting"/>
 		<mapping class="com.code.aon.fiscal.RentingDetail"/>
 		<mapping class="com.code.aon.fiscal.VatTax"/>

@@ -447,42 +447,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- **************** PROFESSIONAL RETENTION  *************** -->
-	<managed-bean>
-		<managed-bean-name>profRetention</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.fiscal.controller.ProfessionalRetentionController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.fiscal.ProfessionalRetention</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>profRetention</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>ProfessionalRetention_enterprise,ProfessionalRetention_paymentDate desc</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{professionalRetentionControllerListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>professionalRetentionControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.fiscal.event.ProfessionalRetentionControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-					
 	<!-- **************** WITHHOLDING REPORT  *************** -->
 	<managed-bean>
 		<managed-bean-name>withholdingReport</managed-bean-name>
@@ -665,7 +629,6 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
-
 	<!-- **************** MODEL 130  *************** -->
 	<managed-bean>
 		<managed-bean-name>mod130</managed-bean-name>
@@ -708,6 +671,87 @@
 	<managed-bean>
 		<managed-bean-name>mod130ControllerListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.fiscal.controller.mod130.Mod130ControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- **************** MODEL 310  *************** -->
+	<managed-bean>
+		<managed-bean-name>mod310</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.controller.mod310.Mod310Controller</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.fiscal.FiscalModel</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>mod310</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>FiscalModel_model</key>
+					<value>#{fiscalCollections.model310}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>FiscalModel_year desc,FiscalModel_period desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{mod310ControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>mod310ControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.controller.mod310.Mod310ControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- **************** FISCAL ACTIVITY  *************** -->
+	<managed-bean>
+		<managed-bean-name>fiscalActivity</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.controller.activity.FiscalActivityController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.fiscal.FiscalActivity</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>fiscalActivity</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>FiscalActivity_year desc,FiscalActivity_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{fiscalActivityControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>fiscalActivityControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.event.FiscalActivityControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
@@ -871,22 +915,6 @@
 		</navigation-case>
 	</navigation-rule>	
 
-	<!-- =================== PROFESSIONAL RETENTION ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>profRetention_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/fiscal/facelet/profRetention/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>profRetention_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/fiscal/facelet/profRetention/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>profRetention_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/fiscal/facelet/profRetention/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	
 	<!-- =================== WITHHOLDING ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -966,4 +994,38 @@
 			<to-view-id>/com/code/aon/ui/fiscal/facelet/mod130/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+
+	<!-- =================== MODEL 310 ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>mod310_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/mod310/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mod310_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/mod310/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mod310_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/mod310/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+
+	<!-- =================== FISCAL ACTIVITY  ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>fiscalActivity_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/activity/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>fiscalActivity_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/activity/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>fiscalActivity_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/activity/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+		
 </faces-config>

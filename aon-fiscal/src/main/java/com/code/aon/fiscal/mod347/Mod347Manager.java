@@ -70,7 +70,11 @@ public class Mod347Manager {
 				int registry = rs.getInt( REGISTRY_ALIAS );
 				detail.setRegistry(registry);
 				detail.setName(rs.getString(NAME_ALIAS));
-				Country country = Country.valueOf( rs.getString(COUNTRY_ALIAS) ); 
+				String countryStr = rs.getString(COUNTRY_ALIAS);
+				Country country = null;
+				if (StringUtils.isNotBlank(countryStr)) {
+					country = Country.valueOf( countryStr );	
+				}
 				detail.setCountry( country );
 
 				Province province = null;

@@ -40,8 +40,25 @@ public class VatTaxManager {
 		c.set(Calendar.YEAR, params.getYear());
 		c.set(Calendar.DAY_OF_MONTH, 1);
 		c.set(Calendar.MONTH, 0);
-		Date dateFrom = c.getTime();	
+		Date dateFrom = c.getTime();
 		Date dateTo = params.getPeriod().getDueDate(params.getYear());
+		List<VatTaxDetail> list = getVatTax(dateFrom, dateTo, params.getVatTax(), params.getInvoiceStatus());		
+		VatTaxDetailComparator comparator = new VatTaxDetailComparator();
+		Collections.sort(list, comparator);
+		calculate(list);
+		fillDeclared(params,list);		
+		list = decorate(list);
+		return list;
+	}
+	public List<VatTaxDetail> getVatTax(Date dateFrom,Date dateTo) throws ManagerBeanException {
+		return getVatTax(dateFrom, dateTo, null, null); 
+	}
+		
+	public List<VatTaxDetail> getVatTax(
+			Date dateFrom,
+			Date dateTo,
+			VatTax vatTax,
+			InvoiceStatus status) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		TaxColumn column = TaxColumn.ACUMULADO; 
@@ -64,7 +81,7 @@ public class VatTaxManager {
 			stmt.append(" AND it.tax_type = 1");
 			stmt.append(" AND i.tax_date >= ?");
 			stmt.append(" AND i.tax_date <= ?");
-			if (params.getInvoiceStatus() == InvoiceStatus.SCORED) {
+			if (status == InvoiceStatus.SCORED) {
 				stmt.append(" AND i.status = 1 ");
 			}
 			stmt.append(" GROUP BY i.type,i.rectification_type,i.service,it.percentage,it.surcharge,it.vat_deduction_type,i.transaction,i.investment");
@@ -93,8 +110,8 @@ public class VatTaxManager {
 					for (VatTaxKeyEx keyEx : keyExs) {
 						// En el caso de que las claves afectadas deban ser 
 						// aminoradas debido a la existencia de prorrata.
-						if (params.getVatTax().isProrataEnabled() && keyEx.getKey().isProrrataAware()) {
-							double prorata = params.getVatTax().getProrata();
+						if (vatTax != null && vatTax.isProrataEnabled() && keyEx.getKey().isProrrataAware()) {
+							double prorata = vatTax.getProrata();
 							VatTaxAmount proratedAmount = new VatTaxAmount();
 							proratedAmount.setTaxableBase(taxableBase);
 							proratedAmount.setQuota(CommonUtil.round( quota * prorata / 100  ));
@@ -119,11 +136,6 @@ public class VatTaxManager {
 					}
 				}
 			}
-			VatTaxDetailComparator comparator = new VatTaxDetailComparator();
-			Collections.sort(list, comparator);
-			calculate(list);
-			fillDeclared(params,list);		
-			list = decorate(list);
 			return list;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);

@@ -3576,6 +3576,49 @@ CREATE TABLE `finance_pos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Vencimientos de TPV';
 
 #
+# Structure for the `fs_activity` table : 
+#
+
+CREATE TABLE `fs_activity` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `year` int(4) NOT NULL COMMENT 'Ejercicio del Lote',
+  `epigraph` varchar(7) collate latin1_spanish_ci NOT NULL COMMENT 'Epigrafe IAE',
+  `description` varchar(128) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del epigrafe',
+  `farmer` tinyint(1) DEFAULT '0' COMMENT 'Actividad Agricola',
+  `maxPerson` double(15,3) default '0.000' COMMENT 'Valor maximo de personas',
+  `maxImport` double(15,3) default '0.000' COMMENT 'Valor maximo de Importe',
+  `vatPercent` double(15,3) default '0.000' COMMENT 'IVA - Procentaje aplicable',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_FS_ACTIVITY_DOMAIN` (`domain`),
+  CONSTRAINT `FK_FS_ACTIVITY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Fiscal. Datos previos de modulos'; 
+
+#
+# Structure for the `fs_activity_info` table : 
+#
+
+CREATE TABLE `fs_activity_info` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `fs_activity` int(4) NOT NULL COMMENT 'Actividad fiscal',
+  `info_key` varchar(5) collate latin1_spanish_ci NOT NULL COMMENT 'Clave de informacion',
+  `line` int(4) NOT NULL COMMENT 'Numero linea',
+  `type` tinyint(2) NOT NULL COMMENT 'Tipo de linea',
+  `value` varchar(25) collate latin1_spanish_ci NOT NULL COMMENT 'Valor de la informacion',
+  `factor` double(15,3) default '0.000' COMMENT 'Factor',
+  `base` double(15,3) default '0.000' COMMENT 'Rendmineto Neto',
+  `unit` varchar(25) collate latin1_spanish_ci default NULL COMMENT 'Unidades',
+  `minValue` double(15,3) default '0.000' COMMENT 'Valor minimo',
+  `maxValue` double(15,3) default '0.000' COMMENT 'Valor maximo',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_FS_ACTIVITY_INFO_DOMAIN` (`domain`),
+  KEY `IDX_FS_ACTIVITY_INFO_FS_ACTIVITY` (`fs_activity`),
+  CONSTRAINT `FK_FS_ACTIVITY_INFO_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_FS_ACTIVITY_INFO_FS_ACTIVITY` FOREIGN KEY (`fs_activity`) REFERENCES `fs_activity` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Fiscal. Informacion de los datos previos de modulos';
+
+#
 # Structure for the `fs_batch` table : 
 #
 
@@ -3730,13 +3773,17 @@ CREATE TABLE `fs_model` (
   `security_level` tinyint(2) DEFAULT '0' COMMENT 'Nivel de seguridad',
   `complementary` tinyint(1) DEFAULT '0' COMMENT 'Declaracion complementaria',
   `replacement` tinyint(1) DEFAULT '0' COMMENT 'Declaracion sustitutiva',
+  `withoutActivity` tinyint(1) DEFAULT '0' COMMENT 'Sin Actividad',
   `model` varchar(3) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Tipo de modelo',
   `number` int(4) DEFAULT '0' COMMENT 'Numero de Declaracion',
   `replaced_number` int(4) DEFAULT '0' COMMENT 'Numero de Declaracion complementada o sustituida',
   `comments` text COLLATE latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
+  `finance` int(4) default NULL COMMENT 'Identificador de Vencimiento',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_FS_MODEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  KEY `IDX_FS_MODEL_FINANCE` (`finance`),
+  CONSTRAINT `FK_FS_MODEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_FS_MODEL_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaraciones Fiscales';
 
 #
@@ -3748,6 +3795,7 @@ CREATE TABLE `fs_model_detail` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `fs_model` int(4) NOT NULL COMMENT 'Identificador de la Declaracion',
   `type` varchar(10) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Clave de la Declaracion',
+  `description` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   `acu_amount` double(15,3) DEFAULT '0.000' COMMENT 'Importe acumulado',
   `dec_amount` double(15,3) DEFAULT '0.000' COMMENT 'Importe declarado',
   `res_amount` double(15,3) DEFAULT '0.000' COMMENT 'Importe resultado',
@@ -3759,33 +3807,6 @@ CREATE TABLE `fs_model_detail` (
   CONSTRAINT `FK_FS_MODEL_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_FS_MODEL_DETAIL_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de Declaraciones Fiscales';
-
-#
-# Structure for the `fs_prof_retention` table : 
-#
-
-CREATE TABLE `fs_prof_retention` (
-  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `enterprise` int(4) NOT NULL DEFAULT '0' COMMENT 'Identificador de Empresa',
-  `payment_date` date NOT NULL COMMENT 'Fecha de Pago',
-  `document` varchar(16) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Numero de Documento del Profesional',
-  `document_type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de documento (NIF, CIF...) del Profesional',
-  `document_country` varchar(2) COLLATE latin1_spanish_ci NOT NULL DEFAULT 'ES' COMMENT 'Pais del documento del Profesional',
-  `name` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre completo del Profesional',
-  `concept` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Concepto',
-  `taxable_base` double DEFAULT '0' COMMENT 'Base Imponible',
-  `percent` double(15,3) DEFAULT '0.000' COMMENT 'Porcentaje de  retencion',
-  `quota` double DEFAULT '0' COMMENT 'Cuota de retencion',
-  `in_kind` tinyint(1) DEFAULT '0' COMMENT 'Indica si el importe es en especie (1) o dinerario (0)',
-  `withholding_key` varchar(2) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Clave de retencion',
-  `withholding_subkey` varchar(3) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Subclave de retencion',
-  PRIMARY KEY (`id`),
-  KEY `IDX_FS_PROF_RETENTION_ENTERPRISE` (`enterprise`),
-  KEY `IDX_FS_PROF_RETENTION_DOMAIN` (`domain`),
-  CONSTRAINT `FK_FS_PROF_RETENTION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_FS_PROF_RETENTION_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Retenciones de profesionales';
 
 #
 # Structure for the `fs_renting` table : 

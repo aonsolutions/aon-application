@@ -136,7 +136,7 @@ public class Mod347Controller extends BasicController {
 			} catch (DAOException daoe) {
 
 			}
-			throw new AbortProcessingException(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(),e);
 		} finally {
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
