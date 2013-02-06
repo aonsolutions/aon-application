@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Tree;
  * that tree's images should also be included in the same bundle.
  */
 public interface Images extends ClientBundle, Tree.Resources {
+
 	ImageResource draft();
 
 	ImageResource data();
@@ -32,11 +33,15 @@ public interface Images extends ClientBundle, Tree.Resources {
 	
 	ImageResource view();
 
+	ImageResource preview();
+
 	ImageResource minimize();
 	
 	ImageResource maximize();
 	
 	ImageResource restore();
+	
+	ImageResource blank();
 
 	@Source("noimage.png")
 	ImageResource treeLeaf();

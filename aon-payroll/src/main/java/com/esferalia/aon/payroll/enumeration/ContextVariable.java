@@ -48,11 +48,11 @@ public enum ContextVariable implements IResourceable{
 	PAY_WEEKS("SEMANAS_PAGA", VariableType.INTEGER),
 	
 	// Horas ( contratos  a tiempo parcial )
-	WEEK_HOURS("HORAS_SEMANA", VariableType.DOUBLE),
-	SALARY_HOURS("HORAS_NOMINA", VariableType.DOUBLE),
+	WEEK_HOURS("HORAS_SEMANA", VariableType.DOUBLE, false),
+	SALARY_HOURS("HORAS_NOMINA", VariableType.DOUBLE, false),
 
-	HOLIDAY_AMOUNT("IMPORTE_DIA_VACACIONES", VariableType.DOUBLE),
-	COMPENSATION_AMOUNT("IMPORTE_INDEMNIZACION", VariableType.DOUBLE),
+	HOLIDAY_AMOUNT("IMPORTE_DIA_VACACIONES", VariableType.DOUBLE, false),
+	COMPENSATION_AMOUNT("IMPORTE_INDEMNIZACION", VariableType.DOUBLE, false),
 
 	// Bases 
 	CGC_BASE("BASE_CGC", VariableType.DOUBLE),
@@ -151,10 +151,16 @@ public enum ContextVariable implements IResourceable{
 	
 	private final String name;
 	private VariableType type;
+	private final boolean internal;
 	
 	private ContextVariable(String name, VariableType type){
+		this(name, type, true);
+	}
+
+	private ContextVariable(String name, VariableType type, boolean internal){
 		this.name = name;
 		this.type = type;
+		this.internal = internal;
 	}
 	
 	public String getName() {

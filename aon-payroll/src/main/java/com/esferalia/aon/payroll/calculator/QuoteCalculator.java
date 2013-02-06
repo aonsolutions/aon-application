@@ -24,6 +24,7 @@ import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedObject;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 
 public abstract class QuoteCalculator {
@@ -157,7 +158,7 @@ public abstract class QuoteCalculator {
 				return amount;
 			}
 			
-			List<ITimedObject<Double>> quotes;
+			List<ITimedResult<Double>> quotes;
 			quotes = context.eval(quoteExpr, start, end, Double.class);
 			double total = 0.00;
 			for (ITimedObject<Double> quote : quotes) {
@@ -413,7 +414,7 @@ public abstract class QuoteCalculator {
 		if ( expression == null )
 			return null;
 		
-		List<ITimedObject<Double>> limits = null;
+		List<ITimedResult<Double>> limits = null;
 		limits = expressionContext.eval(expression, start, end, Double.class );
 		
 		if ( limits == null || limits.size() == 0 ) {

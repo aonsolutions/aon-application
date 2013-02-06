@@ -11,29 +11,35 @@
 		}
 	</style>
 	
-	<ui:include
-		src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
-
 
 	<aon:form >
-		<ui:decorate
-			template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-			<ui:param name="toolbarTitle"
-				value="#{payrollBundle.payroll_contract_module}" />
-			<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
-
-
-			<ui:define name="toolbarContent">
-				<aon:commandButton id="Contract-Save" value="#{bundle.aon_accept}"
-					reRender="contractMainGrid"
-					styleClass="aon-finding-toolbar-item aon-icon-accept">
-					<aon:actionListener method="#{person.accept}" />
-					<aon:actionListener method="#{contract.accept}" />
-				</aon:commandButton>
-			</ui:define>
-
-		</ui:decorate>
-
+		<c:if test="#{edit}">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{payrollBundle.payroll_contract_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+	
+	
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="Contract-Save" value="#{bundle.aon_accept}"
+						reRender="contractMainGrid"
+						styleClass="aon-finding-toolbar-item aon-icon-accept">
+						<aon:actionListener method="#{person.accept}" />
+						<aon:actionListener method="#{contract.accept}" />
+					</aon:commandButton>
+				</ui:define>
+	
+			</ui:decorate>
+		</c:if>
+		<c:if test="#{!edit}">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{payrollBundle.payroll_contract_module}" />
+			</ui:decorate>
+		</c:if>
+		
 		<aon:div
 			style="overflow: auto; position: absolute; left: 0px; top: 2em; right: 0px; bottom: 0px;">
 

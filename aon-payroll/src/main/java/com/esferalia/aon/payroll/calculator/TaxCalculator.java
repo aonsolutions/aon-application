@@ -11,6 +11,7 @@ import com.esferalia.aon.salary.enumeration.PaymentTypeVisitor;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ITimedObject;
+import com.esferalia.aon.salary.expression.ITimedResult;
 
 public abstract class TaxCalculator {
 
@@ -58,7 +59,7 @@ public abstract class TaxCalculator {
 			}
 			
 			ExpressionContext expressionContext = context.getExpressionContext();
-			List<ITimedObject<Double>> taxes;
+			List<ITimedResult<Double>> taxes;
 			taxes = expressionContext.eval(irpfExpr, start, end, Double.class);
 			double total = 0.00;
 			for (ITimedObject<Double> quote : taxes) {

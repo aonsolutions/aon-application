@@ -5,28 +5,25 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include
-		src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
-
-
 	<aon:form>
-		<ui:decorate
-			template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-			<ui:param name="toolbarTitle"
-				value="#{companyBundle.company_activity}" />
-			<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
-
-
-			<ui:define name="toolbarContent">
-				<aon:commandButton id="Activity-Save" value="#{bundle.aon_accept}"
-					reRender="ActivityMainGrid"
-					styleClass="aon-finding-toolbar-item aon-icon-accept">
-					<aon:actionListener method="#{enterpriseActivity.accept}" />
-				</aon:commandButton>
-			</ui:define>
-
-		</ui:decorate>
-
+		<c:if test="#{edit}">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{companyBundle.company_activity}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+	
+	
+					<ui:define name="toolbarContent">
+						<aon:commandButton id="Activity-Save" value="#{bundle.aon_accept}"
+							reRender="ActivityMainGrid"
+							styleClass="aon-finding-toolbar-item aon-icon-accept">
+							<aon:actionListener method="#{enterpriseActivity.accept}" />
+						</aon:commandButton>
+					</ui:define>
+	
+			</ui:decorate>
+		</c:if>
 		<aon:div
 			style="overflow: auto; position: absolute; left: 0px; top: 2em; right: 0px; bottom: 0px;">
 

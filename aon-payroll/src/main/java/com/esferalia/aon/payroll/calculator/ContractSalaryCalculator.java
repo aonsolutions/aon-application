@@ -32,6 +32,7 @@ import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedObject;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
@@ -171,22 +172,22 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				
 				try {
 
-					List<ITimedObject<Double>> amounts = 
+					List<ITimedResult<Double>> results = 
 						expressionContext.addExpression(contractPayment, paymentStart, paymentEnd, Double.class ) ;
 					
 					double total = 0.00;
 					
-					for (ITimedObject<Double> amount : amounts) {
+					for (ITimedResult<Double> result : results) {
 						
 						String concept = contractPayment.getName(); 
 						PaymentType type = contractPayment.getType();
 
-						Date amountStart = amount.getPeriod().getStart();
-						Date amountEnd = amount.getPeriod().getEnd();
+						Date amountStart = result.getPeriod().getStart();
+						Date amountEnd = result.getPeriod().getEnd();
 						
 						String description  = null;
 	
-						Double value = amount.getValue();
+						Double value = result.getValue();
 						total += value;
 						Double payment = taxCalculator.tax(contractPayment, amountStart, amountEnd, chargeDate, value);
 						//Double payment = taxCalculator.tax(contractPayment, amountStart, amountEnd, issueDate, value);
@@ -200,7 +201,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 								//TODO : Log ???
 							}
 	
-							salaryBuilder.addPayment(type, concept, payment, description, null);
+							salaryBuilder.addPayment(type, concept, payment, description, null, result.getContext() );
 						}
 					}
 					/*
@@ -364,7 +365,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		String expression = d.getExpression() ;
 		DeductionType type = d.getType()  ;
 
-		List<ITimedObject<Double>> amounts =  
+		List<ITimedResult<Double>> amounts =  
 			ctx.addExpression(d, start, end, Double.class);
 		
 		Double total = 0.00;
@@ -419,7 +420,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				double embargoLimit = 0.00;
 				String embargoMax = 
 					expressionContext.getVariable(EMBARGO_MAX, embargoStart, embargoEnd, String.class);
-				List<ITimedObject<Double>> embargosMax = 
+				List<ITimedResult<Double>> embargosMax = 
 					expressionContext.eval(embargoMax, embargoStart, embargoEnd, Double.class );
 				for (ITimedObject<Double> amout : embargosMax) {
 					embargoLimit+= amout.getValue();
@@ -434,7 +435,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				expressionContext.addVariable(EMBARGO_LEFT, left, embargoStart, embargoEnd);
 				
 				String expression = contractEmbargo.getExpression();
-				List<ITimedObject<Double>> amounts = 
+				List<ITimedResult<Double>> amounts = 
 					expressionContext.eval(expression, embargoStart, embargoEnd, Double.class);
 
 				String description = contractEmbargo.getDescription();
@@ -480,7 +481,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				Date costStart = Period.max(contractCost.getStartDate(), start);
 				Date costEnd= Period.min(contractCost.getEndDate(), end );
 				
-				List<ITimedObject<Double>> amounts = 
+				List<ITimedResult<Double>> amounts = 
 					expressionContext.addExpression(contractCost, costStart, costEnd, Double.class);
 				
 				double cost = 0.00;
@@ -539,7 +540,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				}
 
 				try {
-					List<ITimedObject<Double>> amounts = 
+					List<ITimedResult<Double>> amounts = 
 					expressionContext.eval(contractBonus.getExpression(), bonusStart, bonusEnd, Double.class);
 				
 					double bonus = 0.00;

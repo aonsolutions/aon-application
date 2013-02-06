@@ -140,9 +140,10 @@ public class AonServletUtils {
 					request, response, lifecycle);
 
 			UIViewRoot view = facesContext.getApplication().getViewHandler()
-					.createView(facesContext, "/home.xhtml");
+					.createView(facesContext, "/home.jsf");
 
 			facesContext.setViewRoot(view);
+			
 
 		} catch (Throwable throwable) {
 			// TODO: Do some usefull with this.

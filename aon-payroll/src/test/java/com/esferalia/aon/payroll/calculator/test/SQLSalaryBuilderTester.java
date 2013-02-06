@@ -278,7 +278,7 @@ public class SQLSalaryBuilderTester implements ISalaryBuilder {
 	
 	@Override
 	public void addPayment(PaymentType type, String concept, Double amount,
-			String description, String expression) {
+			String description, String expression, Map<String, Object> context) {
 		// TODO Auto-generated method stub
 
 	}

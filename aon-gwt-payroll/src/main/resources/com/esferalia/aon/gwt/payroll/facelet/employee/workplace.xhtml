@@ -5,28 +5,44 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include
-		src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
-
 
 	<aon:form>
-		<ui:decorate
-			template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-			<ui:param name="toolbarTitle"
-				value="#{companyBundle.company_workplace}" />
-			<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
-
-
-			<ui:define name="toolbarContent">
-				<aon:commandButton id="Workplace-Save" value="#{bundle.aon_accept}"
-					reRender="workPlaceMainGrid"
-					styleClass="aon-finding-toolbar-item aon-icon-accept">
-					<aon:actionListener method="#{payrollWorkPlace.accept}" />
-				</aon:commandButton>
-			</ui:define>
-
-		</ui:decorate>
-
+		<c:if test="#{edit}">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{companyBundle.company_workplace}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+	
+	
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="Workplace-Save" value="#{bundle.aon_accept}"
+						reRender="workPlaceMainGrid"
+						styleClass="aon-finding-toolbar-item aon-icon-accept">
+						<aon:actionListener method="#{payrollWorkPlace.accept}" />
+					</aon:commandButton>
+	
+	                <aon:commandButton id="Contract-reset" ajaxSingle="true"
+	                        title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+	                        value="#{payrollBundle.payroll_contract_new}"
+	                        reRender="#{contract.beanName}ModalContainer"
+	                        styleClass="aon-finding-toolbar-item aon-icon-reset" >
+	                        <aon:actionListener method="#{employeeTree.onShowNewContractModal}" />
+	                </aon:commandButton>
+	
+				</ui:define>
+	
+	
+			</ui:decorate>
+		</c:if>
+		<c:if test="#{!edit}">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{companyBundle.company_workplace}" />
+			</ui:decorate>
+		</c:if>
+		
 		<aon:div
 			style="overflow: auto; position: absolute; left: 0px; top: 2em; right: 0px; bottom: 0px;">
 
@@ -104,6 +120,8 @@
 											src="/com/esferalia/aon/ui/payroll/facelet/agreement/lookup.xhtml">
 											<ui:param name="lookupTo"
 												value="#{payrollWorkPlace.payrollWorkPlace.agreement}" />
+											<ui:param name="lookupSuffix"
+												value="_workplace" />
 											<ui:param name="skipNewButton" value="#{true}" />
 											<ui:param name="lookupInputSuggestSize" value="40" />
 										</ui:include>
@@ -133,7 +151,14 @@
 	<aon:lookupButtonPopup lookup="#{agreementLookup}" />
 	<aon:lookupButtonPopup lookup="#{calendarLookup}" />
 
+
 	<ui:include
 		src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+
+    <ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/modalNewContract.xhtml" >
+            <ui:param name="controller" value="#{contract}" />
+            <ui:param name="popupWindowTitle" value="#{payrollBundle.payroll_contract}" />
+            <ui:param name="lookupDisabled" value="true" />
+    </ui:include>
 
 </ui:composition>

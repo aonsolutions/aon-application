@@ -4,20 +4,36 @@ import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.gargoylesoftware.htmlunit.attachment.AttachmentHandler;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.FormElement;
+import com.google.gwt.dom.client.InputElement;
+import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.NodeCollection;
+import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
+import com.sun.star.beans.GetDirectPropertyTolerantResult;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class EmployeeTree implements EntryPoint, Employees.Listener {
+	
+	
+	
 
 	interface GWTResources extends ClientBundle {
 		@NotStrict
@@ -35,9 +51,24 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 
 	}
 
+	class NewEmployeeCommand implements ScheduledCommand{
+		@Override
+		public void execute() {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	class WorkplaceContextMenu extends ContextMenu {
+		public WorkplaceContextMenu() {
+			super();
+			addItem("Nuevo Contrato", new NewEmployeeCommand());
+		}
+	}
+	
 	interface Binder extends UiBinder<Widget, EmployeeTree> {
 	}
-
+	
 	private static final Binder binder = GWT.create(Binder.class);
 
 	@UiField
@@ -50,6 +81,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 	private Cost cost;
 	private Salary salary;
 	private SalaryDraft salaryDraft;
+	private SalaryPreview salaryPreview;
+	
+	private ContextMenu workplaceContextMenu;
 
 	/**
 	 * This method constructs the application user interface by instantiating
@@ -75,42 +109,42 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		// RootPanel root = RootPanel.get("rootPanel");
 		root.add(ui);
-
+		
 		jsf = new JSF();
 		cost = new Cost();
 		salary = new Salary();
 		documents = new Documents();
 		salaryDraft = new SalaryDraft();
-
+		salaryPreview = new SalaryPreview();
+		workplaceContextMenu = new WorkplaceContextMenu();
+		
 		employees.addListener(this);
 
 	}
-
 	@Override
 	public void onEnterpriseSelected(Enterprise enterprise) {
-		jsf.setUrl(GWT.getHostPageBaseURL()
-				+ "/com/esferalia/aon/gwt/payroll/facelet/employee/enterprise.jsf");
 		employeeDetail.setWidget(jsf);
+		jsf.enterpriseSelected();
 	}
 
 	@Override
 	public void onWorkplaceSelected(Workplace workplace) {
-		jsf.setUrl(GWT.getHostPageBaseURL()
-				+ "/com/esferalia/aon/gwt/payroll/facelet/employee/workplace.jsf"
-				+ "?controller=payrollWorkPlace&payrollWorkPlace_id="
-				+ workplace.getId());
 		employeeDetail.setWidget(jsf);
+		jsf.workplaceSelected(workplace.getId());
 	}
 
 	@Override
 	public void onEmployeeSelected(Employee employee) {
-		jsf.setUrl(GWT.getHostPageBaseURL()
-				+ "/com/esferalia/aon/gwt/payroll/facelet/employee/contract.jsf"
-				+ "?controller=contract&contract_id=" + employee.getId()
-				+ "&controller=person&person_id=" + employee.getPerson());
 		employeeDetail.setWidget(jsf);
+		jsf.employeeSelected(employee.getId());
 	}
 	
+	@Override
+	public void onActivitySelected(Activity activity) {
+		employeeDetail.setWidget(jsf);
+		jsf.activitySelected(activity.getId());
+	}
+
 	@Override
 	public void onSalariesSelected(SalaryDocuments docs) {
 		employeeDetail.setWidget(salary);
@@ -130,17 +164,25 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 	}
 
 	@Override
-	public void onSalaryDratSelected( SalaryDraftDocument salaryDraftDocument) {
+	public void onSalaryDraftSelected(SalaryDraftObject salaryDraftObject) {
 		employeeDetail.setWidget(salaryDraft);
-		salaryDraft.setSalaryDraft(salaryDraftDocument);
-		
+		salaryDraft.setSalaryDraftObject(salaryDraftObject);
 	}
 	
 	@Override
-	public void onActivitySelected(Activity activity) {
-		jsf.setUrl(GWT.getHostPageBaseURL()
-				+ "/com/esferalia/aon/gwt/payroll/facelet/employee/activity.jsf"
-				+ "?controller=enterpriseActivity&enterpriseActivity_id=" + activity.getId() );
-		employeeDetail.setWidget(jsf);
+	public void onSalaryPreviewSelected( SalaryPreviewDocument salaryPreviewDocument) {
+		employeeDetail.setWidget(salaryPreview);
+		salaryPreview.setSalaryPreviewDocument(salaryPreviewDocument);
 	}
+	
+	
+	@Override
+	public void onWorkplaceContextMenu(Workplace workplace, ContextMenuEvent event) {
+		NativeEvent nativeEvent = event.getNativeEvent();
+		workplaceContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+		workplaceContextMenu.show();
+	}
+	
+	
+
 }

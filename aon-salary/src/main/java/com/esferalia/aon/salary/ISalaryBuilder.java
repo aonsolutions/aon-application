@@ -1,6 +1,7 @@
 package com.esferalia.aon.salary;
 
 import java.util.Date;
+import java.util.Map;
 
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -99,7 +100,7 @@ public interface ISalaryBuilder {
 
 	public void addCost(DeductionType type, String concept, Double amount, String description );
 
-	public void addPayment(PaymentType type, String concept, Double amount, String description , String expression);
+	public void addPayment(PaymentType type, String concept, Double amount, String description , String expression, Map<String, Object> context);
 
 	public void addDeduction(DeductionType type, String concept, Double amount, String description , String expression);
 

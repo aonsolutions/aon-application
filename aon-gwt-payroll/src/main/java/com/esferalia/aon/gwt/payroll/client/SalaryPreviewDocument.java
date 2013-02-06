@@ -2,15 +2,15 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class SalaryDraftDocument implements IDocument{
+public class SalaryPreviewDocument implements IDocument{
 
 	private EmployeesServiceAsync employeesService;
-	private com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft;
+	private com.esferalia.aon.gwt.payroll.shared.SalaryPreview salaryPreview;
 	
 
-	public SalaryDraftDocument(
-			com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,  EmployeesServiceAsync employeesService) {
-		this.salaryDraft = salaryDraft;
+	public SalaryPreviewDocument(
+			com.esferalia.aon.gwt.payroll.shared.SalaryPreview salaryPreview,  EmployeesServiceAsync employeesService) {
+		this.salaryPreview = salaryPreview;
 		this.employeesService = employeesService;
 	}
 
@@ -40,13 +40,13 @@ public class SalaryDraftDocument implements IDocument{
 
 	@Override
 	public void getAsHTML(int zoom, AsyncCallback<String> callback) {
-		employeesService.getSalaryDraftReceiptHTML(salaryDraft, zoom,
+		employeesService.getSalaryDraftReceiptHTML(salaryPreview, zoom,
 				callback);
 	}
 	
 	
-	public com.esferalia.aon.gwt.payroll.shared.SalaryDraft getSalaryDraft() {
-		return salaryDraft;
+	public com.esferalia.aon.gwt.payroll.shared.SalaryPreview getSalaryPreview() {
+		return salaryPreview;
 	}
 	
 }

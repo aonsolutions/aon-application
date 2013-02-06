@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.filter;
 
 import java.io.IOException;
 
+import javax.faces.context.FacesContext;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -32,7 +33,7 @@ public class AonBeanSelectorFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp,
 			FilterChain chain) throws IOException, ServletException {
-		
+
 		AonServletUtils.initFacesContext(context, (HttpServletRequest) req,
 				(HttpServletResponse) resp);
 
@@ -43,7 +44,6 @@ public class AonBeanSelectorFilter implements Filter {
 		}
 
 		chain.doFilter(req, resp);
-
 	}
 
 	@Override

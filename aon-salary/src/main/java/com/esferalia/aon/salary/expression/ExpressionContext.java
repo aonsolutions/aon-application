@@ -3,7 +3,6 @@ package com.esferalia.aon.salary.expression;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,6 +21,7 @@ import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 
 
 public class ExpressionContext {
+	
 	
 	public  static Set<String> getVariables(String script) {
 		Set<String> names = new HashSet<String>(); 
@@ -44,6 +44,8 @@ public class ExpressionContext {
 			return (ExpressionException) getCause();
 		}
 	}
+	
+	
 	
 	private Variables variables;
 
@@ -98,17 +100,17 @@ public class ExpressionContext {
 	}
 	
 	
-	public List<ITimedObject<Object>> addExpression(IExpression expression,Date start, Date end ) 
+	public List<ITimedResult<Object>> addExpression(IExpression expression,Date start, Date end) 
 	throws ExpressionException {
-		return addExpression(expression, start, end, Object.class );
+		return addExpression(expression, start, end, Object.class);
 	}
 
-	public <T> List<ITimedObject<T>> addExpression(IExpression expression, Date start, Date end, Class<T> toType ) 
+	public <T> List<ITimedResult<T>> addExpression(IExpression expression, Date start, Date end, Class<T> toType) 
 	throws ExpressionException 
 	{
 		String name = expression.getName();
 		String script = expression.getExpression();
-		List<ITimedObject<T>> values = this.eval(script, start, end, toType );
+		List<ITimedResult<T>> values = this.eval(script, start, end, toType);
 		if ( name != null ) {
 			for (ITimedObject<T> timedObject : values) {
 				this.addVariable(name, ( TimedObject<T> ) timedObject );
@@ -117,14 +119,15 @@ public class ExpressionContext {
 		return values;
 	}
 
-	public List<ITimedObject<Object>> eval(String script, Date start, Date end) 
+	public List<ITimedResult<Object>> eval(String script, Date start, Date end) 
 		throws ExpressionException 
 	{
-		return eval(script, start, end, Object.class );
+		return eval(script, start, end, Object.class);
 	}
 	
 
-	public <T> List<ITimedObject<T>>  eval(String script, Date start, Date end, Class<T> toType) 
+	
+	public <T> List<ITimedResult<T>>  eval(String script, Date start, Date end, Class<T> toType) 
 		throws ExpressionException 
 	{
 		if ( script == null ) {
@@ -134,12 +137,12 @@ public class ExpressionContext {
 		Set<String> inputs = getVariables(script);
 		List<PeriodMap> bindingsList = 
 			variables.getBindings(inputs, start, end);
-		List<ITimedObject<T>> values = 
-			new LinkedList<ITimedObject<T>>();
+		List<ITimedResult<T>> values = 
+			new LinkedList<ITimedResult<T>>();
 		for (PeriodMap bindings : bindingsList) {
 			try {
 				T value = MVEL.eval(script, bindings, toType);
-				values.add(new TimedObject<T>(value, bindings.getPeriod()));
+				values.add(new TimedResult<T>(value, bindings.getPeriod(), bindings.getRead()));
 			}catch ( UnresolveablePropertyException e ) {
 				throw new UndefinedVariablesException(e.getName());
 			}catch ( PropertyAccessException e ) {
@@ -212,10 +215,5 @@ public class ExpressionContext {
 			parent = parent.getCause();
 		}
 	}
-	
-	
-	public static void main(String[] args) {
-		
-		System.out.printf(MVEL.evalToString("X = 1.00 ; V = '1' ; H = 1 ; 100 + V + H ;", new HashMap<String, Object>()));
-	}
+
 }

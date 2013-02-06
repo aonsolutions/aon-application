@@ -70,6 +70,7 @@ import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedObject;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
@@ -306,7 +307,7 @@ public class SQLContractSalaryCalculatorContext implements
 		@Override
 		public Object getValue(Period period) {
 			try {
-				List<ITimedObject<Object>>  timedObjects = 
+				List<ITimedResult<Object>>  timedObjects = 
 					getExpressionContext().eval(script, period.getStart(), period.getEnd(), Object.class);
 				
 				return timedObjects.get(0).getValue();

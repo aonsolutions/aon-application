@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll;
 
 import java.util.Date;
+import java.util.Map;
 
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -259,7 +260,7 @@ public class SalaryBuilder implements ISalaryBuilder {
 	
 	@Override
 	public void addPayment(PaymentType type, String concept, Double amount,
-			String description, String expression) {
+			String description, String expression, Map<String, Object> context) {
 		
 		SalaryPayment payment = new SalaryPayment();
 		

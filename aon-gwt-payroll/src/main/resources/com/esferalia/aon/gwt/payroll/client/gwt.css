@@ -327,6 +327,15 @@ td.datePickerMonth,
   border-right: 1px solid #bbbbbb;
 }
 
+.gwt-HorizontalPanel,
+ .gwt-HorizontalPanel tr{
+	border: none;
+}
+.gwt-HorizontalPanel td {
+	border: none;
+	vertical-align : middle !important;
+}
+ 
 .reset * { 
 	border:0;
 	margin: 0; 

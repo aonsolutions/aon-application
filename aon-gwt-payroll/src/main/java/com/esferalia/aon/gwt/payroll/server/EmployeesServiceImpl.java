@@ -33,7 +33,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
@@ -47,6 +46,8 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Variable;
+import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -60,9 +61,12 @@ import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
 
@@ -337,7 +341,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	public String getSalaryDraftReceiptHTML(SalaryDraft salaryDraft, int zoom)
+	public SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft ) 
+			throws IllegalArgumentException{
+		try {
+			initFacesContext();
+			calculate(salaryDraft);
+			return salaryDraft;
+		}finally {
+			releaseFacesContext();
+		}
+		
+	}
+
+	public String getSalaryDraftReceiptHTML(SalaryPreview salaryPreview, int zoom)
 			throws IllegalArgumentException {
 		Map<Object, Object> parameters = new HashMap<Object, Object>(
 				JR_HTML_EXPORTER_PARAMS);
@@ -350,12 +366,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		Map<Object, Object> images = new HashMap<Object, Object>();
 		parameters.put(JRHtmlExporterParameter.IMAGES_MAP, images);
-		String imagesUri = String.format("jasper_image/salary/%d/", salaryDraft
+		String imagesUri = String.format("jasper_image/salary/%d/", salaryPreview
 				.getEmployee().getId());
 
 		parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri);
 
-		String html = getSalaryDraftReceiptHTML(salaryDraft, parameters);
+		String html = getSalaryDraftReceiptHTML(salaryPreview, parameters);
 
 		for (Entry<Object, Object> image : images.entrySet()) {
 			String name = String.format("%s%s", imagesUri, image.getKey());
@@ -365,7 +381,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		return html;
 	}
 
-	public String getSalaryDraftReceiptHTML(final SalaryDraft draft,
+	public String getSalaryDraftReceiptHTML(final SalaryPreview draft,
 			Map<Object, Object> parameters) throws IllegalArgumentException {
 
 		try {
@@ -826,7 +842,47 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private static ISalary getSalary(SalaryDraft draft) {
+	private static void calculate(SalaryDraft draft) {
+		SalaryDraftBuilder salaryBuilder = new SalaryDraftBuilder(draft);
+
+		ContractSalaryCalculator calculator = 
+				new ContractSalaryCalculator();
+
+		calculator.setSalaryBuilder(salaryBuilder);
+		calculator.setListener(salaryBuilder);
+
+		ISalaryCalculatorContext ctx;
+		try {
+			ctx = getSalaryCalculatorContext(draft);
+			
+			ExpressionContext exprCtx = 
+					ctx.getExpressionContext();
+			
+			List<Variable> draftData = draft.getDraftContext();
+			for (Variable variable : draftData) {
+				ExpressionImpl expr = 
+						new ExpressionImpl();
+				expr.setName(variable.getName());
+				expr.setExpression((String)variable.getValue());
+				exprCtx.addExpression(expr, variable.getStartDate(), variable.getEndDate());
+			}
+			
+			
+			calculator.calculate(ctx);
+
+		} catch (ExpressionException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} catch (SalaryException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} 
+	}
+
+	private static ISalary getSalary(SalaryPreview draft) {
 		SalaryBuilder salaryBuilder = new SalaryBuilder();
 
 		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
@@ -862,7 +918,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	private static ISalaryCalculatorContext getSalaryCalculatorContext(
-			SalaryDraft draft) throws ExpressionException, SQLException {
+			SalaryPreview draft) throws ExpressionException, SQLException {
 
 		Connection connection = getConnection();
 

@@ -4,36 +4,50 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include
-		src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
 
-
-	<aon:form>
-		<ui:decorate
-			template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-			<ui:param name="toolbarTitle"
-				value="#{companyBundle.company_enterprise_module}" />
-			<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
-
-
-			<ui:define name="toolbarContent">
-				<aon:commandButton id="Enterprise-Save" value="#{bundle.aon_accept}"
-					reRender="enterpriseMainGrid"
-					styleClass="aon-finding-toolbar-item aon-icon-accept">
-					<aon:actionListener method="#{enterprise.accept}" />
-				</aon:commandButton>
-
-                <aon:commandButton id="Contract-reset" ajaxSingle="true"
-                        title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
-                        value="#{payrollBundle.payroll_contract_new}"
-                        reRender="#{contract.beanName}ModalContainer"
-                        styleClass="aon-finding-toolbar-item aon-icon-reset" >
-                        <aon:actionListener method="#{contract.onShowNewContractModal}" />
-                </aon:commandButton>
-
-			</ui:define>
-
-		</ui:decorate>
+	<aon:form >
+		<c:if test="#{edit}">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{companyBundle.company_enterprise_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+	
+	
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="Enterprise-Save" value="#{bundle.aon_accept}"
+						reRender="enterpriseMainGrid"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						limitToList="true"  >
+						<aon:actionListener method="#{enterprise.accept}" />
+					</aon:commandButton>
+	
+	                <aon:commandButton id="Workplace-reset" ajaxSingle="true"
+	                        title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+	                        value="#{gwtPayrollBundle.enterprise_activity_new}"
+	                        reRender="#{contract.beanName}ModalContainer"
+	                        styleClass="aon-finding-toolbar-item aon-icon-reset" >
+	                </aon:commandButton>
+	
+	                <aon:commandButton id="Activity-reset" ajaxSingle="true"
+	                        title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+	                        value="#{gwtPayrollBundle.workplace_new}"
+	                        reRender="#{contract.beanName}ModalContainer"
+	                        styleClass="aon-finding-toolbar-item aon-icon-reset"
+	                        limitToList="true" >
+	                </aon:commandButton>
+	
+				</ui:define>
+	
+			</ui:decorate>
+		</c:if>
+		<c:if test="#{!edit}">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{companyBundle.company_enterprise_module}" />
+			</ui:decorate>
+		</c:if>
 
 
 		<aon:div style="overflow: auto; position: absolute; left: 0px; top: 2em; right: 0px; bottom: 0px;" >
@@ -61,6 +75,11 @@
 
 	<ui:include
 		src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+		
+	<!-- img style="display:none;"  
+	src="#{aonResource.resolve['/com/esferalia/aon/gwt/payroll/client/blank.png']}"   
+	onload="onLoadJSF(this.parentNode);" 
+	 /-->
 
 </ui:composition>
 

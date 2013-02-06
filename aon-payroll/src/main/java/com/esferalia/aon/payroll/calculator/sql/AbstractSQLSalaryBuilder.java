@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.esferalia.aon.payroll.sql.AbstractSQL;
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -249,7 +250,7 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 	
 	@Override
 	public void addPayment(PaymentType type, String concept, Double amount,
-			String description, String expression) {
+			String description, String expression, Map<String, Object> context) {
 		AbstractSQL.SalaryPayment salaryPayment= 
 			new AbstractSQL.SalaryPayment();
 		salaryPayment.setType(type);
