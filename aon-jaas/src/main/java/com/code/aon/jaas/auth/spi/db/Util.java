@@ -123,7 +123,7 @@ public class Util {
 		return null;			
 	}
 	
-	private Domain getDomainInfo( String domainName ) {
+	public Domain getDomain( String domainName ) {
 		String dbName = StringUtils.replace(domainName, ".", "-");
 		if ( dbExists(dbName) ) {
 			Domain domain = getDomainInfo(dbName, domainName);
@@ -151,61 +151,6 @@ public class Util {
 		}
 		return null;
 	}
-	
-	public Domain getDomain( String domainName ) {
-		Domain domain = null;
-		String name = domainName;
-		do {
-			domain = getDomainInfo(name);
-			if ( domain == null ) {
-				name = StringUtils.substringAfter(name, ".");	
-			}
-		} while ( (domain == null) && StringUtils.contains(name, '.') );
-		return domain;
-	}
-
-	private long getDomainCount() {
-		QueryRunner run = new QueryRunner();
-		try {
-			ResultSetHandler<Long> h = new ScalarHandler<Long>();
-			return run.query( connection, "SELECT count(id) FROM domain", h); 
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-		}		
-		return 0;
-	}	
-
-	private Integer getDefaultDomainId() {
-		QueryRunner run = new QueryRunner();
-		try {
-			ResultSetHandler<Integer> h = new ScalarHandler<Integer>();
-			return run.query( connection, "SELECT id FROM domain", h); 
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-		}		
-		return null;			
-	}	
-	
-	private Integer findDomainId( String domainName ) {
-		QueryRunner run = new QueryRunner();
-		try {
-			ResultSetHandler<Integer> h = new ScalarHandler<Integer>();
-			return run.query( connection, "SELECT id FROM domain WHERE name =?", h, domainName);
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-		}		
-		return null;			
-	}	
-	
-	public Integer getDomainId( String domainName ) {
-		Integer domainId = null;
-		if ( getDomainCount() == 1 ) {
-			domainId = getDefaultDomainId();
-		} else {
-			domainId = findDomainId(domainName);
-		}
-		return domainId;
-	}	
 	
 	private Integer getAdminDomain() {
 		QueryRunner run = new QueryRunner();
