@@ -75,6 +75,10 @@ public enum Mod123Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	public boolean isTotal() {
 		return total;
 	}
+	@Override
+	public boolean isDescriptionEnabled() {
+		return false;
+	}
 
 	public int getLevel() {
 		return level;

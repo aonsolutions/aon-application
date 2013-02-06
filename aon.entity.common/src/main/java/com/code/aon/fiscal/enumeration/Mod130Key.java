@@ -80,6 +80,11 @@ public enum Mod130Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 		return total;
 	}
 
+	@Override
+	public boolean isDescriptionEnabled() {
+		return false;
+	}
+
 	public int getLevel() {
 		return level;
 	}

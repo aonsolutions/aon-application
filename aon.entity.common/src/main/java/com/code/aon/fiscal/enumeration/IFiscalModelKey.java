@@ -10,5 +10,6 @@ public interface IFiscalModelKey {
 	int getLevel();
 	boolean isTitle();
 	boolean isTotal();
+	boolean isDescriptionEnabled();
 	
 }

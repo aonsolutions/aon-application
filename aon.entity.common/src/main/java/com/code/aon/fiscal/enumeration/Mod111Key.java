@@ -217,24 +217,32 @@ public enum Mod111Key implements IFiscalModelKey, IResourceable, IStringEnum  {
     	this.administrations = administrations;
     }
     
+    @Override
     public String getName(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + value);
     }
-
+    
+    @Override
 	public boolean isDifEnabled() {
 		return !isTitle() && difEnabled;
 	}
 	
+	@Override
 	public int getLevel() {
 		return level;
 	}
-
+	@Override
 	public boolean isTitle() {
 		return title;
 	}
+	@Override
 	public boolean isTotal() {
 		return total;
+	}
+	@Override
+	public boolean isDescriptionEnabled() {
+		return false;
 	}
 
 	@Override
