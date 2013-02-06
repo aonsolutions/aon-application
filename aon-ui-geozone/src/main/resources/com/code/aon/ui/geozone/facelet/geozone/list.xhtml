@@ -16,30 +16,28 @@
 				<ui:param name="controller" value="#{geotreeParent}" />
 			</ui:include>
 
-			<aon:div id="geotreeParentData" styleClass="aon-scroll-area">
-				<aon:dataTable id="geotreeParentDataList" value="#{geotreeParent.model}"
-					rows="20" var="to" rendered="#{geotreeParent.model.rowCount > 0}">
-
-					<aon:rowSelector action="geotreeParent_form" 
-						actionListener="#{geotreeParent.onSelect}" />
-
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_id}" />
-						</f:facet>
-						<aon:outputText value="#{to.child.code}" />
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-						<f:facet name="header">
-							<aon:outputText value="#{geozoneBundle.geozone_country}" />
-						</f:facet>
-						<aon:outputText value="#{to.child.name}" />
-					</aon:column>
-
-				</aon:dataTable>
-				<aon:dataScroller2 for="geotreeParentDataList"
-					showNote="true" />
+			<aon:div styleClass="aon-scroll-area">
+			
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{geotreeParent}" />
+					<ui:define name="columns">
+			
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_id}" />
+							</f:facet>
+							<aon:outputText value="#{to.child.code}" />
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputText value="#{geozoneBundle.geozone_country}" />
+							</f:facet>
+							<aon:outputText value="#{to.child.name}" />
+						</aon:column>
+					
+					</ui:define>
+				</ui:decorate>
 			</aon:div>
 		</aon:form>
 

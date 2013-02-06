@@ -30,7 +30,6 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.dao.hibernate.TypeResolver;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.domain.IDomain;
@@ -1450,10 +1449,11 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * index of the model associated to controller is editable.
 	 * 
 	 * @return boolean
+	 * @throws ManagerBeanException 
 	 */
-	public boolean isEditableSelectedTo() {
-		if ( this.model.isRowAvailable() ) {
-			return isCurrentDomainTo(this.model.getRowData());
+	public boolean isEditableSelectedTo() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			return isCurrentDomainTo(getModel().getRowData());
 		}
 		return true;
 	}

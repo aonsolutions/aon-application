@@ -16,35 +16,33 @@
 				actionListener="#{rowSelectorActionListener}" reRender="#{rowSelectorReRender}"
 				focus="#{(focusOnSelect != null)?(focusOnSelect):''}"/>
 	
-			<c:if test="#{!skipResetButton}">
-				<aon:column id="#{dataTableId}-selectColumn" 
-					styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
-					<f:facet name="header">
-						<aon:outputText value="&#160;" />
-					</f:facet>
-					<aon:div rendered="#{formList}" layout="none">
-						<aon:outputText value="&#160;" rendered="#{skipEditSelectedTo}"
-							title="#{bundle.aon_inherited_row}"
-							styleClass="aon-icon2 aon-icon-shield" />														
-						<ui:insert name="beginFormListContent"/>
-					</aon:div>					
-					<aon:div rendered="#{formEdit}" layout="none">
-						<ui:insert name="beginFormEditContent"/>
-					</aon:div>
-					<f:facet name="footer">
-						<aon:div>
-							<aon:commandButton
-								id="#{dataTableId}-reset" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
-								action="#{resetAction}" actionListener="#{resetActionListener}"
-								rendered="#{!formNew}" reRender="#{resetButtonReRender}"
-								styleClass="aon-editDataTable-button aon-icon-reset"
-								accesskey="#{bundle.aon_key_new_line}" 
-								focus="#{(focusOnAdd != null)?(focusOnAdd):''}"/>
-	
-						</aon:div>
-					</f:facet>
-				</aon:column>
-			</c:if>
+
+			<aon:column id="#{dataTableId}-selectColumn" 
+				styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:div rendered="#{formList}" layout="none">
+					<aon:outputText value="&#160;" rendered="#{skipEditSelectedTo}"
+						title="#{bundle.aon_inherited_row}"
+						styleClass="aon-icon2 aon-icon-shield" />														
+					<ui:insert name="beginFormListContent"/>
+				</aon:div>					
+				<aon:div rendered="#{formEdit}" layout="none">
+					<ui:insert name="beginFormEditContent"/>
+				</aon:div>
+				<f:facet name="footer">
+					<c:if test="#{!skipResetButton}">
+						<aon:commandButton
+							id="#{dataTableId}-reset" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+							action="#{resetAction}" actionListener="#{resetActionListener}"
+							rendered="#{!formNew}" reRender="#{resetButtonReRender}"
+							styleClass="aon-editDataTable-button aon-icon-reset"
+							accesskey="#{bundle.aon_key_new_line}" 
+							focus="#{(focusOnAdd != null)?(focusOnAdd):''}"/>
+					</c:if>
+				</f:facet>
+			</aon:column>
 	
 			<ui:insert name="columns"/>
 			
