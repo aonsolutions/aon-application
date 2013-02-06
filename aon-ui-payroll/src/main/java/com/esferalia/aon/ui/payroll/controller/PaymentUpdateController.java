@@ -57,7 +57,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.ITimedObject;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
@@ -339,7 +339,7 @@ public class PaymentUpdateController {
 			}
 
 			ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(startDate, endDate, SalaryType.SALARY);
-			List<ITimedObject<Object>> resultList = ctx.getExpressionContext().eval(name, startDate, endDate);
+			List<ITimedResult<Object>> resultList = ctx.getExpressionContext().eval(name, startDate, endDate);
 			if( !resultList.isEmpty() && resultList.get(0).getValue()!=null ){
 				cd.setExpression( resultList.get(0).getValue().toString() );
 				return cd;

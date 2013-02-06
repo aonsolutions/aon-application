@@ -39,7 +39,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
-import com.esferalia.aon.salary.expression.ITimedObject;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.IPaymentHandler;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -353,8 +353,8 @@ public class ContractPaymentController extends ContractDetailVariableController 
 			Calendar endCal = Calendar.getInstance();
 			startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
 			endCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMaximum(Calendar.DAY_OF_MONTH));
-			List<ITimedObject<Object>> list = ctx.getExpressionContext().eval(sp.getPaymentConcept().getExpression(), startCal.getTime(), endCal.getTime());
-			for(ITimedObject<Object> o: list){
+			List<ITimedResult<Object>> list = ctx.getExpressionContext().eval(sp.getPaymentConcept().getExpression(), startCal.getTime(), endCal.getTime());
+			for(ITimedResult<Object> o: list){
 				if(((Number)o.getValue()).intValue()>0){
 					return true;
 				}
