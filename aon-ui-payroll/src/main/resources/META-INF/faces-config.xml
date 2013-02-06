@@ -17,13 +17,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<!--  **** ENTERPRISE SEARCH EXTENDED **** -->
-	<managed-bean>
-		<managed-bean-name>enterpriseSearchEx</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.event.enterprise.EnterpriseSearchExListener</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
 	<!--  **** ENTERPRISE TREE **** -->
 	<managed-bean>
 		<managed-bean-name>enterpriseTree</managed-bean-name>
@@ -38,23 +31,11 @@
 			<value>true</value>
 		</managed-property>
 	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>enterpriseTreeControllerListener</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.event.EnterpriseTreeControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
 	
 	<!--  **** ENTERPRISE PAYROLL **** -->
 	<managed-bean>
 		<managed-bean-name>enterprisePayroll</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.enterprise.EnterprisePayrollController</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
-	<!-- **** ENTERPRISE PARAMS LISTENER **** -->
-	<managed-bean>
-		<managed-bean-name>enterpriseParamsControllerListener</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.event.EnterpriseParamsControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
@@ -83,25 +64,6 @@
 				<map-entry>
 					<key>PAY_salarySendingMethod_PAY</key>
 					<value>[NULL]</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>enterpriseActivityChildListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>enterpriseActivity</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>EnterpriseActivity_enterprise_id</key>
-					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -194,26 +156,6 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>		
-	</managed-bean>
-	
-	<!--  **** PAYROLL WORKPLACE LISTENER **** -->
-	<managed-bean>
-		<managed-bean-name>payrollWorkPlaceChildListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>payrollWorkPlace</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>WorkPlace_enterprise_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
 	</managed-bean>
 	
 	<managed-bean>
@@ -2717,14 +2659,6 @@
 		<managed-bean-name>agreementTree</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.agreement.AgreementTree</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>searchCurrent</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
-			<property-name>inactiveLastPeriod</property-name>
-			<value>ALL</value>
-		</managed-property>
 	</managed-bean>
 	<!-- ************ SALARY LAUNCHER  ************** -->
 	<managed-bean>
@@ -2830,6 +2764,69 @@
 			<value>geozoneIrpf</value>
 		</managed-property>
 	</managed-bean>
+
+
+	<!--
+		==========================================================
+		================== OPTIONAL LISTENER =====================
+		==========================================================
+	-->
+	<managed-bean>
+		<managed-bean-name>enterpriseTreeControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.EnterpriseTreeControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>enterpriseActivityChildListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>enterpriseActivity</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>EnterpriseActivity_enterprise_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>payrollWorkPlaceChildListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>payrollWorkPlace</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>WorkPlace_enterprise_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>enterpriseParamsControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.EnterpriseParamsControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>enterpriseSearchEx</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.enterprise.EnterpriseSearchExListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 
 	<!--
 		==========================================================
