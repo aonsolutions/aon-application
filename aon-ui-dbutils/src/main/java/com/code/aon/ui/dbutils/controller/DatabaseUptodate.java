@@ -1,5 +1,8 @@
 package com.code.aon.ui.dbutils.controller;
 
+import static com.code.aon.ui.dbutils.controller.IDbutilsConstants.BUNDLE_NAME;
+import static com.code.aon.ui.dbutils.controller.IDbutilsConstants.DOMAIN_NOT_EXIST;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -19,6 +22,7 @@ import com.code.aon.ui.util.DataSourceUtil;
 
 public class DatabaseUptodate {
 
+	private Properties properties;
 	private String currentVersion;
 	private boolean updatable;
 	private boolean connectionAvailable;
@@ -28,8 +32,14 @@ public class DatabaseUptodate {
 	public DatabaseUptodate() {
 		versionManager = new VersionManager();		
 		try {
-			setUpdatable(versionManager.getAvailableUpdateScripts(getCurrentVersion()) != null);
-			connectionAvailable = true;
+			this.properties = DataSourceUtil.getDBProperties();
+			if ( this.properties != null ) {
+				setUpdatable(versionManager.getAvailableUpdateScripts(getCurrentVersion()) != null);
+				connectionAvailable = true;				
+			} else {
+				String server = AonUtil.getServerName();
+				connectionErrorMessage = AonUtil.getMessage(BUNDLE_NAME, DOMAIN_NOT_EXIST, server);
+			}
 		} catch (AonException e) {
 			connectionAvailable = false;
 			connectionErrorMessage = e.getMessage()
@@ -47,16 +57,11 @@ public class DatabaseUptodate {
 		}		
 	}
 	
-	private Connection getConnection() throws AonException {
-		Properties properties = DataSourceUtil.getDBProperties();
-		return ConnectionProvider.getConnection(properties);
-	}
-	
 	public String getCurrentVersion() throws AonException {
 		if (currentVersion == null) {
 			Connection connection = null;
 			try {
-				connection = getConnection();
+				connection = ConnectionProvider.getConnection(properties);
 				setCurrentVersion( versionManager.getDatabaseVersion(connection) );
 			} catch (AonSQLException e) {
 				AonUtil.addErrorMessage("Imposible conseguir el número de versión");
@@ -84,7 +89,7 @@ public class DatabaseUptodate {
 	public void onUptodate(ActionEvent event) {
 		Connection connection = null;
 		try {
-			connection = getConnection();
+			connection = ConnectionProvider.getConnection(properties);
 			setCurrentVersion( null );
 			versionManager.uptodateDatabase(connection);
 			setUpdatable(false);

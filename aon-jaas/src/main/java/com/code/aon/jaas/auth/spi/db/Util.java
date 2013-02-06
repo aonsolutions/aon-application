@@ -65,25 +65,22 @@ public class Util {
 	}
 
 	public Properties getConnectionProperties( String domainName ) {
-		Properties cp = new Properties();
-		cp.putAll(this.properties);
-		String name = domainName;
-		
 		Connection connection = null;
 		try {
 			connection = createConnection(MYSQL);
 			Domain domain = getDomain(domainName);
 			if ( domain != null ) {
-				name = domain.getDataBaseName();
+				Properties cp = new Properties();
+				cp.putAll(this.properties);
+				cp.put(URL, getConnectionURL(domain.getDataBaseName()));
+				return cp;
 			}
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		} finally {
 			DbUtils.closeQuietly(connection);
 		}
-				
-		cp.put(URL, getConnectionURL(name));
-		return cp;
+		return null;
 	}
 	
 	public void setConnection(Connection connection) {

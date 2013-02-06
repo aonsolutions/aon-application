@@ -266,15 +266,17 @@ public class CustomizeController {
 		Connection connection = null;
 		try {
 			Properties dbProperties = DataSourceUtil.getDBProperties();
-			connection =  ConnectionProvider.getConnection(dbProperties);
-			if ( connection != null ) {
-				this.domainId = DataSourceUtil.getDomain(connection, AonUtil.getServerName(), AonUtil.isSkipLdap() );
-				if (this.domainId != null) {
-					this.companyId = getCompanyId(connection);
-					if ( this.companyId != null ) {
-						loadValues(connection);	
+			if ( dbProperties != null ) {
+				connection =  ConnectionProvider.getConnection(dbProperties);
+				if ( connection != null ) {
+					this.domainId = DataSourceUtil.getDomain(connection, AonUtil.getServerName(), AonUtil.isSkipLdap() );
+					if (this.domainId != null) {
+						this.companyId = getCompanyId(connection);
+						if ( this.companyId != null ) {
+							loadValues(connection);	
+						}
 					}
-				}
+				}				
 			}
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error getting company name and logo", th );
