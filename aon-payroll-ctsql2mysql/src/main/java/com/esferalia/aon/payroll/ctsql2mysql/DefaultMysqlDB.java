@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.CharEncoding;
 
 import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.audit.enumeration.Module;
@@ -38,7 +39,6 @@ import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.enumeration.Toolbar;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.AonSQLFile;
-import com.code.aon.dbutils.AonSQLScript;
 import com.code.aon.master.VersionManager;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
@@ -887,7 +887,7 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		// loads domain's default values.
 		VersionManager versionManager = new VersionManager();
 		URL  sqlUrl = versionManager.getInsertScript("aon.domain");
-		AonSQLFile sqlFile =  new AonSQLFile(sqlUrl.openStream());
+		AonSQLFile sqlFile =  new AonSQLFile(sqlUrl.openStream(), CharEncoding.ISO_8859_1);
 
 		mysqlConnection.createStatement().execute(String.format("SET @Domain=%d", domain));
 

@@ -10,6 +10,7 @@ import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -20,6 +21,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -259,7 +261,7 @@ public class NewDomainController {
 				scriptName = IConstants.INSERT_DOMAIN_FROM_PARENT_DEFAULTS_SCRIPT;
 			}
 			URL script = VersionManager.getScript(scriptName);
-			AonSQLFile file = new AonSQLFile(script.openStream());
+			AonSQLFile file = new AonSQLFile(script.openStream(), CharEncoding.ISO_8859_1);
 			file.setFileName(scriptName);
 			Properties properties = DataSourceUtil.getDBProperties();
 			connection = ConnectionProvider.getConnection(properties);

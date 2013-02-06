@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.CharEncoding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,11 +56,11 @@ public class VersionManager {
 			throw new IllegalArgumentException(msg);
 		}
 
-		// Se busca el índice de la versión pasada por param.
+		// Se busca el ï¿½ndice de la versiï¿½n pasada por param.
 		int idx = 0;
 		for (; idx < IConstants.VERSIONS.length && !initialVersion.equals(IConstants.VERSIONS[idx]) ; idx++);
 		
-		if (idx < (IConstants.VERSIONS.length - 1)) { // La última versión no tiene update file.
+		if (idx < (IConstants.VERSIONS.length - 1)) { // La ï¿½ltima versiï¿½n no tiene update file.
 			String[] versions = Arrays.copyOfRange(IConstants.VERSIONS, idx, (IConstants.VERSIONS.length - 1));
 			URL[] urls = new URL[versions.length];
 			for (int i = 0; i < versions.length; i++) {
@@ -114,7 +115,7 @@ public class VersionManager {
 	
 	private void execute( Connection c, URL url, String dbName ) throws IOException, AonSQLException {
 		LOGGER.info("sql script: {}", url.getFile());
-		AonSQLFile file = new AonSQLFile(url.openStream());
+		AonSQLFile file = new AonSQLFile(url.openStream(), CharEncoding.ISO_8859_1);
 		if ( dbName != null ) {
 			file.setDbName(dbName);
 		}

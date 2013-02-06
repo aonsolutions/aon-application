@@ -8,7 +8,6 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.USER_WORK_GROUP_E
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

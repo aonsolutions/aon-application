@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,17 +30,19 @@ public class AonSQLFile {
 	private String fileName;
 	private String dbName;
 
-	public AonSQLFile(InputStream input, String separator) {
-		this(input);
-		this.separator = separator;
-	}
-
-	public AonSQLFile(InputStream input) {
-		InputStreamReader isr = new InputStreamReader(input);
-		reader = new LineNumberReader(isr);
+	private AonSQLFile(Reader reader) {
+		this.reader = new LineNumberReader(reader);
 		separator = ";";
 	}
+	
+	public AonSQLFile(InputStream input) {
+		this( new InputStreamReader(input) );
+	}
 
+	public AonSQLFile(InputStream input, String charsetNmae) throws UnsupportedEncodingException {
+		this( new InputStreamReader(input, charsetNmae) );
+	}
+	
 	public int getLineNumber() {
 		return lineNumber;
 	}

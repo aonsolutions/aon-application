@@ -81,6 +81,14 @@
 						</aon:selectOneMenu>
 					</c:if>	
 
+					<c:if test="#{domainSwitcher.childDomain}" >
+						<aon:outputLabel for="Domain_enableHeredity"
+							value="#{adminBundle.admin_domain_enableHeredity}" />
+						<aon:selectBooleanCheckbox id="Domain_enableHeredity"
+							disabled="true"
+							value="#{adminDomain.to.enableHeredity}" />
+					</c:if>								
+
 					<c:if test="#{aonRole.sysAdmin}" >
 						<aon:outputLabel for="Domain_active"
 							value="#{bundle.aon_active}" />
@@ -91,13 +99,6 @@
 							value="#{adminBundle.admin_domain_disableDomainManagement}" />
 						<aon:selectBooleanCheckbox id="Domain_disableDomainManagement"
 							value="#{adminDomain.to.disableDomainManagement}" />								
-
-						<c:if test="#{domainSwitcher.childDomain}" >
-							<aon:outputLabel for="Domain_enableHeredity"
-								value="#{adminBundle.admin_domain_enableHeredity}" />
-							<aon:selectBooleanCheckbox id="Domain_enableHeredity"
-								value="#{adminDomain.to.enableHeredity}" />
-						</c:if>								
 
 						<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{adminDomain.to.parent}" />
