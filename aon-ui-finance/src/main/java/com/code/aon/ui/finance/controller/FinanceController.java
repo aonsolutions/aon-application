@@ -762,6 +762,11 @@ public class FinanceController extends FinanceListController {
 
 	private void ungroupSelected() throws ManagerBeanException {
 		FinanceGroupListController groupListController = (FinanceGroupListController) AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_GROUP_LIST_CONTROLLER_NAME);
+		if(groupListController.getCheckedFinances().size()==groupListController.getGroupList().size()){
+			String msg = "Imposible continuar. Se debe agrupar al menos un vencimiento.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 		ungroupSelected(groupListController.getCheckedFinances());
     }
 	
