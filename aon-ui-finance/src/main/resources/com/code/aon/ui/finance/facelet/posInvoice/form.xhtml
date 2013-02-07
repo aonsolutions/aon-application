@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="posInvoiceForm">
+			<aon:div id="menuExt"> 
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+					<ui:param name="toolbarTitle" value="#{financeBundle.finance_pos_invoice_management_module}" />
+					<ui:param name="controller" value="#{posInvoice}" />
+					<ui:param name="skipFocusFirst" value="#{!posInvoice.new}" />
+					<ui:param name="skipSaveButton" value="#{posInvoice.readOnly}" />
+					<ui:param name="skipRemoveButton" value="#{true}" />
+					<ui:param name="skipCancelButton" value="#{true}" />
+					<ui:param name="skipSearchButton" value="#{true}" />
+					<ui:param name="skipBackButton" value="#{true}" />
+					<ui:param name="saveButtonReRender" value="posInvoiceForm" />
+					<ui:define name="beforeSpinToolbarContent">
+						<aon:commandButton id="cashPayment"
+							styleClass="aon-finding-toolbar-item aon-icon-cash"
+							value="#{financeBundle.finance_cash_payment}"
+							title="Alt+{Mayús}+E"
+							rendered="#{posInvoice.toInvoiceTotalPrice != 0 and (!posInvoice.recorded or posInvoiceFinance.model.rowCount == 0)}"
+							actionListener="#{posInvoice.generateCashFinance}"
+							accesskey="E" />
+						<aon:commandButton id="cardPayment"
+							styleClass="aon-finding-toolbar-item aon-icon-card"
+							value="#{financeBundle.finance_card_payment}"
+							title="Alt+{Mayús}+T"
+							rendered="#{posInvoice.toInvoiceTotalPrice != 0 and (!posInvoice.recorded or posInvoiceFinance.model.rowCount == 0)}"
+							actionListener="#{posInvoice.generateCardFinance}"
+							accesskey="T" />
+					</ui:define>
+				</ui:decorate>
+			</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<c:if test="#{posInvoice.new}">
+					<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formNewContent.xhtml">
+						<ui:param name="invoiceController" value="#{posInvoice}" />
+						<ui:param name="addressController" value="#{posInvoiceAddress}" />
+						<ui:param name="detailController" value="#{posInvoiceDetail}" />
+						<ui:param name="financeController" value="#{posInvoiceFinance}" />
+						<ui:param name="formName" value="posInvoiceForm" />
+						<ui:param name="posMode" value="#{true}" />
+					</ui:include>
+				</c:if>			
+				<c:if test="#{!posInvoice.new}">
+					<aon:panelGrid id="dataTable" columns="4"
+						styleClass="aon-width-all aon-margin-bottom"
+						columnClasses="aon-panelGrid-odd aon-width-140,
+							aon-panelGrid-even aon-width-500,
+							aon-panelGrid-odd aon-width-100,
+							aon-panelGrid-even aon-width-auto">
+
+						<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formContent.xhtml">
+							<ui:param name="invoiceController" value="#{posInvoice}" />
+							<ui:param name="addressController" value="#{posInvoiceAddress}" />
+							<ui:param name="detailController" value="#{posInvoiceDetail}" />
+							<ui:param name="financeController" value="#{posInvoiceFinance}" />
+							<ui:param name="formName" value="posInvoiceForm" />
+							<ui:param name="posMode" value="#{true}" />
+						</ui:include>
+					</aon:panelGrid>
+
+					<aon:panelGrid columns="2" style="width: 100%;"
+						rendered="#{posInvoice.to.seller.id != null}"
+						columnClasses="aon-panelGrid-odd aon-width-140,
+							aon-panelGrid-even aon-width-auto">
+
+						<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+							<ui:param name="lookupTo" value="#{posInvoice.to.seller}" />
+							<ui:param name="lookupDisabled" value="#{posInvoice.readOnly}" />
+							<aon:methodParam name="lookupChangeListener"
+								value="#{posInvoice.onSellerChanged}" type="lookupChangeListener" />
+						</ui:include>
+
+					</aon:panelGrid>
+				</c:if>
+
+				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formDetail.xhtml">
+					<ui:param name="invoiceController" value="#{posInvoice}" />
+					<ui:param name="detailController" value="#{posInvoiceDetail}" />
+					<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
+						<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
+					</c:if>
+					<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
+						<ui:param name="projectLabel" value="#{tasBundle.tas_projectTas}" />
+					</c:if>
+				</ui:include>
+
+				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formFinance.xhtml">
+					<ui:param name="invoiceController" value="#{posInvoice}" />
+					<ui:param name="detailController" value="#{posInvoiceDetail}" />
+					<ui:param name="financeController" value="#{posInvoiceFinance}" />
+				</ui:include>
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAddress.xhtml">
+			<ui:param name="invoiceController" value="#{posInvoice}" />
+			<ui:param name="invoiceAddress" value="#{posInvoiceAddress}" />
+		</ui:include>
+	</ui:define>
+</ui:composition>

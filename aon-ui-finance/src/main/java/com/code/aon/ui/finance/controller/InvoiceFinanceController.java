@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -70,11 +69,11 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	public boolean isAllPending() throws ManagerBeanException{
-		Iterator<?> iterator = ((List<?>)getModel().getWrappedData()).iterator();
-		while(iterator.hasNext()){
-			Finance finance = (Finance)iterator.next();
-			if(FinanceStatus.PENDING != finance.getFinanceStatus()){
+		for (ITransferObject ito : (List<ITransferObject>)getModel().getWrappedData()) {
+			Finance finance = (Finance)ito;
+			if (FinanceStatus.PENDING != finance.getFinanceStatus()) {
 				return false;
 			}
 		}

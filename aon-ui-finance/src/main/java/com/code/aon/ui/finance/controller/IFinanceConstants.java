@@ -56,6 +56,11 @@ public interface IFinanceConstants {
 	String UNDEDUCTIBLE_INVOICE_FINANCE_CONTROLLER_NAME = "undeductibleInvoiceFinance";
 	String UNDEDUCTIBLE_INVOICE_SIGNER_CONTROLLER_NAME = "undeductibleInvoiceSigner";
 
+	String POS_INVOICE_CONTROLLER_NAME = "posInvoice";
+	String POS_INVOICE_ADDRESS_CONTROLLER_NAME = "posInvoiceAddress";
+	String POS_INVOICE_DETAIL_CONTROLLER_NAME = "posInvoiceDetail";
+	String POS_INVOICE_FINANCE_CONTROLLER_NAME = "posInvoiceFinance";
+
 	String BANK_STATEMENT_CONTROLLER_NAME = "bankStatement";
 	String BANK_STATEMENT_SEARCH_LISTENER_NAME = "bankStatementSearch";
 	String BANK_STATEMENT_LINK_CONTROLLER_NAME = "bankStatementLink";

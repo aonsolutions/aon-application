@@ -47,17 +47,17 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 	}
 
     public void setPrice(double price) {
-        super.setPrice( CommonUtil.round(price, 4) );
+        super.setPrice(CommonUtil.round(price, 4));
     }
 
 	public void setTaxableBase(double taxableBase) {
-		super.setTaxableBase( CommonUtil.round(taxableBase, 4) );
+		super.setTaxableBase(CommonUtil.round(taxableBase, 4));
 	}
 	
 	public void setTaxes(double taxes) {
-		super.setTaxes( CommonUtil.round(taxes, 3) );
+		super.setTaxes(CommonUtil.round(taxes, 3));
 	}
-	
+
 	@Transient
 	public boolean isUpdateEnabled() {
 		return updateEnabled;

@@ -170,7 +170,7 @@ public class FinanceGenerator {
 		return createFinance(invoice, date, payMethod, totalPrice, bank, bankAccount);
 	}
 
-	private Finance createFinance(Invoice invoice, Date date, PayMethod payMethod, double totalPrice, Bank bank, BankAccount bankAccount) {
+	public Finance createFinance(Invoice invoice, Date date, PayMethod payMethod, double totalPrice, Bank bank, BankAccount bankAccount) {
 		Finance finance = new Finance();
 		finance.setPayment(!invoice.getType().equals(InvoiceType.SALES));
 		finance.setRegistry(invoice.getRegistry());
@@ -190,7 +190,7 @@ public class FinanceGenerator {
 		finance.setScope(invoice.getScope());
 		return finance;
 	}
-	
+
 	private void insertFinances(List<Finance> financeList) throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		for (Finance finance : financeList) {

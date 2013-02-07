@@ -349,6 +349,59 @@
 									</aon:div>
 								</aon:panelGrid>
 							</c:if>
+
+							<aon:panelGrid id="group_pos"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-pos aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{pmsBundle.pms_pos_module}"/>
+								</f:facet>					
+								<aon:div styleClass="aon-direct-access-list">
+									<c:if test="#{aonRole.config}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="posDefinition" 
+												action="pos_search"
+												actionListener="#{pos.onEditSearch}"
+												value="#{pmsBundle.pms_pos_definition_module}" />
+										</aon:div>
+									</c:if>
+									<c:if test="#{aonRole.admin or aonRole.config or aonRole.saleOperator}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="posShift" 
+												action="posShift_search"
+												actionListener="#{posShift.onEditSearch}"
+												value="#{pmsBundle.pms_posShift_module}" />
+										</aon:div>
+									</c:if>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="pos_opening" 
+											action="posOpening_form"
+											actionListener="#{posOpening.onInit}"
+											value="#{pmsBundle.pms_posOpening_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="pos_closing" 
+											action="posClosing_form"
+											actionListener="#{posClosing.onInit}" 
+											value="#{pmsBundle.pms_posCashCount_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="pos_invoice" 
+											action="posInvoice_form"
+											actionListener="#{posInvoice.onReset}" 
+											value="#{financeBundle.finance_pos_invoice_management_module}" />
+									</aon:div>
+									<c:if test="#{aonRole.financeOperator}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="pos_finance_bath" 
+												action="posFinance_search"
+												actionListener="#{posFinance.onEditSearch}"
+												value="#{pmsBundle.pms_posFinance_module}" />
+										</aon:div>
+									</c:if>
+								</aon:div>
+							</aon:panelGrid>
+
 						</aon:panelGroup>
 					</c:if>
 

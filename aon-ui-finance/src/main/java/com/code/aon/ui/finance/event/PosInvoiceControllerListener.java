@@ -1,0 +1,99 @@
+package com.code.aon.ui.finance.event;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.Series;
+import com.code.aon.customer.Customer;
+import com.code.aon.finance.Invoice;
+import com.code.aon.ql.Criteria;
+import com.code.aon.seller.Seller;
+import com.code.aon.ui.finance.controller.PosInvoiceController;
+import com.code.aon.ui.form.event.ControllerEvent;
+import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
+
+public class PosInvoiceControllerListener extends SaleInvoiceControllerListener {
+
+	private Seller seller;
+
+	@Override
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		PosInvoiceController controller = (PosInvoiceController)event.getController();
+		Invoice invoice = (Invoice)controller.getTo();
+		try {
+			Series series = obtainPosSeries();
+			if (series != null) {
+				invoice.setSeries(series.getCode());
+				invoice.setSecurityLevel(series.getSecurityLevel());
+			}
+			Customer customer = obtainPosCustomer();
+			if (customer != null) {
+				controller.customerChanged(customer);
+			}
+			if (seller != null && seller.getId() != null) {
+				invoice.setSeller(seller);
+			}
+		} catch (ManagerBeanException ex) {
+			throw new ControllerListenerException(ex.getMessage(), ex);
+		}
+
+		super.afterBeanCreated(event);
+	}
+
+	@Override
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		PosInvoiceController controller = (PosInvoiceController)event.getController();
+		controller.setFinanceGenerationMode(-1);
+
+		super.beforeBeanAdded(event);
+	}
+	
+
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		Invoice invoice = (Invoice)event.getController().getTo();
+		if (invoice.getSeller() != null && invoice.getSeller().getId() != null) {
+			seller = invoice.getSeller();
+		}
+	}
+
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		Invoice invoice = (Invoice)event.getController().getTo();
+		if (invoice.getSeller() != null && invoice.getSeller().getId() != null) {
+			seller = invoice.getSeller();
+		}
+
+		super.afterBeanUpdated(event);
+	}
+
+	private Series obtainPosSeries() throws ManagerBeanException {
+		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_POS), true);
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), true);
+		for (ITransferObject ito : seriesBean.getList(criteria)) {
+			return (Series)ito;
+		}
+		return null;
+	}
+
+	private Customer obtainPosCustomer() throws ManagerBeanException {
+		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), "POS_CUSTOMER_ID");
+		for (ITransferObject ito : appParamBean.getList(criteria)) {
+			String value = ((ApplicationParameter)ito).getValue();
+			if (StringUtils.isNotEmpty(value)) {
+				return (Customer)BeanManager.getManagerBean(Customer.class).get(Integer.parseInt(value));
+			}
+		}
+		return null;
+	}
+
+}

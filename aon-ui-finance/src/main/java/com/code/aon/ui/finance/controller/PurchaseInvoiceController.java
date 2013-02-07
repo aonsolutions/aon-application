@@ -26,7 +26,6 @@ import com.code.aon.finance.invoicing.engine.income.IncomeInvoicingEngine;
 import com.code.aon.ql.Criteria;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
@@ -39,7 +38,7 @@ import com.code.aon.warehouse.bridge.IncomeTransferManager;
 import com.code.aon.warehouse.enumeration.IncomeStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class PurchaseInvoiceController extends InvoiceController implements IFinanceConstants, IFinanceMessages {
+public class PurchaseInvoiceController extends InvoiceController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseInvoiceController.class.getName());
 	
@@ -156,7 +155,7 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 		}
 
 		refresh(null);
-		IController detailController = FormUtil.getController(IFinanceConstants.PURCHASE_INVOICE_DETAIL_CONTROLLER_NAME);
+		IController detailController = FormUtil.getController(PURCHASE_INVOICE_DETAIL_CONTROLLER_NAME);
 		detailController.onSearch(null);
 	}
 
@@ -211,7 +210,7 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 
 	@Override
 	public SignerController getSignerController() {
-		return (SignerController) AonUtil.getRegisteredBean(IFinanceConstants.PURCHASE_INVOICE_SIGNER_CONTROLLER_NAME);
+		return (SignerController) AonUtil.getRegisteredBean(PURCHASE_INVOICE_SIGNER_CONTROLLER_NAME);
 	}
 	
 	

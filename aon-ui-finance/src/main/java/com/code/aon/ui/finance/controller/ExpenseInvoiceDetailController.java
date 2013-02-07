@@ -54,7 +54,10 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 		}
 
 		if (invoice.getRegistry() == null || invoice.getRegistry().getId() == null) {
-			((ExpenseInvoiceController)getMasterController()).creditorChanged(obtainExpenseLastCreditor(item));
+			Creditor creditor = obtainExpenseLastCreditor(item);
+			if (creditor != null) {
+				((ExpenseInvoiceController)getMasterController()).creditorChanged(creditor);
+			}
 		}
 	}
 

@@ -14,10 +14,14 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.Company;
+import com.code.aon.config.Bank;
+import com.code.aon.config.BankAccount;
+import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceAttachmentType;
@@ -30,9 +34,10 @@ import com.code.aon.finance.invoicing.engine.InvoicingEngineFactory;
 import com.code.aon.finance.invoicing.engine.delivery.DeliveryInvoicingDAO;
 import com.code.aon.finance.invoicing.engine.delivery.DeliveryInvoicingEngine;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryPayMethod;
+import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
@@ -43,7 +48,7 @@ import com.code.aon.warehouse.bridge.DeliveryTransferManager;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class SaleInvoiceController extends InvoiceController implements IFinanceConstants, IFinanceMessages {
+public class SaleInvoiceController extends InvoiceController {
 	
 	private RegistryValidationManager vm;
 	private DeliveryTransferManager deliveryTransferManager;
@@ -62,18 +67,33 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		return vm;
 	}
 
-	public boolean isSeriesActive() throws ManagerBeanException {
+	public DeliveryTransferManager getDeliveryTransferManager() {
+		if (deliveryTransferManager == null) {
+			deliveryTransferManager = new DeliveryTransferManager(); 
+		}
+		return deliveryTransferManager;
+	}
+
+	public void setDeliveryTransferManager(DeliveryTransferManager deliveryTransferManager) {
+		this.deliveryTransferManager = deliveryTransferManager;
+	}
+
+	public boolean isShowDeliveryTransferWindow() {
+		return showDeliveryTransferWindow;
+	}
+
+	public void setShowDeliveryTransferWindow(boolean value) {
+		this.showDeliveryTransferWindow = value;
+	}
+	
+	public boolean isSeriesValid() throws ManagerBeanException {
 		String seriesCode = getInvoice().getSeries();
-		return (StringUtils.isEmpty(seriesCode)?true:SeriesUtil.isSeriesActive(seriesCode));
+		return (StringUtils.isEmpty(seriesCode)) ? true : SeriesUtil.isSeriesActive(seriesCode) && seriesCode.equals(SeriesUtil.ensureInvoiceSeries(seriesCode));
 	}
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		int number = obtainMaxNumber((String)event.getNewValue());
-		SecurityLevel securityLevel = SeriesUtil.getSeriesSecurityLevel((String)event.getNewValue());
-		if (getInvoice() != null) {
-			getInvoice().setNumber(number);
-			getInvoice().setSecurityLevel(securityLevel);
-		}
+		getInvoice().setNumber(obtainMaxNumber((String)event.getNewValue()));
+		getInvoice().setSecurityLevel(SeriesUtil.getSeriesSecurityLevel((String)event.getNewValue()));
 	}
 
 	private int obtainMaxNumber(String seriesId)  {
@@ -104,20 +124,42 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		getInvoice().setNumber(number);
 	}
 
-	public void customerData(LookupChangeEvent event) throws ManagerBeanException {
+	public void onCustomerChanged(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Customer customer = (Customer)event.getNewValue();
-			isBlocked(customer); // Saca el mensaje de bloqueo.
-			getInvoice().setRegistryName(customer.getRegistry().getFullName());
-			getInvoice().setRegistryDocument(customer.getRegistry().getDocument());
-			getInvoice().setRegistryDocumentType(customer.getRegistry().getDocumentType());
-			getInvoice().setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry());
-			getInvoice().setRegistry(customer.getRegistry());
-			loadAddresses(customer.getId());
-			loadProjects(customer.getId());
+			customerChanged(customer);
 		} else {
 			setAddresses(null);	
 			setProjects(null);	
+		}
+	}
+
+	public void customerChanged(Customer customer) throws ManagerBeanException {
+		isBlocked(customer); // Saca el mensaje de bloqueo.
+		Invoice invoice = getInvoice();
+		invoice.setRegistryName(customer.getRegistry().getFullName());
+		invoice.setRegistryDocument(customer.getRegistry().getDocument());
+		invoice.setRegistryDocumentType(customer.getRegistry().getDocumentType());
+		invoice.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry());
+		invoice.setRegistry(customer.getRegistry());
+		invoice.setTransaction(customer.getTransaction());
+		invoice.setSurcharge(customer.isSurcharge());
+		invoice.setWithholding(customer.isWithholding() && getCompany().isWithholding());
+		loadAddresses(customer.getId());
+		loadProjects(customer.getId());
+
+		if (isNew()) {
+			InvoiceFinanceController financeController = (InvoiceFinanceController)FormUtil.getController(getInvoiceFinanceControllerName());
+			Finance finance = (Finance)financeController.getTo();
+			if (finance != null) {
+				RegistryPayMethod rPayMethod = customer.getRegistry().getPayMethod();
+				finance.setPayMethod((rPayMethod==null) ? new PayMethod() : rPayMethod.getPayment());
+				finance.setBank((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? new Bank() : rPayMethod.getBank());
+				finance.setBankAccount((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? new BankAccount() : rPayMethod.getBankAccount());
+
+				financeController.setRegistryBank((rPayMethod==null) ? null : rPayMethod.getRegistryBank());
+				financeController.setShowBankManualInput(false);
+			}
 		}
 	}
 
@@ -125,38 +167,20 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		return getRegistryValidationManager().isBlocked(customer);
 	}
 
-	public Customer getCustomer() throws ManagerBeanException{
-		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
-		Criteria criteria = new Criteria();
-		if (getInvoice() != null) {
-			criteria.addEqualExpression(customerBean.getFieldName(IEntityAlias.CUSTOMER_REGISTRY_ID), getInvoice().getRegistry().getId());
-			Iterator<?> iterator = customerBean.getList(criteria).iterator();
-			if (iterator.hasNext()) {
-				return (Customer)iterator.next();
-			}
+	private Company getCompany() throws ManagerBeanException {
+		for (ITransferObject ito : BeanManager.getManagerBean(Company.class).getList(null, 0, 1)) {
+			return (Company)ito;
 		}
 		return null;
 	}
 
-	public DeliveryTransferManager getDeliveryTransferManager() {
-		if (deliveryTransferManager == null) {
-			deliveryTransferManager = new DeliveryTransferManager(); 
+	public void onSellerChanged(LookupChangeEvent event) {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			Seller seller = (Seller)event.getNewValue();
+			getInvoice().setSeller(seller);
 		}
-		return deliveryTransferManager;
 	}
 
-	public void setDeliveryTransferManager(DeliveryTransferManager deliveryTransferManager) {
-		this.deliveryTransferManager = deliveryTransferManager;
-	}
-
-	public boolean isShowDeliveryTransferWindow() {
-		return showDeliveryTransferWindow;
-	}
-
-	public void setShowDeliveryTransferWindow(boolean value) {
-		this.showDeliveryTransferWindow = value;
-	}
-	
 	public void onDeliveryTransferShow(ActionEvent event) throws ManagerBeanException {
 		List<ITransferObject> invoicedDeliveryList = new LinkedList<ITransferObject>();
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
@@ -213,7 +237,7 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		}
 
 		refresh(null);
-		IController detailController = FormUtil.getController(IFinanceConstants.SALE_INVOICE_DETAIL_CONTROLLER_NAME);
+		IController detailController = FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
 		detailController.onSearch(null);
 	}
 

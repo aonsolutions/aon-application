@@ -478,10 +478,16 @@ color:#000;
  .aon-icon-wrong{
 	background:transparent url(images/aon-icon/aon-icon-wrong.png) scroll left center no-repeat;	
  }
+ .aon-icon-cash{
+	background:transparent url(images/aon-icon/aon-icon-cash.png) scroll left center no-repeat;	
+ }
+ .aon-icon-card{
+	background:transparent url(images/aon-icon/aon-icon-card.png) scroll left center no-repeat;	
+ }
  .aon-icon-pay{
 	background:transparent url(images/aon-icon/aon-icon-pay.png) scroll left center no-repeat;	
  }
- .aon-icon-return{
+.aon-icon-return{
 	background:transparent url(images/aon-icon/aon-icon-return.png) scroll left center no-repeat;	
  }
  .aon-icon-fraction{

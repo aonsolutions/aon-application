@@ -14,14 +14,13 @@ import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.util.CreditorValidationManager;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class UndeductibleInvoiceController extends InvoiceController implements IFinanceConstants, IFinanceMessages {
+public class UndeductibleInvoiceController extends InvoiceController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(UndeductibleInvoiceController.class.getName());
 	
@@ -92,7 +91,7 @@ public class UndeductibleInvoiceController extends InvoiceController implements 
 
 	@Override
 	public SignerController getSignerController() {
-		return (SignerController) AonUtil.getRegisteredBean(IFinanceConstants.UNDEDUCTIBLE_INVOICE_SIGNER_CONTROLLER_NAME);
+		return (SignerController) AonUtil.getRegisteredBean(UNDEDUCTIBLE_INVOICE_SIGNER_CONTROLLER_NAME);
 	}
 
 }

@@ -73,7 +73,7 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.SecurityInfo;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class InvoiceController extends BasicController implements ISignatureController, IFinanceConstants {
+public class InvoiceController extends BasicController implements ISignatureController, IFinanceConstants, IFinanceMessages {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceController.class.getName());
 	
@@ -558,7 +558,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			}
 			invoiceFinanceController.onSearch(null);
 		} catch (ManagerBeanException e) {
-			String msg = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.GENERATE_FINANCES_ERROR_KEY) + ". " + e.getMessage();
+			String msg = AonUtil.getMessage(BUNDLE_KEY, GENERATE_FINANCES_ERROR_KEY) + ". " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		}
@@ -568,12 +568,12 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		double invoiceTotal = getToInvoiceTotalPrice();
 		double financeTotal = getToInvoiceFinanceTotal();
 		if (financeTotal != 0 && invoiceTotal != financeTotal) {
-			String message = AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY);
+			String message = AonUtil.addErrorMessageFromBundle(BUNDLE_KEY, UNABLE_RECORD_INACCURACY_ERROR_KEY);
 			throw new AbortProcessingException(message);
 		}
 		Invoice invoice = getInvoice();
 		if (invoice.isInvestment() && !isAmortizationForm()) {
-			String message = AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.UNABLE_RECORD_NO_AMORTIZATION_ERROR_KEY);
+			String message = AonUtil.addErrorMessageFromBundle(BUNDLE_KEY, UNABLE_RECORD_NO_AMORTIZATION_ERROR_KEY);
 			throw new AbortProcessingException(message);
 		}
 		
@@ -627,10 +627,10 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			// hay que tener en cuenta que al descontabilizar la factura, se está borrando el apunte del que 
 			// provienes. De tal forma, se sobreescribe la funcionalidad del botón Volver, para que vaya a la 
 			// pantalla de búsqueda de apuntes, ejecutando el actionListener correspondiente. 
-			if (ObjectUtils.equals(IFinanceConstants.ACCOUNT_ENTRY_FORM_PAGE, this.backAction())) {
-				setBackAction(IFinanceConstants.ACCOUNT_ENTRY_SEARCH_PAGE);
-				setBackActionListener(IFinanceConstants.ACCOUNT_ENTRY_ON_EDIT_SEARCH_ACTION);
-				AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_UNRECORD_INVOICE_WARNING);
+			if (ObjectUtils.equals(ACCOUNT_ENTRY_FORM_PAGE, this.backAction())) {
+				setBackAction(ACCOUNT_ENTRY_SEARCH_PAGE);
+				setBackActionListener(ACCOUNT_ENTRY_ON_EDIT_SEARCH_ACTION);
+				AonUtil.addWarningMessageFromBundle(BUNDLE_KEY, FINANCE_UNRECORD_INVOICE_WARNING);
 			}
 		} catch (Exception e) {
 			try {
@@ -786,7 +786,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	}
 	
 	public SignerController getSignerController() {
-		return (SignerController) AonUtil.getRegisteredBean(IFinanceConstants.SALE_INVOICE_SIGNER_CONTROLLER_NAME);
+		return (SignerController) AonUtil.getRegisteredBean(SALE_INVOICE_SIGNER_CONTROLLER_NAME);
 	}
 	
 	public IAttachment getInvoiceData(Invoice invoice) throws ManagerBeanException {
@@ -900,7 +900,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	public void onShowAmortizationPanel(ActionEvent event) {
 		setShowAmortizationWindow(true);
 		
-		IController controller = (IController) AonUtil.getRegisteredBean(IFinanceConstants.AMORTIZATION_CONTROLLER_NAME);
+		IController controller = (IController) AonUtil.getRegisteredBean(AMORTIZATION_CONTROLLER_NAME);
 		controller.onReset(event);
 		Invoice invoice = getInvoice();
 		Amortization amortization = (Amortization) controller.getTo();
@@ -918,7 +918,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 			
-			IController controller = (IController) AonUtil.getRegisteredBean(IFinanceConstants.AMORTIZATION_CONTROLLER_NAME);
+			IController controller = (IController) AonUtil.getRegisteredBean(AMORTIZATION_CONTROLLER_NAME);
 			((BasicController) controller).accept(event);
 			Amortization amortization = (Amortization) controller.getTo();
 			Invoice invoice = getInvoice();
@@ -948,7 +948,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	
 	public String showAmortization() {
 		try {
-			IController controller = (IController) AonUtil.getRegisteredBean(IFinanceConstants.AMORTIZATION_CONTROLLER_NAME);
+			IController controller = (IController) AonUtil.getRegisteredBean(AMORTIZATION_CONTROLLER_NAME);
 			controller.onEditSearch(null);
 			Criteria criteria = controller.getCriteria();
 		
@@ -964,11 +964,11 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			String alias = controller.getFieldName(IEntityAlias.AMORTIZATION_ID);
 			criteria.addInExpression(alias, ids);
 			controller.onSearch(null);
-			String backAction = IFinanceConstants.AMORTIZATION_LIST_VIEW; 
+			String backAction = AMORTIZATION_LIST_VIEW; 
 			if (controller.getModel().getRowCount() == 1) {
 				controller.getModel().setRowIndex(0);
 				controller.onSelect(null);
-				backAction = IFinanceConstants.AMORTIZATION_FORM_VIEW;
+				backAction = AMORTIZATION_FORM_VIEW;
 			} 
 			((BasicController) controller).setBackAction(getBeanName() + "_form");
 			return backAction;

@@ -21,9 +21,4 @@ public class ExpenseInvoiceControllerListener extends InvoiceControllerListener 
 		invoice.setType(InvoiceType.EXPENSES);
 	}
 
-	@Override
-	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		//Borrar cuando se quite el metodo del InvoiceControllerListener
-	}
-
 }

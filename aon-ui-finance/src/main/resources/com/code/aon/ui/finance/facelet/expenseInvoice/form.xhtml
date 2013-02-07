@@ -17,7 +17,7 @@
 					<ui:param name="toolbarTitle"
 						value="#{financeBundle.finance_expense_invoice_management_module}" />
 					<ui:param name="controller" value="#{expenseInvoice}" />
-					<ui:param name="skipFocusFirst" value="true" />
+					<ui:param name="skipFocusFirst" value="#{!expenseInvoice.new}" />
 					<ui:param name="skipSaveButton" value="#{expenseInvoice.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{!expenseInvoice.removable or !expenseInvoiceFinance.allPending}" />
 					<ui:param name="saveButtonReRender" value="expenseInvoiceForm" />
@@ -137,7 +137,8 @@
 					</ui:include>
 				</c:if>			
 				<c:if test="#{!expenseInvoice.new}">
-					<aon:panelGrid id="dataTable" columns="4" styleClass="aon-width-all"
+					<aon:panelGrid id="dataTable" columns="4"
+						styleClass="aon-width-all aon-margin-bottom"
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-500,
 							aon-panelGrid-odd aon-width-100,
@@ -237,7 +238,7 @@
 					</aon:div>
 				</c:if>
 
-				<ui:include	src="/com/code/aon/ui/finance/facelet/expenseInvoice/form_detail.xhtml">
+				<ui:include	src="/com/code/aon/ui/finance/facelet/expenseInvoice/formDetail.xhtml">
 					<ui:param name="invoiceController" value="#{expenseInvoice}" />
 					<ui:param name="detailController" value="#{expenseInvoiceDetail}" />
 					<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
@@ -248,7 +249,7 @@
 					</c:if>
 				</ui:include>
 
-				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/form_finances.xhtml">
+				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formFinance.xhtml">
 					<ui:param name="invoiceController" value="#{expenseInvoice}" />
 					<ui:param name="detailController" value="#{expenseInvoiceDetail}" />
 					<ui:param name="financeController" value="#{expenseInvoiceFinance}" />

@@ -17,7 +17,7 @@
 					<ui:param name="toolbarTitle"
 						value="#{financeBundle.finance_sale_invoice_management_module}" />
 					<ui:param name="controller" value="#{saleInvoice}" />
-					<ui:param name="skipFocusFirst" value="true" />
+					<ui:param name="skipFocusFirst" value="#{!saleInvoice.new}" />
 					<ui:param name="skipSaveButton" value="#{saleInvoice.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending}" />
 					<ui:param name="saveButtonReRender" value="saleInvoiceForm" />
@@ -158,21 +158,21 @@
 			</aon:div>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
-					styleClass="aon-margin-bottom"
+				<aon:panelGrid id="dataTable" columns="4"
+					styleClass="aon-width-all aon-margin-bottom"
 					columnClasses="aon-panelGrid-odd aon-width-140,
 						aon-panelGrid-even aon-width-500,
 						aon-panelGrid-odd aon-width-100,
 						aon-panelGrid-even aon-width-auto">
 
 					<aon:outputLabel for="Invoice_number"
-						value="#{bundle.aon_series}/#{bundle.aon_number}" />
+						value="#{financeBundle.finance_invoice_number}" />
 					<aon:div>
 						<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
 							<aon:div id="invoiceReferenceCodeDiv">
 								<aon:selectOneMenu id="Invoice_series"
 									value="#{saleInvoice.to.series}" 
-									rendered="#{saleInvoice.seriesActive and !saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}"
+									rendered="#{saleInvoice.seriesValid and !saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}"
 									valueChangeListener="#{saleInvoice.onSeriesChanged}"
 									reRender="Invoice_number,Invoice_securityLevel">
 									<f:selectItem itemLabel=" " value="#{null}" />
@@ -180,7 +180,7 @@
 								</aon:selectOneMenu>
 								<aon:inputText id="Invoice_series-input"
 									value="#{saleInvoice.to.series}" 
-									rendered="#{!saleInvoice.seriesActive and !saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}"
+									rendered="#{!saleInvoice.seriesValid and !saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}"
 									size="5" />
 								<aon:inputText id="Invoice_number" styleClass="aon-margin-left"
 									value="#{saleInvoice.to.number}" 
@@ -238,16 +238,12 @@
 							disabled="#{saleInvoice.readOnly}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}">
-							<c:if test="#{aonRole.accountingOperator}">
-								<a4j:support ajaxSingle="true" event="oninputchange"
-									actionListener="#{saleInvoice.onDateChanged}"
-									reRender="Invoice_taxDate"
-									focus="Customer_id" />
-								<a4j:support ajaxSingle="true" event="onchanged"
-									actionListener="#{saleInvoice.onDateChanged}"
-									reRender="Invoice_taxDate"
-									focus="Customer_id" />
-							</c:if>
+							<a4j:support ajaxSingle="true" event="oninputchange"
+								actionListener="#{saleInvoice.onDateChanged}"
+								reRender="Invoice_taxDate" />
+							<a4j:support ajaxSingle="true" event="onchanged"
+								actionListener="#{saleInvoice.onDateChanged}"
+								reRender="Invoice_taxDate" />
 						</aon:selectInputDate>
 					</aon:div>
 
@@ -262,7 +258,7 @@
 						<ui:param name="skipSuggestText" 
 							value="#{saleInvoice.to.registry != null and saleInvoice.to.registry.id != null}" />
 						<aon:methodParam name="lookupChangeListener"
-							value="#{saleInvoice.customerData}" type="lookupChangeListener" />
+							value="#{saleInvoice.onCustomerChanged}" type="lookupChangeListener" />
 					</ui:include>
 					
 					<aon:outputLabel for="Invoice_taxDate" 
@@ -275,11 +271,9 @@
 							popupDateFormat="#{bundle.aon_date_pattern}"
 							inputStyle="#{saleInvoice.taxDateEquals?'':'background-color: #ff865e;'}">
 							<a4j:support ajaxSingle="true" event="oninputchange"
-								reRender="Invoice_taxDate"
-								focus="Customer_id" />
+								reRender="Invoice_taxDate" />
 							<a4j:support ajaxSingle="true" event="onchanged"
-								reRender="Invoice_taxDate"
-								focus="Customer_id" />
+								reRender="Invoice_taxDate" />
 						</aon:selectInputDate>
 					</c:if>
 					<c:if test="#{!aonRole.accountingOperator}">
@@ -433,6 +427,20 @@
 				</aon:div>
 
 				<aon:panelGrid columns="2" style="width: 100%;"
+					rendered="#{saleInvoice.to.seller.id != null}"
+					columnClasses="aon-panelGrid-odd aon-width-140,
+						aon-panelGrid-even aon-width-auto">
+
+					<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{saleInvoice.to.seller}" />
+						<ui:param name="lookupDisabled" value="#{saleInvoice.readOnly}" />
+						<aon:methodParam name="lookupChangeListener"
+							value="#{saleInvoice.onSellerChanged}" type="lookupChangeListener" />
+					</ui:include>
+
+				</aon:panelGrid>
+
+				<aon:panelGrid columns="2" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-140,
 						aon-panelGrid-even aon-width-auto">
 
@@ -478,7 +486,7 @@
 
 				</aon:panelGrid>
 
-				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/form_detail.xhtml">
+				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formDetail.xhtml">
 					<ui:param name="invoiceController" value="#{saleInvoice}" />
 					<ui:param name="detailController" value="#{saleInvoiceDetail}" />
 					<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
@@ -489,7 +497,7 @@
 					</c:if>
 				</ui:include>
 
-				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/form_finances.xhtml">
+				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formFinance.xhtml">
 					<ui:param name="invoiceController" value="#{saleInvoice}" />
 					<ui:param name="detailController" value="#{saleInvoiceDetail}" />
 					<ui:param name="financeController" value="#{saleInvoiceFinance}" />
@@ -498,6 +506,7 @@
 
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
