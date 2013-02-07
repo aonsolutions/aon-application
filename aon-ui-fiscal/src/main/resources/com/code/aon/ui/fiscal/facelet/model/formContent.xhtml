@@ -69,7 +69,12 @@
 					value="#{fiscalBundle.fiscal_period}" />
 				<aon:selectOneMenu id="controller_period" value="#{controller.declaration.header.period}"
 					required="true" disabled="#{controller.declaration.header.readOnly}">
-					<f:selectItems value="#{fiscalCollections.periods}" />
+					<c:if test="#{quarterPeriods}">
+						<f:selectItems value="#{fiscalCollections.quarterPeriods}" />
+					</c:if>
+					<c:if test="#{!quarterPeriods}">
+						<f:selectItems value="#{fiscalCollections.periods}" />	
+					</c:if>
 				</aon:selectOneMenu>
 
 				<aon:outputLabel for="controller_administration"

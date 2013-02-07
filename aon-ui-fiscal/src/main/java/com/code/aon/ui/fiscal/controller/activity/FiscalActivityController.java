@@ -254,8 +254,9 @@ public class FiscalActivityController extends BasicController implements IFiscal
 	
 	public DataModel getSectors() {
 		if (sectors == null) {
+			
 			try {
-				setSectors( new ListDataModel( getModules().getSectors() ));
+				setSectors( new ListDataModel( getModules().getSectors( getFiscalActivity().isFarmer() ) ));
 			} catch (AonException e) {
 				AonUtil.addErrorMessage("Imposible recuperar los sectores de los epígrafes");
 				setSectors( new ListDataModel( ));
@@ -271,7 +272,7 @@ public class FiscalActivityController extends BasicController implements IFiscal
 		String sug = (String) suggest;
 		sug = PERCENT + (sug!=null?(sug+ PERCENT):"");
 		Modules modules = new Modules();
-		return modules.getSectors(sug);
+		return modules.getSectors(sug,getFiscalActivity().isFarmer());
 	}
 	
 	public void onClearSector(ActionEvent event) {
@@ -336,10 +337,12 @@ public class FiscalActivityController extends BasicController implements IFiscal
 		fa.setMaxImport(fa.getSector().getMaxImport());
 		fa.setMaxPerson(fa.getSector().getMaxPerson());
 		fa.setVatPercent(fa.getSector().getVatPercent());
-		fillInfo( fa );
-		fillVatModules(fa, epigrafe );
-		fillIrpfModules(fa, epigrafe );
-		fillInfoChoices();
+		if (!fa.isFarmer()) {
+			fillInfo( fa );
+			fillVatModules(fa, epigrafe );
+			fillIrpfModules(fa, epigrafe );
+			fillInfoChoices();
+		}
 	}
 
 	private void fillInfo(FiscalActivity fa) {

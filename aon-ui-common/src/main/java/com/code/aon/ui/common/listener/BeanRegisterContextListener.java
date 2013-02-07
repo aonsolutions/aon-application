@@ -79,7 +79,7 @@ public class BeanRegisterContextListener implements ServletContextListener {
 	        for (int i = 0; i < urls.length; i++) {
 	            try {
 	            	addBeanConfig( urls[i] );
-	            	LOGGER.info("Added Bean Config from: " + urls[i]);
+	            	LOGGER.debug("Added Bean Config from: " + urls[i]);
 	            } catch (Exception e) {
 	                LOGGER.error( "Error Loading Library: " + urls[i], e);
 	            }

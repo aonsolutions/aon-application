@@ -36,6 +36,7 @@ public class FiscalCollectionsController {
 	private List<SelectItem> vatTypes;
 	private List<SelectItem> invoiceOrders;
 	private List<SelectItem> periods;
+	private List<SelectItem> quarterPeriods;
 	private List<SelectItem> mod347Formats;
 	private List<SelectItem> mod347Types;
 	private List<SelectItem> mod349Statuses;
@@ -159,6 +160,18 @@ public class FiscalCollectionsController {
 			}
 		}
 		return periods;
+	}
+	
+	public List<SelectItem> getQuarterPeriods() {
+		if (quarterPeriods == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			quarterPeriods = new LinkedList<SelectItem>();
+			quarterPeriods.add( new SelectItem(Period.T1, Period.T1.getName(locale)) );
+			quarterPeriods.add( new SelectItem(Period.T2, Period.T2.getName(locale)) );
+			quarterPeriods.add( new SelectItem(Period.T3, Period.T3.getName(locale)) );
+			quarterPeriods.add( new SelectItem(Period.T4, Period.T4.getName(locale)) );
+		}
+		return quarterPeriods;
 	}
 	
 	public List<SelectItem> getMod340Formats() {

@@ -31,6 +31,17 @@
 						disabled="#{!fiscalActivity.new}"
 						focus="'#{'FiscalActivity_sector'}"
 						value="#{fiscalActivity.to.year}" required="true" />
+				
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="FiscalActivity_farmer" value="#{fiscalActivity.to.farmer}"
+							disabled="#{!fiscalActivity.new and fiscalActivity.to.epigraph != null}">
+							<a4j:support event="onchange" ajaxSingle="true"
+								reRender="epigraphTable"
+								actionListener="#{fiscalActivity.onClearSector}"/>
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="FiscalActivity_farmer" value="#{fiscalBundle.fiscal_farmer_activity}" />
+					</aon:div>
 					
 					<c:if test="#{fiscalActivity.new}">
 						<aon:outputLabel for="FiscalActivity_sector"

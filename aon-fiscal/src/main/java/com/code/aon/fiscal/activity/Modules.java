@@ -19,9 +19,10 @@ public class Modules {
 	private static String AEAT_DATABASE_URL = "jdbc:derby:classpath:"+AEAT_DATABASE;
 	
 	private static String SELECT_EPIGRAFES = "SELECT" 
- 			+ " SECTOR, EPIGRAFE, DESCRIPCION"
-			+ " FROM EPIGRAFE"
-			+ " WHERE EPIGRAFE.SECTOR = ? "; 
+ 			+ " EPIGRAFE.SECTOR, EPIGRAFE.EPIGRAFE, EPIGRAFE.DESCRIPCION, SECTOR.DESCRIPCION"
+			+ " FROM EPIGRAFE, SECTOR"
+			+ " WHERE EPIGRAFE.SECTOR = ? "
+			+ " AND EPIGRAFE.SECTOR = SECTOR.ID "; 
 	
 	private static String SELECT_SECTORS = "SELECT " 
 			+"ID"
@@ -41,19 +42,25 @@ public class Modules {
 			+",MAX_PERSON"
 			+",PORCENTAJE"
 			+ " FROM APP.SECTOR ";
-	private static String SELECT_ALL_SECTORS_WHERE = " WHERE MOD_AGR = 0" 
-			+ " AND (IVA = 1 OR IRPF = 1)";
 	
-	private static String SELECT_ALL_SECTORS = SELECT_SECTORS + SELECT_ALL_SECTORS_WHERE; 
+	private static String SELECT_NON_FARMER_SECTORS_WHERE = " WHERE MOD_AGR = 0" 
+			+ " AND (IVA = 1 OR IRPF = 1)";
+	private static String SELECT_FARMER_SECTORS_WHERE = " WHERE IVA_AGR = 1";
+	
+	private static String SELECT_NON_FARMER_ALL_SECTORS = SELECT_SECTORS + SELECT_NON_FARMER_SECTORS_WHERE; 
+	private static String SELECT_FARMER_ALL_SECTORS = SELECT_SECTORS + SELECT_FARMER_SECTORS_WHERE; 
 
-	private static String SELECT_SECTORS_FILTERED = SELECT_ALL_SECTORS
-			+ " AND (SECTOR LIKE ? " 
+	private static String SECTORS_FILTER = " AND (SECTOR LIKE ? " 
 			+ " OR UPPER(DESCRIPCION) LIKE ?)";
 	
 	private static String SELECT_SECTORS_ORDER = " ORDER BY SECTOR "; 
 
-	private static String SELECT_SECTORS_UNFILTERED = SELECT_ALL_SECTORS + SELECT_SECTORS_ORDER;
-	
+	private static String SELECT_NON_FARMER_SECTORS_UNFILTERED = SELECT_NON_FARMER_ALL_SECTORS + SELECT_SECTORS_ORDER;
+	private static String SELECT_FARMER_SECTORS_UNFILTERED = SELECT_FARMER_ALL_SECTORS + SELECT_SECTORS_ORDER;
+
+	private static String SELECT_NON_FARMER_SECTORS_FILTERED = SELECT_NON_FARMER_ALL_SECTORS + SECTORS_FILTER + SELECT_SECTORS_ORDER;
+	private static String SELECT_FARMER_SECTORS_FILTERED = SELECT_FARMER_ALL_SECTORS + SECTORS_FILTER + SELECT_SECTORS_ORDER;
+
 	private static String SELECT_IRPF_MODULES = "SELECT " 
 			+ " MODULE.ID" 
 			+" ,MODULE.DESCRIPCION" 
@@ -96,7 +103,11 @@ public class Modules {
 				Epigrafe e = new Epigrafe();
 				e.setSector(rs.getInt(1));
 				e.setCode(rs.getString(2));
-				e.setDescription(rs.getString(3));
+				String description = rs.getString(3);
+				if (StringUtils.isBlank(description)) {
+					description = rs.getString(4);	
+				}
+				e.setDescription(description);
 				epigrafes.add(e);
 			}
 			return epigrafes;
@@ -111,20 +122,20 @@ public class Modules {
 		}
 	}
 	
-	public List<Sector> getSectors() throws AonException {
-		return getSectors(null);
+	public List<Sector> getSectors(boolean farmer) throws AonException {
+		return getSectors(null,farmer);
 	}
 
-	public List<Sector> getSectors(String sug) throws AonException {
+	public List<Sector> getSectors(String sug, boolean farmer) throws AonException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
 			conn = getConnection();
 			if (StringUtils.isBlank(sug)) {
-				stmt = conn.prepareStatement(SELECT_SECTORS_UNFILTERED);	
+				stmt = conn.prepareStatement(farmer?SELECT_FARMER_SECTORS_UNFILTERED:SELECT_NON_FARMER_SECTORS_UNFILTERED );
 			} else {
-				stmt = conn.prepareStatement(SELECT_SECTORS_FILTERED);
+				stmt = conn.prepareStatement(farmer?SELECT_FARMER_SECTORS_FILTERED:SELECT_NON_FARMER_SECTORS_FILTERED);
 				sug = StringUtils.upperCase(sug);
 				stmt.setString(1, sug);
 				stmt.setString(2, sug);
@@ -224,11 +235,9 @@ public class Modules {
 			DbUtils.closeQuietly(conn);
 		}
 	}
-
 	
-	public static void main(String[] args) throws AonException {
-		Modules m = new Modules();
+	public static void main(String[] args) {
 		
-		m.getSectors();
-	} 
+	}
+
 }

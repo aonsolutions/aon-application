@@ -35,26 +35,19 @@ public class Mod310 implements IFiscalDeclaration {
 	public void initializeDetails() throws ManagerBeanException {
 		Administration admin = fiscalModel.getAdministration();
 		boolean cacAdded = false;
-		boolean cagAdded = false;
 		for (Mod310Key key : Mod310Key.values()) {
 			if (key.accept(admin)) {
 				if (key == Mod310Key.CAC1 
 				 || key == Mod310Key.CAC2
 				 || key == Mod310Key.CAC3
 				 || key == Mod310Key.CAC4
-				 || key == Mod310Key.CAC5) {
+				 || key == Mod310Key.CAC5
+				 || key == Mod310Key.CAG1
+				 || key == Mod310Key.CAG2
+				 || key == Mod310Key.CAG3
+				 || key == Mod310Key.CAG4) {
 					if (!cacAdded) {
 						addFiscalActivities();
-						cacAdded = true;
-					}
-				} else if (key == Mod310Key.CAG1
-						 || key == Mod310Key.CAG2
-						 || key == Mod310Key.CAG3
-						 || key == Mod310Key.CAG4
-						) {
-					if (!cagAdded) {
-						// TODO
-						// add agricolas
 						cacAdded = true;
 					}
 				} else {
@@ -72,22 +65,32 @@ public class Mod310 implements IFiscalDeclaration {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_YEAR), year);
 		List<ITransferObject> list = bean.getList(criteria);
-		int i = 1;
+		int ac = 1;
+		int ag = 1;
 		for (ITransferObject to : list) {
-			FiscalActivity fa = (FiscalActivity) to;	
-			criteria = new Criteria();
-			criteria.addEqualExpression(infoBean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_INFO_FISCAL_ACTIVITY_ID), fa.getId());
-			criteria.addEqualExpression(infoBean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_INFO_INFO_KEY), FiscalActivityInfoKey.V06);
-			List<ITransferObject> infos = infoBean.getList(criteria);
-			for (ITransferObject infoTo : infos) {
-				FiscalActivityInfo info = (FiscalActivityInfo) infoTo;
+			FiscalActivity fa = (FiscalActivity) to;
+			if ( fa.isFarmer() ) {
 				FiscalModelDetail detail = new FiscalModelDetail();
 				detail.setFiscalModel(getHeader());
-				detail.setType("310-AC" + i);
-				detail.setAccumulatedAmount( info.getDoubleValue() );
+				detail.setType(Mod310Key.FARMING_ACTIVITIES_PREFIX + ag);
 				detail.setDescription( fa.getEpigraph() + " - " + fa.getDescription() );
 				addDetail(detail);
-				i++;
+				ag++;
+			} else {
+				criteria = new Criteria();
+				criteria.addEqualExpression(infoBean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_INFO_FISCAL_ACTIVITY_ID), fa.getId());
+				criteria.addEqualExpression(infoBean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_INFO_INFO_KEY), FiscalActivityInfoKey.V06);
+				List<ITransferObject> infos = infoBean.getList(criteria);
+				for (ITransferObject infoTo : infos) {
+					FiscalActivityInfo info = (FiscalActivityInfo) infoTo;
+					FiscalModelDetail detail = new FiscalModelDetail();
+					detail.setFiscalModel(getHeader());
+					detail.setType(Mod310Key.ACTIVITIES_PREFIX + ac);
+					detail.setAccumulatedAmount( info.getDoubleValue() );
+					detail.setDescription( fa.getEpigraph() + " - " + fa.getDescription() );
+					addDetail(detail);
+					ac++;
+				}
 			}
 		}
 		
