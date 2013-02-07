@@ -695,8 +695,10 @@ public class FinanceController extends FinanceListController {
 	}
 	
 	public void onShowFinanceGroupWindow(ActionEvent event) throws ManagerBeanException{
+		if(!this.isNew()){
+			buildFinanceGroupList((Finance) this.getTo());
+		}
 		refreshFinanceList();
-		refreshFinanceGroupList();
 		setShowFinanceGroupWindow(true);
 	}
 	
@@ -706,12 +708,14 @@ public class FinanceController extends FinanceListController {
         if(!this.isNew()){
         	groupSelected();
         	buildFinanceGroupList((Finance) this.getTo());
+        	this.getManagerBean().restoreNullSubPOJOs(this.getTo());
+        	this.getManagerBean().update(this.getTo());
         } else {
         	groupListController.getGroupList().addAll(financeListController.getCheckedFinances());
+        	refreshFinanceGroupAmount();
         }
         financeListController.clearCheckedFinances();
         refreshFinanceList();
-        refreshFinanceGroupAmount();
 	}
 	
 	public void onUngroupSelected(ActionEvent event) throws ManagerBeanException{
@@ -719,12 +723,14 @@ public class FinanceController extends FinanceListController {
         if(!this.isNew()){
         	ungroupSelected();
         	buildFinanceGroupList((Finance) this.getTo());
+        	this.getManagerBean().restoreNullSubPOJOs(this.getTo());
+        	this.getManagerBean().update(this.getTo());
         } else {
         	groupListController.getGroupList().removeAll(groupListController.getCheckedFinances());
+        	refreshFinanceGroupAmount();
         }
         groupListController.clearCheckedFinances();
         refreshFinanceList();
-        refreshFinanceGroupAmount();
 	}
 	
 	public void buildFinanceGroupList(Finance finance) throws ManagerBeanException{
@@ -743,12 +749,14 @@ public class FinanceController extends FinanceListController {
 	private void groupSelected() throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		FinanceListController financeListController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);        
+		Finance financeGroup = (Finance) this.getTo();
 		for(Finance finance: financeListController.getCheckedFinances()){
-			finance.setFinanceGroup((Finance) this.getTo());
+			finance.setFinanceGroup(financeGroup);
 			finance.setFinanceStatus(FinanceStatus.SETTLED);
 			financeBean.update(finance);
 			String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_GROUPED);
 			createFinanceTracking(finance, message);
+			financeGroup.setAmount(financeGroup.getAmount()+finance.getAmount());
 		}
 	}
 
@@ -759,12 +767,14 @@ public class FinanceController extends FinanceListController {
 	
 	public void ungroupSelected(List<?> finances) throws ManagerBeanException{
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Finance financeGroup = (Finance) this.getTo();
 		for(Object to : finances){
 			Finance finance = (Finance) to;
 			finance.setFinanceGroup(null);
 			finance.setFinanceStatus((FinanceTrackingWriter.wasFinanceReturned(finance)?FinanceStatus.RETURNED:FinanceStatus.PENDING));
 			financeBean.update(finance);
 			removeFinanceTracking(finance);
+			financeGroup.setAmount(financeGroup.getAmount()-finance.getAmount());
 		}
 	}
 	
