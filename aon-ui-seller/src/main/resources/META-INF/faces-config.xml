@@ -46,6 +46,7 @@
 				</value-class>
 				<value>#{sellerSearch}</value>
 				<value>#{sellerForm}</value>
+				<value>#{sellerScopeListener}</value>
 				<value>#{sellerMediaListener}</value>
 				<value>#{sellerAddressListener}</value>
 				<value>#{sellerAddInfoListener}</value>
@@ -61,6 +62,16 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>sellerScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>Seller_scope_id</value>
+		</managed-property>
+	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>sellerAddressListener</managed-bean-name>
@@ -366,6 +377,7 @@
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{sellerSearch}</value>
 				<value>#{sellerForm}</value>
+				<value>#{sellerScopeListener}</value>				
 			</list-entries>
 		</managed-property>				
 	</managed-bean>
