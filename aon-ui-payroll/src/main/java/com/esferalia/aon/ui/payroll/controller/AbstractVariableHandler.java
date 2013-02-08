@@ -38,15 +38,16 @@ import com.code.aon.ql.ast.impl.ConstantExpressionImpl;
 import com.code.aon.ql.ast.impl.RelationalExpressionImpl;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.SystemData;
-import com.esferalia.aon.payroll.enumeration.CNO;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
@@ -65,9 +66,6 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 	private DataModel variablesModel;
 	private DataModel undefinedVariablesModel;
 	
-//	private Date inactiveDate;
-//	private InactiveLastPeriod inactiveLastPeriod;
-//	private Boolean searchCurrentVariables;
 	private boolean isNew;
 	
 	private IController controller;
@@ -132,22 +130,6 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 		return ((BasicController)getController()).getBeanName();
 	}
 
-//	public boolean isSearchCurrentVariables() {
-//		if(searchCurrentVariables == null){
-//			searchCurrentVariables = true;
-//		}
-//		return searchCurrentVariables;
-//	}
-//	public void setSearchCurrentVariables(boolean searchCurrentVariables) {
-//		this.searchCurrentVariables = searchCurrentVariables;
-//	}
-//	public InactiveLastPeriod getInactiveLastPeriod() {
-//		return inactiveLastPeriod;
-//	}
-//	public void setInactiveLastPeriod(InactiveLastPeriod inactiveLastPeriod) {
-//		this.inactiveLastPeriod = inactiveLastPeriod;
-//	}
-
 	public boolean isNew() {
 		return isNew;
 	}
@@ -155,13 +137,6 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 		this.isNew = isNew;
 	}
 
-//	public Date getInactiveDate() {
-//		return inactiveDate;
-//	}
-//	public void setInactiveDate(Date inactiveDate) {
-//		this.inactiveDate = inactiveDate;
-//	}
-	
 	public VariableData getData() {
 		return data;
 	}
@@ -196,11 +171,12 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 		return total;
 	}
 	
-	public void onResetVariable(ActionEvent event) {
+	public void onResetVariable(ActionEvent event) throws ManagerBeanException {
 		setNew(true);
 		resetVariable();
 		getData().setExpression("");
 		getData().setStartDate(new Date());
+		setCno((CNO) BeanManager.getManagerBean(CNO.class).createNewTo());
 	}
 	public void onSelectVariable(ActionEvent event) {
 		initEditor();
@@ -354,60 +330,6 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 	//******************************************************
 	// VARIABLEs FILTER
 	//******************************************************
-//	public void onChangeInactiveDate( ActionEvent event ) {
-//		if(getInactiveDate()==null && getInactiveLastPeriod()!=InactiveLastPeriod.ALL){
-//			Calendar cal = Calendar.getInstance();
-//			cal.add(Calendar.MONTH, -1);
-//			setInactiveDate(cal!=null?cal.getTime():null);
-//		}
-//	}
-//	
-//	public void onChangeLastPeriod( ActionEvent event ) {
-//		Calendar cal = Calendar.getInstance();
-//		cal.set(Calendar.DAY_OF_MONTH, 1);
-//		if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_MONTH){
-//			cal.add(Calendar.MONTH, -1);
-//		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_QUARTER){
-//			cal.add(Calendar.MONTH, -3);
-//		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_SEMESTER){
-//			cal.add(Calendar.MONTH, -6);
-//		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_YEAR){
-//			cal.add(Calendar.YEAR, -1);
-//		} else if(getInactiveLastPeriod()==InactiveLastPeriod.ALL){
-//			cal = null;
-//		}
-//		setInactiveDate(cal!=null?cal.getTime():null);
-//	}
-//	
-//	private String selectedVariableFilter;
-//	
-//	@SuppressWarnings("unchecked")
-//	public List<SelectItem> getAvailableVariables(){
-//		List<SelectItem> list = new LinkedList<SelectItem>();
-//		if(getVariablesModel()!=null){
-//			for(VariableData data: (List<VariableData>)getVariablesModel().getWrappedData()){
-//				String name = data.getName();
-//				SelectItem item = new SelectItem(name, name);
-//				list.add(item);
-//			}
-//		}
-//		if(getUndefinedVariablesModel()!=null){
-//			for(VariableData data: (List<VariableData>)getUndefinedVariablesModel().getWrappedData()){
-//				String name = data.getName();
-//				SelectItem item = new SelectItem(name, name);
-//				list.add(item);
-//			}
-//		}
-//		return list;
-//	}
-//	
-//	public String getSelectedVariableFilter() {
-//		return selectedVariableFilter;
-//	}
-//	public void setSelectedVariableFilter(String selectedVariableFilter) {
-//		this.selectedVariableFilter = selectedVariableFilter;
-//	}
-	
 	private VariableFilter variableFilter;
 	
 	public VariableFilter getVariableFilter() {
@@ -649,8 +571,10 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 			getData().setExpression( getData().getExpression().substring(1, getData().getExpression().length()-1) );
 		}
 		
+//		if (data.getVariable() == ContextVariable.CNO) {
+//			setCno(CNO.getCnoByValue(data.getExpression()));
 		if (data.getVariable() == ContextVariable.CNO) {
-			setCno(CNO.getCnoByValue(data.getExpression()));
+			loadCno(data.getExpression());
 		} else if (data.getVariable() == ContextVariable.TC2) {
 			setContractCode(ContractCode.getContractCodeByValue(data.getExpression()));
 		} else if (data.getVariable() == ContextVariable.CATEGORY) {
@@ -678,11 +602,14 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 			}
 		}
 	}
-	
+
 	private void handleDataExpression() {
 		if(!getData().isEnableExpressionEditor()){
+			// FIXME
+//			if(getData().getVariable()==ContextVariable.CNO){
+//				getData().setExpression("\""+String.valueOf(getCno().ordinal())+"\"");
 			if(getData().getVariable()==ContextVariable.CNO){
-				getData().setExpression("\""+String.valueOf(getCno().ordinal())+"\"");
+				getData().setExpression("\""+String.valueOf(getCno().getCode())+"\"");
 			}else if(getData().getVariable()==ContextVariable.TC2){
 				getData().setExpression("\""+getContractCode().getValue()+"\"");
 			}else if(getData().getVariable()==ContextVariable.CATEGORY){
@@ -704,6 +631,32 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 			}else if(getData().getVariable()!=null && getData().getVariable().getType()==VariableType.DATE){
 				;
 			}
+		}
+	}
+	
+	private void loadCno(String expression) {
+//		setCno(null);
+		if(getCno()==null){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(CNO.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CNO_CODE), expression);
+				List<ITransferObject> list = bean.getList(criteria);
+				if( !list.isEmpty() ){
+					setCno((CNO) list.get(0));
+				}
+			} catch (ManagerBeanException e) {
+				// do nothing ...
+			}
+		}
+	}
+	
+	public void onCnoChange(LookupChangeEvent event){
+		try {
+			setCno((CNO) BeanManager.getManagerBean(CNO.class).createNewTo());
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -808,8 +761,13 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 			setExpressionValue(false);
 			if( StringUtils.isBlank(getExpression()) ){
 				setExpressionValue(false);
-			}else if(getVariable()==ContextVariable.CNO && CNO.getCnoByValue(getExpression())==null ){
-				setExpressionValue(true);
+			}else if(getVariable()==ContextVariable.CNO){
+				loadCno(getExpression());
+				if(getCno()==null ){
+					setExpressionValue(true);
+				} else {
+					setExpressionValue(false);
+				}
 			}else if(getVariable()==ContextVariable.TC2 && ContractCode.getContractCodeByValue(getExpression())==null ){
 				setExpressionValue(true);
 			}else if(getVariable()==ContextVariable.CATEGORY){
@@ -853,9 +811,10 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 		}
 		
 		public Enum<?> getVariableEnum(){
-			if(getName().equals(ContextVariable.CNO.getName())){
-				return CNO.getCnoByValue(handleSelectItemExpression(getExpression()));
-			} else if(getName().equals(ContextVariable.TC2.getName())){
+//			if(getName().equals(ContextVariable.CNO.getName())){
+//				return CNO.getCnoByValue(handleSelectItemExpression(getExpression()));
+//			} else 
+			if(getName().equals(ContextVariable.TC2.getName())){
 				return ContractCode.getContractCodeByValue(handleSelectItemExpression(getExpression()));
 			} else if(getName().equals(ContextVariable.QUOTE_GROUP.getName())){
 				return QuoteGroup.getQuoteGroupByValue(handleSelectItemExpression(getExpression()));
@@ -866,8 +825,37 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 			}
 			return null;
 		}
+		public String getVariableLookup(){
+//			if(getCno()!=null && getName().equals(ContextVariable.CNO.getName())){
+//				return getCno().getCode() + " - " + getCno().getTitle();
+			if(getName().equals(ContextVariable.CNO.getName())){
+				try {
+					CNO cno = null;
+					IManagerBean bean = BeanManager.getManagerBean(CNO.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CNO_CODE), handleLookupExpression(getExpression()));
+					List<ITransferObject> list = bean.getList(criteria);
+					if( !list.isEmpty() ){
+						cno = (CNO) list.get(0);
+					}
+					return cno.getCode() + " - " + cno.getTitle();
+				} catch (ManagerBeanException e) {
+					// do nothing ...
+				}
+				
+//				return ContractCode.getContractCodeByValue(handleSelectItemExpression(getExpression()));
+			} 
+			return null;
+		}
 		
 		private String handleSelectItemExpression(String expression) {
+			if( StringUtils.startsWith(expression, "\"") && StringUtils.endsWith(expression, "\"")){
+				return expression = expression.substring(1, expression.length()-1);
+			}
+			return expression;
+		}
+		
+		private String handleLookupExpression(String expression) {
 			if( StringUtils.startsWith(expression, "\"") && StringUtils.endsWith(expression, "\"")){
 				return expression = expression.substring(1, expression.length()-1);
 			}

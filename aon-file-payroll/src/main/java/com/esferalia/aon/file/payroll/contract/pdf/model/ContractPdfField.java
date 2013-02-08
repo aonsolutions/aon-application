@@ -19,6 +19,7 @@ public class ContractPdfField {
 	private String leftCoordinates;
 	private String width;
 	private String height;
+	private Integer maxLength;
 	private int zoomFactor;
 	
 	public int getZoomFactor() {
@@ -96,7 +97,13 @@ public class ContractPdfField {
 	public void setHeight(String height) {
 		this.height = height;
 	}
-	
+	public Integer getMaxLength() {
+		return maxLength;
+	}
+	public void setMaxLength(Integer maxLength) {
+		this.maxLength = maxLength;
+	}
+
 	public boolean isText(){
 		if(type.equals(AcroFields.FIELD_TYPE_TEXT)){
 			return true;

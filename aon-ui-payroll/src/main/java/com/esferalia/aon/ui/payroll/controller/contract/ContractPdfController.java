@@ -279,7 +279,7 @@ public class ContractPdfController {
 		final String SCHEMA = getContractModel()+".pdf"; 
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		URL[] urls = Classpath.search(cl, IPayrollConstants.MODEL_PATH, SCHEMA);
-		PdfToImage.create(urls[0], getContractPage(), getContractWidth().intValue(), getContractHeight().intValue());
+		PdfToImage.createPdfWallpaper(urls[0], getContractPage(), getContractWidth().intValue(), getContractHeight().intValue());
 	}
 	
 	public void onChangeZoomFactor( ActionEvent event ) throws IOException {

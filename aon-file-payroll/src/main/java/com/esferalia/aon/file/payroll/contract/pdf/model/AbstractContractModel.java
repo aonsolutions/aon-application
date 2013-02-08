@@ -9,9 +9,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
-
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.Classpath;
 import com.esferalia.aon.payroll.Contract;
@@ -19,6 +16,9 @@ import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.AcroFields;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfNumber;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 
@@ -73,9 +73,10 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 	public void setNumberOfContractPages(Integer numberOfContractPages) {
 		this.numberOfContractPages = numberOfContractPages;
 	}
-
+	
 	public byte[] buildPdf() {
 		try {
+			
 			PdfReader reader = new PdfReader(getContractModelUrl(modelName+".pdf"));
 			
 			setContractWidth((double)reader.getPageSize(1).getWidth());
@@ -84,13 +85,11 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
 			PdfStamper stamp = new PdfStamper(reader, baos);
-			AcroFields form = stamp.getAcroFields();
 			
+			AcroFields form = stamp.getAcroFields();
 			
 			String checkValue = null;
 			for (Iterator<?> it = getPdfFields().iterator(); it.hasNext();) {
-//				key = (String) it.next();
-//				ContractPdfField field = getPdfFieldsMap().get(key);
 				ContractPdfField field = (ContractPdfField) it.next();
 				if(field.getType()==AcroFields.FIELD_TYPE_CHECKBOX){
 					if(checkValue==null){
@@ -101,6 +100,7 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 					form.setField(field.getLabel(), field.getValue());
 				}
 			}
+			
 //    		stamp.setFormFlattening(true);
 			stamp.setFormFlattening(false);
 			stamp.close();
@@ -155,8 +155,7 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 			}
 			reader.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = "No se ha podido cargar todos los datos del centrato en el documento.";
 		}
 	}
 	
@@ -195,6 +194,11 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 			field.setWidth(getInputTextWidth(form, key));
 			field.setHeight(getInputTextHeight(form, key));
 			field.setZoomFactor(2);
+			PdfDictionary mergedField = form.getFieldItem( key ).getMerged( 0 );
+			PdfNumber maxLengthNumber = mergedField.getAsNumber( PdfName.MAXLEN );
+			if (maxLengthNumber != null) {
+			  field.setMaxLength(maxLengthNumber.intValue());
+			}
 			if(field.getType()!=null){
 				getPdfFieldsMap().put(key, field);
 			}

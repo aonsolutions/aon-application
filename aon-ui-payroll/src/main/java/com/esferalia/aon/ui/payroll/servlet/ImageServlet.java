@@ -25,27 +25,11 @@ public class ImageServlet extends HttpServlet implements IPayrollConstants{
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		
-//		String page = request.getServletPath();
-//		page = StringUtils.substringBetween(page, "/", ".");
-//		if(StringUtils.isEmpty(page)){
-//			throw new IllegalArgumentException("Pagina de contrato desconocida");
-//		}
-//		String model = request.getParameter("model");
-//		Integer zoom = Integer.parseInt(request.getParameter("zoom"));
-//		Integer width = Integer.parseInt(request.getParameter("width"));
-//		Integer height = Integer.parseInt(request.getParameter("height"));
-//		if (StringUtils.isEmpty(model)) {
-//			throw new IllegalArgumentException("Modelo vacio");
-//		}
-//		final String SCHEMA = model+".pdf"; 
-//		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-//		URL[] urls = Classpath.search(cl, MODEL_PATH, SCHEMA);
-//		BufferedImage pic = PdfToImage.create(urls[0], Integer.parseInt(page), width.intValue(), height.intValue());
-		BufferedImage pic = PdfToImage.getImage();
-		if (pic==null) {
+		BufferedImage contractWallpaper = PdfToImage.getPdfWallpaperImage();
+		if (contractWallpaper==null) {
 			throw new IllegalArgumentException("Se ha producido un error al obtener la página del contrato.");
 		}
-		byte[] buffer = ImageUtil.getImage(pic,MimeType.MIME_PNG.getExtension());
+		byte[] buffer = ImageUtil.getImage(contractWallpaper,MimeType.MIME_PNG.getExtension());
 		InputStream in = new ByteArrayInputStream(buffer);
 		int bytes = in.read(buffer);
 		while (bytes != -1) {

@@ -13,6 +13,8 @@
 		<aon:valueParam name="baseVariableType" default="#{data.variable.type}" />
 		<aon:valueParam name="variableType" default="#{data.variableType}" />
 		
+		<aon:methodParam name="cnoChangeListener" default="#{controller.handler.onCnoChange}" type="lookupChangeListener" />
+		
 	</ui:include>
 
 </ui:composition>

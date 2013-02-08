@@ -36,10 +36,12 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.model.IContratoType;
+import com.esferalia.aon.file.payroll.contract.model.IProrrogaType;
 import com.esferalia.aon.file.payroll.contract.model.ITransformacionType;
 import com.esferalia.aon.file.payroll.contrata.ContractContrataFactory;
 import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATOS;
 import com.esferalia.aon.file.payroll.contrata.model.prorrogas.PRORROGAS;
+import com.esferalia.aon.file.payroll.contrata.model.prorrogas.PRORROGATIPOTYPE;
 import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACIONES;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseCCC;
@@ -53,7 +55,6 @@ public class ContrataWriter {
 	private final String CONTRATA_CONTRATOS_MODEL_PATH = "com.esferalia.aon.file.payroll.contrata.model.contratos";
 	private final String CONTRATA_TRANSFORMACIONES_MODEL_PATH = "com.esferalia.aon.file.payroll.contrata.model.transformaciones";
 	private final String CONTRATA_PRORROGAS_MODEL_PATH = "com.esferalia.aon.file.payroll.contrata.model.prorrogas";
-	private final String ZERO_VALUE = "0";
 	
 	private com.esferalia.aon.file.payroll.contrata.model.contratos.ObjectFactory contratoFactory = new com.esferalia.aon.file.payroll.contrata.model.contratos.ObjectFactory();
 
@@ -111,35 +112,24 @@ public class ContrataWriter {
 		TRANSFORMACIONES transformaciones = null;
 		PRORROGAS prorrogas = null;
 		String modelPath = null;
+		ContractContrataFactory factory = new ContractContrataFactory();
 		if( contratoFile ){
-			ContractContrataFactory factory = new ContractContrataFactory();
-//			IContratoType contratoType = factory.createContratoModel(code);
-//			contratoType = createContratosFile(contratoType, params);
-			
 			ContrataContratosWriter writer = new ContrataContratosWriter();
 			IContratoType contratoType = writer.createFile(factory.createContratoModel(code), params);
-
 			contratos = contratoFactory.createCONTRATOS();
 			contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().add(contratoType);
 			modelPath = CONTRATA_CONTRATOS_MODEL_PATH;
 		} else if( transfonacionFile ) {
-			ContractContrataFactory factory = new ContractContrataFactory();
-//			ITransformacionType transformacionType = factory.createTransformacionesType(code);
-//			transformacionType = createTransformacionesFile(transformacionType, params);
-
 			ContrataTransformacionesWriter writer = new ContrataTransformacionesWriter(); 
 			ITransformacionType transformacionType = writer.createFile(factory.createTransformacionesType(code), params);
-
 			transformaciones = transformacionFactory.createTRANSFORMACIONES();
 			transformaciones.getTRANSFORMACION109AndTRANSFORMACION139AndTRANSFORMACION189().add(transformacionType);
 			modelPath = CONTRATA_TRANSFORMACIONES_MODEL_PATH;
 		} else if( prorrogaFile ) {
-//			ContractContrataFactory factory = new ContractContrataFactory();
-//			IProrrogaType prorrogaType = factory.createProrrogasType(code);
-//			prorrogaType = createProrrogasFile(prorrogaType, params);
-			
+			ContrataProrrogasWriter writer = new ContrataProrrogasWriter(); 
+			IProrrogaType prorrogaType = writer.createFile(factory.createProrrogasType(code), params);
 			prorrogas = prorrogaFactory.createPRORROGAS();
-//			prorrogas.getPRORROGATIPO().add(prorrogaType);
+			prorrogas.getPRORROGATIPO().add((PRORROGATIPOTYPE) prorrogaType);
 			modelPath = CONTRATA_PRORROGAS_MODEL_PATH;
 		}
 		

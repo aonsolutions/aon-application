@@ -20,7 +20,7 @@
 					rendered="#{field.page==contractPdf.contractPage}"
 					style="background-color:transparent; border: #E0ECF8 2px solid; position:absolute; bottom:#{field.scaledBottomCoordinates-2}px; left:#{field.scaledLeftCoordinates}px;width:#{field.scaledWidth}px; "
 					value="#{field.value}" size="#{field.width}"
-					maxlength="16" />
+					maxlength="#{field.maxLength}" />
 			</c:if>
 			<c:if test="#{field.check}">
 				<aon:selectBooleanCheckbox 

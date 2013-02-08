@@ -2851,6 +2851,10 @@
 			<value>CNO_code</value>
 		</managed-property>
 		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>CNO_title</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/cno/list.xhtml</value>
 		</managed-property>

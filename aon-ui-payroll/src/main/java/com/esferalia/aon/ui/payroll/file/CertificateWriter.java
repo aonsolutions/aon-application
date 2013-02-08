@@ -176,7 +176,7 @@ public class CertificateWriter {
 		try {
 			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-			URL[] urls = Classpath.search(cl, "META-INF/", SCHEMA);
+			URL[] urls = Classpath.search(cl, "META-INF/schema/", SCHEMA);
 			Validator validator = sf.newSchema(urls[0]).newValidator();
 			StreamSource source = new StreamSource(xml);
 			validator.validate(source);

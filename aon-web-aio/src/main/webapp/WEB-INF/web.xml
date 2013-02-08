@@ -92,6 +92,16 @@
 		<servlet-name>TemplatePreview</servlet-name>
 		<url-pattern>*.template</url-pattern>
 	</servlet-mapping>
+	
+	<!-- Payroll Contract Image Servlet -->
+	<servlet>
+		<servlet-name>ImageServlet</servlet-name>
+		<servlet-class>com.esferalia.aon.ui.payroll.servlet.ImageServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ImageServlet</servlet-name>
+		<url-pattern>*.contractImage</url-pattern>
+	</servlet-mapping>
 
 	<!-- JSF STANDARD CONFIGURATION -->
 	<context-param>

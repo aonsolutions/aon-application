@@ -39,6 +39,7 @@ public interface IPayrollConstants {
 	String AGREEMENT_LEVEL_CONTROLLER_NAME = "agreementLevel";
 	String AGREEMENT_PAYMENT_CONTROLLER_NAME = "agreementPayment";
 	String AGREEMENT_TREE_CONTROLLER_NAME = "agreementTree";
+	String CERTIFICA2_BATCH_ATTACH_CONTROLLER_NAME = "certifica2BatchAttach";
 	String CERTIFICA2_BATCH_DETAIL_CONTROLLER_NAME = "certifica2BatchDetail";
 	String CERTIFICA2_BATCH_CONTROLLER_NAME = "certifica2Batch";
 	String CERTIFICA2_LIST_CONTROLLER_NAME = "certifica2List";
@@ -96,7 +97,6 @@ public interface IPayrollConstants {
 	// ************************************************************
 	// CONFIGURATION
 	// ************************************************************
-//	String MODEL_PATH = "com/esferalia/aon/ui/payroll/contractModel/";
 	String MODEL_PATH = "com/esferalia/aon/file/payroll/contract/pdf/";
 	String SHOW_ENTERPRISE_IN_SEARCH = "showEnterpriseInSearch";
 	String SHOW_PERSON_COLUMN = "showPersonColumn";

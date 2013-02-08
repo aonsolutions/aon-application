@@ -364,7 +364,7 @@ public class Certifica2BatchController extends BasicController {
 	}
 
 	private void checkDiskCreated() throws ManagerBeanException {
-		LinesController controller = (LinesController)FormUtil.getController(IPayrollConstants.CERTIFICA2_BATCH_DETAIL_CONTROLLER_NAME);
+		LinesController controller = (LinesController)FormUtil.getController(IPayrollConstants.CERTIFICA2_BATCH_ATTACH_CONTROLLER_NAME);
 		if(controller.getRowCount()>0){
 			setRecorded(true);
 		} else {

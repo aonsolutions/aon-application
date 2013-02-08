@@ -69,12 +69,6 @@ public class ContractContrataController {
 	public void setHandler(ContractContrataHandler handler) {
 		this.handler = handler;
 	}
-	//	public ContractContrataFactory getFactory() {
-//		return factory;
-//	}
-//	public void setFactory(ContractContrataFactory factory) {
-//		this.factory = factory;
-//	}
 	public ContrataParams getParams() {
 		return getHandler().getParams();
 	}
@@ -99,9 +93,6 @@ public class ContractContrataController {
 				 || code.equals(ContractCode.C289.getValue())
 				 || code.equals(ContractCode.C309.getValue())
 				 || code.equals(ContractCode.C389.getValue()) ){
-//			String msg = "Transformacion de contrato no implementado para generar el fichero contrat@";
-//			AonUtil.addErrorMessage(msg);
-//			throw new AbortProcessingException(msg);
 		}
 		if( code.equals(ContractCode.C408.getValue())
 				 || code.equals(ContractCode.C418.getValue())
@@ -151,7 +142,7 @@ public class ContractContrataController {
 				return (ContractAttachment) list.get(0);
 			}
 		} catch (ManagerBeanException e) {
-			// NOTHING TO TO
+			// NOTHING TO DO
 		}
 		return null;
 	}

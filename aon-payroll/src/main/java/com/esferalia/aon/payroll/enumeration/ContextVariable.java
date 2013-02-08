@@ -87,7 +87,7 @@ public enum ContextVariable implements IResourceable{
 
 	// Datos 'temporales' del contrato
 	TC2("TC2", VariableType.TC2_DROP),
-	CNO("CNO", VariableType.CNO_DROP),
+	CNO("CNO", VariableType.CNO_LOOKUP),
 	IPREM("IPREM", VariableType.DOUBLE),
 	CATEGORY("CATEGORIA", VariableType.STRING),
 	INDEFINITE("INDEFINIDO", VariableType.BOOLEAN),
