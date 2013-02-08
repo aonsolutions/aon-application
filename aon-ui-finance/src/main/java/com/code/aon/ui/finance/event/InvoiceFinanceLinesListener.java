@@ -4,6 +4,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ui.finance.controller.InvoiceController;
+import com.code.aon.ui.finance.controller.InvoiceFinanceController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.listener.LinesControllerListener;
@@ -12,16 +13,21 @@ public class InvoiceFinanceLinesListener extends LinesControllerListener {
 	
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		InvoiceFinanceController financeController = (InvoiceFinanceController)getLinesController();
 		InvoiceController invoiceController = (InvoiceController)event.getController();
 		Invoice invoice = (Invoice)invoiceController.getTo();
 		if (invoiceController.getFinanceGenerationMode() == 1 && invoice.getTotal() != 0) {
-			Finance finance = (Finance)getLinesController().getTo();
+			Finance finance = (Finance)financeController.getTo();
 			if (finance != null) {
 				finance.setInvoice(invoice);
-				finance.setAmount(invoice.getTotal());
+				if (financeController.getPaidAmount() == 0 || financeController.getPaidAmount() >= invoice.getTotal()) {
+					finance.setAmount(invoice.getTotal());
+				} else {
+					finance.setAmount(financeController.getPaidAmount());
+				}
 			}
 		} else {
-			getLinesController().onCancel(null);
+			financeController.onCancel(null);
 		}
 
 		if (invoiceController.getFinanceGenerationMode() == 0 && invoice.getTotal() != 0) {

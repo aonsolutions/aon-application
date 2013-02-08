@@ -154,6 +154,8 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	public void onFinanceGenerationModeChanged(ValueChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			setFinanceGenerationMode((Integer)event.getNewValue());
+			InvoiceFinanceController invoiceFinanceController = (InvoiceFinanceController)FormUtil.getController(invoiceFinanceControllerName);
+			invoiceFinanceController.resetPaidAmount();
 		}
 	}
 
@@ -517,12 +519,18 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return getPriceStrategy().getTotalPrice(invoice, invoice);
 	}
 
-	public double getToInvoiceFinanceTotal() throws ManagerBeanException {
+	public double getToInvoiceFinanceTotal() {
 		double financeTotal = 0;
-		IController invoiceFinanceController = FormUtil.getController(invoiceFinanceControllerName);
-		for (ITransferObject ito : invoiceFinanceController.getManagerBean().getList(invoiceFinanceController.getCriteria())) {
-			Finance finance = (Finance)ito;
-			financeTotal += finance.getAmount();
+		try {
+			IController invoiceFinanceController = FormUtil.getController(invoiceFinanceControllerName);
+			for (ITransferObject ito : invoiceFinanceController.getManagerBean().getList(invoiceFinanceController.getCriteria())) {
+				Finance finance = (Finance)ito;
+				financeTotal += finance.getAmount();
+			}
+		} catch (ManagerBeanException ex) {
+			String msg = AonUtil.getMessage(BUNDLE_KEY, CALCULATE_FINANCES_AMOUNT_ERROR_KEY) + ". " + ex.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, ex);
 		}
 		return CommonUtil.round(financeTotal);
 	}
@@ -552,9 +560,9 @@ public class InvoiceController extends BasicController implements ISignatureCont
 				}
 			}
 
-			double totalAmount = CommonUtil.round(getToInvoiceTotalPrice() - getToInvoiceFinanceTotal());
-			if (totalAmount != 0) {
-				getFinanceGenerator().generateFinances(invoice, totalAmount);
+			double pendingAmount = getPendingAmount();
+			if (pendingAmount != 0) {
+				getFinanceGenerator().generateFinances(invoice, pendingAmount);
 			}
 			invoiceFinanceController.onSearch(null);
 		} catch (ManagerBeanException e) {
@@ -564,6 +572,10 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		}
 	}
 	
+	public double getPendingAmount() {
+		return CommonUtil.round(getToInvoiceTotalPrice() - getToInvoiceFinanceTotal());
+	}
+
 	public void onRecordInvoice(ActionEvent event) throws ManagerBeanException{
 		double invoiceTotal = getToInvoiceTotalPrice();
 		double financeTotal = getToInvoiceFinanceTotal();

@@ -26,16 +26,14 @@
 			<ui:param name="posMode" value="#{posMode}" />
 		</ui:include>
 
-		<c:if test="#{!posMode}">
-			<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formNewFinance.xhtml">
-				<ui:param name="invoiceController" value="#{invoiceController}" />
-				<ui:param name="addressController" value="#{addressController}" />
-				<ui:param name="detailController" value="#{detailController}" />
-				<ui:param name="financeController" value="#{financeController}" />
-				<ui:param name="formName" value="#{formName}" />
-				<ui:param name="posMode" value="#{posMode}" />
-			</ui:include>
-		</c:if>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formNewFinance.xhtml">
+			<ui:param name="invoiceController" value="#{invoiceController}" />
+			<ui:param name="addressController" value="#{addressController}" />
+			<ui:param name="detailController" value="#{detailController}" />
+			<ui:param name="financeController" value="#{financeController}" />
+			<ui:param name="formName" value="#{formName}" />
+			<ui:param name="posMode" value="#{posMode}" />
+		</ui:include>
 
 	</aon:panelGrid>
 

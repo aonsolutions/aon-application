@@ -43,16 +43,9 @@ public class PosInvoiceControllerListener extends SaleInvoiceControllerListener 
 		}
 
 		super.afterBeanCreated(event);
-	}
 
-	@Override
-	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		PosInvoiceController controller = (PosInvoiceController)event.getController();
 		controller.setFinanceGenerationMode(-1);
-
-		super.beforeBeanAdded(event);
 	}
-	
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {

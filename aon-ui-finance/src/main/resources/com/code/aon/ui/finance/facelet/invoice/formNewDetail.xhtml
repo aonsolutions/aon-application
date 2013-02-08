@@ -78,7 +78,7 @@
 					value="#{detailController.to.quantity}" 
 					required="true" size="5" maxlength="5"
 					valueChangeListener="#{detailController.onQuantityChanged}"
-					reRender="InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_total" ajaxSingle="true"
+					reRender="InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_total,InvoiceFinance_changeAmount" ajaxSingle="true"
 					focus="InvoiceDetail_discount" />
 
 				<aon:outputLabel for="InvoiceDetail_discount" 
@@ -87,7 +87,7 @@
 				<aon:inputText id="InvoiceDetail_discount"
 					value="#{detailController.to.discountExpression.discountExpr}"
 					required="true" size="5" maxlength="5"
-					reRender="InvoiceDetail_total" ajaxSingle="true" />
+					reRender="InvoiceDetail_total,InvoiceFinance_changeAmount" ajaxSingle="true" />
 			</aon:div>
 		</aon:panelGrid>
 

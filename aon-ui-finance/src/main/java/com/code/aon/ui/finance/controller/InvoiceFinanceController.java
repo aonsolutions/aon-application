@@ -26,6 +26,7 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
@@ -36,6 +37,7 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 
 	private RegistryBank registryBank;
 	private boolean showBankManualInput;
+	private double paidAmount;
 
 	public RegistryBank getRegistryBank() {
 		return registryBank;
@@ -53,8 +55,47 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 		this.showBankManualInput = showBankManualInput;
 	}
 
+	public double getPaidAmount() {
+		return paidAmount;
+	}
+
+	public void setPaidAmount(double paidAmount) {
+		this.paidAmount = paidAmount;
+	}
+
+	public void resetPaidAmount() {
+		String invoiceDetailControllerName = ((InvoiceController)getMasterController()).getInvoiceDetailControllerName();
+		InvoiceDetailController detailController = (InvoiceDetailController)FormUtil.getController(invoiceDetailControllerName);
+		if (detailController instanceof SaleInvoiceDetailController) {
+			setPaidAmount(((SaleInvoiceDetailController)detailController).getTotalSalesPrice());
+		} else {
+			setPaidAmount(0);
+		}
+	}
+
+	public void onPaidAmountChanged(ValueChangeEvent event) {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			Double value = (Double)event.getNewValue();
+			setPaidAmount(value);
+		} else {
+			setPaidAmount(0);
+		}
+	}
+
+	public double getChangeAmount() {
+		InvoiceController invoiceController = (InvoiceController)getMasterController();
+		if (invoiceController.isNew()) {
+			String invoiceDetailControllerName = ((InvoiceController)getMasterController()).getInvoiceDetailControllerName();
+			InvoiceDetailController detailController = (InvoiceDetailController)FormUtil.getController(invoiceDetailControllerName);
+			if (detailController instanceof SaleInvoiceDetailController) {
+				return getPaidAmount() - ((SaleInvoiceDetailController)detailController).getTotalSalesPrice();
+			}
+		}
+		return getPaidAmount() - invoiceController.getPendingAmount();
+	}
+
 	public boolean isModelToEditable() throws ManagerBeanException{
-		if (getModel().isRowAvailable()) {  
+		if (getModel().isRowAvailable()) {
 			Finance finance = (Finance)getModel().getRowData(); 
 			return (finance.getFinanceStatus().equals(FinanceStatus.PENDING) || finance.getFinanceStatus().equals(FinanceStatus.RETURNED));
 		}
@@ -81,10 +122,11 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 	}
 
 	public void onPayMethodChanged(ValueChangeEvent event) {
-		PayMethod oldPay = (PayMethod) event.getOldValue();
-		PayMethod newPay = (PayMethod) event.getNewValue();
-		if (oldPay == null || newPay == null || oldPay.getType() != newPay.getType()) {
+		PayMethod oldPayMethod = (PayMethod) event.getOldValue();
+		PayMethod newPayMethod = (PayMethod) event.getNewValue();
+		if (oldPayMethod == null || newPayMethod == null || oldPayMethod.getType() != newPayMethod.getType()) {
 			Finance finance = (Finance) getTo();
+			finance.setPayMethod(newPayMethod);
 			finance.setBank(new Bank());
 			finance.setBankAccount(new BankAccount());
 

@@ -23,20 +23,21 @@
 					<ui:param name="skipBackButton" value="#{true}" />
 					<ui:param name="saveButtonReRender" value="posInvoiceForm" />
 					<ui:define name="beforeSpinToolbarContent">
-						<aon:commandButton id="cashPayment"
+						<aon:commandButton id="finishTicket"
 							styleClass="aon-finding-toolbar-item aon-icon-cash"
-							value="#{financeBundle.finance_cash_payment}"
-							title="Alt+{Mayús}+E"
-							rendered="#{posInvoice.toInvoiceTotalPrice != 0 and (!posInvoice.recorded or posInvoiceFinance.model.rowCount == 0)}"
-							actionListener="#{posInvoice.generateCashFinance}"
-							accesskey="E" />
-						<aon:commandButton id="cardPayment"
-							styleClass="aon-finding-toolbar-item aon-icon-card"
-							value="#{financeBundle.finance_card_payment}"
-							title="Alt+{Mayús}+T"
-							rendered="#{posInvoice.toInvoiceTotalPrice != 0 and (!posInvoice.recorded or posInvoiceFinance.model.rowCount == 0)}"
-							actionListener="#{posInvoice.generateCardFinance}"
-							accesskey="T" />
+							value="#{financeBundle.finance_pos_finish_ticket}"
+							title="Alt+{Mayús}+F"
+							rendered="#{posInvoice.toInvoiceTotalPrice != 0 and posInvoice.toInvoiceTotalPrice != posInvoice.toInvoiceFinanceTotal}"
+							actionListener="#{posInvoiceFinance.onReset}"
+							reRender="showFinishTicketWindow"
+							accesskey="F">
+							<f:setPropertyActionListener target="#{posInvoice.financeGenerationMode}"
+								value="1" />
+							<f:setPropertyActionListener target="#{posInvoiceFinance.paidAmount}"
+								value="#{posInvoice.pendingAmount}" />
+							<f:setPropertyActionListener target="#{posInvoice.showFinishTicketWindow}"
+								value="#{true}" />
+						</aon:commandButton>						
 					</ui:define>
 				</ui:decorate>
 			</aon:div>
@@ -111,6 +112,13 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAddress.xhtml">
 			<ui:param name="invoiceController" value="#{posInvoice}" />
 			<ui:param name="invoiceAddress" value="#{posInvoiceAddress}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/posInvoice/modalFinishTicket.xhtml">
+			<ui:param name="invoiceController" value="#{posInvoice}" />
+			<ui:param name="detailController" value="#{posInvoiceDetail}" />
+			<ui:param name="financeController" value="#{posInvoiceFinance}" />
+			<ui:param name="formName" value="posInvoiceForm" />
+			<ui:param name="posMode" value="#{true}" />
 		</ui:include>
 	</ui:define>
 </ui:composition>
