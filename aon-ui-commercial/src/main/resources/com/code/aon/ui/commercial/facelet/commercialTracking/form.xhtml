@@ -21,6 +21,12 @@
 				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_tracking_module}" />
 				<ui:param name="controller" value="#{commercialTracking}" />
 				<ui:define name="beforeSpinToolbarContent" >				
+					<aon:commandButton id="viewAlarm"
+						rendered="#{!formNew and commercialTracking.hasAlarm}"
+						value="#{groupwareBundle.groupware_alarm_view}"
+						action="alarm_form" immediate="true"
+						actionListener="#{commercialTracking.onSelectAlarm}"
+						styleClass="aon-finding-toolbar-item aon-icon-alarm-pending" />
 					<c:if test="#{aonConfiguration.bean.alarm.showNew}">
 						<aon:commandButton id="alarm"
 							rendered="#{!formNew}"

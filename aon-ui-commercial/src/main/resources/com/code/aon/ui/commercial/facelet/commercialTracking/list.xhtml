@@ -67,6 +67,13 @@
 						<ui:include
 							src="/com/code/aon/ui/commercial/facelet/commercialTracking/listContent.xhtml" />
 
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<aon:outputText value="&#160;"
+								rendered="#{controller.currentHasAlarm}"
+								title="#{groupwareBundle.aon_alarm}"
+								styleClass="aon-icon2 aon-icon-alarm" />														
+						</aon:column>
+
 					</ui:define>
 				</ui:decorate>
 			</aon:div>

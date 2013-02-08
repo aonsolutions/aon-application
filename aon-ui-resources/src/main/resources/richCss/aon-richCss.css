@@ -2462,26 +2462,19 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
  	padding:5px 0 5px 12px;
  	border-bottom:#f4f3f3 1px solid;
 }
-
-.aon-icon-email{
+.aon-menu-icon{
 	padding-left: 8px;
 	cursor:pointer;
  	display:block;
  	padding:2px 6px 1px 10px;
+}
+.aon-icon-email{
 	background:transparent url(images/aon-main-menu/aon-icon-mail2.png) no-repeat scroll center left;
 }
 .aon-icon-home{
-	padding-left: 8px;
-	cursor:pointer;
- 	display:block;
- 	padding:2px 6px 1px 10px;
 	background:transparent url(images/aon-main-menu/aon-icon-home.png) no-repeat scroll center left;
 }
 .aon-icon-alarm-pending{
-	padding-left: 8px;
-	cursor:pointer;
- 	display:block;
- 	padding:2px 6px 1px 10px;
 	background:transparent url(images/aon-main-menu/aon-icon-alarm-pending.png) no-repeat scroll center left;
 }
 .aon-icon-favorites{

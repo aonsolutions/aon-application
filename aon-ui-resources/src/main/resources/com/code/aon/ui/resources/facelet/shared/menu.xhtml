@@ -33,9 +33,9 @@
 								rendered="#{alarm.pendingCount &gt; 0}"
 								action="alarm_list" actionListener="#{alarm.onInit}" 
 								style="padding-right: 5px;padding-left: 18px"
-								styleClass="aon-bold aon-icon-alarm-pending" />					
+								styleClass="aon-bold aon-menu-icon aon-icon-alarm-pending" />					
 						</c:if>
-						<aon:commandLink styleClass="aon-icon-email"
+						<aon:commandLink styleClass="aon-menu-icon aon-icon-email"
 							rendered="#{(aonConfiguration.currentAction == 'home') or (aonConfiguration.currentAction == 'start')}"
 							title="#{webmailBundle.webmail_send_email}" 
 							ajaxSingle="true" reRender="showNewMessageWindow"
@@ -47,7 +47,7 @@
 						<aon:commandLink action="home" 
 							actionListener="#{homeActionListener}" 
 							title="#{bundle.aon_home}"
-							styleClass="aon-icon-home"
+							styleClass="aon-menu-icon aon-icon-home"
 							value="&#160;" />
 						<aon:dropDownMenu>
 			                <f:facet name="label"> 

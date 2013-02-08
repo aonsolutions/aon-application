@@ -61,5 +61,13 @@ public class ProjectCommercialTrackingController extends BasicController {
 		ct.onBack(event);
 		initializeModel();
 	}
-	
+
+	public boolean isCurrentHasAlarm() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			CommercialTracking ct = (CommercialTracking) getModel().getRowData();
+			return CommercialTrackingController.isCurrentHasAlarm(ct);
+		}
+		return false;
+	}
+		
 }

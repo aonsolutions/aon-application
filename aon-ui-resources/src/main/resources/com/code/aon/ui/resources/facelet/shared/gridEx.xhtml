@@ -32,15 +32,18 @@
 					<ui:insert name="beginFormEditContent"/>
 				</aon:div>
 				<f:facet name="footer">
-					<c:if test="#{!skipResetButton}">
-						<aon:commandButton
-							id="#{dataTableId}-reset" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
-							action="#{resetAction}" actionListener="#{resetActionListener}"
-							rendered="#{!formNew}" reRender="#{resetButtonReRender}"
-							styleClass="aon-editDataTable-button aon-icon-reset"
-							accesskey="#{bundle.aon_key_new_line}" 
-							focus="#{(focusOnAdd != null)?(focusOnAdd):''}"/>
-					</c:if>
+					<aon:div layout="none">
+						<ui:insert name="beginFooterContent"/>
+						<c:if test="#{!skipResetButton}">
+							<aon:commandButton
+								id="#{dataTableId}-reset" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+								action="#{resetAction}" actionListener="#{resetActionListener}"
+								rendered="#{!formNew}" reRender="#{resetButtonReRender}"
+								styleClass="aon-editDataTable-button aon-icon-reset"
+								accesskey="#{bundle.aon_key_new_line}" 
+								focus="#{(focusOnAdd != null)?(focusOnAdd):''}"/>
+						</c:if>
+					</aon:div>
 				</f:facet>
 			</aon:column>
 	

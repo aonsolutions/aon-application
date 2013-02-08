@@ -1,8 +1,11 @@
 package com.code.aon.ui.commercial.controller;
 
+import static com.code.aon.ui.commercial.controller.ICommercialConstants.COMMERCIAL_TRACKING_CONTROLLER_NAME;
 import static com.code.aon.ui.groupware.controller.IGroupWareConstants.ALARM_CONTROLLER_NAME;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -19,11 +22,14 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.User;
 import com.code.aon.groupware.Alarm;
 import com.code.aon.groupware.enumeration.AlarmSource;
+import com.code.aon.groupware.enumeration.AlarmStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -248,5 +254,53 @@ public class CommercialTrackingController extends BasicController {
 		}
 		return getSurveyReturnAction();
 	}	
+	
+	private static Criteria getCriteria( IManagerBean bean, CommercialTracking ct ) throws ManagerBeanException {
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ALARM_SOURCE), AlarmSource.COMMERCIAL_TRACKING);
+    	criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ALARM_SOURCE_ID), ct.getId());
+    	criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.ALARM_STATUS), AlarmStatus.FINISHED);
+    	User user = UserUtils.getInstance().getLoggedUser();
+    	criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ALARM_USER_ID), user.getId());
+    	String dateAlias = bean.getFieldName(IEntityAlias.ALARM_ALARM_DATE);
+    	criteria.addLessThanOrEqualExpression(dateAlias, new Date());
+       	criteria.addOrder(dateAlias, false);	
+       	return criteria;
+	}
+	
+	public static boolean isCurrentHasAlarm( CommercialTracking ct ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Alarm.class);
+    	Criteria criteria = getCriteria(bean, ct);
+    	return bean.getCount(criteria) > 0;
+	}
+	
+	public boolean isCurrentHasAlarm() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			CommercialTracking ct = (CommercialTracking) getModel().getRowData();
+			return isCurrentHasAlarm(ct);
+		}
+		return false;
+	}
+
+	public boolean isHasAlarm() throws ManagerBeanException {
+		return isCurrentHasAlarm( (CommercialTracking) getTo() );
+	}
+	
+	public void onSelectAlarm( ActionEvent event ) {
+		AlarmController controller = (AlarmController) AonUtil.getRegisteredBean(ALARM_CONTROLLER_NAME);
+        try {
+        	CommercialTracking ct = (CommercialTracking) getSelectedTO();
+        	Criteria criteria = getCriteria(controller.getManagerBean(), ct);
+        	List<ITransferObject> list = controller.getManagerBean().getList(criteria);
+        	if (! list.isEmpty() ) {
+        		Alarm alarm = (Alarm) list.get(0);
+                controller.select(event, alarm);	
+                controller.setBackAction(COMMERCIAL_TRACKING_CONTROLLER_NAME + "_form");
+        	}
+        } catch (ManagerBeanException e) {
+        	LOGGER.error( e.getMessage(), e );
+            throw new AbortProcessingException(e.getMessage(), e);
+        }			
+	}
 	
 }
