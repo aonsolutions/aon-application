@@ -202,18 +202,22 @@ public class AuditManager implements IAuditConstants {
 				switch ( type ) {
 					case ENTERPRISE:
 						list.add(Module.WAREHOUSE);
+						list.add(Module.POS);
 						break;
 					case GARAGE:
 						list.add(Module.GARAGE);
 						list.add(Module.WAREHOUSE);
+						list.add(Module.POS);
 						break;
 					case ACADEMY:
 						list.add(Module.ACADEMY);
 						list.add(Module.WAREHOUSE);
+						list.add(Module.POS);
 						break;
 					case HOTEL:
 						list.add(Module.HOTEL);
 						list.add(Module.WAREHOUSE);
+						list.add(Module.POS);
 						break;
 					case CONSULTANCY:
 						list.add(Module.FISCAL);
