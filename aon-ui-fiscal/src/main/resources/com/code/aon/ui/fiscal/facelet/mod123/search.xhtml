@@ -7,41 +7,10 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="rentingForm" styleClass="aon-form">
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_model_123_module_abbr}" />
-				<ui:param name="controller" value="#{mod123}" />
-			</ui:include>
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="controller" value="#{mod123}" />
-
-				<ui:define name="searchContent">
-					<aon:outputLabel for="Mod123_year" value="#{bundle.aon_year}" />
-					<aon:inputText id="Mod123_year" size="5"
-						valueChangeListener="#{mod123.addExpression}" />
-
-					<aon:outputLabel for="Mod123_period"
-						value="#{fiscalBundle.fiscal_period}" />
-					<aon:selectOneMenu id="Mod123_period"
-						valueChangeListener="#{mod123.addEqualExpression}"
-						converter="aon.EnumConverter">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{fiscalCollections.periods}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Mod123_status"
-						value="#{bundle.aon_status}" />
-					<aon:selectOneRadio id="Mod123_status"
-						valueChangeListener="#{mod123.addEqualExpression}"
-						converter="aon.EnumConverter">
-						<f:selectItem value="#{null}" itemLabel="#{bundle.aon_all}" />
-						<f:selectItems value="#{fiscalCollections.fiscalModelStatuses}" />
-					</aon:selectOneRadio>
-				</ui:define>
-				
-			</ui:decorate>
-		</aon:form>
+		<ui:include src="/com/code/aon/ui/fiscal/facelet/model/search.xhtml">
+			<ui:param name="moduleLabel" value="#{fiscalBundle.fiscal_model_123_module_abbr}" />
+			<ui:param name="controller" value="#{mod123}" />
+		</ui:include>
 	</ui:define>
+	
 </ui:composition>

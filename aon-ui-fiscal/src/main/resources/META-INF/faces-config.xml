@@ -719,6 +719,51 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- **************** MODEL 131  *************** -->
+	<managed-bean>
+		<managed-bean-name>mod131</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.controller.mod131.Mod131Controller</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.fiscal.FiscalModel</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>mod131</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>FiscalModel_model</key>
+					<value>#{fiscalCollections.model131}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>FiscalModel_year desc,FiscalModel_period desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{mod131ControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>mod131ControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.controller.mod131.Mod131ControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!-- **************** FISCAL ACTIVITY  *************** -->
 	<managed-bean>
 		<managed-bean-name>fiscalActivity</managed-bean-name>
@@ -1011,6 +1056,21 @@
 		</navigation-case>
 	</navigation-rule>
 
+	<!-- =================== MODEL 131 ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>mod131_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/mod131/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mod131_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/mod131/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mod131_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/mod131/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 	<!-- =================== FISCAL ACTIVITY  ================= -->
 	<navigation-rule>

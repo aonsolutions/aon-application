@@ -12,83 +12,8 @@
 		<aon:div id="detailContainer" styleClass="aon-width-all aon-margin-top">
 			<aon:dataTable value="#{controller.declaration.keys}" var="key">
 			
-				<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" style="font-size: 0.9em;">
-					<f:facet name="header">
-						<aon:outputText value="&#160;"/>	
-					</f:facet>
-					<aon:div style="margin-left: #{key.level}em;#{(key.title and key.level==0)?'font-weight: bold;':''}">
-						<aon:outputText value="#{key}" rendered="#{!key.descriptionEnabled}"/>
-						<aon:outputText value="#{controller.declaration.map[key].description}" 
-							rendered="#{key.descriptionEnabled}"/>
-						<aon:outputText value="&#160;"/>
-					</aon:div>
-					
-					
-				</aon:column>
-				
-				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
-					<f:facet name="header">
-						<aon:outputText value="#{fiscalBundle.fiscal_vatTax_accumulated}" />	
-					</f:facet>
-					<aon:div rendered="#{!key.title and !key.total}">
-						<aon:outputText value="#{controller.declaration.map[key].accumulatedAmount}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-					</aon:div>
-				</aon:column>
-				<c:if test="#{controller.difEnabled}">
-					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
-						<f:facet name="header">
-							<aon:outputText value="#{fiscalBundle.fiscal_vatTax_declared}" />
-						</f:facet>
-						<aon:div rendered="#{key.difEnabled}">
-							<aon:outputText value="#{controller.declaration.map[key].declaredAmount}">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
-						</aon:div>
-					</aon:column>
-				</c:if>
-
-				<c:if test="#{controller.difEnabled}">
-					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
-						<f:facet name="header">
-							<aon:outputText value="#{fiscalBundle.fiscal_vatTax_result}" />
-						</f:facet>
-						<aon:div rendered="#{key.difEnabled}">
-							<aon:outputText value="#{controller.declaration.map[key].resultAmount}">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
-						</aon:div>
-					</aon:column>
-				</c:if>
-
-				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
-					<f:facet name="header">
-						<aon:outputText value="#{fiscalBundle.fiscal_vatTax_adjusts}" />
-					</f:facet>
-					<aon:div rendered="#{!key.title and !key.total}">
-						<aon:outputText value="#{controller.declaration.map[key].adjustAmount}" 
-							rendered="#{!controller.declaration.header.pending}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-						<aon:inputText value="#{controller.declaration.map[key].adjustAmount}" 
-							rendered="#{controller.declaration.header.pending}" 
-							required="true" size="8" />
-					</aon:div>
-				</aon:column>
-
-				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
-					<f:facet name="header">
-						<aon:outputText value="#{fiscalBundle.fiscal_vatTax_to_declare}" />
-					</f:facet>
-					<aon:div rendered="#{!key.title}">
-						<aon:outputText value="#{controller.declaration.map[key].amount}"
-							style="#{(key.total)?(key.level==0?'font-weight: bold':'font-style:italic'):''};">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-					</aon:div>
-				</aon:column>
-
+				<ui:include src="/com/code/aon/ui/fiscal/facelet/model/detailContent.xhtml"/>
+							
 			</aon:dataTable>
 		</aon:div>
 	</c:if>

@@ -16,20 +16,18 @@ import com.code.aon.fiscal.enumeration.FiscalModelStatus;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 import com.code.aon.fiscal.enumeration.Mod347Type;
-import com.code.aon.fiscal.enumeration.Mod349Type;
 import com.code.aon.fiscal.enumeration.Mod349Status;
+import com.code.aon.fiscal.enumeration.Mod349Type;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.RentingStatus;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
 import com.code.aon.fiscal.enumeration.VatType;
-import com.code.aon.fiscal.enumeration.WithholdingDetailKey;
 import com.code.aon.fiscal.enumeration.WithholdingStatus;
 
 public class FiscalCollectionsController {
 
 	private List<SelectItem> rentingStatuses;
-	private List<SelectItem> withholdingDetailKeys;
 	private List<SelectItem> withholdingStatuses;
 	private List<SelectItem> vatTaxStatuses;
 	private List<SelectItem> vatTaxDeclarationStatuses;
@@ -56,19 +54,6 @@ public class FiscalCollectionsController {
 			}
 		}
 		return rentingStatuses;
-	}
-
-	public List<SelectItem> getWithholdingDetailKeys() {
-		if (withholdingDetailKeys == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			withholdingDetailKeys = new LinkedList<SelectItem>();
-			for (WithholdingDetailKey key:WithholdingDetailKey.values()) {
-				String name = key.getName(locale);
-				SelectItem item = new SelectItem(key, name);
-				withholdingDetailKeys.add(item);
-			}
-		}
-		return withholdingDetailKeys;
 	}
 
 	public List<SelectItem> getWithholdingStatuses() {
@@ -264,6 +249,9 @@ public class FiscalCollectionsController {
 	}
 	public FiscalModelType getModel310() {
 		return FiscalModelType.M310;
+	}
+	public FiscalModelType getModel131() {
+		return FiscalModelType.M131;
 	}
 
 }

@@ -756,11 +756,12 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 		// *****************************************************************
 		// Resultado. Pago Trimestral.
 		// *****************************************************************
-		double percent = 4.0;
-		if (CommonUtil.round(m01) <= 1.0) percent = 3.0; 
-		if (CommonUtil.round(m01) == 0.0) percent = 2.0;
-		double i14 = CommonUtil.round(i13 *  percent / 100 );
+		double i14 = 4.0;
+		if (CommonUtil.round(m01) <= 1.0) i14 = 3.0; 
+		if (CommonUtil.round(m01) == 0.0) i14 = 2.0;
+		double i15 = CommonUtil.round(i13 *  i14 / 100 );
 		getIrpfInfoKey(FiscalActivityInfoKey.I14).setDoubleValue(i14);
+		getIrpfInfoKey(FiscalActivityInfoKey.I15).setDoubleValue(i15);
 	}
 
 	@Override

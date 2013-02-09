@@ -202,6 +202,7 @@ public enum FiscalActivityInfoKey implements IResourceable, IStringEnum {
 	I12 ("I12",FiscalActivityInfoType.IRPF_INFO,2012,9999,false,Double.class,false,true ,false,"0",null,null),
 	I13 ("I13",FiscalActivityInfoType.IRPF_INFO,2012,9999,false,Double.class,false,true ,false,"0",null,null),
 	I14 ("I14",FiscalActivityInfoType.IRPF_INFO,2012,9999,false,Double.class,false,true ,false,"0",null,null),
+	I15 ("I15",FiscalActivityInfoType.IRPF_INFO,2012,9999,false,Double.class,false,true ,false,"0",null,null),
 	
 	V01 ("V01",FiscalActivityInfoType.VAT_INFO,2012,9999,false,Double.class,false,true ,false,"0",null,null),
 	V02 ("V02",FiscalActivityInfoType.VAT_INFO,2012,9999,false,Double.class,false,true ,false,"0",null,null),

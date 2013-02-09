@@ -562,14 +562,3 @@ public class FiscalActivityController extends BasicController implements IFiscal
 	}
 	
 }
-
-//aon_enum_activityAddInfo_M011=Mayores de 19 años
-//aon_enum_activityAddInfo_M012=Menores de 19 años y trabajadors con contratos de aprendizaje o formación que no sean discapacitados.
-//aon_enum_activityAddInfo_M013=Discapacitados con grado de minusvalía igual o superior al 33 por 100
-//aon_enum_activityAddInfo_M014=Horas anuales
-
-//aon_enum_activityAddInfo_M021=Horas anuales del titular.
-//aon_enum_activityAddInfo_M025=Horas anuales del cónyuge.
-//aon_enum_activityAddInfo_M023=Indique si el cónyuge es discapacitado en grado igual o superior al 33%
-//aon_enum_activityAddInfo_M024=Horas anuales de los hijos menores de 18 años.
-//aon_enum_activityAddInfo_M026=Horas anuales de los hijos menores de 18 años con discapacidad en grado igual o superior al 33%

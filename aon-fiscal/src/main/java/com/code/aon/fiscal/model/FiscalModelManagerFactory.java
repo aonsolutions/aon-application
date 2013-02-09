@@ -9,6 +9,7 @@ import com.code.aon.fiscal.mod111.Mod111Manager;
 import com.code.aon.fiscal.mod115.Mod115Manager;
 import com.code.aon.fiscal.mod123.Mod123Manager;
 import com.code.aon.fiscal.mod130.Mod130Manager;
+import com.code.aon.fiscal.mod131.Mod131Manager;
 import com.code.aon.fiscal.mod310.Mod310Manager;
 
 public class FiscalModelManagerFactory {
@@ -22,6 +23,7 @@ public class FiscalModelManagerFactory {
 		managers.add(new Mod123Manager() );
 		managers.add(new Mod130Manager() );
 		managers.add(new Mod310Manager() );
+		managers.add(new Mod131Manager() );
 	}
 	
 	public List<IFiscalModelManager> getManagers() {
@@ -37,7 +39,7 @@ public class FiscalModelManagerFactory {
 				return manager;
 			}
 		}
-		throw new AonException("No existe proveedor de modelo para el typo " + type);
+		throw new AonException("No existe proveedor de modelo para el tipo " + type);
 	}
 	
 }

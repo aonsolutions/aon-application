@@ -144,11 +144,15 @@
 				</aon:div>
 			</aon:panelGrid>
 			
-			<ui:include src="/com/code/aon/ui/fiscal/facelet/model/detail.xhtml">
-				<ui:param name="controller" value="#{controller}" />
-			</ui:include>
+			<c:if test="#{!skipDetail}">
+				<ui:include src="/com/code/aon/ui/fiscal/facelet/model/detail.xhtml">
+					<ui:param name="controller" value="#{controller}" />
+				</ui:include>
+			</c:if>
+			<c:if test="#{skipDetail}">
+				<ui:insert name="customDetail" />
+			</c:if>
 			
 		</aon:div>
-		
 	</aon:form>
 </ui:composition>
