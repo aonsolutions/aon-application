@@ -674,6 +674,15 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+	</managed-bean>
+	
+	<!-- **** POS INVOICE **** -->
+	<managed-bean>
+		<managed-bean-name>posInvoiceParams</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.company.controller.PosInvoiceParamsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
 	<!-- **** COMPANY IMAGES **** -->
