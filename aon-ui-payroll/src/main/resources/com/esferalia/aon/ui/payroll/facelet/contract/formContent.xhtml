@@ -80,23 +80,42 @@
 				rendered="#{contract.to.seniorityDateDifferent}" />
 		</aon:panelGroup>
 		
-		<aon:outputLabel for="agreementLevelCategory" 
-			value="#{payrollBundle.payroll_agreementLevel_category}" />
-		<aon:div>
+		<aon:outputLabel  
+			value="#{payrollBundle.payroll_agreementLevel_category_level}" />
+		<aon:panelGrid id="agreementLevelCategory-content" columns="2" 
+			columnClasses="aon-panelGrid-even aon-noborder aon-italic, aon-panelGrid-even aon-noborder" >
+
 			<aon:methodParam name="lookupChangeListener" value="#{contract.onChangeAgreement}" type="lookupChangeListener" />
 			<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/agreement/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{contract.agreement}" />
 				<ui:param name="skipInputText" value="#{true}" />
 				<ui:param name="skipNewButton" value="#{true}" />
 				<ui:param name="lookupInputSuggestSize" value="30" />
-				<ui:param name="lookupReRender" value="agreementLevelCategory" />
+				<ui:param name="lookupReRender" value="agreementLevelCategory-content" />
+				<ui:define name="afterLookupContent">
+					<aon:outputText id="agreementLevelCategory-info" 
+						value="&#160;&#160;&#160;&#160;&#160;"
+						title="#{payrollBundle.payroll_contract_no_category_selected}"
+						styleClass="aon-icon-info"
+						rendered="#{contract.agreement.id!=null and contract.to.agreementLevelCategory.id==null}" />
+				</ui:define>
 			</ui:decorate>
-			<aon:selectOneMenu id="agreementLevelCategory" styleClass="aon-margin-left"
-				value="#{contract.to.agreementLevelCategory}" >
-				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{contract.agreementLevelCategories}" />
-			</aon:selectOneMenu>
-		</aon:div>
+
+			<aon:outputLabel for="agreementLevelCategory" 
+				value="#{payrollBundle.payroll_agreementLevel_category}" />
+			<aon:panelGroup>
+				<aon:selectOneMenu id="agreementLevelCategory" styleClass="aon-margin-left"
+					value="#{contract.to.agreementLevelCategory}" >
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{contract.agreementLevelCategories}" />
+				</aon:selectOneMenu>
+				<aon:outputLabel for="agreementLevelCategory-alias" styleClass="aon-margin-left" 
+					value="Alias" />
+				<aon:inputText id="agreementLevelCategory-alias" maxLength="64"
+					value="#{contract.to.categoryDescription}" />
+			</aon:panelGroup>
+			
+		</aon:panelGrid>
 
 	</aon:panelGrid>
 
