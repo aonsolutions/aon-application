@@ -401,8 +401,8 @@
 
 	<!-- ** AON SELLER  **************************************************** -->
 	<bean class="com.code.aon.seller.Seller" sqlName="seller">
-		<alias names="id,domain,commercialType,scope,status,registry_id,registry_name,registry_alias,registry_document"/>
-		<hibernate names="id,domain,commercialType,scope,status,registry.id,registry.name,registry.alias,registry.document"/>
+		<alias names="id,domain,commercialType,scope_id,status,registry_id,registry_name,registry_alias,registry_document"/>
+		<hibernate names="id,domain,commercialType,scope.id,status,registry.id,registry.name,registry.alias,registry.document"/>
 	</bean>	
 	
 	<!-- ** AON SUPPLIER   **************************************************** -->
