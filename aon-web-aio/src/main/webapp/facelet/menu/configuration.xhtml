@@ -373,6 +373,14 @@
 												actionListener="#{aonLoader.onStart}"
 												value="#{accountingBundle.aon_loader_module}" />
 										</aon:div>
+										<c:if test="#{aonRole.sysAdmin}">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="applicationParameter"
+													action="applicationParameter_list"
+													actionListener="#{applicationParameter.onSearch}"
+													value="#{configBundle.config_app_param_module}" />
+											</aon:div>
+										</c:if>									
 									</aon:div>
 								</aon:panelGrid>
 								

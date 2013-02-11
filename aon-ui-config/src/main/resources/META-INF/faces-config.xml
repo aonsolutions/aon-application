@@ -259,6 +259,30 @@
 			<value>WorkGroup_description</value>
 		</managed-property>		
 	</managed-bean>
+
+
+	<!-- ************ APPLCIATION PARAMETER ************** -->
+	<managed-bean>
+		<managed-bean-name>applicationParameter</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.ApplicationParameter</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>applicationParameter</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ApplicationParameter_name</value>
+		</managed-property>		
+	</managed-bean>
 	
 	<!-- ************ SCOPE ************** -->
 	<managed-bean>
@@ -797,6 +821,14 @@
 		<navigation-case>
 			<from-outcome>workgroup_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/config/facelet/workgroup/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== WORKGROUP ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>applicationParameter_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/applicationParameter/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
