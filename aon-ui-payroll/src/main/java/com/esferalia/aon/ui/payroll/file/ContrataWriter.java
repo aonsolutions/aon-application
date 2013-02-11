@@ -1,16 +1,15 @@
 package com.esferalia.aon.ui.payroll.file;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
@@ -26,15 +25,9 @@ import javax.xml.validation.Validator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.Classpath;
-import com.code.aon.company.Enterprise;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.model.IContratoType;
 import com.esferalia.aon.file.payroll.contract.model.IProrrogaType;
 import com.esferalia.aon.file.payroll.contract.model.ITransformacionType;
@@ -44,17 +37,19 @@ import com.esferalia.aon.file.payroll.contrata.model.prorrogas.PRORROGAS;
 import com.esferalia.aon.file.payroll.contrata.model.prorrogas.PRORROGATIPOTYPE;
 import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACIONES;
 import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.EnterpriseCCC;
-import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class ContrataWriter {
 	
+	private final String CONTRATA_XML_FILE_ENCODING = "ISO-8859-1";
 	private final String CONTRATA_CONTRATOS_MODEL_PATH = "com.esferalia.aon.file.payroll.contrata.model.contratos";
 	private final String CONTRATA_TRANSFORMACIONES_MODEL_PATH = "com.esferalia.aon.file.payroll.contrata.model.transformaciones";
 	private final String CONTRATA_PRORROGAS_MODEL_PATH = "com.esferalia.aon.file.payroll.contrata.model.prorrogas";
+	private final String CONTRATOS_SCHEMA_FILE_NAME = "EsquemaContratos50.xsd";
+	private final String TRANSFORMACIONES_SCHEMA_FILE_NAME = "EsquemaTransformaciones50.xsd";
+	private final String PRORROGAS_SCHEMA_FILE_NAME = "EsquemaProrrogas50.xsd";
 	
 	private com.esferalia.aon.file.payroll.contrata.model.contratos.ObjectFactory contratoFactory = new com.esferalia.aon.file.payroll.contrata.model.contratos.ObjectFactory();
 
@@ -138,6 +133,7 @@ public class ContrataWriter {
 			JAXBContext jaxbContext = JAXBContext.newInstance(modelPath);
 			Marshaller marshaller = jaxbContext.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			marshaller.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1");
 			File file = File.createTempFile("aon-temp", ".XML"); 
 			if( contratoFile ){
 				marshaller.marshal( contratos, file );
@@ -157,10 +153,6 @@ public class ContrataWriter {
 		}
 	}
 	
-	private final String CONTRATOS_SCHEMA_FILE_NAME = "EsquemaContratos50.xsd";
-	private final String TRANSFORMACIONES_SCHEMA_FILE_NAME = "EsquemaTransformaciones50.xsd";
-	private final String PRORROGAS_SCHEMA_FILE_NAME = "EsquemaProrrogas50.xsd";
-	
 	private void validateXmlPattern(File xml, String SCHEMA) {
 		File schemaFile = null;
 		try {
@@ -171,8 +163,8 @@ public class ContrataWriter {
 			schemaFile = getSchemaFile(SCHEMA, urls[0]);
 			if( schemaFile!=null ){
 				Schema schema = sf.newSchema(schemaFile);
-				Validator validator = schema.newValidator();
 				StreamSource source = new StreamSource(xml);
+				Validator validator = schema.newValidator();
 				validator.validate(source);
 			} else {
 				AonUtil.addErrorMessage("Imporsible obtener el esquema (XSD)");
@@ -207,18 +199,6 @@ public class ContrataWriter {
 		return contractDataMap;
 	}
 	
-	private String getEnterpriseCCC(Enterprise enterprise) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), enterprise.getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_TYPE), CCCType.PRINCIPAL);
-		List<ITransferObject> list = bean.getList(criteria);
-		if(!list.isEmpty()){
-			return ((EnterpriseCCC)list.get(0)).getCcc();
-		}
-		return null;
-	}
-	
 	private String getFormatedDate(Date date){
 		String pattern = "yyyyMMdd";
 		if(date!=null){
@@ -226,26 +206,6 @@ public class ContrataWriter {
 		}
 		return null;
 	}
-	
-	private String completeLength(Integer value, Integer length, String appendValue, boolean rightAppend) {
-		return completeLength(value.toString(), length, appendValue, rightAppend);
-	}
-	
-	private String completeLength(String value, Integer length, String appendValue, boolean rightAppend) {
-		if(value==null)return null;
-		StringBuilder builder = new StringBuilder("");
-		if(rightAppend){
-			builder.append(value);
-		}
-		for(int i=value.length(); i<length; i++){
-			builder.append(appendValue);
-		}
-		if(!rightAppend){
-			builder.append(value);
-		}
-		return builder.toString();
-	}
-	
 	
 	private File getSchemaFile(String schema, URL url) {
 		if( schema.equals(CONTRATOS_SCHEMA_FILE_NAME) ){
@@ -294,9 +254,9 @@ public class ContrataWriter {
 		map.put("CONTRATO_990", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C990.getValue()));
 		try {
 			File tempFile = new File("tmpEsquemaContratos50.xsd");
-
-			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-			BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+			
+			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), CONTRATA_XML_FILE_ENCODING));
+			OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(tempFile), CONTRATA_XML_FILE_ENCODING);
 
 			String currentLine;
 
@@ -336,7 +296,6 @@ public class ContrataWriter {
 					continue;
 				}
 			    writer.write(currentLine);
-			    writer.newLine();
 			}
 			writer.close();
 			return tempFile;
@@ -367,8 +326,8 @@ public class ContrataWriter {
 		try {
 			tempFile = new File("tmpEsquemaTransformaciones50.xsd");
 			
-			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-			BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), CONTRATA_XML_FILE_ENCODING));
+			OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(tempFile), CONTRATA_XML_FILE_ENCODING);
 			
 			String currentLine;
 			
@@ -386,7 +345,6 @@ public class ContrataWriter {
 					continue;
 				}
 				writer.write(currentLine);
-				writer.newLine();
 			}
 			writer.close();
 		} catch (FileNotFoundException e) {
@@ -398,7 +356,7 @@ public class ContrataWriter {
 		}
 		return tempFile;
 	}
-
+	
 	
 }
 
