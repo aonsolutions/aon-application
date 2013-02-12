@@ -862,6 +862,7 @@
 													<source>
 														<location>target/aon-aio</location>
 														<excludes>
+															<exclude>**/MANIFEST.MF</exclude>
 															<exclude>**/aon.jaas*.jar</exclude>
 															<exclude>**/commons-dbutils*.jar</exclude>
 															<exclude>**/commons-lang*.jar</exclude>
