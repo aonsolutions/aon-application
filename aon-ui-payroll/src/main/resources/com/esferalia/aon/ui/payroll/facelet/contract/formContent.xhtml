@@ -109,8 +109,8 @@
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{contract.agreementLevelCategories}" />
 				</aon:selectOneMenu>
-				<aon:outputLabel for="agreementLevelCategory-alias" styleClass="aon-margin-left" 
-					value="Alias" />
+				<aon:outputLabel for="agreementLevelCategory-alias" styleClass="aon-margin-left aon-margin-right" 
+					value="#{payrollBundle.payroll_display_as}" />
 				<aon:inputText id="agreementLevelCategory-alias" maxLength="64"
 					value="#{contract.to.categoryDescription}" />
 			</aon:panelGroup>
