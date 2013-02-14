@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="irpfDataList">
+
+			<aon:methodParam name="searchAction" value="irpfData_search" />
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_model_145_module}" />
+				<ui:param name="controller" value="#{contract}" />
+				<ui:param name="skipResetButton" value="true" />
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:methodParam name="rowSelectorAction" value="irpfData_form" />
+				<aon:methodParam name="rowSelectorActionListener" value="#{irpfData.onSelectContract}" type="actionListener" />
+				
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{contract}" />
+					
+					<ui:define name="columns">
+						
+						<aon:column alias="Contract.person.registry.surname,Contract.person.registry.name"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<h:outputText value="#{payrollBundle.payroll_employee_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.person.registry.fullName}" />
+						</aon:column>
+						
+						<aon:column alias="Contract.workPlace.enterprise.registry.surname,Contract.workPlace.enterprise.registry.name"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<h:outputText value="#{payrollBundle.payroll_enterprise}" />
+							</f:facet>
+							<aon:outputText value="#{to.workPlace.enterprise.registry.fullName}" />
+						</aon:column>
+						
+						<aon:column alias="Contract.startDate"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.aon_start_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.startDate}" style="margin-left: 5px;">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+						
+						<aon:column alias="Contract.endDate"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.aon_end_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.endDate}" style="margin-left: 5px;">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+						
+					</ui:define>
+				</ui:decorate>
+
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

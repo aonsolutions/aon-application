@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+	
+		<aon:form id="enterpriseForm">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{companyBundle.company_enterprise}" />
+				<ui:param name="toolbarDescription" value="#{(enterprise.new)?(bundle.aon_reset):(bundle.aon_editing)}" />
+				<ui:define name="toolbarContent">
+					<c:if test="#{enterprise.new}" >
+						<aon:commandButton id="enterprise-save"
+							value="#{bundle.aon_save}" reRender="aonHeader,aonContent"
+							action="home" actionListener="#{enterprise.accept}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}" >
+							<aon:actionListener method="#{companyDisplay.update}" />
+						</aon:commandButton>
+					</c:if>
+					<c:if test="#{!enterprise.new}" >
+						<aon:commandButton id="enterprise-save"
+							value="#{bundle.aon_save}"
+							action="company_form" actionListener="#{enterprise.accept}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}" >
+							<aon:actionListener method="#{companyDisplay.update}" />
+						</aon:commandButton>
+						<aon:commandButton id="enterprise-back"
+							title="#{bundle.aon_key_cancel_accelerator}"
+							value="#{bundle.aon_back}" 
+							rendered="#{!enterprise.new and enterprise.treeView}" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							actionListener="#{enterprise.onBackActionListener}"
+							action="#{enterprise.backAction}"
+							accesskey="#{bundle.aon_key_cancel}" />
+					</c:if>
+				</ui:define>				
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<c:if test="#{enterprise.new}">
+					<aon:panelGrid columns="2" cellspacing="10" 
+						styleClass="aon-panelGrid-formatting"
+						columnClasses="aon-width-half,aon-width-half aon-vertical-align-top">
+						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formNewContent.xhtml">
+							<ui:param name="controller" value="#{enterprise}" />
+						</ui:include>
+					</aon:panelGrid>				
+				</c:if>							
+				<c:if test="#{!enterprise.new}">			
+	
+					<aon:panelGrid columns="2" cellspacing="10" 
+						styleClass="aon-panelGrid-formatting"
+						columnClasses="aon-width-half aon-vertical-align-top,aon-width-half aon-vertical-align-top">
+
+						<ui:include 
+							src="/com/code/aon/ui/company/facelet/enterprise/formContent.xhtml">
+							<ui:param name="controller" value="#{enterprise}" />
+						</ui:include>
+					</aon:panelGrid>
+
+					<aon:panelTabSet selectedTab="#{enterprise.selectedTab}">
+
+						<c:if test="#{aonConfiguration.bean.enterprise.showProject}" >
+							<aon:panelTab id="projects" label="#{projectBundle.project_projects}">
+								<ui:include	src="/com/code/aon/ui/project/facelet/project/gridContent.xhtml" >
+									<ui:param name="controller" value="#{enterpriseProject}" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
+						
+						<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
+							<aon:panelTab id="activities" label="#{companyBundle.company_activity_module}">
+								<ui:include	src="/com/esferalia/aon/ui/payroll/facelet/enterpriseActivity/gridContent.xhtml" >
+									<ui:param name="controller" value="#{enterpriseActivity}" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
+						
+						<aon:panelTab id="workplace" label="#{companyBundle.company_workplaces}">
+							<ui:include	src="/com/code/aon/ui/company/facelet/workplace/tab_grid.xhtml">
+								<ui:param name="controller" value="#{enterpriseWorkPlace}" />
+								<ui:param name="showEnterpriseData" value="#{true}" />
+							</ui:include>
+						</aon:panelTab>
+
+						<aon:panelTab id="address" label="#{registryBundle.registry_address_module}">
+							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
+								<ui:param name="controller" value="#{enterpriseAddress}" />
+							</ui:include>
+						</aon:panelTab>
+	
+						<aon:panelTab id="media" label="#{registryBundle.registry_media_module}">
+							<ui:include	src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
+								<ui:param name="controller" value="#{enterpriseMedia}" />
+							</ui:include>
+						</aon:panelTab>
+						
+						<c:if test="#{aonConfiguration.bean.enterprise.showFinanceData and aonRole.financeOperator}">
+							<aon:panelTab id="finance" label="#{registryBundle.registry_finance_data_module}">
+								<ui:include	src="/com/code/aon/ui/company/facelet/enterprise/financeTemplate.xhtml" />
+							</aon:panelTab>
+						</c:if>
+
+						<c:if test="#{aonConfiguration.bean.enterprise.showDirStaff}">
+							<aon:panelTab id="dirStaff"
+								label="#{registryBundle.registry_dir_staff}">
+								<ui:include	src="/com/code/aon/ui/registry/facelet/rdirstaff/tab_grid.xhtml">
+									<ui:param name="controller" value="#{enterpriseDirStaff}" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
+											
+						<c:if test="#{aonConfiguration.bean.enterprise.showAddInfo}">
+							<aon:panelTab id="addInfo"
+								label="#{registryBundle.registry_addInfo}">
+								<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
+									<ui:param name="controller" value="#{enterpriseAddInfo}" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
+						
+						<c:if test="#{aonRole.document}">
+							<aon:panelTab id="documentManagement" label="#{bundle.aon_documents}">
+								<ui:include src="/com/code/aon/ui/registry/facelet/documentManager/tab_grid.xhtml">
+									<ui:param name="controller" value="#{enterpriseRAttach}" />
+								</ui:include>								
+							</aon:panelTab>
+						</c:if>						
+						
+					</aon:panelTabSet>
+				</c:if>
+			</aon:div>
+		</aon:form>
+		<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
+			<aon:lookupButtonPopup lookup="#{cnae2009Lookup}" />
+			<aon:lookupButtonPopup lookup="#{agreementLookup}" />
+			<aon:lookupButtonPopup lookup="#{calendarLookup}" />
+		</c:if>
+		<c:if test="#{aonConfiguration.bean.enterprise.showProject}" >
+			<aon:lookupButtonPopup lookup="#{registryLookup}" />
+		</c:if>
+		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+	</ui:define>
+</ui:composition>

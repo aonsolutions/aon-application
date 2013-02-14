@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="domainDBConnectionForm">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{managerBundle.manager_db_connections} (#{domain.to.commonName})" />
+				<ui:param name="controller" value="#{domainDBConnection}" />
+				<ui:param name="skipSearchButton" value="#{true}" />
+				<ui:param name="saveOnClick" value="Richfaces.showModalPanel('waitProccess')" />
+				<ui:param name="saveOnComplete" value="Richfaces.hideModalPanel('waitProccess')" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid columns="2">
+
+					<aon:outputLabel for="DBConnnection_commonName"
+						value="#{bundle.aon_name}" />
+					<aon:inputText id="DBConnnection_commonName"
+						validator="#{domainDBConnection.idCheck}"
+						size="40" required="true" disabled="#{!domainDBConnection.new}"
+						value="#{domainDBConnection.to.commonName}" />
+
+					<aon:outputLabel for="DBConnnection_labeledURI"
+						value="#{managerBundle.manager_db_connection_url}" />
+					<aon:inputText id="DBConnnection_labeledURI" required="true"
+						size="120" value="#{domainDBConnection.to.labeledURI}" />
+
+					<c:if test="#{manager.config.showDBConnectionDetails}" >
+						<aon:outputLabel for="DBConnnection_driverClassName"
+							value="#{managerBundle.manager_db_connection_driverClassName}" />
+						<aon:inputText id="DBConnnection_driverClassName" required="true"
+							size="40" value="#{domainDBConnection.to.driverClassName}" />
+	
+						<aon:outputLabel for="DBConnnection_uid"
+							value="#{managerBundle.manager_user}" />
+						<aon:inputText id="DBConnnection_uid" required="true"
+							size="40" maxlength="256" value="#{domainDBConnection.to.uid}" />
+	
+						<aon:outputLabel for="DBConnnection_userPassword"
+							value="#{bundle.aon_login_passwd}" />
+						<aon:inputSecret id="DBConnnection_userPassword" redisplay="true" required="true"
+							size="40" maxlength="256" value="#{domainDBConnection.to.userPasswordString}" />
+					</c:if>
+						
+					<c:if test="#{domainDBConnection.new}" >					
+						<aon:outputLabel for="DBConnnection_createDB"
+							value="#{managerBundle.manager_domain_create_db}" />
+						<aon:selectBooleanCheckbox id="DBConnnection_createDB" 
+							value="#{domainDBConnection.createDB}" />
+					</c:if>
+
+				</aon:panelGrid>
+				
+				<c:if test="#{!domainDBConnection.new and domainDBConnection.aonDB}">
+					<aon:panelTabSet selectedTab="#{domainDBConnection.selectedTab}">
+
+						<c:if test="#{manager.config.showDBConnectionWorkGroup}" >
+							<aon:panelTab name="userWorkGroups" label="#{managerBundle.manager_workgroups}">
+								<ui:include src="/com/code/aon/ui/manager/facelet/workGroup/grid.xhtml" >
+									<ui:param name="controller" value="#{workGroup}" />
+								</ui:include>
+		                    </aon:panelTab>
+						</c:if>
+	                                        
+						<c:if test="#{manager.config.showDBConnectionScope}" >	                                        
+							<aon:panelTab name="scopes" label="#{managerBundle.manager_scopes}">
+								<ui:include src="/com/code/aon/ui/manager/facelet/scope/grid.xhtml" >
+									<ui:param name="controller" value="#{scope}" />
+								</ui:include>
+		                    </aon:panelTab>
+						</c:if>
+	                                                            
+					</aon:panelTabSet>
+				</c:if>						
+				
+			</aon:div>
+		</aon:form>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+	</ui:define>
+</ui:composition>

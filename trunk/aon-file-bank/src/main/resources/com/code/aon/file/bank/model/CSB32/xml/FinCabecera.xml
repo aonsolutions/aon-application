@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="FinCabecera">
+
+ <field name="type" value="71" format="AlphaNumeric" pattern="X(2)" />
+ <field name="cod_operacion" value="65" format="AlphaNumeric" pattern="X(2)" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(2)" />
+ <field name="free2" value=" " format="Alphabetic" pattern="X(22)" />
+ <field name="free3" value=" " format="Alphabetic" pattern="X(37)" />
+ <field name="free4" value=" " format="Alphabetic" pattern="X(10)" />
+ <field name="suma_importes" value="bean" bean="LOT" property="amount" format="Numeric" pattern="9(8)V99" />
+ <field name="free5" value=" " format="Alphabetic" pattern="X(10)" />
+ <field name="free6" value=" " format="Alphabetic" pattern="X(6)" />
+ <field name="free7" value=" " format="Alphabetic" pattern="X(7)" />
+ <field name="free8" value=" " format="Alphabetic" pattern="X(6)" />
+ <field name="free9" value=" " format="Alphabetic" pattern="X(6)" />
+ <field name="free10" value=" " format="Alphabetic" pattern="X(6)" />
+ <field name="numero_remesas" value="bean" bean="LOT" property="numDeliverys" format="Numeric" pattern="9(5)" />
+ <field name="numero_registros" value="bean" bean="LOT" property="numRegs" format="Numeric" pattern="9(7)" />
+ <field name="numero_efectos" value="bean" bean="LOT" property="numEfects" format="Numeric" pattern="9(6)" />
+ <field name="free11" value=" " format="Alphabetic" pattern="X(6)" />
+ 
+</register>

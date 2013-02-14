@@ -1,0 +1,19 @@
+<mbeans-descriptors>
+
+  <mbean name="AonMainDeployer"
+         description="Custom AonMainDeployer"
+         className="org.apache.catalina.mbeans.ClassNameMBean"
+         domain="Catalina"
+         type="com.code.aon.jaas.vendor.tomcat.TomcatMainDeployer">
+
+  </mbean>
+
+  <mbean name="AonSessionManager"
+         description="Custom AonSessionManager"
+         className="org.apache.catalina.mbeans.ClassNameMBean"
+         domain="Catalina"
+         type="com.code.aon.jaas.vendor.tomcat.TomcatSessionManager">
+
+  </mbean>
+
+</mbeans-descriptors>

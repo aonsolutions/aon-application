@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showFinanceSearchWindow">
+		<c:if test="#{financeList.showFinanceSearchWindow}">
+			<rich:modalPanel id="financeSearchModalPanel" minHeight="400"
+				minWidth="580" rendered="#{financeList.showFinanceSearchWindow}"
+				showWhenRendered="true" zindex="100" style="overflow: auto;" >
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{financeBundle.finance_refine_search}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showFinanceSearchWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{financeList.showFinanceSearchWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="financeSearchForm" >
+				<aon:div styleClass="aon-popupWindow-content" >
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="clear-button"
+										value="#{bundle.aon_clear}"
+										type="reset" ajaxSingle="true"
+										styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+									<aon:commandButton id="financeSearch-search"
+										value="#{bundle.aon_search}"
+										reRender="showFinanceSearchWindow,#{searchReRender}"
+										actionListener="#{masterController.onSearch}"
+										styleClass="aon-finding-toolbar-item aon-icon-search">
+										<rich:componentControl for="financeSearchModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{financeList.showFinanceSearchWindow}"
+											value="#{false}" />
+										<aon:actionHotKey key="return" />
+									</aon:commandButton>
+									<aon:commandButton id="financeSearch-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showFinanceSearchWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{financeList.showFinanceSearchWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+								
+									<aon:panel label="#{financeBundle.finance_finance}">
+										<f:facet name="header">
+											<aon:outputText value="#{financeBundle.finance_finance}" />
+										</f:facet>
+										<aon:panelGrid columns="2" >
+											
+											<aon:outputLabel for="Finance_hotel" 
+												value="#{pmsBundle.pms_hotel}" />
+											<aon:selectOneMenu id="Finance_hotel" 
+												value="#{paymentCardSettle.hotel}" >
+												<f:selectItem itemLabel=" - " itemValue="#{null}" />
+												<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+											</aon:selectOneMenu>
+											
+											<aon:outputLabel for="Finance_invoice_referenceCode" 
+												value="#{financeBundle.finance_invoice}" />
+											<aon:inputText id="Finance_invoice_referenceCode"
+												onblur="toUpperCase(this);"
+												valueChangeListener="#{controller.addExpression}"
+												size="30">
+											</aon:inputText>
+											
+											<aon:outputLabel 
+													value="#{financeBundle.finance_finance_date_abbrv}" />
+											<aon:div>
+												<aon:outputLabel for="Finance_invoice_issueDate_from"
+													styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+												<aon:selectInputDate id="Finance_invoice_issueDate_from"
+													value="#{paymentCardSettle.startDate}" 
+													timeZone="#{timeZoneController.timeZone}"
+													popupDateFormat="#{bundle.aon_date_pattern}"/>
+												<aon:outputLabel for="Finance_invoice_issueDate_to"
+													styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+												<aon:selectInputDate id="Finance_invoice_issueDate_to"
+													value="#{paymentCardSettle.endDate}" 
+													timeZone="#{timeZoneController.timeZone}"
+													popupDateFormat="#{bundle.aon_date_pattern}"/>
+											</aon:div>
+											
+											<aon:outputLabel for="Finance_amount"
+												value="#{bundle.aon_amount}" />
+											<aon:inputText id="Finance_amount"
+												valueChangeListener="#{controller.addExpression}"
+												size="15">
+											</aon:inputText>
+											
+											<aon:outputLabel for="Finance_payMethod_id"
+												value="#{configBundle.config_pay_method}" />
+											<aon:div id="payMethodDiv">
+												<a4j:repeat value="#{paymentCardSettle.payMethods}" rowKeyVar="index" var="payMth">
+													<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+														<aon:selectOneMenu id="Finance_payMethod_id"
+															value="#{paymentCardSettle.payMethods[index]}">
+															<f:selectItem itemLabel="-" itemValue="#{paymentCardSettle.emptyPayMethod}" />
+															<f:selectItems value="#{configCollections.payMethods}" />
+														 	<a4j:support event="onchange" reRender="payMethodDiv" />
+														</aon:selectOneMenu>
+														<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="payMethodDiv"
+															actionListener="#{paymentCardSettle.onRemovePayMethod}"
+															rendered="#{payMth.id != null}">
+															<f:param name="payMethodIndex" value="#{index}" />
+														</aon:commandButton>
+														<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="payMethodDiv"
+															actionListener="#{paymentCardSettle.onAddPayMethod}"
+															rendered="#{(payMth.id != null) and (index == (paymentCardSettle.payMethodsSize-1))}" />					
+													</aon:div>						
+												</a4j:repeat>
+											</aon:div>
+									
+										</aon:panelGrid>
+									</aon:panel>
+									
+									<aon:panel label="#{pmsBundle.pms_reservation}">
+										<f:facet name="header">
+											<aon:outputText value="#{pmsBundle.pms_reservation}" />
+										</f:facet>
+										<aon:panelGrid columns="2" >
+											
+											<aon:outputLabel for="ProjectReservation_project_id" 
+												value="#{pmsBundle.pms_reservation_id}" />
+											<aon:inputText id="ProjectReservation_project_id"
+												value="#{paymentCardSettle.reservationId}"
+												size="20" />
+										
+											<aon:outputLabel for="ProjectReservation_code" 
+												value="#{pmsBundle.pms_reservation_code}" />
+											<aon:inputText id="ProjectReservation_code"
+												value="#{paymentCardSettle.reservationCode}"
+												size="20" />
+												
+											<aon:outputLabel value="#{pmsBundle.pms_guest}" />
+											<aon:div>
+												<aon:outputLabel for="ProjectReservation_guestName"
+													styleClass="aon-italic aon-margin-right" value="#{bundle.aon_name}" />
+												<aon:inputText id="ProjectReservation_guestName"
+													value="#{paymentCardSettle.guestName}"
+													size="14" />
+												<aon:outputLabel for="ProjectReservation_guestSurname"
+													styleClass="aon-italic aon-margin-left aon-margin-right" value="#{bundle.aon_surname}" />
+												<aon:inputText id="ProjectReservation_guestSurname"
+													value="#{paymentCardSettle.guestSurname}"
+													size="20" />
+											</aon:div>
+											
+										</aon:panelGrid>
+									</aon:panel>	
+								
+									
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

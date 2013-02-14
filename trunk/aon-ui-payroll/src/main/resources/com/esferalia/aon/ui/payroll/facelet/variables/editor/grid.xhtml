@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/editor/gridEx.xhtml" >
+		<aon:valueParam name="inputTextId" default="#{controller.beanName}_expression" />
+		<aon:valueParam name="required" default="true" />
+		<aon:valueParam name="cno" default="#{controller.handler.cno}" />
+		<aon:valueParam name="contractCode" default="#{controller.handler.contractModelCode}" />
+		<aon:valueParam name="quoteGroup" default="#{controller.handler.quoteGroup}" />
+		<aon:valueParam name="occupationType" default="#{controller.handler.occupationType}" />
+		<aon:valueParam name="baseVariableType" default="#{data.variable.type}" />
+		<aon:valueParam name="variableType" default="#{data.variableType}" />
+		
+		<aon:methodParam name="cnoChangeListener" default="#{controller.handler.onCnoChange}" type="lookupChangeListener" />
+		
+	</ui:include>
+
+</ui:composition>

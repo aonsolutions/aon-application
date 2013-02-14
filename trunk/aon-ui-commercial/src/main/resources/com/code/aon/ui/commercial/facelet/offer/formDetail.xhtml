@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="dataTableId" value="offerDetails" />
+		<ui:param name="controller" value="#{offerDetail}" />
+		<ui:param name="rows" value="0" />
+		<ui:param name="showNote" value="false" />
+		<ui:param name="showDataScroller" value="false" />
+		<ui:param name="skipResetButton" value="#{offer.readOnly}" />
+		<ui:param name="skipLineEdition" value="#{true}" />
+		<ui:param name="rowSelectorReRender" value="menuExt" />
+		<ui:param name="resetButtonReRender" value="menuExt" />
+		<ui:param name="newCancelButtonReRender" value="menuExt" />
+		<ui:param name="cancelButtonReRender" value="menuExt" />
+		<ui:param name="newSaveButtonReRender" value="menuExt,Offer_total" />
+		<ui:param name="saveButtonReRender" value="menuExt,Offer_total" />
+		<ui:param name="removeButtonReRender" value="menuExt,Offer_total" />
+		<ui:param name="focusOnAdd" value="Item_id-New" />
+		<ui:param name="focusOnSelect" value="Item_id" />
+		<ui:define name="beginFormListContent">
+			<aon:commandLink id="#{dataTableId}-selectButton"
+				styleClass="aon-table-row-link" value="&#160;"
+				immediate="true" ajaxSingle="true" requestDelay="100"
+				rendered="#{offerDetail.pending}"
+				actionListener="#{offerDetail.onSelect}"
+				onkeyup="#{dataTableId}KeyUp(this)"
+				onfocus="#{dataTableId}SelectRow(this)"
+				onblur="#{dataTableId}DeselectRow(this)"
+				focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
+			</aon:commandLink>
+		</ui:define>
+
+		<ui:define name="columns">
+	
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
+				<f:facet name="header">
+					<aon:outputLabel for="OfferDetail_line" value="#{commercialBundle.commercial_offer_detail_line}" />
+				</f:facet>
+				<aon:outputText value="#{to.line}"
+					rendered="#{formList}" />
+				<aon:inputText id="OfferDetail_line" 
+					value="#{controller.to.line}" rendered="#{formEdit}"
+					required="true" size="1" maxlength="3" />
+				<f:facet name="footer">
+					<aon:inputText id="OfferDetail_line-New" 
+						value="#{controller.to.line}" rendered="#{formNew}"
+						required="true" size="1" maxlength="3" />
+				</f:facet>
+			</aon:column>
+	
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+				<f:facet name="header">
+					<aon:outputLabel for="Item_id" value="#{productBundle.product_item}" />
+				</f:facet>
+				<aon:outputText value="#{to.description}" 
+					rendered="#{formList}"
+					style="#{to.item == null or to.item.id == null?'font-weight:bold;':'padding-left:10px;'}">
+					<aon:abbreviateConverter maxWidth="64" />
+				</aon:outputText>
+				<ui:include src="/com/code/aon/ui/commercial/facelet/offer/formDetailItemLookup.xhtml" >
+					<ui:param name="lookupInputOnFocus" value="OfferDetail_description" />
+					<ui:param name="lookupRendered" value="#{formEdit}" />
+					<ui:param name="lookupReRender" 
+						value="offerDetailItemEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount" />
+				</ui:include>						
+				<aon:panelGroup id="offerDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
+					<c:if test="#{aonConfiguration.bean.product.showAlternatives}">
+						<aon:commandButton value="&#160;"
+							title="#{productBundle.product_info}"
+							rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null and !offerDetail.to.item.active}"
+							styleClass="aon-icon aon-icon-edit-end aon-icon-info"
+							actionListener="#{itemInfo.onShowPanel}"
+							reRender="itemInfoContainer">
+							<aon:set var="#{itemInfo.stockVisible}" value="#{false}" />
+							<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
+							<aon:set var="#{itemInfo.item}" value="#{offerDetail.to.item}" /> 
+							<aon:set var="#{itemInfo.componentId}" value="Item_id" />
+							<aon:set var="#{itemInfo.alternativeMethod}" value="offerDetail.onItemChanged" />
+						</aon:commandButton>															
+					</c:if>
+					<aon:inputTextarea id="OfferDetail_description"
+						value="#{offerDetail.to.description}" required="true"
+						rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null}"
+						cols="60" rows="#{!offerDetail.longDescription?1:5}"
+						style="#{!offerDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+						<f:validateLength maximum="1024" />
+					</aon:inputTextarea>
+					<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
+						actionListener="#{offerDetail.onShortDescription}" reRender="OfferDetail_description"
+						rendered="#{offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
+					<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
+						actionListener="#{offerDetail.onLongDescription}" reRender="OfferDetail_description"
+						rendered="#{!offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
+				</aon:panelGroup>
+				<f:facet name="footer">
+					<aon:div>
+						<ui:include src="/com/code/aon/ui/commercial/facelet/offer/formDetailItemLookup.xhtml" >
+							<ui:param name="lookupSuffix" value="-New" />
+							<ui:param name="lookupInputOnFocus" value="OfferDetail_description-New" />
+							<ui:param name="lookupRendered" value="#{formNew}" />
+							<ui:param name="lookupReRender" 
+								value="offerDetailItemNew,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New" />
+						</ui:include>						
+						<aon:panelGroup id="offerDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
+							<c:if test="#{aonConfiguration.bean.product.showAlternatives}">
+								<aon:commandButton value="&#160;"
+									title="#{productBundle.product_info}"
+									rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null and !offerDetail.to.item.active}"
+									styleClass="aon-icon aon-icon-edit-end aon-icon-info"
+									actionListener="#{itemInfo.onShowPanel}"
+									reRender="itemInfoContainer">
+									<aon:set var="#{itemInfo.stockVisible}" value="#{false}" />
+									<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
+									<aon:set var="#{itemInfo.item}" value="#{offerDetail.to.item}" /> 
+									<aon:set var="#{itemInfo.componentId}" value="Item_id-New" />
+									<aon:set var="#{itemInfo.alternativeMethod}" value="offerDetail.onItemChanged" />
+								</aon:commandButton>															
+							</c:if>
+							<aon:inputTextarea id="OfferDetail_description-New"
+								value="#{offerDetail.to.description}" required="true"
+								rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null}"
+								cols="60" rows="#{!offerDetail.longDescription?1:5}"
+								style="#{!offerDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+								<f:validateLength maximum="1024" />
+							</aon:inputTextarea>
+							<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
+								actionListener="#{offerDetail.onShortDescription}" reRender="OfferDetail_description-New"
+								rendered="#{offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
+							<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
+								actionListener="#{offerDetail.onLongDescription}" reRender="OfferDetail_description-New"
+								rendered="#{!offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
+						</aon:panelGroup>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+	
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel for="OfferDetail_quantity" value="#{bundle.aon_quantity}" />
+				</f:facet>
+				<aon:outputText value="#{to.quantity}"
+					rendered="#{formList and to.item != null and to.item.id != null}">
+					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
+				</aon:outputText>
+				<aon:inputText id="OfferDetail_quantity" 
+					value="#{controller.to.quantity}" rendered="#{formEdit}"
+					valueChangeListener="#{controller.onQuantityChanged}" 
+					reRender="OfferDetail_price,OfferDetail_discount,OfferDetail_amount" 
+					required="true" size="5" focus="OfferDetail_price" />
+				<f:facet name="footer">
+					<aon:inputText id="OfferDetail_quantity-New" 
+						value="#{controller.to.quantity}" rendered="#{formNew}"
+						valueChangeListener="#{controller.onQuantityChanged}" 
+						reRender="OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New" 
+						required="true" size="5" focus="OfferDetail_price-New" />
+				</f:facet>
+			</aon:column>
+	
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel for="OfferDetail_price" value="#{bundle.aon_price}" />
+				</f:facet>
+				<aon:outputText value="#{to.price}"
+					rendered="#{formList and to.item != null and to.item.id != null}">
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+				</aon:outputText>
+				<aon:inputText id="OfferDetail_price" 
+					value="#{controller.to.price}" rendered="#{formEdit}"
+					reRender="OfferDetail_amount" 
+					required="true" size="5" />
+				<f:facet name="footer">
+					<aon:inputText id="OfferDetail_price-New" 
+						value="#{controller.to.price}" rendered="#{formNew}"
+						reRender="OfferDetail_amount-New" 
+						required="true" size="5" />
+				</f:facet>
+			</aon:column>
+	
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel for="OfferDetail_discount" value="#{bundle.aon_discount}" />
+				</f:facet>
+				<aon:outputText value="#{to.discountExpression.discountExpr}"
+					rendered="#{formList and to.item != null and to.item.id != null}">
+					<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
+				</aon:outputText>
+				<aon:inputText id="OfferDetail_discount" 
+					value="#{controller.to.discountExpression.discountExpr}" rendered="#{formEdit}"
+					reRender="OfferDetail_amount" 
+					required="true" size="5" />
+				<f:facet name="footer">
+					<aon:inputText id="OfferDetail_discount-New" 
+						value="#{controller.to.discountExpression.discountExpr}" rendered="#{formNew}"
+						reRender="OfferDetail_amount-New" 
+						required="true" size="5" />
+				</f:facet>
+			</aon:column>
+	
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel for="OfferDetail_amount" value="#{bundle.aon_amount}" />
+				</f:facet>
+				<aon:outputText value="#{controller.modelAmount}"
+					rendered="#{formList and to.item != null and to.item.id != null}">
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+				</aon:outputText>
+				<aon:outputText id="OfferDetail_amount" 
+					value="#{controller.amount}" rendered="#{formEdit}">
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+				</aon:outputText>
+				<f:facet name="footer">
+					<aon:div style="text-align:right;">
+						<aon:outputText id="OfferDetail_amount-New" 
+							value="#{controller.amount}" rendered="#{formNew}">
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+						</aon:outputText>
+						<aon:outputText id="Offer_taxableBase" 
+							value="#{offer.taxableBase}" rendered="#{!formNew}">
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+						</aon:outputText>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+	
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-40">
+				<f:facet name="header">
+					<aon:outputLabel value="INFO" />
+				</f:facet>
+				<aon:commandLink id="offerDetailSourceLink" immediate="true"
+					styleClass="aon-button-goto" style="padding-right: 20px;"
+					value="&#160;" title="#{bundle.aon_go}" 
+					rendered="#{!controller.pending and to.item != null and to.item.id != null}" 
+					actionListener="#{controller.onLoadSales}"
+					action="sales_form"
+					reRender="aonContent">
+					<rich:toolTip value="#{controller.lineStatusInfo}" />
+				</aon:commandLink>
+			</aon:column>
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:valueParam name="pojoName" default="#{controller.pojoShortName}"/>
+	<aon:valueParam name="registry" default="#{controller.to.registry}"/>
+
+	<c:if test="#{!skipId or !skipRegistryType}">
+		<c:if test="#{!skipId}">
+			<aon:outputLabel for="#{pojoName}_id" value="#{bundle.aon_id}" />
+			<aon:inputText id="#{pojoName}_id" value="#{controller.to.id}"
+				rendered="#{!controller.new}" size="15" disabled="true" />
+			<aon:outputText value="--------" rendered="#{controller.new}" />
+		</c:if>		
+		<c:if test="#{skipId}">
+			<aon:outputText value="&#160;" />
+			<aon:outputText value="&#160;" />
+		</c:if>
+	
+		<c:if test="#{!skipRegistryType}">
+			<aon:outputText for="#{pojoName}_type" value="#{bundle.aon_entity}" />
+			<aon:selectOneRadio id="#{pojoName}_type" value="#{registry.type}">
+				<f:selectItems value="#{registryCollections.registryTypes}" />
+				<a4j:support event="onclick" focus="#{pojoName}_document"
+					actionListener="#{controller.onChangeRegistryType}"
+					reRender="#{pojoName}DocumentPanel,#{registryTypeReRender}" 
+					ajaxSingle="true" />
+			</aon:selectOneRadio>
+		</c:if>
+		<c:if test="#{skipRegistryType}">
+			<aon:outputText value="&#160;" />
+			<aon:outputText value="&#160;" />
+		</c:if>
+	</c:if>
+
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/formDocument.xhtml" />
+
+	<aon:outputLabel for="#{pojoName}_nationality"
+		value="#{registryBundle.registry_nationality}" />
+	<aon:selectOneMenu id="#{pojoName}_nationality"
+		value="#{registry.nationality}" >
+		<f:selectItem value="#{null}" itemLabel="-"/>
+		<f:selectItems value="#{commonCollections.countries}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="#{pojoName}_name"
+		value="#{bundle.aon_company_name}" />
+	<aon:inputText id="#{pojoName}_name" maxlength="64"
+		value="#{registry.name}" size="64"
+		required="true">
+		<f:validateLength minimum="1" maximum="64" />
+	</aon:inputText>
+				
+	<aon:outputLabel for="#{pojoName}_alias"
+		value="#{bundle.aon_company_alias}" />
+	<aon:inputText id="#{pojoName}_alias" maxlength="32"
+		value="#{registry.alias}" size="32">
+		<f:validateLength minimum="1" maximum="32" />
+	</aon:inputText>
+
+</ui:composition>

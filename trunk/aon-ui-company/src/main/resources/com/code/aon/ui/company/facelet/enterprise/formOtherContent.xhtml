@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
+		<c:if test="#{enterprisePayroll.activity != null}" >	
+			<aon:outputText value="#{companyBundle.company_activity}" />
+			<aon:outputText value="#{enterprisePayroll.activity.cnae2009.code} - #{enterprisePayroll.activity.description}" />
+		</c:if>
+	
+		<c:if test="#{enterprisePayroll.ccc != null}" >	
+			<aon:outputText value="#{companyBundle.company_enterprise_ccc}" />
+			<aon:outputText value="#{enterprisePayroll.ccc.ccc}" />
+		</c:if>
+	</c:if>
+
+	<aon:outputText value="#{companyBundle.company_workplace}" />
+	<aon:div>
+		<aon:outputText value="#{enterprise.workplace.description}" />
+		<c:if test="#{enterprise.workplace.economicAgreement != null}" >
+			<aon:outputText value=" (" />
+			<aon:outputText value="#{enterprise.workplace.economicAgreement}" />
+			<aon:outputText value=" )" />
+		</c:if>
+	</aon:div>
+				
+	<c:if test="#{enterprise.dirStaff != null}" >
+		<aon:outputText value="#{registryBundle.registry_dir_staff_representative_labor}" />
+		<aon:outputText value="#{enterprise.dirStaff.name}, #{bundle.aon_company_document} #{enterprise.dirStaff.document}" />
+	</c:if>
+	
+</ui:composition>

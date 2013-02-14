@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS model-entity="JSFProcess">
+ <PROCESS-ITEM NAME="rules:" SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::0" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="question_list::#com#code#aon#ui#marketing#facelet#question#list.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/marketing/facelet/question/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#question#list.xhtml"
+    TITLE="question_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="question_form::#com#code#aon#ui#marketing#facelet#question#form.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/marketing/facelet/question/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#question#form.xhtml"
+    TITLE="question_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="question_search::#com#code#aon#ui#marketing#facelet#question#search.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/marketing/facelet/question/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#question#search.xhtml"
+    TITLE="question_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::1" SHAPE="32,417,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::1" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="survey_list::#com#code#aon#ui#marketing#facelet#survey#list.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/marketing/facelet/survey/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#survey#list.xhtml"
+    TITLE="survey_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="survey_form::#com#code#aon#ui#marketing#facelet#survey#form.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/marketing/facelet/survey/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#survey#form.xhtml"
+    TITLE="survey_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="survey_search::#com#code#aon#ui#marketing#facelet#survey#search.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/marketing/facelet/survey/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#survey#search.xhtml"
+    TITLE="survey_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::2" SHAPE="32,817,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::2" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="surveyResponse_list::#com#code#aon#ui#marketing#facelet#surveyResponse#list.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/marketing/facelet/surveyResponse/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#surveyResponse#list.xhtml"
+    TITLE="surveyResponse_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="surveyResponse_form::#com#code#aon#ui#marketing#facelet#surveyResponse#form.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/marketing/facelet/surveyResponse/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#surveyResponse#form.xhtml"
+    TITLE="surveyResponse_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="surveyResponse_action_form::#com#code#aon#ui#marketing#facelet#surveyResponse#formFromAction.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/marketing/facelet/surveyResponse/formFromAction.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#surveyResponse#formFromAction.xhtml"
+    TITLE="surveyResponse_action_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="surveyResponse_search::#com#code#aon#ui#marketing#facelet#surveyResponse#search.xhtml"
+    NAME="output3"
+    PATH="/com/code/aon/ui/marketing/facelet/surveyResponse/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#surveyResponse#search.xhtml"
+    TITLE="surveyResponse_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::3" SHAPE="32,1361,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::3" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="marketingCampaign_list::#com#code#aon#ui#marketing#facelet#campaign#list.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/marketing/facelet/campaign/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#campaign#list.xhtml"
+    TITLE="marketingCampaign_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="marketingCampaign_form::#com#code#aon#ui#marketing#facelet#campaign#form.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/marketing/facelet/campaign/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#campaign#form.xhtml"
+    TITLE="marketingCampaign_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="marketingCampaign_search::#com#code#aon#ui#marketing#facelet#campaign#search.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/marketing/facelet/campaign/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#campaign#search.xhtml"
+    TITLE="marketingCampaign_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::4" SHAPE="32,1537,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::4" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="campaignAction_form::#com#code#aon#ui#marketing#facelet#campaignAction#form.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/marketing/facelet/campaignAction/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#campaignAction#form.xhtml"
+    TITLE="campaignAction_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="campaignAction_list::#com#code#aon#ui#marketing#facelet#campaign#form.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/marketing/facelet/campaign/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#campaign#form.xhtml"
+    TITLE="campaignAction_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="campaignActionTarget_search::#com#code#aon#ui#marketing#facelet#campaignActionTarget#search.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/marketing/facelet/campaignActionTarget/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#campaignActionTarget#search.xhtml"
+    TITLE="campaignActionTarget_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="campaignActionTarget_list::#com#code#aon#ui#marketing#facelet#campaignActionTarget#list.xhtml"
+    NAME="output3"
+    PATH="/com/code/aon/ui/marketing/facelet/campaignActionTarget/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#campaignActionTarget#list.xhtml"
+    TITLE="campaignActionTarget_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="campaignActionTarget_import::#com#code#aon#ui#marketing#facelet#campaignActionTarget#import.xhtml"
+    NAME="output4"
+    PATH="/com/code/aon/ui/marketing/facelet/campaignActionTarget/import.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#campaignActionTarget#import.xhtml"
+    TITLE="campaignActionTarget_import" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::5" SHAPE="32,2337,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::5" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="communicationCenter::#com#code#aon#ui#marketing#facelet#communicationCenter#form.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/marketing/facelet/communicationCenter/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#communicationCenter#form.xhtml"
+    TITLE="communicationCenter" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="communicationCenter_response::#com#code#aon#ui#marketing#facelet#communicationCenter#response.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/marketing/facelet/communicationCenter/response.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#communicationCenter#response.xhtml"
+    TITLE="communicationCenter_response" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="communicationCenter_email::#com#code#aon#ui#marketing#facelet#communicationCenter#email.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/marketing/facelet/communicationCenter/email.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#communicationCenter#email.xhtml"
+    TITLE="communicationCenter_email" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="communicationCenter_sms::#com#code#aon#ui#marketing#facelet#communicationCenter#sms.xhtml"
+    NAME="output3"
+    PATH="/com/code/aon/ui/marketing/facelet/communicationCenter/sms.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#communicationCenter#sms.xhtml"
+    TITLE="communicationCenter_sms" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="communicationCenter_mail::#com#code#aon#ui#marketing#facelet#communicationCenter#mail.xhtml"
+    NAME="output4"
+    PATH="/com/code/aon/ui/marketing/facelet/communicationCenter/mail.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#communicationCenter#mail.xhtml"
+    TITLE="communicationCenter_mail" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::6" SHAPE="32,3025,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::6" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="marketingTemplate_list::#com#code#aon#ui#marketing#facelet#marketingTemplate#list.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/marketing/facelet/marketingTemplate/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#marketingTemplate#list.xhtml"
+    TITLE="marketingTemplate_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="marketingTemplate_form::#com#code#aon#ui#marketing#facelet#marketingTemplate#form.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/marketing/facelet/marketingTemplate/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#marketingTemplate#form.xhtml"
+    TITLE="marketingTemplate_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="marketingTemplate_search::#com#code#aon#ui#marketing#facelet#marketingTemplate#search.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/marketing/facelet/marketingTemplate/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#marketing#facelet#marketingTemplate#search.xhtml"
+    TITLE="marketingTemplate_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#survey#search.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/survey/search.xhtml"
+  SHAPE="272,721,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#communicationCenter#form.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/communicationCenter/form.xhtml"
+  SHAPE="304,2353,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#surveyResponse#formFromAction.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/surveyResponse/formFromAction.xhtml"
+  SHAPE="288,1153,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#campaignAction#form.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/campaignAction/form.xhtml"
+  SHAPE="304,1793,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#campaignActionTarget#list.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/campaignActionTarget/list.xhtml"
+  SHAPE="304,2017,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#question#form.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/question/form.xhtml"
+  SHAPE="272,209,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#marketingTemplate#form.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/marketingTemplate/form.xhtml"
+  SHAPE="272,3217,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#surveyResponse#list.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/surveyResponse/list.xhtml"
+  SHAPE="288,833,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#campaignActionTarget#import.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/campaignActionTarget/import.xhtml"
+  SHAPE="304,2129,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#communicationCenter#sms.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/communicationCenter/sms.xhtml"
+  SHAPE="304,2817,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#survey#list.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/survey/list.xhtml"
+  SHAPE="272,433,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#campaign#list.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/campaign/list.xhtml"
+  SHAPE="304,1377,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#communicationCenter#response.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/communicationCenter/response.xhtml"
+  SHAPE="304,2593,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#question#search.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/question/search.xhtml"
+  SHAPE="272,321,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#communicationCenter#email.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/communicationCenter/email.xhtml"
+  SHAPE="304,2705,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#campaignActionTarget#search.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/campaignActionTarget/search.xhtml"
+  SHAPE="304,1905,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#campaign#form.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/campaign/form.xhtml"
+  SHAPE="304,1553,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#surveyResponse#form.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/surveyResponse/form.xhtml"
+  SHAPE="288,1041,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#marketingTemplate#search.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/marketingTemplate/search.xhtml"
+  SHAPE="272,3329,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#campaign#search.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/campaign/search.xhtml"
+  SHAPE="304,2241,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#survey#form.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/survey/form.xhtml"
+  SHAPE="272,609,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#surveyResponse#search.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/surveyResponse/search.xhtml"
+  SHAPE="288,1265,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#question#list.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/question/list.xhtml"
+  SHAPE="272,33,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#marketingTemplate#list.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/marketingTemplate/list.xhtml"
+  SHAPE="272,3041,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#marketing#facelet#communicationCenter#mail.xhtml"
+  PATH="/com/code/aon/ui/marketing/facelet/communicationCenter/mail.xhtml"
+  SHAPE="304,2929,0,0" model-entity="JSFProcessGroup"/>
+</PROCESS>

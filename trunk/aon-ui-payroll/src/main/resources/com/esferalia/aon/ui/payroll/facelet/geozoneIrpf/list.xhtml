@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="geozoneIrpfList">
+
+			<aon:div ajaxRendered="true" layout="none">
+				<aon:div styleClass="aon-finding-title-toolbar">
+					<aon:panelGrid columns="3" dir="true"
+						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+			
+						<aon:div styleClass="aon-finding-title-internal">
+							<aon:outputText value="#{payrollBundle.payroll_geozoneIrpf_module}" />
+						</aon:div>
+			
+						<aon:div styleClass="aon-finding-subtitle-internal">
+							<aon:outputText value="#{bundle.aon_reset}" />
+						</aon:div>
+			
+						<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
+						
+							<aon:commandButton id="settle-search" 
+								title="#{bundle.aon_key_search_accelerator}"
+								value="#{bundle.aon_search}" 
+								immediate="true"
+								action="geozoneIrpf_search" 
+								styleClass="aon-finding-toolbar-item aon-icon-search"
+								accesskey="#{bundle.aon_key_search}" >
+								<aon:actionListener method="#{geozoneIrpf.onInitialize}" />
+							</aon:commandButton>
+							
+						</aon:div>
+						
+					</aon:panelGrid>
+				</aon:div>
+
+				<!--  aon-region-body -->
+				<aon:div styleClass="aon-scroll-area">
+
+					<aon:dataTable id="GeozoneIrpfTable" var="to" value="#{geozoneIrpf.irpfModel}" rows="20">
+						
+						<aon:rowSelector id="geozoneIrpfTable-select" 
+							action="geozoneIrpf_form"
+							actionListener="#{geozoneIrpf.onSelectGeozone}" 
+							reRender="aonContent"/>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText 
+									value="#{bundle.aon_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.geozoneName}"  />
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText
+									value="#{bundle.aon_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.year}" />
+						</aon:column>
+
+					</aon:dataTable>
+					<aon:dataScroller2 for="GeozoneIrpfTable" showNote="true" />
+
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>

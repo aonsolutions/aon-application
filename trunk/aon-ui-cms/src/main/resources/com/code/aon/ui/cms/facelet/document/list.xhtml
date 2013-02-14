@@ -1,0 +1,12 @@
+<ui:composition 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:include src="/com/code/aon/ui/cms/facelet/util/gallery.xhtml" >
+		<ui:param name="controller" value="#{document}" />
+		<ui:param name="toolbarTitle" value="#{appBundle.document_gallery}" />
+		<ui:param name="gallery_document_label" value="#{appBundle.aon_cms_document}" />
+		<ui:param name="skipResizeButton" value="#{true}" />
+	</ui:include>
+
+</ui:composition>

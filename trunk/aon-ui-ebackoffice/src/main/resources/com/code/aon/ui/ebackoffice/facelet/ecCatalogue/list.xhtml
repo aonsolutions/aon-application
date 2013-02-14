@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="offerList">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{productBundle.product_categoryGroup_module}" />
+				<ui:param name="controller" value="#{eccatalogue}" />
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+					<ui:param name="controller" value="#{eccatalogue}" />
+					<ui:param name="columnClasses"
+						value="aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn,aon-editDataTable-numberColumn" />
+
+					<ui:define name="columns">
+						<aon:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundle.aon_name}" />
+							</f:facet>
+							<aon:outputText value="Datos" />
+						</aon:column>
+					</ui:define>
+				</ui:decorate>
+
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

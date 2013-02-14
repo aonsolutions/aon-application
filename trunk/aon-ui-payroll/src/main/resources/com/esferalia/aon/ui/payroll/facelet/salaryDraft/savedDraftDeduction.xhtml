@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" >
+	
+	<aon:div styleClass="aon-margin-top aon-border" 
+		style="background-color:#F6F6F6;">
+		
+		<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
+			columnClasses="aon-noborder aon-padding-left aon-width-auto">
+			
+			<aon:outputText value="&#160;&#160;" 
+				styleClass="aon-bold" style="position: relative; top: -8px; margin-left: 5px; "/>
+
+			<aon:div style="margin-left: 10px;">
+				<aon:outputText value="&#160;" styleClass="aon-bold"/>
+			</aon:div>
+		</aon:panelGrid>
+
+		<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
+			columnClasses="aon-noborder aon-padding-right aon-width-150 aon-text-right aon-bold">
+			
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftDeduction.xhtml" >
+				<ui:param name="deductions" value="#{sortedSalaryDeductions.items['COMMON_CONTINGENCY']}" />
+			</ui:include>
+
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftDeduction.xhtml" >
+				<ui:param name="deductions" value="#{sortedSalaryDeductions.items['UNEMPLOYMENT']}" />
+			</ui:include>
+
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftDeduction.xhtml" >
+				<ui:param name="deductions" value="#{sortedSalaryDeductions.items['JOB_TRAINING']}" />
+			</ui:include>
+
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftDeduction.xhtml" >
+				<ui:param name="deductions" value="#{sortedSalaryDeductions.items['STRUCTURAL_OVERTIME']}" />
+			</ui:include>
+
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftDeduction.xhtml" >
+				<ui:param name="deductions" value="#{sortedSalaryDeductions.items['NON_STRUCTURAL_OVERTIME']}" />
+			</ui:include>
+
+
+			<c:set var="ssDiff" 
+				value="#{ ( oldSsTotal > ssTotal ? oldSsTotal - ssTotal : ssTotal - oldSsTotal )}" />
+			<aon:div styleClass="#{ ssDiff >= 0.01  ? 'aon-label-error' : ''}" style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{oldSsTotal}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+
+
+			<c:forEach var="irpf" items="#{sortedSalaryDeductions.items['IRPF'].list}" >
+				<c:set var="irpfTotal" value="#{irpfTotal + irpf.amount}" />
+				<c:set var="oldIrpfTotal" value="#{oldIrpfTotal + irpf.oldAmount}" />
+				<c:set var="irpfDescription" value="#{irpf.description}" />
+			</c:forEach>
+			
+			<c:set var="irpfDiff" 
+				value="#{ ( oldIrpfTotal > irpfTotal ? oldIrpfTotal - irpfTotal : irpfTotal - oldIrpfTotal )}" />
+			<aon:div styleClass="#{ irpfDiff >= 0.01  ? 'aon-label-error' : ''}" style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{oldIrpfTotal}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+			</aon:div>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftDeduction.xhtml" >
+				<ui:param name="hide" value="#{true}" />
+				<ui:param name="deductions" value="#{sortedSalaryDeductions.items['ADVANCE_PAYMENT']}" />
+			</ui:include>
+
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+			</aon:div>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftDeduction.xhtml" >
+				<ui:param name="hide" value="#{true}" />
+				<ui:param name="deductions" value="#{sortedSalaryDeductions.items['IN_KIND']}" />
+			</ui:include>
+
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+			</aon:div>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftDeduction.xhtml" >
+				<ui:param name="hide" value="#{true}" />
+				<ui:param name="deductions" value="#{sortedSalaryDeductions.items['OTHER']}" />
+			</ui:include>
+
+			<c:set var="totalDiff" 
+				value="#{ ( oldTotalDeduction > totalDeduction ? oldTotalDeduction - totalDeduction : totalDeduction - oldTotalDeduction )}" />
+			<aon:div styleClass="#{ totalDiff >= 0.01  ? 'aon-label-error' : ''}" style="">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{oldTotalDeduction}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+		</aon:panelGrid>		
+	</aon:div>
+</ui:composition>

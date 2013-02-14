@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="EMP">
+
+<!-- 
+################
+PAGE 1
+################
+si_bonif_cuota
+no_bonif_cuota
+nomreptra
+dnireptra
+calireptra
+verificacion123
+verificacion1234
+entre16y30
+trabdiscap
+alumproy
+profetraba
+catetraba
+cno1
+cno2
+cno3
+cno4
+
+################
+PAGE 2
+################
+año1
+año2y3
+trabefec
+porcforma
+convcole
+jornhoraefec
+totaldura
+fechaini
+fechafin
+periodoprue
+retribu
+perioretri
+vacaciones
+porc_75_250
+porc_100_249
+convcole2
+munifirma
+clausadici
+diafirma
+mesfirma
+añofirma
+
+################ 
+COPIA BASICA
+################
+cto
+horasjornada1
+jornada
+euros
+
+-->
+
+</register>

@@ -1,0 +1,53 @@
+package com.code.aon.dbutils;
+
+public interface Constants {
+
+	String ACCOUNT_PERIOD_TABLE_NAME = "account_period";
+	String ACCOUNT_TABLE_NAME = "account";
+	String ACTION_ENTRY_TABLE_NAME = "action_entry";
+	String ACTION_TABLE_NAME = "action";
+	String ALARM_TABLE_NAME = "alarm";
+	String APPLICATION_TABLE_NAME = "application";
+	String APPLICATION_ROLE_TABLE_NAME = "application_role";
+	String APP_PARAM_TABLE_NAME = "app_param";
+	String BANK_CONCEPT_TABLE_NAME = "bank_concept";
+	String BANK_STATEMENT_LINK_TABLE_NAME = "bank_statement_link";
+	String CNAE_TABLE_NAME = "cnae";
+	String CNAE2009_RATE_TABLE_NAME = "cnae2009_rate";
+	String CNAE2009_TABLE_NAME = "cnae2009";
+	String CNO_TABLE_NAME = "cno";
+	String COMMERCIAL_TRACKING_TABLE_NAME = "commercial_tracking";
+	String DOMAIN_TABLE_NAME = "domain";
+	String DELIVERY_DETAIL_TABLE_NAME = "delivery_detail";
+	String GEOZONE_IRPF_HANDICAP_TABLE_NAME = "geozone_irpf_handicap";
+	String GEOZONE_IRPF_DESCENDANT_TABLE_NAME = "geozone_irpf_descendant";
+	String GEOZONE_IRPF_TABLE_NAME = "geozone_irpf";
+	String OFFER_DETAIL_TABLE_NAME = "offer_detail";
+	String INCOME_DETAIL_TABLE_NAME = "income_detail";
+	String INVOICE_DETAIL_TABLE_NAME = "invoice_detail";
+	String MK_ACTION_TARGET_TABLE_NAME = "mk_action_target";
+	String NOTICE_TABLE_NAME = "notice";
+	String PROFILE_TABLE_NAME = "profile";
+	String PURCHASE_DETAIL_TABLE_NAME = "purchase_detail";
+	String ROLE_TABLE_NAME = "role";
+	String SALES_DETAIL_TABLE_NAME = "sales_detail";
+	String SERIES_TABLE_NAME = "series";
+	String SESSION_TABLE_NAME = "session";
+	String TASK_TABLE_NAME = "task";	
+	String TAX_TABLE_NAME = "tax";
+	
+	String DOMAIN_COLUMN_NAME = "domain";
+	String NAME_COLUMN_NAME = "name";
+	String SOURCE_ID_COLUMN_NAME = "source_id";
+	String SOURCE_COLUMN_NAME = "source";
+	String VALUE_COLUMN_NAME = "value";
+	
+	String IS_AUTOINCREMENT = "IS_AUTOINCREMENT";
+	String COLUMN_NAME = "COLUMN_NAME";
+	String PKTABLE_NAME = "PKTABLE_NAME";
+	String FKCOLUMN_NAME = "FKCOLUMN_NAME";
+	
+	String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
+	String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
+	
+}

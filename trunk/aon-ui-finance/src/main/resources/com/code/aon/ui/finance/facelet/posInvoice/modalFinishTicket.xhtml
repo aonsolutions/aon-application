@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showFinishTicketWindow">
+		<c:if test="#{invoiceController.showFinishTicketWindow}">
+			<rich:modalPanel id="finishTicketModalPanel" minHeight="260"
+				minWidth="520" rendered="#{invoiceController.showFinishTicketWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{financeBundle.finance_pos_finish_ticket}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showFinishTicketWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{invoiceController.showFinishTicketWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="finishTicketForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="finishTicket-accept"
+										value="#{bundle.aon_accept}"
+										actionListener="#{invoiceController.onFinishTicket}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="finishTicketModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{invoiceController.showFinishTicketWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="finishTicket-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showFinishTicketWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{invoiceController.showFinishTicketWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
+
+										<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formNewFinance.xhtml">
+											<ui:param name="invoiceController" value="#{invoiceController}" />
+											<ui:param name="detailController" value="#{detailController}" />
+											<ui:param name="financeController" value="#{financeController}" />
+											<ui:param name="formName" value="#{formName}" />
+											<ui:param name="posMode" value="#{posMode}" />
+											<ui:param name="skipGenerationMode" value="#{true}" />
+										</ui:include>
+
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

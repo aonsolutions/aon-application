@@ -1,0 +1,395 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="configurationMenu">
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+
+					<aon:panelGroup>
+											
+						<aon:panelGrid id="group_general_email"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-mail">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_mail_configuration} (#{loggedUser.loggedUserName})" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="mailAccount"
+										action="mailAccount_list"
+										actionListener="#{mailConfig.onInitMailAccount}"
+										value="#{webmailBundle.webmail_mailAccount_full}" />						
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="signature"
+										action="signature_list"
+										actionListener="#{mailConfig.onInitSignature}"
+										value="#{webmailBundle.webmail_signature_full}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="contact"
+										action="contact_list"
+										actionListener="#{mailConfig.onInitContact}"
+										value="#{webmailBundle.webmail_email}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+
+						<c:if test="#{aonRole.admin}">
+							<aon:panelGrid id="group_config_company"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-company aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{companyBundle.company_data_module}"/>
+								</f:facet>					
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="company" 
+											action="company"
+											actionListener="#{company.onLoad}"
+											value="#{companyBundle.company_data_module}" />
+									</aon:div>
+									<c:if test="#{companyCustomize.show}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="companyCustomize" 
+												action="companyCustomize"
+												actionListener="#{companyCustomize.onInit}"
+												value="#{bundle.aon_oem}" />
+										</aon:div>
+									</c:if>
+									<c:if test="#{domainSwitcher.type == 'HOTEL'}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="hotel" 
+												action="hotel_list" 
+												value="#{pmsBundle.pms_hotel_module}" />
+										</aon:div>								
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="department" 
+												action="department_grid" 
+												value="#{companyBundle.company_department_module}" />
+										</aon:div>
+									</c:if>																	
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="mailAccountEnterprise"
+											action="mailAccount_list-enterprise"
+											actionListener="#{adminMain.onInitMailAccount}"
+											value="#{adminBundle.admin_mailAccount_enterprise}" />						
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="signatureEnterprise"
+											action="signature_list-enterprise"
+											actionListener="#{adminMain.onInitSignature}"
+											value="#{adminBundle.admin_signature_enterprise}" />
+									</aon:div>								
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
+						
+						<c:if test="#{aonRole.saleOperator or aonRole.purchaseOperator or aonRole.productOperator or aonRole.commercialOperator}">
+							<aon:panelGrid id="group_configuration_masters"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-general">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_master_tables}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
+										<c:if test="#{aonRole.saleOperator}">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="customer-configuration"
+													action="customer_search-configuration"
+													actionListener="#{customer.onEditSearch}"
+													value="#{customerBundle.customer_module}" />
+											</aon:div>
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="aon_invoicing_group-configuration"
+													action="invoicingGroup_list-configuration"
+													value="#{financeBundle.finance_invoicing_group_module}" />
+											</aon:div>
+										</c:if>
+										<c:if test="#{aonRole.purchaseOperator}">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="supplier-configuration" 
+													action="supplier_search-configuration"
+													actionListener="#{supplier.onEditSearch}"
+													value="#{supplierBundle.supplier_module}" />
+											</aon:div>
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="creditor-configuration" 
+													action="creditor_search-configuration"
+													actionListener="#{creditor.onEditSearch}"
+													value="#{financeBundle.finance_creditor_module}" />
+											</aon:div>
+										</c:if>
+									</c:if>
+									<c:if test="#{aonRole.productOperator}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="item-configuration" 
+												action="item_search"
+												actionListener="#{item.onEditSearch}"
+												value="#{productBundle.product_module}" />
+										</aon:div>
+									</c:if>
+									<c:if test="#{aonRole.productOperator or aonRole.purchaseOperator}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="expenseItem-configuration" 
+												action="expenseItem-configuration" 
+												value="#{productBundle.product_expense_module}" />
+										</aon:div>
+									</c:if>
+									<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
+										<c:if test="#{aonRole.commercialOperator}">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="target-configuration" 
+													action="target_search-configuration" 
+													actionListener="#{target.onEditSearch}"
+													value="#{commercialBundle.commercial_target_module}" />
+											</aon:div>
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="seller-configuration" 
+													action="seller_search-configuration" 
+													actionListener="#{seller.onEditSearch}"
+													value="#{sellerBundle.seller_module}" />
+											</aon:div>
+										</c:if>
+									</c:if>
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
+
+						<c:if test="#{aonRole.admin}">
+							<aon:panelGrid id="group_configuration_security"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-security aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_security}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<c:if test="#{aonRole.sysAdmin or (aonRole.admin and !domainSwitcher.disableDomainManagement)}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="adminDomain"
+												action="adminDomain_form"
+												actionListener="#{adminMain.onInit}"
+												value="#{adminBundle.admin_domain_management}" >
+												<aon:actionListener method="#{adminDomain.onInit}" />
+											</aon:commandLink>
+										</aon:div>
+									</c:if>								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="domainUsers"
+											action="domainUser_list"
+											actionListener="#{adminMain.onInit}"
+											value="#{adminBundle.admin_users}" >
+											<aon:actionListener method="#{domainUser.onSearch}" />
+										</aon:commandLink>						
+									</aon:div>
+									<c:if test="#{domainSwitcher.parentDomainUserInChildDomain or (aonRole.sysAdmin and domainSwitcher.childDomain)}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="overloadUsers"
+												action="userOverload_list"
+												actionListener="#{adminMain.onInit}"
+												value="#{adminBundle.admin_overload_users}" >
+												<aon:actionListener method="#{userOverload.onSearch}" />
+											</aon:commandLink>						
+										</aon:div>
+									</c:if>
+									<c:if test="#{aonRole.sysAdmin}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="domainApplications"
+												action="domainApplication_list"
+												actionListener="#{adminMain.onInit}"
+												value="#{adminBundle.admin_applications}" >
+												<aon:actionListener method="#{domainApplication.onSearch}" />
+											</aon:commandLink>						
+										</aon:div>
+									</c:if>									
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="profiles"
+											action="domainApplicationProfile_list"
+											actionListener="#{adminMain.onInit}"
+											value="#{adminBundle.admin_profiles}" >
+											<aon:actionListener method="#{domainApplicationProfile.onInit}" />
+										</aon:commandLink>						
+									</aon:div>									
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="scope"
+											action="scope_list"
+											actionListener="#{scope.onSearch}"
+											value="#{configBundle.config_scopes}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="workGroup"
+											action="workgroup_list-utilities"
+											actionListener="#{workGroup.onSearch}"
+											value="#{configBundle.config_workgroup_module}" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
+					</aon:panelGroup>
+
+					<aon:panelGroup>
+						<c:if test="#{aonRole.config}">												
+							<aon:panelGrid id="group_management_tables"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-config">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_management_auxiliaries_tables}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="payMethod-configuration"
+											action="payMethod-configuration"
+											value="#{configBundle.config_paymethod_module}" />
+									</aon:div>								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="bank-configuration"
+											action="bank-configuration"
+											value="#{configBundle.config_bank_module}" />
+									</aon:div>
+									<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="bankConcept"
+												action="bankConcept" 
+												value="#{financeBundle.finance_bank_concept_module}" />
+										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="series-configuration" 
+												action="series-configuration" 
+												value="#{configBundle.config_series_module}" />
+										</aon:div>								
+									</c:if>	
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="tax-configuration" 
+											action="tax_list-configuration" 
+											value="#{configBundle.config_tax_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="geotreeParent_list-configuration" 
+											action="geotreeParent_list-configuration" 
+											actionListener="#{geotreeParent.onSearch}"
+											value="#{geozoneBundle.geozone_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="segment_form-configuration" 
+											action="segment_form-configuration" 
+											value="#{registryBundle.registry_segment_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="relationship" 
+											action="relationship_form" 
+											value="#{registryBundle.registry_relationship_module}" />
+									</aon:div>								
+								</aon:div>							
+							</aon:panelGrid>
+						</c:if>
+		
+						<c:if test="#{aonRole.config}">												
+							<aon:panelGrid id="group_prodyct_tables"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-config">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_product_auxiliaries_tables}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="productCategory-configuration" 
+											action="productCategory-configuration"
+											value="#{productBundle.product_category_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="brand-configuration"
+											action="brand-configuration"
+											value="#{productBundle.product_brand_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="tariff-configuration" 
+											action="tariff_list-configuration"
+											actionListener="#{tariff.onSearch}"
+											value="#{productBundle.product_tariff_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="catalogue-configuration" 
+											action="catalogue_search-configuration"
+											actionListener="#{catalogue.onEditSearch}"
+											value="#{productBundle.product_catalogue_module}" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
+								
+						<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
+							<c:if test="#{aonRole.config}">												
+								<aon:panelGrid id="group_main_parameters"
+									styleClass="aon-width-all" columnClasses="aon-padding"
+									headerClass="aon-direct-access-panel aon-icon-config">
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_main_parameters}" />
+									</f:facet>
+									<aon:div styleClass="aon-direct-access-list">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="defaultParams-configuration" 
+												action="accountingDefaultParams-configuration"
+												actionListener="#{accAppParams.onLoad}"
+												value="#{accountingBundle.accounting_default_params_module}" />
+										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="fiscalParams-configuration" 
+												action="fiscalParams-configuration"
+												actionListener="#{fiscalParams.onLoad}"
+												value="#{fiscalBundle.fiscal_parameters_module}" />
+										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="payrollParams-configuration" 
+												action="defaultParams-configuration"
+												actionListener="#{payrollAppParams.onLoad}"
+												value="#{payrollBundle.payroll_default_params_module}" />
+										</aon:div>
+									</aon:div>
+								</aon:panelGrid>
+								
+								<aon:panelGrid id="group_utilities"
+									styleClass="aon-width-all" columnClasses="aon-padding"
+									headerClass="aon-direct-access-panel aon-icon-config">
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_utilities}" />
+									</f:facet>
+									<aon:div styleClass="aon-direct-access-list">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="aonLoader"
+												action="aonLoader_form"
+												actionListener="#{aonLoader.onStart}"
+												value="#{accountingBundle.aon_loader_module}" />
+										</aon:div>
+										<c:if test="#{aonRole.sysAdmin}">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="applicationParameter"
+													action="applicationParameter_list"
+													actionListener="#{applicationParameter.onSearch}"
+													value="#{configBundle.config_app_param_module}" />
+											</aon:div>
+										</c:if>									
+									</aon:div>
+								</aon:panelGrid>
+								
+								
+							</c:if>
+						</c:if>
+					</aon:panelGroup>
+				</h:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

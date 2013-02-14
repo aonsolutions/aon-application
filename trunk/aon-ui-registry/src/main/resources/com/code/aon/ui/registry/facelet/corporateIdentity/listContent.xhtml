@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:include 
+		src="/com/code/aon/ui/registry/facelet/corporateIdentity/listBasic.xhtml" />
+
+	<ui:insert name="attachmentAdditonalContent"/>
+
+	<c:if test="#{aonRole.confidentiality}">
+		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
+			<f:facet name="header">
+				<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
+					styleClass="aon-icon-confidential" style="padding-left:15px" />
+			</f:facet>
+			<aon:outputText value="&#160;" style="padding-left:20px"
+				styleClass="#{to.confidential?'aon-icon-checked':'aon-icon-check'}" />
+		</aon:column>
+	</c:if>		
+			
+	<aon:column alias="RegistryAttachment.scope&lt;description"
+		styleClass="aon-editDataTable-textColumn aon-width-130">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_scope}" />
+		</f:facet>
+		<aon:outputText value="#{to.scope.description}" />
+	</aon:column>
+
+	<aon:column alias="RegistryAttachment.category&lt;name"
+		styleClass="aon-editDataTable-textColumn aon-width-130">
+		<f:facet name="header">
+			<aon:outputText value="#{registryBundle.registry_category}" />
+		</f:facet>
+		<aon:outputText value="#{to.category.name}" />
+	</aon:column>
+
+	<aon:column styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{registryBundle.registry_tag_module}" />
+		</f:facet>
+		<aon:outputText value="#{to.tagList}" />
+	</aon:column>
+
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_fileupload_element}" />
+		</f:facet>
+		<aon:div onmouseover="disableRowSelector();"
+			onmouseup="disableRowSelector();"
+			onmouseout="enableRowSelector();" >
+			<aon:htmlCommandLink id="download" target="_blank"
+				rendered="#{to.data != null}"
+				actionListener="#{controller.downloadAttachment}"
+				styleClass="aon-icon aon-icon-mail-save"
+				style="line-height:16px;margin-right:0;"
+				title="#{bundle.aon_fileupload_download}">
+				<f:param name="index" value="#{to.id}" />
+				<aon:outputText value="&#160;" />
+			</aon:htmlCommandLink>
+			<c:if test="#{!skipAddToBatch}">
+				<aon:commandLink title="#{registryBundle.registry_add_batch}" 
+					ajaxSingle="true" style="background-position-y: top;"
+					actionListener="#{controller.onAddCurrentToBatch}" value="&#160;"
+					styleClass="aon-finding-toolbar-item aon-icon-version aon-finding-toolbar-item-no-border"
+					rendered="#{!controller.currentInBatch}" >
+				</aon:commandLink>			
+			</c:if>
+		</aon:div>					
+	</aon:column>
+	
+</ui:composition>

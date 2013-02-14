@@ -1,0 +1,333 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+	
+	<application>
+		<message-bundle>com.code.aon.ui.common.i18n.messages</message-bundle>
+		<locale-config>
+			<default-locale>es</default-locale>
+			<supported-locale>en</supported-locale>
+		</locale-config> 
+		<navigation-handler>com.code.aon.ui.audit.AuditNavigationHandler</navigation-handler>
+		<resource-bundle>
+			<base-name>com.code.aon.web.aio.i18n.messages</base-name>
+			<var>appBundle</var>
+		</resource-bundle>
+	</application>
+
+	<!-- *************** RESOURCE RESOLVER ***************** --> 
+	<managed-bean>
+		<managed-bean-name>aonResource</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.resources.bean.ResourceResolver
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>resourceContextPath</property-name>
+			<value>aon-aio</value>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** AON CONFIGURATION **** -->
+	<managed-bean>
+		<managed-bean-name>aonConfiguration</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.common.controller.ConfigurationController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>styleSheets</property-name>
+			<list-entries>
+				<value>#{aonResource.resolve['/aon-richCss.css']}</value>
+				<value>#{aonResource.resolveLocal['/css/aio.css']}</value>
+			</list-entries>
+		</managed-property>
+	   <managed-property>
+	      <property-name>properties</property-name>
+	      <map-entries>
+	         <map-entry>
+	            <key>hideApplicationVersion</key>
+	            <value>#{true}</value>
+	         </map-entry>
+	      </map-entries>
+	   </managed-property>      	    				
+	</managed-bean>
+
+	<!--  **** DESKTOP CONTROLLER **** -->
+	<managed-bean>
+		<managed-bean-name>desktop</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.aio.controller.DesktopController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- =================== Application Menu Navigation Rules ================= -->	
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>menu_enterprise</from-outcome>
+			<to-view-id>/facelet/menu/enterprise.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_marketing</from-outcome>
+			<to-view-id>/facelet/menu/marketing.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_commercial</from-outcome>
+			<to-view-id>/facelet/menu/commercial.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_management</from-outcome>
+			<to-view-id>/facelet/menu/management.xhtml</to-view-id> 
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>menu_sales</from-outcome>
+			<to-view-id>/facelet/menu/sales.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_purchase</from-outcome>
+			<to-view-id>/facelet/menu/purchase.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_expenses</from-outcome>
+			<to-view-id>/facelet/menu/expenses.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_warehouse</from-outcome>
+			<to-view-id>/facelet/menu/warehouse.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_treasury</from-outcome>
+			<to-view-id>/facelet/menu/treasury.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_config</from-outcome>
+			<to-view-id>/facelet/menu/config.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_fiscal</from-outcome>
+			<to-view-id>/facelet/menu/fiscal.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_accounting</from-outcome>
+			<to-view-id>/facelet/menu/accounting.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_groupware</from-outcome>
+			<to-view-id>/facelet/menu/groupware.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_payroll</from-outcome>
+			<to-view-id>/facelet/menu/payroll.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_asset</from-outcome>
+			<to-view-id>/facelet/menu/asset.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_document</from-outcome>
+			<to-view-id>/facelet/menu/document.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_configuration</from-outcome>
+			<to-view-id>/facelet/menu/configuration.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_garage</from-outcome>
+			<to-view-id>/facelet/menu/garage.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_academy</from-outcome>
+			<to-view-id>/facelet/menu/academy.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_hotel</from-outcome>
+			<to-view-id>/facelet/menu/hotel.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_infoweb</from-outcome>
+			<to-view-id>/facelet/menu/infoweb.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_pos</from-outcome>
+			<to-view-id>/facelet/menu/pos.xhtml</to-view-id> 
+		</navigation-case>
+	</navigation-rule>
+	
+   	<!-- ************************************************** -->
+   	<!-- ************* OPTIONAL LISTENERS ***************** -->
+   	<!-- ************************************************** -->
+	
+	<!-- ************ ACCOUNT LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>accountOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.account.bridge -->
+			<value>#{accountControllerCascadeListener}</value>
+		</list-entries>
+	</managed-bean>
+
+	<!-- ************ CUSTOMER LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>customerOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.finance -->
+			<value>#{customerFeeChildListener}</value>
+			<!-- aon-ui-project-->
+			<value>#{customerProjectListener}</value>
+			<!-- aon-ui-academy-->
+			<value>#{customerAbsenceChildListener}</value>
+			<value>#{customerAlumnLoanChildListener}</value>
+			<value>#{customerAlumnCourseChildListener}</value>
+			<value>#{alumnControllerListener}</value>
+			<!--  aon.ui.customer -->
+			<value>#{customerPersonListener}</value>
+		</list-entries>
+	</managed-bean>
+
+	<!-- ************ ITEM LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>itemOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.warehouse -->
+			<value>#{itemWarehouseChildListener}</value>
+			<!--  aon.ui.product -->
+			<value>#{itemAlternativeChildListener}</value>				
+			<value>#{itemCompositionChildListener}</value>				
+			<value>#{itemSupplierChildListener}</value>
+			<value>#{itemTariffChildListener}</value>
+			<value>#{itemCatalogueChildListener}</value>
+		</list-entries>
+	</managed-bean>
+
+	<!-- ************ COMPANY LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>companyOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.company -->
+			<value>#{companyCertificateChildListener}</value>
+			<value>#{enterpriseActivityChildListener}</value>
+			<value>#{payrollWorkPlaceChildListener}</value>
+			<value>#{companyImagesChildListener}</value>
+			<value>#{companyCustomizeChildListener}</value>
+			<!--  aon.ui.registry -->
+			<value>#{corporateIdentityChildListener}</value>			
+		</list-entries>
+	</managed-bean>
+
+	<!-- ************ SALE INVOICE DETAIL LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>saleInvoiceDetailOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.finance -->
+			<value>#{invoiceDetailCompositeListener}</value>
+		</list-entries>
+	</managed-bean>
+
+	<!-- ************ PURCHASE INVOICE DETAIL LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>purchaseInvoiceDetailOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.finance -->
+			<value>#{invoiceDetailCompositeListener}</value>
+		</list-entries>
+	</managed-bean>
+
+	<!-- ************ TARGET LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>targetOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<value>#{targetItemListener}</value>
+			<value>#{targetSellerListener}</value>
+			<value>#{targetProfileListener}</value>
+			<value>#{targetSupplierListener}</value>
+			<value>#{targetProjectCommercialListener}</value>
+		</list-entries>		
+	</managed-bean>
+
+	<!-- ************ ENTERPRISE LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>enterpriseOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.project -->
+			<value>#{enterpriseProjectChildListener}</value>
+			<!--  aon.ui.company -->
+			<value>#{enterpriseTreeControllerListener}</value>
+			<value>#{enterpriseActivityChildListener}</value>
+			<value>#{payrollWorkPlaceChildListener}</value>
+			<value>#{enterpriseParamsControllerListener}</value>
+			<!--  aon.ui.payroll -->
+			<value>#{enterpriseSearchEx}</value>			
+		</list-entries>
+	</managed-bean>
+	
+	<!-- ************ OFFER LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>offerOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.audabridge -->
+			<value>#{audabridgeOfferControllerListener}</value>
+		</list-entries>
+	</managed-bean>	
+
+	<!--  **** ROLE MANAGER DB **** -->
+	<managed-bean>
+		<managed-bean-name>aonRole</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.common.role.RoleManagerDB
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************* CHANGE PASSWORD DB ***************** -->
+	<managed-bean>
+		<managed-bean-name>changePassword</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.ChangeDBPasswordController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+		
+	<managed-bean>
+		<managed-bean-name>domainSwitcherListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.common.domain.IDomainChangeListener</value-class>
+			<!--  aon.ui.audit -->
+			<value>#{auditDomainChangeListener}</value>
+		</list-entries>
+	</managed-bean>
+	
+
+</faces-config>

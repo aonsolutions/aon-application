@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+	
+	<aon:div styleClass="aon-scroll-area" 
+		style="height:#{contractPdf.contractHeight}px; width:#{contractPdf.contractWidth}px; border: #000000 1px solid; margin-left: 10px;">
+	<aon:div styleClass="contractModalContent"
+		style="position: absolute; left: 30; right: 30; margin: auto; background: white url(#{contractPdf.imageUrl}) top left no-repeat; border:#ffffff 1px solid; height:#{contractPdf.contractHeight}px; width:#{contractPdf.contractWidth}px;">
+		
+		<c:forEach items="#{contractPdf.contractPdfWriter.contractPdfFields}" var="field" >
+			<c:if test="#{field.text}">
+				<aon:inputText 
+					title="#{field.label}"
+					rendered="#{field.page==contractPdf.contractPage}"
+					style="background-color:transparent; border: #E0ECF8 2px solid; position:absolute; bottom:#{field.scaledBottomCoordinates-2}px; left:#{field.scaledLeftCoordinates}px;width:#{field.scaledWidth}px; "
+					value="#{field.value}" size="#{field.width}"
+					maxlength="#{field.maxLength}" />
+			</c:if>
+			<c:if test="#{field.check}">
+				<aon:selectBooleanCheckbox 
+					title="#{field.label}"
+					rendered="#{field.page==contractPdf.contractPage}"
+					style="background-color:#E0ECF8; border:none; position:absolute; bottom:#{field.scaledBottomCoordinates-2}px; left:#{field.scaledLeftCoordinates}px; "
+					value="#{field.booleanValue}" >
+				</aon:selectBooleanCheckbox>
+			</c:if>
+		</c:forEach>
+			
+	</aon:div>
+	</aon:div>
+		 
+
+</ui:composition>

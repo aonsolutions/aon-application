@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="identityForm">
+
+			<aon:div ajaxRendered="true" layout="none">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml" >
+					<ui:param name="toolbarTitle" value="#{bundle.aon_documents}" />
+					<ui:param name="toolbarDescription" value="#{corporateIdentity.identityReport.company.fullName}" />
+					<ui:param name="controller" value="#{corporateIdentityAttach}" />
+					<ui:param name="skipResetButton" value="#{!aonRole.userInRole['CorporativeDocumentsManager']}" />
+					<ui:param name="skipSearchButton" value="false" />
+					<ui:define name="additionalToolbarContent">
+						<aon:commandButton id="category" value="#{registryBundle.registry_category_module}"
+							rendered="#{aonRole.userInRole['CorporativeDocumentsManager']}"
+							action="corporate_identity_category" actionListener="#{category.onSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-category" />
+					</ui:define>
+				</ui:decorate>
+			</aon:div>
+			
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:div styleClass="aon-form-group" rendered="#{aonRole.userInRole['PredefinedDocumentsExecutable']}">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel value="#{registryBundle.registry_predefined_documents}" />
+						</aon:div>
+					</aon:div>
+			
+					<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/predefinedContext.xhtml" />			
+
+				</aon:div>
+			
+				<aon:div styleClass="aon-form-group">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel value="#{registryBundle.registry_corporate_documents}" />
+						</aon:div>
+					</aon:div>
+					
+					<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
+						<ui:param name="controller" value="#{corporateIdentityAttach}" />
+						<ui:param name="rows" value="10" />
+						<ui:param name="sortColumns" value="#{true}" />
+						<ui:param name="skipLineEdition" value="#{!aonRole.userInRole['CorporativeDocumentsManager']}" />
+						<ui:param name="skipResetButton" value="#{!aonRole.userInRole['CorporativeDocumentsManager']}" />
+					</ui:include>
+
+				</aon:div>
+				
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

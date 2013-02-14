@@ -1,0 +1,123 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<aon:form id="domainsList">
+
+		<!--  aon-region-body -->
+		<aon:div styleClass="aon-scroll-area">			
+			<aon:div styleClass="aon-portlet-title">
+				<aon:div styleClass="aon-portlet-title-buttons">
+					<aon:commandLink id="newDomainDesktop" 
+						title="#{adminBundle.admin_new_domain}"
+						value="&#160;" styleClass="aon-icon-portlet aon-icon-new" 
+						actionListener="#{domains.onNewDomain}"
+						action="newDomain_form"/> 
+				</aon:div>
+				<aon:outputText value="#{configBundle.config_domain_module}"
+					styleClass="aon-portlet-title-text aon-icon aon-icon-company"/>
+			</aon:div>
+			<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
+			
+				<aon:div styleClass="aon-padding-bottom">
+					<aon:outputLabel for="domainFilter"
+						styleClass="aon-italic aon-margin-right aon-bold"
+						value="#{bundle.aon_filter}:"/>
+					<aon:inputText id="domainFilter" size="80" value="#{domains.filter}">
+						<a4j:support 
+							event="onkeyup"
+							reRender="domainSwitcherTableContainer"
+							eventsQueue="domainSwitcherFilterKeyUp"
+							actionListener="#{domains.onChangeFilter}"
+							requestDelay="500"
+							ajaxSingle="true"
+							ignoreDupResponses="true"
+							limitToList="true"/>
+					</aon:inputText>
+				</aon:div>
+			
+				<aon:div id="domainSwitcherTableContainer" styleClass="aon-width-all">
+					<aon:methodParam name="rowSelectorAction" value="start" />
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+						<ui:param name="controller" value="#{domains}" />
+						<ui:param name="skipFocusFirst" value="true" />
+						<ui:define name="columns">
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto"
+								alias="Domain.description" >
+								<f:facet name="header">
+									<aon:outputText value="#{adminBundle.admin_domain_displayName}" />
+								</f:facet>							
+								<aon:outputText value="#{to.description}" />
+							</aon:column>
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
+								alias="Domain.type" >
+								<f:facet name="header">
+									<aon:outputText value="#{adminBundle.admin_domain_type}" />
+								</f:facet>							
+								<aon:outputText value="#{to.type}" />
+							</aon:column>
+							<aon:column styleClass="aon-editDataTable-iconColumn"
+								alias="Domain.active" >
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_active}" />
+								</f:facet>
+								<aon:outputText value="&#160;"
+									styleClass="aon-icon #{(to.active)?'aon-icon-checked':'aon-icon-check'}" />							
+							</aon:column>									
+							<aon:column styleClass="aon-editDataTable-iconColumn"
+								alias="Domain.domainManagement" >
+								<f:facet name="header">
+									<aon:outputText value="#{adminBundle.admin_domain_domainManagement}" />
+								</f:facet>
+								<aon:outputText value="&#160;"
+									styleClass="aon-icon #{(to.domainManagement)?'aon-icon-checked':'aon-icon-check'}" />							
+							</aon:column>									
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-200"
+								alias="Domain.name" >
+								<f:facet name="header">
+									<aon:outputText value="#{adminBundle.admin_domain_url}" />
+								</f:facet>							
+								<aon:div onmouseover="disableRowSelector();"
+									onmouseup="disableRowSelector();"
+									onmouseout="enableRowSelector();" >
+									<aon:outputLink target="_blank" value="http://#{to.name}" >
+										<aon:outputText style="#{customize.fontStyle}" value="http://#{to.name}" />
+								    </aon:outputLink>
+								</aon:div>
+							</aon:column>
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+								<f:facet name="header">
+									<aon:outputText value="#{adminBundle.admin_domain_childs}" />
+								</f:facet>							
+								<aon:outputText value="#{domains.currentDomainChildNumber}" />
+							</aon:column>
+							<aon:column styleClass="aon-editDataTable-buttonsColumn aon-vertical-align-top">
+								<f:facet name="header">
+									<aon:outputText value="&#160;" />
+								</f:facet>
+								<aon:commandButton id="#{dataTableId}-remove"
+									onmouseover="disableRowSelector();"
+									onmouseup="disableRowSelector();"
+									onmouseout="enableRowSelector();"
+									title="#{adminBundle.admin_remove_domain} (#{bundle.aon_key_remove_line_accelerator})"
+									action="removeDomain_form" actionListener="#{domains.onRemoveDomain}"
+									rendered="#{domains.currentDomainChildNumber == 0}"
+									styleClass="aon-editDataTable-button aon-icon-delete"
+									accesskey="#{bundle.aon_key_remove_line}" />
+							</aon:column>
+						</ui:define>
+					</ui:decorate>
+				</aon:div>
+
+			</aon:div>
+
+		</aon:div>
+
+	</aon:form>
+
+</ui:composition>

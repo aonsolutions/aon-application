@@ -1,0 +1,60 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+		<ui:param name="controller" value="#{targetItem}" />
+		<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+		<ui:define name="columns">
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="Item_id" value="#{productBundle.product_item}" />
+				</f:facet>
+				<aon:outputText value="#{to.item.product.name} #{to.item.detail}"
+					rendered="#{formList}" />
+					
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+					<ui:param name="lookupTo" value="#{targetItem.to.item}" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="lookupRendered" value="#{formEdit}" />
+				</ui:include>
+				<f:facet name="footer" >
+					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{targetItem.to.item}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="lookupRendered" value="#{formNew}" />
+						<ui:param name="lookupSuffix" value="-New" />
+					</ui:include>
+				</f:facet>					
+
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="TargetItem_status" value="#{bundle.aon_status}" />
+				</f:facet>
+				<aon:outputText value="#{to.status}"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="TargetItem_status" rendered="#{formEdit}"
+					required="true" value="#{to.status}">
+					<f:selectItem itemLabel="-" value="#{null}"/>
+					<f:selectItems value="#{commercialCollections.targetItemStatuses}" />
+				</aon:selectOneMenu>								
+				<f:facet name="footer">
+					<aon:selectOneMenu id="TargetItem_status-New" rendered="#{formNew}"
+						required="true" value="#{targetItem.to.status}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{commercialCollections.targetItemStatuses}" />
+					</aon:selectOneMenu>								
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

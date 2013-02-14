@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:valueParam name="registry" default="#{controller.to.registry}"/>
+
+	<aon:panelGrid columns="2" columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-500">
+
+		<aon:outputLabel for="Person_id" value="#{bundle.aon_id}" />
+		<aon:div>
+			<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
+				<aon:div>
+					<aon:inputText id="Person_id" value="#{controller.to.id}"
+						rendered="#{!controller.new}" size="15" disabled="true" />
+					<aon:outputText value="--------" rendered="#{controller.new}" />
+				</aon:div>
+				<aon:div>
+					<c:if test="#{aonRole.confidentiality}">
+						<aon:selectBooleanCheckbox id="Person_securityLevel"
+							value="#{controller.to.registry.confidential}" />
+						<aon:outputText styleClass="aon-italic aon-margin-right"
+							value="#{bundle.aon_confidential}" />
+					</c:if>
+				</aon:div>
+			</aon:panelGrid>
+		</aon:div>
+
+		<ui:include src="/com/code/aon/ui/registry/facelet/registry/formDocument.xhtml" />
+
+		<aon:outputLabel for="Person_name"
+			value="#{bundle.aon_name}" />
+		<aon:inputText id="Person_name" required="true"
+			value="#{controller.to.name}" size="64" maxlength="64">
+			<f:validateLength minimum="1" maximum="64" />
+		</aon:inputText>
+
+		<aon:outputLabel for="Person_firstSurname"
+			value="#{registryBundle.registry_person_firstSurname}" />
+		<aon:inputText id="Person_firstSurname" required="true"
+			value="#{controller.to.firstSurname}" size="64" maxlength="64">
+			<f:validateLength minimum="1" maximum="64" />
+		</aon:inputText>
+
+		<aon:outputLabel for="Person_secondSurname"
+			value="#{registryBundle.registry_person_secondSurname}" />
+		<aon:inputText id="Person_secondSurname" 
+			value="#{controller.to.secondSurname}" size="64" maxlength="64">
+			<f:validateLength minimum="1" maximum="64" />
+		</aon:inputText>
+				
+		<aon:outputLabel for="Person_alias"
+			value="#{bundle.aon_alias}" />
+		<aon:inputText id="Person_alias" 
+			value="#{controller.to.registry.alias}" size="32" maxlength="32">
+			<f:validateLength minimum="1" maximum="32" />
+		</aon:inputText>
+
+		<aon:outputLabel for="Person_birthDate"
+			value="#{registryBundle.registry_person_birthDate}" />
+		<aon:div>
+			<aon:selectInputDate id="Person_birthDate" 
+				value="#{controller.to.birthDate}"
+				inputSize="10" renderAsPopup="true" enableManualInput="true"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}">
+			</aon:selectInputDate>
+			<aon:div style="display:inline;">
+				<aon:outputText value="&#160;(" rendered="#{controller.to.age!=null}"/>
+				<aon:outputText value="#{controller.to.age}" rendered="#{controller.to.age!=null}"/>
+				<aon:outputText value="&#160;#{bundle.aon_years}" rendered="#{controller.to.age!=null}"/>
+				<aon:outputText value=")" rendered="#{controller.to.age!=null}"/>
+			</aon:div>
+			<aon:outputText value="#{registryBundle.registry_nationality}" styleClass="aon-margin-left aon-italic"/>
+			<aon:selectOneMenu id="Person_nationality" value="#{controller.to.registry.nationality}"
+				styleClass="aon-margin-left">
+				<f:selectItem value="#{null}" itemLabel="-"/>
+				<f:selectItems value="#{commonCollections.countries}" />
+			</aon:selectOneMenu>
+		</aon:div>
+
+		<aon:outputLabel for="Person_socialSecurityNumber" value="#{registryBundle.registry_person_nss}" />
+		<aon:panelGroup id="Person_SSNumberPanel">
+			<aon:inputText id="Person_socialSecurityNumber" value="#{controller.to.socialSecurityNumber}"
+				size="32" maxlength="12" >
+				<f:validateLength minimum="1" maximum="12" />
+				<a4j:support event="onchange"
+					actionListener="#{controller.onChangeSSNumber}" 
+					reRender="Person_SSNumberPanel, Person_address_geozone" 
+					ajaxSingle="true" />
+			</aon:inputText>
+			<aon:outputText 
+				rendered="#{controller.to.validSSNumber}"
+				styleClass="aon-icon-predetermine"
+				style="padding-left: 15px;"
+				value="&#160;" />
+			<aon:outputText 
+				rendered="#{not empty controller.to.socialSecurityNumber and !controller.to.validSSNumber}"
+				styleClass="aon-icon-exception"
+				style="padding-left: 15px;"
+				value="&#160;" />
+		</aon:panelGroup>
+
+		<aon:outputLabel for="Person_gender" value="#{registryBundle.registry_person_gender}" />
+		<aon:div>
+			<aon:selectOneMenu id="Person_gender"
+				value="#{controller.to.gender}">
+				<f:selectItems value="#{registryCollections.genders}" />
+			</aon:selectOneMenu>
+			<aon:outputText value="#{registryBundle.registry_person_marital_status}" styleClass="aon-margin-left aon-italic"/>
+			<aon:selectOneMenu id="Person_maritalStatus"
+				styleClass="aon-margin-left"
+				value="#{controller.to.maritalStatus}">
+				<f:selectItems value="#{registryCollections.maritalStatuses}" />
+			</aon:selectOneMenu>
+		</aon:div>
+	
+		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
+			<ui:param name="controllerLookupListener" value="#{personForm}"/>
+			<ui:param name="skipFax" value="#{true}"/>
+			<ui:param name="skipWeb" value="#{true}"/>
+		</ui:include>	
+
+	</aon:panelGrid>
+
+	<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formPayMethod.xhtml">
+		<ui:param name="controllerLookupListener" value="#{personForm}"/>
+	</ui:include>
+
+</ui:composition>
+

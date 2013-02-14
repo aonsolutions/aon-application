@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
+	    <ui:param name="lookupBean" value="#{paymentConceptLookup}" />
+	    <ui:param name="lookupInputSize" value="10"/>
+		<ui:param name="lookupInputMaxLength" value="15"/>
+		<ui:param name="controller" value="#{paymentConcept}" />
+		<ui:param name="lookupInputValue" value="#{lookupTo.code}"/>
+		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.description}" />
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.description}"/>
+		<ui:param name="skipNewButton" value="false" />
+		<ui:param name="skipGoToButton" value="false" />
+		<ui:param name="skipSearchButton" value="false" />
+		<ui:param name="lookupLabel" value="#{bundle.aon_concept}" />
+		<ui:param name="searchButtonTitle" value="#{payrollBundle.payroll_paymentConcept_selection}" />
+		<ui:param name="newButtonTitle" value="#{payrollBundle.payroll_paymentConcept_reset}" />
+		
+		<ui:define name="lookupInputTextContent">
+			<aon:joinProperty alias="PaymentConcept_code" value="#{lookupInputValue}" />
+		</ui:define>		
+	</ui:decorate>
+	
+</ui:composition>

@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:outputLabel for="ReservationRequest_hotel_id" value="#{pmsBundle.pms_hotel}" />
+	<aon:outputText	value="#{reservationRequest.to.hotel.workPlace.description}" styleClass="aon-bold"
+		rendered="#{!reservationRequest.new}" />
+	<aon:selectOneMenu id="ReservationRequest_hotel_id" value="#{reservationRequest.to.hotel}" 
+		rendered="#{reservationRequest.new}" required="true" ajaxSingle="true">
+		<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="ReservationRequest_id" value="#{pmsBundle.pms_reservation_request_id}"
+		rendered="#{!reservationRequest.new}" />
+	<aon:outputText	id="ReservationRequest_id" value="#{reservationRequest.to.id}" 
+		styleClass="aon-bold" rendered="#{!reservationRequest.new}" />
+
+	<aon:outputLabel for="ReservationRequest_code" value="#{pmsBundle.pms_reservation_code}" />
+	<aon:outputText	value="#{reservationRequest.to.code}" styleClass="aon-bold"
+		rendered="#{!reservationRequest.to.active}" />
+	<aon:inputText id="ReservationRequest_code" value="#{reservationRequest.to.code}"
+		size="30" maxlength="20" required="true"
+		rendered="#{reservationRequest.to.active}" ajaxSingle="true" />
+
+	<aon:outputLabel for="ReservationRequest_startDate" value="#{pmsBundle.pms_checkIn}" />
+	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto">
+		<aon:outputText	value="#{reservationRequest.to.startDate}" styleClass="aon-bold"
+			rendered="#{!aonRole.saleOperator or !reservationRequest.to.active}">
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
+		<aon:selectInputDate id="ReservationRequest_startDate" value="#{reservationRequest.to.startDate}" 
+			required="true" rendered="#{aonRole.saleOperator and reservationRequest.to.active}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}">
+			<a4j:support ajaxSingle="true" event="oninputchange"
+				actionListener="#{reservationRequest.onStartDateChanged}"
+				reRender="ReservationRequest_nights,ReservationRequest_endDate"
+				focus="ReservationRequest_nights" />
+			<a4j:support ajaxSingle="true" event="onchanged"
+				actionListener="#{reservationRequest.onStartDateChanged}"
+				reRender="ReservationRequest_nights,ReservationRequest_endDate"
+				focus="ReservationRequest_nights" />
+		</aon:selectInputDate>
+		<aon:div>
+			<aon:outputLabel for="ReservationRequest_nights" value="#{pmsBundle.pms_nights}:" 
+				styleClass="aon-margin-right aon-italic" />
+			<aon:outputText value="#{reservationRequest.nights}" styleClass="aon-bold" 
+				rendered="#{!reservationRequest.to.active}" />
+			<aon:inputText id="ReservationRequest_nights" value="#{reservationRequest.nights}"
+				size="1" maxlength="3"
+				rendered="#{reservationRequest.to.active}"
+				valueChangeListener="#{reservationRequest.onNightsChanged}"
+				reRender="ReservationRequest_endDate"
+				focus="ReservationRequest_bookingHolder">
+				<f:validateDoubleRange minimum="1" />
+			</aon:inputText>
+		</aon:div>
+	</aon:panelGrid>
+
+	<aon:outputLabel for="ReservationRequest_endDate" value="#{pmsBundle.pms_checkOut}" />
+	<aon:outputText	value="#{reservationRequest.to.endDate}" styleClass="aon-bold"
+		rendered="#{!reservationRequest.to.active}">
+		<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+			timeZone="#{timeZoneController.timeZoneId}" />
+	</aon:outputText>
+	<aon:selectInputDate id="ReservationRequest_endDate" value="#{reservationRequest.to.endDate}" 
+		required="true" rendered="#{reservationRequest.to.active}"
+		timeZone="#{timeZoneController.timeZone}"
+		popupDateFormat="#{bundle.aon_date_pattern}">
+		<a4j:support ajaxSingle="true" event="oninputchange"
+			actionListener="#{reservationRequest.onEndDateChanged}"
+			reRender="ReservationRequest_nights,ReservationRequest_endDate"
+			focus="ReservationRequest_bookingHolder" />
+		<a4j:support ajaxSingle="true" event="onchanged"
+			actionListener="#{reservationRequest.onEndDateChanged}"
+			reRender="ReservationRequest_nights,ReservationRequest_endDate"
+			focus="ReservationRequest_bookingHolder" />
+	</aon:selectInputDate>
+
+	<aon:outputLabel for="ReservationRequest_bookingHolder" value="#{pmsBundle.pms_reservation_holder}" />
+	<aon:outputText value="#{reservationRequest.to.bookingHolder}" styleClass="aon-bold" 
+		rendered="#{!reservationRequest.to.active}" />
+	<aon:selectOneMenu id="ReservationRequest_bookingHolder" value="#{reservationRequest.to.bookingHolder}" 
+		required="true" rendered="#{reservationRequest.to.active}"
+		valueChangeListener="#{reservationRequest.onHolderChanged}"
+		reRender="BookingHolderLabelDiv,BookingHolderContentDiv">
+		<f:selectItems value="#{pmsCollections.bookingHolders}" />
+	</aon:selectOneMenu>
+
+	<aon:div id="BookingHolderLabelDiv">
+		<aon:outputLabel for="ReservationRequest_agency" value="#{pmsBundle.pms_agency}"
+			 rendered="#{!reservationRequest.to.companyHolder}" />
+		<aon:outputLabel for="ReservationRequest_company" value="#{pmsBundle.pms_company}"
+			rendered="#{reservationRequest.to.companyHolder}" />
+	</aon:div>
+
+	<aon:div id="BookingHolderContentDiv">
+		<aon:outputText value="#{reservationRequest.to.agency.registry.fullName}" styleClass="aon-bold" 
+			rendered="#{!reservationRequest.to.active and !reservationRequest.to.companyHolder}"  />
+		<aon:selectOneMenu id="ReservationRequest_agency" value="#{reservationRequest.to.agency}" 
+			required="true" styleClass="aon-width-350"
+			rendered="#{reservationRequest.to.active and !reservationRequest.to.companyHolder}"
+			disabled="#{reservationRequest.to.guestHolder}">
+			<c:if test="#{reservationRequest.to.guestHolder}">
+				<f:selectItem itemLabel="-" value="#{null}" />		
+			</c:if>
+			<f:selectItems value="#{pmsCollections.agencies}" />
+		</aon:selectOneMenu>
+		<aon:outputText value="#{reservationRequest.to.company.registry.fullName}" styleClass="aon-bold" 
+			rendered="#{!reservationRequest.to.active and reservationRequest.to.companyHolder}"  />
+		<aon:selectOneMenu id="ReservationRequest_company" value="#{reservationRequest.to.company}" 
+			required="true" styleClass="aon-width-350"
+			rendered="#{reservationRequest.to.active and reservationRequest.to.companyHolder}">
+			<f:selectItems value="#{pmsCollections.companies}" />
+		</aon:selectOneMenu>
+	</aon:div>
+
+	<aon:outputLabel for="ReservationRequest_remarks" value="#{bundle.aon_remark}" />
+	<aon:outputText	value="#{reservationRequest.to.remarks}" styleClass="aon-bold"
+		rendered="#{!aonRole.saleOperator and reservationRequest.to.agencyHolder}" />
+	<aon:inputText id="ReservationRequest_remarks" value="#{reservationRequest.to.remarks}"
+		size="64" maxlength="166"
+		rendered="#{aonRole.saleOperator or !reservationRequest.to.agencyHolder}" ajaxSingle="true" />
+
+ </ui:composition>

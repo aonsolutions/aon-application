@@ -1,0 +1,119 @@
+/********************************************************************
+* Copyright (c) 2011, esferalia NETWORKS S.A
+*
+* The copyright of the computer program herein is the property 
+* of esferalia NETWORKS.
+*********************************************************************
+* The program may be used and/or copied only with the written 
+* permission of esferalia NETWORKS, or in accordance with the 
+* terms and conditions stipulated in the agreement contract 
+* under which the program has been supplied.
+*********************************************************************
+*/
+
+package ${package};
+
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+
+import java.util.List;
+import java.util.LinkedList;
+
+import java.io.InputStream;
+
+import ${package}.SQLConstants.*;
+
+public class SQLReader  extends AbstractSQL {
+
+	public SQLReader(Connection connection) 
+	throws SQLException {
+		super(connection);
+	}
+
+#foreach($table in $tables)
+
+
+	public ${table}Reader new${table}Reader()
+	throws SQLException {
+		return new ${table}Reader();
+	}
+
+
+	String ${table.javaName}Sql = null;
+	PreparedStatement ${table.javaName}Stmt = null;
+	
+
+	public class ${table}Reader {
+	
+		StringBuffer where ;
+		List<Object> params ;
+		
+		private ${table}Reader() {
+			where = new StringBuffer();
+			params = new LinkedList<Object>();
+		}
+#foreach ($column in $table.columns)
+
+		/**
+		* @$column.javaName $column.remarks 
+		*/
+		public void set${column}(${column.javaClass} $column.javaName) 	{
+			params.add($column.javaName);
+			if  ( where.length() > 0 ){
+				where.append(" AND ");
+			}
+			else {  
+				where.append(" WHERE ");
+			}
+			where.append( String.format(" %s = ? ", ${table}Columns.${column.name.toUpperCase()}));
+		}
+#end
+
+		public I${table} find${table} () 
+		throws SQLException {
+			ResultSet rs = null ;
+			try {
+				String sql = "SELECT * FROM `${table.name}` " + where.toString();  
+				if ( ${table.javaName}Stmt == null || 
+					! sql.equals (${table.javaName}Sql) ){
+					if ( ${table.javaName}Stmt != null ){
+						${table.javaName}Stmt.close();
+					}
+					${table.javaName}Stmt = connection.prepareStatement(sql);
+					${table.javaName}Sql = sql;
+				}
+				for ( int i = 0 ; i < params.size(); i++  ){
+					${table.javaName}Stmt.setObject(i+1, params.get(i) );
+				}
+				rs = ${table.javaName}Stmt.executeQuery();
+				return rs.next() ? create${table}(rs) : null; 
+			}finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		private I${table} create${table} ( ResultSet rs ) 
+		throws SQLException{
+			${table} ${table.javaName} = new ${table}();
+#foreach ($column in $table.columns)
+#if ($column.javaClass.equals("Integer"))
+			${table.javaName}.set${column}(rs.getInt("${column.name}"));
+#elseif ($column.type == -4 )
+			${table.javaName}.set${column}(rs.getBinaryStream("${column.name}"));
+#else
+			${table.javaName}.set${column}(rs.get${column.javaClass}("${column.name}"));
+#end
+#end
+			return 	${table.javaName};		
+		}	
+	}
+#end	
+	
+}
+	

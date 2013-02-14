@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGrid columns="2">
+		<aon:outputLabel for="Alarm_alarmDate"
+			value="#{bundle.aon_date}" />
+		<aon:div>			
+			<a4j:region>
+				<aon:selectInputDate id="Alarm_alarmDate"
+					value="#{alarm.to.alarmDate}" required="true"
+					timeZone="#{timeZoneController.timeZone}" inputSize="16"
+					popupDateFormat="#{bundle.aon_timestamp2_pattern}">									
+				</aon:selectInputDate>
+				<aon:outputLabel for="Alarm_delayTime" rendered="#{!alarm.new}"
+					value="#{groupwareBundle.alarm_delay_time}" />
+				<aon:selectOneMenu id="Alarm_delayTime"
+					styleClass="aon-margin-left" rendered="#{!alarm.new}"
+					valueChangeListener="#{alarm.onDelayTimeChanged}"
+					reRender="Alarm_alarmDate" value="#{alarm.delayTime}">
+					<f:selectItem itemLabel="-" value="#{null}"/>
+					<f:selectItems value="#{groupWareCollections.delayTimes}" />
+				</aon:selectOneMenu>
+			</a4j:region>			
+		</aon:div>		
+		
+		<aon:outputLabel for="Alarm_priority"
+			value="#{groupwareBundle.alarm_priority}" />
+		<aon:selectOneMenu id="Alarm_priority"
+			value="#{alarm.to.priority}" required="true">
+			<f:selectItem itemLabel="-" value="#{null}"/>
+			<f:selectItems value="#{groupWareCollections.priorities}" />
+		</aon:selectOneMenu>
+		
+		<aon:outputLabel for="Alarm_description"
+			value="#{bundle.aon_description}" />
+		<aon:inputTextarea id="Alarm_description"
+			cols="60" rows="7" required="true"
+			value="#{alarm.to.description}" />
+		
+		<c:if test="#{!alarm.new}" >
+			<aon:outputLabel value="#{groupwareBundle.alarm_source}" />
+			<aon:div>
+				<aon:outputText value="#{alarm.to.source}"/>
+				<c:if test="#{alarm.to.sourceId != null}" >
+					<c:if test="#{aonConfiguration.bean.alarm.showGoToCommercialMarketing and alarm.to.commercialTracking}" >
+						<aon:goToButton controller="#{commercialTracking}"
+							propertyId="#{alarm.to.sourceId}" />					
+					</c:if>
+					<c:if test="#{aonConfiguration.bean.alarm.showGoToCallCenter and alarm.to.callCenter}" >
+						<aon:commandButton immediate="true"
+							value="&#160;" style="border:0;"
+							title="#{marketingBundle.marketing_survey_start}"
+							action="communicationCenter"
+							actionListener="#{communicationCenter.onGoToActionTarget}"
+							styleClass="aon-finding-toolbar-item aon-icon-telephone" />
+					</c:if>
+				</c:if>
+			</aon:div>
+	
+			<c:if test="#{alarm.sender != null}" >	
+				<aon:outputLabel value="#{groupwareBundle.groupware_sender}" />
+				<aon:outputText value="#{alarm.sender}" />
+			</c:if>
+		</c:if>
+	</aon:panelGrid>
+
+</ui:composition>

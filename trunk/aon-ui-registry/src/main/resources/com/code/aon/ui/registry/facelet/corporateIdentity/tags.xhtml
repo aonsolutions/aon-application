@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:outputLabel for="RegistryAttachment_tag"
+		value="#{registryBundle.registry_tag_module}" />
+	<aon:div id="tagDiv">
+		<a4j:region>
+			<a4j:repeat value="#{searchController.tags}" rowKeyVar="index" var="raTag">
+				<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+					<aon:selectOneMenu id="RegistryAttachment_tag"
+						value="#{searchController.tags[index]}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{registryCollections.tags}" />
+						<a4j:support event="onchange" reRender="tagDiv"/>
+					</aon:selectOneMenu>
+					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="tagDiv"
+						actionListener="#{searchController.onRemoveTag}" value="&#160;" immediate="true"
+						rendered="#{raTag.id != null}">
+						<f:param name="index" value="#{index}" />
+					</aon:commandButton>
+					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="tagDiv"
+						actionListener="#{searchController.onAddTag}" value="&#160;" immediate="true"
+						rendered="#{(raTag.id != null) and (index == (searchController.tagsSize-1))}"/>
+				</aon:div>						
+			</a4j:repeat>
+		</a4j:region>
+	</aon:div>			
+
+</ui:composition>

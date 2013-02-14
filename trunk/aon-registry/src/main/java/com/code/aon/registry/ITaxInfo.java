@@ -1,0 +1,17 @@
+package com.code.aon.registry;
+
+import com.code.aon.config.enumeration.InvoiceTransactionType;
+
+public interface ITaxInfo {
+	
+    public boolean isSurcharge();
+
+    public boolean isWithholding();
+
+    public InvoiceTransactionType getTransaction();
+
+    public boolean isVatFree();
+
+    public boolean isRetentionFree();
+
+}

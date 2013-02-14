@@ -1,0 +1,23 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:graphicImage title="Google" style="vertical-align:text-bottom;"
+		value="#{aonResource.resolve['/images/aon-header/google.png']}" />			
+	<aon:div layout="inline" styleClass="aon-header-menu-item">
+		<h:outputLink value="http://mail.google.com" target="_blank">
+			<aon:outputText value="#{webmailBundle.webmail_main}" />
+		</h:outputLink> 			
+		<h:outputLink value="https://mail.google.com/mail/#contacts" target="_blank">
+			<aon:outputText value="#{webmailBundle.webmail_email}" />
+		</h:outputLink> 			
+		<h:outputLink value="http://www.google.com/calendar" target="_blank">
+			<aon:outputText value="#{bundle.aon_calendar}" />
+		</h:outputLink> 			
+		<h:outputLink value="http://docs.google.com" target="_blank">
+			<aon:outputText value="#{bundle.aon_documents}" />
+		</h:outputLink>
+	</aon:div> 			
+
+</ui:composition>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="EMP">
+
+<!-- 
+################
+PAGE 1
+################ 
+tiempocompleto
+tiempoparcial
+nomreptra
+dnireptra
+calireptra
+titulprac
+fechatit
+ubicact
+Texto2
+tiempoc
+profetraba
+catetraba
+ubitrab
+calletrab
+
+################
+PAGE 2
+################
+sel_jorn1
+horasjorna1
+horainicio
+sel_jorn2
+horasjorna2
+tipojorntp1
+tipojorntp2
+tipojorntp3
+tipojorntp4
+Casilla de verificación161
+Casilla de verificación171
+Casilla de verificación181
+horatraba1
+horatraba2
+totaldura
+fechaini
+fechafin
+peridoprue
+retribu
+perioretri
+concepsala
+vacaciones
+convcole
+oecomu
+clausadici
+munifirma
+diafirma
+mesfirma
+añofirma
+
+################ 
+COPIA BASICA
+################
+cto
+euros
+jornada
+
+-->
+
+</register>

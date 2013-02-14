@@ -1,0 +1,16 @@
+package com.esferalia.aon.payroll;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import com.esferalia.aon.entity.master.Certifica2BatchDetailDB;
+
+@Entity
+@Table(name="certifica2_batch_detail")
+public class Certifica2BatchDetail extends Certifica2BatchDetailDB {
+
+	private static final long serialVersionUID = 1L;
+
+}
+
+

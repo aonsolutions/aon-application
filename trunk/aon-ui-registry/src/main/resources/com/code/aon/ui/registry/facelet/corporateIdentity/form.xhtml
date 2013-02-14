@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="corporateIdentityAttachForm">
+			<c:if test="#{corporateIdentityAttach.massiveUpload}" >
+				<aon:methodParam name="saveActionListener" value="#{corporateIdentityAttach.masiveUpload}" type="actionListener" />
+			</c:if>		
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{(corporateIdentityAttach.massiveUpload)?(registryBundle.registry_document_massive_upload):(bundle.aon_documents)}" />
+				<ui:param name="controller" value="#{corporateIdentityAttach}" />
+				<ui:param name="skipResetButton" value="#{(!aonRole.documentManager) or (documentManager.freeSpace &lt; 1)}" />
+				<ui:param name="skipCancelButton" value="#{corporateIdentityAttach.massiveUpload}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid id="dataTable" columns="2" >
+				
+					<ui:include src="/com/code/aon/ui/registry/facelet/rattach/form_content.xhtml" >
+						<ui:param name="controller" value="#{corporateIdentityAttach}" />
+						<ui:param name="skipScopeSelection" value="#{true}" />
+					</ui:include>
+
+					<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/tags.xhtml" >
+						<ui:param name="searchController" value="#{corporateIdentitySearch}" />
+					</ui:include>
+					
+					<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{corporateIdentityAttach.domain}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="lookupRendered" value="#{corporateIdentityAttach.massiveUpload}" />
+						<ui:param name="lookupReRender" value="RegistryAttachment_scope" />
+						<ui:param name="lookupControllerListener" value="#{corporateIdentityAttach.domainLookupListener}" />
+						<aon:methodParam name="lookupChangeListener" value="#{corporateIdentityAttach.onDomainChange}" type="lookupChangeListener" />						
+					</ui:include>
+					
+					<aon:outputLabel for="RegistryAttachment_scope"
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="RegistryAttachment_scope" 
+						disabled="#{corporateIdentityAttach.domain.id == null}"
+						value="#{corporateIdentityAttach.to.scope}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{corporateIdentityAttach.domainScopes}" />
+					</aon:selectOneMenu>
+
+					<c:if test="#{!corporateIdentityAttach.new}" >
+						<aon:outputText value="#{bundle.aon_document_download_url}" />
+						<aon:outputLink target="_blank" value="#{domainSwitcher.domainURL}#{corporateIdentityAttach.to.downloadURL}" >
+							<aon:outputText value="#{domainSwitcher.domainURL}#{corporateIdentityAttach.to.downloadURL}" />
+					    </aon:outputLink>
+					</c:if>
+			
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{domainLookup}" />
+	</ui:define>
+</ui:composition>

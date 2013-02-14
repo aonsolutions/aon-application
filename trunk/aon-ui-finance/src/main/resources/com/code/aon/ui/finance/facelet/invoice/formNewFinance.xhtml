@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<c:if test="#{!skipGenerationMode}">
+		<c:if test="#{!posMode}">
+			<aon:outputLabel for="InvoiceFinance_generationMode" value="#{financeBundle.finance_finance}" />
+			<aon:selectOneRadio id="InvoiceFinance_generationMode"
+				value="#{invoiceController.financeGenerationMode}"
+				valueChangeListener="#{invoiceController.onFinanceGenerationModeChanged}"
+			 	reRender="#{formName}" ajaxSingle="true">
+				<f:selectItem itemLabel="#{financeBundle.finance_automatic}" itemValue="0" />
+				<f:selectItem itemLabel="#{financeBundle.finance_manual}" itemValue="1" />
+				<f:selectItem itemLabel="#{financeBundle.finance_not_generate}" itemValue="-1" />
+			</aon:selectOneRadio>				
+		</c:if>
+		<c:if test="#{posMode}">
+			<aon:outputLabel for="InvoiceFinance_generationMode" value="#{financeBundle.finance_pos_finish_ticket}" />
+			<aon:selectOneRadio id="InvoiceFinance_generationMode"
+				value="#{invoiceController.financeGenerationMode}"
+				valueChangeListener="#{invoiceController.onFinanceGenerationModeChanged}"
+			 	reRender="#{formName}" ajaxSingle="true">
+				<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="-1" />
+				<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
+			</aon:selectOneRadio>				
+		</c:if>
+	</c:if>
+
+	<c:if test="#{!posMode}">
+		<aon:outputLabel for="Finance_DueDate" value="#{financeBundle.finance_finance_date}"
+			rendered="#{invoiceController.financeGenerationMode == 1}" />
+		<aon:selectInputDate id="Finance_DueDate"
+			value="#{financeController.to.dueDate}"
+			inputSize="8" required="true"
+			rendered="#{invoiceController.financeGenerationMode == 1}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}">
+			<a4j:support event="oninputchange" ajaxSingle="true" />
+			<a4j:support event="onchanged" ajaxSingle="true" />
+		</aon:selectInputDate>
+	</c:if>
+
+	<aon:outputLabel for="Finance_PayMethod" value="#{configBundle.config_pay_method}"
+		rendered="#{invoiceController.financeGenerationMode == 1}" />
+	<aon:selectOneMenu id="Finance_PayMethod"
+		value="#{financeController.to.payMethod}" required="true"
+		rendered="#{invoiceController.financeGenerationMode == 1}"
+		valueChangeListener="#{financeController.onPayMethodChanged}"
+		reRender="#{!posMode?('InvoiceFinance_bankAccount_div'):('InvoiceFinance_changeAmount')}" ajaxSingle="true">
+		<c:if test="#{!posMode}">
+			<f:selectItems value="#{configCollections.payMethods}" />
+		</c:if>
+		<c:if test="#{posMode}">
+			<f:selectItems value="#{configCollections.directPayMethods}" />
+		</c:if>
+	</aon:selectOneMenu>
+
+	<c:if test="#{!posMode}">
+		<aon:div rendered="#{invoiceController.financeGenerationMode == 1}">
+			<aon:outputLabel for="Bank_id-Invoice" value="#{configBundle.config_bank}" />
+			<aon:outputText value=" - #{configBundle.config_bank_account}" />
+		</aon:div>
+		<aon:div id="InvoiceFinance_bankAccount_div" styleClass="aon-nowrap" rendered="#{invoiceController.financeGenerationMode == 1}">
+			<aon:panelGroup id="InvoiceFinance_bankAccount" rendered="#{financeController.showBankManualInput}">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
+					<ui:param name="lookupTo" value="#{financeController.to.bank}" />
+					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="lookupSuffix" value="-Invoice" />
+					<ui:param name="lookupReRender" value="InvoiceFinance_bankAccount" />
+					<aon:methodParam name="lookupChangeListener"
+						value="#{financeController.onBankChanged}" type="lookupChangeListener" />
+				</ui:include>								
+				<aon:inputText id="BankAccount_office"
+					value="#{financeController.to.bankAccount.office}"
+					size="3" maxlength="4">
+					<f:validateLength minimum="4" maximum="4" />
+					<a4j:support event="onchange"
+						reRender="CreateBank_panel" ajaxSingle="true" />
+				</aon:inputText>
+				<aon:inputText id="BankAccount_control"
+					value="#{financeController.to.bankAccount.control}"
+					size="1" maxlength="2">
+					<f:validateLength minimum="2" maximum="2" />
+					<a4j:support event="onchange"
+						reRender="CreateBank_panel" ajaxSingle="true" />
+				</aon:inputText>
+				<aon:inputText id="BankAccount_account"
+					value="#{financeController.to.bankAccount.account}"
+					size="8" maxlength="10">
+					<f:validateLength minimum="10" maximum="10" />
+					<a4j:support event="onchange" 
+						reRender="CreateBank_panel" ajaxSingle="true" />
+				</aon:inputText>
+				<aon:panelGroup id="CreateBank_panel">
+					<aon:commandButton id="CreateBank"
+						value="&#160;" title="#{configBundle.config_bank_creation} #{invoiceController.to.registryName}"
+						styleClass="aon-editDataTable-button aon-lookupButton-new"
+						rendered="#{financeController.bankCreationEnabled}"
+						onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{invoiceController.to.registryName}?')) return false;"	
+						actionListener="#{financeController.onAddRegistryBank}"
+						reRender="InvoiceFinance_bankAccount" ajaxSingle="true" />
+				</aon:panelGroup>
+				<aon:commandLink id="BankAccount_hide_bank_manual"
+					value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
+					styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
+					rendered="#{financeController.showBankManualInput}"  
+					actionListener="#{financeController.onBankManualInput}"
+					reRender="InvoiceFinance_bankAccount_div" ajaxSingle="true">
+					<f:setPropertyActionListener target="#{financeController.showBankManualInput}"
+						value="#{false}" />
+				</aon:commandLink>
+			</aon:panelGroup>
+			<aon:div>
+				<aon:selectOneMenu id="Finance_RegistryBank"
+					value="#{financeController.registryBank}"
+					rendered="#{!financeController.showBankManualInput}"
+					valueChangeListener="#{financeController.onRBankChanged}"
+					reRender="Finance_RegistryBank" ajaxSingle="true">
+					<f:selectItem value="#{null}" />
+					<f:selectItems value="#{financeController.activeBanks}" />
+				</aon:selectOneMenu>
+				<aon:commandLink id="BankAccount_show_bank_manual"
+					value="&#160;" title="#{bundle.aon_edit}"
+					styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
+					rendered="#{!financeController.showBankManualInput}"  
+					actionListener="#{financeController.onBankManualInput}"
+					reRender="InvoiceFinance_bankAccount_div" ajaxSingle="true">
+					<f:setPropertyActionListener target="#{financeController.showBankManualInput}"
+						value="#{true}" />
+				</aon:commandLink>
+			</aon:div>
+		</aon:div>
+	</c:if>
+
+	<c:if test="#{posMode}">
+		<c:if test="#{!invoiceController.new}">
+			<aon:outputLabel for="InvoiceFinance_pendingAmount" 
+				value="#{financeBundle.finance_pos_pending_amount}"
+				rendered="#{invoiceController.financeGenerationMode == 1}" />
+			<aon:outputText id="InvoiceFinance_pendingAmount"
+				styleClass="aon-bold"
+				value="#{invoiceController.pendingAmount}"
+				rendered="#{invoiceController.financeGenerationMode == 1}">
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</c:if>
+
+		<aon:outputLabel for="InvoiceFinance_paidAmount" 
+			value="#{financeBundle.finance_pos_paid_amount}"
+			rendered="#{invoiceController.financeGenerationMode == 1}" />
+		<aon:inputText id="InvoiceFinance_paidAmount"
+			value="#{financeController.paidAmount}" 
+			size="5" maxlength="7"
+			rendered="#{invoiceController.financeGenerationMode == 1}"
+			valueChangeListener="#{financeController.onPaidAmountChanged}"
+			reRender="InvoiceFinance_changeAmount" ajaxSingle="true" />
+
+		<aon:outputLabel for="InvoiceFinance_changeAmount" 
+			value="#{financeBundle.finance_pos_change_amount}"
+			rendered="#{invoiceController.financeGenerationMode == 1}" />
+		<aon:outputText id="InvoiceFinance_changeAmount"
+			styleClass="aon-bold"
+			value="#{financeController.changeAmount}"
+			rendered="#{invoiceController.financeGenerationMode == 1}">
+			<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+		</aon:outputText>
+	</c:if>
+
+</ui:composition>

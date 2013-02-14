@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+		<ui:param name="skipAfterSearch" value="#{true}" />
+		<ui:define name="searchContent">
+
+			<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/searchBasicContent.xhtml" />
+
+			<c:if test="#{showDomainLookup}">		
+				<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml">
+					<ui:param name="lookupTo" value="#{documentGlobalSearch.domain}" />
+					<ui:param name="skipGoToButton" value="#{true}" />
+					<ui:param name="skipNewButton" value="#{true}" />				
+				</ui:include>			
+			</c:if>			
+				
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

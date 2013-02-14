@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showProjectTasWindow">
+		<c:if test="#{offer.showProjectTasWindow}">
+			<rich:modalPanel id="projectTasModalPanel" minHeight="240"
+				minWidth="580" rendered="#{offer.showProjectTasWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{commercialBundle.commercial_offer_to_projectTas}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showProjectTasWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{offer.showProjectTasWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="projectTasForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="projectTas-accept"
+										value="#{commercialBundle.commercial_offer_to_projectTas}"
+										actionListener="#{offer.onProjectTas}"
+										action="projectTas_form"
+										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="projectTasModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{offer.showProjectTasWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="projectTas-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showProjectTasWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{offer.showProjectTasWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid id="menuGrid" columns="2" style="width: 80%;">
+
+										<aon:outputLabel for="Offer_projectTasSeries"
+											value="#{bundle.aon_series}" />
+										<aon:selectOneMenu id="Offer_projectTasSeries"
+											value="#{offer.projectTasSeries}"
+											valueChangeListener="#{offer.onProjectTasSeriesChanged}" 
+											reRender="Offer_projectTasNumber">
+											<f:selectItem itemLabel=" " itemValue="#{null}" />
+											<f:selectItems value="#{configCollections.tasSeriesIds}" />
+										</aon:selectOneMenu>
+
+										<aon:outputLabel for="Offer_projectTasNumber"
+											value="#{bundle.aon_number}" />
+										<aon:inputText id="Offer_projectTasNumber"
+											value="#{offer.projectTasNumber}"
+											required="true" size="7" />
+
+										<aon:outputLabel for="Offer_projectTasDate"
+											value="#{bundle.aon_date}" />
+										<aon:selectInputDate id="Offer_projectTasDate" 
+											value="#{offer.projectTasDate}" required="true"
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}"
+											jointPoint="bottom-right"
+											direction="top-right"
+											verticalOffset="-60" />
+
+										<ui:include src="/com/code/aon/ui/tas/facelet/tasItem/lookup.xhtml">
+											<ui:param name="lookupTo" value="#{offer.projectTasItem}" />
+											<ui:param name="lookupReRender" value="projectTasForm" />
+											<ui:param name="idRequired" value="#{true}" />
+										</ui:include>
+
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+				<aon:lookupButtonPopup lookup="#{tasItemLookup}" />
+				<aon:lookupButtonPopup lookup="#{modelLookup}" />
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

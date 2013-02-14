@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="proposalForm">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{purchaseBundle.purchase_proposal_module}" />
+				<ui:param name="controller" value="#{proposal}" />
+				<ui:param name="skipRemoveButton" value="#{proposal.transferProcessed and !proposal.to.itemReturn}" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="showTransferWindow-button"
+						value="#{purchaseBundle.purchase_proposal_transfer_to}"
+						reRender="showTransferWindow"
+						rendered="#{proposal.transferPending}"
+						actionListener="#{proposal.onShowTransferWindow}"
+						immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-sincronize">
+						<f:setPropertyActionListener
+							target="#{proposal.showTransferWindow}"
+							value="#{true}" />
+					</aon:commandButton>
+					<aon:htmlCommandLink id="purchaseProposal-report" value="#{purchaseBundle.purchase_proposal}"
+						target="_new" rendered="#{!proposal.new and proposalDetail.model.rowCount > 0}"
+						action="#{report.onExecute}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-noborder aon-icon-pdf">
+						<f:param name="reportKey" value="purchaseProposal" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>
+					<c:if test="#{aonRole.purchaseOperator}">
+						<aon:htmlCommandLink id="purchaseProposal_valued-report" value="#{purchaseBundle.purchase_valued_report}"
+							target="_new" rendered="#{!proposal.new and proposalDetail.model.rowCount > 0}"
+							action="#{purchaseReport.onExecute}"
+							accesskey="#{bundle.aon_key_print}"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf">
+							<f:setPropertyActionListener target="#{purchaseReport.valued}" value="#{true}" />
+							<f:param name="reportKey" value="purchaseProposal" />
+							<f:param name="outputFormat" value="PDF" />
+						</aon:htmlCommandLink>
+					</c:if>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid id="proposalPanel" columns="2" >
+				
+					<aon:outputText value="#{bundle.aon_id}" 
+						rendered="#{!proposal.new}" />
+					<aon:div rendered="#{!proposal.new}">
+						<aon:inputText value="#{proposal.to.id}" size="5" disabled="#{true}" styleClass="aon-margin-right" />
+						
+						<aon:outputText value="(" rendered="#{proposal.to.itemReturn}" />
+						<aon:outputText value="#{purchaseBundle.purchase_proposal_item_return}"
+							 rendered="#{proposal.to.itemReturn}" />
+						<aon:outputText value=")" rendered="#{proposal.to.itemReturn}" />
+						
+						<aon:outputText value="#{proposal.to.transferStatus}" styleClass="aon-margin-left aon-bold" 
+							rendered="#{proposal.transferProcessed or proposal.transferPending}" />
+						
+						<aon:commandButton id="undoTransfer" value="&#160;"
+							styleClass="aon-icon-commandButton aon-icon-rubber aon-margin-left"
+							title="#{purchaseBundle.purchase_proposal_transfer_undo}"  
+							actionListener="#{proposal.onUndoTransfer}"
+							reRender="proposalPanel"
+							rendered="#{proposal.to.pending and proposal.to.transferProposal.pending and proposal.to.itemReturn}" />
+						
+					</aon:div>
+					
+					<aon:outputText value="#{bundle.aon_type}" 
+						rendered="#{proposal.new}" />
+					<aon:selectOneRadio value="#{proposal.proposalType}" 
+						required="true" rendered="#{proposal.new}" >
+						<f:selectItems value="#{proposal.proposalTypes}" />
+					</aon:selectOneRadio>
+						
+						
+					<aon:outputText value="#{purchaseBundle.purchase_issueDate}" />
+					<aon:div>
+						<aon:outputText value="#{proposal.to.issueDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						<aon:div styleClass="aon-margin-left" style="display:inline;" >
+							<aon:outputText value="(" rendered="#{!proposal.new}" />
+							<aon:outputText value="#{proposal.to.status}" rendered="#{!proposal.new}" />
+							<aon:outputText value=")" rendered="#{!proposal.new}" />
+						</aon:div>
+					</aon:div>
+
+					<aon:outputLabel for="Proposal_workPlace" 
+						value="#{companyBundle.company_workplace}" />
+					<aon:div>
+						<aon:outputText	value="#{proposal.to.workPlace.description}" styleClass="aon-bold"
+							rendered="#{!proposal.new}" />
+						<aon:selectOneMenu id="Proposal_workPlace" 
+							value="#{proposal.to.workPlace}"
+							required="true" 
+							rendered="#{proposal.new}" >
+							<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+							<a4j:support event="onchange" reRender="Proposal_department" ignoreDupResponses="true" ajaxSingle="true" />
+							<a4j:support event="oninputchanged" reRender="Proposal_department" ignoreDupResponses="true" ajaxSingle="true" />
+						</aon:selectOneMenu>
+					</aon:div>
+			
+					<aon:outputLabel for="Proposal_department" 
+						value="#{companyBundle.company_department}" />
+					<aon:div>
+						<aon:outputText	value="#{proposal.to.department.name}" styleClass="aon-bold"
+							rendered="#{!proposal.new}" />
+						<aon:selectOneMenu id="Proposal_department" 
+							required="true" 
+							value="#{proposal.to.department}"
+							rendered="#{proposal.new}" >
+							<f:selectItems value="#{proposal.departments}" />
+						</aon:selectOneMenu>
+					</aon:div>	
+
+					<aon:outputLabel for="Proposal_remarks" value="#{bundle.aon_comment}" />
+					<aon:inputTextarea id="Proposal_remarks" disabled="#{proposal.processed}"
+						value="#{proposal.to.remarks}" cols="80" rows="4"  />
+				
+				</aon:panelGrid>
+				
+				<br />
+				
+				<c:if test="#{!proposal.new}">
+					<ui:include	src="/com/code/aon/ui/purchase/facelet/proposal/detail/tab_grid.xhtml">
+						<ui:param name="controller" value="#{proposalDetail}" />
+					</ui:include>
+				</c:if>
+				
+			</aon:div>
+			
+		</aon:form>
+		
+		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<ui:include src="/com/code/aon/ui/purchase/facelet/proposal/modalTransfer.xhtml" />
+		
+		
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{fiscalBundle.fiscal_parameters_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+
+				<ui:define name="toolbarContent">
+
+					<aon:commandButton id="save" value="#{bundle.aon_save}"
+						accesskey="#{bundle.aon_key_save}"
+						actionListener="#{fiscalParams.onAccept}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;">
+					</aon:commandButton>
+				</ui:define>
+			</ui:decorate>
+
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="paramsContainer" columns="2">
+
+					<aon:outputLabel for="tax_regime"
+						value="#{fiscalBundle.fiscal_tax_regime}" />
+					<aon:selectOneMenu id="tax_regime"
+						value="#{fiscalParams.taxRegime}">
+						<f:selectItems value="#{registryCollections.taxRegimes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="default_period"
+						value="#{fiscalBundle.fiscal_parameters_year}" />
+					<aon:selectOneMenu id="default_period" value="#{fiscalParams.defaultYear}">
+						<f:selectItem itemValue="#{null}" itemLabel="-"  />
+						<f:selectItem itemValue="2009" itemLabel="2009" />
+						<f:selectItem itemValue="2010" itemLabel="2010" />
+						<f:selectItem itemValue="2011" itemLabel="2011" />
+						<f:selectItem itemValue="2012" itemLabel="2012" />
+						<f:selectItem itemValue="2013" itemLabel="2013" />
+						<f:selectItem itemValue="2014" itemLabel="2014" />
+						<f:selectItem itemValue="2015" itemLabel="2015" />
+						<f:selectItem itemValue="2016" itemLabel="2016" />
+						<f:selectItem itemValue="2017" itemLabel="2017" />
+						<f:selectItem itemValue="2018" itemLabel="2018" />
+						<f:selectItem itemValue="2019" itemLabel="2019" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="default_administration"
+						value="#{fiscalBundle.fiscal_default_administration}" />
+					<aon:selectOneMenu id="default_administration"
+						reRender="paramsContainer"
+						value="#{fiscalParams.defaultAdministration}">
+						<f:selectItem  itemLabel="-" itemValue="#{null}" />
+						<f:selectItems value="#{configCollections.administrations}" />
+					</aon:selectOneMenu>
+
+					<c:if test="#{fiscalParams.commonTerritoryDefaultAdministration}">					
+						<aon:outputLabel for="administration_code"
+							value="#{fiscalBundle.fiscal_administration_code}" />
+						<aon:inputText id="administration_code" size="8" maxLength="5" 
+							value="#{fiscalParams.administrationCode}">
+						</aon:inputText>
+					</c:if>						
+
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="default_tax_refund_registry"
+							value="#{fiscalParams.taxRefundRegistry}">
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="default_tax_refund_registry"
+							value="#{fiscalBundle.fiscal_tax_refund_registry}" />
+					</aon:div>
+
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
