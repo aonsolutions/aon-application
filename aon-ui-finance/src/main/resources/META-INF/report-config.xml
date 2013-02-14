@@ -793,4 +793,27 @@
 		</params>
 	</report>
 	
+	<!--  ********* POS Invoice (ticket) ********* -->
+	<report id="posInvoice" description="POS Invoice's Report Template">
+		<template path="/com/code/aon/ui/finance/report/posInvoice.jasper" />
+		<collection provider="#{posInvoice}" forceRefresh="true" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="printLogo" value="#{posInvoiceParams.isPrintLogo}" />
+			<param id="printTradename" value="#{posInvoiceParams.isPrintTradename}" />
+			<param id="printDirStaff" value="#{posInvoiceParams.getPrintDirStaff}" />
+			<param id="printSellerName" value="#{posInvoiceParams.getPrintSellerName}" />
+			<param id="printDomain" value="#{posInvoiceParams.isPrintDomain}" />
+			<param id="footerText" value="#{posInvoiceParams.getFooterText}" />
+		</params>
+	</report>	
+	
 </report-config>

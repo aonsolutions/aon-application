@@ -1,4 +1,4 @@
-package com.code.aon.ui.company.controller;
+package com.code.aon.ui.finance.controller;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,7 +30,8 @@ public class PosInvoiceParamsController {
 	private final String PRINT_SELLER_NAME 		= "POS_INVOICE_PRINT_SELLER_NAME";
 	private final String PRINT_DOMAIN 			= "POS_INVOICE_PRINT_DOMAIN";
 	private final String FOOTER_TEXT 			= "POS_INVOICE_FOOTER_TEXT";
-	private final String FOOTER_TEXT_CONTENT_MSG_KEY_PREFIX = "company_posInvoice_footerText_default";
+	private final String BUNDLE_NAME = "financeBundle";
+	private final String FOOTER_TEXT_CONTENT_MSG_KEY_PREFIX = "finance_posInvoice_footerText_default";
 	
 	private Map<String, ApplicationParameter> params;
 
@@ -104,7 +105,7 @@ public class PosInvoiceParamsController {
 			params.put(PRINT_DOMAIN, obtainApplicationParameter(PRINT_DOMAIN) );
 			ApplicationParameter footerText = obtainApplicationParameter(FOOTER_TEXT);
 			if(footerText.getId()==null){
-				footerText.setValue(AonUtil.getMessage(ICompanyConstants.BUNDLE_NAME, FOOTER_TEXT_CONTENT_MSG_KEY_PREFIX));
+				footerText.setValue(AonUtil.getMessage(BUNDLE_NAME, FOOTER_TEXT_CONTENT_MSG_KEY_PREFIX));
 			}
 			params.put(FOOTER_TEXT, footerText );
 		} catch (ManagerBeanException e) {

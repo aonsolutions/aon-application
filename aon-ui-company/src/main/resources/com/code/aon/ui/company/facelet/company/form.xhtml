@@ -287,15 +287,12 @@
 							</aon:panelTab>
 						</c:if>
 						
-						<!--  
 						<c:if test="#{(domainSwitcher.type == 'HOTEL')}">
-						<c:if test="#{true}">
-							<aon:panelTab label="#{companyBundle.company_posInvoice_params}"
+							<aon:panelTab label="#{financeBundle.finance_posInvoice_params}"
 								actionListener="#{posInvoiceParams.onInit}">
-								<ui:include src="/com/code/aon/ui/company/facelet/posInvoiceParams/tab_grid.xhtml" />
+								<ui:include src="/com/code/aon/ui/finance/facelet/posInvoiceParams/tab_grid.xhtml" />
 							</aon:panelTab>
 						</c:if>
-						-->
 					</aon:panelTabSet>
 				</aon:div>
 			</c:if>

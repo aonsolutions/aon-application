@@ -9,7 +9,7 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-		<ui:param name="toolbarTitle" value="#{companyBundle.company_posInvoice_params}" />
+		<ui:param name="toolbarTitle" value="#{financeBundle.finance_posInvoice_params}" />
 		<ui:param name="toolbarDescription" value="#{bundle.aon_edit}" />
 		<ui:param name="toolbarID" value="aonToolbar-posInvoice_params" />
 		
@@ -25,15 +25,16 @@
 	
 	<aon:div styleClass="aon-scroll-area">
 		
-		<aon:panelGrid  columns="2" style="width:100%">
-	
+		<aon:panelGrid  columns="2" style="width:100%"
+			columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-auto">
+			
 			<aon:outputLabel for="posInvoice_printLogo"
 				value="#{companyBundle.company_print_logo}" />
 			<aon:selectBooleanCheckbox id="posInvoice_printLogo"
 				value="#{posInvoiceParams.printLogo}" />
 			
 			<aon:outputLabel for="posInvoice_print_tradename"
-				value="#{companyBundle.company_print_tradename}" />
+				value="#{financeBundle.finance_print_tradename}" />
 			<aon:selectBooleanCheckbox id="posInvoice_print_tradename"
 				value="#{posInvoiceParams.printTradename}" />
 			
@@ -45,14 +46,14 @@
 			</aon:selectOneMenu>
 				
 			<aon:outputLabel for="posInvoice_print_seller_name"
-				value="#{companyBundle.company_print_seller_name}" />
+				value="#{financeBundle.finance_print_seller_name}" />
 			<aon:selectOneMenu id="posInvoice_print_seller_name"
 				value="#{posInvoiceParams.printSellerName}" >
 				<f:selectItems value="#{companyCollections.shortReportPrintOptions}" />
 			</aon:selectOneMenu>
 				
 			<aon:outputLabel for="posInvoice_print_domain"
-				value="#{companyBundle.company_print_domain}" />
+				value="#{financeBundle.finance_print_domain}" />
 			<aon:selectBooleanCheckbox id="posInvoice_print_domain"
 				value="#{posInvoiceParams.printDomain}" />
 				

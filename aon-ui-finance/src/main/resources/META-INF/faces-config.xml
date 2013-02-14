@@ -3645,6 +3645,13 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	
+	<!-- **** POS INVOICE PARAMS **** -->
+	<managed-bean>
+		<managed-bean-name>posInvoiceParams</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.controller.PosInvoiceParamsController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<!-- ************ INVOICE TAX ************* -->
 	<managed-bean>
