@@ -39,7 +39,8 @@
 									<ui:param name="controller" value="#{tariffCatalogue}" />
 									<ui:define name="columns">
 
-										<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+										<aon:column alias="TariffCatalogue.catalogue.name" 
+											styleClass="aon-editDataTable-textColumn aon-width-150">
 											<f:facet name="header">
 												<aon:outputLabel for="TariffCatalogue_catalogue" value="#{productBundle.product_catalogue}" />
 											</f:facet>
@@ -63,7 +64,8 @@
 											</f:facet>
 										</aon:column>
 
-										<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+										<aon:column alias="TariffCatalogue.catalogue.startDate" 
+											styleClass="aon-editDataTable-textColumn aon-width-80">
 											<f:facet name="header">
 												<aon:outputLabel for="TariffCatalogue_catalogue_startDate" value="#{bundle.aon_date_from}" />
 											</f:facet>
@@ -83,7 +85,8 @@
 											</f:facet>
 										</aon:column>
 
-										<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+										<aon:column alias="TariffCatalogue.catalogue.endDate"
+											styleClass="aon-editDataTable-textColumn aon-width-80">
 											<f:facet name="header">
 												<aon:outputLabel for="TariffCatalogue_catalogue_endDate" value="#{bundle.aon_date_to}" />
 											</f:facet>

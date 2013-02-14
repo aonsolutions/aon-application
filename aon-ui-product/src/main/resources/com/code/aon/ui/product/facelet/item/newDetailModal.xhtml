@@ -10,6 +10,10 @@
 
 	<aon:panelGroup id="showNew#{detailId}Window">
 		<c:if test="#{showNewDetailWindow}">
+		
+			<aon:methodParam name="ndm_saveActionListener"
+				default="#{detailController.onAccept}" type="actionListener" />
+						
 			<rich:modalPanel id="new#{detailId}ModalPanel"
 				minWidth="#{minWidth}" minHeight="#{minHeight}" zindex="90"
 				showWhenRendered="#{showNewDetailWindow}" >
@@ -47,7 +51,7 @@
 												<aon:commandButton id="#{detailId}-save"
 													value="#{bundle.aon_save}"
 													reRender="showNew#{detailId}Window,#{modalReRender}"
-													actionListener="#{detailController.onAccept}"
+													actionListener="#{ndm_saveActionListener}"
 													styleClass="aon-finding-toolbar-item aon-icon-accept"
 													accesskey="#{bundle.aon_key_save}">
 													<rich:componentControl for="new#{detailId}ModalPanel"

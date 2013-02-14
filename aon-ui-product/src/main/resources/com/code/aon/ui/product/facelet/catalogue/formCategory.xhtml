@@ -9,13 +9,10 @@
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:param name="controller" value="#{catalogueCategory}" />
-		<ui:param name="columnClasses"
-			value="aon-editDataTable-textColumn,
-					aon-editDataTable-numberColumn aon-width-100,
-					aon-editDataTable-numberColumn aon-width-80" />
 		<ui:define name="columns">
 
-			<aon:column>
+			<aon:column alias="CatalogueCategory.category.name" 
+				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputLabel for="CatalogueCategory_category" value="#{productBundle.product_category}" />
 				</f:facet>
@@ -35,7 +32,8 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column>
+			<aon:column alias="CatalogueCategory.quantity" 
+				styleClass="aon-editDataTable-numberColumn aon-width-100">
 				<f:facet name="header">
 					<aon:outputLabel for="CatalogueCategory_quantity" value="#{bundle.aon_date_from} #{bundle.aon_quantity}" />
 				</f:facet>
@@ -57,7 +55,8 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column>
+			<aon:column alias="CatalogueCategory.discount" 
+				styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel for="CatalogueCategory_discount" value="#{bundle.aon_discount}" />
 				</f:facet>

@@ -1,35 +1,27 @@
 package com.code.aon.ui.product.controller;
 
-import javax.faces.event.ActionEvent;
+import static com.code.aon.ui.product.controller.IItemConstants.PRODUCT_CATEGORY;
+import static com.code.aon.ui.product.controller.IItemConstants.SHOW_CATEGORY_GROUP;
 
-import com.code.aon.product.ProductCategory;
-import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 
-public class ProductCategoryController extends LinesController {
+public class ProductCategoryController extends BasicController {
 
-	private ProductCategory category;
+	private boolean showPosInfo;
 
-	public ProductCategory getCategory() {
-		return category;
+	public boolean isShowPosInfo() {
+		return showPosInfo;
 	}
 
-	public void setCategory(ProductCategory category) {
-		this.category = category;
+	public void setShowPosInfo(boolean showPosInfo) {
+		this.showPosInfo = showPosInfo;
 	}
-
-	@Override
-	public void onSelect(ActionEvent arg0) {
-		// TODO Auto-generated method stub		
-		super.onSelect(arg0);
-		ProductCategory p = new ProductCategory();
-		p.setId(((ProductCategory)this.getTo()).getId());
-		p.setName(((ProductCategory)this.getTo()).getName());
-		this.category=p;
-	}
-	@Override
-	public void onReset(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		this.setCategory(null);
-		super.onReset(arg0);
+	
+	public boolean isShowCategoryGroup() {
+		if (! showPosInfo ) {
+			return AonUtil.isBeanValue(PRODUCT_CATEGORY, SHOW_CATEGORY_GROUP);
+		}
+		return true;
 	}
 }

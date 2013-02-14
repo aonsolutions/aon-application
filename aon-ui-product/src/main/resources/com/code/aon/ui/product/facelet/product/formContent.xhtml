@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:panelGrid columns="2" cellpadding="5" styleClass="aon-panelGrid-formatting"
+		columnClasses="aon-width-half aon-vertical-align-top,aon-width-half aon-vertical-align-top">
+		<aon:div>
+			<aon:div styleClass="aon-group">
+				<aon:div styleClass="aon-group-title">
+					<aon:outputText value="#{productBundle.product_data}"/>
+				</aon:div>
+				<aon:div styleClass="aon-group-body"> 
+					<aon:div styleClass="aon-group-body-internal">
+						<aon:panelGrid columns="2" styleClass="aon-width-all"
+							columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
+
+							<ui:include	src="/com/code/aon/ui/product/facelet/product/formBasic.xhtml">
+								<ui:param name="controller" value="#{product}" />
+							</ui:include>
+
+						</aon:panelGrid>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+			
+			<c:if test="#{aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
+				<aon:div styleClass="aon-group" >
+					<aon:div styleClass="aon-group-title">
+						<aon:outputText value="#{productBundle.product_accounts}"/>
+					</aon:div>
+					<aon:div styleClass="aon-group-body"> 	
+						<aon:div styleClass="aon-group-body-internal">
+							<a4j:region>
+								<aon:panelGrid columns="2" styleClass="aon-width-all"
+									columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
+	
+									<aon:outputLabel for="Account_id-Sales"
+										value="#{productBundle.product_sales_account}" />
+									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
+										<ui:param name="lookupTo" value="#{controller.to.salesAccount}" />
+										<ui:param name="lookupSuffix" value="-Sales" />
+									</ui:include>
+
+									<aon:outputLabel for="Account_id-Purchase"
+										value="#{productBundle.product_purchase_account}" />
+									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
+										<ui:param name="lookupTo" value="#{controller.to.purchaseAccount}" />
+										<ui:param name="lookupSuffix" value="-Purchase" />
+									</ui:include>
+
+								</aon:panelGrid>
+							</a4j:region>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+			</c:if>			
+
+		</aon:div>
+		
+		<aon:div styleClass="aon-group">
+			<aon:div styleClass="aon-group-title">
+				<aon:outputText value="#{productBundle.product_detail}"/>
+			</aon:div>
+			<aon:div styleClass="aon-group-body"> 
+				<aon:div styleClass="aon-group-body-internal">
+				
+					<ui:include	src="/com/code/aon/ui/product/facelet/product/item/list.xhtml">
+						<ui:param name="controller" value="#{item}" />
+					</ui:include>
+
+				</aon:div>
+			</aon:div>
+		</aon:div>
+		
+	</aon:panelGrid>
+	 
+</ui:composition>

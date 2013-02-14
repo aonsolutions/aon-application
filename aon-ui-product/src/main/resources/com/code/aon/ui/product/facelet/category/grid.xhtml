@@ -22,41 +22,82 @@
 					<ui:decorate
 						template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 						<ui:param name="controller" value="#{productCategory}" />
-						<ui:param name="columnClasses"
-							value="aon-editDataTable-text" />
-
 						<ui:define name="columns">
 
-							<aon:column>
+							<aon:column styleClass="aon-editDataTable-textColumn"
+								alias="ProductCategory.name">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_description}" />
+									<aon:outputLabel for="ProductCategory_name"
+										value="#{bundle.aon_description}" />
 								</f:facet>
-								<aon:outputText value="#{to.name}"
-									rendered="#{to.id!=productCategory.to.id}" />
-								<aon:inputText value="#{productCategory.to.name}"
-									rendered="#{to.id==productCategory.to.id}" required="true" />
+								<aon:outputText value="#{to.name}" rendered="#{formList}" />
+								<aon:inputText id="ProductCategory_name"
+									size="32" maxlength="32" 
+									rendered="#{formEdit}" required="true"
+									value="#{controller.to.name}"  />
 								<f:facet name="footer">
-									<aon:inputText value="#{productCategory.to.name}"
-										rendered="#{productCategory.new}" required="true" />
+									<aon:inputText id="ProductCategory_name-New"
+										size="32" maxlength="32" 
+										rendered="#{formNew}" required="true"
+										value="#{controller.to.name}"  />
 								</f:facet>
 							</aon:column>
 
-							<c:if test="#{aonConfiguration.bean.productCategory.showCategoryGroup}">
-								<aon:column>
+							<c:if test="#{productCategory.showPosInfo}">
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-200"
+									alias="ProductCategory.detail">
 									<f:facet name="header">
-										<aon:outputText value="#{productBundle.product_category_group}" />
+										<aon:outputLabel for="ProductCategory_detail"
+											value="#{productBundle.product_category_label_detail}" />
 									</f:facet>
+									<aon:outputText value="#{to.detail}" rendered="#{formList}" />
+									<aon:inputText id="ProductCategory_detail"
+										size="32" maxlength="32" rendered="#{formEdit}"
+										value="#{controller.to.detail}"  />
+									<f:facet name="footer">
+										<aon:inputText id="ProductCategory_detail-New"
+											size="32" maxlength="32" rendered="#{formNew}"
+											value="#{controller.to.detail}"  />
+									</f:facet>
+								</aon:column>
 	
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-200"
+									alias="ProductCategory.detail2">
+									<f:facet name="header">
+										<aon:outputLabel for="ProductCategory_detail2"
+											value="#{productBundle.product_category_label_detail2}" />
+									</f:facet>
+									<aon:outputText value="#{to.detail2}" rendered="#{formList}" />
+									<aon:inputText id="ProductCategory_detail2"
+										size="32" maxlength="32" rendered="#{formEdit}"
+										value="#{controller.to.detail2}"  />
+									<f:facet name="footer">
+										<aon:inputText id="ProductCategory_detail2-New"
+											size="32" maxlength="32" rendered="#{formNew}"
+											value="#{controller.to.detail2}"  />
+									</f:facet>
+								</aon:column>
+							</c:if>
+
+							<c:if test="#{productCategory.showCategoryGroup and (productCategoryGroup.model.rowCount > 0)}">
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-150"
+									alias="ProductCategory.group.name">
+									<f:facet name="header">
+										<aon:outputLabel for="ProductCategory_group"
+											value="#{productBundle.product_categoryGroup_module}" />
+									</f:facet>
 									<aon:outputText value="#{to.group.name}"
 										rendered="#{formList}" />
-									<aon:selectOneMenu rendered="#{formEdit}"
+									<aon:selectOneMenu id="ProductCategory_group"
+										rendered="#{formEdit}"
 										value="#{productCategory.to.group}">
-										<f:selectItem itemLabel="-"  itemValue="{null}" />
+										<f:selectItem itemLabel="-" itemValue="{null}" />
 										<f:selectItems
 											value="#{productCollections.categoryGroups}" />
 									</aon:selectOneMenu>
 									<f:facet name="footer">
-										<aon:selectOneMenu value="#{productCategory.to.group}"
+										<aon:selectOneMenu id="ProductCategory_group-New"
+											value="#{productCategory.to.group}"
 											rendered="#{formNew}">
 											<f:selectItem itemLabel="-" itemValue="{null}" />
 											<f:selectItems

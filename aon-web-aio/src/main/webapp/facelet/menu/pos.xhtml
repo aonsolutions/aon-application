@@ -51,6 +51,14 @@
 											value="#{pmsBundle.pms_posFinance_module}" />
 									</aon:div>
 								</c:if>
+								<c:if test="#{aonRole.productOperator}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="product" 
+											action="product_search"
+											actionListener="#{product.onEditSearch}"
+											value="#{productBundle.product_module}" />
+									</aon:div>
+								</c:if>								
 							</aon:div>							
 						</aon:panelGrid>
 					</aon:panelGroup>
@@ -63,6 +71,19 @@
 								<aon:outputText value="#{bundle.aon_auxiliaries}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="productCategoryGroup" 
+										action="productCategoryGroup"
+										value="#{productBundle.product_categoryGroup_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="productCategory-pos" 
+										action="productCategory-pos"
+										value="#{productBundle.product_category_module}" >
+										<f:setPropertyActionListener value="#{true}"
+											target="#{productCategory.showPosInfo}" />																					
+									</aon:commandLink>
+								</aon:div>								
 								<c:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="posDefinition-tpv" 

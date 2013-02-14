@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:outputText value="" />
+	<aon:div styleClass="aon-width-600">
+
+		<aon:panelCollapsible expanded="true" label="#{bundle.aon_general}">
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+				<ui:include src="/com/code/aon/ui/product/facelet/product/searchBasicContent.xhtml" />
+			</aon:panelGrid>
+		</aon:panelCollapsible>					
+					
+		<aon:panelCollapsible expanded="false" label="#{productBundle.product_detail}" >
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+				<ui:include src="/com/code/aon/ui/product/facelet/product/item/searchContent.xhtml">
+					<ui:param name="searchController" value="#{productSearch}" />
+				</ui:include>
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+				
+	</aon:div>
+		
+</ui:composition>

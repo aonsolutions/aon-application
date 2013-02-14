@@ -68,7 +68,7 @@
 	<!-- ****** PRODUCT CATEGORY ****** -->
 	<managed-bean>
 		<managed-bean-name>productCategory</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.product.controller.ProductCategoryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -112,6 +112,58 @@
 			<property-name>newPagePath</property-name>
 			<value>/com/code/aon/ui/product/facelet/lookup/category/form.xhtml</value>
 		</managed-property>
+	</managed-bean>
+
+	<!-- ****** PRODUCT ****** -->
+	<managed-bean>
+		<managed-bean-name>product</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.ProductController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.Product</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>product</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Product_type</key>
+					<value>! 4</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Product_category_name,Product_name,Product_code</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{productSearch}</value>
+				<value>#{productControllerListener}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>productSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.event.ProductSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>productControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.event.ProductControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- ****** ITEM ****** -->
@@ -1148,17 +1200,9 @@
 	
    	<!-- ************* NAVIGATION RULES ***************** -->
 	<navigation-rule>
-	    <navigation-case>
-	      <from-outcome>productCategoryGroup_form</from-outcome>
-	      <to-view-id>/com/code/aon/ui/product/facelet/categoryGroup/form.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-	      <from-outcome>productCategoryGroup_list</from-outcome>
-	      <to-view-id>/com/code/aon/ui/product/facelet/categoryGroup/list.xhtml</to-view-id>
-	    </navigation-case>
-	      <navigation-case>
-	      <from-outcome>productCategoryGroup</from-outcome>
-	      <to-view-id>/com/code/aon/ui/product/facelet/categoryGroup/grid.xhtml</to-view-id>
+		<navigation-case>
+		<from-outcome>productCategoryGroup</from-outcome>
+			<to-view-id>/com/code/aon/ui/product/facelet/categoryGroup/grid.xhtml</to-view-id>
 	    </navigation-case>
 	    <navigation-case>
 	      <from-outcome>productCategory</from-outcome>
@@ -1179,6 +1223,18 @@
       	<navigation-case>
 		  <from-outcome>item_search</from-outcome>
 		  <to-view-id>/com/code/aon/ui/product/facelet/item/search.xhtml</to-view-id>
+		</navigation-case>
+      	<navigation-case>
+		  <from-outcome>product_list</from-outcome>
+		  <to-view-id>/com/code/aon/ui/product/facelet/product/list.xhtml</to-view-id>
+		</navigation-case>
+      	<navigation-case>
+		  <from-outcome>product_form</from-outcome>
+		  <to-view-id>/com/code/aon/ui/product/facelet/product/form.xhtml</to-view-id>
+		</navigation-case>
+      	<navigation-case>
+		  <from-outcome>product_search</from-outcome>
+		  <to-view-id>/com/code/aon/ui/product/facelet/product/search.xhtml</to-view-id>
 		</navigation-case>
 	    <navigation-case>
 	      <from-outcome>expenseItem</from-outcome>

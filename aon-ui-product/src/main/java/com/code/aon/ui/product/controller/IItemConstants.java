@@ -12,6 +12,7 @@ public interface IItemConstants  {
 	String ITEM_COMPOSITION = "itemComposition";
 	String ITEM_SUPPLIER = "itemSupplier";
 	String ITEM_TARIFF = "itemTariff";
+	String PRODUCT_CATEGORY = "productCategory";
 	
 	// ************************************************************
 	// CONFIGURATION
@@ -19,6 +20,7 @@ public interface IItemConstants  {
 	
 	String PRODUCT = "product";	
 	String SHOW_SALES_PRICE = "showSalesPrice";
+	String SHOW_CATEGORY_GROUP = "showCategoryGroup";
 	
 	// ************************************************************
 	// OTHER

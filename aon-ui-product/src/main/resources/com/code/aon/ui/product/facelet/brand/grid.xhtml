@@ -21,22 +21,25 @@
 					<ui:decorate
 						template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 						<ui:param name="controller" value="#{brand}" />
-						<ui:param name="columnClasses"
-							value="aon-editDataTable-text,aon-editDataTable-text,aon-editDataTable-text,aon-editDataTable-text,aon-editDataTable-text" />
 
 						<ui:define name="columns">
 
-							<aon:column>
+							<aon:column styleClass="aon-editDataTable-textColumn"
+								alias="Brand.name">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_description}" />
+									<aon:outputLabel for="Brand_name"
+										value="#{bundle.aon_description}" />
 								</f:facet>
-								<aon:outputText value="#{to.name}"
-									rendered="#{to.id!=brand.to.id}" />
-								<aon:inputText value="#{brand.to.name}"
-									rendered="#{to.id==brand.to.id}" required="true" />
+								<aon:outputText value="#{to.name}" rendered="#{formList}" />
+								<aon:inputText id="Brand_name"
+									size="64" maxlength="64" 
+									rendered="#{formEdit}" required="true"
+									value="#{controller.to.name}"  />
 								<f:facet name="footer">
-									<aon:inputText value="#{brand.to.name}"
-										rendered="#{brand.new}" required="true" />
+									<aon:inputText id="Brand_name-New"
+										size="64" maxlength="64" 
+										rendered="#{formNew}" required="true"
+										value="#{controller.to.name}"  />
 								</f:facet>
 							</aon:column>
 

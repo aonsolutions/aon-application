@@ -33,29 +33,29 @@
 				
 			</ui:decorate>
 
-			<aon:div id="tariffData" styleClass="aon-scroll-area">
-				<aon:dataTable id="tariffDataList" value="#{tariff.model}"
-					rows="20" var="to" rendered="#{tariff.model.rowCount > 0}">
+			<aon:div styleClass="aon-scroll-area">
 
-					<aon:rowSelector action="tariff_form" 
-						actionListener="#{tariff.onSelect}" />
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{tariff}" />
+					<ui:define name="columns">
+						<aon:column alias="Tariff.code"
+							styleClass="aon-editDataTable-textColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_id}" />
+							</f:facet>
+							<aon:outputText value="#{to.code}" />
+						</aon:column>
+	
+						<aon:column alias="Tariff.name"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{productBundle.product_tariff}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}" />
+						</aon:column>
+					</ui:define>
+				</ui:decorate>
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_id}" />
-						</f:facet>
-						<aon:outputText value="#{to.code}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{productBundle.product_tariff}" />
-						</f:facet>
-						<aon:outputText value="#{to.name}" />
-					</aon:column>
-				</aon:dataTable>
-				<aon:dataScroller2 for="tariffDataList"
-					showNote="true" />
 			</aon:div>
 		</aon:form>
 

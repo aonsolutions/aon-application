@@ -13,7 +13,7 @@
 				<ui:include
 					src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
 					<ui:param name="toolbarTitle"
-						value="#{productBundle.product_category_module}" />
+						value="#{productBundle.product_categoryGroup_module}" />
 					<ui:param name="controller" value="#{productCategoryGroup}" />
 				</ui:include>
 
@@ -21,22 +21,24 @@
 					<ui:decorate
 						template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 						<ui:param name="controller" value="#{productCategoryGroup}" />
-						<ui:param name="columnClasses"
-							value="aon-editDataTable-text" />
-
 						<ui:define name="columns">
 
-							<aon:column>
+							<aon:column styleClass="aon-editDataTable-textColumn"
+								alias="ProductCategoryGroup.name">
 								<f:facet name="header">
-									<aon:outputText   value="#{bundle.aon_description}" />
+									<aon:outputLabel for="ProductCategoryGroup_name"
+										value="#{bundle.aon_description}" />
 								</f:facet>
-								<aon:outputText value="#{to.name}" rendered="#{formList}"
-									 />
-								<aon:inputText rendered="#{formEdit}"  value="#{productCategoryGroup.to.name}"
-									 required="true" />
+								<aon:outputText value="#{to.name}" rendered="#{formList}" />
+								<aon:inputText id="ProductCategoryGroup_name"
+									size="32" maxlength="32" 
+									rendered="#{formEdit}" required="true"
+									value="#{controller.to.name}"  />
 								<f:facet name="footer">
-									<aon:inputText value="#{productCategoryGroup.to.name}"
-										rendered="#{productCategoryGroup.new}" required="true" />
+									<aon:inputText id="ProductCategoryGroup_name-New"
+										size="32" maxlength="32"									
+										value="#{controller.to.name}"
+										rendered="#{formNew}" required="true" />
 								</f:facet>
 							</aon:column>
 

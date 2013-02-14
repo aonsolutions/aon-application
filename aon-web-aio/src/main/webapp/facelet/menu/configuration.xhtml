@@ -307,7 +307,10 @@
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="productCategory-configuration" 
 											action="productCategory-configuration"
-											value="#{productBundle.product_category_module}" />
+											value="#{productBundle.product_category_module}" >
+											<f:setPropertyActionListener value="#{false}"
+												target="#{productCategory.showPosInfo}" />											
+										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="brand-configuration"
