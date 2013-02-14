@@ -37,16 +37,7 @@
 								value="#{posInvoice.pendingAmount}" />
 							<f:setPropertyActionListener target="#{posInvoice.showFinishTicketWindow}"
 								value="#{true}" />
-						</aon:commandButton>
-						<aon:htmlCommandLink id="posInvoice-report"
-							actionListener="#{posInvoiceParams.onInit}"
-							value="ticket" target="_new"
-							rendered="#{posInvoice.toInvoiceTotalPrice != 0 and posInvoice.toInvoiceTotalPrice == posInvoice.toInvoiceFinanceTotal}" 
-							action="#{report.onExecute}"
-							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-pdf">
-							<f:param name="reportKey" value="posInvoice" />
-						</aon:htmlCommandLink>						
+						</aon:commandButton>				
 					</ui:define>
 				</ui:decorate>
 			</aon:div>
