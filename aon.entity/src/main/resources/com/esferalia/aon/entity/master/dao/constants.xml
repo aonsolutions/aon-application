@@ -143,6 +143,11 @@
 	</bean>
 
 	<!-- ** AON FINANCE  **************************************************** -->
+	<bean class="com.code.aon.finance.BankStatementLink" sqlName="bank_statement_link">
+		<alias names="amount,bankStatement_id,bankStatement_operationDate,bankStatement_payment,bankStatement_securityLevel,bankStatement_status,id,linkedBankStatementLink,linkedBankStatementLink_id,source,sourceDate,sourceId,status" />
+		<hibernate names="amount,bankStatement.id,bankStatement.operationDate,bankStatement.payment,bankStatement.securityLevel,bankStatement.status,id,linkedBankStatementLink,linkedBankStatementLink.id,source,sourceDate,sourceId,status" />
+	</bean>
+
 	<bean class="com.code.aon.finance.Creditor">
 		<alias names="id,registry_id,status,registry_name,registry_alias,registry_document,withholding,transaction,scope_id,account,account_id,account_code"/>
 		<hibernate names="id,registry.id,status,registry.name,registry.alias,registry.document,withholding,transaction,scope.id,account,account.id,account.code"/>
@@ -198,10 +203,15 @@
 		<hibernate names="amount,financeBatch.id,finance.id,id,status,financeBatch.issueDate,financeBatch.securityLevel,finance.invoice&lt;referenceCode,finance.concept,finance.dueDate" />
 	</bean>
 
-	<bean class="com.code.aon.finance.BankStatementLink" sqlName="bank_statement_link">
-		<alias names="amount,bankStatement_id,bankStatement_operationDate,bankStatement_payment,bankStatement_securityLevel,bankStatement_status,id,linkedBankStatementLink,linkedBankStatementLink_id,source,sourceDate,sourceId,status" />
-		<hibernate names="amount,bankStatement.id,bankStatement.operationDate,bankStatement.payment,bankStatement.securityLevel,bankStatement.status,id,linkedBankStatementLink,linkedBankStatementLink.id,source,sourceDate,sourceId,status" />
-	</bean>
+	<bean class="com.code.aon.finance.PosShift" sqlName="pos_shift">
+		<alias names="id,domain,pos_id,pos_workPlace_id,pos_workPlace_scope_id,pos_invoiceable,shift,user_id,user_login,startTime,endTime,initialAmount,remarks,invoice_id,pos_pinPad"/>
+		<hibernate names="id,domain,pos.id,pos.workPlace.id,pos.workPlace.scope.id,pos.invoiceable,shift,user.id,user.login,startTime,endTime,initialAmount,remarks,invoice.id,pos.pinPad"/>
+	</bean> 
+
+	<bean class="com.code.aon.finance.PosShiftCount" sqlName="pos_shift_count">
+		<alias names="id,domain,posShift_id,payMethod_id,payMethod_name,payMethod_type,amount"/>
+		<hibernate names="id,domain,posShift.id,payMethod.id,payMethod.name,payMethod.type,amount"/>
+	</bean> 
 
 	<!-- ** AON FISCAL  **************************************************** -->
 	<bean class="com.code.aon.fiscal.VatTaxDetail">
@@ -251,12 +261,7 @@
 		<alias names="campaign_id,endDate,id,mediaType,startDate,survey_id,campaign_active,campaign_scope_id"/>
 		<hibernate names="campaign.id,endDate,id,mediaType,startDate,survey.id,campaign.active,campaign.scope.id"/>
 	</bean>
-	<!-- 
-	<bean class="com.code.aon.entity.master.MarketingTarget" sqlName="target">
-		<alias names="customer,id,registry_id,target_id,registry_document"/>
-		<hibernate names="customer,id,registry.id,target.id,registry.document"/>
-	</bean>	
- 	-->
+
 	<!-- ** AON PAYROLL  **************************************************** -->
 	<bean class="com.esferalia.aon.payroll.AgreementLevelCategory">
 		<alias names="description,id,level_id,level_agreement_id"/>
@@ -320,14 +325,6 @@
 		<alias names="id,domain,invoiceDetail_id,projectReservationService_id,projectReservationService_item_product_code,projectReservationService_projectReservation_id,projectReservationService_projectReservation_hotel_id,projectReservationService_extra,projectReservationRoomDetail,projectReservationRoomDetail_assetActivity_asset_name,projectReservationRoomDetail_id,projectReservationRoomDetail_projectReservationRoom_id,effectiveDate,quantity,price,taxableBase"/>
 		<hibernate names="id,domain,invoiceDetail.id,projectReservationService.id,projectReservationService.item.product.code,projectReservationService.projectReservation.id,projectReservationService.projectReservation.hotel.id,projectReservationService.extra,projectReservationRoomDetail,projectReservationRoomDetail.assetActivity.asset.name,projectReservationRoomDetail.id,projectReservationRoomDetail.projectReservationRoom.id,effectiveDate,quantity,price,taxableBase"/>
 	</bean>
-	<bean class="com.esferalia.aon.pms.PosShift" sqlName="pos_shift">
-		<alias names="id,domain,pos_id,pos_workPlace_id,pos_workPlace_scope_id,pos_invoiceable,shift,user_id,user_login,startTime,endTime,initialAmount,remarks,invoice_id,pos_pinPad"/>
-		<hibernate names="id,domain,pos.id,pos.workPlace.id,pos.workPlace.scope.id,pos.invoiceable,shift,user.id,user.login,startTime,endTime,initialAmount,remarks,invoice.id,pos.pinPad"/>
-	</bean> 
-	<bean class="com.esferalia.aon.pms.PosShiftCount" sqlName="pos_shift_count">
-		<alias names="id,domain,posShift_id,payMethod_id,payMethod_name,amount"/>
-		<hibernate names="id,domain,posShift.id,payMethod.id,payMethod.name,amount"/>
-	</bean> 
 	<bean class="com.esferalia.aon.pms.ReservationRequest" sqlName="reservation_request">
 		<alias names="id,domain,hotel_id,hotel_scope_id,code,startDate,endDate,agency_id,company_id,bookingHolder,requestCounter,active,creationUser,creationDate,modificationUser,modificationDate"/>
 		<hibernate names="id,domain,hotel.id,hotel.scope.id,code,startDate,endDate,agency.id,company.id,bookingHolder,requestCounter,active,creationUser,creationDate,modificationUser,modificationDate"/>

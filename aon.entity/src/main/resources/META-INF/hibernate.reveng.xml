@@ -32,6 +32,8 @@
 	<table-filter match-name="db_version" exclude="true" />
 	<!--  PAYROLL -->
 	<table-filter match-name="salary_data" exclude="true" />
+	<table-filter match-name="training_center" exclude="true" />
+	<table-filter match-name="training_course" exclude="true" />
 	
 	
 	<!--  ***************** -->

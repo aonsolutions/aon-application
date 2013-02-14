@@ -21,6 +21,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
+import com.code.aon.finance.PosShift;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.finance.enumeration.FinanceStatus;
@@ -31,7 +32,6 @@ import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.pms.PosShift;
 import com.esferalia.aon.ui.pms.event.PosFinanceSearchListener;
 
 public class PosFinanceController extends BasicController implements IPmsConstants {

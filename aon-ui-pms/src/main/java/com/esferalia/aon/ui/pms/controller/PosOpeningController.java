@@ -19,13 +19,12 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.User;
+import com.code.aon.finance.Pos;
+import com.code.aon.finance.PosShift;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
-import com.esferalia.aon.pms.Pos;
-import com.esferalia.aon.pms.PosShift;
 import com.esferalia.aon.pms.invoicing.PosInvoicing;
-
 
 public class PosOpeningController {
 	

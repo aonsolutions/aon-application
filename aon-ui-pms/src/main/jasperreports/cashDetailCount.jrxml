@@ -11,7 +11,7 @@
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
-	<parameter name="posShift" class="com.esferalia.aon.pms.PosShift" isForPrompting="false"/>
+	<parameter name="posShift" class="com.code.aon.finance.PosShift" isForPrompting="false"/>
 	<parameter name="initialAmount" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="calcTotal" class="java.lang.Double" isForPrompting="false"/>
 	<field name="unit" class="java.lang.String"/>

@@ -3670,7 +3670,39 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!--  **** BANK CONCEPT ****	-->
+	<!-- ************* POS ***************** -->
+	<managed-bean>
+		<managed-bean-name>pos</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.Pos</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>pos</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Pos_workPlace_description,Pos_name</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{posSearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>posSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.event.PosSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<!--  **** BANK CONCEPT **** -->
 	<managed-bean>
 		<managed-bean-name>bankConcept</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.BasicController 
@@ -4165,6 +4197,22 @@
 	    </navigation-case>
 	</navigation-rule>
 	
+  	<!-- =================== Pos ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>pos_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/pos/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>pos_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/pos/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>pos_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/pos/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>  
+
 	<!-- =================== No Fee Customer ========================== -->
 	<navigation-rule>
 	    <navigation-case>

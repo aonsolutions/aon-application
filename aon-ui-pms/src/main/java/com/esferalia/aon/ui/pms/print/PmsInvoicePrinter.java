@@ -13,8 +13,6 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 
-
-
 public class PmsInvoicePrinter {
 	
 	public PmsInvoicePrinter getInstance() {

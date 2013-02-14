@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
-import com.esferalia.aon.pms.PosShift;
+import com.code.aon.finance.PosShift;
 
 public class CashCalculatorController implements ICollectionProvider {
 	

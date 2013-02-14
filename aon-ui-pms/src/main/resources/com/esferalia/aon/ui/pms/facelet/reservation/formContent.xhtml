@@ -82,7 +82,7 @@
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>
 		<aon:div>
-			<aon:outputLabel for="ProjectReservation_modificationDate" value="#{pmsBundle.pms_reservation_modificacionDate}:"
+			<aon:outputLabel for="ProjectReservation_modificationDate" value="#{pmsBundle.pms_reservation_modificationDate}:"
 				styleClass="aon-margin-right aon-italic" rendered="#{reservation.reservationPermission.modificationDateVisible}" />
 			<aon:outputText id="ProjectReservation_modificationDate" value="#{reservation.to.modificationDate}" 
 				styleClass="aon-bold" rendered="#{reservation.reservationPermission.modificationDateVisible}">

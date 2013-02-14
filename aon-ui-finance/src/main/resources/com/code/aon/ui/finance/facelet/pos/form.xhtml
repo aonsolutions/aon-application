@@ -14,25 +14,22 @@
 
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle"
-					value="#{pmsBundle.pms_pos_module}" />
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_pos_definition_module}" />
 				<ui:param name="controller" value="#{pos}" />
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:panelGrid id="posPanel" columns="2" >
-					<aon:outputLabel for="pos_name" value="#{bundle.aon_name}" />
-					<aon:inputText id="pos_name" value="#{pos.to.name}" 
-						size="32" required="true">
-						<f:validateLength maximum="32" />
-					</aon:inputText>
-					
-					<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
+				<aon:panelGrid id="posPanel" columns="2">
+					<aon:outputLabel value="#{companyBundle.company_workplace}" />
 					<aon:selectOneMenu 
 						value="#{pos.to.workPlace}" >
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="Pos_name" value="#{financeBundle.finance_pos_name}" />
+					<aon:inputText id="Pos_name" value="#{pos.to.name}" 
+						size="32" maxlength="32" required="true" />
 					
 					<aon:outputLabel value="#{pmsBundle.pms_invoiceable}" />
 					<aon:selectBooleanCheckbox value="#{pos.to.invoiceable}" >
@@ -50,6 +47,7 @@
 					<aon:inputText id="Pos_initialAmount" value="#{pos.to.initialAmount}" 
 						size="20" maxlength="17" />
 
+<!--
 					<aon:outputLabel for="Pos_pinPad" value="#{pmsBundle.pos_pin_pad}" />
 					<aon:selectBooleanCheckbox id="Pos_pinPad" value="#{pos.to.pinPad}" >
 						<a4j:support event="onclick" reRender="posPanel" ignoreDumpResponses="true" ajaxSingle="true" />
@@ -99,7 +97,7 @@
 							<f:selectItem itemLabel="4.2" itemValue="4.2" />
 						</aon:selectOneMenu>						
 					</c:if>
-					
+  -->					
 				</aon:panelGrid>
 				
 			</aon:div>

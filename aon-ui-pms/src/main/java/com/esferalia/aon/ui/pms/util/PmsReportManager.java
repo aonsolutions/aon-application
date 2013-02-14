@@ -15,7 +15,6 @@ import com.esferalia.aon.ui.pms.controller.IPmsConstants;
 import com.esferalia.aon.ui.pms.controller.PmsCollectionsController;
 import com.esferalia.aon.ui.pms.controller.ReservationInOutController.SortType;
 
-
 public class PmsReportManager {
 	
 	public static final Integer BOARD_HOTEL_NAME = 0;

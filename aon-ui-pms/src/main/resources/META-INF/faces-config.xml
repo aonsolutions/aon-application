@@ -942,38 +942,6 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ************* POS ***************** -->
-	<managed-bean>
-		<managed-bean-name>pos</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.pms.Pos</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>pos</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Pos_name</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{posSearch}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>posSearch</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.pms.event.PosSearchListener</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
-	
 	<!-- ************* POS OPENING ***************** -->
 	<managed-bean>
 		<managed-bean-name>posOpening</managed-bean-name>
@@ -1009,7 +977,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.pms.PosShift</value>
+			<value>com.code.aon.finance.PosShift</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -1079,7 +1047,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.pms.PosShiftCount</value>
+			<value>com.code.aon.finance.PosShiftCount</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -1464,22 +1432,6 @@
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/noShowInvoice/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-
-  	<!-- =================== Pos ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>pos_search</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/pms/facelet/pos/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>pos_list</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/pms/facelet/pos/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>pos_form</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/pms/facelet/pos/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>  
 
   	<!-- =================== Pos Shift ================= -->
 	<navigation-rule>

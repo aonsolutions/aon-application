@@ -24,14 +24,6 @@
 
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
-		<!-- AON-ASSET Mapping files --> 
-		<mapping class="com.code.aon.asset.Asset"/>
-		<mapping class="com.code.aon.asset.AssetFeature"/>
-		<mapping class="com.code.aon.asset.AssetActivity"/>
-		<mapping class="com.code.aon.asset.AssetType"/>
-		<mapping class="com.code.aon.asset.AssetInterval"/>
-		<mapping class="com.code.aon.asset.Feature"/>
-		
 		<!-- AON-ACCOUNT Mapping files -->
 		<mapping class="com.code.aon.account.Account"/>
 
@@ -42,6 +34,7 @@
 		<mapping class="com.code.aon.accounting.AccountHelper"/>
 		<mapping class="com.code.aon.accounting.Amortization"/>
 		<mapping class="com.code.aon.accounting.AmortizationDetail"/>
+		<mapping class="com.code.aon.accounting.AmortizationInvoice"/>
 		<mapping class="com.code.aon.accounting.AmortizationType"/>
 		<mapping class="com.code.aon.accounting.Balance"/>
 		<mapping class="com.code.aon.accounting.BalanceDetail"/>
@@ -55,6 +48,28 @@
 		<mapping class="com.code.aon.account.bridge.AccountEntryInvoice"/>
 		<mapping class="com.code.aon.account.bridge.InvoiceDetailAccount"/>
 		<mapping class="com.code.aon.account.bridge.InvoiceTaxAccount"/>
+
+		<!-- AON-ASSET Mapping files --> 
+		<mapping class="com.code.aon.asset.Asset"/>
+		<mapping class="com.code.aon.asset.AssetFeature"/>
+		<mapping class="com.code.aon.asset.AssetActivity"/>
+		<mapping class="com.code.aon.asset.AssetType"/>
+		<mapping class="com.code.aon.asset.AssetInterval"/>
+		<mapping class="com.code.aon.asset.Feature"/>
+		
+		<!-- AON-AUDIT Mapping files -->
+		<mapping class="com.code.aon.audit.Action"/>
+		<mapping class="com.code.aon.audit.ActionDenied"/>
+		<mapping class="com.code.aon.audit.ActionEntry"/>
+		<mapping class="com.code.aon.audit.ActionFavorite"/>
+		<mapping class="com.code.aon.audit.Session"/>
+
+		<!-- AON-CALENDAR Mapping files -->		
+		<mapping class="com.esferalia.aon.calendar.Calendar"/>
+		<mapping class="com.esferalia.aon.calendar.CalendarHoliday"/>	
+		<mapping class="com.esferalia.aon.calendar.CalendarPeriod"/>
+		<mapping class="com.esferalia.aon.calendar.Holiday"/>	
+		<mapping class="com.esferalia.aon.calendar.HolidayDetail"/>			
 
 		<!-- AON-COMMERCIAL Mapping files -->	
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
@@ -78,13 +93,6 @@
 		<mapping class="com.code.aon.commercial.TargetSeller"/>
 		<mapping class="com.code.aon.commercial.TargetSupplier"/>
 		
-		<!-- AON-CALENDAR Mapping files -->		
-		<mapping class="com.esferalia.aon.calendar.Calendar"/>
-		<mapping class="com.esferalia.aon.calendar.CalendarHoliday"/>	
-		<mapping class="com.esferalia.aon.calendar.CalendarPeriod"/>
-		<mapping class="com.esferalia.aon.calendar.Holiday"/>	
-		<mapping class="com.esferalia.aon.calendar.HolidayDetail"/>			
-
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.company.Department"/>
@@ -113,6 +121,7 @@
 		<mapping class="com.code.aon.config.TaxDetail"/>
 		<mapping class="com.code.aon.config.User"/>
 		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.UserWorkGroup"/>
 		<mapping class="com.code.aon.config.WorkGroup"/>
 
 		<!-- AON-CUSTOMER Mapping files -->	
@@ -136,6 +145,9 @@
 		<mapping class="com.code.aon.finance.InvoiceTax"/>
 		<mapping class="com.code.aon.finance.InvoicingGroup"/>
 		<mapping class="com.code.aon.finance.InvoicingGroupDetail"/>
+		<mapping class="com.code.aon.finance.Pos"/>
+		<mapping class="com.code.aon.finance.PosShift"/>
+		<mapping class="com.code.aon.finance.PosShiftCount"/>
 
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoTree"/>
@@ -166,11 +178,25 @@
 		<mapping class="com.code.aon.marketing.Survey"/>
 		<mapping class="com.code.aon.marketing.SurveyQuestion"/>
 
+		<!-- AON-PMS Mapping files -->	
+		<mapping class="com.esferalia.aon.pms.Hotel"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservation"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationDivert"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationGuest"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationRoom"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationRoomDetail"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationService"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationServiceDetail"/>
+		<mapping class="com.esferalia.aon.pms.ReservationRequest"/>
+		<mapping class="com.esferalia.aon.pms.ReservationRequestGuest"/>
+		<mapping class="com.esferalia.aon.pms.ReservationRequestRoom"/>
+		<mapping class="com.esferalia.aon.pms.Room"/>
+
 		<!-- AON-PROJECT Mapping files -->  
 		<mapping class="com.code.aon.project.ActivityType"/>
 		<mapping class="com.code.aon.project.Project"/>
-		<mapping class="com.code.aon.project.ProjectAttachment"/>
 		<mapping class="com.code.aon.project.ProjectActivity"/>
+		<mapping class="com.code.aon.project.ProjectAttachment"/>
 		<mapping class="com.code.aon.project.ProjectType"/>
 				
 		<!-- AON-PRODUCT Mapping files -->	
@@ -239,31 +265,6 @@
 		<mapping class="com.code.aon.warehouse.Warehouse"/>
 		<mapping class="com.code.aon.warehouse.WarehouseTransfer"/>
 		<mapping class="com.code.aon.warehouse.WarehouseTransferDetail"/>
-
-		<!-- AON-AUDIT Mapping files -->
-		<mapping class="com.code.aon.audit.Action"/>
-		<mapping class="com.code.aon.audit.ActionDenied"/>
-		<mapping class="com.code.aon.audit.ActionEntry"/>
-		<mapping class="com.code.aon.audit.ActionFavorite"/>
-		<mapping class="com.code.aon.audit.Session"/>
-
-		<!-- AON-PMS Mapping files -->	
-		<mapping class="com.esferalia.aon.pms.FinancePos"/>
-		<mapping class="com.esferalia.aon.pms.Hotel"/>
-		<mapping class="com.esferalia.aon.pms.Pos"/>
-		<mapping class="com.esferalia.aon.pms.PosShift"/>
-		<mapping class="com.esferalia.aon.pms.PosShiftCount"/>
-		<mapping class="com.esferalia.aon.pms.ProjectReservation"/>
-		<mapping class="com.esferalia.aon.pms.ProjectReservationDivert"/>
-		<mapping class="com.esferalia.aon.pms.ProjectReservationGuest"/>
-		<mapping class="com.esferalia.aon.pms.ProjectReservationRoom"/>
-		<mapping class="com.esferalia.aon.pms.ProjectReservationRoomDetail"/>
-		<mapping class="com.esferalia.aon.pms.ProjectReservationService"/>
-		<mapping class="com.esferalia.aon.pms.ProjectReservationServiceDetail"/>
-		<mapping class="com.esferalia.aon.pms.ReservationRequest"/>
-		<mapping class="com.esferalia.aon.pms.ReservationRequestGuest"/>
-		<mapping class="com.esferalia.aon.pms.ReservationRequestRoom"/>
-		<mapping class="com.esferalia.aon.pms.Room"/>
 
 	</session-factory>
 

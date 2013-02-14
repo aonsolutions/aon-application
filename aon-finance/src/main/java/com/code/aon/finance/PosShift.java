@@ -1,4 +1,4 @@
-package com.esferalia.aon.pms;
+package com.code.aon.finance;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -51,7 +51,7 @@ public class PosShift extends PosShiftDB {
 		IManagerBean bean = BeanManager.getManagerBean(PosShiftCount.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_POS_SHIFT_ID), this.getId());
-		criteria.addEqualExpression("posShiftCount.payMethod.type", PayMethodType.CASH_BASIS);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_PAY_METHOD_TYPE), PayMethodType.CASH_BASIS);
 		Projection projection = Projection.sum(bean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_AMOUNT));
 		Double cashAmount = ((Double) bean.getUniqueResult(projection, criteria));
 		return cashAmount!=null?cashAmount:0;

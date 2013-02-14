@@ -10,28 +10,26 @@
 		<aon:form id="posSearch">
 			
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_pos_module}" />
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_pos_definition_module}" />
 				<ui:param name="controller" value="#{pos}" />
 			</ui:include>
 				
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{pos}" />
-
 				<ui:define name="searchContent">
-				
-					<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
+
+					<aon:outputLabel value="#{companyBundle.company_workplace}" />
 					<aon:selectOneMenu 
-						value="#{posSearch.hotel}" >
+						value="#{posSearch.workPlace}" >
 						<f:selectItem itemLabel=" - " itemValue="null" />
-						<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
-						
-					<aon:outputLabel value="#{bundle.aon_name}" />
+
+					<aon:outputLabel value="#{financeBundle.finance_pos_name}" />
 					<aon:inputText id="Pos_name" 
 						valueChangeListener="#{pos.addExpression}" />
-						
-						
+
 				</ui:define>
 			</ui:decorate>				
 		</aon:form>

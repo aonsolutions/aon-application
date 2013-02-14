@@ -26,6 +26,9 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.Finance;
+import com.code.aon.finance.Pos;
+import com.code.aon.finance.PosShift;
+import com.code.aon.finance.PosShiftCount;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -33,10 +36,6 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
-import com.esferalia.aon.pms.Pos;
-import com.esferalia.aon.pms.PosShift;
-import com.esferalia.aon.pms.PosShiftCount;
-
 
 public class PosShiftController extends BasicController {
 	

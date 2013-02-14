@@ -12,13 +12,13 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
+import com.code.aon.finance.PosShift;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
-import com.esferalia.aon.pms.PosShift;
 import com.esferalia.aon.pms.enumeration.Shift;
 
 public class PosFinanceSearchListener extends ControllerSearchListener {

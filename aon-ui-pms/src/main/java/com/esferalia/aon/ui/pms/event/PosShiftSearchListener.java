@@ -15,13 +15,13 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.finance.Pos;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
-import com.esferalia.aon.pms.Pos;
 
 public class PosShiftSearchListener extends ControllerSearchListener {
 

@@ -24,6 +24,8 @@ import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.PosShift;
+import com.code.aon.finance.PosShiftCount;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
@@ -34,8 +36,6 @@ import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
-import com.esferalia.aon.pms.PosShift;
-import com.esferalia.aon.pms.PosShiftCount;
 import com.esferalia.aon.pms.reservation.IReservationConstants;
 
 public class PosInvoicing implements IReservationConstants {
