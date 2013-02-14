@@ -82,7 +82,13 @@
 								<f:facet name="header">
 									<aon:outputText value="#{adminBundle.admin_domain_url}" />
 								</f:facet>							
-								<aon:outputText value="#{to.name}" />
+								<aon:div onmouseover="disableRowSelector();"
+									onmouseup="disableRowSelector();"
+									onmouseout="enableRowSelector();" >
+									<aon:outputLink target="_blank" value="http://#{to.name}" >
+										<aon:outputText style="#{customize.fontStyle}" value="http://#{to.name}" />
+								    </aon:outputLink>
+								</aon:div>
 							</aon:column>
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 								<f:facet name="header">

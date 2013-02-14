@@ -10,7 +10,6 @@ import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -221,7 +220,6 @@ public class NewDomainController {
 		
 		validateUserPassword(getPassword());
 		
-		
 		try {			
 			if ( isLoadDefaultValuesEnabled() ) {
 				Integer newDomain = createDomain(domainFinalName, getDomainDescription());
@@ -256,13 +254,9 @@ public class NewDomainController {
 	private void insertDefaults( Integer domain ) throws AonSQLException, AonException, IOException {
 		Connection connection = null;
 		try {			
-			String scriptName = IConstants.INSERT_DOMAIN_DEFAULTS_SCRIPT;
-			if ( getParentDomain() != null ) {
-				scriptName = IConstants.INSERT_DOMAIN_FROM_PARENT_DEFAULTS_SCRIPT;
-			}
-			URL script = VersionManager.getScript(scriptName);
+			URL script = VersionManager.getScript(IConstants.INSERT_DOMAIN_DEFAULTS_SCRIPT);
 			AonSQLFile file = new AonSQLFile(script.openStream(), CharEncoding.ISO_8859_1);
-			file.setFileName(scriptName);
+			file.setFileName(IConstants.INSERT_DOMAIN_DEFAULTS_SCRIPT);
 			Properties properties = DataSourceUtil.getDBProperties();
 			connection = ConnectionProvider.getConnection(properties);
 			AonSQLScript sqlScript = new AonSQLScript(file, connection);
@@ -284,6 +278,9 @@ public class NewDomainController {
 		domain.setName(name);
 		domain.setDescription(description);
 		domain.setEnableHeredity( isEnableHeredity() );
+		if ( isDomainManagement() ) {
+			domain.setSubDomainSuffix(name);
+		}
 		bean.insert(domain);
 		DomainApplication da = new DomainApplication(); 
 		Application application = (Application) BeanManager.getManagerBean(Application.class).get(principal.getApplicationId());
