@@ -23,7 +23,7 @@
 					<ui:param name="skipBackButton" value="#{true}" />
 					<ui:param name="saveButtonReRender" value="posInvoiceForm" />
 					<ui:define name="beforeSpinToolbarContent">
-						<aon:commandButton id="finishTicket"
+						<aon:commandButton id="finishTicket" immediate="true"
 							styleClass="aon-finding-toolbar-item aon-icon-cash"
 							value="#{financeBundle.finance_pos_finish_ticket}"
 							title="Alt+{Mayús}+F"
@@ -71,9 +71,11 @@
 						</ui:include>
 					</aon:panelGrid>
 
-					<aon:panelGrid columns="2" style="width: 100%;"
-						rendered="#{posInvoice.to.seller.id != null}"
+					<aon:panelGrid columns="4" style="width: 100%;"
+						rendered="#{posInvoice.to.seller.id != null or posInvoice.to.pos.id != null}"
 						columnClasses="aon-panelGrid-odd aon-width-140,
+							aon-panelGrid-even aon-width-500,
+							aon-panelGrid-odd aon-width-100,
 							aon-panelGrid-even aon-width-auto">
 
 						<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
@@ -82,6 +84,13 @@
 							<aon:methodParam name="lookupChangeListener"
 								value="#{posInvoice.onSellerChanged}" type="lookupChangeListener" />
 						</ui:include>
+
+						<aon:outputLabel for="Invoice_pos"
+							value="#{financeBundle.finance_pos}" />
+						<aon:selectOneMenu id="Invoice_pos"
+							value="#{posInvoice.to.pos}">
+							<f:selectItems value="#{posInvoice.posList}" />
+						</aon:selectOneMenu>
 
 					</aon:panelGrid>
 				</c:if>

@@ -426,9 +426,11 @@
 					</aon:panelGrid>
 				</aon:div>
 
-				<aon:panelGrid columns="2" style="width: 100%;"
-					rendered="#{saleInvoice.to.seller.id != null}"
+				<aon:panelGrid columns="4" style="width: 100%;"
+					rendered="#{saleInvoice.to.seller.id != null or saleInvoice.to.pos.id != null}"
 					columnClasses="aon-panelGrid-odd aon-width-140,
+						aon-panelGrid-even aon-width-500,
+						aon-panelGrid-odd aon-width-100,
 						aon-panelGrid-even aon-width-auto">
 
 					<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
@@ -437,6 +439,11 @@
 						<aon:methodParam name="lookupChangeListener"
 							value="#{saleInvoice.onSellerChanged}" type="lookupChangeListener" />
 					</ui:include>
+
+					<aon:outputLabel for="Invoice_pos"
+						value="#{financeBundle.finance_pos}" />
+					<aon:outputText id="Invoice_pos"
+						value="#{saleInvoice.to.pos.name}" />
 
 				</aon:panelGrid>
 

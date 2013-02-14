@@ -124,6 +124,14 @@
 	</c:if>
 
 	<c:if test="#{posMode and invoiceController.new}">
+		<aon:outputLabel for="Invoice_pos"
+			value="#{financeBundle.finance_pos}" />
+		<aon:selectOneMenu id="Invoice_pos"
+			value="#{invoiceController.to.pos}"
+			ajaxSingle="true">
+			<f:selectItems value="#{posInvoice.posList}" />
+		</aon:selectOneMenu>
+
 		<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
 			<ui:param name="lookupTo" value="#{invoiceController.to.seller}" />
 			<ui:param name="lookupDisabled" value="#{invoiceController.readOnly}" />

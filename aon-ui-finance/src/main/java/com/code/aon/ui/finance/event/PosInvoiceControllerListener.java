@@ -10,6 +10,7 @@ import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.Pos;
 import com.code.aon.ql.Criteria;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.finance.controller.PosInvoiceController;
@@ -19,11 +20,15 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class PosInvoiceControllerListener extends SaleInvoiceControllerListener {
 
+	private Pos pos;
 	private Seller seller;
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		super.afterBeanCreated(event);
+
 		PosInvoiceController controller = (PosInvoiceController)event.getController();
+		controller.setFinanceGenerationMode(-1);
 		Invoice invoice = (Invoice)controller.getTo();
 		try {
 			Series series = obtainPosSeries();
@@ -35,33 +40,25 @@ public class PosInvoiceControllerListener extends SaleInvoiceControllerListener 
 			if (customer != null) {
 				controller.customerChanged(customer);
 			}
+			if (pos != null && pos.getId() != null) {
+				invoice.setPos(pos);
+			}
 			if (seller != null && seller.getId() != null) {
 				invoice.setSeller(seller);
 			}
 		} catch (ManagerBeanException ex) {
 			throw new ControllerListenerException(ex.getMessage(), ex);
 		}
-
-		super.afterBeanCreated(event);
-
-		controller.setFinanceGenerationMode(-1);
 	}
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		Invoice invoice = (Invoice)event.getController().getTo();
-		if (invoice.getSeller() != null && invoice.getSeller().getId() != null) {
-			seller = invoice.getSeller();
-		}
+		setDefaultPosData((Invoice)event.getController().getTo());
 	}
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		Invoice invoice = (Invoice)event.getController().getTo();
-		if (invoice.getSeller() != null && invoice.getSeller().getId() != null) {
-			seller = invoice.getSeller();
-		}
-
+		setDefaultPosData((Invoice)event.getController().getTo());
 		super.afterBeanUpdated(event);
 	}
 
@@ -87,6 +84,15 @@ public class PosInvoiceControllerListener extends SaleInvoiceControllerListener 
 			}
 		}
 		return null;
+	}
+
+	private void setDefaultPosData(Invoice invoice) {
+		if (invoice.getPos() != null && invoice.getPos().getId() != null) {
+			pos = invoice.getPos();
+		}
+		if (invoice.getSeller() != null && invoice.getSeller().getId() != null) {
+			seller = invoice.getSeller();
+		}
 	}
 
 }

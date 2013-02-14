@@ -32,9 +32,9 @@
 	</c:if>
 
 	<c:if test="#{!posMode}">
-		<aon:outputLabel for="Finance_DueDate" value="#{financeBundle.finance_finance_date}"
+		<aon:outputLabel for="Finance_dueDate" value="#{financeBundle.finance_finance_date}"
 			rendered="#{invoiceController.financeGenerationMode == 1}" />
-		<aon:selectInputDate id="Finance_DueDate"
+		<aon:selectInputDate id="Finance_dueDate"
 			value="#{financeController.to.dueDate}"
 			inputSize="8" required="true"
 			rendered="#{invoiceController.financeGenerationMode == 1}"
@@ -45,9 +45,9 @@
 		</aon:selectInputDate>
 	</c:if>
 
-	<aon:outputLabel for="Finance_PayMethod" value="#{configBundle.config_pay_method}"
+	<aon:outputLabel for="Finance_payMethod" value="#{configBundle.config_pay_method}"
 		rendered="#{invoiceController.financeGenerationMode == 1}" />
-	<aon:selectOneMenu id="Finance_PayMethod"
+	<aon:selectOneMenu id="Finance_payMethod"
 		value="#{financeController.to.payMethod}" required="true"
 		rendered="#{invoiceController.financeGenerationMode == 1}"
 		valueChangeListener="#{financeController.onPayMethodChanged}"
@@ -116,11 +116,11 @@
 				</aon:commandLink>
 			</aon:panelGroup>
 			<aon:div>
-				<aon:selectOneMenu id="Finance_RegistryBank"
+				<aon:selectOneMenu id="Finance_registryBank"
 					value="#{financeController.registryBank}"
 					rendered="#{!financeController.showBankManualInput}"
 					valueChangeListener="#{financeController.onRBankChanged}"
-					reRender="Finance_RegistryBank" ajaxSingle="true">
+					reRender="Finance_registryBank" ajaxSingle="true">
 					<f:selectItem value="#{null}" />
 					<f:selectItems value="#{financeController.activeBanks}" />
 				</aon:selectOneMenu>
