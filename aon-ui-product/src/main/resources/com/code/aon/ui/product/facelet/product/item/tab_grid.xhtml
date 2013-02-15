@@ -10,7 +10,7 @@
 	<aon:div styleClass="aon-toolbar" >
 		<aon:commandButton id="saveItem" value="#{bundle.aon_save}"					
 			styleClass="aon-finding-toolbar-item aon-icon-accept"
-			actionListener="#{controller.accept}" />
+			actionListener="#{product.acceptItem}" />
 		<aon:confirmButton id="removeItem"
 			rendered="#{controller.model.rowCount > 1}"
 			value="#{bundle.aon_remove}" immediate="true"
@@ -21,7 +21,7 @@
 			confirmActionListener="#{product.onRemoveItem}" />
 		<aon:commandButton id="resetItem"
 			value="#{bundle.aon_reset}" reRender="showNewItemWindow"
-			actionListener="#{product.onNewItem}"
+			actionListener="#{product.onResetItem}"
 			styleClass="aon-finding-toolbar-item aon-icon-new" >			
 			<f:setPropertyActionListener target="#{product.showNewItemWindow}" value="#{true}" />							
 		</aon:commandButton>

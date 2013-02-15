@@ -8,6 +8,7 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<aon:methodParam name="rowSelectorAction" value="product_form" />
+	<aon:methodParam name="rowSelectorActionListener" value="#{product.onSelectItem}" type="actionListener" />
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 		<ui:param name="skipSelectButton" value="true" />

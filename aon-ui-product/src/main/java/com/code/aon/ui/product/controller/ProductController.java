@@ -38,6 +38,10 @@ public class ProductController extends BasicController {
 	public void setItem(Item item) {
 		this.item = item;
 	}
+	
+	private ItemController getItemController() {
+		return (ItemController) AonUtil.getRegisteredBean(ITEM);
+	}
 
 	public static void updateVat( Product product ) throws ManagerBeanException {
 		if (product.getVat() == null || product.getVat().getId() == null) {
@@ -50,49 +54,54 @@ public class ProductController extends BasicController {
 		}		
 	}	
 	
-	public void onNewItem(ActionEvent event) {
-		ItemController controller = (ItemController) AonUtil.getRegisteredBean(ITEM);
-		controller.onReset(event);
+	private void updateItem( ItemController controller ) {
 		Product product = (Product) getTo();
 		Item item = (Item) controller.getTo();
-		item.setProduct(product);
+		item.setProduct(product);		
 	}
 
-	public void onSaveItem(ActionEvent event) {
-		ItemController controller = (ItemController) AonUtil.getRegisteredBean(ITEM);
-		controller.onAccept(event);
-		Product product = (Product) getTo();
-		Item item = (Item) controller.getTo();
-		item.setProduct(product);
+	public void acceptItem(ActionEvent event) {
+		ItemController controller = getItemController();
+		controller.accept(event);
+		updateItem(controller);
+	}
+	
+	public void onResetItem(ActionEvent event) {
+		ItemController controller = getItemController();
+		controller.onReset(event);
+		updateItem(controller);
+	}
+
+	public void onSelectItem(ActionEvent event) {
+		ItemController controller = getItemController();
+		controller.onSelect(event);
+		updateItem(controller);		
 	}
 	
 	public void onRemoveItem(ActionEvent event) throws ManagerBeanException {
-		ItemController controller = (ItemController) AonUtil.getRegisteredBean(ITEM);
+		ItemController controller = getItemController();
 		controller.onRemove(event);
 		if (controller.getModel().getRowCount() > 0) {
 			controller.getModel().setRowIndex(0);
 			controller.onSelect(null);
+			updateItem(controller);
 		}
 	}
 	
 	public void onPurchasePriceChanged(ValueChangeEvent event) {
-		ItemController controller = (ItemController) AonUtil.getRegisteredBean(ITEM);
-		controller.getPricesManager().onPurchasePriceChanged( getItem(), event.getNewValue());
+		getItemController().getPricesManager().onPurchasePriceChanged( getItem(), event.getNewValue());
 	}
 
 	public void onProfitChanged(ValueChangeEvent event) {
-		ItemController controller = (ItemController) AonUtil.getRegisteredBean(ITEM);
-		controller.getPricesManager().onProfitChanged( getItem(), event.getNewValue());
+		getItemController().getPricesManager().onProfitChanged( getItem(), event.getNewValue());
 	}
 
 	public void onPriceChanged(ValueChangeEvent event) {
-		ItemController controller = (ItemController) AonUtil.getRegisteredBean(ITEM);
-		controller.getPricesManager().onPriceChanged( getItem(), event.getNewValue());
+		getItemController().getPricesManager().onPriceChanged( getItem(), event.getNewValue());
 	}
 
 	public void onSalesPriceChanged(ValueChangeEvent event) {
-		ItemController controller = (ItemController) AonUtil.getRegisteredBean(ITEM);
-		controller.getPricesManager().onSalesPriceChanged( getItem(), event.getNewValue());
+		getItemController().getPricesManager().onSalesPriceChanged( getItem(), event.getNewValue());
 	}
 	
 }
