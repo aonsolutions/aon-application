@@ -8,6 +8,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tax;
 import com.code.aon.product.Item;
@@ -102,6 +104,32 @@ public class ProductController extends BasicController {
 
 	public void onSalesPriceChanged(ValueChangeEvent event) {
 		getItemController().getPricesManager().onSalesPriceChanged( getItem(), event.getNewValue());
+	}
+	
+	public boolean isShowDetail() {
+		Product product = (Product) getTo();
+		if ( product.getCategory() != null ) {
+			return ! StringUtils.isEmpty(product.getCategory().getDetail());
+		}
+		return false;
+	}
+
+	public boolean isShowDetail2() {
+		Product product = (Product) getTo();
+		if ( product.getCategory() != null ) {
+			return ! StringUtils.isEmpty(product.getCategory().getDetail2());
+		}
+		return false;
+	}
+
+	public String getLabelDetail() {
+		Product product = (Product) getTo();
+		return product.getCategory().getDetail();
+	}
+	
+	public String getLabelDetail2() {
+		Product product = (Product) getTo();
+		return product.getCategory().getDetail2();
 	}
 	
 }

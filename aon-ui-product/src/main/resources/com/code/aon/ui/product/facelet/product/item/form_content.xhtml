@@ -8,15 +8,25 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<aon:panelGrid columns="2" cellpadding="5" styleClass="aon-panelGrid-formatting"
+	<aon:panelGrid id="itemDataGrid"
+		columns="2" cellpadding="5" styleClass="aon-panelGrid-formatting"
 		columnClasses="aon-width-half aon-vertical-align-top,aon-width-half aon-vertical-align-top">
 
 		<aon:panelGrid columns="2" styleClass="aon-width-all" >
 	
-			<aon:outputLabel for="Item_product_detail"
-				value="#{productBundle.product_detail}" />
-			<aon:inputText id="Item_product_detail" 
-				value="#{controller.to.detail}" size="25" maxlength="15" />
+			<c:if test="#{product.showDetail}">
+				<aon:outputLabel for="Item_product_detail"
+					value="#{product.labelDetail}" />
+				<aon:inputText id="Item_product_detail" 
+					value="#{controller.to.detail}" size="25" maxlength="15" />
+			</c:if>
+
+			<c:if test="#{product.showDetail2}">
+				<aon:outputLabel for="Item_product_detail2"
+					value="#{product.labelDetail2}" />
+				<aon:inputText id="Item_product_detail2" 
+					value="#{controller.to.detail2}" size="25" maxlength="15" />
+			</c:if>
 	
 			<c:if test="#{aonConfiguration.bean.product.showBarcode}">
 				<aon:outputLabel for="Item_barcode"

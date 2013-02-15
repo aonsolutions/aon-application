@@ -17,7 +17,9 @@
 
 	<aon:outputLabel for="Product_category" value="#{productBundle.product_category}" />
 	<aon:div>
-		<aon:selectOneMenu id="Product_category" value="#{controller.to.category}">
+		<aon:selectOneMenu id="Product_category" 
+			reRender="itemDataGrid,itemData"
+			value="#{controller.to.category}">
 			<f:selectItems value="#{productCollections.categories}" />
 		</aon:selectOneMenu>
 
