@@ -132,9 +132,9 @@ public class RegistryLoaderFactory {
 		RegistryPayMethod rPayMethod = new RegistryPayMethod();
 		rPayMethod.setRegistry(registry);
 		rPayMethod.setRegistryBank(rbank);
-		rPayMethod.setNumberOfPayments(loaded.getNumeroVtos());
-		rPayMethod.setDaysBetweenPayments(loaded.getDiasEntreVtos());
-		rPayMethod.setDaysToFirstPayment(loaded.getDiasAlPrimerVto());
+		rPayMethod.setNumberOfPayments(ensureInteger(loaded.getNumeroVtos()));
+		rPayMethod.setDaysBetweenPayments(ensureInteger(loaded.getDiasEntreVtos()));
+		rPayMethod.setDaysToFirstPayment(ensureInteger(loaded.getDiasAlPrimerVto()));
 		if (StringUtils.isNotBlank(loaded.getDiasPago())) {
 			rPayMethod.setPaymentDays(loaded.getDiasPago());	
 		}
@@ -145,6 +145,10 @@ public class RegistryLoaderFactory {
 		bean.insert(rPayMethod);
 	}
 	
+	private int ensureInteger(Integer integer) {
+		return integer==null?0:integer;
+	}
+
 	public void insertRegistrySegment(Registry registry,String segmento) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistrySegment.class);
 		RegistrySegment rSegment = new RegistrySegment();
