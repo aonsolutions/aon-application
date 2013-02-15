@@ -18,6 +18,8 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 
 	private ProductStatus[] statuses;
 	
+	private ProductStatus[] itemStatuses;
+	
 	private ProductType[] types;
 	
 	private Tax vat;
@@ -75,6 +77,14 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	public void setSalesAccount(Account salesAccount) {
 		this.salesAccount = salesAccount;
 	}
+	
+	public ProductStatus[] getItemStatuses() {
+		return itemStatuses;
+	}
+
+	public void setItemStatuses(ProductStatus[] itemStatuses) {
+		this.itemStatuses = itemStatuses;
+	}
 
 	@Override
 	protected void init() throws ManagerBeanException {
@@ -86,6 +96,7 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		setPurchaseAccount( (Account) accountBean.createNewTo() );
 		setSalesAccount( (Account) accountBean.createNewTo() );
+		setItemStatuses( new ProductStatus[0] );
 	}
 	
 	@Override
@@ -93,6 +104,9 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		if (!ArrayUtils.isEmpty(getStatuses())) {
 			String alias = getController().resolveAlias(IEntityAlias.PRODUCT_STATUS);
 			addEnumToCriteria(criteria, alias, getStatuses());
+		}
+		if (!ArrayUtils.isEmpty(getItemStatuses())) {
+			addEnumToCriteria(criteria, "Product.items.status", getItemStatuses());
 		}
 		if (!ArrayUtils.isEmpty(getTypes())) {
 			String alias = getController().resolveAlias(IEntityAlias.PRODUCT_TYPE);
