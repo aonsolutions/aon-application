@@ -7,11 +7,13 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.annotations.Heritable;
 import com.code.aon.registry.enumeration.AddressType;
 import com.esferalia.aon.entity.master.RegistryAddressDB;
 
 @Entity
 @Table(name="raddress")
+@Heritable
 public class RegistryAddress extends RegistryAddressDB implements IAddress {
 
 	private static final long serialVersionUID = 1L;
