@@ -32,8 +32,6 @@
 	<table-filter match-name="db_version" exclude="true" />
 	<!--  PAYROLL -->
 	<table-filter match-name="salary_data" exclude="true" />
-	<table-filter match-name="training_center" exclude="true" />
-	<table-filter match-name="training_course" exclude="true" />
 	
 	
 	<!--  ***************** -->
@@ -1530,6 +1528,12 @@
 		<foreign-key constraint-name="FK_TAX_ACCOUNT_PURCHASE">
 			<many-to-one property="purchaseAccount" />
 		</foreign-key>
+	</table>
+	
+	<table name="training_center">
+		<primary-key>
+			<key-column name="registry" property="id" type="java.lang.Integer"/>
+		</primary-key>
 	</table>
 	
 	<table name="user">

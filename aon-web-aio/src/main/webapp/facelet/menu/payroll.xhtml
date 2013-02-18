@@ -18,24 +18,24 @@
 					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_main_payroll" styleClass="aon-width-all"
-							columnClasses="aon-padding"
-							headerClass="aon-icon-config aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{payrollBundle.labor_menu_group}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<c:if test="#{companyCollections.currentUserEnterprisesCount > 0}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="integral" 
-											action="#{enterprise.initialAction}"
-											actionListener="#{enterprise.onTreeViewSelect}" 
-											value="#{payrollBundle.menu_integral}">
-											<aon:actionListener method="#{enterprise.onEditSearch}" />
-										</aon:commandLink>
-									</aon:div>
-								</c:if>
-								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+						<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+							<aon:panelGrid id="group_main_payroll" styleClass="aon-width-all"
+								columnClasses="aon-padding"
+								headerClass="aon-icon-config aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{payrollBundle.labor_menu_group}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<c:if test="#{companyCollections.currentUserEnterprisesCount > 0}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="integral" 
+												action="#{enterprise.initialAction}"
+												actionListener="#{enterprise.onTreeViewSelect}" 
+												value="#{payrollBundle.menu_integral}">
+												<aon:actionListener method="#{enterprise.onEditSearch}" />
+											</aon:commandLink>
+										</aon:div>
+									</c:if>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="salaryDraft"
 											action="salaryDraft_search"
@@ -69,7 +69,7 @@
 											<aon:actionListener method="#{enterprise.onEditSearch}" />
 										</aon:commandLink>
 									</aon:div>							
-
+	
 									<aon:div styleClass="aon-direct-access-list-element" >
 										<aon:commandLink id="gwt_enterprise" 
 											action="gwt_enterprise_site"
@@ -78,10 +78,10 @@
 											<aon:actionListener method="#{enterprise.onEditSearch}" />
 										</aon:commandLink>
 									</aon:div>
-								</c:if>
-							</aon:div>
-
-						</aon:panelGrid>
+								</aon:div>
+	
+							</aon:panelGrid>
+						</c:if>
 						
 						<aon:panelGrid id="launcher_wizard"
 							styleClass="aon-width-all" columnClasses="aon-padding"
@@ -156,6 +156,11 @@
 									<aon:commandLink id="holiday"
 										action="#{holiday.initialAction}"
 										value="#{calendarBundle.aon_calendar_festivities_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="training-center"
+										action="trainingCenter_list"
+										value="#{payrollBundle.payroll_trainingCenter_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>

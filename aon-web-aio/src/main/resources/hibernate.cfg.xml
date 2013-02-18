@@ -289,6 +289,8 @@
 		<mapping class="com.esferalia.aon.payroll.SystemData"/>
 		<mapping class="com.esferalia.aon.payroll.SystemDeduction"/>
 		<mapping class="com.esferalia.aon.payroll.SystemPayment"/>
+		<mapping class="com.esferalia.aon.payroll.TrainingCenter"/>
+		<mapping class="com.esferalia.aon.payroll.TrainingCourse"/>
 
 		<!-- AON-PMS Mapping files -->	
 		<mapping class="com.esferalia.aon.pms.Hotel"/>

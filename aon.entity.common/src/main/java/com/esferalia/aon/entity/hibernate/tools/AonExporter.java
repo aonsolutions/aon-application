@@ -433,6 +433,8 @@ public class AonExporter extends GenericExporter{
 		map.put("SystemData","com.esferalia.aon.payroll.SystemData");
 		map.put("SystemDeduction","com.esferalia.aon.payroll.SystemDeduction");
 		map.put("SystemPayment","com.esferalia.aon.payroll.SystemPayment");
+		map.put("TrainingCenter","com.esferalia.aon.payroll.TrainingCenter");
+		map.put("TrainingCourse","com.esferalia.aon.payroll.TrainingCourse");
 
 		//AON PRODUCT 
 		map.put("Brand","com.code.aon.product.Brand");
