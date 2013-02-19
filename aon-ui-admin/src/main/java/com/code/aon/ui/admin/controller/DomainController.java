@@ -214,6 +214,7 @@ public class DomainController extends BasicController {
 				list.remove(Module.PAYROLL);
 				list.remove(Module.DOCUMENT_PORTAL);
 				list.remove(Module.PAYROLL_PORTAL);
+				list.remove(Module.CONTRATA);
 			}
 		}
 		return list;

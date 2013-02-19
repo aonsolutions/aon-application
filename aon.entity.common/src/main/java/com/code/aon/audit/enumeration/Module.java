@@ -64,7 +64,10 @@ public enum Module implements IResourceable {
 	DOCUMENT_PORTAL( "document_portal" ),
 	
     /** POS. */
-	POS( "pos" );
+	POS( "pos" ),
+	
+    /** CONTRAT@. */
+	CONTRATA( "contrata" );
 	
 	/** Message file base path. */
 	private static final String BASE_NAME = "com.code.aon.audit.i18n.messages";

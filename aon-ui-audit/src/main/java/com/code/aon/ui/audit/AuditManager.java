@@ -191,6 +191,7 @@ public class AuditManager implements IAuditConstants {
 				list.add(Module.PAYROLL);
 				list.add(Module.PAYROLL_PORTAL);
 				list.add(Module.DOCUMENT_PORTAL);
+				list.add(Module.CONTRATA);
 			} else {
 				list.add(Module.ACCOUNTING);
 				list.add(Module.COMMERCIAL);
@@ -235,6 +236,9 @@ public class AuditManager implements IAuditConstants {
 						}
 						if (AuditManager.hasModule(parentDomainId, applicationId, Module.DOCUMENT_PORTAL) ) {
 							list.add(Module.DOCUMENT_PORTAL);
+						}
+						if (AuditManager.hasModule(parentDomainId, applicationId, Module.CONTRATA) ) {
+							list.add(Module.CONTRATA);
 						}
 					}
 				}			

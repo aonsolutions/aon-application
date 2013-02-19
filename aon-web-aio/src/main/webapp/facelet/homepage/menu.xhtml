@@ -99,6 +99,11 @@
 				styleClass="aon-top-menu-item" />
 		</c:if>
 		
+		<aon:commandLink id="menu_contrata"
+			value="#{bundle.aon_module_contrata}"
+			action="menu_contrata" immediate="true"
+			styleClass="aon-top-menu-item" />
+		
 		<c:if test="#{aonRole.payroll}">
 			<aon:commandLink id="menu_payroll"
 				value="#{bundle.aon_module_payroll}"
