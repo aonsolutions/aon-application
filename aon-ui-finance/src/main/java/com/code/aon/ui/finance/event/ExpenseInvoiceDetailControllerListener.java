@@ -95,7 +95,7 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 
 	private void beforeSaveExpenseDetail(ExpenseInvoiceDetailController controller) {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
-		if (invoiceDetail.getTaxableBase() != 0 && controller.getTotalChanged() == 0) {
+		if (invoiceDetail.getTaxableBase() != 0 && invoiceDetail.getVatQuota() == 0) {
 			controller.taxableBaseChanged(invoiceDetail);
 		} else if (invoiceDetail.getTaxableBase() == 0 && controller.getTotalChanged() != 0) {
 			controller.totalChanged(invoiceDetail);
@@ -138,9 +138,8 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail.getId());
-			Iterator<?> iterator = invoiceTaxBean.getList(criteria).iterator();
-			while (iterator.hasNext()) {
-				InvoiceTax invoiceTax = (InvoiceTax)iterator.next();
+			for (ITransferObject ito : invoiceTaxBean.getList(criteria)) {
+				InvoiceTax invoiceTax = (InvoiceTax)ito;
 				if (TaxType.VAT == invoiceTax.getTaxType()) {
 					invoiceDetail.setVatPercent(invoiceTax.getPercentage());
 					invoiceDetail.setVatQuota(invoiceTax.getQuota());
