@@ -22,7 +22,7 @@
 				<ui:param name="skipSaveButton" value="#{!(adminMain.termsOfServiceAccepted or aonRole.sysAdmin)}" />
 				<ui:define name="beforeSpinToolbarContent">				
 					<aon:commandButton id="audit-info"
-						value="#{bundle.aon_audit}"
+						value="#{bundle.aon_audit}" immediate="true"
 						styleClass="aon-finding-toolbar-item aon-icon-audit"
 						reRender="showAuditInfoWindow">
 						<f:setPropertyActionListener target="#{adminDomain.showAuditInfoWindow}"
