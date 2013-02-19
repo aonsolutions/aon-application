@@ -2,7 +2,6 @@ package com.esferalia.aon.payroll;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.common.BeanManager;
@@ -10,7 +9,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 
 @Entity
-@Table(name="payroll_batch_attach")
 @DiscriminatorValue(value="1")
 public class FanBatchAttachment extends PayrollBatchAttachment {
 
