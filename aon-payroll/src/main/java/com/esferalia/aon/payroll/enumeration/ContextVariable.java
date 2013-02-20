@@ -3,8 +3,6 @@ package com.esferalia.aon.payroll.enumeration;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.hamcrest.core.Is;
-
 import com.code.aon.common.enumeration.IResourceable;
 
 public enum ContextVariable implements IResourceable{
