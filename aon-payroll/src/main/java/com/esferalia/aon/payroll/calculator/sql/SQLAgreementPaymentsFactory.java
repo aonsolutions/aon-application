@@ -12,6 +12,7 @@ import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 
 
 public class SQLAgreementPaymentsFactory 
@@ -19,6 +20,7 @@ public class SQLAgreementPaymentsFactory
 
 	private static final String SQL = 
 		"SELECT * " 
+		+", " + ExpressionScope.AGREEMENT.ordinal() + " AS " + SQLContractPayment.SCOPE_ALIAS
 		+" FROM agreement_payment AS " + SQLContractPayment.PAYMENT_ALIAS
 		+" LEFT JOIN  payment_concept" 							// LEFT JOIN: payment_concept puede ser NULL
 		+"	ON payment_concept = payment_concept.id"

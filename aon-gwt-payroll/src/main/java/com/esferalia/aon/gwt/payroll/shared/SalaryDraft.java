@@ -5,130 +5,83 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-
 public class SalaryDraft extends SalaryPreview {
 
-	public abstract static class Item implements Serializable {
-
-		protected Double amount;
-		protected String description;
-
-		public Double getAmount() {
-			return amount;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-
+	public static enum Scope {
+		SYSTEM, APPLICATION, AGREEMENT, CONTRACT, SALARY
 	}
-
-	public static class Payment extends Item {
-
+	
+	public static class Event implements Serializable {
 		public static enum Type {
-			BASE_SALARY, SALARY_SUPPLEMENTS, STRUCTURAL_HOURS, NON_STRUCTURAL_HOURS, SPECIAL_BONUSES, SALARY_IN_KIND, COMPENSATION_OR_PREPAID_EXPENSES, SOCIAL_SECURITY_BENEFITS, MOVING_COMPENSATION, OTHER_NON_WAGE;
+			ERROR, WARNING, INFO, DEBUG
+		};
 
-		}
-
-		private Type type;
+		Type type;
+		String message;
 
 		public Type getType() {
 			return type;
 		}
-
-
-	}
-
-	public static class Deduction extends Item {
-
-		public static enum Type {
-			COMMON_CONTINGENCY, PROFESSIONAL_CONTINGENCY, UNEMPLOYMENT, JOB_TRAINING, STRUCTURAL_OVERTIME, NON_STRUCTURAL_OVERTIME, IRPF, ADVANCE_PAYMENT, IN_KIND, OTHER, FOGASA // TODO:
-			;
-
-		}
-
-		private Type type;
-
-		public Type getType() {
-			return type;
-		}
-
-
-	}
-
-	public static class Event implements Serializable{
-		private String message;
-
-		public Event(String message) {
-			this.message = message;
+		
+		public void setType(Type type) {
+			this.type = type;
 		}
 
 		public String getMessage() {
 			return message;
 		}
+		
+		public void setMessage(String message) {
+			this.message = message;
+		}
 
 	}
-	
-	
 
-	public abstract static class Variable implements Serializable {
-		
-		private String name;
-		private Date startDate;
-		private Date endDate;
-
-
-		public String getName() {
-			return name;
-		}
-
-
-		public Date getStartDate() {
-			return startDate;
-		}
-
-		public Date getEndDate() {
-			return endDate;
-		}
-
-		public abstract Object getValue();
+	public static class PaymentEvent extends Event implements HasPayment {
+		Payment payment;
 		
 		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (!(obj instanceof Variable))
-				return false;
-			Variable var = (Variable) obj;
-			return ((name == var.name) || ( ( name != null ) && name.equals(var.name))) ;
+		public Payment getPayment() {
+			return payment;
 		}
 		
+		public void setPayment(Payment payment) {
+			this.payment = payment;
+		}
 		
 	}
 	
-	public static class StringVariable extends Variable  {
+	public static class DeductionEvent extends Event implements HasDeduction{
+		Deduction deduction;
 		
+		@Override
+		public Deduction getDeduction() {
+			return deduction;
+		}
+		
+		public void setDeduction(Deduction deduction) {
+			this.deduction = deduction;
+		}
+	}
+
+	public static class StringVariable extends Variable {
+
 		private String value;
-		
-		
-		
+
 		@Override
 		public Object getValue() {
 			return value;
 		}
-		
+
 		@Override
 		public boolean equals(Object obj) {
 			return super.equals(obj);
 		}
 	}
 
-	public static class NumberVariable extends Variable  {
-		
+	public static class NumberVariable extends Variable {
+
 		private Number value;
-		
 
 		@Override
 		public Object getValue() {
@@ -139,7 +92,43 @@ public class SalaryDraft extends SalaryPreview {
 		public boolean equals(Object obj) {
 			return super.equals(obj);
 		}
+
+	}
+
+	public static class UndefinedVariable extends Variable {
+		@Override
+		public Object getValue() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
+	}
+
+	public static class UndefinedPaymentVariable extends UndefinedVariable implements HasPayment {
+		private Payment payment;
+		
+		@Override
+		public Payment getPayment() {
+			return payment;
+		}
+		
+		public void setPayment(Payment payment) {
+			this.payment = payment;
+		}
+	}
+
+	public static class UndefinedDeductionVariable extends UndefinedVariable implements HasDeduction{
+
+		private Deduction deduction;
+		
+		@Override
+		public Deduction getDeduction() {
+			return deduction;
+		}
+		
+		public void setDeduction(Deduction deduction) {
+			this.deduction = deduction;
+		}
 	}
 
 	private String enterpriseName;
@@ -166,71 +155,114 @@ public class SalaryDraft extends SalaryPreview {
 	private Double totalPayment;
 
 	private List<Variable> context;
-	private List<Event> errors;
+	private List<Event> events;
 	private List<Payment> payments;
 	private List<Deduction> deductions;
 
 	private List<Variable> draftContext;
+	private List<Payment> draftPayments;
+	private List<Deduction> draftDeductions;
 
 	public SalaryDraft() {
 		context = new LinkedList<Variable>();
-		errors = new LinkedList<Event>();
+		events = new LinkedList<Event>();
 		payments = new LinkedList<Payment>();
 		deductions = new LinkedList<Deduction>();
-		
+
 		draftContext = new LinkedList<Variable>();
+		draftPayments = new LinkedList<Payment>();
+		draftDeductions = new LinkedList<Deduction>();
 	}
 
-	public void addError(String message) {
-		errors.add(new Event(message));
-	}
-	
-
-	public void addPayment(Payment.Type type, String description, Double amount) {
-		Payment payment = new Payment();
-		payment.type =  type;
-		payment.amount = amount;
-		payment.description = description;
+	public void addPayment(Payment payment) {
 		payments.add(payment);
 	}
 
-	public void addDeduction(Deduction.Type type, String description,
-			Double amount) {
-		Deduction deduction = new Deduction();
-		deduction.type = type;
-		deduction.amount = amount;
-		deduction.description = description;
-		deductions.add(deduction);
+	public void addDraftPayment(Payment payment) {
+		int i = draftPayments.indexOf(payment);
+		if (i != -1) {
+			draftPayments.remove(i);
+		}
+		draftPayments.add(payment);
 	}
 
-	public void addVariable(String name, Object value, Date startDate, Date endDate){
+	public void addDeduction(Deduction deduction) {
+		deductions.add(deduction);
+	}
+	
+	public void addDraftDeduction(Deduction deduction) {
+		draftDeductions.remove(deduction);
+		draftDeductions.add(deduction);
+	}
+
+	public void addVariable(String name, Object value, Date startDate,
+			Date endDate) {
 		Variable var;
-		if ( value instanceof Number) {
+		if (value instanceof Number) {
 			var = new NumberVariable();
-			((NumberVariable)var).value = (Number)value;
-		}
-		else {
+			((NumberVariable) var).value = (Number) value;
+		} else {
 			var = new StringVariable();
-			((StringVariable)var).value = value.toString();
+			((StringVariable) var).value = value.toString();
 		}
 		var.name = name;
 		var.startDate = startDate;
 		var.endDate = endDate;
-		if ( !context.contains(var))
+		var.scope = Scope.SYSTEM;
+		var.implicit = true;
+		if (!context.contains(var))
 			context.add(var);
 	}
 
-	public void addContextVariable(String name, Object value, Date startDate, Date endDate){
+	public void addVariable(String name, Object value, Date startDate,
+			Date endDate, Scope scope, String expression) {
+		Variable var;
+		if (value instanceof Number) {
+			var = new NumberVariable();
+			((NumberVariable) var).value = (Number) value;
+		} else {
+			var = new StringVariable();
+			((StringVariable) var).value = value.toString();
+		}
+		var.name = name;
+		var.startDate = startDate;
+		var.endDate = endDate;
+		var.scope = scope;
+		var.implicit = false;
+		var.expression = expression;
+		if (!context.contains(var))
+			context.add(var);
+	}
+
+	public void addUndefinedVariable(UndefinedVariable var) {
+		if (!context.contains(var))
+			context.add(var);
+	}
+
+	public void addContextVariable(String name, Object value, Date startDate,
+			Date endDate) {
 		Variable var = new StringVariable();
 		var.name = name;
 		var.startDate = startDate;
 		var.endDate = endDate;
-		((StringVariable)var).value = value.toString();
+		var.implicit = false;
+		var.scope = Scope.SALARY; // DRAFT
+		var.expression = value.toString();
+		((StringVariable) var).value = value.toString();
 		int i = draftContext.indexOf(var);
-		if ( i != -1 ) {
+		if (i != -1) {
 			draftContext.remove(i);
 		}
 		draftContext.add(var);
+	}
+
+	public void addPaymentError(PaymentEvent paymentEvent) {
+
+		events.add(paymentEvent);
+	}
+	
+	public void addDeductionEevent(DeductionEvent deductionEvent) {
+		events.add(deductionEvent);
 	}
 
 	public List<Payment> getPayments() {
@@ -249,24 +281,32 @@ public class SalaryDraft extends SalaryPreview {
 		deductions.clear();
 	}
 
-	public List<Event> getErrors() {
-		return errors;
+	public List<Event> getEvents() {
+		return events;
 	}
-	
+
 	public List<Variable> getContext() {
 		return context;
 	}
-	
+
 	public List<Variable> getDraftContext() {
 		return draftContext;
+	}
+
+	public List<Payment> getDraftPayments() {
+		return draftPayments;
+	}
+
+	public List<Deduction> getDraftDeductions() {
+		return draftDeductions;
 	}
 
 	public void clearContext() {
 		context.clear();
 	}
 
-	public void clearErrors() {
-		errors.clear();
+	public void clearEvents() {
+		events.clear();
 	}
 
 	public String getEmployeeSS() {
@@ -430,5 +470,6 @@ public class SalaryDraft extends SalaryPreview {
 	public void setEmployeeAgreementCategory(String employeeAgreementCategory) {
 		this.employeeAgreementCategory = employeeAgreementCategory;
 	}
+
 
 }

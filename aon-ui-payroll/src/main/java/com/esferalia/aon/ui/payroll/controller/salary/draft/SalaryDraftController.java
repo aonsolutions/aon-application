@@ -79,6 +79,7 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
+import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.SalarySupplements;
@@ -1282,5 +1283,57 @@ public class SalaryDraftController extends BasicController implements ContractSa
 			selectItems.add(new SelectItem(month, month.getName(locale)));
 		}
 		return selectItems;
+	}
+
+	@Override
+	public void onCompileError(String variableName, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCompileError(IContractPayment payment, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUndefinedData(IContractPayment payment,
+			RemovedExpressionVariable<?> var) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUndefinedData(IContractPayment payment, String variableName,
+			String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCompileError(IContractDeduction deduction, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUndefinedData(IContractDeduction deduction,
+			RemovedExpressionVariable<?> var) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUndefinedData(IContractDeduction deduction,
+			String variableName, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCompileError(IContractBonus bonus, String message) {
+		// TODO Auto-generated method stub
+		
 	}
 }

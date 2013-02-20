@@ -1,15 +1,21 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.List;
+
+import org.apache.tools.ant.taskdefs.Sleep;
+
+import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class SalaryDraftObject {
-	
+
 	interface CalculateCallback {
-		void onCalculateSucces( SalaryDraftObject object);
+		void onCalculateSucces(SalaryDraftObject object);
+
 		void onCalculateFailure(Throwable throwable);
 	}
-
+	
 	private SalaryDraft salaryDraft;
 	private EmployeesServiceAsync employeesServiceAsync;
 
@@ -27,7 +33,7 @@ public class SalaryDraftObject {
 					public void onSuccess(SalaryDraft result) {
 						SalaryDraftObject.this.salaryDraft = result;
 						callback.onCalculateSucces(SalaryDraftObject.this);
-					}	
+					}
 
 					@Override
 					public void onFailure(Throwable caught) {
@@ -40,5 +46,21 @@ public class SalaryDraftObject {
 		return salaryDraft;
 	}
 
+	public void getAsHTML(int zoom, AsyncCallback<String> callback) {
+		employeesServiceAsync.getSalaryDraftReceiptHTML(salaryDraft, zoom,
+				callback);
+	}
+
+
+
+	public void download(String mime, AsyncCallback<String> callback) {
+		employeesServiceAsync
+				.getSalaryDraftReceipt(salaryDraft, mime, callback);
+	}
+	
+	public void getPaymentConcepts(AsyncCallback<List<Payment>> callback) {
+		employeesServiceAsync
+		.getPaymentConcepts(callback);
+	}
 
 }

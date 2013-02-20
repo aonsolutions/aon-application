@@ -21,6 +21,20 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		List<ITimedVariable<?>> get(String var);
 	}
 
+	public static class NotFoundVariableError extends Error {
+		
+		private String variableName;
+		
+		public NotFoundVariableError(String variableName) {
+			this.variableName = variableName;
+		}
+		
+		public String getVariableName() {
+			return variableName;
+		}
+
+	}
+
 	private NotFoundHandler notFoundHandler;
 	private Map<String, List<ITimedVariable<?>>> vars;
 
@@ -28,8 +42,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 		private Period period;
 
-		private Map<String,Object> read = 
-				new HashMap<String,Object>();
+		private Map<String, ITimedVariable<?>> read = new HashMap<String, ITimedVariable<?>>();
 
 		public PeriodMap(Period period) {
 			this.period = period;
@@ -46,7 +59,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 		@Override
 		public boolean containsKey(Object key) {
-			return Variables.this.containsKey((String) key, this.period);
+			return Variables.this.containsKey((String)key, this.period);
 		}
 
 		@Override
@@ -61,9 +74,10 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 		@Override
 		public Object get(Object key) {
-			Object value = Variables.this.get((String) key, period);
-			read.put( (String) key, value);
-			return value;
+			ITimedVariable<?> var = Variables.this.getVariable((String) key,
+					period);
+			read.put((String) key, var);
+			return var != null ? var.getValue(period) : null;
 		}
 
 		@Override
@@ -110,7 +124,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			super.finalize();
 		}
 
-		public Map<String,Object> getRead() {
+		public Map<String, ITimedVariable<?>> getRead() {
 			return read;
 		}
 
@@ -220,20 +234,9 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 	}
 
 	public Object get(String var, Period p) {
-		List<ITimedVariable<?>> values = get(var);
-		if (values == null) {
-			return null;
-		}
+		ITimedVariable<?> variable = getVariable(var, p);
 
-		Object value = null;
-
-		for (ITimedVariable<?> timedObject : values) {
-			if (timedObject.getPeriod().intersects(p)) {
-				value = timedObject.getValue(p);
-			}
-		}
-
-		return value;
+		return variable != null ? variable.getValue(p) : null;
 
 	}
 
@@ -326,6 +329,23 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 	}
 
 	// ------------------------------------------
+	private ITimedVariable<?> getVariable(String name, Period p) {
+		List<ITimedVariable<?>> values = get(name);
+		if (values == null) {
+			return null;
+		}
+
+		ITimedVariable<?> ret = null;
+
+		for (ITimedVariable<?> var : values) {
+			if (var.getPeriod().intersects(p)) {
+				ret = var;
+			}
+		}
+
+		return ret;
+
+	}
 
 	private List<ITimedVariable<?>> get(String var) {
 		List<ITimedVariable<?>> values = vars.get(var);

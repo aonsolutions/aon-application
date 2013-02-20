@@ -6,9 +6,12 @@ import java.util.Map;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
+import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.payment.IPayment;
 
 public class SalaryBuilder implements ISalaryBuilder {
 
@@ -260,35 +263,35 @@ public class SalaryBuilder implements ISalaryBuilder {
 	
 	@Override
 	public void addPayment(PaymentType type, String concept, Double amount,
-			String description, String expression, Map<String, Object> context) {
+			String description, IPayment payment, Map<String, ITimedVariable<?>> context) {
 		
-		SalaryPayment payment = new SalaryPayment();
+		SalaryPayment sPayment = new SalaryPayment();
 		
-		payment.setSalary(salary);
-		payment.setType(type);
-		payment.setPaymentConcept(concept);
-		payment.setAmount(amount);
-		payment.setDescription(description);
-		payment.setExpression(expression);
+		sPayment.setSalary(salary);
+		sPayment.setType(type);
+		sPayment.setPaymentConcept(concept);
+		sPayment.setAmount(amount);
+		sPayment.setDescription(description);
+		sPayment.setExpression(payment.getExpression());
 
-		this.salary.getSalaryPayments().add(payment);
+		this.salary.getSalaryPayments().add(sPayment);
 		
 	}
 
 	@Override
 	public void addDeduction(DeductionType type, String concept, final Double amount,
-			String description, String expression) {
+			String description, IDeduction deduction, Map<String, ITimedVariable<?>> context) {
 		
-		SalaryDeduction deduction = new SalaryDeduction();
+		SalaryDeduction salaryDeduction = new SalaryDeduction();
 
-		deduction.setSalary(salary);
-		deduction.setType(type);
-		deduction.setAmount(amount);
-		deduction.setDescription(description);
-		deduction.setExpression(expression);
-		deduction.setDeductionConcept(concept);
+		salaryDeduction.setSalary(salary);
+		salaryDeduction.setType(type);
+		salaryDeduction.setAmount(amount);
+		salaryDeduction.setDescription(description);
+		salaryDeduction.setDeductionConcept(concept);
+		salaryDeduction.setExpression(deduction.getExpression());
 		
-		this.salary.getSalaryDeductions().add(deduction);
+		this.salary.getSalaryDeductions().add(salaryDeduction);
 		
 		if ( type == DeductionType.IRPF ) {
 			Double totalIrpf = salary.getTotalIrpf();

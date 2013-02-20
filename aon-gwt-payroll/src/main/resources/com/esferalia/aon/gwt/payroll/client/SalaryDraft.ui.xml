@@ -1,12 +1,14 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client' xmlns:s="urn:import:com.google.gwt.dom.builder.shared">
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:s="urn:import:com.google.gwt.dom.builder.shared">
 
 	<ui:style type='com.esferalia.aon.gwt.payroll.client.SalaryDraft.MyStyle'>
 		.editor {
 			
 		}
 		
+
 		.vertical-space {
 			height: 20px;
 		}
@@ -41,12 +43,39 @@
 			padding: 0px !important;
 		}
 		
-		.cell-label {
-			font-size: 9px;
-			font-weight: bold;
-			font-family: sans-serif;
+		@if !user.agent safari {
+			.cell-label {
+				font-size: 9px;
+				font-weight: bold;
+				font-family: sans-serif;
+			}
+		}
+		@else {
+			.cell-label {
+				font-size: 11px;
+				font-weight: bold;
+				font-family: sans-serif;
+			}
 		}
 		
+		.text-warn *{
+			font-weight: bold;
+			color: orange !important;
+		}
+
+		.text-error *{
+			font-weight: bold;
+			color: red !important;
+		}
+
+		@sprite .cell-warn {
+			width: auto; 
+			height: auto;
+			color: orange;
+			gwt-image: 'warn';
+			padding-left: 14px;
+		}
+
 		.span-cell-table {
 			width: 100%;
 			border-collapse: collapse !important;
@@ -62,8 +91,28 @@
 			border: 0px !important;
 		}
 		
+		@sprite .collapseAllButton {
+			float: right;
+			gwt-image: 'collapseall';
+		}
+
+		@sprite .expandAllButton {
+			float: right;
+			gwt-image: 'expandall';
+		}
+		@sprite .pdfPreviewButton {
+			width: auto; 
+			height: auto;
+			gwt-image: 'pdfPreview';
+		}
+		
+
 	</ui:style>
 
+	<ui:image field='warn' src='warn.png' />
+	<ui:image field='expandall' src='expandall.png' />
+	<ui:image field='collapseall' src='collapseall.png' />
+	<ui:image field='pdfPreview' src='pdfPreview.png' />
 	<g:DockLayoutPanel unit="PX">
 		<g:north size="72">
 
@@ -83,7 +132,14 @@
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+								<g:Button ui:field='printButton'
+									styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir"/>
+								<g:Button ui:field='printPreviewButton'
+									styleName='aon-finding-toolbar-item {style.pdfPreviewButton}' text="Vista Preliminar"/>
 								<employee:SalarySelect ui:field="salarySelect" />
+								<g:ListBox ui:field="zoomListBox" />
+								<g:Button ui:field='closePreviewButton'
+									styleName='aon-finding-toolbar-item aon-icon-cancel' text="Cerrar Preliminar"/>
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
@@ -95,255 +151,268 @@
 		<g:center>
 			<g:ScrollPanel styleName="{style.editor}">
 				<g:VerticalPanel styleName="{style.document}">
+					<g:DeckPanel ui:field="deckPanel">
+						<g:VerticalPanel ui:field="draftPanel">
+							<g:Grid styleName="aon-dataTable">
+								<g:row styleName="aon-dataTable-row-odd">
+									<g:customCell style="width:50%">
+										<g:HTMLPanel>
+											<g:Label styleName="{style.cell-label}">EMPRESA</g:Label>
+											<g:Label ui:field="enterpriseNameLabel" styleName="aon-text-center">&nbsp;
+											</g:Label>
+										</g:HTMLPanel>
+									</g:customCell>
+									<g:customCell>
+										<g:HTMLPanel>
+											<g:Label styleName="{style.cell-label}">TRABAJADOR/A</g:Label>
+											<g:Label ui:field="employeeNameLabel" styleName="aon-text-center">&nbsp;
+											</g:Label>
+										</g:HTMLPanel>
+									</g:customCell>
+								</g:row>
+								<g:row styleName="aon-dataTable-row-even">
+									<g:customCell>
+										<g:HTMLPanel>
+											<g:Label styleName="{style.cell-label}">DOMICILIO</g:Label>
+											<g:Label ui:field="enterpriseAddressLabel" styleName="aon-text-center">&nbsp;
+											</g:Label>
+										</g:HTMLPanel>
+									</g:customCell>
+									<g:customCell styleName="{style.span-cell}">
+										<g:Grid styleName="{style.span-cell-table}">
+											<g:row>
+												<g:customCell styleName="{style.span-cell-cell}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">CATEGORÍA
+															PROFESIONAL</g:Label>
+														<g:Label ui:field="employeeAgreementCategoryLabel"
+															styleName="aon-text-center">&nbsp;
+														</g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+												<g:customCell styleName="{style.span-cell-cell}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">PUESTO DE
+															TRABAJO</g:Label>
+														<g:Label ui:field="employeeJobLabel" styleName="aon-text-center">&nbsp;
+														</g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+												<g:customCell styleName="{style.span-cell-cell-last}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">ANTIGUEDAD</g:Label>
+														<g:Label ui:field="employeeSeniorityLabel"
+															styleName="aon-text-center">&nbsp;
+														</g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+											</g:row>
+										</g:Grid>
+									</g:customCell>
+								</g:row>
+								<g:row styleName="aon-dataTable-row-odd">
+									<g:customCell styleName="{style.span-cell}">
+										<g:Grid styleName="{style.span-cell-table}">
+											<g:row>
+												<g:customCell styleName="{style.span-cell-cell}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">POBLACION</g:Label>
+														<g:Label ui:field="enterpriseCityLabel" styleName="aon-text-center">&nbsp;
+														</g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+												<g:customCell styleName="{style.span-cell-cell-last}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">N. INSCRIPCION
+															SS</g:Label>
+														<g:Label ui:field="enterpriseCCCLabel" styleName="aon-text-center">&nbsp;
+														</g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+											</g:row>
+										</g:Grid>
+									</g:customCell>
+									<g:customCell styleName="{style.span-cell}">
+										<g:Grid styleName="{style.span-cell-table}">
+											<g:row>
+												<g:customCell styleName="{style.span-cell-cell}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">N. AFILIACION
+															SS</g:Label>
+														<g:Label ui:field="employeeSSLabel" styleName="aon-text-center">&nbsp;
+														</g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+												<g:customCell styleName="{style.span-cell-cell-last}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">DNI</g:Label>
+														<g:Label ui:field="employeeDocumentLabel"
+															styleName="aon-text-center">&nbsp;
+														</g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+											</g:row>
+										</g:Grid>
+									</g:customCell>
+								</g:row>
+								<g:row styleName="aon-dataTable-row-even">
+									<g:customCell styleName="{style.span-cell}">
+										<g:Grid styleName="{style.span-cell-table}">
+											<g:row>
+												<g:customCell styleName="{style.span-cell-cell}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">PERIODO DE
+															LIQUIDACION</g:Label>
+														<g:Label ui:field="periodLabel" styleName="aon-text-center">&nbsp;
+														</g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+												<g:customCell styleName="{style.span-cell-cell-last}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">TOTAL DIAS</g:Label>
+														<g:Label ui:field="daysLabel" styleName="aon-text-center">&nbsp;
+														</g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+											</g:row>
+										</g:Grid>
+									</g:customCell>
 
-					<g:Grid styleName="aon-dataTable" >
-						<g:row styleName="aon-dataTable-row-odd" >
-							<g:customCell style="width:50%" >
-								<g:HTMLPanel>
-									<g:Label styleName="{style.cell-label}">EMPRESA</g:Label>
-									<g:Label ui:field="enterpriseNameLabel" styleName="aon-text-center">&nbsp;
-									</g:Label>
-								</g:HTMLPanel>
-							</g:customCell>
-							<g:customCell>
-								<g:HTMLPanel>
-									<g:Label styleName="{style.cell-label}">TRABAJADOR/A</g:Label>
-									<g:Label ui:field="employeeNameLabel" styleName="aon-text-center" >&nbsp;
-									</g:Label>
-								</g:HTMLPanel>
-							</g:customCell>
-						</g:row>
-						<g:row styleName="aon-dataTable-row-even">
-							<g:customCell>
-								<g:HTMLPanel>
-									<g:Label styleName="{style.cell-label}">DOMICILIO</g:Label>
-									<g:Label ui:field="enterpriseAddressLabel" styleName="aon-text-center" >&nbsp;
-									</g:Label>
-								</g:HTMLPanel>
-							</g:customCell>
-							<g:customCell styleName="{style.span-cell}">
-								<g:Grid styleName="{style.span-cell-table}" >
-									<g:row >
-										<g:customCell styleName="{style.span-cell-cell}">
+									<g:customCell>
+										<g:HTMLPanel>
+											<g:Label styleName="{style.cell-label}">IMPORTE TOTAL
+												DEVENGOS</g:Label>
+											<g:Label ui:field="totalPaymentsLabel" styleName="aon-text-center">&nbsp;
+											</g:Label>
+										</g:HTMLPanel>
+									</g:customCell>
+								</g:row>
+							</g:Grid>
+
+							<g:HTML styleName="{style.vertical-space}" />
+							<g:FlexTable ui:field="contextTable"
+								styleName="aon-dataTable {style.edit-cells}" />
+							<g:HTML styleName="{style.vertical-space}" />
+
+							<g:FlexTable ui:field="eventsTable" styleName="aon-dataTable" />
+							<g:HTML ui:field="eventsTableSpace" styleName="{style.vertical-space}" visible="false" />
+
+							<g:FlexTable ui:field="paymentsTable"
+								styleName="aon-dataTable {style.edit-rows}" />
+
+							<g:HTML styleName="{style.vertical-space}" />
+
+							<g:HorizontalPanel>
+
+								<g:Grid ui:field="basesTable" styleName="aon-dataTable">
+									<g:row styleName="aon-dataTable-row-odd">
+										<g:customCell>
 											<g:HTMLPanel>
-												<g:Label styleName="{style.cell-label}">CATEGORÍA
-													PROFESIONAL</g:Label>
-												<g:Label ui:field="employeeAgreementCategoryLabel"  styleName="aon-text-center"  >&nbsp;
+												<g:Label styleName="{style.cell-label}">RENUMERACION
+													TOTAL</g:Label>
+												<g:Label ui:field="remunerationLabel" styleName="aon-text-center">&nbsp;
 												</g:Label>
 											</g:HTMLPanel>
 										</g:customCell>
-										<g:customCell styleName="{style.span-cell-cell}">
+										<g:customCell>
 											<g:HTMLPanel>
-												<g:Label styleName="{style.cell-label}">PUESTO DE
-													TRABAJO</g:Label>
-												<g:Label ui:field="employeeJobLabel" styleName="aon-text-center"  >&nbsp;
+												<g:Label styleName="{style.cell-label}">PRORRATA PAGAS</g:Label>
+												<g:Label ui:field="prorationBaseLabel" styleName="aon-text-center">&nbsp;
 												</g:Label>
 											</g:HTMLPanel>
 										</g:customCell>
-										<g:customCell styleName="{style.span-cell-cell-last}">
+										<g:customCell>
 											<g:HTMLPanel>
-												<g:Label styleName="{style.cell-label}">ANTIGUEDAD</g:Label>
-												<g:Label ui:field="employeeSeniorityLabel"  styleName="aon-text-center" >&nbsp;
+												<g:Label styleName="{style.cell-label}">BASE TOTAL
+													COTIZ.</g:Label>
+												<g:Label ui:field="cgcBaseLabel" styleName="aon-text-center">&nbsp;
+												</g:Label>
+											</g:HTMLPanel>
+										</g:customCell>
+									</g:row>
+									<g:row styleName="aon-dataTable-row-even">
+										<g:customCell>
+											<g:HTMLPanel>
+												<g:Label></g:Label>
+												<g:Label></g:Label>
+											</g:HTMLPanel>
+										</g:customCell>
+										<g:customCell>
+											<g:HTMLPanel>
+												<g:Label styleName="{style.cell-label}">BASE H.E.</g:Label>
+												<g:Label ui:field="hExtraBaseLabel" styleName="aon-text-center">&nbsp;
+												</g:Label>
+											</g:HTMLPanel>
+										</g:customCell>
+										<g:customCell>
+											<g:HTMLPanel>
+												<g:Label styleName="{style.cell-label}">BASE AT Y EP.</g:Label>
+												<g:Label ui:field="cgpBaseLabel" styleName="aon-text-center">&nbsp;
+												</g:Label>
+											</g:HTMLPanel>
+										</g:customCell>
+									</g:row>
+									<g:row styleName="aon-dataTable-row-odd">
+										<g:customCell>
+											<g:HTMLPanel>
+												<g:Label styleName="{style.cell-label}">BASE IRPF</g:Label>
+												<g:Label ui:field="irpfBaseLabel" styleName="aon-text-center">&nbsp;
+												</g:Label>
+											</g:HTMLPanel>
+										</g:customCell>
+										<g:customCell>
+											<g:HTMLPanel>
+												<g:Label styleName="{style.cell-label}">BASE H.E. NO
+													AUTORIZ.</g:Label>
+												<g:Label ui:field="nonHExtraBaseLabel" styleName="aon-text-center">&nbsp;
+												</g:Label>
+											</g:HTMLPanel>
+										</g:customCell>
+										<g:customCell>
+											<g:HTMLPanel>
+												<g:Label></g:Label>
+												<g:Label></g:Label>
+											</g:HTMLPanel>
+										</g:customCell>
+									</g:row>
+								</g:Grid>
+
+								<g:HTML styleName="{style.horizontal-space}" />
+
+								<g:Grid ui:field="totalsTable" styleName="aon-dataTable">
+									<g:row styleName="aon-dataTable-row-odd">
+										<g:customCell>
+											<g:HTMLPanel>
+												<g:Label styleName="{style.cell-label}">A. TOTAL
+													DEVENGO</g:Label>
+												<g:Label ui:field="totalPaymentLabel" styleName="aon-text-center">&nbsp;
+												</g:Label>
+											</g:HTMLPanel>
+										</g:customCell>
+										<g:customCell>
+											<g:HTMLPanel>
+												<g:Label styleName="{style.cell-label}">B. TOTAL
+													DEDUCIR</g:Label>
+												<g:Label ui:field="totalDeductionLabel" styleName="aon-text-center">&nbsp;
+												</g:Label>
+											</g:HTMLPanel>
+										</g:customCell>
+										<g:customCell>
+											<g:HTMLPanel>
+												<g:Label styleName="{style.cell-label}">LIQUIDO A
+													PERCIBIR (A-B)</g:Label>
+												<g:Label ui:field="totalLiquidLabel" styleName="aon-text-center">&nbsp;
 												</g:Label>
 											</g:HTMLPanel>
 										</g:customCell>
 									</g:row>
 								</g:Grid>
-							</g:customCell>
-						</g:row>
-						<g:row styleName="aon-dataTable-row-odd">
-							<g:customCell styleName="{style.span-cell}">
-								<g:Grid styleName="{style.span-cell-table}" >
-									<g:row>
-										<g:customCell styleName="{style.span-cell-cell}">
-											<g:HTMLPanel >
-												<g:Label styleName="{style.cell-label}">POBLACION</g:Label>
-												<g:Label ui:field="enterpriseCityLabel" styleName="aon-text-center" >&nbsp;
-												</g:Label>
-											</g:HTMLPanel>
-										</g:customCell>
-										<g:customCell styleName="{style.span-cell-cell-last}">
-											<g:HTMLPanel>
-												<g:Label styleName="{style.cell-label}">N. INSCRIPCION
-													SS</g:Label>
-												<g:Label ui:field="enterpriseCCCLabel" styleName="aon-text-center"  >&nbsp;
-												</g:Label>
-											</g:HTMLPanel>
-										</g:customCell>
-									</g:row>
-								</g:Grid>
-							</g:customCell>
-							<g:customCell styleName="{style.span-cell}">
-								<g:Grid styleName="{style.span-cell-table}" >
-									<g:row>
-										<g:customCell styleName="{style.span-cell-cell}">
-											<g:HTMLPanel>
-												<g:Label styleName="{style.cell-label}">N. AFILIACION
-													SS</g:Label>
-												<g:Label ui:field="employeeSSLabel" styleName="aon-text-center"  >&nbsp;
-												</g:Label>
-											</g:HTMLPanel>
-										</g:customCell>
-										<g:customCell styleName="{style.span-cell-cell-last}">
-											<g:HTMLPanel>
-												<g:Label styleName="{style.cell-label}">DNI</g:Label>
-												<g:Label ui:field="employeeDocumentLabel" styleName="aon-text-center"  >&nbsp;
-												</g:Label>
-											</g:HTMLPanel>
-										</g:customCell>
-									</g:row>
-								</g:Grid>
-							</g:customCell>
-						</g:row>
-						<g:row styleName="aon-dataTable-row-even">
-							<g:customCell styleName="{style.span-cell}">
-								<g:Grid styleName="{style.span-cell-table}" >
-									<g:row>
-										<g:customCell styleName="{style.span-cell-cell}">
-											<g:HTMLPanel>
-												<g:Label styleName="{style.cell-label}">PERIODO DE
-													LIQUIDACION</g:Label>
-												<g:Label ui:field="periodLabel" styleName="aon-text-center"  >&nbsp;
-												</g:Label>
-											</g:HTMLPanel>
-										</g:customCell>
-										<g:customCell styleName="{style.span-cell-cell-last}">
-											<g:HTMLPanel>
-												<g:Label styleName="{style.cell-label}">TOTAL DIAS</g:Label>
-												<g:Label ui:field="daysLabel" styleName="aon-text-center"  >&nbsp;
-												</g:Label>
-											</g:HTMLPanel>
-										</g:customCell>
-									</g:row>
-								</g:Grid>
-							</g:customCell>
+							</g:HorizontalPanel>
+						</g:VerticalPanel>
+						<g:HTML styleName="reset" ui:field='printPreviewHTML'
+							wordWrap='true' />
 
-							<g:customCell>
-								<g:HTMLPanel>
-									<g:Label styleName="{style.cell-label}">IMPORTE TOTAL
-										DEVENGOS</g:Label>
-									<g:Label ui:field="totalPaymentsLabel" styleName="aon-text-center"   >&nbsp;
-									</g:Label>
-								</g:HTMLPanel>
-							</g:customCell>
-						</g:row>
-					</g:Grid>
-					
-					<g:HTML styleName="{style.vertical-space}"/>
-					<g:FlexTable ui:field="contextTable" styleName="aon-dataTable {style.edit-cells}" />
-					<g:HTML styleName="{style.vertical-space}"/>
-
-					<g:FlexTable ui:field="eventsTable" styleName="aon-dataTable" />
-					<g:FlexTable ui:field="paymentsTable" styleName="aon-dataTable {style.edit-rows}" />
-
-					<g:HTML styleName="{style.vertical-space}"/>
-
-					<g:HorizontalPanel>
-
-						<g:Grid ui:field="basesTable" styleName="aon-dataTable">
-							<g:row styleName="aon-dataTable-row-odd" >
-								<g:customCell>
-									<g:HTMLPanel>
-										<g:Label styleName="{style.cell-label}">RENUMERACION
-											TOTAL</g:Label>
-										<g:Label ui:field="remunerationLabel" styleName="aon-text-center"  >&nbsp;
-										</g:Label>
-									</g:HTMLPanel>
-								</g:customCell>
-								<g:customCell>
-									<g:HTMLPanel>
-										<g:Label styleName="{style.cell-label}">PRORRATA PAGAS</g:Label>
-										<g:Label ui:field="prorationBaseLabel" styleName="aon-text-center"  >&nbsp;
-										</g:Label>
-									</g:HTMLPanel>
-								</g:customCell>
-								<g:customCell>
-									<g:HTMLPanel>
-										<g:Label styleName="{style.cell-label}">BASE TOTAL
-											COTIZ.</g:Label>
-										<g:Label ui:field="cgcBaseLabel" styleName="aon-text-center"  >&nbsp;
-										</g:Label>
-									</g:HTMLPanel>
-								</g:customCell>
-							</g:row>
-							<g:row styleName="aon-dataTable-row-even">
-								<g:customCell>
-									<g:HTMLPanel>
-										<g:Label></g:Label>
-										<g:Label></g:Label>
-									</g:HTMLPanel>
-								</g:customCell>
-								<g:customCell>
-									<g:HTMLPanel>
-										<g:Label styleName="{style.cell-label}">BASE H.E.</g:Label>
-										<g:Label ui:field="hExtraBaseLabel" styleName="aon-text-center"  >&nbsp;
-										</g:Label>
-									</g:HTMLPanel>
-								</g:customCell>
-								<g:customCell>
-									<g:HTMLPanel>
-										<g:Label styleName="{style.cell-label}">BASE AT Y EP.</g:Label>
-										<g:Label ui:field="cgpBaseLabel" styleName="aon-text-center" >&nbsp;
-										</g:Label>
-									</g:HTMLPanel>
-								</g:customCell>
-							</g:row>
-							<g:row styleName="aon-dataTable-row-odd">
-								<g:customCell>
-									<g:HTMLPanel>
-										<g:Label styleName="{style.cell-label}">BASE IRPF</g:Label>
-										<g:Label ui:field="irpfBaseLabel" styleName="aon-text-center"  >&nbsp;
-										</g:Label>
-									</g:HTMLPanel>
-								</g:customCell>
-								<g:customCell>
-									<g:HTMLPanel>
-										<g:Label styleName="{style.cell-label}">BASE H.E. NO
-											AUTORIZ.</g:Label>
-										<g:Label ui:field="nonHExtraBaseLabel" styleName="aon-text-center"  >&nbsp;
-										</g:Label>
-									</g:HTMLPanel>
-								</g:customCell>
-								<g:customCell>
-									<g:HTMLPanel>
-										<g:Label></g:Label>
-										<g:Label></g:Label>
-									</g:HTMLPanel>
-								</g:customCell>
-							</g:row>
-						</g:Grid>
-						
-						<g:HTML styleName="{style.horizontal-space}"/>
-						
-						<g:Grid ui:field="totalsTable" styleName="aon-dataTable">
-							<g:row styleName="aon-dataTable-row-odd">
-								<g:customCell>
-									<g:HTMLPanel>
-										<g:Label styleName="{style.cell-label}">A. TOTAL
-											DEVENGO</g:Label>
-										<g:Label ui:field="totalPaymentLabel" styleName="aon-text-center" >&nbsp;
-										</g:Label  >
-									</g:HTMLPanel>
-								</g:customCell>
-								<g:customCell>
-									<g:HTMLPanel>
-										<g:Label styleName="{style.cell-label}">B. TOTAL
-											DEDUCIR</g:Label>
-										<g:Label ui:field="totalDeductionLabel" styleName="aon-text-center" >&nbsp;
-										</g:Label>
-									</g:HTMLPanel>
-								</g:customCell>
-								<g:customCell>
-									<g:HTMLPanel>
-										<g:Label styleName="{style.cell-label}">LIQUIDO A
-											PERCIBIR (A-B)</g:Label>
-										<g:Label ui:field="totalLiquidLabel" styleName="aon-text-center" >&nbsp;
-										</g:Label>
-									</g:HTMLPanel>
-								</g:customCell>
-							</g:row>
-						</g:Grid>
-					</g:HorizontalPanel>
+					</g:DeckPanel>
 				</g:VerticalPanel>
 			</g:ScrollPanel>
 		</g:center>

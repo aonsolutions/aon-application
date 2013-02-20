@@ -2,9 +2,13 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.Arrays;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
@@ -12,11 +16,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.codec.binary.Base64;
+
 import com.code.aon.company.Enterprise;
-import com.code.aon.registry.Registry;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.payroll.client.Images;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.user.server.Base64Utils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.user.server.rpc.SerializationPolicy;
 import com.google.gwt.user.server.rpc.SerializationPolicyLoader;
@@ -25,12 +35,12 @@ import com.google.gwt.user.server.rpc.SerializationPolicyLoader;
 public class AonRemoteServiceServlet extends RemoteServiceServlet {
 
 	
-	protected Integer getPersonID() {
+	Integer getPersonID() {
 		HttpSession session = getSession();
 		return null;
 	}
 
-	protected Integer getEnterpriseID() {
+	Integer getEnterpriseID() {
 		EnterpriseController controller = (EnterpriseController) AonUtil
 				.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
 		controller.initialAction();
@@ -38,19 +48,31 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		return enterprise.getId();
 	}
 
-	protected HttpSession getSession() {
+	Integer getDomainID() {
+		DomainSwitcher domainSwitcher = (DomainSwitcher)AonUtil
+				.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
+		return domainSwitcher.getDomainId();
+	}
+	
+	Integer getParentDomainID() {
+		DomainSwitcher domainSwitcher = (DomainSwitcher)AonUtil
+				.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
+		return domainSwitcher.getParentDomainId();
+	}
+
+	HttpSession getSession() {
 		HttpServletRequest request = getThreadLocalRequest();
 		return request.getSession(false);
 	}
 
-	protected void initFacesContext() {
+	void initFacesContext() {
 		ServletContext context = getServletContext();
 		HttpServletRequest request = getThreadLocalRequest();
 		HttpServletResponse response = getThreadLocalResponse();
 		AonServletUtils.initFacesContext(context, request, response);
 	}
 
-	protected void releaseFacesContext() {
+	void releaseFacesContext() {
 		AonServletUtils.releaseFacesContext();
 	}
 
@@ -140,6 +162,27 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 	
 	static ClassLoader getResourceLoader() {
 		return Thread.currentThread().getContextClassLoader();
+	}
+	
+	static void encodeURIComponent(String mime, InputStream is, Writer writer ) 
+	throws IOException {
+		// data:[<MIME-type>][;charset=<encoding>][;base64],<data>
+		writer.write("data:");
+		writer.write(mime);
+		writer.write(";base64,");
+		int read = 0; 
+		byte buffer [] = new byte [3 * 50];
+		while ( ( read = is.read(buffer) ) > 0 ) {
+			byte data [] = Arrays.copyOfRange(buffer, 0, read);
+			
+			String safe = Base64Utils.toBase64(data);
+			String base64 = safe.replace('$', '+');
+			base64 = base64.replace('_', '/');
+			
+			writer.write(base64);
+		}
+		
+		
 	}
 
 }

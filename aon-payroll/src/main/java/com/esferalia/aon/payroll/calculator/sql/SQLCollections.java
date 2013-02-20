@@ -36,6 +36,7 @@ public class SQLCollections {
 			contractPayment.startDate = sqlContractPayment.getStartDate();
 			contractPayment.endDate = sqlContractPayment.getEndDate();
 			contractPayment.expression = sqlContractPayment.getExpression();
+			contractPayment.expressionScope = sqlContractPayment.getScope();
 			contractPayment.irpfExpression = sqlContractPayment.getIrpfExpression();
 			contractPayment.quoteExpression = sqlContractPayment.getQuoteExpression();
 			contractPayment.description = sqlContractPayment.getDescription();

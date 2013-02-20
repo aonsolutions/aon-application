@@ -7,9 +7,12 @@ import java.util.Map;
 
 import com.esferalia.aon.payroll.sql.AbstractSQL;
 import com.esferalia.aon.salary.ISalaryBuilder;
+import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.payment.IPayment;
 
 public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 
@@ -250,12 +253,12 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 	
 	@Override
 	public void addPayment(PaymentType type, String concept, Double amount,
-			String description, String expression, Map<String, Object> context) {
+			String description, IPayment payment, Map<String, ITimedVariable<?>> context) {
 		AbstractSQL.SalaryPayment salaryPayment= 
 			new AbstractSQL.SalaryPayment();
 		salaryPayment.setType(type);
 		salaryPayment.setAmount(amount);
-		salaryPayment.setExpression(expression);
+		salaryPayment.setExpression(payment.getExpression());
 		salaryPayment.setPaymentConcept(concept);
 		salaryPayment.setDescription(description);
 
@@ -264,15 +267,15 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 
 	@Override
 	public void addDeduction(DeductionType type, String concept, Double amount,
-			String description, String expression) {
+			String description, IDeduction deduction, Map<String, ITimedVariable<?>> context) {
 		AbstractSQL.SalaryDeduction salaryDeduction = 
 			new AbstractSQL.SalaryDeduction();
 		
 		salaryDeduction.setType(type);
 		salaryDeduction.setAmount(amount);
-		salaryDeduction.setExpression(expression);
 		salaryDeduction.setDescription(description);
 		salaryDeduction.setDeductionConcept(concept);
+		salaryDeduction.setExpression(deduction.getExpression());
 		
 		salaryDeductions.add(salaryDeduction);
 	}

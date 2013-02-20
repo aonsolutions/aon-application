@@ -9,6 +9,7 @@ import java.util.List;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
@@ -55,6 +56,15 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 				.getEnterprise(new AsyncCallbackWrapper<Enterprise>(callback));
 	}
 
+	@Override
+	public void getPaymentConcepts(AsyncCallback<List<Payment>> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync
+				.getPaymentConcepts(new AsyncCallbackWrapper<List<Payment>>(
+						callback));
+	}
+
 	public void getWorkplaceCosts(int workplaceId,
 			AsyncCallback<List<Cost>> callback) throws IllegalArgumentException {
 		AON.start();
@@ -98,11 +108,11 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
-	public void getSalaryDraftReceiptHTML(SalaryPreview salaryPreview,
+	public void getSalaryPreviewReceiptHTML(SalaryPreview salaryPreview,
 			int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getSalaryDraftReceiptHTML(salaryPreview, zoom,
+		employeesServiceAsync.getSalaryPreviewReceiptHTML(salaryPreview, zoom,
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
@@ -123,4 +133,19 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 				new AsyncCallbackWrapper<SalaryDraft>(callback));
 	}
 
+	@Override
+	public void getSalaryDraftReceiptHTML(SalaryDraft salaryPreview, int zoom,
+			AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getSalaryDraftReceiptHTML(salaryPreview, zoom,
+				new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void getSalaryDraftReceipt(SalaryDraft salaryDraft, String mime,
+			AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getSalaryDraftReceipt(salaryDraft, mime,
+				new AsyncCallbackWrapper<String>(callback));
+	}
 }

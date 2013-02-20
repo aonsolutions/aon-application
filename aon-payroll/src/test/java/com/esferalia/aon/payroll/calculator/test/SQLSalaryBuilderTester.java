@@ -18,9 +18,12 @@ import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
+import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.payment.IPayment;
 
 
 
@@ -278,14 +281,15 @@ public class SQLSalaryBuilderTester implements ISalaryBuilder {
 	
 	@Override
 	public void addPayment(PaymentType type, String concept, Double amount,
-			String description, String expression, Map<String, Object> context) {
+			String description, IPayment payment,
+			Map<String, ITimedVariable<?>> context) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void addDeduction(DeductionType type, String concept, Double amount,
-			String description, String expression) {
+			String description, IDeduction deduction, Map<String, ITimedVariable<?>> context) {
 		// TODO Auto-generated method stub
 
 	}

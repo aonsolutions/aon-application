@@ -123,6 +123,7 @@ public class SQLContractSalaryCalculatorContext implements
 	
 	private static final String PAYMENT_SQL =
 		"SELECT * "
+		+", " + ExpressionScope.CONTRACT.ordinal() + " AS " + SQLContractPayment.SCOPE_ALIAS
 		+" FROM contract_payment AS " + SQLContractPayment.PAYMENT_ALIAS
 		+" LEFT JOIN  payment_concept" 							// LEFT JOIN: payment_concept puede ser NULL
 		+"	ON payment_concept = payment_concept.id"	
@@ -188,6 +189,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 	private static final String SYSTEM_PAYMENT_SQL =
 		"SELECT *"
+		+", " + ExpressionScope.SYSTEM.ordinal() + " AS " + SQLContractPayment.SCOPE_ALIAS
 		+" FROM system_payment AS "+ SQLContractPayment.PAYMENT_ALIAS
 		+" LEFT JOIN  payment_concept" 								// LEFT JOIN: payment_concept puede ser NULL
 		+"	ON payment_concept = payment_concept.id"	
@@ -1557,9 +1559,6 @@ public class SQLContractSalaryCalculatorContext implements
 				Date end = Period.min(dataEnd, endDate);
 				try {
 					ctx.addExpression(expr, start, end );
-//					if ( expr.getName().contains("AUMENTO") ) 
-//						System.out.printf("[%s]: Contract data %s = %s [%tF..%tF ]\r\n", 
-//								getEmployeeDocument(), expr.getName(), expr.getExpression(), start, end);
 				} catch (UndefinedVariablesException e ){
 					failed.add(new TimedObject<IExpression>(expr, new Period(start, end)));
 				} catch (Exception e) {
@@ -1571,8 +1570,6 @@ public class SQLContractSalaryCalculatorContext implements
 				try {
 					Period period = timedExpr.getPeriod();
 					IExpression expr = timedExpr.getValue();
-/*					System.out.printf("[%s]: UndefinedVariablesException %s = %s [%tF..%tF ]\r\n", 
-							getEmployeeDocument(), expr.getName(), expr.getExpression(), period.getStart(), period.getEnd());*/
 					ctx.addExpression(expr, 
 							period.getStart(), 
 							period.getEnd() ); 

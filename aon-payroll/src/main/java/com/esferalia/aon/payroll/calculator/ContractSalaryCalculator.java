@@ -19,6 +19,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.mvel2.CompileException;
+
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.salary.ISalary;
@@ -30,6 +32,8 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
+import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedResult;
@@ -37,21 +41,32 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.salary.expression.Variables.NotFoundVariableError;
 
 public class ContractSalaryCalculator implements ISalaryCalculator{
 
 	
 	public interface IListener {
+
 		public void onCheckError( String message);
+		
 		public void onInvalidData(String variableName, String message);
+		public void onCompileError(String variableName, String message);
 
 		public void onCheckError( IContractPayment payment, String message);
+		public void onCompileError( IContractPayment payment, String message);
+		public void onUndefinedData(IContractPayment payment, RemovedExpressionVariable<?> var);
 		public void onInvalidData(IContractPayment payment, String variableName, String message);
+		public void onUndefinedData(IContractPayment payment, String variableName, String message);
 
 		public void onCheckError( IContractDeduction deduction, String message);
+		public void onCompileError( IContractDeduction deduction, String message);
+		public void onUndefinedData(IContractDeduction deduction, RemovedExpressionVariable<?> var);
 		public void onInvalidData(IContractDeduction deduction, String variableName, String message);
+		public void onUndefinedData(IContractDeduction deduction, String variableName, String message);
 
 		public void onCheckError( IContractBonus bonus, String message);
+		public void onCompileError( IContractBonus bonus, String message);
 		public void onInvalidData( IContractBonus bonus, String variableName, String message);
 	}
 	
@@ -201,16 +216,9 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 								//TODO : Log ???
 							}
 	
-							salaryBuilder.addPayment(type, concept, payment, description, null, result.getContext() );
+							salaryBuilder.addPayment(type, concept, payment, description, contractPayment, result.getContext() );
 						}
 					}
-					/*
-					System.out.println(String.format("[%s]: %-45s\t\t= %f\t(%f)", 
-							contractPayment.getName(), 
-							contractPayment.getDescription(), 
-							total, 
-							taxCalculator.getTotalPayment()));
-					*/
 					quoteCalculator.quote(contractPayment, paymentStart, paymentEnd, total);
 
 				}catch ( InvalidVariables e ) {
@@ -218,8 +226,14 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				}catch ( CheckException e ) {
 					onCheckError(contractPayment, e.getMessage());
 				}
+				catch ( RemoveVariableError e ){
+					onUndefinedData(contractPayment, e.getVariable() );
+				}
 				catch ( UndefinedVariablesException e ) {
-					// TODO : notificar ??? 
+					onUndefinedData(contractPayment, e.getMessage(), e.getVariableNames() );
+				}
+				catch ( CompileException e ) {
+					onCompileError(contractPayment, e.getMessage());
 				}
 			}
 
@@ -340,9 +354,14 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 						onInvalidData(contractDeduction, e.getMessage(), e.getVariables());
 					}catch ( CheckException e ) {
 						onCheckError(contractDeduction, e.getMessage());
+					}catch ( RemoveVariableError e ){
+						onUndefinedData(contractDeduction, e.getVariable() );
 					}catch ( UndefinedVariablesException e ) {
-						// TODO : notificar ??? 
+						onUndefinedData(contractDeduction, e.getMessage(), e.getVariableNames() );
+					}catch ( CompileException e ) {
+						onCompileError(contractDeduction, e.getMessage());
 					}
+
 			}
 			
 			salaryBuilder.setSocialSecurityContributions(ssContributions);
@@ -365,30 +384,27 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		String expression = d.getExpression() ;
 		DeductionType type = d.getType()  ;
 
-		List<ITimedResult<Double>> amounts =  
+		List<ITimedResult<Double>> results =  
 			ctx.addExpression(d, start, end, Double.class);
 		
 		Double total = 0.00;
 		
-		for (ITimedObject<Double> amount : amounts) {
-			Double value = amount.getValue();
+		for (ITimedResult<Double> result : results) {
+			Double value = result.getValue();
 			if ( value == 0 ) 
 				continue;
 			String description  = null;
 			try  {
-				Period period = amount.getPeriod();
+				Period period = result.getPeriod();
 				description = ctx.evalTemplate(d.getDescription(), period.getStart(), period.getEnd());
 			} catch (Exception e ) {
 				//TODO : Log ???
 			}
-			salaryBuilder.addDeduction(type, concept, value, description, expression);
+			salaryBuilder.addDeduction(type, concept, value, description, d, result.getContext());
 			total += value;
 		}
 		
-		amounts = null;
-		
-//		if ( total > 0 )
-//			System.out.printf("%s=%s %.3f \r\n", concept, expression, total);
+		results = null;
 		
 		return total ;
 	}
@@ -618,10 +634,29 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		}
 	}
 
+	private void onCompileError( IContractDeduction deduction, String message){
+		if ( listener!= null ) {
+			listener.onCompileError(deduction, message);
+		}
+	}
+	
 	private void onInvalidData( IContractDeduction deduction, String message, String... variableNames ){
 		if ( listener!= null ) {
 			for (int i = 0; i < variableNames.length; i++) {
 				listener.onInvalidData(deduction, variableNames[i], message);
+			}
+		}
+	}
+	private void onUndefinedData( IContractDeduction deduction, RemovedExpressionVariable<?> var){
+		if ( listener!= null ) {
+			listener.onUndefinedData(deduction, var);
+		}
+	}
+
+	private void onUndefinedData( IContractDeduction deduction, String message, String... variableNames ){
+		if ( listener!= null ) {
+			for (int i = 0; i < variableNames.length; i++) {
+				listener.onUndefinedData(deduction, variableNames[i], message);
 			}
 		}
 	}
@@ -632,10 +667,30 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		}
 	}
 
+	private void onCompileError( IContractPayment payment, String message){
+		if ( listener!= null ) {
+			listener.onCompileError(payment, message);
+		}
+	}
+
 	private void onInvalidData( IContractPayment payment, String message, String... variableNames ){
 		if ( listener!= null ) {
 			for (int i = 0; i < variableNames.length; i++) {
 				listener.onInvalidData(payment, variableNames[i], message);
+			}
+		}
+	}
+
+	private void onUndefinedData( IContractPayment payment, RemovedExpressionVariable<?> var){
+		if ( listener!= null ) {
+			listener.onUndefinedData(payment, var);
+		}
+	}
+
+	private void onUndefinedData( IContractPayment payment, String message, String... variableNames ){
+		if ( listener!= null ) {
+			for (int i = 0; i < variableNames.length; i++) {
+				listener.onUndefinedData(payment, variableNames[i], message);
 			}
 		}
 	}

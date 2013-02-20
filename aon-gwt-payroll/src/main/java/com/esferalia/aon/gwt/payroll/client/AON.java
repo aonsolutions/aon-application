@@ -41,5 +41,16 @@ public class AON {
 		}
 	}
 
+	static final String AON_DATA_TABLE_ROW_EVEN = "aon-dataTable-row-even";
+	static final String AON_DATA_TABLE_ROW_ODD = "aon-dataTable-row-odd";
+	static final String AON_BOLD = "aon-bold";
+	static final String AON_TEXT_RIGHT = "aon-text-right";
+	static final String AON_TEXT_CENTER = "aon-text-center";
+	static final String AON_ICON_RESET = "aon-icon-reset";
+	static final String AON_EDIT_DATA_TABLE_BUTTON = "aon-editDataTable-button";
+	static final String AON_ICON_DELETE = "aon-icon-delete";
+	static final String AON_ICON_ROW_SELECTOR = "aon-icon-rowSelector";
+	static final String AON_ICON_EXCEPTION = "aon-icon-exception";
+
 	
 }

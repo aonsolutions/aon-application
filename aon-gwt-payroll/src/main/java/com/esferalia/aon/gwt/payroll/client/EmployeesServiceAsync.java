@@ -6,6 +6,7 @@ import java.util.List;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
@@ -16,6 +17,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface EmployeesServiceAsync {
 	void getEnterprise(AsyncCallback<Enterprise> callback)
+			throws IllegalArgumentException;
+	void getPaymentConcepts(AsyncCallback<List<Payment>> callback) 
 			throws IllegalArgumentException;
 	void getWorkplaceCosts(int workplaceId, AsyncCallback<List<Cost>> callback ) 
 			throws IllegalArgumentException;
@@ -31,7 +34,11 @@ public interface EmployeesServiceAsync {
 			throws IllegalArgumentException;
 	void calculateSalaryDraft(SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
-	void getSalaryDraftReceiptHTML(SalaryPreview salaryPreview, int zoom, AsyncCallback<String> callback)
+	void getSalaryDraftReceipt(SalaryDraft salaryDraft, String mime, AsyncCallback<String> callback)
+			throws IllegalArgumentException;
+	void getSalaryDraftReceiptHTML(SalaryDraft salaryPreview, int zoom, AsyncCallback<String> callback)
+			throws IllegalArgumentException;
+	void getSalaryPreviewReceiptHTML(SalaryPreview salaryPreview, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
 	void getEmployees(int workplaceId, Date endDate, String pattern, int offset, int limit, AsyncCallback<List<Employee>> callback) 
 			throws IllegalArgumentException;

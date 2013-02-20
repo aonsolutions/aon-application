@@ -3,6 +3,8 @@ package com.esferalia.aon.payroll.enumeration;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.hamcrest.core.Is;
+
 import com.code.aon.common.enumeration.IResourceable;
 
 public enum ContextVariable implements IResourceable{
@@ -14,38 +16,38 @@ public enum ContextVariable implements IResourceable{
 	SALARY_END("FIN_NOMINA", VariableType.DATE),
 	
 	// Datos de la persona
-	AGE("EDAD", VariableType.INTEGER),
-	GENDER("SEXO", VariableType.UNKNOWN),
-	MALE("HOMBRE", VariableType.UNKNOWN),
-	FEMALE("MUJER", VariableType.UNKNOWN),
+	AGE("EDAD", VariableType.INTEGER, false),
+	GENDER("SEXO", VariableType.UNKNOWN, false),
+	MALE("HOMBRE", VariableType.UNKNOWN, false),
+	FEMALE("MUJER", VariableType.UNKNOWN, false),
 
 	// Dias
-	YEAR_DAYS("DIAS_AÑO", VariableType.INTEGER),
-	MONTH_DAYS("DIAS_MES", VariableType.INTEGER),
-	HOLIDAYS("DIAS_VACACIONES", VariableType.INTEGER),
-	NO_HOLIDAYS("DIAS_VACACIONES_NO_DISFRUTADOS", VariableType.INTEGER),
-	WORKED_DAYS("DIAS_TRABAJADOS", VariableType.INTEGER),
-	WEEK_DAYS("DIAS_SEMANA", VariableType.INTEGER),
-	CONTRACT_DAYS("DIAS_CONTRATO", VariableType.INTEGER),
-	SALARY_DAYS("DIAS_NOMINA", VariableType.INTEGER),
-	PAY_DAYS("DIAS_PAGA", VariableType.INTEGER),
-	EXTRA_DAYS("DIAS_PAGA", VariableType.INTEGER),
-	BONUS_DAYS("DIAS_BONIFICACION", VariableType.INTEGER),
-	QUOTE_DAYS("DIAS_COTIZADOS", VariableType.INTEGER),
-	ACTUAL_DAYS("DIAS_EFECTIVOS", VariableType.INTEGER),
-	LEAVE_DAYS("DIAS_IT", VariableType.INTEGER),
-	GUARANTEED_DAYS("DIAS_GARANTIZADOS", VariableType.INTEGER),
-	SPECIAL_DAYS("DIAS_ESPECIALES", VariableType.INTEGER),
-	MATERNITY_DAYS("DIAS_MATERNIDAD", VariableType.INTEGER),
-	COMMON_DISEASE_DAYS("DIAS_ENFERMEDAD_COMUN", VariableType.INTEGER),
-	OCCUPATIONAL_DISEASE_DAYS("DIAS_ENFERMEDAD_PROFESIONAL", VariableType.INTEGER),
-	PAYMENTS("NUM_PAGAS", VariableType.INTEGER),
+	YEAR_DAYS("DIAS_AÑO", VariableType.INTEGER, false),
+	MONTH_DAYS("DIAS_MES", VariableType.INTEGER, false),
+	HOLIDAYS("DIAS_VACACIONES", VariableType.INTEGER, false),
+	NO_HOLIDAYS("DIAS_VACACIONES_NO_DISFRUTADOS", VariableType.INTEGER, false),
+	WORKED_DAYS("DIAS_TRABAJADOS", VariableType.INTEGER, false),
+	WEEK_DAYS("DIAS_SEMANA", VariableType.INTEGER, false),
+	CONTRACT_DAYS("DIAS_CONTRATO", VariableType.INTEGER, false),
+	SALARY_DAYS("DIAS_NOMINA", VariableType.INTEGER, false),
+	PAY_DAYS("DIAS_PAGA", VariableType.INTEGER, false),
+	EXTRA_DAYS("DIAS_PAGA", VariableType.INTEGER, false),
+	BONUS_DAYS("DIAS_BONIFICACION", VariableType.INTEGER, false),
+	QUOTE_DAYS("DIAS_COTIZADOS", VariableType.INTEGER, false),
+	ACTUAL_DAYS("DIAS_EFECTIVOS", VariableType.INTEGER, false),
+	LEAVE_DAYS("DIAS_IT", VariableType.INTEGER, false),
+	GUARANTEED_DAYS("DIAS_GARANTIZADOS", VariableType.INTEGER, false),
+	SPECIAL_DAYS("DIAS_ESPECIALES", VariableType.INTEGER, false),
+	MATERNITY_DAYS("DIAS_MATERNIDAD", VariableType.INTEGER, false),
+	COMMON_DISEASE_DAYS("DIAS_ENFERMEDAD_COMUN", VariableType.INTEGER, false),
+	OCCUPATIONAL_DISEASE_DAYS("DIAS_ENFERMEDAD_PROFESIONAL", VariableType.INTEGER, false),
+	PAYMENTS("NUM_PAGAS", VariableType.INTEGER, false),
 
-	SALARY_MONTHS("MESES_NOMINA", VariableType.INTEGER),
-	PAY_MONTHS("MESES_PAGA", VariableType.INTEGER),
-	WORKED_WEEKS("SEMANAS_TRABAJADAS", VariableType.INTEGER),
-	SALARY_WEEKS("SEMANAS_NOMINA", VariableType.INTEGER),
-	PAY_WEEKS("SEMANAS_PAGA", VariableType.INTEGER),
+	SALARY_MONTHS("MESES_NOMINA", VariableType.INTEGER, false),
+	PAY_MONTHS("MESES_PAGA", VariableType.INTEGER, false),
+	WORKED_WEEKS("SEMANAS_TRABAJADAS", VariableType.INTEGER, false),
+	SALARY_WEEKS("SEMANAS_NOMINA", VariableType.INTEGER, false),
+	PAY_WEEKS("SEMANAS_PAGA", VariableType.INTEGER, false),
 	
 	// Horas ( contratos  a tiempo parcial )
 	WEEK_HOURS("HORAS_SEMANA", VariableType.DOUBLE, false),
@@ -62,6 +64,7 @@ public enum ContextVariable implements IResourceable{
 	IPREM_BASE_SHORT("BIPREM", VariableType.DOUBLE),
 	CGC_BASE_MIN("BASE_CGC_MIN", VariableType.DOUBLE),
 	CGC_BASE_MAX("BASE_CGC_MAX", VariableType.DOUBLE),
+	
 	CGP_BASE_MIN("BASE_CGP_MIN", VariableType.DOUBLE),
 	CGP_BASE_MAX("BASE_CGP_MAX", VariableType.DOUBLE),
 	SENIOR_BASE("BASE_ANTIGUEDAD", VariableType.DOUBLE),
@@ -86,23 +89,23 @@ public enum ContextVariable implements IResourceable{
 
 
 	// Datos 'temporales' del contrato
-	TC2("TC2", VariableType.TC2_DROP),
-	CNO("CNO", VariableType.CNO_LOOKUP),
-	IPREM("IPREM", VariableType.DOUBLE),
-	CATEGORY("CATEGORIA", VariableType.STRING),
-	INDEFINITE("INDEFINIDO", VariableType.BOOLEAN),
-	OCCUPATION("OCUPACION", VariableType.OCCUPATION_DROP),
-	GUARANTEED("GARANTIZADO", VariableType.DOUBLE),
-	IRREGULAR("IRREGULAR", VariableType.BOOLEAN),
-	FULL_TIME("TIEMPO_COMPLETO", VariableType.BOOLEAN),
-	IRPF_PERCENT("PORCENTAJE_IRPF", VariableType.DOUBLE),
-	QUOTE_GROUP("GRUPO_COTIZACION", VariableType.QUOTE_GROUP_DROP),
-	FREE_IPREM("EXENTO_IPREM", VariableType.DOUBLE),
-	FREE_IPREM_SHORT("XIPREM", VariableType.DOUBLE),
-	IT_RATE("TARIFA_IT", VariableType.DOUBLE),
-	IMS_RATE("TARIFA_IMS", VariableType.DOUBLE),
-	SHORT_CONTRACT("CONTRATO_CORTA_DURACION", VariableType.BOOLEAN),
-	SENIORITY("AÑOS_ANTIGUEDAD", VariableType.DOUBLE),
+	TC2("TC2", VariableType.TC2_DROP, false),
+	CNO("CNO", VariableType.CNO_LOOKUP, false),
+	IPREM("IPREM", VariableType.DOUBLE, false),
+	CATEGORY("CATEGORIA", VariableType.STRING, false),
+	INDEFINITE("INDEFINIDO", VariableType.BOOLEAN, false),
+	OCCUPATION("OCUPACION", VariableType.OCCUPATION_DROP, false),
+	GUARANTEED("GARANTIZADO", VariableType.DOUBLE, false),
+	IRREGULAR("IRREGULAR", VariableType.BOOLEAN, false),
+	FULL_TIME("TIEMPO_COMPLETO", VariableType.BOOLEAN, false),
+	IRPF_PERCENT("PORCENTAJE_IRPF", VariableType.DOUBLE, false),
+	QUOTE_GROUP("GRUPO_COTIZACION", VariableType.QUOTE_GROUP_DROP, false),
+	FREE_IPREM("EXENTO_IPREM", VariableType.DOUBLE, false),
+	FREE_IPREM_SHORT("XIPREM", VariableType.DOUBLE, false),
+	IT_RATE("TARIFA_IT", VariableType.DOUBLE, false),
+	IMS_RATE("TARIFA_IMS", VariableType.DOUBLE, false),
+	SHORT_CONTRACT("CONTRATO_CORTA_DURACION", VariableType.BOOLEAN, false),
+	SENIORITY("AÑOS_ANTIGUEDAD", VariableType.DOUBLE, false),
 	
 	// Bajas, Incapacidad Temporal
 	MATERNITY("MTNAD", VariableType.BOOLEAN),
@@ -110,15 +113,15 @@ public enum ContextVariable implements IResourceable{
 	TOTAL_BENEFITS_IT("TOTAL_PRESTACIONES_IT", VariableType.DOUBLE),
 	
 	// Régimenes, cotizacion 
-	MORE_THAN_65("MAYOR_65", VariableType.BOOLEAN),
-	ASSIMILATED ("ASIMILADO_REGIMEN_GRAL", VariableType.BOOLEAN),
-	ENTRY_BY_COMPANY_ACCOUNT("INGRESO_AC_EMPRESA", VariableType.BOOLEAN),
+	MORE_THAN_65("MAYOR_65", VariableType.BOOLEAN, false),
+	ASSIMILATED ("ASIMILADO_REGIMEN_GRAL", VariableType.BOOLEAN, false),
+	ENTRY_BY_COMPANY_ACCOUNT("INGRESO_AC_EMPRESA", VariableType.BOOLEAN, false),
 	
 	// Embargos 
-	EMBARGO_LEFT("PENDIENTE", VariableType.DOUBLE),
-	EMBARGO_PAID("EMBARGADO", VariableType.DOUBLE),
-	EMBARGO_LIMIT("EMBARGABLE", VariableType.DOUBLE),
-	EMBARGO_MAX("MAX_EMBARGABLE", VariableType.DOUBLE),
+	EMBARGO_LEFT("PENDIENTE", VariableType.DOUBLE, false),
+	EMBARGO_PAID("EMBARGADO", VariableType.DOUBLE, false),
+	EMBARGO_LIMIT("EMBARGABLE", VariableType.DOUBLE, false),
+	EMBARGO_MAX("MAX_EMBARGABLE", VariableType.DOUBLE, false),
 	
 	// Tipo de nomina
 	SALARY("NOMINA", VariableType.BOOLEAN),
@@ -135,8 +138,8 @@ public enum ContextVariable implements IResourceable{
 	CURRENT("ACTUAL", VariableType.UNKNOWN),
 
 	// Datos de las bonificaciones
-	BONUS_AGE("DURACION", VariableType.DATE),
-	BONUS_START("INICIO", VariableType.DATE),
+	BONUS_AGE("DURACION", VariableType.DATE, false),
+	BONUS_START("INICIO", VariableType.DATE, false),
 
 	
 	;
@@ -169,6 +172,10 @@ public enum ContextVariable implements IResourceable{
 	
 	public VariableType getType() {
 		return type;
+	}
+	
+	public boolean isInternal() {
+		return internal;
 	}
 	
 	@Override

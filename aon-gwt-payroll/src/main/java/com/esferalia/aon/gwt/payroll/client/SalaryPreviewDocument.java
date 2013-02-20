@@ -29,7 +29,7 @@ public class SalaryPreviewDocument implements IDocument{
 	@Override
 	public void download(String format) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class SalaryPreviewDocument implements IDocument{
 
 	@Override
 	public void getAsHTML(int zoom, AsyncCallback<String> callback) {
-		employeesService.getSalaryDraftReceiptHTML(salaryPreview, zoom,
+		employeesService.getSalaryPreviewReceiptHTML(salaryPreview, zoom,
 				callback);
 	}
 	

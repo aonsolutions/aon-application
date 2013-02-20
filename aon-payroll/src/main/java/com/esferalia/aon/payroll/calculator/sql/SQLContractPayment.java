@@ -14,6 +14,8 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 
 public class SQLContractPayment extends SQLCollection<IContractPayment> implements IContractPayment {
 	
+	public static final String SCOPE_ALIAS = "scope";
+
 	public static final String PAYMENT_ALIAS = "payment";
 	
 	
@@ -42,7 +44,8 @@ public class SQLContractPayment extends SQLCollection<IContractPayment> implemen
 	
 	@Override
 	public ExpressionScope getScope() {
-		throw new UnsupportedOperationException();
+		Integer type = getInt(SCOPE_ALIAS);
+		return type == null ? null : ExpressionScope.values()[type];
 	}
 
 	@Override

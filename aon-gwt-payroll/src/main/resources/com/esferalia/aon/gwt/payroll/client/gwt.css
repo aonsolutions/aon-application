@@ -157,6 +157,38 @@ a, a:hover, a:visited {
 }
 
 
+.gwt-SuggestBoxPopup {
+	margin : 0px;
+	padding: 4px 0px;
+	background: #F1EEE9;
+	border: 1px solid #C4C0B9;
+	box-shadow: 2px 2px 5px 1px #C4C0B9;
+
+}
+
+.gwt-SuggestBoxPopup .suggestPopupTopLeft,
+.gwt-SuggestBoxPopup .suggestPopupTopCenter,
+.gwt-SuggestBoxPopup .suggestPopupTopRight,
+.gwt-SuggestBoxPopup .suggestPopupMiddleLeft,
+.gwt-SuggestBoxPopup .suggestPopupMiddleRight,
+.gwt-SuggestBoxPopup .suggestPopupBottomLeft,
+.gwt-SuggestBoxPopup .suggestPopupBottomCenter,
+.gwt-SuggestBoxPopup .suggestPopupBottomRight
+	{
+	display: none;
+}
+
+.gwt-SuggestBoxPopup .item {
+    font-size: 1em;
+}
+.gwt-SuggestBoxPopup .item-selected {
+    background: none repeat scroll 0 0 #E3DFD9;
+}
+
+.gwt-SuggestBoxPopup .suggestPopupContent {
+    background: inherit;
+}
+
 @sprite .aon-MenuItemCheckYes {
 	gwt-image: "checkYes"; 
 }
@@ -298,8 +330,10 @@ td.datePickerMonth,
 }
 
 
-.gwt-TextBox {
+.gwt-TextBox,
+.gwt-SuggestBox {
 	padding: 2px;
+	font-size: 1em;
 }
 
 .gwt-TextBox:focus,

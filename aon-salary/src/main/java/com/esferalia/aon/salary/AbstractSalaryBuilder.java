@@ -3,9 +3,12 @@ package com.esferalia.aon.salary;
 import java.util.Date;
 import java.util.Map;
 
+import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.payment.IPayment;
 
 public abstract class AbstractSalaryBuilder implements ISalaryBuilder {
 
@@ -208,17 +211,18 @@ public abstract class AbstractSalaryBuilder implements ISalaryBuilder {
 		
 
 	}
-
+	
 	@Override
 	public void addPayment(PaymentType type, String concept, Double amount,
-			String description, String expression, Map<String,Object> context ) {
+			String description, IPayment payment,
+			Map<String, ITimedVariable<?>> context) {
+		// TODO Auto-generated method stub
 		
-
 	}
-
+	
 	@Override
 	public void addDeduction(DeductionType type, String concept, Double amount,
-			String description, String expression) {
+			String description, IDeduction deduction, Map<String, ITimedVariable<?>> context) {
 		
 
 	}
