@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
+import com.code.aon.config.enumeration.Administration;
 
 public enum Period implements IResourceable {
 	
@@ -45,6 +46,15 @@ public enum Period implements IResourceable {
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
     public String getName() {
+    	return name;
+    }
+    public String getName(Administration admon) {
+    	if (admon == Administration.COMMON_TERRITORY) {
+    		if (this == T1) return "1T";
+    		if (this == T2) return "2T";
+    		if (this == T3) return "3T";
+    		if (this == T4) return "4T";
+    	}
     	return name;
     }
 	public int getStartMonth() {

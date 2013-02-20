@@ -38,9 +38,10 @@ public class Aeat2011Mod130Calculator extends FiscalModelDetailCalculator implem
 		mod130.getDetail( Mod130Key.C11 ).setAmount( c11 );
 		
 		double c12 =  CommonUtil.round(c07 + c11);
+		c12 =  c12>0?c12:0;
 		mod130.getDetail( Mod130Key.C12 ).setAmount( c12 );
 		double c13 = mod130.getDetail( Mod130Key.C13 ).getAmount();
-		double c14 =  CommonUtil.round(c12 + c13);
+		double c14 =  CommonUtil.round(c12 - c13);
 		mod130.getDetail( Mod130Key.C14 ).setAmount( c14 );
 		double c15 = mod130.getDetail( Mod130Key.C15 ).getAmount();
 		double c16 = mod130.getDetail( Mod130Key.C16 ).getAmount();
@@ -60,6 +61,11 @@ public class Aeat2011Mod130Calculator extends FiscalModelDetailCalculator implem
 		double c19 =  CommonUtil.round(c17 -c18);
 		mod130.getDetail( Mod130Key.C19 ).setAmount( c19 );
 		
+	}
+
+	@Override
+	public double getResult(Mod130 mod130) {
+		return mod130.getDetail( Mod130Key.C19 ).getAmount( );
 	}
 
 }

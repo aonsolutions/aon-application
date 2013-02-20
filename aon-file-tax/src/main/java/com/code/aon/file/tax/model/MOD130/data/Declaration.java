@@ -42,6 +42,7 @@ public class Declaration {
 	private String contactPerson;
 	private String contactPhone;
 	private String payment;
+	private Double deposit;
 	private String toDeduct;
 	private String ccc1;
 	private String ccc2;
@@ -152,7 +153,7 @@ public class Declaration {
 
 	public String getName() {
 		if ( isPerson() ) {
-			return StringUtils.substringAfter(getName(), " ");
+			return StringUtils.substringAfter(name, " ");
 		}
 		return name;
 	}
@@ -248,6 +249,12 @@ public class Declaration {
 	public void setPayment(String payment) {
 		this.payment = payment;
 	}
+	public Double getDeposit() {
+		return deposit;
+	}
+	public void setDeposit(Double deposit) {
+		this.deposit = deposit;
+	}
 	public String getToDeduct() {
 		return toDeduct;
 	}
@@ -285,13 +292,11 @@ public class Declaration {
 		this.boxes = boxes;
 	}
 	public String getSurnameStart() {
-		return StringUtils.substring(getName(), 0, 4);
+		String name = getName();
+		return StringUtils.substring(name, 0, 4);
 	}
 	public String getOnlyName() {
-		if ( isPerson() ) {
-			return StringUtils.substringBefore(getName(), " ");
-		}
-		return null;
+		return StringUtils.substringBefore(name, " ");
 	}
 	
 	public String getDeclarationType() {

@@ -47,4 +47,9 @@ public class Aeat2013Mod131Calculator extends FiscalModelDetailCalculator implem
 		
 	}
 
+	@Override
+	public double getResult(Mod131 mod131) {
+		return mod131.getDetail( Mod131Key.C15 ).getAmount();
+	}
+
 }

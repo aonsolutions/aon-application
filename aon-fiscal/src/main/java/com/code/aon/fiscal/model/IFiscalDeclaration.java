@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.finance.Finance;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.IFiscalModelKey;
@@ -13,6 +14,8 @@ import com.code.aon.fiscal.enumeration.IFiscalModelKey;
 public interface IFiscalDeclaration {
 	
 	FiscalModel getHeader();
+	void setHeader(FiscalModel fiscalModel);
+	
 	Map<? extends IFiscalModelKey, FiscalModelDetail> getMap();
 	Collection<FiscalModelDetail> getDetails();
 	List<? extends IFiscalModelKey> getKeys();
@@ -24,5 +27,15 @@ public interface IFiscalDeclaration {
 	FiscalModelDetail getDetail(IFiscalModelKey key);
 	FiscalModelDetail ensureDetail(IFiscalModelKey key);
 	void calculate() throws AonException;
+	
+	double getResult();
+	Finance getFinance();
+	
+	boolean isDeclarationNegativeAvailable();
+	boolean isToDeductDeclarationAvailable();
+	boolean isWithoutActivityDeclarationAvailable();
+	public boolean isNegative();
+	public boolean isToDeduct();
+	
 	
 }

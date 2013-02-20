@@ -50,4 +50,9 @@ public class Aeat2013Mod310Calculator extends FiscalModelDetailCalculator implem
 		mod310.getDetail( Mod310Key.C12 ).setAmount( c12 );
 	}
 
+	@Override
+	public double getResult(Mod310 mod310) {
+		return mod310.getDetail( Mod310Key.C12 ).getAmount();
+	}
+
 }

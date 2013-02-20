@@ -16,12 +16,11 @@ import com.code.aon.fiscal.enumeration.Mod310Key;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.fiscal.model.FiscalModelManager;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
-import com.code.aon.fiscal.model.IFiscalModelManager;
 import com.code.aon.fiscal.vat.tax.VatTaxManager;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class Mod310Manager extends FiscalModelManager implements IFiscalModelManager{
+public class Mod310Manager extends FiscalModelManager {
 	
 	@Override
 	public boolean accept(FiscalModelType type) {
@@ -32,7 +31,6 @@ public class Mod310Manager extends FiscalModelManager implements IFiscalModelMan
 	public Mod310 initializeFiscalModel(FiscalModel fiscalModel) throws AonException {
 		Mod310 mod310 = new Mod310();
 		mod310.setFiscalModel(fiscalModel);
-		//mod310.initializeDetails();
 		return mod310;
 	}
 	

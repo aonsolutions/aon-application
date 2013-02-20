@@ -25,30 +25,51 @@ import com.code.aon.fiscal.enumeration.Mod130Key;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.model.FiscalModelManager;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
-import com.code.aon.fiscal.model.IFiscalModelManager;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class Mod130Manager extends FiscalModelManager implements IFiscalModelManager{
+public class Mod130Manager extends FiscalModelManager {
 	
-	private static String SELECT_05_1 = "SELECT " 
-			+" SUM( IF(fmd.amount<0,0,fmd.amount) )"
+	private static String SELECT_19 = "SELECT " 
+			+" SUM( IF(fmd.amount<0,fmd.amount,0) )"
 			+" FROM fs_model_detail fmd"
 			+" INNER JOIN fs_model fm ON (fmd.fs_model = fm.id)" 
-			+" WHERE " + DomainManager.getSQLWhereClause("fmd.domain")
-			+" AND fm.model = " + FiscalModelType.M130.ordinal()
-			+" AND fm.administration != ? "
+			+" WHERE " + DomainManager.getStaticSQLWhereClause("fmd.domain")
+			+" AND fm.model = ? "
+			+" AND fm.administration = ? "
 			+" AND fm.year = ? "
 			+" AND fm.period < ? "
 			+" AND fmd.type = ? ";
 	
+	private static String SELECT_15 = "SELECT " 
+			+" SUM( fmd.amount )"
+			+" FROM fs_model_detail fmd"
+			+" INNER JOIN fs_model fm ON (fmd.fs_model = fm.id)" 
+			+" WHERE " + DomainManager.getStaticSQLWhereClause("fmd.domain")
+			+" AND fm.model = ? "
+			+" AND fm.administration = ? "
+			+" AND fm.year = ? "
+			+" AND fm.period < ? "
+			+" AND fmd.type = ? ";
+
+	private static String SELECT_05_1 = "SELECT " 
+			+" SUM( IF(fmd.amount<0,0,fmd.amount) )"
+			+" FROM fs_model_detail fmd"
+			+" INNER JOIN fs_model fm ON (fmd.fs_model = fm.id)" 
+			+" WHERE " + DomainManager.getStaticSQLWhereClause("fmd.domain")
+			+" AND fm.model = ? "
+			+" AND fm.administration = ? "
+			+" AND fm.year = ? "
+			+" AND fm.period < ? "
+			+" AND fmd.type = ? ";
+
 	private static String SELECT_05_2 = "SELECT " 
 			+" SUM( fmd.amount )"
 			+" FROM fs_model_detail fmd"
 			+" INNER JOIN fs_model fm ON (fmd.fs_model = fm.id)" 
-			+" WHERE " + DomainManager.getSQLWhereClause("fmd.domain")
-			+" AND fm.model = " + FiscalModelType.M130.ordinal()
-			+" AND fm.administration != ? "
+			+" WHERE " + DomainManager.getStaticSQLWhereClause("fmd.domain")
+			+" AND fm.model = ? "
+			+" AND fm.administration = ? "
 			+" AND fm.year = ? "
 			+" AND fm.period < ? "
 			+" AND fmd.type = ? ";
@@ -59,7 +80,7 @@ public class Mod130Manager extends FiscalModelManager implements IFiscalModelMan
 			+" FROM invoice_tax it "
 			+" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)" 
 			+" INNER JOIN invoice i ON (id.invoice = i.id)"
-			+" WHERE " + DomainManager.getSQLWhereClause("i.domain")
+			+" WHERE " + DomainManager.getStaticSQLWhereClause("i.domain")
 			+" AND i.type != 1 " 			// No Ventas
 			+" AND it.tax_type = 2" 		// IRPF
 			+" AND i.tax_date >= ?"
@@ -69,9 +90,9 @@ public class Mod130Manager extends FiscalModelManager implements IFiscalModelMan
 			+" fm.period,fmd.amount"
 			+" FROM fs_model_detail fmd"
 			+" INNER JOIN fs_model fm ON (fmd.fs_model = fm.id)" 
-			+" WHERE " + DomainManager.getSQLWhereClause("fmd.domain")
-			+" AND fm.model = " + FiscalModelType.M130.ordinal()
-			+" AND fm.administration != ? "
+			+" WHERE " + DomainManager.getStaticSQLWhereClause("fmd.domain")
+			+" AND fm.model = ? "
+			+" AND fm.administration = ? "
 			+" AND fm.year = ? "
 			+" AND fmd.type = ? "
 			+" ORDER by fm.period";
@@ -80,9 +101,9 @@ public class Mod130Manager extends FiscalModelManager implements IFiscalModelMan
 			+" fm.period,fmd.amount"
 			+" FROM fs_model_detail fmd"
 			+" INNER JOIN fs_model fm ON (fmd.fs_model = fm.id)" 
-			+" WHERE " + DomainManager.getSQLWhereClause("fmd.domain")
-			+" AND fm.model = " + FiscalModelType.M130.ordinal()
-			+" AND fm.administration != ? "
+			+" WHERE " + DomainManager.getStaticSQLWhereClause("fmd.domain")
+			+" AND fm.model = ? "
+			+" AND fm.administration!= ? "
 			+" AND fm.year = ? "
 			+" AND fmd.type = ? "
 			+" ORDER by fm.period";
@@ -119,7 +140,7 @@ public class Mod130Manager extends FiscalModelManager implements IFiscalModelMan
 		params.setFromDate(dateFrom);
 		params.setToDate(dateTo);
 		SummaryCollection sc = sp.getSummaryCollection(params,true);
-		double c01 = CommonUtil.round(sc.getCreditBalance())==0.0?CommonUtil.round(sc.getUnpaidBalance()*-1):sc.getCreditBalance(); 
+		double c01 = CommonUtil.round(sc.getCredit())==0.0?CommonUtil.round(sc.getDebit()*-1):sc.getCredit();
 		mod130.ensureDetail(Mod130Key.C01).addAccumulatedAmount(c01);
 //		 ------------------------------------------------------------------------
 		
@@ -145,7 +166,7 @@ public class Mod130Manager extends FiscalModelManager implements IFiscalModelMan
 		params.setFromDate(dateFrom);
 		params.setToDate(dateTo);
 		sc = sp.getSummaryCollection(params,true);
-		double c02 = CommonUtil.round(sc.getUnpaidBalance())==0.0?CommonUtil.round(sc.getCreditBalance()*-1):sc.getUnpaidBalance(); 
+		double c02 = CommonUtil.round(sc.getDebit())==0.0?CommonUtil.round(sc.getCredit()*-1):sc.getDebit(); 
 		mod130.ensureDetail(Mod130Key.C02).addAccumulatedAmount(c02);
 //		 ------------------------------------------------------------------------
 
@@ -209,13 +230,69 @@ public class Mod130Manager extends FiscalModelManager implements IFiscalModelMan
 		double c13 = 0;
 		if ( CommonUtil.round(previousC03 + previousC08) <= 12000 ) {
 			if ( CommonUtil.round(previousC03 + previousC08) <= 8000 ) {
-				c13 = CommonUtil.round( -400.0 / 4 );		
+				c13 = CommonUtil.round( 400.0 / 4 );		
 			} else {
-				c13 = CommonUtil.round( (-400.0 - ((previousC03 + previousC08 - 8000) * 0.1)) / 4);
+				c13 = CommonUtil.round( (400.0 - ((previousC03 + previousC08 - 8000) * 0.1)) / 4);
 			}
 		}
 		mod130.ensureDetail(Mod130Key.C13).addAccumulatedAmount(c13);
+
 //		 ------------------------------------------------------------------------
+//		Casilla 15. Si en la casilla 14 anterior se hubiera obtenido una cantidad positiva, 
+//		se hará constar en la casilla 15 el importe de los resultados negativos que, en su 
+//		caso, se hubieran obtenido en la casilla 19 de cualquiera de las declaraciones 
+//		anteriores, modelo 130, del mismo ejercicio y que no hubieran sido deducidos 
+//		anteriormente, teniendo en cuenta que en ningún caso podrá figurar en la casilla 15 
+//		un importe superior a la cantidad positiva consignada en la casilla 14.
+		mod130.calculate();
+		double c14 = mod130.getDetail( Mod130Key.C14 ).getAmount();
+		double c15 = 0.0;
+		if (c14 > 0) {
+			double previousC15 = getPreviousAmount(SELECT_15,fiscalModel,Mod130Key.C15);
+			double previousC19 = getPreviousAmount(SELECT_19,fiscalModel,Mod130Key.C19);
+			previousC19 = CommonUtil.round( previousC19 * (-1));
+			c15 = CommonUtil.round( previousC19 - previousC15 );
+			c15 = c15>c14?c14:c15;
+		}
+		mod130.ensureDetail(Mod130Key.C15).addAccumulatedAmount(c15);
+//		 ------------------------------------------------------------------------
+//		Casilla 16. Si en la casilla 14 se hubiera obtenido una cantidad positiva y el 
+//		contribuyente está realizando pagos por préstamos destinados a la adquisición o 
+//		rehabilitación de su vivienda habitual, se hará constar, en su caso, en la casilla 
+//		16 el importe de la deducción a que se refiere el artículo 110.3.d) del Reglamento 
+//		del Impuesto. 
+//		Si únicamente se hubiese cumplimentado el apartado I de este modelo, 
+//		dicha deducción está constituida por el importe resultante de aplicar el porcentaje 
+//		del 2 por 100 sobre la cantidad consignada en la casilla 03, con el límite máximo 
+//		de 660,14 euros para cada trimestre. 
+//		Si solamente se hubiese cumplimentado el apartado II, la deducción está constituida 
+//		por el importe resultante de aplicar el porcentaje del 2 por 100 sobre la cantidad 
+//		consignada en la casilla 08. En este caso, el límite máximo de deducción por este 
+//		concepto será de 660,14 euros anuales.
+//		En cualquier caso, deberá tenerse en cuenta que el importe consignado en la casilla 16 
+//		no podrá ser superior a la diferencia positiva entre las casillas 14 y 15 anteriores.
+		if (mod130.isPermanentAddressChanges() && CommonUtil.round(c14 - c15) > 0 ) {
+			double c16 = 0.0;
+			mod130.calculate();
+			double c03 = mod130.getDetail( Mod130Key.C03 ).getAmount();
+			double c08 = mod130.getDetail( Mod130Key.C08 ).getAmount();
+ 
+ 
+			if (c03 > 0 && c08 > 0 ) { // no resultará aplicable cuando el contribuyente realice simultáneamente   
+									   // actividades agrícolas y actividades distintas de éstas.
+				if (c03 > 0 ) {
+					c16 = CommonUtil.round(c03 * 2 / 100);
+					c16 = c16>660.14?660.14:c16;
+				} else if (c08 > 0 ) {
+					c16 = CommonUtil.round(c08 * 2 / 100);
+					c16 = c16>660.14?660.14:c16;
+				}
+				if (CommonUtil.round(c14 - c15) < c16) {
+					c16 = CommonUtil.round(c14 - c15); 
+				}
+				mod130.ensureDetail(Mod130Key.C16).addAccumulatedAmount(c16);
+			}
+		}
 		
 		mod130.calculate();
 		return mod130;
@@ -230,6 +307,9 @@ public class Mod130Manager extends FiscalModelManager implements IFiscalModelMan
 			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(select,
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
+			int filled = DomainManager.fillHostVariables(ps, 1);
+			i = i + filled;
+			ps.setString(++i, FiscalModelType.M130.getValue());
 			ps.setInt(++i, fiscalModel.getAdministration().ordinal());
 			ps.setInt(++i, fiscalModel.getYear());
 			ps.setInt(++i, fiscalModel.getPeriod().ordinal());
@@ -268,6 +348,8 @@ public class Mod130Manager extends FiscalModelManager implements IFiscalModelMan
 			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(SELECT_06,
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
+			int filled = DomainManager.fillHostVariables(ps, 1);
+			i = i + filled;
 			ps.setDate(++i, new java.sql.Date( dateFrom.getTime() ));
 			ps.setDate(++i, new java.sql.Date( dateTo.getTime()));
 			rs = ps.executeQuery();
@@ -321,13 +403,16 @@ public class Mod130Manager extends FiscalModelManager implements IFiscalModelMan
 			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(select,
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
+			int filled = DomainManager.fillHostVariables(ps, 1);
+			i = i + filled;
+			ps.setString(++i, fiscalModel.getModel().getValue());
 			ps.setInt(++i, fiscalModel.getAdministration().ordinal());
 			ps.setInt(++i, fiscalModel.getYear());
 			ps.setString(++i, key.getValue());
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				Period period = Period.values()[rs.getInt(2)]; 
-				c03 = rs.getDouble(1);
+				Period period = Period.values()[rs.getInt(1)]; 
+				c03 = rs.getDouble(2);
 				Date firstPeriodDay = period.getStartDate(fiscalModel.getYear());
 				Date firstYearDay = CommonUtil.getYearFirstDay(fiscalModel.getYear());
 				double product;
@@ -369,13 +454,16 @@ public class Mod130Manager extends FiscalModelManager implements IFiscalModelMan
 			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(select,
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
+			int filled = DomainManager.fillHostVariables(ps, 1);
+			i = i + filled;
+			ps.setString(++i, fiscalModel.getModel().getValue());
 			ps.setInt(++i, fiscalModel.getAdministration().ordinal());
 			ps.setInt(++i, fiscalModel.getYear());
 			ps.setString(++i, key.getValue());
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				Period period = Period.values()[rs.getInt(2)]; 
-				c08 = rs.getDouble(1);
+				Period period = Period.values()[rs.getInt(1)]; 
+				c08 = rs.getDouble(2);
 				Date firstPeriodDay = period.getStartDate(fiscalModel.getYear());
 				Date firstYearDay = CommonUtil.getYearFirstDay(fiscalModel.getYear());
 				double product;

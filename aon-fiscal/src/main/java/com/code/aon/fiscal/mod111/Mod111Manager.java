@@ -22,11 +22,10 @@ import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.model.FiscalModelManager;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
-import com.code.aon.fiscal.model.IFiscalModelManager;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class Mod111Manager extends FiscalModelManager implements IFiscalModelManager{
+public class Mod111Manager extends FiscalModelManager {
 	
 	private static String SELECT = "SELECT " 
 		+"i.type,it.percentage,i.rdocument,i.rname,"
@@ -35,7 +34,7 @@ public class Mod111Manager extends FiscalModelManager implements IFiscalModelMan
 		+" FROM invoice_tax it "
 		+" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)" 
 		+" INNER JOIN invoice i ON (id.invoice = i.id)"
-		+" WHERE " + DomainManager.getSQLWhereClause("i.domain")
+		+" WHERE " + DomainManager.getStaticSQLWhereClause("i.domain")
 		+" AND i.type != 1 " 			// No Ventas
 		+" AND it.tax_type = 2" 		// IRPF
 		+" AND it.withholding_type = 0" // IRPF de profesionales
@@ -51,7 +50,7 @@ public class Mod111Manager extends FiscalModelManager implements IFiscalModelMan
 		+" FROM salary s"
 		+" INNER JOIN contract c ON s.contract = c.id"
 		+" INNER JOIN workplace w ON c.workplace = w.id"
-		+" WHERE " + DomainManager.getSQLWhereClause("s.domain")
+		+" WHERE " + DomainManager.getStaticSQLWhereClause("s.domain")
 		+" AND w.enterprise = ?"
 		+" AND s.issue_date>=?"
 		+" AND s.issue_date<=?"
@@ -85,12 +84,14 @@ public class Mod111Manager extends FiscalModelManager implements IFiscalModelMan
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		List<String> receiverDocuments = new ArrayList<String>();
-		List<String> inKindReceiverDocuments = new ArrayList<String>();
+//		List<String> inKindReceiverDocuments = new ArrayList<String>();
 		String sessionName = HibernateUtil.getSessionFactoryName( FiscalModel.class.getName() );
 		try {
 			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(SELECT,
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
+			int filled = DomainManager.fillHostVariables(ps, 1);
+			i = i + filled;
 			ps.setDate(++i, new java.sql.Date( dateFrom.getTime() ));
 			ps.setDate(++i, new java.sql.Date( dateTo.getTime()));
 			rs = ps.executeQuery();
@@ -140,6 +141,8 @@ public class Mod111Manager extends FiscalModelManager implements IFiscalModelMan
 			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(PAYROLL_SELECT,
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
+			int filled = DomainManager.fillHostVariables(ps, 1);
+			i = i + filled;
 			ps.setInt(++i, enterpriseId);
 			ps.setDate(++i, new java.sql.Date( dateFrom.getTime() ));
 			ps.setDate(++i, new java.sql.Date( dateTo.getTime()));

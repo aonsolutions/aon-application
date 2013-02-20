@@ -29,6 +29,10 @@ public enum Mod131Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	AC42("131-AC42",false,false,1,null),
 	AC43("131-AC43",false,false,1,null),
 	AC44("131-AC44",false,false,1,null),
+	AC51("131-AC51",false,false,1,null),
+	AC52("131-AC52",false,false,1,null),
+	AC53("131-AC53",false,false,1,null),
+	AC54("131-AC54",false,false,1,null),
 	AC01("131-AC01",false,true ,1,null),
 	AC02("131-AC02",false,true ,1,null),
 	

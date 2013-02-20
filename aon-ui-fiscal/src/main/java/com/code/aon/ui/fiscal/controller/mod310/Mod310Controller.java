@@ -17,6 +17,12 @@ public class Mod310Controller extends FiscalModelController {
 	}
 
 	@Override
+	public void onEditSearch(ActionEvent event) {
+		checkFiscalActivity(FiscalModelType.M310);
+		super.onEditSearch(event);	
+	}
+
+	@Override
 	public boolean isDifEnabled() {
 		return false;
 	}

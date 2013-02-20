@@ -32,7 +32,11 @@
 				<aon:inputText id="irpfInfoKey_#{info.infoKey}" 
 					value="#{info.doubleValue}" size="8"
 					required="#{info.required}"
-					rendered="#{!info.calculated}"/>
+					rendered="#{!info.calculated}">
+					<a4j:support event="onchange" ajaxSingle="true"
+						actionListener="#{fiscalActivity.onChangeIrpfInfo}"
+						reRender="irpfInfoTable"/>
+				</aon:inputText>
 					
 				<aon:outputText  value="#{info.doubleValue}"
 					rendered="#{info.calculated}">

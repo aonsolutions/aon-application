@@ -49,4 +49,9 @@ public class Navarra2011Mod111Calculator extends FiscalModelDetailCalculator imp
 	public Mod111Key getKeyForInKindWitholding() {
 		return null;
 	}
+
+	@Override
+	public double getResult(Mod111 mod111) {
+		return 0;
+	}
 }

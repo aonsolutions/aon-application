@@ -7,5 +7,6 @@ public interface IMod130Calculator {
 	
 	boolean accept(int year, Administration administration);
 	void calculate(Mod130 mod130) throws AonException;
+	double getResult(Mod130 mod130);
 
 }

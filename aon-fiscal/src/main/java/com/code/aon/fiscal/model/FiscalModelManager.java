@@ -16,7 +16,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class FiscalModelManager {
+public abstract class FiscalModelManager implements IFiscalModelManager {
 	
 	protected Date getInitialDate( FiscalModel fiscalModel) {
 		Calendar c = Calendar.getInstance();
@@ -79,5 +79,10 @@ public class FiscalModelManager {
 		}
 	}
 	
+	@Override
+	public IFiscalDeclaration refreshFiscalModel(IFiscalDeclaration declaration, FiscalModel fiscalModel) {
+		declaration.setHeader( fiscalModel );
+		return declaration;
+	}
 
 }

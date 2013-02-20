@@ -18,4 +18,9 @@ public class Navarra2011Mod123Calculator extends FiscalModelDetailCalculator imp
 	public void calculate(Mod123 mod123) throws AonException {
 		calculateDetails(mod123.getDetails());
 	}
+
+	@Override
+	public double getResult(Mod123 mod123) {
+		return 0;
+	}
 }

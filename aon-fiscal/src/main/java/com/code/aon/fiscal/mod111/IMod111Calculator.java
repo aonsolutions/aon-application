@@ -16,5 +16,7 @@ public interface IMod111Calculator {
 	Mod111Key getKeyForInKindReceivers();
 	Mod111Key getKeyForInKindPerception();
 	Mod111Key getKeyForInKindWitholding();
+	
+	double getResult(Mod111 mod111);
 
 }

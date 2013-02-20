@@ -18,14 +18,12 @@ import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.Mod123Key;
-import com.code.aon.fiscal.mod123.Mod123;
 import com.code.aon.fiscal.model.FiscalModelManager;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
-import com.code.aon.fiscal.model.IFiscalModelManager;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class Mod123Manager extends FiscalModelManager implements IFiscalModelManager{
+public class Mod123Manager extends FiscalModelManager {
 
 	private static String SELECT = "SELECT " 
 			+"i.type,it.percentage,i.rdocument,i.rname,"

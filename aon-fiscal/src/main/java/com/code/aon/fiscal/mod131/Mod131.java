@@ -13,6 +13,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.enumeration.Administration;
+import com.code.aon.finance.Finance;
 import com.code.aon.fiscal.FiscalActivity;
 import com.code.aon.fiscal.FiscalActivityInfo;
 import com.code.aon.fiscal.FiscalModel;
@@ -20,6 +21,7 @@ import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.FiscalActivityInfoKey;
 import com.code.aon.fiscal.enumeration.IFiscalModelKey;
 import com.code.aon.fiscal.enumeration.Mod131Key;
+import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -28,10 +30,18 @@ public class Mod131 implements IFiscalDeclaration {
 
 	private FiscalModel fiscalModel;
 	private Map<Mod131Key,FiscalModelDetail> map;
+	private boolean permanentAddressChanges;
 	
 	public Mod131() {
 		
 	}
+	public boolean isPermanentAddressChanges() {
+		return permanentAddressChanges;	
+	}
+	public void setPermanentAddressChanges(boolean permanentAddressChanges) {
+		this.permanentAddressChanges = permanentAddressChanges;
+	}
+	
 
 	public void initializeDetails() throws ManagerBeanException {
 		Administration admin = fiscalModel.getAdministration();
@@ -121,6 +131,10 @@ public class Mod131 implements IFiscalDeclaration {
 	public FiscalModel getHeader() {
 		return fiscalModel;
 	}
+	@Override
+	public void setHeader(FiscalModel fiscalModel) {
+		this.fiscalModel = fiscalModel;
+	}
 	public void setFiscalModel(FiscalModel fiscalModel) {
 		this.fiscalModel = fiscalModel;
 	}
@@ -201,5 +215,44 @@ public class Mod131 implements IFiscalDeclaration {
 		return Mod131Key.ACH1; 
 	}
 	
+	@Override
+	public Finance getFinance() {
+		return fiscalModel!=null?fiscalModel.getFinance():null;
+	}
 	
+	@Override
+	public double getResult() {
+		Mod131CalculatorFactory factory = new Mod131CalculatorFactory();
+		int year = getHeader().getYear();
+		Administration admin = getHeader().getAdministration(); 
+		IMod131Calculator calculator = factory.getCalculator( year , admin );
+		return calculator.getResult(this);
+	}
+	
+	@Override
+	public boolean isDeclarationNegativeAvailable() {
+		return (getHeader().getPeriod() == Period.T4);
+	}
+
+	@Override
+	public boolean isToDeductDeclarationAvailable() {
+		return (getHeader().getPeriod() == Period.T1
+				|| getHeader().getPeriod() == Period.T2
+				|| getHeader().getPeriod() == Period.T3);
+	}
+
+	@Override
+	public boolean isWithoutActivityDeclarationAvailable() {
+		return false;
+	}
+
+	@Override
+	public boolean isNegative() {
+		return (isDeclarationNegativeAvailable() && getResult() < 0);
+	}
+
+	@Override
+	public boolean isToDeduct() {
+		return (isToDeductDeclarationAvailable()  && getResult() < 0);
+	}
 }

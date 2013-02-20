@@ -7,5 +7,6 @@ public interface IMod123Calculator {
 	
 	boolean accept(int year, Administration administration);
 	void calculate(Mod123 mod123) throws AonException;
+	double getResult(Mod123 mod123);
 
 }

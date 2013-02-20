@@ -493,6 +493,9 @@ public class FiscalActivityController extends BasicController implements IFiscal
 		FiscalActivityInfo info = (FiscalActivityInfo) getIrpfModules().getRowData();
 		getCalculator().changeIrpfModule( info );
 	}
+	public void onChangeIrpfInfo(ActionEvent event) {
+		getCalculator().calculate();
+	}
 	public void onChangeDetailModule(ActionEvent event) {
 		FiscalActivityInfo info = (FiscalActivityInfo) getModulesDetailModel().getRowData();
 		getCalculator().changeDetailModule( info );

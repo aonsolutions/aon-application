@@ -20,13 +20,14 @@ import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.file.format.output.FileOutput;
-import com.code.aon.file.tax.model.MOD123.MOD123;
-import com.code.aon.file.tax.model.MOD123.MOD123Format;
-import com.code.aon.file.tax.model.MOD123.data.Declaration;
+import com.code.aon.file.tax.model.MOD131.MOD131;
+import com.code.aon.file.tax.model.MOD131.MOD131Format;
+import com.code.aon.file.tax.model.MOD131.data.Declaration;
 import com.code.aon.finance.Finance;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
-import com.code.aon.fiscal.enumeration.Mod123Key;
+import com.code.aon.fiscal.enumeration.Mod131Key;
+import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
@@ -38,7 +39,7 @@ import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class MOD123Writer implements IFinanceConstants{
+public class MOD131Writer implements IFinanceConstants{
 	
 	private Company company;
 	
@@ -53,7 +54,7 @@ public class MOD123Writer implements IFinanceConstants{
 		this.company = company;
 	}
 
-	public FileOutput createMOD123(List<FiscalModel> fiscalModels,MOD123Format format) throws ManagerBeanException {
+	public FileOutput createMOD131(List<FiscalModel> fiscalModels,MOD131Format format) throws ManagerBeanException {
 		List<Declaration> declarations = new LinkedList<Declaration>();
 		for (FiscalModel fiscalModel : fiscalModels) {
 			Declaration declaration = getDeclaration(fiscalModel);
@@ -61,9 +62,9 @@ public class MOD123Writer implements IFinanceConstants{
 		}
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(output);
-		MOD123 mod123 = new MOD123();
+		MOD131 mod131 = new MOD131();
 		FileOutput fileOutput = new FileOutput();
-		fileOutput.setErrors(mod123.create(declarations, format, writer));
+		fileOutput.setErrors(mod131.create(declarations, format, writer));
 		fileOutput.setContent(output.toByteArray());
 		return fileOutput;
 	}
@@ -119,10 +120,12 @@ public class MOD123Writer implements IFinanceConstants{
 			}
 		}
 		
+		declaration.setToDeduct("");
+		
 		FiscalParametersController fpc = (FiscalParametersController) AonUtil.getRegisteredBean( FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
 		declaration.setContactPerson( fpc.getContactPerson() );
 		declaration.setContactPhone(fpc.getContactPhone() );
-		
+
 		if (fiscalModel.getAdministration() == Administration.COMMON_TERRITORY) {
 			String administrationCode = fpc.getAdministrationCode();
 			declaration.setAdministrationCode(administrationCode);
@@ -136,14 +139,31 @@ public class MOD123Writer implements IFinanceConstants{
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to : list) {
 			FiscalModelDetail detail = (FiscalModelDetail) to;
-			declaration.getBoxes().put(detail.getType(), detail.getAmount());
+			if (Mod131Key.AC11.getValue().equals(detail.getType())) {
+				declaration.setEpi1(getEpigrafe(detail.getDescription()));
+			} else if (Mod131Key.AC21.getValue().equals(detail.getType())) {
+				declaration.setEpi2(getEpigrafe(detail.getDescription()));
+			} else if (Mod131Key.AC31.getValue().equals(detail.getType())) {
+				declaration.setEpi3(getEpigrafe(detail.getDescription()));
+			} else if (Mod131Key.AC41.getValue().equals(detail.getType())) {
+				declaration.setEpi4(getEpigrafe(detail.getDescription()));
+			} else if (Mod131Key.AC51.getValue().equals(detail.getType())) {
+				declaration.setEpi5(getEpigrafe(detail.getDescription()));
+			} else {
+				declaration.getBoxes().put(detail.getType(), detail.getAmount());
+			}
 		}
 		
-		double d = declaration.getBoxes().get(Mod123Key.C13.getValue()); 
+		double d = declaration.getBoxes().get(Mod131Key.C15.getValue()); 
 		declaration.setDeclarationType("I");
 		declaration.setPayment("0");
-		if (d <= 0) {
-			declaration.setDeclarationType("N");
+		if (d < 0) {
+			if (fiscalModel.getPeriod() == Period.T4) {
+				declaration.setDeclarationType("N");
+			} else {
+				declaration.setDeclarationType("B");
+				declaration.setToDeduct("X");
+			}
 		} else {
 			declaration.setCcc1("");
 			declaration.setCcc2("");
@@ -163,11 +183,23 @@ public class MOD123Writer implements IFinanceConstants{
 					}
 				}
 			}
+			declaration.setDeposit(d);			
 			if (StringUtils.isNotBlank(declaration.getCcc1())) {
 				declaration.setDeclarationType("U");
 			} 
 		}
 		return declaration;
+	}
+	private String getEpigrafe(String description) {
+		String epi = null;
+		if (StringUtils.isNotBlank(description)) {
+			epi = StringUtils.substringBefore(description, " - ");
+			epi = StringUtils.replace(epi, ".", "");
+		}
+		if (StringUtils.isBlank(epi)) {
+			epi = "0";
+		}
+		return epi;
 	}
 
 }

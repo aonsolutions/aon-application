@@ -9,6 +9,7 @@ public interface IFiscalModelManager {
 	boolean accept(FiscalModelType type);
 	
 	IFiscalDeclaration initializeFiscalModel( FiscalModel fiscalModel ) throws AonException;
+	IFiscalDeclaration refreshFiscalModel( IFiscalDeclaration declaration, FiscalModel fiscalModel );
 	IFiscalDeclaration initializeFiscalModelDetails(IFiscalDeclaration declaration) throws AonException;
 
 	IFiscalDeclaration loadFiscalModel(FiscalModel fiscalModel ) throws AonException;

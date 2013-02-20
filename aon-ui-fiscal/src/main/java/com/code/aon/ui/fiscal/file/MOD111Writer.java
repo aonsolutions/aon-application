@@ -18,10 +18,12 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.Administration;
+import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.file.tax.model.MOD111.MOD111;
 import com.code.aon.file.tax.model.MOD111.MOD111Format;
 import com.code.aon.file.tax.model.MOD111.data.Declaration;
+import com.code.aon.finance.Finance;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.Mod111Key;
@@ -73,9 +75,10 @@ public class MOD111Writer implements IFinanceConstants{
 		declaration.setPerson(getCompany().getRegistry().getType() == RegistryType.NATURAL);
 		declaration.setStartPeriod(0);
 		declaration.setEndPeriod(0);
+		Administration admon = fiscalModel.getAdministration();
 		int year = fiscalModel.getYear();
 		declaration.setYear(year); 
-		declaration.setPeriod(fiscalModel.getPeriod().getName()); 
+		declaration.setPeriod(fiscalModel.getPeriod().getName(admon)); 
 		Date date = new Date();
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
@@ -116,18 +119,33 @@ public class MOD111Writer implements IFinanceConstants{
 			}
 		}
 		
-		// TODO. Conseguir los datos del futuro vencimiento que tiene que ir vinculado a la declaración.
 		declaration.setPayInCash("X");
 		declaration.setPayInAccount(" ");
 		declaration.setCcc1("");
 		declaration.setCcc2("");
 		declaration.setCcc3("");
 		declaration.setCcc4("");
-		// -------------------------------
+		Finance finance = fiscalModel.getFinance();
+		if (finance != null) {
+			if (finance.getPayMethod() != null) {
+				if (finance.getPayMethod().getType() != PayMethodType.CASH_BASIS) {
+					declaration.setPayInCash(" ");
+					declaration.setPayInAccount("X");
+					declaration.setCcc1(finance.getBankAccount().getEntity());
+					declaration.setCcc2(finance.getBankAccount().getOffice());
+					declaration.setCcc3(finance.getBankAccount().getControl());
+					declaration.setCcc4(finance.getBankAccount().getAccount());
+				}
+			}
+		}
 		
+		FiscalParametersController fpc = (FiscalParametersController) AonUtil.getRegisteredBean( FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
+		declaration.setContactPerson( fpc.getContactPerson() );
+		declaration.setContactPhone(fpc.getContactPhone() );
+		declaration.setContactCellular( fpc.getContactCellular() );
+		declaration.setContactMail( fpc.getContactMail() );
 		
 		if (fiscalModel.getAdministration() == Administration.COMMON_TERRITORY) {
-			FiscalParametersController fpc = (FiscalParametersController) AonUtil.getRegisteredBean( FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
 			String administrationCode = fpc.getAdministrationCode();
 			declaration.setAdministrationCode(administrationCode);
 		}
@@ -154,7 +172,7 @@ public class MOD111Writer implements IFinanceConstants{
 			d = declaration.getBoxes().get(Mod111Key.CT_C30.getValue());
 		}
 		declaration.setDeclarationType("I");
-		if (d < 0) {
+		if (d <= 0) {
 			declaration.setDeclarationType("N");
 		} else {
 			if (StringUtils.isNotBlank(declaration.getCcc1())) {
