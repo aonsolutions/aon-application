@@ -12,6 +12,7 @@ import com.code.aon.commercial.OfferDetail;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
 import com.code.aon.finance.Invoice;
@@ -116,6 +117,20 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		return getPriceStrategy().getBasePrice((ICalculable)getTo());
 	}
 
+	public void fillTaxDataInDetail() throws ManagerBeanException {
+		Invoice invoice = (Invoice)getMasterController().getTo();
+		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
+		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getId() != null) {
+			Tax vat = invoiceDetail.getItem().getProduct().getVat();
+			Tax retention = invoiceDetail.getItem().getProduct().getRetention();
+			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
+			invoiceDetail.setVatPercent((vat!=null && vat.getId()!=null) ? getTaxPercent(vat, invoice.getIssueDate(), false) : 0);
+			invoiceDetail.setVatQuota(getVatQuota(invoiceDetail));
+			invoiceDetail.setRetentionPercent((retention!=null && retention.getId()!=null) ? getTaxPercent(retention, invoice.getIssueDate(), false) : 0);
+			invoiceDetail.setRetentionQuota(getRetentionQuota(invoiceDetail));
+		}
+	}
+
 	public double getVatPercent() throws ManagerBeanException {
 		Invoice invoice = (Invoice)getMasterController().getTo();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
@@ -163,6 +178,18 @@ public class InvoiceDetailController extends LinesController implements IFinance
 			}
 		}
 		return percent;
+	}
+
+	public double getVatQuota(InvoiceDetail invoiceDetail) {
+		return getQuota(invoiceDetail.getTaxableBase(), invoiceDetail.getVatPercent());
+	}
+
+	public double getRetentionQuota(InvoiceDetail invoiceDetail) {
+		return getQuota(invoiceDetail.getTaxableBase(), invoiceDetail.getRetentionPercent());
+	}
+
+	public double getQuota(double base, double percent) {
+		return CommonUtil.round(base * percent / 100);
 	}
 
 	public String getLineSourceInfo() throws ManagerBeanException {

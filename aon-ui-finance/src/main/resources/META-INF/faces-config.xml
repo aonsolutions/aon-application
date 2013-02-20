@@ -3592,7 +3592,7 @@
 	<managed-bean>
 		<managed-bean-name>posInvoiceDetailControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.event.InvoiceDetailControllerListener
+			com.code.aon.ui.finance.event.PosInvoiceDetailControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>

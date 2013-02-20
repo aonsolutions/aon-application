@@ -38,20 +38,11 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 
 	public void itemChanged(Item item) throws ManagerBeanException {
 		Invoice invoice = (Invoice)getMasterController().getTo();
-		Tax vat = item.getProduct().getVat();
-		Tax retention = item.getProduct().getRetention();
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		invoiceDetail.setItem(item);
 		invoiceDetail.setDescription(item.getProduct().getName() + (item.getDetail() !=null ? " " + item.getDetail() : ""));
 		invoiceDetail.setQuantity(1);
-		if (vat == null || invoiceDetail.getVatPercent() != vat.getPercentage()) {
-			invoiceDetail.setVatPercent(vat != null ? getTaxPercent(vat, invoice.getIssueDate(), false) : 0);
-			invoiceDetail.setVatQuota(getVatQuota(invoiceDetail));
-		}
-		if (retention == null || invoiceDetail.getRetentionPercent() != retention.getPercentage()) {
-			invoiceDetail.setRetentionPercent(retention != null ? getTaxPercent(retention, invoice.getIssueDate(), false) : 0);
-			invoiceDetail.setRetentionQuota(getRetentionQuota(invoiceDetail));
-		}
+		fillTaxDataInDetail();
 
 		if (invoice.getRegistry() == null || invoice.getRegistry().getId() == null) {
 			Creditor creditor = obtainExpenseLastCreditor(item);
@@ -159,18 +150,6 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 		invoiceDetail.setTaxableBase(taxableBase);
 		invoiceDetail.setVatQuota(vatQuota);
 		invoiceDetail.setRetentionQuota(retentionQuota);
-	}
-
-	public double getVatQuota(InvoiceDetail invoiceDetail) {
-		return getQuota(invoiceDetail.getTaxableBase(), invoiceDetail.getVatPercent());
-	}
-
-	public double getRetentionQuota(InvoiceDetail invoiceDetail) {
-		return getQuota(invoiceDetail.getTaxableBase(), invoiceDetail.getRetentionPercent());
-	}
-
-	private double getQuota(double base, double percent) {
-		return CommonUtil.round(base * percent / 100);
 	}
 
 	public double getInvoiceDetailTotal() throws ManagerBeanException {

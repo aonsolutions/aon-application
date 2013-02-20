@@ -135,6 +135,8 @@
 		<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
 			<ui:param name="lookupTo" value="#{invoiceController.to.seller}" />
 			<ui:param name="lookupDisabled" value="#{invoiceController.readOnly}" />
+			<ui:param name="skipGoToButton" value="#{posMode}" />
+			<ui:param name="skipNewButton" value="#{posMode}" />
 			<aon:methodParam name="lookupChangeListener"
 				value="#{invoiceController.onSellerChanged}" type="lookupChangeListener" />
 		</ui:include>

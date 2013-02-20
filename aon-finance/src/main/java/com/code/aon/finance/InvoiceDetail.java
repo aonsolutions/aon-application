@@ -140,6 +140,35 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 	}
 
 	@Transient
+	public void fillTaxDataInDetail() {
+		for (TaxBreakDown taxBreakDown : getTaxBreakDowns()) {
+			if (taxBreakDown.isVat()) {
+				setVatPercent(taxBreakDown.getTaxPercent());
+				setVatQuota(taxBreakDown.getTaxQuota());
+			} else if (taxBreakDown.isRetention()) {
+				setRetentionPercent(taxBreakDown.getTaxPercent());
+				setRetentionQuota(taxBreakDown.getTaxQuota());
+			}
+		}
+	}
+
+	@Transient
+	public double getSalesPrice() {
+		if (getVatQuota() == 0 && getRetentionQuota() == 0) {
+			fillTaxDataInDetail();
+		}
+		return CommonUtil.round(getPrice() * (1 + getVatPercent() / 100 - getRetentionPercent() / 100));
+	}
+
+	@Transient
+	public double getTotalSalesPrice() {
+		if (getVatQuota() == 0 && getRetentionQuota() == 0) {
+			fillTaxDataInDetail();
+		}
+		return CommonUtil.round(getTaxableBase() + getVatQuota() - getRetentionQuota());
+	}
+
+	@Transient
 	public ITransferObject getSourceTo() throws ManagerBeanException {
 		if (getSourceId() != null) {
 			if (InvoiceSource.DELIVERY == getSource()) {

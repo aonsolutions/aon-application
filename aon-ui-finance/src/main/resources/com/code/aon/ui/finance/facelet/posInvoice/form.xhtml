@@ -81,6 +81,7 @@
 						<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
 							<ui:param name="lookupTo" value="#{posInvoice.to.seller}" />
 							<ui:param name="lookupDisabled" value="#{posInvoice.readOnly}" />
+							<ui:param name="skipGoToButton" value="#{true}" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{posInvoice.onSellerChanged}" type="lookupChangeListener" />
 						</ui:include>
@@ -95,15 +96,9 @@
 					</aon:panelGrid>
 				</c:if>
 
-				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formDetail.xhtml">
+				<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formDetail.xhtml">
 					<ui:param name="invoiceController" value="#{posInvoice}" />
 					<ui:param name="detailController" value="#{posInvoiceDetail}" />
-					<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
-						<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
-					</c:if>
-					<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
-						<ui:param name="projectLabel" value="#{tasBundle.tas_projectTas}" />
-					</c:if>
 				</ui:include>
 
 				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formFinance.xhtml">

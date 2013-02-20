@@ -4,9 +4,7 @@ import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tariff;
-import com.code.aon.config.Tax;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -24,8 +22,6 @@ public class SaleInvoiceDetailController extends InvoiceDetailController {
 
 	public void itemChanged(Item item) throws ManagerBeanException {
 		Invoice invoice = (Invoice)getMasterController().getTo();
-		Tax vat = item.getProduct().getVat();
-		Tax retention = item.getProduct().getRetention();
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		invoiceDetail.setItem(item);
 		invoiceDetail.setDescription(item.getProduct().getName() + (item.getDetail() != null ? " " + item.getDetail() : ""));
@@ -44,47 +40,41 @@ public class SaleInvoiceDetailController extends InvoiceDetailController {
 		} else {
 			invoiceDetail.setPrice(getPriceStrategy().getUnitPrice(invoiceDetail));
 		}
-		if (vat == null || invoiceDetail.getVatPercent() != vat.getPercentage()) {
-			invoiceDetail.setVatPercent(vat != null ? getTaxPercent(vat, invoice.getIssueDate(), false) : 0);
-		}
-		if (retention == null || invoiceDetail.getRetentionPercent() != retention.getPercentage()) {
-			invoiceDetail.setRetentionPercent(retention != null ? getTaxPercent(retention, invoice.getIssueDate(), false) : 0);
-		}
 	}	
 
-	public void onQuantityChanged(ValueChangeEvent event) {
+	public void onQuantityChanged(ValueChangeEvent event) throws ManagerBeanException {
+		quantityChanged((event.getNewValue() != null && !event.getNewValue().toString().equals("")) ? (Double)event.getNewValue() : 0);
+	}
+
+	public void quantityChanged(double quantity) throws ManagerBeanException {
 		Invoice invoice = (Invoice)getMasterController().getTo();
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
+		invoiceDetail.setQuantity(quantity);
 		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getId() != null) {
-			if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
-				invoiceDetail.setQuantity((Double)event.getNewValue());
-				if (invoice.getRegistry() != null && invoice.getRegistry().getId() != null) {
-					Tariff tariff;
-					try {
-						Customer customer = (Customer)BeanManager.getManagerBean(Customer.class).get(invoice.getRegistry().getId());
-						tariff = customer.getTariff();
-					} catch (ManagerBeanException e) {
-						tariff = null;
-					}
-					invoiceDetail.setPrice(getPriceStrategy().getUnitPrice(invoiceDetail, invoice.getIssueDate(), tariff));
-				} else {
-					invoiceDetail.setPrice(getPriceStrategy().getUnitPrice(invoiceDetail));
+			if (invoice.getRegistry() != null && invoice.getRegistry().getId() != null) {
+				Tariff tariff;
+				try {
+					Customer customer = (Customer)BeanManager.getManagerBean(Customer.class).get(invoice.getRegistry().getId());
+					tariff = customer.getTariff();
+				} catch (ManagerBeanException e) {
+					tariff = null;
 				}
+				invoiceDetail.setPrice(getPriceStrategy().getUnitPrice(invoiceDetail, invoice.getIssueDate(), tariff));
 			} else {
-				invoiceDetail.setPrice(0);
+				invoiceDetail.setPrice(getPriceStrategy().getUnitPrice(invoiceDetail));
 			}
+		} else {
+			invoiceDetail.setPrice(0);
 		}
 	}
 
-	public double getSalesPrice() {
-		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
-		return CommonUtil.round(invoiceDetail.getPrice() * (1 + invoiceDetail.getVatPercent() / 100 - invoiceDetail.getRetentionPercent() / 100));
+	public void onDiscountChanged(ValueChangeEvent event) throws ManagerBeanException {
+		discountChanged((event.getNewValue() != null && !event.getNewValue().toString().equals("")) ? event.getNewValue().toString() : "0");
 	}
 
-	public double getTotalSalesPrice() {
-		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
-		double taxableBase = getPriceStrategy().getBasePrice(invoiceDetail);
-		return CommonUtil.round(taxableBase * (1 + invoiceDetail.getVatPercent() / 100 - invoiceDetail.getRetentionPercent() / 100));
+	public void discountChanged(String discount) throws ManagerBeanException {
+		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
+		invoiceDetail.getDiscountExpression().setDiscountExpr(discount);
 	}
 
 }

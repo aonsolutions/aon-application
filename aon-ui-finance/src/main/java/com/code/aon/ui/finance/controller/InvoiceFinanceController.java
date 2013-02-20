@@ -19,6 +19,7 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
@@ -64,13 +65,8 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 	}
 
 	public void resetPaidAmount() {
-		String invoiceDetailControllerName = ((InvoiceController)getMasterController()).getInvoiceDetailControllerName();
-		InvoiceDetailController detailController = (InvoiceDetailController)FormUtil.getController(invoiceDetailControllerName);
-		if (detailController instanceof SaleInvoiceDetailController) {
-			setPaidAmount(((SaleInvoiceDetailController)detailController).getTotalSalesPrice());
-		} else {
-			setPaidAmount(0);
-		}
+		InvoiceDetail invoiceDetail = (InvoiceDetail)FormUtil.getController(((InvoiceController)getMasterController()).getInvoiceDetailControllerName()).getTo();
+		setPaidAmount(invoiceDetail.getTotalSalesPrice());
 	}
 
 	public void onPaidAmountChanged(ValueChangeEvent event) {
@@ -85,11 +81,8 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 	public double getChangeAmount() {
 		InvoiceController invoiceController = (InvoiceController)getMasterController();
 		if (invoiceController.isNew()) {
-			String invoiceDetailControllerName = ((InvoiceController)getMasterController()).getInvoiceDetailControllerName();
-			InvoiceDetailController detailController = (InvoiceDetailController)FormUtil.getController(invoiceDetailControllerName);
-			if (detailController instanceof SaleInvoiceDetailController) {
-				return getPaidAmount() - ((SaleInvoiceDetailController)detailController).getTotalSalesPrice();
-			}
+			InvoiceDetail invoiceDetail = (InvoiceDetail)FormUtil.getController(invoiceController.getInvoiceDetailControllerName()).getTo();
+			return getPaidAmount() - invoiceDetail.getTotalSalesPrice();
 		}
 		return getPaidAmount() - invoiceController.getPendingAmount();
 	}
