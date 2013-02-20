@@ -3,6 +3,7 @@ package com.esferalia.aon.file.payroll.contract.pdf.model;
 import java.io.IOException;
 
 import com.code.aon.common.ManagerBeanException;
+import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.lowagie.text.pdf.PdfReader;
@@ -69,15 +70,15 @@ public class ModelPE170 extends AbstractContractModel {
 	
 	
 	public ModelPE170(){
-		super.modelName = MODEL_NAME;
+		super.documentName = MODEL_NAME;
 	}
 	
 	@Override
-	public void loadPdfFields(ContractCode code, Contract contract) throws UnsupportedContractModelException{
+	public void loadPdfFields(ContractCode code, Contract contract) throws UnsupportedContractDocumentException{
 		// TODO 
 		
 		try {
-			PdfReader reader = new PdfReader(getContractModelUrl(modelName+".pdf"));
+			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
 			
 			readPdfFields(reader);
 			
@@ -86,7 +87,7 @@ public class ModelPE170 extends AbstractContractModel {
 			} else if(code == ContractCode.C200){
 				getPdfFieldsMap().get(PE170_TC2_200).setValue("true");
 			} else {
-				throw new UnsupportedContractModelException("El modelo de contrato seleccionado es incorrecto");
+				throw new UnsupportedContractDocumentException("El modelo de contrato seleccionado es incorrecto");
 			}
 			
 			super.loadPdfCommonFields(contract);

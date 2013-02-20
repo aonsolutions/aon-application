@@ -18,8 +18,8 @@ import org.apache.commons.io.IOUtils;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.Classpath;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
-import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollCollectionsController;
 
 public class ContractModelController {
@@ -47,7 +47,7 @@ public class ContractModelController {
 		ContractModel cm = (ContractModel) item.getValue();
 		try {
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-			URL[] urls = Classpath.search(cl, IPayrollConstants.MODEL_PATH, cm + ".pdf");
+			URL[] urls = Classpath.search(cl, AbstractContractModel.CONTRACT_DOCUMENT_PATH, cm + ".pdf");
 			URL url = urls!= null && urls.length > 0?urls[0]:null;
 			return (url != null);
 		} catch (IOException e) {
@@ -64,7 +64,7 @@ public class ContractModelController {
 			SelectItem item = (SelectItem) getModel().getRowData();
 			ContractModel cm = (ContractModel) item.getValue();
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-			URL[] urls = Classpath.search(cl, IPayrollConstants.MODEL_PATH, cm + ".pdf");
+			URL[] urls = Classpath.search(cl, AbstractContractModel.CONTRACT_DOCUMENT_PATH, cm + ".pdf");
 			URL url = urls[0];
 			InputStream is = url.openStream();
 			buf = new BufferedInputStream(is);

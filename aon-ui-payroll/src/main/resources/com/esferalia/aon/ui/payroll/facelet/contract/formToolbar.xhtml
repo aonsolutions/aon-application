@@ -7,13 +7,25 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components" >
 
-	<c:if test="#{!contract.new}" >
-		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-			<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
-			<ui:param name="controller" value="#{contract}" />
-			<ui:param name="skipRemoveButton" value="#{contract.to.status!='PENDING'}" />
-			<ui:param name="showMoreMenu" value="#{!contract.new}" />
-			<ui:define name="moreMenuContent">
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+		<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
+		<ui:param name="controller" value="#{contract}" />
+		<ui:param name="skipRemoveButton" value="#{contract.to.status!='PENDING'}" />
+		<ui:param name="showMoreMenu" value="#{!contract.new}" />
+		<ui:define name="beforeSpinToolbarContent">
+<!--  
+			<aon:htmlCommandLink id="directDebit-report"
+				styleClass="aon-finding-toolbar-item aon-icon-pdf" 
+				value="Domiciliacion bancaria" 
+				rendered="#{contract.trainingContract}"
+				action="#{report.onExecute}" target="_blank" >
+				<f:param name="reportKey" value="trainingDirectDebit" />
+				<f:param name="outputFormat" value="PDF" />
+			</aon:htmlCommandLink>
+-->
+		</ui:define>
+		<ui:define name="moreMenuContent">
+			<c:if test="#{!contract.skipPayrollData}" >
 				<aon:menuItem 
 					value="#{payrollBundle.payroll_contractCalendarEvent}"
 					iconClass="aon-icon-daily-tracking"
@@ -55,36 +67,57 @@
 					<f:setPropertyActionListener
 						target="#{irpfData.backAction}" value="contract_form" />
 				</aon:menuItem>
-				<aon:menuItem id="contrata"
-					value="#{payrollBundle.payroll_contract_contrataData}"
-					action="contrata_form" 
-					rendered="#{!contract.new}"
-					actionListener="#{contract.onShowContrataData}"
-					iconClass="aon-icon-contrata" >
-					<f:setPropertyActionListener
-						target="#{contractContrata.backAction}" value="contract_form" />
-				</aon:menuItem>
-				
-				<rich:menuSeparator id="menuSeparator" />
-				
-				<aon:menuItem id="pdf-edition" 
-					action="contractPdfEdition_form"
-					rendered="#{not empty contract.to.model and not contract.existDocument}"
-					value="EDITAR PDF"
-					iconClass="aon-icon-pdf" >
-					<f:setPropertyActionListener
-						target="#{contractPdf.backAction}" value="contract_form" />
-					<aon:actionListener method="#{contract.onContractDocumentShow}" />
-				</aon:menuItem>
-			</ui:define>
-		</ui:decorate>
-	</c:if>
-	<c:if test="#{contract.new}" >
-		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-			<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
-			<ui:param name="controller" value="#{contract}" />
-			<ui:param name="skipRemoveButton" value="true" />
-		</ui:decorate>
-	</c:if>
-
+			</c:if>
+			<aon:menuItem id="contrata"
+				value="#{payrollBundle.payroll_contract_contrataData}"
+				action="contrata_form" 
+				rendered="#{!contract.new}"
+				actionListener="#{contract.onShowContrataData}"
+				iconClass="aon-icon-contrata" >
+				<f:setPropertyActionListener
+					target="#{contractContrata.backAction}" value="contract_form" />
+			</aon:menuItem>
+			
+			<rich:menuSeparator id="menuSeparator" />
+			
+			<aon:menuItem id="documentDraft-edition" 
+				action="contractPdfEdition_form"
+				rendered="#{not empty contract.to.model and not contract.existDocument}"
+				value="Contrato"
+				title="Edicion manual del documento del contrato"
+				iconClass="aon-icon-pdf" >
+				<f:setPropertyActionListener
+					target="#{contractPdf.documentType}" value="CONTRACT_DOCUMENT_DRAFT" />
+				<f:setPropertyActionListener
+					target="#{contractPdf.backAction}" value="contract_form" />
+				<aon:actionListener method="#{contract.onContractDocumentShow}" />
+			</aon:menuItem>
+			<aon:menuItem id="basicCopyDraft-edition"
+				action="contractPdfEdition_form" 
+				rendered="#{not empty contract.to.model and not contract.existDocument}"
+				value="Copia Basica"
+				title="Edicion manual del documento de la copia basica"
+				iconClass="aon-icon-pdf" >
+				<f:setPropertyActionListener
+					target="#{contractPdf.documentType}" value="BASIC_COPY_DRAFT" />
+				<f:setPropertyActionListener
+					target="#{contractPdf.backAction}" value="contract_form" />
+				<aon:actionListener method="#{contract.onContractDocumentShow}" />
+			</aon:menuItem>
+<!--  
+			<aon:menuItem id="directDebit-report" 
+				action="#{report.onExecute}" target="_blank"
+				rendered="#{not empty contract.to.model and not contract.existDocument}"
+				value="Domiciliacion bancaria"
+				title="Generar el documento de la domiciliacion bancaria del centro de formacion"
+				iconClass="aon-icon-pdf" >
+				<f:setPropertyActionListener
+					target="#{contractPdf.backAction}" value="contract_form" />
+				<f:param name="reportKey" value="trainingDirectDebit" />
+				<f:param name="outputFormat" value="PDF" />
+			</aon:menuItem>
+-->
+		</ui:define>
+	</ui:decorate>
+	
 </ui:composition>

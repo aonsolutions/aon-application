@@ -53,6 +53,14 @@ public class ContractControllerListener extends ControllerAdapter{
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
 		Contract contract = (Contract) controller.getTo();
+		PayrollUtils utils = new PayrollUtils();
+		controller.setEnterprise(utils.getCurrentDomainEnterprise());
+		controller.setWorkPlaces(null);
+		controller.setActivities(null);
+		controller.setEnterpriseCCCs(null);
+		controller.setParams(null);
+		contract.setStartDate(new Date());
+		contract.setSeniorityDate(contract.getStartDate());
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Person.class);
 			contract.setPerson((Person) bean.createNewTo());
@@ -65,21 +73,6 @@ public class ContractControllerListener extends ControllerAdapter{
 			LOGGER.error(msg);
 			throw new ControllerListenerException(msg,e);
 		}
-		PayrollUtils utils = new PayrollUtils();
-		controller.setEnterprise(utils.getCurrentDomainEnterprise());
-		controller.setWorkPlaces(null);
-		controller.setActivities(null);
-		controller.setEnterpriseCCCs(null);
-		controller.getParams().setContractOption(null);
-		controller.getParams().setContractType(null);
-		controller.getParams().setContractCode(null);
-		controller.getParams().setQuoteGroup(null);
-		controller.getParams().setIrpf(null);
-		controller.getParams().setContractDuration(null);
-		controller.getParams().setContractWorkingDay(null);
-		controller.getParams().setTc2Code(null);
-		contract.setStartDate(new Date());
-		contract.setSeniorityDate(contract.getStartDate());
 	}
 	
 	@Override
@@ -99,6 +92,7 @@ public class ContractControllerListener extends ControllerAdapter{
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		saveContractData();
 		ContractController controller = (ContractController) this.getController();
+		controller.getHandler().initializeVariables(null);
 		if(controller.isShowNewContractModal()){
 			controller.setShowNewContractModal(false);
 			EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_TREE_CONTROLLER);
@@ -210,6 +204,32 @@ public class ContractControllerListener extends ControllerAdapter{
 				data.setStartDate(contract.getStartDate());
 				data.setName( ContextVariable.TC2.getName() );
 				data.setExpression("\"" + controller.getParams().getContractModelCode().getCode().getValue() + "\"");
+				bean.insert(data);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el codigo TC2. (" +e.getMessage() + ")";
+			LOGGER.error(msg);
+		}
+		try {
+			if(controller.getParams().getSubsidized()!=null){
+				data = new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setName( "BONIFICADO" );
+				data.setExpression(controller.getParams().getSubsidized()?"true":"false");
+				bean.insert(data);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el codigo TC2. (" +e.getMessage() + ")";
+			LOGGER.error(msg);
+		}
+		try {
+			if(controller.getParams().getTrainingCenter()!=null && controller.getParams().getTrainingCenter().getId()!=null){
+				data = new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setName( "CENTRO_FORMATIVO" );
+				data.setExpression("\"" + controller.getParams().getTrainingCenter().getId() + "\"");
 				bean.insert(data);
 			}
 		} catch (ManagerBeanException e) {

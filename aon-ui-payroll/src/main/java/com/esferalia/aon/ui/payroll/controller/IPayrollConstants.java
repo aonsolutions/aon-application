@@ -97,7 +97,6 @@ public interface IPayrollConstants {
 	// ************************************************************
 	// CONFIGURATION
 	// ************************************************************
-	String MODEL_PATH = "com/esferalia/aon/file/payroll/contract/pdf/";
 	String SHOW_ENTERPRISE_IN_SEARCH = "showEnterpriseInSearch";
 	String SHOW_PERSON_COLUMN = "showPersonColumn";
 

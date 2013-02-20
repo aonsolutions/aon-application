@@ -1,4 +1,4 @@
-package com.esferalia.aon.file.payroll.contract.pdf.model;
+package com.esferalia.aon.file.payroll.contract.pdf;
 
 import org.apache.commons.lang.ObjectUtils;
 

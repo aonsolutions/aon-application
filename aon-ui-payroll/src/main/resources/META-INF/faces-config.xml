@@ -3338,6 +3338,68 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************ TRAINING CENTER LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>trainingCenterLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>trainingCenterLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.esferalia.aon.payroll.TrainingCenter</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>TrainingCenter_code</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>TrainingCenter_registry_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/trainingCenter/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/trainingCenter/search.xhtml</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ TRAINING COURSE LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>trainingCourseLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>trainingCourseLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.esferalia.aon.payroll.TrainingCourse</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>TrainingCourse_code</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>TrainingCourse_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/trainingCourse/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/trainingCourse/search.xhtml</value>
+		</managed-property>
+	</managed-bean>
+	
 	<!--
 		============================================= 
 		============== NAVIGATION ==================
@@ -3450,70 +3512,31 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	<!-- =================== Contract Payment ========================== -->
+
+	<!-- =================== Tree Contract Detail ========================== -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>contractPayment_list</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/payment/list.xhtml</to-view-id>
+			<from-outcome>contractData_formTree</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/data/formTree.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>contractPayment_formTree</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/payment/formTree.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<!--
-		=================== Contract Deduction ==========================
-	-->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>contractDeduction_list</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/deduction/list.xhtml</to-view-id>
-		</navigation-case>
 		<navigation-case>
 			<from-outcome>contractDeduction_formTree</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/deduction/formTree.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<!-- =================== Contract Data ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>contractData_list</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/data/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>contractData_formTree</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/data/formTree.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	<!-- =================== Contract Embargo ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>contractEmbargo_list</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/embargo/list.xhtml</to-view-id>
-		</navigation-case>
 		<navigation-case>
 			<from-outcome>contractEmbargo_formTree</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/embargo/formTree.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	<!-- =================== Contract Bonus ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>contractBonus_list</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/bonus/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>contractBonus_formTree</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/bonus/formTree.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	<!-- =================== Contract Documents ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>contractDocuments_grid</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/document/grid.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
+	
 	<!-- =================== Salary ========================== -->
 	<navigation-rule>
 		<navigation-case>

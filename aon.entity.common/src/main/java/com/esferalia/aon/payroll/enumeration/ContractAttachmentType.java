@@ -7,11 +7,13 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum ContractAttachmentType implements IResourceable {
 	
-	CONTRACT_DRAFT,
+	CONTRACT_DOCUMENT_DRAFT,
 	
-	PDF_DOCUMENT,
+	CONTRACT_DOCUMENT,
 	
-//	BASIC_COPY,
+	BASIC_COPY_DRAFT,
+	
+	BASIC_COPY,
 	
 	SPEE_CONTRATA
 	;

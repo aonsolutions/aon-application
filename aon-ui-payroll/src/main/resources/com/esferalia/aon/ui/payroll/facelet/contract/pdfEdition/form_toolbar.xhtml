@@ -14,75 +14,63 @@
 		
 		<ui:define name="toolbarContent">
 		
-				<!--  
-			<h:panelGrid columns="5" style="border: 0; padding:0;"  >
-		
-				<aon:div>
-				-->
-					<aon:commandButton id="contract-save"
-						value="#{bundle.aon_save}"
-						action="#{contractPdf.backAction}"
-						actionListener="#{contractPdf.onDocumentSave}"
-						onclick="if (!confirm('#{bundle.aon_save}?')) { return false;}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept" />	
-					<aon:commandButton id="prev" immediate="true"
-						value="#{contractPdf.new?bundle.aon_cancel:bundle.aon_back}"
-						action="#{contractPdf.backAction}"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel" />
-<!--  
+			<aon:commandButton id="contract-save"
+				value="#{bundle.aon_save}"
+				action="#{contractPdf.backAction}"
+				actionListener="#{contractPdf.onDocumentSave}"
+				onclick="if (!confirm('#{bundle.aon_save}?')) { return false;}"
+				styleClass="aon-finding-toolbar-item aon-icon-accept" />	
+			<aon:commandButton id="prev" immediate="true"
+				value="#{contractPdf.new?bundle.aon_cancel:bundle.aon_back}"
+				action="#{contractPdf.backAction}"
+				styleClass="aon-finding-toolbar-item aon-icon-cancel" />
 
+			<aon:div style="display:inline; width:100%;">
+			<aon:outputText styleClass="aon-margin-left" value="#{payrollBundle.payroll_contract_page}:" />
+			<aon:div styleClass="aon-spin-control" >
+				<aon:div styleClass="aon-spin-control-element"> 
+					<aon:commandButton id="contractDetail-prev"  
+						ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+						disabled="#{contractPdf.firstDocumentPage}"
+						reRender="#{toolbarReRender}"
+						styleClass="aon-dataScroller-button #{contractPdf.firstDocumentPage?'aon-dataScroller-button-previous-disabled':'aon-dataScroller-button-previous'}"
+						actionListener="#{contractPdf.onPreviousDocumentPage}" />
 				</aon:div>
--->
-	
-				<aon:div style="display:inline; width:100%;">
-				<aon:outputText styleClass="aon-margin-left" value="#{payrollBundle.payroll_contract_page}:" />
-				<aon:div styleClass="aon-spin-control" >
-					<aon:div styleClass="aon-spin-control-element"> 
-						<aon:commandButton id="contractDetail-prev"  
-							ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
-							disabled="#{contractPdf.firstContractPage}"
-							reRender="#{toolbarReRender}"
-							styleClass="aon-dataScroller-button #{contractPdf.firstContractPage?'aon-dataScroller-button-previous-disabled':'aon-dataScroller-button-previous'}"
-							actionListener="#{contractPdf.onPreviousContractPage}" />
-					</aon:div>
-					<aon:div styleClass="aon-spin-control-element aon-nowrap"> 
-						<aon:outputFormat value="#{bundle.aon_spin_result}">
-							<f:param value="#{contractPdf.contractPage}" />
-							<f:param value="#{contractPdf.numberOfContractPages}" />
-						</aon:outputFormat>	
-					</aon:div>
-					<aon:div styleClass="aon-spin-control-element"> 
-						<aon:commandButton id="contractDetail-next" 
-							ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
-							disabled="#{contractPdf.lastContractPage}"
-							reRender="#{toolbarReRender}"
-							styleClass="aon-dataScroller-button #{contractPdf.lastContractPage?'aon-dataScroller-button-next-disabled':'aon-dataScroller-button-next'}"
-							actionListener="#{contractPdf.onNextContractPage}" />				
-					</aon:div>
+				<aon:div styleClass="aon-spin-control-element aon-nowrap"> 
+					<aon:outputFormat value="#{bundle.aon_spin_result}">
+						<f:param value="#{contractPdf.documentPage}" />
+						<f:param value="#{contractPdf.numberOfDocumentPages}" />
+					</aon:outputFormat>	
 				</aon:div>
+				<aon:div styleClass="aon-spin-control-element"> 
+					<aon:commandButton id="contractDetail-next" 
+						ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+						disabled="#{contractPdf.lastDocumentPage}"
+						reRender="#{toolbarReRender}"
+						styleClass="aon-dataScroller-button #{contractPdf.lastDocumentPage?'aon-dataScroller-button-next-disabled':'aon-dataScroller-button-next'}"
+						actionListener="#{contractPdf.onNextDocumentPage}" />				
+				</aon:div>
+			</aon:div>
 
-				<aon:outputText styleClass="aon-margin-left" value="#{payrollBundle.payroll_size}:" />
-				<aon:div styleClass="aon-spin-control" 
-					style="display:inline-block; border:#000 1px solid;">
-					<rich:inputNumberSlider maxValue="4" step="1"
-						styleClass="aon-margin-left" width="150" style="height:12px;"
-						value="#{contractPdf.zoomFactor}"
-						showArrows="true" 
-						showToolTip="true"  
-						showBoundaryValues="false"
-			            showInput="false"  
-						enableManualInput="false" 
-			            barClass=""
-			            decreaseClass="aon-icon-zoom-decrease"
-			            increaseClass="aon-icon-zoom-increase" >
-			            <a4j:support event="onchange" reRender="#{toolbarReRender}"
-			            	actionListener="#{contractPdf.onChangeZoomFactor}" />
-			       </rich:inputNumberSlider>
-				</aon:div>
-				</aon:div>
-<!--
-			</h:panelGrid>
--->
+			<aon:outputText styleClass="aon-margin-left" value="#{payrollBundle.payroll_size}:" />
+			<aon:div styleClass="aon-spin-control" 
+				style="display:inline-block; border:#000 1px solid;">
+				<rich:inputNumberSlider maxValue="4" step="1"
+					styleClass="aon-margin-left" width="150" style="height:12px;"
+					value="#{contractPdf.zoomFactor}"
+					showArrows="true" 
+					showToolTip="true"  
+					showBoundaryValues="false"
+		            showInput="false"  
+					enableManualInput="false" 
+		            barClass=""
+		            decreaseClass="aon-icon-zoom-decrease"
+		            increaseClass="aon-icon-zoom-increase" >
+		            <a4j:support event="onchange" reRender="#{toolbarReRender}"
+		            	actionListener="#{contractPdf.onChangeZoomFactor}" />
+		       </rich:inputNumberSlider>
+			</aon:div>
+			</aon:div>
 			
 		</ui:define>
 	</ui:decorate>

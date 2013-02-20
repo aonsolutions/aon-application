@@ -8,24 +8,32 @@
 	xmlns:aon="http://www.code.es/aon-rich-components" >
 
 	<aon:panelGrid columns="2" styleClass="aon-panelGrid-even"
-		columnClasses="aon-panelGrid-even aon-bold aon-noborder, 
-				aon-panelGrid-even aon-noborder" >
+		columnClasses="aon-panelGrid-odd aon-bold, aon-panelGrid-even" >
 		
 		<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
-		<aon:outputText value="#{contract.to.workPlace.enterprise.registry.fullName}"/>
+		<aon:inputText disabled="#{true}" size="32" 
+			value="#{contract.to.workPlace.enterprise.registry.fullName}"/>
 		
-		<aon:outputText value="#{payrollBundle.payroll_employee_name}" />
-		<aon:outputText value="#{contract.to.person.fullName}" />
+		<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+			<ui:param name="lookupTo" value="#{contract.to.person}" />
+			<ui:param name="lookupDisabled" value="#{true}" />
+			<ui:param name="skipInputText" value="#{true}" />
+			<ui:param name="skipNewButton" value="#{true}" />
+			<ui:param name="lookupInputSuggestSize" value="40" />
+			<ui:param name="goToBackActionListener" value="contract.onPersonBack"/>
+		</ui:include>
 		
 		<aon:outputText value="#{bundle.aon_document}" />
-		<aon:outputText value="#{contract.to.person.registry.document}"/>
+		<aon:inputText disabled="#{true}" size="12"
+			value="#{contract.to.person.registry.document}"/>
 		
 		<aon:outputText value="#{registryBundle.registry_person_birthDate}" />
 		<aon:div>
-			<aon:outputText value="#{contract.to.person.birthDate}" >
-				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-					timeZone="#{timeZoneController.timeZoneId}" />
-			</aon:outputText>		
+			<aon:selectInputDate disabled="#{true}" 
+				value="#{contract.to.person.birthDate}" 
+				inputSize="10" 
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}" />
 			<aon:outputText value="&#160;(" rendered="#{contract.to.person.age!=null}"/>
 			<aon:outputText value="#{contract.to.person.age}" rendered="#{contract.to.person.age!=null}"/>
 			<aon:outputText value="&#160;#{bundle.aon_years}" rendered="#{contract.to.person.age!=null}"/>
@@ -33,13 +41,19 @@
 		</aon:div>
 		
 		<aon:outputText value="#{registryBundle.registry_nationality}" />
-		<aon:outputText value="#{contract.to.person.registry.nationality}" />
+		<aon:selectOneMenu disabled="#{true}"
+			value="#{contract.to.person.registry.nationality}" >
+			<f:selectItem value="#{null}" itemLabel="-"/>
+			<f:selectItems value="#{commonCollections.countries}" />
+		</aon:selectOneMenu>	
 		
 		<aon:outputText value="#{registryBundle.registry_person_nss}" />
-		<aon:outputText value="#{contract.to.person.socialSecurityNumber}"/>
+		<aon:inputText disabled="#{true}" size="13"
+			value="#{contract.to.person.socialSecurityNumber}"/>
 
 		<aon:outputText value="#{registryBundle.registry_address}" />
-		<aon:outputText value="#{contract.to.person.registry.defaultAddress.fullAddress}"/>
+		<aon:inputText disabled="#{true}" size="32"
+			value="#{contract.to.person.registry.defaultAddress.fullAddress}"/>
 		
 	</aon:panelGrid>
 

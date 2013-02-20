@@ -158,7 +158,7 @@
 										value="#{calendarBundle.aon_calendar_festivities_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="training-center"
+									<aon:commandLink id="trainingCenter"
 										action="trainingCenter_list"
 										value="#{payrollBundle.payroll_trainingCenter_module}" />
 								</aon:div>
@@ -179,9 +179,11 @@
 								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="contract"
-											action="contract_search"
+											action="#{contract.initialAction}"
 											actionListener="#{contract.onEditSearch}"
-											value="#{payrollBundle.payroll_contract_module}"/>
+											value="#{payrollBundle.payroll_contract_module}">
+											<f:setPropertyActionListener target="#{contract.skipPayrollData}" value="#{false}" />
+										</aon:commandLink>
 									</aon:div>
 								</c:if>
 								<aon:div styleClass="aon-direct-access-list-element">

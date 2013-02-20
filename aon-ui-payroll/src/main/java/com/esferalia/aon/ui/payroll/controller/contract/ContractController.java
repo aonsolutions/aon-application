@@ -5,9 +5,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -47,6 +47,9 @@ import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
+import com.esferalia.aon.payroll.TrainingCenter;
+import com.esferalia.aon.payroll.TrainingCourse;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractDuration;
@@ -61,6 +64,7 @@ import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.IVariablesHandler;
 import com.esferalia.aon.ui.payroll.controller.salary.SettleController;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class ContractController extends BasicController implements IVariablesHandler {
 
@@ -80,6 +84,7 @@ public class ContractController extends BasicController implements IVariablesHan
 
 	private boolean showNewContractModal;
 	private boolean showContrataWindow;
+	private boolean skipPayrollData;
 
 	public ContractParams getParams() {
 		if(params==null){
@@ -105,6 +110,12 @@ public class ContractController extends BasicController implements IVariablesHan
 	}
 	public void setShowContrataWindow(boolean showContrataWindow) {
 		this.showContrataWindow = showContrataWindow;
+	}
+	public boolean isSkipPayrollData() {
+		return skipPayrollData;
+	}
+	public void setSkipPayrollData(boolean skipPayrollData) {
+		this.skipPayrollData = skipPayrollData;
 	}
 	public boolean isShowNewContractModal() {
 		return showNewContractModal;
@@ -415,39 +426,39 @@ public class ContractController extends BasicController implements IVariablesHan
 		response.flushBuffer();
 		context.responseComplete();
 	}
-	public void onFileUploaded( ActionEvent event ) {
-		if(getAonFile().getSize()>MAX_FILE_SIZE){
-			setAonFile(null);
-			String msg = "El tamaño del archivo excede de lo permitido ("+MAX_FILE_SIZE_MB+" Mb)";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-		saveContractAttach(getAonFile().getData());
-	}
+//	public void onFileUploaded( ActionEvent event ) {
+//		if(getAonFile().getSize()>MAX_FILE_SIZE){
+//			setAonFile(null);
+//			String msg = "El tamaño del archivo excede de lo permitido ("+MAX_FILE_SIZE_MB+" Mb)";
+//			AonUtil.addErrorMessage(msg);
+//			throw new AbortProcessingException(msg);
+//		}
+//		saveContractAttach(getAonFile().getData());
+//	}
 	
-	private void saveContractAttach(byte[] data) {
-		try {
-			ContractAttachment attach = new ContractAttachment();
-			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
-			attach.setContract((Contract) this.getTo());
-			attach.setData(data);
-			attach.setAttachDate(new Date());
-			attach.setAttachmentType(ContractAttachmentType.PDF_DOCUMENT);
-			attach.setMimeType(MimeType.MIME_PDF);
-			attach.setDescription("documento_contrato");
-			bean.insertOrUpdate(attach);
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-			// NADA, no se guarda el documento
-		}
-	}
+//	private void saveContractAttach(byte[] data) {
+//		try {
+//			ContractAttachment attach = new ContractAttachment();
+//			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+//			attach.setContract((Contract) this.getTo());
+//			attach.setData(data);
+//			attach.setAttachDate(new Date());
+//			attach.setAttachmentType(ContractAttachmentType.PDF_DOCUMENT);
+//			attach.setMimeType(MimeType.MIME_PDF);
+//			attach.setDescription("documento_contrato");
+//			bean.insertOrUpdate(attach);
+//		} catch (ManagerBeanException e) {
+//			LOGGER.error(e.getMessage(), e);
+//			// NADA, no se guarda el documento
+//		}
+//	}
 	
 	public void searchContractAttachDocument(Contract contract) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.PDF_DOCUMENT);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.CONTRACT_DOCUMENT);
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				ContractAttachment attach = (ContractAttachment) list.get(0);
@@ -660,6 +671,19 @@ public class ContractController extends BasicController implements IVariablesHan
 			// NADA
 		}
 	}
+	
+	public void onChangeCno(LookupChangeEvent event){
+		Contract contract = (Contract) this.getTo();
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			contract.setCategoryDescription(((CNO)event.getNewValue()).getTitle());
+		}
+	}
+	
+	public boolean isTrainingContract(){
+		PayrollUtils utils = new PayrollUtils();
+		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
+		return map.get(ContextVariable.TC2.getName())!=null && ContractCode.getContractCodeByValue(map.get(ContextVariable.TC2.getName()))==ContractCode.C421;
+	}
 
 	
 //	 * ************************************
@@ -683,9 +707,6 @@ public class ContractController extends BasicController implements IVariablesHan
 	}
 	
 	
-	
-	
-	
 
 
 	public class ContractParams {
@@ -704,6 +725,9 @@ public class ContractController extends BasicController implements IVariablesHan
 		private boolean agreementSalaryCheck;
 		private boolean agreementSalary;
 		private Double grossSalary;
+		private Boolean subsidized;
+		private TrainingCenter trainingCenter;
+		private TrainingCourse trainingCourse;
 		
 		public boolean isAgreementSalaryCheck() {
 			return agreementSalaryCheck;
@@ -722,6 +746,24 @@ public class ContractController extends BasicController implements IVariablesHan
 		}
 		public void setGrossSalary(Double grossSalary) {
 			this.grossSalary = grossSalary;
+		}
+		public Boolean getSubsidized() {
+			return subsidized;
+		}
+		public void setSubsidized(Boolean subsidized) {
+			this.subsidized = subsidized;
+		}
+		public TrainingCenter getTrainingCenter() {
+			return trainingCenter;
+		}
+		public void setTrainingCenter(TrainingCenter trainingCenter) {
+			this.trainingCenter = trainingCenter;
+		}
+		public TrainingCourse getTrainingCourse() {
+			return trainingCourse;
+		}
+		public void setTrainingCourse(TrainingCourse trainingCourse) {
+			this.trainingCourse = trainingCourse;
 		}
 		public Double getIrpf() {
 			return irpf;
@@ -789,6 +831,10 @@ public class ContractController extends BasicController implements IVariablesHan
 		}
 		public void setCno(CNO cno) {
 			this.cno = cno;
+		}
+		
+		public boolean isTrainingContract(){
+			return getContractModelCode()!=null && getContractModelCode().getCode()==ContractCode.C421;
 		}
 		
 	}
