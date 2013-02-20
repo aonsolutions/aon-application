@@ -2,8 +2,6 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.List;
 
-import org.apache.tools.ant.taskdefs.Sleep;
-
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.google.gwt.user.client.rpc.AsyncCallback;
