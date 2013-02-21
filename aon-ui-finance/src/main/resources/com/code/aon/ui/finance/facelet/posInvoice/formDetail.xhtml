@@ -79,7 +79,7 @@
 								<ui:param name="skipGoToButton" value="#{true}" />
 								<ui:param name="skipNewButton" value="#{true}" />
 								<ui:param name="skipSuggestText" value="#{controller.to.item != null and controller.to.item.id != null}" />
-								<ui:param name="lookupInputOnFocus" value="#{toolbarID}-save" />
+								<ui:param name="lookupInputOnFocus" value="#{dataTableId}-save" />
 								<ui:param name="lookupRendered" value="#{formEdit}" />
 								<ui:param name="lookupReRender" 
 									value="invoiceDetailItemEdit,InvoiceDetail_quantity,InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount" />
@@ -105,7 +105,7 @@
 										<ui:param name="skipGoToButton" value="#{true}" />
 										<ui:param name="skipNewButton" value="#{true}" />
 										<ui:param name="skipSuggestText" value="#{controller.to.item != null and controller.to.item.id != null}" />
-										<ui:param name="lookupInputOnFocus" value="InvoiceDetail_description-New" />
+										<ui:param name="lookupInputOnFocus" value="#{dataTableId}-new-save" />
 										<ui:param name="lookupSuffix" value="-New" />
 										<ui:param name="lookupRendered" value="#{formNew}" />
 										<ui:param name="lookupReRender" 
