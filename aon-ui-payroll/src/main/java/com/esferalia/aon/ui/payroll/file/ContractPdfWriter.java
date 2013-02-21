@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.Collection;
 
 import com.code.aon.common.util.Classpath;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfFactory;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
@@ -20,7 +21,7 @@ import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 public class ContractPdfWriter {
 	
 	private static ContractPdfWriter instance;
-	private URL contractModelUrl;
+	private URL contractDocumentUrl;
 	private IContractPdfDocument pdfDocument;
 	
 	private ContractPdfWriter(){
@@ -33,17 +34,22 @@ public class ContractPdfWriter {
 		return instance;
 	}
 	
-	public URL getContractModelUrl() {
-		return contractModelUrl;
+	public URL getContractDocumentUrl() {
+		return contractDocumentUrl;
 	}
-	public void setContractModelUrl(URL contractModelUrl) {
-		this.contractModelUrl = contractModelUrl;
+	public void setContractDocumentUrl(URL contractDocumentUrl) {
+		this.contractDocumentUrl = contractDocumentUrl;
 	}
-	public URL getContractModelUrl(String file) throws IOException {
+	public URL getContractDocumentUrl(String file) throws IOException, UnsupportedContractDocumentException {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		URL[] urls = Classpath.search(cl, pdfDocument.getDocumentPath(), file);
-		contractModelUrl = urls[0];
-		return contractModelUrl;
+		if(urls.length == 0) {
+			String msg = "Nombre del fichero incorrecto. No se ha podido hallar la ruta especificada.";
+			AonUtil.addErrorMessage(msg);
+			throw new UnsupportedContractDocumentException(msg);
+		}
+		contractDocumentUrl = urls[0];
+		return contractDocumentUrl;
 	}
 	public Collection<ContractPdfField> getContractPdfFields() {
 		return pdfDocument.getPdfFields();

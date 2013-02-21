@@ -24,6 +24,7 @@ import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
+import com.esferalia.aon.payroll.TrainingCenter;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
@@ -68,6 +69,8 @@ public class ContractControllerListener extends ControllerAdapter{
 			controller.getParams().setCno((CNO) bean.createNewTo());
 			bean = BeanManager.getManagerBean(Agreement.class);
 			controller.setAgreement((Agreement) bean.createNewTo());
+			bean = BeanManager.getManagerBean(TrainingCenter.class);
+			controller.getParams().setTrainingCenter((TrainingCenter) bean.createNewTo());
 		} catch (ManagerBeanException e) {
 			String msg = "Error on afterBeanCreated";
 			LOGGER.error(msg);

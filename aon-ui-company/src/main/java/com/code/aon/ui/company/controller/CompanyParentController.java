@@ -521,6 +521,22 @@ public class CompanyParentController extends BasicController implements ICompany
 		return null;
 	}
 
+	/**
+	 * Gets the signature attach as input stream.
+	 * 
+	 * @return the signature attach as input stream
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 * @throws IOException the IO exception
+	 */
+	public InputStream getSignatureAttachAsInputStream() throws IOException, ManagerBeanException{
+		RegistryAttachment attach = obtainCompanySignature();
+		if(attach != null){
+			return new ByteArrayInputStream(attach.getData());
+		}
+		return null;
+	}
+
 	public RecordData getCompanyRecordData() throws ManagerBeanException{
 		IManagerBean recordDataBean = BeanManager.getManagerBean(RecordData.class);
 		Company company = (Company)getTo();

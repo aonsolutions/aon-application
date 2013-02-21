@@ -13,16 +13,15 @@
 		<ui:param name="skipRemoveButton" value="#{contract.to.status!='PENDING'}" />
 		<ui:param name="showMoreMenu" value="#{!contract.new}" />
 		<ui:define name="beforeSpinToolbarContent">
-<!--  
 			<aon:htmlCommandLink id="directDebit-report"
 				styleClass="aon-finding-toolbar-item aon-icon-pdf" 
 				value="Domiciliacion bancaria" 
+				actionListener="#{contract.onPrintDirectDebit}"
 				rendered="#{contract.trainingContract}"
 				action="#{report.onExecute}" target="_blank" >
 				<f:param name="reportKey" value="trainingDirectDebit" />
 				<f:param name="outputFormat" value="PDF" />
 			</aon:htmlCommandLink>
--->
 		</ui:define>
 		<ui:define name="moreMenuContent">
 			<c:if test="#{!contract.skipPayrollData}" >

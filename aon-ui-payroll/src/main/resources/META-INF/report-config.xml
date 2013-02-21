@@ -161,4 +161,20 @@
 		</params>
 	</report>
 
+	<!--  IMPRESION DE LA DOMICILIACION BANCARIA DEL CENTRO DE FORMACION -->
+	<report id="trainingDirectDebit" description="Training center direct debit report">
+		<template path="/com/esferalia/aon/ui/payroll/report/trainingDirectDebit.jasper" />
+		<collection provider="#{contract}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.payroll.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="signatureImageFile" value="#{company.getSignatureAttachAsInputStream}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="centerLogoImageFile" value="#{trainingCenter.getLogoAsInputStream}" />
+			<param id="parentDomainName" value="#{parentDomain.getName}" />
+			<param id="parentDomainPhone" value="#{parentDomain.getPhone}" />
+		</params>
+	</report>
+
 </report-config>

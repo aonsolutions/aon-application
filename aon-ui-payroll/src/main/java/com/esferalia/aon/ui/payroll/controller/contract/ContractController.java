@@ -30,6 +30,7 @@ import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
@@ -63,6 +64,7 @@ import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.IVariablesHandler;
+import com.esferalia.aon.ui.payroll.controller.TrainingCenterController;
 import com.esferalia.aon.ui.payroll.controller.salary.SettleController;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
@@ -683,6 +685,16 @@ public class ContractController extends BasicController implements IVariablesHan
 		PayrollUtils utils = new PayrollUtils();
 		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
 		return map.get(ContextVariable.TC2.getName())!=null && ContractCode.getContractCodeByValue(map.get(ContextVariable.TC2.getName()))==ContractCode.C421;
+	}
+	
+	public void onPrintDirectDebit(ActionEvent event) throws ManagerBeanException, ExpressionException{
+		PayrollUtils utils = new PayrollUtils();
+		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
+		if(map.get("CENTRO_FORMATIVO")!=null){
+			String id = map.get("CENTRO_FORMATIVO");
+			TrainingCenterController tcController = (TrainingCenterController) AonUtil.getRegisteredBean("trainingCenter");
+			tcController.select(event, Integer.parseInt(id));
+		}
 	}
 
 	

@@ -1,8 +1,10 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
@@ -218,6 +220,38 @@ public class TrainingCenterController extends RegistryController {
 		Iterator<ITransferObject> iter = registryAttachBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			return (RegistryAttachment)iter.next();
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the logo as input stream.
+	 * 
+	 * @return the logo as input stream
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 * @throws IOException the IO exception
+	 */
+	public InputStream getLogoAsInputStream() throws IOException, ManagerBeanException{
+		RegistryAttachment attach = obtainTrainingCenterLogo();
+		if(attach != null){
+			return new ByteArrayInputStream(attach.getData());
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the signature as input stream.
+	 * 
+	 * @return the signature as input stream
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 * @throws IOException the IO exception
+	 */
+	public InputStream getSignatureAsInputStream() throws IOException, ManagerBeanException{
+		RegistryAttachment attach = obtainTrainingCenterSignature();
+		if(attach != null){
+			return new ByteArrayInputStream(attach.getData());
 		}
 		return null;
 	}

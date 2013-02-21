@@ -269,23 +269,28 @@ public class ContractPdfController {
 		}
 	}
 	
-	private void createPdfThumbnail() throws IOException{
-		final String SCHEMA = getContractModel()+".pdf"; 
-		URL url = getContractPdfWriter().getContractModelUrl(SCHEMA);
+	private void createPdfThumbnail() throws IOException, UnsupportedContractDocumentException{
+		String fileName = "";
+		if(getDocumentType()==ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT){
+			fileName = getContractModel()+".pdf"; 
+		} else if(getDocumentType()==ContractAttachmentType.BASIC_COPY_DRAFT){
+			fileName = BasicCopy.BASIC_COPY_NAME+".pdf"; 
+		}
+		URL url = getContractPdfWriter().getContractDocumentUrl(fileName);
 		PdfToImage.createPdfWallpaper(url, getDocumentPage(), getDocumentWidth().intValue(), getDocumentHeight().intValue());
 	}
 	
-	public void onChangeZoomFactor( ActionEvent event ) throws IOException {
+	public void onChangeZoomFactor( ActionEvent event ) throws IOException, UnsupportedContractDocumentException {
 		createPdfThumbnail();
 		for(ContractPdfField field: getContractPdfWriter().getContractPdfFields()){
 			field.setZoomFactor(getZoomFactor());
 		}
 	}
-	public void onNextDocumentPage( ActionEvent event ) throws IOException {
+	public void onNextDocumentPage( ActionEvent event ) throws IOException, UnsupportedContractDocumentException {
 		setDocumentPage(getDocumentPage()+1);
 		createPdfThumbnail();
 	}
-	public void onPreviousDocumentPage( ActionEvent event ) throws IOException {
+	public void onPreviousDocumentPage( ActionEvent event ) throws IOException, UnsupportedContractDocumentException {
 		setDocumentPage(getDocumentPage()-1);
 		createPdfThumbnail();
 	}
