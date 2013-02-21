@@ -64,12 +64,12 @@
 
 				<aon:outputLabel for="controller_year" value="#{bundle.aon_year}" />
 				<aon:inputText id="controller_year" size="5" value="#{controller.declaration.header.year}"
-					required="true" disabled="#{controller.declaration.header.readOnly}"/>
+					required="true" disabled="#{!controller.new}"/>
 
 				<aon:outputLabel for="controller_period"
 					value="#{fiscalBundle.fiscal_period}" />
 				<aon:selectOneMenu id="controller_period" value="#{controller.declaration.header.period}"
-					required="true" disabled="#{controller.declaration.header.readOnly}">
+					required="true" disabled="#{!controller.new}">
 					<c:if test="#{quarterPeriods}">
 						<f:selectItems value="#{fiscalCollections.quarterPeriods}" />
 					</c:if>
@@ -81,7 +81,7 @@
 				<aon:outputLabel for="controller_administration"
 					value="#{fiscalBundle.fiscal_administration}" />
 				<aon:selectOneMenu id="controller_administration" value="#{controller.declaration.header.administration}"
-					required="true" disabled="#{controller.declaration.header.readOnly}">
+					required="true" disabled="#{!controller.new}">
 					<f:selectItems value="#{configCollections.administrations}" />
 				</aon:selectOneMenu>
 
