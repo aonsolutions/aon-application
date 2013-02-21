@@ -55,6 +55,13 @@
 						<f:selectItems value="#{fiscalCollections.mod340Formats}" />
 					</aon:selectOneMenu>
 
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="mod340_taxDateEnabled"  
+							value="#{mod340.params.taxDateEnabled}"/>
+						<aon:outputLabel for="mod340_taxDateEnabled" value="#{fiscalBundle.fiscal_mod347_generate_from_tax_date}" />
+					</aon:div>
+
 					<aon:outputText value="" />
 					<aon:outputText value="" />
 					
