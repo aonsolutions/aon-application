@@ -186,7 +186,7 @@ public class Mod347Manager {
 		if (!params.isExcludeOutputNationalZero() ) {
 			buf.append(" OR (i.transaction = 0 AND it.percentage = 0)");
 		}
-		buf.append(")) OR (i.type != 1 AND (i.transaction = 0 AND it.percentage != 0)");
+		buf.append(")) OR (i.type != 1 AND ( (i.transaction = 0 AND it.percentage != 0)");
 		if (!params.isExcludeImports() ) {
 			buf.append("OR ((i.transaction = 2 OR i.transaction = 3) AND i.service = 0)");
 		}
@@ -202,7 +202,7 @@ public class Mod347Manager {
         if (!params.isExcludeInputNationalZero() ) {
         	buf.append("OR (i.transaction = 0 AND it.percentage = 0)");
         }
-        buf.append("))");
+        buf.append(")))");
         
 		buf.append(" GROUP BY  key347");
 		if (!params.isGroupedByNIF() ) {
