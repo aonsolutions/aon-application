@@ -626,7 +626,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, domainId);
-			stmt.setInt(2, parentDomainId);
+			stmt.setInt(2, parentDomainId != null ? parentDomainId : 0);
 			rs = stmt.executeQuery();
 
 			List<Payment> paymentConcepts = new LinkedList<Payment>();

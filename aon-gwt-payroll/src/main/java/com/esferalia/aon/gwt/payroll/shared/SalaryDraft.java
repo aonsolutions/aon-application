@@ -7,9 +7,12 @@ import java.util.List;
 
 public class SalaryDraft extends SalaryPreview {
 
+	
 	public static enum Scope {
 		SYSTEM, APPLICATION, AGREEMENT, CONTRACT, SALARY
 	}
+	
+	
 	
 	public static class Event implements Serializable {
 		public static enum Type {
@@ -95,42 +98,6 @@ public class SalaryDraft extends SalaryPreview {
 
 	}
 
-	public static class UndefinedVariable extends Variable {
-		@Override
-		public Object getValue() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-		
-	}
-
-	public static class UndefinedPaymentVariable extends UndefinedVariable implements HasPayment {
-		private Payment payment;
-		
-		@Override
-		public Payment getPayment() {
-			return payment;
-		}
-		
-		public void setPayment(Payment payment) {
-			this.payment = payment;
-		}
-	}
-
-	public static class UndefinedDeductionVariable extends UndefinedVariable implements HasDeduction{
-
-		private Deduction deduction;
-		
-		@Override
-		public Deduction getDeduction() {
-			return deduction;
-		}
-		
-		public void setDeduction(Deduction deduction) {
-			this.deduction = deduction;
-		}
-	}
-
 	private String enterpriseName;
 	private String enterpriseAddress;
 	private String enterpriseDocument;
@@ -178,21 +145,40 @@ public class SalaryDraft extends SalaryPreview {
 		payments.add(payment);
 	}
 
-	public void addDraftPayment(Payment payment) {
+	
+	public Payment addDraftPayment(Payment payment) {
+		Payment oldPaymnet = null;
+		
 		int i = draftPayments.indexOf(payment);
 		if (i != -1) {
-			draftPayments.remove(i);
+			oldPaymnet = draftPayments.remove(i);
 		}
+		
 		draftPayments.add(payment);
+		return oldPaymnet;
 	}
-
+	
+	public void removeDraftPayment(Payment payment) {
+		draftPayments.remove(payment);
+	}
+	
 	public void addDeduction(Deduction deduction) {
 		deductions.add(deduction);
 	}
 	
-	public void addDraftDeduction(Deduction deduction) {
-		draftDeductions.remove(deduction);
+	
+	public Deduction addDraftDeduction(Deduction deduction) {
+		Deduction oldDeduction = null;
+		int i = draftDeductions.indexOf(deduction);
+		if ( i != -1 ) {
+			oldDeduction = draftDeductions.remove(i);
+		}
 		draftDeductions.add(deduction);
+		return oldDeduction;
+	}
+
+	public void removeDraftDeduction(Deduction deduction) {
+		draftDeductions.remove(deduction);
 	}
 
 	public void addVariable(String name, Object value, Date startDate,
@@ -238,23 +224,24 @@ public class SalaryDraft extends SalaryPreview {
 		if (!context.contains(var))
 			context.add(var);
 	}
+	
 
-	public void addContextVariable(String name, Object value, Date startDate,
-			Date endDate) {
-		Variable var = new StringVariable();
-		var.name = name;
-		var.startDate = startDate;
-		var.endDate = endDate;
-		var.implicit = false;
-		var.scope = Scope.SALARY; // DRAFT
-		var.expression = value.toString();
-		((StringVariable) var).value = value.toString();
+	public Variable addDraftVariable(Variable var) {
+		Variable oldVariable = null;
+
 		int i = draftContext.indexOf(var);
 		if (i != -1) {
-			draftContext.remove(i);
+			oldVariable = draftContext.remove(i);
 		}
+		
 		draftContext.add(var);
+		return oldVariable;
 	}
+	
+	public void removeDraftVariable(Variable variable) {
+			draftContext.remove(variable);
+	}
+	
 
 	public void addPaymentError(PaymentEvent paymentEvent) {
 

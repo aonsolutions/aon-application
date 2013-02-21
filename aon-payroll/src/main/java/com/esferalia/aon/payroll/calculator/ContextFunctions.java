@@ -20,11 +20,16 @@ import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.InvalidVariables;
+import com.esferalia.aon.salary.expression.RemoveException;
 
 public class ContextFunctions {
 
 	private static final String MONTHS_IMPL = "MESESIMPL";
 
+
+	public static void remove() throws RemoveException{
+		throw new RemoveException();		
+	}
 
 	public static void isDef(String name, String msg, ExpressionContext context) throws CheckException{
 		if ( !context.isDef(name) ) {
@@ -68,6 +73,24 @@ public class ContextFunctions {
 	}
 	
 	
+	private static void loadRemoveFunction(ExpressionContext context, Date startDate, Date endDate) throws ExpressionException {
+		try {
+			Method remove =  ContextFunctions.class.getMethod(
+					"remove");
+			
+			MethodStub removeStub = new MethodStub(remove);
+			
+			context.addVariable( ContextVariable.REMOVE, removeStub, startDate, endDate);
+			
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
+	}
 	
 	private static void loadMonthsFunction(ExpressionContext context, Date startDate, Date endDate) throws ExpressionException {
 		try {
@@ -180,6 +203,7 @@ public class ContextFunctions {
 		loadWarnFunction(context, startDate, endDate);
 		loadMonthsFunction(context, startDate, endDate);
 		loadIsDefFunction(context, startDate, endDate);
+		loadRemoveFunction(context, startDate, endDate);
 	}
 	
 	

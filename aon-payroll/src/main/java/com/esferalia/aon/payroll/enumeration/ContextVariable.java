@@ -142,13 +142,17 @@ public enum ContextVariable implements IResourceable{
 	
 	;
 	
+	public static final String REMOVE = "REMOVE";
 	public static final String CONTEXT = "CONTEXT";
 
+	// Old 
 	public static final String CHECK = "CHECK";
 	public static final String MONTHS = "MESES";
 	public static final String WARNING = "AVISO";
 	public static final String ISDEF = "DEFINIDA";
 	public static final String CHECK_VAR = "CHECK_VAR";
+	
+	
 	
 	private final String name;
 	private VariableType type;

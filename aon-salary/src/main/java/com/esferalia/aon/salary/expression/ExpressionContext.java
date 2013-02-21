@@ -25,7 +25,6 @@ import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 public class ExpressionContext {
 
 	public static final String REMOVE_VARIABLE = "REMOVE_VARIABLE()";
-
 	private static final String REMOVE_VARIABLE_STUB = "REMOVE_VARIABLE";
 
 	private static final Pattern VARIABLE_PATTERN = Pattern

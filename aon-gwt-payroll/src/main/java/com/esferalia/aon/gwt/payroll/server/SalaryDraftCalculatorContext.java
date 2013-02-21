@@ -92,7 +92,7 @@ public class SalaryDraftCalculatorContext extends
 			ExpressionImpl expr = new ExpressionImpl();
 			expr.setName(variable.getName());
 			expr.setScope(ExpressionScope.SALARY);
-			expr.setExpression((String) variable.getValue());
+			expr.setExpression(variable.getExpression());
 			exprCtx.addExpression(expr, variable.getStartDate(),
 					variable.getEndDate());
 		}

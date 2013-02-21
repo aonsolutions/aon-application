@@ -40,6 +40,7 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.expression.Variables.NotFoundVariableError;
 
@@ -221,7 +222,10 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 					}
 					quoteCalculator.quote(contractPayment, paymentStart, paymentEnd, total);
 
-				}catch ( InvalidVariables e ) {
+				} catch ( RemoveException e) {
+					//TODO: Something ??? It's really necessary...
+				}
+				catch ( InvalidVariables e ) {
 					onInvalidData(contractPayment, e.getMessage(), e.getVariables() );
 				}catch ( CheckException e ) {
 					onCheckError(contractPayment, e.getMessage());
@@ -350,6 +354,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 						if ( type.isSsDeduction() ) {
 							ssContributions += deduction;
 						}
+					}catch ( RemoveException e) {
+						//TODO: Something ??? It's really necessary...
 					}catch ( InvalidVariables e ) {
 						onInvalidData(contractDeduction, e.getMessage(), e.getVariables());
 					}catch ( CheckException e ) {
@@ -660,6 +666,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 			}
 		}
 	}
+
 
 	private void onCheckError( IContractPayment payment, String message){
 		if ( listener!= null ) {
