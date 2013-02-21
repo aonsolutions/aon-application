@@ -170,25 +170,25 @@ public class Mod347Manager {
 		buf.append(" AND it.tax_type=1 ");
 		
 		// GRUPO DE VENTAS
-		buf.append(" AND ( (i.type = 1 AND ( (i.transaction = 0 AND it.percentage != 0)");
+		buf.append(" AND ( (i.type = 1 AND ( (i.transaction IN (0,4) AND it.percentage != 0)");
 		if (!params.isExcludeExports() ) {
-			buf.append(" OR ((i.transaction = 2 OR i.transaction = 3) AND i.service = 0)");
+			buf.append(" OR (i.transaction IN (2,3) AND i.service = 0)");
 		}
 		if (!params.isExcludeIntracommunitaryDeliveries() ) {
 			buf.append(" OR (i.transaction = 1 AND i.service = 0)");
 		}
 		if (!params.isExcludeOutputExtracommunitaryServices() ) {
-			buf.append(" OR ((i.transaction = 2 OR i.transaction = 3) AND i.service = 1)");
+			buf.append(" OR (i.transaction IN (2,3) AND i.service = 1)");
 		}
 		if (!params.isExcludeOutputIntracommunitaryServices() ) {
 			buf.append(" OR (i.transaction = 1 AND i.service = 1)");
 		}
 		if (!params.isExcludeOutputNationalZero() ) {
-			buf.append(" OR (i.transaction = 0 AND it.percentage = 0)");
+			buf.append(" OR (i.transaction IN (0,4) AND it.percentage = 0)");
 		}
-		buf.append(")) OR (i.type != 1 AND ( (i.transaction = 0 AND it.percentage != 0)");
+		buf.append(")) OR (i.type != 1 AND ( (i.transaction IN (0,4) AND it.percentage != 0)");
 		if (!params.isExcludeImports() ) {
-			buf.append("OR ((i.transaction = 2 OR i.transaction = 3) AND i.service = 0)");
+			buf.append("OR (i.transaction IN (2,3) AND i.service = 0)");
 		}
         if (!params.isExcludeIntracommunitaryAdquisitions() ) {
         	buf.append("OR (i.transaction = 1 AND i.service = 0)");
@@ -200,7 +200,7 @@ public class Mod347Manager {
         	buf.append("OR (i.transaction = 1 AND i.service = 1)");
 		}
         if (!params.isExcludeInputNationalZero() ) {
-        	buf.append("OR (i.transaction = 0 AND it.percentage = 0)");
+        	buf.append("OR (i.transaction IN (0,4) AND it.percentage = 0)");
         }
         buf.append(")))");
         
