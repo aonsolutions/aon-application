@@ -82,6 +82,7 @@
 							<ui:param name="lookupTo" value="#{posInvoice.to.seller}" />
 							<ui:param name="lookupDisabled" value="#{posInvoice.readOnly}" />
 							<ui:param name="skipGoToButton" value="#{true}" />
+							<ui:param name="skipNewButton" value="#{true}" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{posInvoice.onSellerChanged}" type="lookupChangeListener" />
 						</ui:include>

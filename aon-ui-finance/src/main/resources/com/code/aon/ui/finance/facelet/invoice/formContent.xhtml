@@ -151,6 +151,8 @@
 			<ui:param name="lookupInputNameDisabled" value="#{invoiceController.readOnly or !financeController.allPending}" />
 			<ui:param name="lookupReRender" value="#{formName}" />
 			<ui:param name="idRequired" value="#{true}" />						
+			<ui:param name="skipGoToButton" value="#{posMode}" />
+			<ui:param name="skipNewButton" value="#{posMode}" />
 			<ui:param name="skipSuggestText" 
 				value="#{invoiceController.to.registry != null and invoiceController.to.registry.id != null}" />
 			<aon:methodParam name="lookupChangeListener"
