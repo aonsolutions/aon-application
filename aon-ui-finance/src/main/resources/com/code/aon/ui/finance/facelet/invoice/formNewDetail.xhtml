@@ -6,6 +6,9 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
+	<aon:valueParam name="itemLookupTemplate"
+		default="/com/code/aon/ui/product/facelet/item/lookupDetail.xhtml"/>
+
 	<c:if test="#{invoiceController.to.sales or invoiceController.to.purchase}">
 		<aon:outputLabel for="Item_id" value="#{productBundle.product_item}" />
 	</c:if>
@@ -14,7 +17,7 @@
 	</c:if>
 	<aon:div>
 		<c:if test="#{invoiceController.to.sales or invoiceController.to.purchase}">
-			<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+			<ui:include src="#{itemLookupTemplate}">
 				<ui:param name="lookupTo" value="#{detailController.to.item}" />
 				<ui:param name="idRequired" value="#{true}" />
 				<ui:param name="skipLabel" value="#{true}" />

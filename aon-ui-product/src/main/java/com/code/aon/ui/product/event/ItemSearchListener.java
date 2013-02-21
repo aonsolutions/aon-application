@@ -5,6 +5,7 @@ import org.apache.commons.lang.ArrayUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.product.Product;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -17,6 +18,7 @@ public class ItemSearchListener extends RegistrySearchListener {
 	private ProductStatus[] itemStatuses;
 	private Supplier supplier;
 	private Supplier supplierParam;
+	private Product product;
 	
 	public ProductStatus[] getItemStatuses() {
 		return itemStatuses;
@@ -42,6 +44,14 @@ public class ItemSearchListener extends RegistrySearchListener {
 		this.supplierParam = supplierParam;
 	}
 
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		ProductStatus[] defaultItemStatus = {ProductStatus.ACTIVE};
@@ -53,6 +63,7 @@ public class ItemSearchListener extends RegistrySearchListener {
 			setSupplier((Supplier)supplierBean.createNewTo());
 		}
 		setSupplierParam((Supplier)supplierBean.createNewTo());
+		setProduct( (Product) BeanManager.getManagerBean(Product.class).createNewTo() );
 		super.init();
 	}
 	
@@ -64,6 +75,9 @@ public class ItemSearchListener extends RegistrySearchListener {
 		}
 		if (getSupplier() != null && getSupplier().getId() != null) {
 			criteria.addEqualExpression(getController().resolveAlias("Item_suppliers_supplier_id"), getSupplier().getId());
+		}
+		if (getProduct() != null && getProduct().getId() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getProduct().getId());
 		}
 		super.completeCriteria(criteria);
 	}

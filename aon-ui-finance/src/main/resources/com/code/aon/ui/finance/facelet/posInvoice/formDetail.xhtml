@@ -72,7 +72,7 @@
 								rendered="#{formList}">
 								<aon:abbreviateConverter maxWidth="64" />
 							</aon:outputText>
-							<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+							<ui:include src="#{itemLookupTemplate}">
 								<ui:param name="lookupTo" value="#{controller.to.item}" />
 								<ui:param name="idRequired" value="#{true}" />
 								<ui:param name="skipLabel" value="#{true}" />
@@ -98,7 +98,7 @@
 							</aon:panelGroup>
 							<f:facet name="footer">
 								<aon:div>
-									<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+									<ui:include src="#{itemLookupTemplate}">
 										<ui:param name="lookupTo" value="#{controller.to.item}" />
 										<ui:param name="idRequired" value="#{true}" />
 										<ui:param name="skipLabel" value="#{true}" />

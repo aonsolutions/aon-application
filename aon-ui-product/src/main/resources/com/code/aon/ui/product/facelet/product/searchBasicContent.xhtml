@@ -6,6 +6,10 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
+	<c:if test="#{lookup != null}">
+		<ui:param name="controller" value="#{lookup}"/>
+	</c:if>
+
 	<aon:outputLabel for="Product_code" value="#{bundle.aon_id}" />
 	<aon:inputText id="Product_code" size="25"
 		valueChangeListener="#{controller.addExpression}"

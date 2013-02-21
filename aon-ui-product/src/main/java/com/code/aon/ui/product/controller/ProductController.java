@@ -60,6 +60,12 @@ public class ProductController extends BasicController {
 		Product product = (Product) getTo();
 		Item item = (Item) controller.getTo();
 		item.setProduct(product);		
+		if (! isShowDetail() ) {
+			item.setDetail(null);
+			item.setDetail2(null);
+		} else if (! isShowDetail2() ) {
+			item.setDetail2(null);
+		}
 	}
 
 	public void acceptItem(ActionEvent event) {

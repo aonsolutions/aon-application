@@ -1230,7 +1230,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>searchPagePath</property-name>
-			<value>/com/code/aon/ui/commercial/facelet/lookup/target/search.xhtml</value>
+			<value>/com/code/aon/ui/commercial/facelet/target/searchBasicContent.xhtml</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>newPagePath</property-name>
@@ -2045,7 +2045,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>searchPagePath</property-name>
-			<value>/com/code/aon/ui/commercial/facelet/lookup/offer/search.xhtml</value>
+			<value>/com/code/aon/ui/commercial/facelet/offer/searchContent.xhtml</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -2096,7 +2096,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>searchPagePath</property-name>
-			<value>/com/code/aon/ui/commercial/facelet/lookup/projectCommercial/search.xhtml</value>
+			<value>/com/code/aon/ui/commercial/facelet/projectCommercial/searchContent.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>

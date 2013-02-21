@@ -11,6 +11,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -100,6 +102,22 @@ public class Item extends ItemDB implements IPriceable {
 	@Transient
 	public boolean isActive() {
 		return getStatus() == ProductStatus.ACTIVE;
+	}
+
+	@Transient
+	public String getFullName() {
+		StringBuffer sb = new StringBuffer();
+		if ( (getProduct() != null) && (getProduct().getId() != null) ) {
+			sb.append(getProduct().getName());
+			if (! StringUtils.isEmpty(getDetail())) {
+				sb.append( " (").append(getDetail());
+				if (! StringUtils.isEmpty(getDetail2())) {
+					sb.append( ",").append(getDetail2());
+				}
+				sb.append( ")");
+			}
+		}
+		return sb.toString();
 	}
 
 }

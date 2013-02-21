@@ -88,32 +88,6 @@
 		</managed-property>
 	</managed-bean>
 
-	<managed-bean>
-		<managed-bean-name>categoryLookup</managed-bean-name>
-		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>categoryLookup</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.product.ProductCategory</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>ProductCategory_name</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>listPagePath</property-name>
-			<value>/com/code/aon/ui/product/facelet/lookup/category/list.xhtml</value>
-		</managed-property>
-		<managed-property>
-			<property-name>newPagePath</property-name>
-			<value>/com/code/aon/ui/product/facelet/lookup/category/form.xhtml</value>
-		</managed-property>
-	</managed-bean>
-
 	<!-- ****** PRODUCT ****** -->
 	<managed-bean>
 		<managed-bean-name>product</managed-bean-name>
@@ -165,6 +139,54 @@
 		<managed-bean-class>com.code.aon.ui.product.event.ProductControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+	
+	<!-- ************ PRODUCT LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>productLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.ItemLookup</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>productLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.product.Product</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Product_type</key>
+					<value>! 4</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Product_category_name,Product_name,Product_code</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Product_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/product/facelet/product/listBasic.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/product/facelet/product/searchBasicContent.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{productSearch}</value>		
+			</list-entries>
+		</managed-property>		
+	</managed-bean>
+	
 	
 	<!-- ****** ITEM ****** -->
 	<managed-bean>
@@ -768,15 +790,67 @@
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
-			<value>/com/code/aon/ui/product/facelet/lookup/item/list.xhtml</value>
+			<value>/com/code/aon/ui/product/facelet/item/listBasic.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>searchPagePath</property-name>
-			<value>/com/code/aon/ui/product/facelet/lookup/item/search.xhtml</value>
+			<value>/com/code/aon/ui/product/facelet/item/searchContent.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>newPagePath</property-name>
-			<value>/com/code/aon/ui/product/facelet/lookup/item/form.xhtml</value>
+			<value>/com/code/aon/ui/product/facelet/item/formNewContent.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{itemSearch}</value>
+				<value>#{itemControllerListener}</value>			
+			</list-entries>
+		</managed-property>		
+	</managed-bean>
+
+	<!-- ************ ITEM DETAIL LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>itemDetailLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.ItemLookup</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>itemDetailLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.product.Item</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Item_product_type</key>
+					<value>! 4</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Item_product_category_name,Item_product_name,Item_barcode</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Item_product_name,Item_detail,Item_detail2</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/product/facelet/lookup/itemDetail/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/product/facelet/lookup/itemDetail/search.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>newPagePath</property-name>
+			<value>/com/code/aon/ui/product/facelet/item/formNewContent.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1061,28 +1135,6 @@
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>catalogueLookup</managed-bean-name>
-		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>catalogueLookup</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.product.Catalogue</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Catalogue_id</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>listPagePath</property-name>
-			<value>/com/code/aon/ui/product/facelet/lookup/catalogue/list.xhtml</value>
-		</managed-property>		
 	</managed-bean>
 	
 	<!-- ****** TARIFF ****** -->

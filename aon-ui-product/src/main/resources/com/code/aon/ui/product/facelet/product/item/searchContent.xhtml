@@ -38,6 +38,16 @@
 		</aon:selectOneRadio>
 	</c:if>		
 	
+	<aon:outputLabel for="Product_items_purchasePrice"
+		value="#{productBundle.product_purchase_price}" />
+	<aon:inputText id="Product_items_purchasePrice" size="25"
+		valueChangeListener="#{controller.addExpression}" />
+	
+	<aon:outputLabel for="Product_items_profitPercent"
+		value="% #{bundle.aon_profit}" />
+	<aon:inputText id="Product_items_profitPercent" size="25"
+		valueChangeListener="#{controller.addExpression}" />
+	
 	<aon:outputLabel for="Product_items_price"
 		value="#{productBundle.product_sales_base_price}" />
 	<aon:inputText id="Product_items_price" size="25"

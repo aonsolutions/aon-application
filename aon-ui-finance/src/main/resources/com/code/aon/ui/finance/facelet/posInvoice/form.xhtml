@@ -42,6 +42,9 @@
 				</ui:decorate>
 			</aon:div>
 
+			<ui:param name="itemLookupTemplate"
+				value="/com/code/aon/ui/product/facelet/item/lookupDetail.xhtml" />
+
 			<aon:div styleClass="aon-scroll-area">
 				<c:if test="#{posInvoice.new}">
 					<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formNewContent.xhtml">
@@ -111,7 +114,9 @@
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
-		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<aon:lookupButtonPopup lookup="#{itemDetailLookup}" />
+		<aon:lookupButtonPopup lookup="#{productLookup}" />
+		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAddress.xhtml">
