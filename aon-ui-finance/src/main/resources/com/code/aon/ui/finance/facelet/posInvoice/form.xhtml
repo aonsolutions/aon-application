@@ -17,7 +17,10 @@
 					<ui:param name="controller" value="#{posInvoice}" />
 					<ui:param name="skipFocusFirst" value="#{!posInvoice.new}" />
 					<ui:param name="skipSaveButton" value="#{posInvoice.readOnly}" />
+					<ui:param name="skipFocusFirst" value="#{true}" />
+<!-- 
 					<ui:param name="skipRemoveButton" value="#{true}" />
+ -->
 					<ui:param name="skipCancelButton" value="#{true}" />
 					<ui:param name="skipSearchButton" value="#{true}" />
 					<ui:param name="skipBackButton" value="#{true}" />
@@ -26,11 +29,11 @@
 						<aon:commandButton id="finishTicket" immediate="true"
 							styleClass="aon-finding-toolbar-item aon-icon-cash"
 							value="#{financeBundle.finance_pos_finish_ticket}"
-							title="Alt+{Mayús}+F"
+							title="Alt+{Mayús}+W"
 							rendered="#{posInvoice.toInvoiceTotalPrice != 0 and posInvoice.toInvoiceTotalPrice != posInvoice.toInvoiceFinanceTotal}"
-							actionListener="#{posInvoiceFinance.onReset}"
+							actionListener="#{posInvoice.onShowFinishTicket}"
 							reRender="showFinishTicketWindow"
-							accesskey="F">
+							accesskey="W">
 							<f:setPropertyActionListener target="#{posInvoice.financeGenerationMode}"
 								value="1" />
 							<f:setPropertyActionListener target="#{posInvoiceFinance.paidAmount}"
@@ -50,6 +53,9 @@
 					</ui:define>
 				</ui:decorate>
 			</aon:div>
+			
+			<rich:jQuery timing="onload"
+				selector="#Item_id" query="focus()" />			
 
 			<ui:param name="itemLookupTemplate"
 				value="/com/code/aon/ui/product/facelet/item/lookupDetail.xhtml" />

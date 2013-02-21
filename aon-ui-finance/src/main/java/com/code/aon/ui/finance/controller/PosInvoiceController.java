@@ -34,6 +34,13 @@ public class PosInvoiceController extends SaleInvoiceController {
 		this.showFinishTicketWindow = value;
 	}
 
+	public void onShowFinishTicket(ActionEvent event) {
+		accept(event);
+
+		InvoiceFinanceController financeController = (InvoiceFinanceController)FormUtil.getController(getInvoiceFinanceControllerName());
+		financeController.onReset(event);
+	}
+
 	public void onFinishTicket(ActionEvent event) {
 		InvoiceDetailController detailController = (InvoiceDetailController)FormUtil.getController(getInvoiceDetailControllerName());
 		detailController.onCancel(event);

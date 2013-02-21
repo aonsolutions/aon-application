@@ -54,13 +54,13 @@
 							</f:facet>
 							<aon:outputText value="#{to.line}"
 								rendered="#{formList}" />
-							<aon:inputText id="InvoiceDetail_line" 
-								value="#{controller.to.line}" rendered="#{formEdit}"
-								required="true" size="1" maxlength="3" />
+							<aon:outputText id="InvoiceDetail_line" 
+								value="#{controller.to.line}" 
+								rendered="#{formEdit}" />
 							<f:facet name="footer">
-								<aon:inputText id="InvoiceDetail_line-New" 
-									value="#{controller.to.line}" rendered="#{formNew}"
-									required="true" size="1" maxlength="3" />
+								<aon:outputText id="InvoiceDetail_line-New" 
+									value="#{controller.to.line}" 
+									rendered="#{formNew}" />
 							</f:facet>
 						</aon:column>
 		
