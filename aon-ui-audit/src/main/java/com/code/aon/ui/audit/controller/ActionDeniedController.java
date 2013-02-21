@@ -84,9 +84,11 @@ public class ActionDeniedController {
 	
 	private IControllerListener listener;
 	
-	private FakeMap skipManagedBean;
+	private SkipManagedBeanMap skipManagedBean;
 	
-	private Set<String> enabledManagedBeans;
+	private ModuleEnabledMap moduleEnabled;
+	
+	private Map<String,ApplicationOption> enabledManagedBeans;
 	
 	public ActionDeniedController() {
 		User user = UserUtils.getInstance().getLoggedUser();
@@ -99,6 +101,7 @@ public class ActionDeniedController {
 			this.listener = new UserLoookupListener();	
 		}
 		initEnabledManagedBeans();
+		this.moduleEnabled = new ModuleEnabledMap();
 	}
 
 	private AuditController getAuditController() {
@@ -482,19 +485,31 @@ public class ActionDeniedController {
 		return list;
 	}
 	
+	private String getManagedBean( ApplicationOption option ) {
+		String managedBean = StringUtils.substringBefore(option.getAction(), "-");
+		return StringUtils.substringBefore(managedBean, "_");
+	}
+	
 	public void initEnabledManagedBeans() {
-		this.skipManagedBean = new FakeMap();
-		this.enabledManagedBeans = new HashSet<String>();
-		List<ApplicationOption> options = new ArrayList<ApplicationOption>( getOptions(false) );
-		options.removeAll(this.deniedActionsMap.values());		
+		this.skipManagedBean = new SkipManagedBeanMap();
+		this.enabledManagedBeans = new HashMap<String, ApplicationOption>();
+		List<ApplicationOption> options = new ArrayList<ApplicationOption>( getOptions(true) );	
 		for( ApplicationOption option : options ) {
-			String managedBean = StringUtils.substringBefore(option.getAction(), "-");
-			this.enabledManagedBeans.add(StringUtils.substringBefore(managedBean, "_"));
+			String managedBean = getManagedBean(option);
+			this.enabledManagedBeans.put(managedBean, option);
+		}
+		for( ApplicationOption option : this.deniedActionsMap.values() ) {
+			String managedBean = getManagedBean(option);
+			this.enabledManagedBeans.remove(managedBean);
 		}
 	}
 
-	public FakeMap getSkip() {
+	public SkipManagedBeanMap getSkip() {
 		return skipManagedBean;
+	}
+
+	public ModuleEnabledMap getModuleEnabled() {
+		return moduleEnabled;
 	}
 	
 	public void enableOnly( String[] categories, String[] groups, String ... disableOptionIds ) {
@@ -521,11 +536,16 @@ public class ActionDeniedController {
 		}
 	}
 	
-	public class FakeMap extends AbstractMap<String,Boolean> {
+	public class SkipManagedBeanMap extends AbstractMap<String,Boolean> {
 		
 		@Override
 		public Boolean get(Object key) {
-			return ! enabledManagedBeans.contains(key);
+			boolean skip = true;
+			ApplicationOption option = enabledManagedBeans.get(key);
+			if ( option != null ) {
+				skip = ! option.isRendered();
+			}
+			return skip;
 		}
 
 		@Override
@@ -534,5 +554,19 @@ public class ActionDeniedController {
 		}
 		
 	}
-	
+
+	public class ModuleEnabledMap extends AbstractMap<String,Boolean> {
+		
+		@Override
+		public Boolean get(Object key) {
+			return ! deniedModulesMap.containsKey(key);
+		}
+
+		@Override
+		public Set<Entry<String, Boolean>> entrySet() {
+			return null;
+		}
+		
+	}
+
 }
