@@ -214,10 +214,10 @@ public class MOD340Writer implements IFinanceConstants{
 
 	private void appendParams(StringWriter stmt) {
 		if (params.getFromDate() != null) {
-			stmt.append(" AND i.issue_date >= ?");
+			stmt.append(" AND " + (params.isTaxDateEnabled()?"i.tax_date":"i.issue_date") + " >= ?");
 		}
 		if (params.getToDate() != null) {
-			stmt.append(" AND i.issue_date <= ?");
+			stmt.append(" AND " + (params.isTaxDateEnabled()?"i.tax_date":"i.issue_date") + " <= ?");
 		}
 	}
 	

@@ -16,11 +16,13 @@ public class Model340Parameters {
 	private Date fromInvoiceDate;
 	private Date toInvoiceDate;
 	private SecurityLevel securityLevel;
+	private boolean taxDateEnabled;
 
 	public Model340Parameters() {
 		setDate(new Date());
 		setFromDate(null);
 		setToDate(null);
+		setTaxDateEnabled(false);
 	}
 	
 	public Integer getYear() {
@@ -77,6 +79,13 @@ public class Model340Parameters {
 	}
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
+	}
+
+	public boolean isTaxDateEnabled() {
+		return taxDateEnabled;
+	}
+	public void setTaxDateEnabled(boolean taxDateEnabled) {
+		this.taxDateEnabled = taxDateEnabled;
 	}
 
 	public String getPeriodString() {
