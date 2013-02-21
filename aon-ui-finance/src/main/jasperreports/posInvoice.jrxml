@@ -2,9 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ticket" pageWidth="210" pageHeight="841" columnWidth="200" leftMargin="5" rightMargin="5" topMargin="5" bottomMargin="5">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="41"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -187,7 +187,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{company}.getWeb().getValue()]]></textFieldExpression>
 			</textField>
@@ -213,7 +213,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" isBold="false" isUnderline="false" pdfFontName="Courier" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{issueDate}]]></textFieldExpression>
 			</textField>
@@ -226,7 +226,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" isBold="false" isUnderline="false" pdfFontName="Courier" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{referenceCode}!= null && !"".equals($F{referenceCode})?$F{referenceCode} :"")]]></textFieldExpression>
 			</textField>
@@ -239,7 +239,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="10" isBold="false" isUnderline="false" pdfFontName="Courier" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["FACTURA SIMPLIFICADA"]]></textFieldExpression>
 			</textField>
@@ -252,7 +252,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" isBold="false" isUnderline="false" pdfFontName="Courier" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
 			</textField>
@@ -307,7 +307,7 @@
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement verticalAlignment="Middle" rotation="None" markup="none">
-									<font fontName="Arial Narrow" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+									<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 									<paragraph lineSpacing="Single"/>
 								</textElement>
 								<textFieldExpression><![CDATA["PRODUCTO"]]></textFieldExpression>
@@ -326,7 +326,7 @@
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement verticalAlignment="Middle" markup="html">
-									<font fontName="Arial Narrow" size="7" pdfFontName="Courier"/>
+									<font fontName="SansSerif" size="7" pdfFontName="Helvetica"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{description} +
 (($F{quantity}>1)?("<br/>"+$F{quantity} + " x " + $F{salesPrice}):(""))]]></textFieldExpression>
@@ -344,7 +344,7 @@
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-									<font fontName="Arial Narrow" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+									<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 									<paragraph lineSpacing="Single"/>
 								</textElement>
 								<textFieldExpression><![CDATA["IMPORTE"]]></textFieldExpression>
@@ -997,6 +997,24 @@
 									<valueExpression><![CDATA["Middle"]]></valueExpression>
 								</genericElementParameter>
 							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["totalSalesPrice"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<box>
@@ -1013,7 +1031,7 @@
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial Narrow" size="7" pdfFontName="Courier"/>
+									<font fontName="SansSerif" size="7" pdfFontName="Helvetica"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{totalSalesPrice}]]></textFieldExpression>
 							</textField>
@@ -1038,7 +1056,7 @@
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial Narrow" size="7" pdfFontName="Courier"/>
+									<font fontName="SansSerif" size="7" pdfFontName="Helvetica"/>
 								</textElement>
 								<textFieldExpression><![CDATA["Pagado " + $F{payMethod}.getName()]]></textFieldExpression>
 							</textField>
@@ -1055,7 +1073,7 @@
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial Narrow" size="7" pdfFontName="Courier"/>
+									<font fontName="SansSerif" size="7" pdfFontName="Helvetica"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 							</textField>
@@ -1576,7 +1594,7 @@
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial Narrow" size="7" pdfFontName="Courier"/>
+									<font fontName="SansSerif" size="7" pdfFontName="Helvetica"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{taxPercent} + ($F{surchargePercent}.doubleValue() > 0?" + " + $F{surchargePercent}:"")]]></textFieldExpression>
 							</textField>
@@ -1591,7 +1609,7 @@
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement verticalAlignment="Middle">
-									<font fontName="Arial Narrow" size="7" pdfFontName="Courier"/>
+									<font fontName="SansSerif" size="7" pdfFontName="Helvetica"/>
 								</textElement>
 								<textFieldExpression><![CDATA["% " + $F{taxType}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 							</textField>
@@ -1608,7 +1626,7 @@
 									<rightPen lineStyle="Solid" lineColor="#FFFFFF"/>
 								</box>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial Narrow" size="8" isBold="true" pdfFontName="Courier"/>
+									<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$R{aon_taxable_base}]]></textFieldExpression>
 							</textField>
@@ -1774,6 +1792,24 @@
 									<valueExpression><![CDATA["Middle"]]></valueExpression>
 								</genericElementParameter>
 							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["base"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
@@ -1787,7 +1823,7 @@
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial Narrow" size="7" pdfFontName="Courier"/>
+									<font fontName="SansSerif" size="7" pdfFontName="Helvetica"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{base}]]></textFieldExpression>
 							</textField>
@@ -1804,7 +1840,7 @@
 									<rightPen lineStyle="Solid" lineColor="#FFFFFF"/>
 								</box>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial Narrow" size="8" isBold="true" pdfFontName="Courier"/>
+									<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$R{finance_rate}]]></textFieldExpression>
 							</textField>
@@ -1821,7 +1857,7 @@
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial Narrow" size="7" pdfFontName="Courier"/>
+									<font fontName="SansSerif" size="7" pdfFontName="Helvetica"/>
 								</textElement>
 								<textFieldExpression><![CDATA[new Double($F{taxQuota}.doubleValue() + $F{surchargeQuota}.doubleValue())]]></textFieldExpression>
 							</textField>
@@ -1838,7 +1874,7 @@
 									<rightPen lineStyle="Solid" lineColor="#FFFFFF"/>
 								</box>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial Narrow" size="8" isBold="true" pdfFontName="Courier"/>
+									<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$R{aon_total}]]></textFieldExpression>
 							</textField>
@@ -1855,7 +1891,7 @@
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial Narrow" size="7" pdfFontName="Courier"/>
+									<font fontName="SansSerif" size="7" pdfFontName="Helvetica"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{base} +
 (new Double($F{taxQuota}.doubleValue() + $F{surchargeQuota}.doubleValue()))]]></textFieldExpression>
@@ -1873,7 +1909,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" isBold="false" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="8" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Total IVA incluido"]]></textFieldExpression>
 			</textField>
@@ -1886,7 +1922,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="7" isBold="false" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new Double($P{PriceStrategy}.getTotalPrice((com.code.aon.product.strategy.ICalculableContainer)$V{currentInvoice}, (com.code.aon.registry.ITaxInfo)$V{currentInvoice}))]]></textFieldExpression>
 			</textField>
@@ -1899,7 +1935,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($P{printSellerName}.name().equals( "FOOTER" )?"Le atendio: agente comercial":null)]]></textFieldExpression>
 			</textField>
@@ -1914,7 +1950,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
 			</textField>
@@ -1929,7 +1965,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{aon_telephone} + ": " + $P{phone}.getValue() + ($P{fax}==null?"":" - " + $R{aon_fax} + ": " + $P{fax}.getValue())]]></textFieldExpression>
 			</textField>
@@ -1944,7 +1980,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{aon_company_document} + ": "
 + $P{company}.getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "
@@ -1962,7 +1998,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="10" isBold="false" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="10" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{enterprise}.getRegistry().getName()]]></textFieldExpression>
 			</textField>
@@ -1987,7 +2023,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{footerText}]]></textFieldExpression>
 			</textField>
@@ -2000,7 +2036,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($P{printSellerName}.name().equals( "HEADER" )?"Le atendio: agente comercial":null)]]></textFieldExpression>
 			</textField>
@@ -2015,7 +2051,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
 			</textField>
@@ -2030,7 +2066,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{aon_telephone} + ": " + $P{phone}.getValue() + ($P{fax}==null?"":" - " + $R{aon_fax} + ": " + $P{fax}.getValue())]]></textFieldExpression>
 			</textField>
@@ -2045,7 +2081,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{aon_company_document} + ": "
 + $P{company}.getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "
