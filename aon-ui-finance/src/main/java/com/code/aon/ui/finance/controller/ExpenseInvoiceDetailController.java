@@ -40,7 +40,7 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 		Invoice invoice = (Invoice)getMasterController().getTo();
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		invoiceDetail.setItem(item);
-		invoiceDetail.setDescription(item.getProduct().getName() + (item.getDetail() !=null ? " " + item.getDetail() : ""));
+		invoiceDetail.setDescription(item.getFullName());
 		invoiceDetail.setQuantity(1);
 		fillTaxDataInDetail();
 

@@ -110,7 +110,7 @@ public class UndeductibleInvoiceDetailController extends InvoiceDetailController
 	public void itemChanged(Item item) {
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		invoiceDetail.setItem(item);
-		invoiceDetail.setDescription(item.getProduct().getName() + (item.getDetail() !=null ? " " + item.getDetail() : ""));
+		invoiceDetail.setDescription(item.getFullName());
 		invoiceDetail.setQuantity(1);
 	}
 

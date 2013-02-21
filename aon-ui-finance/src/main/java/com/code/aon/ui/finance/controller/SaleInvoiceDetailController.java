@@ -24,7 +24,7 @@ public class SaleInvoiceDetailController extends InvoiceDetailController {
 		Invoice invoice = (Invoice)getMasterController().getTo();
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		invoiceDetail.setItem(item);
-		invoiceDetail.setDescription(item.getProduct().getName() + (item.getDetail() != null ? " " + item.getDetail() : ""));
+		invoiceDetail.setDescription(item.getFullName());
 		if (invoiceDetail.getQuantity() == 0) {
 			invoiceDetail.setQuantity(1);
 		}

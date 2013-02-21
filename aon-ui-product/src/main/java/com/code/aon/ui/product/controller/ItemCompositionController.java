@@ -42,7 +42,7 @@ public class ItemCompositionController extends LinesController {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			itemComposition.setCompositionItem(item);
-			itemComposition.setDescription(item.getProduct().getName() + (item.getDetail() != null ? " " + item.getDetail() : ""));
+			itemComposition.setDescription(item.getFullName());
 			if (itemComposition.getQuantity() == 0) {
 				itemComposition.setQuantity(1);
 			}

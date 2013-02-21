@@ -98,7 +98,7 @@ public class IncomeDetailController extends LinesController implements IWarehous
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			incomeDetail.setItem(item);
-			incomeDetail.setDescription(item.getProduct().getName() + (item.getDetail() != null ? " " + item.getDetail() : ""));
+			incomeDetail.setDescription(item.getFullName());
 			if (incomeDetail.getQuantity() == 0) {
 				incomeDetail.setQuantity(1);
 			}

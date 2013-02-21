@@ -96,7 +96,7 @@ public class DeliveryDetailController extends LinesController implements IWareho
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			deliveryDetail.setItem(item);
-			deliveryDetail.setDescription(item.getProduct().getName() + (item.getDetail() != null ? " " + item.getDetail() : ""));
+			deliveryDetail.setDescription(item.getFullName());
 			if (deliveryDetail.getQuantity() == 0) {
 				deliveryDetail.setQuantity(1);
 			}

@@ -94,11 +94,7 @@ public class CustomerFeeController extends LinesController {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			fee.setItem(item);
-			String description = item.getProduct().getName();
-			if (! StringUtils.isBlank(item.getDetail()) ) {
-				description += " " + item.getDetail();
-			}
-			fee.setDescription( description );
+			fee.setDescription(item.getFullName());
 
 			Date date = fee.getInitialDate();
 			Customer customer = (Customer)getMasterController().getTo();

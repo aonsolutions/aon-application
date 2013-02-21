@@ -80,7 +80,7 @@ public class OfferDetailController extends LinesController implements ICommercia
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			offerDetail.setItem(item);
-			offerDetail.setDescription(item.getProduct().getName() + (item.getDetail() != null ? " " + item.getDetail() : ""));
+			offerDetail.setDescription(item.getFullName());
 			if (offerDetail.getQuantity() == 0) {
 				offerDetail.setQuantity(1);
 			}
