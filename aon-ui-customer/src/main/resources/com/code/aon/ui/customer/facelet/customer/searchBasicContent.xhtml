@@ -21,6 +21,17 @@
 		</aon:selectOneMenu>								
 	</c:if>
 	
+	<c:if test="#{aonConfiguration.bean.customer.showTariff}">
+		<aon:outputLabel for="Customer_tariff_id"
+			value="#{productBundle.product_tariff}" />
+		<aon:selectOneMenu id="Customer_tariff_id"
+			value="#{configCollections.tariff}"
+			valueChangeListener="#{controller.addIdEqualExpression}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{configCollections.tariffs}" />
+		</aon:selectOneMenu>
+	</c:if>	
+	
 	<aon:outputText value="#{bundle.aon_status}"/>
 	<aon:selectManyCheckbox value="#{customerSearch.customerStatuses}">
 		<f:selectItems value="#{customerCollections.customerStatuses}"/>

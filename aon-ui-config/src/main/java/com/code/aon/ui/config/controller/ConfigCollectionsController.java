@@ -383,6 +383,13 @@ public class ConfigCollectionsController {
 		return payMethodTypeDetails;
 	}
 
+	public Tariff getTariff() {
+		return null;
+	}
+
+	public void setTariff( Tariff tariff ) {
+	}
+	
 	public List<SelectItem> getTariffs() throws ManagerBeanException {
 		List<SelectItem> tariffs = new LinkedList<SelectItem>();
 		IManagerBean tariffBean = BeanManager.getManagerBean(Tariff.class);
