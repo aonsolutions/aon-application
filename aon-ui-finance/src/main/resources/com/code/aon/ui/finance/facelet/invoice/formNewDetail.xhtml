@@ -43,6 +43,22 @@
 			</ui:include>
 		</c:if>
 		<aon:panelGroup id="invoiceDetailItemDescription" styleClass="aon-nowrap aon-vertical-align-top">
+			<c:if test="#{posMode and aonConfiguration.bean.product.showStock}">
+				<aon:commandButton value="&#160;"
+					title="#{productBundle.product_info}"
+					rendered="#{detailController.to.item != null and detailController.to.item.id != null and detailController.to.item.product.inventoriable}"
+					styleClass="aon-icon aon-icon-edit-end aon-icon-info"
+					actionListener="#{itemInfo.onShowPanel}"
+					reRender="itemInfoContainer">
+					<aon:set var="#{itemInfo.stockVisible}" value="#{true}" />
+					<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
+					<aon:set var="#{itemInfo.item}" value="#{detailController.to.item}" /> 
+					<aon:set var="#{itemInfo.warehouse}" value="#{null}" /> 
+					<aon:set var="#{itemInfo.rowStock}" value="#{detailController.rowStock}" /> 
+					<aon:set var="#{itemInfo.componentId}" value="Item_id" />
+					<aon:set var="#{itemInfo.alternativeMethod}" value="#{invoiceController.invoiceDetailControllerName}.onItemChanged" />
+				</aon:commandButton>															
+			</c:if>
 			<aon:inputTextarea id="InvoiceDetail_description"
 				style="#{!detailController.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}"
 				value="#{detailController.to.description}"

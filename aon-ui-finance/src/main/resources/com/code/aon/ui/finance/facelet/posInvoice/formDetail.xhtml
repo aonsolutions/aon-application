@@ -87,6 +87,22 @@
 									value="#{controller.onItemChanged}" type="lookupChangeListener" />
 							</ui:include>
 							<aon:panelGroup id="invoiceDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
+								<c:if test="#{aonConfiguration.bean.product.showStock}">
+									<aon:commandButton value="&#160;"
+										title="#{productBundle.product_info}"
+										rendered="#{controller.to.item != null and controller.to.item.id != null and controller.to.item.product.inventoriable}"
+										styleClass="aon-icon aon-icon-edit-end aon-icon-info"
+										actionListener="#{itemInfo.onShowPanel}"
+										reRender="itemInfoContainer">
+										<aon:set var="#{itemInfo.stockVisible}" value="#{true}" />
+										<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
+										<aon:set var="#{itemInfo.item}" value="#{controller.to.item}" /> 
+										<aon:set var="#{itemInfo.warehouse}" value="#{null}" /> 
+										<aon:set var="#{itemInfo.rowStock}" value="#{controller.rowStock}" /> 
+										<aon:set var="#{itemInfo.componentId}" value="Item_id" />
+										<aon:set var="#{itemInfo.alternativeMethod}" value="#{invoiceController.invoiceDetailControllerName}.onItemChanged" />
+									</aon:commandButton>															
+								</c:if>
 								<aon:inputTextarea id="InvoiceDetail_description"
 									value="#{controller.to.description}"
 									disabled="#{!controller.longDescription}"
@@ -115,6 +131,22 @@
 											value="#{controller.onItemChanged}" type="lookupChangeListener" />
 									</ui:include>
 									<aon:panelGroup id="invoiceDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
+										<c:if test="#{aonConfiguration.bean.product.showStock}">
+											<aon:commandButton value="&#160;"
+												title="#{productBundle.product_info}"
+												rendered="#{controller.to.item != null and controller.to.item.id != null and controller.to.item.product.inventoriable}"
+												styleClass="aon-icon aon-icon-edit-end aon-icon-info"
+												actionListener="#{itemInfo.onShowPanel}"
+												reRender="itemInfoContainer">
+												<aon:set var="#{itemInfo.stockVisible}" value="#{true}" />
+												<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
+												<aon:set var="#{itemInfo.item}" value="#{controller.to.item}" /> 
+												<aon:set var="#{itemInfo.warehouse}" value="#{null}" /> 
+												<aon:set var="#{itemInfo.rowStock}" value="#{controller.rowStock}" /> 
+												<aon:set var="#{itemInfo.componentId}" value="Item_id" />
+												<aon:set var="#{itemInfo.alternativeMethod}" value="#{invoiceController.invoiceDetailControllerName}.onItemChanged" />
+											</aon:commandButton>															
+										</c:if>
 										<aon:inputTextarea id="InvoiceDetail_description-New"
 											value="#{controller.to.description}"
 											disabled="#{!controller.longDescription}"

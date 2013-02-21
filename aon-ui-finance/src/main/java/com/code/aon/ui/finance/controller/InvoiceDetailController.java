@@ -192,6 +192,26 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		return CommonUtil.round(base * percent / 100);
 	}
 
+	public Double getRowStock() throws ManagerBeanException {
+		double rowStock = 0;
+		InvoiceDetail to = (InvoiceDetail)getTo();
+		if (to != null && to.getItem() != null && to.getItem().getId() != null) {
+			rowStock = getRowStock(to);
+		}
+		return new Double(rowStock);
+	}
+
+	private double getRowStock(InvoiceDetail to) throws ManagerBeanException {
+		double rowStock = 0;
+		if (!isNew()) {
+			InvoiceDetail invoiceDetail = (InvoiceDetail)getManagerBean().get(to.getId());
+			if (to.getItem().equals(invoiceDetail.getItem())) {
+				rowStock = invoiceDetail.getQuantity();
+			}
+		}
+		return rowStock;
+	}
+
 	public String getLineSourceInfo() throws ManagerBeanException {
 		StringBuffer info = new StringBuffer(64);
 
