@@ -10,6 +10,8 @@
 	
 	<aon:methodParam name="ndm_saveActionListener"
 		value="#{product.acceptItem}" type="actionListener" />
+	<aon:methodParam name="ndm_cancelActionListener"
+		value="#{product.onCancelItem}" type="actionListener" />
 
 	<ui:decorate template="/com/code/aon/ui/product/facelet/item/newDetailModal.xhtml">
 		<ui:param name="detailId" value="Item" />

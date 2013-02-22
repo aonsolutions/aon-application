@@ -81,6 +81,7 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
 	@Override
 	public void afterBeanUpdated(ControllerEvent event)	throws ControllerListenerException {
 		ItemTariffController itemTariffController = (ItemTariffController)AonUtil.getRegisteredBean(ITEM_TARIFF);
+		itemTariffController.setModel(null);
 		itemTariffController.onSearch(null);
 	}
 

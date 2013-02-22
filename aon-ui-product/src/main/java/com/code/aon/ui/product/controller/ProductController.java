@@ -24,6 +24,8 @@ public class ProductController extends BasicController {
 	private boolean showNewItemWindow;
 	
 	private Item item;
+	
+	private Item saveStateItem;
 
 	public boolean isShowNewItemWindow() {
 		return showNewItemWindow;
@@ -73,9 +75,17 @@ public class ProductController extends BasicController {
 		controller.accept(event);
 		updateItem(controller);
 	}
+
+	public void onCancelItem(ActionEvent event) throws ManagerBeanException {
+		ItemController controller = getItemController();
+		controller.onCancel(event);
+		controller.setCurrentItem(saveStateItem);
+		updateItem(controller);
+	}
 	
 	public void onResetItem(ActionEvent event) {
 		ItemController controller = getItemController();
+		this.saveStateItem = (Item) controller.getTo();	
 		controller.onReset(event);
 		updateItem(controller);
 	}

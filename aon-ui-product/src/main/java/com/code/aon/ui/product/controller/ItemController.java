@@ -121,4 +121,8 @@ public class ItemController extends BasicController {
 		controller.getProductData();
 	}
 
+	public void setCurrentItem( Item item ) {
+		setTo(item);
+	}
+	
 }

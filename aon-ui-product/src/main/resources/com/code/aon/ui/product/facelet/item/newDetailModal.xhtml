@@ -13,6 +13,8 @@
 		
 			<aon:methodParam name="ndm_saveActionListener"
 				default="#{detailController.onAccept}" type="actionListener" />
+			<aon:methodParam name="ndm_cancelActionListener"
+				default="#{detailController.onCancel}" type="actionListener" />
 						
 			<rich:modalPanel id="new#{detailId}ModalPanel"
 				minWidth="#{minWidth}" minHeight="#{minHeight}" zindex="90"
@@ -63,7 +65,7 @@
 												<aon:commandButton id="#{detailId}-cancel"
 													value="#{bundle.aon_cancel}"
 													reRender="showNew#{detailId}Window"
-													actionListener="#{detailController.onCancel}"
+													actionListener="#{ndm_cancelActionListener}"
 													immediate="true"
 													styleClass="aon-finding-toolbar-item aon-icon-cancel">
 													<f:setPropertyActionListener
