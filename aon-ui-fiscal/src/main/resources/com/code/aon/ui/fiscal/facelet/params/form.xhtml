@@ -31,14 +31,25 @@
 
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="paramsContainer" columns="2">
+				<aon:panelGrid id="paramsContainer" styleClass="aon-width-all"
+					columnClasses="aon-panelGrid-odd aon-width-300
+								,aon-panelGrid-even aon-width-auto" 
+					columns="2">
 
 					<aon:outputLabel for="tax_regime"
 						value="#{fiscalBundle.fiscal_tax_regime}" />
-					<aon:selectOneMenu id="tax_regime"
-						value="#{fiscalParams.taxRegime}">
-						<f:selectItems value="#{registryCollections.taxRegimes}" />
-					</aon:selectOneMenu>
+					<aon:div>
+						<aon:selectOneMenu id="tax_regime"
+							value="#{fiscalParams.taxRegime}">
+							<f:selectItems value="#{registryCollections.taxRegimes}" />
+						</aon:selectOneMenu>
+						<aon:selectBooleanCheckbox id="default_tax_refund_registry"
+							styleClass="aon-margin-left"
+							value="#{fiscalParams.taxRefundRegistry}">
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="default_tax_refund_registry"
+							value="#{fiscalBundle.fiscal_tax_refund_registry}" />
+					</aon:div>
 
 					<aon:outputLabel for="default_period"
 						value="#{fiscalBundle.fiscal_parameters_year}" />
@@ -74,16 +85,46 @@
 						</aon:inputText>
 					</c:if>						
 
+					<aon:outputLabel for="Creditor_id" value="#{fiscalBundle.fiscal_admon_creditor}" />
+					<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{fiscalParams.admonCreditor}" />
+						<ui:param name="skipLabel" value="#{true}" />
+					</ui:include>
+
 					<aon:outputText value="&#160;" />
 					<aon:div>
-						<aon:selectBooleanCheckbox id="default_tax_refund_registry"
-							value="#{fiscalParams.taxRefundRegistry}">
+						<aon:selectBooleanCheckbox id="default_perm_addr_changes"
+							value="#{fiscalParams.permanentAddressChanges}">
 						</aon:selectBooleanCheckbox>
-						<aon:outputLabel for="default_tax_refund_registry"
-							value="#{fiscalBundle.fiscal_tax_refund_registry}" />
+						<aon:outputLabel for="default_perm_addr_changes"
+							value="#{fiscalBundle.fiscal_perm_addr_changes}" />
 					</aon:div>
-
 				</aon:panelGrid>
+
+				<aon:div styleClass="aon-margin-top aon-width-all"> 
+					<aon:div styleClass="aon-bold aon-italic">
+						<aon:outputText value="#{fiscalBundle.fiscal_telematic_submission_info}" />
+					</aon:div>
+					<aon:panelGrid id="paramsContainer2" styleClass="aon-margin-top aon-width-all"
+						columnClasses="aon-panelGrid-odd aon-width-300
+									,aon-panelGrid-even aon-width-auto" 
+						columns="2">
+						<aon:outputLabel for="contact_person"
+							value="#{fiscalBundle.fiscal_contact_person}" />
+						<aon:inputText id="contact_person" size="60" 
+							value="#{fiscalParams.contactPerson}">
+						</aon:inputText>
+	
+						<aon:outputLabel for="contact_phone" value="#{fiscalBundle.fiscal_contact_phone}" />
+						<aon:inputText id="contact_phone" size="10" value="#{fiscalParams.contactPhone}" />
+	
+						<aon:outputLabel for="contact_cellular" value="#{fiscalBundle.fiscal_contact_cellular}" />
+						<aon:inputText id="contact_cellular" size="10" value="#{fiscalParams.contactCellular}" />
+	
+						<aon:outputLabel for="contact_email" value="#{fiscalBundle.fiscal_contact_email}" />
+						<aon:inputText id="contact_email" size="45" value="#{fiscalParams.contactMail}" />
+					</aon:panelGrid>
+				</aon:div>
 			</aon:div>
 		</aon:form>
 	</ui:define>

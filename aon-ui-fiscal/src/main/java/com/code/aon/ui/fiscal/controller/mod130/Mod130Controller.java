@@ -6,12 +6,15 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.AonException;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.tax.model.MOD130.MOD130Format;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
+import com.code.aon.fiscal.mod130.Mod130;
 import com.code.aon.ui.finance.IFinanceMessages;
+import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.fiscal.controller.model.FiscalModelController;
 import com.code.aon.ui.fiscal.file.MOD130Writer;
 import com.code.aon.ui.util.AonUtil;
@@ -26,6 +29,14 @@ public class Mod130Controller extends FiscalModelController {
 	@Override
 	public boolean isDifEnabled() {
 		return false;
+	}
+	
+	@Override
+	public void initialize() throws AonException {
+		super.initialize();
+		Mod130 mod130 = (Mod130) getDeclaration();
+		FiscalParametersController fiscalParams = (FiscalParametersController) AonUtil.getRegisteredBean( FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
+		mod130.setPermanentAddressChanges(fiscalParams.isPermanentAddressChanges());
 	}
 	
 	public void onCreateDisk(ActionEvent event) {

@@ -26,4 +26,9 @@ public class Gipuzkoa2011Mod123Calculator extends FiscalModelDetailCalculator im
 		FiscalModelDetail detail = mod123.getDetail( Mod123Key.C13 );
 		detail.setAmount( CommonUtil.round(c03 + c06 + c08) );
 	}
+
+	@Override
+	public double getResult(Mod123 mod123) {
+		return mod123.getDetail( Mod123Key.C13 ).getAmount();
+	}
 }

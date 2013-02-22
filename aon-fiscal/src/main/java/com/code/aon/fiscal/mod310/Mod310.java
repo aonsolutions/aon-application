@@ -12,6 +12,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.enumeration.Administration;
+import com.code.aon.finance.Finance;
 import com.code.aon.fiscal.FiscalActivity;
 import com.code.aon.fiscal.FiscalActivityInfo;
 import com.code.aon.fiscal.FiscalModel;
@@ -75,6 +76,7 @@ public class Mod310 implements IFiscalDeclaration {
 				detail.setType(Mod310Key.FARMING_ACTIVITIES_PREFIX + ag);
 				detail.setDescription( fa.getEpigraph() + " - " + fa.getDescription() );
 				addDetail(detail);
+				// TODO Añadir importes. Tener en cuente "sin actividad"
 				ag++;
 			} else {
 				criteria = new Criteria();
@@ -86,7 +88,9 @@ public class Mod310 implements IFiscalDeclaration {
 					FiscalModelDetail detail = new FiscalModelDetail();
 					detail.setFiscalModel(getHeader());
 					detail.setType(Mod310Key.ACTIVITIES_PREFIX + ac);
-					detail.setAccumulatedAmount( info.getDoubleValue() );
+					if (!fiscalModel.isWithoutActivity()) {
+						detail.setAccumulatedAmount( info.getDoubleValue() );	
+					}
 					detail.setDescription( fa.getEpigraph() + " - " + fa.getDescription() );
 					addDetail(detail);
 					ac++;
@@ -106,6 +110,10 @@ public class Mod310 implements IFiscalDeclaration {
 	@Override
 	public FiscalModel getHeader() {
 		return fiscalModel;
+	}
+	@Override
+	public void setHeader(FiscalModel fiscalModel) {
+		this.fiscalModel = fiscalModel;
 	}
 	public void setFiscalModel(FiscalModel fiscalModel) {
 		this.fiscalModel = fiscalModel;
@@ -156,5 +164,44 @@ public class Mod310 implements IFiscalDeclaration {
 	@Override
 	public IFiscalModelKey getKey(String value) {
 		return Mod310Key.getKeyWithValue(value);
+	}
+	
+	@Override
+	public Finance getFinance() {
+		return fiscalModel!=null?fiscalModel.getFinance():null;
+	}
+	
+	@Override
+	public double getResult() {
+		Mod310CalculatorFactory factory = new Mod310CalculatorFactory();
+		int year = getHeader().getYear();
+		Administration admin = getHeader().getAdministration(); 
+		IMod310Calculator calculator = factory.getCalculator( year , admin );
+		return calculator.getResult(this);
+	}
+	
+	@Override
+	public boolean isDeclarationNegativeAvailable() {
+		return false;
+	}
+
+	@Override
+	public boolean isToDeductDeclarationAvailable() {
+		return false;
+	}
+
+	@Override
+	public boolean isWithoutActivityDeclarationAvailable() {
+		return true;
+	}
+
+	@Override
+	public boolean isNegative() {
+		return false;
+	}
+
+	@Override
+	public boolean isToDeduct() {
+		return false;
 	}
 }

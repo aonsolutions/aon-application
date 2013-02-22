@@ -67,4 +67,10 @@ public class Alava2011Mod111Calculator extends FiscalModelDetailCalculator imple
 	public Mod111Key getKeyForInKindWitholding() {
 		return Mod111Key.AR_C03;
 	}
+	
+	@Override
+	public double getResult(Mod111 mod111) {
+		return mod111.getDetail( Mod111Key.AR_C31 ).getAmount();
+	}
+	
 }

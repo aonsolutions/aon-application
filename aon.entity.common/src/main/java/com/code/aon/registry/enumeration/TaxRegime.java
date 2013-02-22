@@ -7,9 +7,10 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum TaxRegime implements IResourceable {
 	
-    EDN,		// Estimación Directa Normal
-    EDS,		// Estimación Directa Simplificada
-    MODULES;	// Módulos
+    EDN,				// Estimación Directa Normal
+    EDS,				// Estimación Directa Simplificada
+    MODULES,			// Módulos
+    BUSINESS_SOCIETY; 	// Sociedad Mercantil.
 
     private static final String BASE_NAME = "com.code.aon.registry.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_tax_regime_";

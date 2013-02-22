@@ -25,4 +25,9 @@ public class Bizkaia2011Mod115Calculator extends FiscalModelDetailCalculator imp
 		FiscalModelDetail detail = mod115.getDetail( Mod115Key.C08 );
 		detail.setAmount( CommonUtil.round(c03 + c06) );
 	}
+
+	@Override
+	public double getResult(Mod115 mod115) {
+		return mod115.getDetail( Mod115Key.C08 ).getAmount();
+	}
 }

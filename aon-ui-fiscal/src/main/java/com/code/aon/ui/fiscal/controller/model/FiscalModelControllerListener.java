@@ -1,6 +1,8 @@
 package com.code.aon.ui.fiscal.controller.model;
 
 import com.code.aon.common.AonException;
+import com.code.aon.fiscal.FiscalModel;
+import com.code.aon.fiscal.enumeration.FiscalModelStatus;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -57,11 +59,23 @@ public class FiscalModelControllerListener extends ControllerAdapter {
 	}
 
 	@Override
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		FiscalModelController c = getController(event);
+		FiscalModel fiscalModel = (FiscalModel) c.getTo();
+		if (c.getDeclaration().isWithoutActivityDeclarationAvailable() &&
+				fiscalModel.isWithoutActivity()) {
+			fiscalModel.setStatus(FiscalModelStatus.FINISHED);
+		}
+	}
+	
+	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		try {
 			FiscalModelController c = getController(event);	
 			c.initializeDetails();
 			c.setFileOutput(null);
+			FiscalModel fiscalModel = (FiscalModel) c.getTo(); 
+			c.getFiscalModelManager().initializeFiscalModel(fiscalModel);
 		} catch (AonException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
@@ -73,6 +87,8 @@ public class FiscalModelControllerListener extends ControllerAdapter {
 			FiscalModelController c = getController(event);	
 			c.insertOrUpdateDetails();
 			c.setFileOutput(null);
+			FiscalModel fiscalModel = (FiscalModel) c.getTo(); 
+			c.getFiscalModelManager().refreshFiscalModel(c.getDeclaration(), fiscalModel);
 		} catch (AonException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}

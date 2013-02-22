@@ -61,5 +61,10 @@ public class Gipuzkoa2011Mod111Calculator extends FiscalModelDetailCalculator im
 	public Mod111Key getKeyForInKindWitholding() {
 		return Mod111Key.GP_C03;
 	}
+
+	@Override
+	public double getResult(Mod111 mod111) {
+		return mod111.getDetail( Mod111Key.GP_C25 ).getAmount();
+	}
 	
 }

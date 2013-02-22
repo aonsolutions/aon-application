@@ -18,10 +18,12 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.Administration;
+import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.file.tax.model.MOD123.MOD123;
 import com.code.aon.file.tax.model.MOD123.MOD123Format;
 import com.code.aon.file.tax.model.MOD123.data.Declaration;
+import com.code.aon.finance.Finance;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.Mod123Key;
@@ -75,7 +77,8 @@ public class MOD123Writer implements IFinanceConstants{
 		declaration.setEndPeriod(0);
 		int year = fiscalModel.getYear();
 		declaration.setYear(year); 
-		declaration.setPeriod(fiscalModel.getPeriod().getName()); 
+		Administration admon = fiscalModel.getAdministration();
+		declaration.setPeriod(fiscalModel.getPeriod().getName(admon)); 
 		Date date = new Date();
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
@@ -116,17 +119,11 @@ public class MOD123Writer implements IFinanceConstants{
 			}
 		}
 		
-		// TODO. Conseguir los datos del futuro vencimiento que tiene que ir vinculado a la declaración.
-		declaration.setPayment("0");
-		declaration.setCcc1("");
-		declaration.setCcc2("");
-		declaration.setCcc3("");
-		declaration.setCcc4("");
-		// -------------------------------
-		
+		FiscalParametersController fpc = (FiscalParametersController) AonUtil.getRegisteredBean( FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
+		declaration.setContactPerson( fpc.getContactPerson() );
+		declaration.setContactPhone(fpc.getContactPhone() );
 		
 		if (fiscalModel.getAdministration() == Administration.COMMON_TERRITORY) {
-			FiscalParametersController fpc = (FiscalParametersController) AonUtil.getRegisteredBean( FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
 			String administrationCode = fpc.getAdministrationCode();
 			declaration.setAdministrationCode(administrationCode);
 		}
@@ -144,9 +141,28 @@ public class MOD123Writer implements IFinanceConstants{
 		
 		double d = declaration.getBoxes().get(Mod123Key.C13.getValue()); 
 		declaration.setDeclarationType("I");
-		if (d < 0) {
+		declaration.setPayment("0");
+		if (d <= 0) {
 			declaration.setDeclarationType("N");
 		} else {
+			declaration.setCcc1("");
+			declaration.setCcc2("");
+			declaration.setCcc3("");
+			declaration.setCcc4("");
+			Finance finance = fiscalModel.getFinance();
+			if (finance != null) {
+				if (finance.getPayMethod() != null) {
+					if (finance.getPayMethod().getType() != PayMethodType.CASH_BASIS) {
+						declaration.setPayment("2");
+						declaration.setCcc1(finance.getBankAccount().getEntity());
+						declaration.setCcc2(finance.getBankAccount().getOffice());
+						declaration.setCcc3(finance.getBankAccount().getControl());
+						declaration.setCcc4(finance.getBankAccount().getAccount());
+					} else {
+						declaration.setPayment("1");
+					}
+				}
+			}
 			if (StringUtils.isNotBlank(declaration.getCcc1())) {
 				declaration.setDeclarationType("U");
 			} 

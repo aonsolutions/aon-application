@@ -288,10 +288,7 @@ public class Declaration {
 		return StringUtils.substring(getName(), 0, 4);
 	}
 	public String getOnlyName() {
-		if ( isPerson() ) {
-			return StringUtils.substringBefore(getName(), " ");
-		}
-		return null;
+		return StringUtils.substringBefore(getName(), " ");
 	}
 	
 	public String getDeclarationType() {

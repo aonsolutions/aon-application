@@ -30,4 +30,10 @@ public class Alava2011Mod115Calculator extends FiscalModelDetailCalculator imple
 		detail = mod115.getDetail( Mod115Key.C11 );
 		detail.setAmount( CommonUtil.round(c08 + c09 + c10) );
 	}
+	
+	@Override
+	public double getResult(Mod115 mod115) {
+		return mod115.getDetail( Mod115Key.C11 ).getAmount();
+	}
+	
 }

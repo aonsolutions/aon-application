@@ -12,10 +12,6 @@ public class Mod130CalculatorFactory {
 	public Mod130CalculatorFactory() {
 		calculators = new LinkedList<IMod130Calculator>();
 		calculators.add(new Aeat2011Mod130Calculator());
-		calculators.add(new Alava2011Mod130Calculator());
-		calculators.add(new Bizkaia2011Mod130Calculator());
-		calculators.add(new Gipuzkoa2011Mod130Calculator());
-		calculators.add(new Navarra2011Mod130Calculator());
 	}
 	
 	public IMod130Calculator getCalculator(int year,Administration administration) {

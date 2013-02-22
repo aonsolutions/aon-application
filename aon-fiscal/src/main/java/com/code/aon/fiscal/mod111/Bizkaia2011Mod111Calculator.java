@@ -65,4 +65,10 @@ public class Bizkaia2011Mod111Calculator extends FiscalModelDetailCalculator imp
 	public Mod111Key getKeyForInKindWitholding() {
 		return Mod111Key.BZ_C03;
 	}
+	
+	@Override
+	public double getResult(Mod111 mod111) {
+		return mod111.getDetail( Mod111Key.BZ_C37 ).getAmount();
+	}
+	
 }

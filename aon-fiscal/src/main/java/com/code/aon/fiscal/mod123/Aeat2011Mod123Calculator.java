@@ -29,4 +29,8 @@ public class Aeat2011Mod123Calculator extends FiscalModelDetailCalculator implem
 		mod123.getDetail( Mod123Key.C13 ).setAmount( CommonUtil.round(c09 + c10) );
 	}
 
+	@Override
+	public double getResult(Mod123 mod123) {
+		return mod123.getDetail( Mod123Key.C13 ).getAmount();
+	}
 }

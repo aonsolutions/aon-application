@@ -29,4 +29,9 @@ public class Alava2011Mod123Calculator extends FiscalModelDetailCalculator imple
 		double c12 = mod123.getDetail( Mod123Key.C12 ).getAmount();
 		mod123.getDetail( Mod123Key.C13 ).setAmount( CommonUtil.round(c09 + c11 + c12) );
 	}
+
+	@Override
+	public double getResult(Mod123 mod123) {
+		return mod123.getDetail( Mod123Key.C13 ).getAmount();
+	}
 }

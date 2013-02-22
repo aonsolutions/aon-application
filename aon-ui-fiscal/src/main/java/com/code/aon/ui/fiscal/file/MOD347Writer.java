@@ -83,7 +83,7 @@ public class MOD347Writer implements IFinanceConstants{
 			deponent.setCode(getCompany().getDocument());
 			deponent.setComplementary(mod347.isComplementary());
 			deponent.setReplacement(mod347.isReplacement());
-			long a = 4370000000000L + mod347.getNumber();
+			long a = 3470000000000L + mod347.getNumber();
 			deponent.setNumber(a); 
 			deponent.setName(getCompany().getName());
 			RegistryAddress address = getCompany().getDefaultAddress();
@@ -105,7 +105,7 @@ public class MOD347Writer implements IFinanceConstants{
 			}
 			
 			if (mod347.getReplacedNumber() != null) {
-				long b = 4370000000000L + mod347.getReplacedNumber();
+				long b = 3470000000000L + mod347.getReplacedNumber();
 				deponent.setReplacedNumber(b);
 			} 
 			deponent.setType("T");

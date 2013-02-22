@@ -13,20 +13,21 @@
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 			<ui:param name="toolbarTitle" value="#{moduleLabel}" />
 			<ui:param name="controller" value="#{controller}" />
-			<ui:param name="skipRemoveButton" value="#{controller.declaration.header.readOnly}" />
+			<ui:param name="skipRemoveButton" value="#{controller.to.readOnly}" />
 			
 			<ui:define name="beforeSpinToolbarContent">
+			
 				<aon:commandButton id="#{toolbarID}-finish"
 					value="#{fiscalBundle.fiscal_finish}"
-					actionListener="#{controller.onFinish}"
-					rendered="#{!controller.new and controller.declaration.header.pending}"
-					styleClass="aon-finding-toolbar-item aon-icon-lock"
-					onclick="if (!confirm('#{fiscalBundle.fiscal_finish}?')) return false;"/>
-					
+					actionListener="#{controller.onShowFinalizePanel}"
+					reRender="DeclarationForm,finalizeContainer"
+					rendered="#{!controller.new and controller.to.pending}"
+					styleClass="aon-finding-toolbar-item aon-icon-lock" />
+
 				<aon:commandButton id="#{toolbarID}-reopen"
 					value="#{fiscalBundle.fiscal_reopen}"
 					actionListener="#{controller.onReopen}"
-					rendered="#{!controller.new and controller.declaration.header.finished}"
+					rendered="#{!controller.new and controller.to.finished}"
 					styleClass="aon-finding-toolbar-item aon-icon-unlock"
 					onclick="if (!confirm('#{fiscalBundle.fiscal_reopen}?')) return false;"/>
 
@@ -34,7 +35,7 @@
 					value="#{fiscalBundle.fiscal_recalculate}"
 					actionListener="#{controller.onRecalculate}"
 					accesskey="W" title="ALT+W [+May]" 
-					rendered="#{!controller.new and !controller.declaration.header.readOnly}"
+					rendered="#{!controller.new and !controller.to.readOnly}"
 					styleClass="aon-finding-toolbar-item aon-icon-refresh" />
 <!-- 
 					<aon:htmlCommandLink id="#{toolbarID}-report"
@@ -63,12 +64,12 @@
 
 				<aon:outputLabel for="controller_year" value="#{bundle.aon_year}" />
 				<aon:inputText id="controller_year" size="5" value="#{controller.declaration.header.year}"
-					required="true" disabled="#{controller.declaration.header.readOnly}"/>
+					required="true" disabled="#{!controller.new}"/>
 
 				<aon:outputLabel for="controller_period"
 					value="#{fiscalBundle.fiscal_period}" />
 				<aon:selectOneMenu id="controller_period" value="#{controller.declaration.header.period}"
-					required="true" disabled="#{controller.declaration.header.readOnly}">
+					required="true" disabled="#{!controller.new}">
 					<c:if test="#{quarterPeriods}">
 						<f:selectItems value="#{fiscalCollections.quarterPeriods}" />
 					</c:if>
@@ -80,7 +81,7 @@
 				<aon:outputLabel for="controller_administration"
 					value="#{fiscalBundle.fiscal_administration}" />
 				<aon:selectOneMenu id="controller_administration" value="#{controller.declaration.header.administration}"
-					required="true" disabled="#{controller.declaration.header.readOnly}">
+					required="true" disabled="#{!controller.new}">
 					<f:selectItems value="#{configCollections.administrations}" />
 				</aon:selectOneMenu>
 
@@ -107,6 +108,41 @@
 				</c:if>
 			</aon:panelGrid>
 			
+			<c:if test="#{!controller.new and controller.declaration.header.finished}">
+				
+				<aon:panelGrid id="payPanel" columns="2" style="width: 100%;" styleClass="aon-margin-top"
+					columnClasses="aon-panelGrid-odd aon-width-80
+								,aon-panelGrid-even aon-width-auto">
+				
+					<aon:outputText value="#{fiscalBundle.fiscal_deposit}"
+						rendered="#{!controller.declaration.toDeduct and !controller.declaration.negative}" />
+					<aon:outputText value="#{fiscalBundle.fiscal_deduct}" 
+						rendered="#{controller.declaration.toDeduct}" />
+					<aon:outputText value="#{fiscalBundle.fiscal_negative}" 
+						rendered="#{controller.declaration.negative}" />
+					
+					<aon:div>
+						<aon:outputText styleClass="aon-bold aon-margin-left"
+							value="#{controller.declaration.result}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>									
+
+						<aon:outputText styleClass="aon-margin-left"
+							value="#{controller.to.finance.payMethod.name}">
+						</aon:outputText>
+															
+						<aon:outputText styleClass="aon-margin-left"
+							value="#{controller.to.finance.bank.name}">
+						</aon:outputText>
+
+						<aon:outputText styleClass="aon-margin-left"
+							value="#{controller.to.finance.bankAccount}">
+						</aon:outputText>
+					</aon:div>		
+				</aon:panelGrid>
+
+			</c:if>
+			
 			<aon:panelGrid id="panel2" columns="4" style="width: 100%;" styleClass="aon-margin-top"
 				columnClasses="aon-panelGrid-odd aon-width-80
 							,aon-panelGrid-even aon-width-500
@@ -123,6 +159,13 @@
 							value="#{controller.declaration.header.replacement}"/>
 						<aon:outputLabel for="controller_replacement" styleClass="aon-italic"
 							value="#{fiscalBundle.fiscal_replacement}" />
+					</aon:div>
+					<aon:div rendered="#{controller.declaration.withoutActivityDeclarationAvailable}">
+						<aon:selectBooleanCheckbox id="controller_withoutActivity"
+							disabled="#{controller.declaration.header.readOnly}"
+							value="#{controller.declaration.header.withoutActivity}"/>
+						<aon:outputLabel for="controller_withoutActivity" styleClass="aon-italic"
+							value="#{fiscalBundle.fiscal_without_activity}" />
 					</aon:div>
 				</aon:div>
 				
@@ -152,7 +195,12 @@
 			<c:if test="#{skipDetail}">
 				<ui:insert name="customDetail" />
 			</c:if>
-			
 		</aon:div>
+		
 	</aon:form>
+	
+	<ui:include src="/com/code/aon/ui/fiscal/facelet/model/finalizePanel.xhtml">
+		<ui:param name="controller" value="#{controller}" />
+	</ui:include>	
+	<aon:lookupButtonPopup lookup="#{creditorLookup}" />
 </ui:composition>
