@@ -70,10 +70,11 @@ public class ProductController extends BasicController {
 		}
 	}
 
-	public void acceptItem(ActionEvent event) {
+	public void acceptItem(ActionEvent event) throws ManagerBeanException {
 		ItemController controller = getItemController();
 		controller.accept(event);
 		updateItem(controller);
+		getManagerBean().initializePOJO(getTo());
 	}
 
 	public void onCancelItem(ActionEvent event) throws ManagerBeanException {
