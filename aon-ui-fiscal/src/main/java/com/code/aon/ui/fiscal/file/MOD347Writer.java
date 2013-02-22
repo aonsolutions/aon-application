@@ -127,6 +127,9 @@ public class MOD347Writer implements IFinanceConstants{
 			dec.setName(detail.getName());
 			dec.setKey(detail.getType().getValue());
 			dec.setInsurance(false);
+			if (detail.getProvince() == null) {
+				throw new ManagerBeanException("El registro " + dec.getCode() + " - " + dec.getName() + " no tiene una provincia válida");
+			} 
 			int prov = detail.getProvince().ordinal();
 			if (prov == 0) {
 				prov = 99;
