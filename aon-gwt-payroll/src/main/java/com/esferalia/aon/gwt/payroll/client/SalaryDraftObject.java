@@ -284,6 +284,50 @@ public class SalaryDraftObject {
 	public String getEmployeeAgreementCategory() {
 		return salaryDraft.getEmployeeAgreementCategory();
 	}
+	
+	
+
+	public Double getDbCgcBase() {
+		return salaryDraft.getDbGgcBase();
+	}
+
+	public Double getDbCgpBase() {
+		return salaryDraft.getDbGgpBase();
+	}
+
+	public Double getDbIrpfBase() {
+		return salaryDraft.getDbIrpfBase();
+	}
+
+	public Double getDbHExtraBase() {
+		return salaryDraft.getDbHExtraBase();
+	}
+
+	public Double getDbNonHExtraBase() {
+		return salaryDraft.getDbNonHExtraBase();
+	}
+
+	public Double getDbProrationBase() {
+		return salaryDraft.getDbProrationBase();
+	}
+
+	public Double getDbRemuneration() {
+		return salaryDraft.getDbRemuneration();
+	}
+
+	public Double getDbTotalLiquid() {
+		return salaryDraft.getDbTotalLiquid();
+	}
+
+	public Double getDbTotalPayment() {
+		return salaryDraft.getDbTotalPayment();
+	}
+	
+	
+	
+	public boolean hasDbSalary() {
+		return salaryDraft.hasDbSalary();
+	}
 
 	// ------------------------------------------
 	// Undo & Redo Support

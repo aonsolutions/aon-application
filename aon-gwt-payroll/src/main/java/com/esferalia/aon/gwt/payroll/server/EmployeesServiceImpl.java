@@ -34,6 +34,7 @@ import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.enumeration.Month;
@@ -580,15 +581,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	public List<Payment> getPaymentConcepts() throws IllegalArgumentException{
+	public List<Payment> getPaymentConcepts() throws IllegalArgumentException {
 
 		try {
 			initFacesContext();
 
-			List<Payment> paymentConcepts = getPaymentConcepts(
-					getConnection(), getDomainID(), getParentDomainID());
+			List<Payment> paymentConcepts = getPaymentConcepts(getConnection(),
+					getDomainID(), getParentDomainID());
 			return paymentConcepts;
-		
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
@@ -632,13 +633,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			List<Payment> paymentConcepts = new LinkedList<Payment>();
 			while (rs.next()) {
 				Payment paymentConcept = new Payment();
-				
-				paymentConcept.setName(rs.getString(PaymentConceptColumns.CODE));
-				paymentConcept.setType(getPaymentType(rs.getInt(PaymentConceptColumns.TYPE)));
-				paymentConcept.setExpression(rs.getString(PaymentConceptColumns.EXPRESSION));
-				paymentConcept.setIrpfExpression(rs.getString(PaymentConceptColumns.IRPF_EXPRESSION));
-				paymentConcept.setQuoteExpression(rs.getString(PaymentConceptColumns.QUOTE_EXPRESSION));
-				paymentConcept.setDescription(rs.getString(PaymentConceptColumns.DESCRIPTION));
+
+				paymentConcept
+						.setName(rs.getString(PaymentConceptColumns.CODE));
+				paymentConcept.setType(getPaymentType(rs
+						.getInt(PaymentConceptColumns.TYPE)));
+				paymentConcept.setExpression(rs
+						.getString(PaymentConceptColumns.EXPRESSION));
+				paymentConcept.setIrpfExpression(rs
+						.getString(PaymentConceptColumns.IRPF_EXPRESSION));
+				paymentConcept.setQuoteExpression(rs
+						.getString(PaymentConceptColumns.QUOTE_EXPRESSION));
+				paymentConcept.setDescription(rs
+						.getString(PaymentConceptColumns.DESCRIPTION));
 
 				paymentConcepts.add(paymentConcept);
 			}
@@ -1003,6 +1010,32 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	private static ISalary getDBSalary(SalaryDraft salaryDraft)
+			throws ManagerBeanException {
+
+		IManagerBean beanManager = BeanManager
+				.getManagerBean(com.esferalia.aon.payroll.Salary.class);
+
+		Criteria criteria = new Criteria();
+
+		criteria.addEqualExpression(
+				beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_ID),
+				salaryDraft.getEmployee().getId());
+		criteria.addEqualExpression(
+				beanManager.getFieldName(IEntityAlias.SALARY_TYPE),
+				salaryDraft.getType());
+		criteria.addEqualExpression(
+				beanManager.getFieldName(IEntityAlias.SALARY_START_DATE),
+				salaryDraft.getStartDate());
+		criteria.addEqualExpression(
+				beanManager.getFieldName(IEntityAlias.SALARY_END_DATE),
+				salaryDraft.getEndDate());
+
+		List<ITransferObject> list = beanManager.getList(criteria);
+
+		return list.size() > 0 ? (ISalary) list.get(0) : null;
+	}
+
 	private static List<Salary> getSalaries(Connection connection,
 			Integer enterpriseID, Integer personId, Date toDate)
 			throws SQLException {
@@ -1058,6 +1091,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	private static void calculate(SalaryDraft draft) {
+		
+		
 		SalaryDraftBuilder salaryBuilder = new SalaryDraftBuilder(draft);
 
 		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
@@ -1069,6 +1104,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			ctx = getSalaryCalculatorContext(draft);
 			calculator.calculate(ctx);
+			
+			try {
+				ISalary dbSalary = getDBSalary(draft);
+				if ( dbSalary != null )
+					salaryBuilder.setDbSalary( dbSalary );
+			} catch ( ManagerBeanException e){
+			}
 
 		} catch (ExpressionException e) {
 			// TODO Auto-generated catch block

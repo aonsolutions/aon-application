@@ -58,6 +58,10 @@
 			}
 		}
 		
+		.text-ok * {
+			color: green !important;
+		}
+
 		.text-warn *{
 			font-weight: bold;
 			color: orange !important;
@@ -91,6 +95,10 @@
 			border: 0px !important;
 		}
 		
+		.toolBar-checkBox input {
+			vertical-align: middle;
+		}
+		
 		@sprite .collapseAllButton {
 			float: right;
 			gwt-image: 'collapseall';
@@ -107,6 +115,11 @@
 			background-position: left center;
 		}
 		
+		@sprite .fxButton {
+			gwt-image: 'fx';
+			background-position: left center;
+		}
+
 		@sprite .redoButton {
 			gwt-image: 'redo';
 			background-position: left center;
@@ -119,13 +132,14 @@
 
 	</ui:style>
 
+	<ui:image field='fx' src='fx.png' />
 	<ui:image field='redo' src='redo.png' />
 	<ui:image field='undo' src='undo.png' />
 	<ui:image field='warn' src='warn.png' />
 	<ui:image field='expandall' src='expandall.png' />
 	<ui:image field='collapseall' src='collapseall.png' />
 	<ui:image field='pdfPreview' src='pdfPreview.png' />
-	
+
 	<g:DockLayoutPanel unit="PX">
 		<g:north size="72">
 
@@ -145,18 +159,27 @@
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+								<g:Button ui:field='acceptButton'
+									styleName='aon-finding-toolbar-item aon-icon-accept' text="ACEPTAR"
+									enabled="false" />
 								<g:Button ui:field='printButton'
-									styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir"/>
+									styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" />
 								<g:Button ui:field='printPreviewButton'
-									styleName='aon-finding-toolbar-item {style.pdfPreviewButton}' text="Vista Preliminar"/>
+									styleName='aon-finding-toolbar-item {style.pdfPreviewButton}'
+									text="Vista Preliminar" />
 								<employee:SalarySelect ui:field="salarySelect" />
 								<g:ListBox ui:field="zoomListBox" />
 								<g:Button ui:field='closePreviewButton'
-									styleName='aon-finding-toolbar-item aon-icon-cancel' text="Cerrar Preliminar"/>
+									styleName='aon-finding-toolbar-item aon-icon-cancel' text="Cerrar Preliminar" />
+								<g:Button ui:field="fxButton"
+									styleName='aon-finding-toolbar-item {style.fxButton}' enabled="false" />
 								<g:Button ui:field="undoButton"
 									styleName='aon-finding-toolbar-item {style.undoButton}' />
 								<g:Button ui:field='redoButton'
 									styleName="aon-finding-toolbar-item {style.redoButton}" />
+								<g:CheckBox ui:field='dbSalaryCheck'
+									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+									text="Diferencias" checked="false" />
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
@@ -299,8 +322,12 @@
 										<g:HTMLPanel>
 											<g:Label styleName="{style.cell-label}">IMPORTE TOTAL
 												DEVENGOS</g:Label>
-											<g:Label ui:field="totalPaymentsLabel" styleName="aon-text-center">&nbsp;
-											</g:Label>
+											<g:HTMLPanel tag="div" styleName="aon-text-center">
+												<g:InlineHTML ui:field="totalPaymentsLabel">&nbsp;
+												</g:InlineHTML>
+												<g:InlineHTML ui:field="dbTotalPaymentsLabel"
+													visible="false" />
+											</g:HTMLPanel>
 										</g:HTMLPanel>
 									</g:customCell>
 								</g:row>
@@ -312,7 +339,8 @@
 							<g:HTML styleName="{style.vertical-space}" />
 
 							<g:FlexTable ui:field="eventsTable" styleName="aon-dataTable" />
-							<g:HTML ui:field="eventsTableSpace" styleName="{style.vertical-space}" visible="false" />
+							<g:HTML ui:field="eventsTableSpace" styleName="{style.vertical-space}"
+								visible="false" />
 
 							<g:FlexTable ui:field="paymentsTable"
 								styleName="aon-dataTable {style.edit-rows}" />
@@ -327,23 +355,35 @@
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">RENUMERACION
 													TOTAL</g:Label>
-												<g:Label ui:field="remunerationLabel" styleName="aon-text-center">&nbsp;
-												</g:Label>
+												<g:HTMLPanel tag="div" styleName="aon-text-center">
+													<g:InlineHTML ui:field="remunerationLabel">&nbsp;
+													</g:InlineHTML>
+													<g:InlineHTML ui:field="dbRemunerationLabel"
+														visible="false" />
+												</g:HTMLPanel>
 											</g:HTMLPanel>
 										</g:customCell>
 										<g:customCell>
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">PRORRATA PAGAS</g:Label>
-												<g:Label ui:field="prorationBaseLabel" styleName="aon-text-center">&nbsp;
-												</g:Label>
+												<g:HTMLPanel tag="div" styleName="aon-text-center">
+													<g:InlineHTML ui:field="prorationBaseLabel">&nbsp;
+													</g:InlineHTML>
+													<g:InlineHTML ui:field="dbProrationBaseLabel"
+														visible="false" />
+												</g:HTMLPanel>
 											</g:HTMLPanel>
 										</g:customCell>
 										<g:customCell>
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">BASE TOTAL
 													COTIZ.</g:Label>
-												<g:Label ui:field="cgcBaseLabel" styleName="aon-text-center">&nbsp;
-												</g:Label>
+												<g:HTMLPanel tag="div" styleName="aon-text-center">
+													<g:InlineHTML ui:field="cgcBaseLabel">&nbsp;
+													</g:InlineHTML>
+													<g:InlineHTML ui:field="dbCgcBaseLabel"
+														visible="false" />
+												</g:HTMLPanel>
 											</g:HTMLPanel>
 										</g:customCell>
 									</g:row>
@@ -357,15 +397,23 @@
 										<g:customCell>
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">BASE H.E.</g:Label>
-												<g:Label ui:field="hExtraBaseLabel" styleName="aon-text-center">&nbsp;
-												</g:Label>
+												<g:HTMLPanel tag="div" styleName="aon-text-center">
+													<g:InlineHTML ui:field="hExtraBaseLabel">&nbsp;
+													</g:InlineHTML>
+													<g:InlineHTML ui:field="dbHExtraBaseLabel"
+														visible="false" />
+												</g:HTMLPanel>
 											</g:HTMLPanel>
 										</g:customCell>
 										<g:customCell>
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">BASE AT Y EP.</g:Label>
-												<g:Label ui:field="cgpBaseLabel" styleName="aon-text-center">&nbsp;
-												</g:Label>
+												<g:HTMLPanel tag="div" styleName="aon-text-center">
+													<g:InlineHTML ui:field="cgpBaseLabel">&nbsp;
+													</g:InlineHTML>
+													<g:InlineHTML ui:field="dbCgpBaseLabel"
+														visible="false" />
+												</g:HTMLPanel>
 											</g:HTMLPanel>
 										</g:customCell>
 									</g:row>
@@ -373,16 +421,24 @@
 										<g:customCell>
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">BASE IRPF</g:Label>
-												<g:Label ui:field="irpfBaseLabel" styleName="aon-text-center">&nbsp;
-												</g:Label>
+												<g:HTMLPanel tag="div" styleName="aon-text-center">
+													<g:InlineHTML ui:field="irpfBaseLabel">&nbsp;
+													</g:InlineHTML>
+													<g:InlineHTML ui:field="dbIrpfBaseLabel"
+														visible="false" />
+												</g:HTMLPanel>
 											</g:HTMLPanel>
 										</g:customCell>
 										<g:customCell>
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">BASE H.E. NO
 													AUTORIZ.</g:Label>
-												<g:Label ui:field="nonHExtraBaseLabel" styleName="aon-text-center">&nbsp;
-												</g:Label>
+												<g:HTMLPanel tag="div" styleName="aon-text-center">
+													<g:InlineHTML ui:field="nonHExtraBaseLabel">&nbsp;
+													</g:InlineHTML>
+													<g:InlineHTML ui:field="dbNonHExtraBaseLabel"
+														visible="false" />
+												</g:HTMLPanel>
 											</g:HTMLPanel>
 										</g:customCell>
 										<g:customCell>
@@ -402,24 +458,36 @@
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">A. TOTAL
 													DEVENGO</g:Label>
-												<g:Label ui:field="totalPaymentLabel" styleName="aon-text-center">&nbsp;
-												</g:Label>
+												<g:HTMLPanel tag="div" styleName="aon-text-center">
+													<g:InlineHTML ui:field="totalPaymentLabel">&nbsp;
+													</g:InlineHTML>
+													<g:InlineHTML ui:field="dbTotalPaymentLabel"
+														visible="false" />
+												</g:HTMLPanel>
 											</g:HTMLPanel>
 										</g:customCell>
 										<g:customCell>
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">B. TOTAL
 													DEDUCIR</g:Label>
-												<g:Label ui:field="totalDeductionLabel" styleName="aon-text-center">&nbsp;
-												</g:Label>
+												<g:HTMLPanel tag="div" styleName="aon-text-center">
+													<g:InlineHTML ui:field="totalDeductionLabel">&nbsp;
+													</g:InlineHTML>
+													<g:InlineHTML ui:field="dbTotalDeductionLabel"
+														visible="false" />
+												</g:HTMLPanel>
 											</g:HTMLPanel>
 										</g:customCell>
 										<g:customCell>
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">LIQUIDO A
 													PERCIBIR (A-B)</g:Label>
-												<g:Label ui:field="totalLiquidLabel" styleName="aon-text-center">&nbsp;
-												</g:Label>
+												<g:HTMLPanel tag="div" styleName="aon-text-center">
+													<g:InlineHTML ui:field="totalLiquidLabel">&nbsp;
+													</g:InlineHTML>
+													<g:InlineHTML ui:field="dbTotalLiquidLabel"
+														visible="false" />
+												</g:HTMLPanel>
 											</g:HTMLPanel>
 										</g:customCell>
 									</g:row>

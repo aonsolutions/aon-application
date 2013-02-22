@@ -50,6 +50,21 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		this.salaryDraft = salaryDraft;
 	}
 
+	public void setDbSalary(ISalary dbSalary) {
+		salaryDraft.setHasDbSalary(true);
+		
+		salaryDraft.setDbIrpfBase(dbSalary.getIrpfBase());
+		salaryDraft.setDbGgcBase(dbSalary.getCommonBase());
+		salaryDraft.setDbGgpBase(dbSalary.getProfessionalBase());
+		salaryDraft.setDbHExtraBase(dbSalary.getOvertimeBase());
+		salaryDraft.setDbNonHExtraBase(dbSalary.getNonEstructuralOvertimeBase());
+		salaryDraft.setDbProrationBase(dbSalary.getExtraPayProration());
+
+		salaryDraft.setDbRemuneration(dbSalary.getRemuneration());
+		salaryDraft.setDbTotalLiquid(dbSalary.getTotalLiquid());
+		salaryDraft.setDbTotalPayment(dbSalary.getTotalPayment());
+	}
+
 	@Override
 	public ISalary getSalary() {
 		Collections.sort(salaryDraft.getPayments(), new PaymentComparator());
@@ -61,17 +76,20 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 	@Override
 	public void createNewSalary() {
+		salaryDraft.clearDb();
 		salaryDraft.clearContext();
 		salaryDraft.clearEvents();
 		salaryDraft.clearPayments();
 		salaryDraft.clearDeductions();
 	}
 
+
 	@Override
 	public void setContract(Object contract) {
 		// TODO Auto-generated method stub
 
 	}
+
 
 	@Override
 	public void setCcc(String ccc) {
@@ -459,6 +477,8 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		// TODO Auto-generated method stub
 
 	}
+	
+
 
 	private void addContext(Map<String, ITimedVariable<?>> context) {
 		for (Entry<String, ITimedVariable<?>> entry : context.entrySet()) {
@@ -517,6 +537,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 		return payment;
 	}
+	
 	
 	private Integer getMonth( Month month) {
 		return month == null ? null : month.getValue();

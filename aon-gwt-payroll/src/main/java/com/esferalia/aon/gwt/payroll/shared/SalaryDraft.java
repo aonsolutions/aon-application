@@ -97,6 +97,9 @@ public class SalaryDraft extends SalaryPreview {
 		}
 
 	}
+	
+	private boolean hasDbSalary;
+
 
 	private String enterpriseName;
 	private String enterpriseAddress;
@@ -111,15 +114,24 @@ public class SalaryDraft extends SalaryPreview {
 	private Date employeeSeniorityDate;
 
 	private Double cgcBase;
+	private Double dbGgcBase;
 	private Double cgpBase;
+	private Double dbGgpBase;
 	private Double irpfBase;
+	private Double dbIrpfBase;
 	private Double hExtraBase;
+	private Double dbHExtraBase;
 	private Double nonHExtraBase;
+	private Double dbNonHExtraBase;
 	private Double prorationBase;
+	private Double dbProrationBase;
 
 	private Double remuneration;
+	private Double dbRemuneration;
 	private Double totalLiquid;
+	private Double dbTotalLiquid;
 	private Double totalPayment;
+	private Double dbTotalPayment;
 
 	private List<Variable> context;
 	private List<Event> events;
@@ -139,6 +151,19 @@ public class SalaryDraft extends SalaryPreview {
 		draftContext = new LinkedList<Variable>();
 		draftPayments = new LinkedList<Payment>();
 		draftDeductions = new LinkedList<Deduction>();
+	}
+
+	public void clearDb() {
+		hasDbSalary = false ;
+		dbGgcBase = null;
+		dbGgpBase = null;
+		dbHExtraBase = null;
+		dbIrpfBase = null;
+		dbNonHExtraBase = null;
+		dbProrationBase = null;
+		dbRemuneration = null;
+		dbTotalLiquid = null;
+		dbTotalPayment = null;
 	}
 
 	public void addPayment(Payment payment) {
@@ -344,6 +369,78 @@ public class SalaryDraft extends SalaryPreview {
 		this.cgcBase = cgcBase;
 	}
 
+	public Double getDbGgcBase() {
+		return dbGgcBase;
+	}
+
+	public void setDbGgcBase(Double dbGgcBase) {
+		this.dbGgcBase = dbGgcBase;
+	}
+
+	public Double getDbGgpBase() {
+		return dbGgpBase;
+	}
+
+	public void setDbGgpBase(Double dbGgpBase) {
+		this.dbGgpBase = dbGgpBase;
+	}
+
+	public Double getDbIrpfBase() {
+		return dbIrpfBase;
+	}
+
+	public void setDbIrpfBase(Double dbIrpfBase) {
+		this.dbIrpfBase = dbIrpfBase;
+	}
+
+	public Double getDbHExtraBase() {
+		return dbHExtraBase;
+	}
+
+	public void setDbHExtraBase(Double dbHExtraBase) {
+		this.dbHExtraBase = dbHExtraBase;
+	}
+
+	public Double getDbNonHExtraBase() {
+		return dbNonHExtraBase;
+	}
+
+	public void setDbNonHExtraBase(Double dbNonHExtraBase) {
+		this.dbNonHExtraBase = dbNonHExtraBase;
+	}
+
+	public Double getDbProrationBase() {
+		return dbProrationBase;
+	}
+
+	public void setDbProrationBase(Double dbProrationBase) {
+		this.dbProrationBase = dbProrationBase;
+	}
+
+	public Double getDbRemuneration() {
+		return dbRemuneration;
+	}
+
+	public void setDbRemuneration(Double dbRemuneration) {
+		this.dbRemuneration = dbRemuneration;
+	}
+
+	public Double getDbTotalLiquid() {
+		return dbTotalLiquid;
+	}
+
+	public void setDbTotalLiquid(Double dbTotalLiquid) {
+		this.dbTotalLiquid = dbTotalLiquid;
+	}
+
+	public Double getDbTotalPayment() {
+		return dbTotalPayment;
+	}
+
+	public void setDbTotalPayment(Double dbTotalPayment) {
+		this.dbTotalPayment = dbTotalPayment;
+	}
+
 	public Double getCgpBase() {
 		return cgpBase;
 	}
@@ -458,5 +555,12 @@ public class SalaryDraft extends SalaryPreview {
 		this.employeeAgreementCategory = employeeAgreementCategory;
 	}
 
+	public boolean hasDbSalary() {
+		return hasDbSalary;
+	}
+
+	public void setHasDbSalary(boolean hasDbSalary) {
+		this.hasDbSalary = hasDbSalary;
+	}
 
 }
