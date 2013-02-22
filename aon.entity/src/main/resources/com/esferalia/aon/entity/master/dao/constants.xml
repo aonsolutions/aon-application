@@ -364,8 +364,8 @@
 	</bean>
 
 	<bean class="com.code.aon.product.Product" sqlName="product">
-		<alias names="brand_id,product_category_id,code,composition,compositionPrice,id,inventoriable,name,purchaseAccount_id,retention_id,salesAccount_id,status,type,vat_id" />
-		<hibernate names="brand.id,category.id,code,composition,compositionPrice,id,inventoriable,name,purchaseAccount.id,retention.id,salesAccount.id,status,type,vat.id" />
+		<alias names="brand_id,product_category_id,code,composition,compositionPrice,id,domain,inventoriable,name,purchaseAccount_id,retention_id,salesAccount_id,status,type,vat_id" />
+		<hibernate names="brand.id,category.id,code,composition,compositionPrice,id,domain,inventoriable,name,purchaseAccount.id,retention.id,salesAccount.id,status,type,vat.id" />
 	</bean>
 	
 	<bean class="com.code.aon.product.ProductCategory" sqlName="pcategory">
