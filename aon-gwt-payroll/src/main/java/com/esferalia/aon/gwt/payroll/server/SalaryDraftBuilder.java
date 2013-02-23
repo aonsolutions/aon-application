@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -63,6 +64,9 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		salaryDraft.setDbRemuneration(dbSalary.getRemuneration());
 		salaryDraft.setDbTotalLiquid(dbSalary.getTotalLiquid());
 		salaryDraft.setDbTotalPayment(dbSalary.getTotalPayment());
+		salaryDraft.setDbTotalDeduction(dbSalary.getTotalDeduction());
+		
+		
 	}
 
 	@Override

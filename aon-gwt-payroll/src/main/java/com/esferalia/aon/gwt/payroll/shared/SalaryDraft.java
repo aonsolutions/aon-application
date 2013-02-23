@@ -132,6 +132,8 @@ public class SalaryDraft extends SalaryPreview {
 	private Double dbTotalLiquid;
 	private Double totalPayment;
 	private Double dbTotalPayment;
+	private Double totalDeduction;
+	private Double dbTotalDeduction;
 
 	private List<Variable> context;
 	private List<Event> events;
@@ -440,6 +442,14 @@ public class SalaryDraft extends SalaryPreview {
 	public void setDbTotalPayment(Double dbTotalPayment) {
 		this.dbTotalPayment = dbTotalPayment;
 	}
+	
+	public void setDbTotalDeduction(Double dbTotalDeduction) {
+		this.dbTotalDeduction = dbTotalDeduction;
+	}
+	
+	public Double getDbTotalDeduction() {
+		return dbTotalDeduction;
+	}
 
 	public Double getCgpBase() {
 		return cgpBase;
@@ -497,7 +507,6 @@ public class SalaryDraft extends SalaryPreview {
 		this.totalDeduction = totalDeduction;
 	}
 
-	private Double totalDeduction;
 
 	public String getEnterpriseName() {
 		return enterpriseName;

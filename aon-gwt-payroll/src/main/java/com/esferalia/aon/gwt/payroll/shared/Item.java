@@ -17,6 +17,8 @@ public abstract class Item implements Serializable {
 	String description;
 	Salary.Type salaryType;
 
+	Double dbAmount;
+
 	public String getName() {
 		return name;
 	}
@@ -87,6 +89,14 @@ public abstract class Item implements Serializable {
 	
 	public void setSalaryType(Salary.Type salaryType) {
 		this.salaryType = salaryType;
+	}
+	
+	public Double getDbAmount() {
+		return dbAmount;
+	}
+	
+	public void setDbAmount(Double dbAmount) {
+		this.dbAmount = dbAmount;
 	}
 
 	@Override

@@ -58,6 +58,7 @@
 			}
 		}
 		
+		.text-ok,
 		.text-ok * {
 			color: green !important;
 		}
@@ -67,6 +68,7 @@
 			color: orange !important;
 		}
 
+		.text-error,
 		.text-error *{
 			font-weight: bold;
 			color: red !important;

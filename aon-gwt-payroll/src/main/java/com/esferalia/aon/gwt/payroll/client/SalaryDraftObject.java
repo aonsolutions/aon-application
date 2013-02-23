@@ -146,6 +146,10 @@ public class SalaryDraftObject {
 	public final boolean canRedo() {
 		return undoManager.canRedo();
 	}
+	
+	public void addUndoManagerListener(UndoManager.Listener  listener){
+		undoManager.addListener(listener);
+	}
 
 	public void getAsHTML(int zoom, AsyncCallback<String> callback) {
 		employeesServiceAsync.getSalaryDraftReceiptHTML(salaryDraft, zoom,
@@ -325,6 +329,10 @@ public class SalaryDraftObject {
 	
 	
 	
+	public Double getDbTotalDeduction() {
+		return salaryDraft.getDbTotalDeduction();
+	}
+
 	public boolean hasDbSalary() {
 		return salaryDraft.hasDbSalary();
 	}

@@ -385,6 +385,6 @@ td.datePickerMonth,
 	box-shadow: 5px 5px 10px 5px #D4D0C8;
 }
 
-.aon-finding-toolbar-item  button:disabled {
+.aon-finding-toolbar-item[disabled] {
 	opacity: 0.3;
 }
