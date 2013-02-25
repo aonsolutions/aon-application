@@ -57,7 +57,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.registry.Tag</value>
+			<value>com.code.aon.config.Tag</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>

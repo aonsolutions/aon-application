@@ -8,10 +8,10 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Tag;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Category;
-import com.code.aon.registry.Tag;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
 
 public class CorporateIdentitySearchListener extends ControllerSearchListenerEx {
