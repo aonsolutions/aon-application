@@ -192,8 +192,17 @@ public class ReservationRequestManager implements IReservationConstants {
 		try {
 			Endpoint endpoint = new URLEndpoint(new URL(obtainSoapServerUrl()).toString());
 			MessageFactory messageFactory = MessageFactory.newInstance();
+System.out.println(messageFactory);
 			SOAPMessage soapRequest = messageFactory.createMessage();
+System.out.println(soapRequest);
+System.out.println(soapRequest.getSOAPHeader());
+System.out.println(soapRequest.getSOAPBody());
+System.out.println(soapRequest.getSOAPPart());
 			soapRequest.getSOAPBody().setValue(convertMessage(message));
+System.out.println(convertMessage(message));
+System.out.println(soapRequest.getSOAPHeader());
+System.out.println(soapRequest.getSOAPBody());
+System.out.println(soapRequest.getSOAPPart());
 
 			SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
 			SOAPConnection soapConnection = soapConnectionFactory.createConnection();
@@ -202,6 +211,7 @@ public class ReservationRequestManager implements IReservationConstants {
 			HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
 			return obtainAvailableRoomStayList(hitisDocument.getHITISMessage(), availableRoomStayList);
 		} catch (Exception ex) {
+ex.printStackTrace();
 			AvailableRoomStay availableRoomStay = new AvailableRoomStay();
 			availableRoomStay.setError(true);
 			availableRoomStay.setErrorMessage(ex.getMessage());

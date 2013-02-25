@@ -35,13 +35,11 @@
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.finance</artifactId>
 			<version>${project.version}</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.finance.bridge</artifactId>
 			<version>${project.version}</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
@@ -54,9 +52,16 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>6.0</version>
+			<groupId>axis</groupId>
+			<artifactId>axis-jaxrpc</artifactId>
+			<version>1.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>axis</groupId>
+			<artifactId>axis-saaj</artifactId>
+			<version>1.4</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
     <profiles>
@@ -65,4 +70,3 @@
         </profile>
     </profiles>
 </project>
- 
