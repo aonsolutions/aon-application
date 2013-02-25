@@ -1450,7 +1450,7 @@
 		<column name="description_decorable" type="boolean" />
 	</table>
 
-	<table name="tag" class="com.code.aon.config.Tag">
+	<table name="tag">
 		<column name="type" type="com.code.aon.config.enumeration.TagType" /> 
 	</table>
 	
