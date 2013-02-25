@@ -13,68 +13,51 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.config.Domain;
-import com.code.aon.product.Item;
+import com.code.aon.product.Product;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ItemBeanVetoListener extends ManagerBeanVetoListenerAdapter {
+public class ProductBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
-	@Override
-	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
-		Item item = (Item)evt.getTo();
-		checkValidCode(item, false);
-		checkItem(item);
-	}
+    @Override
+    public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+    	Product to = (Product) evt.getTo();
+    	checkValidCode(to, false);
+    }
 
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
-		Item item = (Item)evt.getTo();
-		checkValidCode(item, true);
-		checkItem(item);
+		Product to = (Product) evt.getTo();
+		checkValidCode(to, true);
 	}
 
-	private void checkItem(Item item) {
-    	if (StringUtils.isEmpty(item.getProduct().getCode())) {
-    		item.getProduct().setCode(item.getId().toString());
-    	}
-    	if (item.getProduct().isInventoriable()) {
-    		item.getProduct().setComposition(false);
-    	}
-    	if (!item.getProduct().isComposition()) {
-    		item.getProduct().setCompositionPrice(false);
-    	}
-	}
-
-	private String getBarcode( IManagerBean itemBean, Item item ) throws ManagerBeanException {
+	private String getCode( IManagerBean productBean, Product product ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID),item.getId());
+		criteria.addEqualExpression(productBean.getFieldName(IEntityAlias.PRODUCT_ID), product.getId());
 		ProjectionList pl = new ProjectionList();
-		pl.add(Projection.property(itemBean.getFieldName(IEntityAlias.ITEM_BARCODE)));
-		List<?> list = itemBean.getList(pl, criteria);
+		pl.add(Projection.property(productBean.getFieldName(IEntityAlias.PRODUCT_CODE)));
+		List<?> list = productBean.getList(pl, criteria);
 		return (String) list.get(0);		
 	}
-	
-    private void checkValidCode(Item to, boolean update) throws ManagerBeanVetoListenerException {
-    	if ( StringUtils.isEmpty(to.getBarcode()) ) {
-    		return;
-    	}
+    
+    private void checkValidCode(Product to, boolean update) throws ManagerBeanVetoListenerException {
 		try {
-			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+			IManagerBean productBean = BeanManager.getManagerBean(Product.class);
 			boolean checkInDomain = true;
 			if ( update ) {
-				String barcode = getBarcode(itemBean, to);
-				checkInDomain = ! StringUtils.equals(to.getBarcode(), barcode);
+				String code = getCode(productBean, to);
+				checkInDomain = ! StringUtils.equals(to.getCode(), code);
 			}
 			if ( checkInDomain ) {
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_BARCODE),to.getBarcode());
-				List<ITransferObject> list = itemBean.getList(criteria);
+				criteria.addEqualExpression(productBean.getFieldName(IEntityAlias.PRODUCT_CODE),to.getCode());
+				List<ITransferObject> list = productBean.getList(criteria);
 				if (! list.isEmpty()) {
-					Item duplicate = (Item) list.get(0);
+					Product duplicate = (Product) list.get(0);
 					throw new ManagerBeanVetoListenerException(
-							"Ya existe un producto con el mismo código de barras (" + duplicate.getFullName() + ")");	
+							"Ya existe un producto con el mismo código (" + duplicate.getName() + ")");	
 				}				
 			}
 			// Si estamos grabando un producto en un dominio padre, se chequea que no exista el 
@@ -90,11 +73,11 @@ public class ItemBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				for (ITransferObject d : domains) {
 					Domain child = (Domain) d;
 					Criteria childCriteria = new Criteria();
-					childCriteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DOMAIN),child.getId());
-					childCriteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_BARCODE),to.getBarcode());
+					childCriteria.addEqualExpression(productBean.getFieldName(IEntityAlias.PRODUCT_DOMAIN),child.getId());
+					childCriteria.addEqualExpression(productBean.getFieldName(IEntityAlias.PRODUCT_CODE),to.getCode());
 					childCriteria.setSkipDomainFilter(true);
-					if ( itemBean.getCount(childCriteria) > 0 ) {
-						throw new ManagerBeanVetoListenerException("Ya existe un producto con el mismo código de barras "
+					if ( productBean.getCount(childCriteria) > 0 ) {
+						throw new ManagerBeanVetoListenerException("Ya existe un producto con el mismo código "
 								+ " en el dominio '"+child.getName()+" " + child.getDescription() +"'");							
 					}
 				}
@@ -103,5 +86,5 @@ public class ItemBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			throw new ManagerBeanVetoListenerException("No se pudo chequear la existencia del producto.");
 		}
 	}
-	
+    
 }

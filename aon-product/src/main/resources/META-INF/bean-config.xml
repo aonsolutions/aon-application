@@ -37,4 +37,11 @@
 		</listeners>
 	</bean>
 
+	<bean description="">
+		<pojo>com.code.aon.product.Product</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.product.event.ProductBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
 </bean-config>
