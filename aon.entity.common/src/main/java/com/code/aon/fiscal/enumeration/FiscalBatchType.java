@@ -13,7 +13,7 @@ public enum FiscalBatchType implements IResourceable {
 	,MOD123( true )
 	,MOD130( true )
 	,MOD131( true )
-//	,MOD310( true )
+	,MOD310( true )
 //	,MOD390( false )
 //	,MOD347( false )
 //	,MOD349( true )

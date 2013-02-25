@@ -32,6 +32,8 @@ public class FiscalBatchModelFactory {
 			return new Mod130BatchModel();
 		} else if (type == FiscalBatchType.MOD131) {
 			return new Mod131BatchModel();
+		} else if (type == FiscalBatchType.MOD310) {
+			return new Mod310BatchModel();
 		}
 		throw new AonException("Imposible recuperar las declaraciones del tipo " + type);
 	}
