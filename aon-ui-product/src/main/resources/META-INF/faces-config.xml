@@ -42,29 +42,6 @@
 		</managed-property>
 	</managed-bean>
 	
-		<!-- ****** PRODUCT CATEGORY GROUP ****** -->
-	<managed-bean>
-		<managed-bean-name>productCategoryGroup</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.product.ProductCategoryGroup</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>productCategoryGroup</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>ProductCategoryGroup_name</value>
-		</managed-property>
-	</managed-bean>
-	
 	<!-- ****** PRODUCT CATEGORY ****** -->
 	<managed-bean>
 		<managed-bean-name>productCategory</managed-bean-name>
@@ -1252,10 +1229,6 @@
 	
    	<!-- ************* NAVIGATION RULES ***************** -->
 	<navigation-rule>
-		<navigation-case>
-		<from-outcome>productCategoryGroup</from-outcome>
-			<to-view-id>/com/code/aon/ui/product/facelet/categoryGroup/grid.xhtml</to-view-id>
-	    </navigation-case>
 	    <navigation-case>
 	      <from-outcome>productCategory</from-outcome>
 	      <to-view-id>/com/code/aon/ui/product/facelet/category/grid.xhtml</to-view-id>

@@ -6,7 +6,6 @@ import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import javax.faces.model.SelectItemGroup;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -18,7 +17,6 @@ import com.code.aon.product.Catalogue;
 import com.code.aon.product.Item;
 import com.code.aon.product.ItemAddInfo;
 import com.code.aon.product.ProductCategory;
-import com.code.aon.product.ProductCategoryGroup;
 import com.code.aon.product.enumeration.ItemTariffType;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
@@ -133,70 +131,16 @@ public class ProductCollectionsController {
 	}
 	
 	public List<SelectItem> getCategories() throws ManagerBeanException {
-		boolean groups = false;
 		List<SelectItem> categories = new LinkedList<SelectItem>();
-		IManagerBean categoryGroupBean = BeanManager.getManagerBean(ProductCategoryGroup.class);
+		IManagerBean categoryBean = BeanManager.getManagerBean(ProductCategory.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(categoryGroupBean.getFieldName(IEntityAlias.PRODUCT_CATEGORY_GROUP_NAME));
-		for (ITransferObject ito : categoryGroupBean.getList(criteria)) {
-			groups = true;
-			ProductCategoryGroup categoryGroup = (ProductCategoryGroup)ito;
-			SelectItem[] groupCategories = obtainGroupCategories(categoryGroup.getId());
-			SelectItemGroup item = new SelectItemGroup(categoryGroup.getName(), categoryGroup.getName(), false, groupCategories);
+		criteria.addOrder(categoryBean.getFieldName(IEntityAlias.PRODUCT_CATEGORY_NAME));
+		for (ITransferObject ito : categoryBean.getList(criteria)) {
+			ProductCategory category = (ProductCategory)ito;
+			SelectItem item = new SelectItem(category, category.getName());
 			categories.add(item);
-		}
-
-		SelectItem[] noGroupCategories = obtainNoGroupCategories();
-		if (groups) {
-			SelectItemGroup item = new SelectItemGroup("OTRAS", "OTRAS", false, noGroupCategories);
-			categories.add(item);
-		} else {
-			for (SelectItem category : noGroupCategories) {
-				categories.add(category);
-			}
 		}
 		return categories;
-	}
-
-	private SelectItem[] obtainGroupCategories(Integer groupId) throws ManagerBeanException {
-		List<SelectItem> categories = new LinkedList<SelectItem>();
-		IManagerBean categoryBean = BeanManager.getManagerBean(ProductCategory.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(categoryBean.getFieldName(IEntityAlias.PRODUCT_CATEGORY_CATEGORY_GROUP_ID), groupId);
-		criteria.addOrder(categoryBean.getFieldName(IEntityAlias.PRODUCT_CATEGORY_NAME));
-		for (ITransferObject ito : categoryBean.getList(criteria)) {
-			ProductCategory category = (ProductCategory)ito;
-			SelectItem item = new SelectItem(category, category.getName());
-			categories.add(item);
-		}
-		return categories.toArray(new SelectItem[categories.size()]);
-	}
-	
-	private SelectItem[] obtainNoGroupCategories() throws ManagerBeanException {
-		List<SelectItem> categories = new LinkedList<SelectItem>();
-		IManagerBean categoryBean = BeanManager.getManagerBean(ProductCategory.class);
-		Criteria criteria = new Criteria();
-		criteria.addNullExpression(categoryBean.getFieldName(IEntityAlias.PRODUCT_CATEGORY_CATEGORY_GROUP));
-		criteria.addOrder(categoryBean.getFieldName(IEntityAlias.PRODUCT_CATEGORY_NAME));
-		for (ITransferObject ito : categoryBean.getList(criteria)) {
-			ProductCategory category = (ProductCategory)ito;
-			SelectItem item = new SelectItem(category, category.getName());
-			categories.add(item);
-		}
-		return categories.toArray(new SelectItem[categories.size()]);
-	}
-	
-	public List<SelectItem> getCategoryGroups() throws ManagerBeanException {
-		List<SelectItem> categoryGroups = new LinkedList<SelectItem>();
-		IManagerBean categoryGroupBean = BeanManager.getManagerBean(ProductCategoryGroup.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(categoryGroupBean.getFieldName(IEntityAlias.PRODUCT_CATEGORY_GROUP_NAME));
-		for (ITransferObject ito : categoryGroupBean.getList(criteria)) {
-			ProductCategoryGroup categoryGroup = (ProductCategoryGroup)ito;
-			SelectItem item = new SelectItem(categoryGroup, categoryGroup.getName());
-			categoryGroups.add(item);
-		}
-		return categoryGroups;
 	}
 
 	public List<SelectItem> getCatalogues() throws ManagerBeanException {
