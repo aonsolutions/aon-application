@@ -43,6 +43,7 @@ public abstract class FiscalModelManager implements IFiscalModelManager {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_YEAR), fiscalModel.getYear());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_ADMINISTRATION), fiscalModel.getAdministration());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_MODEL), fiscalModel.getModel());
 		String periodAlias = bean.getFieldName(IEntityAlias.FISCAL_MODEL_PERIOD);
 
 		int i = fiscalModel.getPeriod().ordinal(); 

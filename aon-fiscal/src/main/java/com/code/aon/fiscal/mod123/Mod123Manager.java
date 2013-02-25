@@ -83,6 +83,7 @@ public class Mod123Manager extends FiscalModelManager {
 				mod123.ensureDetail(Mod123Key.C02).addAccumulatedAmount(rentingAmount);
 				mod123.ensureDetail(Mod123Key.C03).addAccumulatedAmount(retention);
 			}
+			fillDeclaredData(mod123);
 			mod123.calculate();
 			return mod123;
 		} catch (SQLException e) {

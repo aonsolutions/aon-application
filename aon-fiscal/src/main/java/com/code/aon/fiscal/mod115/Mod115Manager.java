@@ -85,7 +85,8 @@ public class Mod115Manager extends FiscalModelManager {
 				mod115.ensureDetail(Mod115Key.C02).addAccumulatedAmount(rentingAmount);
 				mod115.ensureDetail(Mod115Key.C03).addAccumulatedAmount(retention);
 			}
-			mod115.calculate();
+			fillDeclaredData(mod115);
+			mod115.calculate();			
 			return mod115;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
