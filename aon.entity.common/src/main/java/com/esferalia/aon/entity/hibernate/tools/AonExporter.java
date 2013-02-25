@@ -273,6 +273,7 @@ public class AonExporter extends GenericExporter{
 		map.put("PayMethod","com.code.aon.config.PayMethod");
 		map.put("Series","com.code.aon.config.Series");
 		map.put("Scope","com.code.aon.config.Scope");
+		map.put("Tag","com.code.aon.config.Tag");
 		map.put("Tariff","com.code.aon.config.Tariff");
 		map.put("Tax","com.code.aon.config.Tax");
 		map.put("TaxDetail","com.code.aon.config.TaxDetail");
@@ -499,7 +500,6 @@ public class AonExporter extends GenericExporter{
 		map.put("RegistrySegment","com.code.aon.registry.RegistrySegment");
 		map.put("Relationship","com.code.aon.registry.Relationship");
 		map.put("Segment","com.code.aon.registry.Segment");
-		map.put("Tag","com.code.aon.registry.Tag");
 
 		//AON-SALES  
 		map.put("Sales","com.code.aon.sales.Sales");

@@ -26,6 +26,7 @@
 		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>
 		<mapping class="com.code.aon.config.Series"/>
 		<mapping class="com.code.aon.config.Scope"/>
+        <mapping class="com.code.aon.config.Tag"/>
 		<mapping class="com.code.aon.config.Tariff"/>
 		<mapping class="com.code.aon.config.Tax"/>
 		<mapping class="com.code.aon.config.TaxDetail"/>
@@ -55,8 +56,7 @@
 		<mapping class="com.code.aon.registry.RegistryMedia"/>	
 		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
 		<mapping class="com.code.aon.registry.RegistrySegment"/>
-		<mapping class="com.code.aon.registry.Segment"/>			
-		<mapping class="com.code.aon.registry.Tag"/>		
+		<mapping class="com.code.aon.registry.Segment"/>				
 		
 		<!-- AON-CALENDAR Mapping files -->		
 		<mapping class="com.esferalia.aon.calendar.Calendar"/>

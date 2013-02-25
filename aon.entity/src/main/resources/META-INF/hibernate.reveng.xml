@@ -1021,6 +1021,8 @@
 	
 	<table name="payroll_workplace" class="com.esferalia.aon.entity.master.PayrollWorkPlace" />
 	
+	<table name="pcategory" class="com.esferalia.aon.entity.master.ProductCategory" />
+	
 	<table name="product_tag" class="com.esferalia.aon.entity.master.ProductTag" >
 		<foreign-key constraint-name="FK_PRODUCT_TAG_PRODUCT">
 			<many-to-one property="product" />
