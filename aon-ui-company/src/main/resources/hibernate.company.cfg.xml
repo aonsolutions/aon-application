@@ -22,6 +22,7 @@
 		<mapping class="com.code.aon.config.Domain"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.Scope"/>
+        <mapping class="com.code.aon.config.Tag"/>
 
 		<!-- AON-GEOZONE Mapping files -->
 		<mapping class="com.code.aon.geozone.GeoZone"/>		
@@ -37,7 +38,6 @@
 		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
 		<mapping class="com.code.aon.registry.RegistrySegment"/>
 		<mapping class="com.code.aon.registry.Segment"/>					
-		<mapping class="com.code.aon.registry.Tag"/>
 
 	</session-factory>
 

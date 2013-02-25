@@ -1449,6 +1449,10 @@
 		<column name="month" type="com.code.aon.common.enumeration.Month"/>
 		<column name="description_decorable" type="boolean" />
 	</table>
+
+	<table name="tag" class="com.code.aon.config.Tag">
+		<column name="type" type="com.code.aon.config.enumeration.TagType" /> 
+	</table>
 	
 	<table name="target">
 		<primary-key>

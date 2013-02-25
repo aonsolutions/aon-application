@@ -37,8 +37,9 @@
 		<mapping class="com.code.aon.registry.RegistrySegment"/>
 		<mapping class="com.code.aon.registry.Relationship"/>
 		<mapping class="com.code.aon.registry.Segment"/>
-		<mapping class="com.code.aon.registry.Tag"/>
-	
+        
+        <mapping class="com.code.aon.config.Tag"/>
+        	
 		<!-- AON-GEOZONE Mapping files -->
 		<mapping class="com.code.aon.geozone.GeoZone"/>			
 
