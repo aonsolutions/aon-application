@@ -85,7 +85,7 @@
     	<mapping class="com.code.aon.groupware.ProcessTask"/>
     	<mapping class="com.code.aon.project.ActivityType"/>
     	<mapping class="com.esferalia.aon.payroll.ContractDeduction"/>
-    	<mapping class="com.code.aon.product.ProductCategoryTree"/>
+    	<mapping class="com.code.aon.product.ProductTag"/>
     	<mapping class="com.code.aon.config.ApplicationParameter"/>
     	<mapping class="com.code.aon.project.ProjectType"/>
     	<mapping class="com.code.aon.accounting.AccountEntryDetail"/>
@@ -157,7 +157,6 @@
     	<mapping class="com.code.aon.commercial.OfferAttachment"/>
     	<mapping class="com.esferalia.aon.pms.ProjectReservation"/>
     	<mapping class="com.esferalia.aon.pms.Room"/>
-    	<mapping class="com.code.aon.product.ProductCategoryGroup"/>
     	<mapping class="com.esferalia.aon.payroll.CNO"/>
     	<mapping class="com.code.aon.warehouse.Inventory"/>
     	<mapping class="com.code.aon.asset.Feature"/>

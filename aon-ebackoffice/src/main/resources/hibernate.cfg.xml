@@ -69,7 +69,7 @@
 		<mapping class="com.code.aon.product.Item"/>
 		<mapping class="com.code.aon.product.Product"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
-		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
+		<mapping class="com.code.aon.product.ProductTag"/>
 		
 		<!-- REGISTRY -->		
 		<mapping class="com.code.aon.registry.Registry"/>

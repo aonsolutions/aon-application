@@ -57,7 +57,7 @@
     	<mapping class="com.code.aon.product.ItemSupplier"/>
     	<mapping class="com.code.aon.product.Product"/>
     	<mapping class="com.code.aon.product.ProductCategory"/>
-    	<mapping class="com.code.aon.product.ProductCategoryGroup"/>
+    	<mapping class="com.code.aon.product.ProductTag"/>
     	<mapping class="com.code.aon.project.ActivityType"/>
     	<mapping class="com.code.aon.project.Project"/>
     	<mapping class="com.code.aon.project.ProjectActivity"/>

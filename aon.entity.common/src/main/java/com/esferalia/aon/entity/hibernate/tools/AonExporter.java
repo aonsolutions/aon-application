@@ -450,8 +450,7 @@ public class AonExporter extends GenericExporter{
 		map.put("ItemTariff","com.code.aon.product.ItemTariff");
 		map.put("Product","com.code.aon.product.Product");
 		map.put("ProductCategory","com.code.aon.product.ProductCategory");
-		map.put("ProductCategoryGroup","com.code.aon.product.ProductCategoryGroup");
-		map.put("ProductCategoryTree","com.code.aon.product.ProductCategoryTree");
+		map.put("ProductTag","com.code.aon.product.ProductTag");
 		map.put("TariffCatalogue","com.code.aon.product.TariffCatalogue");
 
 		//AON PROJECT 

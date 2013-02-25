@@ -1021,24 +1021,12 @@
 	
 	<table name="payroll_workplace" class="com.esferalia.aon.entity.master.PayrollWorkPlace" />
 	
-	<table name="pcategory" class="com.esferalia.aon.entity.master.ProductCategory">
-		<column name="detail_pattern" property="itemPattern"/>
-		<foreign-key constraint-name="FK_PCATEGORY_PCATEGORY_GROUP">
-			<many-to-one property="group" />
+	<table name="product_tag" class="com.esferalia.aon.entity.master.ProductTag" >
+		<foreign-key constraint-name="FK_PRODUCT_TAG_PRODUCT">
+			<many-to-one property="product" />
 		</foreign-key>
-	</table>
-	
-	<table name="pcategory_group" class="com.esferalia.aon.entity.master.ProductCategoryGroup" />
-	
-	<table name="pcategory_tree" class="com.esferalia.aon.entity.master.ProductCategoryTree">
-		<foreign-key constraint-name="FK_PCATEGORY_TREE_PARENT_PCATEGORY">
-			<many-to-one property="parent" />
-		</foreign-key>
-		<foreign-key constraint-name="FK_PCATEGORY_TREE_CHILD_PCATEGORY">
-			<many-to-one property="child" />
-		</foreign-key>
-	</table>
-	
+	</table>	    
+    
 	<table name="person">
 		<primary-key>
 			<key-column name="registry" property="id" type="java.lang.Integer"/>

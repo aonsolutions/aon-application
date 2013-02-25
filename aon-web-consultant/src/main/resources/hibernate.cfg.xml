@@ -181,8 +181,7 @@
 		<mapping class="com.code.aon.product.ItemTariff"/>
 		<mapping class="com.code.aon.product.Product"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
-		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
-		<mapping class="com.code.aon.product.ProductCategoryTree"/>
+        <mapping class="com.code.aon.product.ProductTag"/>
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 
 		<!-- AON-PROJECT Mapping files -->  

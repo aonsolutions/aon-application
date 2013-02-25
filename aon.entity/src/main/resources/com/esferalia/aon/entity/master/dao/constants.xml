@@ -367,11 +367,6 @@
 		<alias names="brand_id,product_category_id,code,composition,compositionPrice,id,domain,inventoriable,name,purchaseAccount_id,retention_id,salesAccount_id,status,type,vat_id" />
 		<hibernate names="brand.id,category.id,code,composition,compositionPrice,id,domain,inventoriable,name,purchaseAccount.id,retention.id,salesAccount.id,status,type,vat.id" />
 	</bean>
-	
-	<bean class="com.code.aon.product.ProductCategory" sqlName="pcategory">
-		<alias names="category_group,category_group_id,id,itemPattern,name" />
-		<hibernate names="group,group.id,id,itemPattern,name" />
-	</bean>
 
 	<bean class="com.code.aon.product.TariffCatalogue" sqlName="tariff_catalogue">
 		<alias names="id,tariff_id,catalogue_id,catalogue_name,catalogue_startDate,catalogue_endDate" />
