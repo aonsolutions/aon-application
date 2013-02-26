@@ -32,6 +32,10 @@
 			</aon:selectOneMenu>
 		</c:if>
 	</aon:div>
+	
+	<ui:include src="/com/code/aon/ui/config/facelet/tag/input.xhtml" >
+		<ui:param name="searchController" value="#{productSearch}" />
+	</ui:include>	
 
 	<c:if test="#{aonConfiguration.bean.product.showType}">
 		<aon:outputLabel for="Product_type" value="#{bundle.aon_type}" />

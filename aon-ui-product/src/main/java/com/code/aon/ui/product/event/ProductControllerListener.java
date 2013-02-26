@@ -1,11 +1,16 @@
 package com.code.aon.ui.product.event;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Tag;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
+import com.code.aon.product.ProductTag;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
@@ -46,16 +51,28 @@ public class ProductControllerListener extends ControllerAdapter implements IIte
 			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 			itemBean.insert(controller.getItem());
 			updateItems(product);
+			updateTagList( product, getSearch().getTags(), true );			
 		} catch (ManagerBeanException e) {
             throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
+    
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		try {
+			Product product = (Product) event.getController().getTo();
+			updateTagList( product, getSearch().getTags(), false );
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		}
+	}    
 
 	@Override
     public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		try {
 			Product product = (Product) event.getController().getTo();
 			updateItems(product);
+			getSearch().setTags( getTagList(product) );			
 		} catch (ManagerBeanException e) {
             throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -92,4 +109,52 @@ public class ProductControllerListener extends ControllerAdapter implements IIte
 		item.setProduct(product);
 	}
 
+	public ProductSearchListener getSearch() {
+		return (ProductSearchListener) AonUtil.getRegisteredBean(PRODUCT_SEARCH_CONTROLLER_NAME);
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private List<ProductTag> getProductTags( Product product ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ProductTag.class);
+		Criteria criteria = new Criteria();
+		String alias = bean.getFieldName(IEntityAlias.PRODUCT_TAG_PRODUCT_ID);
+		criteria.addEqualExpression(alias,  product.getId());
+		criteria.addOrder("ProductTag.tag.name");
+		return (List) bean.getList(criteria);
+	}	
+	
+	private List<Tag> getTagList( Product product ) throws ManagerBeanException {
+		List<Tag> list = new LinkedList<Tag>();
+		for( ProductTag pt : getProductTags(product) ) {
+			if (! list.contains(pt.getTag()) ) {
+				list.add(pt.getTag());
+			}
+		}
+		return list;
+	}	
+
+	private void updateTagList( Product product, List<Tag> tags, boolean _new ) throws ManagerBeanException {
+		List<Tag> _tags = new LinkedList<Tag>(tags);
+		IManagerBean bean = BeanManager.getManagerBean(ProductTag.class);
+		if (! _new ) {
+			for( ProductTag pt : getProductTags(product) ) {
+				if ( _tags.contains(pt.getTag()) ) {
+					_tags.remove(pt.getTag());
+				} else {
+					bean.remove(pt);
+				}
+			}
+		}
+		if (! _tags.isEmpty() ) {
+			for( Tag tag : _tags ) {
+				if ((tag != null) && (tag.getId() != null)) {
+					ProductTag pt = new ProductTag();
+					pt.setProduct(product);
+					pt.setTag(tag);
+					bean.insert(pt);
+				}
+			}
+		}
+	}		
+	
 }

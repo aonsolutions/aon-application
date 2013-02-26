@@ -1,12 +1,22 @@
 package com.code.aon.ui.product.event;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
+
 import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.account.Account;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Tag;
 import com.code.aon.config.Tax;
+import com.code.aon.config.enumeration.TagType;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
@@ -16,6 +26,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProductSearchListener extends ControllerSearchListenerEx {
 
+	private static final Tag EMPTY_TAG = new Tag();
+	
 	private ProductStatus[] statuses;
 	
 	private ProductStatus[] itemStatuses;
@@ -29,6 +41,8 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	private Account purchaseAccount;
 	
 	private Account salesAccount;
+	
+	private List<Tag> tags;
 	
 	public ProductStatus[] getStatuses() {
 		return statuses;
@@ -85,6 +99,32 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	public void setItemStatuses(ProductStatus[] itemStatuses) {
 		this.itemStatuses = itemStatuses;
 	}
+	
+	
+	public List<Tag> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
+		if (tags.isEmpty()) {
+			tags.add(EMPTY_TAG);
+		}				
+	}
+
+	public int getTagsSize() {
+		return (tags != null) ? tags.size() : 0;
+	}
+	
+	public List<Integer> getTagsIds() {
+		List<Integer> ids = new LinkedList<Integer>();
+		for( Tag tag : tags ) {
+			if ((tag != null) && (tag.getId() != null)) {
+				ids.add(tag.getId());
+			}
+		}
+		return ids;
+	}			
 
 	@Override
 	protected void init() throws ManagerBeanException {
@@ -97,6 +137,7 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		setPurchaseAccount( (Account) accountBean.createNewTo() );
 		setSalesAccount( (Account) accountBean.createNewTo() );
 		setItemStatuses( new ProductStatus[0] );
+		setTags( new LinkedList<Tag>() );
 	}
 	
 	@Override
@@ -128,6 +169,36 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 			String alias = getController().resolveAlias(IEntityAlias.PRODUCT_SALES_ACCOUNT_ID);
 			criteria.addEqualExpression(alias, getSalesAccount().getId());			
 		}	
+		if ( getTagsSize() > 0 ) {
+			addEnumToCriteria(criteria, "Product.tags.tag.id", getTagsIds().toArray());	
+		}		
 	}
+
+	public void onAddTag(ActionEvent event) {
+		getTags().add(EMPTY_TAG);
+	}
+	
+	public void onRemoveTag(ActionEvent event) {
+        FacesContext context = FacesContext.getCurrentInstance();
+		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
+		getTags().remove(index);
+		if (getTags().isEmpty()) {
+			getTags().add(EMPTY_TAG);
+		}
+	}		
+	 
+    public List<SelectItem> getSelectableTags() throws ManagerBeanException {
+    	List<SelectItem> tags = new LinkedList<SelectItem>();
+    	IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression(tagBean.getFieldName(IEntityAlias.TAG_TYPE), TagType.PRODUCT );
+    	criteria.addOrder(tagBean.getFieldName(IEntityAlias.TAG_NAME));
+    	for( ITransferObject to : tagBean.getList(criteria) ) {
+    		Tag tag = (Tag) to;
+    		SelectItem item = new SelectItem(tag, tag.getName());
+    		tags.add(item);
+    	}
+    	return tags;
+    }    
 	
 }

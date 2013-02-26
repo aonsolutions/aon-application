@@ -6,13 +6,19 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tag;
+import com.code.aon.config.enumeration.TagType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Category;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CorporateIdentitySearchListener extends ControllerSearchListenerEx {
 
@@ -151,5 +157,19 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 			getTags().add(EMPTY_TAG);
 		}
 	}		
+	 
+    public List<SelectItem> getSelectableTags() throws ManagerBeanException {
+    	List<SelectItem> tags = new LinkedList<SelectItem>();
+    	IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression(tagBean.getFieldName(IEntityAlias.TAG_TYPE), TagType.RATTACH );
+    	criteria.addOrder(tagBean.getFieldName(IEntityAlias.TAG_NAME));
+    	for( ITransferObject to : tagBean.getList(criteria) ) {
+    		Tag tag = (Tag) to;
+    		SelectItem item = new SelectItem(tag, tag.getName());
+    		tags.add(item);
+    	}
+    	return tags;
+    }    
 	
 }

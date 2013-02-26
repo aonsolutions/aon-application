@@ -6,26 +6,26 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:outputLabel for="RegistryAttachment_tag"
-		value="#{registryBundle.registry_tag_module}" />
+	<aon:outputLabel for="Tag_Input"
+		value="#{configBundle.config_tag_module}" />
 	<aon:div id="tagDiv">
 		<a4j:region>
-			<a4j:repeat value="#{searchController.tags}" rowKeyVar="index" var="raTag">
+			<a4j:repeat value="#{searchController.tags}" rowKeyVar="index" var="theTag">
 				<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
-					<aon:selectOneMenu id="RegistryAttachment_tag"
+					<aon:selectOneMenu id="Tag_Input"
 						value="#{searchController.tags[index]}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{registryCollections.tags}" />
+						<f:selectItems value="#{searchController.selectableTags}" />
 						<a4j:support event="onchange" reRender="tagDiv"/>
 					</aon:selectOneMenu>
 					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="tagDiv"
 						actionListener="#{searchController.onRemoveTag}" value="&#160;" immediate="true"
-						rendered="#{raTag.id != null}">
+						rendered="#{theTag.id != null}">
 						<f:param name="index" value="#{index}" />
 					</aon:commandButton>
 					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="tagDiv"
 						actionListener="#{searchController.onAddTag}" value="&#160;" immediate="true"
-						rendered="#{(raTag.id != null) and (index == (searchController.tagsSize-1))}"/>
+						rendered="#{(theTag.id != null) and (index == (searchController.tagsSize-1))}"/>
 				</aon:div>						
 			</a4j:repeat>
 		</a4j:region>

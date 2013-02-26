@@ -5,8 +5,6 @@ import static com.code.aon.ui.registry.controller.IRegistryConstants.CORPORATE_I
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.persistence.Transient;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -124,7 +122,7 @@ public class CorporateIdentityControllerListener extends RegistryAttachControlle
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<RegistryAttachmentTag> getRegistryAttachmentTags( RegistryAttachment attachment ) throws ManagerBeanException {
+	private List<RegistryAttachmentTag> getRegistryAttachmentTags( RegistryAttachment attachment ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachmentTag.class);
 		Criteria criteria = new Criteria();
 		String alias = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_TAG_ATTACHMENT_ID);
@@ -133,7 +131,7 @@ public class CorporateIdentityControllerListener extends RegistryAttachControlle
 		return (List) bean.getList(criteria);
 	}	
 	
-	public List<Tag> getTagList( RegistryAttachment attachment ) throws ManagerBeanException {
+	private List<Tag> getTagList( RegistryAttachment attachment ) throws ManagerBeanException {
 		List<Tag> list = new LinkedList<Tag>();
 		for( RegistryAttachmentTag rat : getRegistryAttachmentTags(attachment) ) {
 			if (! list.contains(rat.getTag()) ) {
@@ -143,8 +141,7 @@ public class CorporateIdentityControllerListener extends RegistryAttachControlle
 		return list;
 	}	
 
-	@Transient
-	public void updateTagList( RegistryAttachment attachment, List<Tag> tags, boolean _new ) throws ManagerBeanException {
+	private void updateTagList( RegistryAttachment attachment, List<Tag> tags, boolean _new ) throws ManagerBeanException {
 		List<Tag> _tags = new LinkedList<Tag>(tags);
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachmentTag.class);
 		if (! _new ) {

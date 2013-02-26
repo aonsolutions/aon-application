@@ -13,6 +13,7 @@ public interface IItemConstants  {
 	String ITEM_SUPPLIER = "itemSupplier";
 	String ITEM_TARIFF = "itemTariff";
 	String PRODUCT_CATEGORY = "productCategory";
+	String PRODUCT_SEARCH_CONTROLLER_NAME = "productSearch";
 	
 	// ************************************************************
 	// CONFIGURATION

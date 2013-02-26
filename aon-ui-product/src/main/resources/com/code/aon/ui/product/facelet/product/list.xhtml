@@ -24,6 +24,13 @@
 						<ui:include
 							src="/com/code/aon/ui/product/facelet/product/listBasic.xhtml" />
 	
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{registryBundle.registry_tag_module}" />
+							</f:facet>
+							<aon:outputText value="#{to.tagList}" />
+						</aon:column>
+	
 						<c:if test="#{aonConfiguration.bean.product.showBrand}">
 							<aon:column alias="Product.brand.name"
 								styleClass="aon-editDataTable-textColumn">

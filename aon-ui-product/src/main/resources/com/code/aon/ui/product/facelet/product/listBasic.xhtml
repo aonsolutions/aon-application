@@ -13,12 +13,13 @@
 		<ui:param name="abbreviateName" value="#{true}"/>
 	</c:if>
 	
-	<aon:column alias="Product.category.name"
-		styleClass="aon-editDataTable-textColumn aon-nowrap">
+
+	<aon:column alias="Product.code"
+		styleClass="aon-editDataTable-textColumn aon-width-100">
 		<f:facet name="header">
-			<aon:outputText value="#{productBundle.product_category}" />
+			<aon:outputText value="#{bundle.aon_id}" />
 		</f:facet>
-		<aon:outputText value="#{to.category.name}" />
+		<aon:outputText value="#{to.code}" />
 	</aon:column>
 
 	<aon:column alias="Product.name"
@@ -33,12 +34,12 @@
 		</aon:outputText>
 	</aon:column>
 
-	<aon:column alias="Product.code"
-		styleClass="aon-editDataTable-textColumn">
+	<aon:column alias="Product.category.name"
+		styleClass="aon-editDataTable-textColumn aon-nowrap">
 		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_id}" />
+			<aon:outputText value="#{productBundle.product_category}" />
 		</f:facet>
-		<aon:outputText value="#{to.code}" />
+		<aon:outputText value="#{to.category.name}" />
 	</aon:column>
 
 </ui:composition>

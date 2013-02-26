@@ -11,7 +11,6 @@ import javax.faces.model.SelectItem;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Tag;
 import com.code.aon.config.User;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
@@ -310,19 +309,5 @@ public class RegistryCollectionsController {
     	}
     	return addInfos;
     }
- 
-    public List<SelectItem> getTags() throws ManagerBeanException {
-    	List<SelectItem> tags = new LinkedList<SelectItem>();
-    	IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
-    	Criteria criteria = new Criteria();
-    	criteria.addOrder(tagBean.getFieldName(IEntityAlias.TAG_NAME));
-    	Iterator<?> iter = tagBean.getList(criteria).iterator();
-    	while(iter.hasNext()){
-    		Tag tag = (Tag) iter.next();
-    		SelectItem item = new SelectItem(tag, tag.getName());
-    		tags.add(item);
-    	}
-    	return tags;
-    }    
     
 }
