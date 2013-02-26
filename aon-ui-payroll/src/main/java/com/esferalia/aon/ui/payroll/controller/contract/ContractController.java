@@ -289,8 +289,8 @@ public class ContractController extends BasicController implements IVariablesHan
 					SelectItem item = new SelectItem(w, name);
 					getWorkPlaces().add(item);
 				}
-				if( !getWorkPlaces().isEmpty() ){
-					Contract contract = (Contract) getTo();
+				Contract contract = (Contract) getTo();
+				if( !getWorkPlaces().isEmpty() && (contract.getWorkPlace()==null || contract.getWorkPlace().getId()==null) ){
 					contract.setWorkPlace((WorkPlace) getWorkPlaces().get(0).getValue());
 				}
 			} catch (ManagerBeanException e) {
@@ -320,7 +320,7 @@ public class ContractController extends BasicController implements IVariablesHan
 						getActivities().add(item);
 					}
 				}
-				if( !getActivities().isEmpty() ){
+				if( !getActivities().isEmpty() && (contract.getActivity()==null || contract.getActivity().getId()==null)){
 					contract.setActivity((EnterpriseActivity)getActivities().get(0).getValue());
 					BasicController controller = (BasicController) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_CCC_CONTROLLER);
 					controller.onSelectFirst(null);
@@ -685,6 +685,12 @@ public class ContractController extends BasicController implements IVariablesHan
 		PayrollUtils utils = new PayrollUtils();
 		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
 		return map.get(ContextVariable.TC2.getName())!=null && ContractCode.getContractCodeByValue(map.get(ContextVariable.TC2.getName()))==ContractCode.C421;
+	}
+
+	public boolean isTrainingCenterDefined(){
+		PayrollUtils utils = new PayrollUtils();
+		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
+		return map.get("CENTRO_FORMATIVO")!=null;
 	}
 	
 	public void onPrintDirectDebit(ActionEvent event) throws ManagerBeanException, ExpressionException{

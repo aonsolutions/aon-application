@@ -22,7 +22,7 @@
 		<aon:outputLabel for="enterpriseActivities" value="#{companyBundle.company_activity}" 
 			style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 		<aon:selectOneMenu id="enterpriseActivities"
-			disabled="#{contract.enterprise==null or contract.enterprise.id==null}"
+			disabled="#{contract.to.workPlace.id==null}"
 			value="#{contract.to.activity}" >
 			<f:selectItems value="#{contract.activities}" />
 			<a4j:support event="onchange" actionListener="#{contract.onActivityChanged}" ajaxSingle="true" reRender="enterpriseCCCs"/>
@@ -31,7 +31,7 @@
 		<aon:outputLabel for="enterpriseCCCs" value="#{companyBundle.company_enterprise_ccc}"
 			style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 		<aon:selectOneMenu id="enterpriseCCCs"
-			disabled="#{contract.to.activity==null or contract.to.activity.id==null}"
+			disabled="#{contract.to.activity.id==null}"
 			value="#{contract.to.enterpriseCCC}" >
 			<f:selectItems value="#{contract.enterpriseCCCs}" />
 		</aon:selectOneMenu>
@@ -195,19 +195,9 @@
 			</aon:div>
 -->			
 	
-		<c:if test="#{contract.new}" >
-			<c:if test="#{contract.params.trainingContract}" >
+		<c:if test="#{contract.new and contract.params.trainingContract}" >
 				<aon:outputLabel for="contract_bonus" value="#{payrollBundle.payroll_contract_subsidized}" />
-				<aon:selectBooleanCheckbox id="contract_bonus" value="#{contract.params.subsidized}" >
-					<!--  
-					<a4j:support event="onclick" 
-						ajaxSingle="true"
-						ignoreDumpResponses="true"
-						limitToList="true"
-						eventsQueue="bonus"
-						reRender="contract_panel, bonus_panel" />
-					-->
-				</aon:selectBooleanCheckbox>
+				<aon:selectBooleanCheckbox id="contract_bonus" value="#{contract.params.subsidized}" />
 				
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/trainingCenter/lookup.xhtml" >
 					<ui:param name="lookupTo" value="#{contract.params.trainingCenter}" />
@@ -222,7 +212,6 @@
 					<ui:param name="lookupDisabled" value="#{contract.params.trainingCenter.id==null}" />
 				</ui:include>
 		-->
-			</c:if>
 		</c:if>
 		
 	</aon:panelGrid>

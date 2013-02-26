@@ -17,7 +17,7 @@
 				styleClass="aon-finding-toolbar-item aon-icon-pdf" 
 				value="Domiciliacion bancaria" 
 				actionListener="#{contract.onPrintDirectDebit}"
-				rendered="#{contract.trainingContract}"
+				rendered="#{contract.trainingContract and contract.trainingCenterDefined}"
 				action="#{report.onExecute}" target="_blank" >
 				<f:param name="reportKey" value="trainingDirectDebit" />
 				<f:param name="outputFormat" value="PDF" />
@@ -103,19 +103,7 @@
 					target="#{contractPdf.backAction}" value="contract_form" />
 				<aon:actionListener method="#{contract.onContractDocumentShow}" />
 			</aon:menuItem>
-<!--  
-			<aon:menuItem id="directDebit-report" 
-				action="#{report.onExecute}" target="_blank"
-				rendered="#{not empty contract.to.model and not contract.existDocument}"
-				value="Domiciliacion bancaria"
-				title="Generar el documento de la domiciliacion bancaria del centro de formacion"
-				iconClass="aon-icon-pdf" >
-				<f:setPropertyActionListener
-					target="#{contractPdf.backAction}" value="contract_form" />
-				<f:param name="reportKey" value="trainingDirectDebit" />
-				<f:param name="outputFormat" value="PDF" />
-			</aon:menuItem>
--->
+			
 		</ui:define>
 	</ui:decorate>
 	
