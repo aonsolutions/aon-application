@@ -58,10 +58,6 @@ public enum ContractModel implements IResourceable {
     
 	@Override
 	public String getName(Locale locale) {
-		return toString();
-	}
-    
-	public String getDescription(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
 	}
