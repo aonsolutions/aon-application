@@ -3,28 +3,10 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:h="http://java.sun.com/jsf/html"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	xmlns:h="http://java.sun.com/jsf/html">
 
-	<ui:define name="content">
-
-		<aon:form id="tagList">
-
-			<aon:div ajaxRendered="true" layout="none">
-			
-				<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml" >
-					<ui:param name="toolbarTitle" value="#{registryBundle.registry_tag_module}" />
-					<ui:param name="controller" value="#{tag}" />
-				</ui:include>			
-
-				<!--  aon-region-body -->
-				<aon:div styleClass="aon-scroll-area">
-
-					<ui:include src="/com/code/aon/ui/registry/facelet/tag/grid.xhtml" />
-
-				</aon:div>
-			</aon:div>
-		</aon:form>
-	</ui:define>
+	<ui:include src="/com/code/aon/ui/config/facelet/tag/grid.xhtml" >
+		<ui:param name="controller" value="#{tag}" />
+	</ui:include>			
 
 </ui:composition>

@@ -23,6 +23,7 @@ import com.code.aon.config.WorkGroup;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.config.enumeration.TagType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.Toolbar;
 import com.code.aon.config.enumeration.VatDeductionType;
@@ -44,10 +45,11 @@ public class ConfigCollectionsController {
 	private List<SelectItem> workGroupStatuses;
 	private List<SelectItem> administrations;
 	private List<SelectItem> toolbars;
+	private List<SelectItem> tagTypes;
 
 	public List<SelectItem> getTaxTypes() {
 		if (taxTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			taxTypes = new LinkedList<SelectItem>();
 			for(TaxType type : TaxType.values()) {
 				if (type != TaxType.UNKNOWN) {
@@ -62,7 +64,7 @@ public class ConfigCollectionsController {
 
 	public List<SelectItem> getVatDeductionTypes() {
 		if (vatDeductionTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			vatDeductionTypes = new LinkedList<SelectItem>();
 			for (VatDeductionType type : VatDeductionType.values()) {
 				String name = type.getName(locale);
@@ -75,7 +77,7 @@ public class ConfigCollectionsController {
 	
 	public List<SelectItem> getWithholdingTypes() {
 		if (withholdingTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			withholdingTypes = new LinkedList<SelectItem>();
 			for (WithholdingType type : WithholdingType.values()) {
 				String name = type.getName(locale);
@@ -88,7 +90,7 @@ public class ConfigCollectionsController {
 
 	public List<SelectItem> getPayMethodTypes() {
 		if (payMethodTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			payMethodTypes = new LinkedList<SelectItem>();
 			for (PayMethodType type : PayMethodType.values()) {
 				String name = type.getName(locale);
@@ -108,7 +110,7 @@ public class ConfigCollectionsController {
 
 	public List<SelectItem> getInvoiceTransactionTypes() {
 		if (invoiceTransactionTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			invoiceTransactionTypes = new LinkedList<SelectItem>();
 			for (InvoiceTransactionType type : InvoiceTransactionType.values()) {
 				String name = type.getName(locale);
@@ -121,7 +123,7 @@ public class ConfigCollectionsController {
 
 	public List<SelectItem> getWorkGroupStatuses() {
 		if (workGroupStatuses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			workGroupStatuses = new LinkedList<SelectItem>();
 			for (WorkGroupStatus status : WorkGroupStatus.values()) {
 				String name = status.getName(locale);
@@ -418,7 +420,7 @@ public class ConfigCollectionsController {
 
 	public List<SelectItem> getToolbars() {
 		if (toolbars == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			toolbars = new LinkedList<SelectItem>();
 			for (Toolbar toolbar : Toolbar.values()) {
 				if ( toolbar != Toolbar.ESFERALIA_WEBMAIL ) {
@@ -431,4 +433,17 @@ public class ConfigCollectionsController {
 		return toolbars;
 	}	
 
+	public List<SelectItem> getTagTypes() {
+		if (tagTypes == null) {
+			Locale locale = AonUtil.getCurrentLocale();
+			tagTypes = new LinkedList<SelectItem>();
+			for(TagType type : TagType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				tagTypes.add(item);
+			}
+		}
+		return tagTypes;
+	}
+	
 }

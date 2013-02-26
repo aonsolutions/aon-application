@@ -6,7 +6,6 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
-		<ui:param name="controller" value="#{tag}" />
 		<ui:define name="columns">
 			<aon:column styleClass="aon-editDataTable-textColumn"
 				alias="Tag.name">
@@ -16,11 +15,11 @@
 				<aon:outputText value="#{to.name}" rendered="#{formList}" />
 				<aon:inputText id="Tag_name" required="true"
 					rendered="#{formEdit}" size="64"
-					value="#{tag.to.name}" maxlength="64" />
+					value="#{controller.to.name}" maxlength="64" />
 				<f:facet name="footer">
 					<aon:inputText id="Tag_name-New" required="true"
 						rendered="#{formNew}" size="64"
-						value="#{tag.to.name}" maxlength="64" />
+						value="#{controller.to.name}" maxlength="64" />
 				</f:facet>
 			</aon:column>
 		</ui:define>

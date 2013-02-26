@@ -48,7 +48,7 @@
 	<managed-bean>
 		<managed-bean-name>tag</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
+			com.code.aon.ui.config.controller.TagController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -67,6 +67,19 @@
 			<property-name>defaultOrder</property-name>
 			<value>Tag_name</value>
 		</managed-property>				
+		<managed-property>
+			<property-name>type</property-name>
+			<value>#{configCollections.tagTypes[0].value}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Tag_type</key>
+					<value>#{configCollections.tagTypes[0].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>						
 	</managed-bean>
 	
 	<!-- ************ RELATIONSHIP ************** -->
