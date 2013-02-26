@@ -19,6 +19,7 @@
 					title="#{field.label}"
 					rendered="#{field.page==contractPdf.documentPage}"
 					style="background-color:transparent; border: #E0ECF8 2px solid; position:absolute; bottom:#{field.scaledBottomCoordinates-2}px; left:#{field.scaledLeftCoordinates}px;width:#{field.scaledWidth}px; "
+					onmouseover="this.style.border = '#000000 2px solid'" onmouseout="this.style.border = '#E0ECF8 2px solid'"
 					value="#{field.value}" size="#{field.width}"
 					maxlength="#{field.maxLength}" />
 			</c:if>
@@ -27,6 +28,7 @@
 					title="#{field.label}"
 					rendered="#{field.page==contractPdf.documentPage}"
 					style="background-color:#E0ECF8; border:none; position:absolute; bottom:#{field.scaledBottomCoordinates-2}px; left:#{field.scaledLeftCoordinates}px; "
+					onmouseover="this.style.backgroundColor = '#000000'" onmouseout="this.style.backgroundColor = '#E0ECF8'"
 					value="#{field.booleanValue}" >
 				</aon:selectBooleanCheckbox>
 			</c:if>

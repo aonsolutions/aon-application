@@ -99,13 +99,18 @@ public class ModelPE226 extends AbstractContractModel {
 			getPdfFieldsMap().get(PE226_REPRESENTATIVE_NAME).setValue("");
 			getPdfFieldsMap().get(PE226_REPRESENTATIVE_DOCUMENT).setValue("");
 			getPdfFieldsMap().get(PE226_REPRESENTATIVE_FUNCTION).setValue("");
-			getPdfFieldsMap().get(PE226_QUOTE_BONUS_YES).setValue("");
-			getPdfFieldsMap().get(PE226_QUOTE_BONUS_NO).setValue("");
+			if( isQuoteBonus(contract)!=null ){
+				if( isQuoteBonus(contract) ){
+					getPdfFieldsMap().get(PE226_QUOTE_BONUS_YES).setValue("true");
+				} else if( !isQuoteBonus(contract) ){
+					getPdfFieldsMap().get(PE226_QUOTE_BONUS_NO).setValue("true");
+				}
+			}
 			getPdfFieldsMap().get(PE226_EMPLOYEE_OPT1).setValue("");
 			getPdfFieldsMap().get(PE226_EMPLOYEE_OPT2).setValue("");
 			getPdfFieldsMap().get(PE226_EMPLOYEE_OPT3).setValue("");
 			getPdfFieldsMap().get(PE226_EMPLOYEE_PROFFESION).setValue("");
-			getPdfFieldsMap().get(PE226_EMPLOYEE_CATEGORY).setValue("");
+			getPdfFieldsMap().get(PE226_EMPLOYEE_CATEGORY).setValue(contract.getCategoryDescription());
 			
 			Map<String, String>  map = getContractDataMap(contract);
 			String cno = map.get(ContextVariable.CNO.getName());
@@ -115,8 +120,6 @@ public class ModelPE226 extends AbstractContractModel {
 				getPdfFieldsMap().get(PE226_CNO3).setValue(cno.substring(2, 3));
 				getPdfFieldsMap().get(PE226_CNO4).setValue(cno.substring(3, 4));
 			}
-			
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -127,8 +130,8 @@ public class ModelPE226 extends AbstractContractModel {
 	}
 
 	private Boolean isQuoteBonus(Contract contract) {
-		// TODO 
-		return null;
+		String subsidized = getContractDataMap(contract).get(ContextVariable.SUBSIDIZED.getName());
+		return Boolean.parseBoolean(subsidized);
 	}
 	
 	public Map<String, String> getContractDataMap(Contract contract) {

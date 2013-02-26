@@ -203,6 +203,7 @@
 					<ui:param name="lookupTo" value="#{contract.params.trainingCenter}" />
 					<ui:param name="skipNewButton" value="#{true}" />
 					<ui:param name="lookupReRender" value="lookupTrainingCourse" />
+					<ui:param name="lookupRendered" value="#{trainingCenter.model.rowCount>0}" />
 				</ui:include>
 			
 		<!--  

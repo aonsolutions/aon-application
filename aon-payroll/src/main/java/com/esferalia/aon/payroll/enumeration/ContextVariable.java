@@ -138,6 +138,8 @@ public enum ContextVariable implements IResourceable{
 	// Datos de las bonificaciones
 	BONUS_AGE("DURACION", VariableType.DATE, false),
 	BONUS_START("INICIO", VariableType.DATE, false),
+	SUBSIDIZED("BONIFICADO", VariableType.BOOLEAN),
+	TRAINING_CENTER("CENTRO_FORMATIVO", VariableType.TRAINING_CENTER_LOOKUP),
 
 	
 	;

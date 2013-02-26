@@ -67,23 +67,20 @@
 			<f:selectItems value="#{controller.handler.variablesCollection}" />
 		</aon:selectOneMenu>
 	
-		<!--  
-		<aon:selectOneMenu id="#{inputTextId}_CNO_DROP#{editorSuffix}" required="#{required}"
-			rendered="#{variableType=='CNO_DROP'}" style="width: 95%;"
-			value="#{cno}">
-			<f:selectItems value="#{controller.handler.variablesCollection}" />
-		</aon:selectOneMenu>
-		-->
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
 			<ui:param name="lookupTo" value="#{cno}" />
 			<ui:param name="skipLabel" value="#{true}" />
 			<ui:param name="lookupSuffix" value="#{inputTextId}_CNO_LOOKUP#{editorSuffix}" />
 			<ui:param name="lookupRendered" value="#{variableType=='CNO_LOOKUP'}" />
 			<ui:param name="idRequired" value="#{required}" />
-			
-			<aon:methodParam name="lookupChangeListener" 
-				value="#{cnoChangeListener}" type="lookupChangeListener" />
-			
+		</ui:include>
+	
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/trainingCenter/lookup.xhtml" >
+			<ui:param name="lookupTo" value="#{trainingCenter}" />
+			<ui:param name="skipLabel" value="#{true}" />
+			<ui:param name="lookupSuffix" value="#{inputTextId}_TRAINING_CENTER_LOOKUP#{editorSuffix}" />
+			<ui:param name="lookupRendered" value="#{variableType=='TRAINING_CENTER_LOOKUP'}" />
+			<ui:param name="idRequired" value="#{required}" />
 		</ui:include>
 	
 		<aon:selectOneMenu id="#{inputTextId}_TC2_DROP#{editorSuffix}" required="#{required}"
@@ -136,10 +133,9 @@
 	
 		<aon:outputText rendered="#{variableType=='DROP'}" value="#{data.expression}" />
 	
-		<!--  
-		<aon:outputText rendered="#{variableType=='CNO_DROP'}" value="#{data.variableEnum}" />
-		-->
 		<aon:outputText rendered="#{variableType=='CNO_LOOKUP'}" value="#{data.variableLookup}" />
+	
+		<aon:outputText rendered="#{variableType=='TRAINING_CENTER_LOOKUP'}" value="#{data.variableLookup}" />
 		
 		<aon:outputText rendered="#{variableType=='TC2_DROP'}" value="#{data.variableEnum}" />
 	

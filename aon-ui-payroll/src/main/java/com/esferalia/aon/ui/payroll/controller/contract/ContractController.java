@@ -30,13 +30,13 @@ import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
+import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Agreement;
@@ -690,16 +690,23 @@ public class ContractController extends BasicController implements IVariablesHan
 	public boolean isTrainingCenterDefined(){
 		PayrollUtils utils = new PayrollUtils();
 		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
-		return map.get("CENTRO_FORMATIVO")!=null;
+		return map.get(ContextVariable.TRAINING_CENTER.getName())!=null;
 	}
 	
-	public void onPrintDirectDebit(ActionEvent event) throws ManagerBeanException, ExpressionException{
-		PayrollUtils utils = new PayrollUtils();
-		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
-		if(map.get("CENTRO_FORMATIVO")!=null){
-			String id = map.get("CENTRO_FORMATIVO");
-			TrainingCenterController tcController = (TrainingCenterController) AonUtil.getRegisteredBean("trainingCenter");
-			tcController.select(event, Integer.parseInt(id));
+	public String onDirectDebitReport() throws ManagerBeanException{
+		TrainingCenterController tcController = (TrainingCenterController) AonUtil.getRegisteredBean("trainingCenter");
+		try {
+			PayrollUtils utils = new PayrollUtils();
+			Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
+			if(map.get(ContextVariable.TRAINING_CENTER.getName())!=null){
+				String id = map.get(ContextVariable.TRAINING_CENTER.getName());
+				tcController.select(null, Integer.parseInt(id));
+			}
+			ReportManager report = (ReportManager) AonUtil.getRegisteredBean("report");
+			return report.onExecute();
+		} finally {
+			tcController.clearCriteria();
+			tcController.initializeModel();
 		}
 	}
 

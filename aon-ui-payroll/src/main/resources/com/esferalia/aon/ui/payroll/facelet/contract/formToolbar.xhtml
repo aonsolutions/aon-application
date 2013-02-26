@@ -16,9 +16,8 @@
 			<aon:htmlCommandLink id="directDebit-report"
 				styleClass="aon-finding-toolbar-item aon-icon-pdf" 
 				value="Domiciliacion bancaria" 
-				actionListener="#{contract.onPrintDirectDebit}"
 				rendered="#{contract.trainingContract and contract.trainingCenterDefined}"
-				action="#{report.onExecute}" target="_blank" >
+				action="#{contract.onDirectDebitReport}" target="_blank" >
 				<f:param name="reportKey" value="trainingDirectDebit" />
 				<f:param name="outputFormat" value="PDF" />
 			</aon:htmlCommandLink>

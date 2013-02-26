@@ -12,7 +12,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.Classpath;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;

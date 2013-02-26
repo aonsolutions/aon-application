@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.Iterator;
 
 import javax.faces.event.AbortProcessingException;
@@ -22,6 +23,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -252,6 +254,23 @@ public class TrainingCenterController extends RegistryController {
 		RegistryAttachment attach = obtainTrainingCenterSignature();
 		if(attach != null){
 			return new ByteArrayInputStream(attach.getData());
+		}
+		return null;
+	}
+	
+	public RegistryDirStaff obtainDirStaff() throws ManagerBeanException{
+		if(this.getTo() == null){
+			return null;
+		}
+		IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
+		Criteria criteria = new Criteria();
+		String alias = bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID);
+		criteria.addEqualExpression(alias, ((TrainingCenter)this.getTo()).getId());
+		alias = bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE);
+		criteria.addGreaterThanOrEqualExpression(alias, new Date());
+		Iterator<ITransferObject> iter = bean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return (RegistryDirStaff)iter.next();
 		}
 		return null;
 	}

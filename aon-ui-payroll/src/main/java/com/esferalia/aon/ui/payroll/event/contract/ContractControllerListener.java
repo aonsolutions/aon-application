@@ -218,12 +218,12 @@ public class ContractControllerListener extends ControllerAdapter{
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setName( "BONIFICADO" );
+				data.setName( ContextVariable.SUBSIDIZED.getName() );
 				data.setExpression(controller.getParams().getSubsidized()?"true":"false");
 				bean.insert(data);
 			}
 		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el codigo TC2. (" +e.getMessage() + ")";
+			String msg = "Error al grabar si el contrato se acoge a la reduccion de cuotas a la S.S. (" +e.getMessage() + ")";
 			LOGGER.error(msg);
 		}
 		try {
@@ -231,12 +231,12 @@ public class ContractControllerListener extends ControllerAdapter{
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setName( "CENTRO_FORMATIVO" );
+				data.setName( ContextVariable.TRAINING_CENTER.getName() );
 				data.setExpression("\"" + controller.getParams().getTrainingCenter().getId() + "\"");
 				bean.insert(data);
 			}
 		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el codigo TC2. (" +e.getMessage() + ")";
+			String msg = "Error al grabar el centro de formacion. (" +e.getMessage() + ")";
 			LOGGER.error(msg);
 		}
 	}

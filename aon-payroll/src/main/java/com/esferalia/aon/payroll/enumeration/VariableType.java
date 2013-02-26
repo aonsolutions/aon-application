@@ -20,6 +20,7 @@ public enum VariableType {
 	
 	// LOOKUP
 	CNO_LOOKUP,
+	TRAINING_CENTER_LOOKUP,
 	
 	// COMPLEX
 	EXPRESSION,

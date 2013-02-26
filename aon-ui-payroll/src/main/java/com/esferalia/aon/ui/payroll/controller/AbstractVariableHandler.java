@@ -38,7 +38,6 @@ import com.code.aon.ql.ast.impl.ConstantExpressionImpl;
 import com.code.aon.ql.ast.impl.RelationalExpressionImpl;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -48,6 +47,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.SystemData;
+import com.esferalia.aon.payroll.TrainingCenter;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
@@ -411,6 +411,7 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 	}
 	
 	private CNO cno;
+	private TrainingCenter trainingCenter;
 	private ContractModelCode contractModelCode;
 	private ContractCode contractCode;
 	private QuoteGroup quoteGroup;
@@ -422,6 +423,12 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 	}
 	public void setCno(CNO cno) {
 		this.cno = cno;
+	}
+	public TrainingCenter getTrainingCenter() {
+		return trainingCenter;
+	}
+	public void setTrainingCenter(TrainingCenter trainingCenter) {
+		this.trainingCenter = trainingCenter;
 	}
 	public ContractModelCode getContractModelCode() {
 		ContractController controller = (ContractController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
@@ -563,6 +570,7 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 		setData(null);
 		setData(null);
 		setCno(null);
+		setTrainingCenter(null);
 		setQuoteGroup(null);
 		setContractCode(null);
 	}
@@ -571,10 +579,10 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 			getData().setExpression( getData().getExpression().substring(1, getData().getExpression().length()-1) );
 		}
 		
-//		if (data.getVariable() == ContextVariable.CNO) {
-//			setCno(CNO.getCnoByValue(data.getExpression()));
 		if (data.getVariable() == ContextVariable.CNO) {
 			loadCno(data.getExpression());
+		} else if (data.getVariable() == ContextVariable.TRAINING_CENTER) {
+			loadTrainingCenter(data.getExpression());
 		} else if (data.getVariable() == ContextVariable.TC2) {
 			setContractCode(ContractCode.getContractCodeByValue(data.getExpression()));
 		} else if (data.getVariable() == ContextVariable.CATEGORY) {
@@ -605,11 +613,10 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 
 	private void handleDataExpression() {
 		if(!getData().isEnableExpressionEditor()){
-			// FIXME
-//			if(getData().getVariable()==ContextVariable.CNO){
-//				getData().setExpression("\""+String.valueOf(getCno().ordinal())+"\"");
 			if(getData().getVariable()==ContextVariable.CNO){
 				getData().setExpression("\""+String.valueOf(getCno().getCode())+"\"");
+			}else if(getData().getVariable()==ContextVariable.TRAINING_CENTER){
+				getData().setExpression("\""+String.valueOf(getTrainingCenter().getId())+"\"");
 			}else if(getData().getVariable()==ContextVariable.TC2){
 				getData().setExpression("\""+getContractCode().getValue()+"\"");
 			}else if(getData().getVariable()==ContextVariable.CATEGORY){
@@ -635,7 +642,6 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 	}
 	
 	private void loadCno(String expression) {
-//		setCno(null);
 		if(getCno()==null){
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(CNO.class);
@@ -650,13 +656,20 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 			}
 		}
 	}
-	
-	public void onCnoChange(LookupChangeEvent event){
-		try {
-			setCno((CNO) BeanManager.getManagerBean(CNO.class).createNewTo());
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+	private void loadTrainingCenter(String expression) {
+		if(getTrainingCenter()==null){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(TrainingCenter.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_CENTER_ID), Integer.parseInt(expression) );
+				List<ITransferObject> list = bean.getList(criteria);
+				if( !list.isEmpty() ){
+					setTrainingCenter((TrainingCenter) list.get(0));
+				}
+			} catch (ManagerBeanException e) {
+				// do nothing ...
+			}
 		}
 	}
 	
@@ -763,11 +776,10 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 				setExpressionValue(false);
 			}else if(getVariable()==ContextVariable.CNO){
 				loadCno(getExpression());
-				if(getCno()==null ){
-					setExpressionValue(true);
-				} else {
-					setExpressionValue(false);
-				}
+				setExpressionValue( getCno()==null );
+			}else if(getVariable()==ContextVariable.TRAINING_CENTER){
+				loadTrainingCenter(getExpression());
+				setExpressionValue( getTrainingCenter()==null );
 			}else if(getVariable()==ContextVariable.TC2 && ContractCode.getContractCodeByValue(getExpression())==null ){
 				setExpressionValue(true);
 			}else if(getVariable()==ContextVariable.CATEGORY){
@@ -811,9 +823,6 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 		}
 		
 		public Enum<?> getVariableEnum(){
-//			if(getName().equals(ContextVariable.CNO.getName())){
-//				return CNO.getCnoByValue(handleSelectItemExpression(getExpression()));
-//			} else 
 			if(getName().equals(ContextVariable.TC2.getName())){
 				return ContractCode.getContractCodeByValue(handleSelectItemExpression(getExpression()));
 			} else if(getName().equals(ContextVariable.QUOTE_GROUP.getName())){
@@ -826,8 +835,6 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 			return null;
 		}
 		public String getVariableLookup(){
-//			if(getCno()!=null && getName().equals(ContextVariable.CNO.getName())){
-//				return getCno().getCode() + " - " + getCno().getTitle();
 			if(getName().equals(ContextVariable.CNO.getName())){
 				try {
 					CNO cno = null;
@@ -837,15 +844,27 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 					List<ITransferObject> list = bean.getList(criteria);
 					if( !list.isEmpty() ){
 						cno = (CNO) list.get(0);
+						return cno.getCode() + " - " + cno.getTitle();
 					}
-					return cno.getCode() + " - " + cno.getTitle();
 				} catch (ManagerBeanException e) {
 					// do nothing ...
 				}
-				
-//				return ContractCode.getContractCodeByValue(handleSelectItemExpression(getExpression()));
+			} else if(getName().equals(ContextVariable.TRAINING_CENTER.getName())){
+				try {
+					TrainingCenter tc = null;
+					IManagerBean bean = BeanManager.getManagerBean(TrainingCenter.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_CENTER_ID), Integer.parseInt(handleLookupExpression(getExpression())) );
+					List<ITransferObject> list = bean.getList(criteria);
+					if( !list.isEmpty() ){
+						tc = (TrainingCenter) list.get(0);
+						return tc.getCode() + " - " + tc.getRegistry().getFullName();
+					}
+				} catch (ManagerBeanException e) {
+					// do nothing ...
+				}
 			} 
-			return null;
+			return getExpression();
 		}
 		
 		private String handleSelectItemExpression(String expression) {

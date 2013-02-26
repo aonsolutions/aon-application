@@ -157,7 +157,7 @@ public class ContrataWriter {
 		File schemaFile = null;
 		try {
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-			URL[] urls = Classpath.search(cl, "META-INF/", SCHEMA);
+			URL[] urls = Classpath.search(cl, "META-INF/schema", SCHEMA);
 			
 			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			schemaFile = getSchemaFile(SCHEMA, urls[0]);
