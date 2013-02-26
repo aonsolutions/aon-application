@@ -8,20 +8,11 @@
 
 	<ui:define name="content">
 
-		<aon:form id="tagList">
+		<ui:include src="/com/code/aon/ui/config/facelet/tag/formContent.xhtml" >
+			<ui:param name="controller" value="#{registryAttachmentTag}" />
+			<ui:param name="toolbarTitle" value="#{registryBundle.registry_tag_module}" />
+		</ui:include>			
 
-			<aon:div ajaxRendered="true" layout="none">
-			
-				<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml" >
-					<ui:param name="toolbarTitle" value="#{registryBundle.registry_tag_module}" />
-				</ui:include>			
-
-				<aon:div styleClass="aon-scroll-area">
-					<ui:include src="/com/code/aon/ui/registry/facelet/tag/grid.xhtml" />
-				</aon:div>
-
-			</aon:div>
-		</aon:form>
 	</ui:define>
 
 </ui:composition>

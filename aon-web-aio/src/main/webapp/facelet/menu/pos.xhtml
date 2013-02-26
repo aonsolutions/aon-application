@@ -72,9 +72,10 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="productCategoryGroup" 
-										action="productCategoryGroup"
-										value="#{productBundle.product_categoryGroup_module}" />
+									<aon:commandLink id="productTag-pos" 
+										action="productTag_form-pos" 
+										actionListener="#{productTag.onCancel}"
+										value="#{productBundle.product_tag_module}"/>	
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="productCategory-pos" 

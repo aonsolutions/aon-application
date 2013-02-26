@@ -164,6 +164,44 @@
 		</managed-property>		
 	</managed-bean>
 	
+	<!-- ************ PRODUCT TAG ************** -->
+	<managed-bean>
+		<managed-bean-name>productTag</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.TagController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.Tag</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>productTag</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Tag_name</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>type</property-name>
+			<value>#{configCollections.tagTypes[1].value}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Tag_type</key>
+					<value>#{configCollections.tagTypes[1].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>						
+	</managed-bean>
+	
 	
 	<!-- ****** ITEM ****** -->
 	<managed-bean>
@@ -1288,6 +1326,10 @@
 	    <navigation-case>
 	      <from-outcome>tariff_search</from-outcome>
 	      <to-view-id>/com/code/aon/ui/product/facelet/tariff/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>productTag_form</from-outcome>
+	      <to-view-id>/com/code/aon/ui/product/facelet/productTag/form.xhtml</to-view-id>
 	    </navigation-case>
    </navigation-rule>
 </faces-config>

@@ -44,9 +44,9 @@
 		</managed-property>				
 	</managed-bean>
 
-	<!-- ************ TAG ************** -->
+	<!-- ************ REGISTRY ATTACHMENT TAG ************** -->
 	<managed-bean>
-		<managed-bean-name>tag</managed-bean-name>
+		<managed-bean-name>registryAttachmentTag</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.config.controller.TagController
 		</managed-bean-class>
@@ -61,7 +61,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>tag</value>
+			<value>registryAttachmentTag</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -548,11 +548,11 @@
 		</navigation-case>
 	</navigation-rule>	
 
-	<!-- =================== Tag ========================== -->
+	<!-- =================== Registry Attachment Tag ========================== -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>tag_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/registry/facelet/tag/form.xhtml</to-view-id>
+			<from-outcome>registryAttachmentTag_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/registryAttachmentTag/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 

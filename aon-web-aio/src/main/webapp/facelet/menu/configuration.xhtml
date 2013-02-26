@@ -304,13 +304,12 @@
 									<aon:outputText value="#{bundle.aon_product_auxiliaries_tables}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-									<c:if test="#{actionDenied.moduleEnabled['pos']}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="productCategoryGroup-configuration" 
-												action="productCategoryGroup-configuration"
-												value="#{productBundle.product_categoryGroup_module}" />
-										</aon:div>
-									</c:if>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="productTag" 
+											action="productTag_form" 
+											actionListener="#{productTag.onCancel}"
+											value="#{productBundle.product_tag_module}"/>	
+									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="productCategory-configuration" 
 											action="productCategory-configuration"
