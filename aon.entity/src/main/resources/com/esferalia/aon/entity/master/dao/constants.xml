@@ -203,6 +203,11 @@
 		<hibernate names="amount,financeBatch.id,finance.id,id,status,financeBatch.issueDate,financeBatch.securityLevel,finance.invoice&lt;referenceCode,finance.concept,finance.dueDate" />
 	</bean>
 
+	<bean class="com.code.aon.finance.Pos" sqlName="pos">
+		<alias names="id,domain,workPlace_id,workPlace_description,workPlace_scope_id,name,invoiceable,item_id,initialAmount,pinPad,commerce,signaturePassword,terminal,portConfiguration,posVersion,active"/>
+		<hibernate names="id,domain,workPlace.id,workPlace.description,workPlace.scope.id,name,invoiceable,item.id,initialAmount,pinPad,commerce,signaturePassword,terminal,portConfiguration,posVersion,active"/>
+	</bean> 
+
 	<bean class="com.code.aon.finance.PosShift" sqlName="pos_shift">
 		<alias names="id,domain,pos_id,pos_workPlace_id,pos_workPlace_scope_id,pos_invoiceable,shift,user_id,user_login,startTime,endTime,initialAmount,remarks,invoice_id,pos_pinPad"/>
 		<hibernate names="id,domain,pos.id,pos.workPlace.id,pos.workPlace.scope.id,pos.invoiceable,shift,user.id,user.login,startTime,endTime,initialAmount,remarks,invoice.id,pos.pinPad"/>

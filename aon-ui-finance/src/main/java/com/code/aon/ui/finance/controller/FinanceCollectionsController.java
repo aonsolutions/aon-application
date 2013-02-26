@@ -13,6 +13,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.BankConcept;
+import com.code.aon.finance.Pos;
 import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.finance.enumeration.CreditorStatus;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
@@ -24,6 +25,7 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.StatementConcept;
 import com.code.aon.finance.enumeration.StatementStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.config.util.UserUtils;
 import com.esferalia.aon.entity.IEntityAlias;
 
 /**
@@ -207,4 +209,39 @@ public class FinanceCollectionsController {
 		return bankConcepts;
 	}		
 
+	public List<SelectItem> getCurrentUserPos() throws ManagerBeanException {
+		List<SelectItem> poses = new LinkedList<SelectItem>();
+    	for(ITransferObject to: getCurrentUserPosList()){
+    		Pos pos = (Pos)to;
+    		poses.add(new SelectItem(pos, pos.getName()));
+    	}
+		return poses;
+	}	
+
+	public int getCurrentUserPosCount() throws ManagerBeanException {
+		IManagerBean posBean = BeanManager.getManagerBean(Pos.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(posBean.getFieldName(IEntityAlias.POS_ACTIVE), true);
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, posBean.getFieldName(IEntityAlias.POS_WORK_PLACE_SCOPE_ID));
+		return posBean.getCount(criteria);
+	}
+	
+	public List<ITransferObject> getCurrentUserPosList() throws ManagerBeanException {
+		IManagerBean posBean = BeanManager.getManagerBean(Pos.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(posBean.getFieldName(IEntityAlias.POS_ACTIVE), true);
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, posBean.getFieldName(IEntityAlias.POS_WORK_PLACE_SCOPE_ID));
+		criteria.addOrder(posBean.getFieldName(IEntityAlias.POS_NAME));
+		return posBean.getList(criteria);
+	}
+	
+	public List<Integer> getCurrentUserPosIds() throws ManagerBeanException {
+		List<Integer> list = new LinkedList<Integer>();
+		for(ITransferObject to: getCurrentUserPosList()){
+			Pos pos = (Pos)to;
+			list.add(pos.getId());
+		}
+		return list;
+	}
+	
 }

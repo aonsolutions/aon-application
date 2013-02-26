@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showPosSelectionWindow">
+		<c:if test="#{invoiceController.showPosSelectionWindow}">
+			<rich:modalPanel id="posSelectionModalPanel" minHeight="240"
+				minWidth="560" rendered="#{invoiceController.showPosSelectionWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{financeBundle.finance_pos_selection}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showPosSelectionWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{invoiceController.showPosSelectionWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="posSelectionForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="posSelection-accept"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										value="#{bundle.aon_accept}">
+										<rich:componentControl for="posSelectionModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{invoiceController.showPosSelectionWindow}"
+											value="#{false}" />
+										<f:setPropertyActionListener
+											target="#{invoiceController.to.pos}"
+											value="#{invoiceController.pos}" />
+										<f:setPropertyActionListener
+											target="#{invoiceController.to.seller}"
+											value="#{invoiceController.seller}" />
+									</aon:commandButton>
+									<aon:commandButton id="posSelection-cancel" immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showPosSelectionWindow">
+										<f:setPropertyActionListener
+											target="#{invoiceController.showPosSelectionWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
+
+										<aon:outputLabel for="Invoice_pos"
+											value="#{financeBundle.finance_pos}" />
+										<aon:selectOneMenu id="Invoice_pos"
+											value="#{invoiceController.pos}"
+											required="true">
+											<f:selectItems value="#{financeCollections.currentUserPos}" />
+										</aon:selectOneMenu>
+
+										<aon:outputLabel for="Seller_id-modal" value="#{financeBundle.finance_pos_seller_label}" />
+										<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+											<ui:param name="lookupTo" value="#{invoiceController.seller}" />
+											<ui:param name="lookupSuffix" value="-modal" />
+											<ui:param name="skipLabel" value="#{true}" />
+											<ui:param name="skipGoToButton" value="#{true}" />
+											<ui:param name="skipNewButton" value="#{true}" />
+										</ui:include>
+
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

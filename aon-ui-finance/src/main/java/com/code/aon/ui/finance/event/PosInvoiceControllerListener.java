@@ -10,18 +10,13 @@ import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.Pos;
 import com.code.aon.ql.Criteria;
-import com.code.aon.seller.Seller;
 import com.code.aon.ui.finance.controller.PosInvoiceController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PosInvoiceControllerListener extends SaleInvoiceControllerListener {
-
-	private Pos pos;
-	private Seller seller;
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
@@ -40,11 +35,11 @@ public class PosInvoiceControllerListener extends SaleInvoiceControllerListener 
 			if (customer != null) {
 				controller.customerChanged(customer);
 			}
-			if (pos != null && pos.getId() != null) {
-				invoice.setPos(pos);
+			if (controller.getPos() != null && controller.getPos().getId() != null) {
+				invoice.setPos(controller.getPos());
 			}
-			if (seller != null && seller.getId() != null) {
-				invoice.setSeller(seller);
+			if (controller.getSeller() != null && controller.getSeller().getId() != null) {
+				invoice.setSeller(controller.getSeller());
 			}
 		} catch (ManagerBeanException ex) {
 			throw new ControllerListenerException(ex.getMessage(), ex);
@@ -53,12 +48,12 @@ public class PosInvoiceControllerListener extends SaleInvoiceControllerListener 
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		setDefaultPosData((Invoice)event.getController().getTo());
+		setDefaultPosData(event);
 	}
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		setDefaultPosData((Invoice)event.getController().getTo());
+		setDefaultPosData(event);
 		super.afterBeanUpdated(event);
 	}
 
@@ -86,12 +81,14 @@ public class PosInvoiceControllerListener extends SaleInvoiceControllerListener 
 		return null;
 	}
 
-	private void setDefaultPosData(Invoice invoice) {
+	private void setDefaultPosData(ControllerEvent event) {
+		PosInvoiceController controller = (PosInvoiceController)event.getController();
+		Invoice invoice = (Invoice)controller.getTo();
 		if (invoice.getPos() != null && invoice.getPos().getId() != null) {
-			pos = invoice.getPos();
+			controller.setPos(invoice.getPos());
 		}
 		if (invoice.getSeller() != null && invoice.getSeller().getId() != null) {
-			seller = invoice.getSeller();
+			controller.setSeller(invoice.getSeller());
 		}
 	}
 

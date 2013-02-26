@@ -11,7 +11,6 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.FinanceStatus;
-import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
@@ -24,7 +23,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
 		Invoice invoice = (Invoice) evt.getTo();
-		if (InvoiceType.SALES == invoice.getType()) {
+		if (invoice.isSales()) {
 			modifyProjectStatus(((Invoice)evt.getTo()).getProject(), ProjectStatus.CLOSED);
 		}
 	}
@@ -32,7 +31,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
 		Invoice invoice = (Invoice) evt.getTo();
-		if (InvoiceType.SALES == invoice.getType()) {
+		if (invoice.isSales()) {
 			modifyProjectStatus(((Invoice)evt.getTo()).getProject(), ProjectStatus.CLOSED);
 		}
 
@@ -46,7 +45,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 				if (invoiceDetail.getProject() == null || invoiceDetail.getProject().getId() == null) {
 					invoiceDetail.setProject(project);
 				}
-				invoiceDetail.setUpdateEnabled(InvoiceType.SALES == invoice.getType() || InvoiceType.PURCHASE == invoice.getType());
+				invoiceDetail.setUpdateEnabled(isUpdateDetailsEnabled(invoice));
 				invoiceDetail.getInvoice().setUpdateEnabled(false);
 				invoiceDetailBean.update(invoiceDetail);
 			}
@@ -76,7 +75,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	public void beanRemoved(ManagerBeanEvent evt) throws ManagerBeanException {
 		Invoice invoice = (Invoice) evt.getTo();
-		if (InvoiceType.SALES == invoice.getType()) {
+		if (invoice.isSales()) {
 			modifyProjectStatus(((Invoice)evt.getTo()).getProject(), ProjectStatus.PENDING);
 		}
 	}
@@ -90,6 +89,10 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 				projectTasBean.update(projectTas);
 			}
 		}
+	}
+
+	private boolean isUpdateDetailsEnabled(Invoice invoice) {
+		return (invoice.isSales()) ? invoice.getPos() == null || invoice.getPos().getId() == null : invoice.isPurchase();	
 	}
 
 	private void updateTotals(Invoice invoice) throws ManagerBeanException {
