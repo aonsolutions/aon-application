@@ -3,8 +3,8 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.6500000000000001"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.x" value="66"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -86,7 +86,7 @@
 				<textFieldExpression><![CDATA[$P{declaration}.getHeader().getYear()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-16" mode="Opaque" x="372" y="79" width="81" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField-16" mode="Opaque" x="369" y="79" width="81" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box leftPadding="1" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -107,7 +107,7 @@
 				<textFieldExpression><![CDATA[$P{declaration}.getHeader().getPeriod().getName($P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-16" mode="Opaque" x="372" y="67" width="81" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField-16" mode="Opaque" x="369" y="67" width="81" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box leftPadding="1" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -120,7 +120,7 @@
 				<textFieldExpression><![CDATA[$R{aon_year}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="372" y="91" width="163" height="12"/>
+				<reportElement x="455" y="91" width="79" height="12"/>
 				<box rightPadding="2">
 					<bottomPen lineWidth="0.0"/>
 				</box>
@@ -139,7 +139,7 @@
 				</textElement>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="82" y="78" width="281" height="12">
+				<reportElement x="82" y="85" width="281" height="12">
 					<printWhenExpression><![CDATA[$P{declaration}.getHeader().getFinance() != null &&
 $P{declaration}.getHeader().getFinance().getId() != null]]></printWhenExpression>
 				</reportElement>
@@ -149,21 +149,20 @@ $P{declaration}.getHeader().getFinance().getId() != null]]></printWhenExpression
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{declaration}.getHeader().getFinance().getBank().getName()
-]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{declaration}.getHeader().getFinance().getBank().getName()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="82" y="103" width="92" height="14"/>
+				<reportElement x="455" y="104" width="79" height="14"/>
 				<box leftPadding="2" rightPadding="2">
 					<bottomPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{declaration}.getResult()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="82" y="66" width="281" height="12">
+				<reportElement x="82" y="73" width="281" height="12">
 					<printWhenExpression><![CDATA[$P{declaration}.getHeader().getFinance() != null &&
 $P{declaration}.getHeader().getFinance().getId() != null]]></printWhenExpression>
 				</reportElement>
@@ -173,11 +172,10 @@ $P{declaration}.getHeader().getFinance().getId() != null]]></printWhenExpression
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{declaration}.getHeader().getFinance().getPayMethod().getName()
-]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{declaration}.getHeader().getFinance().getPayMethod().getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-16" mode="Opaque" x="1" y="105" width="81" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField-16" mode="Opaque" x="369" y="106" width="81" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box leftPadding="1" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -187,10 +185,10 @@ $P{declaration}.getHeader().getFinance().getId() != null]]></printWhenExpression
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[(!$P{declaration}.isToDeduct() && !$P{declaration}.isNegative())?$R{fiscal_deposit}:$R{fiscal_deduct} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[((!$P{declaration}.isToDeduct() && !$P{declaration}.isNegative())?$R{fiscal_deposit}:$R{fiscal_deduct}) + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-16" mode="Opaque" x="1" y="67" width="81" height="12" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField-16" mode="Opaque" x="1" y="74" width="81" height="12" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$P{declaration}.getHeader().getFinance() != null &&
 $P{declaration}.getHeader().getFinance().getId() != null]]></printWhenExpression>
 				</reportElement>
@@ -206,7 +204,7 @@ $P{declaration}.getHeader().getFinance().getId() != null]]></printWhenExpression
 				<textFieldExpression><![CDATA[$R{fiscal_payMethod}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="82" y="90" width="281" height="12">
+				<reportElement x="82" y="97" width="281" height="12">
 					<printWhenExpression><![CDATA[$P{declaration}.getHeader().getFinance() != null &&
 $P{declaration}.getHeader().getFinance().getId() != null]]></printWhenExpression>
 				</reportElement>
@@ -216,8 +214,20 @@ $P{declaration}.getHeader().getFinance().getId() != null]]></printWhenExpression
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{declaration}.getHeader().getFinance().getBankAccount()
-]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{declaration}.getHeader().getFinance().getBankAccount()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-16" mode="Opaque" x="369" y="91" width="81" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="1" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Double" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{fiscal_administration} + ":"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
