@@ -1253,6 +1253,11 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 		
 		
 		@Override
+		public Integer getId() {
+			return getInt(SalaryPaymentColumns.ID);
+		}
+		
+		@Override
 		public IContractPayment next() {
 			return this;
 		}

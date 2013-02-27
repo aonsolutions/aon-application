@@ -327,8 +327,6 @@ public class SalaryDraftObject {
 		return salaryDraft.getDbTotalPayment();
 	}
 	
-	
-	
 	public Double getDbTotalDeduction() {
 		return salaryDraft.getDbTotalDeduction();
 	}
@@ -336,6 +334,8 @@ public class SalaryDraftObject {
 	public boolean hasDbSalary() {
 		return salaryDraft.hasDbSalary();
 	}
+
+
 
 	// ------------------------------------------
 	// Undo & Redo Support
@@ -358,5 +358,6 @@ public class SalaryDraftObject {
 		undoManager.add(new UndoableVariableEdit(oldVar, var));
 		return oldVar;
 	}
+	
 
 }

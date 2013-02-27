@@ -119,6 +119,7 @@ public class SalaryDraftCalculatorContext extends
 
 			DraftPayment draftPayment = new DraftPayment();
 
+			draftPayment.setId(payment.getId());
 			draftPayment.setName(payment.getName());
 			draftPayment.setType(getPaymentType(payment.getType()));
 			draftPayment.setSalaryType(getSalaryType(payment.getSalaryType()));
@@ -147,6 +148,7 @@ public class SalaryDraftCalculatorContext extends
 
 			DrafDeduction draftDeduction = new DrafDeduction();
 			
+			draftDeduction.setId(deduction.getId());
 			draftDeduction.setName(deduction.getName());
 			draftDeduction.setEndDate(deduction.getEndDate());
 			draftDeduction.setStartDate(deduction.getStartDate());

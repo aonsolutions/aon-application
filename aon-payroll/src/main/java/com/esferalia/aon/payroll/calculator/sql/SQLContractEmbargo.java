@@ -36,6 +36,11 @@ public class SQLContractEmbargo
 	//-------------------------------------------
 	
 	@Override
+	public Integer getId() {
+		return getInt(ContractEmbargoColumns.ID);
+	}
+	
+	@Override
 	public Integer getEmbargo() {
 		return getInt(ContractEmbargoColumns.ID);
 	}

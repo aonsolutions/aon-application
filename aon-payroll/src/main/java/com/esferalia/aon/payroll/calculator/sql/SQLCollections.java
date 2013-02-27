@@ -60,6 +60,7 @@ public class SQLCollections {
 			ContractDeduction contractDeduction = 
 				new ContractDeduction();
 
+			contractDeduction.id = sqlContractDeduction.getId();
 			contractDeduction.type = sqlContractDeduction.getType();
 			contractDeduction.name = sqlContractDeduction.getName();
 			contractDeduction.startDate = sqlContractDeduction.getStartDate();
@@ -84,6 +85,7 @@ public class SQLCollections {
 			ContractCost contractCost = 
 				new ContractCost();
 
+			contractCost.id = sqlContractCost.getId();
 			contractCost.type = sqlContractCost.getType();
 			contractCost.name = sqlContractCost.getName();
 			contractCost.startDate = sqlContractCost.getStartDate();
@@ -99,6 +101,7 @@ public class SQLCollections {
 
 	private static class ContractPayment implements IContractPayment{
 		
+		protected Integer id;
 		protected String name;
 		protected PaymentType type;
 		protected String description;
@@ -114,6 +117,11 @@ public class SQLCollections {
 		protected ExpressionScope expressionScope;
 		protected SalaryType salaryType;
 		
+		
+		@Override
+		public Integer getId() {
+			return id;
+		}
 		
 		@Override
 		public PaymentType getType() {
@@ -188,6 +196,7 @@ public class SQLCollections {
 	
 	private static class ContractDeduction implements IContractDeduction {
 
+		protected Integer id;
 		protected String name;
 		protected DeductionType type;
 		protected String description;
@@ -199,6 +208,12 @@ public class SQLCollections {
 		protected Double amount;
 		protected ExpressionScope expressionScope;
 
+		@Override
+		public Integer getId() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
 		@Override
 		public DeductionType getType() {
 			return type;

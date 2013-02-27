@@ -39,9 +39,9 @@ public class MainEntryPoint implements EntryPoint {
 		var scripts = $doc.getElementsByTagName("script");
 		for ( var i = 0; i < scripts.length; ++i) {
 			if (scripts[i].src != null && scripts[i].src.indexOf(search) != -1) {
-				var parameters = scripts[i].src.match(/\w+=\w+/g);
-				for ( var j = 0; j < parameters.length; ++j) {
-					var keyvalue = parameters[j].split("=");
+				var params = scripts[i].src.match(/\w+=\w+/g);
+				for ( var j = 0; j < params.length; ++j) {
+					var keyvalue = params[j].split("=");
 					if (keyvalue.length == 2 && keyvalue[0] == parameterName) {
 						return unescape(keyvalue[1]);
 					}

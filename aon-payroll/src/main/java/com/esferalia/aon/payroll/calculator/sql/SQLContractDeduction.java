@@ -35,7 +35,12 @@ public class SQLContractDeduction
 	//-------------------------------------------
 	// IContractDeduction
 	//-------------------------------------------
-
+	
+	@Override
+	public Integer getId() {
+		return getInt(ContractDeductionColumns.ID);
+	}
+	
 	@Override
 	public ExpressionScope getScope() {
 		throw new UnsupportedOperationException();

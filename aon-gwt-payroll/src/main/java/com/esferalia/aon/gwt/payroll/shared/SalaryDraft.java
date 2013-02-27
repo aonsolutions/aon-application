@@ -174,6 +174,10 @@ public class SalaryDraft extends SalaryPreview {
 
 	
 	public Payment addDraftPayment(Payment payment) {
+		if ( payment.getId() == null ) {
+			payment.setId(draftPayments.size());
+		}
+
 		Payment oldPaymnet = null;
 		
 		int i = draftPayments.indexOf(payment);
@@ -195,6 +199,11 @@ public class SalaryDraft extends SalaryPreview {
 	
 	
 	public Deduction addDraftDeduction(Deduction deduction) {
+		
+		if ( deduction.getId() == null ) {
+			deduction.setId(draftDeductions.size());
+		}
+		
 		Deduction oldDeduction = null;
 		int i = draftDeductions.indexOf(deduction);
 		if ( i != -1 ) {

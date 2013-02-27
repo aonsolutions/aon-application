@@ -7,7 +7,7 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 
 public class SimpleContractDeduction implements IContractDeduction {
 
-	
+	private Integer id;
 	private double amount;
 	private DeductionType type;
 	private String description;
@@ -21,6 +21,14 @@ public class SimpleContractDeduction implements IContractDeduction {
 	private Date endDate;
 	
 	
+	@Override
+	public Integer getId() {
+		return id;
+	}
+	
+	public void setId(Integer id) {
+		this.id = id;
+	}
 	
 	@Override
 	public double getAmount() {

@@ -1,6 +1,5 @@
 package com.esferalia.aon.payroll;
 
-
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,14 +38,16 @@ import com.esferalia.aon.salary.payment.PaymentsFactoryContext;
 import com.esferalia.aon.salary.payment.PaymentsFactoryManager;
 
 @Entity
-@Table(name="salary")
+@Table(name = "salary")
 public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 
 	static {
-		PaymentsFactoryManager payManager =  PaymentsFactoryManager.getInstance();
-		payManager.addFactory( new SalaryPaymentsFactory() );
-		DeductionsFactoryManager dedManager =  DeductionsFactoryManager.getInstance();
-		dedManager.addFactory( new SalaryDeductionsFactory() );
+		PaymentsFactoryManager payManager = PaymentsFactoryManager
+				.getInstance();
+		payManager.addFactory(new SalaryPaymentsFactory());
+		DeductionsFactoryManager dedManager = DeductionsFactoryManager
+				.getInstance();
+		dedManager.addFactory(new SalaryDeductionsFactory());
 	}
 
 	private static final long serialVersionUID = 628669216993025202L;
@@ -73,9 +74,11 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 	public int getIssueMonth() {
 		return issueMonth;
 	}
+
 	public void setIssueMonth(int issueMonth) {
 		this.issueMonth = issueMonth;
 	}
+
 	@Transient
 	public Month getMonth() {
 		Calendar cal = Calendar.getInstance();
@@ -83,6 +86,7 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 		month = Month.getMonthByValue(cal.get(Calendar.MONTH));
 		return month;
 	}
+
 	@Transient
 	public Integer getYear() {
 		Calendar cal = Calendar.getInstance();
@@ -90,14 +94,16 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 		year = cal.get(Calendar.YEAR);
 		return year;
 	}
-	
+
 	@Formula("year(issue_date)")
 	public int getIssueYear() {
 		return issueYear;
 	}
+
 	public void setIssueYear(int issueYear) {
 		this.issueYear = issueYear;
 	}
+
 	@Override
 	@Transient
 	public boolean isFullTime() {
@@ -109,17 +115,18 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 	public int getSeniority() {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(getSeniorityDate());
-		int seniorityYear =  cal.get(Calendar.YEAR);
+		int seniorityYear = cal.get(Calendar.YEAR);
 		return getYear() - seniorityYear;
 	}
 
 	// *******************************************************
 	// ********************* COSTOS **************************
 	// *******************************************************
-	@OneToMany(mappedBy = "salary", cascade={CascadeType.ALL})
+	@OneToMany(mappedBy = "salary", cascade = { CascadeType.ALL })
 	public Set<SalaryCost> getSalaryCosts() {
 		return salaryCosts;
 	}
+
 	public void setSalaryCosts(Set<SalaryCost> salaryCosts) {
 		this.salaryCosts = salaryCosts;
 	}
@@ -127,21 +134,23 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 	// *******************************************************
 	// ******************** EMBARGOS *************************
 	// *******************************************************
-	@OneToMany(mappedBy = "salary", cascade={CascadeType.ALL})
+	@OneToMany(mappedBy = "salary", cascade = { CascadeType.ALL })
 	public Set<SalaryEmbargo> getSalaryEmbargos() {
 		return salaryEmbargos;
 	}
+
 	public void setSalaryEmbargos(Set<SalaryEmbargo> salaryEmbargos) {
-		this.salaryEmbargos= salaryEmbargos;
+		this.salaryEmbargos = salaryEmbargos;
 	}
 
 	// *******************************************************
 	// **************** BONIFICACIONES **********************
 	// *******************************************************
-	@OneToMany(mappedBy = "salary", cascade={CascadeType.ALL})
+	@OneToMany(mappedBy = "salary", cascade = { CascadeType.ALL })
 	public Set<SalaryBonus> getSalaryBonus() {
 		return salaryBonus;
 	}
+
 	public void setSalaryBonus(Set<SalaryBonus> salaryBonus) {
 		this.salaryBonus = salaryBonus;
 	}
@@ -149,11 +158,12 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 	// *******************************************************
 	// ****************** DEVENGOS ***************************
 	// *******************************************************
-	
-	@OneToMany(mappedBy = "salary", cascade={CascadeType.ALL})
+
+	@OneToMany(mappedBy = "salary", cascade = { CascadeType.ALL })
 	public Set<SalaryPayment> getSalaryPayments() {
 		return salaryPayments;
 	}
+
 	public void setSalaryPayments(Set<SalaryPayment> salaryPayments) {
 		this.salaryPayments = salaryPayments;
 	}
@@ -162,30 +172,34 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 	// ****************** DEDUCCIONES ************************
 	// *******************************************************
 
-	@OneToMany(mappedBy = "salary", cascade={CascadeType.ALL})
+	@OneToMany(mappedBy = "salary", cascade = { CascadeType.ALL })
 	public Set<SalaryDeduction> getSalaryDeductions() {
 		return salaryDeductions;
 	}
+
 	public void setSalaryDeductions(Set<SalaryDeduction> salaryDeductions) {
 		this.salaryDeductions = salaryDeductions;
 	}
 
 	@Override
 	@Transient
-	public ISalary getSalary(){
+	public ISalary getSalary() {
 		return this;
 	}
 
 	@Transient
 	@Override
-	public Deductions getDeductions() throws SalaryException  {
+	public Deductions getDeductions() throws SalaryException {
 		if (deductions == null) {
-			DeductionsFactoryManager manager =  DeductionsFactoryManager.getInstance();
-			IDeductionsFactory factory = manager.getFactory( getDeductionsFactoryContext() );
-			setDeductions( factory.getDeductions(getDeductionsFactoryContext()));
+			DeductionsFactoryManager manager = DeductionsFactoryManager
+					.getInstance();
+			IDeductionsFactory factory = manager
+					.getFactory(getDeductionsFactoryContext());
+			setDeductions(factory.getDeductions(getDeductionsFactoryContext()));
 		}
 		return deductions;
 	}
+
 	public void setDeductions(Deductions deductions) throws SalaryException {
 		this.deductions = deductions;
 	}
@@ -194,24 +208,30 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 	@Transient
 	public Collection<SalaryCost> getCosts() throws SalaryException {
 		try {
-			Collection<SalaryCost> costs ;
-			String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+			Collection<SalaryCost> costs;
+			String sessionName = HibernateUtil
+					.getSessionFactoryName(Salary.class.getName());
 			Session session = HibernateUtil.getSession(sessionName);
-			// Si el Salary está conectado a la session de Hibernate utilizamos la potencia
-			// que nos da la obtención de colecciones tipo LAZY. En caso contrario vamos por 
+			// Si el Salary está conectado a la session de Hibernate utilizamos
+			// la potencia
+			// que nos da la obtención de colecciones tipo LAZY. En caso
+			// contrario vamos por
 			// el FrameWork.
-			if (  session.contains(this)  || this.getId() == null ) {
-				costs =  this.getSalaryCosts();
+			if (session.contains(this) || this.getId() == null) {
+				costs = this.getSalaryCosts();
 			} else {
-				IManagerBean bean = BeanManager.getManagerBean(SalaryCost.class);
+				IManagerBean bean = BeanManager
+						.getManagerBean(SalaryCost.class);
 				Criteria c = new Criteria();
-				c.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_COST_SALARY_ID), this.getId());
+				c.addEqualExpression(
+						bean.getFieldName(IEntityAlias.SALARY_COST_SALARY_ID),
+						this.getId());
 				List<?> list = bean.getList(c);
 				costs = (Collection<SalaryCost>) list;
 			}
 			return costs;
-		} catch (ManagerBeanException  e) {
-			throw new SalaryException(e.getMessage(),e);
+		} catch (ManagerBeanException e) {
+			throw new SalaryException(e.getMessage(), e);
 		}
 	}
 
@@ -219,24 +239,82 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 	@Transient
 	public Collection<SalaryBonus> getBonus() throws SalaryException {
 		try {
-			Collection<SalaryBonus> bonus ;
-			String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+			Collection<SalaryBonus> bonus;
+			String sessionName = HibernateUtil
+					.getSessionFactoryName(Salary.class.getName());
 			Session session = HibernateUtil.getSession(sessionName);
-			// Si el Salary está conectado a la session de Hibernate utilizamos la potencia
-			// que nos da la obtención de colecciones tipo LAZY. En caso contrario vamos por 
+			// Si el Salary está conectado a la session de Hibernate utilizamos
+			// la potencia
+			// que nos da la obtención de colecciones tipo LAZY. En caso
+			// contrario vamos por
 			// el FrameWork.
-			if (  session.contains(this)  || this.getId() == null ) {
-				bonus =  this.getSalaryBonus();
+			if (session.contains(this) || this.getId() == null) {
+				bonus = this.getSalaryBonus();
 			} else {
-				IManagerBean bean = BeanManager.getManagerBean(SalaryBonus.class);
+				IManagerBean bean = BeanManager
+						.getManagerBean(SalaryBonus.class);
 				Criteria c = new Criteria();
-				c.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_BONUS_SALARY_ID), this.getId());
+				c.addEqualExpression(
+						bean.getFieldName(IEntityAlias.SALARY_BONUS_SALARY_ID),
+						this.getId());
 				List<?> list = bean.getList(c);
 				bonus = (Collection<SalaryBonus>) list;
 			}
 			return bonus;
-		} catch (ManagerBeanException  e) {
-			throw new SalaryException(e.getMessage(),e);
+		} catch (ManagerBeanException e) {
+			throw new SalaryException(e.getMessage(), e);
+		}
+	}
+
+	@Transient
+	@Override
+	public Collection<SalaryPayment> getPaymentS() throws SalaryException {
+		try {
+			Collection<SalaryPayment> payments;
+			String sessionName = HibernateUtil
+					.getSessionFactoryName(Salary.class.getName());
+			Session session = HibernateUtil.getSession(sessionName);
+			if (session.contains(this) || this.getId() == null) {
+				payments = this.getSalaryPayments();
+			} else {
+				IManagerBean bean = BeanManager
+						.getManagerBean(SalaryPayment.class);
+				Criteria c = new Criteria();
+				c.addEqualExpression(bean
+						.getFieldName(IEntityAlias.SALARY_PAYMENT_SALARY_ID),
+						this.getId());
+				List<?> list = bean.getList(c);
+				payments = (Collection<SalaryPayment>) list;
+			}
+			return payments;
+		} catch (ManagerBeanException e) {
+			throw new SalaryException(e.getMessage(), e);
+		}
+	}
+
+	@Transient
+	@Override
+	public Collection<SalaryDeduction> getDeductionS() throws SalaryException {
+		try {
+			Collection<SalaryDeduction> deductions;
+			String sessionName = HibernateUtil
+					.getSessionFactoryName(Salary.class.getName());
+			Session session = HibernateUtil.getSession(sessionName);
+			if (session.contains(this) || this.getId() == null) {
+				deductions = this.getSalaryDeductions();
+			} else {
+				IManagerBean bean = BeanManager
+						.getManagerBean(SalaryDeduction.class);
+				Criteria c = new Criteria();
+				c.addEqualExpression(bean
+						.getFieldName(IEntityAlias.SALARY_DEDUCTION_SALARY_ID),
+						this.getId());
+				List<?> list = bean.getList(c);
+				deductions = (Collection<SalaryDeduction>) list;
+			}
+			return deductions;
+		} catch (ManagerBeanException e) {
+			throw new SalaryException(e.getMessage(), e);
 		}
 	}
 
@@ -244,8 +322,10 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 	@Override
 	public Payments getPayments() throws SalaryException {
 		if (payments == null) {
-			PaymentsFactoryManager manager =  PaymentsFactoryManager.getInstance();
-			IPaymentsFactory factory = manager.getFactory( getPaymentsFactoryContext() );
+			PaymentsFactoryManager manager = PaymentsFactoryManager
+					.getInstance();
+			IPaymentsFactory factory = manager
+					.getFactory(getPaymentsFactoryContext());
 			setPayments(factory.getPayments(getPaymentsFactoryContext()));
 		}
 		return payments;
@@ -254,22 +334,23 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 	public void setPayments(Payments payments) throws SalaryException {
 		this.payments = payments;
 	}
-	
+
 	@Transient
 	public IDeductionsFactoryContext getDeductionsFactoryContext() {
 		if (dedContext == null) {
 			DeductionsFactoryContext dfc = new DeductionsFactoryContext();
 			dfc.setSalaryProxy(this);
-			dedContext = dfc;			
+			dedContext = dfc;
 		}
 		return dedContext;
 	}
+
 	@Transient
 	public IPaymentsFactoryContext getPaymentsFactoryContext() {
 		if (payContext == null) {
 			PaymentsFactoryContext pfc = new PaymentsFactoryContext();
 			pfc.setSalaryProxy(this);
-			payContext = pfc;			
+			payContext = pfc;
 		}
 		return payContext;
 	}

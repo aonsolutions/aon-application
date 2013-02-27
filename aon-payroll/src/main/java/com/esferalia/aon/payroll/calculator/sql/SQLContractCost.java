@@ -33,6 +33,11 @@ public class SQLContractCost
 	// IContractDeduction
 	//-------------------------------------------
 	
+	
+	@Override
+	public Integer getId() {
+		return getInt(SystemCostColumns.ID);
+	}
 
 	@Override
 	public DeductionType getType() {

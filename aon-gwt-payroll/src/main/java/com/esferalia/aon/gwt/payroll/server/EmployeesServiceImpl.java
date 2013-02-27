@@ -1032,7 +1032,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				salaryDraft.getEndDate());
 
 		List<ITransferObject> list = beanManager.getList(criteria);
-
+		
 		return list.size() > 0 ? (ISalary) list.get(0) : null;
 	}
 

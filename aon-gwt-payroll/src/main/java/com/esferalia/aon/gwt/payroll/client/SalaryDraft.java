@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.CalculateCallback;
-import com.esferalia.aon.gwt.payroll.client.UndoManager.Undoable;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DeductionComparator;
 import com.esferalia.aon.gwt.payroll.shared.HasDeduction;
@@ -36,12 +35,15 @@ import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasAllFocusHandlers;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.i18n.client.HasDirection.Direction;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -57,8 +59,9 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HasVisibility;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -120,6 +123,26 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private Scope SCOPE_STEPS[] = { Scope.CONTRACT, Scope.AGREEMENT,
 			Scope.SYSTEM };
 
+	static class VisibilityImpl implements HasVisibility {
+
+		private com.google.gwt.dom.client.Element elem;
+
+		public VisibilityImpl(com.google.gwt.dom.client.Element elem) {
+			this.elem = elem;
+		}
+
+		@Override
+		public boolean isVisible() {
+			return UIObject.isVisible(elem);
+		}
+
+		@Override
+		public void setVisible(boolean visible) {
+			UIObject.setVisible(elem, visible);
+		}
+
+	}
+
 	class VariableChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers>
 			implements FocusHandler, BlurHandler {
 
@@ -140,6 +163,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		@Override
 		public void onFocus(FocusEvent event) {
 			setValue(variable.getExpression());
+			//fxButton.setEnabled(true);
 		}
 
 		@Override
@@ -149,6 +173,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			} else {
 				onValueChange();
 			}
+			fxButton.setEnabled(false);
 		}
 
 		private void onValueChange() {
@@ -209,6 +234,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				@Override
 				public void onFocus(FocusEvent event) {
 					widget.setValue(item.getExpression());
+					//fxButton.setEnabled(true);
 				}
 			});
 			widget.addBlurHandler(new BlurHandler() {
@@ -219,6 +245,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 						onExpressionChange(item, widget.getValue());
 					else
 						widget.setValue(format(item.getAmount()));
+					
+					fxButton.setEnabled(false);
 				}
 			});
 		}
@@ -392,6 +420,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		@Override
 		protected void addDrafItem(Deduction item, String expr) {
 			Deduction deduction = new Deduction();
+
 			deduction.setExpression(expr);
 			if (item != null) {
 				deduction.setType(item.getType());
@@ -400,11 +429,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				deduction.setType(Deduction.Type.OTHER);
 			}
 			deduction.setScope(Scope.SALARY);
-			deduction.setSalaryType(salaryDraftObject.getType());
-			deduction.setStartDate(salaryDraftObject.getStartDate());
-			deduction.setStartDate(salaryDraftObject.getEndDate());
-
 			deduction.setDescription(descriptionBox.getValue());
+			deduction.setSalaryType(salaryDraftObject.getType());
+			deduction.setStartDate(salaryDraftObject.getEndDate());
+			deduction.setStartDate(salaryDraftObject.getStartDate());
 
 			salaryDraftObject.addDraftDeduction(deduction);
 		}
@@ -611,8 +639,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private SalaryDraftObject salaryDraftObject;
 
 	private Map<Event.Type, String[]> eventStyles;
-	
-	private List<Widget> dbWidgets;
+
+	private List<HasVisibility> dbUIObjects;
 
 	public SalaryDraft() {
 		initWidget(binder.createAndBindUi(this));
@@ -627,6 +655,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		initEventsStyles(style);
 		initUndoRedo();
 		initSalaryDb();
+		initFxHelper();
 	}
 
 	public void setSalaryDraftObject(SalaryDraftObject salaryDraftObject) {
@@ -634,7 +663,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		this.salaryDraftObject = salaryDraftObject;
 		onChangedSalaryDraftObject();
 	}
-	
+
 	@Override
 	public void onChange(SalarySelect salarySelect) {
 		salaryDraftObject.calculate(this);
@@ -649,7 +678,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	@Override
 	public void onCalculateSucces(SalaryDraftObject object) {
 		salarySelect.setSalaryPreview(object.asSalaryPreview());
+
+		// I don't like it. But almost it's clear enough.
+		if (isPreviewVisible()) {
+			getPrintPreview();
+		}
 		dumpSalaryDraft();
+
 	}
 
 	@Override
@@ -657,8 +692,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		// TODO Auto-generated method stub
 
 	}
-	
-	
+
 	private void setDbVisible(boolean visible) {
 		dbCgcBaseLabel.setVisible(visible);
 		dbCgpBaseLabel.setVisible(visible);
@@ -672,8 +706,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		dbTotalPaymentLabel.setVisible(visible);
 		dbTotalPaymentsLabel.setVisible(visible);
 
-		for (Widget widget : dbWidgets)
-			widget.setVisible(visible);
+		for (HasVisibility obj : dbUIObjects)
+			obj.setVisible(visible);
 	}
 
 	private void showDraft() {
@@ -682,8 +716,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		zoomListBox.setVisible(false);
 		closePreviewButton.setVisible(false);
 
+		fxButton.setVisible(true);
 		salarySelect.setVisible(true);
 		printPreviewButton.setVisible(true);
+		dbSalaryCheck.setVisible(salaryDraftObject != null
+				&& salaryDraftObject.hasDbSalary());
 	}
 
 	private void showPreview() {
@@ -692,19 +729,31 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		zoomListBox.setVisible(true);
 		closePreviewButton.setVisible(true);
 
+		fxButton.setVisible(false);
 		salarySelect.setVisible(false);
+		dbSalaryCheck.setVisible(false);
 		printPreviewButton.setVisible(false);
+	}
+
+	boolean isPreviewVisible() {
+		return isWidgetVisible(printPreviewHTML);
 	}
 
 	private void showWidget(Widget widget) {
 		deckPanel.showWidget(deckPanel.getWidgetIndex(widget));
 	}
 
+	private boolean isWidgetVisible(Widget w) {
+		int index = deckPanel.getVisibleWidget();
+		Widget visibleWidget = deckPanel.getWidget(index);
+		return visibleWidget == w;
+	}
+
 	private void onChangedSalaryDraftObject() {
 		salaryDraftObject.calculate(this);
 
+		// Sync undo & redo controls
 		salaryDraftObject.addUndoManagerListener(this);
-		// TODO Don't like ...
 		redoButton.setEnabled(salaryDraftObject.canRedo());
 		undoButton.setEnabled(salaryDraftObject.canUndo());
 	}
@@ -796,7 +845,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				.setText(format(salaryDraftObject.getDbTotalLiquid()));
 		setDbStyleName(dbTotalLiquidLabel, salaryDraftObject.getTotalLiquid(),
 				salaryDraftObject.getDbTotalLiquid());
-		
+
 		clearDbWidgets();
 		clearEventsTable();
 		clearContextTable();
@@ -839,7 +888,29 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		setDbVisible(salaryDraftObject.hasDbSalary()
 				&& dbSalaryCheck.getValue());
 	}
+	
+	private void initFxHelper() {
+		fxButton.addMouseDownHandler(new MouseDownHandler() {
+			FxDialog  fxDialog = new FxDialog();
+			
+			@Override
+			public void onMouseDown(MouseDownEvent event) {
+				// TODO Auto-generated method stub
+				fxDialog.center();
+				fxDialog.show();
+			}
+		});
 
+		fxButton.addClickHandler(new ClickHandler() {
+			FxDialog  fxDialog = new FxDialog();
+			@Override
+			public void onClick(ClickEvent event) {
+				fxDialog.center();
+				fxDialog.show();
+			}
+		});
+	}
+	
 	private void initSalaryDb() {
 		dbSalaryCheck.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			@Override
@@ -847,7 +918,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				setDbVisible(event.getValue());
 			}
 		});
-		dbWidgets = new LinkedList<Widget>();
+		dbUIObjects = new LinkedList<HasVisibility>();
 	}
 
 	private void initPaymentsTable() {
@@ -952,11 +1023,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			}
 		});
 	}
-	
+
 	private void clearDbWidgets() {
-		dbWidgets.clear();
+		dbUIObjects.clear();
 	}
-	
+
 	private void clearEventsTable() {
 		eventsTable.removeAllRows();
 	}
@@ -969,9 +1040,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		for (int i = paymentsTable.getRowCount() - 1; i > 0; i--)
 			paymentsTable.removeRow(i);
 	}
-	
-	private void addDbWidget(Widget widget) {
-		dbWidgets.add(widget);
+
+	private void addDbWidget(HasVisibility widget) {
+		dbUIObjects.add(widget);
 	}
 
 	private void dumpEvents(List<Event> events) {
@@ -1023,8 +1094,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		int row = paymentsTable.getRowCount();
 		for (Payment payment : payments) {
 			// dumpPayment(payment, tr++, AON.AON_ICON_ROW_SELECTOR);
-			dumpItem(payment, row++, AON.AON_ICON_ROW_SELECTOR,
-					new PaymentChangeHandler<TextBox>(payment));
+			if (payment.getAmount() != null) {
+				dumpItem(payment, row++, AON.AON_ICON_ROW_SELECTOR,
+						new PaymentChangeHandler<TextBox>(payment));
+			}
+			else {
+				String styles [] = eventStyles.get(Event.Type.ERROR);
+				dumpDbItem(payment, row++, styles[0], styles[1], new PaymentChangeHandler<TextBox>(payment), false);
+			}
 		}
 
 	}
@@ -1172,16 +1249,23 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		amountBox.setText(amount != null ? amount : item.getExpression());
 		amountBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		amountBox.addStyleName(AON.AON_TEXT_RIGHT);
-		
+
 		InlineLabel dbAmountLabel = new InlineLabel();
 		dbAmountLabel.setText(format(item.getDbAmount()));
 		dbAmountLabel.setVisible(salaryDraftObject.hasDbSalary());
+		dbAmountLabel.addStyleName(AON.AON_TEXT_RIGHT);
 		setDbStyleName(dbAmountLabel, item.getAmount(), item.getDbAmount());
-		addDbWidget(dbAmountLabel);
-		
-		Panel amountsPanel = new FlowPanel();
+
+		HorizontalPanel amountsPanel = new HorizontalPanel();
+		amountsPanel.setStyleName(GWT_HORIZONTAL_PANEL);
 		amountsPanel.add(amountBox);
 		amountsPanel.add(dbAmountLabel);
+		amountsPanel.setCellWidth(dbAmountLabel, "50%");
+		amountsPanel.setCellHorizontalAlignment(dbAmountLabel,
+				HorizontalAlignmentConstant.startOf(Direction.RTL));
+		addDbWidget(new VisibilityImpl(dbAmountLabel.getElement()
+				.getParentElement()));
+
 		paymentsTable.setWidget(row, isDeduction ? 4 : 3, amountsPanel);
 
 		handler.setDescriptionWidget(descriptionBox);
@@ -1201,6 +1285,59 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		formatRow(row);
 	}
 
+	private <I extends Item> void dumpDbItem(I item, int row,
+			String iconStyleName,  String textStyleName, ItemChangeHandler<TextBox, I> handler, boolean isDeduction) {
+
+		// first cell for edit other stuff buttons.
+		Button editButton = new Button();
+		editButton.setStyleName(iconStyleName);
+		editButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		// remove 'aon-editDataTable-button' margin & paddind.
+		// We don't like it here.
+		editButton.getElement().getStyle().setProperty("padding", "inherit");
+		paymentsTable.setWidget(row, 0, editButton);
+
+		paymentsTable.setHTML(row, 1, "&nbsp;");
+
+		Label descriptionLabel = new InlineLabel(item.getDescription());
+		//descriptionLabel.getElement().getStyle().setWidth(98, Unit.PCT);
+		paymentsTable.setWidget(row, 2, descriptionLabel);
+
+		TextBox amountBox = new TextBox();
+		amountBox.getElement().getStyle().setWidth(98, Unit.PCT);
+		amountBox.addStyleName(AON.AON_TEXT_RIGHT);
+		handler.setExpressionWidget(amountBox);
+
+		InlineLabel dbAmountLabel = new InlineLabel();
+		dbAmountLabel.setText(format(item.getDbAmount()));
+		dbAmountLabel.setVisible(salaryDraftObject.hasDbSalary());
+		dbAmountLabel.addStyleName(AON.AON_TEXT_RIGHT);
+		setDbStyleName(dbAmountLabel, item.getAmount(), item.getDbAmount());
+
+		HorizontalPanel amountsPanel = new HorizontalPanel();
+		amountsPanel.setStyleName(GWT_HORIZONTAL_PANEL);
+		amountsPanel.add(amountBox);
+		amountsPanel.add(dbAmountLabel);
+		amountsPanel.setCellWidth(dbAmountLabel, "50%");
+		amountsPanel.setCellHorizontalAlignment(dbAmountLabel,
+				HorizontalAlignmentConstant.startOf(Direction.RTL));
+
+		paymentsTable.setWidget(row, isDeduction ? 4 : 3, amountsPanel);
+
+		paymentsTable.setHTML(row, isDeduction ? 3 : 4, "&nbsp;");
+
+		paymentsTable.getFlexCellFormatter().setColSpan(row, 4, 2);
+
+		CellFormatter fomatter = paymentsTable.getCellFormatter();
+		for (int col = 0; col < paymentsTable.getCellCount(row); col++) {
+			fomatter.addStyleName(row, col, textStyleName);
+		}
+
+		formatRow(row);
+
+		addDbWidget(new VisibilityImpl(paymentsTable.getRowFormatter().getElement(row)));
+	}
+
 	private void dumpSystemDeduction(Deduction deduction, String description,
 			int row) {
 
@@ -1209,25 +1346,36 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		paymentsTable.getCellFormatter().addStyleName(row, 0,
 				AON.AON_TEXT_CENTER);
 		paymentsTable.setHTML(row, 2, description);
-		
-		FlowPanel amountsPanel = new FlowPanel();
+
+		HorizontalPanel amountsPanel = new HorizontalPanel();
+		amountsPanel.setStyleName(GWT_HORIZONTAL_PANEL);
 		InlineLabel amountLabel = new InlineLabel();
 		amountLabel.setText(format(deduction.getAmount()));
-		
+
 		InlineLabel dbAmountLabel = new InlineLabel();
 		dbAmountLabel.setText(format(deduction.getDbAmount()));
 		dbAmountLabel.setVisible(salaryDraftObject.hasDbSalary());
-		setDbStyleName(dbAmountLabel, deduction.getAmount(), deduction.getDbAmount());
-		addDbWidget(dbAmountLabel);
-		
+		setDbStyleName(dbAmountLabel, deduction.getAmount(),
+				deduction.getDbAmount());
 		amountsPanel.add(amountLabel);
 		amountsPanel.add(dbAmountLabel);
-		
-		paymentsTable.setWidget(row, 4, amountsPanel );
-		
+
+		amountsPanel.setWidth("100%");
+		amountsPanel.setCellWidth(dbAmountLabel, "50%");
+		amountsPanel.setCellHorizontalAlignment(amountLabel,
+				HorizontalAlignmentConstant.startOf(Direction.RTL));
+		amountsPanel.setCellHorizontalAlignment(dbAmountLabel,
+				HorizontalAlignmentConstant.startOf(Direction.RTL));
+		addDbWidget(new VisibilityImpl(dbAmountLabel.getElement()
+				.getParentElement()));
+
+
+		paymentsTable.setWidget(row, 4, amountsPanel);
+
 		paymentsTable.getCellFormatter().addStyleName(row, 4,
 				AON.AON_TEXT_RIGHT);
 		paymentsTable.getFlexCellFormatter().setColSpan(row, 4, 2);
+		
 		formatRow(row);
 	}
 
@@ -1259,6 +1407,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 					variable);
 			variableChangeHandler.setUiObject(variableTextBox);
 			valuePanel.add(variableTextBox);
+
+			valuePanel.add(new InlineHTML("&nbsp;"));
 
 			if (!(variable instanceof UndefinedVariable)) {
 				valuePanel.add(getDeleteButton(variable));

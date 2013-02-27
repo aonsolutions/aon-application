@@ -43,6 +43,11 @@ public class SQLContractPayment extends SQLCollection<IContractPayment> implemen
 	// ------------------------------------------
 	
 	@Override
+	public Integer getId() {
+		return getInt(ContractPaymentColumns.ID);
+	}
+	
+	@Override
 	public ExpressionScope getScope() {
 		Integer type = getInt(SCOPE_ALIAS);
 		return type == null ? null : ExpressionScope.values()[type];

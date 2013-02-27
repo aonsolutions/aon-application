@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 
 public abstract class Item implements Serializable {
 
+	Integer id;
 	Integer month;
 	Scope scope;
 	Date startDate;
@@ -18,6 +19,14 @@ public abstract class Item implements Serializable {
 	Salary.Type salaryType;
 
 	Double dbAmount;
+	
+	public Integer getId() {
+		return id;
+	}
+	
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public String getName() {
 		return name;
@@ -108,8 +117,8 @@ public abstract class Item implements Serializable {
 		if (!(obj instanceof Item))
 			return false;
 		Item item = (Item) obj;
-		return ((name == item.name) || ((name != null) && name
-				.equals(item.name)));
+		return ((id == item.id) || ((id != null) && id
+				.equals(item.id)));
 	}
 
 }

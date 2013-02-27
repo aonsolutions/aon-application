@@ -1,9 +1,13 @@
 package com.esferalia.aon.salary;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 import com.esferalia.aon.salary.deduction.Deductions;
+import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.Payments;
 
 public interface ISalary {
@@ -40,6 +44,9 @@ public interface ISalary {
 	Deductions getDeductions() throws SalaryException;
 	Double getSocialSecurityContributions();
 	Double getTotalDeduction();
+	
+	<T extends IPayment> Collection<T> getPaymentS() throws SalaryException ;
+	<T extends IDeduction>  Collection<T> getDeductionS() throws SalaryException ;
 	
 	Double getTotalIrpf();
 

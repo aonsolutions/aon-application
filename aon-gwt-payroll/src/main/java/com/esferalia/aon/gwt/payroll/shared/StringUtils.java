@@ -7,6 +7,7 @@ import com.google.gwt.i18n.shared.DateTimeFormat;
 
 public class StringUtils {
 	
+	
 	public static boolean isEmpty(String str) {
 		return str == null || str.isEmpty();
 	}
@@ -14,6 +15,7 @@ public class StringUtils {
 	public static String capitalize(String str) {
 		return capitalize(str, null);
 	}
+
 
 	public static String capitalize(String str, String delimiters) {
 		if ( isEmpty(str) ){
@@ -80,4 +82,10 @@ public class StringUtils {
 		return s2.equalsIgnoreCase(s1);
 	}
 	
+	public static String repeat(String str, int times){
+		StringBuffer buffer = new StringBuffer();
+		for ( int i= 0; i < times ; i++ )
+			buffer.append(str);
+		return str.toString();
+	}		
 }

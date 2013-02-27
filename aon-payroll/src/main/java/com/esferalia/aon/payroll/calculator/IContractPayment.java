@@ -10,6 +10,8 @@ import com.esferalia.aon.salary.payment.IPayment;
 
 public interface IContractPayment extends IPayment, IExpression {
 	
+	public Integer getId();
+	
 	public Month getMonth();
 	
 	public Date getStartDate();
