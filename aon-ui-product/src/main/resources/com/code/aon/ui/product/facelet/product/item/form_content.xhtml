@@ -12,68 +12,11 @@
 		columns="2" cellpadding="5" styleClass="aon-panelGrid-formatting"
 		columnClasses="aon-width-half aon-vertical-align-top,aon-width-half aon-vertical-align-top">
 
-		<aon:panelGrid columns="2" styleClass="aon-width-all" >
-	
-			<c:if test="#{product.showDetail}">
-				<aon:outputLabel for="Item_product_detail"
-					value="#{product.labelDetail}" />
-				<aon:inputText id="Item_product_detail" 
-					value="#{controller.to.detail}" size="25" maxlength="15" />
-			</c:if>
-
-			<c:if test="#{product.showDetail2}">
-				<aon:outputLabel for="Item_product_detail2"
-					value="#{product.labelDetail2}" />
-				<aon:inputText id="Item_product_detail2" 
-					value="#{controller.to.detail2}" size="25" maxlength="15" />
-			</c:if>
-	
-			<c:if test="#{aonConfiguration.bean.product.showBarcode}">
-				<aon:outputLabel for="Item_barcode"
-					value="#{productBundle.product_barcode}" />
-				<aon:inputText id="Item_barcode" 
-					value="#{controller.to.barcode}" size="25" maxlength="32" />
-	 		</c:if>
-	
-			<aon:outputLabel for="Item_description" value="#{bundle.aon_description}" />
-		 	<aon:div style="margin-bottom: 0.5em;">
-				<aon:inputTextarea id="Item_description"
-					value="#{controller.to.description}" cols="64" rows="4" />
-		 	</aon:div>
-	
-			<aon:outputLabel for="Item_status" value="#{bundle.aon_status}" />
-			<aon:selectOneRadio id="Item_status" value="#{controller.to.status}">
-				<f:selectItems value="#{productCollections.productStatuses}" />
-			</aon:selectOneRadio>
-
-			<c:if test="#{aonConfiguration.bean.product.showEcommerceData}">
-				<aon:selectBooleanCheckbox id="Item_internet" 
-					value="#{controller.to.internet}" />
-				<aon:outputLabel for="Item_internet" styleClass="aon-margin-right aon-italic"
-					value="#{productBundle.product_ecommerce_available}" />
-			</c:if>
-			
-		</aon:panelGrid>
+		<ui:include src="/com/code/aon/ui/product/facelet/product/item/formBasic.xhtml" />
 		
-		<aon:div styleClass="aon-group">
-			<aon:div styleClass="aon-group-title">
-				<aon:outputText value="#{productBundle.product_basic_sales_tariff}"/>
-			</aon:div>
-			<aon:div styleClass="aon-group-body"> 	
-				<aon:div styleClass="aon-group-body-internal">
-					<a4j:region>
-						<aon:panelGrid columns="2" styleClass="aon-width-all"
-							columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
-
-							<ui:include src="/com/code/aon/ui/product/facelet/product/item/formPrices.xhtml" >
-								<ui:param name="itemTo" value="#{controller.to}" />
-							</ui:include>
-							
-						</aon:panelGrid>
-					</a4j:region>
-				</aon:div>
-			</aon:div>
-		</aon:div>
+		<ui:include src="/com/code/aon/ui/product/facelet/product/item/formPrices.xhtml" >
+			<ui:param name="itemTo" value="#{controller.to}" />
+		</ui:include>
 		
 	</aon:panelGrid>
 

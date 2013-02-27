@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<aon:panelGrid columns="2" styleClass="aon-width-all" >
+
+		<c:if test="#{product.showDetail}">
+			<aon:outputLabel for="Item_product_detail"
+				value="#{product.labelDetail}" />
+			<aon:inputText id="Item_product_detail" 
+				value="#{controller.to.detail}" size="25" maxlength="15" />
+		</c:if>
+
+		<c:if test="#{product.showDetail2}">
+			<aon:outputLabel for="Item_product_detail2"
+				value="#{product.labelDetail2}" />
+			<aon:inputText id="Item_product_detail2" 
+				value="#{controller.to.detail2}" size="25" maxlength="15" />
+		</c:if>
+
+		<c:if test="#{product.showDetail3}">
+			<aon:outputLabel for="Item_product_detail3"
+				value="#{product.labelDetail3}" />
+			<aon:inputText id="Item_product_detail3" 
+				value="#{controller.to.detail3}" size="25" maxlength="15" />
+		</c:if>
+
+		<c:if test="#{aonConfiguration.bean.product.showBarcode}">
+			<aon:outputLabel for="Item_barcode"
+				value="#{productBundle.product_barcode}" />
+			<aon:inputText id="Item_barcode" 
+				value="#{controller.to.barcode}" size="25" maxlength="32" />
+ 		</c:if>
+
+		<aon:outputLabel for="Item_description" value="#{bundle.aon_description}" />
+	 	<aon:div style="margin-bottom: 0.5em;">
+			<aon:inputTextarea id="Item_description"
+				value="#{controller.to.description}" cols="64" rows="4" />
+	 	</aon:div>
+
+		<aon:outputLabel for="Item_status" value="#{bundle.aon_status}" />
+		<aon:selectOneRadio id="Item_status" value="#{controller.to.status}">
+			<f:selectItems value="#{productCollections.productStatuses}" />
+		</aon:selectOneRadio>
+
+		<c:if test="#{aonConfiguration.bean.product.showEcommerceData}">
+			<aon:selectBooleanCheckbox id="Item_internet" 
+				value="#{controller.to.internet}" />
+			<aon:outputLabel for="Item_internet" styleClass="aon-margin-right aon-italic"
+				value="#{productBundle.product_ecommerce_available}" />
+		</c:if>
+		
+	</aon:panelGrid>
+
+</ui:composition>

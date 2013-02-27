@@ -62,8 +62,12 @@ public class ProductControllerListener extends ControllerAdapter implements IIte
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		try {
-			Product product = (Product) event.getController().getTo();
+	    	ProductController controller = (ProductController) event.getController();
+	    	Product product = (Product) controller.getTo();
 			updateTagList( product, getSearch().getTags(), false );
+			if (! controller.isShowDetail() ) {
+				controller.acceptItem(null);
+			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}

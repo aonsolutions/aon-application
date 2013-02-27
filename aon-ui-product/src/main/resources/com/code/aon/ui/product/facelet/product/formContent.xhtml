@@ -62,20 +62,36 @@
 
 		</aon:div>
 		
-		<aon:div styleClass="aon-group">
-			<aon:div styleClass="aon-group-title">
-				<aon:outputText value="#{productBundle.product_detail}"/>
-			</aon:div>
-			<aon:div styleClass="aon-group-body"> 
-				<aon:div styleClass="aon-group-body-internal">
-				
-					<ui:include	src="/com/code/aon/ui/product/facelet/product/item/list.xhtml">
-						<ui:param name="controller" value="#{item}" />
-					</ui:include>
-
+		<aon:panelGroup>
+			<aon:div styleClass="aon-group">
+				<aon:div styleClass="aon-group-title">
+					<aon:outputText value="#{productBundle.product_detail}"/>
+				</aon:div>
+				<aon:div styleClass="aon-group-body"> 
+					<aon:div styleClass="aon-group-body-internal">
+					
+						<c:if test="#{product.showDetail}">				
+							<ui:include	src="/com/code/aon/ui/product/facelet/product/item/list.xhtml">
+								<ui:param name="controller" value="#{item}" />
+							</ui:include>
+						</c:if>
+						<c:if test="#{!product.showDetail}">				
+							<ui:include	src="/com/code/aon/ui/product/facelet/product/item/formBasic.xhtml">
+								<ui:param name="controller" value="#{item}" />
+							</ui:include>
+						</c:if>
+	
+					</aon:div>
 				</aon:div>
 			</aon:div>
-		</aon:div>
+	
+			<c:if test="#{!product.showDetail}">				
+				<ui:include	src="/com/code/aon/ui/product/facelet/product/item/formPrices.xhtml">
+					<ui:param name="controller" value="#{item}" />
+					<ui:param name="itemTo" value="#{item.to}" />
+				</ui:include>
+			</c:if>
+		</aon:panelGroup>
 		
 	</aon:panelGrid>
 	 

@@ -94,12 +94,14 @@
 					</ui:include>
 
 					<aon:panelTabSet selectedTab="#{item.selectedTab}">
-						<aon:panelTab id="itemPanelTab"
-							label="#{productBundle.product_detail}">
-							<ui:include src="/com/code/aon/ui/product/facelet/product/item/tab_grid.xhtml">
-								<ui:param name="controller" value="#{item}" />
-							</ui:include>
-						</aon:panelTab>
+						<c:if test="#{product.showDetail}">
+							<aon:panelTab id="itemPanelTab"
+								label="#{productBundle.product_detail}">
+								<ui:include src="/com/code/aon/ui/product/facelet/product/item/tab_grid.xhtml">
+									<ui:param name="controller" value="#{item}" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
 						<c:if test="#{aonConfiguration.bean.product.showComposition and product.to.composition}">
 							<aon:panelTab id="itemCompositionPanelTab"
 								label="#{productBundle.product_composition}">
