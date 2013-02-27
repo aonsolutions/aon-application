@@ -64,7 +64,6 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 
 	public Invoice() {
 		setIssueDate(new Date());
-		setTaxDate(getIssueDate());
 		setDefaultTaxInfo(true);
 		setUpdateEnabled(true);
 	}

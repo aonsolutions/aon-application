@@ -49,6 +49,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			invoice.setStatus(InvoiceStatus.PENDING);
 			invoice.setRectificationType(RectificationType.NONE);
 			invoice.setSecurityLevel(SecurityLevel.OFFICIAL);
+			invoice.setTaxDate(invoice.getIssueDate());
 
 			invoiceController.loadAddresses(null);
 			invoiceController.loadProjects(null);

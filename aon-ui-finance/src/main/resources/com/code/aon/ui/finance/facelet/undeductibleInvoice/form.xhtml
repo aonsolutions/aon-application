@@ -186,16 +186,14 @@
 							disabled="#{undeductibleInvoice.readOnly}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}">
-							<c:if test="#{aonRole.accountingOperator}">
-								<a4j:support ajaxSingle="true" event="oninputchange"
-									actionListener="#{undeductibleInvoice.onDateChanged}"
-									reRender="Invoice_taxDate"
-									focus="Creditor_id" />
-								<a4j:support ajaxSingle="true" event="onchanged"
-									actionListener="#{undeductibleInvoice.onDateChanged}"
-									reRender="Invoice_taxDate"
-									focus="Creditor_id" />
-							</c:if>
+							<a4j:support ajaxSingle="true" event="oninputchange"
+								actionListener="#{undeductibleInvoice.onDateChanged}"
+								reRender="Invoice_taxDate"
+								focus="Creditor_id" />
+							<a4j:support ajaxSingle="true" event="onchanged"
+								actionListener="#{undeductibleInvoice.onDateChanged}"
+								reRender="Invoice_taxDate"
+								focus="Creditor_id" />
 						</aon:selectInputDate>
 					</aon:div>
 						

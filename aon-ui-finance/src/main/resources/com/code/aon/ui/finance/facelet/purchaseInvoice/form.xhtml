@@ -212,16 +212,14 @@
 						disabled="#{purchaseInvoice.readOnly}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}">
-						<c:if test="#{aonRole.accountingOperator}">
-							<a4j:support ajaxSingle="true" event="oninputchange"
-								actionListener="#{purchaseInvoice.onDateChanged}"
-								reRender="Invoice_taxDate"
-								focus="Supplier_id" />
-							<a4j:support ajaxSingle="true" event="onchanged"
-								actionListener="#{purchaseInvoice.onDateChanged}"
-								reRender="Invoice_taxDate"
-								focus="Supplier_id" />
-						</c:if>
+						<a4j:support ajaxSingle="true" event="oninputchange"
+							actionListener="#{purchaseInvoice.onDateChanged}"
+							reRender="Invoice_taxDate"
+							focus="Supplier_id" />
+						<a4j:support ajaxSingle="true" event="onchanged"
+							actionListener="#{purchaseInvoice.onDateChanged}"
+							reRender="Invoice_taxDate"
+							focus="Supplier_id" />
 					</aon:selectInputDate>
 
 					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
