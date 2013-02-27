@@ -24,7 +24,7 @@
 					<ui:param name="skipBackButton" value="#{true}" />
 					<ui:param name="saveButtonReRender" value="posInvoiceForm" />
 					<ui:define name="beforeSpinToolbarContent">
-						<aon:htmlCommandLink id="posInvoice-report" 
+						<aon:htmlCommandLink id="posInvoice-report" immediate="true" 
 							actionListener="#{posInvoiceParams.onInit}" 
 							value="ticket" target="_new" 
 							rendered="#{posInvoice.toInvoiceTotalPrice != 0 and posInvoice.toInvoiceTotalPrice == posInvoice.toInvoiceFinanceTotal}"  
