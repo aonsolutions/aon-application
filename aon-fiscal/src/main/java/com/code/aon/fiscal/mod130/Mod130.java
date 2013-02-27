@@ -11,6 +11,7 @@ import com.code.aon.config.enumeration.Administration;
 import com.code.aon.finance.Finance;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
+import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.IFiscalModelKey;
 import com.code.aon.fiscal.enumeration.Mod130Key;
 import com.code.aon.fiscal.enumeration.Period;
@@ -24,6 +25,10 @@ public class Mod130 implements IFiscalDeclaration {
 	
 	public Mod130() {
 		
+	}
+	@Override
+	public FiscalModelType getType() {
+		return FiscalModelType.M130;
 	}
 	public boolean isPermanentAddressChanges() {
 		return permanentAddressChanges;	

@@ -31,10 +31,16 @@ public enum FiscalModelType implements IResourceable, IStringEnum {
 
 	private static final String BASE_NAME = "com.code.aon.fiscal.i18n.messages";
 	private static final String MSG_KEY_PREFIX = "aon_enum_fiscal_model_";
+	private static final String DESCR_KEY_PREFIX = MSG_KEY_PREFIX + "descr_";	
 
 	public String getName(Locale locale) {
 		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale);
 		return bundle.getString(MSG_KEY_PREFIX + toString());
+	}
+	
+	public String getDescription(Locale locale) {
+		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale);
+		return bundle.getString(DESCR_KEY_PREFIX + toString());
 	}
 
 }

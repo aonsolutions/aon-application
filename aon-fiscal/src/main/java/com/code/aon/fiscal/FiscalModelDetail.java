@@ -2,8 +2,17 @@ package com.code.aon.fiscal;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.fiscal.enumeration.FiscalModelType;
+import com.code.aon.fiscal.enumeration.IFiscalModelKey;
+import com.code.aon.fiscal.enumeration.Mod111Key;
+import com.code.aon.fiscal.enumeration.Mod115Key;
+import com.code.aon.fiscal.enumeration.Mod123Key;
+import com.code.aon.fiscal.enumeration.Mod130Key;
+import com.code.aon.fiscal.enumeration.Mod131Key;
+import com.code.aon.fiscal.enumeration.Mod310Key;
 import com.esferalia.aon.entity.master.FiscalModelDetailDB;
 
 @Entity
@@ -28,4 +37,25 @@ public class FiscalModelDetail extends FiscalModelDetailDB {
 		setAmount( CommonUtil.round(getAmount()) + amount);
 	}
 	
+	@Transient
+	public IFiscalModelKey getKey() {
+		if (getFiscalModel() != null && getFiscalModel().getModel() != null ) {
+			if (getFiscalModel().getModel() == FiscalModelType.M111) {
+				return Mod111Key.getKeyWithValue( getType() );	
+			} else if (getFiscalModel().getModel() == FiscalModelType.M115) {
+				return Mod115Key.getKeyWithValue( getType() );	
+			} else if (getFiscalModel().getModel() == FiscalModelType.M115) {
+				return Mod115Key.getKeyWithValue( getType() );	
+			} else if (getFiscalModel().getModel() == FiscalModelType.M123) {
+				return Mod123Key.getKeyWithValue( getType() );	
+			} else if (getFiscalModel().getModel() == FiscalModelType.M130) {
+				return Mod130Key.getKeyWithValue( getType() );	
+			} else if (getFiscalModel().getModel() == FiscalModelType.M131) {
+				return Mod131Key.getKeyWithValue( getType() );	
+			} else if (getFiscalModel().getModel() == FiscalModelType.M310) {
+				return Mod310Key.getKeyWithValue( getType() );	
+			}
+		}
+		return null;
+	}
 }

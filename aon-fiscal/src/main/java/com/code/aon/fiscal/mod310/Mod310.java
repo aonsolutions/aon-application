@@ -18,6 +18,7 @@ import com.code.aon.fiscal.FiscalActivityInfo;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.FiscalActivityInfoKey;
+import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.IFiscalModelKey;
 import com.code.aon.fiscal.enumeration.Mod310Key;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
@@ -31,6 +32,10 @@ public class Mod310 implements IFiscalDeclaration {
 	
 	public Mod310() {
 		
+	}
+	@Override
+	public FiscalModelType getType() {
+		return FiscalModelType.M310;
 	}
 
 	public void initializeDetails() throws ManagerBeanException {

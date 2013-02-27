@@ -11,6 +11,7 @@ import com.code.aon.config.enumeration.Administration;
 import com.code.aon.finance.Finance;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
+import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.IFiscalModelKey;
 import com.code.aon.fiscal.enumeration.Mod123Key;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
@@ -21,6 +22,11 @@ public class Mod123 implements IFiscalDeclaration {
 	
 	public Mod123() {
 		
+	}
+	
+	@Override
+	public FiscalModelType getType() {
+		return FiscalModelType.M123;
 	}
 
 	public void initializeDetails() {

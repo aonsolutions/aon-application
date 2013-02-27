@@ -19,6 +19,7 @@ import com.code.aon.fiscal.FiscalActivityInfo;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.FiscalActivityInfoKey;
+import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.IFiscalModelKey;
 import com.code.aon.fiscal.enumeration.Mod131Key;
 import com.code.aon.fiscal.enumeration.Period;
@@ -34,6 +35,10 @@ public class Mod131 implements IFiscalDeclaration {
 	
 	public Mod131() {
 		
+	}
+	@Override
+	public FiscalModelType getType() {
+		return FiscalModelType.M131;
 	}
 	public boolean isPermanentAddressChanges() {
 		return permanentAddressChanges;	

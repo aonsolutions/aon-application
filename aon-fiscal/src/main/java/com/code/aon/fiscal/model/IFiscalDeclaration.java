@@ -9,10 +9,11 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Finance;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
+import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.IFiscalModelKey;
 
 public interface IFiscalDeclaration {
-	
+	FiscalModelType getType();
 	FiscalModel getHeader();
 	void setHeader(FiscalModel fiscalModel);
 	
