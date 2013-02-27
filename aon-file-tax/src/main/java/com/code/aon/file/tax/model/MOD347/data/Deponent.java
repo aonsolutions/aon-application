@@ -29,6 +29,39 @@ public class Deponent {
 		}
 		return c002;
 	}
+	
+	public int getNumVentas() {
+		int c001 = 0;
+		for (Declared r: getDeclareds()) {
+			c001 += ("B".equals(r.getKey()))?1:0;
+		}
+		return c001;
+	}
+
+	public double getImporteVentas() {
+		double c002 = 0;
+		for (Declared r: getDeclareds()) {
+			c002 += ("B".equals(r.getKey()))?r.getQuantity():0;
+		}
+		return c002;
+	}
+
+	public int getNumCompras() {
+		int c001 = 0;
+		for (Declared r: getDeclareds()) {
+			c001 += ("A".equals(r.getKey()))?1:0;
+		}
+		return c001;
+	}
+
+	public double getImporteCompras() {
+		double c002 = 0;
+		for (Declared r: getDeclareds()) {
+			c002 += ("A".equals(r.getKey()))?r.getQuantity():0;
+		}
+		return c002;
+	}
+
 	public double getC003() {
 		return 0.0;
 	}
