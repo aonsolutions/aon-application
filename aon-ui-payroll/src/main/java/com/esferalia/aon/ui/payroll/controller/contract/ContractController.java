@@ -693,7 +693,7 @@ public class ContractController extends BasicController implements IVariablesHan
 		return map.get(ContextVariable.TRAINING_CENTER.getName())!=null;
 	}
 	
-	public String onDirectDebitReport() throws ManagerBeanException{
+	public String onTrainingCenterDirectDebitReport() throws ManagerBeanException{
 		TrainingCenterController tcController = (TrainingCenterController) AonUtil.getRegisteredBean("trainingCenter");
 		try {
 			PayrollUtils utils = new PayrollUtils();

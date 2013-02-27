@@ -453,6 +453,81 @@ public class ContrataContratosWriter {
 		return datos;
 	}
 
+	/**
+	 * <xsd:complexType name="DATOS_TRABAJADORTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos del trabajador contratado</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="IDENTIFICADORPFISICA">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Identificador de la persona física.  
+					Los tipos de documento admitidos (1ª letra del identificador) se encuentran codificados en la tabla STDIDETC.txt de la Ayuda XML 
+					- Ultima versión - Tablas de códigos. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="12"/>
+						<xsd:pattern value="[DEUW][0-9XYZ ]+\d{7}[A-Z]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="NOMBRE_APELLIDOS" type="NOMBREAPELLIDOSTYPE">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Nombre y apellidos del trabajador contratado</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="SEXO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Sexo del trabajador contratado. 
+					Sus posibles valores se encuentran codificados en la tabla TCMCSEXO.txt de la Ayuda XML 
+					- Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{1}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="FECHA_NACIMIENTO" type="FECHATYPE">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Fecha de nacimiento del trabajador contratado</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="NACIONALIDAD" type="PAISTYPE">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Nacionalidad del trabajador contratado</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="MUNICIPIO_RESIDENCIA" type="MUNICIPIOTYPE" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Domicilio de residencia del trabajador contratado. 
+					Obligatorio cuando el PAIS_RESIDENCIA sea 724 (España).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PAIS_RESIDENCIA" type="PAISTYPE">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">País de residencia del trabajador contratado</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="NUMERO_SEGURIDAD_SOCIAL" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Número de afiliación a la Seguridad Social del trabajador contratado.  
+					Su composición corresponde a la unión de los datos de :  provincia(2)-número (8)-dígito de control(2).  
+					Obligatorio cuando la 1ª letra del IDENTIFICADORPFISICA NO sea una D ó una E (tipo de documento NO sea un DNI ó un NIE).</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{12}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	 * @param params
+	 * @return
+	 * @throws ManagerBeanException
+	 */
 	private DATOSTRABAJADORTYPE createDatosTrabajador(ContrataParams params) throws ManagerBeanException {
 		Person person = params.getContract().getPerson();
 		DATOSTRABAJADORTYPE datos = contratoFactory.createDATOSTRABAJADORTYPE(); 
@@ -461,15 +536,15 @@ public class ContrataContratosWriter {
 		} else {
 			AonUtil.addErrorMessage("El trabajador no tiene definida la fecha de nacimiento.");
 		}
-		/*
-		"D";"D.N.I"
-		"E";"NUMERO IDENTIFICATIVO EXTRANJERO"
-		"U";"CIUDADANOS DE LA UE/EEE SIN NIE"
-		"W";"CIUD.QUE NO PERTENECEN A UE/EEE.SIN NIE"
-		*/
 		if(StringUtils.isEmpty(person.getRegistry().getDocument())){
-			AonUtil.addErrorMessage("El trabajador no tiene definido el número de documento..");
+			AonUtil.addErrorMessage("El trabajador no tiene definido el número de documento.");
 		} else {
+			/*
+			"D";"D.N.I"
+			"E";"NUMERO IDENTIFICATIVO EXTRANJERO"
+			"U";"CIUDADANOS DE LA UE/EEE SIN NIE"
+			"W";"CIUD.QUE NO PERTENECEN A UE/EEE.SIN NIE"
+			 */
 			if(person.getRegistry().getDocumentType()==DocumentType.NIF){
 				datos.setIDENTIFICADORPFISICA("D"+person.getRegistry().getDocument());
 			} else if(person.getRegistry().getDocumentType()==DocumentType.NIE){
@@ -489,11 +564,11 @@ public class ContrataContratosWriter {
 		} else {
 			AonUtil.addErrorMessage("El trabajador no tiene definida la dirección.");
 		}
-		/*
-		"1";"HOMBRE"
-		"2";"MUJER"
-		 */
-		datos.setSEXO(person.getGender()==Gender.MALE?"1":"2");
+		if(person.getGender()==null || person.getGender()==Gender.UNKNOWN){
+			AonUtil.addErrorMessage("El sexo del trabajador es desconocido.");
+		} else {
+			datos.setSEXO(person.getGender()==Gender.MALE?"1":"2");
+		}
 		return datos;
 	}
 
@@ -505,6 +580,220 @@ public class ContrataContratosWriter {
 		return datos;
 	}
 
+	/**
+	 * <xsd:complexType name="DATOS_GENERALESCONTRATOTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos propios del contrato</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="FECHA_INICIO" type="FECHATYPE">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Fecha de inicio del contrato.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="FECHA_TERMINO" type="FECHATYPE" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Fecha de término del contrato.  
+					Obligatoria para los contratos de códigos: 402, 502, 430, 530, 420, 520, 421, 441, 541, 452, 552, 970.    
+					Opcional para los contratos de códigos :  401, 501, 410, 510, 403, 503, 540, 980, 990.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="IND_CONVENIO_COLECTIVO" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de convenio colectivo.   
+					Obligatorio para : - contratos de códigos 402 y 502 cuando su duración está entre 6 y 12 meses.   
+					- contratos de código 421 cuando su duración está entre 6 y 12 meses  
+					- contratos de código 401, 501, 450 con modalidad 401 y 550 con modalidad 501 iniciados a partir del 18/06/2010 cuando 
+					su duración está entre 36 y 48 meses.    
+					Refleja la existencia ("S") o no existencia ("N") de un convenio colectivo que autorice estas duraciones. 
+					Para el resto de contratos que no se encuentran en uno de los casos anteriores, este elemento no debe aparecer 
+					en el fichero a enviar.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[SN\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="NIVEL_FORMATIVO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código del nivel formativo.  
+					Sus posibles valores se encuentran codificados en la tabla TBONVFOR.txt de la Ayuda XML 
+					- Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="IND_DISCAPACIDAD" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de discapacidad.  
+					Obligatorio con "S" para contratos de minusválidos.  Obligatorio con "C" para contratos de minusválidos en centros 
+					especiales de empleo. Obligatorio con "E", "F" o "G" para contratos de minusválidos de enclaves laborales. 
+					Sus posibles valores se encuentran codificados en la tabla TEJINDIS.txt de la Ayuda XML 
+					- Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[SCEFG\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="CODIGO_OCUPACION">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código de ocupación del puesto de trabajo.  
+					Sus posibles valores se encuentran codificados en la tabla TAICLAOC.txt de la Ayuda XML 
+					- Ultima versión - Tablas de códigos. La codificación tabulada de este elemento corresponde a códigos de 4 posiciones, 
+					el elemento está definido para admitir un código de 8 posiciones que es la codificación con la que hemos trabajado 
+					anteriormente, por tanto y para no cambiar la longitud, el elemento se deberá enviar con 4 blancos por la derecha hasta 
+					completar las 8 posiciones.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:length value="8"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="ID_OFERTA" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Identificador de la oferta. 
+					Su composición corresponde a la unión de los datos de :  CC.AA.(2)-Año(4)-número secuencial(6). El elemento está definido 
+					para admitir 17 posiciones dado su anterior formato, por tanto y para no cambiar la longitud, el elemento deberá ser enviado 
+					con 5 ceros por la izquierda que completarán las 17 posiciones.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{17}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="CODIGOPROGRAMAEMPLEO" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código del programa de empleo.  
+					Obligatorio para los contratos de inserción (códigos 403 y 503).  Sus posibles valores se encuentran codificados 
+					en la tabla TETPGMEM.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="NACIONALIDAD_CT" type="PAISTYPE">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código de nacionalidad del centro de trabajo.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="MUNICIPIO_CT" type="MUNICIPIOTYPE" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código del municipio del centro de trabajo. 
+					Obligatorio cuando la NACIONALIDAD_CT sea 724 (España).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="OTRAS_LEGISLACIONES" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Otras disposiciones legales para el fomento del empleo (Contratos para mayores de 52 años). 
+					Sus posibles valores se encuentran codificados en la tabla THYDISLE.txt de la Ayuda XML 
+					- Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{3}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="TEMPORAL_MINUSV_BONIFICADO" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Obligatorio (S/N) para los códigos 430 y 530 salvo que sean minusválidos 
+					en Centros Especiales de Empleo (IND_DISCAPACIDAD=C) . Indica si el contrato temporal para personas con discapacidad 
+					es bonificado o no. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[SN\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="FORMACION_BONIFICADO" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Obligatorio (S/N) para los códigos 421 y 450 con modalidad 421 iniciados 
+					entre el 18/06/2010 y el 30/08/2011. Indica si el contrato de formación es bonificado o no. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[SN\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="DATOS_CAMPAÑAS" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código de los datos de campaña. Su composición corresponde a la unión de los datos de :  
+					CC.AA.(2)-Campo libre(3)-Año(4).</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}.{3}\d{4}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="IND_EMPRESA_AAPP_UNIVERSIDAD" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de empresa. Obligatorio (S/N) para los códigos 401, 501, 450 con modalidad 401 
+					y 550 con modalidad 501 iniciados a partir de 19/09/2010 cuando no cumpla con la duración válida y tampoco esté acogido 
+					a convenio colectivo que justifique esta duración. Indica si el contrato se realiza (S) por la Administración Pública , 
+					Organismo Público vinculado o Universidad , o no es una empresa de estos tipos (N). </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[SN\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="REGULARIZACION_RDL_5_2011" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de si el contrato se acoge al proceso de regularización establecido en 
+					el RDL 5/2011 (ctos. iniciados entre el 07/05/2011 y el 31/07/2011). El único valor posible que puede tomar es "S" (SI) para indicar 
+					que se acoge a dicho proceso. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[S\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="ACOGIDO_LEGISLACION_ANTERIOR" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de acogida a la legislación anterior. 
+					Obligatorio para los códigos 421 y 450 con modalidad 421 de Escuela Taller o de empleo-formación promovido por las Comunidades Autónomas, 
+					iniciados a partir de el 31/08/2011. El único valor posible que puede tomar es "S" (SI) para indicar que se acoge a la legislación 
+					anterior y no a los nuevos RDL. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[S\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="PROYECTO_EMPLEO_FORMACION" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de si el contrato es de un proyecto de empleo-formación promovido por 
+					las Comunidades Autónomas. Opcional y sólo para los códigos 421 y 450 con modalidad 421 . El único valor posible que puede 
+					tomar es "S" (SI) para indicar que es promovido. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[S\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	 * @param params
+	 * @return
+	 * @throws ManagerBeanException
+	 */
 	private DATOSGENERALESCONTRATOTYPE createDatosGeneralesContrato(ContrataParams params) throws ManagerBeanException {
 		DATOSGENERALESCONTRATOTYPE datos = contratoFactory.createDATOSGENERALESCONTRATOTYPE();
 		datos.setFECHAINICIO(getFormatedDate(params.getContract().getStartDate()));

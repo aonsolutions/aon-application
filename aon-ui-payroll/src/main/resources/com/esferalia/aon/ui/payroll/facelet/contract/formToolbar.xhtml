@@ -17,7 +17,7 @@
 				styleClass="aon-finding-toolbar-item aon-icon-pdf" 
 				value="Domiciliacion bancaria" 
 				rendered="#{contract.trainingContract and contract.trainingCenterDefined}"
-				action="#{contract.onDirectDebitReport}" target="_blank" >
+				action="#{contract.onTrainingCenterDirectDebitReport}" target="_blank" >
 				<f:param name="reportKey" value="trainingDirectDebit" />
 				<f:param name="outputFormat" value="PDF" />
 			</aon:htmlCommandLink>

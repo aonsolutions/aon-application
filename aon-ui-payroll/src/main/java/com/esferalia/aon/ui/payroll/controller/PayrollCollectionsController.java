@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.payroll.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -12,7 +13,11 @@ import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.enumeration.AgeCollective;
@@ -914,6 +919,20 @@ public class PayrollCollectionsController {
 			}
 		}
 		return ageCollectives;
+	}
+	
+	public Long getTrainingCenterTotalCount(){
+		 String select = "select count(*) " 
+                 +" from TrainingCenter as trainingCenter " 
+                 +" where " + DomainManager.getSQLWhereClause("trainingCenter.domain", true);
+ 		String name = HibernateUtil.getSessionFactoryName();
+		Session session = HibernateUtil.getSession(name);
+		Query query = session.createQuery(select);
+		Iterator<?> iterator = query.list().iterator();
+		if(iterator.hasNext()) {
+			return (Long) iterator.next();
+		}
+		return null;
 	}
 	
 		
