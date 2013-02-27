@@ -78,34 +78,6 @@
 									</f:facet>
 								</aon:column>
 							</c:if>
-
-							<c:if test="#{productCategory.showCategoryGroup and (productCategoryGroup.model.rowCount > 0)}">
-								<aon:column styleClass="aon-editDataTable-textColumn aon-width-150"
-									alias="ProductCategory.group.name">
-									<f:facet name="header">
-										<aon:outputLabel for="ProductCategory_group"
-											value="#{productBundle.product_categoryGroup_module}" />
-									</f:facet>
-									<aon:outputText value="#{to.group.name}"
-										rendered="#{formList}" />
-									<aon:selectOneMenu id="ProductCategory_group"
-										rendered="#{formEdit}"
-										value="#{productCategory.to.group}">
-										<f:selectItem itemLabel="-" itemValue="{null}" />
-										<f:selectItems
-											value="#{productCollections.categoryGroups}" />
-									</aon:selectOneMenu>
-									<f:facet name="footer">
-										<aon:selectOneMenu id="ProductCategory_group-New"
-											value="#{productCategory.to.group}"
-											rendered="#{formNew}">
-											<f:selectItem itemLabel="-" itemValue="{null}" />
-											<f:selectItems
-												value="#{productCollections.categoryGroups}" />
-										</aon:selectOneMenu>
-									</f:facet>
-								</aon:column>
-							</c:if>
  
 						</ui:define>
 					</ui:decorate>
