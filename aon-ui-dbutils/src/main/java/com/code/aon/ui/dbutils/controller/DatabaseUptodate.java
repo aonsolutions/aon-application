@@ -35,9 +35,6 @@ public class DatabaseUptodate {
 			this.properties = DataSourceUtil.getDBProperties();
 			if ( this.properties != null ) {
 				setUpdatable(versionManager.getAvailableUpdateScripts(getCurrentVersion()) != null);
-				if ( isUptodate() ) {
-					onUptodate(null);
-				}
 				connectionAvailable = true;				
 			} else {
 				String server = AonUtil.getServerName();
