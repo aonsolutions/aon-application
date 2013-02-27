@@ -41,10 +41,7 @@
 									<aon:commandLink id="pos_invoice" 
 										action="posInvoice_form"
 										actionListener="#{posInvoice.onLoad}" 
-										value="#{financeBundle.finance_pos_invoice_management_module}">
-										<f:setPropertyActionListener target="#{posInvoice.showPosSelectionWindow}"
-											value="#{true}" />
-									</aon:commandLink>
+										value="#{financeBundle.finance_pos_invoice_management_module}" />
 								</aon:div>
 								<c:if test="#{aonRole.financeOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
