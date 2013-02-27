@@ -1,5 +1,6 @@
 package com.code.aon.ui.product.controller;
 
+import static com.code.aon.common.enumeration.AppParam.AON_PRODUCT_DETAIL_LEVEL;
 import static com.code.aon.ui.product.controller.IItemConstants.ITEM;
 
 import java.util.List;
@@ -9,11 +10,14 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tax;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
+import com.code.aon.product.ProductCategory;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.BasicController;
@@ -26,6 +30,19 @@ public class ProductController extends BasicController {
 	private Item item;
 	
 	private Item saveStateItem;
+	
+	private int detailLevel;
+	
+	public ProductController() {
+		String value = AppParamUtil.getValue(AON_PRODUCT_DETAIL_LEVEL);
+		if ( value != null ) {
+			detailLevel = NumberUtils.toInt(value);
+		}
+	}
+	
+	public int getDetailLevel() {
+		return detailLevel;
+	}
 
 	public boolean isShowNewItemWindow() {
 		return showNewItemWindow;
@@ -123,22 +140,41 @@ public class ProductController extends BasicController {
 		getItemController().getPricesManager().onSalesPriceChanged( getItem(), event.getNewValue());
 	}
 	
-	public boolean isShowDetail() {
+	private ProductCategory getCategory() {
 		Product product = (Product) getTo();
-		if ( product.getCategory() != null ) {
-			return ! StringUtils.isEmpty(product.getCategory().getDetail());
+		return product.getCategory();
+	}
+	
+	public boolean isShowDetail() {
+		if ( getDetailLevel() > 0 ) {
+			ProductCategory category = getCategory();
+			if ( category != null ) {
+				return ! StringUtils.isEmpty(category.getDetail());
+			}			
 		}
 		return false;
 	}
 
 	public boolean isShowDetail2() {
-		Product product = (Product) getTo();
-		if ( product.getCategory() != null ) {
-			return ! StringUtils.isEmpty(product.getCategory().getDetail2());
+		if ( getDetailLevel() > 1 ) {
+			ProductCategory category = getCategory();
+			if ( category != null ) {
+				return ! StringUtils.isEmpty(category.getDetail2());
+			}			
 		}
 		return false;
 	}
 
+	public boolean isShowDetail3() {
+		if ( getDetailLevel() > 2 ) {
+			ProductCategory category = getCategory();
+			if ( category != null ) {
+				return ! StringUtils.isEmpty(category.getDetail3());
+			}			
+		}
+		return false;
+	}
+	
 	public String getLabelDetail() {
 		Product product = (Product) getTo();
 		return product.getCategory().getDetail();
@@ -147,6 +183,11 @@ public class ProductController extends BasicController {
 	public String getLabelDetail2() {
 		Product product = (Product) getTo();
 		return product.getCategory().getDetail2();
+	}
+
+	public String getLabelDetail3() {
+		Product product = (Product) getTo();
+		return product.getCategory().getDetail3();
 	}
 	
 }

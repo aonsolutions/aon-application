@@ -1,15 +1,15 @@
 package com.code.aon.ui.infoweb.controller;
 
+import static com.code.aon.common.enumeration.AppParam.WEBINFO_HOMEPAGE_ID;
+import static com.code.aon.common.enumeration.AppParam.WEBINFO_TEMPLATE_NAME;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.BUNDLE_NAME;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.DIRECTORY_CREATION_ERROR;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.DIRECTORY_NOT_FOUND;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.DIRECTORY_NO_READABLE;
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.HOMEPAGE_ID_PARAM;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.IMAGE_COPY_ERROR;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.NO_PUBLISH_PARAMETERS;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.PAGE_WITHOUT_DETAIL;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.PUBLISH_PARAMETER_CONTROLLER_NAME;
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.TEMPLATE_NAME_PARAM;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.WEB_GENERATED;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.WEB_GENERATION_ERROR;
 import static com.code.aon.ui.publisher.controller.IPublisherConstants.PUBLISH_ERROR;
@@ -104,7 +104,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	private String getTemplate() {
 		String template = DEFAULT_TEMPLATE;
 		//Obtenemos el template seleccionado
-		ApplicationParameter ap = AppParamUtil.getParameter(TEMPLATE_NAME_PARAM);
+		ApplicationParameter ap = AppParamUtil.getParameter(WEBINFO_TEMPLATE_NAME);
 		if ( ap != null ) {
 			template = ap.getValue();				
 		}
@@ -118,7 +118,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	 */
 	private int getHomepage() {
 		int homepage = 0;
-		ApplicationParameter ap = AppParamUtil.getParameter(HOMEPAGE_ID_PARAM);
+		ApplicationParameter ap = AppParamUtil.getParameter(WEBINFO_HOMEPAGE_ID);
 		if ( ap != null ) {
 			homepage = Integer.parseInt(ap.getValue());				
 		}

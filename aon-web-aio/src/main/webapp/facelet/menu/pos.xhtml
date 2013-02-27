@@ -83,10 +83,7 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="productCategory-pos" 
 										action="productCategory-pos"
-										value="#{productBundle.product_category_module}" >
-										<f:setPropertyActionListener value="#{true}"
-											target="#{productCategory.showPosInfo}" />																					
-									</aon:commandLink>
+										value="#{productBundle.product_category_module}" />
 								</aon:div>								
 								<c:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">

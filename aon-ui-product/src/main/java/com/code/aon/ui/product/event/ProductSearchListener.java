@@ -42,7 +42,7 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	
 	private Account salesAccount;
 	
-	private List<Tag> tags;
+	private Tag[] tags;
 	
 	public ProductStatus[] getStatuses() {
 		return statuses;
@@ -100,25 +100,24 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		this.itemStatuses = itemStatuses;
 	}
 	
-	
-	public List<Tag> getTags() {
+	public Tag[] getTags() {
+		if (ArrayUtils.isEmpty(tags)) {
+			tags = new Tag[]{EMPTY_TAG};
+		}
 		return tags;
 	}
 
-	public void setTags(List<Tag> tags) {
+	public void setTags(Tag[] tags) {
 		this.tags = tags;
-		if (tags.isEmpty()) {
-			tags.add(EMPTY_TAG);
-		}				
 	}
 
 	public int getTagsSize() {
-		return (tags != null) ? tags.size() : 0;
+		return ArrayUtils.getLength(tags);
 	}
 	
 	public List<Integer> getTagsIds() {
 		List<Integer> ids = new LinkedList<Integer>();
-		for( Tag tag : tags ) {
+		for( Tag tag : getTags() ) {
 			if ((tag != null) && (tag.getId() != null)) {
 				ids.add(tag.getId());
 			}
@@ -137,7 +136,7 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		setPurchaseAccount( (Account) accountBean.createNewTo() );
 		setSalesAccount( (Account) accountBean.createNewTo() );
 		setItemStatuses( new ProductStatus[0] );
-		setTags( new LinkedList<Tag>() );
+		setTags( new Tag[]{EMPTY_TAG} );
 	}
 	
 	@Override
@@ -173,17 +172,17 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 			addEnumToCriteria(criteria, "Product.tags.tag.id", getTagsIds().toArray());	
 		}		
 	}
-
+	
 	public void onAddTag(ActionEvent event) {
-		getTags().add(EMPTY_TAG);
+		this.tags = (Tag[]) ArrayUtils.add(this.tags, EMPTY_TAG);
 	}
 	
 	public void onRemoveTag(ActionEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
 		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
-		getTags().remove(index);
-		if (getTags().isEmpty()) {
-			getTags().add(EMPTY_TAG);
+		this.tags = (Tag[]) ArrayUtils.remove(this.tags, index);
+		if ( ArrayUtils.isEmpty(this.tags) ) {
+			setTags(new Tag[]{EMPTY_TAG});
 		}
 	}		
 	 

@@ -1,10 +1,9 @@
 package com.code.aon.ui.company.controller;
 
-import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_COLOR;
-import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_OEM;
-import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_SUPPORT_EMAIL;
-import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_SUPPORT_PHONE;
-import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_TITLE;
+import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_COLOR;
+import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_EMAIL;
+import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_PHONE;
+import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_TITLE;
 import static com.code.aon.ui.common.ICommonConstants.FAVICON_NAME;
 import static com.code.aon.ui.common.ICommonConstants.HEADER_LOGO_NAME;
 import static com.code.aon.ui.common.ICommonConstants.LOGIN_LOGO_NAME;
@@ -26,6 +25,7 @@ import org.richfaces.event.UploadEvent;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.registry.controller.RegistryAttachController;
 
@@ -54,7 +54,7 @@ public class CompanyCustomizeController extends RegistryAttachController {
 	}
 	
 	public boolean isShow() {
-		String value = AppParamUtil.getValue(AON_CUSTOMIZE_OEM);
+		String value = AppParamUtil.getValue(AppParam.AON_CUSTOMIZE_OEM);
 		return StringUtils.equals(value, Boolean.TRUE.toString());
 	}
 

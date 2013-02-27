@@ -1,6 +1,7 @@
 package com.code.aon.aio.controller;
 
 
+import static com.code.aon.common.enumeration.AppParam.AON_SUPPORT_ENABLED;
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.APPLICATION_OPTION_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.CONFIGURATION_CATEGORY;
@@ -8,7 +9,6 @@ import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_CONFIG_COMP
 import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_CONFIG_SECURITY;
 import static com.code.aon.ui.audit.controller.IAuditConstants.MAIL_ACCOUNT_ACTION;
 import static com.code.aon.ui.audit.controller.IAuditConstants.SIGNATURE_ACTION;
-import static com.code.aon.ui.common.ICommonConstants.AON_SUPPORT_ENABLED;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_ABSENCE;

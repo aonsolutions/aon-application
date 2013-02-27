@@ -22,9 +22,6 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_URL;
 import static com.code.aon.ui.audit.controller.IAuditConstants.AUDIT_LEVEL;
 import static com.code.aon.ui.common.ICommonConstants.ACTIVE;
 import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
-import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_HERITABLE_ID;
-import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_ID;
-import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_OEM;
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.MODULE_MANAGEMENT_FINANCE;
 import static com.code.aon.ui.common.ICommonConstants.NO;
@@ -64,6 +61,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.common.util.AonFile;
@@ -404,9 +402,9 @@ public class DomainController extends BasicController {
 		OEM = oEM;
 	}
 	
-	private Domain getOEMDomain( String paramName ) throws ManagerBeanException {
+	private Domain getOEMDomain( AppParam appParam ) throws ManagerBeanException {
 		Domain domain = null;
-		String idValue = AppParamUtil.getValue(paramName);
+		String idValue = AppParamUtil.getValue(appParam);
 		if (! StringUtils.isEmpty(idValue) ) {
 			Integer id = NumberUtils.toInt(idValue);
 			Company company = (Company) BeanManager.getManagerBean(Company.class).get(id);
@@ -421,13 +419,13 @@ public class DomainController extends BasicController {
 	}
 
 	public void initOEM() throws ManagerBeanException {
-		String oemValue = AppParamUtil.getValue(AON_CUSTOMIZE_OEM);
+		String oemValue = AppParamUtil.getValue(AppParam.AON_CUSTOMIZE_OEM);
 		this.OEM = StringUtils.equals(oemValue, Boolean.TRUE.toString());
-		this.OEMDomain = getOEMDomain(AON_CUSTOMIZE_ID);
-		this.heritableOEMDomain = getOEMDomain(AON_CUSTOMIZE_HERITABLE_ID);
+		this.OEMDomain = getOEMDomain(AppParam.AON_CUSTOMIZE_ID);
+		this.heritableOEMDomain = getOEMDomain(AppParam.AON_CUSTOMIZE_HERITABLE_ID);
 	}
 
-	private void saveOEMDomain( String paramName, Domain domain) throws ManagerBeanException {
+	private void saveOEMDomain( AppParam appParam, Domain domain) throws ManagerBeanException {
 		String id = null;
 		if ( (domain != null) && (domain.getId() != null) ) {
 			IManagerBean bean = BeanManager.getManagerBean(Company.class);
@@ -440,13 +438,13 @@ public class DomainController extends BasicController {
 				id = String.valueOf(company.getId());
 			}
 		}
-		AppParamUtil.insertParameter(paramName, id);
+		AppParamUtil.insertParameter(appParam, id);
 	}		
 	
 	public void saveOEM() throws ManagerBeanException {
-		AppParamUtil.insertParameter(AON_CUSTOMIZE_OEM, String.valueOf(isOEM()) );
-		saveOEMDomain(AON_CUSTOMIZE_ID, this.OEMDomain);
-		saveOEMDomain(AON_CUSTOMIZE_HERITABLE_ID, this.heritableOEMDomain);
+		AppParamUtil.insertParameter(AppParam.AON_CUSTOMIZE_OEM, String.valueOf(isOEM()) );
+		saveOEMDomain(AppParam.AON_CUSTOMIZE_ID, this.OEMDomain);
+		saveOEMDomain(AppParam.AON_CUSTOMIZE_HERITABLE_ID, this.heritableOEMDomain);
 	}	
 
 	public void domainNameCheck(FacesContext context, UIComponent component, Object value) throws ManagerBeanException {
@@ -512,7 +510,7 @@ public class DomainController extends BasicController {
 		IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);	
 		Criteria criteria = new Criteria();
 		criteria.setSkipDomainFilter(true);
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), AON_CUSTOMIZE_OEM);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), AppParam.AON_CUSTOMIZE_OEM.toString());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_VALUE), Boolean.TRUE.toString());
 		String domainAlias = bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_DOMAIN);
 		ProjectionList pl = new ProjectionList(Projection.property(domainAlias));

@@ -8,6 +8,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -30,9 +32,9 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 	
 	private Integer sizeTo;
 	
-	private List<Category> categories;
+	private Category[] categories;
 	
-	private List<Tag> tags;
+	private Tag[] tags;
 
 	public Integer getSizeFrom() {
 		return sizeFrom;
@@ -49,25 +51,25 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 	public void setSizeTo(Integer sizeTo) {
 		this.sizeTo = sizeTo;
 	}
-
-	public List<Category> getCategories() {
+	
+	public Category[] getCategories() {
+		if (ArrayUtils.isEmpty(categories)) {
+			categories = new Category[]{EMPTY_CATEGORY};
+		}
 		return categories;
 	}
 	
-	public void setCategories(List<Category> categories) {
+	public void setCategories(Category[] categories) {
 		this.categories = categories;
-		if (categories.isEmpty()) {
-			categories.add(EMPTY_CATEGORY);
-		}		
 	}
 
 	public int getCategoriesSize() {
-		return (categories != null) ? categories.size() : 0;
+		return ArrayUtils.getLength(categories);
 	}
 	
 	public List<Integer> getCategoriesIds() {
 		List<Integer> ids = new LinkedList<Integer>();
-		for( Category category : categories ) {
+		for( Category category : getCategories() ) {
 			if ((category != null) && (category.getId() != null)) {
 				ids.add(category.getId());
 			}
@@ -75,30 +77,30 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 		return ids;
 	}		
 	
-	public List<Tag> getTags() {
+	public Tag[] getTags() {
+		if (ArrayUtils.isEmpty(tags)) {
+			tags = new Tag[]{EMPTY_TAG};
+		}
 		return tags;
 	}
 
-	public void setTags(List<Tag> tags) {
+	public void setTags(Tag[] tags) {
 		this.tags = tags;
-		if (tags.isEmpty()) {
-			tags.add(EMPTY_TAG);
-		}				
 	}
 
 	public int getTagsSize() {
-		return (tags != null) ? tags.size() : 0;
+		return ArrayUtils.getLength(tags);
 	}
 	
 	public List<Integer> getTagsIds() {
 		List<Integer> ids = new LinkedList<Integer>();
-		for( Tag tag : tags ) {
+		for( Tag tag : getTags() ) {
 			if ((tag != null) && (tag.getId() != null)) {
 				ids.add(tag.getId());
 			}
 		}
 		return ids;
-	}		
+	}			
 	
 	public void onClear(ActionEvent event) throws ManagerBeanException {
 		reset();
@@ -107,8 +109,8 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 	protected void reset() throws ManagerBeanException {
 		setSizeFrom(null);
 		setSizeTo(null);
-		setCategories( new LinkedList<Category>() );
-		setTags( new LinkedList<Tag>() );	
+		setCategories( new Category[]{EMPTY_CATEGORY} );
+		setTags( new Tag[]{EMPTY_TAG} );	
 	}
 	
 	@Override
@@ -133,28 +135,28 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 	}
 	
 	public void onAddCategory(ActionEvent event) {
-		getCategories().add(EMPTY_CATEGORY);
+		this.categories = (Category[]) ArrayUtils.add(this.categories, EMPTY_CATEGORY);
 	}
 	
 	public void onRemoveCategory(ActionEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
 		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
-		getCategories().remove(index);
-		if (getCategories().isEmpty()) {
-			getCategories().add(EMPTY_CATEGORY);
+		this.categories = (Category[]) ArrayUtils.remove(this.categories, index);
+		if ( ArrayUtils.isEmpty(this.categories) ) {
+			setCategories(new Category[]{EMPTY_CATEGORY});
 		}
-	}		
+}		
 
 	public void onAddTag(ActionEvent event) {
-		getTags().add(EMPTY_TAG);
+		this.tags = (Tag[]) ArrayUtils.add(this.tags, EMPTY_TAG);
 	}
 	
 	public void onRemoveTag(ActionEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
 		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
-		getTags().remove(index);
-		if (getTags().isEmpty()) {
-			getTags().add(EMPTY_TAG);
+		this.tags = (Tag[]) ArrayUtils.remove(this.tags, index);
+		if ( ArrayUtils.isEmpty(this.tags) ) {
+			setTags(new Tag[]{EMPTY_TAG});
 		}
 	}		
 	 

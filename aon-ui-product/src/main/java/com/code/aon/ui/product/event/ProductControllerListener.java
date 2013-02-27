@@ -1,5 +1,6 @@
 package com.code.aon.ui.product.event;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class ProductControllerListener extends ControllerAdapter implements IIte
     		ProductController.updateVat(product);
     		controller.setItem( (Item) BeanManager.getManagerBean(Item.class).createNewTo() );
     		controller.getItem().setProduct(product);
+    		getSearch().setTags( null );
         } catch (ManagerBeanException e) {
             throw new ControllerListenerException(e.getMessage(), e);
         }
@@ -123,18 +125,18 @@ public class ProductControllerListener extends ControllerAdapter implements IIte
 		return (List) bean.getList(criteria);
 	}	
 	
-	private List<Tag> getTagList( Product product ) throws ManagerBeanException {
+	private Tag[] getTagList( Product product ) throws ManagerBeanException {
 		List<Tag> list = new LinkedList<Tag>();
 		for( ProductTag pt : getProductTags(product) ) {
 			if (! list.contains(pt.getTag()) ) {
 				list.add(pt.getTag());
 			}
 		}
-		return list;
+		return list.toArray(new Tag[list.size()]);
 	}	
 
-	private void updateTagList( Product product, List<Tag> tags, boolean _new ) throws ManagerBeanException {
-		List<Tag> _tags = new LinkedList<Tag>(tags);
+	private void updateTagList( Product product, Tag[] tags, boolean _new ) throws ManagerBeanException {
+		List<Tag> _tags = new LinkedList<Tag>(Arrays.asList(tags));
 		IManagerBean bean = BeanManager.getManagerBean(ProductTag.class);
 		if (! _new ) {
 			for( ProductTag pt : getProductTags(product) ) {

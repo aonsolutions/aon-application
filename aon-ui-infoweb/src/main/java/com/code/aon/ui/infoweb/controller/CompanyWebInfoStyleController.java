@@ -1,10 +1,10 @@
 package com.code.aon.ui.infoweb.controller;
 
+import static com.code.aon.common.enumeration.AppParam.WEBINFO_HOMEPAGE_ID;
+import static com.code.aon.common.enumeration.AppParam.WEBINFO_TEMPLATE_NAME;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.DEFAULT_VALUE;
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.HOMEPAGE_ID_PARAM;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.NO_STYLE_FILE_IN_TEMPLATE;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.NO_TEMPLATE_DIRECTORY;
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.TEMPLATE_NAME_PARAM;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -202,17 +202,17 @@ public class CompanyWebInfoStyleController extends BasicController {
 	}
 
 	public void onChangeTemplate(ActionEvent event) {
-		AppParamUtil.insertParameter(TEMPLATE_NAME_PARAM, getTemplate());	
+		AppParamUtil.insertParameter(WEBINFO_TEMPLATE_NAME, getTemplate());	
 		chargeValues();
     }
 
 	public void onChangeHomepage(ActionEvent event) {
-		AppParamUtil.insertParameter(HOMEPAGE_ID_PARAM, String.valueOf(getHomepage()));	
+		AppParamUtil.insertParameter(WEBINFO_HOMEPAGE_ID, String.valueOf(getHomepage()));	
     }
 
 	public String getTemplate() {
 		if (template == null) {
-			ApplicationParameter ap = AppParamUtil.getParameter(TEMPLATE_NAME_PARAM);
+			ApplicationParameter ap = AppParamUtil.getParameter(WEBINFO_TEMPLATE_NAME);
 			if ( ap != null ) {
 				template = ap.getValue();				
 				chargeValues();
@@ -225,7 +225,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 	public Integer getHomepage() {
 		if (homepage == null) {
 			homepage = 0;
-			ApplicationParameter ap = AppParamUtil.getParameter(HOMEPAGE_ID_PARAM);
+			ApplicationParameter ap = AppParamUtil.getParameter(WEBINFO_HOMEPAGE_ID);
 			if ( ap != null ) {
 				homepage = Integer.parseInt(ap.getValue());				
 			}

@@ -20,15 +20,6 @@ public interface IInfoWebConstants {
 	// APP_PARAM
 	// ************************************************************
 	
-	String TEMPLATE_NAME_PARAM = "WEBINFO_TEMPLATE_NAME";
-	String HOMEPAGE_ID_PARAM = "WEBINFO_HOMEPAGE_ID";
-	String FTP_SERVER_PARAM = "WEBINFO_FTP_SERVER";
-	String FTP_USER_PARAM = "WEBINFO_FTP_USER";
-	String FTP_PASSWORD_PARAM = "WEBINFO_FTP_PASSWORD";
-	String PREVIEW_PATH_PARAM = "WEBINFO_PREVIEW_PATH";
-	String PREVIEW_URL_PARAM = "WEBINFO_PREVIEW_URL";
-	String PUBLISH_PATH_PARAM = "WEBINFO_PUBLISH_PATH";
-	String PUBLISH_URL_PARAM = "WEBINFO_PUBLISH_URL";
 	String DOMAIN_PARAM = "WEBINFO_DOMAIN";
 
 	// ************************************************************

@@ -2,6 +2,7 @@ package com.code.aon.ui.registry.controller.event;
 
 import static com.code.aon.ui.registry.controller.IRegistryConstants.CORPORATE_IDENTITY_SEARCH_CONTROLLER_NAME;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class CorporateIdentityControllerListener extends RegistryAttachControlle
 			attach.setScope(cic.getLastAttachment().getScope());
 			attach.setCategory(cic.getLastAttachment().getCategory());
 		} else {
-			getSearch().setTags( new LinkedList<Tag>() );			
+			getSearch().setTags( null );			
 		}
 		try {		
 			IManagerBean domainBean = BeanManager.getManagerBean(Domain.class);
@@ -62,8 +63,7 @@ public class CorporateIdentityControllerListener extends RegistryAttachControlle
 		CorporateIdentityController cic = (CorporateIdentityController) event.getController();
 		RegistryAttachment attachment = (RegistryAttachment) cic.getAttachment();
 		try {
-			List<Tag> tags = getTagList( attachment );
-			getSearch().setTags( tags );
+			getSearch().setTags( getTagList(attachment) );
 			cic.setDomain((Domain)BeanManager.getManagerBean(Domain.class).get(attachment.getDomain()));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
@@ -101,8 +101,7 @@ public class CorporateIdentityControllerListener extends RegistryAttachControlle
 		super.afterBeanAdded(event);
 		RegistryAttachment attachment = (RegistryAttachment) event.getController().getTo();
 		try {
-			List<Tag> tags = getSearch().getTags();
-			updateTagList( attachment, tags, true );
+			updateTagList( attachment, getSearch().getTags(), true );
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
@@ -114,8 +113,7 @@ public class CorporateIdentityControllerListener extends RegistryAttachControlle
 		super.afterBeanUpdated(event);
 		RegistryAttachment attachment = (RegistryAttachment) event.getController().getTo();
 		try {
-			List<Tag> tags = getSearch().getTags();
-			updateTagList( attachment, tags, false );
+			updateTagList( attachment, getSearch().getTags(), false );
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
@@ -131,18 +129,18 @@ public class CorporateIdentityControllerListener extends RegistryAttachControlle
 		return (List) bean.getList(criteria);
 	}	
 	
-	private List<Tag> getTagList( RegistryAttachment attachment ) throws ManagerBeanException {
+	private Tag[] getTagList( RegistryAttachment attachment ) throws ManagerBeanException {
 		List<Tag> list = new LinkedList<Tag>();
 		for( RegistryAttachmentTag rat : getRegistryAttachmentTags(attachment) ) {
 			if (! list.contains(rat.getTag()) ) {
 				list.add(rat.getTag());
 			}
 		}
-		return list;
+		return list.toArray(new Tag[list.size()]);
 	}	
 
-	private void updateTagList( RegistryAttachment attachment, List<Tag> tags, boolean _new ) throws ManagerBeanException {
-		List<Tag> _tags = new LinkedList<Tag>(tags);
+	private void updateTagList( RegistryAttachment attachment, Tag[] tags, boolean _new ) throws ManagerBeanException {
+		List<Tag> _tags = new LinkedList<Tag>(Arrays.asList(tags));
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachmentTag.class);
 		if (! _new ) {
 			for( RegistryAttachmentTag rat : getRegistryAttachmentTags(attachment) ) {

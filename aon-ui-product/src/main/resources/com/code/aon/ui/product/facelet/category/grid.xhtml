@@ -43,7 +43,7 @@
 								</f:facet>
 							</aon:column>
 
-							<c:if test="#{productCategory.showPosInfo}">
+							<c:if test="#{product.detailLevel &gt; 0}">
 								<aon:column styleClass="aon-editDataTable-textColumn aon-width-200"
 									alias="ProductCategory.detail">
 									<f:facet name="header">
@@ -61,22 +61,44 @@
 									</f:facet>
 								</aon:column>
 	
-								<aon:column styleClass="aon-editDataTable-textColumn aon-width-200"
-									alias="ProductCategory.detail2">
-									<f:facet name="header">
-										<aon:outputLabel for="ProductCategory_detail2"
-											value="#{productBundle.product_category_label_detail2}" />
-									</f:facet>
-									<aon:outputText value="#{to.detail2}" rendered="#{formList}" />
-									<aon:inputText id="ProductCategory_detail2"
-										size="32" maxlength="32" rendered="#{formEdit}"
-										value="#{controller.to.detail2}"  />
-									<f:facet name="footer">
-										<aon:inputText id="ProductCategory_detail2-New"
-											size="32" maxlength="32" rendered="#{formNew}"
+								<c:if test="#{product.detailLevel &gt; 1}">
+									<aon:column styleClass="aon-editDataTable-textColumn aon-width-200"
+										alias="ProductCategory.detail2">
+										<f:facet name="header">
+											<aon:outputLabel for="ProductCategory_detail2"
+												value="#{productBundle.product_category_label_detail2}" />
+										</f:facet>
+										<aon:outputText value="#{to.detail2}" rendered="#{formList}" />
+										<aon:inputText id="ProductCategory_detail2"
+											size="32" maxlength="32" rendered="#{formEdit}"
 											value="#{controller.to.detail2}"  />
-									</f:facet>
-								</aon:column>
+										<f:facet name="footer">
+											<aon:inputText id="ProductCategory_detail2-New"
+												size="32" maxlength="32" rendered="#{formNew}"
+												value="#{controller.to.detail2}"  />
+										</f:facet>
+									</aon:column>
+
+									<c:if test="#{product.detailLevel &gt; 2}">
+										<aon:column styleClass="aon-editDataTable-textColumn aon-width-200"
+											alias="ProductCategory.detail3">
+											<f:facet name="header">
+												<aon:outputLabel for="ProductCategory_detail3"
+													value="#{productBundle.product_category_label_detail3}" />
+											</f:facet>
+											<aon:outputText value="#{to.detail3}" rendered="#{formList}" />
+											<aon:inputText id="ProductCategory_detail3"
+												size="32" maxlength="32" rendered="#{formEdit}"
+												value="#{controller.to.detail3}"  />
+											<f:facet name="footer">
+												<aon:inputText id="ProductCategory_detail3-New"
+													size="32" maxlength="32" rendered="#{formNew}"
+													value="#{controller.to.detail3}"  />
+											</f:facet>
+										</aon:column>
+									</c:if>									
+								</c:if>									
+
 							</c:if>
  
 						</ui:define>

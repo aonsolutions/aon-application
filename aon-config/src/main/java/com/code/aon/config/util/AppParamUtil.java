@@ -12,6 +12,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ql.Criteria;
 
@@ -19,11 +20,11 @@ public class AppParamUtil {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AppParamUtil.class);
 	
-	public static ApplicationParameter getParameter( String name ) {
+	public static ApplicationParameter getParameter( AppParam ap ) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(APPLICATION_PARAMETER_NAME), name);
+			criteria.addEqualExpression(bean.getFieldName(APPLICATION_PARAMETER_NAME), ap.getValue());
 			List<ITransferObject> list = bean.getList(criteria);
 			if (! list.isEmpty() ) {
 				return (ApplicationParameter) list.get(0);
@@ -51,18 +52,18 @@ public class AppParamUtil {
 		return null;
     }	
 	
-	public static ApplicationParameter insertParameter( String name, String value ) {
-		ApplicationParameter ap = getParameter(name);
+	public static ApplicationParameter insertParameter( AppParam appParam, String value ) {
+		ApplicationParameter ap = getParameter(appParam);
 		if ( ap == null ) {
 			ap = new ApplicationParameter();
-			ap.setName(name);
+			ap.setName(appParam.getValue());
 		}
 		ap.setValue(value);		
 		return insertParameter(ap);
     }	
 
-	public static boolean removeParameter( String name ) {
-		ApplicationParameter ap = getParameter(name);
+	public static boolean removeParameter( AppParam appParam ) {
+		ApplicationParameter ap = getParameter(appParam);
 		if ( ap != null ) {
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
@@ -74,8 +75,8 @@ public class AppParamUtil {
 		return false;
     }	
 	
-	public static String getValue( String name ) {
-		ApplicationParameter ap = getParameter(name);
+	public static String getValue( AppParam appParam ) {
+		ApplicationParameter ap = getParameter(appParam);
 		if ( ap != null ) {
 			return StringUtils.trimToNull(ap.getValue());
 		}

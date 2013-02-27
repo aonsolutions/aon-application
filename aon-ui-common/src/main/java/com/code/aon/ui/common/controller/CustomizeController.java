@@ -1,11 +1,11 @@
 package com.code.aon.ui.common.controller;
 
-import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_COLOR;
-import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_ID;
-import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_SUPPORT_EMAIL;
-import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_SUPPORT_PHONE;
-import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_TITLE;
-import static com.code.aon.ui.common.ICommonConstants.AON_HIDE_TRADEMARK;
+import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_COLOR;
+import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_ID;
+import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_EMAIL;
+import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_PHONE;
+import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_TITLE;
+import static com.code.aon.common.enumeration.AppParam.AON_HIDE_TRADEMARK;
 import static com.code.aon.ui.common.ICommonConstants.APPLICATION_TITLE;
 import static com.code.aon.ui.common.ICommonConstants.FAVICON_NAME;
 import static com.code.aon.ui.common.ICommonConstants.HEADER_LOGO_NAME;
@@ -38,6 +38,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.util.ConnectionProvider;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DataSourceUtil;
@@ -151,11 +152,11 @@ public class CustomizeController {
 		}
 	}	
 
-	private String getValue( Connection connection, String name ) {
+	private String getValue( Connection connection, AppParam appParam ) {
 		QueryRunner run = new QueryRunner();
 		try {
 			ResultSetHandler<String> h = new ScalarHandler<String>();
-			return run.query( connection, "SELECT value FROM app_param WHERE domain = ? and name = ?", h, domainId, name);
+			return run.query( connection, "SELECT value FROM app_param WHERE domain = ? and name = ?", h, domainId, appParam.getValue());
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		}		
@@ -166,7 +167,7 @@ public class CustomizeController {
 		QueryRunner run = new QueryRunner();
 		try {
 			ResultSetHandler<String> hs = new ScalarHandler<String>();
-			String value = run.query( connection, "SELECT value FROM app_param WHERE domain = ? and name = ?", hs, domainId, AON_CUSTOMIZE_ID);
+			String value = run.query( connection, "SELECT value FROM app_param WHERE domain = ? and name = ?", hs, domainId, AON_CUSTOMIZE_ID.getValue());
 			if (! StringUtils.isEmpty(value) ) {
 				Integer id = NumberUtils.toInt(value);
 				ResultSetHandler<Long> hl = new ScalarHandler<Long>();
