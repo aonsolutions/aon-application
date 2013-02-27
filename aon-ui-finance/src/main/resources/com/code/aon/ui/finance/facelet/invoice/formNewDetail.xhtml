@@ -21,8 +21,6 @@
 				<ui:param name="lookupTo" value="#{detailController.to.item}" />
 				<ui:param name="idRequired" value="#{true}" />
 				<ui:param name="skipLabel" value="#{true}" />
-				<ui:param name="skipGoToButton" value="#{posMode}" />
-				<ui:param name="skipNewButton" value="#{posMode}" />
 				<ui:param name="skipSuggestText" value="#{detailController.to.item != null and detailController.to.item.id != null}" />
 				<ui:param name="lookupInputOnFocus" value="InvoiceDetail_description" />
 				<ui:param name="lookupReRender"	value="#{formName}" />
@@ -43,7 +41,7 @@
 			</ui:include>
 		</c:if>
 		<aon:panelGroup id="invoiceDetailItemDescription" styleClass="aon-nowrap aon-vertical-align-top">
-			<c:if test="#{posMode and aonConfiguration.bean.product.showStock}">
+			<c:if test="#{aonConfiguration.bean.product.showStock}">
 				<aon:commandButton value="&#160;"
 					title="#{productBundle.product_info}"
 					rendered="#{detailController.to.item != null and detailController.to.item.id != null and detailController.to.item.product.inventoriable}"
@@ -67,65 +65,20 @@
 				rendered="#{detailController.to.item != null and detailController.to.item.id != null}">
 				<f:validateLength maximum="1024" />
 			</aon:inputTextarea>
-			<c:if test="#{!posMode}">
-				<aon:commandLink id="InvoiceDetail_description_short" immediate="true"
-					value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
-					styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
-					rendered="#{detailController.longDescription and detailController.to.item.product.code != null}"
-					actionListener="#{detailController.onShortDescription}" 
-					reRender="invoiceDetailItemDescription" ajaxSingle="true" />
-				<aon:commandLink id="InvoiceDetail_description_long" immediate="true"
-					value="&#160;" title="#{bundle.aon_edit}"
-					styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
-					rendered="#{!detailController.longDescription and detailController.to.item.product.code != null}"
-					actionListener="#{detailController.onLongDescription}"
-					reRender="invoiceDetailItemDescription" ajaxSingle="true" />
-			</c:if>
+			<aon:commandLink id="InvoiceDetail_description_short" immediate="true"
+				value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
+				styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
+				rendered="#{detailController.longDescription and detailController.to.item.product.code != null}"
+				actionListener="#{detailController.onShortDescription}" 
+				reRender="invoiceDetailItemDescription" ajaxSingle="true" />
+			<aon:commandLink id="InvoiceDetail_description_long" immediate="true"
+				value="&#160;" title="#{bundle.aon_edit}"
+				styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
+				rendered="#{!detailController.longDescription and detailController.to.item.product.code != null}"
+				actionListener="#{detailController.onLongDescription}"
+				reRender="invoiceDetailItemDescription" ajaxSingle="true" />
 		</aon:panelGroup>
 	</aon:div>
-
-	<c:if test="#{posMode}">
-		<aon:outputLabel for="InvoiceDetail_price" value="#{bundle.aon_unit_price}" />
-		<aon:panelGrid columns="2" columnClasses="aon-width-100, aon-width-auto">
-			<aon:outputText id="InvoiceDetail_price"
-				styleClass="aon-bold"
-				value="#{detailController.to.salesPrice}">
-				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-			</aon:outputText>
-
-			<aon:div>
-				<aon:outputLabel for="InvoiceDetail_quantity" 
-					styleClass="aon-margin-left aon-margin-right"
-					value="#{bundle.aon_quantity}" />
-				<aon:inputText id="InvoiceDetail_quantity"
-					value="#{detailController.to.quantity}" 
-					required="true" size="5" maxlength="5"
-					valueChangeListener="#{detailController.onQuantityChanged}"
-					reRender="InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_total,InvoiceFinance_changeAmount" ajaxSingle="true"
-					focus="InvoiceDetail_discount" />
-
-				<aon:outputLabel for="InvoiceDetail_discount" 
-					styleClass="aon-margin-left aon-margin-right"
-					value="#{bundle.aon_discount}" />
-				<aon:inputText id="InvoiceDetail_discount"
-					value="#{detailController.to.discountExpression.discountExpr}"
-					required="true" size="5" maxlength="5"
-					valueChangeListener="#{detailController.onDiscountChanged}"
-					reRender="InvoiceDetail_total,InvoiceFinance_changeAmount" ajaxSingle="true" />
-			</aon:div>
-		</aon:panelGrid>
-
-		<aon:outputLabel for="InvoiceDetail_total" value="#{bundle.aon_total}" />
-		<aon:div>
-			<aon:outputText id="InvoiceDetail_total" 
-				styleClass="aon-bold"
-				value="#{detailController.to.totalSalesPrice}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:outputLabel styleClass="aon-margin-left aon-italic"
-				value="(#{bundle.aon_tax_included})" />
-		</aon:div>
-	</c:if>
 
 	<c:if test="#{invoiceController.to.expense}">
 		<aon:outputLabel for="InvoiceDetail_taxableBase" value="#{bundle.aon_taxable_base}" />
@@ -185,7 +138,7 @@
 		</aon:selectOneMenu>
 	</c:if>
 
-	<c:if test="#{!posMode and invoiceController.to.sales}">
+	<c:if test="#{invoiceController.to.sales}">
 		<aon:div>
 			<aon:outputLabel for="Invoice_comments"
 				value="#{bundle.aon_comment}" />
@@ -197,7 +150,7 @@
 		<aon:inputTextarea id="Invoice_comments" cols="85" rows="4"
 			value="#{invoiceController.to.comments}" ajaxSingle="true" />
 	</c:if>
-	<c:if test="#{!posMode and !invoiceController.to.sales}">
+	<c:if test="#{!invoiceController.to.sales}">
 		<aon:div>
 			<aon:outputLabel for="Invoice_remarks"
 				value="#{bundle.aon_remark}" />

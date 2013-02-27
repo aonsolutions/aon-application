@@ -61,14 +61,37 @@
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
 
-										<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formNewFinance.xhtml">
-											<ui:param name="invoiceController" value="#{invoiceController}" />
-											<ui:param name="detailController" value="#{detailController}" />
-											<ui:param name="financeController" value="#{financeController}" />
-											<ui:param name="formName" value="#{formName}" />
-											<ui:param name="posMode" value="#{posMode}" />
-											<ui:param name="skipGenerationMode" value="#{true}" />
-										</ui:include>
+										<aon:outputLabel for="Finance_payMethod" value="#{configBundle.config_pay_method}" />
+										<aon:selectOneMenu id="Finance_payMethod"
+											value="#{financeController.to.payMethod}" required="true"
+											valueChangeListener="#{financeController.onPayMethodChanged}"
+											reRender="InvoiceFinance_changeAmount" ajaxSingle="true">
+											<f:selectItems value="#{configCollections.directPayMethods}" />
+										</aon:selectOneMenu>
+
+										<aon:outputLabel for="InvoiceFinance_pendingAmount" 
+											value="#{financeBundle.finance_pos_pending_amount}" />
+										<aon:outputText id="InvoiceFinance_pendingAmount"
+											styleClass="aon-bold"
+											value="#{invoiceController.pendingAmount}">
+											<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+										</aon:outputText>
+
+										<aon:outputLabel for="InvoiceFinance_paidAmount" 
+											value="#{financeBundle.finance_pos_paid_amount}" />
+										<aon:inputText id="InvoiceFinance_paidAmount"
+											value="#{financeController.paidAmount}" 
+											size="5" maxlength="7"
+											valueChangeListener="#{financeController.onPaidAmountChanged}"
+											reRender="InvoiceFinance_changeAmount" ajaxSingle="true" />
+
+										<aon:outputLabel for="InvoiceFinance_changeAmount" 
+											value="#{financeBundle.finance_pos_change_amount}" />
+										<aon:outputText id="InvoiceFinance_changeAmount"
+											styleClass="aon-bold"
+											value="#{financeController.changeAmount}">
+											<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+										</aon:outputText>
 
 									</aon:panelGrid>
 								</aon:div>

@@ -234,13 +234,10 @@
 						styleClass="aon-width-all"
 						columnClasses="aon-width-auto aon-padding-right, aon-width-300 aon-padding-left">
 						<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formDetail.xhtml">
-							<ui:param name="invoiceController" value="#{posInvoice}" />
 							<ui:param name="detailController" value="#{posInvoiceDetail}" />
 						</ui:include>
 
 						<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formFinance.xhtml">
-							<ui:param name="invoiceController" value="#{posInvoice}" />
-							<ui:param name="detailController" value="#{posInvoiceDetail}" />
 							<ui:param name="financeController" value="#{posInvoiceFinance}" />
 						</ui:include>
 					</aon:panelGrid>
@@ -260,10 +257,7 @@
 		<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/posInvoice/modalFinishTicket.xhtml">
 			<ui:param name="invoiceController" value="#{posInvoice}" />
-			<ui:param name="detailController" value="#{posInvoiceDetail}" />
 			<ui:param name="financeController" value="#{posInvoiceFinance}" />
-			<ui:param name="formName" value="posInvoiceForm" />
-			<ui:param name="posMode" value="#{true}" />
 		</ui:include>
 	</ui:define>
 </ui:composition>
