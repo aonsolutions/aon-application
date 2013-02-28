@@ -47,6 +47,9 @@
 					<aon:inputText id="Pos_initialAmount" value="#{pos.to.initialAmount}" 
 						size="20" maxlength="17" />
 
+					<aon:outputLabel value="#{bundle.aon_active}" />
+					<aon:selectBooleanCheckbox value="#{pos.to.active}" />
+					
 <!--
 					<aon:outputLabel for="Pos_pinPad" value="#{pmsBundle.pos_pin_pad}" />
 					<aon:selectBooleanCheckbox id="Pos_pinPad" value="#{pos.to.pinPad}" >
