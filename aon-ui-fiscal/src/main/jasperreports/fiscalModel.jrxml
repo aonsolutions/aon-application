@@ -81,7 +81,7 @@
 				<reportElement x="455" y="67" width="79" height="12"/>
 				<box leftPadding="2" rightPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{declaration}.getHeader().getYear()]]></textFieldExpression>
 			</textField>
