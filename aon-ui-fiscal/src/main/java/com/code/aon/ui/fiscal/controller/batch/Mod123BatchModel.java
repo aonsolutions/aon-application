@@ -56,7 +56,7 @@ public class Mod123BatchModel extends AbstractFiscalBatchModel {
 
 	@Override
 	public void unbatch(FiscalBatchDetail detail) throws AonException {
-		updateStatus(detail.getDetailId(), FiscalModelStatus.PENDING);
+		updateStatus(detail.getDetailId(), FiscalModelStatus.FINISHED);
 	}
 
 	private void updateStatus(Integer detailId, FiscalModelStatus status) throws ManagerBeanException {

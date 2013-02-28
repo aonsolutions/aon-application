@@ -172,6 +172,9 @@ public abstract class FiscalModelController extends BasicController {
 		if (getDeclaration().isDeclarationNegativeAvailable() && getDeclaration().isNegative()) {
 			return false;
 		}
+		if (getDeclaration().getResult() == 0) {
+			return false;
+		}
 		return true;
 	}
 	
