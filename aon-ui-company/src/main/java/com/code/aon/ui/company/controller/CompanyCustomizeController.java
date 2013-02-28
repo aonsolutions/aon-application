@@ -1,6 +1,6 @@
 package com.code.aon.ui.company.controller;
 
-import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_COLOR;
+import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_FONT_COLOR;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_EMAIL;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_PHONE;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_TITLE;
@@ -41,14 +41,14 @@ public class CompanyCustomizeController extends RegistryAttachController {
 
 	public void onInit( ActionEvent event ) {
 		setTitle( AppParamUtil.getValue(AON_CUSTOMIZE_TITLE) );
-		setColor( AppParamUtil.getValue(AON_CUSTOMIZE_COLOR) );
+		setColor( AppParamUtil.getValue(AON_CUSTOMIZE_FONT_COLOR) );
 		setSupportPhone( AppParamUtil.getValue(AON_CUSTOMIZE_SUPPORT_PHONE) );
 		setSupportEmail( AppParamUtil.getValue(AON_CUSTOMIZE_SUPPORT_EMAIL) );
 	}
 
 	public void onSave( ActionEvent event ) {
 		AppParamUtil.insertParameter(AON_CUSTOMIZE_TITLE, getTitle());
-		AppParamUtil.insertParameter(AON_CUSTOMIZE_COLOR, getColor());
+		AppParamUtil.insertParameter(AON_CUSTOMIZE_FONT_COLOR, getColor());
 		AppParamUtil.insertParameter(AON_CUSTOMIZE_SUPPORT_PHONE, getSupportPhone());
 		AppParamUtil.insertParameter(AON_CUSTOMIZE_SUPPORT_EMAIL, getSupportEmail());
 	}

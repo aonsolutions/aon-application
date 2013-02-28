@@ -1,6 +1,6 @@
 package com.code.aon.ui.common.controller;
 
-import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_COLOR;
+import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_FONT_COLOR;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_ID;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_EMAIL;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_PHONE;
@@ -201,7 +201,7 @@ public class CustomizeController {
 	}
 
 	private void updateFontStyle( Connection connection ) {
-		String value = getValue( connection, AON_CUSTOMIZE_COLOR);
+		String value = getValue( connection, AON_CUSTOMIZE_FONT_COLOR);
 		if (! StringUtils.isEmpty(value) ) {
 			this.fontStyle = getColorStyle(value);
 		}
