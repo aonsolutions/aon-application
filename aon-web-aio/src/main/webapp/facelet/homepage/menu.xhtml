@@ -105,10 +105,12 @@
 			styleClass="aon-top-menu-item" />
 		
 		<c:if test="#{aonRole.payroll}">
-			<aon:commandLink id="menu_payroll"
-				value="#{bundle.aon_module_payroll}"
-				action="menu_payroll" immediate="true"
-				styleClass="aon-top-menu-item" />
+			<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+				<aon:commandLink id="menu_payroll"
+					value="#{bundle.aon_module_payroll}"
+					action="menu_payroll" immediate="true"
+					styleClass="aon-top-menu-item" />
+			</c:if>
 			<aon:commandLink id="menu_payroll_portal"
 				value="#{bundle.aon_payroll_portal}"
 				action="gwt_enterprise_site" immediate="true"
