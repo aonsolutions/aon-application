@@ -7,56 +7,39 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
-	<aon:div styleClass="aon-group">
-		<aon:div styleClass="aon-group-title">
-			<aon:outputText value="#{productBundle.product_basic_sales_tariff}"/>
-		</aon:div>
-		<aon:div styleClass="aon-group-body"> 	
-			<aon:div styleClass="aon-group-body-internal">
-				<a4j:region>
-					<aon:panelGrid columns="2" styleClass="aon-width-all"
-						columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
-
-						<aon:outputLabel for="Item_purchase_price" value="#{productBundle.product_purchase_price}" />
-						<aon:inputText id="Item_purchase_price" 
-							value="#{itemTo.purchasePrice}" required="true" size="10"
-							valueChangeListener="#{controller.onPurchasePriceChanged}" 
-							reRender="Item_profit_percent,Item_price,Item_sales_price"
-							focus="Item_profit_percent">
-							<f:validateDoubleRange />
-						</aon:inputText>
-						
-						<aon:outputLabel for="Item_profit_percent" value="% #{bundle.aon_profit}" />
-						<aon:inputText id="Item_profit_percent" 
-							value="#{itemTo.profitPercent}" required="true" size="10"
-							valueChangeListener="#{controller.onProfitChanged}"
-							reRender="Item_price,Item_sales_price"
-							focus="Item_price">
-							<f:validateDoubleRange />
-						</aon:inputText>
-						
-						<aon:outputLabel for="Item_price" value="#{productBundle.product_sales_base_price}" />
-						<aon:inputText id="Item_price" 
-							value="#{itemTo.price}" required="true" size="10"
-							valueChangeListener="#{controller.onPriceChanged}" 
-							reRender="Item_profit_percent,Item_sales_price"
-							focus="Item_product_vat">
-							<f:validateDoubleRange />
-						</aon:inputText>
-						
-						<aon:outputLabel for="Item_sales_price" value="#{bundle.aon_sales_price}" />
-						<aon:inputText id="Item_sales_price" 
-							value="#{itemTo.salesPrice}" required="true" size="10"
-							valueChangeListener="#{controller.onSalesPriceChanged}" 
-							reRender="Item_profit_percent,Item_price">
-							<f:validateDoubleRange/>
-						</aon:inputText>
-						
-					</aon:panelGrid>
-				</a4j:region>
-			</aon:div>
-		</aon:div>
-	</aon:div>
+	<aon:outputLabel for="Item_purchase_price" value="#{productBundle.product_purchase_price}" />
+	<aon:inputText id="Item_purchase_price" 
+		value="#{itemTo.purchasePrice}" required="true" size="10"
+		valueChangeListener="#{controller.onPurchasePriceChanged}" 
+		reRender="Item_profit_percent,Item_price,Item_sales_price"
+		focus="Item_profit_percent">
+		<f:validateDoubleRange />
+	</aon:inputText>
 	
+	<aon:outputLabel for="Item_profit_percent" value="% #{bundle.aon_profit}" />
+	<aon:inputText id="Item_profit_percent" 
+		value="#{itemTo.profitPercent}" required="true" size="10"
+		valueChangeListener="#{controller.onProfitChanged}"
+		reRender="Item_price,Item_sales_price"
+		focus="Item_price">
+		<f:validateDoubleRange />
+	</aon:inputText>
+	
+	<aon:outputLabel for="Item_price" value="#{productBundle.product_sales_base_price}" />
+	<aon:inputText id="Item_price" 
+		value="#{itemTo.price}" required="true" size="10"
+		valueChangeListener="#{controller.onPriceChanged}" 
+		reRender="Item_profit_percent,Item_sales_price"
+		focus="Item_product_vat">
+		<f:validateDoubleRange />
+	</aon:inputText>
+	
+	<aon:outputLabel for="Item_sales_price" value="#{bundle.aon_sales_price}" />
+	<aon:inputText id="Item_sales_price" 
+		value="#{itemTo.salesPrice}" required="true" size="10"
+		valueChangeListener="#{controller.onSalesPriceChanged}" 
+		reRender="Item_profit_percent,Item_price">
+		<f:validateDoubleRange/>
+	</aon:inputText>
 
 </ui:composition>

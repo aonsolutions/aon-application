@@ -106,12 +106,15 @@ public class ItemController extends BasicController {
 
 	@Override
 	public void accept(ActionEvent event) {
-		super.accept(event);
 		try {
-			IManagerBean productBean = BeanManager.getManagerBean(Product.class);
-			productBean.initializePOJO(((Item)getTo()).getProduct());
-		} catch (ManagerBeanException e) {
-			throw new AbortProcessingException(e.getMessage(), e);
+			super.accept(event);	
+		} finally {
+			try {
+				IManagerBean productBean = BeanManager.getManagerBean(Product.class);
+				productBean.initializePOJO(((Item)getTo()).getProduct());
+			} catch (ManagerBeanException e) {
+				throw new AbortProcessingException(e.getMessage(), e);
+			}			
 		}
 	}
 

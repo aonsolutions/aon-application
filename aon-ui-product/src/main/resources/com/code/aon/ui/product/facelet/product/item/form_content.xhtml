@@ -14,10 +14,26 @@
 
 		<ui:include src="/com/code/aon/ui/product/facelet/product/item/formBasic.xhtml" />
 		
-		<ui:include src="/com/code/aon/ui/product/facelet/product/item/formPrices.xhtml" >
-			<ui:param name="itemTo" value="#{controller.to}" />
-		</ui:include>
+		<aon:div styleClass="aon-group">
+			<aon:div styleClass="aon-group-title">
+				<aon:outputText value="#{productBundle.product_basic_sales_tariff}"/>
+			</aon:div>
+			<aon:div styleClass="aon-group-body"> 	
+				<aon:div styleClass="aon-group-body-internal">
+					<a4j:region>
+						<aon:panelGrid columns="2" styleClass="aon-width-all"
+							columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
 		
+							<ui:include src="/com/code/aon/ui/product/facelet/product/item/formPrices.xhtml" >
+								<ui:param name="itemTo" value="#{controller.to}" />
+							</ui:include>
+	
+						</aon:panelGrid>
+					</a4j:region>
+				</aon:div>
+			</aon:div>
+		</aon:div>
+			
 	</aon:panelGrid>
 
 </ui:composition>
