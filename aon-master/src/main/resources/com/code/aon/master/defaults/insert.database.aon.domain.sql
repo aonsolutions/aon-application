@@ -1719,8 +1719,8 @@ INSERT INTO `payment_concept` (`domain`,`code`,`description`,`type`,`description
   (@Domain,'FIVAC','Vacaciones no disfrutadas',1,1,'DIAS_VACACIONES_NO_DISFRUTADAS * IMPORTE_DIA_VACACIONES','FIVAC','FIVAC'),
   (@Domain,'INDEM','Indemnización',6,1,'IMPORTE_INDEMNIZACION','0.00','0.00');
 
-INSERT INTO `pcategory` (`domain`,`name`,`pcategory_group`) VALUES 
-  (@Domain,'GENERICA',NULL);
+INSERT INTO `pcategory` (`domain`,`name`) VALUES 
+  (@Domain,'GENERICA');
 
 INSERT INTO `scope` (`domain`,`description`) VALUES 
   (@Domain,'GENERAL');
