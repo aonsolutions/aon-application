@@ -13,15 +13,27 @@
 			valueChangeListener="#{controller.addExpression}" />
 	</c:if>
 
-	<aon:outputLabel for="Product_items_detail"
-		value="#{productBundle.product_detail}" />
-	<aon:inputText id="Product_items_detail" size="50"
-		valueChangeListener="#{controller.addExpression}" />
+	<c:if test="#{product.detailLevel &gt; 0}">
+		<aon:outputLabel for="Product_items_detail"
+			value="#{productBundle.product_detail}" />
+		<aon:inputText id="Product_items_detail" size="50"
+			valueChangeListener="#{controller.addExpression}" />
+	
+		<c:if test="#{product.detailLevel &gt; 1}">
+			<aon:outputLabel for="Product_items_detail2"
+				value="#{productBundle.product_detail2}" />
+			<aon:inputText id="Product_items_detail2" size="50"
+				valueChangeListener="#{controller.addExpression}" />
 
-	<aon:outputLabel for="Product_items_detail2"
-		value="#{productBundle.product_detail}2" />
-	<aon:inputText id="Product_items_detail2" size="50"
-		valueChangeListener="#{controller.addExpression}" />
+			<c:if test="#{product.detailLevel &gt; 2}">
+				<aon:outputLabel for="Product_items_detail3"
+					value="#{productBundle.product_detail3}" />
+				<aon:inputText id="Product_items_detail3" size="50"
+					valueChangeListener="#{controller.addExpression}" />
+			</c:if>
+		</c:if>
+	
+	</c:if>
 		
 	<aon:outputLabel for="Product_items_description"
 		value="#{bundle.aon_description}" />

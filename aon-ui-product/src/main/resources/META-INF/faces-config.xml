@@ -93,7 +93,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Product_category_name,Product_name,Product_code</value>
+			<value>Product_code,Product_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
