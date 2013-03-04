@@ -108,6 +108,19 @@
 							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
 						</configuration>
 					</execution>
+					<execution>
+						<id>PRESENCIA DIGITAL</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile-reports</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>jasperreports/presenciaDigital</sourceDirectory>
+							<outputDirectory>${project.build.directory}/templates/presenciaDigital</outputDirectory>
+							<xmlValidation>true</xmlValidation>
+							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 		
