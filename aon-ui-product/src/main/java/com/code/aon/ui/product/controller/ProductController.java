@@ -12,16 +12,19 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tax;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProductController extends BasicController {
 
@@ -82,11 +85,29 @@ public class ProductController extends BasicController {
 		if (! isShowDetail() ) {
 			item.setDetail(null);
 			item.setDetail2(null);
+			item.setDetail3(null);
 		} else if (! isShowDetail2() ) {
 			item.setDetail2(null);
+			item.setDetail3(null);
+		} else if (! isShowDetail3() ) {
+			item.setDetail3(null);
 		}
 	}
 
+	private void updateItemPrices( ItemController controller ) throws ManagerBeanException {
+		Item item = (Item) controller.getTo();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(controller.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), item.getProduct().getId());
+		criteria.addOrder(controller.getFieldName(IEntityAlias.ITEM_ID), false);
+		List<ITransferObject> list = controller.getManagerBean().getList(criteria, 0, 1);
+		if (! list.isEmpty() ) {
+			Item lastItem = (Item) list.get(0);
+			item.setPurchasePrice(lastItem.getPurchasePrice());
+			item.setProfitPercent(lastItem.getProfitPercent());
+			item.setPrice(lastItem.getPrice());
+		}
+	}
+	
 	public void acceptItem(ActionEvent event) throws ManagerBeanException {
 		ItemController controller = getItemController();
 		controller.accept(event);
@@ -101,11 +122,12 @@ public class ProductController extends BasicController {
 		updateItem(controller);
 	}
 	
-	public void onResetItem(ActionEvent event) {
+	public void onResetItem(ActionEvent event) throws ManagerBeanException {
 		ItemController controller = getItemController();
 		this.saveStateItem = (Item) controller.getTo();	
 		controller.onReset(event);
 		updateItem(controller);
+		updateItemPrices(controller);
 	}
 
 	public void onSelectItem(ActionEvent event) {

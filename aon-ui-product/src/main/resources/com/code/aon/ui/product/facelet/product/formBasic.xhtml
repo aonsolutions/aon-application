@@ -18,8 +18,9 @@
 	<aon:outputLabel for="Product_category" value="#{productBundle.product_category}" />
 	<aon:div>
 		<aon:selectOneMenu id="Product_category" 
-			reRender="itemDataGrid,itemData"
+			reRender="#{categoryChangeReRender}"
 			value="#{controller.to.category}">
+			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{productCollections.categories}" />
 		</aon:selectOneMenu>
 
@@ -27,7 +28,7 @@
 			<aon:outputLabel for="Product_brand" styleClass="aon-margin-left aon-margin-right aon-italic"
 				value="#{productBundle.product_brand}" />
 			<aon:selectOneMenu id="Product_brand" value="#{controller.to.brand}">
-				<f:selectItem itemLabel="-" itemValue="" />
+				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{productCollections.brands}" />
 			</aon:selectOneMenu>
 		</c:if>

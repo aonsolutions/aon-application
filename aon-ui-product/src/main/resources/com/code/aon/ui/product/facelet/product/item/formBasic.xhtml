@@ -10,39 +10,9 @@
 
 	<aon:panelGrid columns="2" styleClass="aon-width-all" >
 
-		<c:if test="#{product.showDetail}">
-			<aon:outputLabel for="Item_product_detail"
-				value="#{product.labelDetail}" />
-			<aon:inputText id="Item_product_detail" 
-				value="#{controller.to.detail}" size="25" maxlength="15" />
-		</c:if>
-
-		<c:if test="#{product.showDetail2}">
-			<aon:outputLabel for="Item_product_detail2"
-				value="#{product.labelDetail2}" />
-			<aon:inputText id="Item_product_detail2" 
-				value="#{controller.to.detail2}" size="25" maxlength="15" />
-		</c:if>
-
-		<c:if test="#{product.showDetail3}">
-			<aon:outputLabel for="Item_product_detail3"
-				value="#{product.labelDetail3}" />
-			<aon:inputText id="Item_product_detail3" 
-				value="#{controller.to.detail3}" size="25" maxlength="15" />
-		</c:if>
-
-		<c:if test="#{aonConfiguration.bean.product.showBarcode}">
-			<aon:outputLabel for="Item_barcode"
-				value="#{productBundle.product_barcode}" />
-			<aon:inputText id="Item_barcode" 
-				value="#{controller.to.barcode}" size="25" maxlength="32" />
- 		</c:if>
-
-		<aon:outputLabel for="Item_description" value="#{bundle.aon_description}" />
-	 	<aon:div style="margin-bottom: 0.5em;">
-			<aon:inputTextarea id="Item_description"
-				value="#{controller.to.description}" cols="64" rows="4" />
-	 	</aon:div>
+		<ui:include src="/com/code/aon/ui/product/facelet/product/item/formNewContent.xhtml">
+			<ui:param name="itemTo" value="#{controller.to}" />
+		</ui:include>
 
 		<aon:outputLabel for="Item_status" value="#{bundle.aon_status}" />
 		<aon:selectOneRadio id="Item_status" value="#{controller.to.status}">
