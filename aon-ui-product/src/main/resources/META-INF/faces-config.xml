@@ -956,7 +956,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
-			<value>/com/code/aon/ui/product/facelet/lookup/item/list.xhtml</value>
+			<value>/com/code/aon/ui/product/facelet/item/listBasic.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
