@@ -26,7 +26,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Application;
 import com.code.aon.config.DomainApplication;
@@ -182,11 +181,18 @@ public class AuditManager implements IAuditConstants {
 		return bean.getCount(criteria) > 0;
 	}	
 
+	private static boolean isDomainManagementAvailable( Integer domainId ) throws ManagerBeanException {
+		String sfn = HibernateUtil.getSessionFactoryName();
+		Query query = HibernateUtil.getSession(sfn).createQuery("SELECT d.domainManagement FROM Domain d WHERE d.id = ?");
+		query.setInteger(0, domainId);
+		return (Boolean) query.uniqueResult();		
+	}
+	
 	public static List<Module> getVisibleModules( Integer domainId, Integer applicationId ) throws ManagerBeanException {
 		List<Module> list = new LinkedList<Module>();
-		DomainType type = AuditManager.getDomainType(domainId);
+		DomainType type = getDomainType(domainId);
 		if ( type != DomainType.ADMIN ) {
-			if ( DomainManager.isDomainManagementAvailable() && (type == DomainType.CONSULTANCY)) {
+			if ( isDomainManagementAvailable(domainId) && (type == DomainType.CONSULTANCY)) {
 				list.add(Module.FISCAL);
 				list.add(Module.PAYROLL);
 				list.add(Module.PAYROLL_PORTAL);
@@ -227,17 +233,17 @@ public class AuditManager implements IAuditConstants {
 				}
 				Integer parentDomainId = AdminUtil.getParentDomain(domainId);
 				if ( parentDomainId != null)  {
-					if (AuditManager.getDomainType(parentDomainId) == DomainType.CONSULTANCY) {
-						if ( !list.contains(Module.PAYROLL) && AuditManager.hasModule(parentDomainId, applicationId, Module.PAYROLL) ) {
+					if (getDomainType(parentDomainId) == DomainType.CONSULTANCY) {
+						if ( !list.contains(Module.PAYROLL) && hasModule(parentDomainId, applicationId, Module.PAYROLL) ) {
 							list.add(Module.PAYROLL);
 						}
-						if (AuditManager.hasModule(parentDomainId, applicationId, Module.PAYROLL_PORTAL) ) {
+						if (hasModule(parentDomainId, applicationId, Module.PAYROLL_PORTAL) ) {
 							list.add(Module.PAYROLL_PORTAL);
 						}
-						if (AuditManager.hasModule(parentDomainId, applicationId, Module.DOCUMENT_PORTAL) ) {
+						if (hasModule(parentDomainId, applicationId, Module.DOCUMENT_PORTAL) ) {
 							list.add(Module.DOCUMENT_PORTAL);
 						}
-						if (AuditManager.hasModule(parentDomainId, applicationId, Module.CONTRATA) ) {
+						if (hasModule(parentDomainId, applicationId, Module.CONTRATA) ) {
 							list.add(Module.CONTRATA);
 						}
 					}
