@@ -15,14 +15,7 @@
 		<ui:param name="rows" value="0" />
 		<ui:param name="showNote" value="false" />
 		<ui:param name="showDataScroller" value="false" />
-		<ui:param name="skipResetButton" value="#{!income.pending or (aonRole.warehouseOperator and !aonRole.purchaseOperator)}" />
-		
-		<!-- WAREHOUSE ACCESS IN READ-ONLY WITH REMOVE OPTION -->
-		<ui:param name="readOnly" value="#{aonRole.warehouseOperator and !aonRole.purchaseOperator}" />	
-		<ui:param name="skipSaveButton" value="#{readOnly}" />		
-		<ui:param name="skipCancelButton" value="#{readOnly}" />
-		<ui:param name="skipRemoveButton" value="#{readOnly}" />	
-		
+		<ui:param name="skipResetButton" value="#{!income.pending}" />
 		<ui:param name="skipLineEdition" value="#{true}" />
 		<ui:param name="rowSelectorReRender" value="menuExt" />
 		<ui:param name="resetButtonReRender" value="menuExt" />
@@ -45,58 +38,17 @@
 				focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
 			</aon:commandLink>
 		</ui:define>
-		<ui:define name="beforeEditLineButtons" >
-			<c:if test="#{aonRole.warehouseOperator and !aonRole.purchaseOperator}" >
-				<aon:commandButton
-					id="#{dataTableId}-cancel" title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
-					action="#{cancelEditAction}" actionListener="#{cancelEditActionListener}"
-					immediate="true" reRender="#{cancelButtonReRender}"
-					styleClass="aon-editDataTable-button aon-icon-cancel"
-					accesskey="#{bundle.aon_key_cancel_line}" />
-				<aon:confirmButton
-					id="#{dataTableId}-remove" title="#{bundle.aon_remove} (#{bundle.aon_key_remove_line_accelerator})"
-					immediate="true"  
-					reRender="#{dataTableId}Div#{(removeButtonReRender != null)?',':''}#{removeButtonReRender}"
-					confirmTitle="#{bundle.aon_confirm_title}"
-					confirmMessage="#{bundle.aon_remove_confirm}"
-					confirmActionListener="#{removeActionListener}"
-					confirmAction="#{removeAction}"
-					styleClass="aon-editDataTable-button aon-icon-delete"
-					accesskey="#{bundle.aon_key_remove_line}" />
-			</c:if>				
-		</ui:define>
 
 		<ui:define name="columns">
-		
-			<c:if test="#{!income.pending or (aonRole.warehouseOperator and !aonRole.purchaseOperator)}" >
-				<aon:column id="#{dataTableId}-selectColumn" 
-					styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
-					<f:facet name="header">
-						<aon:outputText value="&#160;" />
-					</f:facet>
-					<aon:div rendered="#{formList}" layout="none">
-						<aon:commandLink id="#{dataTableId}-selectButton"
-							styleClass="aon-table-row-link" value="&#160;"
-							immediate="true" ajaxSingle="true" requestDelay="100"
-							rendered="#{income.pending}"
-							actionListener="#{incomeDetail.onSelect}"
-							onkeyup="#{dataTableId}KeyUp(this)"
-							onfocus="#{dataTableId}SelectRow(this)"
-							onblur="#{dataTableId}DeselectRow(this)"
-							focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
-						</aon:commandLink>
-					</aon:div>					
-				</aon:column>
-			</c:if>
 	
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
 				<f:facet name="header">
 					<aon:outputLabel for="IncomeDetail_line" value="#{warehouseBundle.warehouse_income_detail_line}" />
 				</f:facet>
 				<aon:outputText value="#{to.line}"
-					rendered="#{formList or readOnly}" />
+					rendered="#{formList}" />
 				<aon:inputText id="IncomeDetail_line" 
-					value="#{controller.to.line}" rendered="#{formEdit and !readOnly}"
+					value="#{controller.to.line}" rendered="#{formEdit}"
 					required="true" size="1" maxlength="3" />
 				<f:facet name="footer">
 					<aon:inputText id="IncomeDetail_line-New" 
@@ -110,7 +62,7 @@
 					<aon:outputLabel for="Item_id" value="#{productBundle.product_item}" />
 				</f:facet>
 				<aon:outputText value="#{to.description}"
-					rendered="#{formList or readOnly}">
+					rendered="#{formList}">
 					<aon:abbreviateConverter maxWidth="64" />
 				</aon:outputText>
 				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
@@ -121,14 +73,14 @@
 					<ui:param name="skipLabel" value="#{true}" />
 					<ui:param name="skipSuggestText" value="#{incomeDetail.to.item != null and incomeDetail.to.item.id != null}" />
 					<ui:param name="lookupInputOnFocus" value="IncomeDetail_description" />
-					<ui:param name="lookupRendered" value="#{formEdit and !readOnly}" />
+					<ui:param name="lookupRendered" value="#{formEdit}" />
 					<ui:param name="lookupDisabled" value="#{!controller.editable}" />
 					<ui:param name="lookupReRender" 
 						value="incomeDetailItemEdit,IncomeDetail_quantity,IncomeDetail_price,IncomeDetail_amount" />
 					<aon:methodParam name="lookupChangeListener"
 						value="#{incomeDetail.onItemChanged}" type="lookupChangeListener" />
 				</ui:include>
-				<aon:panelGroup id="incomeDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit and !readOnly}">
+				<aon:panelGroup id="incomeDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
 					<aon:inputTextarea id="IncomeDetail_description" 
 						value="#{incomeDetail.to.description}"
 						rendered="#{incomeDetail.to.item != null and incomeDetail.to.item.id != null}"
@@ -184,11 +136,11 @@
 					<aon:outputLabel for="IncomeDetail_quantity" value="#{bundle.aon_quantity}" />
 				</f:facet>
 				<aon:outputText value="#{to.quantity}"
-					rendered="#{formList or !controller.modelEditable or readOnly}">
+					rendered="#{formList or !controller.modelEditable}">
 					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 				</aon:outputText>
 				<aon:inputText id="IncomeDetail_quantity" 
-					value="#{controller.to.quantity}" rendered="#{formEdit and controller.editable and !readOnly}"
+					value="#{controller.to.quantity}" rendered="#{formEdit and controller.editable}"
 					reRender="IncomeDetail_amount" 
 					required="true" size="5" />
 				<f:facet name="footer">
@@ -204,11 +156,11 @@
 					<aon:outputLabel for="IncomeDetail_price" value="#{bundle.aon_price}" />
 				</f:facet>
 				<aon:outputText value="#{to.price}"
-					rendered="#{formList or !aonRole.purchaseOperator or readOnly}">
+					rendered="#{formList or !aonRole.purchaseOperator}">
 					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
 				<aon:inputText id="IncomeDetail_price" 
-					value="#{controller.to.price}" rendered="#{formEdit and aonRole.purchaseOperator and !readOnly}"
+					value="#{controller.to.price}" rendered="#{formEdit and aonRole.purchaseOperator}"
 					reRender="IncomeDetail_amount" 
 					required="true" size="5" />
 				<f:facet name="footer">
@@ -224,11 +176,11 @@
 					<aon:outputLabel for="IncomeDetail_discount" value="#{bundle.aon_discount}" />
 				</f:facet>
 				<aon:outputText value="#{to.discountExpression.discountExpr}"
-					rendered="#{formList or !aonRole.purchaseOperator or readOnly}">
+					rendered="#{formList or !aonRole.purchaseOperator}">
 					<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 				</aon:outputText>
 				<aon:inputText id="IncomeDetail_discount" 
-					value="#{controller.to.discountExpression.discountExpr}" rendered="#{formEdit and aonRole.purchaseOperator and !readOnly}"
+					value="#{controller.to.discountExpression.discountExpr}" rendered="#{formEdit and aonRole.purchaseOperator}"
 					reRender="IncomeDetail_amount" 
 					required="true" size="5" />
 				<f:facet name="footer">
@@ -244,11 +196,11 @@
 					<aon:outputLabel for="IncomeDetail_amount" value="#{bundle.aon_amount}" />
 				</f:facet>
 				<aon:outputText value="#{controller.modelAmount}"
-					rendered="#{formList or readOnly}">
+					rendered="#{formList}">
 					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
 				<aon:outputText id="IncomeDetail_amount" 
-					value="#{controller.amount}" rendered="#{formEdit and !readOnly}">
+					value="#{controller.amount}" rendered="#{formEdit}">
 					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
 				<f:facet name="footer">
