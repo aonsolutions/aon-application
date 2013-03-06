@@ -144,6 +144,7 @@
 		<!-- GENERATED -->
 		<module>aon-audabridge-api</module>
 	  	<module>aon-pms-api</module>
+	  	<module>aon-sepe-api</module>
 
 		<!-- UTILITY -->
 		<module>aon-file-format</module>
