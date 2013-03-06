@@ -564,6 +564,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		InvoiceEntryDetail detail =  new InvoiceEntryDetail();
 		Account a = (getHeader().getAccount() != null) ? getHeader().getAccount() : new Account();
 		detail.setAccount(a);
+		detail.setTransaction(getHeader().getTransaction());
 		return detail;
 	}
 	
@@ -623,6 +624,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			// applySurcharge();
 			((List<InvoiceEntryDetail>) getDetails().getWrappedData()).add(getCurrentDetail());
 			setCurrentDetail(new InvoiceEntryDetail());
+			getCurrentDetail().setTransaction(getHeader().getTransaction());
 			setNewDetail(false);
 			onNewDetail(event);
 		}
@@ -638,6 +640,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 	public void onCancelDetail(ActionEvent event) {
 		setCurrentDetail( new InvoiceEntryDetail() );
+		getCurrentDetail().setTransaction(getHeader().getTransaction());
 		setNewDetail(false);
 	}
 
@@ -651,6 +654,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			((LinkedList<InvoiceEntryDetail>) getDetails().getWrappedData()).add(i,
 					getCurrentDetail());
 			setCurrentDetail( new InvoiceEntryDetail() );
+			getCurrentDetail().setTransaction(getHeader().getTransaction());
 		}
 	}
 
@@ -954,11 +958,16 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	 */
 	private Map<Account, Double> obtainTaxQuotasPerAccount(Invoice invoice)
 			throws ManagerBeanException {
+		boolean ignoreTaxFree = !invoice.isSales() && (invoice.isIntracommunity() || invoice.isOtherISP());
 		Account account;
+		Account balancingAccount = null;
 		if (invoice.getType().equals(InvoiceType.SALES)) {
 			account = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.CHARGE_VAT_ACCOUNT);
 		} else {
 			account = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.PAID_VAT_ACCOUNT);
+			if (ignoreTaxFree) {
+				balancingAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.CHARGE_VAT_ACCOUNT);		
+			}
 		}
 
 		double total = 0.0;
@@ -970,6 +979,9 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 		Map<Account, Double> taxQuotasPerAccountMap = new HashMap<Account, Double>();
 		taxQuotasPerAccountMap.put(account, new Double(total));
+		if (ignoreTaxFree) {
+			taxQuotasPerAccountMap.put(balancingAccount, new Double(total * (-1)));	
+		}
 		return taxQuotasPerAccountMap;
 	}
 
@@ -1603,6 +1615,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				InvoiceEntryDetail detail = new InvoiceEntryDetail();
+				detail.setTransaction(getHeader().getTransaction());
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
 				detail.setId(invoiceDetail.getId());
 				if (invoiceDetail.getSource() != InvoiceSource.ACCOUNT) {

@@ -3,6 +3,7 @@ package com.code.aon.accounting;
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
 
 public class InvoiceEntryDetail implements ITransferObject {
 
@@ -17,6 +18,7 @@ public class InvoiceEntryDetail implements ITransferObject {
 	private double retentionPercent;
 	private double retentionQuota;
 	private Account account;
+	private InvoiceTransactionType transaction;
 
 	public InvoiceEntryDetail() {
 		super();
@@ -87,6 +89,13 @@ public class InvoiceEntryDetail implements ITransferObject {
 		this.account = account;
 	}
 
+	public InvoiceTransactionType getTransaction() {
+		return transaction;
+	}
+	public void setTransaction(InvoiceTransactionType transaction) {
+		this.transaction = transaction;
+	}
+
 	public void calculate() {
 		setVatQuota(0.0);
 		setSurchargeQuota(0.0);
@@ -104,6 +113,9 @@ public class InvoiceEntryDetail implements ITransferObject {
 	}
 	
 	public double getTotal() {
+		if (getTransaction() != InvoiceTransactionType.NATIONAL) {
+			return getTaxableBase();	
+		} 
 		return CommonUtil.round((getTaxableBase() + getSurchargeQuota() + getVatQuota()) - getRetentionQuota(), 2);
 	}
 	

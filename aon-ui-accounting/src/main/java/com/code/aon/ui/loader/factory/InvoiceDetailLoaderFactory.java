@@ -216,63 +216,92 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			invoiceTaxBean.insert(invoiceTax);
 
 
-			
-			LoadedAccountEntryDetail vatAccountEntryDetail = loaded.getVATLoadedAccountEntryDetail(entry.getType());
-			vatAccountEntryDetail.setDocumento(invoice.getDocumentNumber());
-			vatAccountEntryDetail.setEntry(entry);
-			vatAccountEntryDetail.setConcepto(concept);
-			if (StringUtils.isBlank(vatAccountEntryDetail.getCuenta())) {
-				Account vatAccount = (entry.getType() == AccountEntryType.SALES_INVOICE)?getLoaderUtils().getOutputVatAccount():getLoaderUtils().getInputVatAccount();
-				vatAccountEntryDetail.setCuenta( vatAccount.getCode() );
-				vatAccountEntryDetail.setDescripcionCuenta( vatAccount.getDescription() );
-			}
-			if (balancingAccount != null) {
-				vatAccountEntryDetail.setContrapartida(balancingAccount.getCode());	
-			}
-			AccountEntryDetail vatAed = (AccountEntryDetail) engine.get(params, vatAccountEntryDetail);
-			if (vatAed == null) {
-				if ( vatAccountEntryDetail.hasSaldo()) {
-					engine.insertAonEntity(params, vatAccountEntryDetail);	
+			boolean ignoreTaxFree = !invoice.isSales() && (invoice.isIntracommunity() || invoice.isOtherISP());
+			if (!invoice.isVatFree() || ignoreTaxFree) {
+				LoadedAccountEntryDetail vatAccountEntryDetail = loaded.getVATLoadedAccountEntryDetail(entry.getType());
+				vatAccountEntryDetail.setDocumento(invoice.getDocumentNumber());
+				vatAccountEntryDetail.setEntry(entry);
+				vatAccountEntryDetail.setConcepto(concept);
+				if (StringUtils.isBlank(vatAccountEntryDetail.getCuenta())) {
+					Account vatAccount = (entry.getType() == AccountEntryType.SALES_INVOICE)?getLoaderUtils().getOutputVatAccount():getLoaderUtils().getInputVatAccount();
+					vatAccountEntryDetail.setCuenta( vatAccount.getCode() );
+					vatAccountEntryDetail.setDescripcionCuenta( vatAccount.getDescription() );
 				}
-			} else {
-				vatAed = mergeAccountEntryDetail(vatAed,vatAccountEntryDetail);
-			}
-			
-			if (loaded.getPorcentajeIrpf() != null && loaded.getPorcentajeIrpf() > 0) {
-				if (!invoice.isWithholding()) {
-					invoice.setDefaultTaxInfo(false);
-					invoice.setWithholding(true);
-				}
-				invoiceTax = new InvoiceTax();
-				invoiceTax.setInvoiceDetail(detail);
-				invoiceTax.setPercentage(loaded.getPorcentajeIrpf());
-				invoiceTax.setQuota(loaded.getCuotaIrpf());
-				invoiceTax.setSurcharge(0);
-				invoiceTax.setTaxType(TaxType.RETENTION);
-				invoiceTax.setWithholdingType(loaded.getWithholdingType());
-				invoiceTaxBean.insert(invoiceTax);
-
-
-				LoadedAccountEntryDetail retentionAccountEntryDetail = loaded.getRetentionLoadedAccountEntryDetail(entry.getType());
-				retentionAccountEntryDetail.setDocumento(invoice.getDocumentNumber());
-				retentionAccountEntryDetail.setEntry(entry);
-				retentionAccountEntryDetail.setConcepto(concept);
 				if (balancingAccount != null) {
-					retentionAccountEntryDetail.setContrapartida(balancingAccount.getCode());	
+					vatAccountEntryDetail.setContrapartida(balancingAccount.getCode());	
 				}
-				if (StringUtils.isEmpty(retentionAccountEntryDetail.getCuenta())) {
-					Account retentionAccount = getLoaderUtils().getRetentionAccount();
-					if (retentionAccount == null) {
-						throw new ManagerBeanException("No existe una cuenta de retención definida en los parámetros contables");
-					}
-					retentionAccountEntryDetail.setCuenta( retentionAccount.getCode() );
-					retentionAccountEntryDetail.setDescripcionCuenta( retentionAccount.getDescription() );
-				}
-				AccountEntryDetail retentionAed = (AccountEntryDetail) engine.get(params, retentionAccountEntryDetail);
+				AccountEntryDetail vatAed = (AccountEntryDetail) engine.get(params, vatAccountEntryDetail);
 				if (vatAed == null) {
-					engine.insertAonEntity(params, retentionAccountEntryDetail);
+					if ( vatAccountEntryDetail.hasSaldo()) {
+						engine.insertAonEntity(params, vatAccountEntryDetail);	
+					}
 				} else {
-					retentionAed = mergeAccountEntryDetail(retentionAed,retentionAccountEntryDetail);
+					vatAed = mergeAccountEntryDetail(vatAed,vatAccountEntryDetail);
+				}
+				if (ignoreTaxFree) {
+					AccountEntryType type = entry.getType()==AccountEntryType.SALES_INVOICE?AccountEntryType.PURCHASE_INVOICE:AccountEntryType.SALES_INVOICE;
+					LoadedAccountEntryDetail vatAccountEntryDetail2 = loaded.getVATLoadedAccountEntryDetail(type);
+					vatAccountEntryDetail2.setDocumento(invoice.getDocumentNumber());
+					vatAccountEntryDetail2.setEntry(entry);
+					vatAccountEntryDetail2.setConcepto(concept);
+					if (StringUtils.isBlank(vatAccountEntryDetail2.getCuenta())) {
+						Account vatAccount = (type == AccountEntryType.SALES_INVOICE)?getLoaderUtils().getOutputVatAccount():getLoaderUtils().getInputVatAccount();
+						vatAccountEntryDetail2.setCuenta( vatAccount.getCode() );
+						vatAccountEntryDetail2.setDescripcionCuenta( vatAccount.getDescription() );
+					}
+					if (balancingAccount != null) {
+						vatAccountEntryDetail2.setContrapartida(balancingAccount.getCode());	
+					}
+					AccountEntryDetail vatAed2 = (AccountEntryDetail) engine.get(params, vatAccountEntryDetail2);
+					if (vatAed2 == null) {
+						if ( vatAccountEntryDetail2.hasSaldo()) {
+							engine.insertAonEntity(params, vatAccountEntryDetail2);	
+						}
+					} else {
+						vatAed2 = mergeAccountEntryDetail(vatAed2,vatAccountEntryDetail2);
+					}
+				}
+			}
+			
+			
+			
+			if (!invoice.isRetentionFree()) {
+				if (loaded.getPorcentajeIrpf() != null && loaded.getPorcentajeIrpf() > 0) {
+					if (!invoice.isWithholding()) {
+						invoice.setDefaultTaxInfo(false);
+						invoice.setWithholding(true);
+					}
+					invoiceTax = new InvoiceTax();
+					invoiceTax.setInvoiceDetail(detail);
+					invoiceTax.setPercentage(loaded.getPorcentajeIrpf());
+					invoiceTax.setQuota(loaded.getCuotaIrpf());
+					invoiceTax.setSurcharge(0);
+					invoiceTax.setTaxType(TaxType.RETENTION);
+					invoiceTax.setWithholdingType(loaded.getWithholdingType());
+					invoiceTaxBean.insert(invoiceTax);
+
+
+					LoadedAccountEntryDetail retentionAccountEntryDetail = loaded.getRetentionLoadedAccountEntryDetail(entry.getType());
+					retentionAccountEntryDetail.setDocumento(invoice.getDocumentNumber());
+					retentionAccountEntryDetail.setEntry(entry);
+					retentionAccountEntryDetail.setConcepto(concept);
+					if (balancingAccount != null) {
+						retentionAccountEntryDetail.setContrapartida(balancingAccount.getCode());	
+					}
+					if (StringUtils.isEmpty(retentionAccountEntryDetail.getCuenta())) {
+						Account retentionAccount = getLoaderUtils().getRetentionAccount();
+						if (retentionAccount == null) {
+							throw new ManagerBeanException("No existe una cuenta de retención definida en los parámetros contables");
+						}
+						retentionAccountEntryDetail.setCuenta( retentionAccount.getCode() );
+						retentionAccountEntryDetail.setDescripcionCuenta( retentionAccount.getDescription() );
+					}
+					AccountEntryDetail retentionAed = (AccountEntryDetail) engine.get(params, retentionAccountEntryDetail);
+					if (retentionAed == null) {
+						engine.insertAonEntity(params, retentionAccountEntryDetail);
+					} else {
+						retentionAed = mergeAccountEntryDetail(retentionAed,retentionAccountEntryDetail);
+					}
 				}
 			}
 		}
