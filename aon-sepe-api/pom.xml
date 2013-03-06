@@ -45,8 +45,11 @@
 					<configuration>
 						<wsdlDirectory>src/main/wsdl</wsdlDirectory>
 						<wsdlFiles>
-	       					<wsdlFile>${basedir}/src/main/wsdl/SWComunicacionDatos.wsdl</wsdlFile>
+	       					<wsdlFile>SWComunicacionDatos.wsdl</wsdlFile>
 						</wsdlFiles>
+						
+						<wsdlLocation>http://localhost/wsdl/SWComunicacionDatos.wsdl</wsdlLocation>
+						
 						<sourceDestDir>${project.build.directory}/generated-sources</sourceDestDir>
 						<packageName>com.esferalia.aon.sepe.api.SWComunicacionDatos</packageName>
 						<staleFile>${project.build.directory}/generated-sources/staleFlag/jaxws/.staleFlag</staleFile>
@@ -67,8 +70,9 @@
 					<configuration>
 						<wsdlDirectory>src/main/wsdl</wsdlDirectory>
 						<wsdlFiles>
-	       					<wsdlFile>${basedir}/src/main/wsdl/SWConsultaDatos.wsdl</wsdlFile>
+	       					<wsdlFile>SWConsultaDatos.wsdl</wsdlFile>
 						</wsdlFiles>
+						<wsdlLocation>http://localhost/wsdl/SWConsultaDatos.wsdl</wsdlLocation>
 						<sourceDestDir>${project.build.directory}/generated-sources</sourceDestDir>
 						<packageName>com.esferalia.aon.sepe.api.SWConsultaDatos</packageName>
 						<staleFile>${project.build.directory}/generated-sources/staleFlag/jaxws/.staleFlag</staleFile>
