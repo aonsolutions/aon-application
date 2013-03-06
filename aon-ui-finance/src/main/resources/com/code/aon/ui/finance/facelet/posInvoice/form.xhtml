@@ -183,24 +183,55 @@
 
 						<aon:outputLabel value="&#160;" />
 
-						<ui:include src="/com/code/aon/ui/product/facelet/item/lookupDetail.xhtml">
-							<ui:param name="lookupTo" value="#{posInvoiceDetail.to.item}" />
-							<ui:param name="idRequired" value="#{true}" />
-							<ui:param name="skipLabel" value="#{true}" />
-							<ui:param name="skipGoToButton" value="#{true}" />
-							<ui:param name="skipNewButton" value="#{true}" />
-							<ui:param name="lookupInputOnFocus" value="saveTicketDetail" />
-							<ui:param name="lookupReRender"	value="InvoiceDetail_quantity,InvoiceDetail_discount,InvoiceDetail_price,InvoiceDetail_buttons" />
-							<aon:methodParam name="lookupChangeListener"
-								value="#{posInvoiceDetail.onItemChanged}" type="lookupChangeListener" />
-						</ui:include>
+						<aon:div>
+							<ui:include src="/com/code/aon/ui/product/facelet/item/lookupDetail.xhtml">
+								<ui:param name="lookupTo" value="#{posInvoiceDetail.to.item}" />
+								<ui:param name="idRequired" value="#{true}" />
+								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="skipGoToButton" value="#{true}" />
+								<ui:param name="skipNewButton" value="#{true}" />
+								<ui:param name="lookupInputOnFocus" value="saveTicketDetail" />
+								<ui:param name="lookupReRender"	value="PosInvoiceDetailWizard" />
+								<aon:methodParam name="lookupChangeListener"
+									value="#{posInvoiceDetail.onItemChanged}" type="lookupChangeListener" />
+							</ui:include>
+							<c:if test="#{aonConfiguration.bean.product.showStock}">
+								<aon:commandButton 
+									id="PosDetail-itemInfo" immediate="true" value="&#160;"
+									title="#{productBundle.product_info}"
+									rendered="#{posInvoiceDetail.to.item.id != null and posInvoiceDetail.to.item.product.inventoriable}"
+									styleClass="aon-icon aon-icon-edit-end aon-icon-info"
+									actionListener="#{itemInfo.onShowPanel}"
+									reRender="itemInfoContainer">
+									<aon:set var="#{itemInfo.stockVisible}" value="#{true}" />
+									<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
+									<aon:set var="#{itemInfo.item}" value="#{posInvoiceDetail.to.item}" /> 
+									<aon:set var="#{itemInfo.warehouse}" value="#{null}" /> 
+									<aon:set var="#{itemInfo.rowStock}" value="#{posInvoiceDetail.rowStock}" /> 
+									<aon:set var="#{itemInfo.componentId}" value="Item_id" />
+									<aon:set var="#{itemInfo.alternativeMethod}" value="posInvoiceDetail.onItemChanged" />
+								</aon:commandButton>															
+							</c:if>
+						</aon:div>
 
-						<aon:inputText id="InvoiceDetail_quantity"
-							value="#{posInvoiceDetail.to.quantity}" 
-							required="true" size="5" maxlength="5"
-							valueChangeListener="#{posInvoiceDetail.onQuantityChanged}"
-							reRender="InvoiceDetail_discount,InvoiceDetail_price" ajaxSingle="true"
-							focus="InvoiceDetail_discount" />
+						<aon:div>
+							<aon:commandButton
+								id="PosDetail-plusQuantity" immediate="true"
+								styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-search-add"
+								actionListener="#{posInvoiceDetail.onPlusQuantity}"
+								reRender="InvoiceDetail_quantity" ajaxSingle="true" />
+							<aon:inputText id="InvoiceDetail_quantity"
+								value="#{posInvoiceDetail.to.quantity}" 
+								required="true" size="5" maxlength="5"
+								valueChangeListener="#{posInvoiceDetail.onQuantityChanged}"
+								reRender="InvoiceDetail_discount,InvoiceDetail_price" ajaxSingle="true"
+								focus="InvoiceDetail_discount" />
+							<aon:commandButton
+								id="PosFinance-removeButton" immediate="true"
+								styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-search-minus"
+								actionListener="#{posInvoiceDetail.onMinusQuantity}"
+								reRender="InvoiceDetail_quantity" ajaxSingle="true" />
+						</aon:div>
 
 						<aon:inputText id="InvoiceDetail_discount"
 							value="#{posInvoiceDetail.to.discountExpression.discountExpr}"
@@ -214,7 +245,7 @@
 							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 						</aon:outputText>
 
-						<aon:div id ="InvoiceDetail_buttons">
+						<aon:div id="InvoiceDetail_buttons">
 							<aon:commandButton id="saveTicketDetail"
 								styleClass="aon-commandButton"
 								value="#{bundle.aon_key_save_line_description}"

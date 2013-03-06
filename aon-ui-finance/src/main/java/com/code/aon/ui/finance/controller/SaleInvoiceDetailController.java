@@ -13,14 +13,14 @@ import com.code.aon.ui.common.components.LookupChangeEvent;
 
 public class SaleInvoiceDetailController extends InvoiceDetailController {
 
-	public void onItemChanged(LookupChangeEvent event) throws ManagerBeanException {
+	public void onItemChanged(LookupChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			itemChanged(item);
 		}
 	}	
 
-	public void itemChanged(Item item) throws ManagerBeanException {
+	public void itemChanged(Item item) {
 		Invoice invoice = (Invoice)getMasterController().getTo();
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		invoiceDetail.setItem(item);
@@ -42,11 +42,11 @@ public class SaleInvoiceDetailController extends InvoiceDetailController {
 		}
 	}	
 
-	public void onQuantityChanged(ValueChangeEvent event) throws ManagerBeanException {
+	public void onQuantityChanged(ValueChangeEvent event) {
 		quantityChanged((event.getNewValue() != null && !event.getNewValue().toString().equals("")) ? (Double)event.getNewValue() : 0);
 	}
 
-	public void quantityChanged(double quantity) throws ManagerBeanException {
+	public void quantityChanged(double quantity) {
 		Invoice invoice = (Invoice)getMasterController().getTo();
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		invoiceDetail.setQuantity(quantity);
@@ -68,11 +68,11 @@ public class SaleInvoiceDetailController extends InvoiceDetailController {
 		}
 	}
 
-	public void onDiscountChanged(ValueChangeEvent event) throws ManagerBeanException {
+	public void onDiscountChanged(ValueChangeEvent event) {
 		discountChanged((event.getNewValue() != null && !event.getNewValue().toString().equals("")) ? event.getNewValue().toString() : "0");
 	}
 
-	public void discountChanged(String discount) throws ManagerBeanException {
+	public void discountChanged(String discount) {
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		invoiceDetail.getDiscountExpression().setDiscountExpr(discount);
 	}
