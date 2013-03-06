@@ -40,4 +40,14 @@ public enum STDIDETC implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static STDIDETC getEnumByValue(String expression) {
+		for( STDIDETC o : STDIDETC.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

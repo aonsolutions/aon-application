@@ -173,6 +173,7 @@ public class ContrataWriter {
 		} catch (Exception e) {
 			String msg = "Error de formato al validar y generar el XML";
 			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage("*** DETALLE *** :" + e );
 			throw new AbortProcessingException(msg, e);
 		} finally {
 			schemaFile.delete();

@@ -85,7 +85,6 @@ public class ContractController extends BasicController implements IVariablesHan
 	private ContractParams params;
 
 	private boolean showNewContractModal;
-	private boolean showContrataWindow;
 	private boolean skipPayrollData;
 
 	public ContractParams getParams() {
@@ -107,12 +106,6 @@ public class ContractController extends BasicController implements IVariablesHan
 		this.variableHandler = handler;
 	}
 	
-	public boolean isShowContrataWindow() {
-		return showContrataWindow;
-	}
-	public void setShowContrataWindow(boolean showContrataWindow) {
-		this.showContrataWindow = showContrataWindow;
-	}
 	public boolean isSkipPayrollData() {
 		return skipPayrollData;
 	}

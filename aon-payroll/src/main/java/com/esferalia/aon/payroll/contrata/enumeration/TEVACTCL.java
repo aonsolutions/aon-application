@@ -41,4 +41,14 @@ public enum TEVACTCL implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TEVACTCL getEnumByValue(String expression) {
+		for( TEVACTCL o : TEVACTCL.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

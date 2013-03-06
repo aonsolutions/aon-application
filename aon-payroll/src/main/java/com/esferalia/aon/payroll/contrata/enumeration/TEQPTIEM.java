@@ -40,4 +40,14 @@ public enum TEQPTIEM implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TEQPTIEM getEnumByValue(String expression) {
+		for( TEQPTIEM o : TEQPTIEM.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

@@ -42,4 +42,14 @@ public enum TESCETCO implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TESCETCO getEnumByValue(String expression) {
+		for( TESCETCO o : TESCETCO.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

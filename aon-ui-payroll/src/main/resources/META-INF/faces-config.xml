@@ -16,6 +16,13 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.PayrollCollectionsController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+
+	<!-- ************** CONTRATA COLLECTIONS ****************** -->
+	<managed-bean>
+		<managed-bean-name>contrataCollections</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.ContrataCollectionsController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
 	<!--  **** ENTERPRISE TREE **** -->
 	<managed-bean>

@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlElement;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 
@@ -273,8 +271,8 @@ public class ContrataTransformacionesWriter {
 		if(params.isEttData()){
 			DATOSCOMUNICACOPIABASICATYPE datos = factory.createDATOSCOMUNICACOPIABASICATYPE();
 			datos.setDOMICCENTROTRABAJO(params.getContract().getWorkPlace().getAddress().getFullAddress());
-			datos.setTEXTOCOPIABASICA(params.getBasicCopyComments());
-			datos.setTIPOFIRMA(params.getBasicCopySignatureType()!=null?params.getBasicCopySignatureType().getValue():null);
+			datos.setTEXTOCOPIABASICA(params.getTextoCopiaBasica());
+			datos.setTIPOFIRMA(params.getTipoFirmaCopiaBasica()!=null?params.getTipoFirmaCopiaBasica().getValue():null);
 			return datos;
 		}
 		return null;
@@ -366,7 +364,7 @@ public class ContrataTransformacionesWriter {
 		DATOSMEDIDASFOMENTOTYPE datos = factory.createDATOSMEDIDASFOMENTOTYPE();
 		datos.setINDCOSTEDESPIDO(contrataParams.isPermanentContractDevelopment()?"1":"2");
 		if(contrataParams.isPermanentContractDevelopment()){
-			datos.setCODIGOCOLECTIVODESPIDO(contrataParams.getDismissalCollective()!=null?contrataParams.getDismissalCollective().getValue():null);
+			datos.setCODIGOCOLECTIVODESPIDO(contrataParams.getCodigoColectivoDespido()!=null?contrataParams.getCodigoColectivoDespido().getValue():null);
 		} else {
 			datos.setCODIGOCOLECTIVODESPIDO(null);
 		}
@@ -393,9 +391,9 @@ public class ContrataTransformacionesWriter {
 	 * @return
 	 */
 	private DATOSUSOLIBREEMPRESATYPE createDatosUsoLibreEmpresa(ContrataParams params) {
-		if(params.getEnterpriseFreeUse()!=null){
+		if(params.getUsoLibreEmpresa()!=null){
 			DATOSUSOLIBREEMPRESATYPE datos = factory.createDATOSUSOLIBREEMPRESATYPE();
-			datos.setUSOLIBREEMPRESA(params.getEnterpriseFreeUse());
+			datos.setUSOLIBREEMPRESA(params.getUsoLibreEmpresa());
 			return datos;
 		}
 		return null;
@@ -584,7 +582,7 @@ public class ContrataTransformacionesWriter {
 	 */
 	private DATOSADICIONALESTRANSFORMACIONTYPE createDatosAdicionalesTransformacion(ContrataParams params) {
 		DATOSADICIONALESTRANSFORMACIONTYPE datos = factory.createDATOSADICIONALESTRANSFORMACIONTYPE();
-		datos.setINDDISCAPACIDAD(params.getDisabilityCode()!=null?params.getDisabilityCode().getValue():null);
+		datos.setINDDISCAPACIDAD(params.getIndDiscapacidad()!=null?params.getIndDiscapacidad().getValue():null);
 		// TODO
 		datos.setCODIGOCOLECTIVOREDUCCION(null);
 		return datos;
@@ -725,11 +723,13 @@ public class ContrataTransformacionesWriter {
 	private DATOSCONTRATOTIEMPOPARCIALTYPE createDatosContratoTiempoParcial(ContrataParams params) {
 		// TODO
 		DATOSCONTRATOTIEMPOPARCIALTYPE datos = factory.createDATOSCONTRATOTIEMPOPARCIALTYPE();		
-		datos.setTIPOJORNADA(params.getTipojornada().getValue());
-	    datos.setHORASJORNADA(params.getDuracionjornada().isEmpty()?null:completeLength(params.getDuracionjornada(), 6, "0", false));
-	    datos.setHORASCONVENIO(params.getDuracionconvenio().isEmpty()?null:completeLength(params.getDuracionconvenio(), 6, "0", false));
-	    datos.setACTIVIDADSINFECHACIERTA(params.getActividadsinfechacierta());
-	    datos.setFIJODISCONTINUOPERIODICO(params.getFijodiscontinuoperiodico()?"S":"N");
+		datos.setTIPOJORNADA(params.getTipoJornada().getValue());
+		String duracionconvenio = (params.getHorasConvenio()==null?"":completeLength(params.getHorasConvenio(), 4, "0", false))+(params.getMinutosConvenio()==null?"":completeLength(params.getMinutosConvenio(), 2, "0", false));
+		String duracionjornada = (params.getHorasJornada()==null?"":completeLength(params.getHorasJornada(), 4, "0", false))+(params.getMinutosJornada()==null?"":completeLength(params.getMinutosJornada(), 2, "0", false));
+	    datos.setHORASJORNADA(duracionjornada.isEmpty()?null:completeLength(duracionjornada, 6, "0", false));
+	    datos.setHORASCONVENIO(duracionconvenio.isEmpty()?null:completeLength(duracionconvenio, 6, "0", false));
+	    datos.setACTIVIDADSINFECHACIERTA(params.getActividadSinFechaCierta());
+	    datos.setFIJODISCONTINUOPERIODICO(params.getFijoDiscontinuoPeriodico()?"S":"N");
 		return datos;
 	}
 	

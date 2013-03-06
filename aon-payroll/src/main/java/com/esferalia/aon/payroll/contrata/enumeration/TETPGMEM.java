@@ -51,4 +51,14 @@ public enum TETPGMEM implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TETPGMEM getEnumByValue(String expression) {
+		for( TETPGMEM o : TETPGMEM.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

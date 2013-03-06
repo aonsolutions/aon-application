@@ -41,4 +41,14 @@ public enum TEUECCLL implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TEUECCLL getEnumByValue(String expression) {
+		for( TEUECCLL o : TEUECCLL.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

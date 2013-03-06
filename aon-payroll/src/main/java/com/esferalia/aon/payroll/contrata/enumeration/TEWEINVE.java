@@ -7,9 +7,15 @@ import com.code.aon.common.enumeration.IStringEnum;
 */ 
 public enum TEWEINVE implements IStringEnum {
 
-	TEWEINVE_1( "1", "ORGANISMO PUBLICO", null, null ),
-	TEWEINVE_2( "2", "INSTITUCION SIN ANIMO DE LUCRO", null, null ),
-	TEWEINVE_3( "3", "UNIVERSIDAD PUBLICA", null, null ),
+	TEWEINVE_1( "1", "ORGANISMO PÚBLICO", null, null ),
+	TEWEINVE_2( "2", "INSTITUCIÓN SIN ÁNIMO DE LUCRO", null, null ),
+	TEWEINVE_3( "3", "UNIVERSIDAD PÚBLICA", null, null ),
+	TEWEINVE_4( "4", "ORGANISMO PÚBLICO DE INVESTIGACIÓN DE LA ADMINISTRACIÓN GENERAL DEL ESTADO", null, null ),
+	TEWEINVE_5( "5", "ORGANISMO DE INVESTIGACIÓN DE OTRAS ADMINISTRACIONES PÚBLICAS", null, null ),
+	TEWEINVE_6( "6", "UNIVERSIDADES PRIVADAS Y UNIVERSIDADES DE LA IGLESIA CATÓLICA QUE PERCIBAN FONDOS PARA CONTRATAR PERSONAL INVESTIGADOR", null, null ),
+	TEWEINVE_7( "7", "ENTIDADES PRIVADAS SIN ÁNIMO DE LUCRO QUE REALICEN ACTIVIDADES DE I+D SEGÚN D.A. 1ª LEY 14/2011", null, null ),
+	TEWEINVE_8( "8", "CONSORCIOS PÚBLICOS Y FUNDACIONES DEL SECTOR PÚBLICO SEGÚN D.A. 1ª LEY 14/2011", null, null ),
+	TEWEINVE_9( "9", "OTROS ORGANISMOS DE INVESTIGACIÓN DE LA AGE CUANDO REALICEN ACTIVIDAD INVESTIGADORA", null, null ),
 	;
 	private String value;
 	private String label;
@@ -39,4 +45,14 @@ public enum TEWEINVE implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TEWEINVE getEnumByValue(String expression) {
+		for( TEWEINVE o : TEWEINVE.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

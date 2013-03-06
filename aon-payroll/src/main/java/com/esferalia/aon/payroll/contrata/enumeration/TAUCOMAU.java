@@ -56,4 +56,14 @@ public enum TAUCOMAU implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TAUCOMAU getEnumByValue(String expression) {
+		for( TAUCOMAU o : TAUCOMAU.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

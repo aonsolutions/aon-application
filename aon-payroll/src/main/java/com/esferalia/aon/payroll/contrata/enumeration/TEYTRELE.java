@@ -38,4 +38,14 @@ public enum TEYTRELE implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TEYTRELE getEnumByValue(String expression) {
+		for( TEYTRELE o : TEYTRELE.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

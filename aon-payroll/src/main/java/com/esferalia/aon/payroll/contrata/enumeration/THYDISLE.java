@@ -38,4 +38,14 @@ public enum THYDISLE implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static THYDISLE getEnumByValue(String expression) {
+		for( THYDISLE o : THYDISLE.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

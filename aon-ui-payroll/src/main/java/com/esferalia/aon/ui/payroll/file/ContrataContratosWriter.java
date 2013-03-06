@@ -539,6 +539,7 @@ public class ContrataContratosWriter {
 		if(StringUtils.isEmpty(person.getRegistry().getDocument())){
 			AonUtil.addErrorMessage("El trabajador no tiene definido el número de documento.");
 		} else {
+			// FIXME
 			/*
 			"D";"D.N.I"
 			"E";"NUMERO IDENTIFICATIVO EXTRANJERO"
@@ -795,6 +796,7 @@ public class ContrataContratosWriter {
 	 * @throws ManagerBeanException
 	 */
 	private DATOSGENERALESCONTRATOTYPE createDatosGeneralesContrato(ContrataParams params) throws ManagerBeanException {
+		String tc2 = getContractDataMap(params.getContract()).get(ContextVariable.TC2.getName());
 		DATOSGENERALESCONTRATOTYPE datos = contratoFactory.createDATOSGENERALESCONTRATOTYPE();
 		datos.setFECHAINICIO(getFormatedDate(params.getContract().getStartDate()));
 		datos.setFECHATERMINO(getFormatedDate(params.getContract().getEndDate()));
@@ -806,7 +808,15 @@ public class ContrataContratosWriter {
 //				cuando su duración está entre 36 y 48 meses.    
 //		Refleja la existencia ("S") o no existencia ("N") de un convenio colectivo que autorice estas duraciones. 
 //		Para el resto de contratos que no se encuentran en uno de los casos anteriores, este elemento no debe aparecer en el fichero a enviar.
-		datos.setINDCONVENIOCOLECTIVO(params.isCollectiveAgreement()?"S":null);
+		if(params.getContract().getEndDate()!=null){
+			Integer durationInMonths = getMonthsBetweenDates(params.getContract().getStartDate(), params.getContract().getEndDate());
+			if( ((tc2.equals("402") || tc2.equals("502")) && durationInMonths>=6 && durationInMonths<=12) 
+					|| (tc2.equals("421") && durationInMonths>=24 && durationInMonths<=36) 
+					|| ((tc2.equals("401") || tc2.equals("501") || tc2.equals("450") || tc2.equals("550")) && durationInMonths>=36 && durationInMonths<=48)  
+					){
+				datos.setINDCONVENIOCOLECTIVO(params.isCollectiveAgreement()?"S":"N");
+			}
+		}
 //		"11";"ESTUDIOS PRIMARIOS INCOMPLETOS"
 //		"22";"PRIMERA ETAPA DE EDUCACIÓN SECUNDARIA SIN TÍTULO DE GRADUADO ESCOLAR O EQUIVALENTE"              
 //		"23";"PRIMERA ETAPA DE EDUCACIÓN SECUNDARIA CON TÍTULO DE GRADUADO ESCOLAR O EQUIVALENTE"             
@@ -819,17 +829,15 @@ public class ContrataContratosWriter {
 //		"60";"ENSEÑANZAS UNIVERSITARIAS DE MÁSTER"
 //		"61";"DOCTORADO UNIVERSITARIO"
 //		"80";"SIN ESTUDIOS"
-//		datos.setNIVELFORMATIVO(contrataParams.getEducationalLevel()!=null?contrataParams.getEducationalLevel().getValue():null);
-		datos.setNIVELFORMATIVO("11");
+		datos.setNIVELFORMATIVO(params.getNivelFormativo()!=null?params.getNivelFormativo().getValue():null);
 //		Indicador de discapacidad.  
 //		Obligatorio con "S" para contratos de minusválidos.  
 //		Obligatorio con "C" para contratos de minusválidos en centros especiales de empleo. 
 //		Obligatorio con "E", "F" o "G" para contratos de minusválidos de enclaves laborales. 
 //		Sus posibles valores se encuentran codificados en la tabla TEJINDIS.txt de la Ayuda XML 
 		if(params.isDisabilityData()){
-			datos.setINDDISCAPACIDAD(params.getDisabilityCode()!=null?params.getDisabilityCode().getValue():null);
+			datos.setINDDISCAPACIDAD(params.getIndDiscapacidad()!=null?params.getIndDiscapacidad().getValue():null);
 		}
-//		datos.setCODIGOOCUPACION(completeLength(contrataParams.getCno().getCode(), 8, ZERO_VALUE, true));
 		String cno = getContractDataMap(params.getContract()).get(ContextVariable.CNO.getName());
 		if(StringUtils.isEmpty(cno)){
 			AonUtil.addErrorMessage("El trabajador no tiene definido el código de ocupacion (CNO).");
@@ -839,24 +847,23 @@ public class ContrataContratosWriter {
 		if(params.isOfferData()){
 			datos.setIDOFERTA(completeLength(params.getOffer(), 17, ZERO_VALUE, false));
 		}
-//		Código del programa de empleo.  
-//		Obligatorio para los contratos de inserción (códigos 403 y 503).  
-//		Sus posibles valores se encuentran codificados en la tabla TETPGMEM.txt de la Ayuda XML 
-		datos.setCODIGOPROGRAMAEMPLEO(params.getEmploymentProgram()!=null?params.getEmploymentProgram().getValue():null);
+		if( tc2.equals("403") || tc2.equals("503") ){
+			datos.setCODIGOPROGRAMAEMPLEO(params.getCodigoProgramaEmpleo()!=null?params.getCodigoProgramaEmpleo().getValue():null);
+		}
 		datos.setNACIONALIDADCT(completeLength(params.getContract().getWorkPlace().getAddress().getRegistry().getNationality().getIsoNum(),3,ZERO_VALUE,false));
-//		falta por implementar: tabla con los municipios
+		// FIXME: falta por implementar: tabla con los municipios
 		datos.setMUNICIPIOCT(completeLength(params.getContract().getWorkPlace().getAddress().getGeozone().getCode(),5,ZERO_VALUE,false));
 		if(params.isOlderThan52Data()){
-			datos.setOTRASLEGISLACIONES(params.getOtherLaws()!=null?params.getOtherLaws().getValue():null);
+			datos.setOTRASLEGISLACIONES(params.getOtrasLegislaciones()!=null?params.getOtrasLegislaciones().getValue():null);
 		}
-//		contrato temporal para personas con discapacidad bonificado 
-//		Obligatorio (S/N) para los códigos 430 y 530 salvo que sean minusválidos en Centros Especiales de Empleo (IND_DISCAPACIDAD=C) . 
-//		Indica si el contrato temporal para personas con discapacidad es bonificado o no. 
-//		datos.setTEMPORALMINUSVBONIFICADO("");
-//		contrato de formación bonificado
-//		Obligatorio (S/N) para los códigos 421 y 450 con modalidad 421 iniciados entre el 18/06/2010 y el 31/12/2011. 
-//		Indica si el contrato de formación es bonificado o no. 
-//		datos.setFORMACIONBONIFICADO("");
+		if(tc2.equals("430") || (tc2.equals("530") && !datos.getINDDISCAPACIDAD().equals("C") ) ){
+			String subsidized = getContractDataMap(params.getContract()).get(ContextVariable.SUBSIDIZED.getName());
+			datos.setTEMPORALMINUSVBONIFICADO(Boolean.parseBoolean(subsidized)?"S":"N");
+		}
+		if(tc2.equals("421")){
+			String subsidized = getContractDataMap(params.getContract()).get(ContextVariable.SUBSIDIZED.getName());
+			datos.setFORMACIONBONIFICADO(Boolean.parseBoolean(subsidized)?"S":"N");
+		}
 		if(params.isCanpaignData()){
 			datos.setDATOSCAMPAÑAS(params.getFullCampaign());
 		}
@@ -866,7 +873,10 @@ public class ContrataContratosWriter {
 //		y tampoco esté acogido a convenio colectivo que justifique esta duración. 
 //		Indica si el contrato se realiza (S) por la Administración Pública , Organismo Público vinculado o Universidad , 
 //		o no es una empresa de estos tipos (N). 
-//		datos.setINDEMPRESAAAPPUNIVERSIDAD("");
+		// FIXME
+		if(tc2.equals("401") || tc2.equals("501") || tc2.equals("450") || tc2.equals("550")){
+			datos.setINDEMPRESAAAPPUNIVERSIDAD("N");
+		}
 		return datos;
 	}
 	/**
@@ -911,7 +921,7 @@ public class ContrataContratosWriter {
 		DATOSMEDIDASFOMENTOTYPE datos = contratoFactory.createDATOSMEDIDASFOMENTOTYPE();
 		datos.setINDCOSTEDESPIDO(contrataParams.isPermanentContractDevelopment()?"1":"2");
 		if(contrataParams.isPermanentContractDevelopment()){
-			datos.setCODIGOCOLECTIVODESPIDO(contrataParams.getDismissalCollective()!=null?contrataParams.getDismissalCollective().getValue():null);
+			datos.setCODIGOCOLECTIVODESPIDO(contrataParams.getCodigoColectivoDespido()!=null?contrataParams.getCodigoColectivoDespido().getValue():null);
 		} else {
 			datos.setCODIGOCOLECTIVODESPIDO(null);
 		}
@@ -949,7 +959,7 @@ public class ContrataContratosWriter {
 	private DATOSANEXOCONTRATORELEVOTYPE createDatosAnexoContratoRelevo(ContrataParams params) {
 		if(params.isReliefData()){
 			DATOSANEXOCONTRATORELEVOTYPE datos = contratoFactory.createDATOSANEXOCONTRATORELEVOTYPE();
-			datos.setTIPOTRABAJADOR(params.getReliefEmployeeType().getValue());
+			datos.setTIPOTRABAJADOR(params.getTipoTrabajadorRelevo().getValue());
 			datos.setNOMBREAPELLIDOS(createNombreApellidos(params.getReliefPerson()));
 			return datos;
 		}
@@ -984,7 +994,7 @@ public class ContrataContratosWriter {
 	private DATOSETCOTYPE createDatosEtCote(ContrataParams params) {
 		if(params.isSchoolWorkshopData()){
 			DATOSETCOTYPE datos = contratoFactory.createDATOSETCOTYPE();
-			datos.setCODIGOETCOTE(params.getSchoolWorkshop().getValue());
+			datos.setCODIGOETCOTE(params.getCodigoEtCoTe().getValue());
 			return datos;
 		}
 		return null;
@@ -1151,14 +1161,11 @@ public class ContrataContratosWriter {
 	 * @return
 	 */
 	private DATOSCOMUNICACOPIABASICATYPE createDatosComunicacionCopiaBasica(ContrataParams params) {
-		if(params.isEttData()){
-			DATOSCOMUNICACOPIABASICATYPE datos = contratoFactory.createDATOSCOMUNICACOPIABASICATYPE();
-			datos.setDOMICCENTROTRABAJO(params.getContract().getWorkPlace().getAddress().getFullAddress());
-			datos.setTEXTOCOPIABASICA(params.getBasicCopyComments());
-			datos.setTIPOFIRMA(params.getBasicCopySignatureType()!=null?params.getBasicCopySignatureType().getValue():null);
-			return datos;
-		}
-		return null;
+		DATOSCOMUNICACOPIABASICATYPE datos = contratoFactory.createDATOSCOMUNICACOPIABASICATYPE();
+		datos.setDOMICCENTROTRABAJO(params.getContract().getWorkPlace().getAddress().getFullAddress());
+		datos.setTEXTOCOPIABASICA(params.getTextoCopiaBasica());
+		datos.setTIPOFIRMA(params.getTipoFirmaCopiaBasica()!=null?params.getTipoFirmaCopiaBasica().getValue():null);
+		return datos;
 	}
 	/**
 	 * 
@@ -1166,9 +1173,9 @@ public class ContrataContratosWriter {
 	 * @return
 	 */
 	private DATOSUSOLIBREEMPRESATYPE createDatosUsoLibreEmpresa(ContrataParams params) {
-		if(params.getEnterpriseFreeUse()!=null){
+		if(StringUtils.isNotBlank(params.getUsoLibreEmpresa())){
 			DATOSUSOLIBREEMPRESATYPE datos = contratoFactory.createDATOSUSOLIBREEMPRESATYPE();
-			datos.setUSOLIBREEMPRESA(params.getEnterpriseFreeUse());
+			datos.setUSOLIBREEMPRESA(params.getUsoLibreEmpresa());
 			return datos;
 		}
 		return null;
@@ -1329,17 +1336,22 @@ public class ContrataContratosWriter {
 	private DATOSCONTRATOTIEMPOPARCIALTYPE createDatosContratoTiempoParcial(ContrataParams params) {
 		// TODO
 		DATOSCONTRATOTIEMPOPARCIALTYPE datos = contratoFactory.createDATOSCONTRATOTIEMPOPARCIALTYPE();
-		datos.setACTIVIDADSINFECHACIERTA(params.getActividadsinfechacierta());
-		datos.setCOLECTIVOEDAD(params.getColectivoedad());
-		datos.setFIJODISCONTINUOPERIODICO(params.getFijodiscontinuoperiodico()?"S":"N");
-		datos.setHORASANUALESTIEMPOCOMPLETO(params.getHorasanualestiempocompleto());
-		datos.setHORASCONVENIO(params.getDuracionconvenio().isEmpty()?null:completeLength(params.getDuracionconvenio(), 6, "0", false));
-		datos.setHORASFORMACION(params.getDuracionformacion().isEmpty()?null:completeLength(params.getDuracionformacion(), 6, "0", false));
-		datos.setHORASJORNADA(params.getDuracionjornada().isEmpty()?null:completeLength(params.getDuracionjornada(), 6, "0", false));
-		datos.setINDICFORMACIONTEORICA(params.getIndicformacionteorica());
-		datos.setPORCENTAJEJUBILACIONPARCIAL(params.getPorcentajejubilacionparcial());
-		datos.setPORCJORNADAPACTADA(params.getPorcjornadapactada());
-		datos.setTIPOJORNADA(params.getTipojornada().getValue());
+		datos.setACTIVIDADSINFECHACIERTA(params.getActividadSinFechaCierta());
+		datos.setCOLECTIVOEDAD(params.getColectivoEdad()!=null?params.getColectivoEdad().getValue():null);
+		datos.setFIJODISCONTINUOPERIODICO(params.getFijoDiscontinuoPeriodico()!=null && params.getFijoDiscontinuoPeriodico()?"S":"N");
+		datos.setHORASANUALESTIEMPOCOMPLETO(params.getHorasAnualesTiempoCompleto());
+		
+		String duracionconvenio = (params.getHorasConvenio()==null?"":completeLength(params.getHorasConvenio(), 4, "0", false))+(params.getMinutosConvenio()==null?"":completeLength(params.getMinutosConvenio(), 2, "0", false));
+		String duracionjornada = (params.getHorasJornada()==null?"":completeLength(params.getHorasJornada(), 4, "0", false))+(params.getMinutosJornada()==null?"":completeLength(params.getMinutosJornada(), 2, "0", false));
+		String duracionformacion = (params.getHorasFormacion()==null?"":completeLength(params.getHorasFormacion(), 4, "0", false))+(params.getMinutosFormacion()==null?"":completeLength(params.getMinutosFormacion(), 2, "0", false));
+		datos.setHORASCONVENIO(duracionconvenio.isEmpty()?null:completeLength(duracionconvenio, 6, "0", false));
+		datos.setHORASFORMACION(duracionformacion.isEmpty()?null:completeLength(duracionformacion, 6, "0", false));
+		datos.setHORASJORNADA(duracionjornada.isEmpty()?null:completeLength(duracionjornada, 6, "0", false));
+		
+		datos.setINDICFORMACIONTEORICA(params.getIndicFormacionTeorica());
+		datos.setPORCENTAJEJUBILACIONPARCIAL(params.getPorcentajeJubilacionParcial());
+		datos.setPORCJORNADAPACTADA(params.getPorcJornadaPactada());
+		datos.setTIPOJORNADA(params.getTipoJornada()!=null?params.getTipoJornada().getValue():null);
 		return datos;
 	}
 	/**
@@ -1398,7 +1410,7 @@ public class ContrataContratosWriter {
 	 */
 	private DATOSREDUCCIONRDL12011TYPE createDatosReduccionRdl2011(ContrataParams params) {
 		// TODO
-		DATOSREDUCCIONRDL12011TYPE datos = contratoFactory.createDATOSREDUCCIONRDL12011TYPE();
+//		DATOSREDUCCIONRDL12011TYPE datos = contratoFactory.createDATOSREDUCCIONRDL12011TYPE();
 //		datos.setCODIGOCOLECTIVOREDUCCION(params.getCODIGOCOLECTIVOREDUCCION());
 //		datos.setPORCENTAJEREDUCCION(params.getPORCENTAJEREDUCCION());
 //		datos.setPORCENTAJEJORNADAREDUCCION(params.getPORCENTAJEJORNADAREDUCCION());
@@ -1699,9 +1711,9 @@ public class ContrataContratosWriter {
 	 */
 	private DATOSCONTRATOINVESTIGACIONTYPE createDatosContratoInvestigacion(ContrataParams params) {
 		DATOSCONTRATOINVESTIGACIONTYPE datos = new  DATOSCONTRATOINVESTIGACIONTYPE();
-		datos.setINDEMPLEADOR(params.getIndempleador().getValue());
-		datos.setINDTRABAJADOR(params.getIndtrabajador().getValue());
-		datos.setINDRD632006(params.getIndrd632006()?"S":null);
+		datos.setINDEMPLEADOR(params.getIndEmpleador().getValue());
+		datos.setINDTRABAJADOR(params.getIndTrabajador().getValue());
+		datos.setINDRD632006(params.getIndRd632006()?"S":null);
 		return datos;
 	}
 	/**
@@ -1893,6 +1905,11 @@ public class ContrataContratosWriter {
 			builder.append(value);
 		}
 		return builder.toString();
+	}
+	
+	private Integer getMonthsBetweenDates(Date startDate, Date endDate) {
+//		CommonUtil.
+		return null;
 	}
 	
 

@@ -20,12 +20,8 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.enumeration.AgeCollective;
-import com.esferalia.aon.payroll.enumeration.AgeGroup;
-import com.esferalia.aon.payroll.enumeration.BasicCopySignatureType;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.CNO;
-import com.esferalia.aon.payroll.enumeration.CollectiveReductionCode;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCalendarEventType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -35,36 +31,25 @@ import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
-import com.esferalia.aon.payroll.enumeration.DisabilityCode;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.payroll.enumeration.DischargeCause;
 import com.esferalia.aon.payroll.enumeration.DismissCause;
-import com.esferalia.aon.payroll.enumeration.DismissalCollective;
-import com.esferalia.aon.payroll.enumeration.EducationalLevel;
 import com.esferalia.aon.payroll.enumeration.EmbargableType;
-import com.esferalia.aon.payroll.enumeration.EmployeeType;
-import com.esferalia.aon.payroll.enumeration.EmploymentProgram;
 import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 import com.esferalia.aon.payroll.enumeration.FamilySituation;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
-import com.esferalia.aon.payroll.enumeration.InterimCause;
 import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.LiquidationType;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
-import com.esferalia.aon.payroll.enumeration.OtherLaws;
 import com.esferalia.aon.payroll.enumeration.PayrollBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.payroll.enumeration.QuoteType;
-import com.esferalia.aon.payroll.enumeration.ResearchEmployee;
-import com.esferalia.aon.payroll.enumeration.ResearchEmployer;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
-import com.esferalia.aon.payroll.enumeration.SchoolWorkshop;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
-import com.esferalia.aon.payroll.enumeration.WorkingDayType;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -99,15 +84,7 @@ public class PayrollCollectionsController {
 	private List<SelectItem> suspensionCauses;
 	private List<SelectItem> fileStatus;
 	private List<SelectItem> cnoList;
-	private List<SelectItem> employmentProgramList;
-	private List<SelectItem> otherLawsList;
-	private List<SelectItem> educationalLevelList;
-	private List<SelectItem> disabilityCodeList;
-	private List<SelectItem> dismissalCollectiveList;
-	private List<SelectItem> employeeTypeList;
-	private List<SelectItem> schoolWorkshopList;
-	private List<SelectItem> basicCopySignatureTypeList;
-	private List<SelectItem> ageGroupList;
+	
 	private List<SelectItem> embargableTypeList;
 	private List<SelectItem> dismissCauseList;
 	private List<SelectItem> contractAttachTypes;
@@ -125,12 +102,7 @@ public class PayrollCollectionsController {
 	private List<SelectItem> payrollBatchAttachTypes;
 	
 	private List<SelectItem> liquidationTypes;
-	private List<SelectItem> interimCauses;
-	private List<SelectItem> researchEmployers;
-	private List<SelectItem> researchEmployees;
-	private List<SelectItem> collectiveReductionCodes;
-	private List<SelectItem> workingDayTypes;
-	private List<SelectItem> ageCollectives;
+	
 	
 	private String getAbbreviatedSelectItemLabel(String name, int lenght) {
 		if(name.length()>lenght){
@@ -451,132 +423,6 @@ public class PayrollCollectionsController {
 		return fileStatus;
 	}
 	
-	public List<SelectItem> getEmploymentProgramList() {
-		if (employmentProgramList == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			employmentProgramList = new LinkedList<SelectItem>();
-			EmploymentProgram[] ep = EmploymentProgram.values();
-			for (EmploymentProgram c : ep) {
-				String name = c.getName(locale);
-				SelectItem item = new SelectItem(c, name);
-				employmentProgramList.add(item);
-			}
-		}
-		return employmentProgramList;
-	}
-	
-	public List<SelectItem> getOtherLawsList() {
-		if (otherLawsList == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			otherLawsList = new LinkedList<SelectItem>();
-			OtherLaws[] ol = OtherLaws.values();
-			for (OtherLaws c : ol) {
-				String name = c.getName(locale);
-				SelectItem item = new SelectItem(c, name);
-				otherLawsList.add(item);
-			}
-		}
-		return otherLawsList;
-	}
-	
-	public List<SelectItem> getEducationalLevelList() {
-		if (educationalLevelList == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			educationalLevelList = new LinkedList<SelectItem>();
-			EducationalLevel[] el = EducationalLevel.values();
-			for (EducationalLevel c : el) {
-				String name = c.getName(locale);
-				SelectItem item = new SelectItem(c, StringUtils.abbreviate(name, 50));
-				educationalLevelList.add(item);
-			}
-		}
-		return educationalLevelList;
-	}
-	
-	public List<SelectItem> getDisabilityCodeList() {
-		if (disabilityCodeList == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			disabilityCodeList = new LinkedList<SelectItem>();
-			DisabilityCode[] el = DisabilityCode.values();
-			for (DisabilityCode c : el) {
-				String name = c.getName(locale);
-				SelectItem item = new SelectItem(c, name);
-				disabilityCodeList.add(item);
-			}
-		}
-		return disabilityCodeList;
-	}
-	
-	public List<SelectItem> getDismissalCollectiveList() {
-		if (dismissalCollectiveList == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			dismissalCollectiveList = new LinkedList<SelectItem>();
-			DismissalCollective[] el = DismissalCollective.values();
-			for (DismissalCollective c : el) {
-				String name = c.getName(locale);
-				SelectItem item = new SelectItem(c, name);
-				dismissalCollectiveList.add(item);
-			}
-		}
-		return dismissalCollectiveList;
-	}
-	
-	public List<SelectItem> getEmployeeTypeList() {
-		if (employeeTypeList == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			employeeTypeList = new LinkedList<SelectItem>();
-			EmployeeType[] el = EmployeeType.values();
-			for (EmployeeType c : el) {
-				String name = c.getName(locale);
-				SelectItem item = new SelectItem(c, name);
-				employeeTypeList.add(item);
-			}
-		}
-		return employeeTypeList;
-	}
-	
-	public List<SelectItem> getSchoolWorkshopList() {
-		if (schoolWorkshopList == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			schoolWorkshopList = new LinkedList<SelectItem>();
-			SchoolWorkshop[] el = SchoolWorkshop.values();
-			for (SchoolWorkshop c : el) {
-				String name = c.getName(locale);
-				SelectItem item = new SelectItem(c, name);
-				schoolWorkshopList.add(item);
-			}
-		}
-		return schoolWorkshopList;
-	}
-	
-	public List<SelectItem> getBasicCopySignatureTypeList() {
-		if (basicCopySignatureTypeList == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			basicCopySignatureTypeList = new LinkedList<SelectItem>();
-			BasicCopySignatureType[] el = BasicCopySignatureType.values();
-			for (BasicCopySignatureType c : el) {
-				String name = c.getName(locale);
-				SelectItem item = new SelectItem(c, name);
-				basicCopySignatureTypeList.add(item);
-			}
-		}
-		return basicCopySignatureTypeList;
-	}
-	
-	public List<SelectItem> getAgeGroupList() {
-		if (ageGroupList == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			ageGroupList = new LinkedList<SelectItem>();
-			AgeGroup[] el = AgeGroup.values();
-			for (AgeGroup c : el) {
-				String name = c.getName(locale);
-				SelectItem item = new SelectItem(c, name);
-				ageGroupList.add(item);
-			}
-		}
-		return ageGroupList;
-	}
-	
 	public List<SelectItem> getEmbargableTypeList() {
 		if (embargableTypeList == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -841,84 +687,6 @@ public class PayrollCollectionsController {
 			}
 		}
 		return liquidationTypes;
-	}
-	
-	public List<SelectItem> getInterimCauses() {
-		if (interimCauses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			interimCauses = new LinkedList<SelectItem>();
-			for( InterimCause type : InterimCause.values() ) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				interimCauses.add(item);			
-			}
-		}
-		return interimCauses;
-	}
-	
-	public List<SelectItem> getResearchEmployers() {
-		if (researchEmployers == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			researchEmployers = new LinkedList<SelectItem>();
-			for( ResearchEmployer type : ResearchEmployer.values() ) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				researchEmployers.add(item);			
-			}
-		}
-		return researchEmployers;
-	}
-	
-	public List<SelectItem> getResearchEmployees() {
-		if (researchEmployees == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			researchEmployees = new LinkedList<SelectItem>();
-			for( ResearchEmployee type : ResearchEmployee.values() ) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				researchEmployees.add(item);			
-			}
-		}
-		return researchEmployees;
-	}
-	
-	public List<SelectItem> getCollectiveReductionCodes() {
-		if (collectiveReductionCodes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			collectiveReductionCodes = new LinkedList<SelectItem>();
-			for( CollectiveReductionCode type : CollectiveReductionCode.values() ) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				collectiveReductionCodes.add(item);			
-			}
-		}
-		return collectiveReductionCodes;
-	}
-	
-	public List<SelectItem> getWorkingDayTypes() {
-		if (workingDayTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			workingDayTypes = new LinkedList<SelectItem>();
-			for( WorkingDayType type : WorkingDayType.values() ) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				workingDayTypes.add(item);			
-			}
-		}
-		return workingDayTypes;
-	}
-	
-	public List<SelectItem> getAgeCollectives() {
-		if (ageCollectives == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			ageCollectives = new LinkedList<SelectItem>();
-			for( AgeCollective type : AgeCollective.values() ) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				ageCollectives.add(item);			
-			}
-		}
-		return ageCollectives;
 	}
 	
 	public Long getTrainingCenterTotalCount(){

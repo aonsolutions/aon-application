@@ -41,4 +41,14 @@ public enum TEJINDIS implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TEJINDIS getEnumByValue(String expression) {
+		for( TEJINDIS o : TEJINDIS.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

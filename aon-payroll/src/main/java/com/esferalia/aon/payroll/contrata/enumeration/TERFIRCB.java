@@ -40,4 +40,14 @@ public enum TERFIRCB implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TERFIRCB getEnumByValue(String expression) {
+		for( TERFIRCB o : TERFIRCB.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

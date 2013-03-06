@@ -5,19 +5,20 @@ import java.util.Date;
 import com.code.aon.person.Person;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.enumeration.BasicCopySignatureType;
-import com.esferalia.aon.payroll.enumeration.CollectiveReductionCode;
-import com.esferalia.aon.payroll.enumeration.DisabilityCode;
-import com.esferalia.aon.payroll.enumeration.DismissalCollective;
-import com.esferalia.aon.payroll.enumeration.EducationalLevel;
-import com.esferalia.aon.payroll.enumeration.EmployeeType;
-import com.esferalia.aon.payroll.enumeration.EmploymentProgram;
-import com.esferalia.aon.payroll.enumeration.InterimCause;
-import com.esferalia.aon.payroll.enumeration.OtherLaws;
-import com.esferalia.aon.payroll.enumeration.ResearchEmployee;
-import com.esferalia.aon.payroll.enumeration.ResearchEmployer;
-import com.esferalia.aon.payroll.enumeration.SchoolWorkshop;
-import com.esferalia.aon.payroll.enumeration.WorkingDayType;
+import com.esferalia.aon.payroll.contrata.enumeration.TBONVFOR;
+import com.esferalia.aon.payroll.contrata.enumeration.TEIINTER;
+import com.esferalia.aon.payroll.contrata.enumeration.TEJINDIS;
+import com.esferalia.aon.payroll.contrata.enumeration.TEOCOLDE;
+import com.esferalia.aon.payroll.contrata.enumeration.TEQPTIEM;
+import com.esferalia.aon.payroll.contrata.enumeration.TERFIRCB;
+import com.esferalia.aon.payroll.contrata.enumeration.TESCETCO;
+import com.esferalia.aon.payroll.contrata.enumeration.TETPGMEM;
+import com.esferalia.aon.payroll.contrata.enumeration.TEWEINVE;
+import com.esferalia.aon.payroll.contrata.enumeration.TEXTINVE;
+import com.esferalia.aon.payroll.contrata.enumeration.TEYTRELE;
+import com.esferalia.aon.payroll.contrata.enumeration.THPCOLFO;
+import com.esferalia.aon.payroll.contrata.enumeration.THYDISLE;
+import com.esferalia.aon.payroll.contrata.enumeration.TQOCOLRE;
 
 public class ContrataParams {
 	
@@ -26,12 +27,12 @@ public class ContrataParams {
 	/* 
 	 * generales de contrato 
 	 */
-	private EducationalLevel educationalLevel;
+	private TBONVFOR nivelFormativo;
 	private boolean collectiveAgreement;
 	private Double timeUnit;
 	private String profession;
 	private CNO cno;
-	private EmploymentProgram employmentProgram;
+	private TETPGMEM codigoProgramaEmpleo;
 	private String signaturePlace;
 	private Date signatureDate;
 	private String townCode;
@@ -39,7 +40,7 @@ public class ContrataParams {
 	 * datos de contrata 
 	 */
 //	private TimeType timeType;
-	private String enterpriseFreeUse;
+	private String usoLibreEmpresa;
 	private String timeType;
 	private boolean theoryTraining;
 //	private AgeGroup ageGroup;
@@ -60,22 +61,22 @@ public class ContrataParams {
 	private Double financialYear;
 
 	private boolean permanentContractDevelopment;
-	private DismissalCollective dismissalCollective;
+	private TEOCOLDE codigoColectivoDespido;
 
 	// DATOS_GENERALESCONTRATOTYPE
 	private String offer;
-	private DisabilityCode disabilityCode;
-	private OtherLaws otherLaws;
+	private TEJINDIS indDiscapacidad;
+	private THYDISLE otrasLegislaciones;
 	private String campaignGeozone;
 	private String campaign;
 	private String campaignYear;
 	
 	// DATOSETCOTYPE 
-	private SchoolWorkshop schoolWorkshop;
+	private TESCETCO codigoEtCoTe;
 	
 	// DATOSCOMUNICACOPIABASICATYPE
-	private BasicCopySignatureType basicCopySignatureType;
-	private String basicCopyComments;
+	private TERFIRCB tipoFirmaCopiaBasica;
+	private String textoCopiaBasica;
 
 	// DATOSETTTYPE
 	private String ettCif;
@@ -84,7 +85,7 @@ public class ContrataParams {
 	private boolean ettForeignEnterprise;
 	
 	// CONTRATO RELEVO
-	private EmployeeType reliefEmployeeType;
+	private TEYTRELE tipoTrabajadorRelevo;
 	private Person reliefPerson;
 	
 	// DATOSCONTRATOEXTRANJEROTYPE
@@ -106,9 +107,95 @@ public class ContrataParams {
 	private boolean interimData;
 	private boolean researchData;
 	private boolean reductionData;
+
+	private boolean showEmploymentProgramData;
+	private boolean showEttData;
+	private boolean showReliefData;
+	private boolean showOfferData;
+	private boolean showSchoolWorkshopData;
+	private boolean showDisabilityData;
+	private boolean showOlderThan52Data;
+	private boolean showAnnexData;
+	private boolean showCanpaignData;
+	private boolean showInterimData;
+	private boolean showResearchData;
+	private boolean showReductionData;
 	
 	
 	
+	
+	public boolean isShowEmploymentProgramData() {
+		return showEmploymentProgramData;
+	}
+	public void setShowEmploymentProgramData(boolean showEmploymentProgramData) {
+		this.showEmploymentProgramData = showEmploymentProgramData;
+	}
+	public boolean isShowEttData() {
+		return showEttData;
+	}
+	public void setShowEttData(boolean showEttData) {
+		this.showEttData = showEttData;
+	}
+	public boolean isShowReliefData() {
+		return showReliefData;
+	}
+	public void setShowReliefData(boolean showReliefData) {
+		this.showReliefData = showReliefData;
+	}
+	public boolean isShowOfferData() {
+		return showOfferData;
+	}
+	public void setShowOfferData(boolean showOfferData) {
+		this.showOfferData = showOfferData;
+	}
+	public boolean isShowSchoolWorkshopData() {
+		return showSchoolWorkshopData;
+	}
+	public void setShowSchoolWorkshopData(boolean showSchoolWorkshopData) {
+		this.showSchoolWorkshopData = showSchoolWorkshopData;
+	}
+	public boolean isShowDisabilityData() {
+		return showDisabilityData;
+	}
+	public void setShowDisabilityData(boolean showDisabilityData) {
+		this.showDisabilityData = showDisabilityData;
+	}
+	public boolean isShowOlderThan52Data() {
+		return showOlderThan52Data;
+	}
+	public void setShowOlderThan52Data(boolean showOlderThan52Data) {
+		this.showOlderThan52Data = showOlderThan52Data;
+	}
+	public boolean isShowAnnexData() {
+		return showAnnexData;
+	}
+	public void setShowAnnexData(boolean showAnnexData) {
+		this.showAnnexData = showAnnexData;
+	}
+	public boolean isShowCanpaignData() {
+		return showCanpaignData;
+	}
+	public void setShowCanpaignData(boolean showCanpaignData) {
+		this.showCanpaignData = showCanpaignData;
+	}
+	public boolean isShowInterimData() {
+		return showInterimData;
+	}
+	public void setShowInterimData(boolean showInterimData) {
+		this.showInterimData = showInterimData;
+	}
+	public boolean isShowResearchData() {
+		return showResearchData;
+	}
+	public void setShowResearchData(boolean showResearchData) {
+		this.showResearchData = showResearchData;
+	}
+	public boolean isShowReductionData() {
+		return showReductionData;
+	}
+	public void setShowReductionData(boolean showReductionData) {
+		this.showReductionData = showReductionData;
+	}
 	public Contract getContract() {
 		return contract;
 	}
@@ -187,18 +274,17 @@ public class ContrataParams {
 	public void setReductionData(boolean reductionData) {
 		this.reductionData = reductionData;
 	}
-	
-	public EducationalLevel getEducationalLevel() {
-		return educationalLevel;
+	public TBONVFOR getNivelFormativo() {
+		return nivelFormativo;
 	}
-	public void setEducationalLevel(EducationalLevel educationalLevel) {
-		this.educationalLevel = educationalLevel;
+	public void setNivelFormativo(TBONVFOR nivelFormativo) {
+		this.nivelFormativo = nivelFormativo;
 	}
-	public DisabilityCode getDisabilityCode() {
-		return disabilityCode;
+	public TEJINDIS getIndDiscapacidad() {
+		return indDiscapacidad;
 	}
-	public void setDisabilityCode(DisabilityCode disabilityCode) {
-		this.disabilityCode = disabilityCode;
+	public void setIndDiscapacidad(TEJINDIS indDiscapacidad) {
+		this.indDiscapacidad = indDiscapacidad;
 	}
 	public boolean isCollectiveAgreement() {
 		return collectiveAgreement;
@@ -256,17 +342,17 @@ public class ContrataParams {
 	public void setCno(CNO cno) {
 		this.cno = cno;
 	}
-	public EmploymentProgram getEmploymentProgram() {
-		return employmentProgram;
+	public TETPGMEM getCodigoProgramaEmpleo() {
+		return codigoProgramaEmpleo;
 	}
-	public void setEmploymentProgram(EmploymentProgram employmentProgram) {
-		this.employmentProgram = employmentProgram;
+	public void setCodigoProgramaEmpleo(TETPGMEM codigoProgramaEmpleo) {
+		this.codigoProgramaEmpleo = codigoProgramaEmpleo;
 	}
-	public OtherLaws getOtherLaws() {
-		return otherLaws;
+	public THYDISLE getOtrasLegislaciones() {
+		return otrasLegislaciones;
 	}
-	public void setOtherLaws(OtherLaws otherLaws) {
-		this.otherLaws = otherLaws;
+	public void setOtrasLegislaciones(THYDISLE otrasLegislaciones) {
+		this.otrasLegislaciones = otrasLegislaciones;
 	}
 	public String getSignaturePlace() {
 		return signaturePlace;
@@ -286,11 +372,11 @@ public class ContrataParams {
 	public void setTownCode(String townCode) {
 		this.townCode = townCode;
 	}
-	public EmployeeType getReliefEmployeeType() {
-		return reliefEmployeeType;
+	public TEYTRELE getTipoTrabajadorRelevo() {
+		return tipoTrabajadorRelevo;
 	}
-	public void setReliefEmployeeType(EmployeeType reliefEmployeeType) {
-		this.reliefEmployeeType = reliefEmployeeType;
+	public void setTipoTrabajadorRelevo(TEYTRELE tipoTrabajadorRelevo) {
+		this.tipoTrabajadorRelevo = tipoTrabajadorRelevo;
 	}
 	public Person getReliefPerson() {
 		if(reliefPerson==null){
@@ -314,11 +400,11 @@ public class ContrataParams {
 	public void setAnexEmploymentYear(String anexEmploymentYear) {
 		this.anexEmploymentYear = anexEmploymentYear;
 	}
-	public DismissalCollective getDismissalCollective() {
-		return dismissalCollective;
+	public TEOCOLDE getCodigoColectivoDespido() {
+		return codigoColectivoDespido;
 	}
-	public void setDismissalCollective(DismissalCollective dismissalCollective) {
-		this.dismissalCollective = dismissalCollective;
+	public void setCodigoColectivoDespido(TEOCOLDE codigoColectivoDespido) {
+		this.codigoColectivoDespido = codigoColectivoDespido;
 	}
 	public boolean isPermanentContractDevelopment() {
 		return permanentContractDevelopment;
@@ -326,11 +412,11 @@ public class ContrataParams {
 	public void setPermanentContractDevelopment(boolean permanentContractDevelopment) {
 		this.permanentContractDevelopment = permanentContractDevelopment;
 	}
-	public String getEnterpriseFreeUse() {
-		return enterpriseFreeUse;
+	public String getUsoLibreEmpresa() {
+		return usoLibreEmpresa;
 	}
-	public void setEnterpriseFreeUse(String enterpriseFreeUse) {
-		this.enterpriseFreeUse = enterpriseFreeUse;
+	public void setUsoLibreEmpresa(String usoLibreEmpresa) {
+		this.usoLibreEmpresa = usoLibreEmpresa;
 	}
 	public String getTimeType() {
 		return timeType;
@@ -368,11 +454,11 @@ public class ContrataParams {
 	public void setPeriodicalDiscontinuous(boolean periodicalDiscontinuous) {
 		this.periodicalDiscontinuous = periodicalDiscontinuous;
 	}
-	public SchoolWorkshop getSchoolWorkshop() {
-		return schoolWorkshop;
+	public TESCETCO getCodigoEtCoTe() {
+		return codigoEtCoTe;
 	}
-	public void setSchoolWorkshop(SchoolWorkshop schoolWorkshop) {
-		this.schoolWorkshop = schoolWorkshop;
+	public void setCodigoEtCoTe(TESCETCO codigoEtCoTe) {
+		this.codigoEtCoTe = codigoEtCoTe;
 	}
 	public String getEmployerType() {
 		return employerType;
@@ -410,17 +496,17 @@ public class ContrataParams {
 	public void setFinancialYear(Double financialYear) {
 		this.financialYear = financialYear;
 	}
-	public BasicCopySignatureType getBasicCopySignatureType() {
-		return basicCopySignatureType;
+	public TERFIRCB getTipoFirmaCopiaBasica() {
+		return tipoFirmaCopiaBasica;
 	}
-	public void setBasicCopySignatureType(BasicCopySignatureType basicCopySignatureType) {
-		this.basicCopySignatureType = basicCopySignatureType;
+	public void setTipoFirmaCopiaBasica(TERFIRCB tipoFirmaCopiaBasica) {
+		this.tipoFirmaCopiaBasica = tipoFirmaCopiaBasica;
 	}
-	public String getBasicCopyComments() {
-		return basicCopyComments;
+	public String getTextoCopiaBasica() {
+		return textoCopiaBasica;
 	}
-	public void setBasicCopyComments(String basicCopyComments) {
-		this.basicCopyComments = basicCopyComments;
+	public void setTextoCopiaBasica(String textoCopiaBasica) {
+		this.textoCopiaBasica = textoCopiaBasica;
 	}
 	public String getEttCif() {
 		return ettCif;
@@ -454,76 +540,74 @@ public class ContrataParams {
 	////////////////////////////////////////////////////////////////
 	
 	// DATOSCONTRATOINTERINIDADTYPE
-	private InterimCause causaInterinidad;
+	private TEIINTER causaInterinidad;
 	
 	// DATOSREDUCCIONRDL12011TYPE
-	private CollectiveReductionCode codigocolectivoreduccion;
-	private String porcentajereduccion;
-	private Double porcentajejornadareduccion;
+	private TQOCOLRE codigoColectivoReduccion;
+	private String porcentajeReduccion;
+	private Double porcentajeJornadaReduccion;
 	
 	// DATOSPROGEMPLEOPUBLICOTYPE
-	private String corporacionlocal;
+	private String corporacionLocal;
 	private String actuacion;
-	private String ejerciciopresupuestario;
-	private String grupocotizacioncorporacionlocal;
+	private String ejercicioPresupuestario;
+	private String grupoCotizacionCorporacionLocal;
 	
 	// DATOSCONTRATOTIEMPOPARCIALTYPE
-	private WorkingDayType tipojornada;
-	private String horasjornada;
-	private String minutosjornada;
-	private String horasconvenio;
-	private String minutosconvenio;
-	private String horasformacion;
-	private String minutosformacion;
-	private String indicformacionteorica;
-	private String colectivoedad;
-	private String porcentajejubilacionparcial;
-	private String actividadsinfechacierta;
-	private Boolean fijodiscontinuoperiodico;
-	private String porcjornadapactada;
-	private String horasanualestiempocompleto;
+	private TEQPTIEM tipoJornada;
+	private String horasJornada;
+	private String minutosJornada;
+	private String horasConvenio;
+	private String minutosConvenio;
+	private String horasFormacion;
+	private String minutosFormacion;
+	private String indicFormacionTeorica;
+	private THPCOLFO colectivoEdad;
+	private String porcentajeJubilacionParcial;
+	private String actividadSinFechaCierta;
+	private Boolean fijoDiscontinuoPeriodico;
+	private String porcJornadaPactada;
+	private String horasAnualesTiempoCompleto;
 	
 	// DATOSCONTRATOINVESTIGACIONTYPE
-	private ResearchEmployer indempleador;
-	private ResearchEmployee indtrabajador;
-	private Boolean indrd632006;
+	private TEWEINVE indEmpleador;
+	private TEXTINVE indTrabajador;
+	private Boolean indRd632006;
 	
 	// DATOSCONTRATOPRACTICASTYPE 
-	private String titulacionacademica;
-	private Boolean indcertifprofesionalidad;
+	private String titulacionAcademica;
+	private Boolean indCertifProfesionalidad;
 	
 	
-	public InterimCause getCausaInterinidad() {
+	public TEIINTER getCausaInterinidad() {
 		return causaInterinidad;
 	}
-	public void setCausaInterinidad(InterimCause causaInterinidad) {
+	public void setCausaInterinidad(TEIINTER causaInterinidad) {
 		this.causaInterinidad = causaInterinidad;
 	}
-
-	public CollectiveReductionCode getCodigocolectivoreduccion() {
-		return codigocolectivoreduccion;
+	public TQOCOLRE getCodigoColectivoReduccion() {
+		return codigoColectivoReduccion;
 	}
-	public void setCodigocolectivoreduccion(
-			CollectiveReductionCode codigocolectivoreduccion) {
-		this.codigocolectivoreduccion = codigocolectivoreduccion;
+	public void setCodigoColectivoReduccion(TQOCOLRE codigoColectivoReduccion) {
+		this.codigoColectivoReduccion = codigoColectivoReduccion;
 	}
-	public String getPorcentajereduccion() {
-		return porcentajereduccion;
+	public String getPorcentajeReduccion() {
+		return porcentajeReduccion;
 	}
-	public void setPorcentajereduccion(String porcentajereduccion) {
-		this.porcentajereduccion = porcentajereduccion;
+	public void setPorcentajeReduccion(String porcentajeReduccion) {
+		this.porcentajeReduccion = porcentajeReduccion;
 	}
-	public Double getPorcentajejornadareduccion() {
-		return porcentajejornadareduccion;
+	public Double getPorcentajeJornadaReduccion() {
+		return porcentajeJornadaReduccion;
 	}
-	public void setPorcentajejornadareduccion(Double porcentajejornadareduccion) {
-		this.porcentajejornadareduccion = porcentajejornadareduccion;
+	public void setPorcentajeJornadaReduccion(Double porcentajeJornadaReduccion) {
+		this.porcentajeJornadaReduccion = porcentajeJornadaReduccion;
 	}
-	public String getCorporacionlocal() {
-		return corporacionlocal;
+	public String getCorporacionLocal() {
+		return corporacionLocal;
 	}
-	public void setCorporacionlocal(String corporacionlocal) {
-		this.corporacionlocal = corporacionlocal;
+	public void setCorporacionLocal(String corporacionLocal) {
+		this.corporacionLocal = corporacionLocal;
 	}
 	public String getActuacion() {
 		return actuacion;
@@ -531,157 +615,132 @@ public class ContrataParams {
 	public void setActuacion(String actuacion) {
 		this.actuacion = actuacion;
 	}
-	public String getEjerciciopresupuestario() {
-		return ejerciciopresupuestario;
+	public String getEjercicioPresupuestario() {
+		return ejercicioPresupuestario;
 	}
-	public void setEjerciciopresupuestario(String ejerciciopresupuestario) {
-		this.ejerciciopresupuestario = ejerciciopresupuestario;
+	public void setEjercicioPresupuestario(String ejercicioPresupuestario) {
+		this.ejercicioPresupuestario = ejercicioPresupuestario;
 	}
-	public String getGrupocotizacioncorporacionlocal() {
-		return grupocotizacioncorporacionlocal;
+	public String getGrupoCotizacionCorporacionLocal() {
+		return grupoCotizacionCorporacionLocal;
 	}
-	public void setGrupocotizacioncorporacionlocal(
-			String grupocotizacioncorporacionlocal) {
-		this.grupocotizacioncorporacionlocal = grupocotizacioncorporacionlocal;
+	public void setGrupoCotizacionCorporacionLocal(
+			String grupoCotizacionCorporacionLocal) {
+		this.grupoCotizacionCorporacionLocal = grupoCotizacionCorporacionLocal;
 	}
-	public WorkingDayType getTipojornada() {
-		return tipojornada;
+	public TEQPTIEM getTipoJornada() {
+		return tipoJornada;
 	}
-	public void setTipojornada(WorkingDayType tipojornada) {
-		this.tipojornada = tipojornada;
+	public void setTipoJornada(TEQPTIEM tipoJornada) {
+		this.tipoJornada = tipoJornada;
 	}
-	public String getMinutosjornada() {
-		return minutosjornada;
+	public String getHorasJornada() {
+		return horasJornada;
 	}
-	public void setMinutosjornada(String minutosjornada) {
-		this.minutosjornada = minutosjornada;
+	public void setHorasJornada(String horasJornada) {
+		this.horasJornada = horasJornada;
 	}
-	public String getMinutosconvenio() {
-		return minutosconvenio;
+	public String getMinutosJornada() {
+		return minutosJornada;
 	}
-	public String getDuracionconvenio() {
-		return (horasconvenio==null?"":completeLength(horasconvenio, 4, "0", false))+(minutosconvenio==null?"":completeLength(minutosconvenio, 2, "0", false));
+	public void setMinutosJornada(String minutosJornada) {
+		this.minutosJornada = minutosJornada;
 	}
-	public String getDuracionjornada() {
-		return (horasjornada==null?"":completeLength(horasjornada, 4, "0", false))+(minutosjornada==null?"":completeLength(minutosjornada, 2, "0", false));
+	public String getHorasConvenio() {
+		return horasConvenio;
 	}
-	public String getDuracionformacion() {
-		return (horasformacion==null?"":completeLength(horasformacion, 4, "0", false))+(minutosformacion==null?"":completeLength(minutosformacion, 2, "0", false));
+	public void setHorasConvenio(String horasConvenio) {
+		this.horasConvenio = horasConvenio;
 	}
-	public String getMinutosformacion() {
-		return minutosformacion;
+	public String getMinutosConvenio() {
+		return minutosConvenio;
 	}
-	public void setMinutosconvenio(String minutosconvenio) {
-		this.minutosconvenio = minutosconvenio;
+	public void setMinutosConvenio(String minutosConvenio) {
+		this.minutosConvenio = minutosConvenio;
 	}
-	public void setMinutosformacion(String minutosformacion) {
-		this.minutosformacion = minutosformacion;
+	public String getHorasFormacion() {
+		return horasFormacion;
 	}
-	public String getHorasjornada() {
-		return horasjornada;
+	public void setHorasFormacion(String horasFormacion) {
+		this.horasFormacion = horasFormacion;
 	}
-	public void setHorasjornada(String horasjornada) {
-		this.horasjornada = horasjornada;
+	public String getMinutosFormacion() {
+		return minutosFormacion;
 	}
-	public String getHorasconvenio() {
-		return horasconvenio;
+	public void setMinutosFormacion(String minutosFormacion) {
+		this.minutosFormacion = minutosFormacion;
 	}
-	public void setHorasconvenio(String horasconvenio) {
-		this.horasconvenio = horasconvenio;
+	public String getIndicFormacionTeorica() {
+		return indicFormacionTeorica;
 	}
-	public String getHorasformacion() {
-		return horasformacion;
+	public void setIndicFormacionTeorica(String indicFormacionTeorica) {
+		this.indicFormacionTeorica = indicFormacionTeorica;
 	}
-	public void setHorasformacion(String horasformacion) {
-		this.horasformacion = horasformacion;
+	public THPCOLFO getColectivoEdad() {
+		return colectivoEdad;
 	}
-	public String getIndicformacionteorica() {
-		return indicformacionteorica;
+	public void setColectivoEdad(THPCOLFO colectivoEdad) {
+		this.colectivoEdad = colectivoEdad;
 	}
-	public void setIndicformacionteorica(String indicformacionteorica) {
-		this.indicformacionteorica = indicformacionteorica;
+	public String getPorcentajeJubilacionParcial() {
+		return porcentajeJubilacionParcial;
 	}
-	public String getColectivoedad() {
-		return colectivoedad;
+	public void setPorcentajeJubilacionParcial(String porcentajeJubilacionParcial) {
+		this.porcentajeJubilacionParcial = porcentajeJubilacionParcial;
 	}
-	public void setColectivoedad(String colectivoedad) {
-		this.colectivoedad = colectivoedad;
+	public String getActividadSinFechaCierta() {
+		return actividadSinFechaCierta;
 	}
-	public String getPorcentajejubilacionparcial() {
-		return porcentajejubilacionparcial;
+	public void setActividadSinFechaCierta(String actividadSinFechaCierta) {
+		this.actividadSinFechaCierta = actividadSinFechaCierta;
 	}
-	public void setPorcentajejubilacionparcial(String porcentajejubilacionparcial) {
-		this.porcentajejubilacionparcial = porcentajejubilacionparcial;
+	public Boolean getFijoDiscontinuoPeriodico() {
+		return fijoDiscontinuoPeriodico;
 	}
-	public String getActividadsinfechacierta() {
-		return actividadsinfechacierta;
+	public void setFijoDiscontinuoPeriodico(Boolean fijoDiscontinuoPeriodico) {
+		this.fijoDiscontinuoPeriodico = fijoDiscontinuoPeriodico;
 	}
-	public void setActividadsinfechacierta(String actividadsinfechacierta) {
-		this.actividadsinfechacierta = actividadsinfechacierta;
+	public String getPorcJornadaPactada() {
+		return porcJornadaPactada;
 	}
-	public Boolean getFijodiscontinuoperiodico() {
-		return fijodiscontinuoperiodico;
+	public void setPorcJornadaPactada(String porcJornadaPactada) {
+		this.porcJornadaPactada = porcJornadaPactada;
 	}
-	public void setFijodiscontinuoperiodico(Boolean fijodiscontinuoperiodico) {
-		this.fijodiscontinuoperiodico = fijodiscontinuoperiodico;
+	public String getHorasAnualesTiempoCompleto() {
+		return horasAnualesTiempoCompleto;
 	}
-	public String getPorcjornadapactada() {
-		return porcjornadapactada;
+	public void setHorasAnualesTiempoCompleto(String horasAnualesTiempoCompleto) {
+		this.horasAnualesTiempoCompleto = horasAnualesTiempoCompleto;
 	}
-	public void setPorcjornadapactada(String porcjornadapactada) {
-		this.porcjornadapactada = porcjornadapactada;
+	public Boolean getIndRd632006() {
+		return indRd632006;
 	}
-	public String getHorasanualestiempocompleto() {
-		return horasanualestiempocompleto;
+	public TEWEINVE getIndEmpleador() {
+		return indEmpleador;
 	}
-	public void setHorasanualestiempocompleto(String horasanualestiempocompleto) {
-		this.horasanualestiempocompleto = horasanualestiempocompleto;
+	public void setIndEmpleador(TEWEINVE indEmpleador) {
+		this.indEmpleador = indEmpleador;
 	}
-	public ResearchEmployer getIndempleador() {
-		return indempleador;
+	public TEXTINVE getIndTrabajador() {
+		return indTrabajador;
 	}
-	public void setIndempleador(ResearchEmployer indempleador) {
-		this.indempleador = indempleador;
+	public void setIndTrabajador(TEXTINVE indTrabajador) {
+		this.indTrabajador = indTrabajador;
 	}
-	public ResearchEmployee getIndtrabajador() {
-		return indtrabajador;
+	public void setIndRd632006(Boolean indRd632006) {
+		this.indRd632006 = indRd632006;
 	}
-	public void setIndtrabajador(ResearchEmployee indtrabajador) {
-		this.indtrabajador = indtrabajador;
+	public String getTitulacionAcademica() {
+		return titulacionAcademica;
 	}
-	public Boolean getIndrd632006() {
-		return indrd632006;
+	public void setTitulacionAcademica(String titulacionAcademica) {
+		this.titulacionAcademica = titulacionAcademica;
 	}
-	public void setIndrd632006(Boolean indrd632006) {
-		this.indrd632006 = indrd632006;
+	public Boolean getIndCertifProfesionalidad() {
+		return indCertifProfesionalidad;
 	}
-	public String getTitulacionacademica() {
-		return titulacionacademica;
-	}
-	public void setTitulacionacademica(String titulacionacademica) {
-		this.titulacionacademica = titulacionacademica;
-	}
-	public Boolean getIndcertifprofesionalidad() {
-		return indcertifprofesionalidad;
-	}
-	public void setIndcertifprofesionalidad(Boolean indcertifprofesionalidad) {
-		this.indcertifprofesionalidad = indcertifprofesionalidad;
-	}
-	
-	
-	private String completeLength(String value, Integer length, String appendValue, boolean rightAppend) {
-		if(value==null)return null;
-		StringBuilder builder = new StringBuilder("");
-		if(rightAppend){
-			builder.append(value);
-		}
-		for(int i=value.length(); i<length; i++){
-			builder.append(appendValue);
-		}
-		if(!rightAppend){
-			builder.append(value);
-		}
-		return builder.toString();
+	public void setIndCertifProfesionalidad(Boolean indCertifProfesionalidad) {
+		this.indCertifProfesionalidad = indCertifProfesionalidad;
 	}
 	
 	

@@ -14,7 +14,7 @@
 			<f:facet name="header">
 				<aon:outputText value="#{payrollBundle.payroll_contract_other_data}" />
 			</f:facet>
-			<aon:panelGrid columns="2" style="width: 100%;" >
+			<aon:panelGrid columns="2" style="width: 100%;" id="otherDataPanel">
 			
 				<aon:outputLabel for="address_geozone" 
 					value="#{payrollBundle.payroll_town}" />
@@ -23,119 +23,135 @@
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{contractContrata.townNames}" />
 				</aon:selectOneMenu>
+
+				<aon:outputLabel for="educationalLevel" 
+					value="#{payrollBundle.payroll_contract_educational_level}" />
+				<aon:selectOneMenu id="educationalLevel"
+					required="true"
+					value="#{contractContrata.params.nivelFormativo}" >
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{contrataCollections.TBONVFORCodeList}" />
+				</aon:selectOneMenu>
 						
 				<aon:outputLabel for="basicCopySignatureType" 
 					value="#{payrollBundle.payroll_contract_basicCopySignatureType}" />
 				<aon:selectOneMenu id="basicCopySignatureType"
-					value="#{contractContrata.params.basicCopySignatureType}" >
+					required="true"
+					value="#{contractContrata.params.tipoFirmaCopiaBasica}" >
 					<f:selectItem itemLabel="-" value="#{null}" />
-					<f:selectItems value="#{payrollCollections.basicCopySignatureTypeList}" />
+					<f:selectItems value="#{contrataCollections.TERFIRCBCodeList}" />
 				</aon:selectOneMenu>
 			
 				<aon:outputLabel for="basicCopyComments" 
 					value="#{payrollBundle.payroll_contract_basicCopyComments}" />
 				<aon:inputTextarea id="basicCopyComments"
-					value="#{contractContrata.params.basicCopyComments}"
+					value="#{contractContrata.params.textoCopiaBasica}"
 					style="width:90%" 
 					cols="80" rows="5"/>
 							
 				<aon:outputLabel for="enterpriseFreeUse" 
 					value="#{payrollBundle.payroll_contract_enterpriseFreeUse}" />
 				<aon:inputText id="enterpriseFreeUse"
-					value="#{contractContrata.params.enterpriseFreeUse}" maxlength="30" size="45" >
+					value="#{contractContrata.params.usoLibreEmpresa}" maxlength="30" size="55" >
 					<f:validateLength maximum="30" />
 				</aon:inputText>
 				
 				<aon:outputLabel for="workingDayType" 
-					rendered="#{contractContrata.handler.showWorkingDayType}"
 					value="#{payrollBundle.payroll_contract_working_day_type}" />
 				<aon:selectOneMenu id="workingDayType"
-					rendered="#{contractContrata.handler.showWorkingDayType}"
-					value="#{contractContrata.params.tipojornada}" >
+					required="true"
+					disabled="#{!contractContrata.handler.showTipoJornada}"
+					value="#{contractContrata.params.tipoJornada}" >
 					<f:selectItem itemLabel="-" value="#{null}" />
-					<f:selectItems value="#{payrollCollections.workingDayTypes}" />
+					<f:selectItems value="#{contrataCollections.TEQPTIEMCodeList}" />
 				</aon:selectOneMenu>
 				
 				<aon:outputLabel 
-					rendered="#{contractContrata.handler.showWorkingDayDuration}"
+					rendered="#{contractContrata.handler.showHorasMinutosJornada}"
 					value="#{payrollBundle.payroll_contract_working_day_duration}" />
-				<aon:div rendered="#{contractContrata.handler.showWorkingDayDuration}">
+				<aon:div rendered="#{contractContrata.handler.showHorasMinutosJornada}">
 					<aon:outputLabel for="workingDayHours" styleClass="aon-italic aon-margin-right"
 						value="#{payrollBundle.payroll_hours}:" />
 					<aon:inputText id="workingDayHours" size="4" maxlength="4"
-						value="#{contractContrata.params.horasjornada}"/>
+						value="#{contractContrata.params.horasJornada}"/>
 					<aon:outputLabel for="workingDayMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
 						value="#{payrollBundle.payroll_minutes}:" />
 					<aon:inputText id="workingDayMinutes" size="2" maxlength="2"
-						value="#{contractContrata.params.minutosjornada}"/>
+						value="#{contractContrata.params.minutosJornada}"/>
 				</aon:div>
 
 				<aon:outputLabel 
-					rendered="#{contractContrata.handler.showAgreementDuration}"
+					rendered="#{contractContrata.handler.showHorasMinutosConvenio}"
 					value="#{payrollBundle.payroll_contract_agreement_hours}" />
-				<aon:div rendered="#{contractContrata.handler.showAgreementDuration}">
+				<aon:div rendered="#{contractContrata.handler.showHorasMinutosConvenio}">
 					<aon:outputLabel for="agreementHours" styleClass="aon-italic aon-margin-right"
 						value="#{payrollBundle.payroll_hours}:" />
 					<aon:inputText id="agreementHours" size="4" maxlength="4"
-						value="#{contractContrata.params.horasconvenio}"/>
+						value="#{contractContrata.params.horasConvenio}"/>
 					<aon:outputLabel for="agreementMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
 						value="#{payrollBundle.payroll_minutes}:" />
 					<aon:inputText id="agreementMinutes" size="2" maxlength="2"
-						value="#{contractContrata.params.minutosconvenio}"/>
+						value="#{contractContrata.params.minutosConvenio}"/>
 				</aon:div>
+			</aon:panelGrid>
+				
+			<aon:panelGrid columns="2" style="width: 100%;" id="otherDataPanel2">
+				<aon:outputLabel for="formationReceived" 
+					rendered="#{contractContrata.handler.showIndicFormacionTeorica}"
+					value="#{payrollBundle.payroll_contract_formation_received}" />
+				<aon:selectOneRadio id="formationReceived"
+					required="true" 
+					rendered="#{contractContrata.handler.showIndicFormacionTeorica}"
+					value="#{contractContrata.params.indicFormacionTeorica}" >
+					<f:selectItem itemLabel="#{payrollBundle.payroll_yes}" itemValue="S" />
+					<f:selectItem itemLabel="#{payrollBundle.payroll_no}" itemValue="N" />
+					<a4j:support event="onclick" reRender="otherDataPanel2" ajaxSingle="true" />
+				</aon:selectOneRadio>
 
-				<aon:outputLabel 
-					rendered="#{contractContrata.handler.showFormationDuration}"
+				<aon:outputLabel for="formationDuration" 
+					rendered="#{contractContrata.handler.showHorasMinutosFormacion}"
 					value="#{payrollBundle.payroll_contract_formation_hours}" />
-				<aon:div rendered="#{contractContrata.handler.showFormationDuration}" id="formationDuration">
+				<aon:div rendered="#{contractContrata.handler.showHorasMinutosFormacion}" id="formationDuration">
 					<aon:outputLabel for="formationHours" styleClass="aon-italic aon-margin-right"
 						value="#{payrollBundle.payroll_hours}:" />
-					<aon:inputText id="formationHours" size="4" maxlength="4" 
-						disabled="#{contractContrata.params.indicformacionteorica=='S'}" 
-						value="#{contractContrata.params.horasformacion}"/>
+					<aon:inputText id="formationHours" size="4" maxlength="4"
+						required="true" 
+						disabled="#{contractContrata.params.indicFormacionTeorica=='S'}" 
+						value="#{contractContrata.params.horasFormacion}"/>
 					<aon:outputLabel for="formationMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
 						value="#{payrollBundle.payroll_minutes}:" />
 					<aon:inputText id="formationMinutes" size="2" maxlength="2"
-						disabled="#{contractContrata.params.indicformacionteorica=='S'}" 
-						value="#{contractContrata.params.minutosformacion}"/>
+						required="true"
+						disabled="#{contractContrata.params.indicFormacionTeorica=='S'}" 
+						value="#{contractContrata.params.minutosFormacion}"/>
 				</aon:div>
 				
-				<aon:outputLabel for="formationReceived" 
-					rendered="#{contractContrata.handler.showFormationReceived}"
-					value="#{payrollBundle.payroll_contract_formation_received}" />
-				<aon:selectOneRadio id="formationReceived" 
-					rendered="#{contractContrata.handler.showFormationReceived}"
-					value="#{contractContrata.params.indicformacionteorica}" >
-					<f:selectItem itemLabel="#{payrollBundle.payroll_yes}" itemValue="S" />
-					<f:selectItem itemLabel="#{payrollBundle.payroll_no}" itemValue="N" />
-					<a4j:support event="onchange" reRender="formationDuration" />
-				</aon:selectOneRadio>
-				
 				<aon:outputLabel for="ageCollective" 
-					rendered="#{contractContrata.handler.showAgeCollective}"
+					rendered="#{contractContrata.handler.showColectivoEdad}"
 					value="#{payrollBundle.payroll_contract_age_collective}" />
 				<aon:selectOneMenu id="ageCollective"
-					rendered="#{contractContrata.handler.showAgeCollective}"
-					value="#{contractContrata.params.colectivoedad}" >
+					required="true" 
+					rendered="#{contractContrata.handler.showColectivoEdad}"
+					value="#{contractContrata.params.colectivoEdad}" >
 					<f:selectItem itemLabel="-" value="#{null}" />
-					<f:selectItems value="#{payrollCollections.ageCollectives}" />
+					<f:selectItems value="#{contrataCollections.THPCOLFOCodeList}" />
 				</aon:selectOneMenu>
 				
 				<aon:outputLabel for="retirementPercent"
-					rendered="#{contractContrata.handler.showRetirementPercent}"
+					rendered="#{contractContrata.handler.showPorcentajeJubilacionParcial}"
 					value="#{payrollBundle.payroll_contract_retirement_percent}" />
 				<aon:inputText id="retirementPercent" size="6" maxLenght="5"
-					rendered="#{contractContrata.handler.showRetirementPercent}"
-					value="#{contractContrata.params.porcentajejubilacionparcial}">
-					<f:validateDoubleRange minium="25.00" maxium="85.00" />
+					rendered="#{contractContrata.handler.showPorcentajeJubilacionParcial}"
+					value="#{contractContrata.params.porcentajeJubilacionParcial}">
+					<f:validateDoubleRange minimum="25.00" maximum="85.00" />
 				</aon:inputText>
 				
 				<aon:outputText 
-					rendered="#{contractContrata.handler.showPeriodicallyDiscontinuous}"
+					rendered="#{contractContrata.handler.showFijoDiscontinuoPeriodico}"
 					value="&#160;" />
-				<aon:div rendered="#{contractContrata.handler.showPeriodicallyDiscontinuous}">
+				<aon:div rendered="#{contractContrata.handler.showFijoDiscontinuoPeriodico}">
 					<aon:selectBooleanCheckbox id="periodicallyDiscontinuous" 
-						value="#{contractContrata.params.fijodiscontinuoperiodico}" />
+						value="#{contractContrata.params.fijoDiscontinuoPeriodico}" />
 					<aon:outputLabel for="periodicallyDiscontinuous"
 						value="#{payrollBundle.payroll_contract_periodically_discontinuous}" />
 				</aon:div>
@@ -145,127 +161,127 @@
 		
 		
 		
-		<aon:panel style="width: 100%;">
+		<aon:panel style="width: 100%;" id="specificOptionsPanel">
 			<f:facet name="header">
 				<aon:outputText value="#{payrollBundle.payroll_contract_specific_data}" />
 			</f:facet>
 		
 			<aon:panelGrid columns="6" style="width: 100%;" >
 					
-				<aon:selectBooleanCheckbox id="employmentProgramData"  
-					rendered="#{contractContrata.handler.showEmploymentProgramData}"
+				<aon:selectBooleanCheckbox id="datosProgramaEmpleo"  
+					rendered="#{contractContrata.handler.showDatosProgramaEmpleoPanel}"
 					value="#{contractContrata.params.employmentProgramData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="contractContrataForm"/>
 				</aon:selectBooleanCheckbox>
-				<aon:outputLabel for="employmentProgramData" 
-					rendered="#{contractContrata.handler.showEmploymentProgramData}"
-					value="#{payrollBundle.	payroll_contract_employmentProgram_data}" />
+				<aon:outputLabel for="datosProgramaEmpleo" 
+					rendered="#{contractContrata.handler.showDatosProgramaEmpleoPanel}"
+					value="#{payrollBundle.payroll_contract_datosProgramaEmpleo_data}" />
 					
 				<aon:selectBooleanCheckbox id="ettData"  
-					rendered="#{contractContrata.handler.showEttData}"
+					rendered="#{contractContrata.handler.showEttPanel}"
 					value="#{contractContrata.params.ettData}">
 					<a4j:support event="onclick" ajaxSingle="true" 
 						reRender="contractContrataForm"/>
 				</aon:selectBooleanCheckbox>
-				<aon:outputLabel for="ettData" rendered="#{contractContrata.handler.showEttData}"
+				<aon:outputLabel for="ettData" rendered="#{contractContrata.handler.showEttPanel}"
 					value="#{payrollBundle.payroll_contract_ett_data}" />
 					
-				<aon:selectBooleanCheckbox id="reliefData" rendered="#{contractContrata.handler.showReliefData}"
+				<aon:selectBooleanCheckbox id="contratoRelevo" rendered="#{contractContrata.handler.showContratoRelevoPanel}"
 					value="#{contractContrata.params.reliefData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="contractContrataForm"/>
 				</aon:selectBooleanCheckbox>
-				<aon:outputLabel for="reliefData" rendered="#{contractContrata.handler.showReliefData}"
-					value="#{payrollBundle.payroll_contract_relief_data}" />
+				<aon:outputLabel for="contratoRelevo" rendered="#{contractContrata.handler.showContratoRelevoPanel}"
+					value="#{payrollBundle.payroll_contract_contratoRelevo_data}" />
 					
-				<aon:selectBooleanCheckbox id="offerData" rendered="#{contractContrata.handler.showOfferData}"
+				<aon:selectBooleanCheckbox id="datosOfertaTrabajo" rendered="#{contractContrata.handler.showDatosOfertaTrabajoPanel}"
 					value="#{contractContrata.params.offerData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="contractContrataForm"/>
 				</aon:selectBooleanCheckbox>
-				<aon:outputLabel for="offerData" rendered="#{contractContrata.handler.showOfferData}"
-					value="#{payrollBundle.payroll_contract_offer_data}" />
+				<aon:outputLabel for="datosOfertaTrabajo" rendered="#{contractContrata.handler.showDatosOfertaTrabajoPanel}"
+					value="#{payrollBundle.payroll_contract_datosOfertaTrabajo_data}" />
 					
-				<aon:selectBooleanCheckbox id="schoolWorkshopData" rendered="#{contractContrata.handler.showWorkshopData}"
+				<aon:selectBooleanCheckbox id="escuelasTaller" rendered="#{contractContrata.handler.showEscuelasTallerPanel}"
 					value="#{contractContrata.params.schoolWorkshopData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="contractContrataForm"/>
 				</aon:selectBooleanCheckbox>
-				<aon:outputLabel for="schoolWorkshopData" rendered="#{contractContrata.handler.showWorkshopData}"
-					value="#{payrollBundle.payroll_contract_schoolWorkshop_data}" />
+				<aon:outputLabel for="escuelasTaller" rendered="#{contractContrata.handler.showEscuelasTallerPanel}"
+					value="#{payrollBundle.payroll_contract_escuelasTaller_data}" />
 					
-				<aon:selectBooleanCheckbox id="disabilityData" rendered="#{contractContrata.handler.showDisabilityData}"
+				<aon:selectBooleanCheckbox id="discapacidad" rendered="#{contractContrata.handler.showDiscapacidadPanel}"
 					value="#{contractContrata.params.disabilityData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="contractContrataForm"/>
 				</aon:selectBooleanCheckbox>
-				<aon:outputLabel for="disabilityData" rendered="#{contractContrata.handler.showDisabilityData}"
-					value="#{payrollBundle.payroll_contract_disability_data}" />
+				<aon:outputLabel for="discapacidad" rendered="#{contractContrata.handler.showDiscapacidadPanel}"
+					value="#{payrollBundle.payroll_contract_discapacidad_data}" />
 					
-				<aon:selectBooleanCheckbox id="olderThan52Data" rendered="#{contractContrata.handler.showOlderThan52Data}"
+				<aon:selectBooleanCheckbox id="mayores52" rendered="#{contractContrata.handler.showMayor52Panel}"
 					value="#{contractContrata.params.olderThan52Data}"> 
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="contractContrataForm"/>
 				</aon:selectBooleanCheckbox>
-				<aon:outputLabel for="olderThan52Data" rendered="#{contractContrata.handler.showOlderThan52Data}"
-					value="#{payrollBundle.payroll_contract_olderThan52_data}" />
+				<aon:outputLabel for="mayores52" rendered="#{contractContrata.handler.showMayor52Panel}"
+					value="#{payrollBundle.payroll_contract_mayores52_data}" />
 					
-				<aon:selectBooleanCheckbox id="annexData" rendered="#{contractContrata.handler.showAnnexData}"
+				<aon:selectBooleanCheckbox id="anexoGestionColectiva" rendered="#{contractContrata.handler.showAnexoGestionColectivaPanel}"
 					value="#{contractContrata.params.annexData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="contractContrataForm"/>
 				</aon:selectBooleanCheckbox>
-				<aon:outputLabel for="annexData" rendered="#{contractContrata.handler.showAnnexData}"
-					value="#{payrollBundle.payroll_contract_annex_data}" />
+				<aon:outputLabel for="anexoGestionColectiva" rendered="#{contractContrata.handler.showAnexoGestionColectivaPanel}"
+					value="#{payrollBundle.payroll_contract_anexoGestionColectiva_data}" />
 					
-				<aon:selectBooleanCheckbox id="canpaignData" rendered="#{contractContrata.handler.showCanpaignData}"
+				<aon:selectBooleanCheckbox id="campainas" rendered="#{contractContrata.handler.showCampainasPanel}"
 					value="#{contractContrata.params.canpaignData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="contractContrataForm"/>
 				</aon:selectBooleanCheckbox>
-				<aon:outputLabel for="canpaignData" rendered="#{contractContrata.handler.showCanpaignData}"
-					value="#{payrollBundle.payroll_contract_canpaign_data}" />
+				<aon:outputLabel for="campainas" rendered="#{contractContrata.handler.showCampainasPanel}"
+					value="#{payrollBundle.payroll_contract_campainas_data}" />
 					
-				<aon:selectBooleanCheckbox id="interimData" rendered="#{contractContrata.handler.showInterimData}"
+				<aon:selectBooleanCheckbox id="causaInterinidad" rendered="#{contractContrata.handler.showCausaInterinidadPanel}"
 					value="#{contractContrata.params.interimData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="contractContrataForm"/>
 				</aon:selectBooleanCheckbox>
-				<aon:outputLabel for="interimData" rendered="#{contractContrata.handler.showInterimData}"
-					value="#{payrollBundle.payroll_contract_interim_cause}" />
+				<aon:outputLabel for="causaInterinidad" rendered="#{contractContrata.handler.showCausaInterinidadPanel}"
+					value="#{payrollBundle.payroll_contract_causaInterinidad_data}" />
 					
-				<aon:selectBooleanCheckbox id="researchData" rendered="#{contractContrata.handler.showResearchData}"
+				<aon:selectBooleanCheckbox id="investigacion" rendered="#{contractContrata.handler.showInvestigacionPanel}"
 					value="#{contractContrata.params.researchData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="contractContrataForm"/>
 				</aon:selectBooleanCheckbox>
-				<aon:outputLabel for="researchData" rendered="#{contractContrata.handler.showResearchData}"
-					value="#{payrollBundle.payroll_contract_research}" />
+				<aon:outputLabel for="investigacion" rendered="#{contractContrata.handler.showInvestigacionPanel}"
+					value="#{payrollBundle.payroll_contract_investigacion_data}" />
 					
-				<aon:selectBooleanCheckbox id="reductionData" rendered="#{contractContrata.handler.showReductionData}"
+				<aon:selectBooleanCheckbox id="reduccionCuotas" rendered="#{contractContrata.handler.showReduccionCuotasPanel}"
 					value="#{contractContrata.params.reductionData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="contractContrataForm"/>
 				</aon:selectBooleanCheckbox>
-				<aon:outputLabel for="reductionData" rendered="#{contractContrata.handler.showReductionData}"
-					value="#{payrollBundle.payroll_contract_reduction_data}" />
+				<aon:outputLabel for="reduccionCuotas" rendered="#{contractContrata.handler.showReduccionCuotasPanel}"
+					value="#{payrollBundle.payroll_contract_reduccionCuotas_data}" />
 					
 			</aon:panelGrid>
 		</aon:panel>	
 		
-		<aon:div id="employmentProgramPanel" rendered="#{contractContrata.params.employmentProgramData}">
+		<aon:div id="datosProgramaEmpleoPanel" rendered="#{contractContrata.params.employmentProgramData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.payroll_contract_employmentProgram_data}" />
+					<aon:outputText value="#{payrollBundle.payroll_contract_datosProgramaEmpleo_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="employmentProgram" 
 						value="#{payrollBundle.payroll_contract_employmentProgram}" />
 					<aon:selectOneMenu id="employmentProgram"
-						value="#{contractContrata.params.employmentProgram}" >
+						value="#{contractContrata.params.codigoProgramaEmpleo}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{payrollCollections.employmentProgramList}" />
+						<f:selectItems value="#{contrataCollections.TETPGMEMCodeList}" />
 					</aon:selectOneMenu>
 				</aon:panelGrid>
 			</aon:panel>
@@ -306,19 +322,19 @@
 			</aon:panel>
 		</aon:div>	
 			
-		<aon:div id="reliefPanel" rendered="#{contractContrata.params.reliefData}">
+		<aon:div id="contratoRelevoPanel" rendered="#{contractContrata.params.reliefData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.payroll_contract_relief_data}" />
+					<aon:outputText value="#{payrollBundle.payroll_contract_contratoRelevo_data}" />
 				</f:facet>
 			<aon:panelGrid columns="2" style="width: 100%;">
 				<aon:outputLabel for="reliefEmployeeType" 
 					value="#{payrollBundle.payroll_contract_relief_employee_type}" />
 				<aon:selectOneMenu id="reliefEmployeeType"
 					required="#{contractContrata.params.reliefData}"
-					value="#{contractContrata.params.reliefEmployeeType}" >
+					value="#{contractContrata.params.tipoTrabajadorRelevo}" >
 					<f:selectItem itemLabel="-" value="#{null}" />
-					<f:selectItems value="#{payrollCollections.employeeTypeList}" />
+					<f:selectItems value="#{contrataCollections.TEYTRELECodeList}" />
 				</aon:selectOneMenu>
 			</aon:panelGrid>
 			<aon:panel style="width: 100%;">
@@ -342,10 +358,10 @@
 			</aon:panel>
 		</aon:div>
 		
-		<aon:div id="offerPanel" rendered="#{contractContrata.params.offerData}">
+		<aon:div id="datosOfertaTrabajoPanel" rendered="#{contractContrata.params.offerData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.payroll_contract_offer_data}" />
+					<aon:outputText value="#{payrollBundle.payroll_contract_datosOfertaTrabajo_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="offer"
@@ -356,61 +372,61 @@
 			</aon:panel>
 		</aon:div>	
 				
-		<aon:div id="schoolWorkshopPanel" rendered="#{contractContrata.params.schoolWorkshopData}">
+		<aon:div id="escuelasTallerPanel" rendered="#{contractContrata.params.schoolWorkshopData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.payroll_contract_schoolWorkshop_data}" />
+					<aon:outputText value="#{payrollBundle.payroll_contract_escuelasTaller_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="schoolWorkshop" 
 						value="#{payrollBundle.payroll_contract_schoolWorkshop}" />
 					<aon:selectOneMenu id="schoolWorkshop"
-						value="#{contractContrata.params.schoolWorkshop}" >
+						value="#{contractContrata.params.codigoEtCoTe}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{payrollCollections.schoolWorkshopList}" />
+						<f:selectItems value="#{contrataCollections.TESCETCOCodeList}" />
 					</aon:selectOneMenu>
 				</aon:panelGrid>
 			</aon:panel>
 		</aon:div>
 				
-		<aon:div id="disabilityPanel" rendered="#{contractContrata.params.disabilityData}">
+		<aon:div id="discapacidadPanel" rendered="#{contractContrata.params.disabilityData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.payroll_contract_disability_data}" />
+					<aon:outputText value="#{payrollBundle.payroll_contract_discapacidad_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="disability_code"
 						value="#{payrollBundle.payroll_contract_disability_code}" />
 					<aon:selectOneMenu id="disability_code"
-						value="#{contractContrata.params.disabilityCode}" >
+						value="#{contractContrata.params.indDiscapacidad}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{payrollCollections.disabilityCodeList}" />
+						<f:selectItems value="#{contrataCollections.TEJINDISCodeList}" />
 					</aon:selectOneMenu>
 				</aon:panelGrid>
 			</aon:panel>
 		</aon:div>
 				
-		<aon:div id="olderThan52Panel" rendered="#{contractContrata.params.olderThan52Data}">
+		<aon:div id="mayor52Panel" rendered="#{contractContrata.params.olderThan52Data}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.payroll_contract_olderThan52_data}" />
+					<aon:outputText value="#{payrollBundle.payroll_contract_mayores52_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="otherLaws" 
 						value="#{payrollBundle.payroll_contract_otherLaws}" />
 					<aon:selectOneMenu id="otherLaws"
-						value="#{contractContrata.params.otherLaws}" >
+						value="#{contractContrata.params.otrasLegislaciones}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{payrollCollections.otherLawsList}" />
+						<f:selectItems value="#{contrataCollections.THYDISLECodeList}" />
 					</aon:selectOneMenu>
 				</aon:panelGrid>
 			</aon:panel>
 		</aon:div>
 				
-		<aon:div id="annexPanel" rendered="#{contractContrata.params.annexData}">
+		<aon:div id="anexoGestionColectivaPanel" rendered="#{contractContrata.params.annexData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.payroll_contract_annex_data}" />
+					<aon:outputText value="#{payrollBundle.payroll_contract_anexoGestionColectiva_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="employmentCharacter"
@@ -431,10 +447,10 @@
 			</aon:panel>
 		</aon:div>
 				
-		<aon:div id="canpaignPanel" rendered="#{contractContrata.params.canpaignData}">
+		<aon:div id="campainasPanel" rendered="#{contractContrata.params.canpaignData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.payroll_contract_canpaign_data}" />
+					<aon:outputText value="#{payrollBundle.payroll_contract_campainas_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="campaignGeozone"
@@ -461,35 +477,35 @@
 			</aon:panel>
 		</aon:div>
 				
-		<aon:div id="interimPanel" rendered="#{contractContrata.params.interimData}">
+		<aon:div id="causaInterinidadPanel" rendered="#{contractContrata.params.interimData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.payroll_contract_interim_data}" />
+					<aon:outputText value="#{payrollBundle.payroll_contract_causaInterinidad_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="interimCause"
-						value="#{payrollBundle.payroll_contract_interim_cause}" />
+						value="#{payrollBundle.payroll_contract_causaInterinidad_data}" />
 					<aon:selectOneMenu id="interimCause"
 						value="#{contractContrata.params.causaInterinidad}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{payrollCollections.interimCauses}" />
+						<f:selectItems value="#{contrataCollections.TEIINTERCodeList}" />
 					</aon:selectOneMenu>
 				</aon:panelGrid>
 			</aon:panel>
 		</aon:div>
 				
-		<aon:div id="researchPanel" rendered="#{contractContrata.params.researchData}">
+		<aon:div id="investigacionPanel" rendered="#{contractContrata.params.researchData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.payroll_contract_research_data}" />
+					<aon:outputText value="#{payrollBundle.payroll_contract_investigacion_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="researchEmployer"
 						value="#{payrollBundle.payroll_contract_research_employer}" />
 					<aon:selectOneMenu id="researchEmployer"
-						value="#{contractContrata.params.indempleador}" >
+						value="#{contractContrata.params.indEmpleador}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{payrollCollections.researchEmployers}" />
+						<f:selectItems value="#{contrataCollections.TEWEINVECodeList}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="researchEmployee"
@@ -497,7 +513,7 @@
 					<aon:selectOneMenu id="researchEmployee"
 						value="#{contractContrata.params.indtrabajador}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{payrollCollections.researchEmployees}" />
+						<f:selectItems value="#{contrataCollections.TEXTINVECodeList}" />
 					</aon:selectOneMenu>
 					
 					<aon:outputText value="&#160;" />
@@ -511,34 +527,37 @@
 			</aon:panel>
 		</aon:div>
 				
-		<aon:div id="reductionPanel" rendered="#{contractContrata.params.reductionData}">
+		<aon:div id="reduccionCuotasPanel" rendered="#{contractContrata.params.reductionData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.payroll_contract_reduction_data}" />
+					<aon:outputText value="#{payrollBundle.payroll_contract_reduccionCuotas_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="reductionCollective"
 						value="#{payrollBundle.payroll_contract_reduction_collective}" />
 					<aon:selectOneMenu id="reductionCollective"
-						value="#{contractContrata.params.codigocolectivoreduccion}" >
+						value="#{contractContrata.params.codigoColectivoReduccion}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{payrollCollections.collectiveReductionCodes}" />
+						<f:selectItems value="#{contrataCollections.TQOCOLRECodeList}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="reductionPercent"
 						value="#{payrollBundle.payroll_contract_reduction_percent}" />
 					<aon:selectOneRadio id="reductionPercent" layout="pageDirection"
-						value="#{contractContrata.params.porcentajereduccion}" >
+						value="#{contractContrata.params.porcentajeReduccion}" >
 						<f:selectItem itemLabel="#{payrollBundle.payroll_contract_reduction_gt_250}" itemValue="75" />
 						<f:selectItem itemLabel="#{payrollBundle.payroll_contract_reduction_lt_250}" itemValue="100" />
 					</aon:selectOneRadio>
 					
 					<aon:outputLabel for="reductionJournalPercent"
 						value="#{payrollBundle.payroll_contract_reduction_journal_percent}" />
-					<aon:inputText id="reductionJournalPercent" size="6" maxLenght="5"
-						value="#{contractContrata.params.porcentajejornadareduccion}" >
-						<f:validateDoubleRange minium="50.00" maxium="75.00" />
-					</aon:inputText>
+					<aon:div>
+						<aon:inputText id="reductionJournalPercent" size="6" maxLenght="5"
+							value="#{contractContrata.params.porcentajeJornadaReduccion}" >
+							<f:validateDoubleRange minimum="50.00" maximum="75.00" />
+						</aon:inputText>
+						<aon:outputText value="%" />
+					</aon:div>
 					
 				</aon:panelGrid>
 			</aon:panel>

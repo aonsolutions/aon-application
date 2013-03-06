@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showContrataLoginWindow">
+		<c:if test="#{contractContrata.showContrataLoginWindow}">
+			<rich:modalPanel id="contrataLoginModalPanel" minHeight="180"
+				minWidth="450" rendered="#{contractContrata.showContrataLoginWindow}"
+				showWhenRendered="true" zindex="100">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.aon_login}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showContrataLoginWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{contractContrata.showContrataLoginWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="contrataLoginForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="contrataLogin-accept"
+										value="#{bundle.aon_accept}"
+										reRender="showContrataLoginWindow,contrataResponseContainer,contrataForm"
+										actionListener="#{contractContrata.onSendContrataFile}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										onclick="Richfaces.showModalPanel('waitProccess')" 
+		     							oncomplete="Richfaces.hideModalPanel('waitProccess')">
+										<rich:componentControl for="contrataLoginModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{contractContrata.showContrataLoginWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="contataLogin-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showContrataLoginWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{contractContrata.showContrataLoginWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
+										
+										<aon:panelGroup>
+											<aon:outputText value="Usuario Principal (CIF/NIF/NIE)" />
+											<br />
+											<aon:outputText value="o Usuario Asociado" />
+										</aon:panelGroup>	
+										<!--  
+										<aon:outputLabel value="Usuario Principal (CIF/NIF/NIE) o Usuario Asociado" />
+										<aon:outputText value="Usuario Principal (CIF/NIF/NIE)" />
+										-->
+										<aon:inputText value="#{contractContrata.user}" />	
+
+										<aon:outputLabel value="Clave Personal" />
+										<aon:inputText value="#{contractContrata.passwd}" />	
+
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+				
+				
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

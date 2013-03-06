@@ -28,7 +28,7 @@ public enum TEKLEYBO implements IStringEnum {
 	TEKLEYBO_19( "19", "LEY 35 / 2002", "20020713", "0" ),
 	TEKLEYBO_20( "20", "LEY 30 / 2005", "20060101", "20060630" ),
 	TEKLEYBO_21( "21", "REAL DECRETO 290 / 2004", "20040222", "20060630" ),
-	TEKLEYBO_22( "22", "REAL DECRETO 63 / 2006", "20060204", "0" ),
+	TEKLEYBO_22( "22", "REAL DECRETO 63 / 2006", "20060204", "20120731" ),
 	TEKLEYBO_23( "23", "REAL DECRETO LEY 5 / 2006", "20060701", "20061230" ),
 	TEKLEYBO_24( "24", "ORDEN TAS / 3243 / 2006", "20061022", "20081231" ),
 	TEKLEYBO_25( "25", "LEY 43 / 2006", "20061231", "0" ),
@@ -44,7 +44,9 @@ public enum TEKLEYBO implements IStringEnum {
 	TEKLEYBO_35( "35", "REAL DECRETO 1679 / 2009", "20091201", "20111130" ),
 	TEKLEYBO_36( "36", "LEY ORGANICA 3 / 2007", "20070324", "0" ),
 	TEKLEYBO_37( "37", "REAL DECRETO LEY 10 / 2010", "20100618", "20100918" ),
-	TEKLEYBO_38( "38", "LEY 35 / 2010", "20100919", "0" ),
+	TEKLEYBO_38( "38", "LEY 35 / 2010", "20100919", "20111231" ),
+	TEKLEYBO_39( "39", "REAL DECRETO LEY 3 / 2012", "20120212", "20120707" ),
+	TEKLEYBO_40( "40", "LEY 3 / 2012", "20120708", "0" ),
 	;
 	private String value;
 	private String label;
@@ -74,4 +76,14 @@ public enum TEKLEYBO implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TEKLEYBO getEnumByValue(String expression) {
+		for( TEKLEYBO o : TEKLEYBO.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

@@ -38,4 +38,14 @@ public enum TEXTINVE implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TEXTINVE getEnumByValue(String expression) {
+		for( TEXTINVE o : TEXTINVE.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

@@ -76,7 +76,6 @@ import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSPROGEMPLEOPU
 import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSREDUCCIONRDL12011TYPE;
 import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSTRABAJADORTYPE;
 import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSUSOLIBREEMPRESATYPE;
-import com.esferalia.aon.file.payroll.contrata.model.contratos.ObjectFactory;
 import com.esferalia.aon.file.payroll.contrata.model.prorrogas.PRORROGAS;
 import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION109TYPE;
 import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION139TYPE;
@@ -90,20 +89,21 @@ import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMA
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
-import com.esferalia.aon.payroll.enumeration.BasicCopySignatureType;
+import com.esferalia.aon.payroll.contrata.enumeration.TBONVFOR;
+import com.esferalia.aon.payroll.contrata.enumeration.TEIINTER;
+import com.esferalia.aon.payroll.contrata.enumeration.TEJINDIS;
+import com.esferalia.aon.payroll.contrata.enumeration.TEOCOLDE;
+import com.esferalia.aon.payroll.contrata.enumeration.TEQPTIEM;
+import com.esferalia.aon.payroll.contrata.enumeration.TERFIRCB;
+import com.esferalia.aon.payroll.contrata.enumeration.TESCETCO;
+import com.esferalia.aon.payroll.contrata.enumeration.TETPGMEM;
+import com.esferalia.aon.payroll.contrata.enumeration.TEWEINVE;
+import com.esferalia.aon.payroll.contrata.enumeration.TEXTINVE;
+import com.esferalia.aon.payroll.contrata.enumeration.TEYTRELE;
+import com.esferalia.aon.payroll.contrata.enumeration.THPCOLFO;
+import com.esferalia.aon.payroll.contrata.enumeration.THYDISLE;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.esferalia.aon.payroll.enumeration.DisabilityCode;
-import com.esferalia.aon.payroll.enumeration.DismissalCollective;
-import com.esferalia.aon.payroll.enumeration.EducationalLevel;
-import com.esferalia.aon.payroll.enumeration.EmployeeType;
-import com.esferalia.aon.payroll.enumeration.EmploymentProgram;
-import com.esferalia.aon.payroll.enumeration.InterimCause;
-import com.esferalia.aon.payroll.enumeration.OtherLaws;
-import com.esferalia.aon.payroll.enumeration.ResearchEmployee;
-import com.esferalia.aon.payroll.enumeration.ResearchEmployer;
-import com.esferalia.aon.payroll.enumeration.SchoolWorkshop;
-import com.esferalia.aon.payroll.enumeration.WorkingDayType;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 
@@ -168,23 +168,16 @@ public class ContrataReader {
 					JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_CONTRATOS_MODEL_PATH);
 					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 					unmarshaller.setEventHandler(new ContractValidationEventHandler());
-					
-					com.esferalia.aon.file.payroll.contrata.model.contratos.ObjectFactory contratosFactory = new ObjectFactory();
 					contratos = (CONTRATOS) unmarshaller.unmarshal(file);
-					
 				} else if( transfonacionFile ) {
 					JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_TRANSFORMACIONES_MODEL_PATH);
 					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 					unmarshaller.setEventHandler(new ContractValidationEventHandler());
-
-					com.esferalia.aon.file.payroll.contrata.model.transformaciones.ObjectFactory transformacionesFactory = new com.esferalia.aon.file.payroll.contrata.model.transformaciones.ObjectFactory();
 					transformaciones = (TRANSFORMACIONES) unmarshaller.unmarshal(file);
 				} else if( prorrogaFile ) {
 					JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_PRORROGAS_MODEL_PATH);
 					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 					unmarshaller.setEventHandler(new ContractValidationEventHandler());
-				
-					com.esferalia.aon.file.payroll.contrata.model.prorrogas.ObjectFactory prorrogasFactory = new com.esferalia.aon.file.payroll.contrata.model.prorrogas.ObjectFactory();
 					prorrogas = (PRORROGAS) unmarshaller.unmarshal(file);
 				}
 				
@@ -309,6 +302,7 @@ public class ContrataReader {
 	}
 			
 	public void completeProrrogasParams(IProrrogaType prorrogaType, ContrataParams params) throws JAXBException, IOException {
+		// TODO
 //	} else if (code.equals(ContractCode.C408.getValue())
 //			|| code.equals(ContractCode.C418.getValue())
 //			|| code.equals(ContractCode.C508.getValue())
@@ -709,10 +703,10 @@ public class ContrataReader {
 				params.setCollectiveAgreement(datos.getINDCONVENIOCOLECTIVO().equals("S")?true:false);
 			}
 			if(datos.getNIVELFORMATIVO()!=null){
-				params.setEducationalLevel(EducationalLevel.valueOf("EL"+datos.getNIVELFORMATIVO()));
+				params.setNivelFormativo(TBONVFOR.getEnumByValue(datos.getNIVELFORMATIVO()));
 			}
 			if(datos.getINDDISCAPACIDAD()!=null){
-				params.setDisabilityCode(DisabilityCode.valueOf("DC_"+datos.getINDDISCAPACIDAD()));
+				params.setIndDiscapacidad(TEJINDIS.getEnumByValue(datos.getINDDISCAPACIDAD()));
 				params.setDisabilityData(true);
 			}
 			if(datos.getCODIGOOCUPACION()!=null){
@@ -723,11 +717,11 @@ public class ContrataReader {
 				params.setOfferData(true);
 			}
 			if(datos.getCODIGOPROGRAMAEMPLEO()!=null){
-				params.setEmploymentProgram(EmploymentProgram.valueOf("EP"+datos.getCODIGOPROGRAMAEMPLEO()));
+				params.setCodigoProgramaEmpleo(TETPGMEM.getEnumByValue(datos.getCODIGOPROGRAMAEMPLEO()));
 				params.setEmploymentProgramData(true);
 			}
 			if(datos.getOTRASLEGISLACIONES()!=null){
-				params.setOtherLaws(OtherLaws.valueOf("OL"+datos.getOTRASLEGISLACIONES()));
+				params.setOtrasLegislaciones(THYDISLE.getEnumByValue(datos.getOTRASLEGISLACIONES()));
 				params.setOlderThan52Data(true);
 			}
 			if(datos.getDATOSCAMPAÑAS()!=null){
@@ -742,7 +736,7 @@ public class ContrataReader {
 		if(datos != null){
 			params.setPermanentContractDevelopment(datos.getINDCOSTEDESPIDO().equals("1")?true:false);
 			if(datos.getCODIGOCOLECTIVODESPIDO()!=null){
-				params.setDismissalCollective(DismissalCollective.valueOf("DC"+datos.getCODIGOCOLECTIVODESPIDO()));
+				params.setCodigoColectivoDespido(TEOCOLDE.getEnumByValue(datos.getCODIGOCOLECTIVODESPIDO()));
 			}
 		}
 	}
@@ -750,7 +744,7 @@ public class ContrataReader {
 		if(datos != null){
 			params.setReliefData(true);
 			if(datos.getTIPOTRABAJADOR()!=null){
-				params.setReliefEmployeeType(EmployeeType.valueOf("ET"+datos.getTIPOTRABAJADOR()));
+				params.setTipoTrabajadorRelevo(TEYTRELE.getEnumByValue(datos.getTIPOTRABAJADOR()));
 			}
 			Person person = new Person();
 			person.setName(datos.getNOMBREAPELLIDOS().getNOMBRE());
@@ -762,7 +756,7 @@ public class ContrataReader {
 	private void completeDatosEtCote(DATOSETCOTYPE datos) {
 		if(datos != null){
 			params.setSchoolWorkshopData(true);
-			params.setSchoolWorkshop(SchoolWorkshop.valueOf("SW_"+datos.getCODIGOETCOTE()));
+			params.setCodigoEtCoTe(TESCETCO.getEnumByValue(datos.getCODIGOETCOTE()));
 		}
 	}
 	private void completeDatosEtt(DATOSETTTYPE datos) {
@@ -783,34 +777,33 @@ public class ContrataReader {
 	}
 	private void completeDatosComunicacionCopiaBasica(DATOSCOMUNICACOPIABASICATYPE datos) {
 		if(datos != null){
-			params.setEttData(true);
-			params.setBasicCopyComments(datos.getTEXTOCOPIABASICA());
-			params.setBasicCopySignatureType(BasicCopySignatureType.valueOf("BCST"+datos.getTIPOFIRMA()));
+			params.setTextoCopiaBasica(datos.getTEXTOCOPIABASICA());
+			params.setTipoFirmaCopiaBasica(TERFIRCB.getEnumByValue(datos.getTIPOFIRMA()));
 		}
 	}
 
 	private void completeDatosUsoLibreEmpresa(DATOSUSOLIBREEMPRESATYPE datos) {
 		if(datos != null){
-			params.setEnterpriseFreeUse(datos.getUSOLIBREEMPRESA());
+			params.setUsoLibreEmpresa(datos.getUSOLIBREEMPRESA());
 		}
 	}
 	
 	private void completeDatosContratoTiempoParcial(DATOSCONTRATOTIEMPOPARCIALTYPE datos) {
 		if(datos != null){
-			params.setActividadsinfechacierta(datos.getACTIVIDADSINFECHACIERTA());
-			params.setColectivoedad(datos.getCOLECTIVOEDAD());
-			params.setFijodiscontinuoperiodico(datos.getFIJODISCONTINUOPERIODICO().equals("S"));
-			params.setHorasanualestiempocompleto(datos.getHORASANUALESTIEMPOCOMPLETO());
-			params.setHorasconvenio(getHoras(datos.getHORASCONVENIO()));
-			params.setMinutosconvenio(getMinutos(datos.getHORASCONVENIO()));
-			params.setHorasformacion(getHoras(datos.getHORASFORMACION()));
-			params.setMinutosformacion(getMinutos(datos.getHORASFORMACION()));
-			params.setHorasjornada(getHoras(datos.getHORASJORNADA()));
-			params.setMinutosjornada(getMinutos(datos.getHORASJORNADA()));
-			params.setIndicformacionteorica(datos.getINDICFORMACIONTEORICA());
-			params.setPorcentajejubilacionparcial(datos.getPORCENTAJEJUBILACIONPARCIAL());
-			params.setPorcjornadapactada(datos.getPORCJORNADAPACTADA());
-			params.setTipojornada(WorkingDayType.enumByValue(datos.getTIPOJORNADA()));
+			params.setActividadSinFechaCierta(datos.getACTIVIDADSINFECHACIERTA());
+			params.setColectivoEdad(THPCOLFO.getEnumByValue(datos.getCOLECTIVOEDAD()));
+			params.setFijoDiscontinuoPeriodico(datos.getFIJODISCONTINUOPERIODICO().equals("S"));
+			params.setHorasAnualesTiempoCompleto(datos.getHORASANUALESTIEMPOCOMPLETO());
+			params.setHorasConvenio(getHoras(datos.getHORASCONVENIO()));
+			params.setMinutosConvenio(getMinutos(datos.getHORASCONVENIO()));
+			params.setHorasFormacion(getHoras(datos.getHORASFORMACION()));
+			params.setMinutosFormacion(getMinutos(datos.getHORASFORMACION()));
+			params.setHorasJornada(getHoras(datos.getHORASJORNADA()));
+			params.setMinutosJornada(getMinutos(datos.getHORASJORNADA()));
+			params.setIndicFormacionTeorica(datos.getINDICFORMACIONTEORICA());
+			params.setPorcentajeJubilacionParcial(datos.getPORCENTAJEJUBILACIONPARCIAL());
+			params.setPorcJornadaPactada(datos.getPORCJORNADAPACTADA());
+			params.setTipoJornada(TEQPTIEM.getEnumByValue(datos.getTIPOJORNADA()));
 		}
 	}
 	private String getHoras(String duracion){
@@ -843,9 +836,9 @@ public class ContrataReader {
 	}
 	private void completeDatosContratoInvestigacion(DATOSCONTRATOINVESTIGACIONTYPE datos) {
 		if(datos != null){
-			params.setIndempleador(ResearchEmployer.enumByValue(datos.getINDEMPLEADOR()));
-			params.setIndtrabajador(ResearchEmployee.enumByValue(datos.getINDTRABAJADOR()));
-			params.setIndrd632006(datos.getINDRD632006().equals("S"));
+			params.setIndEmpleador(TEWEINVE.getEnumByValue(datos.getINDEMPLEADOR()));
+			params.setIndTrabajador(TEXTINVE.getEnumByValue(datos.getINDTRABAJADOR()));
+			params.setIndRd632006(datos.getINDRD632006().equals("S"));
 		}
 	}
 	private void completeDatosContratoInsercion(DATOSCONTRATOINSERCIONTYPE datos) {
@@ -854,7 +847,7 @@ public class ContrataReader {
 	private void completeDatosContratoInterinidad(DATOSCONTRATOINTERINIDADTYPE datos) {
 		if(datos != null){
 			params.setInterimData(true);
-			params.setCausaInterinidad(InterimCause.valueOf(datos.getCAUSAINTERINIDAD()));
+			params.setCausaInterinidad(TEIINTER.getEnumByValue(datos.getCAUSAINTERINIDAD()));
 		}
 	}
 	private void completeDatosContratoPracticas(DATOSCONTRATOPRACTICASTYPE datos) {
@@ -871,27 +864,35 @@ public class ContrataReader {
 	 * 
 	 */
 	private void readTransformacion109(TRANSFORMACION109TYPE transformacionType){
+		// TODO
 		
 	}
 	private void readTransformacion139(TRANSFORMACION139TYPE transformacionType){
+		// TODO
 		
 	}
 	private void readTransformacion189(TRANSFORMACION189TYPE transformacionType){
+		// TODO
 		
 	}
 	private void readTransformacion209(TRANSFORMACION209TYPE transformacionType){
+		// TODO
 		
 	}
 	private void readTransformacion239(TRANSFORMACION239TYPE transformacionType){
+		// TODO
 		
 	}
 	private void readTransformacion289(TRANSFORMACION289TYPE transformacionType){
+		// TODO
 		
 	}
 	private void readTransformacion309(TRANSFORMACION309TYPE transformacionType){
+		// TODO
 		
 	}
 	private void readTransformacion389(TRANSFORMACION389TYPE transformacionType){
+		// TODO
 		
 	}
 	

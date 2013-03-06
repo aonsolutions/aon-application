@@ -289,9 +289,9 @@ public class ContrataProrrogasWriter {
 	 * @return
 	 */
 	private DATOSUSOLIBREEMPRESATYPE createDatosUsoLibreEmpresa(ContrataParams params) {
-		if(params.getEnterpriseFreeUse()!=null){
+		if(params.getUsoLibreEmpresa()!=null){
 			DATOSUSOLIBREEMPRESATYPE datos = factory.createDATOSUSOLIBREEMPRESATYPE();
-			datos.setUSOLIBREEMPRESA(params.getEnterpriseFreeUse());
+			datos.setUSOLIBREEMPRESA(params.getUsoLibreEmpresa());
 			return datos;
 		}
 		return null;

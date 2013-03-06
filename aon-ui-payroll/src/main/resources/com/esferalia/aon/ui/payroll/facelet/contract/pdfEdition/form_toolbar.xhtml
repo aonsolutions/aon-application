@@ -9,13 +9,13 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-		<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_pdfDocument}" />
+		<ui:param name="toolbarTitle" value="#{contractPdf.documentType}" />
 		<ui:param name="toolbarDescription" value="#{contractPdf.new?bundle.aon_reset:bundle.aon_editing}" />
 		
 		<ui:define name="toolbarContent">
 		
 			<aon:commandButton id="contract-save"
-				value="#{bundle.aon_save}"
+				value="#{contractPdf.new?bundle.aon_accept:bundle.aon_save}"
 				action="#{contractPdf.backAction}"
 				actionListener="#{contractPdf.onDocumentSave}"
 				onclick="if (!confirm('#{bundle.aon_save}?')) { return false;}"

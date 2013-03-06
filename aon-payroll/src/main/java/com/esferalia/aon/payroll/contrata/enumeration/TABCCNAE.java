@@ -125,4 +125,14 @@ public enum TABCCNAE implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TABCCNAE getEnumByValue(String expression) {
+		for( TABCCNAE o : TABCCNAE.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

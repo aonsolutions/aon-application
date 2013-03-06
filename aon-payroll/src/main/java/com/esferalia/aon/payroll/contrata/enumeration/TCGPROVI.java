@@ -89,4 +89,14 @@ public enum TCGPROVI implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TCGPROVI getEnumByValue(String expression) {
+		for( TCGPROVI o : TCGPROVI.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

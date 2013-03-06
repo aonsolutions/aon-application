@@ -137,7 +137,11 @@
 	
 		<aon:outputText rendered="#{variableType=='TRAINING_CENTER_LOOKUP'}" value="#{data.variableLookup}" />
 		
-		<aon:outputText rendered="#{variableType=='TC2_DROP'}" value="#{data.variableEnum}" />
+		<aon:div>
+			<aon:outputText rendered="#{variableType=='TC2_DROP'}" value="#{data.variableEnum.value}" />
+			<aon:outputText rendered="#{variableType=='TC2_DROP'}" value=" - " />
+			<aon:outputText rendered="#{variableType=='TC2_DROP'}" value="#{data.variableEnum}" />
+		</aon:div>
 	
 		<aon:outputText rendered="#{variableType=='QUOTE_GROUP_DROP'}" value="#{data.variableEnum}" />
 	

@@ -38,4 +38,14 @@ public enum TCMCSEXO implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TCMCSEXO getEnumByValue(String expression) {
+		for( TCMCSEXO o : TCMCSEXO.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

@@ -74,6 +74,7 @@ public enum TEHTPCTO implements IStringEnum {
 	TEHTPCTO_309( "309", "CONVERSION FIJO DISCONTINUO BONIFICADO", "20010304", "0" ),
 	TEHTPCTO_330( "330", "FIJO DISCONTINUO MINUSVALIDO", "20010304", "0" ),
 	TEHTPCTO_331( "331", "FIJO DISCONTINUO CENTROS ESPEC. EMPLEO", "20010304", "20011231" ),
+	TEHTPCTO_339( "339", "CONVERSION FIJO DISCONTINUO MINUSVALIDO", "20010304", "0" ),
 	TEHTPCTO_350( "350", "FIJO DISCONTINUO BONIFICADO", "20010304", "0" ),
 	TEHTPCTO_351( "351", "FIJO DISCONTINUO EXCLUIDO SOCIAL", "20010304", "20011231" ),
 	TEHTPCTO_389( "389", "CONVERSION FIJO DISCONTINUO NO BONIFICAD", "20010304", "0" ),
@@ -133,4 +134,14 @@ public enum TEHTPCTO implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TEHTPCTO getEnumByValue(String expression) {
+		for( TEHTPCTO o : TEHTPCTO.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

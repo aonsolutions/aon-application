@@ -148,6 +148,7 @@ public enum TBXCPAIS implements IStringEnum {
 	TBXCPAIS_492( "492", "MÓNACO", null, null ),
 	TBXCPAIS_496( "496", "MONGOLIA", null, null ),
 	TBXCPAIS_498( "498", "MOLDAVIA, REPÚBLICA DE", null, null ),
+	TBXCPAIS_499( "499", "MONTENEGRO", null, null ),
 	TBXCPAIS_500( "500", "MONTSERRAT", null, null ),
 	TBXCPAIS_504( "504", "MARRUECOS", null, null ),
 	TBXCPAIS_508( "508", "MOZAMBIQUE", null, null ),
@@ -200,6 +201,7 @@ public enum TBXCPAIS implements IStringEnum {
 	TBXCPAIS_678( "678", "SANTO TOMAS Y PRINCIPE", null, null ),
 	TBXCPAIS_682( "682", "ARABIA SAUDÍ", null, null ),
 	TBXCPAIS_686( "686", "SENEGAL", null, null ),
+	TBXCPAIS_688( "688", "SERBIA", null, null ),
 	TBXCPAIS_690( "690", "SEYCHELLES", null, null ),
 	TBXCPAIS_694( "694", "SIERRA LEONA", null, null ),
 	TBXCPAIS_702( "702", "SINGAPUR", null, null ),
@@ -277,4 +279,14 @@ public enum TBXCPAIS implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TBXCPAIS getEnumByValue(String expression) {
+		for( TBXCPAIS o : TBXCPAIS.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

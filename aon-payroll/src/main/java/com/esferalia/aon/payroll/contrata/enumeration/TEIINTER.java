@@ -51,4 +51,14 @@ public enum TEIINTER implements IStringEnum {
 	public String getEndDate() {
 		return endDate;
 	}
+
+	public static TEIINTER getEnumByValue(String expression) {
+		for( TEIINTER o : TEIINTER.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
 }

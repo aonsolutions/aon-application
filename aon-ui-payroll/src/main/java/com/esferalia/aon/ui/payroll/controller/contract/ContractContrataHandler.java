@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.payroll.controller.contract;
 
 import java.util.Calendar;
 
+import com.esferalia.aon.payroll.contrata.enumeration.TEQPTIEM;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.ui.payroll.file.ContrataParams;
 
@@ -45,26 +46,36 @@ public class ContractContrataHandler {
 		</xsd:simpleType>
 	</xsd:element>
 	 */
-	public Boolean getShowWorkingDayType() {
-		return getContractCode()!=ContractCode.C300 || getContractCode()!=ContractCode.C330 || getContractCode()!=ContractCode.C350;
+	public Boolean getShowTipoJornada() {
+		if( getContractCode()==ContractCode.C300 || getContractCode()==ContractCode.C330 || getContractCode()==ContractCode.C350){
+			getParams().setTipoJornada(TEQPTIEM.TEQPTIEM_A);
+			return false;
+		}
+		return true;
 	}
-/**
- * <xsd:element name="HORAS_JORNADA" minOccurs="0">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Número de horas por jornada. Formato: HHHHMM (Horas(4)Minutos(2)). 
-					Obligatorias para todos los contratos a tiempo parcial menos para los fijos discontinuos (300, 330 y 350) 
-					que podran no llevarlas dependiendo del valor de ACTIVIDAD_SIN_FECHACIERTA.</xsd:documentation>
-				</xsd:annotation>
-				<xsd:simpleType>
-					<xsd:restriction base="xsd:string">
-						<xsd:pattern value="\d{6}"/>
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:element>
- * @return
- */
-	public Boolean getShowWorkingDayDuration() {
-		return getContractCode()==ContractCode.C300 || getContractCode()==ContractCode.C330 || getContractCode()==ContractCode.C350;
+
+	/**
+	 * <xsd:element name="HORAS_JORNADA" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="es">Número de horas por jornada. Formato: HHHHMM (Horas(4)Minutos(2)). 
+						Obligatorias para todos los contratos a tiempo parcial menos para los fijos discontinuos (300, 330 y 350) 
+						que podran no llevarlas dependiendo del valor de ACTIVIDAD_SIN_FECHACIERTA.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:pattern value="\d{6}"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+	 * @return
+	 */
+	public Boolean getShowHorasMinutosJornada() {
+		if( isPartialTimeContract(getContractCode()) ){
+			return ( getContractCode() != ContractCode.C300
+					&& getContractCode() != ContractCode.C330 && getContractCode() != ContractCode.C350 )
+					|| ( getParams().getActividadSinFechaCierta()==null || !getParams().getActividadSinFechaCierta().equals("S") );
+		}
+		return false;
 	}
 
 	/**
@@ -82,7 +93,7 @@ public class ContractContrataHandler {
 			</xsd:element>
 	 * @return
 	 */
-	public Boolean getShowAgreementDuration() {
+	public Boolean getShowHorasMinutosConvenio() {
 		return getContractCode()==ContractCode.C200 || getContractCode()==ContractCode.C230
 				|| getContractCode()==ContractCode.C250 || getContractCode()==ContractCode.C300
 				|| getContractCode()==ContractCode.C330 || getContractCode()==ContractCode.C350;
@@ -102,9 +113,10 @@ public class ContractContrataHandler {
 			</xsd:element>
 	 * @return
 	 */
-	public Boolean getShowFormationDuration() {
-		return getContractCode()==ContractCode.C421;
+	public Boolean getShowHorasMinutosFormacion() {
+		return getContractCode()==ContractCode.C421 && getParams().getIndicFormacionTeorica()!=null && !getParams().getIndicFormacionTeorica().equals("S");
 	}
+
 	/**
 	 * <xsd:element name="INDIC_FORMACION_TEORICA" minOccurs="0">
 				<xsd:annotation>
@@ -121,9 +133,10 @@ public class ContractContrataHandler {
 			</xsd:element>
 	 * @return
 	 */
-	public Boolean getShowFormationReceived() {
+	public Boolean getShowIndicFormacionTeorica() {
 		return getContractCode()==ContractCode.C421;
 	}
+	
 	/**
 	 * <xsd:element name="COLECTIVO_EDAD" minOccurs="0">
 				<xsd:annotation>
@@ -140,9 +153,10 @@ public class ContractContrataHandler {
 			</xsd:element>
 	 * @return
 	 */
-	public Boolean getShowAgeCollective() {
-		return getContractCode()==ContractCode.C421;
+	public Boolean getShowColectivoEdad() {
+		return getContractCode()==ContractCode.C421 && getParams().getContract().getPerson().getAge()>=21;
 	}
+	
 	/**
 	 * <xsd:element name="PORCENTAJE_JUBILACION_PARCIAL" minOccurs="0">
 				<xsd:annotation>
@@ -159,9 +173,10 @@ public class ContractContrataHandler {
 			</xsd:element>
 	 * @return
 	 */
-	public Boolean getShowRetirementPercent() {
+	public Boolean getShowPorcentajeJubilacionParcial() {
 		return getContractCode()==ContractCode.C540;
 	}
+	
 	/**
 	 * <xsd:element name="FIJODISCONTINUO_PERIODICO" minOccurs="0">
 				<xsd:annotation>
@@ -179,13 +194,14 @@ public class ContractContrataHandler {
 			</xsd:element>
 	 * @return
 	 */
-	public Boolean getShowPeriodicallyDiscontinuous() {
+	public Boolean getShowFijoDiscontinuoPeriodico() {
 		Calendar cal = Calendar.getInstance();
 		cal.set(2006, 6, 1);
 		return getParams().getContract().getStartDate().after(cal.getTime()) 
 				&& ( getContractCode()==ContractCode.C200 || getContractCode()==ContractCode.C230
 				|| getContractCode()==ContractCode.C250 );
 	}
+	
 	/**
 	<xsd:element name="TITULACION_ACADEMICA">
 		<xsd:annotation>
@@ -209,6 +225,7 @@ public class ContractContrataHandler {
 	public Boolean getShowAcademicTitulation() {
 		return true;
 	}
+	
 	/**
 	<xsd:element name="IND_CERTIF_PROFESIONALIDAD" minOccurs="0">
 		<xsd:annotation>
@@ -237,334 +254,125 @@ public class ContractContrataHandler {
 	////////////////////////////////////////
 	// checks datos especificos contrato
 	////////////////////////////////////////
-	public Boolean getShowEmploymentProgramData(){
+	public Boolean getShowDatosProgramaEmpleoPanel(){
+		return getContractCode()==ContractCode.C401 || getContractCode()==ContractCode.C402 || getContractCode()==ContractCode.C403
+				|| getContractCode()==ContractCode.C410 || getContractCode()==ContractCode.C420 || getContractCode()==ContractCode.C421
+				|| getContractCode()==ContractCode.C430 || getContractCode()==ContractCode.C450 || getContractCode()==ContractCode.C452
+				|| getContractCode()==ContractCode.C501 || getContractCode()==ContractCode.C502 || getContractCode()==ContractCode.C503
+				|| getContractCode()==ContractCode.C510 || getContractCode()==ContractCode.C520 || getContractCode()==ContractCode.C530
+				|| getContractCode()==ContractCode.C550 || getContractCode()==ContractCode.C552 || getContractCode()==ContractCode.C970
+				|| getContractCode()==ContractCode.C990;
+	}
+	public Boolean getShowEttPanel(){
+		return getContractCode()==ContractCode.C100 || getContractCode()==ContractCode.C130 || getContractCode()==ContractCode.C150 
+				|| getContractCode()==ContractCode.C200 || getContractCode()==ContractCode.C230 || getContractCode()==ContractCode.C250
+				|| getContractCode()==ContractCode.C300 || getContractCode()==ContractCode.C330 || getContractCode()==ContractCode.C350
+				|| getContractCode()==ContractCode.C401 || getContractCode()==ContractCode.C402 || getContractCode()==ContractCode.C403
+				|| getContractCode()==ContractCode.C410 || getContractCode()==ContractCode.C420 || getContractCode()==ContractCode.C421
+				|| getContractCode()==ContractCode.C430 || getContractCode()==ContractCode.C441 || getContractCode()==ContractCode.C450
+				|| getContractCode()==ContractCode.C452 || getContractCode()==ContractCode.C501 || getContractCode()==ContractCode.C502
+				|| getContractCode()==ContractCode.C503 || getContractCode()==ContractCode.C510 || getContractCode()==ContractCode.C520
+				|| getContractCode()==ContractCode.C530 || getContractCode()==ContractCode.C540 || getContractCode()==ContractCode.C541
+				|| getContractCode()==ContractCode.C550 || getContractCode()==ContractCode.C552 || getContractCode()==ContractCode.C970
+				|| getContractCode()==ContractCode.C980 || getContractCode()==ContractCode.C990;
+	}
+	public Boolean getShowContratoRelevoPanel(){
+		return getContractCode()==ContractCode.C100 || getContractCode()==ContractCode.C130 || getContractCode()==ContractCode.C150 
+				|| getContractCode()==ContractCode.C200 || getContractCode()==ContractCode.C230 || getContractCode()==ContractCode.C250
+				|| getContractCode()==ContractCode.C300 || getContractCode()==ContractCode.C330 || getContractCode()==ContractCode.C350
+				|| getContractCode()==ContractCode.C441 || getContractCode()==ContractCode.C541;
+	}
+	public Boolean getShowEscuelasTallerPanel(){
+		return getContractCode()==ContractCode.C100 || getContractCode()==ContractCode.C130 || getContractCode()==ContractCode.C150 
+				|| getContractCode()==ContractCode.C200 || getContractCode()==ContractCode.C230 || getContractCode()==ContractCode.C250
+				|| getContractCode()==ContractCode.C300 || getContractCode()==ContractCode.C330 || getContractCode()==ContractCode.C350
+				|| getContractCode()==ContractCode.C401 || getContractCode()==ContractCode.C410 || getContractCode()==ContractCode.C420
+				|| getContractCode()==ContractCode.C421 || getContractCode()==ContractCode.C430 || getContractCode()==ContractCode.C441
+				|| getContractCode()==ContractCode.C450 || getContractCode()==ContractCode.C452 || getContractCode()==ContractCode.C501
+				|| getContractCode()==ContractCode.C502 || getContractCode()==ContractCode.C510 || getContractCode()==ContractCode.C520
+				|| getContractCode()==ContractCode.C530 || getContractCode()==ContractCode.C540 || getContractCode()==ContractCode.C541
+				|| getContractCode()==ContractCode.C550 || getContractCode()==ContractCode.C970 || getContractCode()==ContractCode.C980
+				|| getContractCode()==ContractCode.C990;
+	}
+	public Boolean getShowDatosOfertaTrabajoPanel(){
+		// Datos generales para todos los contratos
 		return true;
 	}
-	public Boolean getShowEttData(){
+	public Boolean getShowDiscapacidadPanel(){
+		// Datos generales para todos los contratos
 		return true;
 	}
-	public Boolean getShowReliefData(){
-		return true;	
-	}
-	public Boolean getShowOfferData(){
+	public Boolean getShowMayor52Panel(){
+		// Datos generales para todos los contratos
 		return true;
 	}
-	public Boolean getShowWorkshopData(){
+	public Boolean getShowAnexoGestionColectivaPanel(){
+		// TODO
 		return true;
 	}
-	public Boolean getShowDisabilityData(){
+	public Boolean getShowCampainasPanel(){
+		// Datos generales para todos los contratos
 		return true;
 	}
-	public Boolean getShowOlderThan52Data(){
+	public Boolean getShowCausaInterinidadPanel(){
+		return getContractCode()==ContractCode.C410 || getContractCode()==ContractCode.C450 || getContractCode()==ContractCode.C510
+				|| getContractCode()==ContractCode.C550;
+	}
+	public Boolean getShowInvestigacionPanel(){
+		return getContractCode()==ContractCode.C401 || getContractCode()==ContractCode.C420 || getContractCode()==ContractCode.C501;
+	}
+	public Boolean getShowReduccionCuotasPanel(){
+		return getContractCode()==ContractCode.C200 || getContractCode()==ContractCode.C230 || getContractCode()==ContractCode.C250
+				|| getContractCode()==ContractCode.C300 || getContractCode()==ContractCode.C330 || getContractCode()==ContractCode.C350
+				|| getContractCode()==ContractCode.C421 || getContractCode()==ContractCode.C450 || getContractCode()==ContractCode.C501
+				|| getContractCode()==ContractCode.C502 || getContractCode()==ContractCode.C520 || getContractCode()==ContractCode.C530
+				|| getContractCode()==ContractCode.C550;
+	}
+	public Boolean getShowMedidasFomentoPanel(){
+		// TODO : contractCodes = 100, 130, 150, 200, 230, 250, 300, 330, 350
 		return true;
 	}
-	public Boolean getShowAnnexData(){
+	public Boolean getShowContratoExtranjeroPanel(){
+		// TODO : contractCodes = 100, 200, 401, 402, 501, 502
 		return true;
 	}
-	public Boolean getShowCanpaignData(){
+	public Boolean getShowContratoEmprendedoresPanel(){
+		// TODO : contractCodes = 100, 150, 300, 350
 		return true;
 	}
-	public Boolean getShowInterimData(){
+	public Boolean getShowDatosBonificacionPanel(){
+		// TODO : contractCodes = 130, 150, 230, 250, 330, 350, 430, 450, 452, 530, 550, 552
 		return true;
 	}
-	public Boolean getShowResearchData(){
+	public Boolean getShowEmpresaInsercionPanel(){
+		// TODO : contractCodes = 150, 250, 350, 450, 452, 550, 552
 		return true;
 	}
-	public Boolean getShowReductionData(){
+	public Boolean getShowDatosCopiaBasicaPanel(){
+		// TODO : contractCodes = 402, 450, 452, 550, 552, 990
+		return true;
+	}
+	public Boolean getShowContratoInsercionPanel(){
+		// TODO : contractCodes =  403, 502
+		return true;
+	}
+	public Boolean getShowDatosContratoPracticasPanel(){
+		// TODO : contractCodes =  420, 450, 520, 550
+		return true;
+	}
+	public Boolean getShowDatosExclusionSocialPanel(){
+		// TODO : contractCodes = 450, 550
 		return true;
 	}
 	
-
 	
 	
 	public void buildDataStructure(){
 		
 	}	
 	
-	
-
-//	private static final long serialVersionUID = 3733409240562499848L;
-	
-//	private static final Logger LOGGER = LoggerFactory.getLogger(ContractContrataHandler.class.getName());
-//	private static final String CONTRACT_XML_CONTEXT_PATH = "com.esferalia.aon.ui.payroll.utils.contractMojo";
-
-//	private ContractaWriter xmlWriter;
-	
-//	private ContractContrataFactory factory;
-	
-//	private ContractController contractController;
-	
-//	private CONTRATOS contratos;
-	
-//	private ContractAttachment contrataAttach;
-	
-//	public ContractContrataHandler(ContractController controller) {
-//		contractController = controller;
-//		factory = new ContractContrataFactory();
-//		factory.setParams(new ContrataParams());
-////		factory.setContractCode(ContractCode.getContractCodeByValue(getContractDataMap().get(ContextVariable.TC2.getName())));
-//		factory.setContract((Contract)contractController.getTo());
-//	}
-	
-//	public void setContrataAttach(ContractAttachment contrataAttach) {
-//		this.contrataAttach = contrataAttach;
-//	}
-//	public ContractAttachment getContrataAttach(){
-//		return contrataAttach;
-//	}
-	
-//	public CONTRATOS getContratos() {
-//		return contratos;
-//	}
-//	public void setContratos(CONTRATOS contratos) {
-//		this.contratos = contratos;
-//	}
-	
-//	public ContractaWriter getXmlWriter() {
-//		return xmlWriter;
-//	}
-//	public void setXmlWriter(ContractaWriter xmlWriter) {
-//		this.xmlWriter = xmlWriter;
-//	}
-	
-//	public ContractContrataFactory getFactory() {
-//		return factory;
-//	}
-//	public void setFactory(ContractContrataFactory factory) {
-//		this.factory = factory;
-//	}
-
-//	public ContrataParams getParams() {
-//		return getFactory().getParams();
-//	}
-
-//	public void readXml() throws JAXBException, IOException {
-//		searchContrataAttach();
-//		if(getContrataAttach()!=null){
-//			byte[] f = getContrataAttach().getData();
-//			if(f!=null && f.length>0){
-//				File file = File.createTempFile("aon-temp", ".XML");
-//				FileOutputStream fos = new FileOutputStream(file);
-//				fos.write(f);
-//				fos.close();
-//				JAXBContext jaxbContext = JAXBContext.newInstance(CONTRACT_XML_CONTEXT_PATH);
-//				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-//				setContratos((CONTRATOS) unmarshaller.unmarshal(file));
-//				ContractaReader reader = new ContractaReader();
-//				reader.completeContrataParams(getContratos(), getFactory().getParams());
-//				unmarshaller.setEventHandler(new ContractValidationEventHandler());
-//			}
-//		}
-//	}
-//	
-//	private void searchContrataAttach(){
-//		setContrataAttach(null);
-//		try {
-//			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
-//			Criteria criteria = new Criteria();
-//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), ((Contract)contractController.getTo()).getId());
-//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA);
-//			List<ITransferObject> list = bean.getList(criteria);
-//			if(!list.isEmpty()){
-//				setContrataAttach((ContractAttachment) list.get(0));
-//			}
-//		} catch (ManagerBeanException e) {
-//			// NADA
-//		}
-//	}
-	
-//	public void generateXml() throws JAXBException, ManagerBeanException, IOException{
-//		JAXBContext jaxbContext = JAXBContext.newInstance(CONTRACT_XML_CONTEXT_PATH);
-//		
-//		ObjectFactory factory = new ObjectFactory();
-//		setContratos(factory.createCONTRATOS());
-//		setXmlWriter(new ContractaWriter());
-//		getXmlWriter().setContract((Contract) contractController.getTo());
-//		getXmlWriter().setParams(getFactory().getParams());
-//		
-//		getContratos().getCONTRATO100AndCONTRATO130AndCONTRATO150().add(getXmlWriter().execute());
-//		
-//		Marshaller marshaller = jaxbContext.createMarshaller();
-//		
-//		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-//		File file = File.createTempFile("aon-temp", ".XML"); 
-//		marshaller.marshal( getContratos(), file );
-//		
-//		validateXmlPattern(file);
-//		
-//		FileInputStream fin = new FileInputStream(file);
-//		byte fileContent[] = new byte[(int)file.length()];
-//		fin.read(fileContent);
-//		if(getContrataAttach()==null){
-//			setContrataAttach(new ContractAttachment());
-//		}
-//		getContrataAttach().setContract((Contract) contractController.getTo());
-//		getContrataAttach().setData(fileContent);
-//		getContrataAttach().setAttachmentType(ContractAttachmentType.SPEE_CONTRATA);
-//		getContrataAttach().setMimeType(MimeType.MIME_XML);
-//		getContrataAttach().setDescription("fichero_contrata");
-//		fin.close();
-//	}
-	
-//	private void validateXmlPattern(File xml) {
-//		final String SCHEMA = "EsquemaContratos50.xsd";
-//		
-//		try {
-//			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-//			URL[] urls = Classpath.search(cl, "META-INF/", SCHEMA);
-//			
-//			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-//			Schema schema = sf.newSchema(getSchemaFile(urls[0]));
-//			Validator validator = schema.newValidator();
-//			StreamSource source = new StreamSource(xml);
-//			validator.validate(source);
-//		} catch (Exception e) {
-//			String msg = "Error de formato al generar el XML";
-//			AonUtil.addErrorMessage(msg);
-//			AonUtil.addErrorMessage(e.getMessage());
-//			throw new AbortProcessingException(msg, e);
-//		}
-//	}
-	
-//	private File getSchemaFile(URL url) {
-//		Map<String, Boolean> map = new HashMap<String, Boolean>();
-//		map.put("CONTRATO_100", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C100.getValue()));
-//		map.put("CONTRATO_130", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C130.getValue()));
-//		map.put("CONTRATO_150", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C150.getValue()));
-//		map.put("CONTRATO_200", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C200.getValue()));
-//		map.put("CONTRATO_230", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C230.getValue()));
-//		map.put("CONTRATO_250", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C250.getValue()));
-//		map.put("CONTRATO_300", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C300.getValue()));
-//		map.put("CONTRATO_330", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C330.getValue()));
-//		map.put("CONTRATO_350", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C350.getValue()));
-//		map.put("CONTRATO_401", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C401.getValue()));
-//		map.put("CONTRATO_402", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C402.getValue()));
-//		map.put("CONTRATO_403", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C403.getValue()));
-//		map.put("CONTRATO_410", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C410.getValue()));
-//		map.put("CONTRATO_420", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C420.getValue()));
-//		map.put("CONTRATO_421", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C421.getValue()));
-//		map.put("CONTRATO_430", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C430.getValue()));
-//		map.put("CONTRATO_441", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C441.getValue()));
-//		map.put("CONTRATO_450", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C450.getValue()));
-//		map.put("CONTRATO_452", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C452.getValue()));
-//		map.put("CONTRATO_501", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C501.getValue()));
-//		map.put("CONTRATO_502", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C502.getValue()));
-//		map.put("CONTRATO_503", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C503.getValue()));
-//		map.put("CONTRATO_510", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C510.getValue()));
-//		map.put("CONTRATO_520", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C520.getValue()));
-//		map.put("CONTRATO_530", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C530.getValue()));
-//		map.put("CONTRATO_540", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C540.getValue()));
-//		map.put("CONTRATO_541", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C541.getValue()));
-//		map.put("CONTRATO_550", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C550.getValue()));
-//		map.put("CONTRATO_552", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C552.getValue()));
-//		map.put("CONTRATO_970", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C970.getValue()));
-//		map.put("CONTRATO_980", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C980.getValue()));
-//		map.put("CONTRATO_990", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C990.getValue()));
-//		try {
-//			File tempFile = new File("tmpEsquemaContratos50.xsd");
-//
-//			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-//			BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-//
-//			String currentLine;
-//
-//			while((currentLine = reader.readLine()) != null) {
-//				if( (StringUtils.contains(currentLine, "CONTRATO_100") && !map.get("CONTRATO_100")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_130") && !map.get("CONTRATO_130")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_150") && !map.get("CONTRATO_150")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_200") && !map.get("CONTRATO_200")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_230") && !map.get("CONTRATO_230")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_250") && !map.get("CONTRATO_250")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_300") && !map.get("CONTRATO_300")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_330") && !map.get("CONTRATO_330")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_350") && !map.get("CONTRATO_350")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_401") && !map.get("CONTRATO_401")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_402") && !map.get("CONTRATO_402")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_403") && !map.get("CONTRATO_403")) || 
-//					(StringUtils.contains(currentLine, "CONTRATO_410") && !map.get("CONTRATO_410")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_420") && !map.get("CONTRATO_420")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_421") && !map.get("CONTRATO_421")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_430") && !map.get("CONTRATO_430")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_441") && !map.get("CONTRATO_441")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_450") && !map.get("CONTRATO_450")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_452") && !map.get("CONTRATO_452")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_501") && !map.get("CONTRATO_501")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_502") && !map.get("CONTRATO_502")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_503") && !map.get("CONTRATO_503")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_510") && !map.get("CONTRATO_510")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_520") && !map.get("CONTRATO_520")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_530") && !map.get("CONTRATO_530")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_540") && !map.get("CONTRATO_540")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_541") && !map.get("CONTRATO_541")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_550") && !map.get("CONTRATO_550")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_552") && !map.get("CONTRATO_552")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_970") && !map.get("CONTRATO_970")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_980") && !map.get("CONTRATO_980")) ||
-//					(StringUtils.contains(currentLine, "CONTRATO_990") && !map.get("CONTRATO_990")) ){
-//					continue;
-//				}
-//			    writer.write(currentLine);
-//			}
-//			writer.close();
-//			return tempFile;
-//		} catch (FileNotFoundException e) {
-//			String msg = "Error al obtener el esquema de validacion";
-//			LOGGER.error(msg);
-//			AonUtil.addErrorMessage(msg);
-//		} catch (IOException e) {
-//			String msg = "Error al obtener el esquema de validacion";
-//			LOGGER.error(msg);
-//			AonUtil.addErrorMessage(msg);
-//		}
-//		return null;
-//	}
-
-//	public class ContractValidationEventHandler implements ValidationEventHandler {
-//		public boolean handleEvent(ValidationEvent ve) {
-//			if (ve.getSeverity() == ValidationEvent.FATAL_ERROR || ve.getSeverity() == ValidationEvent.ERROR) {
-//				ValidationEventLocator locator = ve.getLocator();
-//				// Print message from valdation event
-//				System.out.println("Invalid booking document: " + locator.getURL());
-//				System.out.println("Error: " + ve.getMessage());
-//				// Output line and column number
-//				System.out.println("Error at column "
-//						+ locator.getColumnNumber() + ", line "
-//						+ locator.getLineNumber());
-//			}
-//			return true;
-//		}
-//	}
-	
-//	private Map<String, String> contractDataMap;
-//	
-//	protected Map<String, String> getContractDataMap() {
-//		if(contractDataMap==null || contractDataMap.isEmpty()){
-//			PayrollUtils utils = new PayrollUtils();
-//			contractDataMap = utils.getContractDataMap((Contract)contractController.getTo());
-//		}
-//		return contractDataMap;
-//	}
-	
-//	public List<SelectItem> getTownNames(){
-//		String BASE_NAME = "com.esferalia.aon.payroll.i18n.towns";
-//		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME);
-//		Contract contract = (Contract)contractController.getTo();
-//		List<SelectItem> towns = new LinkedList<SelectItem>();
-//		try {
-//			String geozone = contract.getPerson().getRegistry().getDefaultAddress().getGeozone().getCode();
-//			TreeSet<String> tree = new TreeSet<String>(bundle.keySet());
-//			for(String key: tree){
-//				if(key.startsWith(geozone)){
-//					String name = bundle.getString(key);
-//					SelectItem item = new SelectItem(key, name);
-//					towns.add(item);
-//				}
-//			}
-//			return towns;
-//		} catch (ManagerBeanException e) {
-//			// NADA, se devuelve una lista vacia
-//		}
-//		return null;
-//	}
+	private boolean isPartialTimeContract(ContractCode contractCode) {
+		return contractCode.getValue().startsWith("2") || contractCode.getValue().startsWith("5");
+	}
 	
 }
