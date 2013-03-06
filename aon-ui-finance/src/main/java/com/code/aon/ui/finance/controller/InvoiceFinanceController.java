@@ -19,7 +19,6 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
@@ -27,7 +26,6 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
@@ -38,7 +36,6 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 
 	private RegistryBank registryBank;
 	private boolean showBankManualInput;
-	private double paidAmount;
 
 	public RegistryBank getRegistryBank() {
 		return registryBank;
@@ -54,37 +51,6 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 
 	public void setShowBankManualInput(boolean showBankManualInput) {
 		this.showBankManualInput = showBankManualInput;
-	}
-
-	public double getPaidAmount() {
-		return paidAmount;
-	}
-
-	public void setPaidAmount(double paidAmount) {
-		this.paidAmount = paidAmount;
-	}
-
-	public void resetPaidAmount() {
-		InvoiceDetail invoiceDetail = (InvoiceDetail)FormUtil.getController(((InvoiceController)getMasterController()).getInvoiceDetailControllerName()).getTo();
-		setPaidAmount(invoiceDetail.getTotalSalesPrice());
-	}
-
-	public void onPaidAmountChanged(ValueChangeEvent event) {
-		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			Double value = (Double)event.getNewValue();
-			setPaidAmount(value);
-		} else {
-			setPaidAmount(0);
-		}
-	}
-
-	public double getChangeAmount() {
-		InvoiceController invoiceController = (InvoiceController)getMasterController();
-		if (invoiceController.isNew()) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)FormUtil.getController(invoiceController.getInvoiceDetailControllerName()).getTo();
-			return getPaidAmount() - invoiceDetail.getTotalSalesPrice();
-		}
-		return getPaidAmount() - invoiceController.getPendingAmount();
 	}
 
 	public boolean isModelToEditable() throws ManagerBeanException{

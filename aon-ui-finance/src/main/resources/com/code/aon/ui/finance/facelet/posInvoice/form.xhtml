@@ -110,6 +110,7 @@
 							value="#{posInvoice.toInvoiceTotalPrice}">
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
+						<aon:outputText value=" €" styleClass="aon-bold" />
 					</aon:div>
 
 					<aon:outputLabel for="Seller_id" value="#{financeBundle.finance_pos_seller_label}" />
@@ -144,10 +145,6 @@
 									actionListener="#{posInvoice.onShowFinishTicket}"
 									reRender="showFinishTicketWindow"
 									accesskey="W">
-									<f:setPropertyActionListener target="#{posInvoice.financeGenerationMode}"
-										value="1" />
-									<f:setPropertyActionListener target="#{posInvoiceFinance.paidAmount}"
-										value="#{posInvoice.pendingAmount}" />
 									<f:setPropertyActionListener target="#{posInvoice.showFinishTicketWindow}"
 										value="#{true}" />
 								</aon:commandButton>				
@@ -232,7 +229,7 @@
 				<c:if test="#{posInvoiceDetail.model.rowCount > 0}">
 					<aon:panelGrid columns="#{(posInvoiceFinance.model.rowCount > 0) ? 2 : 1}" 
 						styleClass="aon-width-all"
-						columnClasses="aon-width-auto aon-padding-right, aon-width-300 aon-padding-left">
+						columnClasses="aon-width-auto aon-padding-right aon-vertical-align-top, aon-width-300 aon-padding-left aon-vertical-align-top">
 						<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formDetail.xhtml">
 							<ui:param name="detailController" value="#{posInvoiceDetail}" />
 						</ui:include>

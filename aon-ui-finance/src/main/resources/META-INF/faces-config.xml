@@ -3593,7 +3593,7 @@
 	<managed-bean>
 		<managed-bean-name>posInvoiceFinance</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.controller.InvoiceFinanceController
+			com.code.aon.ui.finance.controller.PosInvoiceFinanceController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>

@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
@@ -48,7 +47,7 @@ public class InvoiceFinanceControllerListener extends ControllerAdapter {
 		finance.setSecurityLevel(invoice.getSecurityLevel());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		try {
-			finance.setAmount(CommonUtil.round(invoiceController.getToInvoiceTotalPrice() - invoiceController.getToInvoiceFinanceTotal()));
+			finance.setAmount(invoiceController.getPendingAmount());
 
 			RegistryPayMethod rPayMethod = obtainRegistryPayMethod(finance.getRegistry());
 			finance.setPayMethod((rPayMethod==null) ? new PayMethod() : rPayMethod.getPayment());

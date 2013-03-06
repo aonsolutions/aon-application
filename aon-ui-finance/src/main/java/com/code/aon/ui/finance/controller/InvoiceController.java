@@ -154,8 +154,6 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	public void onFinanceGenerationModeChanged(ValueChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			setFinanceGenerationMode((Integer)event.getNewValue());
-			InvoiceFinanceController invoiceFinanceController = (InvoiceFinanceController)FormUtil.getController(invoiceFinanceControllerName);
-			invoiceFinanceController.resetPaidAmount();
 		}
 	}
 

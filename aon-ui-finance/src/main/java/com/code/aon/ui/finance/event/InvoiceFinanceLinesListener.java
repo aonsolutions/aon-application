@@ -20,11 +20,7 @@ public class InvoiceFinanceLinesListener extends LinesControllerListener {
 			Finance finance = (Finance)financeController.getTo();
 			if (finance != null) {
 				finance.setInvoice(invoice);
-				if (financeController.getPaidAmount() == 0 || financeController.getPaidAmount() >= invoice.getTotal()) {
-					finance.setAmount(invoice.getTotal());
-				} else {
-					finance.setAmount(financeController.getPaidAmount());
-				}
+				finance.setAmount(invoice.getTotal());
 			}
 		} else {
 			financeController.onCancel(null);
