@@ -167,11 +167,11 @@
 				<aon:div id="PosInvoiceDetailWizard">
 					<aon:panelGrid id="posInvoiceDetailDataTable" columns="5"
 						styleClass="aon-width-all aon-margin-bottom aon-text-center"
-						columnClasses="aon-panelGrid-search aon-panelGrid-odd aon-width-auto,
-							aon-panelGrid-search aon-panelGrid-odd aon-width-140,
-							aon-panelGrid-search aon-panelGrid-odd aon-width-140,
-							aon-panelGrid-search aon-panelGrid-odd aon-width-140,
-							aon-panelGrid-search aon-panelGrid-odd aon-width-150">
+						columnClasses="aon-panelGrid-search aon-width-auto,
+							aon-panelGrid-search aon-width-140,
+							aon-panelGrid-search aon-width-140,
+							aon-panelGrid-search aon-width-150,
+							aon-panelGrid-search aon-panelGrid-even aon-width-150">
 
 						<aon:outputLabel for="Item_id" value="#{productBundle.product_item}" />
 
@@ -216,9 +216,9 @@
 
 						<aon:div>
 							<aon:commandButton
-								id="PosDetail-plusQuantity" immediate="true"
-								styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-search-add"
-								actionListener="#{posInvoiceDetail.onPlusQuantity}"
+								id="PosDetail-minusQuantity" immediate="true"
+								styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-search-minus"
+								actionListener="#{posInvoiceDetail.onMinusQuantity}"
 								reRender="InvoiceDetail_quantity" ajaxSingle="true" />
 							<aon:inputText id="InvoiceDetail_quantity"
 								value="#{posInvoiceDetail.to.quantity}" 
@@ -227,9 +227,9 @@
 								reRender="InvoiceDetail_discount,InvoiceDetail_price" ajaxSingle="true"
 								focus="InvoiceDetail_discount" />
 							<aon:commandButton
-								id="PosFinance-removeButton" immediate="true"
-								styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-search-minus"
-								actionListener="#{posInvoiceDetail.onMinusQuantity}"
+								id="PosDetail-plusQuantity" immediate="true"
+								styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-search-add"
+								actionListener="#{posInvoiceDetail.onPlusQuantity}"
 								reRender="InvoiceDetail_quantity" ajaxSingle="true" />
 						</aon:div>
 
@@ -260,7 +260,7 @@
 				<c:if test="#{posInvoiceDetail.model.rowCount > 0}">
 					<aon:panelGrid columns="#{(posInvoiceFinance.model.rowCount > 0) ? 2 : 1}" 
 						styleClass="aon-width-all"
-						columnClasses="aon-width-auto aon-padding-right aon-vertical-align-top, aon-width-300 aon-padding-left aon-vertical-align-top">
+						columnClasses="aon-width-auto aon-padding-right aon-vertical-align-top, aon-width-300 aon-vertical-align-top">
 						<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formDetail.xhtml">
 							<ui:param name="detailController" value="#{posInvoiceDetail}" />
 						</ui:include>
