@@ -1,7 +1,6 @@
 package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_NAME;
-import static com.code.aon.ui.admin.controller.IAdminConstants.AON_PLATFORM;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_DISPLAY_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_DOMAIN_MANAGEMENT;
@@ -115,8 +114,6 @@ public class DomainController extends BasicController {
 	
 	private DomainModuleInfo payrollPortal;
 	
-	private List<DomainApplicationInfo> applicationInfos;
-	
 	private DomainApplication domainApplication;
 		
 	private boolean OEM;
@@ -181,10 +178,6 @@ public class DomainController extends BasicController {
 	public void onPortalDocumentalChanged( ActionEvent event ) {
 		getDocumental().setChecked(getDocumentModule() == Module.DOCUMENT);
 		onDocumentalChanged(event);
-	}
-	
-	public List<DomainApplicationInfo> getApplicationInfos() {
-		return applicationInfos;
 	}
 	
 	public boolean isConsultancyParent() throws ManagerBeanException {
@@ -314,11 +307,12 @@ public class DomainController extends BasicController {
 		}
 	}
 
+	public DomainApplicationInfo getAioInfo() {
+		return aioInfo;
+	}
+
 	public void initApplicationInfos() throws ManagerBeanException {
-		this.applicationInfos = new LinkedList<DomainApplicationInfo>();
 		this.aioInfo = DomainApplicationInfo.getApplicationInfos(getDomain(), AON_AIO_APPLICATION);
-		this.aioInfo.setDescription(AonUtil.getMessage(BUNDLE_NAME, AON_PLATFORM));
-		this.applicationInfos.add(this.aioInfo);
 		updateModules(this.aioInfo);
 	}
 	
@@ -345,12 +339,10 @@ public class DomainController extends BasicController {
 
 	public void saveApplications() throws ManagerBeanException {
 		updatePortalModules();
-		for( DomainApplicationInfo dai : this.applicationInfos ) {
-			if ( dai.isChecked() ) {
-				dai.register();
-			} else {
-				dai.unregister();
-			}
+		if ( this.aioInfo.isChecked() ) {
+			this.aioInfo.register();
+		} else {
+			this.aioInfo.unregister();
 		}
 	}	
 	
