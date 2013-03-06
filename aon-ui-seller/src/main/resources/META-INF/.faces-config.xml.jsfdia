@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS model-entity="JSFProcess">
+ <PROCESS-ITEM NAME="rules:" SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::0" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="seller_list::#com#code#aon#ui#seller#facelet#seller#list.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/seller/facelet/seller/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#seller#facelet#seller#list.xhtml"
+    TITLE="seller_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="seller_form::#com#code#aon#ui#seller#facelet#seller#form.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/seller/facelet/seller/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#seller#facelet#seller#form.xhtml"
+    TITLE="seller_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="seller_search::#com#code#aon#ui#seller#facelet#seller#search.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/seller/facelet/seller/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#seller#facelet#seller#search.xhtml"
+    TITLE="seller_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#seller#facelet#seller#search.xhtml"
+  PATH="/com/code/aon/ui/seller/facelet/seller/search.xhtml"
+  SHAPE="272,321,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#seller#facelet#seller#form.xhtml"
+  PATH="/com/code/aon/ui/seller/facelet/seller/form.xhtml"
+  SHAPE="272,209,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#seller#facelet#seller#list.xhtml"
+  PATH="/com/code/aon/ui/seller/facelet/seller/list.xhtml"
+  SHAPE="272,33,0,0" model-entity="JSFProcessGroup"/>
+</PROCESS>

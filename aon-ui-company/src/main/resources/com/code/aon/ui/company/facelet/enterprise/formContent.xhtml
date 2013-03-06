@@ -9,13 +9,9 @@
 	
 	<ui:decorate template="/com/code/aon/ui/registry/facelet/registry/formContentEx.xhtml">
 		<ui:param name="skipSecurityPanel" value="true"/>
+		<ui:param name="includeRegistryScope" value="#{true}"/>
 		
 		<ui:define name="dataPanel">
-
-			<aon:outputLabel for="Enterprise_scope_id" value="#{bundle.aon_scope}" />
-			<aon:selectOneMenu id="Enterprise_scope_id" value="#{controller.to.scope}">
-				<f:selectItems value="#{configCollections.currentUserScopes}" />
-			</aon:selectOneMenu>
 								
 			<ui:include src="/com/code/aon/ui/registry/facelet/raddress/form.xhtml" />
 				

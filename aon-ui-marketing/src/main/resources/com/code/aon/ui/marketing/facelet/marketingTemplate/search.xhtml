@@ -38,6 +38,15 @@
 						value="#{marketingBundle.marketing_template}" />
 					<aon:inputText id="Template_data" size="60"
 						valueChangeListener="#{controller.addExpression}" />
+		
+					<aon:outputLabel for="Template_scope_id"
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Template_scope_id"
+						value="#{configCollections.scope}"
+						valueChangeListener="#{controller.addIdEqualExpression}" >
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					</aon:selectOneMenu>
 				
 					<aon:outputText value="#{marketingBundle.marketing_creationDate}" />
 					<aon:div>

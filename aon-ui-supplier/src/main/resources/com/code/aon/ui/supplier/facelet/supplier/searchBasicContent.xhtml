@@ -6,9 +6,14 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml">
-		<ui:param name="controller" value="#{controller}" />
-	</ui:include>
+	<c:if test="#{lookup != null}">
+		<ui:param name="controller" value="#{lookup}"/>
+		<ui:param name="searchController" value="#{supplierSearch}" />
+	</c:if>
+
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml" >
+		<ui:param name="includeRegistryScope" value="#{true}"/>
+	</ui:include>	
 		
 	<aon:outputText value="#{bundle.aon_status}"/>
 	<aon:selectManyCheckbox value="#{supplierSearch.supplierStatuses}">

@@ -14,6 +14,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Scope;
 import com.code.aon.config.Tag;
 import com.code.aon.config.enumeration.TagType;
 import com.code.aon.ql.Criteria;
@@ -27,6 +28,8 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 	private static final Category EMPTY_CATEGORY = new Category();
 	
 	private static final Tag EMPTY_TAG = new Tag();
+
+	private static final Scope EMPTY_SCOPE = new Scope();
 	
 	private Integer sizeFrom;
 	
@@ -36,6 +39,33 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 	
 	private Tag[] tags;
 
+	private Scope[] scopes;
+	
+	public Scope[] getScopes() {
+		if (ArrayUtils.isEmpty(scopes)) {
+			scopes = new Scope[]{EMPTY_SCOPE};
+		}
+		return scopes;
+	}
+
+	public void setScopes(Scope[] scopes) {
+		this.scopes = scopes;
+	}
+
+	public int getScopesSize() {
+		return ArrayUtils.getLength(scopes);
+	}
+	
+	public List<Integer> getScopesIds() {
+		List<Integer> ids = new LinkedList<Integer>();
+		for( Scope scope : getScopes() ) {
+			if ((scope != null) && (scope.getId() != null)) {
+				ids.add(scope.getId());
+			}
+		}
+		return ids;
+	}			
+	
 	public Integer getSizeFrom() {
 		return sizeFrom;
 	}
@@ -110,7 +140,8 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 		setSizeFrom(null);
 		setSizeTo(null);
 		setCategories( new Category[]{EMPTY_CATEGORY} );
-		setTags( new Tag[]{EMPTY_TAG} );	
+		setTags( new Tag[]{EMPTY_TAG} );
+		setScopes( new Scope[]{EMPTY_SCOPE} );
 	}
 	
 	@Override
@@ -132,6 +163,10 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 		if ( getTagsSize() > 0 ) {
 			addEnumToCriteria(criteria, "RegistryAttachment.tags.tag.id", getTagsIds().toArray());	
 		}
+		if ( getScopesSize() > 0 ) {
+			String alias = getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_SCOPE_ID);
+			addEnumToCriteria(criteria, alias, getScopesIds().toArray());	
+		}				
 	}
 	
 	public void onAddCategory(ActionEvent event) {
@@ -173,5 +208,18 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
     	}
     	return tags;
     }    
+
+	public void onAddScope(ActionEvent event) {
+		this.scopes = (Scope[]) ArrayUtils.add(this.scopes, EMPTY_SCOPE);
+	}
 	
+	public void onRemoveScope(ActionEvent event) {
+        FacesContext context = FacesContext.getCurrentInstance();
+		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
+		this.scopes = (Scope[]) ArrayUtils.remove(this.scopes, index);
+		if ( ArrayUtils.isEmpty(this.scopes) ) {
+			setScopes(new Scope[]{EMPTY_SCOPE});
+		}
+	}		
+    
 }

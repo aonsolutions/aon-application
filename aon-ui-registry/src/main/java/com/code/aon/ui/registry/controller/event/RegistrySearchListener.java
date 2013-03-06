@@ -10,6 +10,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ClassUtils;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Scope;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -23,6 +24,8 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 	
 	private static final Segment EMPTY_SEGMENT = new Segment();
 	
+	private static final Scope EMPTY_SCOPE = new Scope();
+	
 	private String preffix;
 
 	private List<MediaType> mediaTypes;
@@ -31,6 +34,33 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 	
 	private Segment[] segments;
 	
+	private Scope[] scopes;
+	
+	public Scope[] getScopes() {
+		if (ArrayUtils.isEmpty(scopes)) {
+			scopes = new Scope[]{EMPTY_SCOPE};
+		}
+		return scopes;
+	}
+
+	public void setScopes(Scope[] scopes) {
+		this.scopes = scopes;
+	}
+
+	public int getScopesSize() {
+		return ArrayUtils.getLength(scopes);
+	}
+	
+	public List<Integer> getScopesIds() {
+		List<Integer> ids = new LinkedList<Integer>();
+		for( Scope scope : getScopes() ) {
+			if ((scope != null) && (scope.getId() != null)) {
+				ids.add(scope.getId());
+			}
+		}
+		return ids;
+	}			
+
 	public List<MediaType> getMediaTypes() {
 		if (mediaTypes == null) {
 			mediaTypes = new LinkedList<MediaType>();
@@ -111,6 +141,7 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 		getMediaTypes().add(null);
 		setGeoZones(new GeoZone[]{EMPTY_GEOZONE});
 		setSegments(new Segment[]{EMPTY_SEGMENT});
+		setScopes( new Scope[]{EMPTY_SCOPE} );
 	}
 	
 	public String getPreffix() throws ManagerBeanException {
@@ -133,6 +164,9 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 		addEnumToCriteria(criteria, geozone, getGeoZonesIds().toArray());		
 		String segment = resolveAlias("segments_segment_id");
 		addEnumToCriteria(criteria, segment, getSegmentsIds().toArray());
+		if ( getScopesSize() > 0 ) {
+			addEnumToCriteria(criteria, "Registry.scope.id", getScopesIds().toArray());	
+		}		
 	}
 	
 	public void onAddMediaType(ActionEvent event) {
@@ -173,5 +207,18 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 			setSegments(new Segment[]{EMPTY_SEGMENT});
 		}
 	}
+
+	public void onAddScope(ActionEvent event) {
+		this.scopes = (Scope[]) ArrayUtils.add(this.scopes, EMPTY_SCOPE);
+	}
+	
+	public void onRemoveScope(ActionEvent event) {
+        FacesContext context = FacesContext.getCurrentInstance();
+		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
+		this.scopes = (Scope[]) ArrayUtils.remove(this.scopes, index);
+		if ( ArrayUtils.isEmpty(this.scopes) ) {
+			setScopes(new Scope[]{EMPTY_SCOPE});
+		}
+	}		
 	
 }

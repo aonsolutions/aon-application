@@ -17,7 +17,9 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{enterprise}" />
 				<ui:define name="searchContent">
-					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/searchContent.xhtml" />
+					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/searchContent.xhtml" >
+						<ui:param name="searchController" value="#{enterpriseSearch}" />
+					</ui:include>
 				</ui:define>
 			</ui:decorate>
 		</aon:form>

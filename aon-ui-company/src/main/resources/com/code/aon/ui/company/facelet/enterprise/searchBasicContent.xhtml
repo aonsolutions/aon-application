@@ -8,10 +8,11 @@
 
 	<c:if test="#{lookup != null}">
 		<ui:param name="controller" value="#{lookup}"/>
+		<ui:param name="searchController" value="#{enterpriseSearch}" />
 	</c:if>
 
 	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml">
-		<ui:param name="controller" value="#{controller}" />
+		<ui:param name="includeRegistryScope" value="#{true}"/>
 	</ui:include>
 
 </ui:composition>

@@ -5,12 +5,9 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
-	
-	<aon:outputLabel for="Seller_scope_id" value="#{bundle.aon_scope}" />
-	<aon:selectOneMenu id="Seller_scope_id" value="#{controller.to.scope}">
-		<f:selectItems value="#{configCollections.currentUserScopes}" />
-	</aon:selectOneMenu>
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" >
+		<ui:param name="includeRegistryScope" value="#{true}"/>
+	</ui:include>		
 	
 	<aon:outputLabel for="Seller_commissionType" value="#{configBundle.config_commission_type}" />
 	<aon:selectOneMenu id="Seller_commissionType" value="#{controller.to.commissionType}">

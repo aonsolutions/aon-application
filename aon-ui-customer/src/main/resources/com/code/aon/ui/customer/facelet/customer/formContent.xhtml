@@ -10,12 +10,8 @@
 		<c:if test="#{aonConfiguration.bean.customer.showPerson}">
 			<ui:param name="registryTypeReRender" value="personInfoDiv" />
 		</c:if>
+		<ui:param name="includeRegistryScope" value="#{true}"/>
 	</ui:include>
-
-	<aon:outputLabel for="Customer_scope_id" value="#{bundle.aon_scope}" />
-	<aon:selectOneMenu id="Customer_scope_id" value="#{controller.to.scope}">
-		<f:selectItems value="#{configCollections.currentUserScopes}" />
-	</aon:selectOneMenu>
 
 	<aon:outputLabel for="Customer_status" value="#{bundle.aon_status}" />
 	<aon:selectOneRadio id="Customer_status" value="#{controller.to.status}">

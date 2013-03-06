@@ -8,9 +8,12 @@
 
 	<c:if test="#{lookup != null}">
 		<ui:param name="controller" value="#{lookup}"/>
+		<ui:param name="searchController" value="#{targetSearch}" />
 	</c:if>
 
-	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml" />
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml" >
+		<ui:param name="includeRegistryScope" value="#{true}"/>
+	</ui:include>	
 		
 	<aon:outputLabel for="Target_advertising"
 		value="#{commercialBundle.commercial_target_advertising}" />

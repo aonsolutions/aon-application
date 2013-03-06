@@ -62,4 +62,13 @@
 		<f:validateLength minimum="1" maximum="32" />
 	</aon:inputText>
 
+	<c:if test="#{includeRegistryScope}">
+		<aon:outputLabel for="#{pojoName}_scope_id"
+			value="#{bundle.aon_scope}" />
+		<aon:selectOneMenu id="#{pojoName}_scope_id"
+			value="#{controller.to.scope}">
+			<f:selectItems value="#{configCollections.currentUserScopes}" />
+		</aon:selectOneMenu>
+	</c:if>
+
 </ui:composition>

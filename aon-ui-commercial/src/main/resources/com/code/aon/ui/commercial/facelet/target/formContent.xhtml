@@ -6,21 +6,9 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include	src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
-
-	<aon:outputLabel for="Target_scope_id" value="#{bundle.aon_scope}" />
-	<aon:div>
-		<aon:selectOneMenu id="Target_scope_id" value="#{controller.to.scope}">
-			<f:selectItems value="#{configCollections.currentUserScopes}" />
-		</aon:selectOneMenu>
-		<aon:outputLabel for="Target_advertising" styleClass="aon-italic aon-margin-left aon-margin-right"
-			value="#{commercialBundle.commercial_target_advertising}" />
-		<aon:selectOneMenu id="Target_advertising" value="#{controller.to.advertising}"
-			required="true">
-			<f:selectItem itemLabel="-" value="#{null}"/>
-			<f:selectItems value="#{commercialCollections.advertisings}" />
-		</aon:selectOneMenu>
-	</aon:div>
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" >
+		<ui:param name="includeRegistryScope" value="#{true}"/>
+	</ui:include>
 
 	<aon:outputLabel for="Target_status" value="#{bundle.aon_status}" />
 	<aon:selectOneRadio id="Target_status" value="#{controller.to.status}">
@@ -79,5 +67,13 @@
 			</aon:commandButton>
 		</aon:div>
 	</c:if>
+	
+	<aon:outputLabel for="Target_advertising"
+		value="#{commercialBundle.commercial_target_advertising}" />
+	<aon:selectOneMenu id="Target_advertising" required="true"
+		value="#{controller.to.advertising}" >
+		<f:selectItem itemLabel="-" value="#{null}"/>
+		<f:selectItems value="#{commercialCollections.advertisings}" />
+	</aon:selectOneMenu>
 
 </ui:composition>

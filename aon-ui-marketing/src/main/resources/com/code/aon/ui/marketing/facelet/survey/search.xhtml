@@ -28,6 +28,15 @@
 						value="#{bundle.aon_description}" />
 					<aon:inputText id="Survey_description" size="60"
 						valueChangeListener="#{survey.addExpression}" />
+						
+					<aon:outputLabel for="Survey_scope_id"
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Survey_scope_id"
+						value="#{configCollections.scope}"
+						valueChangeListener="#{controller.addIdEqualExpression}" >
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					</aon:selectOneMenu>						
 				
 					<aon:outputLabel for="Survey_active"				
 						value="#{bundle.aon_status}"/>					

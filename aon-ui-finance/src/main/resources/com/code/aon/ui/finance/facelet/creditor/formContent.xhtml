@@ -6,13 +6,9 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include
-		src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
-
-	<aon:outputLabel for="Creditor_scope_id" value="#{bundle.aon_scope}" />
-	<aon:selectOneMenu id="Creditor_scope_id" value="#{controller.to.scope}">
-		<f:selectItems value="#{configCollections.currentUserScopes}" />
-	</aon:selectOneMenu>
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" >
+		<ui:param name="includeRegistryScope" value="#{true}"/>
+	</ui:include>
 
 	<aon:outputLabel for="Creditor_status" value="#{bundle.aon_status}" />
 	<aon:selectOneRadio id="Creditor_status" value="#{controller.to.status}">
