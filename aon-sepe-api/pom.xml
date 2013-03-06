@@ -45,7 +45,7 @@
 					<configuration>
 						<wsdlDirectory>src/main/wsdl</wsdlDirectory>
 						<wsdlFiles>
-	       						<wsdlFile>SWComunicacionDatos.wsdl</wsdlFile>
+	       					<wsdlFile>${basedir}/src/main/wsdl/SWComunicacionDatos.wsdl</wsdlFile>
 						</wsdlFiles>
 						<sourceDestDir>${project.build.directory}/generated-sources</sourceDestDir>
 						<packageName>com.esferalia.aon.sepe.api.SWComunicacionDatos</packageName>
@@ -67,7 +67,7 @@
 					<configuration>
 						<wsdlDirectory>src/main/wsdl</wsdlDirectory>
 						<wsdlFiles>
-	       						<wsdlFile>SWConsultaDatos.wsdl</wsdlFile>
+	       					<wsdlFile>${basedir}/src/main/wsdl/SWConsultaDatos.wsdl</wsdlFile>
 						</wsdlFiles>
 						<sourceDestDir>${project.build.directory}/generated-sources</sourceDestDir>
 						<packageName>com.esferalia.aon.sepe.api.SWConsultaDatos</packageName>
