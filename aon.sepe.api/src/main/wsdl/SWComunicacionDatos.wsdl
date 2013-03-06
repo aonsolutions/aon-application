@@ -1,0 +1,774 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions targetNamespace="http://comunicacion.serviciosWeb.comunicacto" xmlns:impl="http://comunicacion.serviciosWeb.comunicacto" xmlns:intf="http://comunicacion.serviciosWeb.comunicacto" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+ <wsdl:types>
+  <schema elementFormDefault="qualified" targetNamespace="http://comunicacion.serviciosWeb.comunicacto" xmlns="http://www.w3.org/2001/XMLSchema">
+   <element name="servicioContratos">
+    <complexType>
+     <sequence>
+      <element name="documento" nillable="true" type="xsd:string"/>
+      <element name="usuarioConectado" nillable="true" type="xsd:string"/>
+      <element name="usuarioPrincipal" nillable="true" type="xsd:string"/>
+      <element name="password" nillable="true" type="xsd:string"/>
+      <element name="idioma" nillable="true" type="xsd:string"/>
+      <element name="comunidad" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioContratosResponse">
+    <complexType>
+     <sequence>
+      <element name="servicioContratosReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioCorreccionProrroga">
+    <complexType>
+     <sequence>
+      <element name="documento" nillable="true" type="xsd:string"/>
+      <element name="usuarioConectado" nillable="true" type="xsd:string"/>
+      <element name="usuarioPrincipal" nillable="true" type="xsd:string"/>
+      <element name="password" nillable="true" type="xsd:string"/>
+      <element name="idioma" nillable="true" type="xsd:string"/>
+      <element name="comunidad" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioCorreccionProrrogaResponse">
+    <complexType>
+     <sequence>
+      <element name="servicioCorreccionProrrogaReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioCorreccionTransformacion">
+    <complexType>
+     <sequence>
+      <element name="documento" nillable="true" type="xsd:string"/>
+      <element name="usuarioConectado" nillable="true" type="xsd:string"/>
+      <element name="usuarioPrincipal" nillable="true" type="xsd:string"/>
+      <element name="password" nillable="true" type="xsd:string"/>
+      <element name="idioma" nillable="true" type="xsd:string"/>
+      <element name="comunidad" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioCorreccionTransformacionResponse">
+    <complexType>
+     <sequence>
+      <element name="servicioCorreccionTransformacionReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioHorasComplementarias">
+    <complexType>
+     <sequence>
+      <element name="documento" nillable="true" type="xsd:string"/>
+      <element name="usuarioConectado" nillable="true" type="xsd:string"/>
+      <element name="usuarioPrincipal" nillable="true" type="xsd:string"/>
+      <element name="password" nillable="true" type="xsd:string"/>
+      <element name="idioma" nillable="true" type="xsd:string"/>
+      <element name="comunidad" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioHorasComplementariasResponse">
+    <complexType>
+     <sequence>
+      <element name="servicioHorasComplementariasReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioInclusionContratoOE">
+    <complexType>
+     <sequence>
+      <element name="documento" nillable="true" type="xsd:string"/>
+      <element name="usuarioConectado" nillable="true" type="xsd:string"/>
+      <element name="usuarioPrincipal" nillable="true" type="xsd:string"/>
+      <element name="password" nillable="true" type="xsd:string"/>
+      <element name="idioma" nillable="true" type="xsd:string"/>
+      <element name="comunidad" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioInclusionContratoOEResponse">
+    <complexType>
+     <sequence>
+      <element name="servicioInclusionContratoOEReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioCorreccionLlamamiento">
+    <complexType>
+     <sequence>
+      <element name="documento" nillable="true" type="xsd:string"/>
+      <element name="usuarioConectado" nillable="true" type="xsd:string"/>
+      <element name="usuarioPrincipal" nillable="true" type="xsd:string"/>
+      <element name="password" nillable="true" type="xsd:string"/>
+      <element name="idioma" nillable="true" type="xsd:string"/>
+      <element name="comunidad" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioCorreccionLlamamientoResponse">
+    <complexType>
+     <sequence>
+      <element name="servicioCorreccionLlamamientoReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioProrrogas">
+    <complexType>
+     <sequence>
+      <element name="documento" nillable="true" type="xsd:string"/>
+      <element name="usuarioConectado" nillable="true" type="xsd:string"/>
+      <element name="usuarioPrincipal" nillable="true" type="xsd:string"/>
+      <element name="password" nillable="true" type="xsd:string"/>
+      <element name="idioma" nillable="true" type="xsd:string"/>
+      <element name="comunidad" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioProrrogasResponse">
+    <complexType>
+     <sequence>
+      <element name="servicioProrrogasReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioCorreccionContrato">
+    <complexType>
+     <sequence>
+      <element name="documento" nillable="true" type="xsd:string"/>
+      <element name="usuarioConectado" nillable="true" type="xsd:string"/>
+      <element name="usuarioPrincipal" nillable="true" type="xsd:string"/>
+      <element name="password" nillable="true" type="xsd:string"/>
+      <element name="idioma" nillable="true" type="xsd:string"/>
+      <element name="comunidad" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioCorreccionContratoResponse">
+    <complexType>
+     <sequence>
+      <element name="servicioCorreccionContratoReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioTransformacionIndefinido">
+    <complexType>
+     <sequence>
+      <element name="documento" nillable="true" type="xsd:string"/>
+      <element name="usuarioConectado" nillable="true" type="xsd:string"/>
+      <element name="usuarioPrincipal" nillable="true" type="xsd:string"/>
+      <element name="password" nillable="true" type="xsd:string"/>
+      <element name="idioma" nillable="true" type="xsd:string"/>
+      <element name="comunidad" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioTransformacionIndefinidoResponse">
+    <complexType>
+     <sequence>
+      <element name="servicioTransformacionIndefinidoReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioCopiaBasica">
+    <complexType>
+     <sequence>
+      <element name="documento" nillable="true" type="xsd:string"/>
+      <element name="usuarioConectado" nillable="true" type="xsd:string"/>
+      <element name="usuarioPrincipal" nillable="true" type="xsd:string"/>
+      <element name="password" nillable="true" type="xsd:string"/>
+      <element name="idioma" nillable="true" type="xsd:string"/>
+      <element name="comunidad" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioCopiaBasicaResponse">
+    <complexType>
+     <sequence>
+      <element name="servicioCopiaBasicaReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioLlamamientoFijoDiscontinuo">
+    <complexType>
+     <sequence>
+      <element name="documento" nillable="true" type="xsd:string"/>
+      <element name="usuarioConectado" nillable="true" type="xsd:string"/>
+      <element name="usuarioPrincipal" nillable="true" type="xsd:string"/>
+      <element name="password" nillable="true" type="xsd:string"/>
+      <element name="idioma" nillable="true" type="xsd:string"/>
+      <element name="comunidad" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioLlamamientoFijoDiscontinuoResponse">
+    <complexType>
+     <sequence>
+      <element name="servicioLlamamientoFijoDiscontinuoReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioContratoGrupo">
+    <complexType>
+     <sequence>
+      <element name="documento" nillable="true" type="xsd:string"/>
+      <element name="usuarioConectado" nillable="true" type="xsd:string"/>
+      <element name="usuarioPrincipal" nillable="true" type="xsd:string"/>
+      <element name="password" nillable="true" type="xsd:string"/>
+      <element name="idioma" nillable="true" type="xsd:string"/>
+      <element name="comunidad" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioContratoGrupoResponse">
+    <complexType>
+     <sequence>
+      <element name="servicioContratoGrupoReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioCorreccionHorasComplementarias">
+    <complexType>
+     <sequence>
+      <element name="documento" nillable="true" type="xsd:string"/>
+      <element name="usuarioConectado" nillable="true" type="xsd:string"/>
+      <element name="usuarioPrincipal" nillable="true" type="xsd:string"/>
+      <element name="password" nillable="true" type="xsd:string"/>
+      <element name="idioma" nillable="true" type="xsd:string"/>
+      <element name="comunidad" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="servicioCorreccionHorasComplementariasResponse">
+    <complexType>
+     <sequence>
+      <element name="servicioCorreccionHorasComplementariasReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="servicioCorreccionTransformacionResponse">
+
+      <wsdl:part element="impl:servicioCorreccionTransformacionResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioCorreccionProrrogaResponse">
+
+      <wsdl:part element="impl:servicioCorreccionProrrogaResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioContratosResponse">
+
+      <wsdl:part element="impl:servicioContratosResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioProrrogasRequest">
+
+      <wsdl:part element="impl:servicioProrrogas" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioCorreccionContratoRequest">
+
+      <wsdl:part element="impl:servicioCorreccionContrato" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioCopiaBasicaRequest">
+
+      <wsdl:part element="impl:servicioCopiaBasica" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioLlamamientoFijoDiscontinuoRequest">
+
+      <wsdl:part element="impl:servicioLlamamientoFijoDiscontinuo" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioTransformacionIndefinidoRequest">
+
+      <wsdl:part element="impl:servicioTransformacionIndefinido" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioCorreccionLlamamientoResponse">
+
+      <wsdl:part element="impl:servicioCorreccionLlamamientoResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioContratoGrupoRequest">
+
+      <wsdl:part element="impl:servicioContratoGrupo" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioContratoGrupoResponse">
+
+      <wsdl:part element="impl:servicioContratoGrupoResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioInclusionContratoOEResponse">
+
+      <wsdl:part element="impl:servicioInclusionContratoOEResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioCopiaBasicaResponse">
+
+      <wsdl:part element="impl:servicioCopiaBasicaResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioTransformacionIndefinidoResponse">
+
+      <wsdl:part element="impl:servicioTransformacionIndefinidoResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioProrrogasResponse">
+
+      <wsdl:part element="impl:servicioProrrogasResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioCorreccionContratoResponse">
+
+      <wsdl:part element="impl:servicioCorreccionContratoResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioCorreccionHorasComplementariasRequest">
+
+      <wsdl:part element="impl:servicioCorreccionHorasComplementarias" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioCorreccionHorasComplementariasResponse">
+
+      <wsdl:part element="impl:servicioCorreccionHorasComplementariasResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioCorreccionProrrogaRequest">
+
+      <wsdl:part element="impl:servicioCorreccionProrroga" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioContratosRequest">
+
+      <wsdl:part element="impl:servicioContratos" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioInclusionContratoOERequest">
+
+      <wsdl:part element="impl:servicioInclusionContratoOE" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioCorreccionTransformacionRequest">
+
+      <wsdl:part element="impl:servicioCorreccionTransformacion" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioHorasComplementariasRequest">
+
+      <wsdl:part element="impl:servicioHorasComplementarias" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioHorasComplementariasResponse">
+
+      <wsdl:part element="impl:servicioHorasComplementariasResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioCorreccionLlamamientoRequest">
+
+      <wsdl:part element="impl:servicioCorreccionLlamamiento" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="servicioLlamamientoFijoDiscontinuoResponse">
+
+      <wsdl:part element="impl:servicioLlamamientoFijoDiscontinuoResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="SWComunicacionDatos">
+
+      <wsdl:operation name="servicioContratos">
+
+         <wsdl:input message="impl:servicioContratosRequest" name="servicioContratosRequest"/>
+
+         <wsdl:output message="impl:servicioContratosResponse" name="servicioContratosResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioCorreccionProrroga">
+
+         <wsdl:input message="impl:servicioCorreccionProrrogaRequest" name="servicioCorreccionProrrogaRequest"/>
+
+         <wsdl:output message="impl:servicioCorreccionProrrogaResponse" name="servicioCorreccionProrrogaResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioCorreccionTransformacion">
+
+         <wsdl:input message="impl:servicioCorreccionTransformacionRequest" name="servicioCorreccionTransformacionRequest"/>
+
+         <wsdl:output message="impl:servicioCorreccionTransformacionResponse" name="servicioCorreccionTransformacionResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioHorasComplementarias">
+
+         <wsdl:input message="impl:servicioHorasComplementariasRequest" name="servicioHorasComplementariasRequest"/>
+
+         <wsdl:output message="impl:servicioHorasComplementariasResponse" name="servicioHorasComplementariasResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioInclusionContratoOE">
+
+         <wsdl:input message="impl:servicioInclusionContratoOERequest" name="servicioInclusionContratoOERequest"/>
+
+         <wsdl:output message="impl:servicioInclusionContratoOEResponse" name="servicioInclusionContratoOEResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioCorreccionLlamamiento">
+
+         <wsdl:input message="impl:servicioCorreccionLlamamientoRequest" name="servicioCorreccionLlamamientoRequest"/>
+
+         <wsdl:output message="impl:servicioCorreccionLlamamientoResponse" name="servicioCorreccionLlamamientoResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioProrrogas">
+
+         <wsdl:input message="impl:servicioProrrogasRequest" name="servicioProrrogasRequest"/>
+
+         <wsdl:output message="impl:servicioProrrogasResponse" name="servicioProrrogasResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioCorreccionContrato">
+
+         <wsdl:input message="impl:servicioCorreccionContratoRequest" name="servicioCorreccionContratoRequest"/>
+
+         <wsdl:output message="impl:servicioCorreccionContratoResponse" name="servicioCorreccionContratoResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioTransformacionIndefinido">
+
+         <wsdl:input message="impl:servicioTransformacionIndefinidoRequest" name="servicioTransformacionIndefinidoRequest"/>
+
+         <wsdl:output message="impl:servicioTransformacionIndefinidoResponse" name="servicioTransformacionIndefinidoResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioCopiaBasica">
+
+         <wsdl:input message="impl:servicioCopiaBasicaRequest" name="servicioCopiaBasicaRequest"/>
+
+         <wsdl:output message="impl:servicioCopiaBasicaResponse" name="servicioCopiaBasicaResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioLlamamientoFijoDiscontinuo">
+
+         <wsdl:input message="impl:servicioLlamamientoFijoDiscontinuoRequest" name="servicioLlamamientoFijoDiscontinuoRequest"/>
+
+         <wsdl:output message="impl:servicioLlamamientoFijoDiscontinuoResponse" name="servicioLlamamientoFijoDiscontinuoResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioContratoGrupo">
+
+         <wsdl:input message="impl:servicioContratoGrupoRequest" name="servicioContratoGrupoRequest"/>
+
+         <wsdl:output message="impl:servicioContratoGrupoResponse" name="servicioContratoGrupoResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioCorreccionHorasComplementarias">
+
+         <wsdl:input message="impl:servicioCorreccionHorasComplementariasRequest" name="servicioCorreccionHorasComplementariasRequest"/>
+
+         <wsdl:output message="impl:servicioCorreccionHorasComplementariasResponse" name="servicioCorreccionHorasComplementariasResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="SWComunicacionDatosSoapBinding" type="impl:SWComunicacionDatos">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="servicioContratos">
+
+         <wsdlsoap:operation soapAction="servicioContratos"/>
+
+         <wsdl:input name="servicioContratosRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="servicioContratosResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioCorreccionProrroga">
+
+         <wsdlsoap:operation soapAction="servicioCorreccionProrroga"/>
+
+         <wsdl:input name="servicioCorreccionProrrogaRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="servicioCorreccionProrrogaResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioCorreccionTransformacion">
+
+         <wsdlsoap:operation soapAction="servicioCorreccionTransformacion"/>
+
+         <wsdl:input name="servicioCorreccionTransformacionRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="servicioCorreccionTransformacionResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioHorasComplementarias">
+
+         <wsdlsoap:operation soapAction="servicioHorasComplementarias"/>
+
+         <wsdl:input name="servicioHorasComplementariasRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="servicioHorasComplementariasResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioInclusionContratoOE">
+
+         <wsdlsoap:operation soapAction="servicioInclusionContratoOE"/>
+
+         <wsdl:input name="servicioInclusionContratoOERequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="servicioInclusionContratoOEResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioCorreccionLlamamiento">
+
+         <wsdlsoap:operation soapAction="servicioCorreccionLlamamiento"/>
+
+         <wsdl:input name="servicioCorreccionLlamamientoRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="servicioCorreccionLlamamientoResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioProrrogas">
+
+         <wsdlsoap:operation soapAction="servicioProrrogas"/>
+
+         <wsdl:input name="servicioProrrogasRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="servicioProrrogasResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioCorreccionContrato">
+
+         <wsdlsoap:operation soapAction="servicioCorreccionContrato"/>
+
+         <wsdl:input name="servicioCorreccionContratoRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="servicioCorreccionContratoResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioTransformacionIndefinido">
+
+         <wsdlsoap:operation soapAction="servicioTransformacionIndefinido"/>
+
+         <wsdl:input name="servicioTransformacionIndefinidoRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="servicioTransformacionIndefinidoResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioCopiaBasica">
+
+         <wsdlsoap:operation soapAction="servicioCopiaBasica"/>
+
+         <wsdl:input name="servicioCopiaBasicaRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="servicioCopiaBasicaResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioLlamamientoFijoDiscontinuo">
+
+         <wsdlsoap:operation soapAction="servicioLlamamientoFijoDiscontinuo"/>
+
+         <wsdl:input name="servicioLlamamientoFijoDiscontinuoRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="servicioLlamamientoFijoDiscontinuoResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioContratoGrupo">
+
+         <wsdlsoap:operation soapAction="servicioContratoGrupo"/>
+
+         <wsdl:input name="servicioContratoGrupoRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="servicioContratoGrupoResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="servicioCorreccionHorasComplementarias">
+
+         <wsdlsoap:operation soapAction="servicioCorreccionHorasComplementarias"/>
+
+         <wsdl:input name="servicioCorreccionHorasComplementariasRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="servicioCorreccionHorasComplementariasResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="SWComunicacionDatosService">
+
+      <wsdl:port binding="impl:SWComunicacionDatosSoapBinding" name="SWComunicacionDatos">
+
+         <!-- Entorno REAL -->
+         <!--  
+         <wsdlsoap:address location="https://www.sepe.es/ccomunicacto/services/SWComunicacionDatos"/>
+         -->
+         
+         <!--      Entorno de pruebas -->
+         <wsdlsoap:address location="http://www.sepe.es/ecomunicacto/services/SWComunicacionDatos"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>
