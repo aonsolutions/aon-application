@@ -4,13 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.sun.star.beans.GetDirectPropertyTolerantResult;
 
 public class FxDialog extends CustomDialog {
 
@@ -20,7 +23,7 @@ public class FxDialog extends CustomDialog {
 
 	private static final Binder binder = GWT.create(Binder.class);
 
-	static enum Category {
+	static enum Category { 
 		ALL("Todos"), DATE("Fecha"), INFO("Información"), LOGIC("Lógico"), MATH(
 				"Mátemáticas"), TEXT("Texto"), VAR("Variables");
 
@@ -52,7 +55,7 @@ public class FxDialog extends CustomDialog {
 				"Comprueba si alguno de los argumentos es VERDADERO, y devuelve VERDADERO o FALS0. Devuelve FALSO si todos los argumentos son FALSOS.",
 				"valor_lógico 1", "valor_lógico 2", "..."), IF(
 				"SI",
-				"Comprueba si se cumple una condición y devuelve un valur si se evalúa como VERDADERO y otro valor si se evalúa como FALSO.",
+				"Comprueba si se cumple una condición y devuelve un valor si se evalúa como VERDADERO y otro valor si se evalúa como FALSO.",
 				"prueba_lógica", "valor_si_verdadero", "valor_si_falso"), TRUE(
 				"VERDADERO", "Devuelve el valor lógico VERDADERO."), AND(
 				"O",
@@ -168,6 +171,7 @@ public class FxDialog extends CustomDialog {
 	private void onCategorySelected(Category category) {
 		Function functions[] = CATEGORY_FUNCTIONS_MAP.get(category);
 		for (Function function : functions) {
+			Document.get();
 			functionListBox.addItem(function.getName());
 		}
 	}

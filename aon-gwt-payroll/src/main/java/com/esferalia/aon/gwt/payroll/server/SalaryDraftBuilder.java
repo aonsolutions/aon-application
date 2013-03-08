@@ -577,8 +577,9 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	private Payment newPayment(IContractPayment contractPayment) {
 
 		Payment payment = new Payment();
-
+		
 		payment.setId(contractPayment.getId());
+		payment.setConceptId(contractPayment.getConceptId());
 		payment.setType(getPaymentType(contractPayment.getType()));
 		payment.setName(contractPayment.getName());
 		payment.setMonth(getMonth(contractPayment.getMonth()));
@@ -593,8 +594,8 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		return payment;
 	}
 
-	private Integer getMonth(Month month) {
-		return month == null ? null : month.getValue();
+	private Short getMonth(Month month) {
+		return month == null ? null : (short) month.getValue();
 	}
 
 	private Deduction.Type getDeductionType(DeductionType type) {

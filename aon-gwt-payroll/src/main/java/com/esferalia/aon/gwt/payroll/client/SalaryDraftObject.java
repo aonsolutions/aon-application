@@ -1,18 +1,26 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import com.esferalia.aon.gwt.payroll.client.UndoManager.Undoable;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
+import com.esferalia.aon.gwt.payroll.shared.HasStartAndEndDate;
+import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Event;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class SalaryDraftObject {
+
+	public static Date NULL_DATE = new Date() {
+	};
 
 	interface CalculateCallback {
 		void onCalculateSucces(SalaryDraftObject object);
@@ -22,12 +30,12 @@ public class SalaryDraftObject {
 
 	abstract private class UndoableEdit<T> implements Undoable {
 
-		private T oldT;
-		private T newT;
+		T oldT;
+		T newT;
 
 		public UndoableEdit(T oldT, T newT) {
-			this.oldT = oldT;
 			this.newT = newT;
+			this.oldT = oldT;
 		}
 
 		@Override
@@ -37,20 +45,19 @@ public class SalaryDraftObject {
 
 		@Override
 		public void undo() {
-			if (oldT != null) {
+			if (oldT != null)
 				addDraft(oldT);
-			} else {
+			else
 				removeDraft(newT);
-			}
 		}
-		
+
 		abstract void addDraft(T t);
+
 		abstract void removeDraft(T t);
 	}
-	
-	class UndoableVariableEdit extends UndoableEdit<Variable>{
-		
-		
+
+	class UndoableVariableEdit extends UndoableEdit<Variable> {
+
 		public UndoableVariableEdit(Variable oldT, Variable newT) {
 			super(oldT, newT);
 		}
@@ -59,28 +66,29 @@ public class SalaryDraftObject {
 		void addDraft(Variable t) {
 			salaryDraft.addDraftVariable(t);
 		}
-		
+
 		@Override
 		void removeDraft(Variable t) {
 			salaryDraft.removeDraftVariable(t);
 		}
 	}
-	
+
 	class UndoablePaymentEdit extends UndoableEdit<Payment> {
 
 		public UndoablePaymentEdit(Payment oldT, Payment newT) {
 			super(oldT, newT);
 		}
-		
+
 		@Override
 		void addDraft(Payment t) {
 			salaryDraft.addDraftPayment(t);
 		}
-		
+
 		@Override
 		void removeDraft(Payment t) {
 			salaryDraft.removeDraftPayment(t);
 		}
+
 	}
 
 	class UndoableDeductionEdit extends UndoableEdit<Deduction> {
@@ -88,30 +96,102 @@ public class SalaryDraftObject {
 		public UndoableDeductionEdit(Deduction oldT, Deduction newT) {
 			super(oldT, newT);
 		}
-		
+
 		@Override
 		void addDraft(Deduction t) {
 			salaryDraft.addDraftDeduction(t);
 		}
-		
+
 		@Override
 		void removeDraft(Deduction t) {
 			salaryDraft.removeDraftDeduction(t);
+
 		}
+
 	}
 
+	private Date draftEndDate;
+	private Date draftStartDate;
+
 	private SalaryDraft salaryDraft;
-	private UndoManager undoManager = new UndoManager();
+	private UndoManager<UndoableEdit<?>> undoManager;
+
 	private EmployeesServiceAsync employeesServiceAsync;
 
 	public SalaryDraftObject(SalaryDraft salaryDraft,
 			EmployeesServiceAsync employeesServiceAsync) {
 		this.salaryDraft = salaryDraft;
 		this.employeesServiceAsync = employeesServiceAsync;
+		this.undoManager = new UndoManager<UndoableEdit<?>>();
+	}
+
+	public void save(final CalculateCallback callback) {
+
+		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
+		removeSalaryPart(salaryDraft);
+
+		employeesServiceAsync.saveSalaryDraft(salaryDraft,
+				new AsyncCallback<Void>() {
+
+					@Override
+					public void onSuccess(Void result) {
+
+
+						undoManager.discardAll();
+						salaryDraft.clearDrafts();
+
+						employeesServiceAsync.calculateSalaryDraft(salaryDraft,
+								new AsyncCallback<SalaryDraft>() {
+
+									@Override
+									public void onSuccess(SalaryDraft result) {
+										SalaryDraftObject.this.salaryDraft = result;
+										callback.onCalculateSucces(SalaryDraftObject.this);
+									}
+
+									@Override
+									public void onFailure(Throwable caught) {
+										callback.onCalculateFailure(caught);
+									}
+								});
+
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onCalculateFailure(caught);
+					}
+				});
+
 	}
 
 	public void calculate(final CalculateCallback callback) {
+
+		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
+		removeSalaryPart(salaryDraft);
+
 		employeesServiceAsync.calculateSalaryDraft(salaryDraft,
+				new AsyncCallback<SalaryDraft>() {
+
+					@Override
+					public void onSuccess(SalaryDraft result) {
+						SalaryDraftObject.this.salaryDraft = result;
+						callback.onCalculateSucces(SalaryDraftObject.this);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onCalculateFailure(caught);
+					}
+				});
+	}
+
+	public void emitSalary(final CalculateCallback callback) {
+
+		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
+		removeSalaryPart(salaryDraft);
+
+		employeesServiceAsync.saveSalary(salaryDraft,
 				new AsyncCallback<SalaryDraft>() {
 
 					@Override
@@ -135,7 +215,7 @@ public class SalaryDraftObject {
 		undoManager.undo();
 	}
 
-	public void add(Undoable undoable) {
+	public void add(UndoableEdit<?> undoable) {
 		undoManager.add(undoable);
 	}
 
@@ -146,8 +226,8 @@ public class SalaryDraftObject {
 	public final boolean canRedo() {
 		return undoManager.canRedo();
 	}
-	
-	public void addUndoManagerListener(UndoManager.Listener  listener){
+
+	public void addUndoManagerListener(UndoManager.Listener listener) {
 		undoManager.addListener(listener);
 	}
 
@@ -288,8 +368,6 @@ public class SalaryDraftObject {
 	public String getEmployeeAgreementCategory() {
 		return salaryDraft.getEmployeeAgreementCategory();
 	}
-	
-	
 
 	public Double getDbCgcBase() {
 		return salaryDraft.getDbGgcBase();
@@ -326,7 +404,7 @@ public class SalaryDraftObject {
 	public Double getDbTotalPayment() {
 		return salaryDraft.getDbTotalPayment();
 	}
-	
+
 	public Double getDbTotalDeduction() {
 		return salaryDraft.getDbTotalDeduction();
 	}
@@ -335,7 +413,34 @@ public class SalaryDraftObject {
 		return salaryDraft.hasDbSalary();
 	}
 
+	public boolean hasDrafts() {
+		return salaryDraft.hasDrafts()
+				|| !isDraftPeriodSet(getDraftStartDate(), getDraftEndDate(),
+						salaryDraft);
+	}
 
+	// ------------------------------------------
+	//
+	//
+
+	public Date getDraftEndDate() {
+		return draftEndDate == null ? salaryDraft.getEndDate()
+				: (draftEndDate == NULL_DATE ? null : draftEndDate);
+	}
+
+	public Date getDraftStartDate() {
+		return draftStartDate == null ? salaryDraft.getStartDate()
+				: draftStartDate;
+	}
+
+	public void setDraftPeriod(Date draftStartDate) {
+		setDraftPeriod(draftStartDate, NULL_DATE);
+	}
+
+	public void setDraftPeriod(Date draftStartDate, Date draftEndDate) {
+		this.draftStartDate = draftStartDate;
+		this.draftEndDate = draftEndDate;
+	}
 
 	// ------------------------------------------
 	// Undo & Redo Support
@@ -350,7 +455,7 @@ public class SalaryDraftObject {
 	public Deduction addDraftDeduction(Deduction deduction) {
 		Deduction oldDeduction = salaryDraft.addDraftDeduction(deduction);
 		undoManager.add(new UndoableDeductionEdit(oldDeduction, deduction));
-		return deduction;
+		return oldDeduction;
 	}
 
 	public Variable addDraftVariable(Variable var) {
@@ -358,6 +463,69 @@ public class SalaryDraftObject {
 		undoManager.add(new UndoableVariableEdit(oldVar, var));
 		return oldVar;
 	}
-	
 
+	// ------------------------------------------
+	//
+
+	private static <T> boolean sameDate(Date d1, Date d2) {
+		if (d1 == d2)
+			return true;
+		if (d1 == null)
+			return false;
+		if (d2 == null)
+			return false;
+		return CalendarUtil.isSameDate(d1, d2);
+	}
+
+
+	private static void removeSalaryPart(SalaryDraft salaryDraft) {
+		salaryDraft.clearDb();
+		salaryDraft.clearEvents();
+		salaryDraft.clearContext();
+		salaryDraft.clearPayments();
+		salaryDraft.clearDeductions();
+	}
+
+	private static boolean isDraftPeriodSet(Date draftStartDate,
+			Date draftEndDate, SalaryDraft draft) {
+		if (!isStartAndEndDatesSet(draftStartDate, draftEndDate,
+				draft.getDraftContext()))
+			return false;
+		if (!isStartAndEndDatesSet(draftStartDate, draftEndDate,
+				draft.getDraftPayments()))
+			return false;
+		if (!isStartAndEndDatesSet(draftStartDate, draftEndDate,
+				draft.getDraftDeductions()))
+			return false;
+		return true;
+	}
+
+	private static void setDraftPeriod(Date draftStartDate, Date draftEndDate,
+			SalaryDraft draft) {
+		setStartAndEndDates(draftStartDate, draftEndDate,
+				draft.getDraftContext());
+		setStartAndEndDates(draftStartDate, draftEndDate,
+				draft.getDraftPayments());
+		setStartAndEndDates(draftStartDate, draftEndDate,
+				draft.getDraftDeductions());
+	}
+
+	private static <T extends HasStartAndEndDate> void setStartAndEndDates(
+			Date draftStartDate, Date draftEndDate, Collection<T> items) {
+		for (T item : items) {
+			item.setStartDate(draftStartDate);
+			item.setEndDate(draftEndDate);
+		}
+	}
+
+	private static <T extends HasStartAndEndDate> boolean isStartAndEndDatesSet(
+			Date draftStartDate, Date draftEndDate, Collection<T> items) {
+		for (T item : items) {
+			if (!sameDate(draftStartDate, item.getStartDate()))
+				return false;
+			if (!sameDate(draftEndDate, item.getEndDate()))
+				return false;
+		}
+		return true;
+	}
 }

@@ -29,6 +29,13 @@ public class AgreementPayment extends AgreementPaymentDB implements IContractPay
 	public String getName() {
 		return getPaymentConcept()==null?null:getPaymentConcept().getCode();
 	}
+	
+	@Override
+	@Transient
+	public Integer getConceptId() {
+		return getPaymentConcept()==null?null:getPaymentConcept().getId();
+	}
+	
 	@Override
 	@Transient
 	public ExpressionScope getScope() {

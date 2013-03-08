@@ -124,7 +124,27 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 				offset, limit, new AsyncCallbackWrapper<List<Employee>>(
 						callback));
 	}
+	
+	@Override
+	public void saveSalaryDraft(SalaryDraft salaryDraft,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.saveSalaryDraft(salaryDraft,
+				new AsyncCallbackWrapper<Void>(callback));
+		
+	}
 
+	@Override
+	public void saveSalary(SalaryDraft salaryDraft,
+			AsyncCallback<SalaryDraft> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.saveSalary(salaryDraft,
+				new AsyncCallbackWrapper<SalaryDraft>(callback));
+	}
+
+	
+	@Override
 	public void calculateSalaryDraft(SalaryDraft salaryDraft,
 			AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException {

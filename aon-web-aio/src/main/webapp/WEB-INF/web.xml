@@ -329,15 +329,6 @@
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 
-	<filter>
-		<filter-name>aonBeanSelectorFilter</filter-name>
-		<filter-class>com.esferalia.aon.gwt.payroll.filter.AonBeanSelectorFilter</filter-class>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>aonBeanSelectorFilter</filter-name>
-		<url-pattern>/com/esferalia/aon/gwt/payroll/facelet/*</url-pattern>
-	</filter-mapping>
 
 
 	<!-- Audit Filter <filter> <filter-name>AuditFilter</filter-name> <filter-class>com.code.aon.ui.audit.session.AuditSessionFilter</filter-class> 

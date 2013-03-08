@@ -21,6 +21,11 @@ public class DelegateContractPayment implements IContractPayment {
 		return contractPayment.getId();
 	}
 	
+	@Override
+	public Integer getConceptId() {
+		return contractPayment.getConceptId();
+	}
+	
 	public ExpressionScope getScope() {
 		return contractPayment.getScope();
 	}

@@ -35,6 +35,7 @@ public class SQLCollections {
 			contractPayment.month = sqlContractPayment.getMonth();
 			contractPayment.startDate = sqlContractPayment.getStartDate();
 			contractPayment.endDate = sqlContractPayment.getEndDate();
+			contractPayment.conceptId = sqlContractPayment.getConceptId();
 			contractPayment.expression = sqlContractPayment.getExpression();
 			contractPayment.expressionScope = sqlContractPayment.getScope();
 			contractPayment.irpfExpression = sqlContractPayment.getIrpfExpression();
@@ -103,6 +104,7 @@ public class SQLCollections {
 		
 		protected Integer id;
 		protected String name;
+		protected Integer conceptId;
 		protected PaymentType type;
 		protected String description;
 		protected String expression;
@@ -121,6 +123,11 @@ public class SQLCollections {
 		@Override
 		public Integer getId() {
 			return id;
+		}
+		
+		@Override
+		public Integer getConceptId() {
+			return conceptId;
 		}
 		
 		@Override
@@ -210,8 +217,7 @@ public class SQLCollections {
 
 		@Override
 		public Integer getId() {
-			// TODO Auto-generated method stub
-			return null;
+			return id;
 		}
 		
 		@Override

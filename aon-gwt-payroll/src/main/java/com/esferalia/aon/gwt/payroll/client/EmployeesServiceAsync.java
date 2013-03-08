@@ -18,28 +18,49 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface EmployeesServiceAsync {
 	void getEnterprise(AsyncCallback<Enterprise> callback)
 			throws IllegalArgumentException;
-	void getPaymentConcepts(AsyncCallback<List<Payment>> callback) 
+
+	void getPaymentConcepts(AsyncCallback<List<Payment>> callback)
 			throws IllegalArgumentException;
-	void getWorkplaceCosts(int workplaceId, AsyncCallback<List<Cost>> callback ) 
+
+	void getWorkplaceCosts(int workplaceId, AsyncCallback<List<Cost>> callback)
 			throws IllegalArgumentException;
-	void getEnterpriseCosts(int enterpriseId, AsyncCallback<List<Cost>> callback ) 
+
+	void getEnterpriseCosts(int enterpriseId, AsyncCallback<List<Cost>> callback)
 			throws IllegalArgumentException;
+
 	void getSalaries(Employee employee, AsyncCallback<List<Salary>> callback)
 			throws IllegalArgumentException;
+
 	void getCostReceiptHTML(Cost cost, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
-	void getSalaryReceiptHTML(Cost cost, int zoom, AsyncCallback<String> callback)
+
+	void getSalaryReceiptHTML(Cost cost, int zoom,
+			AsyncCallback<String> callback) throws IllegalArgumentException;
+
+	void getSalaryReceiptHTML(Salary salary, int zoom,
+			AsyncCallback<String> callback) throws IllegalArgumentException;
+
+	void saveSalaryDraft(SalaryDraft salaryDraft, AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
-	void getSalaryReceiptHTML(Salary salary, int zoom, AsyncCallback<String> callback)
+
+	void saveSalary(SalaryDraft salaryDraft,
+			AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
-	void calculateSalaryDraft(SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
+
+	void calculateSalaryDraft(SalaryDraft salaryDraft,
+			AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
-	void getSalaryDraftReceipt(SalaryDraft salaryDraft, String mime, AsyncCallback<String> callback)
-			throws IllegalArgumentException;
-	void getSalaryDraftReceiptHTML(SalaryDraft salaryPreview, int zoom, AsyncCallback<String> callback)
-			throws IllegalArgumentException;
-	void getSalaryPreviewReceiptHTML(SalaryPreview salaryPreview, int zoom, AsyncCallback<String> callback)
-			throws IllegalArgumentException;
-	void getEmployees(int workplaceId, Date endDate, String pattern, int offset, int limit, AsyncCallback<List<Employee>> callback) 
+
+	void getSalaryDraftReceipt(SalaryDraft salaryDraft, String mime,
+			AsyncCallback<String> callback) throws IllegalArgumentException;
+
+	void getSalaryDraftReceiptHTML(SalaryDraft salaryPreview, int zoom,
+			AsyncCallback<String> callback) throws IllegalArgumentException;
+
+	void getSalaryPreviewReceiptHTML(SalaryPreview salaryPreview, int zoom,
+			AsyncCallback<String> callback) throws IllegalArgumentException;
+
+	void getEmployees(int workplaceId, Date endDate, String pattern,
+			int offset, int limit, AsyncCallback<List<Employee>> callback)
 			throws IllegalArgumentException;
 }

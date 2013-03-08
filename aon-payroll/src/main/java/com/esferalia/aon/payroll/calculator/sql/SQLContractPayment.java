@@ -15,7 +15,6 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 public class SQLContractPayment extends SQLCollection<IContractPayment> implements IContractPayment {
 	
 	public static final String SCOPE_ALIAS = "scope";
-
 	public static final String PAYMENT_ALIAS = "payment";
 	
 	
@@ -108,7 +107,12 @@ public class SQLContractPayment extends SQLCollection<IContractPayment> implemen
 	public String getName() {
 		return getString(PaymentConceptColumns.CODE);
 	}
-
+	
+	@Override
+	public Integer getConceptId() {
+		return getInt(ContractPaymentColumns.PAYMENT_CONCEPT);
+	}
+	
 	@Override
 	public String getIrpfExpression() {
 		return getString(ContractPaymentColumns.IRPF_EXPRESSION, 

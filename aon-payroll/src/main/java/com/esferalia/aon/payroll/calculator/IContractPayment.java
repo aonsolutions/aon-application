@@ -17,6 +17,8 @@ public interface IContractPayment extends IPayment, IExpression {
 	public Date getStartDate();
 	public Date getEndDate();
 	
+	public Integer getConceptId();
+
 	public String getIrpfExpression();
 	public String getQuoteExpression();
 	

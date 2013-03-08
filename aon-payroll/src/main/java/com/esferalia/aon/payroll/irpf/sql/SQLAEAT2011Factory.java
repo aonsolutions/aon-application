@@ -1285,6 +1285,10 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 			return getString(PaymentConceptColumns.CODE);
 		}
 
+		@Override
+		public Integer getConceptId() {
+			return getInt(PaymentConceptColumns.ID);
+		}
 
 		@Override
 		public String getDescription() {

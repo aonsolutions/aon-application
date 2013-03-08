@@ -87,12 +87,26 @@ public class DateUtils {
 		return lastDayOfMonth;
 	}
 	
+	
+    public static Date resetTime(Date date) {
+    	Date onlyDate = CalendarUtil.copyDate(date);
+    	onlyDate.setHours(0);
+    	onlyDate.setMinutes(0);
+    	onlyDate.setSeconds(0);
+		return onlyDate;
+		
+    }
+
+	
 	public static boolean equals(Date d1, Date d2) {
 		if ( d1 == d2 )
 			return true;
-		if ( d1 != null )
-			return d1.equals(d2);
-		return d2.equals(d1);
+		if ( d1 == null )
+			return false;
+		if ( d2 == null )
+			return false;
+		
+		return CalendarUtil.isSameDate(d1, d2);
 	}
 
 	

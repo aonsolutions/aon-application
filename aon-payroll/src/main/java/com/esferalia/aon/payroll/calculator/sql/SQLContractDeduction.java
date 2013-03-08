@@ -15,6 +15,8 @@ public class SQLContractDeduction
 	extends SQLCollection<IContractDeduction> 
 	implements IContractDeduction {
 
+	public static final String SCOPE_ALIAS = "scope";
+
 	public SQLContractDeduction() {
 	}
 	
@@ -43,7 +45,7 @@ public class SQLContractDeduction
 	
 	@Override
 	public ExpressionScope getScope() {
-		throw new UnsupportedOperationException();
+		return getEnum(SCOPE_ALIAS, ExpressionScope.class );
 	}
 
 	@Override
@@ -89,7 +91,7 @@ public class SQLContractDeduction
 		return getString(ContractDeductionColumns.EXPRESSION, 
 				DeductionConceptColumns.EXPRESSION);
 	}
-
+	
 	
 	private Integer getInt(String deductionLabel, String conceptColumn ) {
 		return super.getInt(deductionLabel, SQLConstants.DEDUCTION_CONCEPT +"."+ conceptColumn );

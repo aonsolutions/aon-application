@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 
-public class Payment extends Item {
+public class Payment extends Item<Payment.Type> {
 
 	String irpfExpression;
 	String quoteExpression;
@@ -11,16 +11,6 @@ public class Payment extends Item {
 
 	}
 
-	Payment.Type type;
-
-	public Payment.Type getType() {
-		return type;
-	}
-
-	public void setType(Payment.Type type) {
-		this.type = type;
-	}
-	
 
 	public String getIrpfExpression() {
 		return irpfExpression;
@@ -37,5 +27,6 @@ public class Payment extends Item {
 	public void setQuoteExpression(String quoteExpression) {
 		this.quoteExpression = quoteExpression;
 	}
+	
 
 }

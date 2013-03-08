@@ -35,6 +35,12 @@ public class ContractPayment extends ContractPaymentDB implements IContractPayme
 
 	@Override
 	@Transient
+	public Integer getConceptId() {
+		return getPaymentConcept()==null?null:getPaymentConcept().getId();
+	}
+
+	@Override
+	@Transient
 	public ExpressionScope getScope() {
 		return ExpressionScope.CONTRACT;
 	}

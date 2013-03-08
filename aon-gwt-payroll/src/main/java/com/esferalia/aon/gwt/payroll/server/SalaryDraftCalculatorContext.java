@@ -1,10 +1,18 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Transient;
+
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.iterators.FilterIterator;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
@@ -15,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.ContractPayment;
+import com.esferalia.aon.payroll.calculator.CompositeCollection;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.DelegateContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.HierarchyDeductions;
@@ -74,6 +83,54 @@ public class SalaryDraftCalculatorContext extends
 		}
 	}
 
+	static class DraftCompositePayments extends CompositePayments implements
+			Predicate {
+
+		public DraftCompositePayments(Collection<IContractPayment>... payments) {
+			super(payments);
+		}
+
+		private Set<Integer> ids = new HashSet<Integer>();
+
+		@Override
+		@SuppressWarnings("unchecked")
+		public Iterator<IContractPayment> iterator() {
+			return new FilterIterator(super.iterator(), this);
+		}
+
+		@Override
+		public boolean evaluate(Object obj) {
+			IContractPayment payment = (IContractPayment) obj;
+			return ids.add(payment.getId());
+		}
+
+	}
+	
+	static class DraftHierarchyDeductions extends HierarchyDeductions {
+		
+		private Set<Integer> ids = new HashSet<Integer>();
+		
+
+		public DraftHierarchyDeductions(Iterator<IContractDeduction>... childs) {
+			super(childs);
+		}
+		
+		@Override
+		protected IContractDeduction next(IContractDeduction e) {
+			Integer id = e.getId();
+			// Not it's not tricky. Remember we use Set, and Set's
+			// add methos return true if this Set not already contain 
+			// the specified element ( id ) 
+			if ( ids.add(id))
+				return super.next(e);
+			else
+				return  null;
+		}
+	}
+	
+	
+
+
 	private SalaryDraft draft;
 
 	public SalaryDraftCalculatorContext(SalaryDraft draft,
@@ -93,8 +150,8 @@ public class SalaryDraftCalculatorContext extends
 			expr.setName(variable.getName());
 			expr.setScope(ExpressionScope.SALARY);
 			expr.setExpression(variable.getExpression());
-			exprCtx.addExpression(expr, variable.getStartDate(),
-					variable.getEndDate());
+			exprCtx.addExpression(expr, resetTime(variable.getStartDate()),
+					resetTime(variable.getEndDate()));
 		}
 
 	}
@@ -102,14 +159,14 @@ public class SalaryDraftCalculatorContext extends
 	@Override
 	public Collection<IContractDeduction> getContractDeductions()
 			throws AonException {
-		return new HierarchyDeductions(getDraftDeductions().iterator(), super
+		return new DraftHierarchyDeductions(getDraftDeductions().iterator(), super
 				.getContractDeductions().iterator());
 	}
 
 	@Override
 	public Collection<IContractPayment> getContractPayments()
 			throws AonException {
-		return new CompositePayments(getDraftPayments(),
+		return new DraftCompositePayments(getDraftPayments(),
 				super.getContractPayments());
 	}
 
@@ -124,9 +181,9 @@ public class SalaryDraftCalculatorContext extends
 			draftPayment.setType(getPaymentType(payment.getType()));
 			draftPayment.setSalaryType(getSalaryType(payment.getSalaryType()));
 
-			draftPayment.setStartDate(payment.getStartDate());
-			draftPayment.setEndDate(payment.getEndDate());
-			Integer month = payment.getMonth();
+			draftPayment.setStartDate(resetTime(payment.getStartDate()));
+			draftPayment.setEndDate(resetTime(payment.getEndDate()));
+			Short month = payment.getMonth();
 			if (month != null) {
 				draftPayment.setMonth(Month.getMonthByValue(month));
 			}
@@ -147,23 +204,40 @@ public class SalaryDraftCalculatorContext extends
 		for (Deduction deduction : draft.getDraftDeductions()) {
 
 			DrafDeduction draftDeduction = new DrafDeduction();
-			
+
 			draftDeduction.setId(deduction.getId());
 			draftDeduction.setName(deduction.getName());
-			draftDeduction.setEndDate(deduction.getEndDate());
-			draftDeduction.setStartDate(deduction.getStartDate());
+			draftDeduction.setEndDate(resetTime(deduction.getEndDate()));
+			draftDeduction.setStartDate(resetTime(deduction.getStartDate()));
 			draftDeduction.setMonth(getMonth(deduction.getMonth()));
 			draftDeduction.setExpression(deduction.getExpression());
 			draftDeduction.setDescription(deduction.getDescription());
 			draftDeduction.setType(getDeductionType(deduction.getType()));
-			
+
 			deductions.add(draftDeduction);
 		}
 
 		return deductions;
 	}
 
-	private static Month getMonth(Integer month) {
+	private static Date resetTime(Date date) {
+		if (date == null)
+			return null;
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+
+		// Set time fields to zero
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
+		// Put iterator back in the Date object
+		return cal.getTime();
+	}
+
+	private static Month getMonth(Short month) {
 		return month != null ? Month.getMonthByValue(month) : null;
 	}
 
@@ -178,5 +252,5 @@ public class SalaryDraftCalculatorContext extends
 	private static DeductionType getDeductionType(Deduction.Type type) {
 		return type != null ? DeductionType.values()[type.ordinal()] : null;
 	}
-	
+
 }

@@ -31,6 +31,12 @@ public class SystemPayment extends SystemPaymentDB implements IContractPayment {
 	}
 	@Override
 	@Transient
+	public Integer getConceptId() {
+		return getPaymentConcept()==null?null:getPaymentConcept().getId();
+	}
+	
+	@Override
+	@Transient
 	public ExpressionScope getScope() {
 		return ExpressionScope.SYSTEM;
 	}

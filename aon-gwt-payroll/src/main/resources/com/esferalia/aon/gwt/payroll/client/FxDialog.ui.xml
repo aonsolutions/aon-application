@@ -16,6 +16,7 @@
 						<g:Label>Categor&iacute;a
 						</g:Label>
 						<g:ListBox ui:field="categoryListBox" />
+						<g:Label >&nbsp;</g:Label>
 						<g:Label>Funci&oacute;n
 						</g:Label>
 						<g:ListBox ui:field="functionListBox" visibleItemCount="20" />
@@ -49,7 +50,7 @@
 						<tr>
 							<td colspan="3">
 								<!-- Allow multiple lines fopr description -->
-								<g:Label ui:field="descriptionLabel" wordWrap="true">Espeficica
+								<g:Label ui:field="descriptionLabel" wordWrap="true" >Espeficica
 									una prueba l&oacutegica;
 									que se desea efectuar.
 								</g:Label>

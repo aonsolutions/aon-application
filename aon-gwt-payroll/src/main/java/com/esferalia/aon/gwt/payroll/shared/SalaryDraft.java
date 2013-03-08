@@ -168,6 +168,18 @@ public class SalaryDraft extends SalaryPreview {
 		dbTotalPayment = null;
 	}
 
+	public void clearDrafts(){
+		draftContext.clear();
+		draftPayments.clear();
+		draftDeductions.clear();
+	}
+	
+	public boolean hasDrafts(){
+		return  (draftContext.size() > 0) ||
+				(draftPayments.size() > 0) ||
+				(draftDeductions.size() > 0 );
+	}
+	
 	public void addPayment(Payment payment) {
 		payments.add(payment);
 	}
@@ -175,7 +187,7 @@ public class SalaryDraft extends SalaryPreview {
 	
 	public Payment addDraftPayment(Payment payment) {
 		if ( payment.getId() == null ) {
-			payment.setId(draftPayments.size());
+			payment.setId((-1) * (draftPayments.size() + 1));
 		}
 
 		Payment oldPaymnet = null;
@@ -189,9 +201,10 @@ public class SalaryDraft extends SalaryPreview {
 		return oldPaymnet;
 	}
 	
-	public void removeDraftPayment(Payment payment) {
-		draftPayments.remove(payment);
+	public boolean removeDraftPayment(Payment payment) {
+		return draftPayments.remove(payment);
 	}
+	
 	
 	public void addDeduction(Deduction deduction) {
 		deductions.add(deduction);
@@ -201,7 +214,7 @@ public class SalaryDraft extends SalaryPreview {
 	public Deduction addDraftDeduction(Deduction deduction) {
 		
 		if ( deduction.getId() == null ) {
-			deduction.setId(draftDeductions.size());
+			deduction.setId((-1) * ( draftDeductions.size() + 1));
 		}
 		
 		Deduction oldDeduction = null;
@@ -213,8 +226,8 @@ public class SalaryDraft extends SalaryPreview {
 		return oldDeduction;
 	}
 
-	public void removeDraftDeduction(Deduction deduction) {
-		draftDeductions.remove(deduction);
+	public boolean removeDraftDeduction(Deduction deduction) {
+		return draftDeductions.remove(deduction);
 	}
 
 	public void addVariable(String name, Object value, Date startDate,
@@ -274,8 +287,8 @@ public class SalaryDraft extends SalaryPreview {
 		return oldVariable;
 	}
 	
-	public void removeDraftVariable(Variable variable) {
-			draftContext.remove(variable);
+	public boolean removeDraftVariable(Variable variable) {
+			return draftContext.remove(variable);
 	}
 	
 

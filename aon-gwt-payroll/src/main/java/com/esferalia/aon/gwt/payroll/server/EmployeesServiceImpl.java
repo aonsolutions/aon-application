@@ -4,11 +4,11 @@ import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.getConnection
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.payroll.sql.SQLConstants.PAYMENT_CONCEPT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.PERSON;
 import static com.esferalia.aon.payroll.sql.SQLConstants.REGISTRY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
-import static com.esferalia.aon.payroll.sql.SQLConstants.PAYMENT_CONCEPT;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -48,19 +48,22 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseActivityColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
@@ -69,10 +72,13 @@ import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
+import com.esferalia.aon.payroll.sql.SQLWriter;
+import com.esferalia.aon.salary.CompositeSalaryBuilder;
 import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.salary.ISalaryBuilder;
+import com.esferalia.aon.salary.SalaryBuilderListener;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
-import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
@@ -390,6 +396,34 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
+	public void saveSalaryDraft(SalaryDraft salaryDraft)
+			throws IllegalArgumentException {
+		try {
+			initFacesContext();
+			SQLSalaryDraft.save(getConnection(), salaryDraft, getDomainID(),
+					getParentDomainID());
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();
+		}
+
+	}
+
+	public SalaryDraft saveSalary(SalaryDraft salaryDraft)
+			throws IllegalArgumentException {
+		try {
+			initFacesContext();
+			calculateAndSave(salaryDraft);
+			return salaryDraft;
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();
+		}
+
+	}
+
 	public String getSalaryDraftReceipt(final SalaryDraft draft, String mime)
 			throws IllegalArgumentException {
 
@@ -634,6 +668,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			while (rs.next()) {
 				Payment paymentConcept = new Payment();
 
+				paymentConcept.setId(rs.getInt(PaymentConceptColumns.ID));
 				paymentConcept
 						.setName(rs.getString(PaymentConceptColumns.CODE));
 				paymentConcept.setType(getPaymentType(rs
@@ -1032,7 +1067,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				salaryDraft.getEndDate());
 
 		List<ITransferObject> list = beanManager.getList(criteria);
-		
+
 		return list.size() > 0 ? (ISalary) list.get(0) : null;
 	}
 
@@ -1091,27 +1126,58 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	private static void calculate(SalaryDraft draft) {
-		
-		
+
 		SalaryDraftBuilder salaryBuilder = new SalaryDraftBuilder(draft);
+		calculate(draft, salaryBuilder, salaryBuilder);
+
+		try {
+			ISalary dbSalary = getDBSalary(draft);
+			if (dbSalary != null)
+				salaryBuilder.setDbSalary(dbSalary);
+		} catch (SalaryException e) {
+		} catch (ManagerBeanException e) {
+		}
+
+	}
+
+	private static void calculateAndSave(SalaryDraft draft) throws SQLException {
+		Connection conn = getConnection();
+		
+		SQLSalaryDraft.removeSalary(conn, draft);
+
+		SQLSalaryBuilder sqlSalaryBuilder = new SQLSalaryBuilder(conn);
+		sqlSalaryBuilder.setListener(new SalaryBuilderListener());
+		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
+		CompositeSalaryBuilder compositeSalaryBuilder = new CompositeSalaryBuilder(
+				salaryDraftBuilder, sqlSalaryBuilder);
+		sqlSalaryBuilder.begin();
+		calculate(draft, compositeSalaryBuilder, salaryDraftBuilder);
+		sqlSalaryBuilder.commit();
+
+		try {
+			ISalary dbSalary = getDBSalary(draft);
+			if (dbSalary != null)
+				salaryDraftBuilder.setDbSalary(dbSalary);
+		} catch (SalaryException e) {
+		} catch (ManagerBeanException e) {
+		}
+
+	}
+
+	private static void calculate(SalaryDraft draft,
+			ISalaryBuilder salaryBuilder,
+			ContractSalaryCalculator.IListener listener) {
 
 		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
 
 		calculator.setSalaryBuilder(salaryBuilder);
-		calculator.setListener(salaryBuilder);
+		calculator.setListener(listener);
 
 		ISalaryCalculatorContext ctx;
 		try {
+
 			ctx = getSalaryCalculatorContext(draft);
 			calculator.calculate(ctx);
-			
-			try {
-				ISalary dbSalary = getDBSalary(draft);
-				if ( dbSalary != null )
-					salaryBuilder.setDbSalary( dbSalary );
-			} catch ( ManagerBeanException e){
-			}
-
 		} catch (ExpressionException e) {
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
@@ -1361,23 +1427,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			enterpriseHandler.getEnterprise().addWorkplace(workplace);
 		}
 
-	}
-
-	private static java.sql.Date getMonthStartDate() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.DAY_OF_MONTH, 1);
-
-		return new java.sql.Date(calendar.getTimeInMillis());
-	}
-
-	private static java.sql.Date getDefaultStartDate() {
-		Calendar calendar = Calendar.getInstance();
-
-		int year = calendar.get(Calendar.YEAR);
-		int month = calendar.get(Calendar.MONTH);
-		calendar.set(Calendar.YEAR, year - (month < 2 ? 2 : 1));
-
-		return new java.sql.Date(calendar.getTimeInMillis());
 	}
 
 }

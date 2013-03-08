@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -102,6 +103,7 @@ public class AonServletUtils {
 		return connection;
 	}
 
+
 	protected static String getExtn(String path) {
 		return path.substring(path.lastIndexOf('.') + 1);
 	}
@@ -119,7 +121,7 @@ public class AonServletUtils {
                 return enterprise.getId();
         }
 
-	public static void initFacesContext(ServletContext context,
+	protected static void initFacesContext(ServletContext context,
 			HttpServletRequest request, HttpServletResponse response) {
 
 		try {
@@ -151,7 +153,7 @@ public class AonServletUtils {
 		}
 	}
 
-	public static void releaseFacesContext() {
+	protected static void releaseFacesContext() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		if (facesContext != null) {
 			facesContext.release();
@@ -289,5 +291,26 @@ public class AonServletUtils {
 
 	}
 
+	protected static void begin(Connection conn) throws SQLException {
+		execute(conn, "BEGIN");
+	}
 
+	protected static void commit(Connection conn) throws SQLException {
+		execute(conn, "COMMIT");
+	}
+
+	protected static void rollback(Connection conn) throws SQLException {
+		execute(conn, "COMMIT");
+	}
+
+	private static void execute(Connection conn, String sql) throws SQLException {
+		Statement stmt = null;
+		try {
+			stmt = conn.createStatement();
+			stmt.execute(sql);
+		} finally {
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 }

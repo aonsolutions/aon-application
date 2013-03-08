@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.CalculateCallback;
+import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DeductionComparator;
 import com.esferalia.aon.gwt.payroll.shared.HasDeduction;
@@ -81,6 +82,10 @@ import com.google.gwt.user.datepicker.client.CalendarUtil;
 public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		SalarySelect.Listener, UndoManager.Listener {
 
+	public static final String CUSTOM = "CUSTOM";
+	public static final String ONLY_THIS_MONTH = "ONLY_THIS_MONTH";
+	public static final String FROM_THIS_MONTH = "FROM_THIS_MONTH";
+
 	private static final int ZOOM_STEP = 20;
 
 	private static final int MIN_ZOOM = 50;
@@ -88,6 +93,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private static final int DEFAULT_ZOOM = 135;
 
 	private static final String GWT_HORIZONTAL_PANEL = "gwt-HorizontalPanel";
+
+	private static final DateTimeFormat MONTH_FORMAT = DateTimeFormat
+			.getFormat(PredefinedFormat.YEAR_MONTH_NUM);
+
+	private static final DateTimeFormat DATE_SHORT = DateTimeFormat
+			.getFormat(PredefinedFormat.DATE_SHORT);
 
 	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.YEAR_MONTH_NUM_DAY);
@@ -163,7 +174,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		@Override
 		public void onFocus(FocusEvent event) {
 			setValue(variable.getExpression());
-			//fxButton.setEnabled(true);
+			fxButton.setEnabled(true);
 		}
 
 		@Override
@@ -234,7 +245,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				@Override
 				public void onFocus(FocusEvent event) {
 					widget.setValue(item.getExpression());
-					//fxButton.setEnabled(true);
+					fxButton.setEnabled(true);
 				}
 			});
 			widget.addBlurHandler(new BlurHandler() {
@@ -245,7 +256,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 						onExpressionChange(item, widget.getValue());
 					else
 						widget.setValue(format(item.getAmount()));
-					
+
 					fxButton.setEnabled(false);
 				}
 			});
@@ -356,6 +367,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			this.expressionBox.addBlurHandler(new BlurHandler() {
 				@Override
 				public void onBlur(BlurEvent event) {
+					event.stopPropagation();
 					onValueChange();
 				}
 			});
@@ -450,7 +462,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			Payment draftPayment = new Payment();
 
 			draftPayment.setExpression(expression);
-
 			draftPayment.setName(payment.getName());
 			draftPayment.setType(payment.getType());
 			draftPayment.setDescription(payment.getDescription());
@@ -462,6 +473,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			draftPayment.setStartDate(salaryDraftObject.getStartDate());
 			draftPayment.setSalaryType(salaryDraftObject.getType());
 			// draftPayment.setMonth(payment.getMonth());
+			draftPayment.setConceptId(payment.getId());
 
 			salaryDraftObject.addDraftPayment(draftPayment);
 
@@ -614,6 +626,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	@UiField
 	Button printButton;
+	@UiField
+	Button acceptButton;
+	@UiField
+	Button salaryButton;
 
 	@UiField
 	Button fxButton;
@@ -622,6 +638,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	Button undoButton;
 	@UiField
 	Button redoButton;
+
+	@UiField
+	ListBox datesListBox;
 
 	@UiField
 	CheckBox dbSalaryCheck;
@@ -656,6 +675,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		initUndoRedo();
 		initSalaryDb();
 		initFxHelper();
+		initDatesListBox();
+		initAcceptButton();
+		initSalaryButton();
 	}
 
 	public void setSalaryDraftObject(SalaryDraftObject salaryDraftObject) {
@@ -667,12 +689,15 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	@Override
 	public void onChange(SalarySelect salarySelect) {
 		salaryDraftObject.calculate(this);
+		syncDatesListBox();
 	}
 
 	@Override
 	public void onChange(UndoManager undoManager) {
 		redoButton.setEnabled(salaryDraftObject.canRedo());
 		undoButton.setEnabled(salaryDraftObject.canUndo());
+
+		acceptButton.setEnabled(salaryDraftObject.hasDrafts());
 	}
 
 	@Override
@@ -718,6 +743,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		fxButton.setVisible(true);
 		salarySelect.setVisible(true);
+		datesListBox.setVisible(true);
 		printPreviewButton.setVisible(true);
 		dbSalaryCheck.setVisible(salaryDraftObject != null
 				&& salaryDraftObject.hasDbSalary());
@@ -731,6 +757,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		fxButton.setVisible(false);
 		salarySelect.setVisible(false);
+		datesListBox.setVisible(false);
 		dbSalaryCheck.setVisible(false);
 		printPreviewButton.setVisible(false);
 	}
@@ -750,12 +777,17 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	private void onChangedSalaryDraftObject() {
+
 		salaryDraftObject.calculate(this);
+
+		syncDatesListBox();
 
 		// Sync undo & redo controls
 		salaryDraftObject.addUndoManagerListener(this);
 		redoButton.setEnabled(salaryDraftObject.canRedo());
 		undoButton.setEnabled(salaryDraftObject.canUndo());
+		acceptButton.setEnabled(salaryDraftObject.hasDrafts());
+
 	}
 
 	private void dumpSalaryDraft() {
@@ -887,12 +919,15 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		dbSalaryCheck.setVisible(salaryDraftObject.hasDbSalary());
 		setDbVisible(salaryDraftObject.hasDbSalary()
 				&& dbSalaryCheck.getValue());
+		acceptButton.setEnabled(salaryDraftObject.hasDrafts());
+		undoButton.setEnabled(salaryDraftObject.canUndo());
+		redoButton.setEnabled(salaryDraftObject.canRedo());
 	}
-	
+
 	private void initFxHelper() {
 		fxButton.addMouseDownHandler(new MouseDownHandler() {
-			FxDialog  fxDialog = new FxDialog();
-			
+			FxDialog fxDialog = new FxDialog();
+
 			@Override
 			public void onMouseDown(MouseDownEvent event) {
 				// TODO Auto-generated method stub
@@ -902,7 +937,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		});
 
 		fxButton.addClickHandler(new ClickHandler() {
-			FxDialog  fxDialog = new FxDialog();
+			FxDialog fxDialog = new FxDialog();
+
 			@Override
 			public void onClick(ClickEvent event) {
 				fxDialog.center();
@@ -910,7 +946,115 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			}
 		});
 	}
-	
+
+	private void initDatesListBox() {
+		datesListBox.addChangeHandler(new ChangeHandler() {
+
+			PeriodDialog periodDialog = new PeriodDialog() {
+				{
+					setDateTimeFormat(DATE_SHORT);
+				}
+
+				@Override
+				protected void onAccept() {
+					if (getEndDate() == null) {
+						salaryDraftObject.setDraftPeriod(getStartDate());
+					} else {
+						salaryDraftObject.setDraftPeriod(getStartDate(),
+								getEndDate());
+					}
+					salaryDraftObject.calculate(SalaryDraft.this);
+					syncDatesListBox();
+				}
+			};
+
+			@Override
+			public void onChange(ChangeEvent event) {
+
+				int index = datesListBox.getSelectedIndex();
+				String value = datesListBox.getValue(index);
+				if (CUSTOM.equals(value)) {
+					periodDialog.center();
+					periodDialog.show();
+				} else if (ONLY_THIS_MONTH.equals(value)) {
+					salaryDraftObject.setDraftPeriod(null, null);
+				} else if (FROM_THIS_MONTH.equals(value)) {
+					salaryDraftObject.setDraftPeriod(null);
+				} else {
+					String dates[] = value.split("\\.\\.\\.");
+					Date start = DATE_SHORT.parse(dates[0]);
+					if (dates.length == 1) {
+						salaryDraftObject.setDraftPeriod(start);
+					} else {
+						Date end = DATE_SHORT.parse(dates[1]);
+						salaryDraftObject.setDraftPeriod(start, end);
+					}
+				}
+
+				acceptButton.setEnabled(salaryDraftObject.hasDrafts());
+			}
+		});
+	}
+
+	private void initAcceptButton() {
+		acceptButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				salaryDraftObject.save(SalaryDraft.this);
+			}
+		});
+	}
+
+	private void initSalaryButton() {
+		salaryButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				salaryDraftObject.emitSalary(SalaryDraft.this);
+			}
+		});
+	}
+
+	private void syncDatesListBox() {
+
+		Date draftStartDate = salaryDraftObject.getDraftStartDate();
+		Date draftEndDate = salaryDraftObject.getDraftEndDate();
+
+		Date date = salaryDraftObject.getStartDate();
+		Date firstDayOfMonth = DateUtils.getFirstDayOfMonth(date);
+
+		datesListBox.setItemText(0,
+				"Este mes ( " + MONTH_FORMAT.format(firstDayOfMonth) + " )");
+		datesListBox.setItemText(
+				1,
+				"A partir de este mes ( "
+						+ MONTH_FORMAT.format(firstDayOfMonth) + "...)");
+
+		if (DateUtils.equals(draftStartDate, firstDayOfMonth)) {
+			if (draftEndDate == null) {
+				datesListBox.setSelectedIndex(1);
+				return;
+			}
+			Date lastDayOfMonth = DateUtils.getLastDayOfMonth(date);
+			if (DateUtils.equals(draftEndDate, lastDayOfMonth)) {
+				datesListBox.setSelectedIndex(0);
+				return;
+			}
+		}
+
+		StringBuffer buffer = new StringBuffer("");
+		buffer.append(DATE_SHORT.format(draftStartDate));
+		buffer.append("...");
+		if (draftEndDate != null)
+			buffer.append(DATE_SHORT.format(draftEndDate));
+
+		datesListBox.setItemText(2, buffer.toString());
+		datesListBox.setValue(2, buffer.toString());
+		datesListBox.setSelectedIndex(2);
+
+		if (datesListBox.getItemCount() < 4)
+			datesListBox.addItem("Personalizado...", CUSTOM);
+	}
+
 	private void initSalaryDb() {
 		dbSalaryCheck.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			@Override
@@ -1097,10 +1241,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			if (payment.getAmount() != null) {
 				dumpItem(payment, row++, AON.AON_ICON_ROW_SELECTOR,
 						new PaymentChangeHandler<TextBox>(payment));
-			}
-			else {
-				String styles [] = eventStyles.get(Event.Type.ERROR);
-				dumpDbItem(payment, row++, styles[0], styles[1], new PaymentChangeHandler<TextBox>(payment), false);
+			} else {
+				String styles[] = eventStyles.get(Event.Type.ERROR);
+				dumpDbItem(payment, row++, styles[0], styles[1],
+						new PaymentChangeHandler<TextBox>(payment), false);
 			}
 		}
 
@@ -1286,7 +1430,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	private <I extends Item> void dumpDbItem(I item, int row,
-			String iconStyleName,  String textStyleName, ItemChangeHandler<TextBox, I> handler, boolean isDeduction) {
+			String iconStyleName, String textStyleName,
+			ItemChangeHandler<TextBox, I> handler, boolean isDeduction) {
 
 		// first cell for edit other stuff buttons.
 		Button editButton = new Button();
@@ -1300,7 +1445,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		paymentsTable.setHTML(row, 1, "&nbsp;");
 
 		Label descriptionLabel = new InlineLabel(item.getDescription());
-		//descriptionLabel.getElement().getStyle().setWidth(98, Unit.PCT);
+		// descriptionLabel.getElement().getStyle().setWidth(98, Unit.PCT);
 		paymentsTable.setWidget(row, 2, descriptionLabel);
 
 		TextBox amountBox = new TextBox();
@@ -1335,7 +1480,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		formatRow(row);
 
-		addDbWidget(new VisibilityImpl(paymentsTable.getRowFormatter().getElement(row)));
+		addDbWidget(new VisibilityImpl(paymentsTable.getRowFormatter()
+				.getElement(row)));
 	}
 
 	private void dumpSystemDeduction(Deduction deduction, String description,
@@ -1369,13 +1515,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		addDbWidget(new VisibilityImpl(dbAmountLabel.getElement()
 				.getParentElement()));
 
-
 		paymentsTable.setWidget(row, 4, amountsPanel);
 
 		paymentsTable.getCellFormatter().addStyleName(row, 4,
 				AON.AON_TEXT_RIGHT);
 		paymentsTable.getFlexCellFormatter().setColSpan(row, 4, 2);
-		
+
 		formatRow(row);
 	}
 
@@ -1559,7 +1704,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	private String format(Double amount) {
-		return amount == null ? null : CURRENCY_FORMAT.format(amount);
+		return amount == null ? null : CURRENCY_FORMAT.format((double) Math
+				.round(amount * 1000.00) / 1000.00);
 	}
 
 	private boolean equals(Double d1, Double d2) {
@@ -1569,9 +1715,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			return d2 == null;
 		if (d2 == null)
 			return false;
+
 		// neither of them is null
-		double round1 = (double) Math.round(d1 * 100.00) / 100.00;
-		double round2 = (double) Math.round(d2 * 100.00) / 100.00;
+		double round1 = (double) Math.round(d1 * 1000.00) / 1000.00;
+		double round2 = (double) Math.round(d2 * 1000.00) / 1000.00;
+
 		return round1 == round2;
 	}
 

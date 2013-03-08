@@ -5,10 +5,12 @@ import java.util.Date;
 
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 
-public abstract class Item implements Serializable {
+public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
+		HasId<Integer>, Serializable {
 
 	Integer id;
-	Integer month;
+	T type;
+	Short month;
 	Scope scope;
 	Date startDate;
 	Date endDate;
@@ -17,37 +19,45 @@ public abstract class Item implements Serializable {
 	String expression;
 	String description;
 	Salary.Type salaryType;
-
 	Double dbAmount;
-	
+	Integer conceptId;
+
 	public Integer getId() {
 		return id;
 	}
-	
+
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public T getType() {
+		return type;
+	}
+
+	public void setType(T type) {
+		this.type = type;
 	}
 
 	public String getName() {
 		return name;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	public Integer getMonth() {
+	public Short getMonth() {
 		return month;
 	}
-	
-	public void setMonth(Integer month) {
+
+	public void setMonth(Short month) {
 		this.month = month;
 	}
 
 	public Scope getScope() {
 		return scope;
 	}
-	
+
 	public void setScope(Scope scope) {
 		this.scope = scope;
 	}
@@ -55,7 +65,7 @@ public abstract class Item implements Serializable {
 	public Date getEndDate() {
 		return endDate;
 	}
-	
+
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
@@ -63,7 +73,7 @@ public abstract class Item implements Serializable {
 	public Date getStartDate() {
 		return startDate;
 	}
-	
+
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
@@ -71,7 +81,7 @@ public abstract class Item implements Serializable {
 	public Double getAmount() {
 		return amount;
 	}
-	
+
 	public void setAmount(Double amount) {
 		this.amount = amount;
 	}
@@ -79,7 +89,7 @@ public abstract class Item implements Serializable {
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -87,7 +97,7 @@ public abstract class Item implements Serializable {
 	public String getExpression() {
 		return expression;
 	}
-	
+
 	public void setExpression(String expression) {
 		this.expression = expression;
 	}
@@ -95,17 +105,25 @@ public abstract class Item implements Serializable {
 	public Salary.Type getSalaryType() {
 		return salaryType;
 	}
-	
+
 	public void setSalaryType(Salary.Type salaryType) {
 		this.salaryType = salaryType;
 	}
-	
+
 	public Double getDbAmount() {
 		return dbAmount;
 	}
-	
+
 	public void setDbAmount(Double dbAmount) {
 		this.dbAmount = dbAmount;
+	}
+
+	public Integer getConceptId() {
+		return conceptId;
+	}
+
+	public void setConceptId(Integer conceptId) {
+		this.conceptId = conceptId;
 	}
 
 	@Override
@@ -117,8 +135,7 @@ public abstract class Item implements Serializable {
 		if (!(obj instanceof Item))
 			return false;
 		Item item = (Item) obj;
-		return ((id == item.id) || ((id != null) && id
-				.equals(item.id)));
+		return ((id == item.id) || ((id != null) && id.equals(item.id)));
 	}
 
 }

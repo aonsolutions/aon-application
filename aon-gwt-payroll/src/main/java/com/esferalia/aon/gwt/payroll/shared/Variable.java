@@ -5,7 +5,7 @@ import java.util.Date;
 
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 
-public abstract class Variable implements Serializable {
+public abstract class Variable implements HasStartAndEndDate, Serializable{
 
 	String name;
 	Date startDate;
@@ -76,5 +76,6 @@ public abstract class Variable implements Serializable {
 		return ((name == var.name) || ((name != null) && name
 				.equals(var.name)));
 	}
+	
 
 }

@@ -26,6 +26,8 @@ public interface EmployeesService extends RemoteService {
 	String getCostReceiptHTML(Cost cost, int zoom) throws IllegalArgumentException;
 	String getSalaryReceiptHTML(Cost cost, int zoom) throws IllegalArgumentException;
 	String getSalaryReceiptHTML(Salary salary, int zoom) throws IllegalArgumentException;
+	void saveSalaryDraft(SalaryDraft salaryDraft) throws IllegalArgumentException;
+	SalaryDraft saveSalary(SalaryDraft salaryDraft ) throws IllegalArgumentException;
 	SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft ) throws IllegalArgumentException;
 	String getSalaryDraftReceipt(SalaryDraft salaryDraft, String mime) throws IllegalArgumentException;
 	String getSalaryDraftReceiptHTML(SalaryDraft salaryDraft, int zoom) throws IllegalArgumentException;

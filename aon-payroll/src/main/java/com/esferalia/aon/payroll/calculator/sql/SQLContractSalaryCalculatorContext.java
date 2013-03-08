@@ -143,6 +143,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 	private static final String DEDUCTION_SQL =
 		"SELECT *"
+		+", " + ExpressionScope.CONTRACT.ordinal() + " AS " + SQLContractDeduction.SCOPE_ALIAS
 		+" FROM contract_deduction"
 		+" LEFT JOIN  deduction_concept" 							// LEFT JOIN: deduction_concept puede ser NULL
 		+"	ON deduction_concept = deduction_concept.id"	
@@ -180,6 +181,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 	private static final String SYSTEM_DEDUCTION_SQL =
 		"SELECT *"
+		+", " + ExpressionScope.SYSTEM.ordinal() + " AS " + SQLContractDeduction.SCOPE_ALIAS
 		+" FROM system_deduction"
 		+" LEFT JOIN  deduction_concept" 							// LEFT JOIN: deduction_concept puede ser NULL
 		+"	ON deduction_concept = deduction_concept.id"	
