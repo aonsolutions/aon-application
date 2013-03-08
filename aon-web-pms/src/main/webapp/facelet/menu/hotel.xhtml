@@ -1,0 +1,257 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="hotelMenu">
+		
+			<aon:div styleClass="aon-scroll-area">		
+		
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+
+					<aon:panelGroup>
+						<aon:panelGrid id="group_hotel_reservation"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-book aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_reservation_module}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="reservation_request" 
+										action="reservationRequest_search" actionListener="#{reservationRequest.onEditSearch}"
+										value="#{pmsBundle.pms_reservation_request_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="reservation" 
+										action="reservation_list" actionListener="#{reservation.onLoad}"
+										value="#{pmsBundle.pms_reservation_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="reservation-search"
+										action="reservation_search" actionListener="#{reservation.onEditSearch}"
+										value="#{pmsBundle.pms_reservation_search_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="reservationIO" 
+										value="#{pmsBundle.pms_reservationIO_module}"
+										action="reservationIO_search" >
+										<aon:actionListener method="#{reservationIO.onInit}" />
+									</aon:commandLink>
+								</aon:div>
+								<c:if test="#{pmsCollections.currentUserServiceHotelsCount > 0}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="serviceInvoice" 
+											action="serviceInvoice_list" actionListener="#{serviceInvoice.onLoad}"
+											value="#{pmsBundle.pms_service_invoice_module}">
+										</aon:commandLink>
+									</aon:div>
+								</c:if>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="rack"
+										action="rack_search" actionListener="#{rack.onEditSearch}"
+										value="#{pmsBundle.pms_rack_module}">
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+
+						<aon:panelGrid id="group_hotel_divert"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-transfer">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_divert_group}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="divert" 
+										value="#{pmsBundle.pms_divert_module}"
+										action="divert_grid" >
+										<aon:actionListener method="#{divert.onEditSearch}" />
+										<aon:actionListener method="#{divert.onSearch}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="divertReception" 
+										value="#{pmsBundle.pms_divertReception_module}"
+										action="divertReception_list" >
+										<aon:actionListener method="#{divertReception.onEditSearch}" />
+										<aon:actionListener method="#{divertReception.onSearch}" />
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+						
+						<c:if test="#{aonRole.config}">
+							<aon:panelGrid id="group_hotel_room"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-room">
+								<f:facet name="header">
+									<aon:outputText value="#{pmsBundle.pms_room_module}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="room"
+											action="room_search" actionListener="#{room.onEditSearch}"
+											value="#{pmsBundle.pms_room_module}">
+										</aon:commandLink>
+									</aon:div>
+									<c:if test="#{aonRole.admin}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="feature" 
+												value="#{assetBundle.asset_feature_module}"
+												action="feature_grid" >
+											</aon:commandLink>
+										</aon:div>
+									</c:if>
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>							
+					</aon:panelGroup>
+
+					<aon:panelGroup>
+					
+						<aon:panelGrid id="group_config_general"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-general">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_general}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="mailAccountChange"
+										action="mailAccount_list" actionListener="#{mailAccount.onSearch}"
+										value="#{webmailBundle.webmail_mailAccount}" />						
+								</aon:div>								
+							</aon:div>
+						</aon:panelGrid>
+						
+						<aon:panelGrid id="group_hotel_pos"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-pos aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_pos_module}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<c:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="pos" 
+											action="pos_search" actionListener="#{pos.onEditSearch}"
+											value="#{pmsBundle.pms_pos_module}">
+										</aon:commandLink>
+									</aon:div>
+								</c:if>
+								<c:if test="#{aonRole.admin or aonRole.config or aonRole.saleOperator}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="posShift" 
+											action="posShift_search" actionListener="#{posShift.onEditSearch}"
+											value="#{pmsBundle.pms_posShift_module}">
+										</aon:commandLink>
+									</aon:div>
+								</c:if>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="pos_opening" 
+										action="posOpening_form" actionListener="#{posOpening.onInit}"
+										value="#{pmsBundle.pms_posOpening_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="pos_closing" 
+										action="posClosing_form" 
+										value="#{pmsBundle.pms_posCashCount_module}">
+										<aon:actionListener method="#{posClosing.onInit}" />
+									</aon:commandLink>
+								</aon:div>
+								<c:if test="#{aonRole.financeOperator}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="pos_finance_bath" 
+											action="posFinance_search" actionListener="#{posFinance.onEditSearch}"
+											value="#{pmsBundle.pms_posFinance_module}" />
+									</aon:div>
+								</c:if>
+							</aon:div>
+						</aon:panelGrid>
+
+						<aon:panelGrid id="group_hotel_governess"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-governess aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_governess_group}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="workPlanning" 
+										action="workPlanning_search" actionListener="#{workPlanning.onInit}"
+										value="#{pmsBundle.pms_workPlanning_module}">
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+
+						<aon:panelGrid id="group_hotel_boards"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-board aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_board_group}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="boardList" 
+										action="boardList_list" actionListener="#{boardList.onInit}"
+										value="#{pmsBundle.pms_boardList_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="boardBooking" 
+										action="boardBooking_search" actionListener="#{boardBooking.onInit}"
+										value="#{pmsBundle.pms_boardBooking_module}">
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+
+						<aon:panelGrid id="group_hotel_booking"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-book aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_occupation_group}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="roomBooking" 
+										action="roomBooking_search" actionListener="#{roomBooking.onInit}"
+										value="#{pmsBundle.pms_roomBooking_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="emptyRoomList"
+										action="emptyRoom_search" actionListener="#{emptyRoom.onInit}"
+										value="#{pmsBundle.pms_emptyRoom_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="hotelGuestList"
+										action="hotelGuest_search" actionListener="#{hotelGuest.onInit}"
+										value="#{pmsBundle.pms_hotelGuest_module}">
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
+						
+				</h:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
