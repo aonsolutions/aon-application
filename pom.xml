@@ -163,7 +163,6 @@
 		<!-- OTHER -->
 		<module>aon-payroll-ctsql2mysql</module>
 		<module>aon-common-resources</module>
-		<module>tgc-ui-payroll</module>
 		<module>aon.python</module>
 		
 	</modules>
