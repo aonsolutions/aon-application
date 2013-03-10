@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.Calendar;
 import java.util.Date;
@@ -140,9 +141,12 @@ public class SQLSalaryDraft {
 		}
 	}
 
+
 	// -------------------------------------------
 	// Private
 	// -------------------------------------------
+	
+	
 
 	private static final String CONTRACT_DATA_INSERT = "INSERT INTO "
 			+ SQLConstants.CONTRACT_DATA + " ( " + ContractDataColumns.DOMAIN
@@ -676,8 +680,7 @@ public class SQLSalaryDraft {
 				setInt(insertStmt, 1,
 						rs.getInt(ContractDeductionColumns.DOMAIN)); // NOT NULL
 				setInt(insertStmt, 2,
-						rs.getInt(ContractDeductionColumns.CONTRACT)); // NOT
-																		// NULL
+						rs.getInt(ContractDeductionColumns.CONTRACT)); // NOT  NULL
 				set(insertStmt, 3, rs.getObject(ContractDeductionColumns.TYPE),
 						Types.TINYINT); // DEFAULT NULL
 				set(insertStmt, 4,
@@ -690,8 +693,8 @@ public class SQLSalaryDraft {
 				setDate(insertStmt, 7, sqlStartDate);
 				setDate(insertStmt, 8, sqlEndDate);
 
-				setInt(insertStmt, 9,
-						rs.getInt(ContractDeductionColumns.DEDUCTION_CONCEPT));
+				set(insertStmt, 9,
+						rs.getObject(ContractDeductionColumns.DEDUCTION_CONCEPT), Types.INTEGER);
 
 				if (Period.compare(startDate, sqlStartDate) > 0) {
 					setDate(insertStmt, 8, date2sql(addDay(startDate, -1)));
@@ -825,6 +828,40 @@ public class SQLSalaryDraft {
 		}
 	}
 
+	public static Payment getPaymentConceptByName(Connection conn, String name) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement("SELECT * FROM " + SQLConstants.PAYMENT_CONCEPT +  
+					" WHERE " + PaymentConceptColumns.CODE + " = ? ");
+			rs = stmt.executeQuery();
+			if ( ! rs.next() ) 
+				return null;
+			Payment paymentConcept = new Payment();
+
+			paymentConcept.setId(rs.getInt(PaymentConceptColumns.ID));
+			paymentConcept
+					.setName(rs.getString(PaymentConceptColumns.CODE));
+			paymentConcept.setType(getPaymentType(rs
+					.getInt(PaymentConceptColumns.TYPE)));
+			paymentConcept.setDescription(rs
+					.getString(PaymentConceptColumns.DESCRIPTION));
+			paymentConcept.setExpression(rs
+					.getString(PaymentConceptColumns.EXPRESSION));
+			paymentConcept.setIrpfExpression(rs
+					.getString(PaymentConceptColumns.IRPF_EXPRESSION));
+			paymentConcept.setQuoteExpression(rs
+					.getString(PaymentConceptColumns.QUOTE_EXPRESSION));
+			
+			return paymentConcept;
+			
+		} finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	private static Date addDay(Date date, int days) {
 		Calendar calendar = Calendar.getInstance();

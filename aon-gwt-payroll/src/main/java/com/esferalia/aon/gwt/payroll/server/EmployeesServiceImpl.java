@@ -1,6 +1,10 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.commit;
+import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.disableAutoCommit;
+import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.enableAutoCommit;
 import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.getConnection;
+import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.rollback;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE_ACTIVITY;
@@ -48,14 +52,12 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
-import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
-import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.payroll.Contract;
@@ -72,7 +74,6 @@ import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
-import com.esferalia.aon.payroll.sql.SQLWriter;
 import com.esferalia.aon.salary.CompositeSalaryBuilder;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -398,13 +399,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	public void saveSalaryDraft(SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
+		Connection connection = null;
 		try {
 			initFacesContext();
-			SQLSalaryDraft.save(getConnection(), salaryDraft, getDomainID(),
+			connection = getConnection();
+			disableAutoCommit(connection);
+			SQLSalaryDraft.save(connection, salaryDraft, getDomainID(),
 					getParentDomainID());
+			commit(connection);
 		} catch (SQLException e) {
+			rollback(connection);
 			throw new IllegalArgumentException(e);
 		} finally {
+			enableAutoCommit(connection);
 			releaseFacesContext();
 		}
 
@@ -412,9 +419,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	public SalaryDraft saveSalary(SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
+		Connection connection = null;
 		try {
 			initFacesContext();
-			calculateAndSave(salaryDraft);
+			connection = getConnection();
+			calculateAndSave(connection, salaryDraft);
 			return salaryDraft;
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -1140,9 +1149,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	private static void calculateAndSave(SalaryDraft draft) throws SQLException {
-		Connection conn = getConnection();
-		
+	private static void calculateAndSave(Connection conn, SalaryDraft draft) throws SQLException {
 		SQLSalaryDraft.removeSalary(conn, draft);
 
 		SQLSalaryBuilder sqlSalaryBuilder = new SQLSalaryBuilder(conn);
@@ -1185,6 +1192,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (SalaryException e) {
+			e.printStackTrace();
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		}

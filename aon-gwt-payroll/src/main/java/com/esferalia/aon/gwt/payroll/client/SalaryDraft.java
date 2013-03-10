@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -328,9 +329,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	}
 
-	abstract class NewItemHandler<T extends Item> implements
-			AsyncCallback<List<T>> {
+	abstract class NewItemHandler<T extends Item> {
 
+		Button recoverButton;
 		TextBox expressionBox;
 		SuggestBox descriptionBox;
 		MultiWordSuggestOracle oracle;
@@ -339,6 +340,24 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		public void setDescriptionBox(SuggestBox descriptionBox) {
 			this.descriptionBox = descriptionBox;
+
+			this.descriptionBox.getValueBox().addFocusHandler(
+					new FocusHandler() {
+
+						@Override
+						public void onFocus(FocusEvent event) {
+							if (paymentConceptsMap == null) {
+								paymentConceptsMap = new HashMap<String, T>();
+
+								for (T item : getAvailableItems()) {
+									String suggestion = item.getDescription()
+											+ " ( " + item.getName() + " )";
+									oracle.add(suggestion);
+									paymentConceptsMap.put(suggestion, item);
+								}
+							}
+						}
+					});
 
 			this.descriptionBox.getValueBox().addBlurHandler(new BlurHandler() {
 				@Override
@@ -358,7 +377,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		public void setOracle(MultiWordSuggestOracle oracle) {
 			this.oracle = oracle;
-			getAvailableItems();
+
 		}
 
 		public void setExpressionBox(TextBox expressionBox) {
@@ -372,24 +391,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				}
 			});
 			// this.expressionBox.addValueChangeHandler(this);
-		}
-
-		@Override
-		public void onSuccess(List<T> items) {
-			this.paymentConceptsMap = new HashMap<String, T>();
-			for (T item : items) {
-				String suggestion = item.getDescription() + " ( "
-						+ item.getName() + " )";
-				oracle.add(suggestion);
-				paymentConceptsMap.put(suggestion, item);
-			}
-
-		}
-
-		@Override
-		public void onFailure(Throwable caught) {
-			// TODO Auto-generated method stub
-
 		}
 
 		protected void onValueChange() {
@@ -416,7 +417,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			salaryDraftObject.calculate(SalaryDraft.this);
 		}
 
-		protected abstract void getAvailableItems();
+		protected abstract List<T> getAvailableItems();
 
 		protected abstract void addDrafItem(T item, String expr);
 
@@ -425,8 +426,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	class NewDeductionHandler extends NewItemHandler<Deduction> {
 
 		@Override
-		protected void getAvailableItems() {
-			onSuccess(Collections.<Deduction> emptyList());
+		protected List<Deduction> getAvailableItems() {
+			return Collections.<Deduction> emptyList();
 		}
 
 		@Override
@@ -453,8 +454,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	class NewPaymentHandler extends NewItemHandler<Payment> {
 
 		@Override
-		protected void getAvailableItems() {
-			salaryDraftObject.getPaymentConcepts(this);
+		protected List<Payment> getAvailableItems() {
+			return SalaryDraft.this.availablePaymens;
 		}
 
 		@Override
@@ -472,7 +473,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			draftPayment.setEndDate(salaryDraftObject.getEndDate());
 			draftPayment.setStartDate(salaryDraftObject.getStartDate());
 			draftPayment.setSalaryType(salaryDraftObject.getType());
-			// draftPayment.setMonth(payment.getMonth());
+			// draftPayment.setMonth(deduction.getMonth());
 			draftPayment.setConceptId(payment.getId());
 
 			salaryDraftObject.addDraftPayment(draftPayment);
@@ -503,6 +504,76 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			salaryDraftObject.calculate(SalaryDraft.this);
 		}
 
+	}
+
+	abstract class RecoverItemHandler<T extends Item> implements ClickHandler {
+
+		private T item;
+
+		public RecoverItemHandler(T item) {
+			this.item = item;
+		}
+
+		@Override
+		public void onClick(ClickEvent event) {
+			addDrafItem(item);
+			salaryDraftObject.calculate(SalaryDraft.this);
+
+		}
+
+		abstract void addDrafItem(T item);
+
+	}
+
+	class RecoverPaymentHandler extends RecoverItemHandler<Payment> {
+
+		public RecoverPaymentHandler(Payment payment) {
+			super(payment);
+		}
+
+		@Override
+		void addDrafItem(Payment payment) {
+			fillPayment(payment);
+			salaryDraftObject.addDraftPayment(payment);
+		}
+
+		void fillPayment(Payment draftPayment) {
+			
+			if ( draftPayment.getType() != null )
+				return;
+			
+			for (Payment payment : SalaryDraft.this.availablePaymens) {
+				if ( StringUtils.equals(payment.getName(), draftPayment.getName()) ){
+					draftPayment.setConceptId(payment.getId());
+					draftPayment.setType(payment.getType());
+					draftPayment.setIrpfExpression(payment.getIrpfExpression());
+					draftPayment.setQuoteExpression(payment.getQuoteExpression());
+
+					draftPayment.setScope(Scope.SALARY);
+					draftPayment.setEndDate(salaryDraftObject.getEndDate());
+					draftPayment.setStartDate(salaryDraftObject.getStartDate());
+					draftPayment.setSalaryType(salaryDraftObject.getType());
+				}
+			}
+		}
+
+	}
+
+	class RecoverDeductionHandler implements ClickHandler {
+
+		private Deduction deduction;
+
+		public RecoverDeductionHandler(Deduction deduction) {
+			this.deduction = deduction;
+		}
+
+		@Override
+		public void onClick(ClickEvent event) {
+			// TODO Auto-generated method stub
+			salaryDraftObject.addDraftDeduction(deduction);
+			salaryDraftObject.calculate(SalaryDraft.this);
+
+		}
 	}
 
 	interface MyStyle extends CssResource {
@@ -655,11 +726,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private int zoom;
 	private Scope scope;
+
 	private SalaryDraftObject salaryDraftObject;
 
 	private Map<Event.Type, String[]> eventStyles;
 
 	private List<HasVisibility> dbUIObjects;
+
+	private List<Payment> availablePaymens = new ArrayList<Payment>();
 
 	public SalaryDraft() {
 		initWidget(binder.createAndBindUi(this));
@@ -883,6 +957,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		clearContextTable();
 		clearPaymentsTable();
 
+		initAvailablePayments();
 		List<Payment> payments = salaryDraftObject.getPayments();
 		dumpPayments(payments);
 		insertNewPaymentRow();
@@ -922,6 +997,23 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		acceptButton.setEnabled(salaryDraftObject.hasDrafts());
 		undoButton.setEnabled(salaryDraftObject.canUndo());
 		redoButton.setEnabled(salaryDraftObject.canRedo());
+	}
+
+	private void initAvailablePayments() {
+		availablePaymens.clear();
+		salaryDraftObject
+				.getPaymentConcepts(new AsyncCallback<List<Payment>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onSuccess(List<Payment> result) {
+						availablePaymens.addAll(result);
+					}
+				});
 	}
 
 	private void initFxHelper() {
@@ -1237,14 +1329,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		int row = paymentsTable.getRowCount();
 		for (Payment payment : payments) {
-			// dumpPayment(payment, tr++, AON.AON_ICON_ROW_SELECTOR);
+			// dumpPayment(deduction, tr++, AON.AON_ICON_ROW_SELECTOR);
 			if (payment.getAmount() != null) {
 				dumpItem(payment, row++, AON.AON_ICON_ROW_SELECTOR,
 						new PaymentChangeHandler<TextBox>(payment));
 			} else {
 				String styles[] = eventStyles.get(Event.Type.ERROR);
 				dumpDbItem(payment, row++, styles[0], styles[1],
-						new PaymentChangeHandler<TextBox>(payment), false);
+						new RecoverPaymentHandler(payment), false);
 			}
 		}
 
@@ -1354,10 +1446,25 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			String description = DEDUCTION_DESCRIPTIONS
 					.get(deduction.getType());
 			if (description != null) {
-				dumpSystemDeduction(deduction, description, row++);
+				if (deduction.getAmount() != null) {
+					dumpSystemDeduction(deduction, description, row++);
+				} else {
+					String styles[] = eventStyles.get(Event.Type.ERROR);
+					dumpDbSystemDeduction(deduction, description, row++,
+							styles[0], styles[1]);
+				}
 			} else {
-				dumpItem(deduction, row++, AON.AON_ICON_ROW_SELECTOR,
-						new DeductionChangeHandler<TextBox>(deduction), true);
+				if (deduction.getAmount() != null)
+					dumpItem(deduction, row++, AON.AON_ICON_ROW_SELECTOR,
+							new DeductionChangeHandler<TextBox>(deduction),
+							true);
+				else {
+					String styles[] = eventStyles.get(Event.Type.ERROR);
+					dumpDbItem(deduction, row++, styles[0], styles[1],
+							new RecoverDeductionHandler(deduction), false);
+
+				}
+
 			}
 		}
 
@@ -1430,8 +1537,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	private <I extends Item> void dumpDbItem(I item, int row,
-			String iconStyleName, String textStyleName,
-			ItemChangeHandler<TextBox, I> handler, boolean isDeduction) {
+			String iconStyleName, String textStyleName, ClickHandler handler,
+			boolean isDeduction) {
 
 		// first cell for edit other stuff buttons.
 		Button editButton = new Button();
@@ -1448,11 +1555,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		// descriptionLabel.getElement().getStyle().setWidth(98, Unit.PCT);
 		paymentsTable.setWidget(row, 2, descriptionLabel);
 
-		TextBox amountBox = new TextBox();
-		amountBox.getElement().getStyle().setWidth(98, Unit.PCT);
-		amountBox.addStyleName(AON.AON_TEXT_RIGHT);
-		handler.setExpressionWidget(amountBox);
-
 		InlineLabel dbAmountLabel = new InlineLabel();
 		dbAmountLabel.setText(format(item.getDbAmount()));
 		dbAmountLabel.setVisible(salaryDraftObject.hasDbSalary());
@@ -1461,7 +1563,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		HorizontalPanel amountsPanel = new HorizontalPanel();
 		amountsPanel.setStyleName(GWT_HORIZONTAL_PANEL);
-		amountsPanel.add(amountBox);
+		amountsPanel.setWidth("100%");
+		amountsPanel.add(new InlineLabel());
 		amountsPanel.add(dbAmountLabel);
 		amountsPanel.setCellWidth(dbAmountLabel, "50%");
 		amountsPanel.setCellHorizontalAlignment(dbAmountLabel,
@@ -1471,7 +1574,16 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		paymentsTable.setHTML(row, isDeduction ? 3 : 4, "&nbsp;");
 
-		paymentsTable.getFlexCellFormatter().setColSpan(row, 4, 2);
+		// paymentsTable.getFlexCellFormatter().setColSpan(row, 4, 2);
+
+		Button recoverButton = new Button();
+		recoverButton.setStyleName(AON.AON_ICON_CANCEL);
+		recoverButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		recoverButton.getElement().getStyle().setProperty("padding", "inherit");
+		paymentsTable.setWidget(row, 5, recoverButton);
+		paymentsTable.getCellFormatter().addStyleName(row, 5,
+				AON.AON_TEXT_RIGHT);
+		recoverButton.addClickHandler(handler);
 
 		CellFormatter fomatter = paymentsTable.getCellFormatter();
 		for (int col = 0; col < paymentsTable.getCellCount(row); col++) {
@@ -1522,6 +1634,26 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		paymentsTable.getFlexCellFormatter().setColSpan(row, 4, 2);
 
 		formatRow(row);
+	}
+
+	private void dumpDbSystemDeduction(Deduction deduction, String description,
+			int row, String iconStyleName, String textStyleName) {
+		dumpSystemDeduction(deduction, description, row);
+
+		// first cell for edit other stuff buttons.
+		Button iconButton = new Button();
+		iconButton.setStyleName(iconStyleName);
+		iconButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		// remove 'aon-editDataTable-button' margin & paddind.
+		// We don't like it here.
+		iconButton.getElement().getStyle().setProperty("padding", "inherit");
+		paymentsTable.setWidget(row, 0, iconButton);
+
+		CellFormatter fomatter = paymentsTable.getCellFormatter();
+		for (int col = 0; col < paymentsTable.getCellCount(row); col++) {
+			fomatter.addStyleName(row, col, textStyleName);
+		}
+
 	}
 
 	private int dumpContext(List<Variable> context, Scope to, boolean show) {

@@ -49,6 +49,7 @@ public class AON {
 	static final String AON_ICON_RESET = "aon-icon-reset";
 	static final String AON_EDIT_DATA_TABLE_BUTTON = "aon-editDataTable-button";
 	static final String AON_ICON_DELETE = "aon-icon-delete";
+	static final String AON_ICON_CANCEL = "aon-icon-cancel";
 	static final String AON_ICON_ROW_SELECTOR = "aon-icon-rowSelector";
 	static final String AON_ICON_EXCEPTION = "aon-icon-exception";
 

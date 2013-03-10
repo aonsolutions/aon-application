@@ -103,6 +103,42 @@ public class AonServletUtils {
 		return connection;
 	}
 
+	protected static void rollback(Connection conn) {
+		try {
+			conn.rollback();
+		} catch (SQLException e) {
+		}
+	}
+
+	protected static void commit(Connection conn) throws SQLException {
+		conn.commit();
+	}
+
+
+	protected static void execute(Connection connection, String... sqls)
+			throws SQLException {
+		Statement stmt = null;
+		try {
+			stmt = connection.createStatement();
+			for (String sql : sqls) {
+				stmt.execute(sql);
+			}
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	protected static void disableAutoCommit(Connection conn) throws SQLException {
+		conn.setAutoCommit(false);
+	}
+
+	protected static void enableAutoCommit(Connection conn) {
+		try {
+			conn.setAutoCommit(true);
+		} catch (SQLException e) {
+		}
+	}
 
 	protected static String getExtn(String path) {
 		return path.substring(path.lastIndexOf('.') + 1);
@@ -114,12 +150,12 @@ public class AonServletUtils {
 	}
 
 	protected static Integer getEnterpriseID() {
-                EnterpriseController controller = (EnterpriseController) AonUtil
-                                .getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
-                controller.initialAction();
-                Enterprise enterprise = (Enterprise) controller.getTo();
-                return enterprise.getId();
-        }
+		EnterpriseController controller = (EnterpriseController) AonUtil
+				.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
+		controller.initialAction();
+		Enterprise enterprise = (Enterprise) controller.getTo();
+		return enterprise.getId();
+	}
 
 	protected static void initFacesContext(ServletContext context,
 			HttpServletRequest request, HttpServletResponse response) {
@@ -145,7 +181,6 @@ public class AonServletUtils {
 					.createView(facesContext, "/home.jsf");
 
 			facesContext.setViewRoot(view);
-			
 
 		} catch (Throwable throwable) {
 			// TODO: Do some usefull with this.
@@ -281,36 +316,15 @@ public class AonServletUtils {
 				beanManager.getFieldName(IEntityAlias.CONTRACT_ID), id);
 
 		List<ITransferObject> list = beanManager.getList(criteria);
-		
-		if ( list.isEmpty() ) {
+
+		if (list.isEmpty()) {
 			return null;
 		}
-		
+
 		Contract contract = (Contract) list.get(0);
 		return contract;
 
 	}
 
-	protected static void begin(Connection conn) throws SQLException {
-		execute(conn, "BEGIN");
-	}
 
-	protected static void commit(Connection conn) throws SQLException {
-		execute(conn, "COMMIT");
-	}
-
-	protected static void rollback(Connection conn) throws SQLException {
-		execute(conn, "COMMIT");
-	}
-
-	private static void execute(Connection conn, String sql) throws SQLException {
-		Statement stmt = null;
-		try {
-			stmt = conn.createStatement();
-			stmt.execute(sql);
-		} finally {
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
 }

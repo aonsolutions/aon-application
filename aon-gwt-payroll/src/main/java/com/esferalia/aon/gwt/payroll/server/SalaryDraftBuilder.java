@@ -27,6 +27,7 @@ import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.VariableComparator;
+import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
@@ -89,12 +90,43 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 			dbPayments.remove(dbPayment);
 		}
 
-		for (IPayment dbPayment : dbPayments) {
+		for (Payment draftPayment : salaryDraft.getDraftPayments()) {
+			List<IPayment> dbCounterParts = getDbItemCounterParts(
+					dbPayments, draftPayment);
+			if (dbCounterParts.size() == 0)
+				continue;
+			// Found almost one counterpart. Gets first of them.
+			IPayment dbPayment = dbCounterParts.get(0);
+
 			Payment payment = new Payment();
+			payment.setScope(Scope.SALARY);
 			payment.setName(dbPayment.getName());
 			payment.setDbAmount(dbPayment.getAmount());
 			payment.setExpression(dbPayment.getExpression());
 			payment.setDescription(dbPayment.getDescription());
+
+			payment.setId(draftPayment.getId());
+			payment.setType(draftPayment.getType());
+			payment.setEndDate(draftPayment.getEndDate());
+			payment.setStartDate(draftPayment.getStartDate());
+			payment.setConceptId(draftPayment.getConceptId());
+			payment.setSalaryType(draftPayment.getSalaryType());
+			payment.setIrpfExpression(draftPayment.getIrpfExpression());
+			payment.setQuoteExpression(draftPayment.getQuoteExpression());
+			
+			salaryDraft.addPayment(payment);
+			// Remove it from the list to avoid processing later.
+			dbPayments.remove(dbPayment);
+		}
+
+		for (IPayment dbPayment : dbPayments) {
+			Payment payment = new Payment();
+			payment.setScope(Scope.SALARY);
+			payment.setName(dbPayment.getName());
+			payment.setDbAmount(dbPayment.getAmount());
+			payment.setExpression(dbPayment.getExpression());
+			payment.setDescription(dbPayment.getDescription());
+			
 			salaryDraft.addPayment(payment);
 		}
 
@@ -116,12 +148,12 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		}
 
 		for (IDeduction dbPayment : dbDeductions) {
-			Deduction payment = new Deduction();
-			payment.setName(dbPayment.getName());
-			payment.setDbAmount(dbPayment.getAmount());
-			payment.setExpression(dbPayment.getExpression());
-			payment.setDescription(dbPayment.getDescription());
-			salaryDraft.addDeduction(payment);
+			Deduction deduction = new Deduction();
+			deduction.setName(dbPayment.getName());
+			deduction.setDbAmount(dbPayment.getAmount());
+			deduction.setExpression(dbPayment.getExpression());
+			deduction.setDescription(dbPayment.getDescription());
+			salaryDraft.addDeduction(deduction);
 		}
 	}
 
