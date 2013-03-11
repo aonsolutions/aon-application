@@ -110,6 +110,24 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
         return ExpressionUtilities.getAndExpression(ExpressionUtilities.getAndExpression(billingExpr, initialExpr), ExpressionUtilities.getOrExpression(finalExpr, finalNullExpr));
 	}
 
+	private List<ITransferObject> obtainFeeList(Criteria criteria, InvoicingParameters params) throws ManagerBeanException {
+		IManagerBean feeBean = BeanManager.getManagerBean(CustomerFee.class);
+		Criteria feeCriteria = new Criteria();
+		feeCriteria.addExpression(criteria.getExpression());
+		feeCriteria.setOrderByList(criteria.getOrderByList());
+		feeCriteria = completeCriteriaWithCustomerData(feeCriteria, params.getCustomer());
+		List<ITransferObject> feeList = feeBean.getList(feeCriteria);
+		for (ITransferObject ito : feeList) {
+			CustomerFee customerFee = (CustomerFee)ito;
+			InvoicingGroup invoicingGroup = getInvoicingGroupByChild(customerFee.getCustomer().getRegistry());
+			customerFee.setInvoicingDescription(obtainFeeDescription(customerFee, invoicingGroup, params));
+			if (invoicingGroup != null) {
+				customerFee.setInvoicingCustomer((Customer)BeanManager.getManagerBean(Customer.class).get(invoicingGroup.getParent().getId()));
+			}
+		}
+		return orderFeeList(feeList);
+	}
+
 	private Criteria completeCriteriaWithCustomerData(Criteria criteria, Customer customer) throws ManagerBeanException {
 		IManagerBean feeBean = BeanManager.getManagerBean(CustomerFee.class);
 		if (customer != null && customer.getId() != null) {
@@ -151,24 +169,6 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		return null;
 	}
 
-	private List<ITransferObject> obtainFeeList(Criteria criteria, InvoicingParameters params) throws ManagerBeanException {
-		IManagerBean feeBean = BeanManager.getManagerBean(CustomerFee.class);
-		Criteria feeCriteria = new Criteria();
-		feeCriteria.addExpression(criteria.getExpression());
-		feeCriteria.setOrderByList(criteria.getOrderByList());
-		feeCriteria = completeCriteriaWithCustomerData(feeCriteria, params.getCustomer());
-		List<ITransferObject> feeList = feeBean.getList(feeCriteria);
-		for (ITransferObject ito : feeList) {
-			CustomerFee customerFee = (CustomerFee)ito;
-			InvoicingGroup invoicingGroup = getInvoicingGroupByChild(customerFee.getCustomer().getRegistry());
-			customerFee.setInvoicingDescription(obtainFeeDescription(customerFee, invoicingGroup, params));
-			if (invoicingGroup != null) {
-				customerFee.setInvoicingCustomer((Customer)BeanManager.getManagerBean(Customer.class).get(invoicingGroup.getParent().getId()));
-			}
-		}
-		return orderFeeList(feeList);
-	}
-
 	private String obtainFeeDescription(CustomerFee customerFee, InvoicingGroup group, InvoicingParameters params) {
 		String description = customerFee.getDescription();
 		if (description.indexOf("${MONTH}") > 0) {
@@ -186,16 +186,24 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 	private List<ITransferObject> orderFeeList(List<ITransferObject> feeList) {
 		class FeeComparator implements Comparator<ITransferObject> {
 			public int compare(ITransferObject o1, ITransferObject o2) {
+				int retValue = 0;
 				if (o1 instanceof CustomerFee && o2 instanceof CustomerFee) {
 					CustomerFee fee1 = (CustomerFee)o1;
-					String name1 = fee1.getInvoicingCustomer().getRegistry().getFullName();
-					Integer line1 = new Integer(fee1.getLine());
 					CustomerFee fee2 = (CustomerFee)o2;
-					String name2 = fee2.getInvoicingCustomer().getRegistry().getFullName();
-					Integer line2 = new Integer(fee2.getLine());
-					return (name1.compareTo(name2) == 0) ? line1.compareTo(line2) : name1.compareTo(name2);
+					retValue = fee1.getInvoicingCustomer().getRegistry().getFullName().compareTo(fee2.getInvoicingCustomer().getRegistry().getFullName());
+					if (retValue == 0) {
+						boolean parent1 = fee1.getInvoicingCustomer().getRegistry().getId().equals(fee1.getCustomer().getRegistry().getId());
+						boolean parent2 = fee2.getInvoicingCustomer().getRegistry().getId().equals(fee2.getCustomer().getRegistry().getId());
+						retValue = !(parent1 ^ parent2) ? 0 : ((parent1) ? -1 : 1);
+						if (retValue == 0) {
+							retValue = fee1.getCustomer().getRegistry().getFullName().compareTo(fee2.getCustomer().getRegistry().getFullName());
+							if (retValue == 0) {
+								retValue = (fee1.getLine() < fee2.getLine()) ? -1 : 1;
+							}
+						}
+					}
 				}
-				return 0;
+				return retValue;
 			}
 		}
 
