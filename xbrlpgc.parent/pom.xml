@@ -67,7 +67,7 @@
 	<build>
 		<plugins>
 			<!-- Instala en el repositorio local los JAR no disponibles en ningun 
-				repositorio MAVEN -->
+				repositorio MAVEN --> 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
@@ -107,6 +107,25 @@
 								<argument>-DgroupId=xbrl.saxon</argument>
 								<argument>-DartifactId=saxon</argument>
 								<argument>-Dversion=8.2</argument>
+								<argument>-Dpackaging=jar</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					
+					<execution>
+						<id>install-Struts-Layout</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>mvn</executable>
+							<arguments>
+								<argument>install:install-file</argument>
+								<argument>-Dfile=non-maven-libs/Struts-Layout.jar</argument>
+								<argument>-DgroupId=xbrl.Struts-Layout</argument>
+								<argument>-DartifactId=Struts-Layout</argument>
+								<argument>-Dversion=1.0.0</argument>
 								<argument>-Dpackaging=jar</argument>
 							</arguments>
 						</configuration>
