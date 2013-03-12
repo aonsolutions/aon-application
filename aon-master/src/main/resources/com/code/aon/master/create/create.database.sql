@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.12.2
+# Version: 7.14.0
 # Created by: girazu
-# Creation Date: 27/02/2013 17:55
+# Creation Date: 12/03/2013 12:35
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1084,9 +1084,9 @@ CREATE TABLE `action` (
   `name` varchar(64) COLLATE latin1_spanish_ci NOT NULL DEFAULT '' COMMENT 'Nombre de la Accion',
   `application` int(4) NOT NULL COMMENT 'Aplicacion a la que pertenece la Accion',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `IDX_UNQ_ACTION_NAME_APPLICATION` (`name`,`application`),
   KEY `IDX_ACTION_NAME` (`name`),
   KEY `IDX_ACTION_APPLICATION` (`application`),
-  KEY `IDX_ACTION_NAME_APPLICATION` (`name`,`application`),
   CONSTRAINT `FK_ACTION_APPLICATION` FOREIGN KEY (`application`) REFERENCES `application` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acciones de una Applicacion';
 
@@ -6968,7 +6968,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.12.2');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.14.0');
 
 COMMIT;
 
