@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<XbrlConfiguration 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation="XbrlConfiguration.xsd">
+  <DefaultSchemaLocationResolutionList>
+
+
+ <SchemaLocationResolution namespace="http://www.xbrl.org.es/es/2008/dgi/gp/gen-ex/2011-01-30"
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-gen-ex-2011-01-30.xsd"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-gen-ex-2011-01-30.xsd"/>
+
+
+<SchemaLocationResolution namespace="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30"
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-est-gen-2011-01-30.xsd"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-est-gen-2011-01-30.xsd"/>
+
+<SchemaLocationResolution namespace="http://www.xbrl.org.es/es/2008/dgi/gp/types/2011-01-30"
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-types-2011-01-30.xsd"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-types-2011-01-30.xsd"/>
+
+<SchemaLocationResolution namespace="http://www.xbrl.org.es/es/2008/dgi/gp/gen-bas/2011-01-30"
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-gen-bas-2011-01-30.xsd"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-gen-bas-2011-01-30.xsd"/>
+
+<SchemaLocationResolution namespace="http://www.xbrl.org.es/es/2008/dgi/gp/eco-bas/2011-01-30"
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-eco-bas-2011-01-30.xsd"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-eco-bas-2011-01-30.xsd"/>
+
+<SchemaLocationResolution namespace="http://www.xbrl.org.es/es/2008/dgi/gp/dat-inf/2011-01-30"
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-dat-inf-2011-01-30.xsd"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-dat-inf-2011-01-30.xsd"/>
+
+<SchemaLocationResolution namespace="http://www.xbrl.org.es/es/2008/dgi/gp/rel/2011-01-30"
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-rel-2011-01-30.xsd"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-rel-2011-01-30.xsd"/>
+
+<SchemaLocationResolution namespace="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-lc-es-2011-01-30.xsd"/>
+
+<SchemaLocationResolution namespace="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-lc-int-2011-01-30.xsd"/>
+
+<SchemaLocationResolution namespace="http://www.xbrl.org.es/es/2008/dgi/gp/lc-cnae-2009/2011-01-30"
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-cnae-09-2011-01-30.xsd"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-cnae-09-2011-01-30.xsd"/>
+ 
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-types-2011-01-30-label-es.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-types-2011-01-30-label-es.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-types-2011-01-30-label-en.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-types-2011-01-30-label-en.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-types-2011-01-30-reference.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-types-2011-01-30-reference.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-est-gen-2011-01-30-presentation.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-est-gen-2011-01-30-presentation.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-est-gen-2011-01-30-label-es.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-est-gen-2011-01-30-label-es.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-est-gen-2011-01-30-label-en.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-est-gen-2011-01-30-label-en.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-est-gen-2011-01-30-reference.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-est-gen-2011-01-30-reference.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-gen-bas-2011-01-30-presentation.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-gen-bas-2011-01-30-presentation.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-gen-bas-2011-01-30-label-es.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-gen-bas-2011-01-30-label-es.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-gen-bas-2011-01-30-label-en.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-gen-bas-2011-01-30-label-en.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-gen-bas-2011-01-30-reference.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-gen-bas-2011-01-30-reference.xml"/>
+ 
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-gen-ex-2011-01-30-presentation.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-gen-ex-2011-01-30-presentation.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-gen-ex-2011-01-30-label-es.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-gen-ex-2011-01-30-label-es.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-gen-ex-2011-01-30-label-en.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-gen-ex-2011-01-30-label-en.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-gen-ex-2011-01-30-reference.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-gen-ex-2011-01-30-reference.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-eco-bas-2011-01-30-presentation.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-eco-bas-2011-01-30-presentation.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-eco-bas-2011-01-30-calculation.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-eco-bas-2011-01-30-calculation.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-eco-bas-2011-01-30-label-es.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-eco-bas-2011-01-30-label-es.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-eco-bas-2011-01-30-label-en.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-eco-bas-2011-01-30-label-en.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-eco-bas-2011-01-30-reference.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-eco-bas-2011-01-30-reference.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-dat-inf-2011-01-30-presentation.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-dat-inf-2011-01-30-presentation.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-dat-inf-2011-01-30-label-es.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-dat-inf-2011-01-30-label-es.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-dat-inf-2011-01-30-label-en.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-dat-inf-2011-01-30-label-en.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-dat-inf-2011-01-30-reference.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-dat-inf-2011-01-30-reference.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-rel-2011-01-30-presentation.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-rel-2011-01-30-presentation.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-rel-2011-01-30-label-es.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-rel-2011-01-30-label-es.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-rel-2011-01-30-label-en.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-rel-2011-01-30-label-en.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-rel-2011-01-30-reference.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-rel-2011-01-30-reference.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30-label-es.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-lc-es-2011-01-30-label-es.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30-label-en.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-lc-es-2011-01-30-label-en.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30-label.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-lc-es-2011-01-30-label.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30-reference.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-lc-es-2011-01-30-reference.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30-label-es.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-lc-int-2011-01-30-label-es.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30-label-en.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-lc-int-2011-01-30-label-en.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30-reference.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-lc-int-2011-01-30-reference.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-cnae-09-2011-01-30-label-es.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-cnae-09-2011-01-30-label-es.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-cnae-09-2011-01-30-label-en.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-cnae-09-2011-01-30-label-en.xml"/>
+
+<SchemaLocationResolution namespace=""
+logicalUri="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-cnae-09-2011-01-30-reference.xml"
+  physicalUri="$TAXONOMYROOT/auxiliares/dgiv2.3.3/dgi-cnae-09-2011-01-30-reference.xml"/>
+ 
+
+  </DefaultSchemaLocationResolutionList>
+
+ 
+  
+</XbrlConfiguration>

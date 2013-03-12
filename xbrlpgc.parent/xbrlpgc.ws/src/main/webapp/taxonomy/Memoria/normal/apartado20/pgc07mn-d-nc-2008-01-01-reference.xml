@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01 ../../../auxiliares/pgc-07-ref-2008-01-01.xsd" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <link:referenceLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-nc-2008-01-01.xsd#pgc07mn-d-nc_NegocioConjuntoDomain" xlink:label="NegocioConjuntoDomain"/>
+    <link:reference xlink:type="resource" xlink:label="reference_NegocioConjuntoDomain" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_NegocioConjuntoDomain">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>20</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="NegocioConjuntoDomain" xlink:to="reference_NegocioConjuntoDomain"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-nc-2008-01-01.xsd#pgc07mn-d-nc_NegocionConjuntoDimension" xlink:label="NegocionConjuntoDimension"/>
+    <link:reference xlink:type="resource" xlink:label="reference_NegocionConjuntoDimension" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_NegocionConjuntoDimension">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>20</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="NegocionConjuntoDimension" xlink:to="reference_NegocionConjuntoDimension"/>
+  </link:referenceLink>
+</link:linkbase>

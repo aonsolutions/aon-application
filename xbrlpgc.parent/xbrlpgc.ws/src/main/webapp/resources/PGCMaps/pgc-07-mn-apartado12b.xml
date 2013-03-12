@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mn-apartado12b" mainSchemaPrefix="pgc-07-mn" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01">
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosDesgloseGastoIngresoImpuestoBeneficiosEjercicioImpuestoCorriente"
+        inputID="1"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-sf:GastoIngresoDimension">
+        <Member id="93225" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoValoracionInstrumentosFinancieros"/>
+        <Member id="93226" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoCoberturasFlujoEfectivo"/>
+        <Member id="93227" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoSubvencionesDonancionesLegados"/>
+        <Member id="93228" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoGananciaPerdidaActuariales"/>
+        <Member id="93230" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVenta"/>
+        <Member id="93231" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVentaDiferenciasConversion"/>
+        <Member id="93232" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVentaReservas"/>
+        <Member id="93222" qname="pgc07mn-d-sf:ImputacionPerdidasGananciasOperacionesContinuadas"/>
+        <Member id="93223" qname="pgc07mn-d-sf:ImputacionPerdidasGananciasOperacionesInterrumpidas"/>
+        <Member id="93221" qname="pgc07mn-d-sf:ImputacionPerdidasGanancias"/>
+        <Member id="93224" qname="pgc07mn-d-sf:ImputacionPatrimonioNeto"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosDesgloseGastoIngresoImpuestoBeneficiosEjercicioVairacionesImpuestoDiferidoTotal"
+        inputID="4"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-sf:GastoIngresoDimension">
+        <Member id="93225" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoValoracionInstrumentosFinancieros"/>
+        <Member id="93226" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoCoberturasFlujoEfectivo"/>
+        <Member id="93227" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoSubvencionesDonancionesLegados"/>
+        <Member id="93228" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoGananciaPerdidaActuariales"/>
+        <Member id="93230" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVenta"/>
+        <Member id="93231" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVentaDiferenciasConversion"/>
+        <Member id="93232" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVentaReservas"/>
+        <Member id="93222" qname="pgc07mn-d-sf:ImputacionPerdidasGananciasOperacionesContinuadas"/>
+        <Member id="93223" qname="pgc07mn-d-sf:ImputacionPerdidasGananciasOperacionesInterrumpidas"/>
+        <Member id="93221" qname="pgc07mn-d-sf:ImputacionPerdidasGanancias"/>
+        <Member id="93224" qname="pgc07mn-d-sf:ImputacionPatrimonioNeto"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosDesgloseGastoIngresoImpuestoBeneficiosEjercicioVairacionesImpuestoDiferidoDiferenciasTemporarias"
+        inputID="5"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-sf:GastoIngresoDimension">
+        <Member id="93225" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoValoracionInstrumentosFinancieros"/>
+        <Member id="93226" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoCoberturasFlujoEfectivo"/>
+        <Member id="93227" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoSubvencionesDonancionesLegados"/>
+        <Member id="93228" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoGananciaPerdidaActuariales"/>
+        <Member id="93230" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVenta"/>
+        <Member id="93231" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVentaDiferenciasConversion"/>
+        <Member id="93232" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVentaReservas"/>
+        <Member id="93222" qname="pgc07mn-d-sf:ImputacionPerdidasGananciasOperacionesContinuadas"/>
+        <Member id="93223" qname="pgc07mn-d-sf:ImputacionPerdidasGananciasOperacionesInterrumpidas"/>
+        <Member id="93221" qname="pgc07mn-d-sf:ImputacionPerdidasGanancias"/>
+        <Member id="93224" qname="pgc07mn-d-sf:ImputacionPatrimonioNeto"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosDesgloseGastoIngresoImpuestoBeneficiosEjercicioVairacionesImpuestoDiferidoCreditoImpositivo"
+        inputID="6"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-sf:GastoIngresoDimension">
+        <Member id="93225" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoValoracionInstrumentosFinancieros"/>
+        <Member id="93226" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoCoberturasFlujoEfectivo"/>
+        <Member id="93227" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoSubvencionesDonancionesLegados"/>
+        <Member id="93228" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoGananciaPerdidaActuariales"/>
+        <Member id="93230" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVenta"/>
+        <Member id="93231" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVentaDiferenciasConversion"/>
+        <Member id="93232" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVentaReservas"/>
+        <Member id="93222" qname="pgc07mn-d-sf:ImputacionPerdidasGananciasOperacionesContinuadas"/>
+        <Member id="93223" qname="pgc07mn-d-sf:ImputacionPerdidasGananciasOperacionesInterrumpidas"/>
+        <Member id="93221" qname="pgc07mn-d-sf:ImputacionPerdidasGanancias"/>
+        <Member id="93224" qname="pgc07mn-d-sf:ImputacionPatrimonioNeto"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosDesgloseGastoIngresoImpuestoBeneficiosEjercicioVairacionesImpuestoDiferidoOtrosCreditos"
+        inputID="7"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-sf:GastoIngresoDimension">
+        <Member id="93225" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoValoracionInstrumentosFinancieros"/>
+        <Member id="93226" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoCoberturasFlujoEfectivo"/>
+        <Member id="93227" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoSubvencionesDonancionesLegados"/>
+        <Member id="93228" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoGananciaPerdidaActuariales"/>
+        <Member id="93230" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVenta"/>
+        <Member id="93231" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVentaDiferenciasConversion"/>
+        <Member id="93232" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVentaReservas"/>
+        <Member id="93222" qname="pgc07mn-d-sf:ImputacionPerdidasGananciasOperacionesContinuadas"/>
+        <Member id="93223" qname="pgc07mn-d-sf:ImputacionPerdidasGananciasOperacionesInterrumpidas"/>
+        <Member id="93221" qname="pgc07mn-d-sf:ImputacionPerdidasGanancias"/>
+        <Member id="93224" qname="pgc07mn-d-sf:ImputacionPatrimonioNeto"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosDesgloseGastoIngresoImpuestoBeneficiosEjercicioVariacionesImpuestoDiferidoPasivoDiferenciasTemporarias"
+        inputID="8"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-sf:GastoIngresoDimension">
+        <Member id="93225" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoValoracionInstrumentosFinancieros"/>
+        <Member id="93226" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoCoberturasFlujoEfectivo"/>
+        <Member id="93227" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoSubvencionesDonancionesLegados"/>
+        <Member id="93228" qname="pgc07mn-d-sf:ImputacionPatrimonioNetoGananciaPerdidaActuariales"/>
+        <Member id="93230" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVenta"/>
+        <Member id="93231" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVentaDiferenciasConversion"/>
+        <Member id="93232" qname="pgc07mn-d-sf:ImputacionActivosNoCorrientesPasivosVinculadosMantenidosVentaReservas"/>
+        <Member id="93222" qname="pgc07mn-d-sf:ImputacionPerdidasGananciasOperacionesContinuadas"/>
+        <Member id="93223" qname="pgc07mn-d-sf:ImputacionPerdidasGananciasOperacionesInterrumpidas"/>
+        <Member id="93221" qname="pgc07mn-d-sf:ImputacionPerdidasGanancias"/>
+        <Member id="93224" qname="pgc07mn-d-sf:ImputacionPatrimonioNeto"/>
+    </conceptMap>
+</Statement>

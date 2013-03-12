@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mn-apartado7b" mainSchemaPrefix="pgc-07-mn" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01">
+    <conceptMap outputID="AmortizacionAcumuladaSaldoInicialEjercicio"
+        inputID="90710"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap outputID="DotacionAmortizacionEjercicio" inputID="90711"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap outputID="AumentosAdquisicionesTraspasos"
+        inputID="90712"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap
+        outputID="AmortizacionesAcumuladasDisminucionesSalidasBajasReduccionesTraspasos"
+        inputID="90713"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap outputID="AmortizacionAcumuladaSaldoFinalEjercicio"
+        inputID="90714"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap
+        outputID="CorreccionesValorDeterioroSaldoInicialEjercicio"
+        inputID="90700"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap
+        outputID="CorreccionesValorativasDeterioroReconocidasEjercicio"
+        inputID="90701"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap outputID="ReversionCorreccionesValorativasDeterioro"
+        inputID="90702"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap
+        outputID="CorreccionesValorativasDisminucionesSalidasBajasReduccionesTraspasos"
+        inputID="90703"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap outputID="CorreccionesValorDeterioroSaldoFinalEjercicio"
+        inputID="90704"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap outputID="SaldoBrutoInicialEjercicio" inputID="90720"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap outputID="AdquisicionesMedianteCombinacionesNegocios"
+        inputID="90721"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap outputID="AportacionesNoDinerarias" inputID="90722"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap outputID="ActivosGeneradosInternamente" inputID="90723"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap outputID="RestoEntradas" inputID="90724"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap outputID="SalidasBajasReducciones" inputID="90725"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap
+        outputID="ActivosNoCorrientesMantenidosVentaOperacionesInterrumpidas"
+        inputID="90726"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap outputID="TraspadosOtrasPartidas" inputID="90727"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+    <conceptMap outputID="SaldoBrutoFinalEjercicio" inputID="90728"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-it:InmovilizadoIntangibleDesgloseDimension">
+        <Member id="02" qname="pgc07mn-d-it:InmovilizadoIntangibleDesarrollo"/>
+        <Member id="03" qname="pgc07mn-d-it:InmovilizadoIntangibleConcesiones"/>
+        <Member id="05" qname="pgc07mn-d-it:InmovilizadoIntangibleAplicacionesInformaticas"/>
+        <Member id="06" qname="pgc07mn-d-it:InmovilizadoIntangibleInvestigacion"/>
+        <Member id="07" qname="pgc07mn-d-it:InmovilizadoIntangibleOtro"/>
+        <Member id="04" qname="pgc07mn-d-it:InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    </conceptMap>
+</Statement>

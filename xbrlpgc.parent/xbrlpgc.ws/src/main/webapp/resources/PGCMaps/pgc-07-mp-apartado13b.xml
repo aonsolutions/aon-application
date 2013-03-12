@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mp-apartado13b" mainSchemaPrefix="pgc-07-mp" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/2009-01-01">
+    <conceptMap outputID="EmployeeCategoryTotal"
+        inputID="EmployeeCategoryTotal"
+        ns="http://www.xbrl.org.es/es/2008/dgi/gp/eco-bas/2011-01-30"
+        nsPrefix="dgi-eco-bas" domain="pgc07m-d-cp:OtraInformacionCategoriasProfesionalesDimension">
+        <Member id="Xcode_CAP.5" qname="dgi-lc-es:Xcode_CAP.5"/>
+        <Member id="Xcode_CAP.8" qname="dgi-lc-es:Xcode_CAP.8"/>
+        <Member id="Xcode_CAP.3" qname="dgi-lc-es:Xcode_CAP.3"/>
+        <Member id="Xcode_CAP.6" qname="dgi-lc-es:Xcode_CAP.6"/>
+        <Member id="Xcode_CAP.4" qname="dgi-lc-es:Xcode_CAP.4"/>
+        <Member id="Xcode_CAP.7" qname="dgi-lc-es:Xcode_CAP.7"/>
+        <Member id="EmployeesPeriodAverageNumberTotal" qname="dgi-eco-bas:EmployeesPeriodAverageNumberTotal"/>
+        <Member id="Xcode_CAP.2" qname="dgi-lc-es:Xcode_CAP.2"/>
+    </conceptMap>
+</Statement>

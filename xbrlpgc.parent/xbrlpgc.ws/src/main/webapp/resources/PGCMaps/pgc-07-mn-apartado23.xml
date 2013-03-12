@@ -1,0 +1,1330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mn-apartado23" mainSchemaPrefix="pgc-07-mn" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01">
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosVentasActivosCorrientes"
+        inputID="9700"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosVentasActivosCorrientesResultado"
+        inputID="9701"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosVetasActivosNoCorrientes"
+        inputID="9702"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosVetasActivosNoCorrientesResultado"
+        inputID="9703"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosPrestacionServicios"
+        inputID="9706"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosPrestacionServiciosResultado"
+        inputID="9707"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosIngresosInteresesDevengadosCobrados"
+        inputID="9713"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosIngresosInteresesDevengadosNoCobrados"
+        inputID="9714"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosGarantiasAvales"
+        inputID="9719"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosComprasActivosCorrientes"
+        inputID="9704"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosServiciosRecibidos"
+        inputID="9708"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosComprasActivosNoCorrientes"
+        inputID="9705"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosContratosArrendamientoFinanciero"
+        inputID="9709"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosTransferenciasInvestigacionDesarrollo"
+        inputID="9711"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosAportacionesPlanesPensionesSegurosVida"
+        inputID="9721"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosPrestacionesCompensarInstrumentosPatrimonioPropios"
+        inputID="9722"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosGastosInteresesDevengadosPagados"
+        inputID="9715"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosGastosInteresesDevengadosNoPagados"
+        inputID="9716"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosDividendosOtrosBeneficiosDistribuidos"
+        inputID="9718"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosGarantiasAvales"
+        inputID="9720"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosRemuneracionesIndemnizaciones"
+        inputID="9723"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosContratosArrendamientoFinancieroResultado"
+        inputID="9710"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosTransferenciasInvestigacionDesarrolloResultados"
+        inputID="9712"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosGastosDeudasDudosoCobro"
+        inputID="9717"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosVentasActivosCorrientes"
+        inputID="9700"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosVentasActivosCorrientesResultado"
+        inputID="9701"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosVetasActivosNoCorrientes"
+        inputID="9702"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosVetasActivosNoCorrientesResultado"
+        inputID="9703"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosPrestacionServicios"
+        inputID="9706"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosPrestacionServiciosResultado"
+        inputID="9707"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosIngresosInteresesDevengadosCobrados"
+        inputID="9713"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosIngresosInteresesDevengadosNoCobrados"
+        inputID="9714"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasIngresosGarantiasAvales"
+        inputID="9719"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosComprasActivosCorrientes"
+        inputID="9704"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosServiciosRecibidos"
+        inputID="9708"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosComprasActivosNoCorrientes"
+        inputID="9705"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosContratosArrendamientoFinanciero"
+        inputID="9709"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosTransferenciasInvestigacionDesarrollo"
+        inputID="9711"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosAportacionesPlanesPensionesSegurosVida"
+        inputID="9721"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosPrestacionesCompensarInstrumentosPatrimonioPropios"
+        inputID="9722"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosGastosInteresesDevengadosPagados"
+        inputID="9715"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosGastosInteresesDevengadosNoPagados"
+        inputID="9716"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosDividendosOtrosBeneficiosDistribuidos"
+        inputID="9718"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosGarantiasAvales"
+        inputID="9720"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosRemuneracionesIndemnizaciones"
+        inputID="9723"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosContratosArrendamientoFinancieroResultado"
+        inputID="9710"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosTransferenciasInvestigacionDesarrolloResultados"
+        inputID="9712"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasGastosDividendosGastosDeudasDudosoCobro"
+        inputID="9717"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoNoCorriente"
+        inputID="9730"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoCorriente"
+        inputID="9733"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoNoCorriente"
+        inputID="9744"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoCorriente"
+        inputID="9750"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoNoCorrienteInversionesFinancierasLargoPlazoOtrosActivosFinancieros"
+        inputID="9763"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoNoCorrienteInversionesFinancierasLargoPlazoDerivados"
+        inputID="9762"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoNoCorrienteInversionesFinancierasLargoPlazoValoresRepresentativosDeuda"
+        inputID="9761"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoNoCorrienteInversionesFinancierasLargoPlazoCreditos"
+        inputID="9760"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoNoCorrienteInversionesFinancierasLargoPlazoInstrumentosPatrimonio"
+        inputID="9759"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoNoCorrienteInversionesFinancierasLargoPlazoCorreccionesValorativasCreditosDudosoCobro"
+        inputID="9732"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoCorrienteDeudoresComercialesOtrasCuentasCobrarTotal"
+        inputID="9784"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoCorrienteInversionesFinancierasCortoPlazoTotal"
+        inputID="9785"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoCorrienteClientesVentasPrestacionServiciosLargoPlazo"
+        inputID="9735"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoCorrienteClientesVentasPrestacionServiciosCortoPlazo"
+        inputID="9737"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoCorrienteDeudoresVarios"
+        inputID="9740"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoCorrientePersona"
+        inputID="9764"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoCorrienteAccionistasDesembolsosExigidos"
+        inputID="9739"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoCorrienteCorreccionesValorativasClientesDudosoCobroLargoPlazo"
+        inputID="9736"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoCorrienteCorreccionesValorativasClientesDudosoCobroCortoPlazo"
+        inputID="9738"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoCorrienteCorreccionesValorativasOtrosDeudoresDudosoCobro"
+        inputID="9741"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoCorrienteInversionesFinancierasCortoPlazoInstrumentosPatrimonio"
+        inputID="9765"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoCorrienteInversionesFinancierasCortoPlazoCreditos"
+        inputID="9766"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoCorrienteinversionesFinancierasCortoPlacoValoresRepresentativosDeuda"
+        inputID="9767"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoCorrienteInversionesFinancierasCortoPlazoDerivados"
+        inputID="9768"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoCorrienteInversionesFinancierasCortoPlazoOtrosActivosFinancieros"
+        inputID="9769"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasActivoCorrienteInversionesFinancierasCortoPlazoCorreccionesValorativasCreditosDudosoCobro"
+        inputID="9743"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoNoCorrienteDeudasLargoPlazoTotal"
+        inputID="9786"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoNoCorrienteDeudaCaracteristicasEspeciales"
+        inputID="9749"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoNoCorrienteDeudasLargoPlazoObligacionesOtrosValoresNegociables"
+        inputID="9770"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoNoCorrienteDeudasLargoPlazoEntidadesCredito"
+        inputID="9746"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoNoCorrienteDeudasLargoPlazoAcreedoresArrendamientoFinancieros"
+        inputID="9747"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoNoCorrienteDeudasLargoPlazoDerivados"
+        inputID="9787"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoNoCorrienteOtrosPasivosFinancieros"
+        inputID="9748"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoCorrienteDeudaCaracteristicasEspeciales"
+        inputID="9758"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoCorrienteDeudasCortoPlazoTotal"
+        inputID="9788"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoCorrienteAcreedoresComercialesOtrasCuentasPagarTotal"
+        inputID="9789"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoCorrienteDeudasCortoPlazoObligacionesOtrosValoresNegociables"
+        inputID="9771"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoCorrienteDeudasCortoPlazoEntidadesCredito"
+        inputID="9752"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoCorrienteDeudasCortoPlazoAcreedoresArrendamientoFinanciero"
+        inputID="9753"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoCorrienteDeudasCortoPlazoDerivados"
+        inputID="9754"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoCorrienteOtrosPasivosFinancieros"
+        inputID="9772"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoCorrienteAcreedoresComercialesOtrasCuentasPagarProveedoresLargoPlazo"
+        inputID="9773"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoCorrienteAcreedoresComercialesOtrasCuentasPagarProveedoresCortoPlazo"
+        inputID="9756"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoCorrienteAcreedoresVarios"
+        inputID="9757"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoCorrientePersonal"
+        inputID="9774"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasIngresosGastosSaldosPendientesPartesVinculadasPasivoCorrienteAnticiposClientes"
+        inputID="9775"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasDimension">
+        <Member id="2" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+        <Member id="3" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+        <Member id="4" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+        <Member id="5" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+        <Member id="6" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+        <Member id="7" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+        <Member id="8" qname="pgc07m-d-pv:OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionSueldosDietasOtrasRemuneraciones"
+        inputID="9776"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosDimension">
+        <Member id="02" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionMiembrosActualesOrganoAdministracion"/>
+        <Member id="03" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionMiembrosAntiguosOrganoAdministracion"/>
+        <Member id="04" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionPersonalActualAltaDireccion"/>
+        <Member id="05" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionPersonalAntiguoAltaDireccion"/>
+        <Member id="06" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotal"/>
+        <Member id="08" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotalMiembrosAltaDireccion"/>
+        <Member id="07" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotalMiembrosOrganoAdministracion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionObligacionesContraidasMateriaPensiones"
+        inputID="9777"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosDimension">
+        <Member id="02" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionMiembrosActualesOrganoAdministracion"/>
+        <Member id="03" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionMiembrosAntiguosOrganoAdministracion"/>
+        <Member id="04" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionPersonalActualAltaDireccion"/>
+        <Member id="05" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionPersonalAntiguoAltaDireccion"/>
+        <Member id="06" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotal"/>
+        <Member id="08" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotalMiembrosAltaDireccion"/>
+        <Member id="07" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotalMiembrosOrganoAdministracion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionPrimasSeguroVidda"
+        inputID="9778"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosDimension">
+        <Member id="02" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionMiembrosActualesOrganoAdministracion"/>
+        <Member id="03" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionMiembrosAntiguosOrganoAdministracion"/>
+        <Member id="04" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionPersonalActualAltaDireccion"/>
+        <Member id="05" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionPersonalAntiguoAltaDireccion"/>
+        <Member id="06" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotal"/>
+        <Member id="08" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotalMiembrosAltaDireccion"/>
+        <Member id="07" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotalMiembrosOrganoAdministracion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionIndemnizacionesCese"
+        inputID="9779"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosDimension">
+        <Member id="02" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionMiembrosActualesOrganoAdministracion"/>
+        <Member id="03" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionMiembrosAntiguosOrganoAdministracion"/>
+        <Member id="04" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionPersonalActualAltaDireccion"/>
+        <Member id="05" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionPersonalAntiguoAltaDireccion"/>
+        <Member id="06" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotal"/>
+        <Member id="08" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotalMiembrosAltaDireccion"/>
+        <Member id="07" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotalMiembrosOrganoAdministracion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionRemuneracionesBasadaInstrumentosPatrimonio"
+        inputID="9780"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosDimension">
+        <Member id="02" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionMiembrosActualesOrganoAdministracion"/>
+        <Member id="03" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionMiembrosAntiguosOrganoAdministracion"/>
+        <Member id="04" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionPersonalActualAltaDireccion"/>
+        <Member id="05" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionPersonalAntiguoAltaDireccion"/>
+        <Member id="06" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotal"/>
+        <Member id="08" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotalMiembrosAltaDireccion"/>
+        <Member id="07" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotalMiembrosOrganoAdministracion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionAnticiposCreditosConcedidosTipoInteres"
+        inputID="9781"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosDimension">
+        <Member id="02" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionMiembrosActualesOrganoAdministracion"/>
+        <Member id="03" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionMiembrosAntiguosOrganoAdministracion"/>
+        <Member id="04" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionPersonalActualAltaDireccion"/>
+        <Member id="05" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionPersonalAntiguoAltaDireccion"/>
+        <Member id="06" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotal"/>
+        <Member id="08" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotalMiembrosAltaDireccion"/>
+        <Member id="07" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotalMiembrosOrganoAdministracion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionAnticiposCreditosConcedidosImportesDevueltos"
+        inputID="9782"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosDimension">
+        <Member id="02" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionMiembrosActualesOrganoAdministracion"/>
+        <Member id="03" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionMiembrosAntiguosOrganoAdministracion"/>
+        <Member id="04" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionPersonalActualAltaDireccion"/>
+        <Member id="05" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionPersonalAntiguoAltaDireccion"/>
+        <Member id="06" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotal"/>
+        <Member id="08" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotalMiembrosAltaDireccion"/>
+        <Member id="07" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotalMiembrosOrganoAdministracion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionAnticiposCreditosConcedidosObligacionesAsumidasCuentaEllosTituloGarantia"
+        inputID="9783"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosDimension">
+        <Member id="02" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionMiembrosActualesOrganoAdministracion"/>
+        <Member id="03" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionMiembrosAntiguosOrganoAdministracion"/>
+        <Member id="04" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionPersonalActualAltaDireccion"/>
+        <Member id="05" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionPersonalAntiguoAltaDireccion"/>
+        <Member id="06" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotal"/>
+        <Member id="08" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotalMiembrosAltaDireccion"/>
+        <Member id="07" qname="pgc07mn-d-pv:OperacionesPartesVinculadasDetallesRemuneracionesMiembrosOrganoAdministracionPersonalAltaDireccionTotalMiembrosOrganoAdministracion"/>
+    </conceptMap>
+</Statement>

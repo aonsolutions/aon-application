@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statement xmlns="http://www.inteco.es/xbrl/pgc07/mapa"
+           xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+           xmlns:link="http://www.xbrl.org/2003/linkbase"
+           xmlns:xlink="http://www.w3.org/1999/xlink"
+           xmlns:xbrli="http://www.xbrl.org/2003/instance"
+           xmlns:pgc07ma-rsm="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviada/resumen/2009-01-01"
+           xmlns:pgc07mc-bs="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+           xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01"
+           mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/2009-01-01"
+           mainSchemaPrefix="pgc07am"
+           name="pgc-07-ma-noNormalizado8">
+   <conceptMap inputID="" nsPrefix="pgc07ma-rsm"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviada/resumen/2009-01-01"
+               outputID="DescripcionNoNormalizadaPresentacion"
+               parent=""
+               order=""
+               abstract="true"/>
+   <conceptMap inputID="9089001" nsPrefix="pgc07ma-rsm"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviada/resumen/2009-01-01"
+               outputID="DescripcionNoNormalizadaApartado8Resumen"
+               parent="pgc07ma-rsm:DescripcionNoNormalizadaPresentacion"
+               order="6.0"
+               preferredLabel="http://www.xbrl.org/2003/role/label"/>
+</statement>

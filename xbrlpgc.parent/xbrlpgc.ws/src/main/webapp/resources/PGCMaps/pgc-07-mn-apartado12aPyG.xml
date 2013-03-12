@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mn-apartado12aPyG" mainSchemaPrefix="pgc-07-mn" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01">
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosConciliacionImporteNetoIngresosGastosEjercicioBaseImponibleImpuestoBeneficiosSaldoIngresosGastosEjercicio"
+        inputID="93211"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-sf:EstadoCuentaPerdidasGananciasDimension">
+        <Member id="04" qname="pgc07mn-d-sf:ResultadoEfectoNeto"/>
+        <Member id="02" qname="pgc07mn-d-sf:ResultadoAumentos"/>
+        <Member id="03" qname="pgc07mn-d-sf:ResultadoDisminuciones"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosConciliacionImporteNetoIngresosGastosEjercicioBaseImponibleImpuestoBeneficiosImpuestoSociedades"
+        inputID="93212"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-sf:EstadoCuentaPerdidasGananciasDimension">
+        <Member id="04" qname="pgc07mn-d-sf:ResultadoEfectoNeto"/>
+        <Member id="02" qname="pgc07mn-d-sf:ResultadoAumentos"/>
+        <Member id="03" qname="pgc07mn-d-sf:ResultadoDisminuciones"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosConciliacionImporteNetoIngresosGastosEjercicioBaseImponibleImpuestoBeneficiosDiferenciasPermanentes"
+        inputID="93213"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-sf:EstadoCuentaPerdidasGananciasDimension">
+        <Member id="04" qname="pgc07mn-d-sf:ResultadoEfectoNeto"/>
+        <Member id="02" qname="pgc07mn-d-sf:ResultadoAumentos"/>
+        <Member id="03" qname="pgc07mn-d-sf:ResultadoDisminuciones"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosConciliacionImporteNetoIngresosGastosEjercicioBaseImponibleImpuestoBeneficiosDiferenciasTemporariasTotal"
+        inputID="93214"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-sf:EstadoCuentaPerdidasGananciasDimension">
+        <Member id="04" qname="pgc07mn-d-sf:ResultadoEfectoNeto"/>
+        <Member id="02" qname="pgc07mn-d-sf:ResultadoAumentos"/>
+        <Member id="03" qname="pgc07mn-d-sf:ResultadoDisminuciones"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosConciliacionImporteNetoIngresosGastosEjercicioBaseImponibleImpuestoBeneficiosCompensacionBasesImponiblesNegativasEjerciciosAnteriores"
+        inputID="93217"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-sf:EstadoCuentaPerdidasGananciasDimension">
+        <Member id="04" qname="pgc07mn-d-sf:ResultadoEfectoNeto"/>
+        <Member id="02" qname="pgc07mn-d-sf:ResultadoAumentos"/>
+        <Member id="03" qname="pgc07mn-d-sf:ResultadoDisminuciones"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosConciliacionImporteNetoIngresosGastosEjercicioBaseImponibleImpuestoBeneficiosBaseImponibleResultadoFiscal"
+        inputID="93218"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-sf:EstadoCuentaPerdidasGananciasDimension">
+        <Member id="04" qname="pgc07mn-d-sf:ResultadoEfectoNeto"/>
+        <Member id="02" qname="pgc07mn-d-sf:ResultadoAumentos"/>
+        <Member id="03" qname="pgc07mn-d-sf:ResultadoDisminuciones"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosConciliacionImporteNetoIngresosGastosEjercicioBaseImponibleImpuestoBeneficiosDiferenciasTemporariasOrigenEjercicio"
+        inputID="93215"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-sf:EstadoCuentaPerdidasGananciasDimension">
+        <Member id="04" qname="pgc07mn-d-sf:ResultadoEfectoNeto"/>
+        <Member id="02" qname="pgc07mn-d-sf:ResultadoAumentos"/>
+        <Member id="03" qname="pgc07mn-d-sf:ResultadoDisminuciones"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosConciliacionImporteNetoIngresosGastosEjercicioBaseImponibleImpuestoBeneficiosDiferenciasTemporariasOrigenEjerciciosAnteriores"
+        inputID="93216"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-sf:EstadoCuentaPerdidasGananciasDimension">
+        <Member id="04" qname="pgc07mn-d-sf:ResultadoEfectoNeto"/>
+        <Member id="02" qname="pgc07mn-d-sf:ResultadoAumentos"/>
+        <Member id="03" qname="pgc07mn-d-sf:ResultadoDisminuciones"/>
+    </conceptMap>
+</Statement>

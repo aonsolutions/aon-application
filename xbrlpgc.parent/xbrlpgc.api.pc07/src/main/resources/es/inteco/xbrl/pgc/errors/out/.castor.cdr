@@ -1,0 +1,4 @@
+#Tue Dec 09 15:23:29 CET 2008
+es.inteco.xbrl.pgc.errors.out.PGC07ErrorsOutput=es.inteco.xbrl.pgc.errors.out.descriptors.PGC07ErrorsOutputDescriptor
+es.inteco.xbrl.pgc.errors.out.PGCErrorParameter=es.inteco.xbrl.pgc.errors.out.descriptors.PGCErrorParameterDescriptor
+es.inteco.xbrl.pgc.errors.out.PGCErrorOut=es.inteco.xbrl.pgc.errors.out.descriptors.PGCErrorOutDescriptor

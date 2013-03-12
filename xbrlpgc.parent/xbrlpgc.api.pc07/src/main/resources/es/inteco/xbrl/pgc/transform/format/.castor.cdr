@@ -1,0 +1,9 @@
+#Wed Nov 26 15:53:29 CET 2008
+es.inteco.xbrl.pgc.transform.format.Table=es.inteco.xbrl.pgc.transform.format.descriptors.TableDescriptor
+es.inteco.xbrl.pgc.transform.format.Module=es.inteco.xbrl.pgc.transform.format.descriptors.ModuleDescriptor
+es.inteco.xbrl.pgc.transform.format.Note=es.inteco.xbrl.pgc.transform.format.descriptors.NoteDescriptor
+es.inteco.xbrl.pgc.transform.format.Item=es.inteco.xbrl.pgc.transform.format.descriptors.ItemDescriptor
+es.inteco.xbrl.pgc.transform.format.Entity=es.inteco.xbrl.pgc.transform.format.descriptors.EntityDescriptor
+es.inteco.xbrl.pgc.transform.format.Row=es.inteco.xbrl.pgc.transform.format.descriptors.RowDescriptor
+es.inteco.xbrl.pgc.transform.format.Record=es.inteco.xbrl.pgc.transform.format.descriptors.RecordDescriptor
+es.inteco.xbrl.pgc.transform.format.Report=es.inteco.xbrl.pgc.transform.format.descriptors.ReportDescriptor

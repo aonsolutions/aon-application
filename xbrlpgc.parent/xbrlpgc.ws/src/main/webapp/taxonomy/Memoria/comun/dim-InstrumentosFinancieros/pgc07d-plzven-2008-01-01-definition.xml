@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:xbrldt="http://xbrl.org/2005/xbrldt" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xbrli="http://www.xbrl.org/2003/instance">
+  <link:roleRef roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainPlazosVencimiento" xlink:type="simple" xlink:href="../pgc07m-roles-2008-01-01.xsd#domainPlazosVencimiento"/>
+  <link:arcroleRef arcroleURI="http://xbrl.org/int/dim/arcrole/dimension-domain" xlink:type="simple" xlink:href="http://www.xbrl.org/2005/xbrldt-2005.xsd#dimension-domain"/>
+  <link:arcroleRef arcroleURI="http://xbrl.org/int/dim/arcrole/domain-member" xlink:type="simple" xlink:href="http://www.xbrl.org/2005/xbrldt-2005.xsd#domain-member"/>
+  <link:definitionLink xlink:type="extended" xlink:role="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainPlazosVencimiento">
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoDimension" xlink:label="InstrumentosFinancierosPlazoVencimientoDimension"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoDomain" xlink:label="InstrumentosFinancierosPlazoVencimientoDomain"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/dimension-domain" xlink:from="InstrumentosFinancierosPlazoVencimientoDimension" xlink:to="InstrumentosFinancierosPlazoVencimientoDomain" order="1.0" xbrldt:usable="false"/>
+  </link:definitionLink>
+  <link:definitionLink xlink:type="extended" xlink:role="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainPlazosVencimiento">
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoDomain" xlink:label="InstrumentosFinancierosPlazoVencimientoDomain"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoPrimerPlazo" xlink:label="InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InstrumentosFinancierosPlazoVencimientoDomain" xlink:to="InstrumentosFinancierosPlazoVencimientoPrimerPlazo" order="1.0"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoSegundoPlazo" xlink:label="InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InstrumentosFinancierosPlazoVencimientoDomain" xlink:to="InstrumentosFinancierosPlazoVencimientoSegundoPlazo" order="2.0"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoTercerPlazo" xlink:label="InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InstrumentosFinancierosPlazoVencimientoDomain" xlink:to="InstrumentosFinancierosPlazoVencimientoTercerPlazo" order="3.0"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoCuartoPlazo" xlink:label="InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InstrumentosFinancierosPlazoVencimientoDomain" xlink:to="InstrumentosFinancierosPlazoVencimientoCuartoPlazo" order="4.0"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoQuintoPlazo" xlink:label="InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InstrumentosFinancierosPlazoVencimientoDomain" xlink:to="InstrumentosFinancierosPlazoVencimientoQuintoPlazo" order="5.0"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoUltimoPlazo" xlink:label="InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InstrumentosFinancierosPlazoVencimientoDomain" xlink:to="InstrumentosFinancierosPlazoVencimientoUltimoPlazo" order="6.0"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoTotalPlazo" xlink:label="InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InstrumentosFinancierosPlazoVencimientoDomain" xlink:to="InstrumentosFinancierosPlazoVencimientoTotalPlazo" order="7.0"/>
+  </link:definitionLink>
+</link:linkbase>

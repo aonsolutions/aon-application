@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xbrli="http://www.xbrl.org/2003/instance">
+  <link:labelLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <link:loc xlink:type="locator" xlink:href="pgc07ma-apdo7-2008-01-01.xsd#pgc07ma-apdo7_InstrumentosFinancierosPresentacion" xlink:label="InstrumentosFinancierosPresentacion"/>
+    <link:label xlink:type="resource" xlink:label="label_InstrumentosFinancierosPresentacion" xlink:role="http://www.xbrl.org/2003/role/label" xml:lang="es" id="label_InstrumentosFinancierosPresentacion"> Instrumentos Financieros  Presentacion</link:label>
+    <link:labelArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-label" xlink:from="InstrumentosFinancierosPresentacion" xlink:to="label_InstrumentosFinancierosPresentacion"/>
+    <link:label xlink:type="resource" xlink:label="label_InstrumentosFinancierosPresentacion_2" xlink:role="http://www.xbrl.org/2003/role/verboseLabel" xml:lang="es" id="label_InstrumentosFinancierosPresentacion_2"> Instrumentos Financieros  Presentacion</link:label>
+    <link:labelArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-label" xlink:from="InstrumentosFinancierosPresentacion" xlink:to="label_InstrumentosFinancierosPresentacion_2"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07ma-apdo7-2008-01-01.xsd#pgc07ma-apdo7_InstrumentosFinancierosHypercube" xlink:label="InstrumentosFinancierosHypercube"/>
+    <link:label xlink:type="resource" xlink:label="label_InstrumentosFinancierosHypercube" xlink:role="http://www.xbrl.org/2003/role/label" xml:lang="es" id="label_InstrumentosFinancierosHypercube">Instrumentos Financieros Hypercubo    </link:label>
+    <link:labelArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-label" xlink:from="InstrumentosFinancierosHypercube" xlink:to="label_InstrumentosFinancierosHypercube"/>
+    <link:label xlink:type="resource" xlink:label="label_InstrumentosFinancierosHypercube_2" xlink:role="http://www.xbrl.org/2003/role/verboseLabel" xml:lang="es" id="label_InstrumentosFinancierosHypercube_2"> Instrumentos Financieros Hypercubo    </link:label>
+    <link:labelArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-label" xlink:from="InstrumentosFinancierosHypercube" xlink:to="label_InstrumentosFinancierosHypercube_2"/>
+  </link:labelLink>
+</link:linkbase>

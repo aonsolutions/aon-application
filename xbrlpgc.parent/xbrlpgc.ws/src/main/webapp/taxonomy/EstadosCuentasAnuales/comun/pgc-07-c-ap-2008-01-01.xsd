@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/comun-abreviadopymes/2009-01-01" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pgc-07-c-ap="http://www.icac.meh.es/es/fr/gaap/pgc07/comun-abreviadopymes/2009-01-01" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:xl="http://www.xbrl.org/2003/XLink" xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:pgc-07-types="http://www.icac.meh.es/es/fr/gaap/pgc07/types/2009-01-01" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <xsd:annotation>
+    <xsd:appinfo>
+      <link:linkbaseRef xlink:type="simple" xlink:href="pgc-07-c-ap-2008-01-01-label-es.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+      <link:linkbaseRef xlink:type="simple" xlink:href="pgc-07-c-ap-2008-01-01-label-es-code.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+      <link:linkbaseRef xlink:type="simple" xlink:href="pgc-07-c-ap-2008-01-01-reference.xml" xlink:role="http://www.xbrl.org/2003/role/referenceLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+    </xsd:appinfo>
+  </xsd:annotation>
+  <xsd:import namespace="http://www.xbrl.org/2003/instance" schemaLocation="http://www.xbrl.org/2003/xbrl-instance-2003-12-31.xsd"/>
+  <xsd:import namespace="http://www.icac.meh.es/es/fr/gaap/pgc07/types/2009-01-01" schemaLocation="../../auxiliares/pgc-07-types-2008-01-01.xsd"/>
+  <xsd:element name="ActivoCorrienteDeudoresComercialesOtrasCuentasCobrarOtrosDeudores" id="pgc-07-c-ap_ActivoCorrienteDeudoresComercialesOtrasCuentasCobrarOtrosDeudores" type="pgc-07-types:monetaryPositiveItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:balance="debit" xbrli:periodType="instant"/>
+  <xsd:element name="PasivoNoCorrienteDeudasLargoPlazoOtrasDeudas" id="pgc-07-c-ap_PasivoNoCorrienteDeudasLargoPlazoOtrasDeudas" type="pgc-07-types:monetaryPositiveItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:balance="credit" xbrli:periodType="instant"/>
+  <xsd:element name="PasivoCorrienteDeudasCortoPlazoOtrasDeudas" id="pgc-07-c-ap_PasivoCorrienteDeudasCortoPlazoOtrasDeudas" type="pgc-07-types:monetaryPositiveItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:balance="credit" xbrli:periodType="instant"/>
+  <xsd:element name="PasivoCorrienteAcreedoresComercialesOtrasCuentasPagarOtrosAcreedores" id="pgc-07-c-ap_PasivoCorrienteAcreedoresComercialesOtrasCuentasPagarOtrosAcreedores" type="pgc-07-types:monetaryPositiveItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:balance="credit" xbrli:periodType="instant"/>
+  <xsd:element name="PerdidasGananciasOperacionesContinuadasIngresosFinancierosOtrosIngresosFinancieros" id="pgc-07-c-ap_PerdidasGananciasOperacionesContinuadasIngresosFinancierosOtrosIngresosFinancieros" type="pgc-07-types:monetaryPositiveItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:balance="credit" xbrli:periodType="duration"/>
+</xsd:schema>

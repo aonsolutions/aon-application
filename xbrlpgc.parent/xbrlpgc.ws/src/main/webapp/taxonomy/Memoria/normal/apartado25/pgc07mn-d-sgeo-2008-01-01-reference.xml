@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01 ../../../auxiliares/pgc-07-ref-2008-01-01.xsd" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xbrli="http://www.xbrl.org/2003/instance">
+  <link:referenceLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-sgeo-2008-01-01.xsd#pgc07mn-d-sgeo_InformacionSegmentadaMercadosGeograficosDomain" xlink:label="InformacionSegmentadaMercadosGeograficosDomain"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InformacionSegmentadaMercadosGeograficosDomain" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InformacionSegmentadaMercadosGeograficosDomain">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>25</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InformacionSegmentadaMercadosGeograficosDomain" xlink:to="reference_InformacionSegmentadaMercadosGeograficosDomain"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-sgeo-2008-01-01.xsd#pgc07mn-d-sgeo_InformacionSegmentadaMercadosGeograficosPresentacion" xlink:label="InformacionSegmentadaMercadosGeograficosPresentacion"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InformacionSegmentadaMercadosGeograficosPresentacion" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InformacionSegmentadaMercadosGeograficosPresentacion">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>25</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InformacionSegmentadaMercadosGeograficosPresentacion" xlink:to="reference_InformacionSegmentadaMercadosGeograficosPresentacion"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-sgeo-2008-01-01.xsd#pgc07mn-d-sgeo_InformacionSegmentadaMercadosGeograficosDimension" xlink:label="InformacionSegmentadaMercadosGeograficosDimension"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InformacionSegmentadaMercadosGeograficosDimension" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InformacionSegmentadaMercadosGeograficosDimension">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>25</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InformacionSegmentadaMercadosGeograficosDimension" xlink:to="reference_InformacionSegmentadaMercadosGeograficosDimension"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-sgeo-2008-01-01.xsd#pgc07mn-d-sgeo_InformacionSegmentadaMercadosGeograficosTotal" xlink:label="InformacionSegmentadaMercadosGeograficosTotal"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InformacionSegmentadaMercadosGeograficosTotal" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InformacionSegmentadaMercadosGeograficosTotal">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>25</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InformacionSegmentadaMercadosGeograficosTotal" xlink:to="reference_InformacionSegmentadaMercadosGeograficosTotal"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-sgeo-2008-01-01.xsd#pgc07mn-d-sgeo_InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:label="InformacionSegmentadaMercadosGeograficosNacionalTotal"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InformacionSegmentadaMercadosGeograficosNacionalTotal">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>25</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="reference_InformacionSegmentadaMercadosGeograficosNacionalTotal"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-sgeo-2008-01-01.xsd#pgc07mn-d-sgeo_InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:label="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>25</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="reference_InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-sgeo-2008-01-01.xsd#pgc07mn-d-sgeo_InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:label="InformacionSegmentadaMercadosGeograficosRestoMundoTotal"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InformacionSegmentadaMercadosGeograficosRestoMundoTotal">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>25</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="reference_InformacionSegmentadaMercadosGeograficosRestoMundoTotal"/>
+  </link:referenceLink>
+ </link:linkbase>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-ma-apartado6f" mainSchemaPrefix="pgc-07-ma" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/2009-01-01">
+    <conceptMap
+        outputID="InstrumentosFinancierosCorreccionesDeterioroValorOriginadasRiesgoCreditoPerdidaDeterioroInicioEjercicio"
+        inputID="59"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07ma-apdo6:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresaDimension">
+        <Member id="9350" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasGrupo"/>
+        <Member id="9351" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasMultigrupo"/>
+        <Member id="9352" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasAsociadas"/>
+        <Member id="9353" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosCorreccionesDeterioroValorOriginadasRiesgoCreditoVariacionDeterioroLlevadaPyG"
+        inputID="1"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07ma-apdo6:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresaDimension">
+        <Member id="9350" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasGrupo"/>
+        <Member id="9351" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasMultigrupo"/>
+        <Member id="9352" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasAsociadas"/>
+        <Member id="9353" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosCorreccionesDeterioroValorOriginadasRiesgoCreditoReversionDeterioroContraPatrimonioNeto"
+        inputID="2"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07ma-apdo6:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresaDimension">
+        <Member id="9350" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasGrupo"/>
+        <Member id="9351" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasMultigrupo"/>
+        <Member id="9352" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasAsociadas"/>
+        <Member id="9353" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosCorreccionesDeterioroValorOriginadasRiesgoCreditoBajaActivo"
+        inputID="3"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07ma-apdo6:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresaDimension">
+        <Member id="9350" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasGrupo"/>
+        <Member id="9351" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasMultigrupo"/>
+        <Member id="9352" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasAsociadas"/>
+        <Member id="9353" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosCorreccionesDeterioroValorOriginadasRiesgoCreditoOtrasVariacionesDeterioro"
+        inputID="4"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07ma-apdo6:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresaDimension">
+        <Member id="9350" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasGrupo"/>
+        <Member id="9351" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasMultigrupo"/>
+        <Member id="9352" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasAsociadas"/>
+        <Member id="9353" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosCorreccionesDeterioroValorOriginadasRiesgoCreditoPerdidaDeterioroFinalEjercicio"
+        inputID="5"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07ma-apdo6:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresaDimension">
+        <Member id="9350" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasGrupo"/>
+        <Member id="9351" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasMultigrupo"/>
+        <Member id="9352" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasAsociadas"/>
+        <Member id="9353" qname="pgc07mc-ap:InstrumentosFinancierosCorreccionesValorativasParticipacionesEmpresasTotal"/>
+    </conceptMap>
+</Statement>

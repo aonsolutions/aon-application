@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mp-apartado7b" mainSchemaPrefix="pgc-07-mp" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/2009-01-01">
+    <conceptMap
+        outputID="InstrumentosFinancierosPasivosFinancierosTotal"
+        inputID="9403"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="1" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoDeudasEntidadesCredito"/>
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoObligacionesOtrosValoresNegociables"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoDerivadosOtros"/>
+        <Member id="4" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasPasivosFinancierosPasivosFinancierosCosteAmortizado"
+        inputID="9404"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/2009-01-01"
+        nsPrefix="pgc07mp" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="1" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoDeudasEntidadesCredito"/>
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoObligacionesOtrosValoresNegociables"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoDerivadosOtros"/>
+        <Member id="4" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasPasivosFinancierosPasivosFinancierosMantenidosNegociacion"
+        inputID="9405"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/2009-01-01"
+        nsPrefix="pgc07mp" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="1" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoDeudasEntidadesCredito"/>
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoObligacionesOtrosValoresNegociables"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoDerivadosOtros"/>
+        <Member id="4" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoTotal"/>
+    </conceptMap>
+</Statement>

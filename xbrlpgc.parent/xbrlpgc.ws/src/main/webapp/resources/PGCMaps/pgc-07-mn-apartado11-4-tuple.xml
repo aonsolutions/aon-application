@@ -1,0 +1,763 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statement xmlns="http://www.inteco.es/xbrl/pgc07/mapa"
+           xmlns:pgc07m-roles="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/roles/2009-01-01"
+           xmlns:link="http://www.xbrl.org/2003/linkbase"
+           xmlns:xlink="http://www.w3.org/1999/xlink"
+           xmlns:xbrli="http://www.xbrl.org/2003/instance"
+           xmlns:xl="http://www.xbrl.org/2003/XLink"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:pgc07mn-apdo11-4="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado11.4/MonedaExtranjera/CambioMonedaFuncional/2009-01-01"
+           xmlns:xbrldt="http://xbrl.org/2005/xbrldt"
+           xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01"
+           xmlns:dgi-types="http://www.xbrl.org.es/es/2008/dgi/gp/types/2011-01-30"
+           xmlns:pgc07mn="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+           xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+           xmlns:xhtml="http://www.w3.org/1999/xhtml"
+           xmlns:xbrll="http://www.xbrl.org/2003/linkbase"
+           xmlns:dgi-lc-int="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+           mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01"
+           mainSchemaPrefix="pgc-07-v-mn"
+           name="pgc-07-mn-apartado11-4">
+   <conceptMap inputID="" nsPrefix="pgc07mn-apdo11-4"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado11.4/MonedaExtranjera/CambioMonedaFuncional/2009-01-01"
+               outputID="MonedaExtranjeraUtilizacionAdicionalMonedaFuncionalPresentacion"
+               parent=""
+               order=""
+               abstract="true"/>
+   <conceptMap order="1.0" inputID="9001101" nsPrefix="pgc07mn-apdo11-4"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado11.4/MonedaExtranjera/CambioMonedaFuncional/2009-01-01"
+               parent="pgc07mn-apdo11-4:MonedaExtranjeraUtilizacionAdicionalMonedaFuncionalPresentacion"
+               outputID="MonedaExtranjeraUtilizacionAdicionalMonedaFuncionalTupla"/>
+   <conceptMap order="1.0" inputID="9001102" nsPrefix="pgc07mn-apdo11-4"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado11.4/MonedaExtranjera/CambioMonedaFuncional/2009-01-01"
+               parent="pgc07mn-apdo11-4:MonedaExtranjeraUtilizacionAdicionalMonedaFuncionalTupla"
+               outputID="9001101:MonedaExtranjeraUtilizacionAdicionalMonedaFuncionalImporteActivos"/>
+   <conceptMap order="2.0" inputID="9001103" nsPrefix="pgc07mn-apdo11-4"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado11.4/MonedaExtranjera/CambioMonedaFuncional/2009-01-01"
+               parent="pgc07mn-apdo11-4:MonedaExtranjeraUtilizacionAdicionalMonedaFuncionalTupla"
+               outputID="9001101:MonedaExtranjeraUtilizacionAdicionalMonedaFuncionalImporteCifraNetaNegocios"/>
+   <conceptMap order="3.0" inputID="9001104" nsPrefix="pgc07mn-apdo11-4"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado11.4/MonedaExtranjera/CambioMonedaFuncional/2009-01-01"
+               parent="pgc07mn-apdo11-4:MonedaExtranjeraUtilizacionAdicionalMonedaFuncionalTupla"
+               outputID="9001101:MonedaExtranjeraUtilizacionAdicionalMonedaFuncionalImporteResultados"/>
+   <conceptMap order="4.0" inputID="" nsPrefix="dgi-types"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/types/2011-01-30"
+               parent="pgc07mn-apdo11-4:MonedaExtranjeraUtilizacionAdicionalMonedaFuncionalTupla"
+               outputID="9001101:CurrencyCodeItemHead"/>
+   <conceptMap order="1.0" inputID="Xcode_ISO4217.AED" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.AED"/>
+   <conceptMap order="2.0" inputID="Xcode_ISO4217.AFN" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.AFN"/>
+   <conceptMap order="3.0" inputID="Xcode_ISO4217.ALL" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.ALL"/>
+   <conceptMap order="4.0" inputID="Xcode_ISO4217.AMD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.AMD"/>
+   <conceptMap order="5.0" inputID="Xcode_ISO4217.ANG" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.ANG"/>
+   <conceptMap order="6.0" inputID="Xcode_ISO4217.AOA" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.AOA"/>
+   <conceptMap order="7.0" inputID="Xcode_ISO4217.ARS" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.ARS"/>
+   <conceptMap order="8.0" inputID="Xcode_ISO4217.AUD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.AUD"/>
+   <conceptMap order="9.0" inputID="Xcode_ISO4217.AWG" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.AWG"/>
+   <conceptMap order="10.0" inputID="Xcode_ISO4217.AZN" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.AZN"/>
+   <conceptMap order="11.0" inputID="Xcode_ISO4217.BAM" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.BAM"/>
+   <conceptMap order="12.0" inputID="Xcode_ISO4217.BBD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.BBD"/>
+   <conceptMap order="13.0" inputID="Xcode_ISO4217.BDT" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.BDT"/>
+   <conceptMap order="14.0" inputID="Xcode_ISO4217.BGN" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.BGN"/>
+   <conceptMap order="15.0" inputID="Xcode_ISO4217.BHD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.BHD"/>
+   <conceptMap order="16.0" inputID="Xcode_ISO4217.BIF" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.BIF"/>
+   <conceptMap order="17.0" inputID="Xcode_ISO4217.BMD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.BMD"/>
+   <conceptMap order="18.0" inputID="Xcode_ISO4217.BND" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.BND"/>
+   <conceptMap order="19.0" inputID="Xcode_ISO4217.BOB" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.BOB"/>
+   <conceptMap order="20.0" inputID="Xcode_ISO4217.BOV" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.BOV"/>
+   <conceptMap order="21.0" inputID="Xcode_ISO4217.BRL" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.BRL"/>
+   <conceptMap order="22.0" inputID="Xcode_ISO4217.BSD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.BSD"/>
+   <conceptMap order="23.0" inputID="Xcode_ISO4217.BTN" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.BTN"/>
+   <conceptMap order="24.0" inputID="Xcode_ISO4217.BWP" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.BWP"/>
+   <conceptMap order="25.0" inputID="Xcode_ISO4217.BYR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.BYR"/>
+   <conceptMap order="26.0" inputID="Xcode_ISO4217.BZD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.BZD"/>
+   <conceptMap order="27.0" inputID="Xcode_ISO4217.CAD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.CAD"/>
+   <conceptMap order="28.0" inputID="Xcode_ISO4217.CDF" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.CDF"/>
+   <conceptMap order="29.0" inputID="Xcode_ISO4217.CHE" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.CHE"/>
+   <conceptMap order="30.0" inputID="Xcode_ISO4217.CHF" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.CHF"/>
+   <conceptMap order="31.0" inputID="Xcode_ISO4217.CHW" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.CHW"/>
+   <conceptMap order="32.0" inputID="Xcode_ISO4217.CLF" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.CLF"/>
+   <conceptMap order="33.0" inputID="Xcode_ISO4217.CLP" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.CLP"/>
+   <conceptMap order="34.0" inputID="Xcode_ISO4217.CNY" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.CNY"/>
+   <conceptMap order="35.0" inputID="Xcode_ISO4217.COP" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.COP"/>
+   <conceptMap order="36.0" inputID="Xcode_ISO4217.COU" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.COU"/>
+   <conceptMap order="37.0" inputID="Xcode_ISO4217.CRC" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.CRC"/>
+   <conceptMap order="38.0" inputID="Xcode_ISO4217.CUP" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.CUP"/>
+   <conceptMap order="39.0" inputID="Xcode_ISO4217.CVE" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.CVE"/>
+   <conceptMap order="40.0" inputID="Xcode_ISO4217.CZK" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.CZK"/>
+   <conceptMap order="41.0" inputID="Xcode_ISO4217.DJF" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.DJF"/>
+   <conceptMap order="42.0" inputID="Xcode_ISO4217.DKK" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.DKK"/>
+   <conceptMap order="43.0" inputID="Xcode_ISO4217.DOP" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.DOP"/>
+   <conceptMap order="44.0" inputID="Xcode_ISO4217.DZD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.DZD"/>
+   <conceptMap order="45.0" inputID="Xcode_ISO4217.EEK" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.EEK"/>
+   <conceptMap order="46.0" inputID="Xcode_ISO4217.EGP" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.EGP"/>
+   <conceptMap order="47.0" inputID="Xcode_ISO4217.ERN" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.ERN"/>
+   <conceptMap order="48.0" inputID="Xcode_ISO4217.ETB" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.ETB"/>
+   <conceptMap order="49.0" inputID="Xcode_ISO4217.EUR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.EUR"/>
+   <conceptMap order="50.0" inputID="Xcode_ISO4217.FJD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.FJD"/>
+   <conceptMap order="51.0" inputID="Xcode_ISO4217.FKP" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.FKP"/>
+   <conceptMap order="52.0" inputID="Xcode_ISO4217.GBP" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.GBP"/>
+   <conceptMap order="53.0" inputID="Xcode_ISO4217.GEL" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.GEL"/>
+   <conceptMap order="54.0" inputID="Xcode_ISO4217.GHS" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.GHS"/>
+   <conceptMap order="55.0" inputID="Xcode_ISO4217.GIP" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.GIP"/>
+   <conceptMap order="56.0" inputID="Xcode_ISO4217.GMD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.GMD"/>
+   <conceptMap order="57.0" inputID="Xcode_ISO4217.GNF" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.GNF"/>
+   <conceptMap order="58.0" inputID="Xcode_ISO4217.GTQ" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.GTQ"/>
+   <conceptMap order="59.0" inputID="Xcode_ISO4217.GYD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.GYD"/>
+   <conceptMap order="60.0" inputID="Xcode_ISO4217.HKD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.HKD"/>
+   <conceptMap order="61.0" inputID="Xcode_ISO4217.HNL" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.HNL"/>
+   <conceptMap order="62.0" inputID="Xcode_ISO4217.HRK" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.HRK"/>
+   <conceptMap order="63.0" inputID="Xcode_ISO4217.HTG" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.HTG"/>
+   <conceptMap order="64.0" inputID="Xcode_ISO4217.HUF" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.HUF"/>
+   <conceptMap order="65.0" inputID="Xcode_ISO4217.IDR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.IDR"/>
+   <conceptMap order="66.0" inputID="Xcode_ISO4217.ILS" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.ILS"/>
+   <conceptMap order="67.0" inputID="Xcode_ISO4217.INR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.INR"/>
+   <conceptMap order="68.0" inputID="Xcode_ISO4217.IQD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.IQD"/>
+   <conceptMap order="69.0" inputID="Xcode_ISO4217.IRR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.IRR"/>
+   <conceptMap order="70.0" inputID="Xcode_ISO4217.ISK" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.ISK"/>
+   <conceptMap order="71.0" inputID="Xcode_ISO4217.JMD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.JMD"/>
+   <conceptMap order="72.0" inputID="Xcode_ISO4217.JOD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.JOD"/>
+   <conceptMap order="73.0" inputID="Xcode_ISO4217.JPY" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.JPY"/>
+   <conceptMap order="74.0" inputID="Xcode_ISO4217.KES" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.KES"/>
+   <conceptMap order="75.0" inputID="Xcode_ISO4217.KGS" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.KGS"/>
+   <conceptMap order="76.0" inputID="Xcode_ISO4217.KHR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.KHR"/>
+   <conceptMap order="77.0" inputID="Xcode_ISO4217.KMF" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.KMF"/>
+   <conceptMap order="78.0" inputID="Xcode_ISO4217.KPW" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.KPW"/>
+   <conceptMap order="79.0" inputID="Xcode_ISO4217.KRW" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.KRW"/>
+   <conceptMap order="80.0" inputID="Xcode_ISO4217.KWD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.KWD"/>
+   <conceptMap order="81.0" inputID="Xcode_ISO4217.KYD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.KYD"/>
+   <conceptMap order="82.0" inputID="Xcode_ISO4217.KZT" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.KZT"/>
+   <conceptMap order="83.0" inputID="Xcode_ISO4217.LAK" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.LAK"/>
+   <conceptMap order="84.0" inputID="Xcode_ISO4217.LBP" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.LBP"/>
+   <conceptMap order="85.0" inputID="Xcode_ISO4217.LKR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.LKR"/>
+   <conceptMap order="86.0" inputID="Xcode_ISO4217.LRD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.LRD"/>
+   <conceptMap order="87.0" inputID="Xcode_ISO4217.LSL" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.LSL"/>
+   <conceptMap order="88.0" inputID="Xcode_ISO4217.LTL" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.LTL"/>
+   <conceptMap order="89.0" inputID="Xcode_ISO4217.LVL" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.LVL"/>
+   <conceptMap order="90.0" inputID="Xcode_ISO4217.LYD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.LYD"/>
+   <conceptMap order="91.0" inputID="Xcode_ISO4217.MAD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.MAD"/>
+   <conceptMap order="92.0" inputID="Xcode_ISO4217.MDL" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.MDL"/>
+   <conceptMap order="93.0" inputID="Xcode_ISO4217.MGA" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.MGA"/>
+   <conceptMap order="94.0" inputID="Xcode_ISO4217.MKD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.MKD"/>
+   <conceptMap order="95.0" inputID="Xcode_ISO4217.MMK" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.MMK"/>
+   <conceptMap order="96.0" inputID="Xcode_ISO4217.MNT" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.MNT"/>
+   <conceptMap order="97.0" inputID="Xcode_ISO4217.MOP" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.MOP"/>
+   <conceptMap order="98.0" inputID="Xcode_ISO4217.MRO" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.MRO"/>
+   <conceptMap order="99.0" inputID="Xcode_ISO4217.MUR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.MUR"/>
+   <conceptMap order="100.0" inputID="Xcode_ISO4217.MVR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.MVR"/>
+   <conceptMap order="101.0" inputID="Xcode_ISO4217.MWK" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.MWK"/>
+   <conceptMap order="102.0" inputID="Xcode_ISO4217.MXN" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.MXN"/>
+   <conceptMap order="103.0" inputID="Xcode_ISO4217.MXV" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.MXV"/>
+   <conceptMap order="104.0" inputID="Xcode_ISO4217.MYR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.MYR"/>
+   <conceptMap order="105.0" inputID="Xcode_ISO4217.MZN" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.MZN"/>
+   <conceptMap order="106.0" inputID="Xcode_ISO4217.NAD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.NAD"/>
+   <conceptMap order="107.0" inputID="Xcode_ISO4217.NGN" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.NGN"/>
+   <conceptMap order="108.0" inputID="Xcode_ISO4217.NIO" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.NIO"/>
+   <conceptMap order="109.0" inputID="Xcode_ISO4217.NOK" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.NOK"/>
+   <conceptMap order="110.0" inputID="Xcode_ISO4217.NPR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.NPR"/>
+   <conceptMap order="111.0" inputID="Xcode_ISO4217.NZD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.NZD"/>
+   <conceptMap order="112.0" inputID="Xcode_ISO4217.OMR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.OMR"/>
+   <conceptMap order="113.0" inputID="Xcode_ISO4217.PAB" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.PAB"/>
+   <conceptMap order="114.0" inputID="Xcode_ISO4217.PEN" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.PEN"/>
+   <conceptMap order="115.0" inputID="Xcode_ISO4217.PGK" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.PGK"/>
+   <conceptMap order="116.0" inputID="Xcode_ISO4217.PHP" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.PHP"/>
+   <conceptMap order="117.0" inputID="Xcode_ISO4217.PKR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.PKR"/>
+   <conceptMap order="118.0" inputID="Xcode_ISO4217.PLN" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.PLN"/>
+   <conceptMap order="119.0" inputID="Xcode_ISO4217.PYG" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.PYG"/>
+   <conceptMap order="120.0" inputID="Xcode_ISO4217.QAR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.QAR"/>
+   <conceptMap order="121.0" inputID="Xcode_ISO4217.RON" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.RON"/>
+   <conceptMap order="122.0" inputID="Xcode_ISO4217.RSD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.RSD"/>
+   <conceptMap order="123.0" inputID="Xcode_ISO4217.RUB" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.RUB"/>
+   <conceptMap order="124.0" inputID="Xcode_ISO4217.RWF" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.RWF"/>
+   <conceptMap order="125.0" inputID="Xcode_ISO4217.SAR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.SAR"/>
+   <conceptMap order="126.0" inputID="Xcode_ISO4217.SBD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.SBD"/>
+   <conceptMap order="127.0" inputID="Xcode_ISO4217.SCR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.SCR"/>
+   <conceptMap order="128.0" inputID="Xcode_ISO4217.SDG" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.SDG"/>
+   <conceptMap order="129.0" inputID="Xcode_ISO4217.SEK" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.SEK"/>
+   <conceptMap order="130.0" inputID="Xcode_ISO4217.SGD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.SGD"/>
+   <conceptMap order="131.0" inputID="Xcode_ISO4217.SHP" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.SHP"/>
+   <conceptMap order="132.0" inputID="Xcode_ISO4217.SKK" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.SKK"/>
+   <conceptMap order="133.0" inputID="Xcode_ISO4217.SLL" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.SLL"/>
+   <conceptMap order="134.0" inputID="Xcode_ISO4217.SOS" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.SOS"/>
+   <conceptMap order="135.0" inputID="Xcode_ISO4217.SRD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.SRD"/>
+   <conceptMap order="136.0" inputID="Xcode_ISO4217.STD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.STD"/>
+   <conceptMap order="137.0" inputID="Xcode_ISO4217.SYP" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.SYP"/>
+   <conceptMap order="138.0" inputID="Xcode_ISO4217.SZL" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.SZL"/>
+   <conceptMap order="139.0" inputID="Xcode_ISO4217.THB" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.THB"/>
+   <conceptMap order="140.0" inputID="Xcode_ISO4217.TJS" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.TJS"/>
+   <conceptMap order="141.0" inputID="Xcode_ISO4217.TMM" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.TMM"/>
+   <conceptMap order="142.0" inputID="Xcode_ISO4217.TND" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.TND"/>
+   <conceptMap order="143.0" inputID="Xcode_ISO4217.TOP" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.TOP"/>
+   <conceptMap order="144.0" inputID="Xcode_ISO4217.TRY" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.TRY"/>
+   <conceptMap order="145.0" inputID="Xcode_ISO4217.TTD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.TTD"/>
+   <conceptMap order="146.0" inputID="Xcode_ISO4217.TWD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.TWD"/>
+   <conceptMap order="147.0" inputID="Xcode_ISO4217.TZS" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.TZS"/>
+   <conceptMap order="148.0" inputID="Xcode_ISO4217.UAH" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.UAH"/>
+   <conceptMap order="149.0" inputID="Xcode_ISO4217.UGX" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.UGX"/>
+   <conceptMap order="150.0" inputID="Xcode_ISO4217.USD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.USD"/>
+   <conceptMap order="151.0" inputID="Xcode_ISO4217.USN" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.USN"/>
+   <conceptMap order="152.0" inputID="Xcode_ISO4217.USS" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.USS"/>
+   <conceptMap order="153.0" inputID="Xcode_ISO4217.UYU" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.UYU"/>
+   <conceptMap order="154.0" inputID="Xcode_ISO4217.UZS" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.UZS"/>
+   <conceptMap order="155.0" inputID="Xcode_ISO4217.VEF" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.VEF"/>
+   <conceptMap order="156.0" inputID="Xcode_ISO4217.VND" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.VND"/>
+   <conceptMap order="157.0" inputID="Xcode_ISO4217.VUV" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.VUV"/>
+   <conceptMap order="158.0" inputID="Xcode_ISO4217.WST" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.WST"/>
+   <conceptMap order="159.0" inputID="Xcode_ISO4217.XAF" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.XAF"/>
+   <conceptMap order="160.0" inputID="Xcode_ISO4217.XAG" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.XAG"/>
+   <conceptMap order="161.0" inputID="Xcode_ISO4217.XAU" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.XAU"/>
+   <conceptMap order="162.0" inputID="Xcode_ISO4217.XBA" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.XBA"/>
+   <conceptMap order="163.0" inputID="Xcode_ISO4217.XBB" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.XBB"/>
+   <conceptMap order="164.0" inputID="Xcode_ISO4217.XBC" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.XBC"/>
+   <conceptMap order="165.0" inputID="Xcode_ISO4217.XBD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.XBD"/>
+   <conceptMap order="166.0" inputID="Xcode_ISO4217.XCD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.XCD"/>
+   <conceptMap order="167.0" inputID="Xcode_ISO4217.XDR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.XDR"/>
+   <conceptMap order="168.0" inputID="Xcode_ISO4217.XFU" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.XFU"/>
+   <conceptMap order="169.0" inputID="Xcode_ISO4217.XOF" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.XOF"/>
+   <conceptMap order="170.0" inputID="Xcode_ISO4217.XPD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.XPD"/>
+   <conceptMap order="171.0" inputID="Xcode_ISO4217.XPF" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.XPF"/>
+   <conceptMap order="172.0" inputID="Xcode_ISO4217.XPT" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.XPT"/>
+   <conceptMap order="173.0" inputID="Xcode_ISO4217.XTS" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.XTS"/>
+   <conceptMap order="174.0" inputID="Xcode_ISO4217.XXX" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.XXX"/>
+   <conceptMap order="175.0" inputID="Xcode_ISO4217.YER" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.YER"/>
+   <conceptMap order="176.0" inputID="Xcode_ISO4217.ZAR" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.ZAR"/>
+   <conceptMap order="177.0" inputID="Xcode_ISO4217.ZMK" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.ZMK"/>
+   <conceptMap order="178.0" inputID="Xcode_ISO4217.ZWD" nsPrefix="dgi-lc-int"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2011-01-30"
+               parent="dgi-types:CurrencyCodeItemHead"
+               outputID="9001101::Xcode_ISO4217.ZWD"/>
+   <conceptMap order="5.0" inputID="9001105" nsPrefix="pgc07mn-apdo11-4"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado11.4/MonedaExtranjera/CambioMonedaFuncional/2009-01-01"
+               parent="pgc07mn-apdo11-4:MonedaExtranjeraUtilizacionAdicionalMonedaFuncionalTupla"
+               outputID="9001101:MonedaExtranjeraUtilizacionAdicionalMonedaFuncionalCodigoMonedaFunonal"/>
+</statement>

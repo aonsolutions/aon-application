@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!--  
+ API XBRL-PGC2007 is a set of packages for the treatment of instances XBRL
+ (eXtensible Business Reporting Language) corresponding to the taxonomy PGC2007.
+ The General Plan of Accounting 2007 is the legal text that regulates the accounting of
+ the companies in Spain.
+ 
+ This program is part of the API XBRL-PGC2007.
+ 
+ Copyright (C) 2009  INTECO (Instituto Nacional de Tecnologías de la
+ Comunicación, S.A.)
+ 
+ Authors: Members of Software Quality Department inside INTECO
+ 
+ E-mail: difusioncalidad@inteco.es
+ 
+ This program is free software; you can redistribute it and/or modify it under the terms of
+ the GNU Lesser General Public License as published by the Free Software Foundation; 
+ either version 3 of the License, or (at your opinion) any later version.
+ 
+ This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+ License for more details.
+ 
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program. If not, see http://www.gnu.org/licenses/
+ --> 
+
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns="http://www.inteco.es/xbrl/pgc07/errors/catalog" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.inteco.es/xbrl/pgc07/errors/catalog">
+    <xsd:element name="PGC07ErrorsCatalog">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="PGCError" maxOccurs="unbounded">
+                    <xsd:complexType>
+                        <xsd:attribute name="errorCode" type="xsd:integer"/>
+                        <xsd:attribute name="type" >
+                   				<xsd:simpleType>
+                   					<xsd:restriction base="xsd:string">
+                   						<xsd:enumeration value="xbreeze"></xsd:enumeration>
+                   						<xsd:enumeration value="xerces"></xsd:enumeration>
+                   						<xsd:enumeration value="xapinteco"></xsd:enumeration>
+                   					</xsd:restriction>
+                   				</xsd:simpleType>
+                    		</xsd:attribute>
+                        <xsd:attribute name="id" type="xsd:string"/>
+                        <xsd:attribute name="parameterList" type="xsd:string"/>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

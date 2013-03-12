@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+
+<schema targetNamespace="http://www.xbrl.org.es/es/2008/dgi/gp/gen-ex/2011-01-30" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:dgi-gen-ex="http://www.xbrl.org.es/es/2008/dgi/gp/gen-ex/2011-01-30" xmlns:xbrll="http://www.xbrl.org/2003/linkbase" xmlns:dgi-types="http://www.xbrl.org.es/es/2008/dgi/gp/types/2011-01-30" xmlns:dgi-gen-bas="http://www.xbrl.org.es/es/2008/dgi/gp/gen-bas/2011-01-30" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:dgi-est-gen="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30">
+  <annotation>
+    <appinfo>
+      <xbrll:linkbaseRef xlink:type="simple" xlink:href="dgi-gen-ex-2011-01-30-presentation.xml" xlink:role="http://www.xbrl.org/2003/role/presentationLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+      <xbrll:linkbaseRef xlink:type="simple" xlink:href="dgi-gen-ex-2011-01-30-label-es.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+      <xbrll:linkbaseRef xlink:type="simple" xlink:href="dgi-gen-ex-2011-01-30-label-en.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+      <xbrll:linkbaseRef xlink:type="simple" xlink:href="dgi-gen-ex-2011-01-30-reference.xml" xlink:role="http://www.xbrl.org/2003/role/referenceLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+      <xbrll:roleType roleURI="http://www.xbrl.org.es/es/2008/dgi/gp/gen-ex/2011-01-30/role/GeneralExtendido" id="role_GeneralExtendido">
+        <xbrll:definition>Datos Generales, Información Extendida</xbrll:definition>
+        <xbrll:usedOn>xbrll:presentationLink</xbrll:usedOn>
+      </xbrll:roleType>
+    </appinfo>
+  </annotation>
+  <import namespace="http://www.xbrl.org/2003/instance" schemaLocation="http://www.xbrl.org/2003/xbrl-instance-2003-12-31.xsd"/>
+  <import namespace="http://www.xbrl.org/2003/linkbase" schemaLocation="http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd"/>
+  <import namespace="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30" schemaLocation="dgi-est-gen-2011-01-30.xsd"/>
+  <import namespace="http://www.xbrl.org.es/es/2008/dgi/gp/gen-bas/2011-01-30" schemaLocation="dgi-gen-bas-2011-01-30.xsd"/>
+  <import namespace="http://www.xbrl.org.es/es/2008/dgi/gp/types/2011-01-30" schemaLocation="dgi-types-2011-01-30.xsd"/>
+  <element name="GeneralCharacteristics" id="dgi-gen-ex_GeneralCharacteristics" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <sequence>
+        <element minOccurs="0" ref="dgi-gen-ex:IncorporationDate"/>
+        <element minOccurs="0" ref="dgi-gen-ex:BeginningActivitiesDate"/>
+        <element minOccurs="0" ref="dgi-gen-ex:LegalCeaseActivitiesYear"/>
+        <element minOccurs="0" ref="dgi-gen-ex:LegalCeaseActivitiesReason"/>
+        <element minOccurs="0" ref="dgi-gen-ex:GroupBelongingName"/>
+        <element minOccurs="0" ref="dgi-gen-ex:FinancialEntityType"/>
+        <element minOccurs="0" ref="dgi-gen-ex:LegalForm"/>
+        <element minOccurs="0" ref="dgi-gen-ex:CapitalSubscribed"/>
+        <element minOccurs="0" ref="dgi-gen-ex:CapitalPaid"/>
+        <element minOccurs="0" ref="dgi-gen-ex:IssuingEntityType"/>
+      </sequence>
+      <attribute name="id" type="ID"/>
+    </complexType>
+  </element>
+  <element name="IncorporationDate" id="dgi-gen-ex_IncorporationDate" type="xbrli:dateTimeItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="BeginningActivitiesDate" id="dgi-gen-ex_BeginningActivitiesDate" type="xbrli:dateItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="LegalCeaseActivitiesYear" id="dgi-gen-ex_LegalCeaseActivitiesYear" type="xbrli:integerItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="LegalCeaseActivitiesReason" id="dgi-gen-ex_LegalCeaseActivitiesReason" type="xbrli:stringItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="GroupBelongingName" id="dgi-gen-ex_GroupBelongingName" type="xbrli:stringItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="FinancialEntityType" id="dgi-gen-ex_FinancialEntityType" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <choice>
+        <element minOccurs="0" ref="dgi-types:FinancialEntityTypeHead"/>
+        <element minOccurs="0" ref="dgi-gen-ex:OthersFinancialEntityType"/>
+      </choice>
+      <attribute name="id" type="ID"/>
+    </complexType>
+  </element>
+  <element name="OthersFinancialEntityType" id="dgi-gen-ex_OthersFinancialEntityType" type="xbrli:stringItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="LegalForm" id="dgi-gen-ex_LegalForm" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <sequence>
+        <element ref="dgi-gen-ex:LegalFormCode"/>
+        <element minOccurs="0" ref="dgi-gen-ex:LegalFormFormationDate"/>
+        <element minOccurs="0" ref="dgi-est-gen:Region"/>
+        <element minOccurs="0" ref="dgi-est-gen:Country"/>
+      </sequence>
+      <attribute name="id" type="ID"/>
+    </complexType>
+  </element>
+  <element name="LegalFormCode" id="dgi-gen-ex_LegalFormCode" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <choice>
+        <element minOccurs="0" ref="dgi-types:LegalFormCodeHead"/>
+        <element minOccurs="0" ref="dgi-gen-ex:OthersLegalForm"/>
+      </choice>
+      <attribute name="id" type="ID"/>
+    </complexType>
+  </element>
+  <element name="OthersLegalForm" id="dgi-gen-ex_OthersLegalForm" type="xbrli:stringItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="LegalFormFormationDate" id="dgi-gen-ex_LegalFormFormationDate" type="xbrli:dateItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="CapitalSubscribed" id="dgi-gen-ex_CapitalSubscribed" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="CapitalPaid" id="dgi-gen-ex_CapitalPaid" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="IssuingEntityType" id="dgi-gen-ex_IssuingEntityType" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <choice>
+        <element minOccurs="0" ref="dgi-types:IssuingEntityHead"/>
+        <element minOccurs="0" ref="dgi-gen-ex:OthersIssuingEntity"/>
+      </choice>
+      <attribute name="id" type="ID"/>
+    </complexType>
+  </element>
+  <element name="OthersIssuingEntity" id="dgi-gen-ex_OthersIssuingEntity" type="xbrli:stringItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="EntityOrigin" id="dgi-gen-ex_EntityOrigin" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <sequence>
+        <element minOccurs="0" ref="dgi-gen-ex:EntityOriginCode"/>
+        <element minOccurs="0" ref="dgi-est-gen:EntityInformation"/>
+      </sequence>
+      <attribute name="id" type="ID"/>
+    </complexType>
+  </element>
+  <element name="EntityOriginCode" id="dgi-gen-ex_EntityOriginCode" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <choice>
+        <element minOccurs="0" ref="dgi-types:EntityOriginHead"/>
+        <element minOccurs="0" ref="dgi-gen-ex:OthersEntityOriginCode"/>
+      </choice>
+      <attribute name="id" type="ID"/>
+    </complexType>
+  </element>
+  <element name="OthersEntityOriginCode" id="dgi-gen-ex_OthersEntityOriginCode" type="xbrli:stringItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="StockExchangeInformation" id="dgi-gen-ex_StockExchangeInformation" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <sequence>
+        <element ref="dgi-gen-ex:StockExchangeMarket"/>
+        <element maxOccurs="unbounded" minOccurs="0" ref="dgi-gen-ex:SupervisoryEntity"/>
+      </sequence>
+      <attribute name="id" type="ID"/>
+    </complexType>
+  </element>
+  <element name="StockExchangeMarket" id="dgi-gen-ex_StockExchangeMarket" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <sequence>
+        <element minOccurs="0" ref="dgi-gen-ex:QuotationType"/>
+        <element minOccurs="0" ref="dgi-gen-ex:MarketIdentifier"/>
+        <element minOccurs="0" ref="dgi-gen-ex:NumberShares"/>
+        <element minOccurs="0" ref="dgi-gen-ex:StockMarketQuote"/>
+        <element minOccurs="0" ref="dgi-gen-ex:MarketCapitalizationDate"/>
+        <element minOccurs="0" ref="dgi-gen-ex:IsPrimaryStockExchangeMarket"/>
+      </sequence>
+      <attribute name="id" type="ID"/>
+    </complexType>
+  </element>
+  <element name="QuotationType" id="dgi-gen-ex_QuotationType" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <choice>
+        <element minOccurs="0" ref="dgi-types:QuotationTypeHead"/>
+        <element minOccurs="0" ref="dgi-gen-ex:OthersQuotationType"/>
+      </choice>
+      <attribute name="id" type="ID"/>
+    </complexType>
+  </element>
+  <element name="OthersQuotationType" id="dgi-gen-ex_OthersQuotationType" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="OtherMarketIdentifier" id="dgi-gen-ex_OtherMarketIdentifier" type="xbrli:stringItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="MarketIdentifier" id="dgi-gen-ex_MarketIdentifier" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <choice>
+        <element minOccurs="0" ref="dgi-types:MarketIdentifierCodeHead"/>
+        <element minOccurs="0" ref="dgi-gen-ex:OtherMarketIdentifier"/>
+      </choice>
+      <attribute name="id" type="ID"/>
+    </complexType>
+  </element>
+  <element name="NumberShares" id="dgi-gen-ex_NumberShares" type="xbrli:nonNegativeIntegerItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="StockMarketQuote" id="dgi-gen-ex_StockMarketQuote" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="MarketCapitalizationDate" id="dgi-gen-ex_MarketCapitalizationDate" type="xbrli:dateItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="IsPrimaryStockExchangeMarket" id="dgi-gen-ex_IsPrimaryStockExchangeMarket" type="xbrli:booleanItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="SupervisoryEntity" id="dgi-gen-ex_SupervisoryEntity" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <sequence>
+        <element ref="dgi-gen-ex:SupervisorEntityName"/>
+        <element minOccurs="0" ref="dgi-est-gen:Country"/>
+      </sequence>
+      <attribute name="id" type="ID"/>
+    </complexType>
+  </element>
+  <element name="SupervisorEntityName" id="dgi-gen-ex_SupervisorEntityName" type="xbrli:stringItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="SpecialSituations" id="dgi-gen-ex_SpecialSituations" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <sequence>
+        <element ref="dgi-gen-ex:SpecialSituationsList"/>
+        <element minOccurs="0" ref="dgi-gen-ex:SpecialSituationDate"/>
+      </sequence>
+      <attribute name="id" type="ID"/>
+    </complexType>
+  </element>
+  <element name="SpecialSituationsList" id="dgi-gen-ex_SpecialSituationsList" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <choice>
+        <element minOccurs="0" ref="dgi-types:SpecialSituationsCodeHead"/>
+        <element minOccurs="0" ref="dgi-gen-ex:OtherSituationsCode"/>
+      </choice>
+      <attribute name="id" type="ID"/>
+    </complexType>
+  </element>
+  <element name="OtherSituationsCode" id="dgi-gen-ex_OtherSituationsCode" type="xbrli:stringItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <element name="SpecialSituationDate" id="dgi-gen-ex_SpecialSituationDate" type="xbrli:dateItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+</schema>

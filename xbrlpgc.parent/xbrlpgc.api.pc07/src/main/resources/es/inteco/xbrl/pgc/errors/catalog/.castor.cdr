@@ -1,0 +1,3 @@
+#Tue Dec 09 21:44:51 CET 2008
+es.inteco.xbrl.pgc.errors.catalog.PGCError=es.inteco.xbrl.pgc.errors.catalog.descriptors.PGCErrorDescriptor
+es.inteco.xbrl.pgc.errors.catalog.PGC07ErrorsCatalog=es.inteco.xbrl.pgc.errors.catalog.descriptors.PGC07ErrorsCatalogDescriptor

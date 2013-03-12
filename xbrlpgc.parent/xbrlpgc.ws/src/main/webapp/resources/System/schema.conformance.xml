@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ubm:testcases xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ubmatrix.com/XBRL/2.1/conformance/2003-10-24 conformance.xsd" base="" description="Core Conformance" xmlns:ubm="http://www.ubmatrix.com/XBRL/2.1/conformance/2003-10-24">
+    <ubm:testcase href="schema/102-item.xml">
+        <ubm:variation name="SpecExample" description="102.01  The periodType attribute is required all item types." />
+        <ubm:variation name="MissingPeriodType" description="102.01  The periodType attribute is required all item types." />
+        <ubm:variation name="NoPeriodTypeTuple" description="102.01  The periodType attribute is required all item types." />
+        <ubm:variation name="Item Substitution Allowed" description="102.01  The periodType attribute is required all item types." />
+        <ubm:variation name="Item Substitution Allowed with Restriction" description="102.01  The periodType attribute is required all item types." />
+        <ubm:variation name="102.06 Item Substitution Allowed with valid instance" description="102.01  The periodType attribute is required all item types." />
+        <ubm:variation name="Tuple Substitution Allowed" description="102.01  The periodType attribute is required all item types." />
+        <ubm:variation name="Tuple Substitution Allowed With Restriction" description="102.01  The periodType attribute is required all item types." />
+        <ubm:variation name="102.10 Item Substitution Allowed with valid instance" description="102.01  The periodType attribute is required all item types." />
+    </ubm:testcase>
+    <ubm:testcase href="schema/103-type.xml">
+        <ubm:variation name="ComplexContentCounterExample" description="103.01 An item type in a taxonomy can never have complex content unless it is derived by restriction from fractionItemType." />
+    </ubm:testcase>
+    <ubm:testcase href="schema/104-tuple.xml">
+        <ubm:variation name="SpecTupleExample" description="104.01 Tuples are derived from tupleType." />
+        <ubm:variation name="TupleExampleAnyOrder" description="104.01 Tuples are derived from tupleType." />
+        <ubm:variation name="TupleExampleCardinality" description="104.01 Tuples are derived from tupleType." />
+        <ubm:variation name="TupleExampleComplexType" description="104.01 Tuples are derived from tupleType." />
+        <ubm:variation name="TupleExampleNestedComplexType" description="104.01 Tuples are derived from tupleType." />
+        <ubm:variation name="TupleCounterExampleNestedComplexType" description="104.01 Tuples are derived from tupleType." />
+        <ubm:variation name="TupleChoiceExample" description="104.01 Tuples are derived from tupleType." />
+        <ubm:variation name="TupleAnyCounterExample" description="104.01 Tuples are derived from tupleType." />
+        <ubm:variation name="TupleAttributeCounterExample" description="104.01 Tuples are derived from tupleType." />
+        <ubm:variation name="TupleXBRLAttributeCounterExample" description="104.01 Tuples are derived from tupleType." />
+        <ubm:variation name="TupleGroupCounterExample" description="104.01 Tuples are derived from tupleType." />
+        <ubm:variation name="TupleMixedCounterExample" description="104.01 Tuples are derived from tupleType." />
+        <ubm:variation name="TupleRestrictionExample" description="104.01 Tuples are derived from tupleType." />
+        <ubm:variation name="TupleNestedRestrictionExample" description="104.01 Tuples are derived from tupleType." />
+        <ubm:variation name="TupleAbstractCounterExample" description="104.01 Tuples are derived from tupleType." />
+        <ubm:variation name="TupleAnonymousCounterExample" description="104.01 Tuples are derived from tupleType." />
+        <ubm:variation name="Redefine" description="104.01 Tuples are derived from tupleType." />
+        <ubm:variation name="Abstract Tuple Definition" description="104.01 Tuples are derived from tupleType." />
+    </ubm:testcase>
+    <ubm:testcase href="schema/105-balance.xml">
+        <ubm:variation name="105.01 Element type attribute (data type) is not monetaryItemType." description="105.01 Any element with a balance attibute MUST have a type attribute value of monetaryItemType" />
+        <ubm:variation name="105.02 Elements which are tuples must not have balance attribute." description="105.01 Any element with a balance attibute MUST have a type attribute value of monetaryItemType" />
+        <ubm:variation name="105.03 Monetary items with balance type" description="105.01 Any element with a balance attibute MUST have a type attribute value of monetaryItemType" />
+        <ubm:variation name="105.04 Derived element of Monetary datatype with Balance defined" description="105.01 Any element with a balance attibute MUST have a type attribute value of monetaryItemType" />
+        <ubm:variation name="105.05 Derived element with string datatype with Balance defined" description="105.01 Any element with a balance attibute MUST have a type attribute value of monetaryItemType" />
+    </ubm:testcase>
+    <ubm:testcase href="schema/106-targetNamespace.xml">
+        <ubm:variation name="106-01-Non Empty TargetNamespace" description="106.01 Taxonomy schema has non-empty targetNamespace attribute value." />
+        <ubm:variation name="106-02-Empty TargetNamespace" description="106.01 Taxonomy schema has non-empty targetNamespace attribute value." />
+        <ubm:variation name="106-03-TargetNamespace with xsd:include" description="106.01 Taxonomy schema has non-empty targetNamespace attribute value." />
+        <ubm:variation name="106-04-NoTargetNamespace with xsd:include" description="106.01 Taxonomy schema has non-empty targetNamespace attribute value." />
+    </ubm:testcase>
+    <ubm:testcase href="schema/107-DTSWithLinkbaseInSchema.xml">
+        <ubm:variation name="107-01-DTS with linkbase in schema" description="&#xD;&#xA;		  107.01 DTS descovery begins from a taxonomy schema that contains a linkbase &#xD;&#xA;		  reference to a linkbase that that is placed inside the documentation of another &#xD;&#xA;		  XML schema. The other XML schema also contains valid XML Schema markup but the &#xD;&#xA;		  markup violates the requirements of the XBRL 2.1 specification.  By following the &#xD;&#xA;      rules of DTS discovery the linkbase in the second schema should be&#xD;&#xA;      discovered, and processed *as a taxonomy schema* so the material that&#xD;&#xA;      violates the XBRL 2.1 specification should trigger a determination that&#xD;&#xA;      the result is invalid.&#xD;&#xA;		" />
+    </ubm:testcase>
+    <ubm:testcase href="schema/155-TypeExtension.xml">
+        <ubm:variation name="155-TypeExtension-Valid" description="Type Extension - Valid" />
+    </ubm:testcase>
+</ubm:testcases>

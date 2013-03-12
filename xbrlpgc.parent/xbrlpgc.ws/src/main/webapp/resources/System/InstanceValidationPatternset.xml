@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+
+<PatternSet
+
+    name="InstanceValidationPatterns"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:noNamespaceSchemaLocation="ValidationPatterns.xsd" >
+
+    <Pattern id="CheckForXbrlInstanceSchema"
+             name="Check for Missing XBRL Instance schema"
+             method="DtsXPath"
+             value="CheckForXbrlInstanceSchema()">
+        <Failure severity="error">
+            <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Taxonomy#MissingXbrlInstanceSchema" />
+        </Failure>
+    </Pattern>
+
+     <Pattern id="vr_194" 
+ 			name="ValidateScenarioElementMustNotBeInSubstitutionGroupForElementsDefinedInXBRLInstanceNamespace" 
+ 			method="DtsXPath" 
+ 			value="/'domain://ubmatrix.com/Xbrl/Instance#ScenarioDescendant'/-'relationship://ubmatrix.com/Xbrl/Relationship#SchemaDefinesInstance'/'*'IsInSubstitutionGroupNamespace(http://www.xbrl.org/2003/instance)"> 			
+
+          <Failure severity="error">
+                     <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#ScenarioElementMustNotBeInSubstitutionGroupForElementsDefinedInXBRLInstanceNamespace" />
+          </Failure>
+     </Pattern>
+
+ 
+    <Pattern id="AH_Calculation" 
+			name="Validate Calculation" 
+			method="DtsXPath" 
+			value="/'domain://ubmatrix.com/Xbrl/Taxonomy#Role'HasInvalidCalculation()">
+         <Failure severity="error" />
+    </Pattern>
+
+    <Pattern id="vr_143" 
+      			name="ValidateXlinkArcroleAttributeMustHaveFixedContent" 
+      			method="DtsXPath" 
+      			value="/+'relationship://ubmatrix.com/Xbrl/Relationship#LinkbaseReference'/^-'relationship://ubmatrix.com/Xbrl/Relationship#ArcroleClassifies'/'*'Exclude(http://www.w3.org/1999/xlink/properties/linkbase)">      			      
+               <Failure severity="error">
+                          <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#XlinkArcroleAttributeMustHaveFixedContent" />
+               </Failure>
+    </Pattern>
+
+    <Pattern id="vr_163_a" 
+ 			name="ValidateNumericItemMustUseContextRefAndUnitRefAttribute" 
+ 			method="DtsXPath" 
+ 			value="/'domain://ubmatrix.com/Xbrl/Instance#ItemFact'[not(hasPath(/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#FactSpecifiesUnit'/'domain://ubmatrix.com/Xbrl/Instance#Unit')) and not(hasPath(/-'relationship://ubmatrix.com/Xbrl/Instance/Relationship#ContextScopesFact'/'domain://ubmatrix.com/Xbrl/Instance#Context'))]IsNumeric()">
+          <Failure severity="error">
+                     <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#NumericItemMustUseContextRefAndUnitRefAttribute" />
+          </Failure>
+     </Pattern>
+
+    <!-- fractionType by restriction will be taken care by the numeric type above -->
+
+    <Pattern id="vr_163_c" 
+ 			name="ValidateNonNumericItemMustUseContextRefAttribute" 
+ 			method="DtsXPath" 
+ 			value="/'domain://ubmatrix.com/Xbrl/Instance#ItemFact'[not(hasPath(/-'relationship://ubmatrix.com/Xbrl/Instance/Relationship#ContextScopesFact'/'domain://ubmatrix.com/Xbrl/Instance#Context'))]IsNonNumeric()">
+          <Failure severity="error">
+                     <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#NumericItemMustUseContextRefAndUnitRefAttribute" />
+          </Failure>
+     </Pattern>
+ 
+       
+    
+    <Pattern id="ValidateUnitRefAttributeMustNotOccurInNonNumericItem" 
+  			name="ValidateUnitRefAttributeMustNotOccurInNonNumericItem" 
+  			method="DtsXPath" 
+ 			value="ValidateUnitRefAttributeMustNotOccurInNonNumericItem()">
+           <Failure severity="error">
+                      <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#UnitRefAttributeMustNotOccurInNonNumericItem" />
+           </Failure>
+    </Pattern>
+
+    
+    
+     <Pattern id="vr_165" 
+  			name="ValidateUnitRefAttributeMustOccurInNumericItem" 
+  			method="DtsXPath" 
+  			value="/'domain://ubmatrix.com/Xbrl/Instance#ItemFact'[not(hasPath(/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#FactSpecifiesUnit'/'domain://ubmatrix.com/Xbrl/Instance#Unit'))]IsNumeric()">
+           <Failure severity="error">
+                      <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#UnitRefAttributeMustOccurInNumericItem" />
+           </Failure>
+    </Pattern>
+
+    <Pattern id="vr_167" 
+ 			name="ValidateTuplesMustNotHaveContext" 
+ 			method="DtsXPath" 
+ 			value="/'domain://ubmatrix.com/Xbrl/Instance#TupleFact'[hasPath(/-'relationship://ubmatrix.com/Xbrl/Instance/Relationship#ContextScopesFact'/'domain://ubmatrix.com/Xbrl/Instance#Context')]">
+          <Failure severity="error">
+                     <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#TuplesHaveContext" />
+          </Failure>
+    </Pattern>
+    
+     <Pattern id="vr_170" 
+ 			name="ValidateTuplesMustNotHaveUnitRef" 
+ 			method="DtsXPath" 
+ 			value="/'domain://ubmatrix.com/Xbrl/Taxonomy#TupleConcept'/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#ConceptDefinesFact'/'domain://ubmatrix.com/Xbrl/Instance#Fact'[hasPath(/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#FactSpecifiesUnit'/'domain://ubmatrix.com/Xbrl/Instance#Unit')]">          
+ 			<Failure severity="error">
+                     <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#TuplesHaveUnitRef" />
+          </Failure>
+     </Pattern>
+
+     <Pattern id="vr_173" 
+ 			name="ValidateNumericItemMustNotHaveBothPrecisionAndDecimalsAttribute" 
+ 			method="DtsXPath" 
+ 			value="/'domain://ubmatrix.com/Xbrl/Instance#ItemFact'[(hasAttr('precision')) and (hasAttr('decimals'))]IsNumeric()">	
+ 	
+          <Failure severity="error">
+                     <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#NumericItemMustNotHaveBothPrecisionAndDecimalsAttribute" />
+          </Failure>
+     </Pattern>
+    
+     
+     <Pattern id="AH_vr_173" 
+ 			name="ValidateNumericItemMustHaveEitherPrecisionOrDecimalsAttribute" 
+ 			method="DtsXPath"  			
+ 			value="/'domain://ubmatrix.com/Xbrl/Instance#Fact'[(not(hasAttr('precision'))) and (not(hasAttr('decimals'))) and ((attr('http://www.w3.org/2001/XMLSchema-instance#nil') != 'true') or not(hasAttr('http://www.w3.org/2001/XMLSchema-instance#nil')))]IsNumeric()">	
+
+          <Failure severity="error">
+                     <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#NumericItemMustHaveEitherPrecisionOrDecimalsAttribute" />
+          </Failure>
+     </Pattern>
+     
+
+     <Pattern id="ValidateNillItemDoesNotHaveEitherPrecisonOrDecimal" 
+ 			name="ValidateNillItemDoesNotHaveEitherPrecisonOrDecimal" 
+ 			method="DtsXPath"  			
+ 			value="/'domain://ubmatrix.com/Xbrl/Instance#ItemFact'[ ((hasAttr('decimals')) or (hasAttr('precision'))) and (attr('http://www.w3.org/2001/XMLSchema-instance#nil') == 'true') ]">
+          <Failure severity="error">
+                     <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#NumericItemMustHaveEitherPrecisionOrDecimalsAttribute" />
+          </Failure>
+     </Pattern>
+
+  
+     <Pattern id="vr_174" 
+ 			name="ValidateNonNumericItemMustNotHaveEitherPrecisionOrDecimalsAttribute" 
+ 			method="DtsXPath" 
+ 			value="ValidateNonNumericItemMustNotHaveEitherPrecisionOrDecimalsAttribute()">	
+
+          <Failure severity="error">
+                     <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#NonNumericItemMustNotHaveEitherPrecisionOrDecimalsAttribute" />
+          </Failure>
+     </Pattern>
+
+
+     <Pattern id="vr_183" 
+ 			name="ValidateElementWithPeriodTypeInstantMustContainInstantElement" 
+ 			method="DtsXPath" 
+ 			value="/'domain://ubmatrix.com/Xbrl/Instance#Context'[not(hasPath(/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#ContextSpecifiesPeriod'/'domain://ubmatrix.com/Xbrl/Instance#Period'/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#PeriodHasDate'/'domain://ubmatrix.com/Xbrl/Instance#Instant'))]/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#ContextScopesFact'/'domain://ubmatrix.com/Xbrl/Instance#Fact'[/-'relationship://ubmatrix.com/Xbrl/Instance/Relationship#ConceptDefinesFact'/'domain://ubmatrix.com/Xbrl/Taxonomy#ItemConcept'[attr('http://www.xbrl.org/2003/instance#periodType')!='duration']]"> 
+
+          <Failure severity="error">
+                     <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#ElementWithPeriodTypeInstantMustContainInstantElement" />
+          </Failure>
+     </Pattern>
+
+     <Pattern id="vr_184" 
+ 			name="ValidateElementWithPeriodTypeDurationMustContainForeverOrValidSeqOfStartDateAndEndDate" 
+ 			method="DtsXPath" 
+ 			value="/'domain://ubmatrix.com/Xbrl/Instance#Context'[/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#ContextSpecifiesPeriod'/'domain://ubmatrix.com/Xbrl/Instance#Period'/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#PeriodHasDate'/'domain://ubmatrix.com/Xbrl/Instance#Instant']/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#ContextScopesFact'/'domain://ubmatrix.com/Xbrl/Instance#Fact'[/-'relationship://ubmatrix.com/Xbrl/Instance/Relationship#ConceptDefinesFact'/'domain://ubmatrix.com/Xbrl/Taxonomy#ItemConcept'[attr('http://www.xbrl.org/2003/instance#periodType')=='duration']]">
+
+          <Failure severity="error">
+                     <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#ElementWithPeriodTypeDurationMustContainForeverOrValidSeqOfStartDateAndEndDate" />
+          </Failure>
+     </Pattern>
+     
+     <Pattern id="vr_190" 
+ 			name="ValidateSegmentElementMustNotBeRedefinedInXBRLInstanceNamespace" 
+ 			method="DtsXPath" 
+ 			value="/'domain://ubmatrix.com/Xbrl/Instance#SegmentDescendant'DefinedIn(http://www.xbrl.org/2003/instance)"> 			
+
+          <Failure severity="error">
+                     <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#SegmentElementMustNotBeRedefinedInXBRLInstanceNamespace" />
+          </Failure>
+     </Pattern>
+     
+
+     <Pattern id="vr_191" 
+ 			name="ValidateSegmentElementMustNotBeInSubstitutionGroupForElementsDefinedInXBRLInstanceNamespace" 
+ 			method="DtsXPath" 
+ 			value="/'domain://ubmatrix.com/Xbrl/Instance#SegmentDescendant'/-'relationship://ubmatrix.com/Xbrl/Relationship#SchemaDefinesInstance'/'*'IsInSubstitutionGroupNamespace(http://www.xbrl.org/2003/instance)"> 			
+
+          <Failure severity="error">
+                     <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#SegmentElementMustNotBeInSubstitutionGroupForElementsDefinedInXBRLInstanceNamespace" />
+          </Failure>
+     </Pattern>
+
+     <Pattern id="vr_191a" 
+ 			name="ValidateSegmentDescendentMustNotBeInInstanceNamespace" 
+ 			method="DtsXPath" 
+ 			value="/'domain://ubmatrix.com/Xbrl/Instance#SegmentDescendant'DefinedIn(http://www.xbrl.org/2003/instance)"> 			
+
+          <Failure severity="error">
+                     <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#SegmentDescendentDefinedInInstanceNamespace" />
+          </Failure>
+     </Pattern>
+
+     <Pattern id="vr_193" 
+ 			name="ValidateScenarioElementMustNotBeRedefinedInXBRLInstanceNamespace" 
+ 			method="DtsXPath" 
+ 			value="/'domain://ubmatrix.com/Xbrl/Instance#ScenarioDescendant'DefinedIn(http://www.xbrl.org/2003/instance)"> 			
+
+          <Failure severity="error">
+                     <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#ScenarioElementMustNotBeRedefinedInXBRLInstanceNamespace" />
+          </Failure>
+     </Pattern>
+
+     <Pattern id="vr_193a" 
+ 			name="ValidateScenarioDescendentMustNotBeInInstanceNamespace" 
+ 			method="DtsXPath" 
+ 			value="/'domain://ubmatrix.com/Xbrl/Instance#ScenarioDescendant'DefinedIn(http://www.xbrl.org/2003/instance)"> 			
+
+          <Failure severity="error">
+                     <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#ScenarioDescendentDefinedInInstanceNamespace" />
+          </Failure>
+     </Pattern>
+
+       
+    <!-- previous one: value="/'domain://ubmatrix.com/Xbrl/Instance#Fact'DerivesFrom(http://www.xbrl.org/2003/instance#sharesItemType)/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#FactSpecifiesUnit'/'domain://ubmatrix.com/Xbrl/Instance#Unit'/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#SpecifiesMeasure'/'domain://ubmatrix.com/Xbrl/Instance#Measure'NamespacePrefixInValueResolvesTo(http://www.xbrl.org/2003/instance)HasLocalPartInValue(shares)!HasCount(1)"> --> 
+    <Pattern id="vr_203"      
+      			name="ValidateFactWithShareUnitsShouldHaveOneMeasurement"
+      			method="DtsXPath" 
+      				value="FactsDerivedFrom(&amp;http://www.xbrl.org/2003/instance#sharesItemType)ValidateFactHasOneMeasurement(shares)">				
+               <Failure severity="error">
+                          <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#FactWithSharesUnitsHasMoreThanOneMeasurement" />
+               </Failure>
+    </Pattern>       
+          
+     
+    <!-- previous one: value="/'domain://ubmatrix.com/Xbrl/Instance#Fact'DerivesFrom(http://www.xbrl.org/2003/instance#pureItemType)/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#FactSpecifiesUnit'/'domain://ubmatrix.com/Xbrl/Instance#Unit'/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#SpecifiesMeasure'/'domain://ubmatrix.com/Xbrl/Instance#Measure'NamespacePrefixInValueResolvesTo(http://www.xbrl.org/2003/instance)HasLocalPartInValue(pure)!HasCount(1)"> -->
+    <Pattern id="vr_204" 
+      			name="ValidateFactWithPureUnitsShouldHaveOneMeasurement"
+      			method="DtsXPath" 
+      				value="FactsDerivedFrom(&amp;http://www.xbrl.org/2003/instance#pureItemType)ValidateFactHasOneMeasurement(pure)">				
+			
+               <Failure>
+                          <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#FactWithPureUnitsHasMoreThanOneMeasurement" />
+               </Failure>
+    </Pattern>   
+  
+    <Pattern id="vr_207_pure" 
+      			name="ValidateMeasureItemsInInstanceNamespaceArePure"
+      			method="DtsXPath" 
+				value="FactsDerivedFrom(&amp;http://www.xbrl.org/2003/instance#pureItemType)/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#FactSpecifiesUnit'/'domain://ubmatrix.com/Xbrl/Instance#Unit'/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#SpecifiesMeasure'/'domain://ubmatrix.com/Xbrl/Instance#Measure'NamespacePrefixInValueResolvesTo(http://www.xbrl.org/2003/instance)!HasLocalPartInValue(pure)">	
+               <Failure severity="error">
+                          <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#PureFactDoesNotHavePureUnits" />
+               </Failure>
+    </Pattern>   
+    
+    <Pattern id="vr_207_shares_prefix" 
+      			name="ValidateMeasureItemsInInstanceNamespaceAreShares_Prefix"
+      			method="DtsXPath" 
+				value="FactsDerivedFrom(&amp;http://www.xbrl.org/2003/instance#sharesItemType)/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#FactSpecifiesUnit'/'domain://ubmatrix.com/Xbrl/Instance#Unit'/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#SpecifiesMeasure'/'domain://ubmatrix.com/Xbrl/Instance#Measure'!NamespacePrefixInValueResolvesTo(http://www.xbrl.org/2003/instance)">	
+               <Failure severity="error">
+                          <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#SharesFactDoesNotHaveSharesUnits" />
+               </Failure>
+    </Pattern>   
+
+    <Pattern id="vr_207_shares_local" 
+      			name="ValidateMeasureItemsInInstanceNamespaceAreShares_Local"
+      			method="DtsXPath" 
+				value="FactsDerivedFrom(&amp;http://www.xbrl.org/2003/instance#sharesItemType)/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#FactSpecifiesUnit'/'domain://ubmatrix.com/Xbrl/Instance#Unit'/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#SpecifiesMeasure'/'domain://ubmatrix.com/Xbrl/Instance#Measure'NamespacePrefixInValueResolvesTo(http://www.xbrl.org/2003/instance)!HasLocalPartInValue(shares)">	
+               <Failure severity="error">
+                          <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#SharesFactDoesNotHaveSharesUnits" />
+               </Failure>
+    </Pattern>   
+
+     <Pattern id="vr_202b" 
+      			name="ValidatePrefixPartOfMeasureItemsAreInISONamespace"
+      			method="DtsXPath" 
+				value="FactsDerivedFrom(&amp;http://www.xbrl.org/2003/instance#monetaryItemType)/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#FactSpecifiesUnit'/'domain://ubmatrix.com/Xbrl/Instance#Unit'/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#SpecifiesMeasure'/'domain://ubmatrix.com/Xbrl/Instance#Measure'!NamespacePrefixInValueResolvesTo(http://www.xbrl.org/2003/iso4217)">	
+               <Failure severity="error">
+                          <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#PrefixPartOfMeasureItemIsNotInISONamespace" />
+               </Failure>
+    </Pattern>      
+
+<!--    
+
+These patterns are no longer valid per SWG discussion
+
+     <Pattern id="vr_202c" 
+      			name="ValidatePrefixPartOfPureMeasureItemsAreInInstanceNamespace"
+      			method="DtsXPath" 
+				value="FactsDerivedFrom(&amp;http://www.xbrl.org/2003/instance#pureItemType)/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#FactSpecifiesUnit'/'domain://ubmatrix.com/Xbrl/Instance#Unit'/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#SpecifiesMeasure'/'domain://ubmatrix.com/Xbrl/Instance#Measure'!NamespacePrefixInValueResolvesTo(http://www.xbrl.org/2003/instance)">	
+               <Failure severity="error">
+                          <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#PrefixPartOfMeasureItemIsNotInInstanceNamespace" />
+               </Failure>
+    </Pattern>          
+    
+        <Pattern id="vr_202d" 
+      			name="ValidatePrefixPartOfPureMeasureItemsAreInInstanceNamespace"
+      			method="DtsXPath" 
+				value="FactsDerivedFrom(&amp;http://www.xbrl.org/2003/instance#sharesItemType)/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#FactSpecifiesUnit'/'domain://ubmatrix.com/Xbrl/Instance#Unit'/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#SpecifiesMeasure'/'domain://ubmatrix.com/Xbrl/Instance#Measure'!NamespacePrefixInValueResolvesTo(http://www.xbrl.org/2003/instance)">	
+               <Failure severity="error">
+                          <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#PrefixPartOfMeasureItemIsNotInISONamespace" />
+               </Failure>
+    </Pattern>           
+-->
+    
+        <Pattern id="vr_AH_localpart_in_ISO4217" 
+      			name="ValidateLocalPartOfValueIsDefinedInISO4217Namespace"
+      			method="DtsXPath" 
+ 				value="FactsDerivedFrom(&amp;http://www.xbrl.org/2003/instance#monetaryItemType)/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#FactSpecifiesUnit'/'domain://ubmatrix.com/Xbrl/Instance#Unit'/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#SpecifiesMeasure'/'domain://ubmatrix.com/Xbrl/Instance#Measure'NamespacePrefixInValueResolvesTo(http://www.xbrl.org/2003/iso4217)!LocalPartIsValidIso4217Code()">	
+               <Failure severity="error">
+                          <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#LocalPartOfMeasureItemsIsNotInISONamespace" />
+               </Failure>
+    </Pattern>       
+    
+     <Pattern id="vr_210" 
+      			name="ValidateFactUnitNumeratorAndDenominatorAreInSimplestForm"
+      			method="DtsXPath" 
+				value="/'domain://ubmatrix.com/Xbrl/Instance#Divide'!IsFractionInSimplestForm()">	
+               <Failure severity="error">
+                          <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#FactUnitNumeratorAndDenominatorAreNotInSimplestForm" />
+               </Failure>
+    </Pattern>          
+    
+     <Pattern id="vr_211" 
+      			name="ValidateMeasuresInUnitNumeratorAndDenominatorAreSEqual"
+      			method="DtsXPath" 
+				value="/'domain://ubmatrix.com/Xbrl/Instance#UnitNumerator'/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#UnitNumeratorContainsMeasure'/!IsXbrl_S_Equal(/'domain://ubmatrix.com/Xbrl/Instance#UnitDenominator'/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#UnitDenominatorContainsMeasure'/)">	
+               <Failure severity="error">
+                          <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#MeasuresInUnitNumeratorAreNotSEqualToMeasuresInDenominator" />
+               </Failure>
+    </Pattern>                   
+    
+     <Pattern id="vr_227" 
+      			name="ValidateFootnoteResourceHasXmlLangAttribute"
+      			method="DtsXPath" 
+				value="/+'http://www.xbrl.org/2003/linkbase#footnoteArc'/'http://www.xbrl.org/2003/linkbase#footnote'[not(hasAttr('http://www.w3.org/XML/1998/namespace#lang'))]">	
+               <Failure severity="error">
+                          <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#FootnoteResourceMissingXmlLangAttribute" />
+               </Failure>
+    </Pattern>                       
+
+     <Pattern id="vr_FootnoteLocOutOfScope" 
+      			name="ValidateFootnoteLocatorOutOfScope"
+      			method="DtsXPath" 
+				value="/'domain://ubmatrix.com/Xbrl/Instance#Instance'!LocatorFactsBindToInstance()">	
+               <Failure severity="error">
+                          <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#FootnoteLocatorOutOfScope" />
+               </Failure>
+    </Pattern>                       
+
+    <Pattern id="ValidateRequiresElementFacts" 
+			name="ValidateRequiresElementFacts" 
+			method="DtsXPath" 
+			value="/'http://www.xbrl.org/2003/linkbase#definitionArc'[attr('http://www.w3.org/1999/xlink#arcrole') == 'http://www.xbrl.org/2003/arcrole/requires-element']ValidateRequiresElementFacts()">
+         <Failure severity="error">
+                    <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Linkbase#RequiresElementFactsAreNotInSameInstance" />
+         </Failure>
+    </Pattern>               
+    
+    
+       <Pattern id="vr_AH_essense_alias_u_equal" 
+			name="ValidateEssenceAliasFactsAreUEqual" 
+			method="DtsXPath" 
+			value="/+'http://www.xbrl.org/2003/linkbase#definitionArc'[hasPath(/^-'relationship://ubmatrix.com/Xbrl/Relationship#ArcroleClassifies'/'http://www.xbrl.org/2003/arcrole/essence-alias')]/'domain://ubmatrix.com/Xbrl/Taxonomy#Concept'/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#ConceptDefinesFact'/'domain://ubmatrix.com/Xbrl/Instance#Fact'!IsXbrl_U_Equal(/-'http://www.xbrl.org/2003/linkbase#definitionArc'[hasPath(/^-'relationship://ubmatrix.com/Xbrl/Relationship#ArcroleClassifies'/'http://www.xbrl.org/2003/arcrole/essence-alias')]/'domain://ubmatrix.com/Xbrl/Taxonomy#Concept'/+'relationship://ubmatrix.com/Xbrl/Instance/Relationship#ConceptDefinesFact'/'domain://ubmatrix.com/Xbrl/Instance#Fact')">
+         <Failure severity="error">
+                    <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Linkbase#EssenseAliasFactsAreNotUEqual" />
+         </Failure>
+    </Pattern>                   
+      
+       <Pattern id="vr_AH_essense_alias_same_periodType_duration" 
+			name="ValidateEssenceAliasFactsHaveSamePeriodType_duration" 
+			method="DtsXPath" 
+			value="/'domain://ubmatrix.com/Xbrl/Taxonomy#ItemConcept'[attr('http://www.xbrl.org/2003/instance#periodType')=='duration']/+'http://www.xbrl.org/2003/linkbase#definitionArc'[hasPath(/^-'relationship://ubmatrix.com/Xbrl/Relationship#ArcroleClassifies'/'http://www.xbrl.org/2003/arcrole/essence-alias')]/'domain://ubmatrix.com/Xbrl/Taxonomy#ItemConcept'[attr('http://www.xbrl.org/2003/instance#periodType') != 'duration']">
+         <Failure severity="error">
+                    <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#EssenceAliasFactsDoNotHaveSameDurationPeriodType" />
+         </Failure>
+    </Pattern>                   
+    
+       <Pattern id="vr_AH_essense_alias_same_periodType_instant" 
+			name="ValidateEssenceAliasFactsHaveSamePeriodType_instant" 
+			method="DtsXPath" 
+			value="/'domain://ubmatrix.com/Xbrl/Taxonomy#ItemConcept'[attr('http://www.xbrl.org/2003/instance#periodType')=='instant']/+'http://www.xbrl.org/2003/linkbase#definitionArc'[hasPath(/^-'relationship://ubmatrix.com/Xbrl/Relationship#ArcroleClassifies'/'http://www.xbrl.org/2003/arcrole/essence-alias')]/'domain://ubmatrix.com/Xbrl/Taxonomy#ItemConcept'[attr('http://www.xbrl.org/2003/instance#periodType') != 'instant']">
+         <Failure severity="error">
+                    <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#EssenceAliasFactsDoNotHaveSameInstantPeriodType" />
+         </Failure>
+    </Pattern>                   
+
+    <!-- Rule 185: If supplied, the endDate MUST specify or imply a point in time that is later than the specified or implied point in time of the corresponding startDate. -->
+    
+    <Pattern id="ValidateEndDateLaterThanStartDate" 
+			name="ValidateEndDateLaterThanStartDate" 
+			method="DtsXPath" 
+			value="/'domain://ubmatrix.com/Xbrl/Instance#Context'ValidateEndDateLaterThanStartDate()">
+         <Failure severity="error">
+                    <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Instance#EndDateMustBeLaterThanStartDate" />
+         </Failure>
+    </Pattern>                  
+</PatternSet>
+
+<!--
+ The contents of this file are subject to the UBmatrix License Version 1.0 (the "License");
+ you may not use this file except in compliance with the License. You may obtain a copy of the
+ License at http://www.ubmatrix.com/prospect/eula_processor.asp
+
+ Software distributed under the License is distributed on an "AS IS" basis,
+ WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ See the License for the specific language governing rights and limitations under the License.
+
+ Copyright (c) UBmatrix, Inc., 2005-2006.  All Rights Reserved.
+-->

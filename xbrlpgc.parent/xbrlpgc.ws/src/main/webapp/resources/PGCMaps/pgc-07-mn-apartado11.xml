@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mn-apartado11" mainSchemaPrefix="pgc-07-mn" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01">
+    <conceptMap
+        outputID="MonedaExtranjeraDiferenciasCambioTransaccionesVivasTransaccionesPendientesVencimiento"
+        inputID="2"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="99134" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesFinancierasCortoPlazoInstrumentosPatrimonio"/>
+        <Member id="99135" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesFinancierasCortoPlazoCreditosEmpresas"/>
+        <Member id="99136" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesFinancierasCortoPlazoValoresRepresentativosDeuda"/>
+        <Member id="99137" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesFinancierasCortoPlazoDerivados"/>
+        <Member id="99138" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesFinancierasCortoPlazoOtrosActivosFinancieros"/>
+        <Member id="99127" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazoInstrumentosPatrimonio"/>
+        <Member id="99128" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazoCreditosEmpresas"/>
+        <Member id="99130" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazoValoresRepresentativosDeuda"/>
+        <Member id="99131" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazoDerivados"/>
+        <Member id="99132" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazoOtrosActivosFinancieros"/>
+        <Member id="99124" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteActivosNoCorrientesMantenidosVenta"/>
+        <Member id="99125" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteDeudoresComercialesOtrasCuentasCobrar"/>
+        <Member id="99126" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazo"/>
+        <Member id="99133" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesFinancierasCortoPlazo"/>
+        <Member id="99116" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesFinancierasLargoPlazoInstrumentosPatrimonio"/>
+        <Member id="99117" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesFinancierasLargoPlazoCreditosEmpresas"/>
+        <Member id="99118" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesFinancierasLargoPlazoValoresRepresentativosDeuda"/>
+        <Member id="99120" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesFinancierasLargoPlazoDerivados"/>
+        <Member id="99121" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesFinancierasLargoPlazoOtrosActivosFinancieros"/>
+        <Member id="99110" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazoInstrumentosPatrimonio"/>
+        <Member id="99111" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazoCreditosEmpresas"/>
+        <Member id="99112" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazoValoresRepresentativosDeuda"/>
+        <Member id="99113" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazoDerviados"/>
+        <Member id="99114" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazoOtrosActivosFinancieros"/>
+        <Member id="99108" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazo"/>
+        <Member id="99115" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesFinancierasLargoPlazo"/>
+        <Member id="99122" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteDeudoresComercialesNoCorrientes"/>
+        <Member id="99107" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrientePresentacion"/>
+        <Member id="99123" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrientePresentacion"/>
+        <Member id="99140" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoEfectivoOtrosActivosLiquidosEquivalentes"/>
+        <Member id="99155" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrienteDeudasCortoPlazoObligacionesOtrosValoresNegociables"/>
+        <Member id="99156" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrienteDeudasCortoPlazoDeudasEntidadesCredito"/>
+        <Member id="99157" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrienteDeudasCortoPlazoAcreedoresArrendamientoFinanciero"/>
+        <Member id="99158" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrienteDeudasCortoPlazoDerivados"/>
+        <Member id="99160" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrienteDeudasCortoPlazoOtrosPasivosFinancieros"/>
+        <Member id="99153" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrientePasivosVinculadosActivosNoCorrientesMantenidosVenta"/>
+        <Member id="99154" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrienteDeudasCortoPlazo"/>
+        <Member id="99161" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrienteDeudasEmpresasGrupoEmpresasAsociadasCortoPlazo"/>
+        <Member id="99162" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrienteAcreedoresComercialesOtrasCuentasPagar"/>
+        <Member id="99144" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrienteDeudasLargoPlazoObligacionesOtrosValoresNegociables"/>
+        <Member id="99145" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrienteDeudasLargoPlazoDeudasEntidadesCredito"/>
+        <Member id="99146" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrienteDeudasLargoPlazoAcreedoresArrendamientoFinanciero"/>
+        <Member id="99147" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrienteDeudasLargoPlazoDerivados"/>
+        <Member id="99148" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrienteDeudasLargoPlazoOtrosPasivosFinancieros"/>
+        <Member id="99143" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrienteDeudasLargoPlazo"/>
+        <Member id="99150" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrienteDeudasEmpresasGrupoEmpresasAsociadasLargoPlazo"/>
+        <Member id="99151" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrienteAcreedoresComercialesNoCorrientes"/>
+        <Member id="99142" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrientePresentacion"/>
+        <Member id="99152" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrientePresentacion"/>
+    </conceptMap>
+    <conceptMap outputID="MonedaExtranjeraDiferenciasCambioLiquidadas"
+        inputID="1"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="99134" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesFinancierasCortoPlazoInstrumentosPatrimonio"/>
+        <Member id="99135" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesFinancierasCortoPlazoCreditosEmpresas"/>
+        <Member id="99136" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesFinancierasCortoPlazoValoresRepresentativosDeuda"/>
+        <Member id="99137" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesFinancierasCortoPlazoDerivados"/>
+        <Member id="99138" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesFinancierasCortoPlazoOtrosActivosFinancieros"/>
+        <Member id="99127" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazoInstrumentosPatrimonio"/>
+        <Member id="99128" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazoCreditosEmpresas"/>
+        <Member id="99130" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazoValoresRepresentativosDeuda"/>
+        <Member id="99131" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazoDerivados"/>
+        <Member id="99132" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazoOtrosActivosFinancieros"/>
+        <Member id="99124" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteActivosNoCorrientesMantenidosVenta"/>
+        <Member id="99125" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteDeudoresComercialesOtrasCuentasCobrar"/>
+        <Member id="99126" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazo"/>
+        <Member id="99133" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrienteInversionesFinancierasCortoPlazo"/>
+        <Member id="99116" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesFinancierasLargoPlazoInstrumentosPatrimonio"/>
+        <Member id="99117" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesFinancierasLargoPlazoCreditosEmpresas"/>
+        <Member id="99118" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesFinancierasLargoPlazoValoresRepresentativosDeuda"/>
+        <Member id="99120" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesFinancierasLargoPlazoDerivados"/>
+        <Member id="99121" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesFinancierasLargoPlazoOtrosActivosFinancieros"/>
+        <Member id="99110" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazoInstrumentosPatrimonio"/>
+        <Member id="99111" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazoCreditosEmpresas"/>
+        <Member id="99112" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazoValoresRepresentativosDeuda"/>
+        <Member id="99113" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazoDerviados"/>
+        <Member id="99114" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazoOtrosActivosFinancieros"/>
+        <Member id="99108" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazo"/>
+        <Member id="99115" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteInversionesFinancierasLargoPlazo"/>
+        <Member id="99122" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrienteDeudoresComercialesNoCorrientes"/>
+        <Member id="99107" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoNoCorrientePresentacion"/>
+        <Member id="99123" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCorrientePresentacion"/>
+        <Member id="99140" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoEfectivoOtrosActivosLiquidosEquivalentes"/>
+        <Member id="99155" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrienteDeudasCortoPlazoObligacionesOtrosValoresNegociables"/>
+        <Member id="99156" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrienteDeudasCortoPlazoDeudasEntidadesCredito"/>
+        <Member id="99157" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrienteDeudasCortoPlazoAcreedoresArrendamientoFinanciero"/>
+        <Member id="99158" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrienteDeudasCortoPlazoDerivados"/>
+        <Member id="99160" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrienteDeudasCortoPlazoOtrosPasivosFinancieros"/>
+        <Member id="99153" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrientePasivosVinculadosActivosNoCorrientesMantenidosVenta"/>
+        <Member id="99154" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrienteDeudasCortoPlazo"/>
+        <Member id="99161" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrienteDeudasEmpresasGrupoEmpresasAsociadasCortoPlazo"/>
+        <Member id="99162" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrienteAcreedoresComercialesOtrasCuentasPagar"/>
+        <Member id="99144" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrienteDeudasLargoPlazoObligacionesOtrosValoresNegociables"/>
+        <Member id="99145" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrienteDeudasLargoPlazoDeudasEntidadesCredito"/>
+        <Member id="99146" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrienteDeudasLargoPlazoAcreedoresArrendamientoFinanciero"/>
+        <Member id="99147" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrienteDeudasLargoPlazoDerivados"/>
+        <Member id="99148" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrienteDeudasLargoPlazoOtrosPasivosFinancieros"/>
+        <Member id="99143" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrienteDeudasLargoPlazo"/>
+        <Member id="99150" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrienteDeudasEmpresasGrupoEmpresasAsociadasLargoPlazo"/>
+        <Member id="99151" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrienteAcreedoresComercialesNoCorrientes"/>
+        <Member id="99142" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoNoCorrientePresentacion"/>
+        <Member id="99152" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivoCorrientePresentacion"/>
+    </conceptMap>
+</Statement>
