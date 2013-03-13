@@ -1,18 +1,14 @@
 package com.code.aon.dbutils;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -23,82 +19,6 @@ public class AonDomainDuplicate implements Constants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(AonDomainDuplicate.class);
 	
-	private static final String TABLE = "TABLE";
-	private static final String TABLE_NAME = "TABLE_NAME";
-
-	private static final String[] NO_MERGE_TABLES = new String[] {
-		SESSION_TABLE_NAME, ACTION_ENTRY_TABLE_NAME, DOMAIN_TABLE_NAME
-	};
-	
-	private static final AonInternalReference BANK_STATEMENT_LINK_REFERENCE = new AonInternalReference(
-			BANK_STATEMENT_LINK_TABLE_NAME, SOURCE_COLUMN_NAME, SOURCE_ID_COLUMN_NAME
-			, new Integer[] {2,3}
-			, new String[] {BANK_CONCEPT_TABLE_NAME,ACCOUNT_TABLE_NAME});
-
-	private static final AonInternalReference APP_PARAM_REFERENCES = new AonInternalReference( 
-			APP_PARAM_TABLE_NAME, NAME_COLUMN_NAME, VALUE_COLUMN_NAME
-			, new String[] {
-				 "ACC_DEFAULT_ALLOWANCE_ACC"
-				,"ACC_DEFAULT_CASH_ACC"
-				,"ACC_DEFAULT_CHARGED_RET_ACC"
-				,"ACC_DEFAULT_CHARGED_VAT_ACC"
-				,"ACC_DEFAULT_COMPANY_SOC_INS_ACC"
-				,"ACC_DEFAULT_COMPENSATION_ACC"
-				,"ACC_DEFAULT_DEBT_INTEREST_ACC"
-				,"ACC_DEFAULT_FINAN_EXPENSES_ACC"
-				,"ACC_DEFAULT_PAID_RET_ACC"
-				,"ACC_DEFAULT_PAID_VAT_ACC"
-				,"ACC_DEFAULT_PENDING_SALARY_ACC"
-				,"ACC_DEFAULT_PURCHASE_ACC"
-				,"ACC_DEFAULT_SALARY_ACC"
-				,"ACC_DEFAULT_SALES_ACC"
-				,"ACC_DEFAULT_SOCIAL_INSURANCE_ACC"
-				,"ACC_SALARY_CHARGED_RET_ACC"
-				,"ACC_DEFAULT_INVOICE_SERIES"
-				,"ACC_DEFAULT_PERIOD"
-				,"ACC_DEFAULT_RETENTION_PERCENT"
-				,"ACC_DEFAULT_VAT_PERCENT"}
-			, new String[] {
-				 ACCOUNT_TABLE_NAME
-				,ACCOUNT_TABLE_NAME
-				,ACCOUNT_TABLE_NAME
-				,ACCOUNT_TABLE_NAME
-				,ACCOUNT_TABLE_NAME
-				,ACCOUNT_TABLE_NAME
-				,ACCOUNT_TABLE_NAME
-				,ACCOUNT_TABLE_NAME
-				,ACCOUNT_TABLE_NAME
-				,ACCOUNT_TABLE_NAME
-				,ACCOUNT_TABLE_NAME
-				,ACCOUNT_TABLE_NAME
-				,ACCOUNT_TABLE_NAME
-				,ACCOUNT_TABLE_NAME
-				,ACCOUNT_TABLE_NAME
-				,ACCOUNT_TABLE_NAME
-				,SERIES_TABLE_NAME
-				,ACCOUNT_PERIOD_TABLE_NAME
-				,TAX_TABLE_NAME
-				,TAX_TABLE_NAME});
-	
-	private static final AonInternalReference INVOICE_DETAIL_REFERENCES = new AonInternalReference(
-			INVOICE_DETAIL_TABLE_NAME, SOURCE_COLUMN_NAME, SOURCE_ID_COLUMN_NAME
-			, new Integer[] {1,2,3,4,8}
-			, new String[] {PURCHASE_DETAIL_TABLE_NAME,SALES_DETAIL_TABLE_NAME,DELIVERY_DETAIL_TABLE_NAME,INCOME_DETAIL_TABLE_NAME,OFFER_DETAIL_TABLE_NAME});
-
-	private static final AonInternalReference ALARM_REFERENCES = new AonInternalReference(
-			ALARM_TABLE_NAME, SOURCE_COLUMN_NAME, SOURCE_ID_COLUMN_NAME
-			, new Integer[] {0,1,3,4}
-			, new String[] {NOTICE_TABLE_NAME,TASK_TABLE_NAME,COMMERCIAL_TRACKING_TABLE_NAME,MK_ACTION_TARGET_TABLE_NAME});
-	
-	private static final Map<String,AonInternalReference> INTERNAL_REFERENCES_TABLES = new HashMap<String, AonInternalReference>();
-
-	static {
-		INTERNAL_REFERENCES_TABLES.put(BANK_STATEMENT_LINK_TABLE_NAME,BANK_STATEMENT_LINK_REFERENCE);
-		INTERNAL_REFERENCES_TABLES.put(INVOICE_DETAIL_TABLE_NAME,INVOICE_DETAIL_REFERENCES);
-		INTERNAL_REFERENCES_TABLES.put(ALARM_TABLE_NAME,ALARM_REFERENCES);
-		INTERNAL_REFERENCES_TABLES.put(APP_PARAM_TABLE_NAME,APP_PARAM_REFERENCES);
-	}
-
 	private Map<String,TableInfo> tables;
 	private Connection connection;
 	private Integer sourceDomain;
@@ -106,13 +26,7 @@ public class AonDomainDuplicate implements Constants {
 	
 	public AonDomainDuplicate(Connection connection) throws AonSQLException {
 		this.connection = connection;
-		this.tables = new LinkedHashMap<String, TableInfo>();
-		try {
-			DatabaseMetaData metaData = connection.getMetaData();
-			resolveTables(metaData);
-		} catch ( SQLException e ) {
-			throw new AonSQLException("Error iniciando la duplicación de dominios", e);
-		}
+		this.tables = new TableUtil().resolveTables(connection);
 	}
 
 	private void executeStatement( String statement ) {
@@ -126,82 +40,7 @@ public class AonDomainDuplicate implements Constants {
 			DbUtils.closeQuietly(s);
 		}
 	}
-	
-	private boolean isMergeableTable(DatabaseMetaData metaData, String tableName) throws AonSQLException {
-		if ( ArrayUtils.contains(NO_MERGE_TABLES, tableName) ) {
-			return false;
-		}
-		boolean mergeable = false;
-		ResultSet rs = null;
-		try {		
-			rs = metaData.getColumns(null, null, tableName, DOMAIN_COLUMN_NAME);
-			mergeable = rs.next();
-		} catch (SQLException e) {
-			throw new AonSQLException("Error analizando la tabla " + tableName, e);
-		} finally {
-			DbUtils.closeQuietly(rs);
-		}			
-		return mergeable;
-	}
 
-
-	private void addTable(DatabaseMetaData metaData, String table, Stack<String> stack ) throws AonSQLException {
-		if (!tables.containsKey(table) && !stack.contains(table)) {
-			stack.push(table);
-			TableInfo tableInfo = new TableInfo(table, metaData);
-			ResultSet rs = null;
-			try {			
-				rs = metaData.getImportedKeys(null, null, table);
-				while (rs.next()) {
-					String fkTable = rs.getString(PKTABLE_NAME);
-					if (isMergeableTable(metaData, fkTable)) {
-						addTable(metaData, fkTable, stack);	
-					}
-				}
-				if (INTERNAL_REFERENCES_TABLES.containsKey(table)) {
-					for (String referencedTable : INTERNAL_REFERENCES_TABLES.get(table).getFkTables() ) {
-						if (isMergeableTable(metaData, referencedTable)) {
-							addTable(metaData, referencedTable, stack);	
-						}
-					}
-				}
-			} catch (SQLException e) {
-				throw new AonSQLException("Error obteniendo información de la tabla " + table, e);
-			} finally {
-				DbUtils.closeQuietly(rs);
-			}			
-			tables.put(table, tableInfo);
-			stack.pop();
-		}
-	}
-	
-	private void resolveTables( DatabaseMetaData metaData ) throws AonSQLException {
-		Stack<String> stack = new Stack<String>();
-		addTable(metaData, DOMAIN_TABLE_NAME, stack);
-		ResultSet rs = null;
-		try {
-	        rs = metaData.getTables(null, null, null, new String[]{TABLE});
-	        if ( rs.next() ) {
-        		LOGGER.debug("Construyendo el orden de inserción");
-                do {
-                	String tableName = rs.getString(TABLE_NAME);
-                    if (isMergeableTable(metaData, tableName)) {
-                    	addTable(metaData, tableName, stack);
-                    } else {
-                    	LOGGER.debug("Ignorando la tabla {}", tableName);    	
-            		}
-                } while (rs.next());
-	        } else {
-	        	LOGGER.error("No existen tablas en la BD origen");
-	        }
-		} catch (SQLException e) {
-			throw new AonSQLException(e.getMessage() , e);
-		} finally {
-			DbUtils.closeQuietly(rs);
-		}
-		LOGGER.debug("Numero de tablas: ", tables.size() );
-	}
-	
 	public Integer execute(Integer sourceDomain, String domainName, String domainDescription) throws AonSQLException {
 		try {
 			this.newDomain = null;
@@ -306,8 +145,8 @@ public class AonDomainDuplicate implements Constants {
 		ResultSet rs = null;
 		PreparedStatement insert = null;
 		try {
-			String sentence = t.getSelectStatement(this.sourceDomain);
-			select = connection.prepareStatement(sentence,t.getSelectColumns());
+			String sentence = t.getSelectStatement(new Integer[]{this.sourceDomain});
+			select = connection.prepareStatement(sentence,t.getColumnNames());
 			rs = select.executeQuery();
 			if ( rs.next() ) {
 				String insertStmt = t.getInsertStatement();
@@ -334,35 +173,35 @@ public class AonDomainDuplicate implements Constants {
 	}
 	
 	private void updateReferences(TableInfo t) throws SQLException {
-		for (int i = 0 ;i < t.getFkTables().length; i++  ) {
-			String fkTable = t.getFkTables()[i];
-			if (t.getName().equals(fkTable) ) {
-				String fkColumn = t.getFkColumns()[i];
-				String updateStmt = "UPDATE " + t.getName() + " SET " + fkColumn + " =  ? WHERE " + t.getPkColumn() + "=?";
-				String selectStmt = "SELECT * FROM " + t.getName() + " WHERE domain = " + newDomain;
-				PreparedStatement update = null;
-				PreparedStatement select = null;
-				ResultSet rs = null;
-				try {
-					update = connection.prepareStatement(updateStmt);
-					select = connection.prepareStatement(selectStmt,t.getSelectColumns());
-					rs = select.executeQuery();
-					while (rs.next()) {
-						int id = rs.getInt( t.getPkColumn() );
-						Integer value = rs.getInt( fkColumn );
-						if (!rs.wasNull()) {
-							Integer newValue = t.getNewKey(value);
-							update.setInt(1, newValue);	
-							update.setInt(2, id);
-							update.execute();
-							LOGGER.debug( " Recursive {} id {} ---> {} updated", new Object[]{t.getName(), id, newValue});
+		for (ColumnInfo ci : t.getColumns()) {
+			if ( ci.isFkColummn() ) {
+				if (t.getName().equals(ci.getFkTableName()) ) {
+					String updateStmt = "UPDATE " + t.getName() + " SET " + ci.getName() + " =  ? WHERE " + t.getPkColumn().getName() + "=?";
+					String selectStmt = "SELECT * FROM " + t.getName() + " WHERE domain = " + newDomain;
+					PreparedStatement update = null;
+					PreparedStatement select = null;
+					ResultSet rs = null;
+					try {
+						update = connection.prepareStatement(updateStmt);
+						select = connection.prepareStatement(selectStmt,t.getColumnNames());
+						rs = select.executeQuery();
+						while (rs.next()) {
+							int id = rs.getInt( t.getPkColumn().getName() );
+							Integer value = rs.getInt( ci.getName() );
+							if (!rs.wasNull()) {
+								Integer newValue = t.getNewKey(value);
+								update.setInt(1, newValue);	
+								update.setInt(2, id);
+								update.execute();
+								LOGGER.debug( " Recursive {} id {} ---> {} updated", new Object[]{t.getName(), id, newValue});
+							}
 						}
-					}
-				} finally {
-					DbUtils.closeQuietly(rs);
-					DbUtils.closeQuietly(select);
-					DbUtils.closeQuietly(update);
-				}							
+					} finally {
+						DbUtils.closeQuietly(rs);
+						DbUtils.closeQuietly(select);
+						DbUtils.closeQuietly(update);
+					}							
+				}
 			}
 		}
 	}
@@ -381,27 +220,26 @@ public class AonDomainDuplicate implements Constants {
 	}
 
 	private Integer insert(PreparedStatement insert,ResultSet rs, TableInfo t) throws SQLException {
-		int id = rs.getInt( t.getPkColumn() );
+		int id = rs.getInt( t.getPkColumn().getName() );
 		Integer newId = null;
 		boolean notFound = (t.getNewKey(id) == null);
 		if (notFound) {
-			for (int i = 0; i < t.getInsertColumns().length; i++) {
-				String column = t.getInsertColumns()[i];
-				Object value = rs.getObject(column);
+			ColumnInfo[] insertColumns = t.getInsertColumns();
+			for (int i = 0; i < insertColumns.length; i++) {
+				ColumnInfo ci = insertColumns[i];
+				Object value = rs.getObject(ci.getName());
 				if (value != null) {
-					int index = ArrayUtils.indexOf(t.getFkColumns(), column);
-					if (index != -1 ) {
+					if ( ci.isFkColummn() ) {
 						Integer valueInteger = getInteger(value);
-						String fkTable = t.getFkTables()[index];
-						value = getReferenceValue(t, valueInteger, column, fkTable);
-					} else if (INTERNAL_REFERENCES_TABLES.containsKey(t.getName())) {
-						AonInternalReference air = INTERNAL_REFERENCES_TABLES.get(t.getName());
-						if (air.getColumn().equals(column)) {
+						value = getReferenceValue(t, valueInteger, ci.getName(), ci.getFkTableName());
+					} else if ( TableUtil.isInternalReference(t) ) {
+						AonInternalReference air = TableUtil.getInternalReference(t);
+						if (air.getColumn().equals(ci.getName())) {
 							Object discriminator = rs.getObject( air.getDiscriminatorColumn() );
 							String fkTable = getReferencedTable( air, discriminator );
 							if (fkTable != null) {
 								Integer valueInteger = getInteger(value);
-								value = getReferenceValue(t, valueInteger, column, fkTable);
+								value = getReferenceValue(t, valueInteger, ci.getName(), fkTable);
 								if (value == null) {
 									value = -1;	
 								}								
@@ -448,8 +286,8 @@ public class AonDomainDuplicate implements Constants {
 		return null; 
 	}
 
-	private Integer ensureValueId(String fkTable, Integer value) throws SQLException {
-		String sentence = "SELECT id FROM " + fkTable + " WHERE id = " + value; 
+	private Integer ensureValueId(String fkTable, String pk, Integer value) throws SQLException {
+		String sentence = "SELECT " + pk + " FROM " + fkTable + " WHERE " + pk + " = " + value; 
 		Statement s = null;
 		ResultSet rs = null;
 		try {
@@ -472,15 +310,15 @@ public class AonDomainDuplicate implements Constants {
 			if ( fkTableInfo != null ) {
 				newValue = fkTableInfo.getNewKey(value);
 				if ( newValue == null ) {
-					newValue = ensureValueId(fkTable, value);
+					newValue = ensureValueId(fkTable, fkTableInfo.getPkColumn().getName(), value);
 				}
 			} else {
-				newValue = ensureValueId(fkTable, value);
+				newValue = ensureValueId(fkTable, "id", value);
 			}
 			if ( newValue == null ) {
 				LOGGER.warn( "Reference ({},{}-{}) for {} not found", new Object[]{t.getName(),column, value, fkTable} );
 			}
-			if (t.getPkColumn().equals(column)) {
+			if (t.getPkColumn().getName().equals(column)) {
 				t.put((Integer) value, newValue);
 			}
 			return newValue;
@@ -491,11 +329,12 @@ public class AonDomainDuplicate implements Constants {
 	public static void main(String[] args) {
 		DbUtils.loadDriver("org.gjt.mm.mysql.Driver");
 		
-		Integer sourceDomain = 611;
-		String domainName = "test.aonsolutions.dev";
+		Integer sourceDomain = 8;
+		String domainName = "pulsar.aonsolutions.dev";
 		String domainDescription = "PRUEBA de PLANTILLA";
 		
-		String url = "jdbc:mysql://volga:3306/pro-aonsolutions-net";
+		// String url = "jdbc:mysql://volga:3306/pro-aonsolutions-net";
+		String url = "jdbc:mysql://volga:3306/aimar-esferalia-com";
 		String user = "dbuser";
 		String password = "serubd2000";
 		

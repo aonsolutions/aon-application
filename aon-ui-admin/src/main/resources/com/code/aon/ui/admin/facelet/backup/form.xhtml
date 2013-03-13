@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="userOverloadForm">
+
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+					<ui:param name="toolbarTitle" value="#{adminBundle.admin_advanced_mode}" />
+					<ui:define name="toolbarContent">
+						<aon:htmlCommandLink id="download" target="_blank"
+							value="#{bundle.aon_fileupload_download}"
+							actionListener="#{backup.onDump}"
+							styleClass="aon-finding-toolbar-item aon-icon-file-exit" />
+					</ui:define>
+				</ui:decorate>		
+						
+				<aon:div styleClass="aon-scroll-area">
+	
+					<aon:panelGrid columns="2">
+	
+						<c:if test="#{domainSwitcher.domainManagementAvailable}">						
+							<aon:outputLabel value="#{adminBundle.admin_domain_childs}" 
+								for="Backup_childDomains"/>
+							<aon:selectBooleanCheckbox id="Backup_childDomains"
+								value="#{backup.includeChildDomains}" />								
+						</c:if>
+							
+					</aon:panelGrid>
+			
+				</aon:div>
+			
+		</aon:form>
+	</ui:define>
+
+</ui:composition>

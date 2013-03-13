@@ -448,6 +448,15 @@
 			<value>ApplicationUser_user_login</value>
 		</managed-property>
 	</managed-bean>	
+	
+	<!-- ************* BACKUP ***************** -->
+	<managed-bean>
+		<managed-bean-name>backup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.admin.controller.BackupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>			
 
 	<!-- =================== Main ================= -->
 	<navigation-rule>
@@ -534,6 +543,14 @@
 		<navigation-case>
 			<from-outcome>userOverload_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/admin/facelet/userOverload/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== Bakcup ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>backup_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/backup/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

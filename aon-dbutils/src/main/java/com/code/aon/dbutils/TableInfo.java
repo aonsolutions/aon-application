@@ -3,30 +3,29 @@ package com.code.aon.dbutils;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.dbutils.DbUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TableInfo implements Constants {
 
-	private static final String YES_VALUE = "YES";
-
 	private final static Logger LOGGER = LoggerFactory.getLogger(TableInfo.class);
 	
 	private String name;
-	private String[] selectColumns;
-	private String[] insertColumns;
-	private String[] fkTables;
-	private String[] fkColumns;
-	private String pkColumn;
+	private ColumnInfo[] columns;
+	private int insertColumnsNumber;
+	private ColumnInfo pkColumn;
 	private boolean autoincrementPK;
+	private boolean recursive;
 	private Map<Integer,Integer> keys;
+	private Integer baseId;
 	
 	public TableInfo(String name, DatabaseMetaData metaData) {
 		this.name = name;
@@ -40,20 +39,19 @@ public class TableInfo implements Constants {
 		ResultSet rs = null;
 		try {		
 			rs = metaData.getColumns(null, null, this.name, null);
-			List<String> insertColumns = new LinkedList<String>();
-			List<String> selectColumns = new LinkedList<String>();		
+			List<ColumnInfo> columns = new LinkedList<ColumnInfo>();		
 			while (rs.next()) {
-				String ai = rs.getString(IS_AUTOINCREMENT);
 				String columnName = rs.getString(COLUMN_NAME);
-				if ( YES_VALUE.equals(ai) ) {
+				boolean autoIncrement = YES_VALUE.equals(rs.getString(IS_AUTOINCREMENT));
+				int type = rs.getInt(DATA_TYPE);
+				columns.add( new ColumnInfo(columnName, type, autoIncrement) );
+				if ( autoIncrement ) {
 					setAutoincrementPK(true);
 				} else {
-					insertColumns.add( columnName );
+					this.insertColumnsNumber++;
 				}
-				selectColumns.add( columnName );
 			}
-			setInsertColumns(insertColumns.toArray(new String[insertColumns.size()]));
-			setSelectColumns(selectColumns.toArray(new String[selectColumns.size()]));			
+			setColumns(columns.toArray(new ColumnInfo[columns.size()]));			
 		} catch (SQLException e) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
@@ -66,7 +64,9 @@ public class TableInfo implements Constants {
 		try {
 			rs = metaData.getPrimaryKeys(null, null, this.name);
 			if (rs.next()) {
-				setPkColumn( rs.getString(COLUMN_NAME) );	
+				ColumnInfo ci = getColumn(rs.getString(COLUMN_NAME)); 
+				setPkColumn(ci);
+				ci.setPrimaryKey(true);
 			} 
 		} catch (SQLException e) {
 			LOGGER.error( e.getMessage(), e );
@@ -78,16 +78,15 @@ public class TableInfo implements Constants {
 	private void initForeignKeys( DatabaseMetaData metaData ) {
 		ResultSet rs = null;
 		try {
-			List<String> fkTables = new LinkedList<String>();
-			List<String> fkColumns = new LinkedList<String>();		
 			ResultSet ekRs = metaData.getImportedKeys(null, null, this.name);
 			while (ekRs.next()) {
-				fkTables.add(ekRs.getString(PKTABLE_NAME));
-				String b = ekRs.getString(FKCOLUMN_NAME);
-				fkColumns.add(b);
+				ColumnInfo ci = getColumn(ekRs.getString(FKCOLUMN_NAME));
+				String fkTableName = ekRs.getString(PKTABLE_NAME); 
+				ci.setFkTableName( fkTableName );
+				if ( this.name.equals(fkTableName) ) {
+					this.recursive = true;
+				}
 			}
-			setFkTables(fkTables.toArray(new String[fkTables.size()]));
-			setFkColumns(fkColumns.toArray(new String[fkColumns.size()]));	
 		} catch (SQLException e) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
@@ -107,43 +106,56 @@ public class TableInfo implements Constants {
 		return name;
 	}
 	
-	public String[] getSelectColumns() {
-		return selectColumns;
+	public ColumnInfo[] getColumns() {
+		return columns;
 	}
 	
-	private void setSelectColumns(String[] selectColumns) {
-		this.selectColumns = selectColumns;
+	private void setColumns(ColumnInfo[] columns) {
+		this.columns = columns;
 	}
 	
-	public String[] getInsertColumns() {
-		return insertColumns;
+	public ColumnInfo getColumn( String name ) {
+		for( ColumnInfo columnInfo: this.columns ) {
+			if ( columnInfo.getName().equals(name) ) {
+				return columnInfo;
+			}
+		}
+		return null;
+	}
+
+	public String[] getColumnNames() {
+		String[] columnNames = new String[this.columns.length];		
+		for( int i = 0; i < columnNames.length; i++ ) {
+			columnNames[i] = this.columns[i].getName();
+		}
+		return columnNames;			
+	}
+
+	public ColumnInfo[] getInsertColumns() {
+		ColumnInfo[] insertColumns = new ColumnInfo[this.insertColumnsNumber];
+		for( int i = 0, n = 0; i < columns.length; i++ ) {
+			if (! columns[i].isAutoIncrement() ) {
+				insertColumns[n++] = columns[i];
+			}
+		}
+		return insertColumns;			
 	}
 	
-	private void setInsertColumns(String[] insertColumns) {
-		this.insertColumns = insertColumns;
+	public String[] getInsertColumnNames() {
+		String[] columnNames = new String[this.insertColumnsNumber];
+		for( int i = 0, n = 0; i < columns.length; i++ ) {
+			if (! columns[i].isAutoIncrement() ) {
+				columnNames[n++] = columns[i].getName();
+			}
+		}
+		return columnNames;			
 	}
 	
-	public String[] getFkTables() {
-		return fkTables;
-	}
-	
-	private void setFkTables(String[] fkTables) {
-		this.fkTables = fkTables;
-	}
-	
-	public String[] getFkColumns() {
-		return fkColumns;
-	}
-	
-	private void setFkColumns(String[] fkColumns) {
-		this.fkColumns = fkColumns;
-	}
-	
-	public String getPkColumn() {
+	public ColumnInfo getPkColumn() {
 		return pkColumn;
 	}
 	
-	private void setPkColumn(String pkColumn) {
+	private void setPkColumn(ColumnInfo pkColumn) {
 		this.pkColumn = pkColumn;
 	}
 	
@@ -156,56 +168,121 @@ public class TableInfo implements Constants {
 	}
 	
 	public boolean isRecursive() {
-		return !DOMAIN_TABLE_NAME.equals(name) && ArrayUtils.contains(getFkTables(), name);
-	}
-
-	private String getInsertColumnsToString() {
-		StringBuffer buf = new StringBuffer(); 
-		for (String col : getInsertColumns()) {
-			if (buf.length() > 0) {
-				buf.append(",");
-			}
-			buf.append(col);
-		}
-		return buf.toString();
+		return !isDomainTable() && recursive;
 	}
 	
-	private String getInsertColumnsToHostVariables() {
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < getInsertColumns().length; i++) {
-			if (buf.length() > 0) {
-				buf.append(",");
-			}
-			buf.append("?");
-		}
-		return buf.toString();
+	private String[] getInsertColumnsToHostVariables() {
+		String[] values = new String[this.insertColumnsNumber];
+		Arrays.fill(values, "?");
+		return values;
 	}
 	
 	public String getInsertStatement() {
+		return getInsertStatement(getInsertColumnsToHostVariables());
+	}
+
+	public String getInsertStatement( String[] values ) {
 		StringBuffer buf = new StringBuffer();
-		buf.append("INSERT INTO ");
-		buf.append(getName());
-		buf.append(" (");
-		buf.append(getInsertColumnsToString());
-		buf.append(") VALUES (");
-		buf.append(getInsertColumnsToHostVariables());
+		buf.append( getInsertStatementBegin(false) );
+		buf.append( " (");
+		buf.append(StringUtils.join(values, ","));
 		buf.append(")");
 		return buf.toString();
 	}
 
-	public String getSelectStatement( int domain ) {
+	public String getInsertStatementBegin(boolean allColumns) {
+		StringBuffer buf = new StringBuffer();
+		buf.append("INSERT INTO ");
+		buf.append(getName());
+		buf.append(" (");
+		if ( allColumns ) {
+			buf.append(StringUtils.join(getColumnNames(), ","));	
+		} else {
+			buf.append(StringUtils.join(getInsertColumnNames(), ","));
+		}
+		buf.append(") VALUES");
+		return buf.toString();
+	}
+	
+	public String getSelectStatement( Integer[] domains ) {
 		StringBuffer buf = new StringBuffer();
 		buf.append("SELECT * FROM ");
 		buf.append(getName());
 		buf.append(" WHERE ");
 		if ( DOMAIN_TABLE_NAME.equals(getName()) ) {
-			buf.append( getPkColumn() );	
+			buf.append( getPkColumn().getName() );	
 		} else {
 			buf.append( DOMAIN_COLUMN_NAME );
 		}
-		buf.append(" = ");
-		buf.append( domain );
+		if ( domains.length == 1 ) {
+			buf.append(" = ");
+			buf.append( domains[0] );			
+		} else {
+			buf.append(" IN (");
+			buf.append( StringUtils.join(domains, ",") );
+			buf.append( ")" );
+		}
+		buf.append( " order by ");
+		buf.append( getPkColumn().getName() );
 		return buf.toString();
+	}
+
+	public Integer getBaseId() {
+		return baseId;
+	}
+
+	public void setBaseId(Integer baseId) {
+		this.baseId = baseId;
+	}
+
+	public String getVariableId() {
+		return getVariableId(getName());
+	}
+	
+	private String getVariableId( String name ) {
+		return "@" + StringUtils.upperCase(name) + "_ID";
+	}
+	
+	public boolean isDomainTable() {
+		return StringUtils.equals(getName(), DOMAIN_TABLE_NAME);
+	}
+
+	public String getSetVariableStatement() {
+		StringBuffer sb = new StringBuffer();
+		sb.append( "SET ").append( getVariableId() ).append(" = ");
+		sb.append("(SELECT (IFNULL(MAX(").append(getPkColumn().getName());
+		sb.append("),0)+1) FROM ").append(getName()).append(");");			
+		return sb.toString();
+	}
+
+	public String getSetVariableStatement( String lastId ) {
+		StringBuffer sb = new StringBuffer();
+		sb.append( "SET ").append( getVariableId() ).append(" = (SELECT ");
+		if ( getPkColumn().isFkColummn() ) {
+			sb.append(lastId);
+		} else {
+			sb.append("LAST_INSERT_ID()");	
+		}			
+		sb.append(");");
+		return sb.toString();
+	}
+	
+	public String getUpdateAutoIncrementStatement() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("ALTER TABLE ").append(getName()).append(" AUTO_INCREMENT = 1;");
+		return sb.toString();		
+	}
+	
+	public String getRelativeId( Integer id ) {
+		if ( this.baseId == null ) {
+			LOGGER.warn( "Table {} base id null, id {}", getName(), id);
+			return String.valueOf(id);
+		} 
+		int diff = id - this.baseId;
+		if ( diff > 0 ) {
+			return getVariableId() + "+" + diff;
+		}
+		return getVariableId();
 	}
 	
 }

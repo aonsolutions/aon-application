@@ -5,6 +5,9 @@ public interface Constants {
 	String ACCOUNT_PERIOD_TABLE_NAME = "account_period";
 	String ACCOUNT_TABLE_NAME = "account";
 	String ACTION_ENTRY_TABLE_NAME = "action_entry";
+	String ACTION_FAVORITE_TABLE_NAME = "action_favorite";
+	String ACTION_DENIED_TABLE_NAME = "action_denied";
+	String PROFILE_ACTION_DENIED_TABLE_NAME = "profile_action_denied";
 	String ACTION_TABLE_NAME = "action";
 	String ALARM_TABLE_NAME = "alarm";
 	String APPLICATION_TABLE_NAME = "application";
@@ -41,6 +44,7 @@ public interface Constants {
 	String SOURCE_ID_COLUMN_NAME = "source_id";
 	String SOURCE_COLUMN_NAME = "source";
 	String VALUE_COLUMN_NAME = "value";
+	String ID_COLUMN_NAME = "id";
 	
 	String IS_AUTOINCREMENT = "IS_AUTOINCREMENT";
 	String COLUMN_NAME = "COLUMN_NAME";
@@ -49,5 +53,14 @@ public interface Constants {
 	
 	String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
 	String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
+	String BEGIN = "BEGIN;";
+	String COMMIT = "COMMIT;";
+
+	String TABLE = "TABLE";
+	String TABLE_NAME = "TABLE_NAME";
+	String TYPE_NAME = "TYPE_NAME";
+	String DATA_TYPE = "DATA_TYPE";
+	String YES_VALUE = "YES";
+
 	
 }

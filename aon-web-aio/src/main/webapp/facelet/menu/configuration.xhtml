@@ -93,6 +93,12 @@
 											actionListener="#{adminMain.onInitSignature}"
 											value="#{adminBundle.admin_signature_enterprise}" />
 									</aon:div>								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="dump"
+											action="backup_form"
+											actionListener="#{backup.onInit}"
+											value="#{adminBundle.admin_backup}" />
+									</aon:div>									
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
