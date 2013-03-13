@@ -26,6 +26,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.audit.IAuditable;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.FinanceStatus;
@@ -37,6 +38,7 @@ import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.code.aon.registry.IAddress;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryDocument;
@@ -361,6 +363,22 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 			}
 		}
 		return payMethodName;
+	}
+
+	@Transient
+	public double getTotalQuantity() {
+		double totalQuantity = 0;
+		try {
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getId());
+			Projection projection = Projection.sum(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_QUANTITY));
+    		Object result = invoiceDetailBean.getUniqueResult(projection, criteria);
+    		totalQuantity = (result != null) ? CommonUtil.round(((Double)result).doubleValue(), 3) : 0;
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error obtaining invoiceDetail list", e);
+		}
+		return totalQuantity;
 	}
 
 	@Transient

@@ -7,76 +7,75 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<c:if test="#{detailController.model.rowCount > 0}">
-		<aon:div id="posDetailContainer">
-			<aon:panel>
-				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_invoice_lines}" />
-				</f:facet>
-				<ui:decorate
-					template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
-					<ui:param name="controller" value="#{detailController}" />
-					<ui:param name="rows" value="0" />
-					<ui:param name="skipSelectButton" value="#{true}" />
-					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
-					<ui:param name="showDataScroller" value="#{false}" />
-					<ui:define name="columns">
-	
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
-							<f:facet name="header">
-								<aon:outputLabel value="#{financeBundle.finance_invoice_detail_line}" />
-							</f:facet>
-							<aon:outputText value="#{to.line}" />
-						</aon:column>
-		
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-							<f:facet name="header">
-								<aon:outputLabel value="#{productBundle.product_item}" />
-							</f:facet>
-							<aon:outputText value="#{to.description}">
-								<aon:abbreviateConverter maxWidth="64" />
-							</aon:outputText>
-						</aon:column>
-	
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
-							<f:facet name="header">
-								<aon:outputLabel value="#{bundle.aon_price}" />
-							</f:facet>
-							<aon:outputText value="#{to.salesPrice}">
-								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-							</aon:outputText>
-						</aon:column>
-	
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
-							<f:facet name="header">
-								<aon:outputLabel value="#{bundle.aon_quantity}" />
-							</f:facet>
-							<aon:outputText value="#{to.quantity}">
-								<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
-							</aon:outputText>
-						</aon:column>
+	<aon:div id="posDetailContainer">
+		<aon:panel>
+			<f:facet name="header">
+				<aon:outputText style="text-transform:uppercase;"
+					value="#{financeBundle.finance_invoice_lines}" />
+			</f:facet>
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+				<ui:param name="controller" value="#{detailController}" />
+				<ui:param name="rows" value="0" />
+				<ui:param name="skipSelectButton" value="#{true}" />
+				<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+				<ui:param name="showDataScroller" value="#{false}" />
+				<ui:define name="columns">
 
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
-							<f:facet name="header">
-								<aon:outputLabel value="#{bundle.aon_discount}" />
-							</f:facet>
-							<aon:outputText value="#{to.discountExpression.discountExpr}">
-								<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
-							</aon:outputText>
-						</aon:column>
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
+						<f:facet name="header">
+							<aon:outputLabel value="#{financeBundle.finance_invoice_detail_line}" />
+						</f:facet>
+						<aon:outputText value="#{to.line}" />
+					</aon:column>
 	
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
-							<f:facet name="header">
-								<aon:outputLabel value="#{bundle.aon_amount}" />
-							</f:facet>
-							<aon:outputText value="#{to.totalSalesPrice}">
-								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-							</aon:outputText>
-						</aon:column>
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+						<f:facet name="header">
+							<aon:outputLabel value="#{productBundle.product_item}" />
+						</f:facet>
+						<aon:outputText value="#{to.description}">
+							<aon:abbreviateConverter maxWidth="64" />
+						</aon:outputText>
+					</aon:column>
 
-					</ui:define>
-				</ui:decorate>
-			</aon:panel>
-		</aon:div>
-	</c:if>
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<f:facet name="header">
+							<aon:outputLabel value="#{bundle.aon_price}" />
+						</f:facet>
+						<aon:outputText value="#{to.salesPrice}">
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<f:facet name="header">
+							<aon:outputLabel value="#{bundle.aon_quantity}" />
+						</f:facet>
+						<aon:outputText value="#{to.quantity}">
+							<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<f:facet name="header">
+							<aon:outputLabel value="#{bundle.aon_discount}" />
+						</f:facet>
+						<aon:outputText value="#{to.discountExpression.discountExpr}">
+							<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<f:facet name="header">
+							<aon:outputLabel value="#{bundle.aon_amount}" />
+						</f:facet>
+						<aon:outputText value="#{to.totalSalesPrice}">
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+						</aon:outputText>
+					</aon:column>
+
+				</ui:define>
+			</ui:decorate>
+		</aon:panel>
+	</aon:div>
 </ui:composition>

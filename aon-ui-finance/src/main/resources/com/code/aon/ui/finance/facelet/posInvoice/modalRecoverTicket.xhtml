@@ -8,10 +8,10 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panelGroup id="showPosSelectionWindow">
-		<c:if test="#{invoiceController.showPosSelectionWindow}">
-			<rich:modalPanel id="posSelectionModalPanel" minHeight="240"
-				minWidth="560" rendered="#{invoiceController.showPosSelectionWindow}"
+	<aon:panelGroup id="showRecoverTicketWindow">
+		<c:if test="#{invoiceController.showRecoverTicketWindow}">
+			<rich:modalPanel id="recoverTicketModalPanel" minHeight="240"
+				minWidth="560" rendered="#{invoiceController.showRecoverTicketWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -22,46 +22,19 @@
 					<aon:form>
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
-							reRender="showPosSelectionWindow" immediate="true">
+							reRender="showRecoverTicketWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{invoiceController.showPosSelectionWindow}"
+								target="#{invoiceController.showRecoverTicketWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
-				<aon:form id="posSelectionForm">
+				<aon:form id="recoverTicketForm">
 				<aon:div styleClass="aon-popupWindow-content">
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
-								<aon:div styleClass="aon-toolbar">
-									<aon:commandButton id="posSelection-accept"
-										styleClass="aon-finding-toolbar-item aon-icon-accept"
-										value="#{bundle.aon_accept}"
-										title="#{bundle.aon_key_save_accelerator}"
-										accesskey="#{bundle.aon_key_save}">
-										<rich:componentControl for="posSelectionModalPanel"
-											event="onclick" operation="hide"/>																					
-										<f:setPropertyActionListener
-											target="#{invoiceController.showPosSelectionWindow}"
-											value="#{false}" />
-										<f:setPropertyActionListener
-											target="#{invoiceController.to.pos}"
-											value="#{invoiceController.pos}" />
-										<f:setPropertyActionListener
-											target="#{invoiceController.to.seller}"
-											value="#{invoiceController.seller}" />
-									</aon:commandButton>
-									<aon:commandButton id="posSelection-cancel" immediate="true"
-										styleClass="aon-finding-toolbar-item aon-icon-cancel"
-										value="#{bundle.aon_cancel}"
-										reRender="showPosSelectionWindow">
-										<f:setPropertyActionListener
-											target="#{invoiceController.showPosSelectionWindow}"
-											value="#{false}" />
-									</aon:commandButton>
-								</aon:div>
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
 

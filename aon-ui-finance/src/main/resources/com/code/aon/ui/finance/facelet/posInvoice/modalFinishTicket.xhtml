@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{financeBundle.finance_pos_finish_ticket}" />
+						<aon:outputText value="#{financeBundle.finance_to_charge} #{financeBundle.finance_invoice}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -37,21 +37,22 @@
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="finishTicket-accept"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										value="#{bundle.aon_accept}"
+										title="#{bundle.aon_key_save_accelerator}"
 										rendered="#{financeController.financesOk}"
 										actionListener="#{invoiceController.onFinishTicket}"
-										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										accesskey="#{bundle.aon_key_save}">
 										<rich:componentControl for="finishTicketModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener
 											target="#{invoiceController.showFinishTicketWindow}"
 											value="#{false}" />
 									</aon:commandButton>
-									<aon:commandButton id="finishTicket-cancel"
+									<aon:commandButton id="finishTicket-cancel" immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"
 										value="#{bundle.aon_cancel}"
-										reRender="showFinishTicketWindow"
-										immediate="true"
-										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										reRender="showFinishTicketWindow">
 										<f:setPropertyActionListener
 											target="#{invoiceController.showFinishTicketWindow}"
 											value="#{false}" />
@@ -63,7 +64,7 @@
 
 										<aon:outputText value="&#160;" />
 										<aon:div>
-											<aon:outputText value="#{financeBundle.finance_pos_total_ticket}:" 
+											<aon:outputText value="#{financeBundle.finance_invoice_total}:" 
 												styleClass="aon-bold aon-margin-right" style="text-transform:uppercase;" />
 											<aon:outputText value="#{invoiceController.toInvoiceTotalPrice}" styleClass="aon-bold">
 												<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
