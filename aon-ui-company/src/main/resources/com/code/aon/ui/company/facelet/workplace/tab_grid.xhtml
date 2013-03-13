@@ -7,12 +7,12 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
+	<c:if test="#{showPayrollData}" >
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/workplacePayroll/gridContent.xhtml" >
 			<ui:param name="controller" value="#{payrollWorkPlace}" />
 		</ui:include>
 	</c:if>	
-	<c:if test="#{!aonConfiguration.bean.enterprise.showPayrollData}" >
+	<c:if test="#{!showPayrollData}" >
 		<ui:include src="/com/code/aon/ui/company/facelet/workplace/gridContent.xhtml" />
 	</c:if>
 

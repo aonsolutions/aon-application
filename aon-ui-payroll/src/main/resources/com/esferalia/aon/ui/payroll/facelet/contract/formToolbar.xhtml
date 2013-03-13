@@ -11,7 +11,7 @@
 		<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
 		<ui:param name="controller" value="#{contract}" />
 		<ui:param name="skipRemoveButton" value="#{contract.to.status!='PENDING'}" />
-		<ui:param name="showMoreMenu" value="#{!contract.new}" />
+		<ui:param name="showMoreMenu" value="#{!contract.new and !contract.skipPayrollData}" />
 		<ui:define name="beforeSpinToolbarContent">
 			<aon:htmlCommandLink id="directDebit-report"
 				styleClass="aon-finding-toolbar-item aon-icon-pdf" 
@@ -21,6 +21,39 @@
 				<f:param name="reportKey" value="trainingDirectDebit" />
 				<f:param name="outputFormat" value="PDF" />
 			</aon:htmlCommandLink>
+			<aon:commandButton id="documentDraft-edition" 
+				action="contractPdfEdition_form"
+				rendered="#{not empty contract.to.model and not contract.existDocument}"
+				value="Contrato"
+				title="Edicion manual del documento del contrato"
+				styleClass="aon-finding-toolbar-item aon-icon-pdf" >
+				<f:setPropertyActionListener
+					target="#{contractPdf.documentType}" value="CONTRACT_DOCUMENT_DRAFT" />
+				<f:setPropertyActionListener
+					target="#{contractPdf.backAction}" value="contract_form" />
+				<aon:actionListener method="#{contract.onContractDocumentShow}" />
+			</aon:commandButton>
+			<aon:commandButton id="basicCopyDraft-edition"
+				action="contractPdfEdition_form" 
+				rendered="#{not empty contract.to.model and not contract.existDocument}"
+				value="Copia Basica"
+				title="Edicion manual del documento de la copia basica"
+				styleClass="aon-finding-toolbar-item aon-icon-pdf" >
+				<f:setPropertyActionListener
+					target="#{contractPdf.documentType}" value="BASIC_COPY_DRAFT" />
+				<f:setPropertyActionListener
+					target="#{contractPdf.backAction}" value="contract_form" />
+				<aon:actionListener method="#{contract.onContractDocumentShow}" />
+			</aon:commandButton>
+			<aon:commandButton id="contrata-sepe-comunication"
+				value="Comunicar al S.E.P.E."
+				rendered="#{!contractContrata.new}"
+				reRender="showContrataLoginWindow"
+				styleClass="aon-finding-toolbar-item aon-icon-sincronize" >
+				<f:setPropertyActionListener
+					target="#{contractContrata.showContrataLoginWindow}"
+					value="#{true}" />
+			</aon:commandButton>
 		</ui:define>
 		<ui:define name="moreMenuContent">
 			<c:if test="#{!contract.skipPayrollData}" >
@@ -66,6 +99,7 @@
 						target="#{irpfData.backAction}" value="contract_form" />
 				</aon:menuItem>
 			</c:if>
+<!--  
 			<aon:menuItem id="contrata"
 				value="#{payrollBundle.payroll_contract_contrataData}"
 				action="contrata_form" 
@@ -102,7 +136,7 @@
 					target="#{contractPdf.backAction}" value="contract_form" />
 				<aon:actionListener method="#{contract.onContractDocumentShow}" />
 			</aon:menuItem>
-			
+-->			
 		</ui:define>
 	</ui:decorate>
 	

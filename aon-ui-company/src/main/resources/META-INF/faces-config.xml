@@ -846,7 +846,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
+			<value>true</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -870,8 +870,8 @@
 				<value>#{enterpriseWorkPlaceChildListener}</value>
 				<value>#{enterpriseMediaListener}</value>
 				<value>#{enterpriseAddressListener}</value>
-				<value>#{enterpriseRBankChildListener}</value>
 				<value>#{enterpriseRPayMethodChildListener}</value>
+				<value>#{enterpriseRBankChildListener}</value>
 				<value>#{enterpriseAddInfoListener}</value>
 				<value>#{enterpriseDirStaffListener}</value>
 				<value>#{enterpriseRAttachChildListener}</value>		
@@ -1136,7 +1136,7 @@
 
 	<managed-bean>
 		<managed-bean-name>enterpriseRPayMethod</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryPayMethodController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.company.controller.EnterpriseRPayMethodController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>

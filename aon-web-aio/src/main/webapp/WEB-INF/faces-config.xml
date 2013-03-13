@@ -225,8 +225,6 @@
 			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			<!--  aon.ui.company -->
 			<value>#{companyCertificateChildListener}</value>
-			<value>#{enterpriseActivityChildListener}</value>
-			<value>#{payrollWorkPlaceChildListener}</value>
 			<value>#{companyImagesChildListener}</value>
 			<value>#{companyCustomizeChildListener}</value>
 			<!--  aon.ui.registry -->

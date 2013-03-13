@@ -8,7 +8,23 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 	
-	<aon:div id="contractContrataForm" >
+	<aon:div id="contrataResponseContainer">
+		<c:if test="#{contractContrata.xmlResult != null}" >
+			<aon:div style="width:800px;">	
+				
+				<aon:panel style="width: 100%;">
+					<f:facet name="header">
+						<aon:outputText value="Respuesta obtenida del S.E.P.E. (ENTORNO DE PRUEBAS)" />
+					</f:facet>
+					<aon:outputText value="#{contractContrata.xmlResult}" escape="false" />
+				</aon:panel>
+				
+			</aon:div>
+		</c:if>
+	</aon:div>
+	
+	
+	<aon:div>
 		
 		<aon:panel style="width: 100%;">
 			<f:facet name="header">
@@ -95,7 +111,7 @@
 				</aon:div>
 			</aon:panelGrid>
 				
-			<aon:panelGrid columns="2" style="width: 100%;" id="otherDataPanel2">
+			<aon:panelGrid columns="2" style="width:800px;" id="otherDataPanel2">
 				<aon:outputLabel for="formationReceived" 
 					rendered="#{contractContrata.handler.showIndicFormacionTeorica}"
 					value="#{payrollBundle.payroll_contract_formation_received}" />
@@ -158,9 +174,11 @@
 
 			</aon:panelGrid>
 		</aon:panel>
-		
-		
-		
+	
+	</aon:div>	
+	
+	<aon:div style="width:800px;" id="specificOptionsDiv">	
+	
 		<aon:panel style="width: 100%;" id="specificOptionsPanel">
 			<f:facet name="header">
 				<aon:outputText value="#{payrollBundle.payroll_contract_specific_data}" />
@@ -172,7 +190,7 @@
 					rendered="#{contractContrata.handler.showDatosProgramaEmpleoPanel}"
 					value="#{contractContrata.params.employmentProgramData}">
 					<a4j:support event="onclick" ajaxSingle="true"
-						reRender="contractContrataForm"/>
+						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="datosProgramaEmpleo" 
 					rendered="#{contractContrata.handler.showDatosProgramaEmpleoPanel}"
@@ -182,7 +200,7 @@
 					rendered="#{contractContrata.handler.showEttPanel}"
 					value="#{contractContrata.params.ettData}">
 					<a4j:support event="onclick" ajaxSingle="true" 
-						reRender="contractContrataForm"/>
+						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="ettData" rendered="#{contractContrata.handler.showEttPanel}"
 					value="#{payrollBundle.payroll_contract_ett_data}" />
@@ -190,7 +208,7 @@
 				<aon:selectBooleanCheckbox id="contratoRelevo" rendered="#{contractContrata.handler.showContratoRelevoPanel}"
 					value="#{contractContrata.params.reliefData}">
 					<a4j:support event="onclick" ajaxSingle="true"
-						reRender="contractContrataForm"/>
+						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="contratoRelevo" rendered="#{contractContrata.handler.showContratoRelevoPanel}"
 					value="#{payrollBundle.payroll_contract_contratoRelevo_data}" />
@@ -198,7 +216,7 @@
 				<aon:selectBooleanCheckbox id="datosOfertaTrabajo" rendered="#{contractContrata.handler.showDatosOfertaTrabajoPanel}"
 					value="#{contractContrata.params.offerData}">
 					<a4j:support event="onclick" ajaxSingle="true"
-						reRender="contractContrataForm"/>
+						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="datosOfertaTrabajo" rendered="#{contractContrata.handler.showDatosOfertaTrabajoPanel}"
 					value="#{payrollBundle.payroll_contract_datosOfertaTrabajo_data}" />
@@ -206,7 +224,7 @@
 				<aon:selectBooleanCheckbox id="escuelasTaller" rendered="#{contractContrata.handler.showEscuelasTallerPanel}"
 					value="#{contractContrata.params.schoolWorkshopData}">
 					<a4j:support event="onclick" ajaxSingle="true"
-						reRender="contractContrataForm"/>
+						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="escuelasTaller" rendered="#{contractContrata.handler.showEscuelasTallerPanel}"
 					value="#{payrollBundle.payroll_contract_escuelasTaller_data}" />
@@ -214,7 +232,7 @@
 				<aon:selectBooleanCheckbox id="discapacidad" rendered="#{contractContrata.handler.showDiscapacidadPanel}"
 					value="#{contractContrata.params.disabilityData}">
 					<a4j:support event="onclick" ajaxSingle="true"
-						reRender="contractContrataForm"/>
+						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="discapacidad" rendered="#{contractContrata.handler.showDiscapacidadPanel}"
 					value="#{payrollBundle.payroll_contract_discapacidad_data}" />
@@ -222,7 +240,7 @@
 				<aon:selectBooleanCheckbox id="mayores52" rendered="#{contractContrata.handler.showMayor52Panel}"
 					value="#{contractContrata.params.olderThan52Data}"> 
 					<a4j:support event="onclick" ajaxSingle="true"
-						reRender="contractContrataForm"/>
+						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="mayores52" rendered="#{contractContrata.handler.showMayor52Panel}"
 					value="#{payrollBundle.payroll_contract_mayores52_data}" />
@@ -230,7 +248,7 @@
 				<aon:selectBooleanCheckbox id="anexoGestionColectiva" rendered="#{contractContrata.handler.showAnexoGestionColectivaPanel}"
 					value="#{contractContrata.params.annexData}">
 					<a4j:support event="onclick" ajaxSingle="true"
-						reRender="contractContrataForm"/>
+						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="anexoGestionColectiva" rendered="#{contractContrata.handler.showAnexoGestionColectivaPanel}"
 					value="#{payrollBundle.payroll_contract_anexoGestionColectiva_data}" />
@@ -238,7 +256,7 @@
 				<aon:selectBooleanCheckbox id="campainas" rendered="#{contractContrata.handler.showCampainasPanel}"
 					value="#{contractContrata.params.canpaignData}">
 					<a4j:support event="onclick" ajaxSingle="true"
-						reRender="contractContrataForm"/>
+						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="campainas" rendered="#{contractContrata.handler.showCampainasPanel}"
 					value="#{payrollBundle.payroll_contract_campainas_data}" />
@@ -246,7 +264,7 @@
 				<aon:selectBooleanCheckbox id="causaInterinidad" rendered="#{contractContrata.handler.showCausaInterinidadPanel}"
 					value="#{contractContrata.params.interimData}">
 					<a4j:support event="onclick" ajaxSingle="true"
-						reRender="contractContrataForm"/>
+						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="causaInterinidad" rendered="#{contractContrata.handler.showCausaInterinidadPanel}"
 					value="#{payrollBundle.payroll_contract_causaInterinidad_data}" />
@@ -254,7 +272,7 @@
 				<aon:selectBooleanCheckbox id="investigacion" rendered="#{contractContrata.handler.showInvestigacionPanel}"
 					value="#{contractContrata.params.researchData}">
 					<a4j:support event="onclick" ajaxSingle="true"
-						reRender="contractContrataForm"/>
+						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="investigacion" rendered="#{contractContrata.handler.showInvestigacionPanel}"
 					value="#{payrollBundle.payroll_contract_investigacion_data}" />
@@ -262,7 +280,7 @@
 				<aon:selectBooleanCheckbox id="reduccionCuotas" rendered="#{contractContrata.handler.showReduccionCuotasPanel}"
 					value="#{contractContrata.params.reductionData}">
 					<a4j:support event="onclick" ajaxSingle="true"
-						reRender="contractContrataForm"/>
+						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="reduccionCuotas" rendered="#{contractContrata.handler.showReduccionCuotasPanel}"
 					value="#{payrollBundle.payroll_contract_reduccionCuotas_data}" />
@@ -565,5 +583,5 @@
 				
 		
 	</aon:div>
-
+	
 </ui:composition>

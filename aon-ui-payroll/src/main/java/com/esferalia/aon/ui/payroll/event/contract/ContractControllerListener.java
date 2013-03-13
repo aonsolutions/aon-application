@@ -29,6 +29,7 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractContrataController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
@@ -48,6 +49,10 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setParams(null);
 		controller.onShowVariables(null);
 		searchAgreement();
+		
+		ContractContrataController contrataController = (ContractContrataController) AonUtil.getRegisteredBean("contractContrata");
+		contrataController.initialize((Contract) this.getController().getTo());
+		contrataController.onContractaDataShow(null);
 	}
 	
 	@Override
@@ -108,6 +113,13 @@ public class ContractControllerListener extends ControllerAdapter{
 			throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
 		controller.setShowNewContractModal(false);
+	}
+	
+	@Override
+	public void afterBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		ContractContrataController controller = (ContractContrataController) AonUtil.getRegisteredBean("contractContrata");
+		controller.onAccept(null);
 	}
 	
 	private void saveContractData() throws ControllerListenerException {

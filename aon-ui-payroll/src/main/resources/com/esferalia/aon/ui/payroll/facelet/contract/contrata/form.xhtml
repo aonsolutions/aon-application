@@ -19,7 +19,6 @@
     	</a4j:region>
     	
 		<aon:form id="contrataForm">
-		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_contrataData}" />
 				<ui:param name="toolbarDescription" value="#{contractContrata.new?bundle.aon_reset:bundle.aon_editing}" />
@@ -35,7 +34,7 @@
 						value="#{contractContrata.new?bundle.aon_cancel:bundle.aon_back}"
 						action="#{contractContrata.backAction}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel" />
-
+		
 					<aon:commandButton id="contrata-sepe-comunication"
 						value="Comunicar al S.E.P.E."
 						rendered="#{!contractContrata.new}"
@@ -48,25 +47,8 @@
 					
 				</ui:define>				
 			</ui:decorate>
-		
-			<aon:div id="contrataResponseContainer">
-				<c:if test="#{contractContrata.xmlResult != null}" >
-					<aon:div styleClass="aon-scroll-area" style="width:800px;">	
-						
-						<aon:panel style="width: 100%;">
-							<f:facet name="header">
-								<aon:outputText value="Respuesta obtenida del S.E.P.E. (ENTORNO DE PRUEBAS)" />
-							</f:facet>
-							<aon:outputText value="#{contractContrata.xmlResult}" escape="false" />
-						</aon:panel>
-						
-					</aon:div>
-				</c:if>
-			</aon:div>
 			
-			<aon:div styleClass="aon-scroll-area" style="width:800px;">	
-				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_content.xhtml" />
-			</aon:div>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_content.xhtml" />
 					
 		</aon:form>
 
