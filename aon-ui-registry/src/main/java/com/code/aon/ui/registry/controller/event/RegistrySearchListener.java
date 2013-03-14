@@ -165,7 +165,7 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 		String segment = resolveAlias("segments_segment_id");
 		addEnumToCriteria(criteria, segment, getSegmentsIds().toArray());
 		if ( getScopesSize() > 0 ) {
-			addEnumToCriteria(criteria, "Registry.scope.id", getScopesIds().toArray());	
+			addEnumToCriteria(criteria, "Registry.scope<id", getScopesIds().toArray());	
 		}		
 	}
 	
