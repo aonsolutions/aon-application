@@ -39,10 +39,9 @@
 									<aon:commandButton id="finishTicket-accept"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										value="#{bundle.aon_accept}"
-										title="#{bundle.aon_key_save_accelerator}"
 										rendered="#{financeController.financesOk}"
-										actionListener="#{invoiceController.onFinishTicket}"
-										accesskey="#{bundle.aon_key_save}">
+										actionListener="#{invoiceController.onFinishTicket}">
+										<aon:actionHotKey key="return" />
 										<rich:componentControl for="finishTicketModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener

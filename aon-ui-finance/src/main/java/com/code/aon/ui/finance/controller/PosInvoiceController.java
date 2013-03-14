@@ -1,8 +1,12 @@
 package com.code.aon.ui.finance.controller;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
@@ -13,14 +17,18 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.Series;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.Pos;
 import com.code.aon.finance.enumeration.FinanceStatus;
+import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.seller.Seller;
+import com.code.aon.ui.finance.event.PosInvoiceControllerListener;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -29,6 +37,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 
 	private Pos pos;
 	private Seller seller;
+	private List<Invoice> suspendedInvoiceList;
 	private boolean showPosSelectionWindow;
 	private boolean showFinishTicketWindow;
 	private boolean showRecoverTicketWindow;
@@ -87,8 +96,15 @@ public class PosInvoiceController extends SaleInvoiceController {
 			setPos((Pos)BeanManager.getManagerBean(Pos.class).createNewTo());
 		}
 		setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
+
 		onReset(event);
 		FormUtil.getController(getInvoiceDetailControllerName()).onReset(null);
+	}
+
+	@Override
+	public void onReset(ActionEvent event) {
+		super.onReset(event);
+		setSuspendedInvoiceList(null);
 	}
 
 	@Override
@@ -104,14 +120,35 @@ public class PosInvoiceController extends SaleInvoiceController {
 	}
 
 	public void onNewTicket(ActionEvent event) {
-		if (!isNew() && getInvoice().getDetailList().size() == 0) {
-			try {
+		try {
+			if (isNew()) {
+				PosInvoiceControllerListener invoiceControllerListener = (PosInvoiceControllerListener)AonUtil.getRegisteredBean(POS_INVOICE_CONTROLLER_LISTENER_NAME);
+				Series series = invoiceControllerListener.obtainPosSeries();
+
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_POS_ID), getPos().getId());
+				criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
+				if (series == null) {
+					criteria.addNullExpression(getFieldName(IEntityAlias.INVOICE_SERIES));
+				} else {
+					criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_SERIES), series.getCode());
+				}
+				criteria.addOrder(getFieldName(IEntityAlias.INVOICE_NUMBER), false);
+				for (ITransferObject ito : getManagerBean().getList(criteria)) {
+					Invoice invoice = (Invoice)ito;
+					if (!invoice.isSigned() && !invoice.isRecorded() && invoice.getDetailList().size() == 0) {
+						getManagerBean().remove(invoice);
+					}
+					break;
+				}
+			} else if (getInvoice().getDetailList().size() == 0) {
 				getManagerBean().remove(getInvoice());
-			} catch (ManagerBeanException ex) {
-				String msg = "Error al Borrar Ticket vacio.";
-				AonUtil.addErrorMessage(msg);
 			}
+		} catch (ManagerBeanException ex) {
+			String msg = "Error al Borrar Factura vacia.";
+			AonUtil.addErrorMessage(msg);
 		}
+
 		onReset(event);
 
 		Invoice invoice = getInvoice();
@@ -124,8 +161,6 @@ public class PosInvoiceController extends SaleInvoiceController {
 	}
 
 	public void onShowFinishTicket(ActionEvent event) {
-		accept(event);
-
 		PosInvoiceFinanceController financeController = (PosInvoiceFinanceController)FormUtil.getController(getInvoiceFinanceControllerName());
 		financeController.resetFinances();
 		financeController.onNewFinance(event);
@@ -165,24 +200,28 @@ public class PosInvoiceController extends SaleInvoiceController {
 			try {
 				BeanManager.getManagerBean(Finance.class).insert(finance);
 			} catch (ManagerBeanException ex) {
-				String msg = "Error al cobrar el Ticket.";
+				String msg = "Error al cobrar la Factura.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
 		}
-		financeController.onSearch(event);
+
+		getInvoice().setComments("Cobrado: " + new Date() + "\n");
+		accept(event);
 	}
 
 	public void onCancelTicket(ActionEvent event) {
 		try {
 			cancelTicket(true);
 
-			refresh(event);
 			PosInvoiceDetailController detailController = (PosInvoiceDetailController)FormUtil.getController(getInvoiceDetailControllerName());
-			detailController.onSearch(event);
+			if (!isNew()) {
+				refresh(event);
+				detailController.onSearch(event);
+			}
 			detailController.onReset(event);
 		} catch (ManagerBeanException ex) {
-			String msg = "Error al cancelar el Ticket.";
+			String msg = "Error al cancelar la Factura.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -192,12 +231,14 @@ public class PosInvoiceController extends SaleInvoiceController {
 		try {
 			cancelTicket(false);
 
-			refresh(event);
 			PosInvoiceDetailController detailController = (PosInvoiceDetailController)FormUtil.getController(getInvoiceDetailControllerName());
-			detailController.onSearch(event);
+			if (!isNew()) {
+				refresh(event);
+				detailController.onSearch(event);
+			}
 			detailController.onReset(event);
 		} catch (ManagerBeanException ex) {
-			String msg = "Error al cancelar el Ticket.";
+			String msg = "Error al cancelar la Factura.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -230,6 +271,52 @@ public class PosInvoiceController extends SaleInvoiceController {
 			invoiceDetail.setRetentionQuota(invoiceDetail.getRetentionQuota() * (-1));
 
 			invoiceDetailBean.insert(invoiceDetail);
+		}
+
+		if (entireTicket && invoiceDetailList.size() == 0) {
+			getManagerBean().remove(getInvoice());
+			onReset(null);
+		}
+	}
+
+	public List<Invoice> getSuspendedInvoiceList() throws ManagerBeanException {
+		if (suspendedInvoiceList == null) {
+			suspendedInvoiceList = new LinkedList<Invoice>();
+			Criteria criteria = new Criteria();
+			if (!isNew()) {
+				criteria.addNotEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), getInvoice().getId());
+			}
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_POS_ID), getPos().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), new Date());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_STATUS), InvoiceStatus.PENDING);
+			criteria.addNullExpression(getFieldName(IEntityAlias.INVOICE_COMMENTS));
+			for (ITransferObject ito : getManagerBean().getList(criteria)) {
+				Invoice invoice = (Invoice)ito;
+				suspendedInvoiceList.add(invoice);
+			}
+		}
+		return suspendedInvoiceList;
+	}
+
+	public void setSuspendedInvoiceList(List<Invoice> suspendedInvoiceList) {
+		this.suspendedInvoiceList = suspendedInvoiceList;
+	}
+
+	public int getSuspendedInvoiceCount() throws ManagerBeanException {
+		return getSuspendedInvoiceList().size();
+	}
+
+	public void onRecoverSuspendedInvoice(ActionEvent event) {
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		Map<String, String> params = ec.getRequestParameterMap();
+		Integer suspendedInvoiceId = new Integer(params.get("suspendedInvoice"));
+		try {
+			load(event, suspendedInvoiceId);
+		} catch (ManagerBeanException ex) {
+			String msg = "Error al recuperar la Factura aparcada.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 

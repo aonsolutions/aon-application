@@ -86,6 +86,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private AccountEntryInvoiceWriter accountWriter;
 	private List<SelectItem> addresses;
 	private List<SelectItem> projects;
+	private boolean showRegistryDataWindow;
 	private boolean showInvoiceAddressWindow;
 	private boolean showProjectWindow;
 	private boolean showNewProjectWindow;
@@ -259,6 +260,22 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		loadProjects(invoice.getRegistry().getId());
 	}
 	
+	public boolean isShowRegistryDataWindow() {
+		return showRegistryDataWindow;
+	}
+
+	public void setShowRegistryDataWindow(boolean value) {
+		this.showRegistryDataWindow = value;
+	}
+
+	public void onRegistryDataWindowShow(ActionEvent event) {
+		BasicController addressController = (BasicController)FormUtil.getController(invoiceAddressControllerName);
+		ITransferObject to = addressController.getTo();
+		if (to == null) {
+			addressController.onReset(event);
+		}
+	}
+
 	public boolean isShowInvoiceAddressWindow() {
 		return showInvoiceAddressWindow;
 	}

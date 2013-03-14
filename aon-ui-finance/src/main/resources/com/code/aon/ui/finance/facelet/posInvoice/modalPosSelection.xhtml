@@ -38,9 +38,8 @@
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="posSelection-accept"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
-										value="#{bundle.aon_accept}"
-										title="#{bundle.aon_key_save_accelerator}"
-										accesskey="#{bundle.aon_key_save}">
+										value="#{bundle.aon_accept}">
+										<aon:actionHotKey key="return" />
 										<rich:componentControl for="posSelectionModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener

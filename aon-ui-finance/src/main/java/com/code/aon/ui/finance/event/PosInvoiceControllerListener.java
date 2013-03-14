@@ -11,6 +11,7 @@ import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.controller.PosInvoiceController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -57,11 +58,12 @@ public class PosInvoiceControllerListener extends SaleInvoiceControllerListener 
 		super.afterBeanUpdated(event);
 	}
 
-	private Series obtainPosSeries() throws ManagerBeanException {
+	public Series obtainPosSeries() throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_POS), true);
 		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), true);
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, seriesBean.getFieldName(IEntityAlias.SERIES_SCOPE_ID));
 		for (ITransferObject ito : seriesBean.getList(criteria)) {
 			return (Series)ito;
 		}
