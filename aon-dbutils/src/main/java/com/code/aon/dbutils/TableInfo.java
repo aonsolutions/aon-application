@@ -1,5 +1,6 @@
 package com.code.aon.dbutils;
 
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,7 @@ public class TableInfo implements Constants {
 	private boolean recursive;
 	private Map<Integer,Integer> keys;
 	private Integer baseId;
+	private boolean forceHeredity;
 	
 	public TableInfo(String name, DatabaseMetaData metaData) {
 		this.name = name;
@@ -33,6 +36,7 @@ public class TableInfo implements Constants {
 		initColumns(metaData);
 		initPrimaryKeys(metaData);
 		initForeignKeys(metaData);
+		setForceHeredity(ArrayUtils.contains(TableUtil.FORCE_HEREDITY_TABLES, name));
 	}
 	
 	private void initColumns( DatabaseMetaData metaData ) {
@@ -281,8 +285,28 @@ public class TableInfo implements Constants {
 		int diff = id - this.baseId;
 		if ( diff > 0 ) {
 			return getVariableId() + "+" + diff;
+		} else if ( diff == 0 ) {
+			return getVariableId();
 		}
-		return getVariableId();
+		if (! PROFILE_TABLE_NAME.equals(getName())) {
+			LOGGER.warn( "Table {},  base id {}, id {}", new Object[]{getName(),this.baseId,id});	
+		}
+		return String.valueOf(id);
 	}
-	
+
+	public boolean isForceHeredity() {
+		return forceHeredity;
+	}
+
+	public void setForceHeredity(boolean forceHeredity) {
+		this.forceHeredity = forceHeredity;
+	}
+
+	public Integer[] getDomains( Connection connection, Integer[] domains ) {
+		if ( isForceHeredity() ) {
+			return TableUtil.getAllDomains(connection, domains);
+		}	
+		return domains;
+	}
+
 }

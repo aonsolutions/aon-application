@@ -9,6 +9,7 @@ import java.sql.Types;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -16,7 +17,7 @@ import java.util.Stack;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
-import org.apache.commons.dbutils.handlers.ColumnListHandler;
+import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +30,11 @@ public class TableUtil implements Constants {
 
 	private static final String[] NO_MERGE_TABLES = new String[] {
 		SESSION_TABLE_NAME, ACTION_ENTRY_TABLE_NAME, DOMAIN_TABLE_NAME
+	};
+
+	public static final String[] FORCE_HEREDITY_TABLES = new String[] {
+		PROFILE_TABLE_NAME, PROFILE_ROLE_TABLE_NAME,
+		PROFILE_MODULE_DENIED_TABLE_NAME, PROFILE_ACTION_DENIED_TABLE_NAME
 	};
 	
 	private static final AonInternalReference BANK_STATEMENT_LINK_REFERENCE = new AonInternalReference(
@@ -159,8 +165,9 @@ public class TableUtil implements Constants {
 	
 	private static void updateBaseId(Connection connection, Integer[] domains, TableInfo ti) throws SQLException {
 		String searchColumn = ti.isDomainTable() ? "id" : "domain";
+		Integer[] _domains = ti.getDomains(connection, domains);
 		String sentence = "SELECT MIN(" + ti.getPkColumn().getName() + ") FROM " + ti.getName() +
-				" WHERE " + searchColumn + " IN (" + StringUtils.join(domains, ",") + ")"; 
+				" WHERE " + searchColumn + " IN (" + StringUtils.join(_domains, ",") + ")"; 
 		Statement s = null;
 		ResultSet rs = null;
 		try {
@@ -321,5 +328,29 @@ public class TableUtil implements Constants {
 		}		
 		return false;
 	}
-    
+
+	public static Integer[] getAllDomains( Connection connection, Integer[] domains ) {
+		List<Integer> list = new LinkedList<Integer>();
+		for( Integer id : domains ) {
+			DomainInfo di = getDomainInfo(connection, id);
+			list.add( id );
+			if ( di.getParent() != null ) {
+				list.add( di.getParent() );	
+			}
+		}
+		return list.toArray(new Integer[list.size()]);
+	}
+	
+	public static DomainInfo getDomainInfo( Connection connection, Integer id ) {
+		QueryRunner run = new QueryRunner();
+		try {
+			ResultSetHandler<DomainInfo> hs = new BeanHandler<DomainInfo>(DomainInfo.class);
+			DomainInfo di = run.query( connection, "SELECT * FROM domain WHERE id = ?;", hs, id );
+			return di;
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}				
+		return null;
+	}
+	
 }

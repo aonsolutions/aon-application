@@ -62,7 +62,11 @@ public class ColumnInfo implements Constants {
 	}
 
 	public boolean isActionReference() {
-		return isFkColummn() && ACTION_TABLE_NAME.equals(fkTableName);
+		return ACTION_TABLE_NAME.equals(fkTableName);
+	}
+
+	public boolean isProfileReference() {
+		return PROFILE_TABLE_NAME.equals(fkTableName);
 	}
 	
 }

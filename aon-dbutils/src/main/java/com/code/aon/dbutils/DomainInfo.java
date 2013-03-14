@@ -9,7 +9,6 @@ public class DomainInfo {
 	private Integer parent;
 	private String name;
 	private boolean enableHeredity;
-	private Integer[] domainIds;
 	
 	public Integer getId() {
 		return id;
@@ -43,19 +42,16 @@ public class DomainInfo {
 		this.enableHeredity = enableHeredity;
 	}
 
-	public Integer[] getDomainIds() {
-		if ( this.domainIds == null ) {
-			if ( (getParent() != null) && isEnableHeredity() ) {
-				this.domainIds = new Integer[]{getId(), getParent()};
-			} else {
-				this.domainIds = new Integer[]{getId()};
-			}
+	public Integer[] getDomainIds( TableInfo ti ) {
+		if ( (getParent() != null) && (ti.isForceHeredity() || isEnableHeredity()) ) {
+			return new Integer[]{getId(), getParent()};
+		} else {
+			return new Integer[]{getId()};
 		}
-		return this.domainIds;
 	}
 	
-	public boolean isValidDomain( Integer id ) {
-		return ArrayUtils.contains( getDomainIds(), id );
+	public boolean isValidDomain( Integer id, TableInfo ti ) {
+		return ArrayUtils.contains( getDomainIds(ti), id );
 	}
 	
 }

@@ -11,9 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.dbutils.DbUtils;
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.ResultSetHandler;
-import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
@@ -83,19 +80,11 @@ public class CheckIntegrity implements Constants {
 	private DomainInfo getDomainInfo( Integer value ) {
 		DomainInfo di = this.domainMap.get(value);
 		if ( di == null ) {
-			QueryRunner run = new QueryRunner();
-			try {
-				ResultSetHandler<DomainInfo> hs = new BeanHandler<DomainInfo>(DomainInfo.class);
-				di = run.query( connection, "SELECT * FROM domain WHERE id = ?;", hs, value );
-				this.domainMap.put(value, di);
-			} catch (Throwable e) {
-				LOGGER.error(e.getMessage(), e);
-			}					
+			di = TableUtil.getDomainInfo(connection, value);
+			this.domainMap.put(value, di);
 		}
 		return di;
 	}
-	
-	
 	
 	private String getSelect(TableInfo table, String tableName, Integer value, boolean domainColumn) {
 		StringBuffer sb = new StringBuffer();
@@ -113,13 +102,13 @@ public class CheckIntegrity implements Constants {
 		return sb.toString();
 	}
 	
-	private void throwInvalidDomain(DomainInfo di, String tableName, Integer value, Integer domain) {
+	private void throwInvalidDomain(DomainInfo di, TableInfo ti, String tableName, Integer value, Integer domain) {
 		String message = "TABLE " + tableName + " row " + value + " in domain " + domain +
-				". Valid domains " + ArrayUtils.toString(di.getDomainIds());
+				". Valid domains " + ArrayUtils.toString(di.getDomainIds(ti));
 		throw new RuntimeException( message );						
 	}
 	
-	private boolean exist(DomainInfo di, String tableName, Integer value) {
+	private boolean exist(DomainInfo di, TableInfo ti, String tableName, Integer value) {
 		Map<Integer,Integer> idMap = this.ids.get(tableName);
 		if ( idMap == null ) {
 			this.ids.put(tableName, new HashMap<Integer, Integer>());
@@ -128,24 +117,24 @@ public class CheckIntegrity implements Constants {
 			if ( domain == null ) {
 				return true;
 			}
-			if ( di.isValidDomain(domain) ) {
+			if ( di.isValidDomain(domain, ti) ) {
 				return true;
 			} else {
-				throwInvalidDomain(di, tableName, value, domain);
+				throwInvalidDomain(di, ti, tableName, value, domain);
 			}
 		}
 		return false;
 	}
 	
-	private void add(DomainInfo di, String tableName, ResultSet rs, boolean domainColumn) throws SQLException {
+	private void add(DomainInfo di, TableInfo ti, String tableName, ResultSet rs, boolean domainColumn) throws SQLException {
 		Integer id = rs.getInt(1);
 		Integer domain = null;
 		if ( domainColumn ) {
 			domain = rs.getInt(2);
 			if ( rs.wasNull() ) {
 				domain = null;
-			} else if (! di.isValidDomain(domain) ) {
-				throwInvalidDomain(di, tableName, id, domain);
+			} else if (! di.isValidDomain(domain, ti) ) {
+				throwInvalidDomain(di, ti, tableName, id, domain);
 			}			
 		}
 		Map<Integer,Integer> idMap = this.ids.get(tableName);
@@ -153,11 +142,11 @@ public class CheckIntegrity implements Constants {
 	}	
 	
 	private boolean checkId(String tableName, Integer value, Integer domainId) throws SQLException {
+		TableInfo table = this.tables.get(tableName);
 		DomainInfo di = getDomainInfo(domainId);
-		if ( exist(di, tableName, value) ) {
+		if ( exist(di, table, tableName, value) ) {
 			return true;
-		}		
-		TableInfo table = this.tables.get(tableName);		
+		}				
 		boolean domainColumn = (table != null) && !table.isDomainTable();
 		String sentence = getSelect(table, tableName, value, domainColumn); 
 		Statement s = null;
@@ -166,7 +155,7 @@ public class CheckIntegrity implements Constants {
 			s = connection.createStatement();
 			rs = s.executeQuery(sentence);
 			if ( rs.next() ) {
-				add( di, tableName, rs, domainColumn);
+				add( di, table, tableName, rs, domainColumn);
 				return true;
 			} else {
 				String message = "TABLE " + tableName + " row " + value + " not found";
@@ -225,8 +214,7 @@ public class CheckIntegrity implements Constants {
 	public static void main(String[] args) {
 		DbUtils.loadDriver("org.gjt.mm.mysql.Driver");
 		
-		// Integer[] domains = new Integer[]{1,3,4,6,7,8};
-		Integer[] domains = new Integer[]{9};
+		Integer[] domains = new Integer[]{4};
 		
 		String url = "jdbc:mysql://volga:3306/aimar-esferalia-com";
 		// String url = "jdbc:mysql://volga:3306/pro-aonsolutions-net";

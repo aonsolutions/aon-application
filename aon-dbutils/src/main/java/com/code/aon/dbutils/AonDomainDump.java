@@ -92,13 +92,13 @@ public class AonDomainDump implements Constants {
 		}
 	}
 	
-	private List<Integer> getUsedActions( String tableName ) {
+	private List<Integer> getUsedActions( String tableName, Integer[] domains ) {
 		QueryRunner run = new QueryRunner();
 		try {
 			ResultSetHandler<List<Integer>> hs = new ColumnListHandler<Integer>();
 			return run.query( connection,
 					"SELECT action_id FROM " + tableName + " WHERE domain IN (" +
-					StringUtils.join(this.domains, ",") + ") GROUP by action_id;", hs );
+					StringUtils.join(domains, ",") + ") GROUP by action_id;", hs );
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		}		
@@ -107,9 +107,10 @@ public class AonDomainDump implements Constants {
 	
 	private void dumpActionTable() throws IOException, AonSQLException {
 		Set<Integer> usedActions = new HashSet<Integer>();
-		usedActions.addAll( getUsedActions(ACTION_DENIED_TABLE_NAME) );
-		usedActions.addAll( getUsedActions(ACTION_FAVORITE_TABLE_NAME) );
-		usedActions.addAll( getUsedActions(PROFILE_ACTION_DENIED_TABLE_NAME) );
+		Integer[] allDomains = TableUtil.getAllDomains(connection, this.domains);
+		usedActions.addAll( getUsedActions(ACTION_DENIED_TABLE_NAME, allDomains) );
+		usedActions.addAll( getUsedActions(ACTION_FAVORITE_TABLE_NAME, allDomains) );
+		usedActions.addAll( getUsedActions(PROFILE_ACTION_DENIED_TABLE_NAME, allDomains) );
 		if (! usedActions.isEmpty() ) {
 			writeLine( "INSERT IGNORE INTO action (menu, name, application) VALUES" );
 			QueryRunner run = new QueryRunner();
@@ -144,7 +145,7 @@ public class AonDomainDump implements Constants {
 		ResultSet rs = null;
 		try {
 			writeLine("");
-			String sentence = t.getSelectStatement(this.domains);
+			String sentence = t.getSelectStatement(t.getDomains(connection, domains));
 			select = connection.prepareStatement(sentence,t.getColumnNames());
 			rs = select.executeQuery();
 			if ( rs.next() ) {
@@ -214,7 +215,7 @@ public class AonDomainDump implements Constants {
 		}
 		return newValue;
 	}
-
+	
 	private boolean dump(ResultSet rs, TableInfo t, boolean firstInsert) throws SQLException, IOException {
 		ColumnInfo[] columns = t.getInsertColumns();
 		if ( !firstInsert || t.getPkColumn().isFkColummn() ) {
@@ -225,11 +226,15 @@ public class AonDomainDump implements Constants {
 			ColumnInfo ci = columns[i];
 			Object value = TableUtil.getObject(rs, ci);
 			if (value != null) {
-				if ( ci.isActionReference() ) {
-					values[i] = getActionReference( (Integer) value );
-				} else if ( ci.isFkColummn() ) {
+				if ( ci.isFkColummn() ) {
 					Integer fkId = (Integer) value;
-					values[i] = getReferenceValue(t, fkId, ci, ci.getFkTableName());					
+					if ( ci.isActionReference() ) {
+						values[i] = getActionReference( fkId );
+					} else if ( t.isForceHeredity() && DOMAIN_COLUMN_NAME.equals(ci.getName()) ) {
+						values[i] = this.tables.get(DOMAIN_TABLE_NAME).getRelativeId(this.domains[0]);
+					} else {
+						values[i] = getReferenceValue(t, fkId, ci, ci.getFkTableName());	
+					}					
 				} else if ( ci == t.getPkColumn() ) {
 					values[i] = t.getRelativeId((Integer) value);
 				} else {
@@ -304,7 +309,7 @@ public class AonDomainDump implements Constants {
 			}
 		}
 		if ( newValue == null ) {
-			LOGGER.warn( "Reference ({},{}-{}) for {} not found", new Object[]{t.getName(), ci.getName(), value, fkTable} );
+			LOGGER.warn( "Reference ({},{},{}) for {} not found", new Object[]{t.getName(), ci.getName(), value, fkTable} );
 		}
 		return newValue;
 	}
@@ -312,10 +317,10 @@ public class AonDomainDump implements Constants {
 	public static void main(String[] args) {
 		DbUtils.loadDriver("org.gjt.mm.mysql.Driver");
 		
-		Integer[] domains = new Integer[]{6,1};
+		Integer[] domains = new Integer[]{492};
 		
-		// String url = "jdbc:mysql://volga:3306/pro-aonsolutions-net";
-		String url = "jdbc:mysql://volga:3306/aimar-esferalia-com";
+		String url = "jdbc:mysql://volga:3306/pro-aonsolutions-net";
+		// String url = "jdbc:mysql://volga:3306/aimar-esferalia-com";
 		String user = "dbuser";
 		String password = "serubd2000";
 		

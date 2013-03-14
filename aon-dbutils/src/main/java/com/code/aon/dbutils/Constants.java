@@ -8,6 +8,8 @@ public interface Constants {
 	String ACTION_FAVORITE_TABLE_NAME = "action_favorite";
 	String ACTION_DENIED_TABLE_NAME = "action_denied";
 	String PROFILE_ACTION_DENIED_TABLE_NAME = "profile_action_denied";
+	String PROFILE_MODULE_DENIED_TABLE_NAME = "profile_module_denied";
+	String PROFILE_ROLE_TABLE_NAME = "profile_role";
 	String ACTION_TABLE_NAME = "action";
 	String ALARM_TABLE_NAME = "alarm";
 	String APPLICATION_TABLE_NAME = "application";
