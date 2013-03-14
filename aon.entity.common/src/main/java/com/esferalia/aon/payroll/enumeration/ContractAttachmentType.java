@@ -15,7 +15,12 @@ public enum ContractAttachmentType implements IResourceable {
 	
 	BASIC_COPY,
 	
-	SPEE_CONTRATA
+	SPEE_CONTRATA_FILE,
+	
+	SPEE_CONTRATA_RESPONSE,
+	
+	SPEE_CONTRATA_STATUS
+	
 	;
 	
     private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
