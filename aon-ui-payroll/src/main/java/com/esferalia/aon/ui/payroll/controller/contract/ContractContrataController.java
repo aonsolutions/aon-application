@@ -191,7 +191,7 @@ public class ContractContrataController {
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA_FILE);
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				return (ContractAttachment) list.get(0);
@@ -223,7 +223,7 @@ public class ContractContrataController {
 			}
 			getContrataAttach().setContract(contract);
 			getContrataAttach().setData(fileContent);
-			getContrataAttach().setAttachmentType(ContractAttachmentType.SPEE_CONTRATA);
+			getContrataAttach().setAttachmentType(ContractAttachmentType.SPEE_CONTRATA_FILE);
 			getContrataAttach().setMimeType(MimeType.MIME_XML);
 			getContrataAttach().setDescription("Fichero contrat@");
 			fis.close();

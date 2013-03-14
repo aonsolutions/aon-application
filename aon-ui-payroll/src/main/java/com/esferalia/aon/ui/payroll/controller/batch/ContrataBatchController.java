@@ -196,7 +196,7 @@ public class ContrataBatchController extends BasicController {
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 			Criteria criteria = new Criteria();
 			criteria.addInExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contractIds);
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA_FILE);
 			criteria.setSkipDomainFilter(true);
 			// TODO: averiguar el orden de la info dentro del fichero
 //			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID));
