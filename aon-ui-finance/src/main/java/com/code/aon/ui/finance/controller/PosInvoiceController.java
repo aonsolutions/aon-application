@@ -210,6 +210,54 @@ public class PosInvoiceController extends SaleInvoiceController {
 		accept(event);
 	}
 
+	public List<Invoice> getSuspendedInvoiceList() throws ManagerBeanException {
+		if (suspendedInvoiceList == null) {
+			suspendedInvoiceList = new LinkedList<Invoice>();
+			Criteria criteria = new Criteria();
+			if (!isNew()) {
+				criteria.addNotEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), getInvoice().getId());
+			}
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_POS_ID), getPos().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), new Date());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_STATUS), InvoiceStatus.PENDING);
+			criteria.addNullExpression(getFieldName(IEntityAlias.INVOICE_COMMENTS));
+			for (ITransferObject ito : getManagerBean().getList(criteria)) {
+				Invoice invoice = (Invoice)ito;
+				suspendedInvoiceList.add(invoice);
+			}
+		}
+		return suspendedInvoiceList;
+	}
+
+	public void onSuspendTicket(ActionEvent event) {
+		accept(event);
+		onNewTicket(event);
+	}
+
+	public void setSuspendedInvoiceList(List<Invoice> suspendedInvoiceList) {
+		this.suspendedInvoiceList = suspendedInvoiceList;
+	}
+
+	public int getSuspendedInvoiceCount() throws ManagerBeanException {
+		return getSuspendedInvoiceList().size();
+	}
+
+	public void onRecoverSuspendedInvoice(ActionEvent event) {
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		Map<String, String> params = ec.getRequestParameterMap();
+		Integer suspendedInvoiceId = new Integer(params.get("suspendedInvoice"));
+		try {
+			load(event, suspendedInvoiceId);
+			FormUtil.getController(getInvoiceDetailControllerName()).onReset(null);
+			setSuspendedInvoiceList(null);
+		} catch (ManagerBeanException ex) {
+			String msg = "Error al recuperar la Factura aparcada.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+
 	public void onCancelTicket(ActionEvent event) {
 		try {
 			cancelTicket(true);
@@ -276,47 +324,6 @@ public class PosInvoiceController extends SaleInvoiceController {
 		if (entireTicket && invoiceDetailList.size() == 0) {
 			getManagerBean().remove(getInvoice());
 			onReset(null);
-		}
-	}
-
-	public List<Invoice> getSuspendedInvoiceList() throws ManagerBeanException {
-		if (suspendedInvoiceList == null) {
-			suspendedInvoiceList = new LinkedList<Invoice>();
-			Criteria criteria = new Criteria();
-			if (!isNew()) {
-				criteria.addNotEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), getInvoice().getId());
-			}
-			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_POS_ID), getPos().getId());
-			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
-			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), new Date());
-			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_STATUS), InvoiceStatus.PENDING);
-			criteria.addNullExpression(getFieldName(IEntityAlias.INVOICE_COMMENTS));
-			for (ITransferObject ito : getManagerBean().getList(criteria)) {
-				Invoice invoice = (Invoice)ito;
-				suspendedInvoiceList.add(invoice);
-			}
-		}
-		return suspendedInvoiceList;
-	}
-
-	public void setSuspendedInvoiceList(List<Invoice> suspendedInvoiceList) {
-		this.suspendedInvoiceList = suspendedInvoiceList;
-	}
-
-	public int getSuspendedInvoiceCount() throws ManagerBeanException {
-		return getSuspendedInvoiceList().size();
-	}
-
-	public void onRecoverSuspendedInvoice(ActionEvent event) {
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		Map<String, String> params = ec.getRequestParameterMap();
-		Integer suspendedInvoiceId = new Integer(params.get("suspendedInvoice"));
-		try {
-			load(event, suspendedInvoiceId);
-		} catch (ManagerBeanException ex) {
-			String msg = "Error al recuperar la Factura aparcada.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
 		}
 	}
 

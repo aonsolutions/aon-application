@@ -1180,12 +1180,28 @@ color:#000;
 .aon-big-commandButton{
 	border:#808080 1px solid;
 	line-height: 50px;
-	display: block;
+	display: inline-block;
 	font-weight:bold;
 	cursor:pointer;
 	padding:0px !important;
 	width:105px !important;
 	height:50px !important;
+	overflow:visible;
+	background:#d7d7d7 url(images/aon-content/aon-secondary-menu.png) scroll left top repeat-x !important;
+	text-transform:uppercase;
+	text-align: center; 
+	vertical-align:middle;
+}
+.aon-medium-commandButton{
+	border:#808080 1px solid;
+	line-height: 30px;
+	display: inline-block;
+	font-weight:bold;
+	cursor:pointer;
+	margin:0px 5px 5px 0px !important;
+	padding:0px !important;
+	width:250px !important;
+	height:30px !important;
 	overflow:visible;
 	background:#d7d7d7 url(images/aon-content/aon-secondary-menu.png) scroll left top repeat-x !important;
 	text-transform:uppercase;

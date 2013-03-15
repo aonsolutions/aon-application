@@ -73,7 +73,7 @@
 								<aon:outputText value="#{posInvoice.to.referenceCode}" />
 								<aon:outputLabel value="#{bundle.aon_date_time}:" />
 								<aon:outputText value="#{(posInvoice.to.modificationDate != null) ? posInvoice.to.modificationDate : posInvoice.to.creationDate}">
-									<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+									<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
 
@@ -252,7 +252,7 @@
 								value="4 #{financeBundle.finance_pos_suspend}"
 								title="Alt+{Mayús}+4"
 								disabled="#{posInvoice.to.pos.id == null or posInvoice.new or posInvoice.pendingAmount == 0}"
-								actionListener="#{posInvoice.onNewTicket}"
+								actionListener="#{posInvoice.onSuspendTicket}"
 								reRender="posInvoiceForm" ajaxSingle="true"
 								accesskey="4" />
 							<aon:commandButton id="recoverTicket" immediate="true"
