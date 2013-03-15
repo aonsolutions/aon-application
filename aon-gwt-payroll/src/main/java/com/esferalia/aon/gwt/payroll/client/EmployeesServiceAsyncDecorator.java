@@ -6,9 +6,11 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.Date;
 import java.util.List;
 
+import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -57,11 +59,11 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 	}
 
 	@Override
-	public void getPaymentConcepts(AsyncCallback<List<Payment>> callback)
+	public void getAvailablePayments(int employeeId, AsyncCallback<List<Payment>> callback)
 			throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync
-				.getPaymentConcepts(new AsyncCallbackWrapper<List<Payment>>(
+				.getAvailablePayments(employeeId, new AsyncCallbackWrapper<List<Payment>>(
 						callback));
 	}
 
@@ -142,7 +144,22 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.saveSalary(salaryDraft,
 				new AsyncCallbackWrapper<SalaryDraft>(callback));
 	}
-
+	
+	@Override
+	public void eval(String expression, SalaryDraft salaryDraft,
+			AsyncCallback<Double> callback) throws IllegalArgumentException, EvalException {
+		AON.start();
+		employeesServiceAsync.eval(expression, salaryDraft,
+				new AsyncCallbackWrapper<Double>(callback));
+		
+	}
+	@Override
+	public void getContext(SalaryDraft salaryDraft,
+			AsyncCallback<ContextDescriptor> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getContext(salaryDraft,
+				new AsyncCallbackWrapper<ContextDescriptor>(callback));
+	}
 	
 	@Override
 	public void calculateSalaryDraft(SalaryDraft salaryDraft,

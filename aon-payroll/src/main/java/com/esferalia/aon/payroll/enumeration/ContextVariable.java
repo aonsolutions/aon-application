@@ -140,7 +140,20 @@ public enum ContextVariable implements IResourceable{
 	BONUS_START("INICIO", VariableType.DATE, false),
 	SUBSIDIZED("BONIFICADO", VariableType.BOOLEAN),
 	TRAINING_CENTER("CENTRO_FORMATIVO", VariableType.TRAINING_CENTER_LOOKUP),
-
+	
+	// Excel
+	OR("O", VariableType.BOOLEAN ),
+	AND("Y", VariableType.BOOLEAN ),
+	IF("SI", VariableType.BOOLEAN ),
+	NOT("NO", VariableType.BOOLEAN ),
+	FALSE("FALSO", VariableType.BOOLEAN ),
+	TRUE("VERDADERO", VariableType.BOOLEAN ),
+	ABS("ABS", VariableType.DOUBLE ),
+	POW("POTENCIA", VariableType.DOUBLE ),
+	SQRT("RAIZ", VariableType.DOUBLE ),
+	INTEGER("ENTERO", VariableType.INTEGER ),
+	QUOTIENT("COCIENTE", VariableType.INTEGER ),
+	DAYS("DIAS", VariableType.INTEGER ),
 	
 	;
 	
@@ -222,4 +235,5 @@ public enum ContextVariable implements IResourceable{
     	return null;
     }
 	
+
 }

@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.i18n.client.NumberFormat;
 
 public class AON {
 
@@ -12,6 +13,9 @@ public class AON {
 
 	private static final String CONNECTION_STATUS_ELEMENTS[] = {
 			"_viewRoot:status.stop", "_viewRoot:status.start", "status_error" };
+
+	private static final NumberFormat CURRENCY_FORMAT = NumberFormat
+	.getFormat("#,##0.00");
 
 	public static void start() {
 		show(CONNECTION_STATUS_START);
@@ -39,6 +43,10 @@ public class AON {
 			Document.get().getElementById(CONNECTION_STATUS_ELEMENTS[i])
 					.getStyle().setDisplay(Display.NONE);
 		}
+	}
+	
+	public static String format(Double d) {
+		return d == null ? null : CURRENCY_FORMAT.format(d);
 	}
 
 	static final String AON_DATA_TABLE_ROW_EVEN = "aon-dataTable-row-even";

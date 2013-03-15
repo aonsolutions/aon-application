@@ -2,12 +2,22 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.util.Comparator;
 
+import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
+
 
 
 public class PaymentComparator implements Comparator<Payment> {
 	@Override
 	public int compare(Payment arg0, Payment arg1) {
-		int compareTo = arg0.getType().compareTo(arg1.getType());
+		Type type0 = arg0.getType();
+		Type type1 = arg1.getType();
+
+		if ( type0 != null && type1 == null )
+			return 1;
+		if ( type0 == null && type1 != null )
+			return -1;
+		
+		int compareTo = type0 == type1 ? 0 : type0.compareTo(type1);
 		if (compareTo != 0) {
 			return compareTo;
 		}

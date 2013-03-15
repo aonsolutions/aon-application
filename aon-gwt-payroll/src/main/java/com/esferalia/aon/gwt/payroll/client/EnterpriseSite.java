@@ -41,6 +41,9 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		@Source("gwt.css")
 		CssResource css();
 
+		@Source("warn.png")
+		ImageResource warn();
+
 		@Source("aon-menuBar.png")
 		ImageResource menuBar();
 
@@ -50,6 +53,14 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		@Source("button.png")
 		ImageResource button();
 		
+		@Source("public.png")
+		ImageResource publiC();
+		
+		@Source("private.png")
+		ImageResource privatE();
+
+		@Source("protected.png")
+		ImageResource protecteD();
 	}
 
 	

@@ -11,6 +11,7 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -30,6 +31,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		@Source("gwt.css")
 		CssResource css();
 
+		@Source("warn.png")
+		ImageResource warn();
+
 		@Source("aon-menuBar.png")
 		ImageResource menuBar();
 
@@ -39,6 +43,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		@Source("button.png")
 		ImageResource button();
 
+		@Source("public.png")
+		ImageResource publiC();
+		
+		@Source("private.png")
+		ImageResource privatE();
+
+		@Source("protected.png")
+		ImageResource protecteD();
 	}
 
 	class NewEmployeeCommand implements ScheduledCommand{

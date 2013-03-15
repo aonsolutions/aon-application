@@ -189,6 +189,24 @@ a, a:hover, a:visited {
     background: inherit;
 }
 
+.gwt-SuggestBoxPopup .item .payment_concept,
+.gwt-SuggestBoxPopup .item .employee_payment,
+.gwt-SuggestBoxPopup .item .enterprise_payment{
+    padding-left: 15px;
+}
+
+@sprite .gwt-SuggestBoxPopup .item .payment_concept{
+	gwt-image: "publiC"; 
+}
+
+@sprite .gwt-SuggestBoxPopup .item .employee_payment{
+	gwt-image: "privatE"; 
+}
+
+@sprite .gwt-SuggestBoxPopup .item .enterprise_payment{
+	gwt-image: "protecteD"; 
+}
+
 @sprite .aon-MenuItemCheckYes {
 	gwt-image: "checkYes"; 
 }
@@ -376,6 +394,21 @@ td.datePickerMonth,
 	vertical-align : middle !important;
 }
 
+.gwt-Error {
+	width: auto; 
+	height: auto;
+	color: red;
+	font-weight: bold;
+}
+
+@sprite .gwt-Warn {
+	width: auto; 
+	height: auto;
+	color: orange;
+	gwt-image: 'warn';
+	font-weight: bold;
+	padding-left: 14px;
+}
 
 .reset * { 
 	border:0;

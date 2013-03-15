@@ -23,7 +23,7 @@ public class ResourceServlet extends HttpServlet {
 	public static final long ONE_YEAR_MILLIS = 31363200000L;
 
 	/**
-	 * Context parameter for activating debug mode, which will disable caching.
+	 * ContextDescriptor parameter for activating debug mode, which will disable caching.
 	 */
 	public static final String DEBUG_INIT_PARAM = "debug";
 	

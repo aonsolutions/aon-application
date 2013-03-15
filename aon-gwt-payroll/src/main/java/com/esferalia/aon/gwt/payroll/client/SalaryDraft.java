@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +27,10 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dev.jjs.impl.TypeTightener.FixDanglingRefsVisitor;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -39,6 +44,8 @@ import com.google.gwt.event.dom.client.HasAllFocusHandlers;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -48,8 +55,11 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.HasDirection.Direction;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -57,6 +67,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
@@ -71,8 +82,12 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.TextBoxBase;
+import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
+import com.google.gwt.user.client.ui.SuggestBox.SuggestionCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
@@ -176,6 +191,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		public void onFocus(FocusEvent event) {
 			setValue(variable.getExpression());
 			fxButton.setEnabled(true);
+			fxhasValue = uiObject;
 		}
 
 		@Override
@@ -247,6 +263,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				public void onFocus(FocusEvent event) {
 					widget.setValue(item.getExpression());
 					fxButton.setEnabled(true);
+					fxhasValue = widget;
 				}
 			});
 			widget.addBlurHandler(new BlurHandler() {
@@ -329,14 +346,15 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	}
 
-	abstract class NewItemHandler<T extends Item> {
+	abstract class NewItemHandler<T extends Item> extends
+			DefaultSuggestionDisplay {
 
 		Button recoverButton;
 		TextBox expressionBox;
 		SuggestBox descriptionBox;
 		MultiWordSuggestOracle oracle;
 
-		Map<String, T> paymentConceptsMap;
+		Map<String, T> itemsConceptsMap;
 
 		public void setDescriptionBox(SuggestBox descriptionBox) {
 			this.descriptionBox = descriptionBox;
@@ -346,14 +364,17 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 						@Override
 						public void onFocus(FocusEvent event) {
-							if (paymentConceptsMap == null) {
-								paymentConceptsMap = new HashMap<String, T>();
+							if (itemsConceptsMap == null) {
+								itemsConceptsMap = new HashMap<String, T>();
 
 								for (T item : getAvailableItems()) {
-									String suggestion = item.getDescription()
-											+ " ( " + item.getName() + " )";
+									String suggestion = item.getDescription();
+									if (!StringUtils.isEmpty(item.getName()))
+										suggestion += " ( " + item.getName()
+												+ " )";
+
 									oracle.add(suggestion);
-									paymentConceptsMap.put(suggestion, item);
+									itemsConceptsMap.put(suggestion, item);
 								}
 							}
 						}
@@ -377,7 +398,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		public void setOracle(MultiWordSuggestOracle oracle) {
 			this.oracle = oracle;
-
 		}
 
 		public void setExpressionBox(TextBox expressionBox) {
@@ -396,7 +416,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		protected void onValueChange() {
 
 			String suggestion = descriptionBox.getValue();
-			T item = paymentConceptsMap.get(suggestion);
+			T item = itemsConceptsMap.get(suggestion);
 
 			String expression = null;
 			if (item != null) {
@@ -415,6 +435,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			addDrafItem(item, expression);
 
 			salaryDraftObject.calculate(SalaryDraft.this);
+		}
+
+		protected T getItem(String description) {
+			return itemsConceptsMap.get(description);
 		}
 
 		protected abstract List<T> getAvailableItems();
@@ -449,6 +473,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 			salaryDraftObject.addDraftDeduction(deduction);
 		}
+
 	}
 
 	class NewPaymentHandler extends NewItemHandler<Payment> {
@@ -479,6 +504,44 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			salaryDraftObject.addDraftPayment(draftPayment);
 
 		}
+
+		@Override
+		protected void showSuggestions(SuggestBox suggestBox,
+				Collection<? extends Suggestion> suggestions,
+				boolean isDisplayStringHTML, boolean isAutoSelectEnabled,
+				SuggestionCallback callback) {
+
+			Collection<Suggestion> mySuggestions = new ArrayList<Suggestion>(
+					suggestions.size());
+
+			for (Suggestion suggestion : suggestions) {
+				String replacementString = suggestion.getReplacementString();
+				Payment payment = getItem(replacementString);
+
+				SafeHtmlBuilder htmlBuilder = new SafeHtmlBuilder();
+
+				String clazz = null;
+				if (StringUtils.isEmpty(payment.getName()))
+					clazz = payment.getScope() == Scope.CONTRACT ? "employee_payment"
+							: "enterprise_payment";
+				else
+					clazz = "payment_concept";
+
+				htmlBuilder.appendHtmlConstant("<span class=\"" + clazz
+						+ "\" >");
+				htmlBuilder.appendHtmlConstant(suggestion.getDisplayString());
+				htmlBuilder.appendHtmlConstant("</span>");
+
+				mySuggestions
+						.add(new MultiWordSuggestOracle.MultiWordSuggestion(
+								replacementString, htmlBuilder.toSafeHtml()
+										.asString()));
+			}
+
+			super.showSuggestions(suggestBox, mySuggestions,
+					isDisplayStringHTML, isAutoSelectEnabled, callback);
+		}
+
 	}
 
 	class VariableRemoveHandler implements ClickHandler {
@@ -538,16 +601,18 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 
 		void fillPayment(Payment draftPayment) {
-			
-			if ( draftPayment.getType() != null )
+
+			if (draftPayment.getType() != null)
 				return;
-			
+
 			for (Payment payment : SalaryDraft.this.availablePaymens) {
-				if ( StringUtils.equals(payment.getName(), draftPayment.getName()) ){
+				if (StringUtils.equals(payment.getName(),
+						draftPayment.getName())) {
 					draftPayment.setConceptId(payment.getId());
 					draftPayment.setType(payment.getType());
 					draftPayment.setIrpfExpression(payment.getIrpfExpression());
-					draftPayment.setQuoteExpression(payment.getQuoteExpression());
+					draftPayment.setQuoteExpression(payment
+							.getQuoteExpression());
 
 					draftPayment.setScope(Scope.SALARY);
 					draftPayment.setEndDate(salaryDraftObject.getEndDate());
@@ -726,32 +791,24 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private int zoom;
 	private Scope scope;
-
-	private SalaryDraftObject salaryDraftObject;
-
-	private Map<Event.Type, String[]> eventStyles;
-
 	private List<HasVisibility> dbUIObjects;
-
+	private SalaryDraftObject salaryDraftObject;
+	private Map<Event.Type, String[]> eventStyles;
 	private List<Payment> availablePaymens = new ArrayList<Payment>();
+	
+	private HasValue<String> fxhasValue ;
 
 	public SalaryDraft() {
 		initWidget(binder.createAndBindUi(this));
-		initContextTable();
 		initPaymentsTable();
-		initPrint();
 		initPrintPreview();
 		scope = Scope.CONTRACT;
 		salarySelect.addListener(this);
 		showDraft();
 		zoom = DEFAULT_ZOOM;
 		initEventsStyles(style);
-		initUndoRedo();
 		initSalaryDb();
-		initFxHelper();
 		initDatesListBox();
-		initAcceptButton();
-		initSalaryButton();
 	}
 
 	public void setSalaryDraftObject(SalaryDraftObject salaryDraftObject) {
@@ -1016,25 +1073,21 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				});
 	}
 
-	private void initFxHelper() {
-		fxButton.addMouseDownHandler(new MouseDownHandler() {
-			FxDialog fxDialog = new FxDialog();
-
+	@UiHandler("fxButton")
+	void onFxHelperMouseDown(MouseDownEvent event) {
+		final FxDialog fxDialog = new FxDialog(salaryDraftObject);
+		fxDialog.setExpression(fxhasValue.getValue());
+		fxDialog.setWidth(Window.getClientWidth() / 2 + "px");
+		fxDialog.center();
+		fxDialog.show();
+		
+		fxDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
 			@Override
-			public void onMouseDown(MouseDownEvent event) {
-				// TODO Auto-generated method stub
-				fxDialog.center();
-				fxDialog.show();
-			}
-		});
-
-		fxButton.addClickHandler(new ClickHandler() {
-			FxDialog fxDialog = new FxDialog();
-
-			@Override
-			public void onClick(ClickEvent event) {
-				fxDialog.center();
-				fxDialog.show();
+			public void onClose(CloseEvent<PopupPanel> event) {
+				((Focusable)fxhasValue).setFocus(true);
+				if ( fxDialog.isAccepted() ) {
+					fxhasValue.setValue(fxDialog.getExpression());
+				}
 			}
 		});
 	}
@@ -1088,22 +1141,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		});
 	}
 
-	private void initAcceptButton() {
-		acceptButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				salaryDraftObject.save(SalaryDraft.this);
-			}
-		});
+	@UiHandler("acceptButton")
+	void onAcceptButtonClick(ClickEvent event) {
+		salaryDraftObject.save(this);
 	}
 
-	private void initSalaryButton() {
-		salaryButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				salaryDraftObject.emitSalary(SalaryDraft.this);
-			}
-		});
+	@UiHandler("salaryButton")
+	void onSalaryButtonClick(ClickEvent event) {
+		salaryDraftObject.emitSalary(this);
 	}
 
 	private void syncDatesListBox() {
@@ -1183,9 +1228,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	}
 
-	private void initContextTable() {
-	}
-
 	private void initEventsStyles(MyStyle myStyle) {
 		eventStyles = new HashMap<Event.Type, String[]>();
 		eventStyles.put(Event.Type.INFO, new String[] { "", "" });
@@ -1196,32 +1238,21 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				myStyle.textWarn() });
 	}
 
-	private void initUndoRedo() {
-		undoButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				salaryDraftObject.undo();
-				salaryDraftObject.calculate(SalaryDraft.this);
-			}
-		});
-		redoButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				salaryDraftObject.redo();
-				salaryDraftObject.calculate(SalaryDraft.this);
-			}
-		});
+	@UiHandler("undoButton")
+	void onUndoButtonClick(ClickEvent event) {
+		salaryDraftObject.undo();
+		salaryDraftObject.calculate(SalaryDraft.this);
 	}
 
-	private void initPrint() {
-		printButton.addClickHandler(new ClickHandler() {
+	@UiHandler("redoButton")
+	void onRedoButtonClick(ClickEvent event) {
+		salaryDraftObject.redo();
+		salaryDraftObject.calculate(SalaryDraft.this);
+	}
 
-			@Override
-			public void onClick(ClickEvent event) {
-				print();
-			}
-		});
-
+	@UiHandler("printButton")
+	void onPrintButtonClick(ClickEvent event) {
+		print();
 	}
 
 	private void initPrintPreview() {
@@ -1371,11 +1402,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		paymentsTable.setWidget(row, 0, newButton);
 		paymentsTable.setHTML(row, 1, "&nbsp;");
 
-		final MultiWordSuggestOracle paymentsOracle = new MultiWordSuggestOracle();
-		SuggestBox descriptionBox = new SuggestBox(paymentsOracle);
+		NewPaymentHandler newPaymentHandler = new NewPaymentHandler();
+		MultiWordSuggestOracle paymentsOracle = new MultiWordSuggestOracle();
+		SuggestBox descriptionBox = new SuggestBox(paymentsOracle,
+				new TextBox(), newPaymentHandler);
 		descriptionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		paymentsTable.setWidget(row, 2, descriptionBox);
-		NewPaymentHandler newPaymentHandler = new NewPaymentHandler();
 		newPaymentHandler.setOracle(paymentsOracle);
 		newPaymentHandler.setDescriptionBox(descriptionBox);
 

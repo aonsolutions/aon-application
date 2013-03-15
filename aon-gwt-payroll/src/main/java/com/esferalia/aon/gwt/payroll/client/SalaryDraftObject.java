@@ -1,14 +1,13 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
+import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.HasStartAndEndDate;
-import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -17,7 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
-public class SalaryDraftObject {
+public class SalaryDraftObject implements IContextProvider{
 
 	public static Date NULL_DATE = new Date() {
 	};
@@ -124,7 +123,18 @@ public class SalaryDraftObject {
 		this.employeesServiceAsync = employeesServiceAsync;
 		this.undoManager = new UndoManager<UndoableEdit<?>>();
 	}
+	
 
+	@Override
+	public void getContext( AsyncCallback<ContextDescriptor> callback ) {
+		employeesServiceAsync.getContext(salaryDraft, callback);
+	}
+	
+	@Override
+	public void eval(String expression, AsyncCallback<Double> callback) {
+		employeesServiceAsync.eval(expression, salaryDraft, callback);
+	}
+	
 	public void save(final CalculateCallback callback) {
 
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
@@ -242,7 +252,8 @@ public class SalaryDraftObject {
 	}
 
 	public void getPaymentConcepts(AsyncCallback<List<Payment>> callback) {
-		employeesServiceAsync.getPaymentConcepts(callback);
+		int employeeId = salaryDraft.getEmployee().getId();
+		employeesServiceAsync.getAvailablePayments(employeeId, callback);
 	}
 
 	public SalaryDraft asSalaryPreview() {

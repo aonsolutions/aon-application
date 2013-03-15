@@ -1,126 +1,160 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
+import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.EvalException;
+import com.esferalia.aon.gwt.payroll.shared.EvalSyntaxErrorException;
+import com.esferalia.aon.gwt.payroll.shared.EvalWarning;
+import com.esferalia.aon.gwt.payroll.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.TakesValue;
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.InvocationException;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 public class FxDialog extends CustomDialog {
+
+	private static final DateTimeFormat DATE_SHORT = DateTimeFormat
+			.getFormat(PredefinedFormat.DATE_SHORT);
+
+	private static final NumberFormat CURRENCY_FORMAT = NumberFormat
+			.getFormat("#,##0.00");
+
+	static interface IContextProvider {
+
+		void getContext(AsyncCallback<ContextDescriptor> callback);
+		void eval(String expression, AsyncCallback<Double> callback);
+	}
+	
 
 	interface Binder extends UiBinder<Widget, FxDialog> {
 
 	}
 
+	class ContextCallback implements AsyncCallback<ContextDescriptor> {
+
+		@Override
+		public void onFailure(Throwable caught) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onSuccess(ContextDescriptor result) {
+			FxDialog.this.contextDescriptor = result;
+
+			FxDialog.this.categoryListBox.setSelectedIndex(0);
+			onCategoryChanged(null);
+			FxDialog.this.functionListBox.setSelectedIndex(0);
+			onFunctionChanged(null);
+		}
+
+	}
+
+	class ExpressionCallback extends Timer implements AsyncCallback<Double> {
+
+		@Override
+		public void run() {
+			String expression = expressionTextArea.getText();
+			if ( StringUtils.isEmpty(expression) ) {
+				cleanError();
+				cleanResult();
+			}
+			else {
+				contextProvider.eval(expression, this);
+			}
+		}
+
+		@Override
+		public void onFailure(Throwable caught) {
+			cleanResult();
+			// Convenient way to find out which exception was thrown.
+			try {
+				throw caught;
+			} catch (InvocationException e) {
+				setError(e.getMessage());
+				// the call didn't complete cleanly
+			} catch (EvalWarning e) {
+				setWarning(e.getMessage());
+				// one of the 'throws' from the original method
+			} catch (EvalSyntaxErrorException e) {
+				setError(e.getMessage());
+				// one of the 'throws' from the original method
+			} catch (EvalException e) {
+				errorLabel.setHTML(e.getMessage());
+				// one of the 'throws' from the original method
+			} catch (Throwable e) {
+				// last resort -- a very unexpected exception
+				setError("Error desconocido." );
+			}
+
+		}
+
+		@Override
+		public void onSuccess(Double result) {
+			cleanError();
+			resultLabel.setText(result.toString());
+		}
+
+	}
+
 	private static final Binder binder = GWT.create(Binder.class);
 
-	static enum Category { 
-		ALL("Todos"), DATE("Fecha"), INFO("Información"), LOGIC("Lógico"), MATH(
-				"Mátemáticas"), TEXT("Texto"), VAR("Variables");
+	static enum Category {
+		ALL("Todos", Object.class), BOOL("L\u00f3gicas", Boolean.class), MATH(
+				"Matem\u00e1ticas", Number.class), DATE("Fecha", Date.class), TEXT(
+				"Texto", String.class);
 
 		String name;
+		Class<?> type;
 
-		private Category(String name) {
+		private Category(String name, Class<?> type) {
 			this.name = name;
+			this.type = type;
 		}
 
 		public String getName() {
 			return name;
+		}
+
+		public Class<?> getType() {
+			return type;
 		}
 
 		static Category getByName(String name) {
-			for (Category category : Category.values())
+			for (Category category : Category.values()) {
 				if (category.name.equals(name))
 					return category;
-			return null;
-
-		}
-	}
-
-	static enum Function {
-
-		FALSE("FALSO", "Devuelve el valor lógico FALSO."), NOT("NO",
-				"Cambia FALSO por VERDADERO y VERDADERO por FALSO.",
-				"valor_lógico"), OR(
-				"O",
-				"Comprueba si alguno de los argumentos es VERDADERO, y devuelve VERDADERO o FALS0. Devuelve FALSO si todos los argumentos son FALSOS.",
-				"valor_lógico 1", "valor_lógico 2", "..."), IF(
-				"SI",
-				"Comprueba si se cumple una condición y devuelve un valor si se evalúa como VERDADERO y otro valor si se evalúa como FALSO.",
-				"prueba_lógica", "valor_si_verdadero", "valor_si_falso"), TRUE(
-				"VERDADERO", "Devuelve el valor lógico VERDADERO."), AND(
-				"O",
-				"Comprueba si todos los argumentos son VERDADEROS. Devuelve VERDADERO si todos los argumentos son VERDADEROS.",
-				"valor_lógico 1", "valor_lógico 2", "..."),
-
-		NOW("AHORA",
-				"Devuelve la fecha y hora actuales con formato de fecha y hora."), DAYS(
-				"DIAS", "Calcula el número de dias entre dos fechas.",
-				"fecha_inicial", "fecha_final"), DAYS360(
-				"DIAS360",
-				"Calcula el número de dias entre dos fechas basándose en un año de 360 días (doce mese de 30 días).",
-				"fecha_inicial", "fecha_final"), TODAY("HOY",
-				"Devuelve la fecha actual con formato de fecha."),
-
-		ABS("HOY",
-				"Devuelve el valor absoluto de un número, es decir, un número sin signo.");
-
-		private Function(String name, String description, String... params) {
-			this.name = name;
-			this.description = description;
-			this.params = params;
-		}
-
-		String name;
-		String description;
-		String params[];
-
-		public String getName() {
-			return name;
-		}
-
-		public String[] getParams() {
-			return params;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-
-		public String getSyntax() {
-			StringBuffer buff = new StringBuffer();
-			buff.append(name);
-			buff.append("(");
-			for (int i = 0; i < params.length; i++)
-				buff.append((i > 0 ? "," : "") + params[i]);
-			buff.append(")");
-			return buff.toString();
-		}
-
-		static Function getByName(String name) {
-			for (Function function : Function.values())
-				if (function.name.equals(name))
-					return function;
+			}
 			return null;
 		}
 	}
-
-	private static Map<Category, Function[]> CATEGORY_FUNCTIONS_MAP = new HashMap<Category, Function[]>() {
-		{
-			put(Category.LOGIC, new Function[] { Function.FALSE, Function.NOT,
-					Function.OR, Function.IF, Function.TRUE, Function.AND, });
-			put(Category.DATE, new Function[] { Function.NOW, Function.DAYS,
-					Function.DAYS360, Function.TODAY });
-			put(Category.MATH, new Function[] { Function.ABS });
-		}
-	};
 
 	@UiField
 	ListBox categoryListBox;
@@ -130,11 +164,32 @@ public class FxDialog extends CustomDialog {
 	@UiField
 	Label nameLabel;
 	@UiField
+	HTML resultLabel;
+	@UiField
+	InlineHTML valueLabel;
+	@UiField
 	Label syntaxLabel;
 	@UiField
-	Label descriptionLabel;
+	InlineHTML errorLabel;
+	@UiField
+	InlineHTML descriptionLabel;
+	@UiField
+	TextArea expressionTextArea;
 
-	public FxDialog() {
+	@UiField
+	Button cancelButton;
+	@UiField
+	Button acceptButton;
+	
+	private boolean accepted;
+
+	private IContextProvider contextProvider;
+	private ContextDescriptor contextDescriptor;
+
+	private ContextCallback contextCallback;
+	private ExpressionCallback expressionCallback;
+
+	public FxDialog(IContextProvider contextProvider) {
 
 		setCaption("Asistente");
 		setWidget(binder.createAndBindUi(this));
@@ -142,41 +197,144 @@ public class FxDialog extends CustomDialog {
 		for (Category category : Category.values()) {
 			categoryListBox.addItem(category.getName());
 		}
+		this.contextProvider = contextProvider;
+		this.contextCallback = new ContextCallback();
+		this.expressionCallback = new ExpressionCallback();
 
-		categoryListBox.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				int index = categoryListBox.getSelectedIndex();
-				String name = categoryListBox.getItemText(index);
-				Category category = Category.getByName(name);
-				onCategorySelected(category);
-			}
-		});
-
-		categoryListBox.setSelectedIndex(0);
-
-		functionListBox.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				int index = functionListBox.getSelectedIndex();
-				String name = functionListBox.getItemText(index);
-				Function function = Function.getByName(name);
-				onFunctionSelected(function);
-			}
-		});
 	}
 
-	private void onCategorySelected(Category category) {
-		Function functions[] = CATEGORY_FUNCTIONS_MAP.get(category);
-		for (Function function : functions) {
-			Document.get();
-			functionListBox.addItem(function.getName());
+	@Override
+	public void show() {
+		contextProvider.getContext(contextCallback);
+		evalExpression(0);
+		super.show();
+
+	}
+	
+	
+	public boolean isAccepted() {
+		return accepted;
+	}
+
+	public void setExpression(String expression) {
+		expressionTextArea.setText(expression);
+	}
+	
+	public String getExpression(){
+		return expressionTextArea.getText();
+	}
+	
+	@UiHandler("cancelButton")
+	void onCancelButtonClick(ClickEvent event) {
+		hide();
+	}
+
+	@UiHandler("acceptButton")
+	void onAcceptButtonClick(ClickEvent event) {
+		accepted = true;
+		hide();
+	}
+	
+
+	@UiHandler("categoryListBox")
+	void onCategoryChanged(ChangeEvent event) {
+		int index = categoryListBox.getSelectedIndex();
+		String name = categoryListBox.getItemText(index);
+		Category category = Category.getByName(name);
+		loadContext4Category(category);
+	}
+
+	@UiHandler("functionListBox")
+	void onFunctionChanged(ChangeEvent event) {
+		int index = functionListBox.getSelectedIndex();
+		String varName = functionListBox.getItemText(index);
+		nameLabel.setText(varName);
+		VariableDescriptor var = contextDescriptor.get(varName);
+		syntaxLabel.setText(varName + var.getSyntax());
+
+		String value = var.getValue();
+		if (value != null) {
+			if (value.equalsIgnoreCase(Boolean.TRUE.toString()))
+				value = "VERDADERO";
+			else if (value.equalsIgnoreCase(Boolean.FALSE.toString()))
+				value = "FALSO";
+			valueLabel.setHTML(value);
+		} else {
+			valueLabel.setHTML("&nbsp;");
+		}
+		String description = var.getDescription();
+		descriptionLabel.setHTML(description != null ? description : "&nbsp;");
+
+	}
+
+	@UiHandler("functionListBox")
+	void onFunctionDoubleClick(DoubleClickEvent event) {
+		int index = functionListBox.getSelectedIndex();
+		String varName = functionListBox.getItemText(index);
+		VariableDescriptor var = contextDescriptor.get(varName);
+		int curPos = expressionTextArea.getCursorPos();
+		String expression = expressionTextArea.getText();
+		StringBuffer expressionBuffer = new StringBuffer(expression);
+		expressionBuffer.insert(curPos, varName + var.getSyntax());
+		expressionTextArea.setValue(expressionBuffer.toString());
+		onExpressionKeyUp(null);
+		evalExpression(0); // eval now ???
+	}
+
+	@UiHandler("expressionTextArea")
+	void onExpressionKeyUp(KeyUpEvent event) {
+		evalExpression(1000);
+	}
+
+	void evalExpression(int milliseconds) {
+		expressionCallback.cancel();
+		expressionCallback.schedule(milliseconds);
+	}
+
+	void loadContext4Category(Category category) {
+
+		functionListBox.clear();
+
+		if (contextDescriptor == null)
+			return;
+
+		Class<?> type = category.getType();
+		List<String> vars = new ArrayList<String>();
+		for (String varName : contextDescriptor.getVariables()) {
+			VariableDescriptor var = contextDescriptor.get(varName);
+			if (type == Object.class || type == var.getType()) {
+				vars.add(varName);
+			}
+		}
+
+		Collections.sort(vars);
+
+		for (String var : vars) {
+			VariableDescriptor descriptor = contextDescriptor.get(var);
+			functionListBox
+					.addItem(
+							var,
+							descriptor.getClass() == VariableDescriptor.class ? "VariableDescriptor"
+									: "FunctionDescriptor");
 		}
 	}
+	
+	void cleanResult() {
+		resultLabel.setHTML("&nbsp");
+	}
 
-	private void onFunctionSelected(Function function) {
-		nameLabel.setText(function.getName());
-		syntaxLabel.setText(function.getSyntax());
-		descriptionLabel.setText(function.getDescription());
+	void cleanError() {
+		errorLabel.setHTML("&nbsp");
+		errorLabel.setStyleName("");
+	}
+
+	void setError(String html) {
+		errorLabel.setHTML(html);
+		errorLabel.addStyleName("gwt-Error");
+	}
+
+	void setWarning(String html) {
+		errorLabel.setHTML(html);
+		errorLabel.addStyleName("gwt-Warn");
 	}
 }

@@ -2,11 +2,21 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.util.Comparator;
 
+import com.esferalia.aon.gwt.payroll.shared.Deduction.Type;
+
 
 
 public class DeductionComparator implements Comparator<Deduction> {
 	public int compare(Deduction arg0, Deduction arg1) {
-		int compareTo = arg0.getType().compareTo(arg1.getType());
+		Type type0 = arg0.getType();
+		Type type1 = arg1.getType();
+
+		if ( type0 != null && type1 == null )
+			return 1;
+		if ( type0 == null && type1 != null )
+			return -1;
+
+		int compareTo = type0 == type1 ? 0 : arg0.getType().compareTo(arg1.getType());
 		if (compareTo != 0) {
 			return compareTo;
 		}

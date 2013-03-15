@@ -18,6 +18,7 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.calculator.ContextFunctions;
+import com.esferalia.aon.payroll.calculator.ExcelFunctions;
 import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
@@ -215,6 +216,7 @@ public class SQLAgreementContextFactory
 		systemExpressionContext.addVariable(SALARY_START, startDate, startDate, endDate);
 		systemExpressionContext.addVariable(SALARY_END, endDate, startDate, endDate);
 		
+		ExcelFunctions.load(systemExpressionContext, startDate, endDate);
 		ContextFunctions.loadFunctions(systemExpressionContext, startDate, endDate);
 	}
 	
