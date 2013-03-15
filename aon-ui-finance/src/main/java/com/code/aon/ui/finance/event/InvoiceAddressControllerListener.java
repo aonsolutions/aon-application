@@ -1,14 +1,26 @@
 package com.code.aon.ui.finance.event;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.util.CompanyUtil;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class InvoiceAddressControllerListener extends ControllerAdapter {
+
+	private CompanyUtil companyUtil;
+
+	public CompanyUtil getCompanyUtil() {
+		if (companyUtil == null) {
+			companyUtil = new CompanyUtil();
+		}
+		return companyUtil;
+	}
 
 	@Override
 	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
@@ -26,8 +38,20 @@ public class InvoiceAddressControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event)	throws ControllerListenerException {
-		InvoiceAddress to = (InvoiceAddress)event.getController().getTo();
+		LinesController invoiceAddressController = (LinesController)event.getController();
+		InvoiceAddress to = (InvoiceAddress)invoiceAddressController.getTo();
 		to.setStreetType(StreetType.CL);
+
+		Invoice invoice = (Invoice)invoiceAddressController.getMasterController().getTo();
+		if (invoice.getPos() != null && invoice.getPos().getId() != null) {
+			to.setGeozone(invoice.getPos().getWorkPlace().getAddress().getGeozone());
+		} else {
+			try {
+				to.setGeozone(getCompanyUtil().getCompanyGeoZone());
+			} catch (ManagerBeanException e) {
+				throw new ControllerListenerException(e.getMessage(), e);
+			}
+		}
 	}
 
 }

@@ -38,7 +38,7 @@
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="invoiceAddress-save"
 										value="#{bundle.aon_save}"
-										reRender="showInvoiceAddressWindow,InvoiceAddress"
+										reRender="showInvoiceAddressWindow,#{addressReRender}"
 										actionListener="#{invoiceAddress.accept}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										accesskey="#{bundle.aon_key_save}">
@@ -50,7 +50,7 @@
 									</aon:commandButton>
 									<aon:commandButton id="invoiceAddress-remove"
 										value="#{bundle.aon_remove}"
-										reRender="showInvoiceAddressWindow,InvoiceAddress"
+										reRender="showInvoiceAddressWindow,#{addressReRender}"
 										rendered="#{invoiceAddress.to.id != null}"
 										immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-delete"

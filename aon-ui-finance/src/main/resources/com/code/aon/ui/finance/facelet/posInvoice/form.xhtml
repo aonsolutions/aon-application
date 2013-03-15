@@ -80,18 +80,36 @@
 								<aon:outputText value="&#160;" />
 								<aon:outputLabel value="#{customerBundle.customer_customer}:" />
 								<aon:div>
-									<aon:outputText value="#{posInvoice.to.registryName}" />
-									<aon:commandLink id="PosInvoice_changeCustomerData" immediate="true"
+									<aon:outputText value="#{posInvoice.to.registryName}">
+										<aon:abbreviateConverter maxWidth="30" />
+									</aon:outputText>
+									<aon:commandLink id="invoiceRegistryData" immediate="true"
 										value="&#160;" title="#{bundle.aon_edit}"
-										styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
+										styleClass="aon-icon-edit-add-user" style="margin-left: 5px; padding-right: 12px;"
 										actionListener="#{posInvoice.onRegistryDataWindowShow}"
 										ajaxSingle="true">
 										<f:setPropertyActionListener target="#{posInvoice.showRegistryDataWindow}"
 											value="#{true}" />
 									</aon:commandLink>
+									<aon:commandLink id="invoiceAddressButton" immediate="true"
+										value="&#160;" title="#{bundle.aon_edit} #{bundle.aon_address}"
+										styleClass="aon-icon-edit-add-address" style="margin-left: 5px; padding-right: 12px;"
+										actionListener="#{posInvoice.onInvoiceAddressShow}"
+										reRender="showInvoiceAddressWindow">
+										<f:setPropertyActionListener target="#{posInvoice.showInvoiceAddressWindow}"
+											value="#{true}" />								
+									</aon:commandLink>
 								</aon:div>
 								<aon:outputLabel value="#{bundle.aon_company_document}:" />
 								<aon:outputText value="#{posInvoice.to.registryDocument}" />
+
+								<c:if test="#{posInvoiceAddress.to.id != null}">
+									<aon:outputText value="&#160;" />
+									<aon:outputLabel value="#{bundle.aon_address}:" />
+									<aon:outputText value="#{posInvoice.address}" />
+									<aon:outputLabel value="#{registryBundle.registry_city}:" />
+									<aon:outputText value="#{posInvoice.location}" />
+								</c:if>
 
 								<aon:outputText value="&#160;" />
 								<aon:outputLabel value="#{financeBundle.finance_pos_seller_label}:" />
@@ -329,11 +347,16 @@
 		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/posInvoice/modalPosSelection.xhtml">
+			<ui:param name="invoiceController" value="#{posInvoice}" />
+		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalRegistryData.xhtml">
 			<ui:param name="invoiceController" value="#{posInvoice}" />
 		</ui:include>
-		<ui:include src="/com/code/aon/ui/finance/facelet/posInvoice/modalPosSelection.xhtml">
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAddress.xhtml">
 			<ui:param name="invoiceController" value="#{posInvoice}" />
+			<ui:param name="invoiceAddress" value="#{posInvoiceAddress}" />
+			<ui:param name="addressReRender" value="posInvoiceDatatable" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/posInvoice/modalFinishTicket.xhtml">

@@ -607,6 +607,12 @@ color:#000;
 	vertical-align:top;	
 	cursor: pointer;
  }
+.aon-icon-edit-add-user{
+	background:transparent url(images/aon-icon/aon-icon-edit-add-user.png) scroll left center no-repeat;
+ }
+.aon-icon-edit-add-address{
+	background:transparent url(images/aon-icon/aon-icon-edit-add-address.png) scroll left center no-repeat;
+}
 .aon-icon-edit-end-simple{
 	background:transparent url(images/aon-icon/aon-icon-edit-end.png) scroll left center no-repeat;
  }
@@ -619,7 +625,10 @@ color:#000;
 	vertical-align:top;	
 	cursor: pointer;
  }
- 
+.aon-icon-edit-end-user{
+	background:transparent url(images/aon-icon/aon-icon-edit-end-user.png) scroll left center no-repeat;
+ }
+
  /*folder icons*/
 .aon-icon-folder{
 	background:transparent url(images/aon-icon/aon-icon-folder.png) scroll left center no-repeat;
