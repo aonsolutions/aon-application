@@ -101,7 +101,8 @@ public class SalaryDraftCalculatorContext extends
 		@Override
 		public boolean evaluate(Object obj) {
 			IContractPayment payment = (IContractPayment) obj;
-			return ids.add(payment.getId());
+			Integer id = payment.getId();
+			return id == null || ids.add(payment.getId());
 		}
 
 	}

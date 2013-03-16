@@ -33,6 +33,7 @@ public class DateUtils {
 		return getLastDayOfMonth(new Date());
 	}
 
+
 	public static boolean isAfterOrEquals(Date a, Date b ) {
 		if ( a == null ) 
 			return true;

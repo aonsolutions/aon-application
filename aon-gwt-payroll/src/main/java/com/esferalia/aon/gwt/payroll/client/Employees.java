@@ -307,7 +307,7 @@ public class Employees extends ResizeComposite implements
 		// stop the browser from opening the context menu
 		event.preventDefault();
 		event.stopPropagation();
-		
+
 		TreeItem item = tree.getSelectedItem();
 		Object userObject = item.getUserObject();
 		// TODO : I know that's so ugly and not Object oriented. But
@@ -492,7 +492,8 @@ public class Employees extends ResizeComposite implements
 		}
 	}
 
-	private void onSalaryPreviewSelected(SalaryPreviewDocument salaryPreviewDocument) {
+	private void onSalaryPreviewSelected(
+			SalaryPreviewDocument salaryPreviewDocument) {
 		for (Listener listener : listeners) {
 			listener.onSalaryPreviewSelected(salaryPreviewDocument);
 		}
@@ -503,20 +504,18 @@ public class Employees extends ResizeComposite implements
 			listener.onActivitySelected(activity);
 		}
 	}
-	
-	private void onWorkplaceContextMenu(Workplace workplace, ContextMenuEvent event) {
+
+	private void onWorkplaceContextMenu(Workplace workplace,
+			ContextMenuEvent event) {
 		for (Listener listener : listeners) {
 			listener.onWorkplaceContextMenu(workplace, event);
 		}
 	}
-	
 
 	private void loadEmployess(TreeItem workplaceItem,
 			List<Employee> employees, int limit) {
 
 		int added = 0;
-		
-		
 
 		for (Employee employee : employees) {
 
@@ -541,17 +540,17 @@ public class Employees extends ResizeComposite implements
 
 			if (extended) {
 				TreeItem salaryPreviewItem = addImageItem(employeeItem,
-						"Vista Anticipada", images.preview());
+						"Preliminar", images.preview());
 				SalaryPreview salaryPreview = new SalaryPreview();
 				salaryPreview.setEmployee(employee);
 
-				// TODO : This must not be here... and it's
-				// wrong.
-				// TODO : It doesn't care about employee start
-				// and end dates.
-				Date startDate = DateUtils.getFirstDayOfMonth();
-				Date endDate = DateUtils.getLastDayOfMonth();
-				Date issueDate = DateUtils.getLastDayOfMonth();
+				Date salaryDate = DateUtils.before(
+						DateUtils.after(new Date(), employee.getStartDate()),
+						employee.getEndDate());
+				
+				Date startDate = DateUtils.getFirstDayOfMonth(salaryDate);
+				Date endDate = DateUtils.getLastDayOfMonth(salaryDate);
+				Date issueDate = endDate;
 
 				salaryPreview.setStartDate(startDate);
 				salaryPreview.setEndDate(endDate);
@@ -563,13 +562,14 @@ public class Employees extends ResizeComposite implements
 
 				TreeItem salaryDraftItem = addImageItem(employeeItem,
 						"Borrador", images.draft());
-				
+
 				SalaryDraft salaryDraft = new SalaryDraft();
 				salaryDraft.setEmployee(employee);
 				salaryDraft.setStartDate(startDate);
 				salaryDraft.setEndDate(endDate);
 				salaryDraft.setIssueDate(issueDate);
-				SalaryDraftObject draftObject = new SalaryDraftObject(salaryDraft, employeesService);
+				SalaryDraftObject draftObject = new SalaryDraftObject(
+						salaryDraft, employeesService);
 				salaryDraftItem.setUserObject(draftObject);
 			}
 

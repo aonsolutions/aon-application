@@ -55,6 +55,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -788,8 +789,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private SalaryDraftObject salaryDraftObject;
 	private Map<Event.Type, String[]> eventStyles;
 	private List<Payment> availablePaymens = new ArrayList<Payment>();
-	
-	private HasValue<String> fxhasValue ;
+
+	private HasValue<String> fxhasValue;
 
 	public SalaryDraft() {
 		initWidget(binder.createAndBindUi(this));
@@ -939,68 +940,51 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		totalPaymentsLabel.setText(format(salaryDraftObject.getTotalPayment()));
 		dbTotalPaymentsLabel.setText(format(salaryDraftObject
 				.getDbTotalPayment()));
-		setDbStyleName(dbTotalPaymentsLabel,
-				salaryDraftObject.getTotalPayment(),
-				salaryDraftObject.getDbTotalPayment());
+		setDbStyleName(dbTotalPaymentsLabel, totalPaymentsLabel);
 
 		cgcBaseLabel.setText(format(salaryDraftObject.getCgcBase()));
 		dbCgcBaseLabel.setText(format(salaryDraftObject.getDbCgcBase()));
-		setDbStyleName(dbCgcBaseLabel, salaryDraftObject.getCgcBase(),
-				salaryDraftObject.getDbCgcBase());
+		setDbStyleName(dbCgcBaseLabel, cgcBaseLabel);
 		cgpBaseLabel.setText(format(salaryDraftObject.getCgpBase()));
 		dbCgpBaseLabel.setText(format(salaryDraftObject.getDbCgpBase()));
-		setDbStyleName(dbCgpBaseLabel, salaryDraftObject.getCgpBase(),
-				salaryDraftObject.getDbCgpBase());
+		setDbStyleName(dbCgpBaseLabel, cgpBaseLabel);
 		irpfBaseLabel.setText(format(salaryDraftObject.getIrpfBase()));
 		dbIrpfBaseLabel.setText(format(salaryDraftObject.getDbIrpfBase()));
-		setDbStyleName(dbIrpfBaseLabel, salaryDraftObject.getIrpfBase(),
-				salaryDraftObject.getDbIrpfBase());
+		setDbStyleName(dbIrpfBaseLabel, irpfBaseLabel);
 		hExtraBaseLabel.setText(format(salaryDraftObject.gethExtraBase()));
 		dbHExtraBaseLabel.setText(format(salaryDraftObject.getDbHExtraBase()));
-		setDbStyleName(dbHExtraBaseLabel, salaryDraftObject.gethExtraBase(),
-				salaryDraftObject.getDbHExtraBase());
+		setDbStyleName(dbHExtraBaseLabel, hExtraBaseLabel);
 		nonHExtraBaseLabel
 				.setText(format(salaryDraftObject.getNonHExtraBase()));
 		dbNonHExtraBaseLabel.setText(format(salaryDraftObject
 				.getDbNonHExtraBase()));
-		setDbStyleName(dbNonHExtraBaseLabel,
-				salaryDraftObject.getNonHExtraBase(),
-				salaryDraftObject.getDbNonHExtraBase());
+		setDbStyleName(dbNonHExtraBaseLabel, nonHExtraBaseLabel);
 		prorationBaseLabel
 				.setText(format(salaryDraftObject.getProrationBase()));
 		dbProrationBaseLabel.setText(format(salaryDraftObject
 				.getDbProrationBase()));
-		setDbStyleName(dbProrationBaseLabel,
-				salaryDraftObject.getProrationBase(),
-				salaryDraftObject.getDbProrationBase());
+		setDbStyleName(dbProrationBaseLabel,prorationBaseLabel);
 
 		remunerationLabel.setText(format(salaryDraftObject.getRemuneration()));
 		dbRemunerationLabel.setText(format(salaryDraftObject
 				.getDbRemuneration()));
-		setDbStyleName(dbRemunerationLabel,
-				salaryDraftObject.getRemuneration(),
-				salaryDraftObject.getDbRemuneration());
+		setDbStyleName(dbRemunerationLabel,remunerationLabel);
 
 		totalPaymentLabel.setText(format(salaryDraftObject.getTotalPayment()));
 		dbTotalPaymentLabel.setText(format(salaryDraftObject
 				.getDbTotalPayment()));
-		setDbStyleName(dbTotalPaymentLabel,
-				salaryDraftObject.getTotalPayment(),
-				salaryDraftObject.getDbTotalPayment());
+		setDbStyleName(dbTotalPaymentLabel,totalPaymentLabel);
 
 		totalDeductionLabel.setText(format(salaryDraftObject
 				.getTotalDeduction()));
 		dbTotalDeductionLabel.setText(format(salaryDraftObject
 				.getDbTotalDeduction()));
-		setDbStyleName(dbTotalDeductionLabel,
-				salaryDraftObject.getTotalDeduction(),
-				salaryDraftObject.getDbTotalDeduction());
+		setDbStyleName(dbTotalDeductionLabel,totalDeductionLabel);
 
 		totalLiquidLabel.setText(format(salaryDraftObject.getTotalLiquid()));
 		dbTotalLiquidLabel
 				.setText(format(salaryDraftObject.getDbTotalLiquid()));
-		setDbStyleName(dbTotalLiquidLabel, salaryDraftObject.getTotalLiquid(),
-				salaryDraftObject.getDbTotalLiquid());
+		setDbStyleName(dbTotalLiquidLabel, totalLiquidLabel);
 
 		clearDbWidgets();
 		clearEventsTable();
@@ -1073,12 +1057,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		fxDialog.setWidth(Window.getClientWidth() / 2 + "px");
 		fxDialog.center();
 		fxDialog.show();
-		
+
 		fxDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
 			@Override
 			public void onClose(CloseEvent<PopupPanel> event) {
-				((Focusable)fxhasValue).setFocus(true);
-				if ( fxDialog.isAccepted() ) {
+				((Focusable) fxhasValue).setFocus(true);
+				if (fxDialog.isAccepted()) {
 					fxhasValue.setValue(fxDialog.getExpression());
 				}
 			}
@@ -1390,7 +1374,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		Button newButton = new Button();
 		newButton.setStyleName(AON.AON_ICON_RESET); // clear gwt-Button
 		newButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-		newButton.getElement().getStyle().setProperty("padding", "inherit");
 
 		paymentsTable.setWidget(row, 0, newButton);
 		paymentsTable.setHTML(row, 1, "&nbsp;");
@@ -1423,7 +1406,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		Button newButton = new Button();
 		newButton.setStyleName(AON.AON_ICON_RESET); // clear gwt-Button
 		newButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-		newButton.getElement().getStyle().setProperty("padding", "inherit");
 
 		paymentsTable.setWidget(row, 0, newButton);
 		paymentsTable.setHTML(row, 1, "&nbsp;");
@@ -1510,7 +1492,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		editButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		// remove 'aon-editDataTable-button' margin & paddind.
 		// We don't like it here.
-		editButton.getElement().getStyle().setProperty("padding", "inherit");
 		paymentsTable.setWidget(row, 0, editButton);
 
 		paymentsTable.setHTML(row, 1, "&nbsp;");
@@ -1530,7 +1511,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		dbAmountLabel.setText(format(item.getDbAmount()));
 		dbAmountLabel.setVisible(salaryDraftObject.hasDbSalary());
 		dbAmountLabel.addStyleName(AON.AON_TEXT_RIGHT);
-		setDbStyleName(dbAmountLabel, item.getAmount(), item.getDbAmount());
+		setDbStyleName(dbAmountLabel, amountBox.getText(), dbAmountLabel.getText());
 
 		HorizontalPanel amountsPanel = new HorizontalPanel();
 		amountsPanel.setStyleName(GWT_HORIZONTAL_PANEL);
@@ -1552,7 +1533,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		Button deleteButton = new Button();
 		deleteButton.setStyleName(AON.AON_ICON_DELETE);
 		deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-		deleteButton.getElement().getStyle().setProperty("padding", "inherit");
 		paymentsTable.setWidget(row, 5, deleteButton);
 		paymentsTable.getCellFormatter().addStyleName(row, 5,
 				AON.AON_TEXT_RIGHT);
@@ -1571,7 +1551,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		editButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		// remove 'aon-editDataTable-button' margin & paddind.
 		// We don't like it here.
-		editButton.getElement().getStyle().setProperty("padding", "inherit");
 		paymentsTable.setWidget(row, 0, editButton);
 
 		paymentsTable.setHTML(row, 1, "&nbsp;");
@@ -1584,7 +1563,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		dbAmountLabel.setText(format(item.getDbAmount()));
 		dbAmountLabel.setVisible(salaryDraftObject.hasDbSalary());
 		dbAmountLabel.addStyleName(AON.AON_TEXT_RIGHT);
-		setDbStyleName(dbAmountLabel, item.getAmount(), item.getDbAmount());
+		setDbStyleName(dbAmountLabel, null, dbAmountLabel.getText());
 
 		HorizontalPanel amountsPanel = new HorizontalPanel();
 		amountsPanel.setStyleName(GWT_HORIZONTAL_PANEL);
@@ -1604,7 +1583,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		Button recoverButton = new Button();
 		recoverButton.setStyleName(AON.AON_ICON_CANCEL);
 		recoverButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-		recoverButton.getElement().getStyle().setProperty("padding", "inherit");
 		paymentsTable.setWidget(row, 5, recoverButton);
 		paymentsTable.getCellFormatter().addStyleName(row, 5,
 				AON.AON_TEXT_RIGHT);
@@ -1638,8 +1616,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		InlineLabel dbAmountLabel = new InlineLabel();
 		dbAmountLabel.setText(format(deduction.getDbAmount()));
 		dbAmountLabel.setVisible(salaryDraftObject.hasDbSalary());
-		setDbStyleName(dbAmountLabel, deduction.getAmount(),
-				deduction.getDbAmount());
+		setDbStyleName(dbAmountLabel, amountLabel);
 		amountsPanel.add(amountLabel);
 		amountsPanel.add(dbAmountLabel);
 
@@ -1671,7 +1648,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		iconButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		// remove 'aon-editDataTable-button' margin & paddind.
 		// We don't like it here.
-		iconButton.getElement().getStyle().setProperty("padding", "inherit");
 		paymentsTable.setWidget(row, 0, iconButton);
 
 		CellFormatter fomatter = paymentsTable.getCellFormatter();
@@ -1865,23 +1841,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				.round(amount * 1000.00) / 1000.00);
 	}
 
-	private boolean equals(Double d1, Double d2) {
-		if (d1 == d2)
-			return true;
-		if (d1 == null)
-			return d2 == null;
-		if (d2 == null)
-			return false;
 
-		// neither of them is null
-		double round1 = (double) Math.round(d1 * 1000.00) / 1000.00;
-		double round2 = (double) Math.round(d2 * 1000.00) / 1000.00;
-
-		return round1 == round2;
+	private void setDbStyleName(Label l2, Label l1) {
+		setDbStyleName(l2, l1.getText(), l2.getText());
 	}
 
-	private void setDbStyleName(Widget widget, Double amount, Double otherAmount) {
-		if (equals(amount, otherAmount)) {
+	private void setDbStyleName(Widget widget, String s1, String s2) {
+
+		if (StringUtils.equals(s1, s2)) {
 			widget.removeStyleName(style.textError());
 			widget.addStyleName(style.textOk());
 		} else {
@@ -1889,6 +1856,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			widget.addStyleName(style.textError());
 		}
 	}
+
 
 	private String format(Date date) {
 		return date == null ? null : DATE_FORMAT.format(date);

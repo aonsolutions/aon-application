@@ -222,8 +222,8 @@
 		<g:center>
 			<g:ScrollPanel styleName="{style.editor}">
 				<g:VerticalPanel styleName="{style.document}">
-					<g:DeckPanel ui:field="deckPanel">
-						<g:VerticalPanel ui:field="draftPanel">
+					<g:DeckPanel ui:field="deckPanel" >
+						<g:VerticalPanel ui:field="draftPanel" width="auto" >
 							<g:Grid styleName="aon-dataTable">
 								<g:row styleName="aon-dataTable-row-odd">
 									<g:customCell style="width:50%">
