@@ -167,7 +167,7 @@
 	
 	<managed-bean>
 		<managed-bean-name>payrollWorkPlace</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.PayrollWorkPlaceController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -3125,6 +3125,14 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
+	<!--  **** CONTRACT LOADER **** -->
+	<managed-bean>
+		<managed-bean-name>contractLoader</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.ContractLoaderController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+
 	<!--
 		==========================================================
 		======================= LOOKUPS ==========================
@@ -3984,6 +3992,13 @@
 		<navigation-case>
 			<from-outcome>trainingCenter_form</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/trainingCenter/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!--  **** CONTRACT LOADER **** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contractLoader_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractLoader/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
