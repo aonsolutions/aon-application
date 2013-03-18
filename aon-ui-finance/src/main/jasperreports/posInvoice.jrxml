@@ -98,10 +98,6 @@
 		<variableExpression><![CDATA[((com.code.aon.finance.InvoiceDetail)$F{detailList}.get(0)).getWorkPlace().getEnterprise()]]></variableExpression>
 		<initialValueExpression><![CDATA[((com.code.aon.finance.InvoiceDetail)$F{detailList}.get(0)).getWorkPlace().getEnterprise()]]></initialValueExpression>
 	</variable>
-	<variable name="logoImageFile" class="java.io.InputStream" resetType="None">
-		<variableExpression><![CDATA[$V{enterprise}.getAttachAsInputStream()]]></variableExpression>
-		<initialValueExpression><![CDATA[$V{enterprise}.getAttachAsInputStream()]]></initialValueExpression>
-	</variable>
 	<variable name="phone" class="com.code.aon.registry.RegistryMedia" resetType="None">
 		<variableExpression><![CDATA[$V{enterprise}.getRegistry().getPhone()]]></variableExpression>
 		<initialValueExpression><![CDATA[$V{enterprise}.getRegistry().getPhone()]]></initialValueExpression>
@@ -149,7 +145,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<graphicElement fill="Solid"/>
-				<imageExpression><![CDATA[$V{logoImageFile}]]></imageExpression>
+				<imageExpression><![CDATA[$P{logoImageFile}]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>
