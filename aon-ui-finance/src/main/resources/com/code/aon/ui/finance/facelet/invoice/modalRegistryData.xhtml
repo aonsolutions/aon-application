@@ -122,6 +122,15 @@
 											onblur="toUpperCase(this);">
 											<f:validateLength minimum="1" maximum="128" />
 										</aon:inputText>
+
+										<c:if test="#{invoiceController.addressCount > 0}">
+											<aon:outputLabel for="Invoice_registryAddress"
+												value="#{bundle.aon_company_name}" />
+											<aon:selectOneMenu id="Invoice_registryAddress"
+												value="#{invoiceController.to.registryAddress}">
+												<f:selectItems value="#{invoiceController.addresses}" />
+											</aon:selectOneMenu>
+										</c:if>
 									</aon:panelGrid>
 								</aon:div>
 							</aon:div>

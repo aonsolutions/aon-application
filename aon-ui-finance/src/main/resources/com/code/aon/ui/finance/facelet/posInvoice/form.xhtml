@@ -103,7 +103,7 @@
 								<aon:outputLabel value="#{bundle.aon_company_document}:" />
 								<aon:outputText value="#{posInvoice.to.registryDocument}" />
 
-								<c:if test="#{posInvoiceAddress.to.id != null}">
+								<c:if test="#{posInvoice.to.registryAddress.id != null or posInvoiceAddress.to.id != null}">
 									<aon:outputText value="&#160;" />
 									<aon:outputLabel value="#{bundle.aon_address}:" />
 									<aon:outputText value="#{posInvoice.address}" />
