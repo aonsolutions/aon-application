@@ -153,7 +153,7 @@
 										rendered="#{loanFeeEntry.relatedAccount != null and loanFeeEntry.relatedAccount.id != null}"
 										actionListener="#{loanFeeEntry.onAccountStatement}"
 										title="#{accountingBundle.accounting_statement_module}"
-										action="account_statement_list">
+										action="accountStatement_list">
 											<aon:outputText value="#{loanFeeEntry.relatedAccount.fullDescription}" />
 									</aon:commandLink>
 									<aon:outputText value="Prestamo sin cuenta contable asignada"

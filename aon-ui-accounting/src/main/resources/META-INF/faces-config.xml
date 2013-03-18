@@ -1064,27 +1064,27 @@
 			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>account_invoice_entry</from-outcome>
+			<from-outcome>invoiceEntry_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/invoice/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>account_finance_entry</from-outcome>
+			<from-outcome>financeEntry_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/finance/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>account_finance_tracking_entry</from-outcome>
+			<from-outcome>financeTrackingEntry_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/finance/tracking/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>account_expense_entry</from-outcome>
+			<from-outcome>expenseEntry_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/expense/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>account_salary_entry</from-outcome>
+			<from-outcome>salaryEntry_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/salary/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>account_social_insurance_entry</from-outcome>
+			<from-outcome>socialInsuranceEntry_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/social_insurance/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
@@ -1095,11 +1095,11 @@
 	<!-- **************** LOAN ENTRY ********************* -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>account_loan_fee_entry</from-outcome>
+			<from-outcome>loanFeeEntry_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/loan/fee/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>account_loan_entry</from-outcome>
+			<from-outcome>loanEntry_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/loan/open/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
@@ -1130,15 +1130,15 @@
 	<!-- **************** ACCOUNT STATEMENT ************************** -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>account_statement_search</from-outcome>
+			<from-outcome>accountStatement_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/statement/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>account_statement_account_list</from-outcome>
+			<from-outcome>accountStatement_account_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/statement/accountList.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>account_statement_list</from-outcome>
+			<from-outcome>accountStatement_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/statement/statementList.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>

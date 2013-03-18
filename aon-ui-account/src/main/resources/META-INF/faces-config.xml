@@ -159,7 +159,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
   <!-- ****************** ACCOUNT EXPORTER **************** -->
   <navigation-rule>
     <navigation-case>
-      <from-outcome>account_exporter</from-outcome>
+      <from-outcome>accountExporter_form</from-outcome>
       <to-view-id>
       /com/code/aon/ui/account/facelet/account/exporter/form.xhtml</to-view-id>
     </navigation-case>
@@ -167,7 +167,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
   <!-- ****************** ACCOUNT IMPORTER **************** -->
   <navigation-rule>
     <navigation-case>
-      <from-outcome>account_importer</from-outcome>
+      <from-outcome>accountImporter_form</from-outcome>
       <to-view-id>
       /com/code/aon/ui/account/facelet/account/importer/form.xhtml</to-view-id>
     </navigation-case>

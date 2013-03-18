@@ -166,7 +166,7 @@
 								<aon:commandLink id="trialBalanceGrossMargin-search" 
 									immediate="true"
 									title="#{accountingBundle.accounting_statement_module}"
-									styleClass="aon-dataTable-link" action="account_statement_account_list">
+									styleClass="aon-dataTable-link" action="accountStatement_account_list">
 									<f:setPropertyActionListener value="#{to.code}"
 										target="#{profitAndLossReport.accountStatement}" />
 									<aon:actionListener method="#{profitAndLossReport.onStatement}" />
@@ -215,7 +215,7 @@
 								<aon:commandLink id="trialBalanceTotalExpenses-search" 
 									immediate="true"
 									title="#{accountingBundle.accounting_statement_module}"
-									styleClass="aon-dataTable-link" action="account_statement_account_list">
+									styleClass="aon-dataTable-link" action="accountStatement_account_list">
 									<f:setPropertyActionListener value="#{to.code}"
 										target="#{profitAndLossReport.accountStatement}" />
 									<aon:actionListener method="#{profitAndLossReport.onStatement}" />

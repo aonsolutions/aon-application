@@ -120,17 +120,17 @@
 								<c:if test="#{aonRole.accountingOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="financeTrackingEntry"
-											action="account_finance_tracking_entry"
+											action="financeTrackingEntry_form"
 											actionListener="#{financeTrackingEntry.onReset}"
 											value="#{accountingBundle.accounting_entry_finance_tracking_module}" />
 									</aon:div>
 								</c:if>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="checks" action="util_checking"
+									<aon:commandLink id="checks" action="financePrint_checking"
 										value="#{financeBundle.finance_checking_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="checks2" action="invoice_checking"
+									<aon:commandLink id="checks2" action="financeChecking_form"
 										value="#{financeBundle.finance_invoice_checking_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">

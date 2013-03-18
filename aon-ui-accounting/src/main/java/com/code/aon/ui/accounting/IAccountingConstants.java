@@ -43,8 +43,8 @@ public interface IAccountingConstants {
 	String ACCOUNT_ENTRY_FORM_NAVKEY = "accountEntry_form";
 	String ACCOUNT_ENTRY_LIST_NAVKEY = "accountEntry_list";
 	String ACCOUNT_ENTRY_SEARCH_NAVKEY = "accountEntry_search";
-	String ACCOUNT_LOAN_FEE_ENTRY_NAVKEY = "account_loan_fee_entry";
-	String ACCOUNT_STMT_LIST_NAVKEY = "account_statement_list";
+	String ACCOUNT_LOAN_FEE_ENTRY_NAVKEY = "loanFeeEntry_form";
+	String ACCOUNT_STMT_LIST_NAVKEY = "accountStatement_list";
 	String AMORTIZATION_FORM_NAVKEY = "amortization_form";
 	String BALANCE_SHEET_LIST_NAVKEY = "balance_sheet_list";
 	String LEDGER_LIST_NAVKEY = "ledger_list";

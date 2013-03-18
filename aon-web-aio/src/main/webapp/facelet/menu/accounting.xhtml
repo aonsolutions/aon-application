@@ -43,34 +43,34 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="invoiceEntry"
-										action="account_invoice_entry"
+										action="invoiceEntry_form"
 										actionListener="#{invoiceEntry.onReset}"
 										value="#{accountingBundle.accounting_entry_invoice_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="financeEntry"
-										action="account_finance_entry"
+										action="financeEntry_form"
 										actionListener="#{financeEntry.onReset}"
 										value="#{accountingBundle.accounting_entry_finance_module}" />
 								</aon:div>
 
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="expenseEntry"
-										action="account_expense_entry"
+										action="expenseEntry_form"
 										actionListener="#{expenseEntry.onReset}"
 										value="#{accountingBundle.accounting_expense_entry_module}" />
 								</aon:div>
 
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="salaryEntry"
-										action="account_salary_entry"
+										action="salaryEntry_form"
 										actionListener="#{salaryEntry.onReset}"
 										value="#{accountingBundle.accounting_salary_entry_module}" />
 								</aon:div>
 
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="socialInsuranceEntry"
-										action="account_social_insurance_entry"
+										action="socialInsuranceEntry_form"
 										actionListener="#{socialInsuranceEntry.onReset}"
 										value="#{accountingBundle.accounting_social_insurance_entry_module}" />
 								</aon:div>
@@ -104,13 +104,13 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="loanFeeEntry"
-										action="account_loan_fee_entry"
+										action="loanFeeEntry_form"
 										actionListener="#{loanFeeEntry.onReset}"
 										value="#{accountingBundle.accounting_loan_fee_entry_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="loanEntry"
-										action="account_loan_entry"
+										action="loanEntry_form"
 										actionListener="#{loanEntry.onReset}"
 										value="#{accountingBundle.accounting_loan_entry_module}" />
 								</aon:div>
@@ -160,8 +160,8 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="account_statement"
-										action="account_statement_search"
+									<aon:commandLink id="accountStatement"
+										action="accountStatement_search"
 										actionListener="#{trialBalance.onReset}"
 										value="#{accountingBundle.accounting_statement_module}" />
 								</aon:div>
@@ -421,7 +421,7 @@ En CUARENTENA HASTA QUE SE CORRIJAN LOS CAMBIOS DE ACCOUNT-BRIDGE
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="financeTrackingEntry-accounting"
-											action="account_finance_tracking_entry-accounting"
+											action="financeTrackingEntry_form-accounting"
 											actionListener="#{financeTrackingEntry.onReset}"
 											value="#{accountingBundle.accounting_entry_finance_tracking_module}" />
 									</aon:div>								

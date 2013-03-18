@@ -719,7 +719,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 	@Override
 	public String getNavigationKey() {
-		return "account_finance_entry";
+		return "financeEntry_form";
 	}
 
 	public String generate() {

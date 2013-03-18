@@ -108,7 +108,7 @@
 								actionListener="#{balanceSheet.onAccountStatement}"
 								style="padding-left: #{to.level * 15}px;#{to.detail.title?'font-weight:bold;':''}"
 								title="#{accountingBundle.accounting_statement_module}"
-								action="account_statement_account_list">
+								action="accountStatement_account_list">
 								<aon:outputText value="#{to.amount}">
 									<f:convertNumber pattern="#,##0.00;(#,##0.00)" />
 								</aon:outputText>
@@ -133,7 +133,7 @@
 								actionListener="#{balanceSheet.onAccountPreviousStatement}"
 								style="padding-left: #{to.level * 15}px;#{to.detail.title?'font-weight:bold;':''}"
 								title="#{accountingBundle.accounting_statement_module}"
-								action="account_statement_account_list">
+								action="accountStatement_account_list">
 								<aon:outputText value="#{to.previousAmount}">
 									<f:convertNumber pattern="#,##0.00;(#,##0.00)" />
 								</aon:outputText>

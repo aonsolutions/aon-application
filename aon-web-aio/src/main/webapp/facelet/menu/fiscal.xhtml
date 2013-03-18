@@ -311,7 +311,7 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="financeTrackingEntry-fiscal"
-											action="account_finance_tracking_entry-fiscal"
+											action="financeTrackingEntry_form-fiscal"
 											actionListener="#{financeTrackingEntry.onReset}"
 											value="#{accountingBundle.accounting_entry_finance_tracking_module}" />
 									</aon:div>								
@@ -326,13 +326,13 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="account_exporter"
-											action="account_exporter"
+										<aon:commandLink id="accountExporter"
+											action="accountExporter_form"
 											value="#{accountBundle.account_exporter_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="account_importer"
-											action="account_importer"
+										<aon:commandLink id="accountImporter"
+											action="accountImporter_form"
 											actionListener="#{accountImporter.onInitialize}"
 											value="#{accountBundle.account_importer_module}" />
 									</aon:div>

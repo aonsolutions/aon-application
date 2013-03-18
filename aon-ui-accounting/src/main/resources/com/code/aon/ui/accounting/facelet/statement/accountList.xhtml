@@ -16,7 +16,7 @@
 				
 				<ui:define name="toolbarActions">
 					<aon:methodParam name="searchActionListener" value="" type="actionListener" />
-					<aon:methodParam name="searchAction" value="account_statement_search" />
+					<aon:methodParam name="searchAction" value="accountStatement_search" />
 				</ui:define>
 				
 				<ui:define name="additionalToolbarContent">
@@ -127,10 +127,10 @@
 							styleClass="aon-dataTable-link"
 							actionListener="#{trialBalance.onStatement}"
 							title="#{accountingBundle.accounting_statement_module}"
-							action="account_statement_list">
+							action="accountStatement_list">
 							<aon:outputText value="#{to.code}" />
 							<f:setPropertyActionListener 
-								value="account_statement_account_list" 
+								value="accountStatement_account_list" 
 								target="#{statement.backAction}" />
 						</aon:commandLink>
 					</aon:column>

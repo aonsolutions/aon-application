@@ -1673,7 +1673,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 	@Override
 	public String getNavigationKey() {
-		return "account_invoice_entry";
+		return "invoiceEntry_form";
 	}
 	
 	private List<SelectItem> getAccounts() {

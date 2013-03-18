@@ -3961,13 +3961,13 @@
   	<!-- =================== Util Checking ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>util_checking</from-outcome>
+			<from-outcome>financePrint_checking</from-outcome>
 			<to-view-id>/com/code/aon/ui/finance/facelet/financePrint/checking.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>invoice_checking</from-outcome>
+			<from-outcome>financeChecking_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/finance/facelet/financePrint/invoiceChecking.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
