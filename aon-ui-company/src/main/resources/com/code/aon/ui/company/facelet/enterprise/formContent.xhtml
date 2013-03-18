@@ -26,12 +26,12 @@
 				<a4j:region>
 					<h:panelGrid id="attachGrid" columns="2">
 						<a4j:mediaOutput element="img" cacheable="false"
-							style="width: 100px;" value="#{enterprise.logoFile.key}"
-							rendered="#{enterprise.logoFile.size > 0}"
-							createContent="#{enterprise.createCurrentLogoContent}">
+							style="width: 100px;" value="#{company.logoFile.key}"
+							rendered="#{company.logoFile.size > 0}"
+							createContent="#{company.createCurrentLogoContent}">
 						</a4j:mediaOutput>
 						<aon:fileUpload id="attach_file" listWidth="100"
-							fileUploadListener="#{enterprise.logoFileUploaded}" >
+							fileUploadListener="#{company.logoFileUploaded}" >
 							<f:facet name="label">
 								<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
 							</f:facet>
@@ -44,12 +44,12 @@
 				<a4j:region>
 					<h:panelGrid id="signatureAttachGrid" columns="2">
 						<a4j:mediaOutput element="img" cacheable="false"
-							style="width: 100px;" value="#{enterprise.signatureFile.key}"
-							rendered="#{enterprise.signatureFile.size > 0}"
-							createContent="#{enterprise.createCurrentSignatureContent}">
+							style="width: 100px;" value="#{company.signatureFile.key}"
+							rendered="#{company.signatureFile.size > 0}"
+							createContent="#{company.createCurrentSignatureContent}">
 						</a4j:mediaOutput>
 						<aon:fileUpload id="signatureAttach_file" listWidth="100"
-							fileUploadListener="#{enterprise.signatureFileUploaded}" >
+							fileUploadListener="#{company.signatureFileUploaded}" >
 							<f:facet name="label">
 								<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
 							</f:facet>

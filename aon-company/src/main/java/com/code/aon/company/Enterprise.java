@@ -1,8 +1,5 @@
 package com.code.aon.company;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -24,7 +21,6 @@ import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.EnterpriseDB;
 
@@ -44,23 +40,6 @@ public class Enterprise extends EnterpriseDB implements IRegistry, IScopable {
 	public void setDocuments(Set<RegistryAttachment> documents) {
 		this.documents = documents;
 	}	
-	
-	/**
-	 * Gets the attach as input stream.
-	 * 
-	 * @return the attach as input stream
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 * @throws IOException the IO exception
-	 */
-	@Transient
-	public InputStream getAttachAsInputStream() throws IOException, ManagerBeanException{
-		RegistryAttachment attach = obtainEnterpriseLogo();
-		if(attach != null){
-			return new ByteArrayInputStream(attach.getData());
-		}
-		return null;
-	}
 
 	@Transient
 	public RecordData getEnterpriseRecordData() throws ManagerBeanException{
@@ -70,27 +49,6 @@ public class Enterprise extends EnterpriseDB implements IRegistry, IScopable {
 		Iterator<ITransferObject> iter = recordDataBean.getList(criteria, 0, 1).iterator();
 		if(iter.hasNext()){
 			return (RecordData)iter.next();
-		}
-		return null;
-	}
-
-	/**
-	 * Obtains company logo.
-	 * 
-	 * @return the registry attachment
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	private RegistryAttachment obtainEnterpriseLogo() throws ManagerBeanException {
-		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-		Criteria criteria = new Criteria();
-		String alias = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
-		criteria.addEqualExpression(alias, this.getRegistry().getId());
-		String type = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
-		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
-		Iterator<ITransferObject> iter = registryAttachBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			return (RegistryAttachment)iter.next();
 		}
 		return null;
 	}

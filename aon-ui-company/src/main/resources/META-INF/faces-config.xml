@@ -233,6 +233,10 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>		
+		<managed-property>
+			<property-name>optionalListenerClasses</property-name>
+			<value>#{companyWorkPlaceOptionalListeners}</value>
+		</managed-property>
 	</managed-bean>
 	
 	<!-- **** COMPANY RBANK **** -->
@@ -864,16 +868,11 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{enterpriseSearch}</value>
 				<value>#{enterpriseForm}</value>
 				<value>#{enterpriseControllerListener}</value>				
 				<value>#{enterpriseWorkPlaceChildListener}</value>
 				<value>#{enterpriseMediaListener}</value>
-				<value>#{enterpriseAddressListener}</value>
-				<value>#{enterpriseRPayMethodChildListener}</value>
-				<value>#{enterpriseRBankChildListener}</value>
 				<value>#{enterpriseAddInfoListener}</value>
-				<value>#{enterpriseDirStaffListener}</value>
 				<value>#{enterpriseRAttachChildListener}</value>		
 			</list-entries>
 		</managed-property>
@@ -886,12 +885,6 @@
 	<managed-bean>
 		<managed-bean-name>enterpriseOptionalListeners</managed-bean-name>
 	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>enterpriseSearch</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.company.event.EnterpriseSearchListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -916,79 +909,6 @@
 		<managed-property>
 			<property-name>aliasName</property-name>
 			<value>Enterprise_scope_id</value>
-		</managed-property>
-	</managed-bean>
-
-	<!--  **** ENTERPRISE ADDRESS **** -->
-	<managed-bean>
-		<managed-bean-name>enterpriseAddress</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.registry.RegistryAddress</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>enterpriseAddress</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>enterprise</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>registry.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>		
-		<managed-property>
-			<property-name>defaultExpressions</property-name>
-			<map-entries>
-				<map-entry>
-					<key>RegistryAddress_addressType</key>
-					<value>! #{registryCollections.addressTypes[0].value}</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>			
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{enterpriseAddressControllerListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>enterpriseAddressControllerListener</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.registry.controller.event.RegistryAddressControllerListener</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>enterpriseAddressListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>enterpriseAddress</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>RegistryAddress_registry_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
 		</managed-property>
 	</managed-bean>
 
@@ -1042,124 +962,6 @@
 				<map-entry>
 					<key>RegistryMedia_registry_id</key>
 					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-
-	<!-- **** ENTERPRISE RBANK **** -->
-	<managed-bean>
-		<managed-bean-name>enterpriseRBankChildListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>disabled</property-name>
-			<value>#{!aonConfiguration.bean.enterprise.showFinanceData}</value>
-		</managed-property>						
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>enterpriseRbank</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>RegistryBank_registry_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>enterpriseRbank</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.registry.RegistryBank</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>enterpriseRbank</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>enterprise</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>registry.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener 
-				</value-class>
-				<value>#{bankAccountValidatorListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<!-- **** ENTERPRISE RPAYMETHOD **** -->
-	<managed-bean>
-		<managed-bean-name>enterpriseRPayMethodChildListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>disabled</property-name>
-			<value>#{!aonConfiguration.bean.enterprise.showFinanceData}</value>
-		</managed-property>				
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>enterpriseRPayMethod</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>RegistryPayMethod_registry_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>enterpriseRPayMethod</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.company.controller.EnterpriseRPayMethodController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.registry.RegistryPayMethod</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>enterpriseRPayMethod</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>enterprise</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>registry.id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -1220,75 +1022,6 @@
 		</managed-property>
 	</managed-bean>
 
-	<!--  **** ENTERPRISE DIRSTAFF **** -->
-	<managed-bean>
-		<managed-bean-name>enterpriseDirStaff</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryDirStaffLinesController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.registry.RegistryDirStaff</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>enterpriseDirStaff</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>enterprise</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>registry.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{enterpriseDirStaffControllerListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>enterpriseDirStaffListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>disabled</property-name>
-			<value>#{!aonConfiguration.bean.enterprise.showDirStaff}</value>
-		</managed-property>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>enterpriseDirStaff</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>RegistryDirStaff_registry_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-
-	<!--  **** ENTERPRISE DIR STAFF **** -->
-	<managed-bean>
-		<managed-bean-name>enterpriseDirStaffControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryDirStaffControllerListener</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
-	
 	<!--  **** ENTERPRISE WORKPLACE **** -->
 	<managed-bean>
 		<managed-bean-name>enterpriseWorkPlace</managed-bean-name>

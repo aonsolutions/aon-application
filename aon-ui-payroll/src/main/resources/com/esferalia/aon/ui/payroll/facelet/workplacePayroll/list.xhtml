@@ -24,36 +24,53 @@
 			
 			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="WorkPlace_description" value="#{bundle.aon_description}" />
+					<aon:outputText value="#{bundle.aon_description}" />
 				</f:facet>
-				<aon:outputText id="WorkPlace_description" value="#{to.description}" />
+				<aon:outputText value="#{to.workPlace.description}" />
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="WorkPlace_address_shortAddress" 
-						value="#{companyBundle.company_workplace_address}" />
+					<aon:outputText value="#{companyBundle.company_workplace_address}" />
 				</f:facet>
-				<aon:outputText id="WorkPlace_address_shortAddress" 
-					value="#{to.address.shortAddress}" />
+				<aon:outputText value="#{to.workPlace.address.shortAddress}" />
 			</aon:column>			
 			
-<!--  
 			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputText for="WorkPlace_economicAgreement" value="#{configBundle.config_administration}" />
+					<aon:outputText value="#{configBundle.config_administration}" />
 				</f:facet>
-				<aon:outputText value="#{to.economicAgreement}" />
+				<aon:outputText value="#{to.workPlace.economicAgreement}" />
 			</aon:column>		
--->
 			
 			<aon:column styleClass="aon-width-100">
 				<f:facet name="header">
-					<aon:outputLabel for="WorkPlace_active" value="#{bundle.aon_active}" />
+					<aon:outputText value="#{bundle.aon_active}" />
 				</f:facet>
-				<aon:div styleClass="#{to.active?'aon-icon-checked':'aon-icon-check'}">
-					<aon:outputText id="WorkPlace_active" value="&#160;" />
+				<aon:div styleClass="#{to.workPlace.active?'aon-icon-checked':'aon-icon-check'}">
+					<aon:outputText value="&#160;" />
 				</aon:div>
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{calendarBundle.aon_calendar_calendar}" />
+				</f:facet>
+				<aon:outputText value="#{to.calendar.description}" />
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_agreement}" />
+				</f:facet>
+				<aon:outputText value="#{to.agreement.description}" />
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_activity}" />
+				</f:facet>
+				<aon:outputText value="#{to.enterpriseActivity.cnae2009.code} - #{to.enterpriseActivity.description}" />
 			</aon:column>
 			
 		</ui:define>

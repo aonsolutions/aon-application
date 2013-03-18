@@ -9,17 +9,34 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.EnterpriseController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Listener added to the EnterpriseController
  * 
  */
 public class EnterpriseControllerListener extends ControllerAdapter {
-
+	
+	@Override
+	public void beforeBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		controller.select(null);
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		controller.accept(null);
+	}
+	
 	@Override
 	public void afterBeanCreated(ControllerEvent event)	throws ControllerListenerException {
 		EnterpriseController controller = (EnterpriseController) event.getController();
@@ -40,8 +57,6 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 			controller.initRegistryInfo();					
 			controller.initMainWorkPlace();			
 			controller.initMainDirStaff();			
-			controller.initLogo();
-			controller.initSignature();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
@@ -65,8 +80,6 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 		EnterpriseController controller = (EnterpriseController) event.getController();
 		try {
 			controller.saveMainAddress();
-			controller.saveLogo();
-			controller.saveSignature();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}

@@ -36,31 +36,26 @@
 				
 				<aon:outputLabel for="WorkPlace_description" value="#{bundle.aon_description}" />
 				<aon:inputText id="WorkPlace_description"  
-					value="#{payrollWorkPlace.to.description}" 
+					value="#{payrollWorkPlace.to.workPlace.description}" 
 					required="true" size="40" maxlength="64" />
 				
 				<aon:outputLabel for="WorkPlace_address_id" value="#{companyBundle.company_workplace_address}" />
 				<aon:selectOneMenu id="WorkPlace_address_id" 
-					value="#{payrollWorkPlace.to.address}" 
+					value="#{payrollWorkPlace.to.workPlace.address}" 
 					required="true">
-					<c:if test="#{showEnterpriseData}">
-						<f:selectItems value="#{enterprise.addresses}" />
-					</c:if>
-					<c:if test="#{!showEnterpriseData}">
-						<f:selectItems value="#{companyCollections.companyAddresses}" />
-					</c:if>
+					<f:selectItems value="#{companyCollections.companyAddresses}" />
 				</aon:selectOneMenu>
 			
 				<aon:outputText for="WorkPlace_economicAgreement" value="#{configBundle.config_administration}" />
 				<aon:selectOneMenu id="WorkPlace_economicAgreement"
-					value="#{payrollWorkPlace.to.economicAgreement}" >
+					value="#{payrollWorkPlace.to.workPlace.economicAgreement}" >
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{configCollections.administrations}" />
 				</aon:selectOneMenu>	
 			
 				<aon:outputLabel for="WorkPlace_active" value="#{bundle.aon_active}" />
 				<aon:selectBooleanCheckbox id="WorkPlace_active" styleClass="aon-margin-left"
-					value="#{controller.to.active}"  />
+					value="#{controller.to.workPlace.active}"  />
 								
 			</aon:panelGrid>
 			

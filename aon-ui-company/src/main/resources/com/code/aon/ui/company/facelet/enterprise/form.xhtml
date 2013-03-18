@@ -42,123 +42,118 @@
 					</c:if>
 				</ui:define>				
 			</ui:decorate>
-			
+				
+			<aon:div>
+				<aon:panelGrid columns="2" cellspacing="10" 
+					styleClass="aon-panelGrid-formatting"
+					columnClasses="aon-width-half aon-vertical-align-top,aon-width-half aon-vertical-align-top">
+	
+					<ui:include 
+						src="/com/code/aon/ui/company/facelet/enterprise/formContent.xhtml">
+						<ui:param name="controller" value="#{enterprise}" />
+					</ui:include>
+					
+				</aon:panelGrid>
+			</aon:div>
+
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{enterprise.new}">
-					<aon:panelGrid columns="2" cellspacing="10" 
-						styleClass="aon-panelGrid-formatting"
-						columnClasses="aon-width-half,aon-width-half aon-vertical-align-top">
-						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formNewContent.xhtml">
-							<ui:param name="controller" value="#{enterprise}" />
+				<aon:panelTabSet selectedTab="#{enterprise.selectedTab}">				
+					
+					<aon:panelTab label="#{registryBundle.registry_addresses}">
+						<ui:include src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
+							<ui:param name="skipTypeColumn" value="true" />
+							<ui:param name="controller" value="#{companyAddress}" />
 						</ui:include>
-					</aon:panelGrid>				
-				</c:if>							
-				<c:if test="#{!enterprise.new}">			
-	
-					<aon:panelGrid columns="2" cellspacing="10" 
-						styleClass="aon-panelGrid-formatting"
-						columnClasses="aon-width-half aon-vertical-align-top,aon-width-half aon-vertical-align-top">
-
-						<ui:include 
-							src="/com/code/aon/ui/company/facelet/enterprise/formContent.xhtml">
-							<ui:param name="controller" value="#{enterprise}" />
-						</ui:include>
-					</aon:panelGrid>
-
-					<aon:panelTabSet selectedTab="#{enterprise.selectedTab}">
-						
-						<aon:panelTab id="address" label="#{registryBundle.registry_address_module}">
-							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
-								<ui:param name="controller" value="#{enterpriseAddress}" />
+					</aon:panelTab>
+					
+					<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
+						<aon:panelTab id="activities" label="#{companyBundle.company_activity_module}">
+							<ui:include	src="/com/esferalia/aon/ui/payroll/facelet/enterpriseActivity/gridContent.xhtml" >
+								<ui:param name="controller" value="#{enterpriseActivity}" />
 							</ui:include>
 						</aon:panelTab>
-						
-						<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
-							<aon:panelTab id="activities" label="#{companyBundle.company_activity_module}">
-								<ui:include	src="/com/esferalia/aon/ui/payroll/facelet/enterpriseActivity/gridContent.xhtml" >
-									<ui:param name="controller" value="#{enterpriseActivity}" />
+					</c:if>
+					
+					<aon:panelTab id="workplace" label="#{companyBundle.company_workplaces}">
+						<ui:include	src="/com/code/aon/ui/company/facelet/workplace/tab_grid.xhtml">
+							<ui:param name="controller" value="#{enterpriseWorkPlace}" />
+							<ui:param name="showPayrollData" value="#{true}" />
+						</ui:include>
+					</aon:panelTab>
+					
+					<c:if test="#{aonConfiguration.bean.company.showRegistryBank}">
+						<aon:panelTab label="#{registryBundle.registry_banks_module}">
+							<aon:panel>
+								<f:facet name="header">
+									<aon:outputText
+										value="#{registryBundle.registry_banks_module}" />
+								</f:facet>
+								<ui:include src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
+									<ui:param name="controller" value="#{companyRbank}" />
+									<ui:param name="showSuffix" value="#{true}" />
 								</ui:include>
-							</aon:panelTab>
-						</c:if>
-						
-						<aon:panelTab id="workplace" label="#{companyBundle.company_workplaces}">
-							<ui:include	src="/com/code/aon/ui/company/facelet/workplace/tab_grid.xhtml">
-								<ui:param name="controller" value="#{enterpriseWorkPlace}" />
-								<ui:param name="showPayrollData" value="#{true}" />
-							</ui:include>
+							</aon:panel>
+							<aon:panel>
+								<f:facet name="header">
+									<aon:outputText value="#{configBundle.config_predef_paymethod}" />
+								</f:facet>
+								<ui:include src="/com/code/aon/ui/registry/facelet/rpaymethod/tab_grid.xhtml">
+									<ui:param name="controller" value="#{companyRPayMethod}" />
+								</ui:include>
+							</aon:panel>
 						</aon:panelTab>
-						
-						<c:if test="#{aonConfiguration.bean.company.showRegistryBank}">
-							<aon:panelTab label="#{registryBundle.registry_banks_module}">
-								<aon:panel>
-									<f:facet name="header">
-										<aon:outputText
-											value="#{registryBundle.registry_banks_module}" />
-									</f:facet>
-									<ui:include src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
-										<ui:param name="controller" value="#{enterpriseRbank}" />
-										<ui:param name="showSuffix" value="#{true}" />
-									</ui:include>
-								</aon:panel>
-								<aon:panel>
-									<f:facet name="header">
-										<aon:outputText value="#{configBundle.config_predef_paymethod}" />
-									</f:facet>
-									<ui:include src="/com/code/aon/ui/registry/facelet/rpaymethod/tab_grid.xhtml">
-										<ui:param name="controller" value="#{enterpriseRPayMethod}" />
-									</ui:include>
-								</aon:panel>
-							</aon:panelTab>
-						</c:if>		
-						
-						<c:if test="#{aonConfiguration.bean.enterprise.showDirStaff}">
-							<aon:panelTab id="dirStaff"
-								label="#{registryBundle.registry_dir_staff}">
+					</c:if>
+									
+					<c:if test="#{aonConfiguration.bean.company.showDirStaff}">
+						<aon:panelTab id="dirStaff"
+							label="#{registryBundle.registry_dir_staff}">
+							<aon:div rendered="#{true}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/rdirstaff/tab_grid.xhtml">
-									<ui:param name="controller" value="#{enterpriseDirStaff}" />
+									<ui:param name="controller" value="#{companyDirStaff}" />
 								</ui:include>
-							</aon:panelTab>
-						</c:if>
-	
-						<aon:panelTab id="media" label="#{registryBundle.registry_media_module}">
-							<ui:include	src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
-								<ui:param name="controller" value="#{enterpriseMedia}" />
+							</aon:div>
+						</aon:panelTab>
+					</c:if>
+					
+					<aon:panelTab id="media" label="#{registryBundle.registry_media_module}">
+						<ui:include	src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
+							<ui:param name="controller" value="#{enterpriseMedia}" />
+						</ui:include>
+					</aon:panelTab>
+					
+					<c:if test="#{aonConfiguration.bean.enterprise.showFinanceData and aonRole.financeOperator}">
+						<aon:panelTab id="finance" label="#{registryBundle.registry_finance_data_module}">
+							<ui:include	src="/com/code/aon/ui/company/facelet/enterprise/financeTemplate.xhtml" />
+						</aon:panelTab>
+					</c:if>
+					
+					<c:if test="#{aonConfiguration.bean.enterprise.showProject}" >
+						<aon:panelTab id="projects" label="#{projectBundle.project_projects}">
+							<ui:include	src="/com/code/aon/ui/project/facelet/project/gridContent.xhtml" >
+								<ui:param name="controller" value="#{enterpriseProject}" />
 							</ui:include>
 						</aon:panelTab>
-						
-						<c:if test="#{aonConfiguration.bean.enterprise.showFinanceData and aonRole.financeOperator}">
-							<aon:panelTab id="finance" label="#{registryBundle.registry_finance_data_module}">
-								<ui:include	src="/com/code/aon/ui/company/facelet/enterprise/financeTemplate.xhtml" />
-							</aon:panelTab>
-						</c:if>
-						
-						<c:if test="#{aonConfiguration.bean.enterprise.showProject}" >
-							<aon:panelTab id="projects" label="#{projectBundle.project_projects}">
-								<ui:include	src="/com/code/aon/ui/project/facelet/project/gridContent.xhtml" >
-									<ui:param name="controller" value="#{enterpriseProject}" />
-								</ui:include>
-							</aon:panelTab>
-						</c:if>
-											
-						<c:if test="#{aonConfiguration.bean.enterprise.showAddInfo}">
-							<aon:panelTab id="addInfo"
-								label="#{registryBundle.registry_addInfo}">
-								<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
-									<ui:param name="controller" value="#{enterpriseAddInfo}" />
-								</ui:include>
-							</aon:panelTab>
-						</c:if>
-						
-						<c:if test="#{aonRole.document}">
-							<aon:panelTab id="documentManagement" label="#{bundle.aon_documents}">
-								<ui:include src="/com/code/aon/ui/registry/facelet/documentManager/tab_grid.xhtml">
-									<ui:param name="controller" value="#{enterpriseRAttach}" />
-								</ui:include>								
-							</aon:panelTab>
-						</c:if>						
-						
-					</aon:panelTabSet>
-				</c:if>
+					</c:if>
+										
+					<c:if test="#{aonConfiguration.bean.enterprise.showAddInfo}">
+						<aon:panelTab id="addInfo"
+							label="#{registryBundle.registry_addInfo}">
+							<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
+								<ui:param name="controller" value="#{enterpriseAddInfo}" />
+							</ui:include>
+						</aon:panelTab>
+					</c:if>
+					
+					<c:if test="#{aonRole.document}">
+						<aon:panelTab id="documentManagement" label="#{bundle.aon_documents}">
+							<ui:include src="/com/code/aon/ui/registry/facelet/documentManager/tab_grid.xhtml">
+								<ui:param name="controller" value="#{enterpriseRAttach}" />
+							</ui:include>								
+						</aon:panelTab>
+					</c:if>						
+					
+				</aon:panelTabSet>
+				
 			</aon:div>
 		</aon:form>
 		<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >

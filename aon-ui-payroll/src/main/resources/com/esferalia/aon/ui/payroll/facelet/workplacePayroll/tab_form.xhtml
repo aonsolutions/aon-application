@@ -9,14 +9,14 @@
 	<aon:panelGrid columns="2" style="width: 50%;">
 			
 		<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/lookup.xhtml" >
-			<ui:param name="lookupTo" value="#{controller.payrollWorkPlace.calendar}" />
+			<ui:param name="lookupTo" value="#{controller.to.calendar}" />
 			<ui:param name="skipNewButton" value="#{true}" />
 			<ui:param name="lookupInputSuggestSize" value="40" />
 			<ui:param name="lookupSuffix" value="-PayrollWorkPlace" />
 		</ui:include>	
 		
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/lookup.xhtml" >
-			<ui:param name="lookupTo" value="#{controller.payrollWorkPlace.agreement}" />
+			<ui:param name="lookupTo" value="#{controller.to.agreement}" />
 			<ui:param name="skipNewButton" value="#{true}" />
 			<ui:param name="lookupInputSuggestSize" value="40" />
 		</ui:include>	
@@ -24,14 +24,9 @@
 		<aon:outputLabel for="PayrollWorkPlace_enterpriseActivity" 
 			value="#{payrollBundle.payroll_activity}" />
 		<aon:selectOneMenu id="PayrollWorkPlace_enterpriseActivity"
-			value="#{controller.payrollWorkPlace.enterpriseActivity}" >
+			value="#{controller.to.enterpriseActivity}" >
 			<f:selectItem itemLabel="-" value="#{null}" />
-			<c:if test="#{showEnterpriseData}">
-				<f:selectItems value="#{enterprisePayroll.activities}" />
-			</c:if>
-			<c:if test="#{!showEnterpriseData}">
-				<f:selectItems value="#{companyCollections.companyAddresses}" />
-			</c:if>
+			<f:selectItems value="#{enterprisePayroll.activities}" />
 		</aon:selectOneMenu>	
 						
 	</aon:panelGrid>
