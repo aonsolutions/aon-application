@@ -257,10 +257,22 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	}	
 
 	public boolean isEnabledGoToParent() {
-		if ( isParentDomainUserInChildDomain() ) {
+		if ( isParentDomainUserInChildDomain() || isAdminDomain() ) {
 			return ! ObjectUtils.equals(getDomainId(), AonUtil.getAuthPrincipal().getDomainId());
 		}
 		return false;
+	}
+	
+	private boolean isAdminDomain() {
+		DomainType type = getDomainType(AonUtil.getAuthPrincipal().getDomainId());
+		return type == DomainType.ADMIN;
+	}
+
+	public static DomainType getDomainType( Integer domainId ) {
+		String sfn = HibernateUtil.getSessionFactoryName();
+		Query query = HibernateUtil.getSession(sfn).createQuery("SELECT d.type FROM Domain d WHERE d.id = ?");
+		query.setInteger(0, domainId);
+		return (DomainType) query.uniqueResult();
 	}
 	
 }

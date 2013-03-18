@@ -37,6 +37,7 @@ import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AuditManager implements IAuditConstants {
@@ -163,13 +164,6 @@ public class AuditManager implements IAuditConstants {
 			LOGGER.error( "Error login audit", th );
 		}
 	}	
-
-	public static DomainType getDomainType( Integer domainId ) throws ManagerBeanException {
-		String sfn = HibernateUtil.getSessionFactoryName();
-		Query query = HibernateUtil.getSession(sfn).createQuery("SELECT d.type FROM Domain d WHERE d.id = ?");
-		query.setInteger(0, domainId);
-		return (DomainType) query.uniqueResult();
-	}
 	
 	public static boolean hasModule( Integer domainId, Integer applicationId, Module module ) throws ManagerBeanException {
 		Integer da = AdminUtil.getDomainApplication(domainId, applicationId);
@@ -190,7 +184,7 @@ public class AuditManager implements IAuditConstants {
 	
 	public static List<Module> getVisibleModules( Integer domainId, Integer applicationId ) throws ManagerBeanException {
 		List<Module> list = new LinkedList<Module>();
-		DomainType type = getDomainType(domainId);
+		DomainType type = DomainSwitcher.getDomainType(domainId);
 		if ( type != DomainType.ADMIN ) {
 			if ( isDomainManagementAvailable(domainId) && (type == DomainType.CONSULTANCY)) {
 				list.add(Module.FISCAL);
@@ -233,7 +227,7 @@ public class AuditManager implements IAuditConstants {
 				}
 				Integer parentDomainId = AdminUtil.getParentDomain(domainId);
 				if ( parentDomainId != null)  {
-					if (getDomainType(parentDomainId) == DomainType.CONSULTANCY) {
+					if (DomainSwitcher.getDomainType(parentDomainId) == DomainType.CONSULTANCY) {
 						if ( !list.contains(Module.PAYROLL) && hasModule(parentDomainId, applicationId, Module.PAYROLL) ) {
 							list.add(Module.PAYROLL);
 						}

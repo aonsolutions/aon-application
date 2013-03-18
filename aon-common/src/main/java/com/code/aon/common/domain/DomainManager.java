@@ -44,9 +44,9 @@ public class DomainManager {
 	}
 	
 	public synchronized static boolean isParentDomainUserInChildDomain() {
-		int userDomain = getDomainProvider().getUserDomain();
-		int current = getDomainProvider().getCurrentDomain();
-		return (current != userDomain); 
+		Integer userDomain = getDomainProvider().getUserDomain();
+		Integer parent = getDomainProvider().getParentDomain();
+		return userDomain.equals(parent); 
 	}
 	
 	private static boolean isHeritable(Class<?> entityClass) {

@@ -56,6 +56,7 @@ import com.code.aon.ui.audit.OptionGroup;
 import com.code.aon.ui.audit.event.UserLoookupListener;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.role.IAonRole;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
@@ -260,7 +261,7 @@ public class ActionDeniedController {
 			Integer parentDomainId = AdminUtil.getParentDomain(domainId);
 			boolean consultancyParent = false;
 			if ( parentDomainId != null ) {
-				consultancyParent = (AuditManager.getDomainType(parentDomainId) == DomainType.CONSULTANCY);
+				consultancyParent = (DomainSwitcher.getDomainType(parentDomainId) == DomainType.CONSULTANCY);
 			}
 			boolean domainParentUser = ObjectUtils.equals( user.getDomain(), parentDomainId);
 			Set<Module> moduleSet = getEnabledModuleList(consultancyParent && (!domainParentUser));
