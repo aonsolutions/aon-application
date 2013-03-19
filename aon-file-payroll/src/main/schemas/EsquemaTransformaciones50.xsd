@@ -1,0 +1,599 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- XML Schema SPEE ver.5.000 12/04/2012-->
+<!-- ============================================= -->
+<!-- Updated by Esferalia Networks v1.0 20/11/2012 -->
+<!-- Added inheritance definition -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
+	jaxb:version="2.1"
+	jaxb:extensionBindingPrefixes="inheritance">
+	<xsd:annotation>
+		<xsd:documentation xml:lang="es">XML Schema - Comunicación de Transformaciones al SPEE.</xsd:documentation>
+		<xsd:appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.esferalia.aon.file.payroll.contract.generated.transformaciones" />
+			</jaxb:schemaBindings>
+			<inheritance:objectFactory packageName="com.esferalia.aon.file.payroll.contract.model">
+				<inheritance:implements>com.esferalia.aon.file.payroll.contract.model.ITransformacionType</inheritance:implements>
+			</inheritance:objectFactory>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<xsd:element name="TRANSFORMACIONES">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="5">
+				<xsd:element name="TRANSFORMACION_109" type="TRANSFORMACION_109TYPE" minOccurs="0"/>
+				<xsd:element name="TRANSFORMACION_139" type="TRANSFORMACION_139TYPE" minOccurs="0"/>
+				<xsd:element name="TRANSFORMACION_189" type="TRANSFORMACION_189TYPE" minOccurs="0"/>
+				<xsd:element name="TRANSFORMACION_209" type="TRANSFORMACION_209TYPE" minOccurs="0"/>
+				<xsd:element name="TRANSFORMACION_239" type="TRANSFORMACION_239TYPE" minOccurs="0"/>
+				<xsd:element name="TRANSFORMACION_289" type="TRANSFORMACION_289TYPE" minOccurs="0"/>
+				<xsd:element name="TRANSFORMACION_309" type="TRANSFORMACION_309TYPE" minOccurs="0"/>
+				<xsd:element name="TRANSFORMACION_339" type="TRANSFORMACION_339TYPE" minOccurs="0"/>
+				<xsd:element name="TRANSFORMACION_389" type="TRANSFORMACION_389TYPE" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- ******************************************************************************************************************** -->
+	<xsd:complexType name="TRANSFORMACION_109TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Transformación a tiempo completo bonificada</xsd:documentation>
+			<xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.file.payroll.contract.model.ITransformacionType</inheritance:implements>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_CONTRATO" type="DATOS_CONTRATOTYPE"/>
+			<xsd:element name="DATOS_GENERALES_TRANSFORMACION" type="DATOS_GENERALES_TRANSFORMACIONTYPE"/>
+			<xsd:element name="DATOS_MEDIDAS_FOMENTO" type="DATOS_MEDIDASFOMENTOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_BONIFICACION" type="DATOS_BONIFICACIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ADICIONALES_TRANSFORMACION" type="DATOS_ADICIONALES_TRANSFORMACIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ANEXO_CONTRATO_RELEVO" type="DATOS_ANEXOCONTRATORELEVOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TRANSFORMACION_139TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Transformación a tiempo completo minusválidos</xsd:documentation>
+			<xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.file.payroll.contract.model.ITransformacionType</inheritance:implements>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_CONTRATO" type="DATOS_CONTRATOTYPE"/>
+			<xsd:element name="DATOS_GENERALES_TRANSFORMACION" type="DATOS_GENERALES_TRANSFORMACIONTYPE"/>
+			<xsd:element name="DATOS_MEDIDAS_FOMENTO" type="DATOS_MEDIDASFOMENTOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_BONIFICACION" type="DATOS_BONIFICACIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ADICIONALES_TRANSFORMACION" type="DATOS_ADICIONALES_TRANSFORMACIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ANEXO_CONTRATO_RELEVO" type="DATOS_ANEXOCONTRATORELEVOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TRANSFORMACION_189TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Transformación a tiempo completo no bonificada</xsd:documentation>
+			<xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.file.payroll.contract.model.ITransformacionType</inheritance:implements>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_CONTRATO" type="DATOS_CONTRATOTYPE"/>
+			<xsd:element name="DATOS_GENERALES_TRANSFORMACION" type="DATOS_GENERALES_TRANSFORMACIONTYPE"/>
+			<xsd:element name="DATOS_MEDIDAS_FOMENTO" type="DATOS_MEDIDASFOMENTOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ADICIONALES_TRANSFORMACION" type="DATOS_ADICIONALES_TRANSFORMACIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ANEXO_CONTRATO_RELEVO" type="DATOS_ANEXOCONTRATORELEVOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TRANSFORMACION_209TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Transformación a tiempo parcial bonificada</xsd:documentation>
+			<xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.file.payroll.contract.model.ITransformacionType</inheritance:implements>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_CONTRATO" type="DATOS_CONTRATOTYPE"/>
+			<xsd:element name="DATOS_GENERALES_TRANSFORMACION" type="DATOS_GENERALES_TRANSFORMACIONTYPE"/>
+			<xsd:element name="DATOS_CONTRATO_TIEMPO_PARCIAL" type="DATOS_CONTRATOTIEMPOPARCIALTYPE"/>
+			<xsd:element name="DATOS_MEDIDAS_FOMENTO" type="DATOS_MEDIDASFOMENTOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_BONIFICACION" type="DATOS_BONIFICACIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ADICIONALES_TRANSFORMACION" type="DATOS_ADICIONALES_TRANSFORMACIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ANEXO_CONTRATO_RELEVO" type="DATOS_ANEXOCONTRATORELEVOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TRANSFORMACION_239TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Transformación a tiempo parcial minusválidos</xsd:documentation>
+			<xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.file.payroll.contract.model.ITransformacionType</inheritance:implements>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_CONTRATO" type="DATOS_CONTRATOTYPE"/>
+			<xsd:element name="DATOS_GENERALES_TRANSFORMACION" type="DATOS_GENERALES_TRANSFORMACIONTYPE"/>
+			<xsd:element name="DATOS_CONTRATO_TIEMPO_PARCIAL" type="DATOS_CONTRATOTIEMPOPARCIALTYPE"/>
+			<xsd:element name="DATOS_MEDIDAS_FOMENTO" type="DATOS_MEDIDASFOMENTOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_BONIFICACION" type="DATOS_BONIFICACIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ADICIONALES_TRANSFORMACION" type="DATOS_ADICIONALES_TRANSFORMACIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ANEXO_CONTRATO_RELEVO" type="DATOS_ANEXOCONTRATORELEVOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TRANSFORMACION_289TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Transformación a tiempo parcial no bonificada</xsd:documentation>
+			<xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.file.payroll.contract.model.ITransformacionType</inheritance:implements>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_CONTRATO" type="DATOS_CONTRATOTYPE"/>
+			<xsd:element name="DATOS_GENERALES_TRANSFORMACION" type="DATOS_GENERALES_TRANSFORMACIONTYPE"/>
+			<xsd:element name="DATOS_CONTRATO_TIEMPO_PARCIAL" type="DATOS_CONTRATOTIEMPOPARCIALTYPE"/>
+			<xsd:element name="DATOS_MEDIDAS_FOMENTO" type="DATOS_MEDIDASFOMENTOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ADICIONALES_TRANSFORMACION" type="DATOS_ADICIONALES_TRANSFORMACIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ANEXO_CONTRATO_RELEVO" type="DATOS_ANEXOCONTRATORELEVOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TRANSFORMACION_309TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Transformación a fijo discontinuo bonificada</xsd:documentation>
+			<xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.file.payroll.contract.model.ITransformacionType</inheritance:implements>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_CONTRATO" type="DATOS_CONTRATOTYPE"/>
+			<xsd:element name="DATOS_GENERALES_TRANSFORMACION" type="DATOS_GENERALES_TRANSFORMACIONTYPE"/>
+			<xsd:element name="DATOS_CONTRATO_TIEMPO_PARCIAL" type="DATOS_CONTRATOTIEMPOPARCIALTYPE"/>
+			<xsd:element name="DATOS_MEDIDAS_FOMENTO" type="DATOS_MEDIDASFOMENTOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_BONIFICACION" type="DATOS_BONIFICACIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ADICIONALES_TRANSFORMACION" type="DATOS_ADICIONALES_TRANSFORMACIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ANEXO_CONTRATO_RELEVO" type="DATOS_ANEXOCONTRATORELEVOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TRANSFORMACION_339TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Transformación a fijo discontinuo minusválidos</xsd:documentation>
+			<xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.file.payroll.contract.model.ITransformacionType</inheritance:implements>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_CONTRATO" type="DATOS_CONTRATOTYPE"/>
+			<xsd:element name="DATOS_GENERALES_TRANSFORMACION" type="DATOS_GENERALES_TRANSFORMACIONTYPE"/>
+			<xsd:element name="DATOS_CONTRATO_TIEMPO_PARCIAL" type="DATOS_CONTRATOTIEMPOPARCIALTYPE"/>
+			<xsd:element name="DATOS_BONIFICACION" type="DATOS_BONIFICACIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ADICIONALES_TRANSFORMACION" type="DATOS_ADICIONALES_TRANSFORMACIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ANEXO_CONTRATO_RELEVO" type="DATOS_ANEXOCONTRATORELEVOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TRANSFORMACION_389TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Transformación a fijo discontinuo no bonificada</xsd:documentation>
+			<xsd:appinfo>
+				<inheritance:implements>com.esferalia.aon.file.payroll.contract.model.ITransformacionType</inheritance:implements>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_EMPRESA" type="DATOS_EMPRESATYPE"/>
+			<xsd:element name="DATOS_CONTRATO" type="DATOS_CONTRATOTYPE"/>
+			<xsd:element name="DATOS_GENERALES_TRANSFORMACION" type="DATOS_GENERALES_TRANSFORMACIONTYPE"/>
+			<xsd:element name="DATOS_CONTRATO_TIEMPO_PARCIAL" type="DATOS_CONTRATOTIEMPOPARCIALTYPE"/>
+			<xsd:element name="DATOS_MEDIDAS_FOMENTO" type="DATOS_MEDIDASFOMENTOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ADICIONALES_TRANSFORMACION" type="DATOS_ADICIONALES_TRANSFORMACIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_ANEXO_CONTRATO_RELEVO" type="DATOS_ANEXOCONTRATORELEVOTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- ******************************************************************************************************************** -->
+	<xsd:complexType name="DATOS_EMPRESATYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos de la empresa que realiza la transformación</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="CIF_NIF_EMPRESA" type="CIFNIFTYPE">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">CIF/ NIF de la empresa que realiza la transformación</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="CODIGO_CUENTA_COTIZACION">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código de la cuenta de cotización de la empresa que realiza la transformación.  Su composición corresponde a la unión de los datos de :  régimen de cotización(4)-provincia(2)-número de cuenta de cotización(7)-dígito de control(2). Los posibles valores que puede tomar el régimen de cotización se encuentran codificados en la tabla TCHRGCOT.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{15}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_CONTRATOTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos del contrato transformado</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="CLAVE_CONTRATO" type="CLAVECONTRATOTYPE" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Identificador del contrato a transformar. Este campo configura una de las 2 opciones por las que se puede identificar el contrato que se va a transformar.  En el caso de elegir esta opción, el elemento es obligatorio, y no se deben rellenar el resto de campos de DATOS_CONTRATO.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="IDENTIFICADORPFISICA" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Identificador de la persona física del contrato a transformar.  Este campo junto con la FECHA_INICIO_CTO configura la segunda opción por las que se puede identificar el contrato que se va a transformar.  En el caso de elegir esta opción, el elemento es obligatorio, y no se debe rellenar el campo CLAVE_CONTRATO.  Los tipos de documento admitidos (1ª letra del identificador) se encuentran codificados en la tabla STDIDETC.txt de la Ayuda XML - Ultima versión - Tablas de códigos. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="12"/>
+						<xsd:pattern value="[DEUW][0-9XYZ ]+\d{7}[A-Z]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="FECHA_INICIO_CTO" type="FECHATYPE" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Fecha de inicio del contrato a transformar.  Este campo junto con el IDENTIFICADORPFISICA configura la segunda opción por las que se puede identificar el contrato que se va a transformar.  En el caso de elegir esta opción, el elemento es obligatorio, y no se debe rellenar el campo CLAVE_CONTRATO.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_GENERALES_TRANSFORMACIONTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos generales de la transformación</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="FECHA_INICIO" type="FECHATYPE">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Fecha de inicio de la transformación.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="INDICADOR_DISCONTINUIDAD" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de discontinuidad. Los únicos valores admitidos son:  "I" (ILT- Invalidez laboral transitoria) y "P"(Prórroga tácita) que justificarán la discontinuidad existente entre la fecha de inicio de la transformación que se está comunicando y la fecha de término de la prórroga/contrato anterior a la transformación.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[IP\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="FECHA_TERMINO_REAL" type="FECHATYPE" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Fecha de término real del contrato transformado. Obligatoria en caso de existencia de prórroga tácita.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="CODIGO_OCUPACION">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código de ocupación del puesto de trabajo.  Sus posibles valores se encuentran codificados en la tabla TAICLAOC.txt de la Ayuda XML - Ultima versión - Tablas de códigos. La codificación tabulada de este elemento corresponde a códigos de 4 posiciones, el elemento está definido para admitir un código de 8 posiciones que es la codificación con la que hemos trabajado anteriormente, por tanto y para no cambiar la longitud, el elemento se deberá enviar con 4 blancos por la derecha hasta completar las 8 posiciones.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:length value="8"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="NACIONALIDAD_CT" type="PAISTYPE">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código de nacionalidad del centro de trabajo.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="MUNICIPIO_CT" type="MUNICIPIOTYPE" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código del municipio del centro de trabajo. Obligatorio cuando la NACIONALIDAD_CT sea 724 (España).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_CONTRATOTIEMPOPARCIALTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos de las transformaciones a tiempo parcial. Distribución de la jornada de trabajo.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="TIPO_JORNADA">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Período de tiempo. Sus posibles valores se encuentran codificados en la tabla TEQPTIEM.txt de la Ayuda XML - Ultima versión - Tablas de códigos. En el caso de  transformaciones a fijos discontinuos (309, 339 y 389) el tipo de jornada será siempre ANUAL (A). </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:length value="1"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="HORAS_JORNADA" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Número de horas por jornada. Formato: HHHHMM (Horas(4)Minutos(2)). Obligatorias para todas las transformaciones a tiempo parcial menos para las transformaciones a fijos discontinuos (309, 339 y 389) que podran no llevarlas dependiendo del valor de ACTIVIDAD_SIN_FECHACIERTA.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{6}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="HORAS_CONVENIO" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Número de horas por convenio. Formato: HHHHMM (Horas(4)Minutos(2)). </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{6}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="ACTIVIDAD_SIN_FECHACIERTA" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de si el período de actividad no tiene una fecha concreta. Obligatorio para las transformaciones a fijos discontinuos (309, 339 y 389) si no vienen especificadas las HORAS_JORNADA. El único valor posible que puede tomar es "S" (SI) para indicar que es una actividad sin fecha conocida. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[S\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="FIJODISCONTINUO_PERIODICO" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de trabajo fijo discontinuo o periódico. Obligatorio para los transformaciones de código 209, 239 ó 289 iniciadas a partir del 01/07/2006. Los posibles valores que puede tomar son "S" (SI) ó "N" (NO) para indicar si  la transformación a tiempo parcial corresponde a la realización de trabajos fijos discontinuos o periódicos que se repiten en fechas ciertas dentro del volumen normal de la actividad de la empresa. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[SN\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_MEDIDASFOMENTOTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos de medidas de fomento de la contratación indefinida. A partir del 12/02/2012 queda derogada esta D.A. por lo que no deberá enviarse este dato para las transformaciones iniciadas a partir de esa fecha.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="IND_COSTE_DESPIDO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de acogida a la ley de fomento de la contratación indefinida.  Refleja si la transformación se acoge a la ley de fomento(1) o no se acoge(2).</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[12]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="CODIGO_COLECTIVO_DESPIDO" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código del colectivo de fomento de la contratación indefinida. Sólo se rellena para las transformaciones en las que el IND_COSTE_DESPIDO sea 1. Sus posibles valores se encuentran codificados en la tabla TEOCOLDE.txt de la Ayuda XML - Ultima versión - Tablas de códigos.  </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_BONIFICACIONTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos de bonificación de la transformación.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="ACOGIDO_MATERNIDAD_EXCEDENCIA" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de acogida a los colectivos de bonificación de "Maternidad o excedencia".  El único valor posible que puede tomar es "S" (SI) para indicar que se acoge a dicho colectivo.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[S\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="COLECTIVO_DISCAPACITADOS" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código del colectivo de bonificación para discapacitados. Obligatorio para los transformaciones de código 139, 239  y 339 iniciadas a partir del 31/12/2006.  Sus posibles valores se encuentran codificados en la tabla TELCOLBO.txt de la Ayuda XML - Tablas de códigos (códigos 70 a 77).</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="2"/>
+						<xsd:maxLength value="3"/>
+						<xsd:pattern value="([0-9])+"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="CODIGO_COLECTIVO_BONIF" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código del colectivo de bonificación. Obligatorio para los transformaciones de códigos 109, 209 y 309 iniciadas a partir del 18/06/2010.  Sus posibles valores se encuentran codificados en la tabla TELCOLBO.txt de la Ayuda XML - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="2"/>
+						<xsd:maxLength value="3"/>
+						<xsd:pattern value="([0-9])+"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_ADICIONALES_TRANSFORMACIONTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos adicionales de la transformación</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="IND_DISCAPACIDAD" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de discapacidad.  Obligatorio con "S" para transformaciones de contratos de minusválidos.  Obligatorio con "C" para transformaciones de contratos de minusválidos en centros especiales de empleo. Sus posibles valores se encuentran codificados en la tabla TEJINDIS.txt de la Ayuda XML - Ultima versión - Tablas de códigos.   </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[SC\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="CODIGO_COLECTIVO_REDUCCION" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Colectivo de reducción. Sólo vendrá cumplimentado, y de manera opcional, para las transformaciones de contratos de formación (421) a códigos 189, 289 y 389. Sus posibles valores se encuentran codificados en la tabla TQOCOLRE.txt de la Ayuda XML - Ultima versión - Tablas de códigos. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_ANEXOCONTRATORELEVOTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos anexos de los contratos de relevo.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="NOMBRE_APELLIDOS" type="NOMBREAPELLIDOSTYPE">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Nombre y apellidos del trabajador de relevo.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_COMUNICA_COPIA_BASICATYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos de la comunicación de la copia básica del contrato.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="TIPO_FIRMA">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Tipo de firma de la copia básica. Sus posibles valores se encuentran codificados en la tabla TERFIRCB.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{1}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="TEXTO_COPIABASICA" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Texto de la copia básica. Claúsulas y/o condiciones que no vienen reflejados en la comunicación del contrato.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="750"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="DOMIC_CENTRO_TRABAJO" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Domicilio del centro de trabajo.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="150"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_USOLIBRE_EMPRESATYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos para uso de la empresa. No se efectúa ninguna validación ni modificación sobre estos datos.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="USOLIBRE_EMPRESA">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="30"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- ******************************************************************************************************************** -->
+	<xsd:complexType name="NOMBREAPELLIDOSTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Nombre y apellidos.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="NOMBRE">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="15"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="PRIMER_APELLIDO">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="20"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="SEGUNDO_APELLIDO" minOccurs="0">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="20"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CIFNIFTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">CIF / NIF.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="CIF_NIF">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[0-9A-Z]\d{7}[0-9A-Z]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="CLAVECONTRATOTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Identificador del contrato.  Se compone de :  E+Provincia(2)+Año(4)+Número secuencial(7).</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="E\d{13}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="FECHATYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Formato : AAAAMMDD (Año Mes Día)</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="\d{8}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="MUNICIPIOTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Sus posibles valores se encuentran codificados en la tabla TDPMUNIC.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="\d{5}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PAISTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Sus posibles valores se encuentran codificados en la tabla TBXCPAIS.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="\d{3}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>
