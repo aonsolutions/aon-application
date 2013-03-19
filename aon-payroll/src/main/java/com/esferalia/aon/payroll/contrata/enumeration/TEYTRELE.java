@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TEYTRELE table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TEYTRELE table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ *  TEYTRELE	TIPO DE TRABAJADOR DE RELEVO			
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TEYTRELE implements IStringEnum {
 
 	TEYTRELE_1( "1", "TRABAJADOR INSCRITO COMO DEMANDANTE", null, null ),

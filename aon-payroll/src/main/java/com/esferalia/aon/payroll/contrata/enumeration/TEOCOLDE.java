@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TEOCOLDE table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TEOCOLDE table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * *TEOCOLDE	COLECTIVO FOMENTO DE LA CONTR. INDEFINIDA			29-02-2012
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TEOCOLDE implements IStringEnum {
 
 	TEOCOLDE_01( "01", "JOVENES DE 18 A 30 AÑOS", "19970517", "20010303" ),

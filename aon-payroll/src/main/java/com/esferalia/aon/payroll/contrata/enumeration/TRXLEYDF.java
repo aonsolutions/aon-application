@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TRXLEYDF table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TRXLEYDF table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * *TRXLEYDF	LEY DE DEDUCCION FISCAL						26-07-2012
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TRXLEYDF implements IStringEnum {
 
 	TRXLEYDF_01( "01", "REAL DECRETO LEY 3 / 2012", "20120212", "20120707" ),

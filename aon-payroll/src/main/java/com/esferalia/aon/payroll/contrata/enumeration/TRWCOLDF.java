@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TRWCOLDF table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TRWCOLDF table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * *TRWCOLDF	COLECTIVO DE DEDUCCION FISCAL					29-02-2012
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TRWCOLDF implements IStringEnum {
 
 	TRWCOLDF_01( "01", "PRIMER CONTRATO CON TRABAJADOR MENOR DE 30 AÑOS", "20120212", null ),

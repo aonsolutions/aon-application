@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TEKLEYBO table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TEKLEYBO table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * *TEKLEYBO	LEY BONIFICACIÓN						11-09-2012	
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TEKLEYBO implements IStringEnum {
 
 	TEKLEYBO_01( "01", "LEY 64 / 1997", "19970517", "19990516" ),

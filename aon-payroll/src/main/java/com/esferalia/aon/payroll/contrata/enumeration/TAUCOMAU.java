@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TAUCOMAU table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TAUCOMAU table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ *  TAUCOMAU	COMUNIDAD AUTÓNOMA				
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TAUCOMAU implements IStringEnum {
 
 	TAUCOMAU_01( "01", "ANDALUCIA", null, null ),

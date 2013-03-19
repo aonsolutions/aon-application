@@ -18,13 +18,7 @@ import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.model.IProrrogaType;
-import com.esferalia.aon.file.payroll.contrata.model.prorrogas.CIFNIFTYPE;
-import com.esferalia.aon.file.payroll.contrata.model.prorrogas.DATOSADICIONALESPRORROGATYPE;
-import com.esferalia.aon.file.payroll.contrata.model.prorrogas.DATOSCONTRATOTYPE;
-import com.esferalia.aon.file.payroll.contrata.model.prorrogas.DATOSEMPRESATYPE;
-import com.esferalia.aon.file.payroll.contrata.model.prorrogas.DATOSGENERALESPRORROGATYPE;
-import com.esferalia.aon.file.payroll.contrata.model.prorrogas.DATOSUSOLIBREEMPRESATYPE;
-import com.esferalia.aon.file.payroll.contrata.model.prorrogas.PRORROGATIPOTYPE;
+import com.esferalia.aon.file.payroll.contract.generated.prorrogas.*;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.enumeration.CCCType;
@@ -32,7 +26,7 @@ import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class ContrataProrrogasWriter {
 	
-	private com.esferalia.aon.file.payroll.contrata.model.prorrogas.ObjectFactory factory = new com.esferalia.aon.file.payroll.contrata.model.prorrogas.ObjectFactory();;
+	private com.esferalia.aon.file.payroll.contract.generated.prorrogas.ObjectFactory factory = new com.esferalia.aon.file.payroll.contract.generated.prorrogas.ObjectFactory();;
 	
 	public IProrrogaType createFile(IProrrogaType prorrogaType, ContrataParams params) throws ManagerBeanException{
 		if(prorrogaType!=null){

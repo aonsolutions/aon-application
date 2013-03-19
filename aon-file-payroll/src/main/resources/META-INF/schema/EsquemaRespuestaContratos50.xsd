@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- XML Schema SPEE ver.5.000 15/02/2011-->
+<!-- ============================================= -->
+<!-- Updated by Esferalia Networks v1.0 20/11/2012 -->
+<!-- Schema location redefinition -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.1">
+	<!--  
+	<xsd:include schemaLocation="http://www.sepe.es/schemas/EsquemaContratos50.xsd"/>
+	-->
+	<xsd:include schemaLocation="EsquemaContratos50.xsd"/>
+	<xsd:element name="FICHERO_CONTRATOS">
+		<xsd:annotation>
+			<xsd:documentation>XML Schema - Respuesta al proceso de comunicación de Contratos al SPEE</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="ESTADO_FICHERO">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="es">Estado que refleja si se ha procesado la totalidad de los registros enviados  o no. Los posibles valores que puede tomar este elemento son los que aparecen más abajo enumerados.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:enumeration value="PROCESADO TOTALMENTE"/>
+							<xsd:enumeration value="PROCESADO PARCIALMENTE"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="NUMERO_PROCESADOS">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="es">Número de registros procesados.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:pattern value="\d{4}"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="CONTRATOSPROCESADOS">
+					<xsd:complexType>
+						<xsd:sequence maxOccurs="5">
+							<xsd:element name="ENVIO_100" type="ENVIO100TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_130" type="ENVIO130TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_150" type="ENVIO150TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_200" type="ENVIO200TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_230" type="ENVIO230TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_250" type="ENVIO250TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_300" type="ENVIO300TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_330" type="ENVIO330TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_350" type="ENVIO350TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_401" type="ENVIO401TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_402" type="ENVIO402TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_403" type="ENVIO403TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_410" type="ENVIO410TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_420" type="ENVIO420TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_421" type="ENVIO421TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_430" type="ENVIO430TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_441" type="ENVIO441TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_450" type="ENVIO450TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_501" type="ENVIO501TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_502" type="ENVIO502TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_503" type="ENVIO503TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_510" type="ENVIO510TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_520" type="ENVIO520TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_530" type="ENVIO530TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_540" type="ENVIO540TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_541" type="ENVIO541TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_550" type="ENVIO550TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_970" type="ENVIO970TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_980" type="ENVIO980TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_990" type="ENVIO990TYPE" minOccurs="0"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="version" type="xsd:string" fixed="5"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="ENVIO100TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_100" type="CONTRATO100TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO130TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_130" type="CONTRATO130TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO150TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_150" type="CONTRATO150TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO200TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_200" type="CONTRATO200TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO230TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_230" type="CONTRATO230TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO250TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_250" type="CONTRATO250TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO300TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_300" type="CONTRATO300TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO330TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_330" type="CONTRATO330TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO350TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_350" type="CONTRATO350TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO401TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_401" type="CONTRATO401TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO402TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_402" type="CONTRATO402TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO403TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_403" type="CONTRATO403TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO410TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_410" type="CONTRATO410TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO420TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_420" type="CONTRATO420TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO421TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_421" type="CONTRATO421TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO430TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_430" type="CONTRATO430TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO441TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_441" type="CONTRATO441TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO450TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_450" type="CONTRATO450TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO501TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_501" type="CONTRATO501TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO502TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_502" type="CONTRATO502TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO503TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_503" type="CONTRATO503TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO510TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_510" type="CONTRATO510TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO520TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_520" type="CONTRATO520TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO530TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_530" type="CONTRATO530TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO540TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_540" type="CONTRATO540TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO541TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_541" type="CONTRATO541TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO550TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_550" type="CONTRATO550TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO970TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_970" type="CONTRATO970TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO980TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_980" type="CONTRATO980TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO990TYPE">
+		<xsd:sequence>
+			<xsd:element name="CONTRATO_990" type="CONTRATO990TYPE"/>
+			<xsd:element name="RESPUESTACONTRATO" type="RESPUESTACONTRATOTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RESPUESTACONTRATOTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Elementos generados por el SPEE que son devueltos como respuesta al envío de la comunicación de un contrato mediante ficheros XML.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="RESULTADO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Resultado del procesamiento de cada uno de los contratos enviados. Los posibles valores que puede tomar este elemento son los que aparecen más abajo enumerados.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="ACEPTADO"/>
+						<xsd:enumeration value="ACEPTADO CON ERRORES"/>
+						<xsd:enumeration value="RECHAZADO"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="IDCONTRATO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Identificador del contrato. Se compone de : E+Provincia(2)+Año(4)+Número secuencial(7).</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="E\d{13}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="FECHACOMUNICACION" type="FECHATYPE" nillable="true">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Fecha de comunicación del contrato.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="USUARIO" type="USUARIOTYPE">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Usuario que envía el fichero.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="FECHAALTA" type="FECHATYPE" nillable="true">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Fecha de mecanización del contrato.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="OBLIGCB">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de obligatoriedad de presentación de la Copia Básica. (S-obligatoria   N-no obligatoria).</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[SN]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="LEYBONIF">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Ley de bonificación a la que queda acogido el contrato. Sus posibles valores se encuentran codificados en la tabla TEKLEYBO.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="LEYFOMENTO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Ley de fomento de la contratación indefinida a la que queda acogido el contrato. Sus posibles valores se encuentran codificados en la tabla TENLEYDE.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="LEYREDUCCION">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Ley de reducción de cuotas a la que queda acogido el contrato. Sus posibles valores se encuentran codificados en la tabla TQNLEYRE.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="LEYDEDUCCION">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Ley de deducción fiscal a la que queda acogido el contrato. Sus posibles valores se encuentran codificados en la tabla TRXLEYDF.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="ERRORES" type="ERRORTYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ERRORTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Errores generados como resultado del proceso de envío de la comunicación de un contrato mediante ficheros XML.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="ERROR" maxOccurs="15">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código de error del contrato. Sus posibles valores se encuentran codificados en la tabla TERRORES.txt de la Ayuda XML - Ultima versión - Tablas de códigos de respuesta.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:length value="7"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="USUARIOTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Usuario que envía el fichero.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

@@ -27,6 +27,7 @@ import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.TrainingCenter;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
+import com.esferalia.aon.ui.payroll.controller.AbstractVariableHandler.VariableData;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractContrataController;
@@ -36,6 +37,25 @@ import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 public class ContractControllerListener extends ControllerAdapter{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractControllerListener.class.getName());
+	
+	@Override
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		ContractController controller = (ContractController) this.getController();
+		Contract contract = (Contract) controller.getTo();
+		contract.setStatus(ContractStatus.PENDING);
+		if(controller.getAonFile()!=null){
+			contract.setDocument(controller.getAonFile().getData());
+		}
+		if(controller.getParams().getContractModelCode()!=null){
+			contract.setModel(controller.getParams().getContractModelCode().getModel());
+		}
+	}
+	
+	@Override
+	public void beforeBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		removeChildData(event);
+	}
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
@@ -50,9 +70,8 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.onShowVariables(null);
 		searchAgreement();
 		
-		ContractContrataController contrataController = (ContractContrataController) AonUtil.getRegisteredBean("contractContrata");
-		contrataController.initialize((Contract) this.getController().getTo());
-		contrataController.onContractaDataShow(null);
+		initContrataModule();
+		
 	}
 	
 	@Override
@@ -84,19 +103,6 @@ public class ContractControllerListener extends ControllerAdapter{
 	}
 	
 	@Override
-	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		ContractController controller = (ContractController) this.getController();
-		Contract contract = (Contract) controller.getTo();
-		contract.setStatus(ContractStatus.PENDING);
-		if(controller.getAonFile()!=null){
-			contract.setDocument(controller.getAonFile().getData());
-		}
-		if(controller.getParams().getContractModelCode()!=null){
-			contract.setModel(controller.getParams().getContractModelCode().getModel());
-		}
-	}
-	
-	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		saveContractData();
 		ContractController controller = (ContractController) this.getController();
@@ -106,6 +112,7 @@ public class ContractControllerListener extends ControllerAdapter{
 			EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_TREE_CONTROLLER);
 			tree.loadTree();
 		}
+		initContrataModule();
 	}
 	
 	@Override
@@ -253,6 +260,24 @@ public class ContractControllerListener extends ControllerAdapter{
 		}
 	}
 	
+	private void removeChildData(ControllerEvent event) throws ControllerListenerException {
+		ContractController controller = (ContractController) event.getController();
+		List list = (List) controller.getHandler().getVariablesModel().getWrappedData();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			for(Object o: list){
+				ContractData data = (ContractData) ((VariableData) o).getVariableData();
+				bean.remove(data);
+				
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible eliminar los datos de contrato. (" +e.getMessage() + ")";
+			LOGGER.error(msg);
+			throw new ControllerListenerException(msg,e);
+		}
+		
+	}
+	
 	private void searchAgreement() {
 		try {
 			ContractController controller = (ContractController) this.getController();
@@ -283,6 +308,12 @@ public class ContractControllerListener extends ControllerAdapter{
 			String msg = "Error al buscar el convenio. (" +e.getMessage() + ")";
 			LOGGER.error(msg);
 		}
+	}
+	
+	private void initContrataModule() {
+		ContractContrataController contrataController = (ContractContrataController) AonUtil.getRegisteredBean("contractContrata");
+		contrataController.initialize((Contract) this.getController().getTo());
+		contrataController.onContractaDataShow(null);
 	}
 	
 }

@@ -43,6 +43,10 @@
 						</aon:panelTab>
 
 						<aon:panelTab id="contrataData" label="Datos Contrat@" >
+							
+							<c:if test="#{!contractContrata.new}" >
+								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_toolbar.xhtml" />
+							</c:if>
 						
 							<aon:panelGrid columns="4" >
 								<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
@@ -202,6 +206,8 @@
 				<ui:param name="container" value="embargosPanel" />
 			</ui:include>
 		</c:if>
+		
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/modalLogin.xhtml" />
 		

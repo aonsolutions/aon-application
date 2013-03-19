@@ -3,14 +3,26 @@ package com.esferalia.aon.file.payroll.contract.pdf.model;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.util.Classpath;
+import com.code.aon.geozone.GeoTree;
+import com.code.aon.geozone.GeoZone;
+import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryDirStaff;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
@@ -39,10 +51,12 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 	final String ENTERPRISE_NAME = "razsoc";
 	final String ENTERPRISE_ADDRESS = "domsocialem";
 	final String ENTERPRISE_COUNTRY = "Texto1pais";
+	final String ENTERPRISE_COUNTRY1 = "Texto1pais1";
 	final String ENTERPRISE_COUNTRY_CODE1 = "codpaisem1";
 	final String ENTERPRISE_COUNTRY_CODE2 = "codpaisem2";
 	final String ENTERPRISE_COUNTRY_CODE3 = "codpaisem3";
 	final String ENTERPRISE_TOWN = "Texto3mun";
+	final String ENTERPRISE_TOWN1 = "Texto2muni1";
 	final String ENTERPRISE_TOWN_CODE1 = "codmuniem1";
 	final String ENTERPRISE_TOWN_CODE2 = "codmuniem2";
 	final String ENTERPRISE_TOWN_CODE3 = "codmuniem3";
@@ -74,10 +88,12 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 	 * Contract workplace fields
 	 */
 	final String WORKPLACE_COUNTRY = "Texto4pais";
+	final String WORKPLACE_COUNTRY1 = "Texto3pais2";
 	final String WORKPLACE_COUNTRY_CODE1 = "codpaisct1";
 	final String WORKPLACE_COUNTRY_CODE2 = "codpaisct2";
 	final String WORKPLACE_COUNTRY_CODE3 = "codpaisct3";
 	final String WORKPLACE_TOWN = "Texto5municipio";
+	final String WORKPLACE_TOWN1 = "Texto4muni2";
 	final String WORKPLACE_TOWN_CODE1 = "codmunict1";
 	final String WORKPLACE_TOWN_CODE2 = "codmunict2";
 	final String WORKPLACE_TOWN_CODE3 = "codmunict3";
@@ -93,16 +109,19 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 	final String EMPLOYEE_NSS = "numafinss";
 	final String EMPLOYEE_FORMATION_CODE1 = "codnivaca1";
 	final String EMPLOYEE_FORMATION_CODE2 = "codnivaca2";
+	final String EMPLOYEE_COUNTRY = "Texto5nacion1";
 	final String EMPLOYEE_COUNTRY_CODE1 = "codnactra1";
 	final String EMPLOYEE_COUNTRY_CODE2 = "codnactra2";
 	final String EMPLOYEE_COUNTRY_CODE3 = "codnactra3";
 	final String EMPLOYEE_ADDRESS_TOWN = "Texto6mun";
+	final String EMPLOYEE_ADDRESS_TOWN1 = "Texto6muni3";
 	final String EMPLOYEE_ADDRESS_TOWN_CODE1 = "codmunitra1";
 	final String EMPLOYEE_ADDRESS_TOWN_CODE2 = "codmunitra2";
 	final String EMPLOYEE_ADDRESS_TOWN_CODE3 = "codmunitra3";
 	final String EMPLOYEE_ADDRESS_TOWN_CODE4 = "codmunitra4";
 	final String EMPLOYEE_ADDRESS_TOWN_CODE5 = "codmunitra5";
 	final String EMPLOYEE_ADDRESS_COUNTRY = "Texto7padom";
+	final String EMPLOYEE_ADDRESS_COUNTRY1 = "Texto7pais3";
 	final String EMPLOYEE_ADDRESS_COUNTRY_CODE1 = "codpaisdomtr1";
 	final String EMPLOYEE_ADDRESS_COUNTRY_CODE2 = "codpaisdomtr2";
 	final String EMPLOYEE_ADDRESS_COUNTRY_CODE3 = "codpaisdomtr3";
@@ -307,13 +326,29 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		 * Contract enterprise fields
 		 */
 		setPdfFieldValue(ENTERPRISE_CIF,contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
-		setPdfFieldValue(ENTERPRISE_DIR_STAFF_NAME,null);
-		setPdfFieldValue(ENTERPRISE_DIR_STAFF_NIF,null);
-		setPdfFieldValue(ENTERPRISE_DIR_STAFF_CHARGE,null);
+		RegistryDirStaff rDirStaff = obtainRegistryDirStaff(contract); 
+		try {
+			setPdfFieldValue(ENTERPRISE_DIR_STAFF_NAME,rDirStaff.getName());
+			setPdfFieldValue(ENTERPRISE_DIR_STAFF_NIF,rDirStaff.getDocument());
+			String rDirStaddCharge = null;
+			if ( rDirStaff.isShareHolder() ){
+				rDirStaddCharge = "Socio";
+			} else if ( rDirStaff.isRepresentative() ){
+				rDirStaddCharge = "Apoderado";
+			} else if( rDirStaff.isDirector() ){
+				rDirStaddCharge = "Administrador";
+			} else if ( rDirStaff.isRepresentativeLabor() ){
+				rDirStaddCharge = "Representante laboral";
+			}
+			setPdfFieldValue(ENTERPRISE_DIR_STAFF_CHARGE,rDirStaddCharge);
+		} catch (NullPointerException npe) {
+			// do nothing
+		}
 		setPdfFieldValue(ENTERPRISE_NAME,contract.getWorkPlace().getEnterprise().getRegistry().getFullName());
 		setPdfFieldValue(ENTERPRISE_ADDRESS,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getFullAddress());
-		setPdfFieldValue(ENTERPRISE_COUNTRY,contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getName(Locale.getDefault()));
 		try {	
+			setPdfFieldValue(ENTERPRISE_COUNTRY,contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getName(Locale.getDefault()));
+			setPdfFieldValue(ENTERPRISE_COUNTRY1,contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getName(Locale.getDefault()));
 			setPdfFieldValue(ENTERPRISE_COUNTRY_CODE1,String.valueOf(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getIsoNum()).substring(0,1));
 			setPdfFieldValue(ENTERPRISE_COUNTRY_CODE2,String.valueOf(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getIsoNum()).substring(1,2));
 			setPdfFieldValue(ENTERPRISE_COUNTRY_CODE3,String.valueOf(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getIsoNum()).substring(2,3));
@@ -323,6 +358,7 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 			// do nothing
 		}
 		setPdfFieldValue(ENTERPRISE_TOWN,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getCity());
+		setPdfFieldValue(ENTERPRISE_TOWN1,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getCity());
 		setPdfFieldValue(ENTERPRISE_TOWN_CODE1,null);
 		setPdfFieldValue(ENTERPRISE_TOWN_CODE2,null);
 		setPdfFieldValue(ENTERPRISE_TOWN_CODE3,null);
@@ -347,29 +383,36 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 			setPdfFieldValue(CCC_REG2,null);
 			setPdfFieldValue(CCC_REG3,null);
 			setPdfFieldValue(CCC_REG4,null);
-			setPdfFieldValue(CCC_PROV1,null);
-			setPdfFieldValue(CCC_PROV2,null);
-			setPdfFieldValue(CCC_NISS,contract.getEnterpriseCCC().getCcc());
-			setPdfFieldValue(CCC_CONTROL_DIGIT1,null);
-			setPdfFieldValue(CCC_CONTROL_DIGIT2,null);
+			if(contract.getEnterpriseCCC().getCcc().length()==11){
+				setPdfFieldValue(CCC_PROV1,contract.getEnterpriseCCC().getCcc().substring(0, 1));
+				setPdfFieldValue(CCC_PROV2,contract.getEnterpriseCCC().getCcc().substring(1, 2));
+				setPdfFieldValue(CCC_NISS,contract.getEnterpriseCCC().getCcc().substring(2, 9));
+				setPdfFieldValue(CCC_CONTROL_DIGIT1,contract.getEnterpriseCCC().getCcc().substring(9, 10));
+				setPdfFieldValue(CCC_CONTROL_DIGIT2,contract.getEnterpriseCCC().getCcc().substring(10, 11));
+			} else {
+				setPdfFieldValue(CCC_NISS,contract.getEnterpriseCCC().getCcc());
+			}
 			setPdfFieldValue(CCC_ACTIVITY,contract.getEnterpriseCCC().getActivity().getDescription());
-			setPdfFieldValue(CCC_ACTIVITY_CODE1,null);
-			setPdfFieldValue(CCC_ACTIVITY_CODE2,null);
+			setPdfFieldValue(CCC_ACTIVITY_CODE1,contract.getEnterpriseCCC().getActivity().getCnae2009().getCode().substring(0, 1));
+			setPdfFieldValue(CCC_ACTIVITY_CODE2,contract.getEnterpriseCCC().getActivity().getCnae2009().getCode().substring(1, 2));
 		}
 		/* 
 		 * Contract workplace fields
 		 */
-		setPdfFieldValue(WORKPLACE_COUNTRY,null);
-		setPdfFieldValue(WORKPLACE_COUNTRY_CODE1,null);
-		setPdfFieldValue(WORKPLACE_COUNTRY_CODE2,null);
-		setPdfFieldValue(WORKPLACE_COUNTRY_CODE3,null);
-		setPdfFieldValue(WORKPLACE_TOWN,contract.getWorkPlace().getAddress().getCity());
 		try {
-			setPdfFieldValue(WORKPLACE_TOWN_CODE1,contract.getWorkPlace().getAddress().getZip().substring(0, 1));
-			setPdfFieldValue(WORKPLACE_TOWN_CODE2,contract.getWorkPlace().getAddress().getZip().substring(1, 2));
-			setPdfFieldValue(WORKPLACE_TOWN_CODE3,contract.getWorkPlace().getAddress().getZip().substring(2, 3));
-			setPdfFieldValue(WORKPLACE_TOWN_CODE4,contract.getWorkPlace().getAddress().getZip().substring(3, 4));
-			setPdfFieldValue(WORKPLACE_TOWN_CODE5,contract.getWorkPlace().getAddress().getZip().substring(4, 5));
+			GeoZone country = obtainCountry(contract.getWorkPlace().getAddress().getGeozone());
+			setPdfFieldValue(WORKPLACE_COUNTRY,country.getName());
+			setPdfFieldValue(WORKPLACE_COUNTRY1,country.getName());
+			setPdfFieldValue(WORKPLACE_COUNTRY_CODE1,String.valueOf(obtainCountryByValue(country).getIsoNum()).substring(0,1));
+			setPdfFieldValue(WORKPLACE_COUNTRY_CODE2,String.valueOf(obtainCountryByValue(country).getIsoNum()).substring(1,2));
+			setPdfFieldValue(WORKPLACE_COUNTRY_CODE3,String.valueOf(obtainCountryByValue(country).getIsoNum()).substring(2,3));
+			setPdfFieldValue(WORKPLACE_TOWN,contract.getWorkPlace().getAddress().getCity());
+			setPdfFieldValue(WORKPLACE_TOWN1,contract.getWorkPlace().getAddress().getCity());
+			setPdfFieldValue(WORKPLACE_TOWN_CODE1,null);
+			setPdfFieldValue(WORKPLACE_TOWN_CODE2,null);
+			setPdfFieldValue(WORKPLACE_TOWN_CODE3,null);
+			setPdfFieldValue(WORKPLACE_TOWN_CODE4,null);
+			setPdfFieldValue(WORKPLACE_TOWN_CODE5,null);
 		} catch (StringIndexOutOfBoundsException aie) {
 			// do nothing
 		} catch (NullPointerException npe) {
@@ -380,11 +423,15 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		 */
 		setPdfFieldValue(EMPLOYEE_NAME,contract.getPerson().getFullName());
 		setPdfFieldValue(EMPLOYEE_NIF,contract.getPerson().getRegistry().getDocument());
-		setPdfFieldValue(EMPLOYEE_BIRTH_DATE,contract.getPerson().getBirthDate()!=null?contract.getPerson().getBirthDate().toString():null);
+		if(contract.getPerson().getBirthDate()!=null){
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			setPdfFieldValue(EMPLOYEE_BIRTH_DATE,formatter.format(contract.getPerson().getBirthDate()));
+		}
 		setPdfFieldValue(EMPLOYEE_NSS,contract.getPerson().getSocialSecurityNumber());
 		setPdfFieldValue(EMPLOYEE_FORMATION_CODE1,null);
 		setPdfFieldValue(EMPLOYEE_FORMATION_CODE2,null);
 		try {
+			setPdfFieldValue(EMPLOYEE_COUNTRY,String.valueOf(contract.getPerson().getRegistry().getNationality().getName(Locale.getDefault())));
 			setPdfFieldValue(EMPLOYEE_COUNTRY_CODE1,String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(0,1));
 			setPdfFieldValue(EMPLOYEE_COUNTRY_CODE2,String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(1,2));
 			setPdfFieldValue(EMPLOYEE_COUNTRY_CODE3,String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(2,3));
@@ -394,23 +441,66 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 			// do nothing
 		}
 		setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN,contract.getPerson().getRegistry().getDefaultAddress()!=null?contract.getPerson().getRegistry().getDefaultAddress().getCity():null);
+		setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN1,contract.getPerson().getRegistry().getDefaultAddress()!=null?contract.getPerson().getRegistry().getDefaultAddress().getCity():null);
 		try {
-			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE1,contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(0, 1));
-			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE2,contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(1, 2));
-			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE3,contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(2, 3));
-			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE4,contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(3, 4));
-			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE5,contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(4, 5));
+			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE1,null);
+			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE2,null);
+			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE3,null);
+			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE4,null);
+			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE5,null);
 		} catch (StringIndexOutOfBoundsException aie) {
 			// do nothing
 		} catch (NullPointerException npe) {
 			// do nothing
 		}
-		setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY,null);
-		setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY_CODE1,null);
-		setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY_CODE2,null);
-		setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY_CODE3,null);
+		try {
+			GeoZone country = obtainCountry(contract.getPerson().getRegistry().getDefaultAddress().getGeozone());
+			setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY,country.getName());
+			setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY1,country.getName());
+			setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY_CODE1,String.valueOf(obtainCountryByValue(country).getIsoNum()).substring(0,1));
+			setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY_CODE2,String.valueOf(obtainCountryByValue(country).getIsoNum()).substring(1,2));
+			setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY_CODE3,String.valueOf(obtainCountryByValue(country).getIsoNum()).substring(2,3));
+		} catch (StringIndexOutOfBoundsException aie) {
+			// do nothing
+		} catch (NullPointerException npe) {
+			// do nothing
+		}
 	}
 	
+
+	private RegistryDirStaff obtainRegistryDirStaff(Contract contract) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), contract.getWorkPlace().getEnterprise().getRegistry().getId());
+		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE), new Date());
+		List<ITransferObject> list = bean.getList(criteria);
+		if(!list.isEmpty()){
+			return (RegistryDirStaff) list.get(0);
+		}
+		return null;
+	}
+	
+	private GeoZone obtainCountry(GeoZone geoZone) throws ManagerBeanException {
+		IManagerBean geoTreeBean = BeanManager.getManagerBean(GeoTree.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(geoTreeBean.getFieldName(IEntityAlias.GEO_TREE_CHILD_ID), geoZone.getId());
+		Iterator<ITransferObject> iter = geoTreeBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			GeoTree geoTree = (GeoTree)iter.next();
+			return geoTree.getParent();
+		}
+		return null;
+	}
+
+	private Country obtainCountryByValue(GeoZone country) {
+		for( Country c : Country.values() ) {
+    		if ( c.getValue().equals(country.getCode()) ) {
+    			return c;
+    		}
+    	}
+    	return null;
+	}
+
 	/*
 	 * [page, llx, lly, urx, ury]
 	 */

@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TABCCNAE table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TABCCNAE table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ *  TABCCNAE	ACTIVIDAD ECONÓMICA						15-03-2009	
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TABCCNAE implements IStringEnum {
 
 	TABCCNAE_00( "00", "SIN ACTIVIDAD ECONÓMICA                                                                                                                                                                         ", null, null ),

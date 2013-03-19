@@ -4,14 +4,13 @@ package com.esferalia.aon.file.payroll.contrata;
 import com.esferalia.aon.file.payroll.contract.model.IContratoType;
 import com.esferalia.aon.file.payroll.contract.model.IProrrogaType;
 import com.esferalia.aon.file.payroll.contract.model.ITransformacionType;
-import com.esferalia.aon.file.payroll.contrata.model.contratos.ObjectFactory;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 
 public class ContractContrataFactory {
 	
 	
 	public IContratoType createContratoModel(String code) {
-		com.esferalia.aon.file.payroll.contrata.model.contratos.ObjectFactory factory = new ObjectFactory();
+		com.esferalia.aon.file.payroll.contract.generated.contratos.ObjectFactory factory = new com.esferalia.aon.file.payroll.contract.generated.contratos.ObjectFactory();
 		if (code.equals(ContractCode.C100.getValue())) {
 			return factory.createCONTRATO100TYPE();
 		} else if (code.equals(ContractCode.C130.getValue())) {
@@ -82,7 +81,7 @@ public class ContractContrataFactory {
 
 	
 	public ITransformacionType createTransformacionesType(String code) {
-		com.esferalia.aon.file.payroll.contrata.model.transformaciones.ObjectFactory factory = new com.esferalia.aon.file.payroll.contrata.model.transformaciones.ObjectFactory();
+		com.esferalia.aon.file.payroll.contract.generated.transformaciones.ObjectFactory factory = new com.esferalia.aon.file.payroll.contract.generated.transformaciones.ObjectFactory();
 		if (code.equals(ContractCode.C109.getValue())) {
 			return factory.createTRANSFORMACION109TYPE();
 		} else if (code.equals(ContractCode.C139.getValue())) {

@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TEIINTER table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TEIINTER table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * *TEIINTER	CAUSA OBJETO DE LA INTERINIDAD					
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TEIINTER implements IStringEnum {
 
 	TEIINTER_A( "A", "TRABAJADOR CON DERECHO RESERVA DE PUESTO", "19800315", "0" ),

@@ -32,10 +32,10 @@ import com.esferalia.aon.file.payroll.contract.model.IContratoType;
 import com.esferalia.aon.file.payroll.contract.model.IProrrogaType;
 import com.esferalia.aon.file.payroll.contract.model.ITransformacionType;
 import com.esferalia.aon.file.payroll.contrata.ContractContrataFactory;
-import com.esferalia.aon.file.payroll.contrata.model.contratos.CONTRATOS;
-import com.esferalia.aon.file.payroll.contrata.model.prorrogas.PRORROGAS;
-import com.esferalia.aon.file.payroll.contrata.model.prorrogas.PRORROGATIPOTYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACIONES;
+import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATOS;
+import com.esferalia.aon.file.payroll.contract.generated.prorrogas.PRORROGAS;
+import com.esferalia.aon.file.payroll.contract.generated.prorrogas.PRORROGATIPOTYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACIONES;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -44,18 +44,18 @@ import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 public class ContrataWriter {
 	
 	private final String CONTRATA_XML_FILE_ENCODING = "ISO-8859-1";
-	private final String CONTRATA_CONTRATOS_MODEL_PATH = "com.esferalia.aon.file.payroll.contrata.model.contratos";
-	private final String CONTRATA_TRANSFORMACIONES_MODEL_PATH = "com.esferalia.aon.file.payroll.contrata.model.transformaciones";
-	private final String CONTRATA_PRORROGAS_MODEL_PATH = "com.esferalia.aon.file.payroll.contrata.model.prorrogas";
+	private final String CONTRATA_CONTRATOS_MODEL_PATH = "com.esferalia.aon.file.payroll.contract.generated.contratos";
+	private final String CONTRATA_TRANSFORMACIONES_MODEL_PATH = "com.esferalia.aon.file.payroll.contract.generated.transformaciones";
+	private final String CONTRATA_PRORROGAS_MODEL_PATH = "com.esferalia.aon.file.payroll.contract.generated.prorrogas";
 	private final String CONTRATOS_SCHEMA_FILE_NAME = "EsquemaContratos50.xsd";
 	private final String TRANSFORMACIONES_SCHEMA_FILE_NAME = "EsquemaTransformaciones50.xsd";
 	private final String PRORROGAS_SCHEMA_FILE_NAME = "EsquemaProrrogas50.xsd";
 	
-	private com.esferalia.aon.file.payroll.contrata.model.contratos.ObjectFactory contratoFactory = new com.esferalia.aon.file.payroll.contrata.model.contratos.ObjectFactory();
+	private com.esferalia.aon.file.payroll.contract.generated.contratos.ObjectFactory contratoFactory = new com.esferalia.aon.file.payroll.contract.generated.contratos.ObjectFactory();
 
-	private com.esferalia.aon.file.payroll.contrata.model.transformaciones.ObjectFactory transformacionFactory = new com.esferalia.aon.file.payroll.contrata.model.transformaciones.ObjectFactory();;
+	private com.esferalia.aon.file.payroll.contract.generated.transformaciones.ObjectFactory transformacionFactory = new com.esferalia.aon.file.payroll.contract.generated.transformaciones.ObjectFactory();;
 	
-	private com.esferalia.aon.file.payroll.contrata.model.prorrogas.ObjectFactory prorrogaFactory = new com.esferalia.aon.file.payroll.contrata.model.prorrogas.ObjectFactory();;
+	private com.esferalia.aon.file.payroll.contract.generated.prorrogas.ObjectFactory prorrogaFactory = new com.esferalia.aon.file.payroll.contract.generated.prorrogas.ObjectFactory();;
 
 	private String fileName;
 	

@@ -2,6 +2,9 @@ package com.esferalia.aon.ui.payroll.controller.contract;
 
 import java.util.Calendar;
 
+import javax.faces.event.AbortProcessingException;
+
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.contrata.enumeration.TEQPTIEM;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.ui.payroll.file.ContrataParams;
@@ -154,7 +157,13 @@ public class ContractContrataHandler {
 	 * @return
 	 */
 	public Boolean getShowColectivoEdad() {
-		return getContractCode()==ContractCode.C421 && getParams().getContract().getPerson().getAge()>=21;
+		if(getParams().getContract().getPerson().getAge()!=null){
+			return getContractCode()==ContractCode.C421 && getParams().getContract().getPerson().getAge()>=21;
+		} else {
+			String msg = "El trabajador no tiene definida la fecha de nacimiento";
+			AonUtil.addErrorMessage(msg);
+		}
+		return false;
 	}
 	
 	/**

@@ -18,26 +18,26 @@ import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.model.ITransformacionType;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.CIFNIFTYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.DATOSADICIONALESTRANSFORMACIONTYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.DATOSANEXOCONTRATORELEVOTYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.DATOSBONIFICACIONTYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.DATOSCOMUNICACOPIABASICATYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.DATOSCONTRATOTIEMPOPARCIALTYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.DATOSCONTRATOTYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.DATOSEMPRESATYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.DATOSGENERALESTRANSFORMACIONTYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.DATOSMEDIDASFOMENTOTYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.DATOSUSOLIBREEMPRESATYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.NOMBREAPELLIDOSTYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION109TYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION139TYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION189TYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION209TYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION239TYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION289TYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION309TYPE;
-import com.esferalia.aon.file.payroll.contrata.model.transformaciones.TRANSFORMACION389TYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.CIFNIFTYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.DATOSADICIONALESTRANSFORMACIONTYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.DATOSANEXOCONTRATORELEVOTYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.DATOSBONIFICACIONTYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.DATOSCOMUNICACOPIABASICATYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.DATOSCONTRATOTIEMPOPARCIALTYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.DATOSCONTRATOTYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.DATOSEMPRESATYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.DATOSGENERALESTRANSFORMACIONTYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.DATOSMEDIDASFOMENTOTYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.DATOSUSOLIBREEMPRESATYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.NOMBREAPELLIDOSTYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACION109TYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACION139TYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACION189TYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACION209TYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACION239TYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACION289TYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACION309TYPE;
+import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACION389TYPE;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.enumeration.CCCType;
@@ -49,7 +49,7 @@ public class ContrataTransformacionesWriter {
 	
 	private final String ZERO_VALUE = "0";
 	
-	private com.esferalia.aon.file.payroll.contrata.model.transformaciones.ObjectFactory factory = new com.esferalia.aon.file.payroll.contrata.model.transformaciones.ObjectFactory();;
+	private com.esferalia.aon.file.payroll.contract.generated.transformaciones.ObjectFactory factory = new com.esferalia.aon.file.payroll.contract.generated.transformaciones.ObjectFactory();;
 	
 	public ITransformacionType createFile(ITransformacionType transformacionType, ContrataParams params) throws ManagerBeanException{
 		String code = getContractDataMap(params.getContract()).get(ContextVariable.TC2.getName());

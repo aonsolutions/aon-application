@@ -15,14 +15,14 @@
 		<ui:define name="beforeSpinToolbarContent">
 			<aon:htmlCommandLink id="directDebit-report"
 				styleClass="aon-finding-toolbar-item aon-icon-pdf" 
-				value="Domiciliacion bancaria" 
+				value="Domiciliacion bancaria" ajaxSingle="true"
 				rendered="#{contract.trainingContract and contract.trainingCenterDefined}"
 				action="#{contract.onTrainingCenterDirectDebitReport}" target="_blank" >
 				<f:param name="reportKey" value="trainingDirectDebit" />
 				<f:param name="outputFormat" value="PDF" />
 			</aon:htmlCommandLink>
 			<aon:commandButton id="documentDraft-edition" 
-				action="contractPdfEdition_form"
+				action="contractPdfEdition_form" ajaxSingle="true"
 				rendered="#{not empty contract.to.model and not contract.existDocument}"
 				value="Contrato"
 				title="Edicion manual del documento del contrato"
@@ -34,7 +34,7 @@
 				<aon:actionListener method="#{contract.onContractDocumentShow}" />
 			</aon:commandButton>
 			<aon:commandButton id="basicCopyDraft-edition"
-				action="contractPdfEdition_form" 
+				action="contractPdfEdition_form" ajaxSingle="true" 
 				rendered="#{not empty contract.to.model and not contract.existDocument}"
 				value="Copia Basica"
 				title="Edicion manual del documento de la copia basica"
@@ -44,15 +44,6 @@
 				<f:setPropertyActionListener
 					target="#{contractPdf.backAction}" value="contract_form" />
 				<aon:actionListener method="#{contract.onContractDocumentShow}" />
-			</aon:commandButton>
-			<aon:commandButton id="contrata-sepe-comunication"
-				value="Comunicar al S.E.P.E."
-				rendered="#{!contractContrata.new}"
-				reRender="showContrataLoginWindow"
-				styleClass="aon-finding-toolbar-item aon-icon-sincronize" >
-				<f:setPropertyActionListener
-					target="#{contractContrata.showContrataLoginWindow}"
-					value="#{true}" />
 			</aon:commandButton>
 		</ui:define>
 		<ui:define name="moreMenuContent">

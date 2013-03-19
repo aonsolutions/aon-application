@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TCMCSEXO table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TCMCSEXO table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ *  TCMCSEXO	SEXO								
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TCMCSEXO implements IStringEnum {
 
 	TCMCSEXO_1( "1", "HOMBRE", null, null ),

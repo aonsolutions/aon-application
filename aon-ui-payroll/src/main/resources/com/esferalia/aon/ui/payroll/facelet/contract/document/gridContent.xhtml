@@ -13,7 +13,7 @@
 
 			<ui:define name="additionalColumns" >
 				<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.attachmentType"
-					styleClass="aon-editDataTable-textColumn aon-width-100">
+					styleClass="aon-editDataTable-textColumn aon-width-150">
 					<f:facet name="header">
 						<aon:outputLabel for="#{controller.beanName}_attachmentType"
 							value="#{bundle.aon_type}" />
@@ -33,7 +33,7 @@
 					</f:facet>
 				</aon:column>
 				<c:if test="#{aonRole.confidentiality}">
-					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
+					<aon:column styleClass="aon-editDataTable-iconColumn aon-width-40">
 						<f:facet name="header">
 							<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
 								styleClass="aon-icon-confidential" style="padding-left:15px" />
@@ -51,7 +51,7 @@
 					</aon:column>
 				</c:if>		
 				<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.attachDate"
-					styleClass="aon-editDataTable-textColumn aon-width-120">
+					styleClass="aon-editDataTable-dateColumn aon-width-80">
 					<f:facet name="header">
 						<aon:outputLabel for="#{controller.beanName}_scope"
 							value="#{bundle.aon_date}" />
@@ -71,7 +71,7 @@
 				</aon:column>		
 				<c:if test="#{!skipScopeColumn}"> 
 					<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.scope.description"
-						styleClass="aon-editDataTable-textColumn aon-width-100">
+						styleClass="aon-editDataTable-textColumn aon-width-120">
 						<f:facet name="header">
 							<aon:outputLabel for="#{controller.beanName}_scope"
 								value="#{bundle.aon_scope}" />

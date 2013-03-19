@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TFGGRCOT table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TFGGRCOT table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * *TFGGRCOT	GRUPOS DE COTIZACION						15-01-2013
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TFGGRCOT implements IStringEnum {
 
 	TFGGRCOT_01( "01", "DIRECTORES,INGENIEROS", "20020101", "20131231" ),

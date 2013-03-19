@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TRCMODFO table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TRCMODFO table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * *TRCMODFO 	MODALIDAD DE FORMACION						22-03-2012
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TRCMODFO implements IStringEnum {
 
 	TRCMODFO_D( "D", "A DISTANCIA", "20110831", "20131231" ),

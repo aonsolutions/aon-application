@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TEJINDIS table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TEJINDIS table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ *  TEJINDIS	INDICADOR DISCAPACIDAD										
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TEJINDIS implements IStringEnum {
 
 	TEJINDIS_C( "C", "DISCAPACITADOS EN CENTROS ESPEC.EMPLEO", null, null ),

@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TEXTINVE table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TEXTINVE table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * *TEXTINVE	TIPO DE TRABAJADOR INVESTIGACIÓN				
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TEXTINVE implements IStringEnum {
 
 	TEXTINVE_1( "1", "INVESTIGADOR", null, null ),

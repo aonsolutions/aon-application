@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TAICLAOC2011 table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TAICLAOC2011 table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ *  TAICLAOC2011   OCUPACIÓN ( A partir de 2011 )					29-02-2012 
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TAICLAOC2011 implements IStringEnum {
 
 	TAICLAOC2011_0011( "0011", "Oficiales de las fuerzas armadas                                                                                                           ", "S", null ),

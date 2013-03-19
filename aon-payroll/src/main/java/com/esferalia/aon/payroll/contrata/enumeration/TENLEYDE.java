@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TENLEYDE table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TENLEYDE table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * *TENLEYDE	LEY FOMENTO DE LA CONTR. INDEFINIDA				29-02-2012
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TENLEYDE implements IStringEnum {
 
 	TENLEYDE_01( "01", "LEY 63 / 1997", "19970517", "20010303" ),

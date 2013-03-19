@@ -19,6 +19,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
@@ -158,13 +159,35 @@ public class ContractPdfController {
 	public void setContract(Contract contract) {
 		this.contract = contract;
 	}
+	private ContractAttachment getContractPdfDraft() {
+		return contractPdfDraft;
+	}
+	public void setContractPdfDraft(ContractAttachment contractPdfDraft) {
+		this.contractPdfDraft = contractPdfDraft;
+	}
 	public boolean isNew(){
 		return getContractPdfDraft()==null||getContractPdfDraft().getId()==null;
 	}
 	
-	public void initialize(Contract contract) {
-		setContract(contract);
-		contractPdfDraft = null;
+	private void initialize() {
+		setContract((Contract) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER).getTo());
+		setContractPdfDraft( obtainContractPdfDraft() );
+	}
+	
+	private ContractAttachment obtainContractPdfDraft() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), getContract().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), getDocumentType());
+			List<ITransferObject> list = bean.getList(criteria);
+			if(!list.isEmpty()){
+				return (ContractAttachment) list.get(0);
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, se devuelve una nueva instancia
+		}
+		return new ContractAttachment();
 	}
 	
 	public String getImageUrl() {
@@ -184,24 +207,6 @@ public class ContractPdfController {
 		return imageUrl;
 	}
 	
-	private ContractAttachment getContractPdfDraft() {
-		if(contractPdfDraft==null){
-			try {
-				IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), getContract().getId());
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), getDocumentType());
-				List<ITransferObject> list = bean.getList(criteria);
-				if(!list.isEmpty()){
-					return (ContractAttachment) list.get(0);
-				}
-			} catch (ManagerBeanException e) {
-				// NADA, se devuelve una nueva instancia
-			}
-		}
-		return new ContractAttachment();
-	}
-
 	public void beforeDocumentShow() {
 		PayrollUtils utils = new PayrollUtils();
 		String tc2 = utils.getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
@@ -220,6 +225,9 @@ public class ContractPdfController {
 	}
 	
 	public void onContractDocumentShow( ActionEvent event ) {
+		
+		initialize();
+		
 		setContractPdfWriter(null);
 		try {
 			if(getContract()==null || getContract().getId()==null){
@@ -239,20 +247,8 @@ public class ContractPdfController {
 			}
 			
 			setZoomFactor(2);
-
-			if(getDocumentType()==ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT){
-				if(getContractPdfDraft()==null || getContractPdfDraft().getId()==null){
-					getContractPdfWriter().loadNewPdf(getContractModel(), getContract());
-				} else {
-					getContractPdfWriter().loadExistingPdf(getContractPdfDraft(), getContract());
-				}
-			} else if(getDocumentType()==ContractAttachmentType.BASIC_COPY_DRAFT){
-				if(getContractPdfDraft()==null || getContractPdfDraft().getId()==null){
-					getContractPdfWriter().loadNewPdf(BasicCopy.BASIC_COPY_NAME, getContract());
-				} else {
-					getContractPdfWriter().loadExistingPdf(BasicCopy.BASIC_COPY_NAME, getContractPdfDraft());
-				}
-			}
+			
+			loadPdfDocument();
 
 			setDocumentPage(1);
 			
@@ -266,6 +262,22 @@ public class ContractPdfController {
 			LOGGER.error(e.getMessage(), e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
+		}
+	}
+	
+	private void loadPdfDocument() throws UnsupportedContractDocumentException, IOException{
+		if(getDocumentType()==ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT){
+			if(getContractPdfDraft()==null || getContractPdfDraft().getId()==null){
+				getContractPdfWriter().loadNewPdf(getContractModel(), getContract());
+			} else {
+				getContractPdfWriter().loadExistingPdf(getContractPdfDraft(), getContract());
+			}
+		} else if(getDocumentType()==ContractAttachmentType.BASIC_COPY_DRAFT){
+			if(getContractPdfDraft()==null || getContractPdfDraft().getId()==null){
+				getContractPdfWriter().loadNewPdf(BasicCopy.BASIC_COPY_NAME, getContract());
+			} else {
+				getContractPdfWriter().loadExistingPdf(BasicCopy.BASIC_COPY_NAME, getContractPdfDraft());
+			}
 		}
 	}
 	
@@ -319,6 +331,36 @@ public class ContractPdfController {
 			LOGGER.error(e.getMessage(), e);
 			throw new AbortProcessingException(e);
 		}
+	}
+	
+	public void onDocumentReload(ActionEvent event){
+		ContractAttachment attach = obtainContractPdfDraft();
+		try {
+			setContractPdfDraft(new ContractAttachment());
+			loadPdfDocument();
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());
+		} catch (UnsupportedContractDocumentException e) {
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());
+		}
+		
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+			attach.setData(getContractPdfWriter().buildPdf());
+			bean.update(attach);
+			ContractAttachController attachController = (ContractAttachController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_ATTACH_CONTROLLER);
+			attachController.initializeModel();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new AbortProcessingException(e);
+		}
+		
+		onContractDocumentShow(event);
+		
 	}
 	
 }

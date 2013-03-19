@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TERFIRCB table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TERFIRCB table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ *  TERFIRCB	FIRMA COPIA BÁSICA				
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TERFIRCB implements IStringEnum {
 
 	TERFIRCB_1( "1", "FIRMADAS POR LOS REPRESENTANTES LEGALES", null, null ),

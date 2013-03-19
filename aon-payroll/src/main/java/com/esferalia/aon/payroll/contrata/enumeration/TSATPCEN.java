@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TSATPCEN table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TSATPCEN table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * *TSATPCEN	TIPOS DE CENTRO							22-03-2012
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TSATPCEN implements IStringEnum {
 
 	TSATPCEN_E( "E", "CENTRO DEL SISTEMA EDUCATIVO", "20110831", null ),

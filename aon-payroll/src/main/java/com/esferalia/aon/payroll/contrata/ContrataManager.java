@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.contrata;
 
+
 import com.esferalia.aon.sepe.api.SWComunicacionDatos.SWComunicacionDatos;
 import com.esferalia.aon.sepe.api.SWComunicacionDatos.SWComunicacionDatosService;
 import com.esferalia.aon.sepe.api.SWConsultaDatos.SWConsultaDatos;
@@ -19,6 +20,15 @@ public class ContrataManager {
 		SWComunicacionDatos datos = service.getSWComunicacionDatos();
 		
 		String result = datos.servicioContratos(document, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+		
+		if(result==null || result.isEmpty()){
+			try {
+				datos.wait(1000000000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		return result;
 		

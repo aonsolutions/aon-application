@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) TEQPTIEM table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) TEQPTIEM table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ *  TEQPTIEM	PERÍODO DE TIEMPO				
+ *  ------------------------------------------------------------------------
+ */ 
 public enum TEQPTIEM implements IStringEnum {
 
 	TEQPTIEM_A( "A", "JORNADA ANUAL", null, null ),

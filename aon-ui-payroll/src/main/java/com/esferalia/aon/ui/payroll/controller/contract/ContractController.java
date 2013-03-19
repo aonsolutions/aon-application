@@ -611,7 +611,6 @@ public class ContractController extends BasicController implements IVariablesHan
 	
 	public void onContractDocumentShow( ActionEvent event ) {
 		ContractPdfController controller = (ContractPdfController) AonUtil.getRegisteredBean("contractPdf");
-		controller.initialize((Contract) this.getTo());
 		controller.onContractDocumentShow(event);
 	}
 	

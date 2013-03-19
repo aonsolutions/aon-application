@@ -1,12 +1,11 @@
 package com.esferalia.aon.file.payroll.contract.model;
 
-import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSCOMUNICACOPIABASICATYPE;
-import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSEMPRESATYPE;
-import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSETTTYPE;
-import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSGENERALESCONTRATOTYPE;
-import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSTRABAJADORTYPE;
-import com.esferalia.aon.file.payroll.contrata.model.contratos.DATOSUSOLIBREEMPRESATYPE;
-
+import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSCOMUNICACOPIABASICATYPE;
+import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSEMPRESATYPE;
+import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSETTTYPE;
+import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSGENERALESCONTRATOTYPE;
+import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSTRABAJADORTYPE;
+import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSUSOLIBREEMPRESATYPE;
 
 public interface IContratoType {
 

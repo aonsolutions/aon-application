@@ -16,10 +16,17 @@
 		
 			<aon:commandButton id="contract-save"
 				value="#{contractPdf.new?bundle.aon_accept:bundle.aon_save}"
-				action="#{contractPdf.backAction}"
 				actionListener="#{contractPdf.onDocumentSave}"
-				onclick="if (!confirm('#{bundle.aon_save}?')) { return false;}"
 				styleClass="aon-finding-toolbar-item aon-icon-accept" />	
+			<!--  
+			<aon:commandButton id="contract-refresh"
+				value="#{payrollBundle.payroll_reload}"
+				rendered="#{!contractPdf.new}"
+				action="contractPdfEdition_form"
+				actionListener="#{contractPdf.onDocumentReload}"
+				onclick="if (!confirm('#{payrollBundle.payroll_refresh_confirm}')) { return false;}"
+				styleClass="aon-finding-toolbar-item aon-icon-sincronize" />	
+			-->
 			<aon:commandButton id="prev" immediate="true"
 				value="#{contractPdf.new?bundle.aon_cancel:bundle.aon_back}"
 				action="#{contractPdf.backAction}"

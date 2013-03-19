@@ -8,12 +8,19 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.Classpath;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryDirStaff;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
@@ -271,7 +278,12 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument 
 		 * Enterprise fields
 		 */
 		setPdfFieldValue(ENTERPRISE_CIF,contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
-		setPdfFieldValue(ENTERPRISE_DIR_STAFF_NAME,null);
+		RegistryDirStaff rDirStaff = obtainRegistryDirStaff(contract); 
+		try {
+			setPdfFieldValue(ENTERPRISE_DIR_STAFF_NAME,rDirStaff.getName());
+		} catch (NullPointerException npe) {
+			// do nothing
+		}
 		setPdfFieldValue(ENTERPRISE_NAME,contract.getWorkPlace().getEnterprise().getRegistry().getFullName());
 		setPdfFieldValue(ENTERPRISE_ADDRESS,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getFullAddress());
 		setPdfFieldValue(ENTERPRISE_TOWN_CODE1,null);
@@ -304,6 +316,18 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument 
 		setPdfFieldValue(CONTRACT_SIGN_MONTH, dateFormatter.format(new Date()) );
 		dateFormatter.applyPattern("yy");
 		setPdfFieldValue(CONTRACT_SIGN_YEAR, dateFormatter.format(new Date()));
+	}
+	
+	private RegistryDirStaff obtainRegistryDirStaff(Contract contract) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), contract.getWorkPlace().getEnterprise().getRegistry().getId());
+		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE), new Date());
+		List<ITransferObject> list = bean.getList(criteria);
+		if(!list.isEmpty()){
+			return (RegistryDirStaff) list.get(0);
+		}
+		return null;
 	}
 	
 	/*

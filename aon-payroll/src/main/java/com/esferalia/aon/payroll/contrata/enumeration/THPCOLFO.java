@@ -3,8 +3,13 @@ package com.esferalia.aon.payroll.contrata.enumeration;
 import com.code.aon.common.enumeration.IStringEnum;
 
 /** 
-* Enumeration for represent Contrata (S.E.P.E.) THPCOLFO table codes.
-*/ 
+ * Enumeration for represent Contrata (S.E.P.E.) THPCOLFO table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * *THPCOLFO	COLECTIVOS CONTRATOS DE FORMACIÓN				26-07-2012
+ *  ------------------------------------------------------------------------
+ */ 
 public enum THPCOLFO implements IStringEnum {
 
 	THPCOLFO_01( "01", "DESEMPLEADO MINUSVALIDO", "20010304", "0" ),
