@@ -17,15 +17,9 @@ import com.esferalia.aon.payroll.PayrollWorkPlace;
 public class PayrollWorkPlaceControllerListener extends ControllerAdapter {
 	
 	@Override
-	public void beforeBeanAdded(ControllerEvent event)
-			throws ControllerListenerException {
-		insertOrUpdateCurrentToWorkPlace();
-	}
-	
-	@Override
 	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
-		insertOrUpdateCurrentToWorkPlace();
+		updateCurrentToWorkPlace();
 	}
 	
 	@Override
@@ -34,11 +28,11 @@ public class PayrollWorkPlaceControllerListener extends ControllerAdapter {
 		removeCurrentToWorkPlace();
 	}
 	
-	private void insertOrUpdateCurrentToWorkPlace() throws ControllerListenerException {
+	private void updateCurrentToWorkPlace() throws ControllerListenerException {
 		PayrollWorkPlace pw = (PayrollWorkPlace) this.getController().getTo();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
-			pw.setWorkPlace((WorkPlace) bean.insertOrUpdate(pw.getWorkPlace()));
+			pw.setWorkPlace((WorkPlace) bean.update(pw.getWorkPlace()));
 		} catch (ManagerBeanException e) {
 			String message = "Error al actualizar el centro de trabajo";
 			AonUtil.addErrorMessage(message);

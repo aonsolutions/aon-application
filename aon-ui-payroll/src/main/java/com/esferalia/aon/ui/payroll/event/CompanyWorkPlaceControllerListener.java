@@ -1,7 +1,10 @@
 package com.esferalia.aon.ui.payroll.event;
 
+import java.util.List;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.ql.Criteria;
@@ -50,8 +53,11 @@ public class CompanyWorkPlaceControllerListener extends ControllerAdapter {
 			IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), w.getId());
-			PayrollWorkPlace pw = (PayrollWorkPlace) bean.getList(criteria).get(0);
-			bean.remove(pw);
+			List<ITransferObject> list = bean.getList(criteria);
+			if(!list.isEmpty()){
+				PayrollWorkPlace pw = (PayrollWorkPlace) list.get(0);
+				bean.remove(pw);
+			}
 		} catch (ManagerBeanException e) {
 			String message = "Error al borrar el centro de trabajo";
 			AonUtil.addErrorMessage(message);

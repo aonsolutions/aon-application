@@ -15,10 +15,11 @@ import com.code.aon.common.util.Classpath;
 
 public class ContrataCodeTablesWriter {
 	
-	final static String ENUMERATIONS_FOLDER_PATHNAME 	= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/contrata/enumeration/";
-	final static String TOWNS_PROPERTIES_PATHNAME 		= "/AON-TRUNK/aon.parent/aon-payroll/src/main/resources/com/esferalia/aon/payroll/i18n/towns.properties";
-	final static String ZIP_PROPERTIES_PATHNAME 		= "/AON-TRUNK/aon.parent/aon-payroll/src/main/resources/com/esferalia/aon/payroll/i18n/zip.properties";
-	final static String COLLECTIONS_CLASS_PATHNAME 		= "/AON-TRUNK/aon.parent/aon-ui-payroll/src/main/java/com/esferalia/aon/ui/payroll/controller/ContrataCollectionsController.java";
+	final static String ENUMERATIONS_FOLDER_PATHNAME 		= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/contrata/enumeration/";
+	final static String TOWNS_PROPERTIES_PATHNAME 			= "/AON-TRUNK/aon.parent/aon-payroll/src/main/resources/com/esferalia/aon/payroll/i18n/towns.properties";
+	final static String QUALIFICATIONS_PROPERTIES_PATHNAME 	= "/AON-TRUNK/aon.parent/aon-payroll/src/main/resources/com/esferalia/aon/payroll/i18n/qualifications.properties";
+	final static String ZIP_PROPERTIES_PATHNAME 			= "/AON-TRUNK/aon.parent/aon-payroll/src/main/resources/com/esferalia/aon/payroll/i18n/zip.properties";
+	final static String COLLECTIONS_CLASS_PATHNAME 			= "/AON-TRUNK/aon.parent/aon-ui-payroll/src/main/java/com/esferalia/aon/ui/payroll/controller/ContrataCollectionsController.java";
 	
 	final static String CODE_TXT_FILE_URL			= "com/esferalia/aon/payroll/contrata/codeTables/";
 	final static String ERROR_CODE_TXT_FILE_URL		= "com/esferalia/aon/payroll/contrata/errorCodeTables/";
@@ -50,9 +51,12 @@ public class ContrataCodeTablesWriter {
 			} else if(getFileNameWithoutExtension(url).equals(ZIP_FILE_NAME) ){
 				// exclude
 			} else if(getFileNameWithoutExtension(url).equals(QUALIFICATIONS_FILE_NAME) ){
-				file = new File(ENUMERATIONS_FOLDER_PATHNAME+getFileNameWithoutExtension(url)+".java");
-				System.out.print("Enum "+getFileNameWithoutExtension(url)+" en proceso ...");
-				writeQualificationsEnum(url, file);
+//				file = new File(ENUMERATIONS_FOLDER_PATHNAME+getFileNameWithoutExtension(url)+".java");
+//				System.out.print("Enum "+getFileNameWithoutExtension(url)+" en proceso ...");
+//				writeQualificationsEnum(url, file);
+				file = new File(QUALIFICATIONS_PROPERTIES_PATHNAME);
+				System.out.print("#### qualifications.properties en proceso ...");
+				writeQualificationsProperties(url, file);
 				System.out.println(" generado!");
 				enumCount++;
 			} else if(!getFileNameWithoutExtension(url).equals(LEAME_FILE_NAME) 
@@ -82,7 +86,7 @@ public class ContrataCodeTablesWriter {
 		System.out.println("Proceso finalizado !!!!!!!");
 	}
 	
-	public static String getFileNameWithoutExtension(URL url) {
+	private static String getFileNameWithoutExtension(URL url) {
 	    String path = url.getPath();
 
 	    if (StringUtils.isBlank(path)) {
@@ -114,7 +118,7 @@ public class ContrataCodeTablesWriter {
 	 * @param file
 	 * @throws IOException
 	 */
-	public static void writeQualificationsEnum( URL url, File file ) throws IOException {
+	private static void writeQualificationsEnum( URL url, File file ) throws IOException {
 		BufferedWriter out = new BufferedWriter( new FileWriter(file) );
 		
 		writeEnumHeader(out, url, obtainTableDescription(getFileNameWithoutExtension(url)));
@@ -145,7 +149,7 @@ public class ContrataCodeTablesWriter {
 	 * @param file
 	 * @throws IOException
 	 */
-	public static void writeEnum( URL url, File file ) throws IOException {
+	private static void writeEnum( URL url, File file ) throws IOException {
 		BufferedWriter out = new BufferedWriter( new FileWriter(file) );
 		
 		writeEnumHeader(out, url, obtainTableDescription(getFileNameWithoutExtension(url)));
@@ -198,7 +202,7 @@ public class ContrataCodeTablesWriter {
 		out.close();
 	}
 	
-	public static void writeEnumHeader( BufferedWriter out, URL url, String enumDescription ) throws IOException {
+	private static void writeEnumHeader( BufferedWriter out, URL url, String enumDescription ) throws IOException {
 		out.write( "package com.esferalia.aon.payroll.contrata.enumeration;" );
 		out.newLine();
 		out.newLine();
@@ -227,7 +231,7 @@ public class ContrataCodeTablesWriter {
 		out.newLine();
 		out.newLine();
 	}
-	public static void writeEnumLastContent( BufferedWriter out, URL url ) throws IOException {
+	private static void writeEnumLastContent( BufferedWriter out, URL url ) throws IOException {
 		
 		out.write( "\t;" );
 		out.newLine();
@@ -318,7 +322,7 @@ public class ContrataCodeTablesWriter {
 	 * @param file
 	 * @throws IOException
 	 */
-	public static void writeProperties( URL url, File file ) throws IOException {
+	private static void writeProperties( URL url, File file ) throws IOException {
 		BufferedWriter out = new BufferedWriter( new FileWriter(file) );
 		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -334,11 +338,33 @@ public class ContrataCodeTablesWriter {
 	}
 	
 	/**
+	 * Write data to qualifications properties file.
+	 * 
+	 * @param url
+	 * @param file
+	 * @throws IOException
+	 */
+	private static void writeQualificationsProperties( URL url, File file ) throws IOException {
+		BufferedWriter out = new BufferedWriter( new FileWriter(file) );
+		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+		String currentLine;
+		while((currentLine = reader.readLine()) != null) {
+			currentLine = StringUtils.strip(currentLine);
+			String code = currentLine.substring(0, 12);
+			String label = currentLine.substring(13, currentLine.length());
+			out.write( code.replace("\"", "")+"="+label.replace("\"", "") );
+			out.newLine();
+		}
+		out.close();
+	}
+	
+	
+	/**
 	 * Write data to collections file.
 	 * 
 	 * @throws IOException
 	 */
-	public static void writeCollections( ) throws IOException {
+	private static void writeCollections( ) throws IOException {
 		File file = new File(COLLECTIONS_CLASS_PATHNAME);
 		BufferedWriter out = new BufferedWriter( new FileWriter(file) );
 		

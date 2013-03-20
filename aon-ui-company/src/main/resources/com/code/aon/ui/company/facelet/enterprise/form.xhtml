@@ -43,19 +43,11 @@
 				</ui:define>				
 			</ui:decorate>
 				
-			<aon:div>
-				<aon:panelGrid columns="2" cellspacing="10" 
-					styleClass="aon-panelGrid-formatting"
-					columnClasses="aon-width-half aon-vertical-align-top,aon-width-half aon-vertical-align-top">
-	
-					<ui:include 
-						src="/com/code/aon/ui/company/facelet/enterprise/formContent.xhtml">
-						<ui:param name="controller" value="#{enterprise}" />
-					</ui:include>
-					
-				</aon:panelGrid>
-			</aon:div>
-
+			<ui:include 
+				src="/com/code/aon/ui/company/facelet/enterprise/formContent.xhtml">
+				<ui:param name="controller" value="#{enterprise}" />
+			</ui:include>
+				
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelTabSet selectedTab="#{enterprise.selectedTab}">				
 					
@@ -114,12 +106,6 @@
 							</aon:div>
 						</aon:panelTab>
 					</c:if>
-					
-					<aon:panelTab id="media" label="#{registryBundle.registry_media_module}">
-						<ui:include	src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
-							<ui:param name="controller" value="#{enterpriseMedia}" />
-						</ui:include>
-					</aon:panelTab>
 					
 					<c:if test="#{aonConfiguration.bean.enterprise.showFinanceData and aonRole.financeOperator}">
 						<aon:panelTab id="finance" label="#{registryBundle.registry_finance_data_module}">

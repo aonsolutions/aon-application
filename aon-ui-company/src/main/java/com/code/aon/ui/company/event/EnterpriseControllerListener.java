@@ -31,13 +31,6 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 	}
 	
 	@Override
-	public void beforeBeanUpdated(ControllerEvent event)
-			throws ControllerListenerException {
-		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		controller.accept(null);
-	}
-	
-	@Override
 	public void afterBeanCreated(ControllerEvent event)	throws ControllerListenerException {
 		EnterpriseController controller = (EnterpriseController) event.getController();
 		Enterprise enterprise = (Enterprise) controller.getTo();
@@ -77,12 +70,14 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		EnterpriseController controller = (EnterpriseController) event.getController();
 		try {
+			EnterpriseController controller = (EnterpriseController) event.getController();
 			controller.saveMainAddress();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
+		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		companyController.accept(null);
 	}
 	
 	private WorkPlace insertWorkPlace( Enterprise enterprise, RegistryAddress address ) throws ManagerBeanException {

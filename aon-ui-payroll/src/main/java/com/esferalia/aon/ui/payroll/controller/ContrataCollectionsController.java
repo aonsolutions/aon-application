@@ -584,27 +584,6 @@ public class ContrataCollectionsController {
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
-	 *  THITIACA	TITULACIÓN ACADÉMICA						15-01-2013 
-	 *  ------------------------------------------------------------------------
-	 */ 
-	private List<SelectItem> THITIACACodeList;
-
-	public List<SelectItem> getTHITIACACodeList() {
-		if (THITIACACodeList == null) {
-			THITIACACodeList = new LinkedList<SelectItem>();
-			THITIACA[] el = THITIACA.values();
-			for (THITIACA obj : el) {
-				String name = obj.getLabel();
-				SelectItem item = new SelectItem(obj, name);
-				THITIACACodeList.add(item);
-			}
-		}
-		return THITIACACodeList;
-	}
-
-	/** 
-	 *  ------------------------------------------------------------------------
-	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
 	 * *THPCOLFO	COLECTIVOS CONTRATOS DE FORMACIÓN				26-07-2012
 	 *  ------------------------------------------------------------------------
 	 */ 
