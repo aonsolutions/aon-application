@@ -16,6 +16,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -901,7 +902,15 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	private Account fillAccountEntry(AccountEntry entry) throws ManagerBeanException {
 		Account account = null;
 		entry.setAccountPeriod(getHeader().getPeriod());
-		entry.setEntryDate(getHeader().getDate());
+		
+		if (getHeader().getDate() == null) {
+			throw new ManagerBeanException("La fecha de la factura no puede estar vacia.");
+		}
+		Date entryDate = getHeader().getDate();
+		if (getHeader().getTaxDate() != null) {
+			entryDate = getHeader().getTaxDate().after(entryDate)?getHeader().getTaxDate():entryDate;
+		}
+		entry.setEntryDate(entryDate);
 		entry.setJournal(null);
 		entry.setSecurityLevel(getHeader().getSecurityLevel());
 		if (getHeader().getType().equals(InvoiceType.SALES)) {
@@ -1563,14 +1572,13 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				getHeader().setRetentionAccount((detail != null) ? detail.getAccount() : null);
 			}
 			
-			getHeader().setDate(entry.getEntryDate());
+			getHeader().setDate(accountEntryInvoice.getInvoice().getIssueDate());
 			getHeader().setDocumentCountry(accountEntryInvoice.getInvoice().getRegistryDocumentCountry());
 			getHeader().setDocumentType(accountEntryInvoice.getInvoice().getRegistryDocumentType());
 			getHeader().setDocument(accountEntryInvoice.getInvoice().getRegistryDocument());
 			getHeader().setName(accountEntryInvoice.getInvoice().getRegistryName());
 			getHeader().setSeries(accountEntryInvoice.getInvoice().getSeries());
 			getHeader().setNumber(accountEntryInvoice.getInvoice().getNumber());
-			getHeader().setDate(entry.getEntryDate());
 			getHeader().setTaxDate(accountEntryInvoice.getInvoice().getTaxDate());
 			getHeader().setReferenceCode(accountEntryInvoice.getInvoice().getReferenceCode());
 			getHeader().setPeriod(entry.getAccountPeriod());
@@ -1825,6 +1833,13 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			throw new AbortProcessingException(msg,e);
 		}
 		
+	}
+	
+	public boolean isTaxDateEquals() {
+		if (getHeader() != null) {
+			return ObjectUtils.equals(getHeader().getDate(), getHeader().getTaxDate());
+		}
+		return true;
 	}
 	
 }

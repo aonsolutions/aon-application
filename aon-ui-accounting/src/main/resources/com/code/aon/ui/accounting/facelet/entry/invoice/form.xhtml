@@ -201,7 +201,15 @@
 								disabled="#{invoiceEntry.newDetail}"
 								value="#{invoiceEntry.header.taxDate}"
 								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}" />
+								popupDateFormat="#{bundle.aon_date_pattern}"
+								inputStyle="#{invoiceEntry.taxDateEquals?'':'background-color: #ff865e;'}">
+								<a4j:support ajaxSingle="true" event="oninputchange"
+									reRender="Account_taxDate"
+									focus="#{invoiceEntry.sales?'Customer_id':(invoiceEntry.purchase?'Supplier_id':'Creditor_id')}" />
+								<a4j:support ajaxSingle="true" event="onchanged"
+									reRender="Account_taxDate"
+									focus="#{invoiceEntry.sales?'Customer_id':(invoiceEntry.purchase?'Supplier_id':'Creditor_id')}" />
+							</aon:selectInputDate>								
 						</aon:div>
 
 						<aon:div>

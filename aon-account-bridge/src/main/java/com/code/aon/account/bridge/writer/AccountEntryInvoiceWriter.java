@@ -1,5 +1,6 @@
 package com.code.aon.account.bridge.writer;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -122,8 +123,15 @@ public class AccountEntryInvoiceWriter {
 	
 	public List<AccountEntryDetail> recordInvoice(Invoice invoice, boolean save) throws ManagerBeanException {
 		AccountEntry entry = new AccountEntry();
-		entry.setAccountPeriod(getAccountingUtil().obtainPeriod(invoice.getIssueDate()));
-		entry.setEntryDate(invoice.getIssueDate());
+		if (invoice.getIssueDate() == null) {
+			throw new ManagerBeanException("La fecha de la factura no puede estar vacia.");
+		}
+		Date entryDate = invoice.getIssueDate();
+		if (invoice.getTaxDate() != null) {
+			entryDate = invoice.getTaxDate().after(entryDate)?invoice.getTaxDate():entryDate;
+		}
+		entry.setAccountPeriod(getAccountingUtil().obtainPeriod(entryDate));
+		entry.setEntryDate(entryDate);
 		entry.setJournal(null);
 		AccountEntryType accountEntryType = null;
 		Account account = null;

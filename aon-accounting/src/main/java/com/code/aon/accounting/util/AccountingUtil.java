@@ -115,10 +115,13 @@ public class AccountingUtil {
 			deadline.setTime(date);
 			deadline.set(Calendar.DAY_OF_MONTH, 31);
 			deadline.set(Calendar.MONTH, 11);
-
+			int year = initiation.get(Calendar.YEAR);
+			if (year < 2000 && year > 2100) {
+				throw new ManagerBeanException("No se puede crear el elercicio contable. Revise el año de la fecha.");
+			}
 			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 			period = new Period();
-			period.setName(Integer.toString(initiation.get(Calendar.YEAR)));
+			period.setName(Integer.toString(year));
 			period.setInitiationDate(initiation.getTime());
 			period.setDeadline(deadline.getTime());
 			period =(Period) periodBean.insert(period);
