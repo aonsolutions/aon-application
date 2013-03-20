@@ -137,13 +137,13 @@ public class ContrataWriter {
 			File file = File.createTempFile("aon-temp", ".XML"); 
 			if( contratoFile ){
 				marshaller.marshal( contratos, file );
-				validateXmlPattern(file, CONTRATOS_SCHEMA_FILE_NAME);
+//				validateXmlPattern(file, CONTRATOS_SCHEMA_FILE_NAME);
 			} else if( transfonacionFile ) {
 				marshaller.marshal( transformaciones, file );
-				validateXmlPattern(file, TRANSFORMACIONES_SCHEMA_FILE_NAME);
+//				validateXmlPattern(file, TRANSFORMACIONES_SCHEMA_FILE_NAME);
 			} else if( prorrogaFile ) {
 				marshaller.marshal( prorrogas, file );
-				validateXmlPattern(file, PRORROGAS_SCHEMA_FILE_NAME);
+//				validateXmlPattern(file, PRORROGAS_SCHEMA_FILE_NAME);
 			}
 			return file;
 		} catch (JAXBException e) {
