@@ -87,6 +87,7 @@ input:focus{
 	border-right:#666 1px solid;
 	border-bottom:#666 1px solid;
 	font-size:1.1em;
+	width: 140px;
 }
 
 .aon-login-label{

@@ -95,7 +95,7 @@
 					</aon:selectOneMenu>
 					<aon:outputLabel for="agreementLevelCategory-alias" styleClass="aon-margin-left aon-margin-right" 
 						value="#{payrollBundle.payroll_display_as}" />
-					<aon:inputText id="agreementLevelCategory-alias" maxLength="64"
+					<aon:inputText id="agreementLevelCategory-alias" maxlength="64"
 						value="#{contract.to.categoryDescription}" />
 				</aon:panelGroup>
 			</aon:panelGrid>
@@ -104,7 +104,7 @@
 		<c:if test="#{contract.skipPayrollData}" >
 			<aon:outputLabel for="Contract_categoryDescription"  
 				value="#{payrollBundle.payroll_contract_category}" />
-			<aon:inputText id="Contract_categoryDescription" maxLength="64" size="56"
+			<aon:inputText id="Contract_categoryDescription" maxlength="64" size="56"
 				value="#{contract.to.categoryDescription}" />
 		</c:if>
 		

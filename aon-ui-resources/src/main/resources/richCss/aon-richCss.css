@@ -1565,7 +1565,7 @@ color:#000;
 	position:absolute;
 	top:5px;
 	width:114px;
-	background:#0069b4 url(images/aon-header/aon-outputConnectionStatus-start.gif) no-repeat scroll left top;
+	background:url(images/aon-header/aon-outputConnectionStatus-start.gif) no-repeat scroll left top;
 }
 .aon-outputConnectionStatus-stop{
 	-moz-background-clip:border;
@@ -1576,7 +1576,7 @@ color:#000;
 	position:absolute;
 	top:5px;
 	width:114px;
-	background:#0069b4 url(images/aon-header/aon-outputConnectionStatus-stop.png) no-repeat scroll left top;
+	background:url(images/aon-header/aon-outputConnectionStatus-stop.png) no-repeat scroll left top;
 }
 .aon-outputConnectionStatus-failed{
 	-moz-background-clip:border;
@@ -1587,7 +1587,7 @@ color:#000;
 	position:absolute;
 	top:5px;
 	width:114px;
-	background:#0069b4 url(images/aon-header/aon-outputConnectionStatus-failed.png) no-repeat scroll left top;
+	background:url(images/aon-header/aon-outputConnectionStatus-failed.png) no-repeat scroll left top;
 }
 /**********************/
 /****  HEADER SECTION ******/
