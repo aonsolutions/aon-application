@@ -10,6 +10,12 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
+	   <a4j:region>
+	        <h:form>
+	            <a4j:poll status="aonStatus" interval="300000" />
+	        </h:form>
+	    </a4j:region>
+
 		<aon:form id="posInvoiceForm">
 			<aon:div id="menuExt"> 
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
