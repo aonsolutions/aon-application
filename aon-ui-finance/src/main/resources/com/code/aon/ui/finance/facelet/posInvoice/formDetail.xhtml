@@ -22,6 +22,19 @@
 				<ui:param name="showDataScroller" value="#{false}" />
 				<ui:define name="columns">
 
+					<c:if test="#{invoiceController.toInvoiceTotalPrice > 0 and invoiceController.pendingAmount == 0 and posInvoiceFinance.rowCount > 0}">
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-30">
+							<f:facet name="header">
+								<aon:outputText value="#{detailController.checkedCount}" />
+							</f:facet>
+							<aon:selectBooleanCheckbox id="Included_Row_checked"
+								value="#{detailController.rowChecked}"
+								rendered="#{to.quantity > 0}"
+								valueChangeListener="#{detailController.rowSelected}"
+								reRender="aonContent" />	
+						</aon:column>
+					</c:if>
+
 					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
 						<f:facet name="header">
 							<aon:outputLabel value="#{financeBundle.finance_invoice_detail_line}" />

@@ -54,6 +54,9 @@ public class ExpenseInvoiceController extends InvoiceController {
 			Creditor creditor = (Creditor)event.getNewValue();
 			creditorChanged(creditor);
 		} else {
+			Invoice invoice = getInvoice();
+			invoice.setRegistryAddress(null);
+
 			setAddresses(null);	
 		}
 	}

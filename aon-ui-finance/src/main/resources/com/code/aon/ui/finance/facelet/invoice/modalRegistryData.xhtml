@@ -40,7 +40,8 @@
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="registryData-accept"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
-										value="#{bundle.aon_accept}">
+										value="#{bundle.aon_accept}"
+										actionListener="#{invoiceController.accept}">
 										<aon:actionHotKey key="return" />
 										<rich:componentControl for="posSelectionModalPanel"
 											event="onclick" operation="hide"/>																					
@@ -51,6 +52,7 @@
 									<aon:commandButton id="registryData-cancel" immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel"
 										value="#{bundle.aon_cancel}"
+										actionListener="#{invoiceController.refresh}"
 										reRender="showRegistryDataWindow">
 										<f:setPropertyActionListener
 											target="#{invoiceController.showRegistryDataWindow}"
@@ -125,7 +127,7 @@
 
 										<c:if test="#{invoiceController.addressCount > 0}">
 											<aon:outputLabel for="Invoice_registryAddress"
-												value="#{bundle.aon_company_name}" />
+												value="#{bundle.aon_address}" />
 											<aon:selectOneMenu id="Invoice_registryAddress"
 												value="#{invoiceController.to.registryAddress}">
 												<f:selectItems value="#{invoiceController.addresses}" />

@@ -1,5 +1,7 @@
 package com.code.aon.ui.finance.event;
 
+import javax.faces.model.SelectItem;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
@@ -11,10 +13,12 @@ import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.config.controller.ConfigCollectionsController;
+import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.finance.controller.PosInvoiceController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PosInvoiceControllerListener extends SaleInvoiceControllerListener {
@@ -59,13 +63,9 @@ public class PosInvoiceControllerListener extends SaleInvoiceControllerListener 
 	}
 
 	public Series obtainPosSeries() throws ManagerBeanException {
-		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_POS), true);
-		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), true);
-		UserUtils.getInstance().addScopeFilterToCriteria(criteria, seriesBean.getFieldName(IEntityAlias.SERIES_SCOPE_ID));
-		for (ITransferObject ito : seriesBean.getList(criteria)) {
-			return (Series)ito;
+		ConfigCollectionsController configCollections = (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+		for (SelectItem posItem : configCollections.getPosSeries()) {
+			return (Series)posItem.getValue();
 		}
 		return null;
 	}

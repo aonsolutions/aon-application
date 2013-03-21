@@ -257,6 +257,14 @@ public class ConfigCollectionsController {
 		return getSeries(true, IEntityAlias.SERIES_RECTIFICATION);
 	}	
 
+	public List<SelectItem> getPosSeries() throws ManagerBeanException{
+		return getSeries(false, IEntityAlias.SERIES_POS);
+	}
+
+	public List<SelectItem> getPosSeriesIds() throws ManagerBeanException {
+		return getSeries(true, IEntityAlias.SERIES_POS);
+	}	
+
 	public List<SelectItem> getSeries(boolean onlyCode, String typeAlias) throws ManagerBeanException {
 		List<SelectItem> series = new LinkedList<SelectItem>();
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);

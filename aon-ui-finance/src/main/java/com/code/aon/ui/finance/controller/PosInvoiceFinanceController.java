@@ -18,7 +18,16 @@ import com.code.aon.ui.util.AonUtil;
 
 public class PosInvoiceFinanceController extends InvoiceFinanceController {
 
+	private double pendingAmount;
 	private List<Finance> finances;
+
+	public double getPendingAmount() {
+		return pendingAmount;
+	}
+
+	public void setPendingAmount(double pendingAmount) {
+		this.pendingAmount = pendingAmount;
+	}
 
 	public List<Finance> getFinances() {
 		return finances;
@@ -61,7 +70,7 @@ public class PosInvoiceFinanceController extends InvoiceFinanceController {
 				throw new AbortProcessingException(msg);
 			}
 		}
-		finance.setAmount(CommonUtil.round(invoiceController.getPendingAmount() - getFinancesAmount()));
+		finance.setAmount(CommonUtil.round(getPendingAmount() - getFinancesAmount()));
 		getFinances().add(finance);
 	}
 
@@ -72,7 +81,7 @@ public class PosInvoiceFinanceController extends InvoiceFinanceController {
 	}
 
 	public boolean isFinancesOk() {
-		return (isFinancesPayMethodOk()) ? isFinancesCardOk() : false;
+		return (isFinancesPayMethodOk()) ? isFinancesAmountOk() : false;
 	}
 
 	public boolean isFinancesPayMethodOk() {
@@ -85,9 +94,12 @@ public class PosInvoiceFinanceController extends InvoiceFinanceController {
 		return true;
 	}
 
-	public boolean isFinancesCardOk() {
-		InvoiceController invoiceController = (InvoiceController)getMasterController();
-		return (invoiceController.getPendingAmount() >= getFinancesCardAmount());
+	public boolean isFinancesAmountOk() {
+		if (getPendingAmount() > 0) {
+			return (getPendingAmount() >= getFinancesCardAmount());
+		} else {
+			return (getPendingAmount() == getFinancesAmount());
+		}
 	}
 
 	public boolean isFinancesCashAlready() {
@@ -132,13 +144,27 @@ public class PosInvoiceFinanceController extends InvoiceFinanceController {
 	}
 
 	public double getFinancesCashChange() {
-		InvoiceController invoiceController = (InvoiceController)getMasterController();
-		double cashAmount = getFinancesCashAmount();
-		if (cashAmount > 0) {
-			double change = CommonUtil.round(getFinancesAmount() - invoiceController.getPendingAmount());
+		if (getFinancesCashAmount() > 0) {
+			double change = CommonUtil.round(getFinancesAmount() - getPendingAmount());
 			return (change > 0) ? change : 0;
 		}
 		return 0;
+	}
+
+	public boolean isFinancesCardOk() {
+		return (getPendingAmount() > 0) ? getPendingAmount() >= getFinancesCardAmount() : getFinancesCardAmount() == 0 || isFinancesAmountOk();
+	}
+
+	public boolean isFinancesCashOk() {
+		return (getPendingAmount() > 0) ? getFinancesCashAmount() >= getFinancesCashChange() : getFinancesCashAmount() == 0 || isFinancesAmountOk();
+	}
+
+	public boolean isFinancesChangeOk() {
+		return (getPendingAmount() > 0) ? getFinancesCashAmount() >= getFinancesCashChange() : getFinancesCashChange() == 0;
+	}
+
+	public boolean isFinancesTotalOk() {
+		return (getPendingAmount() > 0) ? getFinancesAmount() >= getPendingAmount() : isFinancesAmountOk();
 	}
 
 }

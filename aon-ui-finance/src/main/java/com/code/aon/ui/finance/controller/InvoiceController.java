@@ -87,6 +87,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private List<SelectItem> addresses;
 	private List<SelectItem> projects;
 	private boolean showRegistryDataWindow;
+	private boolean showSellerDataWindow;
 	private boolean showInvoiceAddressWindow;
 	private boolean showProjectWindow;
 	private boolean showNewProjectWindow;
@@ -210,7 +211,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
 			iAddress = (InvoiceAddress)addressController.getTo();
 		}
-		return ((iAddress.getFullAddress().length()>30)?iAddress.getFullAddress().substring(0,27)+"...":iAddress.getFullAddress());
+		return iAddress.getFullAddress();
 	}
 
 	public String getLocation() {
@@ -268,12 +269,12 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		this.showRegistryDataWindow = value;
 	}
 
-	public void onRegistryDataWindowShow(ActionEvent event) {
-		BasicController addressController = (BasicController)FormUtil.getController(invoiceAddressControllerName);
-		ITransferObject to = addressController.getTo();
-		if (to == null) {
-			addressController.onReset(event);
-		}
+	public boolean isShowSellerDataWindow() {
+		return showSellerDataWindow;
+	}
+
+	public void setShowSellerDataWindow(boolean value) {
+		this.showSellerDataWindow = value;
 	}
 
 	public boolean isShowInvoiceAddressWindow() {
@@ -456,16 +457,16 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	public void onRectificationShow(ActionEvent event) throws ManagerBeanException {
 		setRectificationSeries(SeriesUtil.ensureRectificationSeries(getInvoice().getSeries()));
-		setRectificationNumber(obtainMaxRectificationNumber(getRectificationSeries()));
+		setRectificationNumber(obtainMaxInvoiceNumber(getRectificationSeries()));
 		setRectificationDate(new Date());
 		setRectificationCause(null);
 	}
 
 	public void onRectificationSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		setRectificationNumber(obtainMaxRectificationNumber((String)event.getNewValue()));
+		setRectificationNumber(obtainMaxInvoiceNumber((String)event.getNewValue()));
 	}
 
-	private int obtainMaxRectificationNumber(String seriesId) {
+	protected int obtainMaxInvoiceNumber(String seriesId) {
     	Criteria criteria = new Criteria();
     	criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
 		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);

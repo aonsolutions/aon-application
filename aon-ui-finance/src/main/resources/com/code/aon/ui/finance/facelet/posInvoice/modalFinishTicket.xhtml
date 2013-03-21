@@ -144,7 +144,7 @@
 											<aon:outputText value="#{financeBundle.finance_pos_total_cash}:"
 												styleClass="aon-bold aon-margin-right" style="text-transform:uppercase;" />
 											<aon:outputText value="#{financeController.financesCashAmount}" styleClass="aon-bold"
-												style="#{(financeController.financesCashChange > financeController.financesCashAmount) ? 'color:red;' : ''}">
+												style="#{(!financeController.financesCashOk) ? 'color:red;' : ''}">
 												<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 											</aon:outputText>
 											<aon:outputText value=" €" styleClass="aon-bold" />
@@ -153,7 +153,7 @@
 											<aon:outputText value="#{financeBundle.finance_pos_total_card}:"
 												styleClass="aon-bold aon-margin-right" style="text-transform:uppercase;" />
 											<aon:outputText value="#{financeController.financesCardAmount}" styleClass="aon-bold"
-												style="#{(financeController.financesCardAmount > invoiceController.pendingAmount) ? 'color:red;' : ''}">
+												style="#{(!financeController.financesCardOk) ? 'color:red;' : ''}">
 												<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 											</aon:outputText>
 											<aon:outputText value=" €" styleClass="aon-bold" />
@@ -169,7 +169,7 @@
 											<aon:outputText value="#{financeBundle.finance_pos_cash_change}:"
 												styleClass="aon-bold aon-margin-right" style="text-transform:uppercase;" />
 											<aon:outputText value="#{financeController.financesCashChange}" styleClass="aon-bold"
-												style="#{(financeController.financesCashChange > financeController.financesCashAmount) ? 'color:red;' : ''}">
+												style="#{(!financeController.financesChangeOk) ? 'color:red;' : ''}">
 												<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 											</aon:outputText>
 											<aon:outputText value=" €" styleClass="aon-bold" />
@@ -178,7 +178,7 @@
 											<aon:outputText value="#{financeBundle.finance_pos_total_finances}:"
 												styleClass="aon-bold aon-margin-right" style="text-transform:uppercase;" />
 											<aon:outputText value="#{financeController.financesAmount}" styleClass="aon-bold"
-												style="#{(invoiceController.pendingAmount > financeController.financesAmount) ? 'color:red;' : ''}">
+												style="#{(!financeController.financesTotalOk) ? 'color:red;' : ''}">
 												<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 											</aon:outputText>
 											<aon:outputText value=" €" styleClass="aon-bold" />

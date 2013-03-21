@@ -129,7 +129,11 @@ public class SaleInvoiceController extends InvoiceController {
 			Customer customer = (Customer)event.getNewValue();
 			customerChanged(customer);
 		} else {
-			setAddresses(null);	
+			Invoice invoice = getInvoice();
+			invoice.setRegistryAddress(null);
+			invoice.setProject(null);
+
+			setAddresses(null);
 			setProjects(null);	
 		}
 	}

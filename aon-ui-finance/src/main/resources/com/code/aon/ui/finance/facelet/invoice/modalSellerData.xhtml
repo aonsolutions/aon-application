@@ -8,10 +8,10 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panelGroup id="showRecoverTicketWindow">
-		<c:if test="#{invoiceController.showRecoverTicketWindow}">
-			<rich:modalPanel id="recoverTicketModalPanel" minHeight="200"
-				minWidth="420" rendered="#{invoiceController.showRecoverTicketWindow}"
+	<aon:panelGroup id="showSellerDataWindow">
+		<c:if test="#{invoiceController.showSellerDataWindow}">
+			<rich:modalPanel id="sellerDataModalPanel" minHeight="200"
+				minWidth="620" rendered="#{invoiceController.showSellerDataWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -23,54 +23,52 @@
 					<aon:form>
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
-							reRender="showRecoverTicketWindow" immediate="true">
+							reRender="showSellerDataWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{invoiceController.showRecoverTicketWindow}"
+								target="#{invoiceController.showSellerDataWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
-				<aon:form id="recoverTicketForm">
+				<aon:form id="sellerDataForm">
 				<aon:div styleClass="aon-popupWindow-content">
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
-									<aon:commandButton id="recoverTicket-accept"
+									<aon:commandButton id="sellerData-accept"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										value="#{bundle.aon_accept}"
-										actionListener="#{invoiceController.onRecoverTicket}">
+										actionListener="#{invoiceController.accept}">
 										<aon:actionHotKey key="return" />
 										<rich:componentControl for="posSelectionModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener
-											target="#{invoiceController.showRecoverTicketWindow}"
+											target="#{invoiceController.showSellerDataWindow}"
 											value="#{false}" />
 									</aon:commandButton>
-									<aon:commandButton id="recoverTicket-cancel" immediate="true"
+									<aon:commandButton id="sellerData-cancel" immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel"
-										value="#{bundle.aon_cancel}">
+										value="#{bundle.aon_cancel}"
+										actionListener="#{invoiceController.refresh}">
 										<f:setPropertyActionListener
-											target="#{invoiceController.showRecoverTicketWindow}"
+											target="#{invoiceController.showSellerDataWindow}"
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
 
-										<aon:outputLabel for="Invoice_number" value="#{financeBundle.finance_invoice_number}" />
-										<aon:div>
-											<aon:selectOneMenu id="Invoice_series"
-												value="#{invoiceController.recoverSeries}">
-												<f:selectItems value="#{configCollections.posSeriesIds}" />
-											</aon:selectOneMenu>
-											<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold"
-												value="/" />
-											<aon:inputText id="Invoice_number" 
-												value="#{invoiceController.recoverNumber}" 
-												required="true" size="7" maxlength="10" />
-										</aon:div>
+										<aon:outputLabel for="Seller_id" value="#{financeBundle.finance_pos_seller_label}" />
+										<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+											<ui:param name="lookupTo" value="#{posInvoice.to.seller}" />
+											<ui:param name="skipLabel" value="#{true}" />
+											<ui:param name="skipGoToButton" value="#{true}" />
+											<ui:param name="skipNewButton" value="#{true}" />
+											<aon:methodParam name="lookupChangeListener"
+												value="#{posInvoice.onSellerChanged}" type="lookupChangeListener" />
+										</ui:include>
 
 									</aon:panelGrid>
 								</aon:div>

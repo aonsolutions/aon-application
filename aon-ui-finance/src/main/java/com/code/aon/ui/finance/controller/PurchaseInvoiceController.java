@@ -15,6 +15,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.invoicing.InvoicingException;
@@ -71,6 +72,10 @@ public class PurchaseInvoiceController extends InvoiceController {
 			loadAddresses(supplier.getId());
 			loadProjects(supplier.getId());
 		} else {
+			Invoice invoice = getInvoice();
+			invoice.setRegistryAddress(null);
+			invoice.setProject(null);
+
 			setAddresses(null);	
 			setProjects(null);
 		}
