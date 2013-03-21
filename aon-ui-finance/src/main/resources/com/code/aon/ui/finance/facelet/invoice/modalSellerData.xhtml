@@ -11,7 +11,7 @@
 	<aon:panelGroup id="showSellerDataWindow">
 		<c:if test="#{invoiceController.showSellerDataWindow}">
 			<rich:modalPanel id="sellerDataModalPanel" minHeight="200"
-				minWidth="620" rendered="#{invoiceController.showSellerDataWindow}"
+				minWidth="590" rendered="#{invoiceController.showSellerDataWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -63,6 +63,7 @@
 										<aon:outputLabel for="Seller_id" value="#{financeBundle.finance_pos_seller_label}" />
 										<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
 											<ui:param name="lookupTo" value="#{posInvoice.to.seller}" />
+											<ui:param name="lookupInputSuggestSize" value="40" />
 											<ui:param name="skipLabel" value="#{true}" />
 											<ui:param name="skipGoToButton" value="#{true}" />
 											<ui:param name="skipNewButton" value="#{true}" />

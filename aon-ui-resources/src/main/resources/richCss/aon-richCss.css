@@ -163,6 +163,9 @@ color:#000;
 .aon-width-100{
 	width:100px;
 }	
+.aon-width-105{
+	width:105px;
+}	
 .aon-width-110{
 	width:110px;
 }	
@@ -1142,6 +1145,12 @@ color:#000;
 	font-weight:bold;
 	background-position:left center !important;	
 	}
+.aon-message-big2{
+	padding:10px 0.7em 5px 0.7em;
+	font-size:1.1em;
+	font-weight:bold;
+	background-position:left center !important;	
+	}
 .aon-message-error{
 	color: red;
 	font-weight:bold;
@@ -1193,7 +1202,6 @@ color:#000;
 	font-weight:bold;
 	cursor:pointer;
 	padding:0px !important;
-	width:105px !important;
 	height:50px !important;
 	overflow:visible;
 	background:#d7d7d7 url(images/aon-content/aon-secondary-menu.png) scroll left top repeat-x !important;
@@ -1209,7 +1217,6 @@ color:#000;
 	cursor:pointer;
 	margin:0px 5px 5px 0px !important;
 	padding:0px !important;
-	width:250px !important;
 	height:30px !important;
 	overflow:visible;
 	background:#d7d7d7 url(images/aon-content/aon-secondary-menu.png) scroll left top repeat-x !important;

@@ -15,7 +15,7 @@
 			</f:facet>
 
 			<a4j:repeat value="#{invoiceController.suspendedInvoiceList}" var="suspendedInvoice">
-				<aon:commandLink styleClass="aon-medium-commandButton "
+				<aon:commandLink styleClass="aon-medium-commandButton aon-width-250"
 					value ="&#160;" immediate="true"
 					actionListener="#{invoiceController.onRecoverSuspendedInvoice}"
 					reRender="aonContent" ajaxSingle="true">
