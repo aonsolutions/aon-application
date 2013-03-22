@@ -32,6 +32,7 @@ public class Salary implements Serializable {
 				put(NOT_ENJOYED_VACATIONS,"Vacaciones no disfrutadas");
 			}
 		};
+		
 	}
 
 	private int id ;

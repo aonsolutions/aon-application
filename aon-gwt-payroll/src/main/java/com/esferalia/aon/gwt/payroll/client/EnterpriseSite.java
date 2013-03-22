@@ -49,13 +49,13 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 
 		@Source("checkyes.png")
 		ImageResource checkYes();
-		
+
 		@Source("button.png")
 		ImageResource button();
-		
+
 		@Source("public.png")
 		ImageResource publiC();
-		
+
 		@Source("private.png")
 		ImageResource privatE();
 
@@ -63,13 +63,10 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		ImageResource protecteD();
 	}
 
-	
-
 	interface Binder extends UiBinder<Widget, EnterpriseSite> {
 	}
-	
+
 	private static final Binder binder = GWT.create(Binder.class);
-	
 
 	@UiField
 	Employees employees;
@@ -85,7 +82,6 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	private Salary salary;
 	private Documents documents;
 
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -109,7 +105,7 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		salary = new Salary();
 		documents = new Documents();
 		employees.addListener(this);
-		
+
 	}
 
 	@Override
@@ -130,13 +126,12 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		jsf.employeeSelected(employee.getId());
 	}
 
-	
 	@Override
 	public void onSalariesSelected(SalaryDocuments docs) {
 		detailPanel.setWidget(salary);
 		salary.setSalaryDocuments(docs);
 	}
-	
+
 	@Override
 	public void onCostsSelected(CostDocuments docs) {
 		detailPanel.setWidget(cost);
@@ -148,23 +143,32 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		detailPanel.setWidget(documents);
 		documents.setDocuments(docs);
 	}
-	
+
 	@Override
 	public void onActivitySelected(Activity activity) {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public void onSalaryPreviewSelected( SalaryPreviewDocument salaryPreviewDocument) {
+	public void onSalaryPreviewSelected(
+			SalaryPreviewDocument salaryPreviewDocument) {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public void onWorkplaceContextMenu(Workplace workplace,ContextMenuEvent event) {
+	public void onWorkplaceContextMenu(Workplace workplace,
+			ContextMenuEvent event) {
 	}
-	
+
 	@Override
 	public void onSalaryDraftSelected(SalaryDraftObject salaryDraftDocument) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onAgreementDraftSelected(
+			AgreementDraftObject agreementDraftDocument) {
+		// TODO Auto-generated method stub
+
 	}
 }

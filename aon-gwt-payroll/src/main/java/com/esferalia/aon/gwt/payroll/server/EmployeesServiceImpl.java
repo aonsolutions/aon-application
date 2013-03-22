@@ -5,6 +5,8 @@ import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.disableAutoCo
 import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.enableAutoCommit;
 import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.rollback;
+
+import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE_ACTIVITY;
@@ -13,6 +15,7 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.PERSON;
 import static com.esferalia.aon.payroll.sql.SQLConstants.REGISTRY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
+import static com.esferalia.aon.payroll.sql.SQLConstants.PAYROLL_WORKPLACE;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -60,6 +63,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
+import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -82,11 +87,13 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorConte
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseActivityColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.PayrollWorkplaceColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
@@ -419,7 +426,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Double total = 0.00;
 			for (ITimedResult<Double> result : results) {
 				Double value = result.getValue();
-				if (value != null )
+				if (value != null)
 					total += value;
 			}
 			return total;
@@ -442,6 +449,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			calculate(salaryDraft);
+			return salaryDraft;
+		} finally {
+			releaseFacesContext();
+		}
+
+	}
+
+	public AgreementDraft calculateAgreementDraft(AgreementDraft salaryDraft)
+			throws IllegalArgumentException {
+		try {
+			initFacesContext();
+			//calculate(salaryDraft);
 			return salaryDraft;
 		} finally {
 			releaseFacesContext();
@@ -1186,7 +1205,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			String sql = "SELECT * " + " FROM " + REGISTRY + ", " + ENTERPRISE
 					+ " LEFT JOIN " + WORKPLACE + " ON ( " + ENTERPRISE + "."
 					+ EnterpriseColumns.REGISTRY + " = " + WORKPLACE + "."
-					+ WorkplaceColumns.ENTERPRISE + " )" + " WHERE " + REGISTRY
+					+ WorkplaceColumns.ENTERPRISE + " )" + " LEFT JOIN "
+					+ PAYROLL_WORKPLACE + " ON ( " + WORKPLACE + "."
+					+ WorkplaceColumns.ID + " = " + PAYROLL_WORKPLACE + "."
+					+ PayrollWorkplaceColumns.WORKPLACE + " )" + " LEFT JOIN "
+					+ AGREEMENT + " ON ( " + PAYROLL_WORKPLACE + "."
+					+ PayrollWorkplaceColumns.AGREEMENT + " = " + AGREEMENT
+					+ "." + AgreementColumns.ID + " )" + " WHERE " + REGISTRY
 					+ "." + RegistryColumns.ID + " = ?" + " AND " + REGISTRY
 					+ "." + RegistryColumns.ID + " = " + ENTERPRISE + "."
 					+ EnterpriseColumns.REGISTRY;
@@ -1372,22 +1397,22 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			ISalaryCalculatorContext ctx = getSalaryCalculatorContext(draft);
 			return ctx.getExpressionContext().eval(expression,
 					ctx.getStartDate(), ctx.getEndDate(), toType);
-		}catch (SQLException e) {
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
-		}catch ( InvalidVariables e ) {
+		} catch (InvalidVariables e) {
 			throw new EvalWarning(e.getMessage());
-		}catch ( CheckException e ) {
+		} catch (CheckException e) {
 			throw new EvalWarning(e.getMessage());
-		}catch ( RemoveVariableError e ){
+		} catch (RemoveVariableError e) {
 			return Collections.emptyList();
-		}catch ( UndefinedVariablesException e ) {
+		} catch (UndefinedVariablesException e) {
 			throw new EvalWarning(e.getMessage());
-		}catch ( CompileException e ) {
+		} catch (CompileException e) {
 			throw new EvalSyntaxErrorException(e.getMessage());
-		}catch (ExpressionException e) {
+		} catch (ExpressionException e) {
 			throw new IllegalArgumentException(e.getMessage());
-		} 
+		}
 
 	}
 
@@ -1442,9 +1467,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 							method.getReturnType(), method.getParameterTypes());
 				} else {
 					Class<?> type = value.getClass();
-					if ( ContextDescriptor.isKnownType(type))
-						contextDescriptor.add(varName, description,
-								type, value.toString());
+					if (ContextDescriptor.isKnownType(type))
+						contextDescriptor.add(varName, description, type,
+								value.toString());
 				}
 
 			}
@@ -1694,6 +1719,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			workplace.setDescription(rs.getString(tableCol(WORKPLACE,
 					WorkplaceColumns.DESCRIPTION)));
 
+			Object agreementId = rs.getObject(
+					tableCol(PAYROLL_WORKPLACE,
+							PayrollWorkplaceColumns.AGREEMENT));
+			if (agreementId != null) {
+				Agreement agreement = new Agreement();
+				agreement.setId((Integer)agreementId);
+				agreement.setDescription(rs.getString(tableCol(AGREEMENT,
+							AgreementColumns.DESCRIPTION)));
+				workplace.setAgreement(agreement);
+			}
+
 			enterpriseHandler.getEnterprise().addWorkplace(workplace);
 		}
 
@@ -1726,5 +1762,5 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		}
 	}
-	
+
 }

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.shared.Activity;
+import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -69,6 +70,8 @@ public class Employees extends ResizeComposite implements
 		void onSalaryPreviewSelected(SalaryPreviewDocument salaryPreviewDocument);
 
 		void onWorkplaceContextMenu(Workplace workplace, ContextMenuEvent event);
+
+		void onAgreementDraftSelected(AgreementDraftObject agreementDraftObject);
 	}
 
 	interface Binder extends UiBinder<Widget, Employees> {
@@ -203,6 +206,13 @@ public class Employees extends ResizeComposite implements
 
 			addImageItem(workplaceItem, "Costos", images.costs());
 
+			Agreement agreement = workplace.getAgreement();
+			if (extended && (agreement != null)) {
+				TreeItem agreementItem = addImageItem(workplaceItem,
+						agreement.getDescription(), images.agreement());
+				AgreementDraftObject agreementDraftObject = new AgreementDraftObject();
+				agreementItem.setUserObject(agreementDraftObject);
+			} // TODO: extended ? Yes I'm know , it's awful.
 		}
 
 		enterpriseItem.setState(true, true);
@@ -257,7 +267,9 @@ public class Employees extends ResizeComposite implements
 			onSalariesSelected((SalaryDocuments) userObject);
 		} else if (userObject instanceof ISpinnable<?>) {
 			onDocumentsSelected((ISpinnable<IDocument>) userObject);
-		}
+		} else if (userObject instanceof AgreementDraftObject) {
+			onAgreementDraftSelected((AgreementDraftObject) userObject);
+		} 
 
 	}
 
@@ -399,7 +411,7 @@ public class Employees extends ResizeComposite implements
 					});
 		} // end-if: Costs of this workplace haven't been loaded yet.
 
-		if (workplaceItem.getChildCount() > 1) {
+		if (workplaceItem.getChildCount() > getEmployeesOffset()) {
 			return;
 		} // end-if: Employees of this workplace already loaded .
 
@@ -512,6 +524,12 @@ public class Employees extends ResizeComposite implements
 		}
 	}
 
+	private void onAgreementDraftSelected(AgreementDraftObject agreementDraftObject) {
+		for (Listener listener : listeners) {
+			listener.onAgreementDraftSelected(agreementDraftObject);
+		}
+	}
+
 	private void loadEmployess(TreeItem workplaceItem,
 			List<Employee> employees, int limit) {
 
@@ -547,7 +565,7 @@ public class Employees extends ResizeComposite implements
 				Date salaryDate = DateUtils.before(
 						DateUtils.after(new Date(), employee.getStartDate()),
 						employee.getEndDate());
-				
+
 				Date startDate = DateUtils.getFirstDayOfMonth(salaryDate);
 				Date endDate = DateUtils.getLastDayOfMonth(salaryDate);
 				Date issueDate = endDate;
@@ -791,7 +809,7 @@ public class Employees extends ResizeComposite implements
 	}
 
 	private int getEmployeesOffset() {
-		return 1;
+		return 2;
 	}
 
 	private void showEndDate(boolean endDate) {

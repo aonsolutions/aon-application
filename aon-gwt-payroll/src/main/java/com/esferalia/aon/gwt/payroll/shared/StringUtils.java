@@ -71,7 +71,7 @@ public class StringUtils {
 			return true;
 		if ( s1 != null )
 			return s1.equals(s2);
-		return s2.equals(s2);
+		return s2.equals(s1);
 	}
 	
 	public static boolean equalsIgnoreCase(String s1, String s2) {

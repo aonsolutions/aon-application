@@ -48,7 +48,7 @@ public class AON {
 	public static String format(Double d) {
 		return d == null ? null : CURRENCY_FORMAT.format(d);
 	}
-
+	
 	static final String AON_DATA_TABLE_ROW_EVEN = "aon-dataTable-row-even";
 	static final String AON_DATA_TABLE_ROW_ODD = "aon-dataTable-row-odd";
 	static final String AON_BOLD = "aon-bold";

@@ -202,11 +202,11 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 						Date amountEnd = result.getPeriod().getEnd();
 						
 						String description  = null;
-	
-						Double value = result.getValue();
-						total += value;
+						
+						Double valueDouble = result.getValue();
+						double value = valueDouble != null ?  valueDouble : 0.00;
+						total += value ;
 						Double payment = taxCalculator.tax(contractPayment, amountStart, amountEnd, chargeDate, value);
-						//Double payment = taxCalculator.tax(contractPayment, amountStart, amountEnd, issueDate, value);
 						
 						if ( payment != 0.00 ){
 							try  {

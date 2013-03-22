@@ -27,6 +27,8 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -274,6 +276,16 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			});
 		}
 
+
+		public void setEditButton(HasClickHandlers deleteButton) {
+			deleteButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					onEdit();
+				}
+			});
+		}
+
 		public void setDeleteButton(HasClickHandlers deleteButton) {
 			deleteButton.addClickHandler(new ClickHandler() {
 				@Override
@@ -282,6 +294,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				}
 			});
 		}
+
+		abstract void onEdit();
 
 		abstract void onExpressionChange(I item, String expression);
 
@@ -293,6 +307,27 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		public PaymentChangeHandler(Payment payment) {
 			super(payment);
+		}
+		
+		@Override
+		void onEdit() {
+			// TODO Auto-generated method stub
+			PaymentDialog paymentDialog = new PaymentDialog();
+			paymentDialog.setNumberFormat(CURRENCY_FORMAT);
+			paymentDialog.setContextProvider(salaryDraftObject);
+			paymentDialog.setConcept(getConcept());
+			paymentDialog.setMonth(item.getMonth());
+			paymentDialog.setType(item.getType());
+			paymentDialog.setReceiptType(item.getSalaryType());
+			paymentDialog.setDescription(item.getDescription());
+			paymentDialog.setPaymentExpression(item.getExpression()); //
+			paymentDialog.setIrpfExpression(item.getIrpfExpression());
+			paymentDialog.setQuoteExpression(item.getQuoteExpression());
+			
+			int width = paymentDialog.getOffsetWidth();
+			//paymentDialog.setWidth(Math.max(Window.getClientWidth() * 6 / 10, width ) + "px");
+			paymentDialog.center();
+			paymentDialog.show();
 		}
 
 		@Override
@@ -312,12 +347,27 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			salaryDraftObject.addDraftPayment(payment);
 			salaryDraftObject.calculate(SalaryDraft.this);
 		}
+		
+		private Payment getConcept() {
+			if ( item.getName() == null ) 
+				return null;
+			for (Payment payment : availablePaymens)
+				if ( StringUtils.equals(payment.getName(), item.getName()))
+					return payment;
+			return null;
+		}
 
 	}
 
 	class DeductionChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers>
 			extends ItemChangeHandler<T, Deduction> {
-
+		
+		@Override
+		void onEdit() {
+			// TODO Auto-generated method stub
+			
+		}
+		
 		public DeductionChangeHandler(Deduction deduction) {
 			super(deduction);
 		}
@@ -377,7 +427,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			this.descriptionBox.getValueBox().addBlurHandler(new BlurHandler() {
 				@Override
 				public void onBlur(BlurEvent event) {
-					onValueChange();
+					onValueChange(NewItemHandler.this.descriptionBox);
 				}
 			});
 			this.descriptionBox
@@ -385,7 +435,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 						@Override
 						public void onSelection(SelectionEvent<Suggestion> event) {
-							onValueChange();
+							onValueChange(NewItemHandler.this.descriptionBox);
 						}
 					});
 		}
@@ -400,14 +450,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			this.expressionBox.addBlurHandler(new BlurHandler() {
 				@Override
 				public void onBlur(BlurEvent event) {
-					event.stopPropagation();
-					onValueChange();
+					onValueChange(NewItemHandler.this.expressionBox );
 				}
 			});
 			// this.expressionBox.addValueChangeHandler(this);
 		}
 
-		protected void onValueChange() {
+		protected void onValueChange(UIObject source) {
 
 			String suggestion = descriptionBox.getValue();
 			T item = itemsConceptsMap.get(suggestion);
@@ -417,11 +466,19 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				expression = item.getExpression();
 			}
 
-			if (StringUtils.isEmpty(expression)) {
+			if (StringUtils.isEmpty(expression) ) {
+
 				expression = expressionBox.getValue();
-				if (StringUtils.isEmpty(expression)) {
+				if (StringUtils.isEmpty(expression) && ( source != expressionBox ) ) {
 					expressionBox.setVisible(true);
-					expressionBox.setFocus(true);
+					// wait for event's loop to terminate.
+					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+						@Override
+						public void execute() {
+							expressionBox.setFocus(true);
+						}
+					});
+					
 					return;
 				}
 			}
@@ -1490,6 +1547,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		Button editButton = new Button();
 		editButton.setStyleName(iconStyleName);
 		editButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		handler.setEditButton(editButton);
+
 		// remove 'aon-editDataTable-button' margin & paddind.
 		// We don't like it here.
 		paymentsTable.setWidget(row, 0, editButton);

@@ -11,6 +11,7 @@ public class Workplace implements Serializable {
 	
 	private int				id;
 	private String 			description;
+	private Agreement		agreement;
 	
 	public Workplace() {
 	}
@@ -30,5 +31,12 @@ public class Workplace implements Serializable {
 		this.description = description;
 	}
 	
+	public Agreement getAgreement() {
+		return agreement;
+	}
+	
+	public void setAgreement(Agreement agreement) {
+		this.agreement = agreement;
+	}
 	
 }

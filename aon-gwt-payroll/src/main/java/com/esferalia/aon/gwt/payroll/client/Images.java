@@ -46,5 +46,7 @@ public interface Images extends ClientBundle, Tree.Resources {
 	@Source("noimage.png")
 	ImageResource treeLeaf();
 	
+	ImageResource agreement();
+	
 	
 }

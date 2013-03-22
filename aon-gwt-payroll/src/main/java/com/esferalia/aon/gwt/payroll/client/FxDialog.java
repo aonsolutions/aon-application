@@ -46,13 +46,12 @@ public class FxDialog extends CustomDialog {
 	private static final NumberFormat CURRENCY_FORMAT = NumberFormat
 			.getFormat("#,##0.00");
 
-	static interface IContextProvider {
+	public static interface IContextProvider {
 
 		void getContext(AsyncCallback<ContextDescriptor> callback);
 		void eval(String expression, AsyncCallback<Double> callback);
 	}
 	
-
 	interface Binder extends UiBinder<Widget, FxDialog> {
 
 	}
@@ -285,7 +284,7 @@ public class FxDialog extends CustomDialog {
 	void onExpressionKeyUp(KeyUpEvent event) {
 		evalExpression(1000);
 	}
-
+	
 	void evalExpression(int milliseconds) {
 		expressionCallback.cancel();
 		expressionCallback.schedule(milliseconds);

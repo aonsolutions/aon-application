@@ -84,6 +84,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 	private Salary salary;
 	private SalaryDraft salaryDraft;
 	private SalaryPreview salaryPreview;
+	private AgreementDraft agreementDraft;
 	
 	private ContextMenu workplaceContextMenu;
 
@@ -118,6 +119,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		documents = new Documents();
 		salaryDraft = new SalaryDraft();
 		salaryPreview = new SalaryPreview();
+		agreementDraft = new AgreementDraft();
 		workplaceContextMenu = new WorkplaceContextMenu();
 		
 		employees.addListener(this);
@@ -185,6 +187,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		workplaceContextMenu.show();
 	}
 	
-	
+	@Override
+	public void onAgreementDraftSelected(
+			AgreementDraftObject agreementDraftObject) {
+		employeeDetail.setWidget(agreementDraft);
+		agreementDraft.setAgreementDraftObject(agreementDraftObject);
+	}
 
 }
