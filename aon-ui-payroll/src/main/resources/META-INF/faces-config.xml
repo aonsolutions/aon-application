@@ -2726,7 +2726,7 @@
 		</managed-property>
 	</managed-bean>	
 	
-	<!--  *************** ACCOUNT APP PARAMS ***************** -->
+	<!--  *************** PAYROLL APP PARAMS ***************** -->
 	<!--  name max length is 32 -->
 	<managed-bean>
 		<managed-bean-name>payrollAppParams</managed-bean-name>
@@ -2755,6 +2755,14 @@
 				</map-entry>
 				<map-entry>
 					<key>PAY_settle_compens_concept_PAY</key>
+					<value>[NULL]</value>
+				</map-entry>
+				<map-entry>
+					<key>PAY_contrata_user_PAY</key>
+					<value>[NULL]</value>
+				</map-entry>
+				<map-entry>
+					<key>PAY_contrata_passwd_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
 			</map-entries>
@@ -3949,7 +3957,7 @@
 	<!-- ****************** DEFAULT PARAMETERS **************** -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>defaultParams</from-outcome>
+			<from-outcome>payrollDefaultParams</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/params/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>

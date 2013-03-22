@@ -12,7 +12,7 @@
 		<c:if test="#{contractContrata.showContrataLoginWindow}">
 			<rich:modalPanel id="contrataLoginModalPanel" minHeight="180"
 				minWidth="450" rendered="#{contractContrata.showContrataLoginWindow}"
-				showWhenRendered="true" zindex="100">
+				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{bundle.aon_login}" />
@@ -36,10 +36,25 @@
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
-									<aon:commandButton id="contrataLogin-accept"
+									<aon:commandButton id="contrataCommunicationLogin-accept"
 										value="#{bundle.aon_accept}"
 										reRender="showContrataLoginWindow,contrataResponseContainer,contrataData,contractForm"
+										rendered="#{!contractContrata.communicationResponseReceived}"
 										actionListener="#{contractContrata.onSendContrataFile}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										onclick="Richfaces.showModalPanel('waitProccess')" 
+		     							oncomplete="Richfaces.hideModalPanel('waitProccess')">
+										<rich:componentControl for="contrataLoginModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{contractContrata.showContrataLoginWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="contrataQueryLogin-accept"
+										value="#{bundle.aon_accept}"
+										reRender="showContrataLoginWindow,contrataResponseContainer,contrataData,contractForm"
+										rendered="#{contractContrata.communicationResponseReceived}"
+										actionListener="#{contractContrata.onContrataDataQuery}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										onclick="Richfaces.showModalPanel('waitProccess')" 
 		     							oncomplete="Richfaces.hideModalPanel('waitProccess')">
@@ -59,20 +74,45 @@
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
-								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+								<aon:div style="margin-top: 2em;">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
 										
 										<aon:panelGroup>
-											<aon:outputText value="Usuario Principal (CIF/NIF/NIE)" />
+											<aon:outputLabel for="contrata-user" 
+												value="#{payrollBundle.payroll_contract_contrata_user}" />
 											<br />
-											<aon:outputText value="o Usuario Asociado" />
+											<aon:outputText value="#{payrollBundle.payroll_contract_contrata_user2}" />
 										</aon:panelGroup>	
-										<aon:inputText value="#{contractContrata.user}" />	
-
-										<aon:outputLabel value="Clave Personal" />
-										<aon:inputText value="#{contractContrata.passwd}" />	
+										<aon:inputText id="contrata-user" 
+											required="#{true}" style="width: 100%;" 
+											value="#{contractContrata.user}" />
+										
+										<aon:outputLabel for="contrata-passwd" 
+											value="#{payrollBundle.payroll_contract_contrata_passwd}" />
+										<aon:inputSecret id="contrata-passwd" 
+											required="#{true}" style="width: 100%;"
+											value="#{contractContrata.passwd}" />	
 
 									</aon:panelGrid>
+
+									<aon:div style="padding-top: 5px;">
+										<aon:selectBooleanCheckbox id="Contrata_login_remember"
+											value="#{contractContrata.contrataLoginRemember}" />
+										<aon:outputLabel for="Contrata_login_remember"
+											styleClass="aon-italic" 
+											value="Recordar los datos identificativos" />
+									</aon:div>
+									
+									<!--  
+									<aon:panel style="padding-top: 5px;">
+										<aon:selectBooleanCheckbox id="Contrata_login_remember"
+											value="#{contractContrata.contrataLoginRemember}" />
+										<aon:outputLabel for="Contrata_login_remember"
+											styleClass="aon-italic" 
+											value="Recordar los datos identificativos" />
+									</aon:panel>
+									-->
+									
 								</aon:div>
 							</aon:div>
 						</aon:div>

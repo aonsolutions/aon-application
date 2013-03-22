@@ -365,9 +365,11 @@
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="payrollParams-configuration" 
-												action="defaultParams-configuration"
+												action="payrollDefaultParams-configuration"
 												actionListener="#{payrollAppParams.onLoad}"
-												value="#{payrollBundle.payroll_default_params_module}" />
+												value="#{payrollBundle.payroll_default_params_module}" >
+												<f:setPropertyActionListener target="#{payrollAppParams.skipPayrollData}" value="#{false}" />
+											</aon:commandLink>
 										</aon:div>
 									</aon:div>
 								</aon:panelGrid>

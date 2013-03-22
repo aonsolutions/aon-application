@@ -68,6 +68,41 @@
 					</aon:panelGroup>
 					
 					<aon:panelGroup>
+						
+						<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
+						</c:if>
+						<c:if test="#{aonRole.config}">												
+							<aon:panelGrid id="group_main_parameters"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-config">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_configuration}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+								
+									<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="enterprise-contrata"
+												action="#{enterprise.initialAction}"
+												actionListener="#{enterprise.onBasicViewSelect}"
+												value="#{companyBundle.company_data_module}">
+												<aon:actionListener method="#{enterprise.onEditSearch}" />
+											</aon:commandLink>
+										</aon:div>
+									</c:if>
+								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="payrollParams-configuration" 
+											action="payrollDefaultParams-contrata"
+											actionListener="#{payrollAppParams.onLoad}"
+											value="#{payrollBundle.payroll_default_params_module}" >
+											<f:setPropertyActionListener target="#{payrollAppParams.skipPayrollData}" value="#{true}" />
+										</aon:commandLink>
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
+					
 						<aon:panelGrid id="group_contrata_auxiliaries"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-utilities aon-direct-access-panel">
@@ -75,16 +110,6 @@
 								<aon:outputText value="#{bundle.aon_auxiliaries}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="enterprise-contrata"
-											action="#{enterprise.initialAction}"
-											actionListener="#{enterprise.onBasicViewSelect}"
-											value="#{companyBundle.company_data_module}">
-											<aon:actionListener method="#{enterprise.onEditSearch}" />
-										</aon:commandLink>
-									</aon:div>
-								</c:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="trainingCenter-contrata"
 										action="trainingCenter_list-contrata"
@@ -119,6 +144,7 @@
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
+						
 					</aon:panelGroup>													
 					
 				</h:panelGrid>

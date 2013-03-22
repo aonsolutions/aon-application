@@ -18,8 +18,8 @@ import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.PaymentConcept;
 
 public class PayrollAppParamsController{
 	
@@ -27,14 +27,90 @@ public class PayrollAppParamsController{
 	public final static String SETTLE_NOTICE_DAY_CONCEPT = "PAY_settle_noticeDay_concept_PAY";
 	public final static String SETTLE_COMPENSATION_CONCEPT = "PAY_settle_compens_concept_PAY";
 	
+	public final static String CONTRATA_USER = "PAY_contrata_user_PAY";
+	public final static String CONTRATA_PASSWORD = "PAY_contrata_passwd_PAY";
+	
 	private PaymentConcept settleVacationConcept;
 	private PaymentConcept settleNoticeDayConcept;
 	private PaymentConcept settleCompensationConcept;
 	
+	private String contrataUser;
+	private String contrataPassword;
+	private Boolean validContrataLogin;
+	
 	private Map<String, ApplicationParameter> parameters;
 
 	private Map<String, String> defaultParameters;
+	
+	private boolean skipPayrollData;
+	
 
+	public boolean isSkipPayrollData() {
+		return skipPayrollData;
+	}
+
+	public void setSkipPayrollData(boolean skipPayrollData) {
+		this.skipPayrollData = skipPayrollData;
+	}
+
+	public Boolean getValidContrataLogin() {
+		return validContrataLogin;
+	}
+
+	public void setValidContrataLogin(Boolean validContrataLogin) {
+		this.validContrataLogin = validContrataLogin;
+	}
+
+	public boolean isContrataLoginChecked() {
+		return validContrataLogin != null;
+	}
+
+	public String getContrataUser() {
+		if(contrataUser==null){
+			initContrataUser();
+		}
+		return contrataUser;
+	}
+
+	public void setContrataUser(String contrataUser) {
+		this.contrataUser = contrataUser;
+	}
+	
+	private void initContrataUser() {
+		try {
+			if(getParameter(CONTRATA_USER).getValue()!=null){
+				setContrataUser(getParameter(CONTRATA_USER).getValue());
+			} else {
+				setContrataUser("");
+			}
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+	}
+
+	public String getContrataPassword() {
+		if(contrataPassword==null){
+			initContrataPassword();
+		}
+		return contrataPassword;
+	}
+
+	public void setContrataPassword(String contrataPassword) {
+		this.contrataPassword = contrataPassword;
+	}
+	
+	private void initContrataPassword() {
+		try {
+			if(getParameter(CONTRATA_PASSWORD).getValue()!=null){
+				setContrataPassword(getParameter(CONTRATA_PASSWORD).getValue());
+			} else {
+				setContrataPassword("");
+			}
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+	}
+	
 	public PaymentConcept getSettleVacationConcept() {
 		if(settleVacationConcept==null){
 			initSettleVacationConcept();
@@ -138,19 +214,24 @@ public class PayrollAppParamsController{
 	}
 
 	public void onAccept(ActionEvent event) throws ManagerBeanException{
-		IManagerBean managerBean = BeanManager.getManagerBean(ApplicationParameter.class);
-		Collection<ApplicationParameter>params = parameters.values();
-		for(ApplicationParameter param : params){
-			beforeBeanUpdate();
-			managerBean.update(param);
-		}
+		accept();
 		loadParameters();
 		AonUtil.addInfoMessage("Los parámetros se guardaron correctamente.");		
+	}
+	
+	public void accept() throws ManagerBeanException{
+		IManagerBean managerBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		Collection<ApplicationParameter>params = parameters.values();
+		beforeBeanUpdate();
+		for(ApplicationParameter param : params){
+			managerBean.update(param);
+		}
 	}
 
 	public void onLoad(ActionEvent event) {
 		try {
 			loadParameters();
+			setValidContrataLogin(null);
 		} catch (ManagerBeanException e) {
 			String msg = "Unable to load defaultParameters";
 			AonUtil.addErrorMessage(msg);
@@ -159,6 +240,13 @@ public class PayrollAppParamsController{
 	}
 
 	public void loadParameters() throws ManagerBeanException{
+		setSettleVacationConcept(null);
+		setSettleNoticeDayConcept(null);
+		setSettleCompensationConcept(null);
+		setContrataUser(null);
+		setContrataPassword(null);
+		setValidContrataLogin(null);
+		
 		parameters = new TreeMap<String, ApplicationParameter>();
 		IManagerBean managerBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		List<ITransferObject> list = managerBean.getList(null);
@@ -187,6 +275,7 @@ public class PayrollAppParamsController{
 	}
 	
 	private void beforeBeanUpdate() throws ManagerBeanException {
+		// SETTLE PARAMS
 		if(getSettleVacationConcept()!=null && getSettleVacationConcept().getCode()!=null){
 			getParameter(SETTLE_VACATION_CONCEPT).setValue(getSettleVacationConcept().getId().toString());
 		}
@@ -196,11 +285,22 @@ public class PayrollAppParamsController{
 		if(getSettleCompensationConcept()!=null && getSettleCompensationConcept().getCode()!=null){
 			getParameter(SETTLE_COMPENSATION_CONCEPT).setValue(getSettleCompensationConcept().getId().toString());
 		}
+
+		// SALARY PRINT PARAMS
 		getParameter(ICompanyConstants.REPORT_SALARY_DRAFT_PARAM).setValue(getDraftTemplateName());
+
+		// CONTRATA PARAMS
+		getParameter(CONTRATA_USER).setValue(getContrataUser());
+		getParameter(CONTRATA_PASSWORD).setValue(getContrataPassword());
 	}
 
 	private String getDraftTemplateName() throws ManagerBeanException {
 		return getParameter(ICompanyConstants.REPORT_SALARY_PARAM).getValue().replaceFirst(ICompanyConstants.SALARY, ICompanyConstants.SALARY_DRAFT);
 	}
-
+	
+	public void validateLogin(ActionEvent event){
+		// TODO implementar
+		setValidContrataLogin(true);
+	}
+	
 }

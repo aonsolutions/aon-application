@@ -30,7 +30,6 @@ import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.ui.payroll.controller.AbstractVariableHandler.VariableData;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
-import com.esferalia.aon.ui.payroll.controller.contract.ContractContrataController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
@@ -69,9 +68,6 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setParams(null);
 		controller.onShowVariables(null);
 		searchAgreement();
-		
-		initContrataModule();
-		
 	}
 	
 	@Override
@@ -112,7 +108,6 @@ public class ContractControllerListener extends ControllerAdapter{
 			EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_TREE_CONTROLLER);
 			tree.loadTree();
 		}
-		initContrataModule();
 	}
 	
 	@Override
@@ -120,13 +115,6 @@ public class ContractControllerListener extends ControllerAdapter{
 			throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
 		controller.setShowNewContractModal(false);
-	}
-	
-	@Override
-	public void afterBeanUpdated(ControllerEvent event)
-			throws ControllerListenerException {
-		ContractContrataController controller = (ContractContrataController) AonUtil.getRegisteredBean("contractContrata");
-		controller.onAccept(null);
 	}
 	
 	private void saveContractData() throws ControllerListenerException {
@@ -308,12 +296,6 @@ public class ContractControllerListener extends ControllerAdapter{
 			String msg = "Error al buscar el convenio. (" +e.getMessage() + ")";
 			LOGGER.error(msg);
 		}
-	}
-	
-	private void initContrataModule() {
-		ContractContrataController contrataController = (ContractContrataController) AonUtil.getRegisteredBean("contractContrata");
-		contrataController.initialize((Contract) this.getController().getTo());
-		contrataController.onContractaDataShow(null);
 	}
 	
 }

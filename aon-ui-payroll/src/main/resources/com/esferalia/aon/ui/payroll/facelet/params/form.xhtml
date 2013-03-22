@@ -6,6 +6,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -29,45 +30,126 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="2">
 
-					<aon:outputLabel for="salary_model"
-						value="#{payrollBundle.payroll_params_salary_model}" />
-					<aon:selectOneMenu id="salary_model"
-						value="#{payrollAppParams.parameters['PAY_REPORT_salary_PAY'].value}">
-						<f:selectItems value="#{companyCollections.salaryTemplates}" />
-					</aon:selectOneMenu>
+				<c:if test="#{!payrollAppParams.skipPayrollData}" >
+					<aon:div styleClass="aon-group">
+						<aon:div styleClass="aon-group-title">
+							<aon:outputText value="#{payrollBundle.payroll_salary_module}"/>
+						</aon:div>
+						<aon:div styleClass="aon-group-body"> 
+							<aon:div styleClass="aon-group-body-internal">
+								<aon:panelGrid columns="2">
+									<aon:outputLabel for="salary_model"
+										value="#{payrollBundle.payroll_params_salary_model}" />
+									<aon:selectOneMenu id="salary_model"
+										value="#{payrollAppParams.parameters['PAY_REPORT_salary_PAY'].value}">
+										<f:selectItems value="#{companyCollections.salaryTemplates}" />
+									</aon:selectOneMenu>
+								</aon:panelGrid>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+		
+					<aon:div styleClass="aon-group">
+						<aon:div styleClass="aon-group-title">
+							<aon:outputText value="#{payrollBundle.payroll_settle_module}"/>
+						</aon:div>
+						<aon:div styleClass="aon-group-body"> 
+							<aon:div styleClass="aon-group-body-internal">
+								<aon:panelGrid columns="2">
+									<aon:outputLabel value="#{payrollBundle.payroll_settle_vacation_default_concept}" />
+									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
+										<ui:param name="lookupTo" value="#{payrollAppParams.settleVacationConcept}" />
+										<ui:param name="skipNewButton" value="#{true}" />
+										<ui:param name="idRequired" value="#{true}" />
+										<ui:param name="skipLabel" value="#{true}" />
+										<ui:param name="lookupSuffix" value="-vacation" />
+									</ui:include>
+				
+									<aon:outputLabel value="#{payrollBundle.payroll_settle_noticeDay_default_concept}" />
+									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
+										<ui:param name="lookupTo" value="#{payrollAppParams.settleNoticeDayConcept}" />
+										<ui:param name="skipNewButton" value="#{true}" />
+										<ui:param name="idRequired" value="#{true}" />
+										<ui:param name="skipLabel" value="#{true}" />
+										<ui:param name="lookupSuffix" value="-noticeDay" />
+									</ui:include>
+				
+									<aon:outputLabel value="#{payrollBundle.payroll_settle_compensation_default_concept}" />
+									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
+										<ui:param name="lookupTo" value="#{payrollAppParams.settleCompensationConcept}" />
+										<ui:param name="skipNewButton" value="#{true}" />
+										<ui:param name="idRequired" value="#{true}" />
+										<ui:param name="skipLabel" value="#{true}" />
+										<ui:param name="lookupSuffix" value="-compensation" />
+									</ui:include>
+								</aon:panelGrid>
+							</aon:div>
+						</aon:div>		
+					</aon:div>
+				</c:if>
+				
+				<aon:div styleClass="aon-group">
+					<aon:div styleClass="aon-group-title">
+						<aon:outputText value="#{payrollBundle.payroll_contract_contrataData}"/>
+					</aon:div>
+					<aon:div styleClass="aon-group-body"> 
+						<aon:div styleClass="aon-group-body-internal">
+							<aon:panelGrid columns="2" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
 
-					<aon:outputLabel value="#{payrollBundle.payroll_settle_vacation_default_concept}" />
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{payrollAppParams.settleVacationConcept}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-						<ui:param name="idRequired" value="#{true}" />
-						<ui:param name="skipLabel" value="#{true}" />
-						<ui:param name="lookupSuffix" value="-vacation" />
-					</ui:include>
+								<aon:panelGrid columns="2" style="width: 300px;">
+									<aon:outputLabel for="contrata_user" 
+										value="#{bundle.aon_login_user}" />
+									<aon:inputText id="contrata_user" style="width: 100%;"
+										value="#{payrollAppParams.contrataUser}" />
+	
+									<aon:outputLabel for="contrata_passwd"  
+										value="#{bundle.aon_login_passwd}" />
+									<aon:inputSecret id="contrata_passwd" redisplay="#{true}" style="width: 100%;"
+										value="#{payrollAppParams.contrataPassword}" />
+	
+									<c:if test="#{false and not empty payrollAppParams.contrataUser and not empty payrollAppParams.contrataPassword}" >
+										<aon:outputLabel for="contrata_login_confirm" value="&#160;" />
+										<aon:outputText id="contrata_login_confirm"
+											styleClass="aon-finding-toolbar-item aon-noborder aon-icon-sincronize"
+											value="Validar el acceso al entorno de S.E.P.E." >
+											<a4j:support event="onclick"
+												actionListener="#{payrollAppParams.validateLogin}" 
+												ajaxSingle="true"
+												ignoreDumpResponses="true"
+												limitToList="true"
+												eventsQueue="loginConfirmation"
+												reRender="login-confirm-result" />
+										</aon:outputText>
+									</c:if>
+								</aon:panelGrid>
+						
+								<aon:div id="login-confirm-result" styleClass="aon-margin-left">
+									<c:if test="#{payrollAppParams.contrataLoginChecked}" >
+										<aon:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;"
+											rendered="#{payrollAppParams.validContrataLogin}"
+											styleClass="aon-icon-predetermine" />
+										<aon:outputText value="Acceso autorizado"
+											rendered="#{payrollAppParams.validContrataLogin}"
+											style="color:blue;"
+											styleClass="aon-bold" />
+										
+										<aon:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;"
+											rendered="#{!payrollAppParams.validContrataLogin}"
+											styleClass="aon-icon-wrong " />
+										<aon:outputText value="Acceso rechazado"
+											rendered="#{!payrollAppParams.validContrataLogin}"
+											style="color:red;"
+											styleClass="aon-bold" />
+									</c:if>
+								</aon:div>
+									
+							</aon:panelGrid>	
+						</aon:div>
+					</aon:div>
+				</aon:div>
 
-					<aon:outputLabel value="#{payrollBundle.payroll_settle_noticeDay_default_concept}" />
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{payrollAppParams.settleNoticeDayConcept}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-						<ui:param name="idRequired" value="#{true}" />
-						<ui:param name="skipLabel" value="#{true}" />
-						<ui:param name="lookupSuffix" value="-noticeDay" />
-					</ui:include>
-
-					<aon:outputLabel value="#{payrollBundle.payroll_settle_compensation_default_concept}" />
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{payrollAppParams.settleCompensationConcept}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-						<ui:param name="idRequired" value="#{true}" />
-						<ui:param name="skipLabel" value="#{true}" />
-						<ui:param name="lookupSuffix" value="-compensation" />
-					</ui:include>
-
-				</aon:panelGrid>
 			</aon:div>
-
 		</aon:form>
 		
 		<aon:lookupButtonPopup lookup="#{paymentConceptLookup}" />

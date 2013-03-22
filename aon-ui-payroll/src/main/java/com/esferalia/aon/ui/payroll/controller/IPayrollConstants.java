@@ -78,6 +78,10 @@ public interface IPayrollConstants {
 	String LEAVE_BATCH_DETAIL_CONTROLLER_NAME = "leaveBatchDetail";
 	String LEAVE_BATCH_CONTROLLER_NAME = "leaveBatch";
 	String LEAVE_LIST_CONTROLLER_NAME = "leaveList";
+	String PAYMENT_UPDATE_CONTROLLER = "paymentUpdate";
+	String PAYROLL_APP_PARAMS_CONTROLLER_NAME = "payrollAppParams";
+	String PAYROLL_WORK_PLACE_CONTROLLER = "payrollWorkPlace";
+	String PERSON_CONTROLLER_NAME = "person";
 	String SALARY_CONTROLLER = "salary";
 	String SALARY_DRAFT_BONUS_CONTROLLER = "salaryDraftBonus";
 	String SALARY_DRAFT_CONTROLLER = "salaryDraft";
@@ -89,9 +93,6 @@ public interface IPayrollConstants {
 	String SALARY_TEST_LAUNCHER_NAME = "salaryTestLauncher";
 	String IRPF_TEST_LAUNCHER_NAME = "irpfTestLauncher";
 	String SETTLE_CONTROLLER_NAME = "settle";
-	String PAYMENT_UPDATE_CONTROLLER = "paymentUpdate";
-	String PAYROLL_WORK_PLACE_CONTROLLER = "payrollWorkPlace";
-	String PERSON_CONTROLLER_NAME = "person";
 	String SALARY_EXPENSE_CONTROLLER_NAME = "salaryExpense";
 
 	// ************************************************************

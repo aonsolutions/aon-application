@@ -20,7 +20,7 @@
 			
 				<c:if test="#{!contract.new}" >
 				
-					<aon:panelTabSet switchType="client">
+					<aon:panelTabSet >
 						
 						<aon:panelTab id="mainData" label="Datos Generales" >
 							<aon:panelGrid columns="2" 
@@ -42,7 +42,8 @@
 							</aon:panelCollapsible>
 						</aon:panelTab>
 
-						<aon:panelTab id="contrataData" label="Datos Contrat@" >
+						<aon:panelTab id="contrataData" label="Datos Contrat@"
+							actionListener="#{contract.onShowContrataData}">
 							
 							<c:if test="#{!contractContrata.new}" >
 								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_toolbar.xhtml" />
