@@ -166,7 +166,8 @@ public class ContrataCodeTablesWriter {
 				if(token.hasMoreTokens()){
 					token.nextToken();
 					if(token.hasMoreTokens()){
-						out.write(", \""+token.nextToken()+"\"");
+						String label = StringUtils.strip(token.nextToken());
+						out.write(", \""+(label.length()>80?(label.substring(0, 80)+"..."):label)+"\"");
 						if(token.hasMoreTokens()){
 							token.nextToken();
 							if(token.hasMoreTokens()){
