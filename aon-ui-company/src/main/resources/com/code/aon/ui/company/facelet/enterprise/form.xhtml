@@ -43,10 +43,13 @@
 				</ui:define>				
 			</ui:decorate>
 				
-			<ui:include 
-				src="/com/code/aon/ui/company/facelet/enterprise/formContent.xhtml">
-				<ui:param name="controller" value="#{enterprise}" />
-			</ui:include>
+			<aon:panelGrid id="listData" columns="2" cellspacing="10" styleClass="aon-panelGrid-formatting"
+				columnClasses="aon-width-half-plus aon-vertical-align-top,aon-width-half-minus aon-vertical-align-top">
+				<ui:include 
+					src="/com/code/aon/ui/company/facelet/enterprise/formContent.xhtml">
+					<ui:param name="controller" value="#{enterprise}" />
+				</ui:include>
+			</aon:panelGrid>
 				
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelTabSet selectedTab="#{enterprise.selectedTab}">				
