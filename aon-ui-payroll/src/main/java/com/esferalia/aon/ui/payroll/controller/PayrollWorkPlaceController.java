@@ -23,6 +23,7 @@ public class PayrollWorkPlaceController extends LinesController {
 	@Override
 	public void load(ActionEvent event, Serializable workPlaceId)
 			throws ManagerBeanException {
+		// FIXME necessary for gwt tree do not crash
 		super.load(event, obtainPayrollWorkPlace(workPlaceId).getId());
 	}
 	
@@ -38,7 +39,9 @@ public class PayrollWorkPlaceController extends LinesController {
 	
 	@Override
 	public void accept(ActionEvent event) {
-		insertCurrentTOWorkPlace();
+		if(this.isNew()){
+			insertCurrentTOWorkPlace();
+		}
 		super.accept(event);
 	}
 	

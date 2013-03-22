@@ -45,9 +45,7 @@
 						<aon:panelTab id="contrataData" label="Datos Contrat@"
 							actionListener="#{contract.onShowContrataData}">
 							
-							<c:if test="#{!contractContrata.new}" >
-								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_toolbar.xhtml" />
-							</c:if>
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_toolbar.xhtml" />
 						
 							<aon:panelGrid columns="4" >
 								<aon:outputText value="#{payrollBundle.payroll_enterprise}" />

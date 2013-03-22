@@ -10,6 +10,8 @@ import java.util.TreeMap;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -287,7 +289,9 @@ public class PayrollAppParamsController{
 		}
 
 		// SALARY PRINT PARAMS
-		getParameter(ICompanyConstants.REPORT_SALARY_DRAFT_PARAM).setValue(getDraftTemplateName());
+		if( StringUtils.isNotBlank(getParameter(ICompanyConstants.REPORT_SALARY_PARAM).getValue()) ){
+			getParameter(ICompanyConstants.REPORT_SALARY_DRAFT_PARAM).setValue(getDraftTemplateName());
+		}
 
 		// CONTRATA PARAMS
 		getParameter(CONTRATA_USER).setValue(getContrataUser());
@@ -295,7 +299,10 @@ public class PayrollAppParamsController{
 	}
 
 	private String getDraftTemplateName() throws ManagerBeanException {
-		return getParameter(ICompanyConstants.REPORT_SALARY_PARAM).getValue().replaceFirst(ICompanyConstants.SALARY, ICompanyConstants.SALARY_DRAFT);
+		if( StringUtils.isNotBlank(getParameter(ICompanyConstants.REPORT_SALARY_PARAM).getValue()) ){
+			return getParameter(ICompanyConstants.REPORT_SALARY_PARAM).getValue().replaceFirst(ICompanyConstants.SALARY, ICompanyConstants.SALARY_DRAFT);
+		}
+		return null;
 	}
 	
 	public void validateLogin(ActionEvent event){
