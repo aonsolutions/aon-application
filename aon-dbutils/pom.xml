@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>7.14-SNAPSHOT</version>
+		<version>7.14</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>aon-dbutils</artifactId>
@@ -11,9 +11,9 @@
 	<name>AON DB DBUTILS</name>
 
     <scm>
-            <url>http://dev.esferalia.com/websvn/wsvn/aon-dbutils</url>
-            <connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-dbutils</connection>
-            <developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-dbutils</developerConnection>
+            <url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.13.x/aon-dbutils</url>
+            <connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.13.x/aon-dbutils</connection>
+            <developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.13.x/aon-dbutils</developerConnection>
     </scm>
 
 	<dependencies>
