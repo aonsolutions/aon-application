@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="EDL">
+	<field name="cabecera" value="EDL" format="AlphaNumeric" pattern="X(3)" />
+	<field name="tipo_elemento_datos" value="bean" bean="EDL" property="tipoElementoDatos" format="AlphaNumeric" pattern="X(2)" />
+	<field name="clave" value="bean" bean="EDL" property="clave" format="Numeric" pattern="9(2)" />
+	<field name="elemento" value="bean" bean="EDL" property="elemento" format="Numeric" pattern="9(3)" />
+	<field name="importe" value="bean" bean="EDL" property="importe" format="Numeric" pattern="9(7)" />
+	<field name="signo" value="bean" bean="EDL" property="signo" format="AlphaNumeric" pattern="X(1)" />
+	<field name="tipo_resolucion" value="bean" bean="EDL" property="tipoResolucion" format="Numeric" pattern="9(2)" />
+	<field name="fecha_resolucion" value="bean" bean="EDL" property="fechaResolucion" format="AlphaNumeric" pattern="9(8)" />
+	<field name="inicio_periodo" value="bean" bean="EDL" property="inicioPeriodo" format="AlphaNumeric" pattern="9(8)" />
+	<field name="fin_periodo" value="bean" bean="EDL" property="finPeriodo" format="AlphaNumeric" pattern="9(8)" />
+	<field name="referencia" value="bean" bean="EDL" property="referencia" format="AlphaNumeric" pattern="X(17)" />
+	<field name="free1" value="         " format="AlphaNumeric" pattern="X(9)" />
+</register>

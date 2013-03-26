@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ubm:testcases xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ubmatrix.com/XBRL/2.1/conformance/2003-10-24 conformance.xsd" base="" description="Core Conformance" xmlns:ubm="http://www.ubmatrix.com/XBRL/2.1/conformance/2003-10-24">
+    <ubm:testcase href="200-xbrldie/202-DefaultValueUsedInInstanceError/202-TestCase-DefaultValueUsedInInstanceError.xml">
+        <ubm:variation name="defaultValueInInstance" description="Default values are present in the instance context, to raise xbrldie:DefaultValueUsedInInstanceError." />
+        <ubm:variation name="defaultValueInInstanceOK" description="Default values aren't present in the instance context." />
+    </ubm:testcase>
+    <ubm:testcase href="200-xbrldie/203-PrimaryItemDimensionallyInvalidError/203-TestCase-PrimaryItemDimensionallyInvalidError.xml">
+        <ubm:variation name="combinationOfCubesCase1Segment" description="Fig. 3 (line 1) One cube, all-valid: result-true." />
+        <ubm:variation name="combinationOfCubesCase6Segment" description="Fig. 3 (line 4) One cube, all-invalid: result-false." />
+        <ubm:variation name="combinationOfCubesCase2Segment" description="Fig. 3 (line 5) One cube, notAll-valid: result-false." />
+        <ubm:variation name="combinationOfCubesCase3Segment" description="Fig. 3 (line 3) Two cubes, all-valid, notAll-invalid: result-true." />
+        <ubm:variation name="combinationOfCubesCase4Segment" description="Fig. 3 (line 2) One cube, notAll-invalid: result-true." />
+        <ubm:variation name="combinationOfCubesCase5Segment" description="Fig. 3 (line 6) Two cubes, all-valid, notAll-valid: result-false: cubes are equivalent so are both satisfied." />
+        <ubm:variation name="contextForbiddenExplicitDimInSegment" description="Fig. 3 (6) Two cubes, all-valid, notAll-valid: result-false: Two fact values have separate contexts with segment dimensions, one (merlot/Japan) meets all hypercube and fails notAll and thus is ok, the second (sedan/UnitedKingdom) meets the condition of the notAll hypercube and thus is a forbidden dimension." />
+        <ubm:variation name="contextForbiddenExplicitDimMemberInScenario" description="Fig. 3 (6) Two cubes, all-valid, notAll-valid: result-false: Two fact values have separate contexts with scenario dimensions, one (merlot/Japan) meets all hypercube and fails notAll and thus is ok, the second (sedan/UnitedKingdom) meets the condition of the notAll hypercube and thus is a forbidden dimension." />
+        <ubm:variation name="contextImplicitDimNotInSegment" description="A typed dimension which should be in the segment is instead in the scenario, and the hypercube is not closed, by 3.1.3.1 #2 making the hypercube invalid, thus raising error." />
+        <ubm:variation name="contextImplicitDimNotInScenario" description="A typed dimension which should be in the scenario is instead in the segment, and the hypercube is not closed." />
+        <ubm:variation name="contextExplicitDimNotInSegment" description="An explicit dimension which should be in the segment is instead in the scenario, and the hypercube is not closed." />
+        <ubm:variation name="contextExplicitDimNotInScenario" description="An explicit dimension which should be in the scenario is instead in the segment, and the hypercube is not closed." />
+        <ubm:variation name="combinationOfCubesUnusableMemberInvalid" description="Two dimensions, one member (Merlot)'s dimension-domain was prohibited and replaced with an unusable dimension-domain." />
+        <ubm:variation name="combinationOfCubesUnusableDomainInvalid" description="Two dimensions, products domain is unusable." />
+        <ubm:variation name="closedEmptyHypercubeIsValid" description="Point 3.1.3 Fig 4 row 1" />
+        <ubm:variation name="openEmptyHypercubeIsValid" description="Point 3.1.3 Fig 4 row 2" />
+        <ubm:variation name="closedEmptyHypercubeIsInvalid" description="Point 3.1.3 Fig 4 row 3. It is invalid because the hypercube is closed and contains non expected information" />
+        <ubm:variation name="closedNotEmptyHypercubeIsValid" description="Point 3.1.3 Fig 4 row 4. No extra information is found" />
+        <ubm:variation name="closedNotEmptyHypercubeIsInvalid" description="Point 3.1.3 Fig 4 row 5. It is invalid because the hypercube is closed and contains non expected information" />
+        <ubm:variation name="openNotEmptyHypercubeIsValid" description="Point 3.1.3 Fig 4 row 6. It is valid because the hypercube is open" />
+        <ubm:variation name="InstanceValidAccordingToTwoDimensionalTaxonomies" description="The instance is valid because hypercubes are open" />
+        <ubm:variation name="InstanceInvalidAccordingToTwoDimensionalTaxonomies" description="The instance is invalid because hypercubes are closed" />
+        <ubm:variation name="InstanceInvalidTheValueIsNotADomainMember" description="The paragraph above Figure 2 in the XDT spec excludes the member element that has been used in the instance" />
+        <ubm:variation name="InstanceInvalidTheValueIsNotADomainMemberCase2" description="The paragraph above Figure 2 in the XDT spec excludes the member element that has been used in the instance" />
+        <ubm:variation name="ComplexHypercubeInheritance" description="Example 11 of the spec shows how inheritance should work. The instance is valid according to hypercubes in link1 (Default link)" />
+        <ubm:variation name="ComplexHypercubeInheritance2" description="Example 11 of the spec shows how inheritance should work, The instance is valid according to hypercubes in link2 extended link role" />
+        <ubm:variation name="ComplexHypercubeInheritance3" description="Example 11 of the spec shows how inheritance should work, The instance is Dimensionally invalid secondChildren and thirdChildren at lease must have dimensional information" />
+        <ubm:variation name="memberExcludedFromValidDomain1" description="The effective domain contains the same element twice. That element must be excluded from the domain because it has xbrldt:usable=false in one of the domains." />
+        <ubm:variation name="memberExcludedFromValidDomain2" description="The effective domain contains the same element twice. That element must be excluded from the domain because it has xbrldt:usable=false in one of the domains." />
+    </ubm:testcase>
+    <ubm:testcase href="200-xbrldie/204-RepeatedDimensionInInstanceError/204-TestCase-RepeatedDimensionInInstanceError.xml">
+        <ubm:variation name="contextContainsTypedDimensionValid" description="1.      A context MUST NOT contain more than one dimension value for every dimension. A validator MUST signal [Ins Err, 7] xbrldie:RepeatedDimensionInInstance when this rule is violated.  In this valid variation only one dimension value is provided." />
+        <ubm:variation name="contextContainsRepeatedDimension" description="1.      A context MUST NOT contain more than one dimension value for every dimension. A validator MUST signal [Ins Err, 7] xbrldie:RepeatedDimensionInInstance when this rule is violated.  In this case two customer names are provided for the same context segment." />
+    </ubm:testcase>
+    <ubm:testcase href="200-xbrldie/205-TypedMemberNotTypedDimensionError/205-TestCase-TypedMemberNotTypedDimensionError.xml">
+        <ubm:variation name="typedMemberIsExplicitInvalid" description="The content of the xlink:href attribute of a xbrldi:typedMember element MUST resolve to an typed dimension within the DTS of the instance document. A dimensional processor MUST raise an error [Ins Err, 8] xbrldie:TypedMemberNotTypedDimension if the content of the xlink:href attribute of xbrldi:explicitMember resolves (with xml:base) to anything other than a typed dimension declaration.  In this case it resolves to an explicit dimension." />
+    </ubm:testcase>
+    <ubm:testcase href="200-xbrldie/206-ExplicitMemberNotExplicitDimensionError/206-TestCase-ExplicitMemberNotExplicitDimensionError.xml">
+        <ubm:variation name="contextMemberNotExplicitDimension" description="The content of the xlink:href attribute of an xbrldi:explicitMember element MUST resolve to an explicit dimension within the DTS of the instance document.  In this case it resolves to a hypercube element instead.  The usual hypercube arc from primary item is not present in this test, to prevent missing dimension errors from also being detected." />
+    </ubm:testcase>
+    <ubm:testcase href="200-xbrldie/207-ExplicitMemberUndefinedQNameError/207-TestCase-ExplicitMemberUndefinedQNameError.xml">
+        <ubm:variation name="contextExplicitDimDomainMemberNotFound" description="The explicit dimension has a qName which doesn't correspond to an element declaration in the DTS of the instance." />
+    </ubm:testcase>
+</ubm:testcases>

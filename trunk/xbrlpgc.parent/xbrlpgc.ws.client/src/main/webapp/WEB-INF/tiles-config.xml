@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tiles-definitions>
+    <definition name="news.list"
+       path="/template/template.jsp">
+         <put name="begin" value="begin.jsp"/>	    
+         <put name="title"  value="title.jsp"/>	      
+         <put name="top"  value="top.jsp"/>	      
+         <put name="left"  value="left.jsp"/>	      
+         <put name="content"  value="list.jsp"/>		 
+    </definition>
+</tiles-definitions>

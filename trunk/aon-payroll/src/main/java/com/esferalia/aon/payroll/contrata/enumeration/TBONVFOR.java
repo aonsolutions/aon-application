@@ -1,0 +1,76 @@
+package com.esferalia.aon.payroll.contrata.enumeration;
+
+import com.code.aon.common.enumeration.IStringEnum;
+
+/** 
+ * Enumeration for represent Contrata (S.E.P.E.) TBONVFOR table codes.
+ * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ *  TBONVFOR	NIVEL FORMATIVO							29-02-2012					
+ *  ------------------------------------------------------------------------
+ */ 
+public enum TBONVFOR implements IStringEnum {
+
+	TBONVFOR_11( "11", "ESTUDIOS PRIMARIOS INCOMPLETOS", null, null ),
+	TBONVFOR_12( "12", "ESTUDIOS PRIMARIOS COMPLETOS", null, null ),
+	TBONVFOR_21( "21", "PROGRAMAS PARA LA FORMACIÓN E INSERCIÓN LABORAL QUE NO PRECISAN DE UNA TITULACIÓ...", null, null ),
+	TBONVFOR_22( "22", "PRIMERA ETAPA DE EDUCACIÓN SECUNDARIA SIN TÍTULO DE GRADUADO ESCOLAR O EQUIVALEN...", null, null ),
+	TBONVFOR_23( "23", "PRIMERA ETAPA DE EDUCACIÓN SECUNDARIA CON TÍTULO DE GRADUADO ESCOLAR O EQUIVALEN...", null, null ),
+	TBONVFOR_31( "31", "PROGRAMAS PARA LA FORMACIÓN E INSERCIÓN LABORAL QUE PRECISAN DE UNA TITULACIÓN D...", null, null ),
+	TBONVFOR_32( "32", "ENSEÑANZAS DE BACHILLERATO", null, null ),
+	TBONVFOR_33( "33", "ENSEÑANZAS DE GRADO MEDIO DE FORMACIÓN PROFESIONAL ESPECÍFICA, ARTES PLÁSTICAS, ...", null, null ),
+	TBONVFOR_34( "34", "ENSEÑANZAS DE GRADO MEDIO DE MÚSICA Y DANZA", null, null ),
+	TBONVFOR_41( "41", "ENSEÑANZAS PARA LA FORMACIÓN E INSERCIÓN LABORAL QUE PRECISAN DE UNA TITULACIÓN ...", null, null ),
+	TBONVFOR_51( "51", "ENSEÑANZAS DE GRADO SUPERIOR DE FORMACIÓN PROFESIONAL ESPECÍFICA Y EQUIVALENTE, ...", null, null ),
+	TBONVFOR_52( "52", "TÍTULOS PROPIOS DE LAS UNIVERSIDADES Y OTRAS ENSEÑANZAS QUE PRECISAN DEL TÍTULO ...", null, null ),
+	TBONVFOR_53( "53", "ENSEÑANZAS PARA LA FORMACIÓN E INSERCIÓN LABORAL QUE PRECISAN DE UNA FORMACIÓN P...", null, null ),
+	TBONVFOR_54( "54", "ENSEÑANZAS UNIVERSITARIAS DE PRIMER CICLO Y EQUIVALENTES O PERSONAS QUE HAN APRO...", null, null ),
+	TBONVFOR_55( "55", "ENSEÑANZAS UNIVERSITARIAS DE SEGUNDO CICLO Y EQUIVALENTES (LICENCIADOS)", null, null ),
+	TBONVFOR_56( "56", "ESTUDIOS OFICIALES DE ESPECIALIZACIÓN PROFESIONAL", null, null ),
+	TBONVFOR_57( "57", "PROGRAMAS DE POSTGRADO IMPARTIDOS POR LAS UNIVERSIDADES U OTRAS INSTITUCIONES", null, null ),
+	TBONVFOR_58( "58", "PROGRAMAS DE FORMACIÓN E INSERCIÓN LABORAL QUE PRECISAN DE UNA TITULACIÓN UNIVER...", null, null ),
+	TBONVFOR_59( "59", "ENSEÑANZAS UNIVERSITARIAS DE GRADO", null, null ),
+	TBONVFOR_60( "60", "ENSEÑANZAS UNIVERSITARIAS DE MÁSTER", null, null ),
+	TBONVFOR_61( "61", "DOCTORADO UNIVERSITARIO", null, null ),
+	TBONVFOR_80( "80", "SIN ESTUDIOS", null, null ),
+	;
+	private String value;
+	private String label;
+	private String startDate;
+	private String endDate;
+
+	TBONVFOR( String value, String label, String startDate, String endDate ) {
+		this.value = value;
+		this.label = label;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
+	@Override
+	public String getValue() {
+		return value;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public static TBONVFOR getEnumByValue(String expression) {
+		for( TBONVFOR o : TBONVFOR.values() ) {
+			if ( o.getValue().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
+}

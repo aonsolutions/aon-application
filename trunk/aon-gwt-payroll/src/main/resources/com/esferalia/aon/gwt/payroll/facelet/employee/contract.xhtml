@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<style>
+		.aon-group-body-internal .aon-panelGrid {
+			width: 100%;
+		}
+	</style>
+	
+
+	<aon:form >
+		<c:if test="#{edit}">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{payrollBundle.payroll_contract_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+	
+	
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="Contract-Save" value="#{bundle.aon_accept}"
+						reRender="contractMainGrid"
+						styleClass="aon-finding-toolbar-item aon-icon-accept">
+						<aon:actionListener method="#{person.accept}" />
+						<aon:actionListener method="#{contract.accept}" />
+					</aon:commandButton>
+				</ui:define>
+	
+			</ui:decorate>
+		</c:if>
+		<c:if test="#{!edit}">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{payrollBundle.payroll_contract_module}" />
+			</ui:decorate>
+		</c:if>
+		
+		<aon:div
+			style="overflow: auto; position: absolute; left: 0px; top: 2em; right: 0px; bottom: 0px;">
+
+			<aon:div style="position: relative">
+
+				<aon:panelGrid id="contractMainGrid" columns="1" cellspacing="10"
+					styleClass="aon-panelGrid-formatting" columnClasses="aon-width-all">
+
+					<aon:div styleClass="aon-group">
+						<aon:div styleClass="aon-group-title">
+							<aon:outputText value="#{payrollBundle.payroll_contract_data}" />
+						</aon:div>
+						<aon:div styleClass="aon-group-body">
+							<aon:div styleClass="aon-group-body-internal">
+								<ui:include
+									src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml">
+									<ui:param name="controller" value="#{contract}" />
+								</ui:include>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+
+					<aon:div styleClass="aon-group">
+						<aon:div styleClass="aon-group-title">
+							<aon:outputText value="#{payrollBundle.payroll_person_data}" />
+						</aon:div>
+						<aon:div styleClass="aon-group-body">
+							<aon:div styleClass="aon-group-body-internal">
+								<ui:include
+									src="/com/code/aon/ui/registry/facelet/person/formContent.xhtml">
+									<ui:param name="controller" value="#{person}" />
+								</ui:include>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+
+				</aon:panelGrid>
+			</aon:div>
+
+		</aon:div>
+	</aon:form>
+
+	<aon:lookupButtonPopup lookup="#{agreementLookup}" />
+
+	<ui:include
+		src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+
+</ui:composition>

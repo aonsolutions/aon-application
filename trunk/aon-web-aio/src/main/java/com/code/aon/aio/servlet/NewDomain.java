@@ -1,0 +1,60 @@
+package com.code.aon.aio.servlet;
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+
+public class NewDomain extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	public NewDomain() {
+		super();
+	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doRequest(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doRequest(request, response);
+	}
+
+	private void doRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		try {
+			
+			DomainServletUtil util = new DomainServletUtil(request);
+			String[] command = util.getNewDomainCommand();
+			System.out.print( StringUtils.join(command, " ") );
+			
+			Runtime r = Runtime.getRuntime();
+			Process p = r.exec(command);
+			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+			int exitVal = p.waitFor();
+			
+			util.doResponse(response, stdInput, stdError, exitVal );
+			
+		} catch (Throwable e) {
+			
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.setContentType("text/html");
+			response.getWriter().print("<html><head><head><body>");
+			response.getWriter().print("Se ha producido un error interno. [" + e.getMessage()+ "]");
+			response.getWriter().print("</body></html>");
+			response.getWriter().flush();
+			
+			response.getWriter().flush();
+			e.printStackTrace();
+		}
+
+	}
+	
+}

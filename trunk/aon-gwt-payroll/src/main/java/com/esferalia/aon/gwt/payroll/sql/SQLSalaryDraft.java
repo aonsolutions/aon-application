@@ -1,0 +1,949 @@
+package com.esferalia.aon.gwt.payroll.sql;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.util.Calendar;
+import java.util.Date;
+
+import com.esferalia.aon.gwt.payroll.shared.Deduction;
+import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementDataColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelDataColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractDeductionColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.DeductionConceptColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryBonusColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryCostColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryDataColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryDeductionColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryEmbargoColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryPaymentColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SystemDeductionColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
+import com.esferalia.aon.salary.expression.Period;
+
+public class SQLSalaryDraft {
+
+	public static void save(Connection conn, SalaryDraft draft, Integer domain,
+			Integer parentDomain) throws SQLException {
+		Integer contract = draft.getEmployee().getId();
+
+		for (Variable variable : draft.getDraftContext()) {
+			makeRoom(conn, variable, contract);
+			String expression = variable.getExpression();
+			if (!"REMOVE_VARIABLE()".equals(expression)
+					|| inAgreement(conn, variable, contract)
+					|| inSystem(conn, variable, domain, parentDomain)) {
+				insert(conn, variable, contract, domain);
+			} // end-if : If it's not REMOVE() or is at agreement or system.
+		}
+
+		for (Payment payment : draft.getDraftPayments()) {
+			makeRoom(conn, payment, contract);
+			String expression = payment.getExpression();
+			if (!"REMOVE()".equals(expression)
+					|| inAgreement(conn, payment, contract)
+					|| inSystem(conn, payment, domain, parentDomain)) {
+				insert(conn, payment, contract, domain);
+			} // end-if : If it's not REMOVE() or is at agreement or system.
+		}
+
+		for (Deduction deduction : draft.getDraftDeductions()) {
+			makeRoom(conn, deduction, contract);
+			String expression = deduction.getExpression();
+			if (!"REMOVE()".equals(expression)
+					|| inSystem(conn, deduction, domain, parentDomain)) {
+				insert(conn, deduction, contract, domain);
+			}
+		}
+	}
+
+
+	public static void removeSalary(Connection conn, SalaryDraft draft) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement salaryQueryStmt = null;
+		PreparedStatement costDeleteStmt = null;
+		PreparedStatement bonusDeleteStmt = null;
+		PreparedStatement paymentDeleteStmt = null;
+		PreparedStatement deductionDeleteStmt = null;
+		try {
+
+			costDeleteStmt = conn.prepareStatement("DELETE FROM " + SQLConstants.SALARY_COST + 
+					" WHERE " + SalaryCostColumns.SALARY + " = ? ");
+			
+			bonusDeleteStmt = conn.prepareStatement("DELETE FROM " + SQLConstants.SALARY_BONUS + 
+					" WHERE " + SalaryBonusColumns.SALARY + " = ? ");
+
+			paymentDeleteStmt = conn.prepareStatement("DELETE FROM " + SQLConstants.SALARY_PAYMENT + 
+					" WHERE " + SalaryPaymentColumns.SALARY + " = ? ");
+
+			deductionDeleteStmt = conn.prepareStatement("DELETE FROM " + SQLConstants.SALARY_DEDUCTION + 
+					" WHERE " + SalaryDeductionColumns.SALARY + " = ? ");
+
+			salaryQueryStmt = conn.prepareStatement("SELECT " + SalaryColumns.ID +
+					" FROM " + SQLConstants.SALARY + 
+					" WHERE " + SQLConstants.SALARY + "." + SalaryColumns.CONTRACT + " = ? " + 
+					" AND " + SQLConstants.SALARY + "."  + SalaryColumns.TYPE + " = ? " + 
+					" AND " + SQLConstants.SALARY + "."  + SalaryColumns.START_DATE + " = ? " + 
+					" AND " + SQLConstants.SALARY + "."  + SalaryColumns.END_DATE + " = ? " , 
+					ResultSet.TYPE_FORWARD_ONLY,
+					ResultSet.CONCUR_UPDATABLE);
+
+			salaryQueryStmt.setInt(1, draft.getEmployee().getId());
+			salaryQueryStmt.setShort(2, enum2Short(draft.getType()));
+			salaryQueryStmt.setDate(3, date2sql(draft.getStartDate()));
+			salaryQueryStmt.setDate(4, date2sql(draft.getEndDate()));
+			
+			rs = salaryQueryStmt.executeQuery();
+			while ( rs.next() ) {
+				int salaryId = rs.getInt(SalaryColumns.ID);
+				costDeleteStmt.setInt(1, salaryId);
+				costDeleteStmt.execute();
+				bonusDeleteStmt.setInt(1, salaryId);
+				bonusDeleteStmt.execute();
+				paymentDeleteStmt.setInt(1, salaryId);
+				paymentDeleteStmt.execute();
+				deductionDeleteStmt.setInt(1, salaryId);
+				deductionDeleteStmt.execute();
+				
+				rs.deleteRow();
+			}
+			
+			
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (salaryQueryStmt != null)
+				salaryQueryStmt.close();
+			if (costDeleteStmt != null)
+				costDeleteStmt.close();
+			if (bonusDeleteStmt != null)
+				bonusDeleteStmt.close();
+			if (paymentDeleteStmt != null)
+				paymentDeleteStmt.close();
+			if (deductionDeleteStmt != null)
+				deductionDeleteStmt.close();
+		}
+	}
+
+
+	// -------------------------------------------
+	// Private
+	// -------------------------------------------
+	
+	
+
+	private static final String CONTRACT_DATA_INSERT = "INSERT INTO "
+			+ SQLConstants.CONTRACT_DATA + " ( " + ContractDataColumns.DOMAIN
+			+ ", " + ContractDataColumns.CONTRACT + ", "
+			+ ContractDataColumns.NAME + ", " + ContractDataColumns.EXPRESSION
+			+ ", " + ContractDataColumns.START_DATE + ", "
+			+ ContractDataColumns.END_DATE + " ) VALUES (?, ?, ?, ?, ?, ?)";
+
+	private static final String CONTRACT_DATA_DELETE_SQL = "DELETE FROM "
+			+ SQLConstants.CONTRACT_DATA + " WHERE " + ContractDataColumns.ID
+			+ " = ? ";
+
+	private static void makeRoom(Connection conn, Variable variable,
+			Integer contract) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement queryStmt = null;
+		PreparedStatement insertStmt = null;
+		PreparedStatement deleteStmt = null;
+		try {
+
+			java.sql.Date endDate = date2sql(variable.getEndDate());
+			java.sql.Date startDate = date2sql(variable.getStartDate());
+
+			String sql = "SELECT * " + " FROM " + SQLConstants.CONTRACT_DATA
+					+ " WHERE " + ContractDataColumns.CONTRACT + "= ? "
+					+ " AND " + ContractDataColumns.NAME + " = ? " + " AND ( "
+					+ ContractDataColumns.END_DATE + " IS NULL " + " OR "
+					+ ContractDataColumns.END_DATE + " >= ?  ) ";
+
+			if (endDate != null)
+				sql += " AND " + ContractDataColumns.START_DATE + " <= ? ";
+
+			queryStmt = conn.prepareStatement(sql);
+
+			queryStmt.setInt(1, contract);
+			queryStmt.setString(2, variable.getName());
+			queryStmt.setDate(3, startDate);
+
+			if (endDate != null)
+				queryStmt.setDate(4, endDate);
+
+			deleteStmt = conn.prepareStatement(CONTRACT_DATA_DELETE_SQL);
+
+			insertStmt = conn.prepareStatement(CONTRACT_DATA_INSERT);
+
+			rs = queryStmt.executeQuery();
+			while (rs.next()) {
+				Date sqlStartDate = rs.getDate(ContractDataColumns.START_DATE);
+				Date sqlEndDate = rs.getDate(ContractDataColumns.END_DATE);
+
+				setInt(insertStmt, 1, rs.getInt(ContractDataColumns.DOMAIN));
+				setInt(insertStmt, 2, rs.getInt(ContractDataColumns.CONTRACT));
+				setString(insertStmt, 3, rs.getString(ContractDataColumns.NAME));
+				setString(insertStmt, 4,
+						rs.getString(ContractDataColumns.EXPRESSION));
+				setDate(insertStmt, 5,sqlStartDate);
+				setDate(insertStmt, 6, sqlEndDate);
+
+				if (Period.compare(startDate, sqlStartDate) > 0) {
+					setDate(insertStmt, 6, date2sql(addDay(startDate, -1)));
+					insertStmt.execute();
+					setDate(insertStmt, 6, sqlEndDate);
+				}
+				if (Period.compare(endDate, sqlEndDate) < 0) {
+					setDate(insertStmt, 5, date2sql(addDay(endDate, 1)));
+					insertStmt.execute();
+				}
+
+				// delete old
+				Integer id = rs.getInt(ContractDataColumns.ID);
+				deleteStmt.setInt(1, id);
+				deleteStmt.execute();
+			}
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (queryStmt != null)
+				queryStmt.close();
+			if (deleteStmt != null)
+				deleteStmt.close();
+			if (insertStmt != null)
+				insertStmt.close();
+		}
+	}
+
+	private static boolean inSystem(Connection conn, Variable variable,
+			Integer domain, Integer parentDomain) throws SQLException {
+
+		ResultSet rs = null;
+		PreparedStatement queryStmt = null;
+		try {
+
+			String sql = "SELECT 1 " + " FROM " + SQLConstants.SYSTEM_DATA
+					+ " AS DATA" + " WHERE DATA." + SystemDataColumns.DOMAIN
+					+ " IN ( ?, ? ) " + " AND DATA." + SystemDataColumns.NAME
+					+ " =  ? " + " AND DATA." + SystemDataColumns.START_DATE
+					+ " <= ? " + " AND ( DATA." + SystemDataColumns.END_DATE
+					+ " >= ? " + " OR DATA." + SystemDataColumns.END_DATE
+					+ " IS NULL )";
+
+			queryStmt = conn.prepareStatement(sql);
+			queryStmt.setInt(1, domain);
+			queryStmt.setInt(2, parentDomain);
+			queryStmt.setString(3, variable.getName());
+			queryStmt.setDate(4, date2sql(variable.getEndDate()));
+			queryStmt.setDate(5, date2sql(variable.getStartDate()));
+
+			rs = queryStmt.executeQuery();
+
+			return rs.next();
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (queryStmt != null)
+				queryStmt.close();
+		}
+	}
+
+	private static boolean inAgreement(Connection conn, Variable variable,
+			Integer contract) throws SQLException {
+
+		ResultSet rs = null;
+		PreparedStatement queryStmt = null;
+		try {
+
+			String sql = "SELECT 1 " + " FROM "
+					+ SQLConstants.AGREEMENT_LEVEL_DATA + " AS DATA" + ", "
+					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + " AS CATEGORY"
+					+ ", " + SQLConstants.CONTRACT + " AS CONTRACT "
+					+ " WHERE CONTRACT." + ContractColumns.ID + " =  ? "
+					+ " AND CONTRACT."
+					+ ContractColumns.AGREEMENT_LEVEL_CATEGORY + " = CATEGORY."
+					+ AgreementLevelCategoryColumns.ID + " AND CATEGORY."
+					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL
+					+ " = LEVEL." + AgreementLevelDataColumns.ID + " AND DATA."
+					+ AgreementLevelDataColumns.NAME + " =  ? " + " AND DATA."
+					+ AgreementLevelDataColumns.START_DATE + " <= ? "
+					+ " AND ( DATA." + AgreementLevelDataColumns.END_DATE
+					+ " >= ? " + " OR DATA."
+					+ AgreementLevelDataColumns.END_DATE + " IS NULL )";
+
+			queryStmt = conn.prepareStatement(sql);
+			queryStmt.setInt(1, contract);
+			queryStmt.setString(2, variable.getName());
+			queryStmt.setDate(3, date2sql(variable.getEndDate()));
+			queryStmt.setDate(4, date2sql(variable.getStartDate()));
+
+			rs = queryStmt.executeQuery();
+
+			if (rs.next())
+				return true;
+			rs.close();
+
+			sql = "SELECT 1 " + " FROM " + SQLConstants.AGREEMENT_DATA
+					+ " AS DATA" + ", " + SQLConstants.AGREEMENT_LEVEL
+					+ " AS LEVEL" + ", "
+					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + " AS CATEGORY"
+					+ ", " + SQLConstants.CONTRACT + " AS CONTRACT "
+					+ " WHERE CONTRACT." + ContractColumns.ID + " =  ? "
+					+ " AND CONTRACT."
+					+ ContractColumns.AGREEMENT_LEVEL_CATEGORY + " = CATEGORY."
+					+ AgreementLevelCategoryColumns.ID + " AND CATEGORY."
+					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL
+					+ " = LEVEL." + AgreementLevelColumns.ID + " AND LEVEL."
+					+ AgreementLevelColumns.AGREEMENT + " =  DATA."
+					+ AgreementDataColumns.AGREEMENT + " AND DATA."
+					+ AgreementDataColumns.NAME + " =  ? " + " AND DATA."
+					+ AgreementDataColumns.START_DATE + " <= ? "
+					+ " AND ( DATA." + AgreementDataColumns.END_DATE + " >= ? "
+					+ " OR DATA." + AgreementDataColumns.END_DATE
+					+ " IS NULL )";
+
+			queryStmt = conn.prepareStatement(sql);
+			queryStmt.setInt(1, contract);
+			queryStmt.setString(2, variable.getName());
+			queryStmt.setDate(3, date2sql(variable.getEndDate()));
+			queryStmt.setDate(4, date2sql(variable.getStartDate()));
+
+			return rs.next();
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (queryStmt != null)
+				queryStmt.close();
+		}
+	}
+
+	private static void insert(Connection conn, Variable variable,
+			Integer contract, Integer domain) throws SQLException {
+		PreparedStatement insertStmt = null;
+		try {
+
+			insertStmt = conn.prepareStatement(CONTRACT_DATA_INSERT);
+
+			setInt(insertStmt, 1, domain);
+			setInt(insertStmt, 2, contract);
+			setString(insertStmt, 3, variable.getName());
+			setString(insertStmt, 4, variable.getExpression());
+			setDate(insertStmt, 5, date2sql(variable.getStartDate()));
+			setDate(insertStmt, 6, date2sql(variable.getEndDate()));
+
+			insertStmt.execute();
+
+		} finally {
+			if (insertStmt != null)
+				insertStmt.close();
+		}
+	}
+
+	private static final String CONTRACT_PAYMENT_INSERT = "INSERT INTO "
+			+ SQLConstants.CONTRACT_PAYMENT + "( "
+			+ ContractPaymentColumns.DOMAIN + ", "
+			+ ContractPaymentColumns.CONTRACT + ", "
+			+ ContractPaymentColumns.TYPE + ", " + ContractPaymentColumns.MONTH
+			+ ", " + ContractPaymentColumns.SALARY_TYPE + ", "
+			+ ContractPaymentColumns.DESCRIPTION + ", "
+			+ ContractPaymentColumns.EXPRESSION + ", "
+			+ ContractPaymentColumns.IRPF_EXPRESSION + ", "
+			+ ContractPaymentColumns.QUOTE_EXPRESSION + ", "
+			+ ContractPaymentColumns.START_DATE + ", "
+			+ ContractPaymentColumns.END_DATE + ", "
+			+ ContractPaymentColumns.PAYMENT_CONCEPT
+			+ " ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+
+	private static final String CONTRACT_PAYMENT_DELETE_SQL = "DELETE FROM "
+			+ SQLConstants.CONTRACT_PAYMENT + " WHERE "
+			+ ContractPaymentColumns.ID + " = ? ";
+
+	private static void makeRoom(Connection conn, Payment payment,
+			Integer contract) throws SQLException {
+
+		ResultSet rs = null;
+		PreparedStatement queryStmt = null;
+		PreparedStatement insertStmt = null;
+		PreparedStatement deleteStmt = null;
+		try {
+
+			java.sql.Date endDate = date2sql(payment.getEndDate());
+			java.sql.Date startDate = date2sql(payment.getStartDate());
+
+			String sql = "SELECT * " + " FROM " + SQLConstants.CONTRACT_PAYMENT
+					+ " WHERE " + ContractPaymentColumns.ID + " = ? ";
+
+			queryStmt = conn.prepareStatement(sql);
+
+			queryStmt.setInt(1, payment.getId());
+
+			deleteStmt = conn.prepareStatement(CONTRACT_PAYMENT_DELETE_SQL);
+
+			insertStmt = conn.prepareStatement(CONTRACT_PAYMENT_INSERT);
+
+			rs = queryStmt.executeQuery();
+			if (rs.next()) {
+				Date sqlStartDate = rs.getDate(ContractDataColumns.START_DATE);
+				Date sqlEndDate = rs.getDate(ContractDataColumns.END_DATE);
+
+				// Be care of primitive values ( int, short... ) that can be
+				// null.
+				// With 'getXXX' methods if the value is SQL NULL, the value
+				// returned is 0.
+				setInt(insertStmt, 1, rs.getInt(ContractPaymentColumns.DOMAIN));
+				setInt(insertStmt, 2,
+						rs.getInt(ContractPaymentColumns.CONTRACT));
+				set(insertStmt, 3, rs.getObject(ContractPaymentColumns.TYPE),
+						Types.TINYINT); // Be care type can be null
+				set(insertStmt, 4, rs.getObject(ContractPaymentColumns.MONTH),
+						Types.TINYINT); // Be care month can be null
+				set(insertStmt, 5,
+						rs.getObject(ContractPaymentColumns.SALARY_TYPE),
+						Types.TINYINT); // Be care salary type can be null
+				setString(insertStmt, 6,
+						rs.getString(ContractPaymentColumns.DESCRIPTION));
+				setString(insertStmt, 7,
+						rs.getString(ContractPaymentColumns.EXPRESSION));
+				setString(insertStmt, 8,
+						rs.getString(ContractPaymentColumns.IRPF_EXPRESSION));
+				setString(insertStmt, 9,
+						rs.getString(ContractPaymentColumns.QUOTE_EXPRESSION));
+				setDate(insertStmt, 10,
+						rs.getDate(ContractPaymentColumns.START_DATE));
+				setDate(insertStmt, 11,
+						rs.getDate(ContractPaymentColumns.END_DATE));
+				set(insertStmt, 12,
+						rs.getObject(ContractPaymentColumns.PAYMENT_CONCEPT),
+						Types.INTEGER); // Be payment_concept month can be null
+
+				if (Period.compare(startDate, sqlStartDate) > 0) {
+					setDate(insertStmt, 11, date2sql(addDay(startDate, -1)));
+					insertStmt.execute();
+					setDate(insertStmt, 11, sqlEndDate); // restores original
+															// end date
+				}
+				if (Period.compare(endDate, sqlEndDate) < 0) {
+					setDate(insertStmt, 10, date2sql(addDay(endDate, 1)));
+					insertStmt.execute();
+				}
+
+				// delete old
+				Integer id = rs.getInt(ContractPaymentColumns.ID);
+				deleteStmt.setInt(1, id);
+				deleteStmt.execute();
+			}
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (queryStmt != null)
+				queryStmt.close();
+			if (deleteStmt != null)
+				deleteStmt.close();
+			if (insertStmt != null)
+				insertStmt.close();
+		}
+	}
+
+	private static boolean inAgreement(Connection conn, Payment payment,
+			Integer contract) throws SQLException {
+
+		if (payment.getConceptId() == null)
+			return false;
+
+		ResultSet rs = null;
+		PreparedStatement queryStmt = null;
+		try {
+
+			String sql = "SELECT 1 " + " FROM "
+					+ SQLConstants.AGREEMENT_PAYMENT + " AS PAYMENT" + ", "
+					+ SQLConstants.AGREEMENT_LEVEL + " AS LEVEL" + ", "
+					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + " AS CATEGORY"
+					+ ", " + SQLConstants.CONTRACT + " AS CONTRACT "
+					+ " WHERE CONTRACT." + ContractColumns.ID + " =  ? "
+					+ " AND CONTRACT."
+					+ ContractColumns.AGREEMENT_LEVEL_CATEGORY + " = CATEGORY."
+					+ AgreementLevelCategoryColumns.ID + " AND CATEGORY."
+					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL
+					+ " = LEVEL." + AgreementLevelColumns.ID + " AND LEVEL."
+					+ AgreementLevelColumns.AGREEMENT + " =  PAYMENT."
+					+ AgreementPaymentColumns.AGREEMENT + " AND PAYMENT."
+					+ AgreementPaymentColumns.PAYMENT_CONCEPT + " =  ? "
+					+ " AND PAYMENT." + AgreementPaymentColumns.START_DATE
+					+ " <= ? " + " AND ( PAYMENT."
+					+ AgreementPaymentColumns.END_DATE + " >= ? "
+					+ " OR PAYMENT." + AgreementPaymentColumns.END_DATE
+					+ " IS NULL )";
+
+			queryStmt = conn.prepareStatement(sql);
+			queryStmt.setInt(1, contract);
+			queryStmt.setInt(2, payment.getConceptId());
+			queryStmt.setDate(3, date2sql(payment.getEndDate()));
+			queryStmt.setDate(4, date2sql(payment.getStartDate()));
+
+			rs = queryStmt.executeQuery();
+
+			return rs.next();
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (queryStmt != null)
+				queryStmt.close();
+		}
+	}
+
+	private static boolean inSystem(Connection conn, Payment payment,
+			Integer domain, Integer parentDomain) throws SQLException {
+
+		if (payment.getConceptId() == null)
+			return false;
+
+		ResultSet rs = null;
+		PreparedStatement queryStmt = null;
+		try {
+
+			String sql = "SELECT 1 " + " FROM " + SQLConstants.SYSTEM_PAYMENT
+					+ " AS PAYMENT" + " WHERE PAYMENT."
+					+ SystemPaymentColumns.DOMAIN + " IN ( ?, ? ) "
+					+ " AND PAYMENT." + SystemPaymentColumns.PAYMENT_CONCEPT
+					+ " =  ? " + " AND PAYMENT."
+					+ SystemPaymentColumns.START_DATE + " <= ? "
+					+ " AND ( PAYMENT." + SystemPaymentColumns.END_DATE
+					+ " >= ? " + " OR PAYMENT." + SystemPaymentColumns.END_DATE
+					+ " IS NULL )";
+
+			queryStmt = conn.prepareStatement(sql);
+			queryStmt.setInt(1, domain);
+			queryStmt.setInt(2, parentDomain);
+			queryStmt.setInt(3, payment.getConceptId());
+			queryStmt.setDate(4, date2sql(payment.getEndDate()));
+			queryStmt.setDate(5, date2sql(payment.getStartDate()));
+
+			rs = queryStmt.executeQuery();
+
+			return rs.next();
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (queryStmt != null)
+				queryStmt.close();
+		}
+	}
+
+	private static void insert(Connection conn, Payment payment,
+			Integer contract, Integer domain) throws SQLException {
+		PreparedStatement insertStmt = null;
+		try {
+			if (payment.getConceptId() != null)
+				clearConceptInherit(conn, payment);
+
+			insertStmt = conn.prepareStatement(CONTRACT_PAYMENT_INSERT);
+
+			setInt(insertStmt, 1, domain);
+			setInt(insertStmt, 2, contract);
+
+			setShort(insertStmt, 3, enum2Short(payment.getType()));
+			setShort(insertStmt, 4, payment.getMonth());
+			setShort(insertStmt, 5, enum2Short(payment.getSalaryType()));
+
+			setString(insertStmt, 6, payment.getDescription());
+			setString(insertStmt, 7, payment.getExpression());
+			setString(insertStmt, 8, payment.getIrpfExpression());
+			setString(insertStmt, 9, payment.getQuoteExpression());
+			setDate(insertStmt, 10, date2sql(payment.getStartDate()));
+			setDate(insertStmt, 11, date2sql(payment.getEndDate()));
+
+			setInt(insertStmt, 12, payment.getConceptId());
+
+			insertStmt.execute();
+
+		} finally {
+			if (insertStmt != null)
+				insertStmt.close();
+		}
+	}
+
+	private static void clearConceptInherit(Connection conn, Payment payment)
+			throws SQLException {
+
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			String sql = "SELECT * FROM " + SQLConstants.PAYMENT_CONCEPT
+					+ " WHERE " + PaymentConceptColumns.ID + " = ? ";
+
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, payment.getConceptId());
+
+			rs = stmt.executeQuery();
+			if (rs.next()) {
+				Payment.Type type = getPaymentType(rs
+						.getObject(PaymentConceptColumns.TYPE));
+				if (payment.getType() == type)
+					payment.setType(null);
+				String description = rs
+						.getString(PaymentConceptColumns.DESCRIPTION);
+				if (sameString(description, payment.getDescription()))
+					payment.setDescription(null);
+				String expression = rs
+						.getString(PaymentConceptColumns.EXPRESSION);
+				if (sameString(expression, payment.getExpression()))
+					payment.setExpression(null);
+				String irpfExpression = rs
+						.getString(PaymentConceptColumns.IRPF_EXPRESSION);
+				if (sameString(irpfExpression, payment.getIrpfExpression()))
+					payment.setIrpfExpression(null);
+				String quoteExpression = rs
+						.getString(PaymentConceptColumns.QUOTE_EXPRESSION);
+				if (sameString(quoteExpression, payment.getQuoteExpression()))
+					payment.setQuoteExpression(null);
+
+			}
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static final String CONTRACT_DEDUCTION_INSERT = "INSERT INTO "
+			+ SQLConstants.CONTRACT_DEDUCTION + "( "
+			+ ContractDeductionColumns.DOMAIN + ", "
+			+ ContractDeductionColumns.CONTRACT + ", "
+			+ ContractDeductionColumns.TYPE + ", "
+			+ ContractDeductionColumns.MONTH + ", "
+			+ ContractDeductionColumns.DESCRIPTION + ", "
+			+ ContractDeductionColumns.EXPRESSION + ", "
+			+ ContractDeductionColumns.START_DATE + ", "
+			+ ContractDeductionColumns.END_DATE + ", "
+			+ ContractDeductionColumns.DEDUCTION_CONCEPT
+			+ " ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+	private static final String CONTRACT_DEDUCTION_DELETE_SQL = "DELETE FROM "
+			+ SQLConstants.CONTRACT_DEDUCTION + " WHERE "
+			+ ContractDeductionColumns.ID + " = ? ";
+
+	private static void makeRoom(Connection conn, Deduction deduction,
+			Integer contract) throws SQLException {
+
+		ResultSet rs = null;
+		PreparedStatement queryStmt = null;
+		PreparedStatement insertStmt = null;
+		PreparedStatement deleteStmt = null;
+		try {
+
+			java.sql.Date endDate = date2sql(deduction.getEndDate());
+			java.sql.Date startDate = date2sql(deduction.getStartDate());
+
+			String sql = "SELECT * " + " FROM "
+					+ SQLConstants.CONTRACT_DEDUCTION + " WHERE "
+					+ ContractDeductionColumns.ID + " = ? ";
+
+			queryStmt = conn.prepareStatement(sql);
+			queryStmt.setInt(1, deduction.getId());
+
+			deleteStmt = conn.prepareStatement(CONTRACT_DEDUCTION_DELETE_SQL);
+			insertStmt = conn.prepareStatement(CONTRACT_DEDUCTION_INSERT);
+
+			rs = queryStmt.executeQuery();
+			if (rs.next()) {
+				Date sqlStartDate = rs.getDate(ContractDataColumns.START_DATE);
+				Date sqlEndDate = rs.getDate(ContractDataColumns.END_DATE);
+
+				// Be care of primitive values ( int, short... ) that can be
+				// null.
+				// With 'getXXX' methods if the value is SQL NULL, the value
+				// returned is 0.
+				setInt(insertStmt, 1,
+						rs.getInt(ContractDeductionColumns.DOMAIN)); // NOT NULL
+				setInt(insertStmt, 2,
+						rs.getInt(ContractDeductionColumns.CONTRACT)); // NOT  NULL
+				set(insertStmt, 3, rs.getObject(ContractDeductionColumns.TYPE),
+						Types.TINYINT); // DEFAULT NULL
+				set(insertStmt, 4,
+						rs.getObject(ContractDeductionColumns.MONTH),
+						Types.TINYINT); // DEFAULT NULL
+				setString(insertStmt, 5,
+						rs.getString(ContractDeductionColumns.DESCRIPTION));
+				setString(insertStmt, 6,
+						rs.getString(ContractDeductionColumns.EXPRESSION));
+				setDate(insertStmt, 7, sqlStartDate);
+				setDate(insertStmt, 8, sqlEndDate);
+
+				set(insertStmt, 9,
+						rs.getObject(ContractDeductionColumns.DEDUCTION_CONCEPT), Types.INTEGER);
+
+				if (Period.compare(startDate, sqlStartDate) > 0) {
+					setDate(insertStmt, 8, date2sql(addDay(startDate, -1)));
+					insertStmt.execute();
+					setDate(insertStmt, 8, sqlEndDate); // restores original end date for subsequent inserts
+				}
+				if (Period.compare(endDate, sqlEndDate) < 0) {
+					setDate(insertStmt, 7, date2sql(addDay(endDate, 1)));
+					insertStmt.execute();
+				}
+
+				// delete old
+				Integer id = rs.getInt(ContractPaymentColumns.ID);
+				deleteStmt.setInt(1, id);
+				deleteStmt.execute();
+			}
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (queryStmt != null)
+				queryStmt.close();
+			if (deleteStmt != null)
+				deleteStmt.close();
+			if (insertStmt != null)
+				insertStmt.close();
+		}
+	}
+
+	private static boolean inSystem(Connection conn, Deduction deduction,
+			Integer domain, Integer parentDomain) throws SQLException {
+
+		if (deduction.getConceptId() == null)
+			return false;
+
+		ResultSet rs = null;
+		PreparedStatement queryStmt = null;
+		try {
+
+			String sql = "SELECT 1 " + " FROM " + SQLConstants.SYSTEM_DEDUCTION
+					+ " AS DEDUCTION" + " WHERE DEDUCTION."
+					+ SystemDeductionColumns.DOMAIN + " IN ( ?, ? ) "
+					+ " AND DEDUCTION."
+					+ SystemDeductionColumns.DEDUCTION_CONCEPT + " =  ? "
+					+ " AND DEDUCTION." + SystemDeductionColumns.START_DATE
+					+ " <= ? " + " AND ( DEDUCTION."
+					+ SystemDeductionColumns.END_DATE + " >= ? "
+					+ " OR DEDUCTION." + SystemDeductionColumns.END_DATE
+					+ " IS NULL )";
+
+			queryStmt = conn.prepareStatement(sql);
+			queryStmt.setInt(1, domain);
+			queryStmt.setInt(2, parentDomain);
+			queryStmt.setInt(3, deduction.getConceptId());
+			queryStmt.setDate(4, date2sql(deduction.getEndDate()));
+			queryStmt.setDate(5, date2sql(deduction.getStartDate()));
+
+			rs = queryStmt.executeQuery();
+
+			return rs.next();
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (queryStmt != null)
+				queryStmt.close();
+		}
+	}
+
+	private static void insert(Connection conn, Deduction deduction,
+			Integer contract, Integer domain) throws SQLException {
+		PreparedStatement insertStmt = null;
+		try {
+			if (deduction.getConceptId() != null)
+				clearConceptInherit(conn, deduction);
+
+			insertStmt = conn.prepareStatement(CONTRACT_DEDUCTION_INSERT);
+
+			setInt(insertStmt, 1, domain);
+			setInt(insertStmt, 2, contract);
+			setShort(insertStmt, 3, enum2Short(deduction.getType()));
+			setShort(insertStmt, 4, deduction.getMonth());
+			setString(insertStmt, 5, deduction.getDescription());
+			setString(insertStmt, 6, deduction.getExpression());
+			setDate(insertStmt, 7, date2sql(deduction.getStartDate()));
+			setDate(insertStmt, 8, date2sql(deduction.getEndDate()));
+
+			setInt(insertStmt, 9, deduction.getConceptId());
+
+			insertStmt.execute();
+
+		} finally {
+			if (insertStmt != null)
+				insertStmt.close();
+		}
+	}
+
+	private static void clearConceptInherit(Connection conn, Deduction deduction)
+			throws SQLException {
+
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			String sql = "SELECT * FROM " + SQLConstants.DEDUCTION_CONCEPT
+					+ " WHERE " + DeductionConceptColumns.ID + " = ? ";
+
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, deduction.getConceptId());
+
+			rs = stmt.executeQuery();
+			if (rs.next()) {
+				Deduction.Type type = getDeductionType(rs
+						.getObject(DeductionConceptColumns.TYPE));
+				if (deduction.getType() == type)
+					deduction.setType(null);
+				String description = rs
+						.getString(DeductionConceptColumns.DESCRIPTION);
+				if (sameString(description, deduction.getDescription()))
+					deduction.setDescription(null);
+				String expression = rs
+						.getString(DeductionConceptColumns.EXPRESSION);
+				if (sameString(expression, deduction.getExpression()))
+					deduction.setExpression(null);
+
+			}
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	public static Payment getPaymentConceptByName(Connection conn, String name) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement("SELECT * FROM " + SQLConstants.PAYMENT_CONCEPT +  
+					" WHERE " + PaymentConceptColumns.CODE + " = ? ");
+			rs = stmt.executeQuery();
+			if ( ! rs.next() ) 
+				return null;
+			Payment paymentConcept = new Payment();
+
+			paymentConcept.setId(rs.getInt(PaymentConceptColumns.ID));
+			paymentConcept
+					.setName(rs.getString(PaymentConceptColumns.CODE));
+			paymentConcept.setType(getPaymentType(rs
+					.getInt(PaymentConceptColumns.TYPE)));
+			paymentConcept.setDescription(rs
+					.getString(PaymentConceptColumns.DESCRIPTION));
+			paymentConcept.setExpression(rs
+					.getString(PaymentConceptColumns.EXPRESSION));
+			paymentConcept.setIrpfExpression(rs
+					.getString(PaymentConceptColumns.IRPF_EXPRESSION));
+			paymentConcept.setQuoteExpression(rs
+					.getString(PaymentConceptColumns.QUOTE_EXPRESSION));
+			
+			return paymentConcept;
+			
+		} finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	private static Date addDay(Date date, int days) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.DAY_OF_MONTH, days);
+		return calendar.getTime();
+	}
+
+	private static java.sql.Date date2sql(Date date) {
+		return date != null ? new java.sql.Date(date.getTime()) : null;
+	}
+
+	private static Short enum2Short(Enum<?> type) {
+		return type == null ? null : (short) type.ordinal();
+	}
+
+	private static void setDate(PreparedStatement stmt, int parameterIndex,
+			Date x) throws SQLException {
+		set(stmt, parameterIndex, x, Types.DATE);
+	}
+
+	private static void setInt(PreparedStatement stmt, int parameterIndex,
+			Integer x) throws SQLException {
+		set(stmt, parameterIndex, x, Types.INTEGER);
+	}
+
+	private static void setString(PreparedStatement stmt, int parameterIndex,
+			String x) throws SQLException {
+		set(stmt, parameterIndex, x, Types.VARCHAR);
+	}
+
+	private static void setShort(PreparedStatement stmt, int parameterIndex,
+			Short x) throws SQLException {
+		set(stmt, parameterIndex, x, Types.SMALLINT);
+	}
+
+	private static void set(PreparedStatement stmt, int parameterIndex,
+			Object x, int targetSqlType) throws SQLException {
+		if (x != null)
+			stmt.setObject(parameterIndex, x, targetSqlType);
+		else
+			stmt.setNull(parameterIndex, targetSqlType);
+	}
+
+	private static boolean sameString(String s1, String s2) {
+		if (s1 == s2)
+			return true;
+		if (s1 == null)
+			return false;
+		if (s2 == null)
+			return false;
+
+		return s1.trim().equals(s2.trim());
+	}
+
+	private static Payment.Type getPaymentType(Object object) {
+		if (object == null)
+			return null;
+		if (!(object instanceof Number))
+			return null;
+		int ordinal = ((Number) object).intValue();
+		if (ordinal < 0)
+			return null;
+		Payment.Type types[] = Payment.Type.values();
+		if (ordinal >= types.length)
+			return null;
+
+		return types[ordinal];
+	}
+
+	private static Deduction.Type getDeductionType(Object object) {
+		if (object == null)
+			return null;
+		if (!(object instanceof Number))
+			return null;
+		int ordinal = ((Number) object).intValue();
+		if (ordinal < 0)
+			return null;
+		Deduction.Type types[] = Deduction.Type.values();
+		if (ordinal >= types.length)
+			return null;
+
+		return types[ordinal];
+	}
+}

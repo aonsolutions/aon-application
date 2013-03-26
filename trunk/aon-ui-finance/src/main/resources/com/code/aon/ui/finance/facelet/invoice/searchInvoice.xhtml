@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="invoiceSearch">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" />
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:define name="searchContent">
+					<ui:include src="/com/code/aon/ui/finance/facelet/invoice/searchContent.xhtml" />
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+		<c:if test="#{searchController.sales}">
+			<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		</c:if>
+		<c:if test="#{searchController.purchase}">
+			<aon:lookupButtonPopup lookup="#{supplierLookup}" />		
+		</c:if>
+		<c:if test="#{!(searchController.sales or searchController.purchase)}">
+			<aon:lookupButtonPopup lookup="#{creditorLookup}" />
+			<aon:lookupButtonPopup lookup="#{expenseItemLookup}" />
+		</c:if>
+		<c:if test="#{searchController.sales or searchController.purchase}">
+			<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		</c:if>
+		<aon:lookupButtonPopup lookup="#{bankLookup}" />
+	</ui:define>
+</ui:composition>

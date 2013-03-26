@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="campaignActionForm">		
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >		
+				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_actions}" />
+				<ui:param name="controller" value="#{campaignAction}" />
+				<ui:param name="skipSearchButton" value="true" />	
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="refresh"
+						value="#{richBundle.aon_refresh}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-refresh" />							
+					<aon:htmlCommandLink id="campaignActionReport-excel-hssf-report"
+						value="#{bundle.aon_listing}" target="_blank" actionListener="#{campaignActionReport.onExcelReport}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+					</aon:htmlCommandLink>
+				</ui:define>
+			</ui:decorate>				
+
+			<aon:div styleClass="aon-scroll-area">
+			
+				<h:panelGrid columns="2">
+				
+					<aon:panelGrid columns="2">
+						<aon:outputLabel for="Action_id"
+							rendered="#{!campaignAction.new}" value="#{bundle.aon_id}" />
+						<aon:inputText id="Action_id" value="#{campaignAction.to.id}" required="true"
+							rendered="#{!campaignAction.new}" size="15" disabled="true" />
+							
+						<aon:outputLabel for="Action_description"
+							value="#{bundle.aon_description}" />
+						<aon:inputText id="Action_description" value="#{campaignAction.to.description}"
+							required="true" size="32" maxlength="64" />		
+	
+						<aon:outputLabel for="Action_mediaType"
+							value="#{marketingBundle.marketing_action_media_type}" />
+						<aon:selectOneMenu id="Action_mediaType" required="true"
+							value="#{campaignAction.to.mediaType}">
+							<f:selectItem value="#{null}" itemLabel="    " />
+							<f:selectItems value="#{marketingCampaign.actionMediaTypes}" />
+						</aon:selectOneMenu>
+						
+						<aon:outputLabel for="Action_startDate"
+							value="#{marketingBundle.marketing_action_start_date}" />
+						<aon:selectInputDate id="Action_startDate" 
+							value="#{campaignAction.to.startDate}" required="true"
+							timeZone="#{timeZoneController.timeZone}"
+							renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+						</aon:selectInputDate>
+	
+						<aon:outputLabel for="Action_endDate"
+							value="#{marketingBundle.marketing_action_end_date}" />
+						<aon:selectInputDate id="Action_endDate" 
+							value="#{campaignAction.to.endDate}" 
+							timeZone="#{timeZoneController.timeZone}"
+							renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+						</aon:selectInputDate>
+	
+						<ui:include src="/com/code/aon/ui/marketing/facelet/marketingTemplate/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{campaignAction.to.template}" />
+						</ui:include>					
+	
+						<c:if test="#{aonConfiguration.bean.marketingCampaign.showSurvey}" >
+							<ui:include src="/com/code/aon/ui/marketing/facelet/survey/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{campaignAction.to.survey}" />
+							</ui:include>					
+						</c:if>
+					</aon:panelGrid>
+
+					<aon:panelGrid columns="2" styleClass="aon-margin-left" rendered="#{!campaignAction.new}"
+						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">
+						<aon:outputText value="#{marketingCollections.actionTargetStatuses[0].label}" />
+						<aon:inputText value="#{campaignActionTarget.pendingCount}"
+							size="5" disabled="true" />
+
+						<aon:outputText value="#{marketingCollections.actionTargetStatuses[1].label}" />
+						<aon:inputText value="#{campaignActionTarget.absentCount}"
+							size="5" disabled="true" />
+
+						<aon:outputText value="#{marketingCollections.actionTargetStatuses[2].label}" />
+						<aon:inputText value="#{campaignActionTarget.incorrectCount}"
+							size="5" disabled="true" />
+
+						<aon:outputText value="#{marketingCollections.actionTargetStatuses[3].label}" />
+						<aon:inputText value="#{campaignActionTarget.tryAgainCount}"
+							size="5" disabled="true" />
+
+						<aon:outputText value="#{marketingCollections.actionTargetStatuses[4].label}" />
+						<aon:inputText value="#{campaignActionTarget.cancelCount}"
+							size="5" disabled="true" />
+
+						<aon:outputText value="#{marketingCollections.actionTargetStatuses[5].label}" />
+						<aon:inputText value="#{campaignActionTarget.finishedCount}"
+							size="5" disabled="true" />
+
+						<aon:outputText value="#{marketingCollections.actionTargetStatuses[6].label}" />
+						<aon:inputText value="#{campaignActionTarget.sentCount}"
+							size="5" disabled="true" />
+					</aon:panelGrid>
+
+				</h:panelGrid>
+
+				<aon:div styleClass="aon-form-group" rendered="#{!campaignAction.new}">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel for="campaignActionTargetData" value="#{target.bundle.commercial_target_module}" />
+						</aon:div>
+					</aon:div>
+					
+					<aon:div styleClass="aon-toolbar">
+						<aon:commandButton value="#{marketingBundle.marketing_action_add}"
+							action="campaignActionTarget_search"
+							actionListener="#{target.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-new" />
+						<aon:commandButton id="searchClear"
+							value="#{bundle.aon_clear}"
+							reRender="campaignActionTargetSearchDiv,campaignActionTargetDataDiv"
+							actionListener="#{campaignActionTargetSearch.onClearSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-rubber" >
+							<aon:actionListener method="#{campaignActionTargetSearch.onFilter}" />
+						</aon:commandButton>							
+					</aon:div>
+									
+					<ui:include src="/com/code/aon/ui/marketing/facelet/campaignActionTarget/filterContent.xhtml" />									
+									
+					<ui:include src="/com/code/aon/ui/marketing/facelet/campaignActionTarget/grid.xhtml" >
+						<ui:param name="showSurveyColumn" value="#{campaignAction.to.mediaType == 'PHONE'}" />
+					</ui:include>
+				</aon:div>
+				
+			</aon:div>
+		</aon:form>	
+		<c:if test="#{aonConfiguration.bean.marketingCampaign.showSurvey}" >
+			<aon:lookupButtonPopup lookup="#{surveyLookup}" />
+		</c:if>
+		<aon:lookupButtonPopup lookup="#{targetLookup}" />
+		<aon:lookupButtonPopup lookup="#{marketingTemplateLookup}" />
+		<aon:lookupButtonPopup lookup="#{userLookup}" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

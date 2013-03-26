@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01 ../../../auxiliares/pgc-07-ref-2008-01-01.xsd" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xbrli="http://www.xbrl.org/2003/instance">
+  <link:referenceLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <link:reference xlink:type="resource" xlink:label="reference_SaldoAjustadoInicioEjercicioAnteriorOtrasVariacionesPatrimonioNeto" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_SaldoAjustadoInicioEjercicioAnteriorOtrasVariacionesPatrimonioNeto" id="reference_SaldoAjustadoInicioEjercicioAnteriorOtrasVariacionesPatrimonioNeto">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>B</pgc-07-ref:Categoria>
+      <pgc-07-ref:Epigrafe>III</pgc-07-ref:Epigrafe>
+    </link:reference>
+  </link:referenceLink>
+</link:linkbase>

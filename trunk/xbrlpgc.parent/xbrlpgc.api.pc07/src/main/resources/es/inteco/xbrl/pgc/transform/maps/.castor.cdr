@@ -1,0 +1,4 @@
+#Mon Dec 01 12:35:57 CET 2008
+es.inteco.xbrl.pgc.transform.maps.Member=es.inteco.xbrl.pgc.transform.maps.descriptors.MemberDescriptor
+es.inteco.xbrl.pgc.transform.maps.ConceptMap=es.inteco.xbrl.pgc.transform.maps.descriptors.ConceptMapDescriptor
+es.inteco.xbrl.pgc.transform.maps.Statement=es.inteco.xbrl.pgc.transform.maps.descriptors.StatementDescriptor

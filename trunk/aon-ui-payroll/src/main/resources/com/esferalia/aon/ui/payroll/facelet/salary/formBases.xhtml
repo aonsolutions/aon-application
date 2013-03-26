@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+
+	<aon:div styleClass="aon-margin-top" 
+		style="margin-left: 5px;">
+		
+		<aon:panelGrid columns="2" style="width: 100%;margin-right:10px;"
+			columnClasses="aon-noborder aon-padding-left aon-width-auto
+						  ,aon-border aon-width-100 aon-text-right aon-bold">
+			
+			<aon:div style="margin-left: 200px;border-bottom: solid #CCCCCC 1px;" >
+				<aon:outputText value="#{payrollBundle.payroll_salary_totalLiquid} (A-B)&#160;" styleClass="aon-bold"/>
+			</aon:div>
+			<aon:div styleClass="aon-padding-right" style="font-size: 1.1em;background-color: #F6F6F6;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{salaryTO.totalLiquid}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+		</aon:panelGrid>		
+	</aon:div>
+
+	<aon:div styleClass="aon-bold" style="position: relative; top: 25px; margin-left: 15px; margin-right: 15px;background-color: white;  font-size: 0.9em; width: 95%;">
+		<aon:outputText value="&#160;#{payrollBundle.payroll_salary_bases_desc}:&#160;"/>
+	</aon:div>
+
+	<aon:div styleClass="aon-border" style="margin-left: 5px;background-color:#f6f5e3;">
+		
+		<aon:panelGrid columns="3" style="width: 100%;margin-right:10px;"
+			columnClasses="aon-noborder aon-padding-left aon-width-auto aon-vertical-align-bottom
+						  ,aon-noborder aon-padding-right aon-width-150 aon-text-right aon-vertical-align-bottom
+						  ,aon-noborder aon-padding-right aon-width-150 aon-text-right aon-bold aon-vertical-align-bottom">
+
+		
+			<aon:outputText value="&#160;"/>
+			<aon:outputText value="&#160;"/>
+			<aon:outputText value="&#160;"/>
+
+			<aon:outputText value="&#160;"/>
+			<aon:outputText value="&#160;"/>
+			<aon:outputText value="&#160;"/>
+
+			<aon:div style="margin-left: 20px; border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="#{payrollBundle.payroll_salary_bases_common_remuneration}" />
+			</aon:div>
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+				</aon:div>
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{salaryTO.remuneration}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+			<aon:div style="margin-left: 20px; border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="#{payrollBundle.payroll_salary_bases_common_extraPayProration}" />
+			</aon:div>
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+				</aon:div>
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{salaryTO.extraPayProration}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+			<aon:div style="margin-left: 500px; border-bottom: solid #CCCCCC 1px; text-align: right;">
+				<aon:outputText value="#{bundle.aon_total}" />
+			</aon:div>
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+				</aon:div>
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{salaryTO.remuneration + salaryTO.extraPayProration}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+			<aon:div style="margin-left: 10px;border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="1. #{payrollBundle.payroll_salary_bases_common}" styleClass="aon-bold"/>
+			</aon:div>
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+				</aon:div>
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{salaryTO.commonBase}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+			<aon:div style="margin-left: 10px; border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="2. #{payrollBundle.payroll_salary_bases_professional}" styleClass="aon-bold"/>
+			</aon:div>
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+			</aon:div>
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{salaryTO.professionalBase}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+			<aon:div style="margin-left: 10px; border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="3. #{payrollBundle.payroll_salary_bases_overtime}" styleClass="aon-bold"/>
+			</aon:div>
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+				</aon:div>
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{salaryTO.overtimeBase}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+			<aon:div style="margin-left: 10px; ">
+				<aon:outputText value="4. #{payrollBundle.payroll_salary_bases_irpf}" styleClass="aon-bold"/>
+			</aon:div>
+				<aon:div style="">
+					<aon:outputText value="&#160;"/>
+				</aon:div>
+			<aon:div style="">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{salaryTO.irpfBase}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+			
+		</aon:panelGrid>		
+	</aon:div>
+
+</ui:composition>

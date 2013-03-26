@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:suggestionBox
+		width="#{aon_lst_width}" height="#{aon_lst_height}" 
+		frequency="#{aon_lst_frequency}" minChars="#{aon_lst_minChars}"
+		nothingLabel="#{bundle.aon_search_no_results}" fetchValue=""
+		var="lto" suggestionAction="#{lookup.autocomplete}" >		
+		<h:column>
+			<aon:outputText value="#{aon_lst_columnExpression}" />
+		</h:column>
+		<a4j:support event="onselect" ajaxSingle="true" action="#{aon_lst_lookupAction}"
+			reRender="#{aon_lst_selectReRender}" focus="#{aon_lst_focus}" >
+			<f:setPropertyActionListener value="#{lto}" target="#{lookup.suggestedTo}" />
+			<aon:actionListener method="#{lookup.onSuggestSelect}" />
+		</a4j:support>			
+	</aon:suggestionBox>
+			
+</ui:composition>

@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:valueParam name="itemLookupTemplate"
+		default="/com/code/aon/ui/product/facelet/item/lookupDetail.xhtml"/>
+
+	<c:if test="#{invoiceController.to.sales or invoiceController.to.purchase}">
+		<aon:outputLabel for="Item_id" value="#{productBundle.product_item}" />
+	</c:if>
+	<c:if test="#{invoiceController.to.expense or invoiceController.to.undeductibleExpense}">
+		<aon:outputLabel for="Item_id" value="#{bundle.aon_concept}" />
+	</c:if>
+	<aon:div>
+		<c:if test="#{invoiceController.to.sales or invoiceController.to.purchase}">
+			<ui:include src="#{itemLookupTemplate}">
+				<ui:param name="lookupTo" value="#{detailController.to.item}" />
+				<ui:param name="idRequired" value="#{true}" />
+				<ui:param name="skipLabel" value="#{true}" />
+				<ui:param name="skipSuggestText" value="#{detailController.to.item != null and detailController.to.item.id != null}" />
+				<ui:param name="lookupInputOnFocus" value="InvoiceDetail_description" />
+				<ui:param name="lookupReRender"	value="#{formName}" />
+				<aon:methodParam name="lookupChangeListener"
+					value="#{detailController.onItemChanged}" type="lookupChangeListener" />
+			</ui:include>
+		</c:if>
+		<c:if test="#{invoiceController.to.expense or invoiceController.to.undeductibleExpense}">
+			<ui:include src="/com/code/aon/ui/product/facelet/expenseItem/lookup.xhtml">
+				<ui:param name="lookupTo" value="#{detailController.to.item}" />
+				<ui:param name="idRequired" value="#{true}" />
+				<ui:param name="skipLabel" value="#{true}" />
+				<ui:param name="skipSuggestText" value="#{detailController.to.item != null and detailController.to.item.id != null}" />
+				<ui:param name="lookupInputOnFocus" value="InvoiceDetail_description" />
+				<ui:param name="lookupReRender"	value="#{formName}" />
+				<aon:methodParam name="lookupChangeListener"
+					value="#{detailController.onItemChanged}" type="lookupChangeListener" />
+			</ui:include>
+		</c:if>
+		<aon:panelGroup id="invoiceDetailItemDescription" styleClass="aon-nowrap aon-vertical-align-top">
+			<c:if test="#{aonConfiguration.bean.product.showStock}">
+				<aon:commandButton value="&#160;"
+					title="#{productBundle.product_info}"
+					rendered="#{detailController.to.item != null and detailController.to.item.id != null and detailController.to.item.product.inventoriable}"
+					styleClass="aon-icon aon-icon-edit-end aon-icon-info"
+					actionListener="#{itemInfo.onShowPanel}"
+					reRender="itemInfoContainer">
+					<aon:set var="#{itemInfo.stockVisible}" value="#{true}" />
+					<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
+					<aon:set var="#{itemInfo.item}" value="#{detailController.to.item}" /> 
+					<aon:set var="#{itemInfo.warehouse}" value="#{null}" /> 
+					<aon:set var="#{itemInfo.rowStock}" value="#{detailController.rowStock}" /> 
+					<aon:set var="#{itemInfo.componentId}" value="Item_id" />
+					<aon:set var="#{itemInfo.alternativeMethod}" value="#{invoiceController.invoiceDetailControllerName}.onItemChanged" />
+				</aon:commandButton>															
+			</c:if>
+			<aon:inputTextarea id="InvoiceDetail_description"
+				style="#{!detailController.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}"
+				value="#{detailController.to.description}"
+				cols="60" rows="#{!detailController.longDescription?1:5}"
+				disabled="#{!detailController.longDescription}"
+				rendered="#{detailController.to.item != null and detailController.to.item.id != null}">
+				<f:validateLength maximum="1024" />
+			</aon:inputTextarea>
+			<aon:commandLink id="InvoiceDetail_description_short" immediate="true"
+				value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
+				styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
+				rendered="#{detailController.longDescription and detailController.to.item.product.code != null}"
+				actionListener="#{detailController.onShortDescription}" 
+				reRender="invoiceDetailItemDescription" ajaxSingle="true" />
+			<aon:commandLink id="InvoiceDetail_description_long" immediate="true"
+				value="&#160;" title="#{bundle.aon_edit}"
+				styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
+				rendered="#{!detailController.longDescription and detailController.to.item.product.code != null}"
+				actionListener="#{detailController.onLongDescription}"
+				reRender="invoiceDetailItemDescription" ajaxSingle="true" />
+		</aon:panelGroup>
+	</aon:div>
+
+	<c:if test="#{invoiceController.to.expense}">
+		<aon:outputLabel for="InvoiceDetail_taxableBase" value="#{bundle.aon_taxable_base}" />
+		<aon:inputText id="InvoiceDetail_taxableBase"
+			value="#{detailController.to.taxableBase}"
+			valueChangeListener="#{detailController.onTaxableBaseChanged}"
+			reRender="invoiceDetailTaxQuota,InvoiceDetail_total" ajaxSingle="true" 
+			required="true" size="5" focus="InvoiceDetail_vatQuota" />
+
+		<aon:outputLabel for="InvoiceDetail_vatQuota" value="#{bundle.aon_vat}" />
+		<aon:div id="invoiceDetailTaxQuota">
+			<aon:inputText id="InvoiceDetail_vatQuota"
+				value="#{detailController.to.vatQuota}"
+				disabled="#{detailController.to.item.vat.percentage == 0}"
+				valueChangeListener="#{detailController.onVatQuotaChanged}"
+				reRender="InvoiceDetail_vatPercent,InvoiceDetail_total" ajaxSingle="true" 
+				required="true" size="5"
+				focus="#{invoiceController.to.withholding ? 'InvoiceDetail_retentionQuota' : 'InvoiceDetail_total'}" />
+			<aon:outputText id="InvoiceDetail_vatPercent"
+				styleClass="aon-bold aon-padding-left"
+				value="#{detailController.to.vatPercent}">
+				<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
+			</aon:outputText>
+			<aon:outputText styleClass="aon-bold" style="padding-left: 3px;" value="%" />
+
+			<c:if test="#{invoiceController.to.withholding}">
+				<aon:outputLabel for="InvoiceDetail_retentionQuota" value="#{bundle.aon_retention}"
+					styleClass="aon-padding-left aon-padding-right" />
+				<aon:inputText id="InvoiceDetail_retentionQuota"
+					value="#{detailController.to.retentionQuota}"
+					disabled="#{detailController.to.item.retention == null or detailController.to.item.retention.percentage == 0}"
+					valueChangeListener="#{detailController.onRetentionQuotaChanged}"
+					reRender="InvoiceDetail_retentionPercent,InvoiceDetail_total" ajaxSingle="true" 
+					required="true" size="5" focus="InvoiceDetail_total" />
+				<aon:outputText id="InvoiceDetail_retentionPercent"
+					styleClass="aon-bold aon-padding-left"
+					value="#{detailController.to.retentionPercent}">
+					<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
+				</aon:outputText>
+				<aon:outputText styleClass="aon-bold" style="padding-left: 3px;" value="%" />
+			</c:if>
+		</aon:div>
+
+		<aon:outputLabel for="InvoiceDetail_total" value="#{bundle.aon_total}" />
+		<aon:inputText id="InvoiceDetail_total"
+			value="#{detailController.toInvoiceDetailTotal}"
+			valueChangeListener="#{detailController.onTotalChanged}"
+			reRender="InvoiceDetail_taxableBase,invoiceDetailTaxQuota" ajaxSingle="true"  
+			required="true" size="5" />
+	</c:if>
+
+	<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
+		<aon:outputLabel for="InvoiceDetail_workPlace" value="#{companyBundle.company_workplace}" />
+		<aon:selectOneMenu id="InvoiceDetail_workPlace"
+			value="#{detailController.to.workPlace}" ajaxSingle="true">
+			<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+		</aon:selectOneMenu>
+	</c:if>
+
+	<c:if test="#{invoiceController.to.sales}">
+		<aon:div>
+			<aon:outputLabel for="Invoice_comments"
+				value="#{bundle.aon_comment}" />
+			<aon:div>
+				<aon:outputLabel styleClass="aon-form-date-label"
+					value="(#{bundle.aon_comment_description})" />
+			</aon:div>
+		</aon:div>
+		<aon:inputTextarea id="Invoice_comments" cols="85" rows="4"
+			value="#{invoiceController.to.comments}" ajaxSingle="true" />
+	</c:if>
+	<c:if test="#{!invoiceController.to.sales}">
+		<aon:div>
+			<aon:outputLabel for="Invoice_remarks"
+				value="#{bundle.aon_remark}" />
+			<aon:div>
+				<aon:outputLabel styleClass="aon-form-date-label"
+					value="(#{bundle.aon_remark_description})" />
+			</aon:div>
+		</aon:div>
+		<aon:inputTextarea id="Invoice_remarks" cols="85" rows="4"
+			value="#{invoiceController.to.remarks}" ajaxSingle="true" />
+	</c:if>
+
+</ui:composition>

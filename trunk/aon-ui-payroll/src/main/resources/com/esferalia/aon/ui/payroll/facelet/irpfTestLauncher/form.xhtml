@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"	
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		
+		<ui:decorate
+			template="/com/esferalia/aon/ui/payroll/facelet/irpfLauncher/template.xhtml">
+			<ui:param name="irpfLauncher" value="#{irpfTestLauncher}" />
+			<ui:param name="title" value="#{payrollBundle.payroll_irpfTestLauncher_module}" />
+			
+			<ui:define name="messageRow" >
+				<aon:outputText styleClass="lst lst_#{message.level}" value="#{message.level} : " />
+				<aon:outputText value="#{message.enterpriseName} " 
+					rendered="#{message.contractId!=null}" />
+
+				<aon:commandLink  
+					rendered="#{message.contractId!=null}"
+					style="display: inline; text-decoration:underline;"
+					action="irpfDraft_form" >
+					<aon:outputText value="#{message.employeeName} " />
+					<f:setPropertyActionListener value="#{message.contractId}" 
+					target="#{irpfTestLauncher.contractId}" />
+					<aon:actionListener method="#{irpfTestLauncher.onIrpfDraft}" />
+				</aon:commandLink>	
+								
+				<aon:outputText styleClass="lst lst_#{message.level}" value="#{message.msg}" />
+				
+			</ui:define>			
+
+			<ui:define name="launchButton" >
+				<aon:commandButton id="launchIrpfs"
+					value="#{payrollBundle.payroll_launch}" 
+					styleClass="aon-search-lookup-button"
+					reRender="poll,launchIrpfs,messagesContainer"
+					actionListener="#{irpfLauncher.onExecute}">
+				</aon:commandButton>
+			</ui:define>			
+
+			<ui:define name="addOnsFirstRow" >
+				<aon:selectBooleanCheckbox value="#{irpfLauncher.debugEnabled}" />
+				<aon:outputText value="#{payrollBundle.payroll_launch_debugEnabled}" />
+			</ui:define>			
+			<ui:define name="addOnsSecondRow" >
+				<aon:selectBooleanCheckbox value="#{irpfLauncher.saveEnabled}" />
+				<aon:outputText value="#{payrollBundle.payroll_launch_save_changes}" />
+			</ui:define>			
+		
+		</ui:decorate>
+		
+	</ui:define>
+
+</ui:composition>

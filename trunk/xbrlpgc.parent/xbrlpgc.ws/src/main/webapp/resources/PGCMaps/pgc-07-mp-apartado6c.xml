@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mp-apartado6c" mainSchemaPrefix="pgc-07-mp" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/2009-01-01">
+    <conceptMap
+        outputID="InstrumentosFinancierosCorreccionesDeterioroValorOriginadasRiesgoCreditoPerdidaDeterioroInicioEjercicio"
+        inputID="9330"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="5" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoTotal"/>
+        <Member id="6" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoTotal"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoCreditosDerivadosOtros"/>
+        <Member id="4" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoCreditosDerivadosOtros"/>
+        <Member id="1" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoValoresRepresentativosDeuda"/>
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoValoresRepresentativosDeuda"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosCorreccionesDeterioroValorOriginadasRiesgoCreditoOtrasVariacionesDeterioro"
+        inputID="9334"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="5" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoTotal"/>
+        <Member id="6" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoTotal"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoCreditosDerivadosOtros"/>
+        <Member id="4" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoCreditosDerivadosOtros"/>
+        <Member id="1" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoValoresRepresentativosDeuda"/>
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoValoresRepresentativosDeuda"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosCorreccionesDeterioroValorOriginadasRiesgoCreditoPerdidaDeterioroFinalEjercicio"
+        inputID="9335"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="5" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoTotal"/>
+        <Member id="6" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoTotal"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoCreditosDerivadosOtros"/>
+        <Member id="4" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoCreditosDerivadosOtros"/>
+        <Member id="1" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoValoresRepresentativosDeuda"/>
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoValoresRepresentativosDeuda"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosOtraInformacionMemoriaCorreccionValorativaDeterioro"
+        inputID="9331"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="5" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoTotal"/>
+        <Member id="6" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoTotal"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoCreditosDerivadosOtros"/>
+        <Member id="4" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoCreditosDerivadosOtros"/>
+        <Member id="1" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoValoresRepresentativosDeuda"/>
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoValoresRepresentativosDeuda"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosOtraInformacionMemoriaReversionDeterioro"
+        inputID="9332"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="5" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoTotal"/>
+        <Member id="6" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoTotal"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoCreditosDerivadosOtros"/>
+        <Member id="4" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoCreditosDerivadosOtros"/>
+        <Member id="1" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoValoresRepresentativosDeuda"/>
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoValoresRepresentativosDeuda"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosCorreccionesDeterioroValorOriginadasRiesgoCreditoSalidasReducciones"
+        inputID="9333"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="5" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoTotal"/>
+        <Member id="6" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoTotal"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoCreditosDerivadosOtros"/>
+        <Member id="4" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoCreditosDerivadosOtros"/>
+        <Member id="1" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoValoresRepresentativosDeuda"/>
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosCortoPlazoClasesActivoValoresRepresentativosDeuda"/>
+    </conceptMap>
+</Statement>

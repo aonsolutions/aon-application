@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-ma-apartado6" mainSchemaPrefix="pgc-07-ma" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/2009-01-01">
+    <conceptMap
+        outputID="InstrumentosFinancierosReclasificacionActivosFinancierosInversionesMantenidasVencimiento"
+        inputID="9320"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/normalAbreviado/2009-01-01"
+        nsPrefix="pgc07mc-na" domain="pgc07d-reclsf:InstrumentosFinancierosReclasificacionDimension">
+        <Member id="1" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesMantenidasVencimiento"/>
+        <Member id="2" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesPatrimonioEmpresasGrupoEmpresasMultigrupoEmpresasAsociadas"/>
+        <Member id="3" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionActivosDisponiblesVenta"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosReclasificacionActivosFinancierosActivosMantenidosNegociar"
+        inputID="9321"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/normalAbreviado/2009-01-01"
+        nsPrefix="pgc07mc-na" domain="pgc07d-reclsf:InstrumentosFinancierosReclasificacionDimension">
+        <Member id="1" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesMantenidasVencimiento"/>
+        <Member id="2" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesPatrimonioEmpresasGrupoEmpresasMultigrupoEmpresasAsociadas"/>
+        <Member id="3" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionActivosDisponiblesVenta"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosReclasificacionActivosFinancierosOtrosActivosValorRazonableCambiosPyG"
+        inputID="9322"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/normalAbreviado/2009-01-01"
+        nsPrefix="pgc07mc-na" domain="pgc07d-reclsf:InstrumentosFinancierosReclasificacionDimension">
+        <Member id="1" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesMantenidasVencimiento"/>
+        <Member id="2" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesPatrimonioEmpresasGrupoEmpresasMultigrupoEmpresasAsociadas"/>
+        <Member id="3" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionActivosDisponiblesVenta"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosReclasificacionActivosFinancierosInversionPatrimonioEmpresasGrupoEmpresasMultigrupoEmpresasAsociadas"
+        inputID="9323"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/normalAbreviado/2009-01-01"
+        nsPrefix="pgc07mc-na" domain="pgc07d-reclsf:InstrumentosFinancierosReclasificacionDimension">
+        <Member id="1" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesMantenidasVencimiento"/>
+        <Member id="2" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesPatrimonioEmpresasGrupoEmpresasMultigrupoEmpresasAsociadas"/>
+        <Member id="3" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionActivosDisponiblesVenta"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosReclasificacionActivosFinancierosActivosFinancierosDisponiblesVenta"
+        inputID="9324"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/normalAbreviado/2009-01-01"
+        nsPrefix="pgc07mc-na" domain="pgc07d-reclsf:InstrumentosFinancierosReclasificacionDimension">
+        <Member id="1" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesMantenidasVencimiento"/>
+        <Member id="2" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesPatrimonioEmpresasGrupoEmpresasMultigrupoEmpresasAsociadas"/>
+        <Member id="3" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionActivosDisponiblesVenta"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosValoracionInversionesValorRazonableValorRazonableInicioEjercicio"
+        inputID="9340"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07ma-apdo6:InstrumentosFinancierosCategoriasDimension">
+        <Member id="1" qname="pgc07mc-bs:InstrumentosFinancierosCategoriasActivosActivosValorRazonableCambiosPyG"/>
+        <Member id="2" qname="pgc07mc-bs:InstrumentosFinancierosCategoriasActivosActivosMantenidosNegociar"/>
+        <Member id="3" qname="pgc07mc-bs:InstrumentosFinancierosCategoriasActivosActivosDisponiblesVenta"/>
+        <Member id="4" qname="pgc07mc-bs:InstrumentosFinancierosCategoriasActivosActivosTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosValoracionInversionesValorRazonableVariacionesValorRazonableRegistradasPyG"
+        inputID="9341"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07ma-apdo6:InstrumentosFinancierosCategoriasDimension">
+        <Member id="1" qname="pgc07mc-bs:InstrumentosFinancierosCategoriasActivosActivosValorRazonableCambiosPyG"/>
+        <Member id="2" qname="pgc07mc-bs:InstrumentosFinancierosCategoriasActivosActivosMantenidosNegociar"/>
+        <Member id="3" qname="pgc07mc-bs:InstrumentosFinancierosCategoriasActivosActivosDisponiblesVenta"/>
+        <Member id="4" qname="pgc07mc-bs:InstrumentosFinancierosCategoriasActivosActivosTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosValoracionInversionesValorRazonableValorRazonableFinEjercicio"
+        inputID="9343"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07ma-apdo6:InstrumentosFinancierosCategoriasDimension">
+        <Member id="1" qname="pgc07mc-bs:InstrumentosFinancierosCategoriasActivosActivosValorRazonableCambiosPyG"/>
+        <Member id="2" qname="pgc07mc-bs:InstrumentosFinancierosCategoriasActivosActivosMantenidosNegociar"/>
+        <Member id="3" qname="pgc07mc-bs:InstrumentosFinancierosCategoriasActivosActivosDisponiblesVenta"/>
+        <Member id="4" qname="pgc07mc-bs:InstrumentosFinancierosCategoriasActivosActivosTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosValoracionInversionesValorRazonableVariacionesValorRazonableRegistradasPatrimonioNeto"
+        inputID="9342"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+        nsPrefix="pgc07mc-bs" domain="pgc07ma-apdo6:InstrumentosFinancierosCategoriasDimension">
+        <Member id="1" qname="pgc07mc-bs:InstrumentosFinancierosCategoriasActivosActivosValorRazonableCambiosPyG"/>
+        <Member id="2" qname="pgc07mc-bs:InstrumentosFinancierosCategoriasActivosActivosMantenidosNegociar"/>
+        <Member id="3" qname="pgc07mc-bs:InstrumentosFinancierosCategoriasActivosActivosDisponiblesVenta"/>
+        <Member id="4" qname="pgc07mc-bs:InstrumentosFinancierosCategoriasActivosActivosTotal"/>
+    </conceptMap>
+</Statement>

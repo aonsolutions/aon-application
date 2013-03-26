@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01 ../../../auxiliares/pgc-07-ref-2008-01-01.xsd" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <link:referenceLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <link:loc xlink:type="locator" xlink:href="../../comun/pgc07mc-ap-2008-01-01.xsd#pgc07mc-ap_InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoIntangiblePresentacion" xlink:label="InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoIntangiblePresentacion" xlink:title="InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoIntangiblePresentacion"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoIntangiblePresentacion" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoIntangiblePresentacion" id="reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoIntangiblePresentacion">
+      <pgc-07-ref:Modelo>A</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>5</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>c1</pgc-07-ref:Categoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoIntangiblePresentacion" xlink:to="reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoIntangiblePresentacion" xlink:title="reference: InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoIntangiblePresentacion to reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoIntangiblePresentacion"/>
+    <link:loc xlink:type="locator" xlink:href="../../comun/pgc07mc-ap-2008-01-01.xsd#pgc07mc-ap_InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoMaterialPresentacion" xlink:label="InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoMaterialPresentacion" xlink:title="InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoMaterialPresentacion"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoMaterialPresentacion" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoMaterialPresentacion" id="reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoMaterialPresentacion">
+      <pgc-07-ref:Modelo>A</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>5</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>c2</pgc-07-ref:Categoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoMaterialPresentacion" xlink:to="reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoMaterialPresentacion" xlink:title="reference: InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoMaterialPresentacion to reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoMaterialPresentacion"/>
+    <link:loc xlink:type="locator" xlink:href="../../comun/pgc07mc-ap-2008-01-01.xsd#pgc07mc-ap_InmovilizadoMaterialIntangibleInversionesInmobiliariasInversionesInmobiliariasPresentacion" xlink:label="InmovilizadoMaterialIntangibleInversionesInmobiliariasInversionesInmobiliariasPresentacion" xlink:title="InmovilizadoMaterialIntangibleInversionesInmobiliariasInversionesInmobiliariasPresentacion"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInversionesInmobiliariasPresentacion" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInversionesInmobiliariasPresentacion" id="reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInversionesInmobiliariasPresentacion">
+      <pgc-07-ref:Modelo>A</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>5</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>c3</pgc-07-ref:Categoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InmovilizadoMaterialIntangibleInversionesInmobiliariasInversionesInmobiliariasPresentacion" xlink:to="reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInversionesInmobiliariasPresentacion" xlink:title="reference: InmovilizadoMaterialIntangibleInversionesInmobiliariasInversionesInmobiliariasPresentacion to reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInversionesInmobiliariasPresentacion"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07ma-d-inm-2008-01-01.xsd#pgc07ma-d-inm_InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoIntangibleMaterialInversionesInmobiliariasDesgloseDimension" xlink:label="InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoIntangibleMaterialInversionesInmobiliariasDesgloseDimension"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoIntangibleMaterialInversionesInmobiliariasDesgloseDimension" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoIntangibleMaterialInversionesInmobiliariasDesgloseDimension">
+      <pgc-07-ref:Modelo>A</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>5</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoIntangibleMaterialInversionesInmobiliariasDesgloseDimension" xlink:to="reference_InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoIntangibleMaterialInversionesInmobiliariasDesgloseDimension"/>
+  </link:referenceLink>
+</link:linkbase>

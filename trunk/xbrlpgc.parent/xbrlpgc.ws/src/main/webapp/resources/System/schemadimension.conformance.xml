@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ubm:testcases xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ubmatrix.com/XBRL/2.1/conformance/2003-10-24 conformance.xsd" base="" description="Core Conformance" xmlns:ubm="http://www.ubmatrix.com/XBRL/2.1/conformance/2003-10-24">
+    <ubm:testcase href="000-Schema-invalid/001-Taxonomy/001-TestCase-Taxonomy.xml">
+        <ubm:variation name="hypercubeDimensionTargetRoleInvalidURI" description="The value of the xbrldt:targetRole attribute is valid" />
+        <ubm:variation name="hasHypercubeContextElementInvalid" description="The hasHypercube relationship has an invalid contextElement value.  This should also be detected by XML schema tests, and may appear (after loading) as invalid if retained for end-user editing in some tools." />
+        <ubm:variation name="hasHypercubeClosedInvalid" description="The hasHypercube relationship has an invalid non-boolean closed attribute value.  This may also be detected by XML schema tests." />
+        <ubm:variation name="hasHypercubeTargetRoleInvalidURI" description="An all hypercube has an msdos path in the targetRole attribute to locate the domain - dimension arc network." />
+        <ubm:variation name="dimensionDomainTargetRoleInvalidURI" description="A dimension-domain relationship has an msdos path in the targetRole attribute to locate the domain - member arc network." />
+        <ubm:variation name="domainMemberTargetRoleInvalidURI" description="A domain-member relationship has an msdos path in the targetRole attribute to locate the domain - member arc network." />
+        <ubm:variation name="domainMemberUsableValid" description="A domain-member relationship has a valid non-default usable attribute." />
+        <ubm:variation name="domainMemberUsableInvalid" description="A domain-member relationship has a bogus non-boolean usable attribute." />
+    </ubm:testcase>
+</ubm:testcases>

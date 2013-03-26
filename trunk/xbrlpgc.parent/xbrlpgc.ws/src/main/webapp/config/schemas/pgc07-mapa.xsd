@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+
+
+<!--  
+ API XBRL-PGC2007 is a set of packages for the treatment of instances XBRL
+ (eXtensible Business Reporting Language) corresponding to the taxonomy PGC2007.
+ The General Plan of Accounting 2007 is the legal text that regulates the accounting of
+ the companies in Spain.
+ 
+ This program is part of the API XBRL-PGC2007.
+ 
+ Copyright (C) 2009  INTECO (Instituto Nacional de Tecnologías de la
+ Comunicación, S.A.)
+ 
+ Authors: Members of Software Quality Department inside INTECO
+ 
+ E-mail: difusioncalidad@inteco.es
+ 
+ This program is free software; you can redistribute it and/or modify it under the terms of
+ the GNU Lesser General Public License as published by the Free Software Foundation; 
+ either version 3 of the License, or (at your opinion) any later version.
+ 
+ This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+ License for more details.
+ 
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program. If not, see http://www.gnu.org/licenses/
+ --> 
+<!-- ultima actualización 28/10/2008 18:00h -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns="http://www.inteco.es/xbrl/pgc07/mapa" targetNamespace="http://www.inteco.es/xbrl/pgc07/mapa">
+
+<xs:annotation>
+    <xs:documentation>El XML Schema para el archivo que contiene las asignaciones de código a XBRL elemento.</xs:documentation>
+</xs:annotation>
+
+<xs:element name="statement">
+    <xs:complexType>
+        <xs:sequence>
+            <xs:element ref="conceptMap" minOccurs="1" maxOccurs="unbounded"></xs:element>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"></xs:attribute>
+        <xs:attribute name="mainSchemaURL" type="xs:anyURI"></xs:attribute>
+        <xs:attribute name="mainSchemaPrefix" type="xs:string"></xs:attribute>
+        <xs:attribute name="mainSchemaNamespace" type="xs:anyURI"></xs:attribute>
+        <xs:attribute name="statementID" type="xs:string"><xs:annotation><xs:documentation>Para uso en la creación de nombres de archivo</xs:documentation></xs:annotation></xs:attribute>
+        <xs:attribute name="moduleName" type="xs:string"></xs:attribute>
+        <xs:attribute name="moduleTitle" type="xs:string"></xs:attribute>
+        <xs:attribute name="roleURI" type="xs:anyURI"></xs:attribute>
+        <xs:attribute name="roleID" type="xs:string"></xs:attribute>
+        
+        
+    </xs:complexType>
+    
+</xs:element>
+
+    <xs:element name="conceptMap">
+
+        <xs:complexType>
+            <xs:sequence>
+            	<xs:element ref="member" minOccurs="0" maxOccurs="unbounded"></xs:element>
+        	</xs:sequence>
+            <xs:attributeGroup ref="conceptAttributes"></xs:attributeGroup>
+        </xs:complexType>
+
+    </xs:element>
+    
+	<xs:element name="member">
+		<xs:complexType>
+			<xs:attribute name="id" type="xs:string"/>
+			<xs:attribute name="qname" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+	
+    <xs:attributeGroup name="conceptAttributes">
+        <xs:attribute name="outputID" type="xs:string"><xs:annotation><xs:documentation>El nombre del tema XBRL</xs:documentation></xs:annotation></xs:attribute>
+        <xs:attribute name="inputID" type="xs:string" use="required"><xs:annotation><xs:documentation>El codigo Español.</xs:documentation></xs:annotation></xs:attribute>
+        <xs:attribute name="ns" type="xs:anyURI" use="required"></xs:attribute>
+        <xs:attribute name="nsPrefix" type="xs:string" use="required"></xs:attribute>
+        <xs:attribute name="domain" type="xs:string" use="optional"><xs:annotation><xs:documentation>Nombre de la dimensión</xs:documentation></xs:annotation></xs:attribute>
+        <xs:attribute name="parent" type="xs:string" use="optional"/>
+        <xs:attribute name="order" type="xs:decimal" use="optional"/>
+        <xs:attribute name="abstract" type="xs:boolean" use="optional"/>
+    </xs:attributeGroup>
+
+</xs:schema>

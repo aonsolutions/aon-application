@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="domainSearch">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{managerBundle.manager_users} (#{domain.to.commonName})" />
+				<ui:param name="controller" value="#{domainUser}" />
+				<ui:param name="skipResetButton" value="#{!manager.userManagement}" />
+			</ui:include>
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:param name="controller" value="#{domainUser}" />
+				<ui:define name="searchContent">
+		
+					<aon:outputLabel for="DomainUser_uid"
+						value="#{bundle.aon_login}" />
+					<aon:inputText id="DomainUser_uid" size="80"
+						valueChangeListener="#{controller.addExpression}" />
+		
+					<aon:outputLabel for="DomainUser_outlookName"
+						value="#{bundle.aon_name}" />
+					<aon:inputText id="DomainUser_outlookName" size="80"
+						maxlength="64" valueChangeListener="#{controller.addExpression}" />
+
+					<aon:outputLabel for="DomainUser_surname"
+						value="#{bundle.aon_surname}" />
+					<aon:inputText id="DomainUser_surname" size="80"
+						maxlength="64" valueChangeListener="#{controller.addExpression}" />
+
+					<aon:outputLabel for="DomainUser_active"
+						value="#{configBundle.config_user_active}" />
+					<aon:selectOneMenu id="DomainUser_active"
+						valueChangeListener="#{controller.addExpression}">
+						<f:selectItem itemLabel="-"	itemValue="#{null}" />
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="TRUE" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="FALSE" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="DomainUser_displayName"
+						value="#{bundle.aon_displayName}" />
+					<aon:inputText id="DomainUser_displayName" size="80"
+						maxlength="64" valueChangeListener="#{controller.addExpression}" />
+
+					<aon:outputLabel for="DomainUser_organization"
+						value="#{bundle.aon_organization}" />
+					<aon:inputText id="DomainUser_organization" size="80"
+						maxlength="64" valueChangeListener="#{controller.addExpression}" />
+
+					<aon:outputLabel for="DomainUser_email"
+						value="#{bundle.aon_email}" />
+					<aon:inputText id="DomainUser_email" size="40"
+						maxlength="64" valueChangeListener="#{controller.addExpression}" />
+
+					<aon:outputLabel for="DomainUser_postalCode"
+						value="#{bundle.aon_postal_code}" />
+					<aon:inputText id="DomainUser_postalCode" size="80"
+						maxlength="128" valueChangeListener="#{controller.addExpression}" />
+
+					<aon:outputLabel for="DomainUser_outlookCity"
+						value="#{bundle.aon_city}" />
+					<aon:inputText id="DomainUser_outlookCity" size="25"
+						maxlength="64" valueChangeListener="#{controller.addExpression}" />
+
+					<aon:outputLabel for="DomainUser_state"
+						value="#{bundle.aon_state}" />
+					<aon:inputText id="DomainUser_state" size="25"
+						maxlength="64" valueChangeListener="#{controller.addExpression}" />		
+						
+				</ui:define>
+			</ui:decorate>
+			
+		</aon:form>
+	</ui:define>
+</ui:composition>

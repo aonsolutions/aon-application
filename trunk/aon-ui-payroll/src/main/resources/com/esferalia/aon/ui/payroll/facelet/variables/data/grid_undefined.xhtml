@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<aon:div styleClass="aon-panelGrid-search" style="width: 250px; margin-top:10px;">
+
+		<aon:div styleClass="aon-panelGrid-search-info">
+			<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-exception"/>
+			<aon:outputText value="#{payrollBundle.payroll_contract_undefined_variables}" styleClass="aon-bold"/>
+		</aon:div>	
+		
+		<aon:dataTable value="#{controller.handler.undefinedVariablesModel}" var="to" rows="20" 
+			columnClasses="" >
+			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top">
+				<aon:outputText value="#{to.name}"  />
+			</aon:column> 
+			<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+				<aon:commandButton
+					title="#{payrollBundle.payroll_contract_define_variable_button_title}"
+					actionListener="#{controller.handler.onAddUndefinedVariable}"
+					reRender="#{saveReRender}"
+					styleClass="aon-editDataTable-button aon-icon-reset" />
+			</aon:column> 
+		</aon:dataTable>
+			
+	</aon:div>	
+
+</ui:composition>

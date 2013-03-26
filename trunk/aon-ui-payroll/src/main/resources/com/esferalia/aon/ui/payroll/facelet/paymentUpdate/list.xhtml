@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="paymentUpdate_list">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_payment_update_module}" />
+				<ui:param name="controller" value="#{paymentUpdate}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipSearchButton" value="true" />
+
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="paymentUpdate-save"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						value="#{bundle.aon_save}"
+						onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
+						actionListener="#{paymentUpdate.onSave}" />
+						
+					<aon:commandButton id="paymentUpdate-refresh"
+						styleClass="aon-finding-toolbar-item aon-icon-refresh"
+						value="#{payrollBundle.payroll_refresh}"
+						onclick="if (#{paymentUpdate.selectedVariable!=null}) if (!confirm('#{payrollBundle.payroll_refresh_confirm}')) return false;"
+						actionListener="#{paymentUpdate.onSearch}" />
+				</ui:define>
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-panelGrid-search">
+					<aon:div styleClass="aon-panelGrid-search-info">
+						<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
+					</aon:div>			
+					
+					<aon:panelGrid columns="2" id="paymentUpdateSearch">
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentUpdate/search_content.xhtml" />
+					</aon:panelGrid>
+					
+				</aon:div>		
+			</aon:div>
+			
+			<aon:div styleClass="aon-scroll-area">
+				
+				<aon:dataTable id="paymentUpdateData" styleClass="aon-width-auto" rendered="#{paymentUpdate.model.rowCount > 0}"
+					value="#{paymentUpdate.model}" var="to">
+					
+					<c:if test="#{paymentUpdate.employeeView}">
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentUpdate/list_employee.xhtml" />
+					</c:if>
+					
+					<c:if test="#{paymentUpdate.variableView}">
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentUpdate/list_variable.xhtml" />
+					</c:if>
+					
+				</aon:dataTable>
+				
+			</aon:div>
+		</aon:form>
+		
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{contractLookup}" />
+		
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-ma-apartado9b" mainSchemaPrefix="pgc-07-ma" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/2009-01-01">
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosInmovilizadoIntangible"
+        inputID="9320102"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+        nsPrefix="pgc07mc-ap" domain="pgc07ma-d-sf:SituacionFiscalDesgloseDimension">
+        <Member id="9320116" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasDeducibles"/>
+        <Member id="9320117" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasImponibles"/>
+        <Member id="9320118" qname="pgc07mc-ap:SituacionFiscalTipoImpositivoEvaluacionDiferenciaBalance"/>
+        <Member id="9320119" qname="pgc07mc-ap:SituacionFiscaldescripcionNaturalezaDiferencia"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosInmovilizadoMaterial"
+        inputID="9320103"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+        nsPrefix="pgc07mc-ap" domain="pgc07ma-d-sf:SituacionFiscalDesgloseDimension">
+        <Member id="9320116" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasDeducibles"/>
+        <Member id="9320117" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasImponibles"/>
+        <Member id="9320118" qname="pgc07mc-ap:SituacionFiscalTipoImpositivoEvaluacionDiferenciaBalance"/>
+        <Member id="9320119" qname="pgc07mc-ap:SituacionFiscaldescripcionNaturalezaDiferencia"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosInversionesInmobiliarias"
+        inputID="9320104"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+        nsPrefix="pgc07mc-ap" domain="pgc07ma-d-sf:SituacionFiscalDesgloseDimension">
+        <Member id="9320116" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasDeducibles"/>
+        <Member id="9320117" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasImponibles"/>
+        <Member id="9320118" qname="pgc07mc-ap:SituacionFiscalTipoImpositivoEvaluacionDiferenciaBalance"/>
+        <Member id="9320119" qname="pgc07mc-ap:SituacionFiscaldescripcionNaturalezaDiferencia"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosInversionesEmpresaGrupo"
+        inputID="9320105"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+        nsPrefix="pgc07mc-ap" domain="pgc07ma-d-sf:SituacionFiscalDesgloseDimension">
+        <Member id="9320116" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasDeducibles"/>
+        <Member id="9320117" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasImponibles"/>
+        <Member id="9320118" qname="pgc07mc-ap:SituacionFiscalTipoImpositivoEvaluacionDiferenciaBalance"/>
+        <Member id="9320119" qname="pgc07mc-ap:SituacionFiscaldescripcionNaturalezaDiferencia"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosOtrasInversionesFinancieras"
+        inputID="9320106"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+        nsPrefix="pgc07mc-ap" domain="pgc07ma-d-sf:SituacionFiscalDesgloseDimension">
+        <Member id="9320116" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasDeducibles"/>
+        <Member id="9320117" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasImponibles"/>
+        <Member id="9320118" qname="pgc07mc-ap:SituacionFiscalTipoImpositivoEvaluacionDiferenciaBalance"/>
+        <Member id="9320119" qname="pgc07mc-ap:SituacionFiscaldescripcionNaturalezaDiferencia"/>
+    </conceptMap>
+    <conceptMap outputID="SituacionFiscalImpuestosBeneficiosExistencias"
+        inputID="9320107"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+        nsPrefix="pgc07mc-ap" domain="pgc07ma-d-sf:SituacionFiscalDesgloseDimension">
+        <Member id="9320116" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasDeducibles"/>
+        <Member id="9320117" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasImponibles"/>
+        <Member id="9320118" qname="pgc07mc-ap:SituacionFiscalTipoImpositivoEvaluacionDiferenciaBalance"/>
+        <Member id="9320119" qname="pgc07mc-ap:SituacionFiscaldescripcionNaturalezaDiferencia"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosDeudoresComercialesOtrasCuentasCobrar"
+        inputID="9320108"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+        nsPrefix="pgc07mc-ap" domain="pgc07ma-d-sf:SituacionFiscalDesgloseDimension">
+        <Member id="9320116" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasDeducibles"/>
+        <Member id="9320117" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasImponibles"/>
+        <Member id="9320118" qname="pgc07mc-ap:SituacionFiscalTipoImpositivoEvaluacionDiferenciaBalance"/>
+        <Member id="9320119" qname="pgc07mc-ap:SituacionFiscaldescripcionNaturalezaDiferencia"/>
+    </conceptMap>
+    <conceptMap outputID="SituacionFiscalImpuestosBeneficiosProvisiones"
+        inputID="9320109"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+        nsPrefix="pgc07mc-ap" domain="pgc07ma-d-sf:SituacionFiscalDesgloseDimension">
+        <Member id="9320116" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasDeducibles"/>
+        <Member id="9320117" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasImponibles"/>
+        <Member id="9320118" qname="pgc07mc-ap:SituacionFiscalTipoImpositivoEvaluacionDiferenciaBalance"/>
+        <Member id="9320119" qname="pgc07mc-ap:SituacionFiscaldescripcionNaturalezaDiferencia"/>
+    </conceptMap>
+    <conceptMap outputID="SituacionFiscalImpuestosBeneficiosDeudas"
+        inputID="9320110"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+        nsPrefix="pgc07mc-ap" domain="pgc07ma-d-sf:SituacionFiscalDesgloseDimension">
+        <Member id="9320116" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasDeducibles"/>
+        <Member id="9320117" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasImponibles"/>
+        <Member id="9320118" qname="pgc07mc-ap:SituacionFiscalTipoImpositivoEvaluacionDiferenciaBalance"/>
+        <Member id="9320119" qname="pgc07mc-ap:SituacionFiscaldescripcionNaturalezaDiferencia"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosPasivosViculadosActivosNoCorrientes"
+        inputID="9320111"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+        nsPrefix="pgc07mc-ap" domain="pgc07ma-d-sf:SituacionFiscalDesgloseDimension">
+        <Member id="9320116" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasDeducibles"/>
+        <Member id="9320117" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasImponibles"/>
+        <Member id="9320118" qname="pgc07mc-ap:SituacionFiscalTipoImpositivoEvaluacionDiferenciaBalance"/>
+        <Member id="9320119" qname="pgc07mc-ap:SituacionFiscaldescripcionNaturalezaDiferencia"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosAcreedoresComercialesOtrasCuentasPagar"
+        inputID="9320112"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+        nsPrefix="pgc07mc-ap" domain="pgc07ma-d-sf:SituacionFiscalDesgloseDimension">
+        <Member id="9320116" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasDeducibles"/>
+        <Member id="9320117" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasImponibles"/>
+        <Member id="9320118" qname="pgc07mc-ap:SituacionFiscalTipoImpositivoEvaluacionDiferenciaBalance"/>
+        <Member id="9320119" qname="pgc07mc-ap:SituacionFiscaldescripcionNaturalezaDiferencia"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosCreditosBasesImponiblesNegativas"
+        inputID="9320113"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+        nsPrefix="pgc07mc-ap" domain="pgc07ma-d-sf:SituacionFiscalDesgloseDimension">
+        <Member id="9320116" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasDeducibles"/>
+        <Member id="9320117" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasImponibles"/>
+        <Member id="9320118" qname="pgc07mc-ap:SituacionFiscalTipoImpositivoEvaluacionDiferenciaBalance"/>
+        <Member id="9320119" qname="pgc07mc-ap:SituacionFiscaldescripcionNaturalezaDiferencia"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosOtrosIncentivosFiscales"
+        inputID="9320114"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+        nsPrefix="pgc07mc-ap" domain="pgc07ma-d-sf:SituacionFiscalDesgloseDimension">
+        <Member id="9320116" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasDeducibles"/>
+        <Member id="9320117" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasImponibles"/>
+        <Member id="9320118" qname="pgc07mc-ap:SituacionFiscalTipoImpositivoEvaluacionDiferenciaBalance"/>
+        <Member id="9320119" qname="pgc07mc-ap:SituacionFiscaldescripcionNaturalezaDiferencia"/>
+    </conceptMap>
+    <conceptMap outputID="SituacionFiscalImpuestosBeneficiosTotal"
+        inputID="9320115"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+        nsPrefix="pgc07mc-ap" domain="pgc07ma-d-sf:SituacionFiscalDesgloseDimension">
+        <Member id="9320116" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasDeducibles"/>
+        <Member id="9320117" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasImponibles"/>
+        <Member id="9320118" qname="pgc07mc-ap:SituacionFiscalTipoImpositivoEvaluacionDiferenciaBalance"/>
+        <Member id="9320119" qname="pgc07mc-ap:SituacionFiscaldescripcionNaturalezaDiferencia"/>
+    </conceptMap>
+    <conceptMap
+        outputID="SituacionFiscalImpuestosBeneficiosActivosNoCorrientesMantenidosVenta"
+        inputID="9320120"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviada/2009-01-01"
+        nsPrefix="pgc07ma" domain="pgc07ma-d-sf:SituacionFiscalDesgloseDimension">
+        <Member id="9320116" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasDeducibles"/>
+        <Member id="9320117" qname="pgc07mc-ap:SituacionFiscalDiferenciasTemporariasImponibles"/>
+        <Member id="9320118" qname="pgc07mc-ap:SituacionFiscalTipoImpositivoEvaluacionDiferenciaBalance"/>
+        <Member id="9320119" qname="pgc07mc-ap:SituacionFiscaldescripcionNaturalezaDiferencia"/>
+    </conceptMap>
+</Statement>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statement xmlns="http://www.inteco.es/xbrl/pgc07/mapa">
+   <conceptMap order="" parent="" outputID="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               inputID=""
+               label=""/>
+   <conceptMap order="1.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasImporteNetoCifraNegocios"
+               inputID="40100"
+               label="1. Importe neto de la cifra de negocios"/>
+   <conceptMap order="2.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasVariacionExistenciasProductosTerminadosProductosCursoFabricacion"
+               inputID="40200"
+               label="2. Variación de existencias de productos terminados y en curso de fabricación"/>
+   <conceptMap order="3.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasTrabajosRealizadosEmpresaActivo"
+               inputID="40300"
+               label="3. Trabajos realizados por la empresa para su activo"/>
+   <conceptMap order="4.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasAprovisionamientos"
+               inputID="40400"
+               label="4. Aprovisionamientos"/>
+   <conceptMap order="5.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasOtrosIngresosExplotacion"
+               inputID="40500"
+               label="5. Otros ingresos de explotación"/>
+   <conceptMap order="6.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasGestionPersonal"
+               inputID="40600"
+               label="6. Gastos de personal"/>
+   <conceptMap order="7.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasOtrosGastosExplotacion"
+               inputID="40700"
+               label="7. Otros gastos de explotación"/>
+   <conceptMap order="8.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasAmortizacionInmovilizado"
+               inputID="40800"
+               label="8. Amortización del inmovilizado"/>
+   <conceptMap order="9.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasImputacionSubvencionesInmovilizadoNoFinancieroOtras"
+               inputID="40900"
+               label="9. Imputación de subvenciones de inmovilizado no financiero y otras"/>
+   <conceptMap order="10.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasExcesosProvisiones"
+               inputID="41000"
+               label="10. Excesos de provisiones"/>
+   <conceptMap order="11.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasDeterioroResultadoEnajenacionesInmovilizado"
+               inputID="41100"
+               label="11. Deterioro y resultado por enajenaciones del inmovilizado"/>
+   <conceptMap order="12.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOtrosResultados"
+               inputID="41300"
+               label="12. Otros resultados"/>
+   <conceptMap order="13.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasResultadoExplotacion"
+               inputID="49100"
+               label="A) RESULTADO DE EXPLOTACIÓN (1+2+3+4+5+6+7+8+9+10+11+12)"/>
+   <conceptMap order="14.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasIngresosFinancieros"
+               inputID="41400"
+               label="13. Ingresos financieros"/>
+   <conceptMap order="1.0"
+               parent="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasIngresosFinancieros"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasIngresosFinancierosImputacionSubvencionesDonacionesLegadosCaracterFinanciero"
+               inputID="41430"
+               label="a) Imputación de subvenciones, donaciones y legados de carácter financiero "/>
+   <conceptMap order="2.0"
+               parent="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasIngresosFinancieros"
+               outputID="pgc-07-c-ap:PerdidasGananciasOperacionesContinuadasIngresosFinancierosOtrosIngresosFinancieros"
+               inputID="41490"
+               label="b) Otros ingresos financieros"/>
+   <conceptMap order="15.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasGastosFinancieros"
+               inputID="41500"
+               label="14. Gastos financieros "/>
+   <conceptMap order="16.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasVariacionValorRazonableInstrumentosFinancieros"
+               inputID="41600"
+               label="15. Variación de valor razonable en instrumentos financieros "/>
+   <conceptMap order="17.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasDiferenciasCambio"
+               inputID="41700"
+               label="16. Diferencias de cambio "/>
+   <conceptMap order="18.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasDeterioroResultadoEnajenacionesInstrumentosFinancieros"
+               inputID="41800"
+               label="17. Deterioro y resultado por enajenaciones de instrumentos financieros "/>
+   <conceptMap order="19.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasOtrosIngresosGastosCaracterFinanciero"
+               inputID="42100"
+               label="18. Otros ingresos y gastos de carácter financiero "/>
+   <conceptMap order="1.0"
+               parent="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasOtrosIngresosGastosCaracterFinanciero"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasOtrosIngresosGastosCaracterFinancieroIncorporacionActivoGastosFinancieros"
+               inputID="42110"
+               label="a) Incorporación al activo de gastos financieros"/>
+   <conceptMap order="2.0"
+               parent="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasOtrosIngresosGastosCaracterFinanciero"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasOtrosIngresosGastosCaracterFinancieroIngresosFinancierosDerivadosConveniosAcreedores"
+               inputID="42120"
+               label="b) Ingresos financieros derivados de convenios de acreedores"/>
+   <conceptMap order="3.0"
+               parent="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasOtrosIngresosGastosCaracterFinanciero"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasOtrosIngresosGastosCaracterFinancieroRestoIngresosGastos"
+               inputID="42130"
+               label="c) Resto de ingresos y gastos"/>
+   <conceptMap order="20.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasResultadoFinanciero"
+               inputID="49200"
+               label="B) RESULTADO FINANCIERO (13 + 14 + 15 + 16 + 17 + 18)"/>
+   <conceptMap order="21.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasResultadoAntesImpuestos"
+               inputID="49300"
+               label="C) RESULTADO ANTES DE IMPUESTOS (A+B) "/>
+   <conceptMap order="22.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasImpuestosSobreBeneficios"
+               inputID="41900"
+               label="19. Impuestos sobre beneficios"/>
+   <conceptMap order="23.0" parent="pgc-07-c-bs:PerdidasGananciasPresentacion"
+               outputID="pgc-07-c-bs:PerdidasGananciasResultadoEjercicio"
+               inputID="49500"
+               label="D) RESULTADO DEL EJERCICIO (C+19)"/>
+</statement>

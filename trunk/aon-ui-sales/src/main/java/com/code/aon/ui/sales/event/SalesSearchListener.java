@@ -1,0 +1,76 @@
+package com.code.aon.ui.sales.event;
+
+import org.apache.commons.lang.ArrayUtils;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.customer.Customer;
+import com.code.aon.product.Item;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.sales.enumeration.SalesStatus;
+import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
+
+public class SalesSearchListener extends RegistrySearchListener {
+
+	private static final String REGISTRY_SEARCH_PREFFIX = "Sales_customer_registry_";
+
+	private Customer customer;
+	
+	private SalesStatus[] salesStatuses;
+	
+    private Item item;
+	
+	public String getPreffix() throws ManagerBeanException {
+		return REGISTRY_SEARCH_PREFFIX;
+	}	
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public SalesStatus[] getSalesStatuses() {
+		return salesStatuses;
+	}
+
+	public void setSalesStatuses(SalesStatus[] salesStatuses) {
+		this.salesStatuses = salesStatuses;
+	}
+	
+	public Item getItem() {
+		return item;
+	}
+
+	public void setItem(Item item) {
+		this.item = item;
+	}
+	
+	@Override
+	protected void init() throws ManagerBeanException {
+		super.init();
+		setCustomer((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
+		SalesStatus[] defaultSalesStatus = {SalesStatus.PENDING};
+		setSalesStatuses(defaultSalesStatus);
+		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
+	}
+	
+	@Override
+	protected void completeCriteria(Criteria criteria ) throws ManagerBeanException, ExpressionException {
+		super.completeCriteria(criteria);
+		if (getCustomer() != null && getCustomer().getId() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.SALES_CUSTOMER_ID), getCustomer().getId());			
+		}
+		if (!ArrayUtils.isEmpty(getSalesStatuses())) {
+			String status = getController().resolveAlias(IEntityAlias.SALES_STATUS);
+			addEnumToCriteria(criteria, status, getSalesStatuses());
+		}
+		if ((getItem() != null) && (getItem().getId() != null)) {
+			criteria.addEqualExpression("Sales.lines.item.id", getItem().getId());
+		}				
+	}	
+}

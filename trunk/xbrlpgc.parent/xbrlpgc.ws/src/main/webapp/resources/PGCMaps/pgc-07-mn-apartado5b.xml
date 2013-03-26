@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mn-apartado5b" mainSchemaPrefix="pgc-07-mn" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01">
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosAmortizacionesAcumuladasInmovilizadoMaterialAmortizacionAcumuladaSaldoInicialEjercicio"
+        inputID="90510"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosAmortizacionesAcumuladasInmovilizadoMaterialDotacionAmortizacionEjercicio"
+        inputID="90511"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosAmortizacionesAcumuladasInmovilizadoMaterialAumentosAdquisicionesTraspasos"
+        inputID="90512"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosAmortizacionesAcumuladasInmovilizadoMaterialAmortizacionAcumuladaSaldoFinalEjercicio"
+        inputID="90514"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosAmortizacionesAcumuladasInmovilizadoMaterialDisminucionesSalidasBajasReduccionesTraspasos"
+        inputID="90513"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosCorreccionesValorDeterioroAcumuladasInmovilizadoMaterialSaldoInicialEjercicio"
+        inputID="90500"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosCorreccionesValorDeterioroAcumuladasInmovilizadoMaterialCorreccionesValorativasDeterioroReconocidasPeriodo"
+        inputID="90501"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosCorreccionesValorDeterioroAcumuladasInmovilizadoMaterialReversionCorreccionesValorativasDeterioro"
+        inputID="90502"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosCorreccionesValorDeterioroAcumuladasInmovilizadoMaterialDisminucionesSalidasBajasReduccionesTraspasos"
+        inputID="90503"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosCorreccionesValorDeterioroAcumuladasInmovilizadoMaterialCorreccionesValorDeterioroSaldoDinalEjercicio"
+        inputID="90504"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosSaldosBrutosInmovilizadoMaterialSaldoInicialBrutoEjercicio"
+        inputID="90520"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosSaldosBrutosInmovilizadoMaterialAdquisicionesMedianteCombinacionesNegocios"
+        inputID="90521"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosSaldosBrutosInmovilizadoMaterialAportacionesNoDinerarias"
+        inputID="90522"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosSaldosBrutosInmovilizadoMaterialAmpliacionesMejoras"
+        inputID="90523"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosSaldosBrutosInmovilizadoMaterialRestoEntradas"
+        inputID="90524"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosSaldosBrutosInmovilizadoMaterialSalidasBajasReducciones"
+        inputID="90525"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosSaldosBrutosInmovilizadoMaterialTranspasosActivosNoCorrientesMantenidosVentaOperacionesInterrumpidas"
+        inputID="90527"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosSaldosBrutosInmovilizadoMaterialTraspasosOtrasPartidas"
+        inputID="90526"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InmovilizadoMaterialEstadoMovimientosInmovilizadoMaterialAnalisisMovimientosSaldosBrutosInmovilizadoMaterialSaldoFinalBrutoEjercicio"
+        inputID="90528"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-inm:InmovilizadoMaterialDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-inm:TerrenosConstruccionesPresentacion"/>
+        <Member id="3" qname="pgc07mn-d-inm:InstalacionesTecnicasMaquinariaUtillajeMobiliarioOtroInmovilizadoMaterialPresentacion"/>
+        <Member id="4" qname="pgc07mn-d-inm:InmovilizadoCursoAnticiposPresentacion"/>
+        <Member id="5" qname="pgc07mn-d-inm:TotalPresentacion"/>
+    </conceptMap>
+</Statement>

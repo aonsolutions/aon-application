@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01 ../../../auxiliares/pgc-07-ref-2008-01-01.xsd" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <link:referenceLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-apdo20-2008-01-01.xsd#pgc07mn-apdo20_NegociosConjuntosHypercube" xlink:label="NegociosConjuntosHypercube"/>
+    <link:reference xlink:type="resource" xlink:label="reference_NegociosConjuntosHypercube" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_NegociosConjuntosHypercube">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="NegociosConjuntosHypercube" xlink:to="reference_NegociosConjuntosHypercube"/>
+  </link:referenceLink>
+</link:linkbase>

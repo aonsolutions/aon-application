@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:param name="lookup_reRender" value="lookup#{pojoName}#{lookupSuffix}#{(lookupReRender != null)?',':''}#{lookupReRender}"/>
+
+	<c:if test="#{(!skipLabel) and lookupRendered}">
+		<aon:outputLabel for="#{pojoName}_id#{lookupSuffix}"
+			value="#{lookupLabel}" />			
+	</c:if>
+	<aon:div id="lookup#{pojoName}#{lookupSuffix}"
+		styleClass="aon-lookup" rendered="#{lookupRendered}" >
+		
+		<ui:insert name="beforeLookupContent"/>
+		
+		<c:if test="#{!skipInputText}">
+			<aon:lookupInputText id="#{pojoName}_id#{lookupSuffix}"
+				value="#{lookupInputValue}" property="#{lookupTo}" 
+				lookup="#{lookupBean}" lookupProperty="#{lookupProperty}" 
+				lookupChangeListener="#{lookupChangeListener}"
+				controllerListener="#{lookupControllerListener}"
+				lookupAction="#{lookupAction}"
+				required="#{idRequired}" disabled="#{lookupDisabled}"
+				size="#{lookupInputSize}" maxlength="#{lookupInputMaxLength}"  
+				onsubmit="#{lookupInputOnSubmit}" focus="#{lookupInputOnFocus}"
+				reRender="#{lookup_reRender}">
+				<ui:insert name="lookupInputTextContent"/>
+			</aon:lookupInputText>
+		</c:if>
+		<c:if test="#{!skipGoToButtonEx}">
+			<aon:goToButton controller="#{controller}" property="#{lookupTo}"
+				backAction="#{goToBackAction}"
+				backActionListener="#{goToBackActionListener}" />
+		</c:if>
+		<c:if test="#{!skipSearchButton}">
+			<aon:lookupButton id="#{pojoName}_SearchButton#{lookupSuffix}"
+				windowTitle="#{searchButtonTitle}" property="#{lookupTo}"
+				minHeight="#{searchButtonHeight}" minWidth="#{searchButtonWidth}"
+				disabled="#{lookupDisabled}" actionType="#{lookupSelectType}"
+				lookup="#{lookupBean}" lookupProperty="#{lookupProperty}"
+				lookupChangeListener="#{lookupChangeListener}"
+				controllerListener="#{lookupControllerListener}"
+				lookupAction="#{lookupAction}"
+				selectReRender="#{lookup_reRender}" >
+				<ui:insert name="searchButtonContent"/>
+			</aon:lookupButton>
+		</c:if>
+		<c:if test="#{!skipClearButton}">
+			<aon:lookupButton id="#{pojoName}_ClearButton#{lookupSuffix}"
+				actionType="clear" disabled="#{lookupDisabled}" 
+				lookup="#{lookupBean}" property="#{lookupTo}"
+				lookupProperty="#{lookupProperty}" focus="#{clearButtonFocus}"
+				lookupChangeListener="#{lookupChangeListener}"
+				controllerListener="#{lookupControllerListener}"
+				selectReRender="#{lookup_reRender}" />
+		</c:if>			
+		<c:if test="#{!skipNewButtonEx}">
+			<aon:lookupButton 
+				windowTitle="#{newButtonTitle}"
+				disabled="#{lookupDisabled}" actionType="new"
+				minHeight="#{newButtonHeight}" minWidth="#{newButtonWidth}"
+				property="#{lookupTo}" lookup="#{lookupBean}"
+				lookupProperty="#{lookupProperty}"
+				lookupChangeListener="#{lookupChangeListener}"
+				controllerListener="#{lookupControllerListener}"
+				lookupAction="#{lookupAction}"
+				selectReRender="#{lookup_reRender}" >
+				<ui:insert name="newButtonContent"/>
+			</aon:lookupButton>
+		</c:if>
+		<c:if test="#{!skipSuggestText}">																		
+			<aon:lookupSuggestText id="#{pojoName}_name#{lookupSuffix}"
+				lookup="#{lookupBean}" lookupProperty="#{lookupProperty}"
+				lookupChangeListener="#{lookupChangeListener}"
+				controllerListener="#{lookupControllerListener}"
+				lookupAction="#{lookupAction}"
+				width="#{lookupInputSuggestWidth}"
+				height="#{lookupInputSuggestHeight}"
+				frequency="#{lookupInputSuggestFrequency}"
+				value="#{lookupInputSuggestValue}" property="#{lookupTo}" 
+				columnExpression="#{lookupInputSuggestExpression}"
+				size="#{lookupInputSuggestSize}" disabled="#{lookupDisabled}"
+				minChars="#{lookupInputMinChars}"  focus="#{lookupInputOnFocus}"
+				selectReRender="#{lookup_reRender}" />
+		</c:if>
+
+		<ui:insert name="afterLookupContent"/>
+
+	</aon:div>
+
+</ui:composition>

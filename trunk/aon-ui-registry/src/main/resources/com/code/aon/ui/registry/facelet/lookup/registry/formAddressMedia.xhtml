@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:valueParam name="pojoName" default="#{controllerLookupListener.controller.pojoShortName}"/>
+	<aon:valueParam name="skipPhone" default="#{false}"/>
+	<aon:valueParam name="skipCellular" default="#{false}"/>
+	<aon:valueParam name="skipFax" default="#{false}"/>
+	<aon:valueParam name="skipEmail" default="#{false}"/>
+	<aon:valueParam name="skipWeb" default="#{false}"/>
+
+	<ui:include src="/com/code/aon/ui/registry/facelet/raddress/form.xhtml" >
+		<ui:param name="registryAddress" value="#{controllerLookupListener.mainAddress}" />
+	</ui:include>
+	
+	<c:if test="#{!skipPhone}">
+		<aon:outputLabel for="#{pojoName}_telephone" value="#{registryBundle.registry_phone}" />
+		<aon:div>
+			<aon:inputText id="#{pojoName}_telephone" 
+				value="#{controllerLookupListener.phone.value}" size="12" maxlength="64"/>
+			<aon:outputText value="#{bundle.aon_comment}" styleClass="aon-margin-left aon-margin-right aon-italic" />
+			<aon:inputText id="#{pojoName}_telephone_comment"
+				value="#{controllerLookupListener.phone.comment}" size="48" maxlength="64"/>
+		</aon:div>
+	</c:if>
+		
+	<c:if test="#{!skipCellular}">
+		<aon:outputLabel for="#{pojoName}_cellular" value="#{registryBundle.registry_cellular}" />
+		<aon:div>
+			<aon:inputText id="#{pojoName}_cellular" 
+				value="#{controllerLookupListener.cellular.value}" size="12" maxlength="64"/>
+			<aon:outputText value="#{bundle.aon_comment}" styleClass="aon-margin-left aon-margin-right aon-italic" />
+			<aon:inputText id="#{pojoName}_cellular_comment"
+				value="#{controllerLookupListener.cellular.comment}" size="48" maxlength="64"/>
+		</aon:div>
+	</c:if>
+		
+	<c:if test="#{!skipFax}">
+		<aon:outputLabel for="#{pojoName}_fax" value="#{registryBundle.registry_fax}" />
+		<aon:div>
+			<aon:inputText id="#{pojoName}_fax"
+				value="#{controllerLookupListener.fax.value}" size="12" maxlength="64"/>
+			<aon:outputText value="#{bundle.aon_comment}" styleClass="aon-margin-left aon-margin-right aon-italic" />
+			<aon:inputText id="#{pojoName}_fax_comment"
+				value="#{controllerLookupListener.fax.comment}" size="48" maxlength="64"/>
+		</aon:div>
+	</c:if>
+		
+	<c:if test="#{!skipEmail}">
+		<aon:outputLabel for="#{pojoName}_email" value="#{registryBundle.registry_email}" />
+		<aon:inputText id="#{pojoName}_email" 
+			value="#{controllerLookupListener.email.value}" size="64" maxlength="64" onblur="toLowerCase(this);" />
+	</c:if>
+
+	<c:if test="#{!skipWeb}">
+		<aon:outputLabel for="#{pojoName}_web" value="#{registryBundle.registry_web}" />
+		<aon:inputText id="#{pojoName}_web"
+			value="#{controllerLookupListener.web.value}" size="64" maxlength="64" onblur="toLowerCase(this);" />
+	</c:if>
+			
+</ui:composition>

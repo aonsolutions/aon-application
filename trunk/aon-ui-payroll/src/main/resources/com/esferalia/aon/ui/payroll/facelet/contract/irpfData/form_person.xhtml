@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+				
+					
+	<aon:div styleClass="aon-scroll-area" id="irpfDataContent">
+		<aon:panelGrid columns="2"  width="100%"
+			columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-auto">
+	
+			<aon:outputLabel for="irpfData_fiscal_exclusion"
+				value="#{payrollBundle.payroll_irpfData_fiscal_exclusion}" />
+			<aon:selectBooleanCheckbox id="irpfData_fiscal_exclusion" 
+				value="#{irpfData.to.fiscalExclusion}"/> 
+			
+			<aon:outputLabel for="irpfData_familySituation" value="#{payrollBundle.payroll_irpfData_familySituation}" />
+			<aon:selectOneRadio id="irpfData_familySituation" layout="pageDirection" 
+				value="#{irpfData.to.familySituation}" >
+				<f:selectItems value="#{payrollCollections.familySituations}"  />
+				<a4j:support event="onchange" reRender="irpfDataContent" ajaxSingle="true" />
+				<a4j:support event="onclick" reRender="irpfDataContent" ajaxSingle="true" />
+			</aon:selectOneRadio>
+			
+			<aon:outputLabel for="irpfData_spouseDocument" value="#{payrollBundle.payroll_irpfData_spouseDocument}" 
+				rendered="#{irpfData.to.familySituation=='MARRIED'}"/>
+			<aon:panelGroup id="irpfDataDocumentPanel"
+				rendered="#{irpfData.to.familySituation=='MARRIED'}" required="true">
+				<aon:inputText id="irpfData_spouseDocument" style="margin-left: 3px;" required="true"
+					value="#{irpfData.to.spouseDocument}" size="16" maxlength="16">
+					<f:validateLength minimum="1" maximum="16" />
+					<a4j:support onsubmit="toUpperCase(this);"
+						event="onchange" 
+						reRender="irpfDataDocumentPanel" 
+						ajaxSingle="true" />
+				</aon:inputText>
+				<aon:outputText 
+					rendered="#{irpfData.to.spouseDocument==null}"
+					styleClass="aon-icon-question"
+					style="padding-left: 15px;"
+					value="&#160;" />
+				<aon:outputText 
+					rendered="#{irpfData.validNIF}"
+					styleClass="aon-icon-predetermine"
+					style="padding-left: 15px;"
+					value="&#160;" />
+				<aon:outputText 
+					rendered="#{irpfData.to.spouseDocument!=null and !irpfData.validNIF}"
+					styleClass="aon-icon-exception"
+					style="padding-left: 15px;"
+					value="&#160;" />
+			</aon:panelGroup>
+			
+			<aon:outputLabel for="irpfData_disabilityLevel" value="#{payrollBundle.payroll_irpfData_disabilityLevel}" />
+			<aon:selectOneMenu id="irpfData_disabilityLevel" value="#{irpfData.disabilityLevel}">
+				<f:selectItem value="#{null}" itemLabel=" - " />
+				<f:selectItems value="#{payrollCollections.disabilityLevels}" />
+				<a4j:support event="onchange" reRender="irpfDataContent" ajaxSingle="true" />
+			</aon:selectOneMenu>
+	
+			<aon:outputLabel for="irpfData_dependence"
+				rendered="#{irpfData.disabilityLevel=='GT_EQ_33_LT_65'}" 
+				value="#{payrollBundle.payroll_irpfData_dependence}" />
+			<aon:selectBooleanCheckbox id="irpfData_dependence" 
+				rendered="#{irpfData.disabilityLevel=='GT_EQ_33_LT_65'}" 
+				value="#{irpfData.to.dependence}"/> 
+
+			<aon:outputLabel for="irpfData_movingDate" value="#{payrollBundle.payroll_irpfData_movingDate}" />
+			<aon:selectInputDate id="irpfData_movingDate" 
+				value="#{irpfData.to.movingDate}" 
+				inputSize="10" renderAsPopup="true" enableManualInput="true"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}">
+			</aon:selectInputDate>
+
+			<aon:outputLabel for="irpfData_labourProlongation" value="#{payrollBundle.payroll_irpfData_labourProlongation}" />
+			<aon:selectBooleanCheckbox id="irpfData_labourProlongation" value="#{irpfData.to.labourProlongation}"/>
+			
+		</aon:panelGrid>
+	</aon:div>
+	
+
+
+</ui:composition>

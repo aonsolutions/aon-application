@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mn-apartado9m2" mainSchemaPrefix="pgc-07-mn" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01">
+    <conceptMap
+        outputID="InstrumentosFinancierosInformacionRelacionadaCuentaPyGPatrimonioNetoPasivosFinancierosPerdidasGananciasNetas"
+        inputID="1"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-apdo9:InstrumentosFinancierosCategoriasDimension">
+        <Member id="90962" qname="pgc07mn:InstrumentosFinancierosPasivosFinancierosPasivosValorRazonableCambiosPerdidasGananciasMantenidosNegociar"/>
+        <Member id="90963" qname="pgc07mn:InstrumentosFinancierosPasivosFinancierosPasivosValorRazonableCambiosPerdidasGananciasOtros"/>
+        <Member id="90961" qname="pgc07mn:InstrumentosFinancierosPasivosFinancierosDebitosPartidasPagar"/>
+        <Member id="90964" qname="pgc07mn:InstrumentosFinancierosPasivosFinancierosDerivadosCobertura"/>
+        <Member id="90965" qname="pgc07mn:InstrumentosFinancierosPasivosFinancierosTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosInformacionRelacionadaCuentaPyGPatrimonioNetoPasivosFinancierosGastosFinancierosAplicacionTipoInteresEfectivo"
+        inputID="2"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-apdo9:InstrumentosFinancierosCategoriasDimension">
+        <Member id="90962" qname="pgc07mn:InstrumentosFinancierosPasivosFinancierosPasivosValorRazonableCambiosPerdidasGananciasMantenidosNegociar"/>
+        <Member id="90963" qname="pgc07mn:InstrumentosFinancierosPasivosFinancierosPasivosValorRazonableCambiosPerdidasGananciasOtros"/>
+        <Member id="90961" qname="pgc07mn:InstrumentosFinancierosPasivosFinancierosDebitosPartidasPagar"/>
+        <Member id="90964" qname="pgc07mn:InstrumentosFinancierosPasivosFinancierosDerivadosCobertura"/>
+        <Member id="90965" qname="pgc07mn:InstrumentosFinancierosPasivosFinancierosTotal"/>
+    </conceptMap>
+</Statement>

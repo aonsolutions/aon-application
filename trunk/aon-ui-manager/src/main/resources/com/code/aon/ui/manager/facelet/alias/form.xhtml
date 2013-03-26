@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:include src="/com/code/aon/ui/webmail/facelet/util/formInnerToolbar.xhtml" >
+		<ui:param name="skipSearchButton" value="#{true}" />
+	</ui:include>	
+
+	<aon:div styleClass="aon-scroll-area">
+
+		<aon:panelGrid columns="2">
+
+			<aon:outputLabel for="Alias_commonName"
+				value="#{bundle.aon_name}" />
+			<c:if test="#{controller.new}" >				
+				<aon:div>
+					<aon:inputText id="Alias_commonName"
+						size="20" required="true"
+						validator="#{controller.idCheck}"
+						value="#{controller.to.commonName}" />
+					<aon:outputText value="@"
+						styleClass="aon-bold aon-margin-left aon-margin-right" />								
+					<aon:inputText size="20" disabled="true"
+						value="#{domain.to.commonName}" />
+				</aon:div>
+			</c:if>				
+			<c:if test="#{!controller.new}" >
+				<aon:inputText id="Alias_commonName"
+					size="40" disabled="true"
+					value="#{controller.to.commonName}" />
+			</c:if>
+					
+			<aon:outputLabel for="Alias_values"
+				value="#{managerBundle.manager_alias}" />				
+			<aon:div id="aliasInputDiv">
+				<a4j:region>
+					<a4j:repeat value="#{alias.to.aliases}" rowKeyVar="index" var="aliasValue">
+						<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+							<aon:inputText id="Alias_values" size="40"
+								required="#{alias.aliasesSize == 1}"
+								validator="#{controller.emailCheck}"
+								value="#{alias.to.aliases[index]}" />
+							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="aliasInputDiv"
+								actionListener="#{alias.onRemoveAlias}" value="&#160;"
+								rendered="#{index &lt; (alias.aliasesSize-1)}" >
+								<f:param name="index" value="#{index}" />
+							</aon:commandButton>
+							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="aliasInputDiv"
+								actionListener="#{alias.onAddAlias}" value="&#160;"
+								rendered="#{index == (alias.aliasesSize-1)}"/>					
+						</aon:div>						
+					</a4j:repeat>
+				</a4j:region>
+			</aon:div>					
+
+		</aon:panelGrid>
+	</aon:div>
+
+</ui:composition>

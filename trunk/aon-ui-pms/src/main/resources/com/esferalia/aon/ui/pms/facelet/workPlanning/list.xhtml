@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="posShiftList">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_workPlanning_module}" />
+				
+				<ui:define name="additionalToolbarContent">
+				
+					<aon:commandButton id="workPlanning-search"
+						title="#{bundle.aon_key_search_accelerator}"
+						value="#{bundle.aon_search}" 
+						action="workPlanning_search" actionListener="#{workPlanning.onInit}"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						accesskey="#{bundle.aon_key_search}" />
+					
+					<aon:htmlCommandLink id="workPlanning-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="workPlanning" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="workPlanning_list"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						value="#{bundle.aon_listing}"
+						action="#{report.onExecute}"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="workPlanning" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>	
+				
+				</ui:define>
+				
+			</ui:decorate>
+ 
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:panel>
+					<aon:panelGrid columns="4" 
+						columnClasses="aon-panelGrid-even aon-noborder, 
+						aon-panelGrid-even aon-noborder">
+				
+						<aon:outputText value="#{pmsBundle.pms_hotel}:" styleClass="aon-italic aon-bold" />
+						<aon:outputText value="#{workPlanning.hotel.workPlace.description}" />
+						
+						<aon:outputText value="#{bundle.aon_date}:" styleClass="aon-italic aon-bold" />
+						<aon:outputText value="#{workPlanning.date}" >
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+
+					</aon:panelGrid>
+				
+				</aon:panel>
+			
+				<aon:dataTable id="workPlanningDataList" value="#{workPlanning.model}" 
+					rendered="#{workPlanning.model!=null and workPlanning.model.rowCount > 0}" rows="20" var="to">
+						
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_room}" />
+							</f:facet>
+							<aon:outputText value="#{to.room.asset.name}" />
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_guests}" />
+							</f:facet>
+							<aon:outputText value="#{to.reservationRoomDetail.projectReservationRoom.adults + to.reservationRoomDetail.projectReservationRoom.children}" />
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_operation}" />
+							</f:facet>
+							<aon:outputText value="#{to.action}" />
+						</aon:column>
+						
+				</aon:dataTable>
+			
+				<aon:dataScroller2 for="workPlanningDataList" showNote="true" />
+				
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>

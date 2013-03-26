@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="salarySearch">
+		
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{payrollBundle.payroll_salary_remover_module}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_toolbar_search}" />			
+					</aon:div>
+
+					<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="salaryRemover-clear"
+							value="#{bundle.aon_clear}"
+							type="reset" ajaxSingle="true"
+							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+						<aon:commandButton id="salaryRemover-back" 
+							title="#{bundle.aon_key_cancel_accelerator}"
+							value="#{bundle.aon_back}"
+							action="salaryRemover_list" 
+							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+							accesskey="#{bundle.aon_key_cancel}" />			
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+			
+			<aon:methodParam name="searchActionListener" default="#{salaryRemover.onSearch}" type="actionListener" />
+			<aon:methodParam name="searchAction" default="salaryRemover_list" resolve="true" />
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="controller" value="#{salary}" />
+				<ui:define name="searchContent">
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/searchContent.xhtml"  >
+						<ui:param name="showSalaryType" value="false" />
+					</ui:include>
+
+					<aon:outputLabel for="Salary_type" value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="Salary_type" 
+						value="#{salaryRemover.salaryType}">
+						<f:selectItem itemLabel="#{bundle.aon_common_all}" value="#{null}" />
+						<f:selectItems value="#{payrollCollections.salaryTypes}" />
+					</aon:selectOneMenu>
+
+				</ui:define>
+			</ui:decorate>
+			
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+	</ui:define>
+</ui:composition>

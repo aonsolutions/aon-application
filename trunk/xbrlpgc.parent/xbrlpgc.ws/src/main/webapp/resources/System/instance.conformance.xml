@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ubm:testcases xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ubmatrix.com/XBRL/2.1/conformance/2003-10-24 conformance.xsd" base="" description="Core Conformance" xmlns:ubm="http://www.ubmatrix.com/XBRL/2.1/conformance/2003-10-24">
+    <ubm:testcase href="instance/301-idScope.xml">
+        <ubm:variation name="IdScopeValid" description="301.01 Valid example of id attribute." />
+        <ubm:variation name="IdScopeOutOfScope" description="301.01 Valid example of id attribute." />
+        <ubm:variation name="IdScopePeriodDiff" description="301.01 Valid example of id attribute." />
+        <ubm:variation name="IdScopeContextRefToUnit" description="301.01 Valid example of id attribute." />
+        <ubm:variation name="IdScopeUnitRefToContext" description="301.01 Valid example of id attribute." />
+        <ubm:variation name="FootnoteScopeValid" description="301.01 Valid example of id attribute." />
+        <ubm:variation name="FootenoteOutOfScope" description="301.01 Valid example of id attribute." />
+        <ubm:variation name="FootnoteToContext" description="301.01 Valid example of id attribute." />
+        <ubm:variation name="FootnoteToUnit" description="301.01 Valid example of id attribute." />
+        <ubm:variation name="FootnoteFromOutOfScope" description="301.01 Valid example of id attribute." />
+        <ubm:variation name="FootnoteToOutOfScope" description="301.01 Valid example of id attribute." />
+        <ubm:variation name="FootnoteLocOutOfScope" description="301.01 Valid example of id attribute." />
+        <ubm:variation name="FootnoteLocInScope" description="301.01 Valid example of id attribute." />
+        <ubm:variation name="FootnoteFromResource" description="301.01 Valid example of id attribute." />
+        <ubm:variation name="FootnoteToLoc" description="301.01 Valid example of id attribute." />
+        <ubm:variation name="FootnoteWithoutLang" description="301.01 Valid example of id attribute." />
+    </ubm:testcase>
+    <ubm:testcase href="instance/302-context.xml">
+        <ubm:variation name="SegmentValid" description="302.01 Valid segment in a context" />
+        <ubm:variation name="SegmentNamespaceInvalid" description="302.01 Valid segment in a context" />
+        <ubm:variation name="ScenarioValid" description="302.01 Valid segment in a context" />
+        <ubm:variation name="ScenarioNamespaceInvalid" description="302.01 Valid segment in a context" />
+        <ubm:variation name="SegmentSubstitutionInvalid" description="302.01 Valid segment in a context" />
+        <ubm:variation name="ScenarioSubstitutionInvalid" description="302.01 Valid segment in a context" />
+        <ubm:variation name="SegmentEmptyContent" description="302.01 Valid segment in a context" />
+        <ubm:variation name="ScenarioEmptyContent" description="302.01 Valid segment in a context" />
+        <ubm:variation name="PeriodDateTimeValid" description="302.01 Valid segment in a context" />
+        <ubm:variation name="PeriodDateTimeInvalid" description="302.01 Valid segment in a context" />
+    </ubm:testcase>
+    <ubm:testcase href="instance/303-periodType.xml">
+        <ubm:variation name="PeriodInstantValid" description="303.01 instant context and item defined with PeriodType=&quot;instant&quot;" />
+        <ubm:variation name="PeriodDurationValid" description="303.01 instant context and item defined with PeriodType=&quot;instant&quot;" />
+        <ubm:variation name="PeriodInstantInValid" description="303.01 instant context and item defined with PeriodType=&quot;instant&quot;" />
+        <ubm:variation name="PeriodDurationInvalid" description="303.01 instant context and item defined with PeriodType=&quot;instant&quot;" />
+        <ubm:variation name="ForeverConceptwithInstantPeriodType" description="303.01 instant context and item defined with PeriodType=&quot;instant&quot;" />
+    </ubm:testcase>
+    <ubm:testcase href="instance/304-unitOfMeasure.xml">
+        <ubm:variation name="monetaryItemType has monetary units (using the standard ISO namespace prefix)" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="monetaryItemType has monetary units (using a non-standard ISO namespace prefix)" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="monetaryItemType derivation has monetary units" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="An element with a type derived by restriction from monetaryItemType has monetary units (using a non-standard ISO namespace prefix)" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="non monetaryItemType has monetary units" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="monetaryItemType does not have monetary units" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="monetaryItemType derivation does not have ISO currency code for monetary units - the local name is wrong" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="monetaryItemType derivation does not have monetary units - the namespace is wrong" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="monetaryItemType derivation does not have monetary units - the local name is wrong" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="Units for pure numbers" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="Units for pure numbers - counterexample - local name does not resolve" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="Units for pure numbers - counterexample - the namespace string is incorrect" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="Units for sharesItemType items MUST have A single measure element" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="Units for sharesItemType items derived by restriction" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="Units for sharesItemType items - counter examp e" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="Units must be in their simplest form" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="Units equality. valid case with orderd measure element" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="Units equality. valid case with orderd divide element" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="Units equality. valid case with unorderd measure element" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="Units equality. valid case with unorderd divide element" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="Units equality. invalid case with measure element" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="Units equality. invalid case with divide element" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+        <ubm:variation name="Type and Fact Value unit do not match - shares and monetary type mismatched" description="&#xD;&#xA;		304.01 An element with a monetary item type has an ISO&#xD;&#xA;		currency code for its units (using the standard ISO&#xD;&#xA;		namespace prefix).&#xD;&#xA;		" />
+    </ubm:testcase>
+    <ubm:testcase href="instance/305-decimalPrecision.xml">
+        <ubm:variation name="DecimalOnlySpecified" description="305.01 item has only Decimals specified" />
+        <ubm:variation name="PrecisionOnlySpecified" description="305.01 item has only Decimals specified" />
+        <ubm:variation name="NoDecimalOrPrecisionSpecified" description="305.01 item has only Decimals specified" />
+        <ubm:variation name="BothDecimalAndPrecisionSpecified" description="305.01 item has only Decimals specified" />
+        <ubm:variation name="DecimalSpecifiedOnNilItem" description="305.01 item has only Decimals specified" />
+        <ubm:variation name="PrecisionSpecifiedOnNilItem" description="305.01 item has only Decimals specified" />
+        <ubm:variation name="Decimalzeroandeffectivalue" description="305.01 item has only Decimals specified" />
+    </ubm:testcase>
+    <ubm:testcase href="instance/306-required.xml">
+        <ubm:variation name="RequiredDefinitionValid-ItemItem" description="&#xD;&#xA;		306.01 The instance contains two elements in the same context. &#xD;&#xA;		The presence of one element forces the presence of the other.&#xD;&#xA;		" />
+        <ubm:variation name="RequiredDefinitionValid-TupleItemValid" description="&#xD;&#xA;		306.01 The instance contains two elements in the same context. &#xD;&#xA;		The presence of one element forces the presence of the other.&#xD;&#xA;		" />
+        <ubm:variation name="RequiredDefinitionValid-TupleItemInvalid" description="&#xD;&#xA;		306.01 The instance contains two elements in the same context. &#xD;&#xA;		The presence of one element forces the presence of the other.&#xD;&#xA;		" />
+    </ubm:testcase>
+    <ubm:testcase href="instance/307-schemaRef.xml">
+        <ubm:variation name="SchemaRefExample" description="&#xD;&#xA;		307.01 A schemaRef element MUST hold the URI of a&#xD;&#xA;		schema.  In this case it does.&#xD;&#xA;		" />
+        <ubm:variation name="SchemaRefCounterExample" description="&#xD;&#xA;		307.01 A schemaRef element MUST hold the URI of a&#xD;&#xA;		schema.  In this case it does.&#xD;&#xA;		" />
+        <ubm:variation name="SchemaRefXMLBase" description="&#xD;&#xA;		307.01 A schemaRef element MUST hold the URI of a&#xD;&#xA;		schema.  In this case it does.&#xD;&#xA;		" />
+    </ubm:testcase>
+    <ubm:testcase href="instance/391-inferDecimalPrecision.xml">
+        <ubm:variation name="InferPrecisionFromDecimals 01" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 02" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 03" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 04" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 05" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 06" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 07" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 08" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 09" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 10" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 11" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 12" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 13" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 14" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 15" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 16" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 17" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 18" description="Test variation 391-01 using a base lexical represen ation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 19" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 20" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 21" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 22" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 23" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 24" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 25" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 26" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 27" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 28" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 29" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 30" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 31" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 32" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 33" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 34" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 35" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 36" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 37" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 38" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 39" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 40" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 41" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 42" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 43" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 44" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 45" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 46" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 47" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 48" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 49" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 50" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 51" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 52" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 53" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 54" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 55" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 56" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 57" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 58" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 59" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 60" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 61" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 62" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 63" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 64" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 65" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 66" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 67" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 68" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 69" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+        <ubm:variation name="InferPrecisionFromDecimals 70" description="Test variation 391-01 using a base lexical representation of .0000 for the data value with various exponent parts" />
+    </ubm:testcase>
+    <ubm:testcase href="instance/392-inferEssenceAlias.xml">
+        <ubm:variation name="EssenceAliasValid" description="392.01 Valid example of essence-alias attribute." />
+        <ubm:variation name="EssenceAliasDuplicate" description="392.01 Valid example of essence-alias attribute." />
+        <ubm:variation name="EssenceAliasDuplicateNoEssence" description="392.01 Valid example of essence-alias attribute." />
+        <ubm:variation name="EssenceAliasReverse" description="392.01 Valid example of essence-alias attribute." />
+        <ubm:variation name="EssenceAliasValidWithValue" description="392.01 Valid example of essence-alias attribute." />
+        <ubm:variation name="EssenceAliasInvalid" description="392.01 Valid example of essence-alias attribute." />
+        <ubm:variation name="EssenceAliasDifferentScopeValid" description="392.01 Valid example of essence-alias attribute." />
+        <ubm:variation name="EssenceAliasDifferentScopeInValid" description="392.01 Valid example of essence-alias attribute." />
+        <ubm:variation name="EssenceAliasDifferentScopeValidWithValue" description="392.01 Valid example of essence-alias attribute." />
+        <ubm:variation name="EssenceAliasDifferentUnit" description="392.01 Valid example of essence-alias attribute." />
+        <ubm:variation name="EssenceAliasDifferentContext" description="392.01 Valid example of essence-alias attribute." />
+        <ubm:variation name="EssenceAliasDifferentType" description="392.01 Valid example of essence-alias attribute." />
+        <ubm:variation name="EssenceAliasDifferentPeriodType" description="392.01 Valid example of essence-alias attribute." />
+        <ubm:variation name="EssenceAliasNonNumericValid" description="392.01 Valid example of essence-alias attribute." />
+        <ubm:variation name="EssenceAliasNonNumericInValid" description="392.01 Valid example of essence-alias attribute." />
+        <ubm:variation name="EssenceAliasNonNumericTupleValid" description="392.01 Valid example of essence-alias attribute." />
+        <ubm:variation name="EssenceAliasNonNumericTupleInValid" description="392.01 Valid example of essence-alias attribute." />
+    </ubm:testcase>
+    <ubm:testcase href="instance/395-inferNumericConsistency.xml">
+        <ubm:variation name="InferCalculatedValueConsistencyValid" description="395.01  Valid example of summation-item attribute." />
+        <ubm:variation name="InferCalculatedValueConsistencyValidButDiffernetValue" description="395.01  Valid example of summation-item attribute." />
+    </ubm:testcase>
+    <ubm:testcase href="instance/397-Testcase-SummationItem.xml">
+        <ubm:variation name="ConsistentInstance" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="InconsistentInstance" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="NonCEqualContributing" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="NonUEqualContributing" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="SEqualContextsAndUnitsContributing" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="BothNilContributing" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="OneNilContributingConsistent" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="OneNilContributingInconsistent" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="OneContributingConsistent" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="OneContributingInconsistent" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="NilSummationItem" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="DuplicateSummationItems" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="DuplicateContributingItems" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="InconsistentWithinTuple" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="SeparateTuplesConsistent" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="ContributingWithinTuples" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="MultiLevelBinding" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="ConsistentCountdown" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="InconsistentCountdown" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="DuplicateCountdown" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="NoSummationItemInference" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="NoEssenceAliasInference" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="TopAndTupleInconsistent" description="A simple consistent instance; A = B + C" />
+        <ubm:variation name="TopAndTupleConsistent" description="A simple consistent instance; A = B + C" />
+    </ubm:testcase>
+</ubm:testcases>

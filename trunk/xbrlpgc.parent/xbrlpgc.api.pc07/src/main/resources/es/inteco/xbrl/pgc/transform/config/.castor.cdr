@@ -1,0 +1,11 @@
+#Thu Dec 04 19:07:50 CET 2008
+es.inteco.xbrl.pgc.transform.config.ConfigModule=es.inteco.xbrl.pgc.transform.config.descriptors.ConfigModuleDescriptor
+es.inteco.xbrl.pgc.transform.config.ConfigReport=es.inteco.xbrl.pgc.transform.config.descriptors.ConfigReportDescriptor
+es.inteco.xbrl.pgc.transform.config.Unit=es.inteco.xbrl.pgc.transform.config.descriptors.UnitDescriptor
+es.inteco.xbrl.pgc.transform.config.SchemaRef=es.inteco.xbrl.pgc.transform.config.descriptors.SchemaRefDescriptor
+es.inteco.xbrl.pgc.transform.config.LabelTypeRoles=es.inteco.xbrl.pgc.transform.config.descriptors.LabelTypeRolesDescriptor
+es.inteco.xbrl.pgc.transform.config.DefinitionRoles=es.inteco.xbrl.pgc.transform.config.descriptors.DefinitionRolesDescriptor
+es.inteco.xbrl.pgc.transform.config.NsItem=es.inteco.xbrl.pgc.transform.config.descriptors.NsItemDescriptor
+es.inteco.xbrl.pgc.transform.config.File=es.inteco.xbrl.pgc.transform.config.descriptors.FileDescriptor
+es.inteco.xbrl.pgc.transform.config.Global=es.inteco.xbrl.pgc.transform.config.descriptors.GlobalDescriptor
+es.inteco.xbrl.pgc.transform.config.Role=es.inteco.xbrl.pgc.transform.config.descriptors.RoleDescriptor

@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:outputLabel for="#{searchController.preffix}payMethods_payment_id"
+		value="#{configBundle.config_pay_method}" />				
+	<aon:div id="payMethodDiv">
+		<a4j:repeat value="#{searchController.payMethods}" rowKeyVar="index" var="pay_method">
+			<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+				<aon:selectOneMenu id="#{searchController.preffix}payMethods_payment_id"
+					value="#{searchController.payMethods[index]}">
+					<f:selectItem itemLabel="-" itemValue="#{searchController.emptyPayMethod}"/>
+					<f:selectItems value="#{configCollections.payMethods}" />
+					<a4j:support event="onchange" reRender="payMethodDiv"/>
+				</aon:selectOneMenu>
+				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
+					actionListener="#{searchController.onRemovePayMethod}" reRender="payMethodDiv" value="&#160;"
+					rendered="#{pay_method.id != null}">
+					<f:param name="index" value="#{index}" />
+				</aon:commandButton>
+				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" ajaxSingle="true"
+					actionListener="#{searchController.onAddPayMethod}" reRender="payMethodDiv" value="&#160;"
+					rendered="#{(pay_method.id != null) and (index == (searchController.payMethodsSize-1))}"/>					
+			</aon:div>						
+		</a4j:repeat>
+	</aon:div>						
+
+</ui:composition>

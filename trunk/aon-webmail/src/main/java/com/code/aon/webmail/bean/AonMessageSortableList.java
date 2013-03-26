@@ -1,0 +1,101 @@
+package com.code.aon.webmail.bean;
+
+import java.util.Arrays;
+import java.util.Comparator;
+
+import javax.mail.Folder;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class AonMessageSortableList extends AonSortableList {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(AonMessageSortableList.class);
+
+    public static String FROM_COLUMN = "from";   
+    
+    public static String TO_COLUMN = "to";
+    
+    public static String SUBJECT_COLUMN = "subject";
+    
+    public static String DATE_COLUMN = "date";
+    
+    public static String SIZE_COLUMN = "size";
+    
+    private AonMessage[] messageList;
+
+	protected Folder folder;
+	
+	private boolean sortable;
+	
+	public AonMessageSortableList(String column, Folder folder, boolean sortable) {
+		super(column);
+		this.sortable = sortable;
+		this.folder = folder;
+	}
+
+	/**
+	 * @return the folder
+	 */
+	public Folder getFolder() {
+		return folder;
+	}
+
+
+	/**
+	 * @return the messageList
+	 */
+	public AonMessage[] getMessageList() {
+		if (!oldSort.equals(sort) || oldAscending != ascending) {
+			sort();
+		}
+		return messageList;
+	}
+	
+	public int getMessageListCount() {
+		return ArrayUtils.getLength(messageList);
+	}
+
+	/**
+	 * @param messageList the messageList to set
+	 */
+	public void setMessageList(AonMessage[] messageList) {
+		this.messageList = messageList;
+	}
+
+	@Override
+	protected boolean isDefaultAscending(String column) {
+		if (column.equals(SUBJECT_COLUMN)) {
+			return true;
+		} else if (column.equals(FROM_COLUMN)) {
+			return true;
+		} else if (column.equals(TO_COLUMN)) {
+			return true;
+		} else if (column.equals(DATE_COLUMN)) {
+			return false;
+		}
+		return true;
+	}
+
+	protected void sort(){
+		sort(getSort(), isAscending());
+		oldSort = sort;
+		oldAscending = ascending;
+	}
+
+	/**
+	 * Sort the list.
+	 */
+	protected void sort(final String column, final boolean ascending) {
+		if ( (messageList != null) && sortable) {
+			try {
+				Comparator<AonMessage> comparator = AonMessageComparator.getComparator(column, ascending);
+				Arrays.sort(messageList, comparator);
+			} catch ( Throwable th ) {
+				LOGGER.error("Error sorting message list", th);
+			}
+		}
+	}
+
+}

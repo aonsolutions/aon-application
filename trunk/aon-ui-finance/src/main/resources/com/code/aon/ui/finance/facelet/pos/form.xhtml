@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="posForm">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_pos_definition_module}" />
+				<ui:param name="controller" value="#{pos}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid id="posPanel" columns="2">
+					<aon:outputLabel value="#{companyBundle.company_workplace}" />
+					<aon:selectOneMenu 
+						value="#{pos.to.workPlace}" >
+						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="Pos_name" value="#{financeBundle.finance_pos_name}" />
+					<aon:inputText id="Pos_name" value="#{pos.to.name}" 
+						size="32" maxlength="32" required="true" />
+					
+					<aon:outputLabel value="#{pmsBundle.pms_invoiceable}" />
+					<aon:selectBooleanCheckbox value="#{pos.to.invoiceable}" >
+						<a4j:support event="onclick" reRender="posPanel" ignoreDumpResponses="true" ajaxSingle="true" />
+					</aon:selectBooleanCheckbox>
+					
+					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{pos.to.item}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="lookupRendered" value="#{pos.to.invoiceable}" />
+					</ui:include>
+					
+					<aon:outputLabel for="Pos_initialAmount" value="#{pmsBundle.pms_pos_openingAmount}" />
+					<aon:inputText id="Pos_initialAmount" value="#{pos.to.initialAmount}" 
+						size="20" maxlength="17" />
+
+					<aon:outputLabel value="#{bundle.aon_active}" />
+					<aon:selectBooleanCheckbox value="#{pos.to.active}" />
+					
+<!--
+					<aon:outputLabel for="Pos_pinPad" value="#{pmsBundle.pos_pin_pad}" />
+					<aon:selectBooleanCheckbox id="Pos_pinPad" value="#{pos.to.pinPad}" >
+						<a4j:support event="onclick" reRender="posPanel" ignoreDumpResponses="true" ajaxSingle="true" />
+					</aon:selectBooleanCheckbox>
+					
+					<c:if test="#{pos.to.pinPad}">
+						<aon:outputLabel for="Pos_commerce" value="#{pmsBundle.pos_commerce}" />
+						<aon:inputText id="Pos_commerce" value="#{pos.to.commerce}" 
+							size="20" maxlength="20" required="true" />
+
+						<aon:outputLabel for="Pos_terminal" value="#{pmsBundle.pos_terminal}" />
+						<aon:inputText id="Pos_terminal" value="#{pos.to.terminal}" 
+							size="4" maxlength="4" required="true" >
+							<f:validateLongRange minimum="1" maximum="1000" />
+						</aon:inputText>
+
+						<aon:outputLabel for="Pos_signaturePassword" value="#{pmsBundle.pos_signature_password}" />
+						<aon:inputText id="Pos_signaturePassword" value="#{pos.to.signaturePassword}" 
+							size="32" maxlength="32" required="true" />
+
+						<aon:outputLabel for="Pos_portConfiguration" value="#{pmsBundle.pos_port_configuration}" />
+						<aon:selectOneMenu id="Pos_portConfiguration"
+							value="#{pos.to.portConfiguration}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItem itemLabel="PinPad USB (Ingenico i6280)" itemValue="USB,2816,25216,2,2" />
+							<f:selectItem itemLabel="PinPad USB (Ingenico i6550)" itemValue="USB,2816,25936,2,2" />
+							<f:selectItem itemLabel="COM1" itemValue="COM1:,19200,N,8,1" />
+							<f:selectItem itemLabel="COM2" itemValue="COM2:,19200,N,8,1" />
+							<f:selectItem itemLabel="COM3" itemValue="COM3:,19200,N,8,1" />
+							<f:selectItem itemLabel="COM4" itemValue="COM4:,19200,N,8,1" />
+							<f:selectItem itemLabel="COM5" itemValue="COM5:,19200,N,8,1" />
+							<f:selectItem itemLabel="COM6" itemValue="COM6:,19200,N,8,1" />
+							<f:selectItem itemLabel="COM7" itemValue="COM7:,19200,N,8,1" />
+							<f:selectItem itemLabel="COM8" itemValue="COM8:,19200,N,8,1" />
+							<f:selectItem itemLabel="COM9" itemValue="COM9:,19200,N,8,1" />
+							<f:selectItem itemLabel="COM10" itemValue="COM10:,19200,N,8,1" />
+						</aon:selectOneMenu>
+
+						<aon:outputLabel for="Pos_posVersion" value="#{pmsBundle.pos_version}" />
+						<aon:selectOneMenu id="Pos_posVersion"
+							value="#{pos.to.posVersion}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItem itemLabel="3.0" itemValue="3.0" />
+							<f:selectItem itemLabel="3.1" itemValue="3.1" />
+							<f:selectItem itemLabel="4.0" itemValue="4.0" />
+							<f:selectItem itemLabel="4.1" itemValue="4.1" />
+							<f:selectItem itemLabel="4.2" itemValue="4.2" />
+						</aon:selectOneMenu>						
+					</c:if>
+  -->					
+				</aon:panelGrid>
+				
+			</aon:div>
+		</aon:form>
+		
+		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		
+	</ui:define>
+</ui:composition>

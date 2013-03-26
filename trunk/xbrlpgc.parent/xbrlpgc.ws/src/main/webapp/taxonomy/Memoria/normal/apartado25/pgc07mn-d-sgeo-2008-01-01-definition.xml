@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xbrldt="http://xbrl.org/2005/xbrldt">
+  <link:roleRef roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainMercadosGeograficos" xlink:type="simple" xlink:href="../../comun/pgc07m-roles-2008-01-01.xsd#domainMercadosGeograficosNormal"/>
+  <link:arcroleRef arcroleURI="http://xbrl.org/int/dim/arcrole/dimension-domain" xlink:type="simple" xlink:href="http://www.xbrl.org/2005/xbrldt-2005.xsd#dimension-domain"/>
+  <link:arcroleRef arcroleURI="http://xbrl.org/int/dim/arcrole/domain-member" xlink:type="simple" xlink:href="http://www.xbrl.org/2005/xbrldt-2005.xsd#domain-member"/>
+  <link:definitionLink xlink:type="extended" xlink:role="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainMercadosGeograficos">
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-sgeo-2008-01-01.xsd#pgc07mn-d-sgeo_InformacionSegmentadaMercadosGeograficosDimension" xlink:label="InformacionSegmentadaMercadosGeograficosDimension" xlink:title="InformacionSegmentadaMercadosGeograficosDimension"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-sgeo-2008-01-01.xsd#pgc07mn-d-sgeo_InformacionSegmentadaMercadosGeograficosDomain" xlink:label="InformacionSegmentadaMercadosGeograficosDomain" xlink:title="InformacionSegmentadaMercadosGeograficosDomain"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/dimension-domain" xlink:from="InformacionSegmentadaMercadosGeograficosDimension" xlink:to="InformacionSegmentadaMercadosGeograficosDomain" xlink:title="definition: InformacionSegmentadaMercadosGeograficosDimension to InformacionSegmentadaMercadosGeograficosDomain" order="1.0" xbrldt:usable="false"/>
+  </link:definitionLink>
+  <link:definitionLink xlink:type="extended" xlink:role="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainMercadosGeograficos">
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-sgeo-2008-01-01.xsd#pgc07mn-d-sgeo_InformacionSegmentadaMercadosGeograficosDomain" xlink:label="InformacionSegmentadaMercadosGeograficosDomain" xlink:title="InformacionSegmentadaMercadosGeograficosDomain"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-sgeo-2008-01-01.xsd#pgc07mn-d-sgeo_InformacionSegmentadaMercadosGeograficosTotal" xlink:label="InformacionSegmentadaMercadosGeograficosTotal"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosDomain" xlink:to="InformacionSegmentadaMercadosGeograficosTotal" order="1.0"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-sgeo-2008-01-01.xsd#pgc07mn-d-sgeo_InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:label="InformacionSegmentadaMercadosGeograficosNacionalTotal"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosDomain" xlink:to="InformacionSegmentadaMercadosGeograficosNacionalTotal" order="2.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.AN" xlink:label="Xcode_ISO366-2.AN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.AN" order="1.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.AR" xlink:label="Xcode_ISO366-2.AR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.AR" order="2.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.O" xlink:label="Xcode_ISO366-2.O"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.O" order="3.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.CN" xlink:label="Xcode_ISO366-2.CN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.CN" order="4.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.S" xlink:label="Xcode_ISO366-2.S"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.S" order="5.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.CL" xlink:label="Xcode_ISO366-2.CL"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.CL" order="6.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.CM" xlink:label="Xcode_ISO366-2.CM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.CM" order="7.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.CT" xlink:label="Xcode_ISO366-2.CT"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.CT" order="8.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.M" xlink:label="Xcode_ISO366-2.M"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.M" order="9.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.VC" xlink:label="Xcode_ISO366-2.VC"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.VC" order="10.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.EX" xlink:label="Xcode_ISO366-2.EX"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.EX" order="11.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.GA" xlink:label="Xcode_ISO366-2.GA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.GA" order="12.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.IB" xlink:label="Xcode_ISO366-2.IB"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.IB" order="13.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.NA" xlink:label="Xcode_ISO366-2.NA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.NA" order="14.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.PV" xlink:label="Xcode_ISO366-2.PV"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.PV" order="15.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.LO" xlink:label="Xcode_ISO366-2.LO"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.LO" order="16.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.MU" xlink:label="Xcode_ISO366-2.MU"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.MU" order="17.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.CE" xlink:label="Xcode_ISO366-2.CE"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.CE" order="18.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-es-2011-01-30.xsd#dgi-lc-es_Xcode_ISO366-2.ML" xlink:label="Xcode_ISO366-2.ML"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosNacionalTotal" xlink:to="Xcode_ISO366-2.ML" order="19.0"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-sgeo-2008-01-01.xsd#pgc07mn-d-sgeo_InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:label="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosDomain" xlink:to="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" order="3.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.AND" xlink:label="Xcode_ISO3166-2.AND"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.AND" use="optional" order="1.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ATF" xlink:label="Xcode_ISO3166-2.ATF"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.ATF" use="optional" order="2.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.AUT" xlink:label="Xcode_ISO3166-2.AUT"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.AUT" use="optional" order="3.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BEL" xlink:label="Xcode_ISO3166-2.BEL"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.BEL" use="optional" order="4.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BGR" xlink:label="Xcode_ISO3166-2.BGR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.BGR" use="optional" order="5.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.CHE" xlink:label="Xcode_ISO3166-2.CHE"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.CHE" use="optional" order="6.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.CZE" xlink:label="Xcode_ISO3166-2.CZE"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.CZE" use="optional" order="7.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.DEU" xlink:label="Xcode_ISO3166-2.DEU"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.DEU" use="optional" order="8.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.DNK" xlink:label="Xcode_ISO3166-2.DNK"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.DNK" use="optional" order="9.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.FIN" xlink:label="Xcode_ISO3166-2.FIN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.FIN" use="optional" order="11.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.FRA" xlink:label="Xcode_ISO3166-2.FRA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.FRA" use="optional" order="12.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.GBR" xlink:label="Xcode_ISO3166-2.GBR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.GBR" use="optional" order="13.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.GRC" xlink:label="Xcode_ISO3166-2.GRC"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.GRC" use="optional" order="14.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.HRV" xlink:label="Xcode_ISO3166-2.HRV"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.HRV" use="optional" order="15.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.HUN" xlink:label="Xcode_ISO3166-2.HUN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.HUN" use="optional" order="16.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.IRL" xlink:label="Xcode_ISO3166-2.IRL"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.IRL" use="optional" order="17.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ITA" xlink:label="Xcode_ISO3166-2.ITA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.ITA" use="optional" order="18.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.LIE" xlink:label="Xcode_ISO3166-2.LIE"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.LIE" use="optional" order="19.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.LTU" xlink:label="Xcode_ISO3166-2.LTU"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.LTU" use="optional" order="20.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.LUX" xlink:label="Xcode_ISO3166-2.LUX"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.LUX" use="optional" order="21.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.LVA" xlink:label="Xcode_ISO3166-2.LVA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.LVA" use="optional" order="22.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MCO" xlink:label="Xcode_ISO3166-2.MCO"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.MCO" use="optional" order="23.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MLT" xlink:label="Xcode_ISO3166-2.MLT"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.MLT" use="optional" order="24.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.NLD" xlink:label="Xcode_ISO3166-2.NLD"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.NLD" use="optional" order="25.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.NOR" xlink:label="Xcode_ISO3166-2.NOR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.NOR" use="optional" order="26.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.POL" xlink:label="Xcode_ISO3166-2.POL"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.POL" use="optional" order="27.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.PRT" xlink:label="Xcode_ISO3166-2.PRT"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.PRT" use="optional" order="28.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ROU" xlink:label="Xcode_ISO3166-2.ROU"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.ROU" use="optional" order="29.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.RUS" xlink:label="Xcode_ISO3166-2.RUS"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.RUS" use="optional" order="30.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SCG" xlink:label="Xcode_ISO3166-2.SCG"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.SCG" use="optional" order="31.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SVK" xlink:label="Xcode_ISO3166-2.SVK"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.SVK" use="optional" order="32.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SWE" xlink:label="Xcode_ISO3166-2.SWE"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.SWE" use="optional" order="33.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.TUR" xlink:label="Xcode_ISO3166-2.TUR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.TUR" use="optional" order="34.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.UKR" xlink:label="Xcode_ISO3166-2.UKR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoUnionEuropeaTotal" xlink:to="Xcode_ISO3166-2.UKR" use="optional" order="35.0"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-sgeo-2008-01-01.xsd#pgc07mn-d-sgeo_InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:label="InformacionSegmentadaMercadosGeograficosRestoMundoTotal"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosDomain" xlink:to="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" order="4.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ABW" xlink:label="Xcode_ISO3166-2.ABW"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ABW" order="1.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.AFG" xlink:label="Xcode_ISO3166-2.AFG"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.AFG" order="2.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.AGO" xlink:label="Xcode_ISO3166-2.AGO"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.AGO" order="3.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.AIA" xlink:label="Xcode_ISO3166-2.AIA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.AIA" order="4.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ALB" xlink:label="Xcode_ISO3166-2.ALB"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ALB" order="5.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ANT" xlink:label="Xcode_ISO3166-2.ANT"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ANT" order="7.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ARE" xlink:label="Xcode_ISO3166-2.ARE"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ARE" order="8.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ARG" xlink:label="Xcode_ISO3166-2.ARG"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ARG" order="9.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ARM" xlink:label="Xcode_ISO3166-2.ARM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ARM" order="10.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ASM" xlink:label="Xcode_ISO3166-2.ASM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ASM" order="11.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ATA" xlink:label="Xcode_ISO3166-2.ATA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ATA" order="12.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ATG" xlink:label="Xcode_ISO3166-2.ATG"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ATG" order="14.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.AUS" xlink:label="Xcode_ISO3166-2.AUS"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.AUS" order="15.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.AZE" xlink:label="Xcode_ISO3166-2.AZE"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.AZE" order="17.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BDI" xlink:label="Xcode_ISO3166-2.BDI"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.BDI" order="18.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BEN" xlink:label="Xcode_ISO3166-2.BEN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.BEN" order="20.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BFA" xlink:label="Xcode_ISO3166-2.BFA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.BFA" order="21.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BGD" xlink:label="Xcode_ISO3166-2.BGD"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.BGD" order="22.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BHR" xlink:label="Xcode_ISO3166-2.BHR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.BHR" order="24.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BHS" xlink:label="Xcode_ISO3166-2.BHS"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.BHS" order="25.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BIH" xlink:label="Xcode_ISO3166-2.BIH"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.BIH" order="26.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BLR" xlink:label="Xcode_ISO3166-2.BLR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.BLR" order="27.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BLZ" xlink:label="Xcode_ISO3166-2.BLZ"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.BLZ" order="28.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BMU" xlink:label="Xcode_ISO3166-2.BMU"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.BMU" order="29.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BOL" xlink:label="Xcode_ISO3166-2.BOL"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.BOL" order="30.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BRA" xlink:label="Xcode_ISO3166-2.BRA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.BRA" order="31.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BRB" xlink:label="Xcode_ISO3166-2.BRB"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.BRB" order="32.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BRN" xlink:label="Xcode_ISO3166-2.BRN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.BRN" order="33.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BTN" xlink:label="Xcode_ISO3166-2.BTN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.BTN" order="34.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BVT" xlink:label="Xcode_ISO3166-2.BVT"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.BVT" order="35.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.BWA" xlink:label="Xcode_ISO3166-2.BWA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.BWA" order="36.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.CAF" xlink:label="Xcode_ISO3166-2.CAF"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.CAF" order="37.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.CAN" xlink:label="Xcode_ISO3166-2.CAN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.CAN" order="38.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.CCK" xlink:label="Xcode_ISO3166-2.CCK"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.CCK" order="39.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.CHL" xlink:label="Xcode_ISO3166-2.CHL"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.CHL" order="41.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.CHN" xlink:label="Xcode_ISO3166-2.CHN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.CHN" order="42.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.CIV" xlink:label="Xcode_ISO3166-2.CIV"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.CIV" order="43.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.CMR" xlink:label="Xcode_ISO3166-2.CMR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.CMR" order="44.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.COD" xlink:label="Xcode_ISO3166-2.COD"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.COD" order="45.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.COG" xlink:label="Xcode_ISO3166-2.COG"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.COG" order="46.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.COK" xlink:label="Xcode_ISO3166-2.COK"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.COK" order="47.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.COL" xlink:label="Xcode_ISO3166-2.COL"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.COL" order="48.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.COM" xlink:label="Xcode_ISO3166-2.COM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.COM" order="49.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.CPV" xlink:label="Xcode_ISO3166-2.CPV"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.CPV" order="50.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.CRI" xlink:label="Xcode_ISO3166-2.CRI"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.CRI" order="51.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.CUB" xlink:label="Xcode_ISO3166-2.CUB"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.CUB" order="52.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.CXR" xlink:label="Xcode_ISO3166-2.CXR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.CXR" order="53.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.CYM" xlink:label="Xcode_ISO3166-2.CYM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.CYM" order="54.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.CYP" xlink:label="Xcode_ISO3166-2.CYP"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.CYP" order="55.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.DJI" xlink:label="Xcode_ISO3166-2.DJI"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.DJI" order="58.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.DMA" xlink:label="Xcode_ISO3166-2.DMA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.DMA" order="59.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.DOM" xlink:label="Xcode_ISO3166-2.DOM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.DOM" order="61.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.DZA" xlink:label="Xcode_ISO3166-2.DZA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.DZA" order="62.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ECU" xlink:label="Xcode_ISO3166-2.ECU"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ECU" order="63.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.EGY" xlink:label="Xcode_ISO3166-2.EGY"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.EGY" order="64.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ERI" xlink:label="Xcode_ISO3166-2.ERI"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ERI" order="65.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ESH" xlink:label="Xcode_ISO3166-2.ESH"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ESH" order="66.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.EST" xlink:label="Xcode_ISO3166-2.EST"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.EST" order="68.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ETH" xlink:label="Xcode_ISO3166-2.ETH"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ETH" order="69.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.FJI" xlink:label="Xcode_ISO3166-2.FJI"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.FJI" order="71.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.FLK" xlink:label="Xcode_ISO3166-2.FLK"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.FLK" order="72.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.FRO" xlink:label="Xcode_ISO3166-2.FRO"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.FRO" order="74.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.FSM" xlink:label="Xcode_ISO3166-2.FSM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.FSM" order="75.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.GAB" xlink:label="Xcode_ISO3166-2.GAB"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.GAB" order="76.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.GEO" xlink:label="Xcode_ISO3166-2.GEO"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.GEO" order="78.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.GHA" xlink:label="Xcode_ISO3166-2.GHA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.GHA" order="79.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.GIB" xlink:label="Xcode_ISO3166-2.GIB"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.GIB" order="80.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.GIN" xlink:label="Xcode_ISO3166-2.GIN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.GIN" order="81.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.GLP" xlink:label="Xcode_ISO3166-2.GLP"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.GLP" order="82.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.GMB" xlink:label="Xcode_ISO3166-2.GMB"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.GMB" order="83.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.GNB" xlink:label="Xcode_ISO3166-2.GNB"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.GNB" order="84.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.GNQ" xlink:label="Xcode_ISO3166-2.GNQ"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.GNQ" order="85.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.GRD" xlink:label="Xcode_ISO3166-2.GRD"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.GRD" order="87.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.GRL" xlink:label="Xcode_ISO3166-2.GRL"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.GRL" order="88.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.GTM" xlink:label="Xcode_ISO3166-2.GTM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.GTM" order="89.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.GUF" xlink:label="Xcode_ISO3166-2.GUF"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.GUF" order="90.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.GUM" xlink:label="Xcode_ISO3166-2.GUM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.GUM" order="91.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.GUY" xlink:label="Xcode_ISO3166-2.GUY"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.GUY" order="92.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.HKG" xlink:label="Xcode_ISO3166-2.HKG"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.HKG" order="93.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.HMD" xlink:label="Xcode_ISO3166-2.HMD"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.HMD" order="94.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.HND" xlink:label="Xcode_ISO3166-2.HND"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.HND" order="95.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.HTI" xlink:label="Xcode_ISO3166-2.HTI"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.HTI" order="97.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.IDN" xlink:label="Xcode_ISO3166-2.IDN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.IDN" order="99.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.IND" xlink:label="Xcode_ISO3166-2.IND"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.IND" order="100.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.IOT" xlink:label="Xcode_ISO3166-2.IOT"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.IOT" order="101.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.IRN" xlink:label="Xcode_ISO3166-2.IRN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.IRN" order="103.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.IRQ" xlink:label="Xcode_ISO3166-2.IRQ"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.IRQ" order="104.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ISL" xlink:label="Xcode_ISO3166-2.ISL"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ISL" order="105.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ISR" xlink:label="Xcode_ISO3166-2.ISR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ISR" order="106.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.JAM" xlink:label="Xcode_ISO3166-2.JAM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.JAM" order="108.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.JOR" xlink:label="Xcode_ISO3166-2.JOR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.JOR" order="109.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.JPN" xlink:label="Xcode_ISO3166-2.JPN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.JPN" order="110.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.KAZ" xlink:label="Xcode_ISO3166-2.KAZ"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.KAZ" order="111.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.KEN" xlink:label="Xcode_ISO3166-2.KEN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.KEN" order="112.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.KGZ" xlink:label="Xcode_ISO3166-2.KGZ"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.KGZ" order="113.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.KHM" xlink:label="Xcode_ISO3166-2.KHM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.KHM" order="114.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.KIR" xlink:label="Xcode_ISO3166-2.KIR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.KIR" order="115.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.KNA" xlink:label="Xcode_ISO3166-2.KNA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.KNA" order="116.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.KOR" xlink:label="Xcode_ISO3166-2.KOR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.KOR" order="117.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.KWT" xlink:label="Xcode_ISO3166-2.KWT"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.KWT" order="118.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.LAO" xlink:label="Xcode_ISO3166-2.LAO"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.LAO" order="119.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.LBN" xlink:label="Xcode_ISO3166-2.LBN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.LBN" order="120.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.LBR" xlink:label="Xcode_ISO3166-2.LBR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.LBR" order="121.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.LBY" xlink:label="Xcode_ISO3166-2.LBY"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.LBY" order="122.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.LCA" xlink:label="Xcode_ISO3166-2.LCA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.LCA" order="123.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.LKA" xlink:label="Xcode_ISO3166-2.LKA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.LKA" order="125.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.LSO" xlink:label="Xcode_ISO3166-2.LSO"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.LSO" order="126.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MAC" xlink:label="Xcode_ISO3166-2.MAC"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MAC" order="130.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MAR" xlink:label="Xcode_ISO3166-2.MAR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MAR" order="131.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MDA" xlink:label="Xcode_ISO3166-2.MDA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MDA" order="133.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MDG" xlink:label="Xcode_ISO3166-2.MDG"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MDG" order="134.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MDV" xlink:label="Xcode_ISO3166-2.MDV"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MDV" order="135.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MEX" xlink:label="Xcode_ISO3166-2.MEX"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MEX" order="136.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MHL" xlink:label="Xcode_ISO3166-2.MHL"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MHL" order="137.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MKD" xlink:label="Xcode_ISO3166-2.MKD"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MKD" order="138.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MLI" xlink:label="Xcode_ISO3166-2.MLI"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MLI" order="139.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MMR" xlink:label="Xcode_ISO3166-2.MMR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MMR" order="141.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MNG" xlink:label="Xcode_ISO3166-2.MNG"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MNG" order="142.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MNP" xlink:label="Xcode_ISO3166-2.MNP"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MNP" order="143.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MOZ" xlink:label="Xcode_ISO3166-2.MOZ"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MOZ" order="144.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MRT" xlink:label="Xcode_ISO3166-2.MRT"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MRT" order="145.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MSR" xlink:label="Xcode_ISO3166-2.MSR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MSR" order="146.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MTQ" xlink:label="Xcode_ISO3166-2.MTQ"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MTQ" order="147.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MUS" xlink:label="Xcode_ISO3166-2.MUS"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MUS" order="148.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MWI" xlink:label="Xcode_ISO3166-2.MWI"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MWI" order="149.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MYS" xlink:label="Xcode_ISO3166-2.MYS"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MYS" order="150.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.MYT" xlink:label="Xcode_ISO3166-2.MYT"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.MYT" order="151.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.NAM" xlink:label="Xcode_ISO3166-2.NAM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.NAM" order="152.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.NCL" xlink:label="Xcode_ISO3166-2.NCL"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.NCL" order="153.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.NER" xlink:label="Xcode_ISO3166-2.NER"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.NER" order="154.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.NFK" xlink:label="Xcode_ISO3166-2.NFK"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.NFK" order="155.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.NGA" xlink:label="Xcode_ISO3166-2.NGA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.NGA" order="156.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.NIC" xlink:label="Xcode_ISO3166-2.NIC"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.NIC" order="157.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.NIU" xlink:label="Xcode_ISO3166-2.NIU"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.NIU" order="158.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.NPL" xlink:label="Xcode_ISO3166-2.NPL"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.NPL" order="161.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.NRU" xlink:label="Xcode_ISO3166-2.NRU"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.NRU" order="162.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.NZL" xlink:label="Xcode_ISO3166-2.NZL"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.NZL" order="163.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.OMN" xlink:label="Xcode_ISO3166-2.OMN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.OMN" order="164.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.PAK" xlink:label="Xcode_ISO3166-2.PAK"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.PAK" order="165.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.PAN" xlink:label="Xcode_ISO3166-2.PAN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.PAN" order="166.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.PCN" xlink:label="Xcode_ISO3166-2.PCN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.PCN" order="167.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.PER" xlink:label="Xcode_ISO3166-2.PER"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.PER" order="168.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.PHL" xlink:label="Xcode_ISO3166-2.PHL"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.PHL" order="169.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.PLW" xlink:label="Xcode_ISO3166-2.PLW"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.PLW" order="170.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.PNG" xlink:label="Xcode_ISO3166-2.PNG"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.PNG" order="171.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.PRI" xlink:label="Xcode_ISO3166-2.PRI"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.PRI" order="173.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.PRK" xlink:label="Xcode_ISO3166-2.PRK"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.PRK" order="174.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.PRY" xlink:label="Xcode_ISO3166-2.PRY"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.PRY" order="176.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.PSE" xlink:label="Xcode_ISO3166-2.PSE"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.PSE" order="177.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.PYF" xlink:label="Xcode_ISO3166-2.PYF"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.PYF" order="178.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.QAT" xlink:label="Xcode_ISO3166-2.QAT"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.QAT" order="179.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.REU" xlink:label="Xcode_ISO3166-2.REU"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.REU" order="180.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.RWA" xlink:label="Xcode_ISO3166-2.RWA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.RWA" order="183.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SAU" xlink:label="Xcode_ISO3166-2.SAU"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SAU" order="184.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SDN" xlink:label="Xcode_ISO3166-2.SDN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SDN" order="186.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SEN" xlink:label="Xcode_ISO3166-2.SEN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SEN" order="187.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SGP" xlink:label="Xcode_ISO3166-2.SGP"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SGP" order="188.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SGS" xlink:label="Xcode_ISO3166-2.SGS"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SGS" order="189.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SHN" xlink:label="Xcode_ISO3166-2.SHN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SHN" order="190.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SJM" xlink:label="Xcode_ISO3166-2.SJM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SJM" order="191.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SLB" xlink:label="Xcode_ISO3166-2.SLB"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SLB" order="192.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SLE" xlink:label="Xcode_ISO3166-2.SLE"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SLE" order="193.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SLV" xlink:label="Xcode_ISO3166-2.SLV"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SLV" order="194.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SMR" xlink:label="Xcode_ISO3166-2.SMR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SMR" order="195.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SOM" xlink:label="Xcode_ISO3166-2.SOM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SOM" order="196.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SPM" xlink:label="Xcode_ISO3166-2.SPM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SPM" order="197.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.STP" xlink:label="Xcode_ISO3166-2.STP"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.STP" order="198.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SUR" xlink:label="Xcode_ISO3166-2.SUR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SUR" order="199.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SVN" xlink:label="Xcode_ISO3166-2.SVN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SVN" order="201.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SWZ" xlink:label="Xcode_ISO3166-2.SWZ"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SWZ" order="203.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SYC" xlink:label="Xcode_ISO3166-2.SYC"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SYC" order="204.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.SYR" xlink:label="Xcode_ISO3166-2.SYR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.SYR" order="205.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.TCA" xlink:label="Xcode_ISO3166-2.TCA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.TCA" order="206.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.TCD" xlink:label="Xcode_ISO3166-2.TCD"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.TCD" order="207.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.TGO" xlink:label="Xcode_ISO3166-2.TGO"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.TGO" order="208.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.THA" xlink:label="Xcode_ISO3166-2.THA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.THA" order="209.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.TJK" xlink:label="Xcode_ISO3166-2.TJK"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.TJK" order="210.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.TKL" xlink:label="Xcode_ISO3166-2.TKL"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.TKL" order="211.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.TKM" xlink:label="Xcode_ISO3166-2.TKM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.TKM" order="212.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.TLS" xlink:label="Xcode_ISO3166-2.TLS"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.TLS" order="213.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.TON" xlink:label="Xcode_ISO3166-2.TON"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.TON" order="214.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.TTO" xlink:label="Xcode_ISO3166-2.TTO"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.TTO" order="215.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.TUN" xlink:label="Xcode_ISO3166-2.TUN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.TUN" order="216.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.TUV" xlink:label="Xcode_ISO3166-2.TUV"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.TUV" order="218.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.TWN" xlink:label="Xcode_ISO3166-2.TWN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.TWN" order="219.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.TZA" xlink:label="Xcode_ISO3166-2.TZA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.TZA" order="220.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.UGA" xlink:label="Xcode_ISO3166-2.UGA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.UGA" order="221.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.UMI" xlink:label="Xcode_ISO3166-2.UMI"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.UMI" order="223.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.URY" xlink:label="Xcode_ISO3166-2.URY"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.URY" order="224.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.USA" xlink:label="Xcode_ISO3166-2.USA"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.USA" order="225.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.UZB" xlink:label="Xcode_ISO3166-2.UZB"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.UZB" order="226.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.VAT" xlink:label="Xcode_ISO3166-2.VAT"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.VAT" order="227.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.VCT" xlink:label="Xcode_ISO3166-2.VCT"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.VCT" order="228.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.VEN" xlink:label="Xcode_ISO3166-2.VEN"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.VEN" order="229.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.VGB" xlink:label="Xcode_ISO3166-2.VGB"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.VGB" order="230.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.VIR" xlink:label="Xcode_ISO3166-2.VIR"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.VIR" order="231.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.VNM" xlink:label="Xcode_ISO3166-2.VNM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.VNM" order="232.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.VUT" xlink:label="Xcode_ISO3166-2.VUT"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.VUT" order="233.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.WLF" xlink:label="Xcode_ISO3166-2.WLF"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.WLF" order="234.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.WSM" xlink:label="Xcode_ISO3166-2.WSM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.WSM" order="235.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.YEM" xlink:label="Xcode_ISO3166-2.YEM"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.YEM" order="236.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ZAF" xlink:label="Xcode_ISO3166-2.ZAF"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ZAF" order="237.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ZMB" xlink:label="Xcode_ISO3166-2.ZMB"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ZMB" order="238.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-lc-int-2011-01-30.xsd#dgi-lc-int_Xcode_ISO3166-2.ZWE" xlink:label="Xcode_ISO3166-2.ZWE"/>
+    <link:definitionArc xlink:type="arc" xlink:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" xlink:from="InformacionSegmentadaMercadosGeograficosRestoMundoTotal" xlink:to="Xcode_ISO3166-2.ZWE" order="239.0"/>
+  </link:definitionLink>
+ </link:linkbase>

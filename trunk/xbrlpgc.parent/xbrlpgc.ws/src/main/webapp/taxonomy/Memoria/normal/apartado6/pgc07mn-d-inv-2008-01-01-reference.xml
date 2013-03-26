@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01 ../../../auxiliares/pgc-07-ref-2008-01-01.xsd" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xbrli="http://www.xbrl.org/2003/instance">
+  <link:referenceLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-inv-2008-01-01.xsd#pgc07mn-d-inv_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTerrenosPresentacion" xlink:label="InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTerrenosPresentacion" xlink:title="InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTerrenosPresentacion"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTerrenosPresentacion" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTerrenosPresentacion" id="reference_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTerrenosPresentacion">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>6</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+      <pgc-07-ref:Subcategoria>1</pgc-07-ref:Subcategoria>
+      <pgc-07-ref:Epigrafe>c1</pgc-07-ref:Epigrafe>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTerrenosPresentacion" xlink:to="reference_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTerrenosPresentacion" xlink:title="reference: InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTerrenosPresentacion to reference_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTerrenosPresentacion"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-inv-2008-01-01.xsd#pgc07mn-d-inv_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasConstruccionesPresentacion" xlink:label="InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasConstruccionesPresentacion" xlink:title="InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasConstruccionesPresentacion"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasConstruccionesPresentacion" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasConstruccionesPresentacion" id="reference_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasConstruccionesPresentacion">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>6</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+      <pgc-07-ref:Subcategoria>1</pgc-07-ref:Subcategoria>
+      <pgc-07-ref:Epigrafe>c2</pgc-07-ref:Epigrafe>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasConstruccionesPresentacion" xlink:to="reference_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasConstruccionesPresentacion" xlink:title="reference: InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasConstruccionesPresentacion to reference_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasConstruccionesPresentacion"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-inv-2008-01-01.xsd#pgc07mn-d-inv_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTotalPresentacion" xlink:label="InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTotalPresentacion" xlink:title="InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTotalPresentacion"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTotalPresentacion" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTotalPresentacion" id="reference_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTotalPresentacion">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>6</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+      <pgc-07-ref:Subcategoria>1</pgc-07-ref:Subcategoria>
+      <pgc-07-ref:Epigrafe>c3</pgc-07-ref:Epigrafe>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTotalPresentacion" xlink:to="reference_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTotalPresentacion" xlink:title="reference: InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTotalPresentacion to reference_InversionesInmobiliariasEstadoMovimientosInversionesInmobiliariasTotalPresentacion"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-inv-2008-01-01.xsd#pgc07mn-d-inv_InversionesInmobiliariasDesgloseDomain" xlink:label="InversionesInmobiliariasDesgloseDomain"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InversionesInmobiliariasDesgloseDomain" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InversionesInmobiliariasDesgloseDomain">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>6</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InversionesInmobiliariasDesgloseDomain" xlink:to="reference_InversionesInmobiliariasDesgloseDomain"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-inv-2008-01-01.xsd#pgc07mn-d-inv_InversionesInmobiliariasDesglosePresentacion" xlink:label="InversionesInmobiliariasDesglosePresentacion"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InversionesInmobiliariasDesglosePresentacion" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InversionesInmobiliariasDesglosePresentacion">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>6</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InversionesInmobiliariasDesglosePresentacion" xlink:to="reference_InversionesInmobiliariasDesglosePresentacion"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-inv-2008-01-01.xsd#pgc07mn-d-inv_InversionesInmobiliariasDesgloseDimension" xlink:label="InversionesInmobiliariasDesgloseDimension"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InversionesInmobiliariasDesgloseDimension" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InversionesInmobiliariasDesgloseDimension">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>6</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InversionesInmobiliariasDesgloseDimension" xlink:to="reference_InversionesInmobiliariasDesgloseDimension"/>
+  </link:referenceLink>
+</link:linkbase>

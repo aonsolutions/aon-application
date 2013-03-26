@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+	<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deductionConcept/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{controller.to.deductionConcept}" />
+		<ui:param name="skipNewButton" value="#{true}" />
+		<ui:param name="idRequired" value="#{true}" />
+	</ui:include>
+
+	<aon:outputLabel for="ContractDeduction_startDate" value="#{bundle.aon_start_date}" />
+	<aon:selectInputDate id="ContractDeduction_startDate" value="#{controller.to.startDate}" required="true"
+		timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}"/>
+	
+	<aon:outputLabel for="ContractDeduction_endDate" value="#{bundle.aon_end_date}" />
+	<aon:selectInputDate id="ContractDeduction_endDate" value="#{controller.to.endDate}"
+		timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+	<aon:outputLabel for="ContractDeduction_month" value="#{payrollBundle.payroll_salary_deduction_month}" />
+	<aon:selectOneMenu id="ContractDeduction_month" value="#{controller.to.month}">
+		<f:selectItem value="#{null}" itemLabel=" - " />
+		<c:if test="#{!skipCurrentMonth}">
+			<f:selectItem value="#{controller.currentMonth}"  />
+		</c:if>
+		<c:if test="#{skipCurrentMonth}">
+			<f:selectItems value="#{commonCollections.months}"  />
+		</c:if>
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="ContractDeduction_type" value="#{bundle.aon_type}" />
+	<aon:selectOneMenu id="ContractDeduction_type" value="#{controller.to.deductionType}" >
+		<a4j:support event="onchange" actionListener="#{controller.onTypeChange}" reRender="ContractDeduction_DeductionConcept" ajaxSingle="true"/>
+		<f:selectItem value="#{null}" itemLabel=" - " />
+		<f:selectItems value="#{payrollCollections.deductionTypes}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="ContractDeduction_description" value="#{bundle.aon_description}" />
+	<aon:inputText id="ContractDeduction_description" size="40" maxlength="64" 
+		value="#{controller.to.description}" />
+	
+	<aon:outputText value="&#160;"/>
+	<aon:panelGroup>
+		<aon:selectBooleanCheckbox id="ContractDeduction_decorateDescription" value="#{controller.to.descriptionDecorable}" />
+		<aon:outputLabel for="ContractDeduction_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
+	</aon:panelGroup>
+		
+	<c:if test="#{!aonRole.sysAdmin}">
+		<aon:outputLabel for="ContractDeduction_amount" value="#{payrollBundle.payroll_salary_expression}" />
+		<aon:outputText id="ContractDeduction_amount" size="40" maxlength="64"
+			value="#{(controller.to.expression!=null)?(controller.to.expression):(controller.to.deductionConcept.expression)}" />
+	</c:if>
+	
+	<c:if test="#{aonRole.sysAdmin}">
+		<aon:outputLabel for="ContractDeduction_expression" value="#{payrollBundle.payroll_salary_expression}" />
+		<aon:inputTextarea id="ContractDeduction_expression" cols="38" rows="2" maxlength="128"
+			value="#{controller.to.expression}" >
+			<f:validateLength maximum="128"/>
+			<c:if test="#{!contextDisabled}">
+				<a4j:region>
+					<rich:suggestionbox id="ContractDeduction_expression_suggestion"
+						for="ContractDeduction_expression"
+						onselect="suggestionBoxActive=false;"
+						suggestionAction="#{controller.expressionContext}" var="exp"
+						similarityGroupingId=""
+						tokens=" +-/*%()"
+						fetchValue="#{exp.name}"
+						immediate="true" limitToList="true" ajaxSingle="true"
+						eventsQueue="ContractDeduction_expressionSug" ignoreDupResponses="true"
+						requestDelay="100" width="500" height="200"
+						nothingLabel="#{bundle.aon_search_no_results}">
+						<aon:column>
+							<aon:outputText value="#{exp.name}" styleClass="aon-bold"/>
+							<aon:outputText value=" (#{exp.expression})"/>
+						</aon:column>
+					</rich:suggestionbox>
+				</a4j:region>
+			</c:if>
+		</aon:inputTextarea>
+	</c:if>
+	
+	<c:if test="#{!skipResult}">
+		<aon:outputLabel for="ContractDeduction_result" value="#{payrollBundle.payroll_result}" />
+		<h:panelGrid columns="4">
+			<aon:outputText value="#{(controller.result!=null)?(controller.result):('Imposible evaluar la expresion')}" 
+				style="color:#{(controller.result!=null)?('black'):('red')};" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+	
+			<aon:outputText styleClass="aon-italic aon-margin-left aon-margin-right" 
+				value="#{payrollBundle.payroll_on}" />
+		
+			<aon:selectOneMenu value="#{controller.month}">
+				<f:selectItems value="#{commonCollections.months}"  />
+				<a4j:support event="onchange" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+			</aon:selectOneMenu>
+	
+			<rich:inputNumberSpinner value="#{controller.year}" inputSize="4" 
+				minValue="2000" maxValue="2100">
+			  <a4j:support event="onchange" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+			  <a4j:support event="oninputkeydown" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+			  <a4j:support event="oninputkeyup" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true" />
+			</rich:inputNumberSpinner>
+		</h:panelGrid>
+	</c:if>
+	
+</ui:composition>

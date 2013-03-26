@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j">
+		
+	<aon:column >
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_employee_name}" />	
+		</f:facet>
+		<aon:commandLink immediate="#{true}" 
+			styleClass="aon-dataTable-link"
+			actionListener="#{paymentUpdate.onSalaryDraft}"
+			title="#{payrollBundle.payroll_salaryDraft_module}"
+			action="salaryDraft_form">
+			<aon:outputText value="#{to.contract.person.fullName}" />
+		</aon:commandLink>
+	</aon:column>
+	
+	<aon:column	
+		styleClass="aon-editDataTable-numberColumn aon-width-100">
+		<f:facet name="header">
+			<aon:outputText value="#{empty paymentUpdate.selectedVariable ? '-' : paymentUpdate.selectedVariable}" />
+		</f:facet>
+		<aon:outputText value="&#160;" rendered="#{to.map[paymentUpdate.selectedVariable] == null}" />
+		<aon:outputText 
+			rendered="#{to.map[paymentUpdate.selectedVariable] != null and to.map[paymentUpdate.selectedVariable].readOnly}"
+			value="#{to.map[paymentUpdate.selectedVariable].expression}" />
+		<aon:inputText 
+			rendered="#{to.map[paymentUpdate.selectedVariable] != null and !to.map[paymentUpdate.selectedVariable].readOnly}"
+			value="#{to.map[paymentUpdate.selectedVariable].expression}" size="10"/>
+	</aon:column>
+	
+	<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120 aon-nowrap">
+		<f:facet name="header">
+			<aon:outputLabel value="#{bundle.aon_start_date}" />
+		</f:facet>
+		<aon:outputText value="#{to.map[paymentUpdate.selectedVariable].startDate}" >
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>		
+	</aon:column>
+
+	<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120 aon-nowrap">
+		<f:facet name="header">
+			<aon:outputLabel value="#{bundle.aon_end_date}" />
+		</f:facet>
+		<aon:outputText value="#{to.map[paymentUpdate.selectedVariable].endDate}">
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>		
+	</aon:column>
+		
+</ui:composition>

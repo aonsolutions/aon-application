@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01 ../../../auxiliares/pgc-07-ref-2008-01-01.xsd" xmlns:pgc07cbs-dvs="http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/comunbase/patrimonioNeto/B/VariacionSaldo/Dimension/2009-01-01" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <link:referenceLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionSaldoDomain" xlink:label="VariacionSaldoDomain" xlink:title="VariacionSaldoDomain"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoDomain" xlink:role="http://www.xbrl.org/2003/role/commentaryRef" xlink:title="reference_VariacionSaldoDomain" id="reference_VariacionSaldoDomain">
+      <pgc-07-ref:Account>PGC2008</pgc-07-ref:Account>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoDomain" xlink:to="reference_VariacionSaldoDomain" xlink:title="reference: VariacionSaldoDomain to reference_VariacionSaldoDomain"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionesSaldoPresentacion" xlink:label="VariacionesSaldoPresentacion" xlink:title="VariacionesSaldoPresentacion"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionesSaldoPresentacion" xlink:role="http://www.xbrl.org/2003/role/commentaryRef" xlink:title="reference_VariacionesSaldoPresentacion" id="reference_VariacionesSaldoPresentacion">
+      <pgc-07-ref:Account>PGC2008</pgc-07-ref:Account>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionesSaldoPresentacion" xlink:to="reference_VariacionesSaldoPresentacion" xlink:title="reference: VariacionesSaldoPresentacion to reference_VariacionesSaldoPresentacion"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionSaldoDimension" xlink:label="VariacionSaldoDimension"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoDimension" xlink:role="http://www.xbrl.org/2003/role/commentaryRef" id="reference_VariacionSaldoDimension">
+      <pgc-07-ref:Account>PGC2008</pgc-07-ref:Account>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoDimension" xlink:to="reference_VariacionSaldoDimension"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionSaldoSaldoAjustadoInicioEjercicio" xlink:label="VariacionSaldoSaldoAjustadoInicioEjercicio"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoSaldoAjustadoInicioEjercicio" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_VariacionSaldoSaldoAjustadoInicioEjercicio">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Partida>f4</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoSaldoAjustadoInicioEjercicio" xlink:to="reference_VariacionSaldoSaldoAjustadoInicioEjercicio"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionSaldoSaldoAjustadoInicioEjercicioTotalIngresosGastosReconocidos" xlink:label="VariacionSaldoSaldoAjustadoInicioEjercicioTotalIngresosGastosReconocidos"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoSaldoAjustadoInicioEjercicioTotalIngresosGastosReconocidos" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_VariacionSaldoSaldoAjustadoInicioEjercicioTotalIngresosGastosReconocidos">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Partida>f5</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoSaldoAjustadoInicioEjercicioTotalIngresosGastosReconocidos" xlink:to="reference_VariacionSaldoSaldoAjustadoInicioEjercicioTotalIngresosGastosReconocidos"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietarios" xlink:label="VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietarios"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietarios" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietarios">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Partida>f6</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietarios" xlink:to="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietarios"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosAumentosCapital" xlink:label="VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosAumentosCapital"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosAumentosCapital" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosAumentosCapital">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Partida>f7</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosAumentosCapital" xlink:to="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosAumentosCapital"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosReduccionesCapital" xlink:label="VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosReduccionesCapital"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosReduccionesCapital" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosReduccionesCapital">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Partida>f8</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosReduccionesCapital" xlink:to="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosReduccionesCapital"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosConversionPasivosFinancierosPatrimonioNetoConversionObligacionesCondonacionesDeudas" xlink:label="VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosConversionPasivosFinancierosPatrimonioNetoConversionObligacionesCondonacionesDeudas"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosConversionPasivosFinancierosPatrimonioNetoConversionObligacionesCondonacionesDeudas" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosConversionPasivosFinancierosPatrimonioNetoConversionObligacionesCondonacionesDeudas">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Partida>f9</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosConversionPasivosFinancierosPatrimonioNetoConversionObligacionesCondonacionesDeudas" xlink:to="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosConversionPasivosFinancierosPatrimonioNetoConversionObligacionesCondonacionesDeudas"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosDistribucionDividendos" xlink:label="VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosDistribucionDividendos"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosDistribucionDividendos" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosDistribucionDividendos">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Partida>f10</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosDistribucionDividendos" xlink:to="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosDistribucionDividendos"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosOperacionesAccionesParticipacionesPropias" xlink:label="VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosOperacionesAccionesParticipacionesPropias"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosOperacionesAccionesParticipacionesPropias" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosOperacionesAccionesParticipacionesPropias">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Partida>f11</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosOperacionesAccionesParticipacionesPropias" xlink:to="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosOperacionesAccionesParticipacionesPropias"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosIncrementoReduccionPatrimonioNetoResultanteCombinacionNegocios" xlink:label="VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosIncrementoReduccionPatrimonioNetoResultanteCombinacionNegocios"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosIncrementoReduccionPatrimonioNetoResultanteCombinacionNegocios" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosIncrementoReduccionPatrimonioNetoResultanteCombinacionNegocios">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Partida>f12</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosIncrementoReduccionPatrimonioNetoResultanteCombinacionNegocios" xlink:to="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosIncrementoReduccionPatrimonioNetoResultanteCombinacionNegocios"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosOtrasOperacionesSociosOperacionesPropietarios" xlink:label="VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosOtrasOperacionesSociosOperacionesPropietarios"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosOtrasOperacionesSociosOperacionesPropietarios" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosOtrasOperacionesSociosOperacionesPropietarios">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Partida>f13</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosOtrasOperacionesSociosOperacionesPropietarios" xlink:to="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOperacionesSociosOperacionesPropietariosOtrasOperacionesSociosOperacionesPropietarios"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionSaldoSaldoAjustadoInicioEjercicioOtrasVariacionesPatrimonioNeto" xlink:label="VariacionSaldoSaldoAjustadoInicioEjercicioOtrasVariacionesPatrimonioNeto"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOtrasVariacionesPatrimonioNeto" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOtrasVariacionesPatrimonioNeto">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Partida>f14</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoSaldoAjustadoInicioEjercicioOtrasVariacionesPatrimonioNeto" xlink:to="reference_VariacionSaldoSaldoAjustadoInicioEjercicioOtrasVariacionesPatrimonioNeto"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionSaldoSaldoFinalEjercicio" xlink:label="VariacionSaldoSaldoFinalEjercicio"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoSaldoFinalEjercicio" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_VariacionSaldoSaldoFinalEjercicio">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Partida>f15</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoSaldoFinalEjercicio" xlink:to="reference_VariacionSaldoSaldoFinalEjercicio"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoSaldoFinalEjercicio_2" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_VariacionSaldoSaldoFinalEjercicio_2">
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoSaldoFinalEjercicio" xlink:to="reference_VariacionSaldoSaldoFinalEjercicio_2"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoSaldoFinalEjercicio_3" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_VariacionSaldoSaldoFinalEjercicio_3">
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoSaldoFinalEjercicio" xlink:to="reference_VariacionSaldoSaldoFinalEjercicio_3"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionSaldoSaldoInicioEjercicioAjustesCambiosCriterio" xlink:label="VariacionSaldoSaldoInicioEjercicioAjustesCambiosCriterio"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoSaldoInicioEjercicioAjustesCambiosCriterio" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_VariacionSaldoSaldoInicioEjercicioAjustesCambiosCriterio">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Partida>f2</pgc-07-ref:Partida>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoSaldoInicioEjercicioAjustesCambiosCriterio" xlink:to="reference_VariacionSaldoSaldoInicioEjercicioAjustesCambiosCriterio"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionSaldoSaldoInicioEjercicioAjustesErroresEjercicio" xlink:label="VariacionSaldoSaldoInicioEjercicioAjustesErroresEjercicio"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoSaldoInicioEjercicioAjustesErroresEjercicio" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_VariacionSaldoSaldoInicioEjercicioAjustesErroresEjercicio">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Partida>f3</pgc-07-ref:Partida>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoSaldoInicioEjercicioAjustesErroresEjercicio" xlink:to="reference_VariacionSaldoSaldoInicioEjercicioAjustesErroresEjercicio"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07cbs-dvs-2008-01-01.xsd#pgc07cbs-dvs_VariacionSaldoSaldoInicioEjercicio" xlink:label="VariacionSaldoSaldoInicioEjercicio"/>
+    <link:reference xlink:type="resource" xlink:label="reference_VariacionSaldoSaldoInicioEjercicio" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_VariacionSaldoSaldoInicioEjercicio">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Partida>f1</pgc-07-ref:Partida>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="VariacionSaldoSaldoInicioEjercicio" xlink:to="reference_VariacionSaldoSaldoInicioEjercicio"/>
+  </link:referenceLink>
+</link:linkbase>

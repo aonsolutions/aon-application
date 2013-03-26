@@ -1,0 +1,70 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j" >
+
+	<aon:div styleClass="aon-scroll-area">
+		<aon:div styleClass="aon-note">
+			<aon:div styleClass="aon-note-internal">
+				<aon:panelGroup>
+					<aon:outputText value="#{adminBundle.admin_domain_module_message}" />
+				</aon:panelGroup>
+			</aon:div>
+		</aon:div>	
+		<aon:div styleClass="aon-padding-left">
+			<a4j:region>
+				<c:if test="#{adminDomain.showPayrollSelection}">
+					<a4j:region>
+						<h:panelGrid id="payrollModuleDiv" columns="2" >
+							<aon:selectOneRadio value="#{adminDomain.payrollModule}">
+								<f:selectItems value="#{adminDomain.payrollModules}" />
+							</aon:selectOneRadio>		
+							<aon:commandButton reRender="payrollModuleDiv"
+								styleClass="aon-editDataTable-button aon-icon-delete" >
+								<f:setPropertyActionListener target="#{adminDomain.payrollModule}" value="#{null}" />
+							</aon:commandButton>
+						</h:panelGrid>
+					</a4j:region>
+				</c:if>						
+				<c:if test="#{adminDomain.showDocumentSelection}">						
+					<a4j:region>
+						<h:panelGrid id="documentModuleDiv" columns="2" >
+							<aon:selectOneRadio value="#{adminDomain.documentModule}">
+								<f:selectItems value="#{adminDomain.documentModules}" />
+								<a4j:support event="onchange" ajaxSingle="true"
+									actionListener="#{adminDomain.onPortalDocumentalChanged}"
+									reRender="Domain_maxTotalDocumentSize" />									
+							</aon:selectOneRadio>		
+							<aon:commandButton reRender="documentModuleDiv,Domain_maxTotalDocumentSize"
+								styleClass="aon-editDataTable-button aon-icon-delete" >
+								<f:setPropertyActionListener target="#{adminDomain.documentModule}" value="#{null}" />
+								<aon:actionListener method="#{adminDomain.onPortalDocumentalChanged}" />
+							</aon:commandButton>
+						</h:panelGrid>
+					</a4j:region>
+				</c:if>
+				<a4j:repeat value="#{adminDomain.aioInfo.applicationModules}"
+					rendered="#{adminDomain.aioInfo.checked}" var="appModule">
+					<aon:div rendered="#{appModule.rendered}">
+						<aon:selectBooleanCheckbox value="#{appModule.checked}"
+							disabled="#{appModule.disabled}" >
+							<a4j:support event="onchange" ajaxSingle="true"
+								rendered="#{appModule.module == 'DOCUMENT'}"
+								actionListener="#{adminDomain.onDocumentalChanged}"
+								reRender="Domain_maxTotalDocumentSize" />
+						</aon:selectBooleanCheckbox>								
+						<aon:outputText styleClass="aon-italic"
+							value="#{appModule.description}" />
+					</aon:div>
+				</a4j:repeat>
+	
+			</a4j:region>
+		</aon:div>
+	</aon:div>
+
+</ui:composition>

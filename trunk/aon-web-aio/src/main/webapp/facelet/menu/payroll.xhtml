@@ -1,0 +1,57 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="mainMenu">
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<h:panelGrid styleClass="aon-width-all" columns="3" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+
+					<aon:panelGroup>
+						<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+							<aon:panelGrid id="group_main_payroll" styleClass="aon-width-all"
+								columnClasses="aon-padding"
+								headerClass="aon-icon-config aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{payrollBundle.labor_menu_group}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element" >
+										<aon:commandLink id="gwt_employee" 
+											action="gwt_employee_tree"
+											value="#{gwtPayrollBundle.menu_employee_tree}"
+											target="gwt" >
+											<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
+											<aon:actionListener method="#{enterprise.onEditSearch}" />
+										</aon:commandLink>
+									</aon:div>							
+	
+									<aon:div styleClass="aon-direct-access-list-element" >
+										<aon:commandLink id="gwt_enterprise" 
+											action="gwt_enterprise_site"
+											actionListener="#{enterprise.onTreeViewSelect}"
+											value="#{gwtPayrollBundle.menu_enterprise_site}">
+											<aon:actionListener method="#{enterprise.onEditSearch}" />
+										</aon:commandLink>
+									</aon:div>
+								</aon:div>
+	
+							</aon:panelGrid>
+						</c:if>
+						
+					</aon:panelGroup>
+				</h:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

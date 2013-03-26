@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components" >
+	
+	<aon:div styleClass="aon-finding-title-toolbar">
+		<aon:panelGrid columns="3" dir="true"
+			columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+			<aon:div styleClass="aon-finding-title-internal">
+				<aon:outputText value="#{payrollBundle.payroll_contractLeave_module}" />
+			</aon:div>
+
+			<aon:div styleClass="aon-finding-subtitle-internal">
+				<c:if test="#{controller.new}">
+					<aon:outputText value="#{bundle.aon_reset}" />
+				</c:if>		
+				<c:if test="#{!controller.new}">
+					<aon:outputText value="#{bundle.aon_edit}" />
+				</c:if>
+			</aon:div>
+
+			<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
+			
+				<c:if test="#{!skipSaveButton}">		
+					<aon:commandButton id="contractLeave-save"
+						title="#{bundle.aon_key_save_accelerator}"
+						value="#{bundle.aon_save}" reRender="contractLeaveForm"
+						rendered="#{controller.to!=null}"
+						action="contractLeave_form"
+						actionListener="#{controller.onAccept}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}" />
+				</c:if>
+				<c:if test="#{!skipCancelButton}">			
+					<aon:confirmButton id="contractLeave-cancel"
+						title="#{bundle.aon_key_cancel_accelerator}"
+						value="#{bundle.aon_back}" reRender="#{cancelButtonReRender}"
+						rendered="#{controller.new}" immediate="true" 
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						confirmTitle="#{bundle.aon_confirm_title}"
+						confirmMessage="#{bundle.aon_cancel_confirm}"
+						confirmActionListener="#{controller.onBackActionListener}"
+						confirmAction="#{controller.backAction}"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</c:if>								
+				<c:if test="#{!skipRemoveButton}">				
+					<aon:confirmButton id="contractLeave-remove"
+						title="#{bundle.aon_key_remove_accelerator}"
+						value="#{bundle.aon_remove}" reRender="#{removeButtonReRender}"
+						rendered="#{!controller.new and controller.to!=null}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						confirmTitle="#{bundle.aon_confirm_title}"
+						confirmMessage="#{bundle.aon_remove_confirm}"
+						confirmActionListener="#{controller.remove}"
+						confirmAction="contractLeave_form"
+						confirmOnClick="#{removeOnClick}"
+						confirmOnComplete="#{removeOnComplete}"
+						accesskey="#{bundle.aon_key_remove}" />
+				</c:if>
+				<c:if test="#{!skipResetButton}">								
+					<aon:commandButton id="contractLeave-reset"
+						title="#{bundle.aon_key_new_accelerator}"
+						value="#{bundle.aon_reset}" reRender="#{resetButtonReRender}"
+						rendered="#{!controller.new}"
+						action="contractLeave_form" actionListener="#{controller.onReset}"
+						styleClass="aon-finding-toolbar-item aon-icon-new"
+						accesskey="#{bundle.aon_key_new}" />
+				</c:if>		
+				<c:if test="#{!skipBackButton}">								
+					<aon:commandButton id="contractLeave-back"
+						title="#{bundle.aon_key_cancel_accelerator}"
+						value="#{controller.backAction == null ? bundle.aon_list : bundle.aon_back}" reRender="#{backButtonReRender}"
+						rendered="#{!controller.new and controller.treeOutcome}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						actionListener="#{controller.onBackActionListener}"
+						action="#{controller.backAction}"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</c:if>	
+					
+			</aon:div>
+			
+		</aon:panelGrid>
+	</aon:div>
+
+</ui:composition>

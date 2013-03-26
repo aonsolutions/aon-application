@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	
+		
+	<ui:define name="content">
+		<aon:form id="iprfDraftForm">
+			
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_irpfDraft_module}" />
+				<ui:param name="controller" value="#{irpfDraft}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipSaveButton" value="true" />
+				<ui:param name="skipRemoveButton" value="true" />
+
+				<ui:define name="beforeSpinToolbarContent">
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfDraft/buttons.xhtml" >
+						<ui:param name="irpf" value="#{irpfDraft}" />
+					</ui:include>
+				</ui:define>				
+			</ui:decorate>		
+
+			<aon:div id="irpfDraftContent">
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/formIrpfResult.xhtml" >
+					<ui:param name="irpf" value="#{irpfDraft}" />
+					<ui:param name="propertyEditor" value="/com/esferalia/aon/ui/payroll/facelet/contract/irpfDraft/draftPropertyEditor.xhtml" />
+				</ui:include>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+	
+</ui:composition>

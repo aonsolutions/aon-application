@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="controller" value="#{itemSupplier}" />
+
+		<ui:define name="columns">
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
+				<f:facet name="header">
+					<aon:outputLabel for="ItemSupplier_priority" value="#{bundle.aon_priority}" />
+				</f:facet>
+				<aon:outputText value="#{to.priority}"
+					rendered="#{formList}" />
+				<aon:inputText id="ItemSupplier_priority" 
+					value="#{controller.to.priority}" rendered="#{formEdit}"
+					required="true" size="2" maxlength="3" />
+				<f:facet name="footer">
+					<aon:inputText id="ItemSupplier_priority-New" 
+						value="#{controller.to.priority}" rendered="#{formNew}"
+						required="true" size="2" maxlength="3" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column	styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-auto aon-nowrap">
+				<f:facet name="header">
+					<aon:outputLabel for="Supplier_id" value="#{supplierBundle.supplier_supplier}" />
+				</f:facet>
+				<aon:outputText value="#{to.supplier.registry.fullName}"
+					rendered="#{formList}" />
+				<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
+					<ui:param name="lookupTo" value="#{controller.to.supplier}" />
+					<ui:param name="idRequired" value="#{true}" />						
+					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="lookupRendered" value="#{formEdit}" />
+					<aon:methodParam name="lookupChangeListener"
+						value="#{controller.onSupplierChanged}" type="lookupChangeListener" />
+				</ui:include>
+				<f:facet name="footer">
+					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{controller.to.supplier}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="lookupRendered" value="#{formNew}" />
+						<ui:param name="lookupSuffix" value="-New" />
+						<aon:methodParam name="lookupChangeListener"
+							value="#{controller.onSupplierChanged}" type="lookupChangeListener" />
+					</ui:include>
+				</f:facet>
+			</aon:column>
+
+			<aon:column
+				styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
+				<f:facet name="header">
+					<aon:outputLabel for="ItemSupplier_Code" value="#{productBundle.product_item_supplier_code}" />
+				</f:facet>
+				<aon:outputText value="#{to.code}" rendered="#{formList}" />
+				<aon:inputText id="ItemSupplier_Code"
+					value="#{controller.to.code}" rendered="#{formEdit}" 
+					size="15" maxlength="15" />
+				<f:facet name="footer">
+					<aon:inputText id="ItemSupplier_Code-New"
+						value="#{controller.to.code}" rendered="#{formNew}"
+						size="15" maxlength="15" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column
+				styleClass="aon-editDataTable-numberColumn aon-vertical-align-top aon-width-80 aon-nowrap">
+				<f:facet name="header">
+					<aon:outputLabel for="ItemSupplier_Price" value="#{bundle.aon_price}" />
+				</f:facet>
+				<aon:outputText value="#{to.price}" rendered="#{formList}">
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+				</aon:outputText> 
+				<aon:inputText id="ItemSupplier_Price"
+					value="#{controller.to.price}" rendered="#{formEdit}" 
+					required="true" size="5"/>
+				<f:facet name="footer">
+					<aon:inputText id="ItemSupplier_Price-New"
+						value="#{controller.to.price}" rendered="#{formNew}"
+						required="true" size="5" />
+				</f:facet>
+			</aon:column>
+
+			<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}" >
+				<aon:column
+					styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
+					<f:facet name="header">
+						<aon:outputLabel for="ItemSupplier_workPlace" value="#{companyBundle.company_workplace}" />
+					</f:facet>
+					<aon:outputText value="#{to.workPlace.description}" rendered="#{formList}" />
+					<aon:selectOneMenu id="ItemSupplier_workPlace" rendered="#{formEdit}" 
+						value="#{controller.to.workPlace}">
+						<f:selectItem itemLabel=" - " itemValue="null" />
+						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+					</aon:selectOneMenu>
+					<f:facet name="footer">
+						<aon:selectOneMenu id="ItemSupplier_workPlace-New" rendered="#{formNew}" 
+							value="#{controller.to.workPlace}">
+							<f:selectItem itemLabel=" - " itemValue="null" />
+							<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+						</aon:selectOneMenu>
+					</f:facet>
+				</aon:column>
+			</c:if>
+			
+		</ui:define>
+	</ui:decorate>
+</ui:composition>

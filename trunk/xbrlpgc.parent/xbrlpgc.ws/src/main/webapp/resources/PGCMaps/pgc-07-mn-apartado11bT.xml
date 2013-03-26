@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mn-apartado11bT" mainSchemaPrefix="pgc-07-mn" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01">
+    <conceptMap outputID="MonedaExtranjeraCompraVentaCompras"
+        inputID="93159"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-monex:MonedaExtranjeraTotal"/>
+    </conceptMap>
+    <conceptMap outputID="MonedaExtranjeraCompraVentaServiciosRecibidos"
+        inputID="93160"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-monex:MonedaExtranjeraTotal"/>
+    </conceptMap>
+    <conceptMap outputID="MonedaExtranjeraCompraVentaVentas"
+        inputID="93161"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-monex:MonedaExtranjeraTotal"/>
+    </conceptMap>
+    <conceptMap outputID="MonedaExtranjeraCompraVentaServiciosPrestados"
+        inputID="93162"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-monex:MonedaExtranjeraTotal"/>
+    </conceptMap>
+</Statement>

@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="domainList">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{managerBundle.manager_domains}" />
+				<ui:param name="controller" value="#{domain}" />
+				<ui:param name="skipResetButton" value="#{!manager.domainManagement}" />
+				<ui:param name="skipSearchButton" value="#{!manager.config.showDomainSearch}" />
+			</ui:include>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+			
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{domain}" />
+					<ui:param name="rows" value="20" />					
+					<ui:define name="columns">
+
+						<aon:column styleClass="aon-width-150 aon-editDataTable-textColumn"
+							alias="cn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.commonName}"/>
+						</aon:column>
+	
+						<aon:column alias="o">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.organizationName}"/>
+						</aon:column>
+	
+						<aon:column styleClass="aon-width-150 aon-editDataTable-textColumn"
+							alias="parentDomain">
+							<f:facet name="header">
+								<aon:outputText value="#{managerBundle.manager_domain_parent}" />
+							</f:facet>
+							<aon:outputText value="#{to.parentDomain.commonName}"/>
+						</aon:column>
+
+						<c:if test="#{manager.config.showDomainStatus}" >
+							<aon:column styleClass="aon-editDataTable-iconColumn"
+								alias="active" >
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_status}" />
+								</f:facet>
+								<aon:outputText value="&#160;"
+									styleClass="aon-icon #{(to.status==11)?'aon-icon-check':'aon-icon-checked'}" />							
+							</aon:column>
+						</c:if>
+
+					</ui:define>
+				</ui:decorate>
+
+			</aon:div>
+
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>

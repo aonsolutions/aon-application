@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ubm:testcases xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ubmatrix.com/XBRL/2.1/conformance/2003-10-24 conformance.xsd" base="" description="Core Conformance" xmlns:ubm="http://www.ubmatrix.com/XBRL/2.1/conformance/2003-10-24">
+    <ubm:testcase href="conformance-frta/index-fix.xml" />
+    <ubm:testcase href="conformance-frta/index.xml" />
+    <ubm:testcase href="conformance-frta/000-LRR/001-ArcroleRegistered/001-TestCase-ArcroleRegistered.xml">
+        <ubm:variation name="001-01-ArcroleRegisteredLabel" description="labelArc arcrole is registered" />
+        <ubm:variation name="001-02-ArcroleNotRegisteredLabel" description="labelArc arcrole is registered" />
+        <ubm:variation name="001-03-ArcroleRegisteredReference" description="labelArc arcrole is registered" />
+        <ubm:variation name="001-04-ArcroleNotRegisteredReference" description="labelArc arcrole is registered" />
+        <ubm:variation name="001-05-ArcroleRegisteredCalculation" description="labelArc arcrole is registered" />
+        <ubm:variation name="001-06-ArcroleNotRegisteredCalculation" description="labelArc arcrole is registered" />
+        <ubm:variation name="001-07-ArcroleRegisteredDefinition" description="labelArc arcrole is registered" />
+        <ubm:variation name="001-08-ArcroleNotRegisteredDefinition" description="labelArc arcrole is registered" />
+        <ubm:variation name="001-09-ArcroleRegisteredPresentation" description="labelArc arcrole is registered" />
+        <ubm:variation name="001-10-ArcroleNotRegisteredPresentation" description="labelArc arcrole is registered" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/000-LRR/002-RoleRegistered/002-TestCase-RoleRegistered.xml">
+        <ubm:variation name="002-01-RoleRegisteredLabel" description="Label role is registered" />
+        <ubm:variation name="002-02-RoleNotRegisteredLabel" description="Label role is registered" />
+        <ubm:variation name="002-03-RoleRegisteredReference" description="Label role is registered" />
+        <ubm:variation name="002-04-RoleNotRegisteredReference" description="Label role is registered" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/200-Concepts/202-ElementId/202-TestCase-ElementId.xml">
+        <ubm:variation name="202-00-ProperID" description="ID attribute exists and is the namespace prefix, underscore, and element name concatenated together" />
+        <ubm:variation name="202-01-NoID" description="ID attribute exists and is the namespace prefix, underscore, and element name concatenated together" />
+        <ubm:variation name="202-02-ImproperID" description="ID attribute exists and is the namespace prefix, underscore, and element name concatenated together" />
+        <ubm:variation name="202-03-ImproperIDNoElementName" description="ID attribute exists and is the namespace prefix, underscore, and element name concatenated together" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/200-Concepts/203-ProhibitionOfID/203-TestCase-ProhibitionOfID.xml">
+        <ubm:variation name="203-00-TupleDerivationWithID" description="Base tuple defines ID attribute.  Derived tuple does not prohibit it." />
+        <ubm:variation name="203-01-TupleDerivationWithoutID" description="Base tuple defines ID attribute.  Derived tuple does not prohibit it." />
+        <ubm:variation name="203-02-ItemDerivationWithoutID" description="Base tuple defines ID attribute.  Derived tuple does not prohibit it." />
+        <ubm:variation name="203-03-ItemDerivationWithRequiredID" description="Base tuple defines ID attribute.  Derived tuple does not prohibit it." />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/200-Concepts/205-StandardLabelRoleExists/205-TestCase-StandardLabelRoleExists.xml">
+        <ubm:variation name="205-00-LabelRoleWithStandardLabelRole" description="Label has label role attribute with standard label role" />
+        <ubm:variation name="205-01-LabelRoleWithNonStandardRole" description="Label has label role attribute with standard label role" />
+        <ubm:variation name="205-02-LabelRoleMissing" description="Label has label role attribute with standard label role" />
+        <ubm:variation name="205-03-LabelRoleWithNonStandardExtendedLinkRole" description="Label has label role attribute with standard label role" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/200-Concepts/207-DuplicateLabels/207-TestCase-DuplicateLabels.xml">
+        <ubm:variation name="207-00-EnFrSameLabelDifferentRoles" description="English language, French language, same label, different roles" />
+        <ubm:variation name="207-01-EnEnSameLabelDifferentRoles" description="English language, French language, same label, different roles" />
+        <ubm:variation name="207-02-EnEnSameLabelSameRole" description="English language, French language, same label, different roles" />
+        <ubm:variation name="207-03-EnSameRolesDifferentLabel" description="English language, French language, same label, different roles" />
+        <ubm:variation name="207-04-DifferentBaseSets" description="English language, French language, same label, different roles" />
+        <ubm:variation name="207-05-NotInDTS" description="English language, French language, same label, different roles" />
+        <ubm:variation name="207-06-NotInDTSImport" description="English language, French language, same label, different roles" />
+        <ubm:variation name="207-07-NotInDTSInclude" description="English language, French language, same label, different roles" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/200-Concepts/211-UseOfAllComposerOnTuples/211-TestCase-UseOfAllComposerOnTuples.xml">
+        <ubm:variation name="211-00-WithoutAllCompositor" description="Tuple declaration WITHOUT All compositor" />
+        <ubm:variation name="211-01-WithAllCompositor" description="Tuple declaration WITHOUT All compositor" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/200-Concepts/213-AllTuplesMustProvideID/213-TestCase-AllTuplesMustProvideID.xml">
+        <ubm:variation name="213-00-LocalIdTypeId" description="Tuple with optional local ID attribute whose type is ID" />
+        <ubm:variation name="213-01-TupleWitoutID" description="Tuple with optional local ID attribute whose type is ID" />
+        <ubm:variation name="213-02-TupleNonLocalID" description="Tuple with optional local ID attribute whose type is ID" />
+        <ubm:variation name="213-03-TupleHasIdTypeNotId" description="Tuple with optional local ID attribute whose type is ID" />
+        <ubm:variation name="213-04-RequiredLocalIdTypeId" description="Tuple with optional local ID attribute whose type is ID" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/200-Concepts/217-UniqueLabels/217-TestCase-UniqueLabels.xml">
+        <ubm:variation name="217-00-UniqueLabels" description="Unique labels" />
+        <ubm:variation name="217-01-NonUniqueLabels" description="Unique labels" />
+        <ubm:variation name="217-02-UniqueLabelsVerbose" description="Unique labels" />
+        <ubm:variation name="217-03-NonUniqueLabelsMissingVerbose" description="Unique labels" />
+        <ubm:variation name="217-04-OneLanguageNonUnique" description="Unique labels" />
+        <ubm:variation name="217-05-IncludingSchemaDuplicateLabel" description="Unique labels" />
+        <ubm:variation name="217-06-DuplicateVerboseLabels" description="Unique labels" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/200-Concepts/218-TupleCycles/218-TestCase-TupleCycles.xml">
+        <ubm:variation name="218-00-NoTupleCycles" description="No tuple cycles" />
+        <ubm:variation name="218-01-ImmediateTupleCycle" description="No tuple cycles" />
+        <ubm:variation name="218-02-IndirectTupleCycle" description="No tuple cycles" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/200-Concepts/219-DefinitionElement/219-TestCase-DefinitionElement.xml">
+        <ubm:variation name="219-00-DefinitionElement" description="Definition element exists" />
+        <ubm:variation name="219-01-DefinitionElement" description="Definition element exists" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/300-Relationships/301-UseOfLinkElements/301-TestCase-UseOfLinkElements.xml">
+        <ubm:variation name="301-00-KnownLinkElements" description="Arc with KNOWN link" />
+        <ubm:variation name="301-01-UnknownSimpleLink" description="Arc with KNOWN link" />
+        <ubm:variation name="301-02-UnknownResource" description="Arc with KNOWN link" />
+        <ubm:variation name="301-03-UnknownExtendedLink" description="Arc with KNOWN link" />
+        <ubm:variation name="301-04-UnknownArc" description="Arc with KNOWN link" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/300-Relationships/302-ApprovedArcRoles/302-TestCase-ApprovedArcRoles.xml">
+        <ubm:variation name="302-00-ApprovedArcRoles" description="Arc WITH approved arc role" />
+        <ubm:variation name="302-01-UnapprovedArcRole" description="Arc WITH approved arc role" />
+        <ubm:variation name="302-02-UnapprovedArcRoleNotUsed" description="Arc WITH approved arc role" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/300-Relationships/303-ApprovedLabelReferenceRoles/303-TestCase-ApprovedLabelReferenceRoles.xml">
+        <ubm:variation name="303-00-ApprovedReferenceRole" description="Reference role WITH approved role" />
+        <ubm:variation name="303-01-ApprovedLabelRole" description="Reference role WITH approved role" />
+        <ubm:variation name="303-02-UnapprovedReferenceRole" description="Reference role WITH approved role" />
+        <ubm:variation name="303-03-UnapprovedLabelRole" description="Reference role WITH approved role" />
+        <ubm:variation name="303-04-UnapprovedLabelRole" description="Reference role WITH approved role" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/300-Relationships/304-ArcsInExtendedLinks/304-TestCase-ArcsInExtendedLinks.xml">
+        <ubm:variation name="304-00-SameTypeOfArcs" description="Linkbase extended link with the SAME type of arcs in it" />
+        <ubm:variation name="304-01-DifferentTypesOfArcs" description="Linkbase extended link with the SAME type of arcs in it" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/300-Relationships/309-UseOfOrderAttribute/309-TestCase-UseOfOrderAttribute.xml">
+        <ubm:variation name="309-00-WithOrderAttribute" description="Arc WITH order attribute" />
+        <ubm:variation name="309-01-WithoutOrderAttribute" description="Arc WITH order attribute" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/300-Relationships/310-PreferredLabelRolesUse/310-TestCase-PreferredLabelRolesUse.xml">
+        <ubm:variation name="310-00-PreferredLabelsProvided" description="SHOULD pattern. Valid test. parent-child arcs having the same parent and child in extended links with the same role provide preferred labels." />
+        <ubm:variation name="310-01-PreferredLabelsNotProvided" description="SHOULD pattern. Valid test. parent-child arcs having the same parent and child in extended links with the same role provide preferred labels." />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/300-Relationships/313-ConsistentPresentationAndTuple/313-TestCase-ConsistentPresentationAndTuple.xml">
+        <ubm:variation name="313-00-CompleteTreeFlat" description="Complete presentation tree that's only one level deep (children).  No extraneous concepts." />
+        <ubm:variation name="313-01-CompleteTreeNested" description="Complete presentation tree that's only one level deep (children).  No extraneous concepts." />
+        <ubm:variation name="313-02-NoPresentationLinkbase" description="Complete presentation tree that's only one level deep (children).  No extraneous concepts." />
+        <ubm:variation name="313-03-IncompleteTree" description="Complete presentation tree that's only one level deep (children).  No extraneous concepts." />
+        <ubm:variation name="313-04-FlatTreeWithExtraConcept" description="Complete presentation tree that's only one level deep (children).  No extraneous concepts." />
+        <ubm:variation name="313-05-NestedTreeWithExtraConcept" description="Complete presentation tree that's only one level deep (children).  No extraneous concepts." />
+        <ubm:variation name="313-06-CompleteRestrictedTree" description="Complete presentation tree that's only one level deep (children).  No extraneous concepts." />
+        <ubm:variation name="313-07-RestrictedTreeWithExtraConcept" description="Complete presentation tree that's only one level deep (children).  No extraneous concepts." />
+        <ubm:variation name="313-08-NestedTupleCompleteTree" description="Complete presentation tree that's only one level deep (children).  No extraneous concepts." />
+        <ubm:variation name="313-09-NestedTupleCompleteTreeRepeatedDescendant" description="Complete presentation tree that's only one level deep (children).  No extraneous concepts." />
+        <ubm:variation name="313-10-TreeWithAbstractConcept" description="Complete presentation tree that's only one level deep (children).  No extraneous concepts." />
+        <ubm:variation name="313-11-AbstractChildNoPresentationLinkbase" description="Complete presentation tree that's only one level deep (children).  No extraneous concepts." />
+        <ubm:variation name="313-12-TupleWithSubstitutingConceptInTree" description="Complete presentation tree that's only one level deep (children).  No extraneous concepts." />
+        <ubm:variation name="313-13-LooseSecretaryComplete" description="Complete presentation tree that's only one level deep (children).  No extraneous concepts." />
+        <ubm:variation name="313-14-LooseSecretaryExtraConcept" description="Complete presentation tree that's only one level deep (children).  No extraneous concepts." />
+        <ubm:variation name="313-15-CompleteTreeNotInDTS" description="Complete presentation tree that's only one level deep (children).  No extraneous concepts." />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/300-Relationships/316-CalculationsInDifferentContext/316-TestCase-CalculationsInDifferentContext.xml">
+        <ubm:variation name="316-00-CalculationSourceTargetSamePeriodType" description="All items appears in calculation link have same periodType attribute." />
+        <ubm:variation name="316-01-CalculationSourceTargetDifferentPeriodType" description="All items appears in calculation link have same periodType attribute." />
+        <ubm:variation name="316-02-CalculationSourceTargetDifferentPeriodTypeProhibited" description="All items appears in calculation link have same periodType attribute." />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/300-Relationships/318-DuplicateRoleDefinitions/318-TestCase-DuplicateRoleDefinitions.xml">
+        <ubm:variation name="318-00-NoDuplicateRoleDefinitions" description="Single schema that defines a role R." />
+        <ubm:variation name="318-01-DuplicateRoleDefinitions" description="Single schema that defines a role R." />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/300-Relationships/320-DistinctOrderAttributes/320-TestCase-DistinctOrderAttributes.xml">
+        <ubm:variation name="320-00-DistinctOrderAttributes" description="Distinct order attributes" />
+        <ubm:variation name="320-01-NonDistinctOrderAttributes" description="Distinct order attributes" />
+        <ubm:variation name="320-02-SingleArcNonDistinctOrder" description="Distinct order attributes" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/300-Relationships/321-SourceTargetSummationItemArcDistinct/321-TestCase-SourceTargetSummationItemArcDistinct.xml">
+        <ubm:variation name="321-00-SourceTargetDistinct" description="Source and target are distinct" />
+        <ubm:variation name="321-01-SourceTargetNotDistinct" description="Source and target are distinct" />
+        <ubm:variation name="321-02-SourceTargetNotDistinctProhibited" description="Source and target are distinct" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/300-Relationships/335-RoleTypeURISameSchemeAuthority/335-TestCase-RoleTypeURISameSchemeAuthority.xml">
+        <ubm:variation name="335-00-RoleTypeURISameSchemeAuthority" description="Same scheme and authority." />
+        <ubm:variation name="335-01-RoleTypeURISameNID" description="Same scheme and authority." />
+        <ubm:variation name="335-02-RoleTypeURIDifferentAuthority" description="Same scheme and authority." />
+        <ubm:variation name="335-03-RoleTypeURIDifferentScheme" description="Same scheme and authority." />
+        <ubm:variation name="335-04-RoleTypeURIDifferentNID" description="Same scheme and authority." />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/400-DTS/401-UseOfAppropriateSchemas/401-TestCase-UseOfAppropriateSchemas.xml">
+        <ubm:variation name="401-00-SeparateSchemaDocuments" description="Valid test. part definition, segment content definition, item definitions are defined in each individual schemas." />
+        <ubm:variation name="401-01-SegmentAndConceptDeclarationSameSchemaDocument" description="Valid test. part definition, segment content definition, item definitions are defined in each individual schemas." />
+        <ubm:variation name="401-02-PartAndConceptDeclarationSameSchemaDocument" description="Valid test. part definition, segment content definition, item definitions are defined in each individual schemas." />
+        <ubm:variation name="401-03-AllInOneSchemaDocument" description="Valid test. part definition, segment content definition, item definitions are defined in each individual schemas." />
+        <ubm:variation name="401-04-PartAndRoleTypeAndArcroleTypeSameSchemaDocument" description="Valid test. part definition, segment content definition, item definitions are defined in each individual schemas." />
+        <ubm:variation name="401-05-SegmentAndRoleTypeAndArcroleTypeSameSchemaDocument" description="Valid test. part definition, segment content definition, item definitions are defined in each individual schemas." />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/400-DTS/402-SchemaAsRootElement/402-TestCase-SchemaAsRootElement.xml">
+        <ubm:variation name="402-00-SchemaAsRootElement" description="Schema IS root" />
+        <ubm:variation name="402-01-SchemaInAnnotationAppinfo" description="Schema IS root" />
+        <ubm:variation name="402-02-SchemaInWrapperDocument" description="Schema IS root" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/400-DTS/405-UseOfImbeddedLinkbases/405-TestCase-UseOfImbeddedLinkbases.xml">
+        <ubm:variation name="405-00-SchemaWithoutEmbeddedLinkbase" description="Schema WITHOUT embedded linkbase" />
+        <ubm:variation name="405-01-SchemaWithEmbeddedLinkbase" description="Schema WITHOUT embedded linkbase" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/400-DTS/406-ElementAttributeFormDefault/406-TestCase-ElementAttributeFormDefault.xml">
+        <ubm:variation name="406-00-ProperElementAttributeFormDefault" description="WITH correctly-valued elementFormDefault AND attributeFormDefault attributes" />
+        <ubm:variation name="406-01-MissingElementFormDefault" description="WITH correctly-valued elementFormDefault AND attributeFormDefault attributes" />
+        <ubm:variation name="406-02-MissingAttributeFormDefault" description="WITH correctly-valued elementFormDefault AND attributeFormDefault attributes" />
+        <ubm:variation name="406-03-MissingBoth" description="WITH correctly-valued elementFormDefault AND attributeFormDefault attributes" />
+        <ubm:variation name="406-04-ElementFormDefaultUnqualified" description="WITH correctly-valued elementFormDefault AND attributeFormDefault attributes" />
+        <ubm:variation name="406-05-AttributeFormDefaultQualified" description="WITH correctly-valued elementFormDefault AND attributeFormDefault attributes" />
+        <ubm:variation name="406-06-AttributeFormDefaultOverridden" description="WITH correctly-valued elementFormDefault AND attributeFormDefault attributes" />
+        <ubm:variation name="406-07-ElementFormDefaultOverridden" description="WITH correctly-valued elementFormDefault AND attributeFormDefault attributes" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/400-DTS/407-NullRoleValue/407-TestCase-NullRoleValue.xml">
+        <ubm:variation name="407-00-LinkbaseRefWithLinkbaseRefRole" description="Schema with linkbase reference WITH linkbaseRef role" />
+        <ubm:variation name="407-01-LinkbaseRefNoLinkbaseRefRole" description="Schema with linkbase reference WITH linkbaseRef role" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/400-DTS/409-OneTypeExtendedLinkOnLinkbase/409-TestCase-OneTypeExtendedLinkOnLinkbase.xml">
+        <ubm:variation name="409-00-OneTypeExtendedLinkOnLinkbase" description="Linkbase element with only ONE type of XBRL extended-type link" />
+        <ubm:variation name="409-01-MultipleExtendedTypeLinksOneLinkbaseRef" description="Linkbase element with only ONE type of XBRL extended-type link" />
+        <ubm:variation name="409-02-MultipleExtendedTypeLinksMultipleLinkbaseRef" description="Linkbase element with only ONE type of XBRL extended-type link" />
+        <ubm:variation name="409-03-MultipleExtendedTypeLinksIndirect" description="Linkbase element with only ONE type of XBRL extended-type link" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/400-DTS/412-DefaultNamespacePrefix/412-TestCase-DefaultNamespacePrefix.xml">
+        <ubm:variation name="412-00-ProperNamespacePrefix" description="Namespace prefix BETWEEN 1 and 12 characters" />
+        <ubm:variation name="412-01-NamespaceMoreThan12" description="Namespace prefix BETWEEN 1 and 12 characters" />
+        <ubm:variation name="412-02-NamespacePrefixNotBound" description="Namespace prefix BETWEEN 1 and 12 characters" />
+        <ubm:variation name="412-03-InconsistentlyBoundPrefix" description="Namespace prefix BETWEEN 1 and 12 characters" />
+        <ubm:variation name="412-04-ImportingSchemaIncorrectPrefix" description="Namespace prefix BETWEEN 1 and 12 characters" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/400-DTS/414-NonEmptyNameSpace/414-TestCase-414-NonEmptyNameSpace.xml">
+        <ubm:variation name="414-00-NonEmptyNameSpace" description="Contains a non empty targetnamespace attribute" />
+        <ubm:variation name="414-01-NoTargetNameSpace" description="Contains a non empty targetnamespace attribute" />
+        <ubm:variation name="414-02-EmptyTargetNameSpace" description="Contains a non empty targetnamespace attribute" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/400-DTS/415-LanguagesInSeparateLinkbase/415-TestCase-LanguagesInSeparateLinkbase.xml">
+        <ubm:variation name="415-00-LanguagesInSeparateLinkbase" description="Languages in separate label linkbase" />
+        <ubm:variation name="415-01-LanguageNotInSeparateLinkbase" description="Languages in separate label linkbase" />
+        <ubm:variation name="415-02-MixedCaseLanguageCodesLinkbase" description="Languages in separate label linkbase" />
+        <ubm:variation name="415-03-MixedSubordinateCodesLinkbase" description="Languages in separate label linkbase" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/500-Extensions/503-ProhibitionOfDefinitionLinks/503-TestCase-ProhibitionOfDefinitionLinks.xml">
+        <ubm:variation name="503-00-ProperProhibits" description="Proper prohibits" />
+        <ubm:variation name="503-01-ProhibitEssenceAlias" description="Proper prohibits" />
+        <ubm:variation name="503-02-ProhibitSimilarTuple" description="Proper prohibits" />
+        <ubm:variation name="503-03-ProhibitLabel" description="Proper prohibits" />
+        <ubm:variation name="503-04-ProhibitGeneralSpecial" description="Proper prohibits" />
+        <ubm:variation name="503-05-ProhibitReference" description="Proper prohibits" />
+    </ubm:testcase>
+    <ubm:testcase href="conformance-frta/500-Extensions/508-DistinctPriorityValues/508-TestCase-DistinctPriorityValues.xml">
+        <ubm:variation name="508-00-ExtensionHigherPriorityParentChild" description="Extension has higher priority than base (parent-child)" />
+        <ubm:variation name="508-01-ExtensionSamePriorityParentChild" description="Extension has higher priority than base (parent-child)" />
+        <ubm:variation name="508-02-ExtensionHigherPriorityRequiresElement" description="Extension has higher priority than base (parent-child)" />
+        <ubm:variation name="508-03-ExtensionSamePriorityRequiresElement" description="Extension has higher priority than base (parent-child)" />
+        <ubm:variation name="508-04-ExtensionHigherPrioritySummationItem" description="Extension has higher priority than base (parent-child)" />
+        <ubm:variation name="508-05-ExtensionSamePrioritySummationItem" description="Extension has higher priority than base (parent-child)" />
+        <ubm:variation name="508-06-SamePriorityWithinTaxonomy" description="Extension has higher priority than base (parent-child)" />
+        <ubm:variation name="508-07-SamePriorityWithinTaxonomyMultipleLinkbases" description="Extension has higher priority than base (parent-child)" />
+        <ubm:variation name="508-08-SamePriorityWithinTaxonomyMultipleNamespaces" description="Extension has higher priority than base (parent-child)" />
+        <ubm:variation name="508-09-SamePriorityWithinTaxonomyDisconnectedLinkbases" description="Extension has higher priority than base (parent-child)" />
+        <ubm:variation name="508-10-ExtensionLowerPrioritySummationItem" description="Extension has higher priority than base (parent-child)" />
+    </ubm:testcase>
+</ubm:testcases>

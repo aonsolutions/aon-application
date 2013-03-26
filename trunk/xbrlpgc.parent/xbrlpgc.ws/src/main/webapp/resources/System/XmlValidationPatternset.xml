@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+
+<PatternSet
+    name="XmlValidationPatterns"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="ValidationPatterns.xsd" >
+    <Pattern id="ValidateInstanceAgainstSchema" 
+			name="ValidateInstanceAgainstSchema" 
+			method="DtsXPath" 
+			value="ValidateInstance()">			
+         <Failure>
+                    <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Taxonomy#InstanceDocumentFailedToValidateAgainstSchema" />
+         </Failure>
+    </Pattern>     
+    <!-- Removing because it is done during load. Once editing is enabled, we will add this back in
+    <Pattern id="ValidateSchemaAgainstSchema" 
+			name="ValidateSchemaAgainstSchema" 
+			method="DtsXPath" 
+			value="ValidateSchema()">			
+         <Failure>
+                    <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Taxonomy#SchemaFailedToValidateAgainstSchema" />
+         </Failure>
+    </Pattern>         
+    -->
+    <Pattern id="ValidateTuplesMustNotUseMixedAttribute" 
+    			name="ValidateTuplesMustNotUseMixedAttribute" 
+    			method="DtsXPath" 
+    			value="/'domain://ubmatrix.com/Xbrl/Taxonomy#TupleConcept'ValidateMixedAttribute()">      			      			
+             <Failure severity="error">
+                        <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Taxonomy#TuplesMustNotUseMixedAttribute" />
+             </Failure>
+    </Pattern>     
+                
+    <Pattern id="ValidateTuplesMustNotContainAnonymousDefinition" 
+    			name="ValidateTuplesMustNotContainAnonymousDefinition" 
+    			method="DtsXPath" 
+    			value="/+'relationship://ubmatrix.com/Xbrl/Taxonomy/Relationship#TupleContainsConcept'/'domain://ubmatrix.com/Xbrl/Taxonomy#LocalConcept'ValidateAnonymousDefinition()">    			
+             <Failure>
+                        <Action saveDO="memo" method="CreateErrorMemo" uri="memo://ubmatrix.com/Validation/Taxonomy#TuplesMustNotContainAnonymousDefinition" />
+             </Failure>
+    </Pattern>  
+    
+ 
+    
+ </PatternSet>
+
+<!--
+ The contents of this file are subject to the UBmatrix License Version 1.0 (the "License");
+ you may not use this file except in compliance with the License. You may obtain a copy of the
+ License at http://www.ubmatrix.com/prospect/eula_processor.asp
+
+ Software distributed under the License is distributed on an "AS IS" basis,
+ WITHOUT WARRANTY OF ANY KIND, either express or implied.
+ See the License for the specific language governing rights and limitations under the License.
+
+ Copyright (c) UBmatrix, Inc., 2005-2006.  All Rights Reserved.
+-->

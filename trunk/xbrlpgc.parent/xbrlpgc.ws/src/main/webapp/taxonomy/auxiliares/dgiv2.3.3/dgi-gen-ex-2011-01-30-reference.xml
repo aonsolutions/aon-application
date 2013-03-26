@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+
+<linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2004/ref http://www.xbrl.org/2004/ref-2004-08-10.xsd http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd" xmlns:dgi-gen-ex="http://www.xbrl.org.es/es/2008/dgi/gp/gen-ex/2011-01-30" xmlns="http://www.xbrl.org/2003/linkbase" xmlns:ref="http://www.xbrl.org/2004/ref" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <referenceLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_IncorporationDate" xlink:label="IncorporationDate" xlink:title="IncorporationDate"/>
+    <reference xlink:type="resource" xlink:label="ref_IncorporationDate" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_IncorporationDate" id="ref_IncorporationDate">
+      <ref:Name>Código de Comercio</ref:Name>
+      <ref:Article>119</ref:Article>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="IncorporationDate" xlink:to="ref_IncorporationDate" xlink:title="reference: IncorporationDate to ref_IncorporationDate"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_BeginningActivitiesDate" xlink:label="BeginningActivitiesDate" xlink:title="BeginningActivitiesDate"/>
+    <reference xlink:type="resource" xlink:label="ref_BeginningActivitiesDate_1" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_BeginningActivitiesDate_1" id="ref_BeginningActivitiesDate_1">
+      <ref:Name>Ley de Sociedades Anónimas</ref:Name>
+      <ref:Article>9</ref:Article>
+      <ref:Name>Ley de Sociedades de Responsabilidad Limitada</ref:Name>
+      <ref:Article>14</ref:Article>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="BeginningActivitiesDate" xlink:to="ref_BeginningActivitiesDate_1" xlink:title="reference: BeginningActivitiesDate to ref_BeginningActivitiesDate"/>
+    <reference xlink:type="resource" xlink:label="ref_BeginningActivitiesDate_2" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_BeginningActivitiesDate_2" id="ref_BeginningActivitiesDate_2">
+      <ref:Name>Ley de Sociedades de Responsabilidad Limitada</ref:Name>
+      <ref:Article>14</ref:Article>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="BeginningActivitiesDate" xlink:to="ref_BeginningActivitiesDate_2" xlink:title="reference: BeginningActivitiesDate to ref_BeginningActivitiesDate"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_LegalCeaseActivitiesYear" xlink:label="LegalCeaseActivitiesYear" xlink:title="LegalCeaseActivitiesYear"/>
+    <reference xlink:type="resource" xlink:label="ref_LegalCeaseActivitiesYear_1" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_LegalCeaseActivitiesYear_1" id="ref_LegalCeaseActivitiesYear_1">
+      <ref:Name>Ley de Sociedades Anónimas</ref:Name>
+      <ref:Article>260 y ss.</ref:Article>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="LegalCeaseActivitiesYear" xlink:to="ref_LegalCeaseActivitiesYear_1" xlink:title="reference: LegalCeaseActivitiesYear to ref_LegalCeaseActivitiesYear"/>
+    <reference xlink:type="resource" xlink:label="ref_LegalCeaseActivitiesYear_2" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_LegalCeaseActivitiesYear_2" id="ref_LegalCeaseActivitiesYear_2">
+      <ref:Name>Ley de Sociedades de Responsabilidad Limitada</ref:Name>
+      <ref:Article>104 y ss.</ref:Article>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="LegalCeaseActivitiesYear" xlink:to="ref_LegalCeaseActivitiesYear_2" xlink:title="reference: LegalCeaseActivitiesYear to ref_LegalCeaseActivitiesYear"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_LegalCeaseActivitiesReason" xlink:label="LegalCeaseActivitiesReason" xlink:title="LegalCeaseActivitiesReason"/>
+    <reference xlink:type="resource" xlink:label="ref_LegalCeaseActivitiesReason_1" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_LegalCeaseActivitiesReason_1" id="ref_LegalCeaseActivitiesReason_1">
+      <ref:Name>Ley de Sociedades Anónimas</ref:Name>
+      <ref:Article>260 y ss.</ref:Article>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="LegalCeaseActivitiesReason" xlink:to="ref_LegalCeaseActivitiesReason_1" xlink:title="reference: LegalCeaseActivitiesReason to ref_LegalCeaseActivitiesReason"/>
+    <reference xlink:type="resource" xlink:label="ref_LegalCeaseActivitiesReason_2" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_LegalCeaseActivitiesReason_2" id="ref_LegalCeaseActivitiesReason_2">
+      <ref:Name>Ley de Sociedades de Responsabilidad Limitada</ref:Name>
+      <ref:Article>104 y ss.</ref:Article>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="LegalCeaseActivitiesReason" xlink:to="ref_LegalCeaseActivitiesReason_2" xlink:title="reference: LegalCeaseActivitiesReason to ref_LegalCeaseActivitiesReason"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_CapitalSubscribed" xlink:label="CapitalSubscribed" xlink:title="CapitalSubscribed"/>
+    <reference xlink:type="resource" xlink:label="ref_CapitalSubscribed_1" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_CapitalSubscribed_1" id="ref_CapitalSubscribed_1">
+      <ref:Name>Ley de Sociedades Anónimas</ref:Name>
+      <ref:Article>4, 8 y 9</ref:Article>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="CapitalSubscribed" xlink:to="ref_CapitalSubscribed_1" xlink:title="reference: CapitalSubscribed to ref_CapitalSubscribed"/>
+    <reference xlink:type="resource" xlink:label="ref_CapitalSubscribed_2" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_CapitalSubscribed_2" id="ref_CapitalSubscribed_2">
+      <ref:Name>Ley de Sociedades de Responsabilidad Limitada</ref:Name>
+      <ref:Article>4, 12 y 13</ref:Article>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="CapitalSubscribed" xlink:to="ref_CapitalSubscribed_2" xlink:title="reference: CapitalSubscribed to ref_CapitalSubscribed"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_CapitalPaid" xlink:label="CapitalPaid" xlink:title="CapitalPaid"/>
+    <reference xlink:type="resource" xlink:label="ref_CapitalPaid" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_CapitalPaid" id="ref_CapitalPaid">
+      <ref:Name>Ley de Sociedades Anónimas</ref:Name>
+      <ref:Article>9 y 13</ref:Article>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="CapitalPaid" xlink:to="ref_CapitalPaid" xlink:title="reference: CapitalPaid to ref_CapitalPaid"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_GeneralCharacteristics" xlink:label="GeneralCharacteristics" xlink:title="GeneralCharacteristics"/>
+    <reference xlink:type="resource" xlink:label="ref_GeneralCharacteristics" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_GeneralCharacteristics" id="ref_GeneralCharacteristics">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="GeneralCharacteristics" xlink:to="ref_GeneralCharacteristics" xlink:title="reference: GeneralCharacteristics to ref_GeneralCharacteristics"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_GroupBelongingName" xlink:label="GroupBelongingName" xlink:title="GroupBelongingName"/>
+    <reference xlink:type="resource" xlink:label="ref_GroupBelongingName" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_GroupBelongingName" id="ref_GroupBelongingName">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="GroupBelongingName" xlink:to="ref_GroupBelongingName" xlink:title="reference: GroupBelongingName to ref_GroupBelongingName"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_FinancialEntityType" xlink:label="FinancialEntityType" xlink:title="FinancialEntityType"/>
+    <reference xlink:type="resource" xlink:label="ref_FinancialEntityType" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_FinancialEntityType" id="ref_FinancialEntityType">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="FinancialEntityType" xlink:to="ref_FinancialEntityType" xlink:title="reference: FinancialEntityType to ref_FinancialEntityType"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_OthersFinancialEntityType" xlink:label="OthersFinancialEntityType" xlink:title="OthersFinancialEntityType"/>
+    <reference xlink:type="resource" xlink:label="ref_OthersFinancialEntityType" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_OthersFinancialEntityType" id="ref_OthersFinancialEntityType">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OthersFinancialEntityType" xlink:to="ref_OthersFinancialEntityType" xlink:title="reference: OthersFinancialEntityType to ref_OthersFinancialEntityType"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_LegalForm" xlink:label="LegalForm" xlink:title="LegalForm"/>
+    <reference xlink:type="resource" xlink:label="ref_LegalForm" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_LegalForm" id="ref_LegalForm">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="LegalForm" xlink:to="ref_LegalForm" xlink:title="reference: LegalForm to ref_LegalForm"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_LegalFormCode" xlink:label="LegalFormCode" xlink:title="LegalFormCode"/>
+    <reference xlink:type="resource" xlink:label="ref_LegalFormCode" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_LegalFormCode" id="ref_LegalFormCode">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="LegalFormCode" xlink:to="ref_LegalFormCode" xlink:title="reference: LegalFormCode to ref_LegalFormCode"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_OthersLegalForm" xlink:label="OthersLegalForm" xlink:title="OthersLegalForm"/>
+    <reference xlink:type="resource" xlink:label="ref_OthersLegalForm" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_OthersLegalForm" id="ref_OthersLegalForm">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OthersLegalForm" xlink:to="ref_OthersLegalForm" xlink:title="reference: OthersLegalForm to ref_OthersLegalForm"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_LegalFormFormationDate" xlink:label="LegalFormFormationDate" xlink:title="LegalFormFormationDate"/>
+    <reference xlink:type="resource" xlink:label="ref_LegalFormFormationDate" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_LegalFormFormationDate" id="ref_LegalFormFormationDate">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="LegalFormFormationDate" xlink:to="ref_LegalFormFormationDate" xlink:title="reference: LegalFormFormationDate to ref_LegalFormFormationDate"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_IssuingEntityType" xlink:label="IssuingEntityType" xlink:title="IssuingEntityType"/>
+    <reference xlink:type="resource" xlink:label="ref_IssuingEntityType" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_IssuingEntityType" id="ref_IssuingEntityType">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="IssuingEntityType" xlink:to="ref_IssuingEntityType" xlink:title="reference: IssuingEntityType to ref_IssuingEntityType"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_OthersIssuingEntity" xlink:label="OthersIssuingEntity" xlink:title="OthersIssuingEntity"/>
+    <reference xlink:type="resource" xlink:label="ref_OthersIssuingEntity" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_OthersIssuingEntity" id="ref_OthersIssuingEntity">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OthersIssuingEntity" xlink:to="ref_OthersIssuingEntity" xlink:title="reference: OthersIssuingEntity to ref_OthersIssuingEntity"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_EntityOrigin" xlink:label="EntityOrigin" xlink:title="EntityOrigin"/>
+    <reference xlink:type="resource" xlink:label="ref_EntityOrigin" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_EntityOrigin" id="ref_EntityOrigin">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="EntityOrigin" xlink:to="ref_EntityOrigin" xlink:title="reference: EntityOrigin to ref_EntityOrigin"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_EntityOriginCode" xlink:label="EntityOriginCode" xlink:title="EntityOriginCode"/>
+    <reference xlink:type="resource" xlink:label="ref_EntityOriginCode" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_EntityOriginCode" id="ref_EntityOriginCode">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="EntityOriginCode" xlink:to="ref_EntityOriginCode" xlink:title="reference: EntityOriginCode to ref_EntityOriginCode"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_OthersEntityOriginCode" xlink:label="OthersEntityOriginCode" xlink:title="OthersEntityOriginCode"/>
+    <reference xlink:type="resource" xlink:label="ref_OthersEntityOriginCode" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_OthersEntityOriginCode" id="ref_OthersEntityOriginCode">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OthersEntityOriginCode" xlink:to="ref_OthersEntityOriginCode" xlink:title="reference: OthersEntityOriginCode to ref_OthersEntityOriginCode"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_StockExchangeInformation" xlink:label="StockExchangeInformation" xlink:title="StockExchangeInformation"/>
+    <reference xlink:type="resource" xlink:label="ref_StockExchangeInformation" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_StockExchangeInformation" id="ref_StockExchangeInformation">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="StockExchangeInformation" xlink:to="ref_StockExchangeInformation" xlink:title="reference: StockExchangeInformation to ref_StockExchangeInformation"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_StockExchangeMarket" xlink:label="StockExchangeMarket" xlink:title="StockExchangeMarket"/>
+    <reference xlink:type="resource" xlink:label="ref_StockExchangeMarket" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_StockExchangeMarket" id="ref_StockExchangeMarket">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="StockExchangeMarket" xlink:to="ref_StockExchangeMarket" xlink:title="reference: StockExchangeMarket to ref_StockExchangeMarket"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_QuotationType" xlink:label="QuotationType" xlink:title="QuotationType"/>
+    <reference xlink:type="resource" xlink:label="ref_QuotationType" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_QuotationType" id="ref_QuotationType">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="QuotationType" xlink:to="ref_QuotationType" xlink:title="reference: QuotationType to ref_QuotationType"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_OthersQuotationType" xlink:label="OthersQuotationType" xlink:title="OthersQuotationType"/>
+    <reference xlink:type="resource" xlink:label="ref_OthersQuotationType" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_OthersQuotationType" id="ref_OthersQuotationType">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OthersQuotationType" xlink:to="ref_OthersQuotationType" xlink:title="reference: OthersQuotationType to ref_OthersQuotationType"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_OtherMarketIdentifier" xlink:label="OtherMarketIdentifier" xlink:title="OtherMarketIdentifier"/>
+    <reference xlink:type="resource" xlink:label="ref_OtherMarketIdentifier" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_OtherMarketIdentifier" id="ref_OtherMarketIdentifier">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OtherMarketIdentifier" xlink:to="ref_OtherMarketIdentifier" xlink:title="reference: OtherMarketIdentifier to ref_OtherMarketIdentifier"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_MarketIdentifier" xlink:label="MarketIdentifier" xlink:title="MarketIdentifier"/>
+    <reference xlink:type="resource" xlink:label="ref_MarketIdentifier" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_MarketIdentifier" id="ref_MarketIdentifier">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="MarketIdentifier" xlink:to="ref_MarketIdentifier" xlink:title="reference: MarketIdentifier to ref_MarketIdentifier"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_NumberShares" xlink:label="MarketCapitalization" xlink:title="MarketCapitalization"/>
+    <reference xlink:type="resource" xlink:label="ref_MarketCapitalization" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_MarketCapitalization" id="ref_MarketCapitalization">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="MarketCapitalization" xlink:to="ref_MarketCapitalization" xlink:title="reference: MarketCapitalization to ref_MarketCapitalization"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_MarketCapitalizationDate" xlink:label="MarketCapitalizationDate" xlink:title="MarketCapitalizationDate"/>
+    <reference xlink:type="resource" xlink:label="ref_MarketCapitalizationDate" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_MarketCapitalizationDate" id="ref_MarketCapitalizationDate">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="MarketCapitalizationDate" xlink:to="ref_MarketCapitalizationDate" xlink:title="reference: MarketCapitalizationDate to ref_MarketCapitalizationDate"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_IsPrimaryStockExchangeMarket" xlink:label="IsPrimaryStockExchangeMarket" xlink:title="IsPrimaryStockExchangeMarket"/>
+    <reference xlink:type="resource" xlink:label="ref_IsPrimaryStockExchangeMarket" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_IsPrimaryStockExchangeMarket" id="ref_IsPrimaryStockExchangeMarket">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="IsPrimaryStockExchangeMarket" xlink:to="ref_IsPrimaryStockExchangeMarket" xlink:title="reference: IsPrimaryStockExchangeMarket to ref_IsPrimaryStockExchangeMarket"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_SupervisoryEntity" xlink:label="SupervisoryEntity" xlink:title="SupervisoryEntity"/>
+    <reference xlink:type="resource" xlink:label="ref_SupervisoryEntity" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_SupervisoryEntity" id="ref_SupervisoryEntity">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="SupervisoryEntity" xlink:to="ref_SupervisoryEntity" xlink:title="reference: SupervisoryEntity to ref_SupervisoryEntity"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_SupervisorEntityName" xlink:label="SupervisorEntityName" xlink:title="SupervisorEntityName"/>
+    <reference xlink:type="resource" xlink:label="ref_SupervisorEntityName" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_SupervisorEntityName" id="ref_SupervisorEntityName">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="SupervisorEntityName" xlink:to="ref_SupervisorEntityName" xlink:title="reference: SupervisorEntityName to ref_SupervisorEntityName"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_SpecialSituations" xlink:label="SpecialSituations" xlink:title="SpecialSituations"/>
+    <reference xlink:type="resource" xlink:label="ref_SpecialSituations" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_SpecialSituations" id="ref_SpecialSituations">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="SpecialSituations" xlink:to="ref_SpecialSituations" xlink:title="reference: SpecialSituations to ref_SpecialSituations"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_SpecialSituationsList" xlink:label="SpecialSituationsList" xlink:title="SpecialSituationsList"/>
+    <reference xlink:type="resource" xlink:label="ref_SpecialSituationsList" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_SpecialSituationsList" id="ref_SpecialSituationsList">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="SpecialSituationsList" xlink:to="ref_SpecialSituationsList" xlink:title="reference: SpecialSituationsList to ref_SpecialSituationsList"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_OtherSituationsCode" xlink:label="OtherSituationsCode" xlink:title="OtherSituationsCode"/>
+    <reference xlink:type="resource" xlink:label="ref_OtherSituationsCode" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_OtherSituationsCode" id="ref_OtherSituationsCode">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OtherSituationsCode" xlink:to="ref_OtherSituationsCode" xlink:title="reference: OtherSituationsCode to ref_OtherSituationsCode"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_SpecialSituationDate" xlink:label="SpecialSituationDate" xlink:title="SpecialSituationDate"/>
+    <reference xlink:type="resource" xlink:label="ref_SpecialSituationDate" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="ref_SpecialSituationDate" id="ref_SpecialSituationDate">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="SpecialSituationDate" xlink:to="ref_SpecialSituationDate" xlink:title="reference: SpecialSituationDate to ref_SpecialSituationDate"/>
+    <loc xlink:type="locator" xlink:href="dgi-gen-ex-2011-01-30.xsd#dgi-gen-ex_StockMarketQuote" xlink:label="StockMarketQuote" xlink:title="StockMarketQuote"/>
+    <reference xlink:type="resource" xlink:label="reference_StockMarketQuote" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_StockMarketQuote" id="reference_StockMarketQuote">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="StockMarketQuote" xlink:to="reference_StockMarketQuote" xlink:title="reference: StockMarketQuote to reference_StockMarketQuote"/>
+  </referenceLink>
+</linkbase>

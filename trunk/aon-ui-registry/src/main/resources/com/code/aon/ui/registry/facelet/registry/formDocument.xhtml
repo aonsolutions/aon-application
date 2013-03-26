@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:outputLabel for="#{pojoName}_document" value="#{bundle.aon_document}" />
+	<aon:panelGroup id="#{pojoName}DocumentPanel">
+		<aon:selectOneMenu id="#{pojoName}_document_type" value="#{registry.documentType}">
+			<f:selectItems value="#{registryCollections.documentTypes}" />
+			<a4j:support event="onchange" focus="#{pojoName}_document"
+				actionListener="#{controller.onChangeDocument}"
+				reRender="#{pojoName}DocumentPanel,#{pojoName}_type" 
+				ajaxSingle="true" />
+		</aon:selectOneMenu>
+		<aon:outputText value="#{bundle.aon_document_country}" styleClass="aon-italic aon-margin-left"/>
+		<aon:selectOneMenu id="#{pojoName}_document_country" value="#{registry.documentCountry}"
+			styleClass="aon-margin-left">
+			<f:selectItems value="#{commonCollections.countryCodes}" />
+			<a4j:support event="onchange" focus="#{pojoName}_document"
+				actionListener="#{controller.onChangeDocument}"
+				reRender="#{pojoName}DocumentPanel"
+				ajaxSingle="true" />
+		</aon:selectOneMenu>
+		<aon:inputText id="#{pojoName}_document" style="margin-left: 3px;"
+			value="#{registry.document}" size="16" maxlength="16">
+			<f:validateLength minimum="1" maximum="16" />
+			<a4j:support onsubmit="toUpperCase(this);"
+				event="onchange" focus="#{pojoName}_name"
+				actionListener="#{controller.onChangeDocument}"
+				reRender="#{pojoName}DocumentPanel" 
+				ajaxSingle="true" />
+		</aon:inputText>
+		<aon:outputText 
+			rendered="#{!registry.documentValidable}"
+			styleClass="aon-icon-question"
+			style="padding-left: 15px;"
+			value="&#160;" />
+		<aon:outputText 
+			rendered="#{registry.documentValidable and registry.validDocument}"
+			styleClass="aon-icon-predetermine"
+			style="padding-left: 15px;"
+			value="&#160;" />
+		<aon:outputText 
+			rendered="#{registry.documentValidable and !registry.validDocument}"
+			styleClass="aon-icon-exception"
+			style="padding-left: 15px;"
+			value="&#160;" />
+	</aon:panelGroup>
+			
+</ui:composition>

@@ -1,0 +1,341 @@
+package com.code.aon.dbutils;
+
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.sql.Blob;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.dbutils.handlers.ArrayHandler;
+import org.apache.commons.dbutils.handlers.ArrayListHandler;
+import org.apache.commons.dbutils.handlers.ColumnListHandler;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.CharEncoding;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class AonDomainDump implements Constants {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(AonDomainDump.class);
+	
+	private Map<String,TableInfo> tables;
+	private Connection connection;
+	private Integer[] domains;
+	private BufferedWriter writer;
+	private String lastId;
+	
+	public AonDomainDump(Connection connection) throws AonSQLException {
+		this.connection = connection;
+		this.tables = new TableUtil().resolveTables(connection);
+	}
+	
+	private void writeLine( String statement ) throws IOException {
+		writer.write(statement);
+		writer.newLine();
+	}
+	
+	private void writeInfo() throws IOException, SQLException {
+		writeLine("# Database: " + connection.getCatalog() );
+		for( Integer domainId : domains ) {
+			String name = TableUtil.getDomainName(connection, domainId);
+			writeLine("# Domain: " +  name + " (" + domainId + ")" );
+		}
+		writeLine("# Version: " + TableUtil.getVersion(connection) );
+		writeLine("# Creation Date: " + new Date() );
+		writeLine("");
+	}
+
+	public void execute(Integer[] domains, Writer writer ) throws AonSQLException {
+		try {
+			this.domains = domains;
+			this.writer = new BufferedWriter(writer);
+
+			writeInfo();
+			writeLine(SET_FOREIGN_KEY_CHECKS_0);
+
+			TableUtil.updateBaseIds(connection, tables.values(), this.domains);
+
+			dumpActionTable();
+			
+            int i = 0;
+            for (TableInfo table: this.tables.values()) {
+            	LOGGER.info( "{}-Dump table {}",++i,table.getName() );
+            	dump(table);
+            }
+            
+            writeLine(SET_FOREIGN_KEY_CHECKS_1);
+            this.writer.flush();
+		} catch (Throwable e) {
+			if ( e instanceof AonSQLException ) {
+				throw (AonSQLException) e;
+			}
+			throw new AonSQLException(e.getMessage() , e);
+		}
+	}
+	
+	private List<Integer> getUsedActions( String tableName, Integer[] domains ) {
+		QueryRunner run = new QueryRunner();
+		try {
+			ResultSetHandler<List<Integer>> hs = new ColumnListHandler<Integer>();
+			return run.query( connection,
+					"SELECT action_id FROM " + tableName + " WHERE domain IN (" +
+					StringUtils.join(domains, ",") + ") GROUP by action_id;", hs );
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
+		return Collections.emptyList();		
+	}
+	
+	private void dumpActionTable() throws IOException, AonSQLException {
+		Set<Integer> usedActions = new HashSet<Integer>();
+		Integer[] allDomains = TableUtil.getAllDomains(connection, this.domains);
+		usedActions.addAll( getUsedActions(ACTION_DENIED_TABLE_NAME, allDomains) );
+		usedActions.addAll( getUsedActions(ACTION_FAVORITE_TABLE_NAME, allDomains) );
+		usedActions.addAll( getUsedActions(PROFILE_ACTION_DENIED_TABLE_NAME, allDomains) );
+		if (! usedActions.isEmpty() ) {
+			writeLine( "INSERT IGNORE INTO action (menu, name, application) VALUES" );
+			QueryRunner run = new QueryRunner();
+			try {
+				ResultSetHandler<List<Object[]>> hs = new ArrayListHandler();
+				List<Object[]> result = run.query( connection,
+						"SELECT CONVERT(menu,SIGNED),CONCAT('\\'',name,'\\''),application FROM action WHERE id in (" +
+						StringUtils.join(usedActions, ",") + ");", hs );
+				for( int i = 0; i < result.size(); i++ ) {
+					Object[] values = result.get(i);
+					writeLine( "\t (" + StringUtils.join(values, ",") + ")" + ((i+1==result.size())?";":",") );					
+				}
+			} catch (SQLException e) {
+				throw new AonSQLException("Error volcando la tabla action", e);
+			}									
+		}
+	}
+	
+	private String getActionReference( Integer id ) throws SQLException {
+		QueryRunner run = new QueryRunner();
+		ResultSetHandler<Object[]> hs = new ArrayHandler();
+		Object[] result = run.query( connection,
+				"SELECT name,application FROM action WHERE id = ?", hs, id );
+		if (! ArrayUtils.isEmpty(result) ) {
+			return "(SELECT id FROM action WHERE name='" + result[0] + "' AND application=" + result[1] + ")"; 
+		}
+		return String.valueOf(id);
+	}
+	
+	private void dump(TableInfo t) throws AonSQLException, IOException {
+		PreparedStatement select = null;
+		ResultSet rs = null;
+		try {
+			writeLine("");
+			String sentence = t.getSelectStatement(t.getDomains(connection, domains));
+			select = connection.prepareStatement(sentence,t.getColumnNames());
+			rs = select.executeQuery();
+			if ( rs.next() ) {
+				if ( t.isRecursive() ) {
+					writeLine( t.getSetVariableStatement() );	
+				}				
+				writeLine( t.getInsertStatementBegin(t.getPkColumn().isFkColummn()) );
+				boolean firstInsert = true;
+				boolean moreRows = false;
+				int i = 0;
+				do {
+					i++;
+					moreRows = dump(rs,t,firstInsert);
+					if ( firstInsert ) {
+						writeLine( t.getSetVariableStatement(this.lastId) );
+						if ( moreRows ) {
+							writeLine( t.getInsertStatementBegin(true) );
+							firstInsert = false;							
+						}
+					}
+					
+				} while (moreRows);				
+				LOGGER.info( "Table {}, TOTAL {} rows inserted",t.getName(), i);
+				writeLine( t.getUpdateAutoIncrementStatement() );
+			} else {
+				writeLine("# Table " + t.getName() + " is empty");
+				LOGGER.info( "Table {} is empty", t.getName() );
+			}
+		} catch (SQLException e) {
+			throw new AonSQLException("Error volcando la tabla " + t.getName(), e);
+		} finally {
+			DbUtils.closeQuietly(rs);
+			DbUtils.closeQuietly(select);
+		}			
+	}
+
+	private String format( Object value, int type ) throws SQLException {
+		String newValue = null;
+		switch ( type ) {
+			case Types.INTEGER:
+			case Types.TINYINT:
+			case Types.BIT:
+			case Types.SMALLINT:
+				newValue = value.toString();
+				break;
+			case Types.DOUBLE:
+				newValue = value.toString();
+				break;
+			case Types.DATE:
+			case Types.TIME:
+			case Types.TIMESTAMP:
+				newValue = "\'" + value.toString() + "\'";
+				break;
+			case Types.CHAR:
+			case Types.VARCHAR:
+			case Types.LONGVARCHAR:
+				newValue = "\'" + TableUtil.escapeSql(value.toString()) + "\'";
+				break;
+			case Types.LONGVARBINARY:
+            	Blob blob = (Blob) value;
+            	int length = (int) blob.length();
+            	byte[] data = blob.getBytes( 1, length);
+            	newValue = "0x" + new String(Hex.encodeHex(data));
+				break;
+			default:
+				throw new RuntimeException( "not support: " + type );
+		}
+		return newValue;
+	}
+	
+	private boolean dump(ResultSet rs, TableInfo t, boolean firstInsert) throws SQLException, IOException {
+		ColumnInfo[] columns = t.getInsertColumns();
+		if ( !firstInsert || t.getPkColumn().isFkColummn() ) {
+			columns = t.getColumns();
+		}
+		String[] values = new String[columns.length];
+		for (int i = 0; i < columns.length; i++) {
+			ColumnInfo ci = columns[i];
+			Object value = TableUtil.getObject(rs, ci);
+			if (value != null) {
+				if ( ci.isFkColummn() ) {
+					Integer fkId = (Integer) value;
+					if ( ci.isActionReference() ) {
+						values[i] = getActionReference( fkId );
+					} else if ( t.isForceHeredity() && DOMAIN_COLUMN_NAME.equals(ci.getName()) ) {
+						values[i] = this.tables.get(DOMAIN_TABLE_NAME).getRelativeId(this.domains[0]);
+					} else {
+						values[i] = getReferenceValue(t, fkId, ci, ci.getFkTableName());	
+					}					
+				} else if ( ci == t.getPkColumn() ) {
+					values[i] = t.getRelativeId((Integer) value);
+				} else {
+					values[i] = format(value, ci.getType());
+					if ( TableUtil.isInternalReference(t) ) {
+						AonInternalReference air = TableUtil.getInternalReference(t);
+						if (air.getColumn().equals(ci.getName())) {
+							Object discriminator = rs.getObject( air.getDiscriminatorColumn() );
+							String fkTable = air.getReferencedTable(discriminator);
+							if (fkTable != null) {
+								Integer valueInteger = getInteger(value);
+								String newValue = getReferenceValue(t, valueInteger, ci, fkTable);
+								values[i] = (newValue == null) ? "-1" : newValue;
+							}
+						}
+					}
+				}
+			} else {
+				values[i] = "NULL";	
+			}
+			if ( ci.isPrimaryKey() ) {
+				this.lastId = values[i];
+			}
+		}
+		boolean moreRows = rs.next();
+		writeLine( "\t (" + StringUtils.join(values, ",") + ")" + (moreRows && !firstInsert?",":";") );
+		return moreRows;
+	}
+
+	private Integer getInteger(Object value) {
+		Integer valueInteger = null;
+		if (value != null) {
+			if (value instanceof Integer) {
+				valueInteger = (Integer) value;
+			} else if (value instanceof String) {
+				try {
+					valueInteger = Integer.parseInt((String) value) ;
+				} catch (NumberFormatException e) {
+					throw new IllegalStateException( "El valor " + value + " no se puede convertir a Integer "); 
+				} 
+			} else {
+				throw new IllegalStateException( "El valor " + value + " no se puede convertir a Integer ");
+			}
+		}
+		return valueInteger;
+	}
+
+	private boolean ensureValueId(String fkTable, String pk, Integer value) throws SQLException {
+		String sentence = "SELECT " + pk + " FROM " + fkTable + " WHERE " + pk  + " = " + value; 
+		Statement s = null;
+		ResultSet rs = null;
+		try {
+			s = connection.createStatement();
+			rs = s.executeQuery(sentence);
+			return rs.next();
+		} finally {
+			DbUtils.closeQuietly(rs);
+			DbUtils.closeQuietly(s);
+		}		
+	}
+	
+	private String getReferenceValue(TableInfo t, Integer value, ColumnInfo ci, String fkTable ) throws SQLException {
+		String newValue = null;
+		TableInfo fkTableInfo = tables.get(fkTable);
+		if ( fkTableInfo != null ) {
+			if ( ensureValueId(fkTable, fkTableInfo.getPkColumn().getName(), value) ) {
+				newValue = fkTableInfo.getRelativeId(value);
+			}
+		} else {
+			if ( ensureValueId(fkTable, "id", value) ) {
+				newValue = String.valueOf(value);
+			}
+		}
+		if ( newValue == null ) {
+			LOGGER.warn( "Reference ({},{},{}) for {} not found", new Object[]{t.getName(), ci.getName(), value, fkTable} );
+		}
+		return newValue;
+	}
+
+	public static void main(String[] args) {
+		DbUtils.loadDriver("org.gjt.mm.mysql.Driver");
+		
+		Integer[] domains = new Integer[]{492};
+		
+		String url = "jdbc:mysql://volga:3306/pro-aonsolutions-net";
+		// String url = "jdbc:mysql://volga:3306/aimar-esferalia-com";
+		String user = "dbuser";
+		String password = "serubd2000";
+		
+		Connection connection  = null ;
+		try {
+			connection = DriverManager.getConnection(url, user, password);
+			AonDomainDump dump = new AonDomainDump(connection);
+			Writer writer = new OutputStreamWriter(new FileOutputStream("/tmp/dump.sql"), CharEncoding.ISO_8859_1);			
+			dump.execute(domains, writer);
+			writer.close();
+		} catch (Throwable e) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			DbUtils.closeQuietly(connection);
+		}
+	}
+	
+}

@@ -1,0 +1,783 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Xerces @version $Id: XMLSchemaMessages.properties,v 1.78 2005/06/14 04:24:24  -->
+<!-- XBreeze XBRL Processing Engine (XPE), Localizer.xml, v2.500 2007-01-06 05:23 -->
+<!-- XAPINTECO  errorMessages.properties  -->
+<PGC07ErrorsCatalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.inteco.es/xbrl/pgc07/errors/catalog schemas/pgc07-errors.xsd" xmlns="http://www.inteco.es/xbrl/pgc07/errors/catalog">
+    <PGCError errorCode="0" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#MissingXbrlInstanceSchema" parameterList=""/>
+    <PGCError errorCode="1" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#TuplesMustNotContainAllCompositor" parameterList="0"/>
+    <PGCError errorCode="2" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#TupleConceptHasOtherThanConcept" parameterList="0"/>
+    <PGCError errorCode="3" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#FootnoteLocatorOutOfScope" parameterList="0,1"/>
+    <PGCError errorCode="4" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#TupleAttributesDefinedInXBRLNamespce" parameterList="0"/>
+    <PGCError errorCode="5" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#CalculationWeightIsZero" parameterList="0"/>
+    <PGCError errorCode="6" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#XlinkArcroleAttributeMustHaveFixedContent" parameterList="0"/>
+    <PGCError errorCode="7" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#CalculationLinkbaseRefMustContainOnlyCalculationLink" parameterList="0"/>
+    <PGCError errorCode="8" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#PresentationLinkbaseRefMustContainOnlyPresentationLink" parameterList="0"/>
+    <PGCError errorCode="9" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#UnitRefAttributeMustNotOccurInNonNumericItem" parameterList="0"/>
+    <PGCError errorCode="10" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#UnitRefAttributeMustOccurInNumericItem" parameterList="0"/>
+    <PGCError errorCode="11" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#TuplesHaveContext" parameterList="0"/>
+    <PGCError errorCode="12" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#NumericItemsMustHaveUnitRefAttribute" parameterList="0"/>
+    <PGCError errorCode="13" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#TuplesHaveUnitRef" parameterList="0"/>
+    <PGCError errorCode="14" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#NumericItemMustNotHaveBothPrecisionAndDecimalsAttribute" parameterList="0"/>
+    <PGCError errorCode="15" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#NumericItemMustHaveEitherPrecisionOrDecimalsAttribute" parameterList="0"/>
+    <PGCError errorCode="16" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#NonNumericItemMustNotHaveEitherPrecisionOrDecimalsAttribute" parameterList="0"/>
+    <PGCError errorCode="17" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#ElementWithPeriodTypeInstantMustContainInstantElement" parameterList="0"/>
+    <PGCError errorCode="18" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#ElementWithPeriodTypeDurationMustContainForeverOrValidSeqOfStartDateAndEndDate" parameterList="0"/>
+    <PGCError errorCode="19" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#SegmentElementMustNotBeInSubstitutionGroupForElementsDefinedInXBRLInstanceNamespace" parameterList="0"/>
+    <PGCError errorCode="20" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#ScenarioElementMustNotBeRedefinedInXBRLInstanceNamespace" parameterList="0"/>
+    <PGCError errorCode="21" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#FactDerivedFromMonetaryItemTypeHasBalanceDefined" parameterList="0"/>
+    <PGCError errorCode="22" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#FactWithPureUnitsHasMoreThanOneMeasurement" parameterList="0"/>
+    <PGCError errorCode="23" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#LocalPartOfMeasureItemsIsNotInISONamespace" parameterList="0"/>
+    <PGCError errorCode="24" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#FactUnitNumeratorAndDenominatorAreNotInSimplestForm" parameterList="0"/>
+    <PGCError errorCode="25" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#FootnoteResourceMissingXmlLangAttribute" parameterList="0"/>
+    <PGCError errorCode="26" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#FactsIsXBRLIdentical" parameterList="0"/>
+    <PGCError errorCode="27" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#ScenarioElementMustNotBeInSubstitutionGroupForElementsDefinedInXBRLInstanceNamespace" parameterList="0"/>
+    <PGCError errorCode="28" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#SegmentElementMustNotBeRedefinedInXBRLInstanceNamespace" parameterList="0"/>
+    <PGCError errorCode="29" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#SegmentDescendentDefinedInInstanceNamespace" parameterList="0"/>
+    <PGCError errorCode="30" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#ScenarioDescendentDefinedInInstanceNamespace" parameterList="0"/>
+    <PGCError errorCode="31" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#FactWithSharesUnitsHasMoreThanOneMeasurement" parameterList="0"/>
+    <PGCError errorCode="32" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#PureFactDoesNotHavePureUnits" parameterList="0"/>
+    <PGCError errorCode="33" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#SharesFactDoesNotHaveSharesUnits" parameterList="0"/>
+    <PGCError errorCode="34" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#PrefixPartOfMeasureItemIsNotInISONamespace" parameterList="0"/>
+    <PGCError errorCode="35" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#MeasuresInUnitNumeratorAreNotSEqualToMeasuresInDenominator" parameterList="0"/>
+    <PGCError errorCode="36" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#EssenceAliasFactsDoNotHaveSameDurationPeriodType" parameterList="0"/>
+    <PGCError errorCode="37" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#EssenceAliasFactsDoNotHaveSameInstantPeriodType" parameterList="0"/>
+    <PGCError errorCode="38" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#TupleFactIsXBRLIdentical" parameterList="0"/>
+    <PGCError errorCode="39" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#RoleTypeDefinedByThisSpecificatinMustNotBeRedefinedUsingRoleTypeElement" parameterList="0"/>
+    <PGCError errorCode="40" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#ItemTypesMustBeXbrlDataType" parameterList="0"/>
+    <PGCError errorCode="41" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#TupleContainsPeriodTypeAttribute" parameterList="0"/>
+    <PGCError errorCode="42" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#ThereMustNotBeMoreThanOneRoleTypeElementWithSameRoleUriAttribute" parameterList="0"/>
+    <PGCError errorCode="43" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#ArcroleTypeDefinedByThisSpecificatinMustNotBeRedefinedUsingRoleTypeElement" parameterList="0"/>
+    <PGCError errorCode="44" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#ThereMustNotBeMoreThanOneArcroleTypeElementWithSameRoleUriAttribute" parameterList="0"/>
+    <PGCError errorCode="45" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#CalculationArcsAreNotEquivalent" parameterList="0"/>
+    <PGCError errorCode="46" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#InvalidCycleDetected" parameterList="0"/>
+    <PGCError errorCode="47" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#TuplesHaveInvalidAttribute" parameterList="0"/>
+    <PGCError errorCode="48" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#DerivedItemMustNotProhibitID" parameterList="0"/>
+    <PGCError errorCode="49" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#TupleConceptIsEmpty" parameterList="0"/>
+    <PGCError errorCode="50" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#TuplesMustNotSpecifyNestedAnonymousTypes" parameterList="0"/>
+    <PGCError errorCode="51" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#ConceptDefinitionDoesNotHaveID" parameterList="0"/>
+    <PGCError errorCode="52" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#TupleTypesMustNotHavePeriodAttribute" parameterList="0"/>
+    <PGCError errorCode="53" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#ItemTypesMustHavePeriodAttribute" parameterList="0,0"/>
+    <PGCError errorCode="54" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#NonMonetaryItemTypeMustNotHaveBalanceAttribute" parameterList="0"/>
+    <PGCError errorCode="55" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#InvalidRelationshipEndpointCardinality" parameterList="0"/>
+    <PGCError errorCode="56" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#TuplesMustNotContainAnonymousDefinition" parameterList="0"/>
+    <PGCError errorCode="57" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#ReferenceLinkbaseRefMustContainOnlyReferenceLink" parameterList="0"/>
+    <PGCError errorCode="58" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#ItemsMustNotHaveComplexContent" parameterList="0"/>
+    <PGCError errorCode="59" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#TupleContainsBalanceAttribute" parameterList="0"/>
+    <PGCError errorCode="60" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#TuplesMustNotUseMixedAttribute" parameterList="0"/>
+    <PGCError errorCode="61" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#SchemaFailedToValidateAgainstSchema" parameterList="0"/>
+    <PGCError errorCode="62" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#InstanceDocumentFailedToValidateAgainstSchema" parameterList="0"/>
+    <PGCError errorCode="63" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#DomainObjectDoesNotHaveUniqueID" parameterList="0"/>
+    <PGCError errorCode="64" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#TargetConceptOfGeneralSpecialArcDoesNotPointToConceptsInTheItemSubstitutionGroup" parameterList="0"/>
+    <PGCError errorCode="65" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#SourceConceptOfGeneralSpecialArcDoesNotPointToConceptsInTheItemSubstitutionGroup" parameterList="0"/>
+    <PGCError errorCode="66" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#ValueOfMeasureIsNotQName" parameterList="0"/>
+    <PGCError errorCode="67" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#NumericItemMustUseContextRefAndUnitRefAttribute" parameterList="0"/>
+    <PGCError errorCode="68" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Instance#EndDateMustBeLaterThanStartDate" parameterList="0,1,2,3"/>
+    <PGCError errorCode="69" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#RoleUsedOnDoesNotMatchWithSpecifiedLink" parameterList="0"/>
+    <PGCError errorCode="70" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#ArcroleUsedOnDoesNotMatchWithSpecifiedArc" parameterList="0"/>
+    <PGCError errorCode="71" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#UsedOnDoesNotMatchWithSpecifiedArc" parameterList="0"/>
+    <PGCError errorCode="72" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#IllegalUseOfArcOverride" parameterList="0"/>
+    <PGCError errorCode="73" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#XlinkArcRoleAtributeMustBeStandardOrCustomRoleType" parameterList="0"/>
+    <PGCError errorCode="74" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#XlinkHrefAttributeOnSimpleLinkMustEndInFragmentIdentifier" parameterList="0"/>
+    <PGCError errorCode="75" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#InvalidCalculation" parameterList="0"/>
+    <PGCError errorCode="76" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#XlinkRoleAttributeMustTakeURIValue" parameterList="0"/>
+    <PGCError errorCode="77" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#XLinkRoleAttributeEmpty" parameterList="0"/>
+    <PGCError errorCode="78" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#CalculationLinkbaseRefMustContainOnlyCalculationLink" parameterList="0"/>
+    <PGCError errorCode="79" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#DefinitionLinkbaseRefMustContainOnlyDefinitionLink" parameterList="0"/>
+    <PGCError errorCode="80" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#LabelLinkbaseRefMustContainOnlyLabelLink" parameterList="0"/>
+    <PGCError errorCode="81" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#PresentationLinkbaseRefMustContainOnlyPresentationLink" parameterList="0"/>
+    <PGCError errorCode="82" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#ReferenceLinkbaseRefMustContainOnlyReferenceLink" parameterList="0"/>
+    <PGCError errorCode="83" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#RoleElementsWithSameRoleURIAttributeMustBeS_Equal" parameterList="0"/>
+    <PGCError errorCode="84" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#XlinkRoleAttributeMustBeAbsoluteUri" parameterList="0"/>
+    <PGCError errorCode="85" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#XlinkRoleAtributeMustBeStandardOrCustomRoleType" parameterList="0"/>
+    <PGCError errorCode="86" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#ElementsMustBeIdentifiedWithUsedOnElementInRoleTypeElement" parameterList="0"/>
+    <PGCError errorCode="87" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#ArcroleElementsWithSameArcroleURIAttributeMustBeS_Equal" parameterList="0"/>
+    <PGCError errorCode="88" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#ElementsMustBeIdentifiedWithUsedOnElementInArcroleTypeElement" parameterList="0"/>
+    <PGCError errorCode="89" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#LocMustPointToConcepts" parameterList="0"/>
+    <PGCError errorCode="90" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#LabelDoesNotHaveXmlLangAttribute" parameterList="0"/>
+    <PGCError errorCode="91" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#LabelElementNotDefinedInLabelLink" parameterList="0"/>
+    <PGCError errorCode="92" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#ReferenceArcDoesNotPointToConcept" parameterList="0"/>
+    <PGCError errorCode="93" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#PresentationArcDoesNotPointToConcept" parameterList="0"/>
+    <PGCError errorCode="94" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#ParentChildArcsDoNotRelateConceptsInItemTupleSubstitutionGroup" parameterList="0"/>
+    <PGCError errorCode="95" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#CalculationArcDoesNotPointToConcept" parameterList="0"/>
+    <PGCError errorCode="96" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#SummationItemConceptNotInItemSubstitutionGroup" parameterList="0"/>
+    <PGCError errorCode="97" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#DefinitionArcDoesNotPointToConcept" parameterList="0"/>
+    <PGCError errorCode="98" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#GeneralPurposeArcDoesNotPointToConceptsInTheItemSubstitutionGroup" parameterList="0"/>
+    <PGCError errorCode="99" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#EssenceAliasAreNotSameType" parameterList="0"/>
+    <PGCError errorCode="100" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#AliasesAreNotVEqual" parameterList="0"/>
+    <PGCError errorCode="101" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#SimularTupleArcDoesNotPointToTargetsInTupleSubstitutionGroup" parameterList="0"/>
+    <PGCError errorCode="102" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#RequiresElementsArcDoesNotPointToTargetsInTupleOrItemSubstitutionGroup" parameterList="0"/>
+    <PGCError errorCode="103" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#EssenseAliasFactsAreNotInSameInstance" parameterList="0"/>
+    <PGCError errorCode="104" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#IllegalValuesOfWeightAttributeOnCalculationArc" parameterList="0"/>
+    <PGCError errorCode="105" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#InvalidUriReference" parameterList="0"/>
+    <PGCError errorCode="106" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#FootNoteResourceDoesNotHaveXmlLangAttribute" parameterList="0"/>
+    <PGCError errorCode="107" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#UsedOnDoesNotMatchWithSpecifiedLink" parameterList="0"/>
+    <PGCError errorCode="108" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#FailedToBindConceptToFact" parameterList="0,0,1,2"/>
+    <PGCError errorCode="109" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#InvalidGrandUncleFact" parameterList="0"/>
+    <PGCError errorCode="110" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#LinkbaseGraphContainsCycle" parameterList="0"/>
+    <PGCError errorCode="111" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#LinkbaseGraphContainsMultiplePathsBetweenNodes" parameterList="0"/>
+    <PGCError errorCode="112" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#InvalidCalculationArcEndpoints" parameterList="0"/>
+    <PGCError errorCode="113" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#InvalidBalanceValues" parameterList="0"/>
+    <PGCError errorCode="114" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#RequiresElementFactsAreNotInSameInstance" parameterList="0"/>
+    <PGCError errorCode="115" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#EssenseAliasFactsAreNotUEqual" parameterList="0"/>
+    <PGCError errorCode="116" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#DuplicateXLinkArc" parameterList="0,1,2"/>
+    <PGCError errorCode="117" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#LabelArcToSideDoesNotHaveLabel" parameterList="0"/>
+    <PGCError errorCode="118" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#LabelArcFromSideDoesNotHaveConcept" parameterList="0"/>
+    <PGCError errorCode="119" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#ReferenceArcToSideDoesNotHaveReference" parameterList="0"/>
+    <PGCError errorCode="120" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#ReferenceArcFromSideDoesNotHaveConcept" parameterList="0"/>
+    <PGCError errorCode="121" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#PresentationArcFromSideDoesNotHaveConcept" parameterList="0"/>
+    <PGCError errorCode="122" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#PresentationArcToSideDoesNotHaveConcept" parameterList="0"/>
+    <PGCError errorCode="123" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#CalculationArcToSideDoesNotHaveConcept" parameterList="0"/>
+    <PGCError errorCode="124" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#CalculationArcFromSideDoesNotHaveConcept" parameterList="0"/>
+    <PGCError errorCode="125" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#FootnoteArcToSideDoesNotHaveFactFootnote" parameterList="0"/>
+    <PGCError errorCode="126" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#FootnoteArcFromSideDoesNotHaveFact" parameterList="0"/>
+    <PGCError errorCode="127" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#DefinitionArcToSideDoesNotHaveConcept" parameterList="0"/>
+    <PGCError errorCode="128" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#DefinitionArcFromSideDoesNotHaveConcept" parameterList="0"/>
+    <PGCError errorCode="129" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#GeneralSpecialDefinitionArcToSideDoesNotHaveConcept" parameterList="0"/>
+    <PGCError errorCode="130" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#GeneralSpecialDefinitionArcFromSideDoesNotHaveConcept" parameterList="0"/>
+    <PGCError errorCode="131" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#EssenceAliasDefinitionArcHasEndpointsThatAreNotSameDatatype" parameterList="0"/>
+    <PGCError errorCode="132" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#EssenceAliasDefinitionArcToSideDoesNotHaveConcept" parameterList="0"/>
+    <PGCError errorCode="133" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#EssenceAliasDefinitionArcFromSideDoesNotHaveConcept" parameterList="0"/>
+    <PGCError errorCode="134" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#SimilarTuplesDefinitionArcToSideDoesNotHaveConcept" parameterList="0"/>
+    <PGCError errorCode="135" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#SimilarTuplesDefinitionArcFromSideDoesNotHaveConcept" parameterList="0"/>
+    <PGCError errorCode="136" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#RequiresElementDefinitionArcToSideDoesNotHaveConcept" parameterList="0"/>
+    <PGCError errorCode="137" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#RequiresElementDefinitionArcFromSideDoesNotHaveConcept" parameterList="0"/>
+    <PGCError errorCode="138" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#InvalidCalculationRollup" parameterList="0,0,1,2,3"/>
+    <PGCError errorCode="139" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#GeneralSpecialArcDoesNotPointToConceptsInTheItemSubstitutionGroup" parameterList="0"/>
+    <PGCError errorCode="140" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#EssenceAliasFactsAreNotConsistent" parameterList="0"/>
+    <PGCError errorCode="141" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#IdenticalRolesContainDifferentUsedOnElements" parameterList="0"/>
+    <PGCError errorCode="142" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#" parameterList="0"/>
+    <PGCError errorCode="143" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#DuplicateXBRLArc" parameterList="0"/>
+    <PGCError errorCode="144" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#ArcDoesNotHaveArcRoleClassifies" parameterList="0"/>
+    <PGCError errorCode="145" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#c_DuplicateUsedOnElementsMemoUri" parameterList="0"/>
+    <PGCError errorCode="146" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#InvalidUsedOnElements" parameterList="0"/>
+    <PGCError errorCode="147" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#EmptyTargetNamespace" parameterList=""/>
+    <PGCError errorCode="148" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Taxonomy#InvalidRelationshipEndpoint" parameterList="0"/>
+    <PGCError errorCode="149" type="xbreeze"
+        id="memo://ubmatrix.com/Validation/Linkbase#NoLabelForPreferredLabelUri" parameterList="0"/>
+    <PGCError errorCode="150" type="xerces" id="BadMessageKey" parameterList=""/>
+    <PGCError errorCode="151" type="xerces" id="mg-props-correct.2" parameterList="0"/>
+    <PGCError errorCode="152" type="xerces" id="src-redefine.3.1" parameterList="1,0"/>
+    <PGCError errorCode="153" type="xerces" id="cos-st-restricts.2.1" parameterList="0,1"/>
+    <PGCError errorCode="154" type="xerces" id="cvc-elt.3.2.2" parameterList="0,1"/>
+    <PGCError errorCode="155" type="xerces" id="cvc-elt.3.2.1" parameterList="0,1"/>
+    <PGCError errorCode="156" type="xerces" id="cvc-complex-type.4" parameterList="1,0"/>
+    <PGCError errorCode="157" type="xerces"
+        id="fractionDigits-valid-restriction" parameterList="2,0,1"/>
+    <PGCError errorCode="158" type="xerces"
+        id="derivation-ok-restriction.5.3.2" parameterList="0,1"/>
+    <PGCError errorCode="159" type="xerces"
+        id="minLength-less-than-equal-to-maxLength" parameterList="2,0,1"/>
+    <PGCError errorCode="160" type="xerces" id="rcase-NameAndTypeOK.4.b" parameterList="0,1,2"/>
+    <PGCError errorCode="161" type="xerces" id="rcase-NameAndTypeOK.4.a" parameterList="0,1"/>
+    <PGCError errorCode="162" type="xerces" id="cos-applicable-facets" parameterList="0,1"/>
+    <PGCError errorCode="163" type="xerces" id="st-props-correct.3" parameterList="0,1"/>
+    <PGCError errorCode="164" type="xerces" id="sch-props-correct.2" parameterList="0"/>
+    <PGCError errorCode="165" type="xerces" id="st-props-correct.2" parameterList="0,0"/>
+    <PGCError errorCode="166" type="xerces" id="src-single-facet-value" parameterList="0"/>
+    <PGCError errorCode="167" type="xerces" id="no-xsi" parameterList="0"/>
+    <PGCError errorCode="168" type="xerces" id="Internal-Error" parameterList="0"/>
+    <PGCError errorCode="169" type="xerces"
+        id="cvc-fractionDigits-valid" parameterList="0,1,2"/>
+    <PGCError errorCode="170" type="xerces"
+        id="maxInclusive-maxExclusive" parameterList="2,0,1"/>
+    <PGCError errorCode="171" type="xerces"
+        id="length-valid-restriction" parameterList="2,0,1"/>
+    <PGCError errorCode="172" type="xerces" id="KeyRefReferNotFound" parameterList="0,1"/>
+    <PGCError errorCode="173" type="xerces" id="c-general-xpath-ns" parameterList="0"/>
+    <PGCError errorCode="174" type="xerces" id="cvc-elt.3.1" parameterList="1,0,0"/>
+    <PGCError errorCode="175" type="xerces" id="src-attribute_group.3" parameterList="0"/>
+    <PGCError errorCode="176" type="xerces" id="src-attribute_group.2" parameterList="0"/>
+    <PGCError errorCode="177" type="xerces" id="FixedDiffersFromActual" parameterList=""/>
+    <PGCError errorCode="178" type="xerces" id="cvc-elt.2" parameterList="0"/>
+    <PGCError errorCode="179" type="xerces" id="src-redefine.2" parameterList="0"/>
+    <PGCError errorCode="180" type="xerces" id="cvc-elt.1" parameterList="0"/>
+    <PGCError errorCode="181" type="xerces" id="DuplicateKey" parameterList="0,1"/>
+    <PGCError errorCode="182" type="xerces" id="s4s-att-must-appear" parameterList="1,0"/>
+    <PGCError errorCode="183" type="xerces"
+        id="rcase-NSRecurseCheckCardinality.2" parameterList="0,1,2,3"/>
+    <PGCError errorCode="184" type="xerces"
+        id="rcase-NSRecurseCheckCardinality.1" parameterList=""/>
+    <PGCError errorCode="185" type="xerces"
+        id="cos-st-restricts.2.3.1.1" parameterList="0,0,1"/>
+    <PGCError errorCode="186" type="xerces"
+        id="cos-st-restricts.3.3.1.1" parameterList="0,0,1"/>
+    <PGCError errorCode="187" type="xerces"
+        id="derivation-ok-restriction.4.3" parameterList="0,1,2"/>
+    <PGCError errorCode="188" type="xerces"
+        id="derivation-ok-restriction.4.2" parameterList="0"/>
+    <PGCError errorCode="189" type="xerces"
+        id="derivation-ok-restriction.4.1" parameterList="0"/>
+    <PGCError errorCode="190" type="xerces" id="src-redefine.6.1.2" parameterList="0"/>
+    <PGCError errorCode="191" type="xerces" id="src-redefine.6.1.1" parameterList="0"/>
+    <PGCError errorCode="192" type="xerces" id="src-resolve" parameterList="0,1"/>
+    <PGCError errorCode="193" type="xerces" id="rcase-NSSubset.3" parameterList="0,1"/>
+    <PGCError errorCode="194" type="xerces" id="rcase-NSSubset.2" parameterList="0,1,2,3"/>
+    <PGCError errorCode="195" type="xerces"
+        id="src-union-memberTypes-or-simpleTypes" parameterList=""/>
+    <PGCError errorCode="196" type="xerces" id="rcase-NSSubset.1" parameterList=""/>
+    <PGCError errorCode="197" type="xerces"
+        id="enumeration-valid-restriction" parameterList="0,1"/>
+    <PGCError errorCode="198" type="xerces" id="cvc-minLength-valid" parameterList="0,1,2,3"/>
+    <PGCError errorCode="199" type="xerces" id="s4s-elt-must-match.2" parameterList="0,1"/>
+    <PGCError errorCode="200" type="xerces"
+        id="minInclusive-minExclusive" parameterList="2,0,1"/>
+    <PGCError errorCode="201" type="xerces" id="s4s-elt-must-match.1" parameterList="0,1,2"/>
+    <PGCError errorCode="202" type="xerces"
+        id="minExclusive-less-than-maxInclusive" parameterList="2,0,1"/>
+    <PGCError errorCode="203" type="xerces" id="src-simple-type.2.b" parameterList=""/>
+    <PGCError errorCode="204" type="xerces" id="PublicSystemOnNotation" parameterList=""/>
+    <PGCError errorCode="205" type="xerces" id="src-simple-type.2.a" parameterList=""/>
+    <PGCError errorCode="206" type="xerces" id="EmptyTargetNamespace" parameterList="0"/>
+    <PGCError errorCode="207" type="xerces"
+        id="derivation-ok-restriction.2.2.b" parameterList="0,1,2"/>
+    <PGCError errorCode="208" type="xerces" id="schema_reference.4" parameterList="0"/>
+    <PGCError errorCode="209" type="xerces" id="cvc-type.3.1.3" parameterList="1,0"/>
+    <PGCError errorCode="210" type="xerces"
+        id="derivation-ok-restriction.2.2.a" parameterList="0,1"/>
+    <PGCError errorCode="211" type="xerces" id="cvc-type.3.1.2" parameterList="0"/>
+    <PGCError errorCode="212" type="xerces" id="cvc-type.3.1.1" parameterList="0,1"/>
+    <PGCError errorCode="213" type="xerces" id="UndeclaredPrefix" parameterList="0,1"/>
+    <PGCError errorCode="214" type="xerces" id="SchemaLocation" parameterList="0"/>
+    <PGCError errorCode="215" type="xerces" id="UniqueNotEnoughValues" parameterList="0"/>
+    <PGCError errorCode="216" type="xerces"
+        id="minInclusive-less-than-maxExclusive" parameterList="2,0,1"/>
+    <PGCError errorCode="217" type="xerces"
+        id="totalDigits-valid-restriction" parameterList="2,0,1"/>
+    <PGCError errorCode="218" type="xerces" id="UnknownField" parameterList="0"/>
+    <PGCError errorCode="219" type="xerces" id="cvc-enumeration-valid" parameterList="0,1"/>
+    <PGCError errorCode="220" type="xerces" id="rcase-NSCompat.2" parameterList="0,1,2,3,4"/>
+    <PGCError errorCode="221" type="xerces" id="rcase-NSCompat.1" parameterList="0,1"/>
+    <PGCError errorCode="222" type="xerces" id="rcase-MapAndSum.2" parameterList="0,1,2,3"/>
+    <PGCError errorCode="223" type="xerces"
+        id="s4s-elt-invalid-content.3" parameterList="0"/>
+    <PGCError errorCode="224" type="xerces" id="rcase-MapAndSum.1" parameterList=""/>
+    <PGCError errorCode="225" type="xerces"
+        id="s4s-elt-invalid-content.2" parameterList="0,1"/>
+    <PGCError errorCode="226" type="xerces"
+        id="s4s-elt-invalid-content.1" parameterList="0,1"/>
+    <PGCError errorCode="227" type="xerces" id="cos-particle-restrict.b" parameterList=""/>
+    <PGCError errorCode="228" type="xerces" id="ct-props-correct.5" parameterList="0,1,2"/>
+    <PGCError errorCode="229" type="xerces" id="cos-particle-restrict.a" parameterList=""/>
+    <PGCError errorCode="230" type="xerces" id="ct-props-correct.4" parameterList="0,1"/>
+    <PGCError errorCode="231" type="xerces" id="ct-props-correct.3" parameterList="0,0"/>
+    <PGCError errorCode="232" type="xerces" id="au-props-correct.2" parameterList="0,1,0,1"/>
+    <PGCError errorCode="233" type="xerces" id="p-props-correct.2.1" parameterList="0,1,2"/>
+    <PGCError errorCode="234" type="xerces" id="src-ct.4" parameterList="0"/>
+    <PGCError errorCode="235" type="xerces" id="UndeclaredEntity" parameterList="0"/>
+    <PGCError errorCode="236" type="xerces" id="src-import.2" parameterList="0"/>
+    <PGCError errorCode="237" type="xerces" id="cos-all-limited.2" parameterList="0,1"/>
+    <PGCError errorCode="238" type="xerces" id="src-ct.1" parameterList="0,1"/>
+    <PGCError errorCode="239" type="xerces"
+        id="minExclusive-less-than-equal-to-maxExclusive" parameterList="2,0,1"/>
+    <PGCError errorCode="240" type="xerces"
+        id="maxInclusive-valid-restriction.4" parameterList="2,0,1"/>
+    <PGCError errorCode="241" type="xerces" id="cos-valid-default.2.2.2" parameterList="0"/>
+    <PGCError errorCode="242" type="xerces" id="AbsentKeyValue" parameterList="0"/>
+    <PGCError errorCode="243" type="xerces"
+        id="maxInclusive-valid-restriction.3" parameterList="2,0,1"/>
+    <PGCError errorCode="244" type="xerces"
+        id="maxInclusive-valid-restriction.2" parameterList="2,0,1"/>
+    <PGCError errorCode="245" type="xerces"
+        id="maxExclusive-valid-restriction.4" parameterList="2,0,1"/>
+    <PGCError errorCode="246" type="xerces" id="cvc-complex-type.5.2" parameterList="0,1,2"/>
+    <PGCError errorCode="247" type="xerces"
+        id="maxInclusive-valid-restriction.1" parameterList="2,0,1"/>
+    <PGCError errorCode="248" type="xerces"
+        id="maxExclusive-valid-restriction.3" parameterList="2,0,1"/>
+    <PGCError errorCode="249" type="xerces"
+        id="derivation-ok-restriction.3" parameterList="0,1"/>
+    <PGCError errorCode="250" type="xerces" id="cvc-complex-type.5.1" parameterList="0,1,2"/>
+    <PGCError errorCode="251" type="xerces"
+        id="maxExclusive-valid-restriction.2" parameterList="2,0,1"/>
+    <PGCError errorCode="252" type="xerces" id="src-redefine.5.b.d" parameterList="0,1"/>
+    <PGCError errorCode="253" type="xerces"
+        id="maxExclusive-valid-restriction.1" parameterList="2,0,1"/>
+    <PGCError errorCode="254" type="xerces"
+        id="derivation-ok-restriction.1" parameterList="0,1,1"/>
+    <PGCError errorCode="255" type="xerces" id="src-redefine.5.b.c" parameterList="0"/>
+    <PGCError errorCode="256" type="xerces" id="src-redefine.7.2.2" parameterList="0,1"/>
+    <PGCError errorCode="257" type="xerces" id="src-redefine.5.b.b" parameterList=""/>
+    <PGCError errorCode="258" type="xerces" id="src-redefine.7.2.1" parameterList="0"/>
+    <PGCError errorCode="259" type="xerces" id="src-redefine.5.b.a" parameterList=""/>
+    <PGCError errorCode="260" type="xerces" id="cvc-pattern-valid" parameterList="0,1,2"/>
+    <PGCError errorCode="261" type="xerces" id="cvc-complex-type.3.1" parameterList="2,1,0,1,3"/>
+    <PGCError errorCode="262" type="xerces" id="e-props-correct.6" parameterList="0"/>
+    <PGCError errorCode="263" type="xerces" id="e-props-correct.5" parameterList="0"/>
+    <PGCError errorCode="264" type="xerces" id="a-props-correct.3" parameterList="0"/>
+    <PGCError errorCode="265" type="xerces" id="e-props-correct.4" parameterList="0,1,1"/>
+    <PGCError errorCode="266" type="xerces" id="cvc-elt.5.2.2.1" parameterList="0"/>
+    <PGCError errorCode="267" type="xerces" id="a-props-correct.2" parameterList="1,0"/>
+    <PGCError errorCode="268" type="xerces" id="e-props-correct.2" parameterList="1,0"/>
+    <PGCError errorCode="269" type="xerces"
+        id="enumeration-required-notation" parameterList="0,2,1"/>
+    <PGCError errorCode="270" type="xerces" id="cos-nonambig" parameterList="0,1"/>
+    <PGCError errorCode="271" type="xerces" id="rcase-RecurseLax.2" parameterList=""/>
+    <PGCError errorCode="272" type="xerces" id="rcase-RecurseLax.1" parameterList="0,1,2,3"/>
+    <PGCError errorCode="273" type="xerces" id="cos-particle-restrict.2" parameterList="0"/>
+    <PGCError errorCode="274" type="xerces" id="InvalidRegex" parameterList="0,1"/>
+    <PGCError errorCode="275" type="xerces" id="DuplicateField" parameterList="0"/>
+    <PGCError errorCode="276" type="xerces" id="c-general-xpath" parameterList="0"/>
+    <PGCError errorCode="277" type="xerces" id="s4s-elt-schema-ns" parameterList="0"/>
+    <PGCError errorCode="278" type="xerces" id="cos-st-restricts.1.1" parameterList="1,0"/>
+    <PGCError errorCode="279" type="xerces"
+        id="rcase-RecurseUnordered.2" parameterList=""/>
+    <PGCError errorCode="280" type="xerces"
+        id="rcase-RecurseUnordered.1" parameterList="0,1,2,3"/>
+    <PGCError errorCode="281" type="xerces"
+        id="minInclusive-less-than-equal-to-maxInclusive" parameterList="2,0,1"/>
+    <PGCError errorCode="282" type="xerces" id="cvc-minExclusive-valid" parameterList="0,1,2"/>
+    <PGCError errorCode="283" type="xerces" id="FacetValueFromBase" parameterList="0,1,2,3"/>
+    <PGCError errorCode="284" type="xerces"
+        id="derivation-ok-restriction.5.4.2" parameterList="0"/>
+    <PGCError errorCode="285" type="xerces"
+        id="cvc-datatype-valid.1.2.3" parameterList="0,1"/>
+    <PGCError errorCode="286" type="xerces"
+        id="cvc-datatype-valid.1.2.2" parameterList="0,1"/>
+    <PGCError errorCode="287" type="xerces" id="maxOccurLimit" parameterList="0"/>
+    <PGCError errorCode="288" type="xerces"
+        id="cvc-datatype-valid.1.2.1" parameterList="0,1"/>
+    <PGCError errorCode="289" type="xerces" id="rcase-NameAndTypeOK.7" parameterList="0,1,2"/>
+    <PGCError errorCode="290" type="xerces" id="cos-element-consistent" parameterList="0,1"/>
+    <PGCError errorCode="291" type="xerces" id="rcase-NameAndTypeOK.6" parameterList="0"/>
+    <PGCError errorCode="292" type="xerces" id="rcase-NameAndTypeOK.5" parameterList="0"/>
+    <PGCError errorCode="293" type="xerces" id="KeyNotEnoughValues" parameterList="1,0"/>
+    <PGCError errorCode="294" type="xerces" id="rcase-NameAndTypeOK.3" parameterList="0,1,2,3,4"/>
+    <PGCError errorCode="295" type="xerces" id="rcase-NameAndTypeOK.2" parameterList="0"/>
+    <PGCError errorCode="296" type="xerces" id="rcase-NameAndTypeOK.1" parameterList="0,1,2,3"/>
+    <PGCError errorCode="297" type="xerces" id="src-resolve.4.2" parameterList="2,2,1,0,2,0"/>
+    <PGCError errorCode="298" type="xerces" id="src-resolve.4.1" parameterList="2,2,0,2,2,0"/>
+    <PGCError errorCode="299" type="xerces" id="TargetNamespace.2" parameterList="1"/>
+    <PGCError errorCode="300" type="xerces" id="TargetNamespace.1" parameterList="0,1"/>
+    <PGCError errorCode="301" type="xerces" id="cvc-minInclusive-valid" parameterList="0,1,2"/>
+    <PGCError errorCode="302" type="xerces" id="src-attribute.4" parameterList="0"/>
+    <PGCError errorCode="303" type="xerces" id="cvc-elt.5.2.2.2.2" parameterList="1,0,2"/>
+    <PGCError errorCode="304" type="xerces" id="cvc-elt.5.2.2.2.1" parameterList="1,0,2"/>
+    <PGCError errorCode="305" type="xerces" id="src-attribute.2" parameterList="0"/>
+    <PGCError errorCode="306" type="xerces" id="src-attribute.1" parameterList="0"/>
+    <PGCError errorCode="307" type="xerces" id="KeyRefOutOfScope" parameterList="0"/>
+    <PGCError errorCode="308" type="xerces" id="c-fields-xpaths" parameterList="0"/>
+    <PGCError errorCode="309" type="xerces" id="src-include.1" parameterList="0"/>
+    <PGCError errorCode="310" type="xerces" id="cvc-elt.4.3" parameterList="1,2,0"/>
+    <PGCError errorCode="311" type="xerces" id="cvc-elt.4.2" parameterList="1,0"/>
+    <PGCError errorCode="312" type="xerces" id="cvc-elt.4.1" parameterList="2,1,0"/>
+    <PGCError errorCode="313" type="xerces"
+        id="minLength-valid-restriction" parameterList="2,0,1"/>
+    <PGCError errorCode="314" type="xerces" id="cvc-length-valid" parameterList="0,1,2,3"/>
+    <PGCError errorCode="315" type="xerces"
+        id="derivation-ok-restriction.2.1.3.b" parameterList="0,1,2,3"/>
+    <PGCError errorCode="316" type="xerces"
+        id="derivation-ok-restriction.2.1.3.a" parameterList="0,1"/>
+    <PGCError errorCode="317" type="xerces" id="s4s-elt-character" parameterList="0"/>
+    <PGCError errorCode="318" type="xerces" id="KeyNotFound" parameterList="0,1,2"/>
+    <PGCError errorCode="319" type="xerces" id="GrammarConflict" parameterList=""/>
+    <PGCError errorCode="320" type="xerces" id="cos-list-of-atomic" parameterList="0,1,1"/>
+    <PGCError errorCode="321" type="xerces"
+        id="cos-ct-extends.1.4.3.2.2.1.b" parameterList="0"/>
+    <PGCError errorCode="322" type="xerces"
+        id="maxLength-valid-restriction" parameterList="2,0,1"/>
+    <PGCError errorCode="323" type="xerces" id="DuplicateUnique" parameterList="0,1"/>
+    <PGCError errorCode="324" type="xerces"
+        id="cos-ct-extends.1.4.3.2.2.1.a" parameterList="0"/>
+    <PGCError errorCode="325" type="xerces" id="src-redefine.6.2.2" parameterList="0,1"/>
+    <PGCError errorCode="326" type="xerces" id="ag-props-correct.3" parameterList="0,1,2"/>
+    <PGCError errorCode="327" type="xerces" id="src-redefine.6.2.1" parameterList="0"/>
+    <PGCError errorCode="328" type="xerces" id="ag-props-correct.2" parameterList="0,1"/>
+    <PGCError errorCode="329" type="xerces"
+        id="minInclusive-valid-restriction.4" parameterList="2,0,1"/>
+    <PGCError errorCode="330" type="xerces"
+        id="minInclusive-valid-restriction.3" parameterList="2,0,1"/>
+    <PGCError errorCode="331" type="xerces" id="s4s-att-not-allowed" parameterList="1,0"/>
+    <PGCError errorCode="332" type="xerces"
+        id="minInclusive-valid-restriction.2" parameterList="2,0,1"/>
+    <PGCError errorCode="333" type="xerces"
+        id="minExclusive-valid-restriction.4" parameterList="2,0,1"/>
+    <PGCError errorCode="334" type="xerces"
+        id="minInclusive-valid-restriction.1" parameterList="2,0,1"/>
+    <PGCError errorCode="335" type="xerces"
+        id="minExclusive-valid-restriction.3" parameterList="2,0,1"/>
+    <PGCError errorCode="336" type="xerces"
+        id="minExclusive-valid-restriction.2" parameterList="2,0,1"/>
+    <PGCError errorCode="337" type="xerces"
+        id="minExclusive-valid-restriction.1" parameterList="2,0,1"/>
+    <PGCError errorCode="338" type="xerces" id="s4s-elt-invalid" parameterList="0"/>
+    <PGCError errorCode="339" type="xerces" id="src-simple-type.3.b" parameterList=""/>
+    <PGCError errorCode="340" type="xerces" id="src-simple-type.3.a" parameterList=""/>
+    <PGCError errorCode="341" type="xerces" id="cvc-maxExclusive-valid" parameterList="0,1,2"/>
+    <PGCError errorCode="342" type="xerces" id="src-include.2.1" parameterList="1,0"/>
+    <PGCError errorCode="343" type="xerces" id="cvc-type.2" parameterList="0"/>
+    <PGCError errorCode="344" type="xerces" id="c-selector-xpath" parameterList="0"/>
+    <PGCError errorCode="345" type="xerces" id="cvc-complex-type.3.2.2" parameterList="1,0"/>
+    <PGCError errorCode="346" type="xerces" id="cvc-complex-type.3.2.1" parameterList="0,1"/>
+    <PGCError errorCode="347" type="xerces" id="cos-all-limited.1.2" parameterList=""/>
+    <PGCError errorCode="348" type="xerces" id="src-ct.2.2" parameterList="0"/>
+    <PGCError errorCode="349" type="xerces" id="cvc-totalDigits-valid" parameterList="0,1,2"/>
+    <PGCError errorCode="350" type="xerces" id="FormatFailed" parameterList=""/>
+    <PGCError errorCode="351" type="xerces" id="KeyMatchesNillable" parameterList="0"/>
+    <PGCError errorCode="352" type="xerces" id="src-ct.2.1" parameterList="0,1"/>
+    <PGCError errorCode="353" type="xerces" id="cvc-maxLength-valid" parameterList="0,1,2,3"/>
+    <PGCError errorCode="354" type="xerces" id="no-xmlns" parameterList=""/>
+    <PGCError errorCode="355" type="xerces" id="cvc-maxInclusive-valid" parameterList="0,1,2"/>
+    <PGCError errorCode="356" type="xerces"
+        id="derivation-ok-restriction.5.4.1.2" parameterList="0,1"/>
+    <PGCError errorCode="357" type="xerces" id="dt-whitespace" parameterList="0"/>
+    <PGCError errorCode="358" type="xerces" id="cos-valid-default.2.1" parameterList="0"/>
+    <PGCError errorCode="359" type="xerces" id="rcase-Recurse.2" parameterList=""/>
+    <PGCError errorCode="360" type="xerces" id="rcase-Recurse.1" parameterList="0,1,2,3"/>
+    <PGCError errorCode="361" type="xerces"
+        id="length-minLength-maxLength.e" parameterList="0,1,2"/>
+    <PGCError errorCode="362" type="xerces"
+        id="length-minLength-maxLength.d" parameterList="0,1,2"/>
+    <PGCError errorCode="363" type="xerces"
+        id="fractionDigits-totalDigits" parameterList="2,0,1"/>
+    <PGCError errorCode="364" type="xerces"
+        id="length-minLength-maxLength.c" parameterList="0,1,2"/>
+    <PGCError errorCode="365" type="xerces" id="src-import.3.2" parameterList="1"/>
+    <PGCError errorCode="366" type="xerces"
+        id="length-minLength-maxLength.b" parameterList="0,1,2"/>
+    <PGCError errorCode="367" type="xerces" id="src-import.3.1" parameterList="0,1"/>
+    <PGCError errorCode="368" type="xerces"
+        id="length-minLength-maxLength.a" parameterList="0,1,2,3"/>
+    <PGCError errorCode="369" type="xerces" id="s4s-att-invalid-value" parameterList="1,0,2"/>
+    <PGCError errorCode="370" type="xerces" id="src-import.1.1" parameterList="0"/>
+    <PGCError errorCode="371" type="xerces"
+        id="derivation-ok-restriction.5.2.2.1" parameterList="0,1,2"/>
+    <PGCError errorCode="372" type="xerces" id="cvc-attribute.4" parameterList="2,1,0,3"/>
+    <PGCError errorCode="373" type="xerces"
+        id="derivation-ok-restriction.2.1.2" parameterList="0,1,2,3"/>
+    <PGCError errorCode="374" type="xerces" id="cvc-attribute.3" parameterList="2,1,0,3"/>
+    <PGCError errorCode="375" type="xerces"
+        id="derivation-ok-restriction.2.1.1" parameterList="0,1,2"/>
+    <PGCError errorCode="376" type="xerces" id="c-props-correct.2" parameterList="0,1"/>
+    <PGCError errorCode="377" type="xerces" id="cvc-id.3" parameterList="0,1"/>
+    <PGCError errorCode="378" type="xerces"
+        id="whiteSpace-valid-restriction.2" parameterList="0"/>
+    <PGCError errorCode="379" type="xerces" id="cvc-id.2" parameterList="0"/>
+    <PGCError errorCode="380" type="xerces"
+        id="whiteSpace-valid-restriction.1" parameterList="0,1"/>
+    <PGCError errorCode="381" type="xerces" id="cvc-id.1" parameterList="0"/>
+    <PGCError errorCode="382" type="xerces" id="src-element.2.2" parameterList="0,1"/>
+    <PGCError errorCode="383" type="xerces" id="cvc-complex-type.2.4.d" parameterList="0"/>
+    <PGCError errorCode="384" type="xerces" id="src-element.2.1" parameterList=""/>
+    <PGCError errorCode="385" type="xerces" id="cvc-complex-type.2.4.c" parameterList="0"/>
+    <PGCError errorCode="386" type="xerces" id="cvc-complex-type.2.4.b" parameterList="0,1"/>
+    <PGCError errorCode="387" type="xerces" id="cvc-complex-type.2.4.a" parameterList="0,1"/>
+    <PGCError errorCode="388" type="xerces" id="src-redefine.5.a.c" parameterList="0,1"/>
+    <PGCError errorCode="389" type="xerces" id="KeyRefNotEnoughValues" parameterList="1,0"/>
+    <PGCError errorCode="390" type="xerces" id="src-redefine.5.a.b" parameterList="0"/>
+    <PGCError errorCode="391" type="xerces" id="src-redefine.5.a.a" parameterList=""/>
+    <PGCError errorCode="392" type="xerces" id="src-element.3" parameterList="0"/>
+    <PGCError errorCode="393" type="xerces" id="src-annotation" parameterList="0"/>
+    <PGCError errorCode="394" type="xerces" id="cvc-complex-type.2.3" parameterList="0"/>
+    <PGCError errorCode="395" type="xerces" id="cvc-complex-type.2.2" parameterList="0"/>
+    <PGCError errorCode="396" type="xerces" id="src-element.1" parameterList="0"/>
+    <PGCError errorCode="397" type="xerces" id="cvc-complex-type.2.1" parameterList="0"/>
+    <PGCError errorCode="398" type="xerces" id="src-attribute.3.2" parameterList="0"/>
+    <PGCError errorCode="399" type="xerces" id="src-attribute.3.1" parameterList=""/>
+    <PGCError errorCode="400" type="xerces" id="src-redefine.7.1" parameterList="0"/>
+    <PGCError errorCode="401" type="xerces" id="cos-ct-extends.1.1" parameterList="0,1,1"/>
+    <PGCError errorCode="402" type="xerces" id="cvc-elt.5.1.1" parameterList="2,0,1"/>
+    <PGCError errorCode="403" type="xerces" id="FieldMultipleMatch" parameterList="0"/>
+    <PGCError errorCode="404" type="xerces" id="FixedFacetValue" parameterList="3,1,0,0,2"/>
+    <PGCError errorCode="405" type="xapinteco"
+        id="errorReadingPeridodTypeAttribute" parameterList=""/>
+    <PGCError errorCode="406" type="xapinteco"
+        id="errorCreatingDimension" parameterList=""/>
+    <PGCError errorCode="407" type="xapinteco"
+        id="errorTryingViewInstance" parameterList=""/>
+    <PGCError errorCode="408" type="xapinteco"
+        id="errorInValidationReportFile" parameterList="0"/>
+    <PGCError errorCode="409" type="xapinteco"
+        id="errorGettingGlobalTupleTable" parameterList=""/>
+    <PGCError errorCode="410" type="xapinteco"
+        id="failedGettingInstanceByte" parameterList=""/>
+    <PGCError errorCode="411" type="xapinteco"
+        id="errorCreatingFootNoteArcRoleNotFound" parameterList="0"/>
+    <PGCError errorCode="412" type="xapinteco" id="errorCreatingContext" parameterList=""/>
+    <PGCError errorCode="413" type="xapinteco"
+        id="errorInValidationXbrlInstance" parameterList="1,0"/>
+    <PGCError errorCode="414" type="xapinteco"
+        id="notFoundReportInGlobal" parameterList="0"/>
+    <PGCError errorCode="415" type="xapinteco"
+        id="errorInTransformationToXml" parameterList="0"/>
+    <PGCError errorCode="416" type="xapinteco" id="errorCreatingUnit" parameterList=""/>
+    <PGCError errorCode="417" type="xapinteco"
+        id="errorCreatingConceptMap" parameterList=""/>
+    <PGCError errorCode="418" type="xapinteco"
+        id="notFoundModuleForReportInGlobal" parameterList="0,1"/>
+    <PGCError errorCode="419" type="xapinteco"
+        id="errorInReportFileDeserialization" parameterList="0"/>
+    <PGCError errorCode="420" type="xapinteco"
+        id="errorGettingXPathPrefixMaps" parameterList=""/>
+    <PGCError errorCode="421" type="xapinteco"
+        id="unsuportedEncodingInstanceByte&quot;" parameterList=""/>
+    <PGCError errorCode="422" type="xapinteco"
+        id="hyperCubeNotFoundInRoleGDM" parameterList="0"/>
+    <PGCError errorCode="423" type="xapinteco"
+        id="errorValidatingInstanceNotLoad" parameterList="0"/>
+    <PGCError errorCode="424" type="xapinteco"
+        id="failedWriteXbrlDocument" parameterList="0,1"/>
+    <PGCError errorCode="425" type="xapinteco"
+        id="coreErrorCreatingNamespaces" parameterList=""/>
+    <PGCError errorCode="426" type="xapinteco"
+        id="errorCheckingPeridoTypeIsInstant" parameterList="0"/>
+    <PGCError errorCode="427" type="xapinteco"
+        id="errorCreatingFootNote" parameterList="0"/>
+    <PGCError errorCode="428" type="xapinteco"
+        id="errorCreatingFactConceptNotFound" parameterList="0"/>
+    <PGCError errorCode="429" type="xapinteco"
+        id="notExistTempDirectory" parameterList="0"/>
+    <PGCError errorCode="430" type="xapinteco"
+        id="errorCreatingStatement" parameterList="0,1,2"/>
+    <PGCError errorCode="431" type="xapinteco"
+        id="errorCreatingXBRLContext" parameterList=""/>
+    <PGCError errorCode="432" type="xapinteco"
+        id="errorExtractingContextFromFact" parameterList=""/>
+    <PGCError errorCode="433" type="xapinteco"
+        id="errorContextWithoutScenario" parameterList="0"/>
+    <PGCError errorCode="434" type="xapinteco"
+        id="errorInValidationXmlInput" parameterList="0"/>
+    <PGCError errorCode="435" type="xapinteco"
+        id="errorGettingGlobalTupleChildsTable" parameterList=""/>
+    <PGCError errorCode="436" type="xapinteco"
+        id="errorGettingCodeLabel" parameterList=""/>
+    <PGCError errorCode="437" type="xapinteco" id="notExistReportFile" parameterList="0"/>
+    <PGCError errorCode="438" type="xapinteco"
+        id="errorAddMembersToConceptMap" parameterList=""/>
+    <PGCError errorCode="439" type="xapinteco"
+        id="errorInicializingProcessor" parameterList=""/>
+    <PGCError errorCode="440" type="xapinteco" id="errorLoadingTaxonomy" parameterList="0,1,2"/>
+    <PGCError errorCode="441" type="xapinteco"
+        id="errorTryingViewInstanceExternal" parameterList="0"/>
+    <PGCError errorCode="442" type="xapinteco"
+        id="errorGettingRoleFromDTS" parameterList="0"/>
+    <PGCError errorCode="443" type="xapinteco"
+        id="errorTranslatingFactsFromIteratorToTable" parameterList=""/>
+    <PGCError errorCode="444" type="xapinteco" id="roleNotFoundInMap" parameterList="0,1"/>
+    <PGCError errorCode="445" type="xapinteco"
+        id="errorCreatingStatementDimensionMap" parameterList="0,1,2,3"/>
+    <PGCError errorCode="446" type="xapinteco"
+        id="errorCreatingTupleConceptNotFound" parameterList="0"/>
+    <PGCError errorCode="447" type="xapinteco" id="fileNotFound" parameterList="0,1"/>
+    <PGCError errorCode="448" type="xapinteco"
+        id="errorGettingContextTable" parameterList=""/>
+    <PGCError errorCode="449" type="xapinteco"
+        id="errorInMapFileDeserialization" parameterList="0"/>
+    <PGCError errorCode="450" type="xapinteco"
+        id="errorInGlobalFileDeserialization" parameterList="0"/>
+    <PGCError errorCode="451" type="xapinteco" id="notExistGlobalFile" parameterList="0"/>
+    <PGCError errorCode="452" type="xapinteco" id="notExistDirectoryMap" parameterList="0"/>
+    <PGCError errorCode="453" type="xapinteco"
+        id="coreErrorGettingCodeLabel" parameterList=""/>
+    <PGCError errorCode="454" type="xapinteco" id="errorCreatingMap" parameterList="0,1,2,3"/>
+    <PGCError errorCode="455" type="xapinteco"
+        id="errorTryingViewInstanceResultFile" parameterList="0"/>
+    <PGCError errorCode="456" type="xapinteco" id="errorGettingUnitList" parameterList=""/>
+    <PGCError errorCode="457" type="xapinteco"
+        id="errorCreatingInstantPeriod" parameterList=""/>
+    <PGCError errorCode="458" type="xapinteco"
+        id="errorGettingSchemaFromInstance" parameterList=""/>
+    <PGCError errorCode="459" type="xapinteco"
+        id="genericErrorValidatingInstance" parameterList="0"/>
+    <PGCError errorCode="460" type="xapinteco" id="errorItemInBadModule" parameterList="0,1,2"/>
+    <PGCError errorCode="461" type="xapinteco"
+        id="errorCreatingFootNoteLinkLinkRoleNotFound" parameterList="0"/>
+    <PGCError errorCode="462" type="xapinteco"
+        id="notExistDomainMemberForModule" parameterList="0,1"/>
+    <PGCError errorCode="463" type="xapinteco" id="errorCreatingMeasure" parameterList=""/>
+    <PGCError errorCode="464" type="xapinteco"
+        id="canNotResolveSchemaRef" parameterList="0"/>
+    <PGCError errorCode="465" type="xapinteco" id="notExistUnitCode" parameterList="0,1"/>
+    <PGCError errorCode="466" type="xapinteco"
+        id="errorCreatingTupleChildConceptNotFound" parameterList="0"/>
+    <PGCError errorCode="467" type="xapinteco" id="notExistMapFile" parameterList="0"/>
+    <PGCError errorCode="468" type="xapinteco" id="unsuportedEncoding" parameterList=""/>
+    <PGCError errorCode="469" type="xapinteco" id="notExistUnitKey" parameterList="0,1"/>
+    <PGCError errorCode="470" type="xapinteco" id="errorLoadingInstance" parameterList="0,1"/>
+    <PGCError errorCode="471" type="xapinteco" id="errorCreatingTuple" parameterList=""/>
+    <PGCError errorCode="472" type="xapinteco"
+        id="errorCreatingXBRLFact" parameterList=""/>
+    <PGCError errorCode="473" type="xapinteco"
+        id="errorInTransformationToXbrl" parameterList="0"/>
+    <PGCError errorCode="474" type="xapinteco"
+        id="errorGettingDimensionalModule" parameterList="0,1"/>
+    <PGCError errorCode="475" type="xapinteco"
+        id="errorCreatingDurationPeriod" parameterList=""/>
+    <PGCError errorCode="476" type="xapinteco"
+        id="errorCreatingFootNoteLink" parameterList=""/>
+    <PGCError errorCode="477" type="xapinteco"
+        id="errorCreatingFootNoteNoteRoleNotFound" parameterList="0"/>
+    <PGCError errorCode="478" type="xapinteco"
+        id="errorValidatingInstance" parameterList="0"/>
+    <PGCError errorCode="479" type="xapinteco" id="errorIdNotFoundInMap" parameterList="0,1,2"/>
+    <PGCError errorCode="480" type="xapinteco"
+        id="errorGettingGlobalTupleTableByParent" parameterList=""/>
+    <PGCError errorCode="481" type="xapinteco" id="notFoudUnitCode" parameterList="0"/>
+    <PGCError errorCode="482" type="xapinteco"
+        id="errorCreatingXbrlInstance" parameterList="0,1,2"/>
+    <PGCError errorCode="483" type="xapinteco" id="errorCreatingConcept" parameterList=""/>
+    <PGCError errorCode="484" type="xapinteco" id="errorGettingModule" parameterList="0,1"/>
+    <PGCError errorCode="485" type="xapinteco"
+        id="errorCreatingNamespaces" parameterList=""/>
+    <PGCError errorCode="486" type="xapinteco" id="notCataloguedError" parameterList=""/>
+    <PGCError errorCode="487" type="xapinteco" id="duplicateIemsError" parameterList="0"/>
+    <PGCError errorCode="488" type="xapinteco" id="errorGettingMembers" parameterList=""/>
+    <PGCError errorCode="489" type="xapinteco"
+        id="errorGettingGlobalFactsTable" parameterList=""/>
+    <PGCError errorCode="490" type="xapinteco"
+        id="errorCreatingTupleChild" parameterList=""/>
+    <PGCError errorCode="491" type="xapinteco"
+        id="errorCheckingFactIsTuple" parameterList=""/>
+
+    <PGCError errorCode="492" type="xapinteco"
+        id="genericTraceMessage" parameterList=""/>        
+        
+</PGC07ErrorsCatalog>

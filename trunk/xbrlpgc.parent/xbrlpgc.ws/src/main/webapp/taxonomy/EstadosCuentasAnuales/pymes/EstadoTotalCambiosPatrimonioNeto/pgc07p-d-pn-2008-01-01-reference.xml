@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01 ../../../auxiliares/pgc-07-ref-2008-01-01.xsd" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xbrli="http://www.xbrl.org/2003/instance">
+  <link:referenceLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <link:loc xlink:type="locator" xlink:href="../../comun/EstadoTotalCambiosPatrimonioNeto/pgc07cbs-dpn-2008-01-01.xsd#pgc07cbs-dpn_CambiosPatrimonioNetoPresentacion" xlink:label="CambiosPatrimonioNetoPresentacion" xlink:title="CambiosPatrimonioNetoPresentacion"/>
+    <link:reference xlink:type="resource" xlink:label="reference_CambiosPatrimonioNetoPresentacion" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_CambiosPatrimonioNetoPresentacion" id="reference_CambiosPatrimonioNetoPresentacion">
+      <pgc-07-ref:Modelo>P</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="CambiosPatrimonioNetoPresentacion" xlink:to="reference_CambiosPatrimonioNetoPresentacion" xlink:title="reference: CambiosPatrimonioNetoPresentacion to reference_CambiosPatrimonioNetoPresentacion"/>
+    <link:loc xlink:type="locator" xlink:href="../../comun/EstadoTotalCambiosPatrimonioNeto/pgc07cbs-dpn-2008-01-01.xsd#pgc07cbs-dpn_CambiosPatrimonioNetoCapitalEscriturado" xlink:label="CapitalEscriturado" xlink:title="CapitalEscriturado"/>
+    <link:reference xlink:type="resource" xlink:label="reference_CapitalEscriturado" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_CapitalEscriturado" id="reference_CapitalEscriturado">
+      <pgc-07-ref:Modelo>P</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>E</pgc-07-ref:Categoria>
+      <pgc-07-ref:Partida>2</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="CapitalEscriturado" xlink:to="reference_CapitalEscriturado" xlink:title="reference: CapitalEscriturado to reference_CapitalEscriturado"/>
+    <link:loc xlink:type="locator" xlink:href="../../comun/EstadoTotalCambiosPatrimonioNeto/pgc07cbs-dpn-2008-01-01.xsd#pgc07cbs-dpn_CambiosPatrimonioNetoCapitalNoExigido" xlink:label="CapitalNoExigido" xlink:title="CapitalNoExigido"/>
+    <link:reference xlink:type="resource" xlink:label="reference_CapitalNoExigido" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_CapitalNoExigido" id="reference_CapitalNoExigido">
+      <pgc-07-ref:Modelo>P</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>E</pgc-07-ref:Categoria>
+      <pgc-07-ref:Partida>3</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="CapitalNoExigido" xlink:to="reference_CapitalNoExigido" xlink:title="reference: CapitalNoExigido to reference_CapitalNoExigido"/>
+    <link:loc xlink:type="locator" xlink:href="../../comun/EstadoTotalCambiosPatrimonioNeto/pgc07cbs-dpn-2008-01-01.xsd#pgc07cbs-dpn_CambiosPatrimonioNetoPrimaEmision" xlink:label="PrimaEmision" xlink:title="PrimaEmision"/>
+    <link:reference xlink:type="resource" xlink:label="reference_PrimaEmision" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_PrimaEmision" id="reference_PrimaEmision">
+      <pgc-07-ref:Modelo>P</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>E</pgc-07-ref:Categoria>
+      <pgc-07-ref:Partida>4</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="PrimaEmision" xlink:to="reference_PrimaEmision" xlink:title="reference: PrimaEmision to reference_PrimaEmision"/>
+    <link:loc xlink:type="locator" xlink:href="../../comun/EstadoTotalCambiosPatrimonioNeto/pgc07cbs-dpn-2008-01-01.xsd#pgc07cbs-dpn_CambiosPatrimonioNetoReservas" xlink:label="Reservas" xlink:title="Reservas"/>
+    <link:reference xlink:type="resource" xlink:label="reference_Reservas" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_Reservas" id="reference_Reservas">
+      <pgc-07-ref:Modelo>P</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>E</pgc-07-ref:Categoria>
+      <pgc-07-ref:Partida>5</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="Reservas" xlink:to="reference_Reservas" xlink:title="reference: Reservas to reference_Reservas"/>
+    <link:loc xlink:type="locator" xlink:href="../../comun/EstadoTotalCambiosPatrimonioNeto/pgc07cbs-dpn-2008-01-01.xsd#pgc07cbs-dpn_CambiosPatrimonioNetoAccionesParticipacionesPatrimonioPropias" xlink:label="AccionesParticipacionesPatrimonioPropias" xlink:title="AccionesParticipacionesPatrimonioPropias"/>
+    <link:reference xlink:type="resource" xlink:label="reference_AccionesParticipacionesPatrimonioPropias" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_AccionesParticipacionesPatrimonioPropias" id="reference_AccionesParticipacionesPatrimonioPropias">
+      <pgc-07-ref:Modelo>P</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>E</pgc-07-ref:Categoria>
+      <pgc-07-ref:Partida>6</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="AccionesParticipacionesPatrimonioPropias" xlink:to="reference_AccionesParticipacionesPatrimonioPropias" xlink:title="reference: AccionesParticipacionesPatrimonioPropias to reference_AccionesParticipacionesPatrimonioPropias"/>
+    <link:loc xlink:type="locator" xlink:href="../../comun/EstadoTotalCambiosPatrimonioNeto/pgc07cbs-dpn-2008-01-01.xsd#pgc07cbs-dpn_CambiosPatrimonioNetoResultadoEjerciciosAnteriores" xlink:label="ResultadoEjerciciosAnteriores" xlink:title="ResultadoEjerciciosAnteriores"/>
+    <link:reference xlink:type="resource" xlink:label="reference_ResultadoEjerciciosAnteriores" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_ResultadoEjerciciosAnteriores" id="reference_ResultadoEjerciciosAnteriores">
+      <pgc-07-ref:Modelo>P</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>E</pgc-07-ref:Categoria>
+      <pgc-07-ref:Partida>7</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="ResultadoEjerciciosAnteriores" xlink:to="reference_ResultadoEjerciciosAnteriores" xlink:title="reference: ResultadoEjerciciosAnteriores to reference_ResultadoEjerciciosAnteriores"/>
+    <link:loc xlink:type="locator" xlink:href="../../comun/EstadoTotalCambiosPatrimonioNeto/pgc07cbs-dpn-2008-01-01.xsd#pgc07cbs-dpn_CambiosPatrimonioNetoOtrasAportacionesSocios" xlink:label="OtrasAportacionesSocios" xlink:title="OtrasAportacionesSocios"/>
+    <link:reference xlink:type="resource" xlink:label="reference_OtrasAportacionesSocios" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_OtrasAportacionesSocios" id="reference_OtrasAportacionesSocios">
+      <pgc-07-ref:Modelo>P</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>E</pgc-07-ref:Categoria>
+      <pgc-07-ref:Partida>8</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OtrasAportacionesSocios" xlink:to="reference_OtrasAportacionesSocios" xlink:title="reference: OtrasAportacionesSocios to reference_OtrasAportacionesSocios"/>
+    <link:loc xlink:type="locator" xlink:href="../../comun/EstadoTotalCambiosPatrimonioNeto/pgc07cbs-dpn-2008-01-01.xsd#pgc07cbs-dpn_CambiosPatrimonioNetoResultadoEjercicio" xlink:label="ResultadoEjercicio" xlink:title="ResultadoEjercicio"/>
+    <link:reference xlink:type="resource" xlink:label="reference_ResultadoEjercicio" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_ResultadoEjercicio" id="reference_ResultadoEjercicio">
+      <pgc-07-ref:Modelo>P</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>E</pgc-07-ref:Categoria>
+      <pgc-07-ref:Partida>9</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="ResultadoEjercicio" xlink:to="reference_ResultadoEjercicio" xlink:title="reference: ResultadoEjercicio to reference_ResultadoEjercicio"/>
+    <link:loc xlink:type="locator" xlink:href="../../comun/EstadoTotalCambiosPatrimonioNeto/pgc07cbs-dpn-2008-01-01.xsd#pgc07cbs-dpn_CambiosPatrimonioNetoDividendoCuenta" xlink:label="DividendoCuenta" xlink:title="DividendoCuenta"/>
+    <link:reference xlink:type="resource" xlink:label="reference_DividendoCuenta" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_DividendoCuenta" id="reference_DividendoCuenta">
+      <pgc-07-ref:Modelo>P</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>E</pgc-07-ref:Categoria>
+      <pgc-07-ref:Partida>10</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="DividendoCuenta" xlink:to="reference_DividendoCuenta" xlink:title="reference: DividendoCuenta to reference_DividendoCuenta"/>
+    <link:loc xlink:type="locator" xlink:href="../../comun/EstadoTotalCambiosPatrimonioNeto/pgc07cbs-dpn-2008-01-01.xsd#pgc07cbs-dpn_CambiosPatrimonioNetoOtrosInstrumentosPatrimonioNeto" xlink:label="OtrosInstrumentosPatrimonioNeto" xlink:title="OtrosInstrumentosPatrimonioNeto"/>
+    <link:reference xlink:type="resource" xlink:label="reference_OtrosInstrumentosPatrimonioNeto" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_OtrosInstrumentosPatrimonioNeto" id="reference_OtrosInstrumentosPatrimonioNeto">
+      <pgc-07-ref:Modelo>P</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>E</pgc-07-ref:Categoria>
+      <pgc-07-ref:Partida>11</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OtrosInstrumentosPatrimonioNeto" xlink:to="reference_OtrosInstrumentosPatrimonioNeto" xlink:title="reference: OtrosInstrumentosPatrimonioNeto to reference_OtrosInstrumentosPatrimonioNeto"/>
+    <link:loc xlink:type="locator" xlink:href="../../comun/EstadoTotalCambiosPatrimonioNeto/pgc07cbs-dpn-2008-01-01.xsd#pgc07cbs-dpn_CambiosPatrimonioNetoAjustesCambioValor" xlink:label="AjustesCambioValor" xlink:title="AjustesCambioValor"/>
+    <link:reference xlink:type="resource" xlink:label="reference_AjustesCambioValor" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_AjustesCambioValor" id="reference_AjustesCambioValor">
+      <pgc-07-ref:Modelo>P</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>E</pgc-07-ref:Categoria>
+      <pgc-07-ref:Partida>12</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="AjustesCambioValor" xlink:to="reference_AjustesCambioValor" xlink:title="reference: AjustesCambioValor to reference_AjustesCambioValor"/>
+    <link:loc xlink:type="locator" xlink:href="../../comun/EstadoTotalCambiosPatrimonioNeto/pgc07cbs-dpn-2008-01-01.xsd#pgc07cbs-dpn_CambiosPatrimonioNetoSubvencionesDonacionesLegadosRecibidos" xlink:label="SubvencionesDonacionesLegadosRecibidos" xlink:title="SubvencionesDonacionesLegadosRecibidos"/>
+    <link:reference xlink:type="resource" xlink:label="reference_SubvencionesDonacionesLegadosRecibidos" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_SubvencionesDonacionesLegadosRecibidos" id="reference_SubvencionesDonacionesLegadosRecibidos">
+      <pgc-07-ref:Modelo>P</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>E</pgc-07-ref:Categoria>
+      <pgc-07-ref:Partida>13</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="SubvencionesDonacionesLegadosRecibidos" xlink:to="reference_SubvencionesDonacionesLegadosRecibidos" xlink:title="reference: SubvencionesDonacionesLegadosRecibidos to reference_SubvencionesDonacionesLegadosRecibidos"/>
+    <link:loc xlink:type="locator" xlink:href="../../comun/EstadoTotalCambiosPatrimonioNeto/pgc07cbs-dpn-2008-01-01.xsd#pgc07cbs-dpn_CambiosPatrimonioNetoTotalCambios" xlink:label="TotalCambios" xlink:title="TotalCambios"/>
+    <link:reference xlink:type="resource" xlink:label="reference_TotalCambios" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_TotalCambios" id="reference_TotalCambios">
+      <pgc-07-ref:Modelo>P</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>E</pgc-07-ref:Categoria>
+      <pgc-07-ref:Partida>14</pgc-07-ref:Partida>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="TotalCambios" xlink:to="reference_TotalCambios" xlink:title="reference: TotalCambios to reference_TotalCambios"/>
+  </link:referenceLink>
+</link:linkbase>

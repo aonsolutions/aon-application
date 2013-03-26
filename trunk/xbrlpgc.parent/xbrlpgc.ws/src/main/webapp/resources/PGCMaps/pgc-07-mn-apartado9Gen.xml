@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mn-apartado9Gen" mainSchemaPrefix="pgc-07-mn" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01">
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosPasivosFinancierosDeudasEmpresaGrupoEmpresasAsociadas"
+        inputID="90924"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosPasivosFinancierosDeudasAcreedoresComercialesNoCorrientes"
+        inputID="90925"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosPasivosFinancierosDeudasCaracteristicasEspeciales"
+        inputID="90916"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosPasivosFinancierosTotal"
+        inputID="90917"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosPasivosFinancierosDeudasTotal"
+        inputID="90919"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosPasivosFinancierosDeudasAcreedoresComercialesOtrasCuentasPagarTotal"
+        inputID="90915"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosPasivosFinancierosDeudasObligacionesOtrosValoresNegociables"
+        inputID="90918"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosPasivosFinancierosDeudasDeudasEntidadesCredito"
+        inputID="90920"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosPasivosFinancierosDeudasAcreedoresArrendamientoFinanciero"
+        inputID="90921"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosPasivosFinancierosDeudasDerivados"
+        inputID="90922"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosPasivosFinancierosDeudasOtrosPasivosFinancieros"
+        inputID="90923"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosPasivosFinancierosDeudasAcreedoresComercialesOtrasCuentasPagarProveedores"
+        inputID="90926"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosPasivosFinancierosDeudasAcreedoresComercialesOtrasCuentasPagarProveedoresEmpresasGrupoEmpresasAsociadas"
+        inputID="90927"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosPasivosFinancierosDeudasAcreedoresComercialesOtrasCuentasPagarAcreedoresVarios"
+        inputID="90928"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosPasivosFinancierosDeudasAcreedoresComercialesOtrasCuentasPagarPersonal"
+        inputID="90930"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosPasivosFinancierosDeudasAcreedoresComercialesOtrasCuentasPagarAnticiposClientes"
+        inputID="90931"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoDeudasComercialesNoCorrientes"
+        inputID="90974"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoAnticiposProveedores"
+        inputID="90975"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoTotal"
+        inputID="90976"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoInversionesEmpresasGrupoAsociadasTotal"
+        inputID="90971"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoInversionesFinancierasTotal"
+        inputID="90972"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoDeudoresComercialesOtrasCuentasCobrarTotal"
+        inputID="90973"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoInversionesEmpresasGrupoAsociadasCreditosEmpresas"
+        inputID="90977"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoInversionesEmpresasGrupoAsociadasValoresRepresentativosDeuda"
+        inputID="90978"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoInversionesEmpresasGrupoAsociadasDerivados"
+        inputID="90979"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoInversionesEmpresasGrupoAsociadasOtrosActivosFinancieros"
+        inputID="90980"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoInversionesEmpresasGrupoAsociadasOtrasInversiones"
+        inputID="90981"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoInversionesFinancierasCreditosTerceros"
+        inputID="90982"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoInversionesFinancierasValoresRepresentativosDeuda"
+        inputID="90983"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoInversionesFinancierasDerivados"
+        inputID="90984"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoInversionesFinancierasOtrosActivosFinancieros"
+        inputID="90985"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoInversionesFinancierasOtrasInversiones"
+        inputID="90986"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoDeudoresComercialesOtrasCuentasCobrarClientesVentasPrestacionServicios"
+        inputID="90987"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoDeudoresComercialesOtrasCuentasCobrarClientesEmpresasGrupoEmpresasAsociadas"
+        inputID="90988"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoDeudoresComercialesOtrasCuentasCobrarDeudoresVarios"
+        inputID="90989"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoDeudoresComercialesOtrasCuentasCobrarPersonal"
+        inputID="90990"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosVencimientosActivoDeudoresComercialesOtrasCuentasCobrarAccionistasSociosDesembolsosExigidos"
+        inputID="90991"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoDimension">
+        <Member id="02" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+        <Member id="03" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+        <Member id="04" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+        <Member id="05" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+        <Member id="06" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+        <Member id="07" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+        <Member id="08" qname="pgc07d-plzven:InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosOtraInformacionMemoriaContabilidadCoberturasValorRazonableInstrumentosCoberturaValorRazonableValorRazonableCierreEjercicioCoberturaValorRazonable"
+        inputID="90941"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosClasesActivosPresentacion"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivosPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosOtraInformacionMemoriaContabilidadCoberturasValorRazonableInstrumentosCoberturaValorRazonableValorRazonableCierreEjercicioCoberturaFlujoEfectivo"
+        inputID="90942"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosClasesActivosPresentacion"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivosPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosOtraInformacionMemoriaContabilidadCoberturasValorRazonableInstrumentosCoberturaValorRazonableValorRazonableCierreEjercicioCoberturaInversionNetaNegociosExtranjero"
+        inputID="90943"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosClasesActivosPresentacion"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivosPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosOtraInformacionMemoriaContabilidadCoberturasValorRazonableInstrumentosCoberturaValorRazonableValorRazonableCierreEjercicioTotal"
+        inputID="90944"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosClasesActivosPresentacion"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosClasesPasivosPresentacion"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosReclasificacionActivosFinancierosInversionesMantenidasVencimiento"
+        inputID="9320"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/normalAbreviado/2009-01-01"
+        nsPrefix="pgc07mc-na" domain="pgc07d-reclsf:InstrumentosFinancierosReclasificacionDimension">
+        <Member id="2" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesMantenidasVencimiento"/>
+        <Member id="3" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesPatrimonioEmpresasGrupoEmpresasMultigrupoEmpresasAsociadas"/>
+        <Member id="4" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionActivosDisponiblesVenta"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosReclasificacionActivosFinancierosActivosMantenidosNegociar"
+        inputID="9321"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/normalAbreviado/2009-01-01"
+        nsPrefix="pgc07mc-na" domain="pgc07d-reclsf:InstrumentosFinancierosReclasificacionDimension">
+        <Member id="2" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesMantenidasVencimiento"/>
+        <Member id="3" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesPatrimonioEmpresasGrupoEmpresasMultigrupoEmpresasAsociadas"/>
+        <Member id="4" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionActivosDisponiblesVenta"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosReclasificacionActivosFinancierosOtrosActivosValorRazonableCambiosPyG"
+        inputID="9322"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/normalAbreviado/2009-01-01"
+        nsPrefix="pgc07mc-na" domain="pgc07d-reclsf:InstrumentosFinancierosReclasificacionDimension">
+        <Member id="2" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesMantenidasVencimiento"/>
+        <Member id="3" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesPatrimonioEmpresasGrupoEmpresasMultigrupoEmpresasAsociadas"/>
+        <Member id="4" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionActivosDisponiblesVenta"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosReclasificacionActivosFinancierosInversionPatrimonioEmpresasGrupoEmpresasMultigrupoEmpresasAsociadas"
+        inputID="9323"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/normalAbreviado/2009-01-01"
+        nsPrefix="pgc07mc-na" domain="pgc07d-reclsf:InstrumentosFinancierosReclasificacionDimension">
+        <Member id="2" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesMantenidasVencimiento"/>
+        <Member id="3" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesPatrimonioEmpresasGrupoEmpresasMultigrupoEmpresasAsociadas"/>
+        <Member id="4" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionActivosDisponiblesVenta"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosReclasificacionActivosFinancierosActivosFinancierosDisponiblesVenta"
+        inputID="9324"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/normalAbreviado/2009-01-01"
+        nsPrefix="pgc07mc-na" domain="pgc07d-reclsf:InstrumentosFinancierosReclasificacionDimension">
+        <Member id="2" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesMantenidasVencimiento"/>
+        <Member id="3" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionInversionesPatrimonioEmpresasGrupoEmpresasMultigrupoEmpresasAsociadas"/>
+        <Member id="4" qname="pgc07d-reclsf:InstrumentosFinancierosReclasificacionActivosDisponiblesVenta"/>
+    </conceptMap>
+</Statement>

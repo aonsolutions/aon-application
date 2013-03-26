@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://www.inteco.es/xbrl/pgc07/transform" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://www.inteco.es/xbrl/pgc07/transform" xmlns:intf="http://www.inteco.es/xbrl/pgc07/transform" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema elementFormDefault="qualified" targetNamespace="http://www.inteco.es/xbrl/pgc07/transform" xmlns="http://www.w3.org/2001/XMLSchema">
+   <element name="transformToXml">
+    <complexType>
+     <sequence>
+      <element name="inputDocument" type="xsd:base64Binary"/>
+      <element name="validate" type="xsd:boolean"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="transformToXmlResponse">
+    <complexType>
+     <sequence>
+      <element name="transformToXmlReturn" type="impl:TransformResult"/>
+     </sequence>
+    </complexType>
+   </element>
+   <complexType name="TransformResult">
+    <sequence>
+     <element name="arrayResult" nillable="true" type="xsd:base64Binary"/>
+     <element name="generalError" nillable="true" type="xsd:string"/>
+     <element name="xbrlValidateError" nillable="true" type="xsd:string"/>
+     <element name="xsdValidateError" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <element name="transformToXbrl">
+    <complexType>
+     <sequence>
+      <element name="inputDocument" type="xsd:base64Binary"/>
+      <element name="validate" type="xsd:boolean"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="transformToXbrlResponse">
+    <complexType>
+     <sequence>
+      <element name="transformToXbrlReturn" type="impl:TransformResult"/>
+     </sequence>
+    </complexType>
+   </element>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="transformToXbrlRequest">
+
+      <wsdl:part element="impl:transformToXbrl" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="transformToXmlResponse">
+
+      <wsdl:part element="impl:transformToXmlResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="transformToXmlRequest">
+
+      <wsdl:part element="impl:transformToXml" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="transformToXbrlResponse">
+
+      <wsdl:part element="impl:transformToXbrlResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="PGCWSTransformator">
+
+      <wsdl:operation name="transformToXml">
+
+         <wsdl:input message="impl:transformToXmlRequest" name="transformToXmlRequest"/>
+
+         <wsdl:output message="impl:transformToXmlResponse" name="transformToXmlResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="transformToXbrl">
+
+         <wsdl:input message="impl:transformToXbrlRequest" name="transformToXbrlRequest"/>
+
+         <wsdl:output message="impl:transformToXbrlResponse" name="transformToXbrlResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="PGCWSTransformatorSoapBinding" type="impl:PGCWSTransformator">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="transformToXml">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="transformToXmlRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="transformToXmlResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="transformToXbrl">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="transformToXbrlRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="transformToXbrlResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="PGCWSTransformatorService">
+
+      <wsdl:port binding="impl:PGCWSTransformatorSoapBinding" name="PGCWSTransformator">
+
+         <wsdlsoap:address location="http://localhost:8080/PGCWSProject/services/PGCWSTransformator"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

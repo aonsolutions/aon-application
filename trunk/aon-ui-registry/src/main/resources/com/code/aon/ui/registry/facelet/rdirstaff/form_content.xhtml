@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:outputText value="#{bundle.aon_company_document}" />
+	<aon:inputText id="Registry_Lookup_document-Edit" size="16"
+		value="#{controller.to.document}" >
+		<a4j:support event="onchange" ajaxSingle="true"
+			reRender="Registry_full_name-Edit" focus="Registry_full_name-Edit"
+			actionListener="#{controller.onDocumentChange}"/>
+	</aon:inputText>
+
+	<aon:outputText value="#{bundle.aon_name}" />
+	<aon:inputText id="Registry_full_name-Edit" 
+		size="40" value="#{controller.to.name}" />
+
+	<aon:outputText
+		value="#{registryBundle.registry_dir_staff_is_shareholder}" />
+	<aon:selectBooleanCheckbox id="RegistryDirStaff_shareHolder-Edit"
+		value="#{controller.to.shareHolder}"
+		valueChangeListener="#{controller.onChangeShareHolder}"
+		reRender="RegistryDirStaff_shareNumber-Edit,RegistryDirStaff_percentShare-Edit,RegistryDirStaff_nominalValue-Edit" 
+		ajaxSingle="true"/>
+
+	<aon:outputText
+		value="#{registryBundle.registry_dir_staff_is_representative}" />
+	<aon:selectBooleanCheckbox id="RegistryDirStaff_representative-Edit"
+		value="#{controller.to.representative}" />
+
+	<aon:outputText	value="#{registryBundle.registry_dir_staff_is_director}" />
+	<aon:selectBooleanCheckbox id="RegistryDirStaff_director-Edit"
+		reRender="RegistryDirStaff_dueDate-Edit" ajaxSingle="true"
+		value="#{controller.to.director}" />
+
+	<aon:outputText
+		value="#{registryBundle.registry_dir_staff_is_representative_labor}" />
+	<aon:selectBooleanCheckbox id="RegistryDirStaff_representativeLabor-Edit"
+		value="#{controller.to.representativeLabor}" />
+
+	<aon:outputText
+		value="#{registryBundle.registry_dir_staff_percent_shares}" />
+	<aon:inputText id="RegistryDirStaff_percentShare-Edit"
+		size="5"
+		disabled="#{!controller.to.shareHolder}"
+		value="#{controller.to.percentShare}" />
+
+	<aon:outputText
+		value="#{registryBundle.registry_dir_staff_share_number}" />
+	<aon:inputText id="RegistryDirStaff_shareNumber-Edit"
+		size="5"
+		disabled="#{!controller.to.shareHolder}"
+		value="#{controller.to.shareNumber}" />
+
+	<aon:outputText
+		value="#{registryBundle.registry_dir_staff_nominal_value}" />
+	<aon:inputText id="RegistryDirStaff_nominalValue-Edit"
+		size="5"
+		disabled="#{!controller.to.shareHolder}"
+		value="#{controller.to.nominalValue}" />
+
+	<aon:outputText value="#{registryBundle.registry_dir_staff_date}" />
+	<aon:selectInputDate id="RegistryDirStaff_dueDate-Edit"
+		value="#{controller.to.dueDate}" 
+		disabled="#{!controller.to.director}"
+		inputSize="7" timeZone="#{timeZoneController.timeZone}"
+		popupDateFormat="#{bundle.aon_date_pattern}" />
+
+</ui:composition>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" attributeFormDefault="unqualified">
+	<xs:complexType name="LoadSchemaType">
+		<xs:sequence>
+			<xs:element name="AddReference" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="namespace" type="xs:anyURI" use="required"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="namespace" type="xs:anyURI" use="required"/>
+		<xs:attribute name="defaultIgnoreDuringFind" type="xs:boolean" use="optional" default="false"/>
+		<xs:attribute name="forceGrammarLoad" type="xs:boolean" use="optional" default="false"/>
+	</xs:complexType>
+	<xs:simpleType name="CoreRootSourceType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Registry"/>
+			<xs:enumeration value="Environment"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="PreloadType">
+		<xs:sequence>
+			<xs:element name="LoadSchema" type="LoadSchemaType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SchemaLocationResolutionType">
+		<xs:attribute name="namespace" type="xs:anyURI" use="required"/>
+		<xs:attribute name="logicalUri" type="xs:anyURI" use="required"/>
+		<xs:attribute name="physicalUri" type="xs:anyURI" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="FakeType">
+		<xs:attribute name="fake" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="DefaultSchemaLocationResolutionListType">
+		<xs:sequence>
+			<xs:element name="SchemaLocationResolution" type="SchemaLocationResolutionType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="XbrlConfigurationType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="DefaultSchemaLocationResolutionList" type="DefaultSchemaLocationResolutionListType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Preload" type="PreloadType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Transformation" type="TransformationType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="XbrlLocationControllerPatternPath" type="XbrlLocationControllerPatternPathType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="XmlBehaviorMethodsPath" type="XmlBehaviorMethodsPathType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Trace" type="TraceType" minOccurs="0"/>
+			<xs:element name="Language" type="LanguageType" minOccurs="0"/>
+			<xs:element name="TopView" type="TopViewType" minOccurs="0"/>
+			<xs:element name="CoreRootSource" type="CoreRootSourceType" minOccurs="0"/>
+			<xs:element name="Validation" type="ValidationType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="OptionType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="name" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XbrlLocationControllerPatternPathType">
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="physicalUri" type="xs:anyURI" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="XmlBehaviorMethodsPathType">
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="physicalUri" type="xs:anyURI" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="TraceType">
+		<xs:attribute name="value" type="xs:boolean" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="LanguageType">
+		<xs:attribute name="value" type="xs:language" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="TopViewType">
+		<xs:attribute name="value" type="xs:boolean" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="ValidatorType">
+		<xs:sequence>
+			<xs:element name="Option" type="OptionType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="patternSetUri" type="xs:anyURI" use="required"/>
+		<xs:attribute name="classificationUri" type="xs:anyURI" use="required"/>
+		<xs:attribute name="logicalUri" type="xs:anyURI" use="required"/>
+		<xs:attribute name="pluginID" type="xs:string" use="required"/>
+		<xs:attribute name="runCondition" type="xs:string"/>
+		<xs:attribute name="classUri" type="xs:string" use="required"/>
+		<xs:attribute name="execute" type="xs:boolean"/>
+		<xs:attribute name="inheritsFrom" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="ValidationType">
+		<xs:sequence>
+			<xs:element name="Validator" type="ValidatorType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="classificationUri" type="xs:anyURI" use="required"/>
+		<xs:attribute name="logicalUri" type="xs:anyURI"/>
+		<xs:attribute name="depends" type="xs:string"/>
+	</xs:complexType>
+	<!-- Added to facilitate dynamic indexing -->
+	<xs:complexType name="TransformationType">
+		<xs:sequence>
+			<xs:element name="NodeWrapper" type="NodeWrapperType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ExtensionFunctionModule" type="ExtensionFunctionModuleType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="caching" type="xs:boolean"/>
+		<xs:attribute name="dynamicTypeAnalysis" type="xs:boolean"/>
+		<xs:attribute name="execute" type="xs:boolean" default="true"/>
+	</xs:complexType>
+	<xs:complexType name="NodeWrapperType">
+		<xs:attribute name="logicalUri" type="xs:anyURI" use="required"/>
+		<xs:attribute name="assembly" type="xs:anyURI" use="required"/>
+		<xs:attribute name="type" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="ExtensionFunctionModuleType">
+		<xs:attribute name="logicalUri" type="xs:anyURI" use="required"/>
+		<xs:attribute name="assembly" type="xs:anyURI" use="required"/>
+		<xs:attribute name="type" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:element name="XbrlConfiguration" type="XbrlConfigurationType"/>
+</xs:schema>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mn-apartado9q1" mainSchemaPrefix="pgc-07-mn" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01">
+    <conceptMap
+        outputID="InstrumentosFinancierosOtraInformacionMemoriaValorRazonableValorLibrosInstrumentosFinancierosSaldoFinalValorRazonable"
+        inputID="1"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="90938" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoValoresRepresentativosDeuda"/>
+        <Member id="90937" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoInstrumentosPatrimonio"/>
+        <Member id="90939" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCreditosDerivadosOtros"/>
+        <Member id="90940" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosOtraInformacionMemoriaValorRazonableValorLibrosInstrumentosFinancierosSaldoFinalValorLibros"
+        inputID="2"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="90938" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoValoresRepresentativosDeuda"/>
+        <Member id="90937" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoInstrumentosPatrimonio"/>
+        <Member id="90939" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCreditosDerivadosOtros"/>
+        <Member id="90940" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosOtraInformacionMemoriaValorRazonableValorLibrosInstrumentosFinancierosSaldoBajaValorLibros"
+        inputID="3"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="90938" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoValoresRepresentativosDeuda"/>
+        <Member id="90937" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoInstrumentosPatrimonio"/>
+        <Member id="90939" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCreditosDerivadosOtros"/>
+        <Member id="90940" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosOtraInformacionMemoriaValorRazonableValorLibrosInstrumentosFinancierosSaldoBajaPerdidasGananciasReconocidas"
+        inputID="4"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="90938" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoValoresRepresentativosDeuda"/>
+        <Member id="90937" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoInstrumentosPatrimonio"/>
+        <Member id="90939" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoCreditosDerivadosOtros"/>
+        <Member id="90940" qname="pgc07d-clase:InstrumentosFinancierosClasesActivoTotal"/>
+    </conceptMap>
+</Statement>

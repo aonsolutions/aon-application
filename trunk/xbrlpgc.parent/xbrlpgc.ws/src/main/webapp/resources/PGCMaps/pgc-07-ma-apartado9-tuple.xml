@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statement xmlns="http://www.inteco.es/xbrl/pgc07/mapa"
+           xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01"
+           xmlns:pgc07ma-d-sf="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/SituacionFiscal/Dimension/2009-01-01"
+           xmlns:pgc07mc-bs="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+           xmlns:xbrldt="http://xbrl.org/2005/xbrldt"
+           xmlns:pgc07ma-apdo9="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviada/apartado9/SituacionFiscal/2009-01-01"
+           xmlns:pgc07-ma="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/2009-01-01"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:pgc07mc-ap="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+           xmlns:link="http://www.xbrl.org/2003/linkbase"
+           xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+           xmlns:xlink="http://www.w3.org/1999/xlink"
+           xmlns:xbrli="http://www.xbrl.org/2003/instance"
+           xmlns:pgc07mc-np="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/normalPymes/2009-01-01"
+           xmlns:xl="http://www.xbrl.org/2003/XLink"
+           xmlns:pgc07ma="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviada/2009-01-01"
+           xmlns:pgc07mc-na="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/normalAbreviado/2009-01-01"
+           xmlns:pgc07m-d-pv="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/PartesVinculadas/Dimension/2009-01-01"
+           xmlns:pgc07m-roles="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/roles/2009-01-01"
+           xmlns:pgc07d-clase="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/ClasesInstrumentosFinancieros/Dimension/2009-01-01"
+           xmlns:pgc07d-plzven="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/PlazoVencimientoInstrumentosFinancieros/Dimension/2009-01-01"
+           xmlns:pgc07d-reclsf="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/ReclasificacionInstrumentosFinancieros/Dimension/2009-01-01"
+           mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/2009-01-01"
+           mainSchemaPrefix="pgc07am"
+           name="pgc-07-ma-apartado9">
+   <conceptMap inputID="" nsPrefix="pgc07mc-bs"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+               outputID="SituacionFiscal"
+               parent=""
+               order=""
+               abstract="true"/>
+   <conceptMap order="1.0" inputID="" nsPrefix="pgc07mc-bs"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+               abstract="true"
+               parent="pgc07mc-bs:SituacionFiscal"
+               outputID="SituacionFiscalImpuestosBeneficios"/>
+   <conceptMap order="1.0" inputID="" nsPrefix="pgc07mc-ap"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+               abstract="true"
+               parent="pgc07mc-bs:SituacionFiscalImpuestosBeneficios"
+               outputID="InformacionFiscalImpuestosBeneficiosInformacionCreditosBasesImponiblesNegativas"/>
+   <conceptMap order="1.0" inputID="9320121" nsPrefix="pgc07mc-ap"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+               parent="pgc07mc-ap:InformacionFiscalImpuestosBeneficiosInformacionCreditosBasesImponiblesNegativas"
+               outputID="InformacionFiscalImpuestosBeneficiosInformacionCreditosBasesImponiblesNegativasAntiguedadCreditos"/>
+   <conceptMap order="2.0" inputID="9320122" nsPrefix="pgc07mc-ap"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2009-01-01"
+               parent="pgc07mc-ap:InformacionFiscalImpuestosBeneficiosInformacionCreditosBasesImponiblesNegativas"
+               outputID="InformacionFiscalImpuestosBeneficiosInformacionCreditosBasesImponiblesNegativasPlazoPrevistoRecuperacionFiscal"/>
+   <conceptMap order="3.0" inputID="" nsPrefix="pgc07mc-bs"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+               abstract="true"
+               parent="pgc07mc-bs:SituacionFiscalImpuestosBeneficios"
+               outputID="SituacionFiscalImpuestosBeneficiosProvisionesContingenciasRelativasImpuestoBeneficios"/>
+   <conceptMap order="1.0" inputID="9320023" nsPrefix="pgc07mc-bs"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+               parent="pgc07mc-bs:SituacionFiscalImpuestosBeneficiosProvisionesContingenciasRelativasImpuestoBeneficios"
+               outputID="SituacionFiscalImpuestosBeneficiosProvisionesContingenciasRelativasImpuestoBeneficiosSaldoProvisionesImpuestoBeneficios"/>
+   <conceptMap order="2.0" inputID="9320024" nsPrefix="pgc07mc-bs"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+               parent="pgc07mc-bs:SituacionFiscalImpuestosBeneficiosProvisionesContingenciasRelativasImpuestoBeneficios"
+               outputID="SituacionFiscalImpuestosBeneficiosProvisionesContingenciasRelativasImpuestoBeneficiosContingenciasCaracterFiscalCierreEjercicio"/>
+   <conceptMap order="3.0" inputID="9320025" nsPrefix="pgc07mc-bs"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+               parent="pgc07mc-bs:SituacionFiscalImpuestosBeneficiosProvisionesContingenciasRelativasImpuestoBeneficios"
+               outputID="SituacionFiscalImpuestosBeneficiosProvisionesContingenciasRelativasImpuestoBeneficiosModificacionesNormativaFiscalPosteriorCierreAfecteActivosPasivosFiscalesRegistrados"/>
+   <conceptMap order="4.0" inputID="9320026" nsPrefix="pgc07mc-bs"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+               parent="pgc07mc-bs:SituacionFiscalImpuestosBeneficiosProvisionesContingenciasRelativasImpuestoBeneficios"
+               outputID="SituacionFiscalImpuestosBeneficiosProvisionesContingenciasRelativasImpuestoBeneficiosEjerciciosImpuestoBeneficiosPendientesComprobacion"/>
+   <conceptMap order="4.0" inputID="9320130" nsPrefix="pgc07mc-bs"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+               parent="pgc07mc-bs:SituacionFiscalImpuestosBeneficios"
+               outputID="SituacionFiscalImpuestosBeneficiosOtrasCircunstanciasSustantivasRelacionSituacionImpuestoBeneficios"/>
+   <conceptMap order="2.0" inputID="9320124" nsPrefix="pgc07ma-apdo9"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviada/apartado9/SituacionFiscal/2009-01-01"
+               parent="pgc07mc-bs:SituacionFiscalImpuestosBeneficios"
+               outputID="SituacionFiscalImpuestosBeneficiosInformacionIncentivosFiscalesTupla"/>
+   <conceptMap order="1.0" inputID="9320125" nsPrefix="pgc07mc-bs"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+               parent="pgc07ma-apdo9:SituacionFiscalImpuestosBeneficiosInformacionIncentivosFiscalesTupla"
+               outputID="9320124:SituacionFiscalImpuestosBeneficiosNaturalezaIncentivoFiscal"/>
+   <conceptMap order="2.0" inputID="9320126" nsPrefix="pgc07mc-bs"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+               parent="pgc07ma-apdo9:SituacionFiscalImpuestosBeneficiosInformacionIncentivosFiscalesTupla"
+               outputID="9320124:SituacionFiscalImpuestosBeneficiosInformacionIncentivosFiscalesImporteRelativoIncentivoFiscalAplicadoEjercicio"/>
+   <conceptMap order="3.0" inputID="9320127" nsPrefix="pgc07mc-bs"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+               parent="pgc07ma-apdo9:SituacionFiscalImpuestosBeneficiosInformacionIncentivosFiscalesTupla"
+               outputID="9320124:SituacionFiscalImpuestosBeneficiosInformacionIncentivosFiscalesImporteRelativoIncentivosFiscalObjetoPeriodificacionEstaPendienteDeducir"/>
+   <conceptMap order="4.0" inputID="9320128" nsPrefix="pgc07mc-bs"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+               parent="pgc07ma-apdo9:SituacionFiscalImpuestosBeneficiosInformacionIncentivosFiscalesTupla"
+               outputID="9320124:SituacionFiscalImpuestosBeneficiosInformacionIncentivosFiscalesCompromisosAdquiridosRelacionIncentivoFiscal"/>
+   <conceptMap order="2.0" inputID="" nsPrefix="pgc07mc-bs"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+               abstract="true"
+               parent="pgc07mc-bs:SituacionFiscal"
+               outputID="SituacionFiscalOtrosAtributos"/>
+   <conceptMap order="1.0" inputID="9320028" nsPrefix="pgc07mc-bs"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+               parent="pgc07mc-bs:SituacionFiscalOtrosAtributos"
+               outputID="SituacionFiscalOtrosAtributosCircunstanciasSignificativasRelacionTributos"/>
+   <conceptMap order="2.0" inputID="9320030" nsPrefix="pgc07mc-bs"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+               parent="pgc07mc-bs:SituacionFiscalOtrosAtributos"
+               outputID="SituacionFiscalOtrosAtributosContingenciasFiscalesRelacionTributos"/>
+   <conceptMap order="3.0" inputID="9320031" nsPrefix="pgc07mc-bs"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+               parent="pgc07mc-bs:SituacionFiscalOtrosAtributos"
+               outputID="SituacionFiscalOtrosAtributosEjerciciosPendientesComprobacionTributos"/>
+</statement>

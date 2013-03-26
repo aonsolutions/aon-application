@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>7.14</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.esferalia.aon</groupId>
+	<artifactId>aon.sql.payroll</artifactId>
+	<description>AON SQL PAYROLL</description>
+	<name>AON SQL PAYROLL</name>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.esferalia.aon</groupId>
+				<artifactId>aon-maven-plugin</artifactId>
+				<version>${project.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate-db</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<targetPackage>com.esferalia.aon.payroll.sql</targetPackage>
+					<dbtables>registry,person,raddress,rattach,category,enterprise.*,customer,workplace.*,agreement.*,calendar.*,deduction_concept,payment_concept,bonus_concept,system.*,contract.*,salary.*,cnae2009.*,payroll.*,user,irpf.*,geozone_irpf.*,app_param</dbtables>
+				</configuration>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>com.esferalia.aon</groupId>
+										<artifactId>
+											aon-maven-plugin
+										</artifactId>
+										<versionRange>[6.14-SNAPSHOT,)</versionRange>
+										<goals>
+											<goal>generate-db</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+    <profiles>
+      	<profile>
+            <id>perform-stats</id>
+        </profile>
+    </profiles>
+</project>

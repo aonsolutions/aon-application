@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01 ../../../auxiliares/pgc-07-ref-2008-01-01.xsd" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xbrli="http://www.xbrl.org/2003/instance">
+  <link:referenceLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <link:loc xlink:type="locator" xlink:href="pgc07m-d-pv-2008-01-01.xsd#pgc07m-d-pv_OperacionesPartesVinculadasPartesVinculadasDimension" xlink:label="OperacionesPartesVinculadasPartesVinculadasDimension"/>
+    <link:reference xlink:type="resource" xlink:label="reference_OperacionesPartesVinculadasPartesVinculadasDimension" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_OperacionesPartesVinculadasPartesVinculadasDimension">
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Modelo>A</pgc-07-ref:Modelo>
+      <pgc-07-ref:Grupo>12</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OperacionesPartesVinculadasPartesVinculadasDimension" xlink:to="reference_OperacionesPartesVinculadasPartesVinculadasDimension"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07m-d-pv-2008-01-01.xsd#pgc07m-d-pv_OperacionesPartesVinculadasPartesVinculadasDomain" xlink:label="OperacionesPartesVinculadasPartesVinculadasDomain"/>
+    <link:reference xlink:type="resource" xlink:label="reference_OperacionesPartesVinculadasPartesVinculadasDomain" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_OperacionesPartesVinculadasPartesVinculadasDomain">
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Modelo>A</pgc-07-ref:Modelo>
+      <pgc-07-ref:Grupo>12</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OperacionesPartesVinculadasPartesVinculadasDomain" xlink:to="reference_OperacionesPartesVinculadasPartesVinculadasDomain"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07m-d-pv-2008-01-01.xsd#pgc07m-d-pv_OperacionesPartesVinculadasPartesVinculadasEntidadDominante" xlink:label="OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+    <link:reference xlink:type="resource" xlink:label="reference_OperacionesPartesVinculadasPartesVinculadasEntidadDominante" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_OperacionesPartesVinculadasPartesVinculadasEntidadDominante">
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Modelo>A</pgc-07-ref:Modelo>
+      <pgc-07-ref:Grupo>12</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+      <pgc-07-ref:Subcategoria>c1</pgc-07-ref:Subcategoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OperacionesPartesVinculadasPartesVinculadasEntidadDominante" xlink:to="reference_OperacionesPartesVinculadasPartesVinculadasEntidadDominante"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07m-d-pv-2008-01-01.xsd#pgc07m-d-pv_OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo" xlink:label="OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+    <link:reference xlink:type="resource" xlink:label="reference_OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo">
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Modelo>A</pgc-07-ref:Modelo>
+      <pgc-07-ref:Grupo>12</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+      <pgc-07-ref:Subcategoria>c2</pgc-07-ref:Subcategoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo" xlink:to="reference_OperacionesPartesVinculadasPartesVinculadasOtrasEmpresasGrupo"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07m-d-pv-2008-01-01.xsd#pgc07m-d-pv_OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe" xlink:label="OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+    <link:reference xlink:type="resource" xlink:label="reference_OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe">
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Modelo>A</pgc-07-ref:Modelo>
+      <pgc-07-ref:Grupo>12</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+      <pgc-07-ref:Subcategoria>c3</pgc-07-ref:Subcategoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe" xlink:to="reference_OperacionesPartesVinculadasPartesVinculadasNegociosConjuntosEmpresaParticipe"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07m-d-pv-2008-01-01.xsd#pgc07m-d-pv_OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas" xlink:label="OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+    <link:reference xlink:type="resource" xlink:label="reference_OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas">
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Modelo>A</pgc-07-ref:Modelo>
+      <pgc-07-ref:Grupo>12</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+      <pgc-07-ref:Subcategoria>c4</pgc-07-ref:Subcategoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas" xlink:to="reference_OperacionesPartesVinculadasPartesVinculadasEmpresasAsociadas"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07m-d-pv-2008-01-01.xsd#pgc07m-d-pv_OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa" xlink:label="OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+    <link:reference xlink:type="resource" xlink:label="reference_OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa">
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Modelo>A</pgc-07-ref:Modelo>
+      <pgc-07-ref:Grupo>12</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+      <pgc-07-ref:Subcategoria>c5</pgc-07-ref:Subcategoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa" xlink:to="reference_OperacionesPartesVinculadasPartesVinculadasEmpresasControlConjuntoInfluenciaSignificativaEmpresa"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07m-d-pv-2008-01-01.xsd#pgc07m-d-pv_OperacionesPartesVinculadasPartesVinculadasMiembrosConsejoAdministracion" xlink:label="OperacionesPartesVinculadasPartesVinculadasMiembrosConsejoAdministracion"/>
+    <link:reference xlink:type="resource" xlink:label="reference_OperacionesPartesVinculadasPartesVinculadasMiembrosConsejoAdministracion" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_OperacionesPartesVinculadasPartesVinculadasMiembrosConsejoAdministracion">
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Modelo>A</pgc-07-ref:Modelo>
+      <pgc-07-ref:Grupo>12</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+      <pgc-07-ref:Subcategoria>c6</pgc-07-ref:Subcategoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OperacionesPartesVinculadasPartesVinculadasMiembrosConsejoAdministracion" xlink:to="reference_OperacionesPartesVinculadasPartesVinculadasMiembrosConsejoAdministracion"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07m-d-pv-2008-01-01.xsd#pgc07m-d-pv_OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante" xlink:label="OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+    <link:reference xlink:type="resource" xlink:label="reference_OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante">
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Modelo>A</pgc-07-ref:Modelo>
+      <pgc-07-ref:Grupo>12</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+      <pgc-07-ref:Subcategoria>c7</pgc-07-ref:Subcategoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante" xlink:to="reference_OperacionesPartesVinculadasPartesVinculadasOtroPersonalAltaDireccionEmpresaEntidadDominante"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07m-d-pv-2008-01-01.xsd#pgc07m-d-pv_OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas" xlink:label="OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+    <link:reference xlink:type="resource" xlink:label="reference_OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas">
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Modelo>A</pgc-07-ref:Modelo>
+      <pgc-07-ref:Grupo>12</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+      <pgc-07-ref:Subcategoria>c8</pgc-07-ref:Subcategoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas" xlink:to="reference_OperacionesPartesVinculadasPartesVinculadasOtrasPartesVinculadas"/>
+  </link:referenceLink>
+</link:linkbase>

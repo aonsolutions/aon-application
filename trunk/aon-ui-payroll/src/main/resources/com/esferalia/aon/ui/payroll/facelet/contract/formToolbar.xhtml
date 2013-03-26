@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components" >
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+		<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
+		<ui:param name="controller" value="#{contract}" />
+		<ui:param name="skipRemoveButton" value="#{contract.to.status!='PENDING'}" />
+		<ui:param name="showMoreMenu" value="#{!contract.new and !contract.skipPayrollData}" />
+		<ui:define name="beforeSpinToolbarContent">
+			<aon:htmlCommandLink id="directDebit-report"
+				styleClass="aon-finding-toolbar-item aon-icon-pdf" 
+				value="Domiciliacion bancaria" ajaxSingle="true"
+				rendered="#{contract.trainingContract and contract.trainingCenterDefined}"
+				action="#{contract.onTrainingCenterDirectDebitReport}" target="_blank" >
+				<f:param name="reportKey" value="trainingDirectDebit" />
+				<f:param name="outputFormat" value="PDF" />
+			</aon:htmlCommandLink>
+			<aon:commandButton id="documentDraft-edition" 
+				action="contractPdfEdition_form" ajaxSingle="true"
+				rendered="#{not empty contract.to.model and not contract.existDocument}"
+				value="Contrato"
+				title="Edicion manual del documento del contrato"
+				styleClass="aon-finding-toolbar-item aon-icon-pdf" >
+				<f:setPropertyActionListener
+					target="#{contractPdf.documentType}" value="CONTRACT_DOCUMENT_DRAFT" />
+				<f:setPropertyActionListener
+					target="#{contractPdf.backAction}" value="contract_form" />
+				<aon:actionListener method="#{contract.onContractDocumentShow}" />
+			</aon:commandButton>
+			<aon:commandButton id="basicCopyDraft-edition"
+				action="contractPdfEdition_form" ajaxSingle="true" 
+				rendered="#{not empty contract.to.model and not contract.existDocument}"
+				value="Copia Basica"
+				title="Edicion manual del documento de la copia basica"
+				styleClass="aon-finding-toolbar-item aon-icon-pdf" >
+				<f:setPropertyActionListener
+					target="#{contractPdf.documentType}" value="BASIC_COPY_DRAFT" />
+				<f:setPropertyActionListener
+					target="#{contractPdf.backAction}" value="contract_form" />
+				<aon:actionListener method="#{contract.onContractDocumentShow}" />
+			</aon:commandButton>
+		</ui:define>
+		<ui:define name="moreMenuContent">
+			<c:if test="#{!contract.skipPayrollData}" >
+				<aon:menuItem 
+					value="#{payrollBundle.payroll_contractCalendarEvent}"
+					iconClass="aon-icon-daily-tracking"
+					rendered="#{!contract.new}"
+					action="contractCalendarEvent_form" >
+					<f:setPropertyActionListener
+						target="#{contractCalendarEvent.backActionListener}" value="contractCalendarEvent.onBack" />
+					<f:setPropertyActionListener
+						target="#{contractCalendarEvent.forceBackAction}" value="true" />
+					<f:setPropertyActionListener
+						target="#{contractCalendarEvent.backAction}" value="contract_form" />
+				</aon:menuItem>
+				<aon:menuItem id="contract_leave"
+					value="#{payrollBundle.payroll_contractLeave_module}"
+					action="contractLeave_form"
+					iconClass="aon-icon-copy">
+					<f:setPropertyActionListener
+						target="#{contractLeave.treeOutcome}" value="#{true}" />
+					<f:setPropertyActionListener
+						target="#{contractLeave.contractEditable}" value="#{false}" />
+					<aon:actionListener method="#{contract.onShowContractLeave}" />
+					<f:setPropertyActionListener
+						target="#{contractLeave.backAction}" value="contract_form" />
+				</aon:menuItem>
+				<aon:menuItem id="settle"
+					value="#{payrollBundle.payroll_settle_module}"
+					action="settle_form"
+					rendered="#{contract.to.endDate==null}"
+					iconClass="aon-icon-black-list">
+					<f:setPropertyActionListener
+						target="#{settle.backAction}" value="contract_form" />
+					<aon:actionListener method="#{contract.onShowSettle}" />
+				</aon:menuItem>
+				<aon:menuItem id="IRPF-calculator"
+					value="#{payrollBundle.payroll_contract_irpf_data}"
+					action="irpfData_form"
+					iconClass="aon-icon-aeat">
+					<aon:actionListener method="#{contract.onShowIrpfData}" />
+					<f:setPropertyActionListener
+						target="#{irpfData.backAction}" value="contract_form" />
+				</aon:menuItem>
+			</c:if>
+<!--  
+			<aon:menuItem id="contrata"
+				value="#{payrollBundle.payroll_contract_contrataData}"
+				action="contrata_form" 
+				rendered="#{!contract.new}"
+				actionListener="#{contract.onShowContrataData}"
+				iconClass="aon-icon-contrata" >
+				<f:setPropertyActionListener
+					target="#{contractContrata.backAction}" value="contract_form" />
+			</aon:menuItem>
+			
+			<rich:menuSeparator id="menuSeparator" />
+			
+			<aon:menuItem id="documentDraft-edition" 
+				action="contractPdfEdition_form"
+				rendered="#{not empty contract.to.model and not contract.existDocument}"
+				value="Contrato"
+				title="Edicion manual del documento del contrato"
+				iconClass="aon-icon-pdf" >
+				<f:setPropertyActionListener
+					target="#{contractPdf.documentType}" value="CONTRACT_DOCUMENT_DRAFT" />
+				<f:setPropertyActionListener
+					target="#{contractPdf.backAction}" value="contract_form" />
+				<aon:actionListener method="#{contract.onContractDocumentShow}" />
+			</aon:menuItem>
+			<aon:menuItem id="basicCopyDraft-edition"
+				action="contractPdfEdition_form" 
+				rendered="#{not empty contract.to.model and not contract.existDocument}"
+				value="Copia Basica"
+				title="Edicion manual del documento de la copia basica"
+				iconClass="aon-icon-pdf" >
+				<f:setPropertyActionListener
+					target="#{contractPdf.documentType}" value="BASIC_COPY_DRAFT" />
+				<f:setPropertyActionListener
+					target="#{contractPdf.backAction}" value="contract_form" />
+				<aon:actionListener method="#{contract.onContractDocumentShow}" />
+			</aon:menuItem>
+-->			
+		</ui:define>
+	</ui:decorate>
+	
+</ui:composition>

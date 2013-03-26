@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+			
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+		<ui:param name="innerToolbar" value="true" />
+		<ui:define name="toolbarContent">
+			
+			<aon:commandButton id="contrata-save"
+				value="#{contractContrata.new?bundle.aon_accept:bundle.aon_save}"
+				actionListener="#{contractContrata.onAccept}"
+				styleClass="aon-finding-toolbar-item aon-icon-accept" />
+				
+			<aon:commandButton id="contrata-sepe-comunication"
+				value="Comunicar al S.E.P.E."
+				rendered="#{!contractContrata.new and !contractContrata.communicationResponseReceived}"
+				reRender="showContrataLoginWindow,contrataResponseContainer,contrataData,contractForm"
+				actionListener="#{contractContrata.onSendContrataFile}"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+ 				oncomplete="Richfaces.hideModalPanel('waitProccess')"
+				styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
+			
+			<aon:commandButton id="contrata-sepe-dataQuery"
+				value="Consultar datos al S.E.P.E."
+				reRender="showContrataLoginWindow,contrataResponseContainer,contrataData,contractForm"
+				rendered="#{!contractContrata.new and contractContrata.communicationResponseReceived}"
+				actionListener="#{contractContrata.onContrataDataQuery}"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+ 				oncomplete="Richfaces.hideModalPanel('waitProccess')"
+				styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
+
+<!--  
+			<aon:commandButton id="contrata-sepe-viewDataQuery"
+				value="Mostrar última consulta"
+				reRender="showContrataLoginWindow,contrataResponseContainer,contrataData,contractForm"
+				rendered="#{!contractContrata.new and contractContrata.communicationResponseReceived}"
+				actionListener="#{contractContrata.onShowDataQuery}"
+				styleClass="aon-finding-toolbar-item aon-icon-sincronize"  />
+-->
+			
+		</ui:define>				
+	</ui:decorate>
+				
+</ui:composition>
