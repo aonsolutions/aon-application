@@ -1,21 +1,19 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.code.aon</groupId>
-		<artifactId>aon.web.parent</artifactId>
+		<artifactId>aon.parent</artifactId>
 		<version>7.15-SNAPSHOT</version>
-		<relativePath>../aon-web-parent</relativePath>
 	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon-ws-gps</artifactId>
 	<packaging>war</packaging>
-	<version>7.15-SNAPSHOT</version>
-	<description>AON WS GPS</description>
 	<name>AON WS GPS</name>
+	<description>AON WS GPS</description>
 	<properties>
-		<dbVersion>7.0.0</dbVersion>
+		<maven.build.timestamp.format>dd/MM/yyyy</maven.build.timestamp.format>
 	</properties>
+
 	<build>
 		<finalName>aon-ws-gps</finalName>
 		<plugins>
