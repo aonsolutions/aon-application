@@ -34,11 +34,132 @@
 			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
+		
+		<!--  DEPENDENCIAS DE EJECUCION PARA TOMCAT -->
+		<dependency>
+			<groupId>com.sun.xml.ws</groupId>
+			<artifactId>jaxws-rt</artifactId>
+			<version>2.2.6</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate</artifactId>
+			<version>3.2.7.ga</version>
+			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm-attrs</artifactId>
+				</exclusion>
+				<exclusion>
+				    <groupId>net.sf.ehcache</groupId>
+				    <artifactId>ehcache</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-annotations</artifactId>
+			<version>3.3.1.GA</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-commons-annotations</artifactId>
+			<version>3.3.0.ga</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>c3p0</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>0.9.1.2</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+  			<groupId>antlr</groupId>
+  			<artifactId>antlr</artifactId>
+  			<version>2.7.6</version>
+			<scope>runtime</scope>
+		</dependency>
+		
 	</dependencies>
-    <profiles>
+
+	<profiles>
+		<profile>
+		
+			<id>tomcat-rpm-release</id>
+			
+			<activation>
+				<property>
+					<name>tomcat.rpm.release</name>
+					<value>true</value>
+				</property>
+			</activation>
+
+			<build>
+				<pluginManagement>
+					<plugins>
+						<!-- Para construir el RPM -->
+						<plugin>
+
+							<groupId>org.codehaus.mojo</groupId>
+							<artifactId>rpm-maven-plugin</artifactId>
+							<version>2.1-alpha-2</version>
+							<extensions>true</extensions>
+							
+
+							<executions>
+								<execution>
+									<id>tomcat-rpm-build</id>
+									<goals>
+										<goal>attached-rpm</goal>
+									</goals>
+									
+									<!-- Se indica la configuracion dentro de la ejecucion, para no sobrescribir la de JBOSS -->
+									<configuration>
+										<group>Applications/Aon</group>
+										
+										<!-- Se utiliza el parametro calssifier para diferenciar la ejcución de la de Jboss web-parent. --> 
+										<classifier>TOMCAT</classifier>
+										
+										<release>tomcat_${buildNumber}</release>
+										<copyright>2013, esferalia Networks S.A</copyright>
+										<requires>
+											<require>tomcat6</require>
+											<!-- CONFIRMAR  -->
+											<require>java-1.7.0-openjdk</require>
+											<require>mysql-connector-java</require>
+											<require>slf4j</require>
+										</requires>
+										<mappings>
+											<mapping>
+												<directory>/var/lib/tomcat6/webapps/aon-ws-gps</directory>
+												<filemode>755</filemode>
+												<username>tomcat</username>
+												<groupname>tomcat</groupname>
+												<directoryIncluded>false</directoryIncluded>
+												<sources>
+													<source>
+														<location>target/aon-ws-gps</location>
+													</source>
+												</sources>
+											</mapping>
+										</mappings>
+									</configuration>
+								</execution>
+							</executions>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
+		
       	<profile>
             <id>perform-stats</id>
         </profile>
-    </profiles>
+
+	</profiles>	
 </project>
  
