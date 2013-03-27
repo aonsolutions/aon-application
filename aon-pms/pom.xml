@@ -54,13 +54,7 @@
 		<dependency>
 			<groupId>axis</groupId>
 			<artifactId>axis-jaxrpc</artifactId>
-			<version>1.4</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>axis</groupId>
-			<artifactId>axis-saaj</artifactId>
-			<version>1.4</version>
+			<version>1.3</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

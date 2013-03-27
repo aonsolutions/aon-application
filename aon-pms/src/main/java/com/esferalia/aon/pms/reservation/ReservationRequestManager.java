@@ -1,5 +1,6 @@
 package com.esferalia.aon.pms.reservation;
 
+import java.io.StringReader;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.Calendar;
@@ -8,12 +9,16 @@ import java.util.List;
 
 import javax.xml.messaging.Endpoint;
 import javax.xml.messaging.URLEndpoint;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.commons.lang.StringUtils;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -191,27 +196,15 @@ public class ReservationRequestManager implements IReservationConstants {
 	private String sendAvailabilityQuery(String message, List<AvailableRoomStay> availableRoomStayList) {
 		try {
 			Endpoint endpoint = new URLEndpoint(new URL(obtainSoapServerUrl()).toString());
-			MessageFactory messageFactory = MessageFactory.newInstance();
-System.out.println(messageFactory);
-			SOAPMessage soapRequest = messageFactory.createMessage();
-System.out.println(soapRequest);
-System.out.println(soapRequest.getSOAPHeader());
-System.out.println(soapRequest.getSOAPBody());
-System.out.println(soapRequest.getSOAPPart());
-			soapRequest.getSOAPBody().setValue(convertMessage(message));
-System.out.println(convertMessage(message));
-System.out.println(soapRequest.getSOAPHeader());
-System.out.println(soapRequest.getSOAPBody());
-System.out.println(soapRequest.getSOAPPart());
+			SOAPMessage soapRequest = MessageFactory.newInstance().createMessage();
+			soapRequest.getSOAPBody().addDocument(obtainMessageDocument(message));
 
-			SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
-			SOAPConnection soapConnection = soapConnectionFactory.createConnection();
+			SOAPConnection soapConnection = SOAPConnectionFactory.newInstance().createConnection();
 			SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
 
 			HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
 			return obtainAvailableRoomStayList(hitisDocument.getHITISMessage(), availableRoomStayList);
 		} catch (Exception ex) {
-ex.printStackTrace();
 			AvailableRoomStay availableRoomStay = new AvailableRoomStay();
 			availableRoomStay.setError(true);
 			availableRoomStay.setErrorMessage(ex.getMessage());
@@ -228,6 +221,11 @@ ex.printStackTrace();
 			return ((ApplicationParameter)ito).getValue();
 		}
 		return null;
+	}
+
+	private Document obtainMessageDocument(String message) throws Exception {
+		DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();  
+		return documentBuilder.parse(new InputSource(new StringReader(convertMessage(message))));  
 	}
 
 	private String convertMessage(String message) {
@@ -451,12 +449,10 @@ ex.printStackTrace();
 	private AvailableRoomStay sendBookingQuery(String message, AvailableRoomStay availableRoomStay) {
 		try {
 			Endpoint endpoint = new URLEndpoint(new URL(obtainSoapServerUrl()).toString());
-			MessageFactory messageFactory = MessageFactory.newInstance();
-			SOAPMessage soapRequest = messageFactory.createMessage();
-			soapRequest.getSOAPBody().setValue(convertMessage(message));
+			SOAPMessage soapRequest = MessageFactory.newInstance().createMessage();
+			soapRequest.getSOAPBody().addDocument(obtainMessageDocument(message));
 
-			SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
-			SOAPConnection soapConnection = soapConnectionFactory.createConnection();
+			SOAPConnection soapConnection = SOAPConnectionFactory.newInstance().createConnection();
 			SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
 		
 			HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
@@ -534,12 +530,10 @@ ex.printStackTrace();
 	private boolean sendBookingCancelQuery(String message) {
 		try {
 			Endpoint endpoint = new URLEndpoint(new URL(obtainSoapServerUrl()).toString());
-			MessageFactory messageFactory = MessageFactory.newInstance();
-			SOAPMessage soapRequest = messageFactory.createMessage();
-			soapRequest.getSOAPBody().setValue(convertMessage(message));
+			SOAPMessage soapRequest = MessageFactory.newInstance().createMessage();
+			soapRequest.getSOAPBody().addDocument(obtainMessageDocument(message));
 
-			SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
-			SOAPConnection soapConnection = soapConnectionFactory.createConnection();
+			SOAPConnection soapConnection = SOAPConnectionFactory.newInstance().createConnection();
 			SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
 		
 			HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
