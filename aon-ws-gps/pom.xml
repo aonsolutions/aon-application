@@ -6,6 +6,7 @@
 		<artifactId>aon.parent</artifactId>
 		<version>7.15-SNAPSHOT</version>
 	</parent>
+	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon-ws-gps</artifactId>
 	<packaging>war</packaging>
 	<name>AON WS GPS</name>
