@@ -17,6 +17,72 @@
 	<build>
 		<finalName>aon-ws-gps</finalName>
 		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>parse-version</id>
+						<goals>
+							<goal>parse-version</goal>
+						</goals>
+						<configuration>
+		
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<dbVersion>${dbVersion}</dbVersion>
+							<buildNumber>${env.BUILD_NUMBER}</buildNumber>
+							<buildDate>${maven.build.timestamp}</buildDate>
+							<buildRevision>${buildNumber}</buildRevision>
+						</manifestEntries>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+		            	<id>execution1</id>
+			            <phase>package</phase>
+		            	<configuration>
+			            </configuration>
+		            	<goals>
+							<goal>manifest</goal>
+						</goals>
+					</execution>
+		        </executions>
+			</plugin>
+
 			<!-- Para construir el RPM -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -160,4 +226,3 @@
 
 	</profiles>	
 </project>
- 
