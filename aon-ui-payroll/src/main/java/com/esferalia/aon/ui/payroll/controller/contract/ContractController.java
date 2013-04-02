@@ -173,75 +173,6 @@ public class ContractController extends BasicController implements IVariablesHan
 		setShowNewContractModal(true);
 	}
 	
-	public void onShowVariables( ActionEvent event ) {
-		try {
-			Contract to = (Contract) getTo();
-			IController c = FormUtil.getController(IPayrollConstants.CONTRACT_DATA_CONTROLLER);
-			c.onEditSearch(event);
-			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), to.getId());
-			c.onSearch(event);
-			this.initializeVariables(event);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible mostrar las variables del contrato (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}						
-	}
-	
-	public void onShowPayments( ActionEvent event ) {
-		ContractPaymentController c = (ContractPaymentController) FormUtil.getController(IPayrollConstants.CONTRACT_PAYMENT_CONTROLLER);
-		c.reset(false);
-		c.initialize();
-	}
-	
-	public void onShowDeductions( ActionEvent event ) {
-		try {
-			Contract to = (Contract) getTo();
-			ContractDeductionController c = (ContractDeductionController) FormUtil.getController(IPayrollConstants.CONTRACT_DEDUCTION_CONTROLLER);
-			c.reset(false);
-			c.onEditSearch(event);
-			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_CONTRACT_ID), to.getId());
-			c.onSearch(event);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible mostrar las deducciones del contrato (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}						
-	}
-	public void onShowEmbargos( ActionEvent event ) {
-		try {
-			Contract to = (Contract) getTo();
-			ContractEmbargoController c = (ContractEmbargoController) FormUtil.getController(IPayrollConstants.CONTRACT_EMBARGO_CONTROLLER);
-			c.onEditSearch(event);
-			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_EMBARGO_CONTRACT_ID), to.getId());
-			c.onSearch(event);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible mostrar los embargos del contrato (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}						
-	}
-	public void onShowBonus( ActionEvent event ) {
-		try {
-			Contract to = (Contract) getTo();
-			ContractBonusController c = (ContractBonusController) FormUtil.getController(IPayrollConstants.CONTRACT_BONUS_CONTROLLER);
-			c.onEditSearch(event);
-			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_BONUS_CONTRACT_ID), to.getId());
-			c.onSearch(event);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible mostrar las bonificaciones del contrato (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}						
-	}
-	public void onShowDocuments( ActionEvent event ) {
-		
-	}
-	
 	public void onEnterpriseChanged( LookupChangeEvent event ) {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			setEnterprise((Enterprise)event.getNewValue());
@@ -372,21 +303,81 @@ public class ContractController extends BasicController implements IVariablesHan
 			LOGGER.error(msg);
 		}
 	}
+	
+	public List<SelectItem> getAgreementLevelCategories(){
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		try {
+			Criteria criteria = new Criteria();
+			if(getAgreement()!=null && getAgreement().getId()!=null){
+				IManagerBean cBean = BeanManager.getManagerBean(AgreementLevelCategory.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(cBean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_AGREEMENT_ID), getAgreement().getId());
+				for (ITransferObject to : cBean.getList(criteria)) {
+					AgreementLevelCategory alc = (AgreementLevelCategory) to;
+					String name = alc.getLevel().getDescription() + (alc.getDescription()!=null?" - "+alc.getDescription():"");
+					SelectItem item = new SelectItem(alc, name);
+					list.add(item);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, no se cargan datos del convenio
+		}
+		return list;
+	}
+	
+	public void onChangeAgreement(LookupChangeEvent event){
+		if (event.getNewValue() == null || event.getNewValue().equals("")) {
+			Contract contract = (Contract) getTo();
+			contract.setAgreementLevelCategory(null);
+		}
+	}
+	
+	public void onChangeAgreementLevelCategory(ActionEvent event){
+		// TODO if contract.isNew then pedir salario bruto, y si es asi como obtenerlo del convenio?
+		Contract contract = (Contract) getTo();
+		try {
+			if(contract.getAgreementLevelCategory()!=null){
+				IManagerBean bean = BeanManager.getManagerBean(AgreementLevelData.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID), contract.getAgreementLevelCategory().getLevel().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_NAME), "P05_IMPORTE");
+				List<ITransferObject> list = bean.getList(criteria);
+				if(!list.isEmpty()){
+					AgreementLevelData d = (AgreementLevelData) list.get(0);
+					getParams().setAgreementSalaryCheck(true);
+					getParams().setGrossSalary(d.getDoubleExpression());
+				} else {
+					getParams().setAgreementSalaryCheck(false);
+					getParams().setGrossSalary(null);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+	}
+	
+	public void onChangeCno(LookupChangeEvent event){
+		Contract contract = (Contract) this.getTo();
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			contract.setCategoryDescription(((CNO)event.getNewValue()).getTitle());
+		}
+	}
+	
+	public boolean isTrainingContract(){
+		PayrollUtils utils = new PayrollUtils();
+		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
+		return map.get(ContextVariable.TC2.getName())!=null && ContractCode.getContractCodeByValue(map.get(ContextVariable.TC2.getName()))==ContractCode.C421;
+	}
+
+	public boolean isTrainingCenterDefined(){
+		PayrollUtils utils = new PayrollUtils();
+		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
+		return map.get(ContextVariable.TRAINING_CENTER.getName())!=null;
+	}
 
 //	 * ************************************
 //	 * 			DOWNLOAD & UPLOAD METHODS		
 //	 * ************************************
-	public void onDownloadSelected( ActionEvent event ) {
-		try {
-			Contract c = (Contract) getTo();
-			download(c);
-		} catch (IOException e) {
-			String msg = "Imposible descargar el Contrato. (" +e.getMessage() + ")"; 
-			LOGGER.error(msg, e);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}
-	}
 	
 	public void onDownloadContract( ActionEvent event ) {
 		try {
@@ -421,32 +412,6 @@ public class ContractController extends BasicController implements IVariablesHan
 		response.flushBuffer();
 		context.responseComplete();
 	}
-//	public void onFileUploaded( ActionEvent event ) {
-//		if(getAonFile().getSize()>MAX_FILE_SIZE){
-//			setAonFile(null);
-//			String msg = "El tamaño del archivo excede de lo permitido ("+MAX_FILE_SIZE_MB+" Mb)";
-//			AonUtil.addErrorMessage(msg);
-//			throw new AbortProcessingException(msg);
-//		}
-//		saveContractAttach(getAonFile().getData());
-//	}
-	
-//	private void saveContractAttach(byte[] data) {
-//		try {
-//			ContractAttachment attach = new ContractAttachment();
-//			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
-//			attach.setContract((Contract) this.getTo());
-//			attach.setData(data);
-//			attach.setAttachDate(new Date());
-//			attach.setAttachmentType(ContractAttachmentType.PDF_DOCUMENT);
-//			attach.setMimeType(MimeType.MIME_PDF);
-//			attach.setDescription("documento_contrato");
-//			bean.insertOrUpdate(attach);
-//		} catch (ManagerBeanException e) {
-//			LOGGER.error(e.getMessage(), e);
-//			// NADA, no se guarda el documento
-//		}
-//	}
 	
 	public void searchContractAttachDocument(Contract contract) {
 		try {
@@ -487,27 +452,102 @@ public class ContractController extends BasicController implements IVariablesHan
 		return false;
 	}
 	
-	public void fileUploaded(UploadEvent event) {
+	public void onContractDocumentShow( ActionEvent event ) {
+		ContractPdfController controller = (ContractPdfController) AonUtil.getRegisteredBean("contractPdf");
+		controller.onContractDocumentShow(event);
+	}
+	
+	
+	
+	public String onTrainingCenterDirectDebitReport() throws ManagerBeanException{
+		TrainingCenterController tcController = (TrainingCenterController) AonUtil.getRegisteredBean("trainingCenter");
 		try {
-			UploadItem item = event.getUploadItem();
-			AonFile f = new AonFile();
-			File file = item.getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				f.setData(data);
+			PayrollUtils utils = new PayrollUtils();
+			Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
+			if(map.get(ContextVariable.TRAINING_CENTER.getName())!=null){
+				String id = map.get(ContextVariable.TRAINING_CENTER.getName());
+				tcController.select(null, Integer.parseInt(id));
 			}
-			f.setFileName( item.getFileName() );
-			f.setMimeType( MimeType.get(item.getContentType()) );
-			setAonFile(f);
-		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage());
+			ReportManager report = (ReportManager) AonUtil.getRegisteredBean("report");
+			return report.onExecute();
+		} finally {
+			tcController.clearCriteria();
+			tcController.initializeModel();
 		}
 	}
 	 
 //	 * ************************************
 //	 * 			TREE METHODS		
 //	 * ************************************
+	
+	public void onShowVariables( ActionEvent event ) {
+		try {
+			Contract to = (Contract) getTo();
+			IController c = FormUtil.getController(IPayrollConstants.CONTRACT_DATA_CONTROLLER);
+			c.onEditSearch(event);
+			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), to.getId());
+			c.onSearch(event);
+			this.initializeVariables(event);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible mostrar las variables del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}						
+	}
+	
+	public void onShowPayments( ActionEvent event ) {
+		ContractPaymentController c = (ContractPaymentController) FormUtil.getController(IPayrollConstants.CONTRACT_PAYMENT_CONTROLLER);
+		c.reset(false);
+		c.initialize();
+	}
+	
+	public void onShowDeductions( ActionEvent event ) {
+		try {
+			Contract to = (Contract) getTo();
+			ContractDeductionController c = (ContractDeductionController) FormUtil.getController(IPayrollConstants.CONTRACT_DEDUCTION_CONTROLLER);
+			c.reset(false);
+			c.onEditSearch(event);
+			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_CONTRACT_ID), to.getId());
+			c.onSearch(event);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible mostrar las deducciones del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}						
+	}
+	public void onShowEmbargos( ActionEvent event ) {
+		try {
+			Contract to = (Contract) getTo();
+			ContractEmbargoController c = (ContractEmbargoController) FormUtil.getController(IPayrollConstants.CONTRACT_EMBARGO_CONTROLLER);
+			c.onEditSearch(event);
+			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_EMBARGO_CONTRACT_ID), to.getId());
+			c.onSearch(event);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible mostrar los embargos del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}						
+	}
+	public void onShowBonus( ActionEvent event ) {
+		try {
+			Contract to = (Contract) getTo();
+			ContractBonusController c = (ContractBonusController) FormUtil.getController(IPayrollConstants.CONTRACT_BONUS_CONTROLLER);
+			c.onEditSearch(event);
+			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_BONUS_CONTRACT_ID), to.getId());
+			c.onSearch(event);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible mostrar las bonificaciones del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}						
+	}
+	public void onShowDocuments( ActionEvent event ) {
+		
+	}
 	 
 	public void onEdit( ActionEvent event ) {
 		try {
@@ -609,98 +649,9 @@ public class ContractController extends BasicController implements IVariablesHan
 		controller.onContractaDataShow(event);
 	}
 	
-	public void onContractDocumentShow( ActionEvent event ) {
-		ContractPdfController controller = (ContractPdfController) AonUtil.getRegisteredBean("contractPdf");
-		controller.onContractDocumentShow(event);
-	}
-	
-	public List<SelectItem> getAgreementLevelCategories(){
-		List<SelectItem> list = new LinkedList<SelectItem>();
-		try {
-			Criteria criteria = new Criteria();
-			if(getAgreement()!=null && getAgreement().getId()!=null){
-				IManagerBean cBean = BeanManager.getManagerBean(AgreementLevelCategory.class);
-				criteria = new Criteria();
-				criteria.addEqualExpression(cBean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_AGREEMENT_ID), getAgreement().getId());
-				for (ITransferObject to : cBean.getList(criteria)) {
-					AgreementLevelCategory alc = (AgreementLevelCategory) to;
-					String name = alc.getLevel().getDescription() + (alc.getDescription()!=null?" - "+alc.getDescription():"");
-					SelectItem item = new SelectItem(alc, name);
-					list.add(item);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			// NADA, no se cargan datos del convenio
-		}
-		return list;
-	}
-	
-	public void onChangeAgreement(LookupChangeEvent event){
-		if (event.getNewValue() == null || event.getNewValue().equals("")) {
-			Contract contract = (Contract) getTo();
-			contract.setAgreementLevelCategory(null);
-		}
-	}
-	
-	public void onChangeAgreementLevelCategory(ActionEvent event){
-		// TODO if contract.isNew then pedir salario bruto, y si es asi como obtenerlo del convenio?
-		Contract contract = (Contract) getTo();
-		try {
-			if(contract.getAgreementLevelCategory()!=null){
-				IManagerBean bean = BeanManager.getManagerBean(AgreementLevelData.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID), contract.getAgreementLevelCategory().getLevel().getId());
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_NAME), "P05_IMPORTE");
-				List<ITransferObject> list = bean.getList(criteria);
-				if(!list.isEmpty()){
-					AgreementLevelData d = (AgreementLevelData) list.get(0);
-					getParams().setAgreementSalaryCheck(true);
-					getParams().setGrossSalary(d.getDoubleExpression());
-				} else {
-					getParams().setAgreementSalaryCheck(false);
-					getParams().setGrossSalary(null);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			// NADA
-		}
-	}
-	
-	public void onChangeCno(LookupChangeEvent event){
-		Contract contract = (Contract) this.getTo();
-		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			contract.setCategoryDescription(((CNO)event.getNewValue()).getTitle());
-		}
-	}
-	
-	public boolean isTrainingContract(){
-		PayrollUtils utils = new PayrollUtils();
-		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
-		return map.get(ContextVariable.TC2.getName())!=null && ContractCode.getContractCodeByValue(map.get(ContextVariable.TC2.getName()))==ContractCode.C421;
-	}
 
-	public boolean isTrainingCenterDefined(){
-		PayrollUtils utils = new PayrollUtils();
-		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
-		return map.get(ContextVariable.TRAINING_CENTER.getName())!=null;
-	}
 	
-	public String onTrainingCenterDirectDebitReport() throws ManagerBeanException{
-		TrainingCenterController tcController = (TrainingCenterController) AonUtil.getRegisteredBean("trainingCenter");
-		try {
-			PayrollUtils utils = new PayrollUtils();
-			Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
-			if(map.get(ContextVariable.TRAINING_CENTER.getName())!=null){
-				String id = map.get(ContextVariable.TRAINING_CENTER.getName());
-				tcController.select(null, Integer.parseInt(id));
-			}
-			ReportManager report = (ReportManager) AonUtil.getRegisteredBean("report");
-			return report.onExecute();
-		} finally {
-			tcController.clearCriteria();
-			tcController.initializeModel();
-		}
-	}
+	
 
 	
 //	 * ************************************

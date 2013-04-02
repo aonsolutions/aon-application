@@ -38,10 +38,9 @@ import com.code.aon.ql.Projection;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.FICHEROCONTRATOS;
+import com.esferalia.aon.sepe.api.contrata.contratos.FICHEROCONTRATOS;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
-import com.esferalia.aon.payroll.contrata.ContrataManager;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -50,6 +49,7 @@ import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.file.ContrataParams;
 import com.esferalia.aon.ui.payroll.file.ContrataReader;
 import com.esferalia.aon.ui.payroll.file.ContrataWriter;
+import com.esferalia.aon.ui.payroll.sepe.ContrataManager;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 

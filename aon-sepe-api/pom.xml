@@ -9,6 +9,43 @@
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.sepe.api</artifactId>
 	<name>AON SEPE API</name>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+			<version>2.4.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.7.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.4</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- JAXB -->
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.2.5-2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jvnet.jaxb2_commons</groupId>
+			<artifactId>jaxb2-basics-runtime</artifactId>
+			<version>0.6.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jvnet.jaxb2_commons</groupId>
+			<artifactId>jaxb2-basics-testing</artifactId>
+			<version>0.6.4</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
@@ -43,7 +80,7 @@
 		              <goal>wsimport</goal>
 		            </goals>
 					<configuration>
-						<wsdlDirectory>src/main/wsdl</wsdlDirectory>
+						<wsdlDirectory>src/main/resources/META-INF/wsdl</wsdlDirectory>
 						<wsdlFiles>
 	       					<wsdlFile>SWComunicacionDatos.wsdl</wsdlFile>
 						</wsdlFiles>
@@ -55,20 +92,13 @@
 						<staleFile>${project.build.directory}/generated-sources/staleFlag/jaxws/.staleFlag</staleFile>
 					</configuration>
 		          </execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.jvnet.jax-ws-commons</groupId>
-		        <artifactId>jaxws-maven-plugin</artifactId>
-		        <version>2.2</version>
-		        <executions>
 		          <execution>
 		            <id>SWConsultaDatos</id>
 		            <goals>
 		              <goal>wsimport</goal>
 		            </goals>
 					<configuration>
-						<wsdlDirectory>src/main/wsdl</wsdlDirectory>
+						<wsdlDirectory>src/main/resources/META-INF/wsdl</wsdlDirectory>
 						<wsdlFiles>
 	       					<wsdlFile>SWConsultaDatos.wsdl</wsdlFile>
 						</wsdlFiles>
@@ -79,6 +109,163 @@
 					</configuration>
 		          </execution>
 				</executions>
+			</plugin>
+			<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+			<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+			<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+			<plugin>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<version>0.8.2</version>
+				<executions>
+					<!-- ================================ -->
+					<!-- Esquemas de ficheros a comunicar -->
+					<!-- ================================ -->
+					<execution>
+						<id>generate-contratos</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/contratos</generateDirectory>
+							<generatePackage>com.esferalia.aon.sepe.api.contrata.contratos</generatePackage>
+							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas</schemaDirectory>
+							<schemaIncludes>
+					<!--  
+								<include>EsquemaContratos50.xsd</include>
+					-->
+								<include>EsquemaRespuestaContratos50.xsd</include>
+							</schemaIncludes>
+<!--  
+							<bindingIncludes>
+	                            <include>EsquemaContratos50_binding.xjb</include>
+	                        </bindingIncludes>
+-->
+							<forceRegenerate>false</forceRegenerate>
+							
+							<!-- whether old output should be removed, this field should generally be set to "true" -->  
+							<removeOldOutput>true</removeOldOutput>  
+							<!-- generate lots of output -->  
+							<verbose>true</verbose>
+							<extension>true</extension>
+							<args>
+								<param>-npa</param>
+								<arg>-Xinheritance</arg>
+							</args>
+	                        <plugins>
+								<plugin>
+									<groupId>org.jvnet.jaxb2_commons</groupId>
+									<artifactId>jaxb2-basics</artifactId>
+									<version>0.6.4</version>
+								</plugin>
+							</plugins>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate-transformaciones</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/transformaciones</generateDirectory>
+							<generatePackage>com.esferalia.aon.sepe.api.contrata.transformaciones</generatePackage>
+							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas</schemaDirectory>
+							<schemaIncludes>
+								<include>EsquemaTransformaciones50.xsd</include>
+							</schemaIncludes>
+							<bindingIncludes>
+	                            <include>EsquemaTransformaciones50_binding.xjb</include>
+	                        </bindingIncludes>
+							<forceRegenerate>false</forceRegenerate>
+							<removeOldOutput>true</removeOldOutput>
+							<verbose>true</verbose>
+							<extension>true</extension>
+							<args>
+								<param>-npa</param>
+								<arg>-Xinheritance</arg>
+							</args>
+	                        <plugins>
+								<plugin>
+									<groupId>org.jvnet.jaxb2_commons</groupId>
+									<artifactId>jaxb2-basics</artifactId>
+									<version>0.6.4</version>
+								</plugin>
+							</plugins>
+						</configuration>
+					</execution>
+<!--  
+					<execution>
+						<id>generate-prorrogas</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/</generateDirectory>
+							<schemaDirectory>${project.basedir}/src/main/schemas</schemaDirectory>
+							<schemaIncludes>
+								<include>EsquemaProrrogas50.xsd</include>
+							</schemaIncludes>
+							<forceRegenerate>false</forceRegenerate>
+							<removeOldOutput>true</removeOldOutput>
+							<verbose>true</verbose>
+							<extension>true</extension>
+							<args>
+								<param>-npa</param>
+								<arg>-Xinheritance</arg>
+							</args>
+	                        <plugins>
+								<plugin>
+									<groupId>org.jvnet.jaxb2_commons</groupId>
+									<artifactId>jaxb2-basics</artifactId>
+									<version>0.6.4</version>
+								</plugin>
+							</plugins>
+						</configuration>
+					</execution>
+-->					
+					
+					<!-- ================================= -->
+					<!-- Esquemas de ficheros de respuesta -->
+					<!-- ================================= -->
+<!--  
+					<execution>
+						<id>generate-respuestaContratos</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/</generateDirectory>
+							<schemaDirectory>${project.basedir}/src/main/schemas</schemaDirectory>
+							<schemaIncludes>
+								<include>EsquemaRespuestaContratos50.xsd</include>
+							</schemaIncludes>
+							<forceRegenerate>false</forceRegenerate>
+							<removeOldOutput>true</removeOldOutput>
+							<verbose>true</verbose>
+							<extension>true</extension>
+							<args>
+								<param>-npa</param>
+								<arg>-Xinheritance</arg>
+							</args>
+	                        <plugins>
+								<plugin>
+									<groupId>org.jvnet.jaxb2_commons</groupId>
+									<artifactId>jaxb2-basics</artifactId>
+									<version>0.6.4</version>
+								</plugin>
+							</plugins>
+						</configuration>
+					</execution>
+-->
+				</executions>  
+			</plugin>
+			<plugin>
+				<inherited>true</inherited>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
 			</plugin>
 		</plugins>
 		<pluginManagement>
@@ -117,14 +304,7 @@
 			</plugins>
 		</pluginManagement>
 	</build> 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.xmlbeans</groupId>
-			<artifactId>xmlbeans</artifactId>
-			<version>2.4.0</version>
-			<scope>compile</scope>
-		</dependency>
-	</dependencies>
+	
     <profiles>
       	<profile>
             <id>perform-stats</id>

@@ -30,6 +30,11 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.sepe.api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 	        <groupId>com.lowagie</groupId>
 	        <artifactId>itext</artifactId>
 	        <version>2.1.7</version>
@@ -47,178 +52,12 @@
 			<scope>compile</scope>
 		</dependency>
 		
-		<!-- JAXB -->
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<version>2.2.5-2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jvnet.jaxb2_commons</groupId>
-			<artifactId>jaxb2-basics-runtime</artifactId>
-			<version>0.6.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jvnet.jaxb2_commons</groupId>
-			<artifactId>jaxb2-basics-testing</artifactId>
-			<version>0.6.4</version>
-			<scope>test</scope>
-		</dependency>
-		
 	</dependencies>
     <profiles>
       	<profile>
             <id>perform-stats</id>
         </profile>
     </profiles>
-    
-    <build>
-		<plugins>
-	        <plugin>
-				<groupId>org.jvnet.jaxb2.maven2</groupId>
-				<artifactId>maven-jaxb2-plugin</artifactId>
-				<version>0.8.2</version>
-				<executions>
-					<!-- ================================== -->
-					<!-- Esquemas de ficheros por comunicar -->
-					<!-- ================================== -->
-					<execution>
-						<id>generate-contratos</id>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<generateDirectory>${project.build.directory}/contrata/generated-sources/contratos</generateDirectory>
-							<schemaDirectory>${project.basedir}/src/main/schemas</schemaDirectory>
-							<schemaIncludes>
-					<!--  
-								<include>EsquemaContratos50.xsd</include>
-					-->
-								<include>EsquemaRespuestaContratos50.xsd</include>
-							</schemaIncludes>
-							<bindingIncludes>
-	                            <include>EsquemaContratos50_binding.xjb</include>
-	                        </bindingIncludes>
-							<forceRegenerate>false</forceRegenerate>
-							<removeOldOutput>true</removeOldOutput>
-							<verbose>true</verbose>
-							<extension>true</extension>
-							<args>
-								<param>-npa</param>
-								<arg>-Xinheritance</arg>
-							</args>
-	                        <plugins>
-								<plugin>
-									<groupId>org.jvnet.jaxb2_commons</groupId>
-									<artifactId>jaxb2-basics</artifactId>
-									<version>0.6.4</version>
-								</plugin>
-							</plugins>
-						</configuration>
-					</execution>
-					<execution>
-						<id>generate-transformaciones</id>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<generateDirectory>${project.build.directory}/contrata/generated-sources/transformaciones</generateDirectory>
-							<schemaDirectory>${project.basedir}/src/main/schemas</schemaDirectory>
-							<schemaIncludes>
-								<include>EsquemaTransformaciones50.xsd</include>
-							</schemaIncludes>
-							<bindingIncludes>
-	                            <include>EsquemaTransformaciones50_binding.xjb</include>
-	                        </bindingIncludes>
-							<forceRegenerate>false</forceRegenerate>
-							<removeOldOutput>true</removeOldOutput>
-							<verbose>true</verbose>
-							<extension>true</extension>
-							<args>
-								<param>-npa</param>
-								<arg>-Xinheritance</arg>
-							</args>
-	                        <plugins>
-								<plugin>
-									<groupId>org.jvnet.jaxb2_commons</groupId>
-									<artifactId>jaxb2-basics</artifactId>
-									<version>0.6.4</version>
-								</plugin>
-							</plugins>
-						</configuration>
-					</execution>
-					<execution>
-						<id>generate-prorrogas</id>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<generateDirectory>${project.build.directory}/contrata/generated-sources/prorrogas</generateDirectory>
-							<schemaDirectory>${project.basedir}/src/main/schemas</schemaDirectory>
-							<schemaIncludes>
-								<include>EsquemaProrrogas50.xsd</include>
-							</schemaIncludes>
-							<forceRegenerate>false</forceRegenerate>
-							<removeOldOutput>true</removeOldOutput>
-							<verbose>true</verbose>
-							<extension>true</extension>
-							<args>
-								<param>-npa</param>
-								<arg>-Xinheritance</arg>
-							</args>
-	                        <plugins>
-								<plugin>
-									<groupId>org.jvnet.jaxb2_commons</groupId>
-									<artifactId>jaxb2-basics</artifactId>
-									<version>0.6.4</version>
-								</plugin>
-							</plugins>
-						</configuration>
-					</execution>
-					
-					<!-- ================================= -->
-					<!-- Esquemas de ficheros de respuesta -->
-					<!-- ================================= -->
-					<execution>
-						<id>generate-respuestaContratos</id>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<generateDirectory>${project.build.directory}/contrata/generated-sources/contratos</generateDirectory>
-							<schemaDirectory>${project.basedir}/src/main/schemas</schemaDirectory>
-							<schemaIncludes>
-								<include>EsquemaRespuestaContratos50.xsd</include>
-							</schemaIncludes>
-							<forceRegenerate>false</forceRegenerate>
-							<removeOldOutput>true</removeOldOutput>
-							<verbose>true</verbose>
-							<extension>true</extension>
-							<args>
-								<param>-npa</param>
-								<arg>-Xinheritance</arg>
-							</args>
-	                        <plugins>
-								<plugin>
-									<groupId>org.jvnet.jaxb2_commons</groupId>
-									<artifactId>jaxb2-basics</artifactId>
-									<version>0.6.4</version>
-								</plugin>
-							</plugins>
-						</configuration>
-					</execution>
-				</executions>  
-			</plugin>
-			<plugin>
-				<inherited>true</inherited>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 	
 </project>
  

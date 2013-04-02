@@ -18,20 +18,24 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.payroll.contract.model.IContratoType;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.*;
+import com.esferalia.aon.sepe.api.contrata.contratos.*;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.sepe.api.contract.model.IContratoType;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class ContrataContratosWriter {
 	
 	private final String ZERO_VALUE = "0";
 	
-	private com.esferalia.aon.file.payroll.contract.generated.contratos.ObjectFactory contratoFactory = new com.esferalia.aon.file.payroll.contract.generated.contratos.ObjectFactory();
+	private ObjectFactory factory = new ObjectFactory();
+	
+	public ObjectFactory getFactory(){
+		return factory;
+	}
 	
 	public IContratoType createFile(IContratoType contratoType, ContrataParams params) throws ManagerBeanException{
 		writeContratosMainData(contratoType, params);
@@ -393,7 +397,7 @@ public class ContrataContratosWriter {
 		return c;
 	}
 	private DATOSEMPRESATYPE createDatosEmpresa(ContrataParams params) throws ManagerBeanException {
-		DATOSEMPRESATYPE datos = contratoFactory.createDATOSEMPRESATYPE();
+		DATOSEMPRESATYPE datos = factory.createDATOSEMPRESATYPE();
 		datos.setCIFNIFEMPRESA(createCifNif(params.getContract().getWorkPlace().getEnterprise().getRegistry().getDocument()));
 		datos.setCODIGOCUENTACOTIZACION(completeLength(getEnterpriseCCC(params.getContract().getWorkPlace().getEnterprise()),15,"0",false));
 		return datos;
@@ -476,7 +480,7 @@ public class ContrataContratosWriter {
 	 */
 	private DATOSTRABAJADORTYPE createDatosTrabajador(ContrataParams params) throws ManagerBeanException {
 		Person person = params.getContract().getPerson();
-		DATOSTRABAJADORTYPE datos = contratoFactory.createDATOSTRABAJADORTYPE(); 
+		DATOSTRABAJADORTYPE datos = factory.createDATOSTRABAJADORTYPE(); 
 		if(person.getBirthDate()!=null){
 			datos.setFECHANACIMIENTO(getFormatedDate(person.getBirthDate()));
 		} else {
@@ -520,7 +524,7 @@ public class ContrataContratosWriter {
 	}
 
 	private NOMBREAPELLIDOSTYPE createNombreApellidos(Person person) {
-		NOMBREAPELLIDOSTYPE datos = contratoFactory.createNOMBREAPELLIDOSTYPE();
+		NOMBREAPELLIDOSTYPE datos = factory.createNOMBREAPELLIDOSTYPE();
 		datos.setNOMBRE(person!=null?person.getName():null);
 		datos.setPRIMERAPELLIDO(person!=null?person.getFirstSurname():null);
 		datos.setSEGUNDOAPELLIDO(person!=null?person.getSecondSurname():null);
@@ -743,7 +747,7 @@ public class ContrataContratosWriter {
 	 */
 	private DATOSGENERALESCONTRATOTYPE createDatosGeneralesContrato(ContrataParams params) throws ManagerBeanException {
 		String tc2 = getContractDataMap(params.getContract()).get(ContextVariable.TC2.getName());
-		DATOSGENERALESCONTRATOTYPE datos = contratoFactory.createDATOSGENERALESCONTRATOTYPE();
+		DATOSGENERALESCONTRATOTYPE datos = factory.createDATOSGENERALESCONTRATOTYPE();
 		datos.setFECHAINICIO(getFormatedDate(params.getContract().getStartDate()));
 		datos.setFECHATERMINO(getFormatedDate(params.getContract().getEndDate()));
 //		Indicador de convenio colectivo.   
@@ -864,7 +868,7 @@ public class ContrataContratosWriter {
 	 */
 	private DATOSMEDIDASFOMENTOTYPE createDatosMedidasFomento(ContrataParams contrataParams) {
 		// TODO 
-		DATOSMEDIDASFOMENTOTYPE datos = contratoFactory.createDATOSMEDIDASFOMENTOTYPE();
+		DATOSMEDIDASFOMENTOTYPE datos = factory.createDATOSMEDIDASFOMENTOTYPE();
 		datos.setINDCOSTEDESPIDO(contrataParams.isPermanentContractDevelopment()?"1":"2");
 		if(contrataParams.isPermanentContractDevelopment()){
 			datos.setCODIGOCOLECTIVODESPIDO(contrataParams.getCodigoColectivoDespido()!=null?contrataParams.getCodigoColectivoDespido().getValue():null);
@@ -904,7 +908,7 @@ public class ContrataContratosWriter {
 	 */
 	private DATOSANEXOCONTRATORELEVOTYPE createDatosAnexoContratoRelevo(ContrataParams params) {
 		if(params.isReliefData()){
-			DATOSANEXOCONTRATORELEVOTYPE datos = contratoFactory.createDATOSANEXOCONTRATORELEVOTYPE();
+			DATOSANEXOCONTRATORELEVOTYPE datos = factory.createDATOSANEXOCONTRATORELEVOTYPE();
 			datos.setTIPOTRABAJADOR(params.getTipoTrabajadorRelevo().getValue());
 			datos.setNOMBREAPELLIDOS(createNombreApellidos(params.getReliefPerson()));
 			return datos;
@@ -939,7 +943,7 @@ public class ContrataContratosWriter {
 	 */
 	private DATOSETCOTYPE createDatosEtCote(ContrataParams params) {
 		if(params.isSchoolWorkshopData()){
-			DATOSETCOTYPE datos = contratoFactory.createDATOSETCOTYPE();
+			DATOSETCOTYPE datos = factory.createDATOSETCOTYPE();
 			datos.setCODIGOETCOTE(params.getCodigoEtCoTe().getValue());
 			return datos;
 		}
@@ -1002,7 +1006,7 @@ public class ContrataContratosWriter {
 	 */
 	private DATOSETTTYPE createDatosEtt(ContrataParams params) {
 		if(params.isEttData()){
-			DATOSETTTYPE datos = contratoFactory.createDATOSETTTYPE();
+			DATOSETTTYPE datos = factory.createDATOSETTTYPE();
 			datos.setCIFNIFEMPRESAUSUARIA(params.getEttCif()!=null?createCifNif(params.getEttCif()):null);
 			datos.setRAZONSOCIALEMPRESAUSUARIA(params.getEttName());
 			datos.setINDCTOPLANTILLA(params.isEttContractTemplate()?"S":null);
@@ -1013,7 +1017,7 @@ public class ContrataContratosWriter {
 	}
 
 	private CIFNIFTYPE createCifNif(String cif) {
-		CIFNIFTYPE datos = contratoFactory.createCIFNIFTYPE();
+		CIFNIFTYPE datos = factory.createCIFNIFTYPE();
 		datos.setCIFNIF(cif);
 		return datos;
 	}
@@ -1053,7 +1057,7 @@ public class ContrataContratosWriter {
 	 */
 	private DATOSCONTRATOEXTRANJEROTYPE createDatosContratoExtranjero(ContrataParams params) {
 		if(params.isAnnexData()){
-			DATOSCONTRATOEXTRANJEROTYPE datos = contratoFactory.createDATOSCONTRATOEXTRANJEROTYPE();
+			DATOSCONTRATOEXTRANJEROTYPE datos = factory.createDATOSCONTRATOEXTRANJEROTYPE();
 			datos.setAÑOCONTINGENTE(params.getAnexEmploymentYear());
 			datos.setINDCARACTEROFERTA(params.getEmploymentCharacter());
 			return datos;
@@ -1107,7 +1111,7 @@ public class ContrataContratosWriter {
 	 * @return
 	 */
 	private DATOSCOMUNICACOPIABASICATYPE createDatosComunicacionCopiaBasica(ContrataParams params) {
-		DATOSCOMUNICACOPIABASICATYPE datos = contratoFactory.createDATOSCOMUNICACOPIABASICATYPE();
+		DATOSCOMUNICACOPIABASICATYPE datos = factory.createDATOSCOMUNICACOPIABASICATYPE();
 		datos.setDOMICCENTROTRABAJO(params.getContract().getWorkPlace().getAddress().getFullAddress());
 		datos.setTEXTOCOPIABASICA(params.getTextoCopiaBasica());
 		datos.setTIPOFIRMA(params.getTipoFirmaCopiaBasica()!=null?params.getTipoFirmaCopiaBasica().getValue():null);
@@ -1120,7 +1124,7 @@ public class ContrataContratosWriter {
 	 */
 	private DATOSUSOLIBREEMPRESATYPE createDatosUsoLibreEmpresa(ContrataParams params) {
 		if(StringUtils.isNotBlank(params.getUsoLibreEmpresa())){
-			DATOSUSOLIBREEMPRESATYPE datos = contratoFactory.createDATOSUSOLIBREEMPRESATYPE();
+			DATOSUSOLIBREEMPRESATYPE datos = factory.createDATOSUSOLIBREEMPRESATYPE();
 			datos.setUSOLIBREEMPRESA(params.getUsoLibreEmpresa());
 			return datos;
 		}
@@ -1281,7 +1285,7 @@ public class ContrataContratosWriter {
 	 */
 	private DATOSCONTRATOTIEMPOPARCIALTYPE createDatosContratoTiempoParcial(ContrataParams params) {
 		// TODO
-		DATOSCONTRATOTIEMPOPARCIALTYPE datos = contratoFactory.createDATOSCONTRATOTIEMPOPARCIALTYPE();
+		DATOSCONTRATOTIEMPOPARCIALTYPE datos = factory.createDATOSCONTRATOTIEMPOPARCIALTYPE();
 		datos.setACTIVIDADSINFECHACIERTA(params.getActividadSinFechaCierta());
 		datos.setCOLECTIVOEDAD(params.getColectivoEdad()!=null?params.getColectivoEdad().getValue():null);
 		datos.setFIJODISCONTINUOPERIODICO(params.getFijoDiscontinuoPeriodico()!=null && params.getFijoDiscontinuoPeriodico()?"S":"N");
@@ -1356,7 +1360,7 @@ public class ContrataContratosWriter {
 	 */
 	private DATOSREDUCCIONRDL12011TYPE createDatosReduccionRdl2011(ContrataParams params) {
 		// TODO
-//		DATOSREDUCCIONRDL12011TYPE datos = contratoFactory.createDATOSREDUCCIONRDL12011TYPE();
+//		DATOSREDUCCIONRDL12011TYPE datos = factory.createDATOSREDUCCIONRDL12011TYPE();
 //		datos.setCODIGOCOLECTIVOREDUCCION(params.getCODIGOCOLECTIVOREDUCCION());
 //		datos.setPORCENTAJEREDUCCION(params.getPORCENTAJEREDUCCION());
 //		datos.setPORCENTAJEJORNADAREDUCCION(params.getPORCENTAJEJORNADAREDUCCION());

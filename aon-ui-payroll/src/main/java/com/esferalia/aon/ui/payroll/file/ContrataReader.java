@@ -20,72 +20,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.person.Person;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.file.payroll.contract.model.IContratoType;
-import com.esferalia.aon.file.payroll.contract.model.IProrrogaType;
-import com.esferalia.aon.file.payroll.contract.model.ITransformacionType;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO100TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO130TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO150TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO200TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO230TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO250TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO300TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO330TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO350TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO401TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO402TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO403TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO410TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO420TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO421TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO430TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO441TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO450TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO452TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO501TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO502TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO503TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO510TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO520TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO530TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO540TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO541TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO550TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO552TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO970TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO980TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATO990TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATOS;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSANEXOCONTRATORELEVOTYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSBONIFICACIONTYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSCOMUNICACOPIABASICATYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSCONTRATOEXTRANJEROTYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSCONTRATOINSERCIONTYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSCONTRATOINTERINIDADTYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSCONTRATOINVESTIGACIONTYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSCONTRATOPRACTICASTYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSCONTRATOTIEMPOPARCIALTYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSCOPIABASICATYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSEMPRESAINSERCIONTYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSETCOTYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSETTTYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSEXCLUSIONSOCIALTYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSGENERALESCONTRATOTYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSMEDIDASFOMENTOTYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSPROGEMPLEOPUBLICOTYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSREDUCCIONRDL12011TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSTRABAJADORTYPE;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.DATOSUSOLIBREEMPRESATYPE;
-import com.esferalia.aon.file.payroll.contract.generated.prorrogas.PRORROGAS;
-import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACION109TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACION139TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACION189TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACION209TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACION239TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACION289TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACION309TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACION389TYPE;
-import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACIONES;
+import com.esferalia.aon.sepe.api.contrata.contratos.*;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACIONES;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
@@ -104,14 +40,17 @@ import com.esferalia.aon.payroll.contrata.enumeration.THPCOLFO;
 import com.esferalia.aon.payroll.contrata.enumeration.THYDISLE;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.sepe.api.contract.model.IContratoType;
+import com.esferalia.aon.sepe.api.contract.model.IProrrogaType;
+import com.esferalia.aon.sepe.api.contract.model.ITransformacionType;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 
 public class ContrataReader {
 	
-	private final String CONTRATA_CONTRATOS_MODEL_PATH = "com.esferalia.aon.file.payroll.contract.generated.contratos";
-	private final String CONTRATA_TRANSFORMACIONES_MODEL_PATH = "com.esferalia.aon.file.payroll.contract.generated.transformaciones";
-	private final String CONTRATA_PRORROGAS_MODEL_PATH = "com.esferalia.aon.file.payroll.contract.generated.prorrogas";
+	private final String CONTRATA_CONTRATOS_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.contratos";
+	private final String CONTRATA_TRANSFORMACIONES_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.transformaciones";
+	private final String CONTRATA_PRORROGAS_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.prorrogas";
 	
 	private ContrataParams params;
 	
@@ -163,7 +102,7 @@ public class ContrataReader {
 			
 				CONTRATOS contratos = null;
 				TRANSFORMACIONES transformaciones = null;
-				PRORROGAS prorrogas = null;
+//				PRORROGAS prorrogas = null;
 				if( contratoFile ){
 					JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_CONTRATOS_MODEL_PATH);
 					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -174,12 +113,13 @@ public class ContrataReader {
 					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 					unmarshaller.setEventHandler(new ContractValidationEventHandler());
 					transformaciones = (TRANSFORMACIONES) unmarshaller.unmarshal(file);
-				} else if( prorrogaFile ) {
-					JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_PRORROGAS_MODEL_PATH);
-					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-					unmarshaller.setEventHandler(new ContractValidationEventHandler());
-					prorrogas = (PRORROGAS) unmarshaller.unmarshal(file);
-				}
+				} 
+//				else if( prorrogaFile ) {
+//					JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_PRORROGAS_MODEL_PATH);
+//					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+//					unmarshaller.setEventHandler(new ContractValidationEventHandler());
+//					prorrogas = (PRORROGAS) unmarshaller.unmarshal(file);
+//				}
 				
 
 				this.params = new ContrataParams();
@@ -191,10 +131,11 @@ public class ContrataReader {
 				} else if( transfonacionFile ) {
 					ITransformacionType transformacionType = (ITransformacionType) transformaciones.getTRANSFORMACION109AndTRANSFORMACION139AndTRANSFORMACION189().get(0);
 					completeTransformacionesParams(transformacionType, params);
-				} else if( prorrogaFile ) {
-					IProrrogaType prorrogaType = (IProrrogaType) prorrogas.getPRORROGATIPO().get(0);
-					completeProrrogasParams(prorrogaType, params);
-				}
+				} 
+//				else if( prorrogaFile ) {
+//					IProrrogaType prorrogaType = (IProrrogaType) prorrogas.getPRORROGATIPO().get(0);
+//					completeProrrogasParams(prorrogaType, params);
+//				}
 
 				return params;
 			} catch (JAXBException e) {
@@ -277,26 +218,26 @@ public class ContrataReader {
 	
 	public void completeTransformacionesParams(ITransformacionType transformacionType, ContrataParams params) throws JAXBException, IOException {
 		
-		if (transformacionType instanceof TRANSFORMACION109TYPE) {
-			readTransformacion109((TRANSFORMACION109TYPE)transformacionType);
-		} else if (transformacionType instanceof TRANSFORMACION139TYPE) {
-			readTransformacion139((TRANSFORMACION139TYPE)transformacionType);
-		} else if (transformacionType instanceof TRANSFORMACION189TYPE) {
-			readTransformacion189((TRANSFORMACION189TYPE)transformacionType);
-		} else if (transformacionType instanceof TRANSFORMACION209TYPE) {
-			readTransformacion209((TRANSFORMACION209TYPE)transformacionType);
-		} else if (transformacionType instanceof TRANSFORMACION239TYPE) {
-			readTransformacion239((TRANSFORMACION239TYPE)transformacionType);
-		} else if (transformacionType instanceof TRANSFORMACION289TYPE) {
-			readTransformacion289((TRANSFORMACION289TYPE)transformacionType);
-		} else if (transformacionType instanceof TRANSFORMACION309TYPE) {
-			readTransformacion309((TRANSFORMACION309TYPE)transformacionType);
-//	TODO: nueva clave de contrato - Boletin Noticias RED 2012/05
-//		} else if (transformacionType instanceof TRANSFORMACION339TYPE) {
-//			readTransformacion339((TRANSFORMACION339TYPE)transformacionType);
-		} else if (transformacionType instanceof TRANSFORMACION389TYPE) {
-			readTransformacion389((TRANSFORMACION389TYPE)transformacionType);
-		}
+//		if (transformacionType instanceof TRANSFORMACION109TYPE) {
+//			readTransformacion109((TRANSFORMACION109TYPE)transformacionType);
+//		} else if (transformacionType instanceof TRANSFORMACION139TYPE) {
+//			readTransformacion139((TRANSFORMACION139TYPE)transformacionType);
+//		} else if (transformacionType instanceof TRANSFORMACION189TYPE) {
+//			readTransformacion189((TRANSFORMACION189TYPE)transformacionType);
+//		} else if (transformacionType instanceof TRANSFORMACION209TYPE) {
+//			readTransformacion209((TRANSFORMACION209TYPE)transformacionType);
+//		} else if (transformacionType instanceof TRANSFORMACION239TYPE) {
+//			readTransformacion239((TRANSFORMACION239TYPE)transformacionType);
+//		} else if (transformacionType instanceof TRANSFORMACION289TYPE) {
+//			readTransformacion289((TRANSFORMACION289TYPE)transformacionType);
+//		} else if (transformacionType instanceof TRANSFORMACION309TYPE) {
+//			readTransformacion309((TRANSFORMACION309TYPE)transformacionType);
+////	TODO: nueva clave de contrato - Boletin Noticias RED 2012/05
+////		} else if (transformacionType instanceof TRANSFORMACION339TYPE) {
+////			readTransformacion339((TRANSFORMACION339TYPE)transformacionType);
+//		} else if (transformacionType instanceof TRANSFORMACION389TYPE) {
+//			readTransformacion389((TRANSFORMACION389TYPE)transformacionType);
+//		}
 		
 		
 	}
@@ -863,38 +804,38 @@ public class ContrataReader {
 	 * TRANSFORMACIONES
 	 * 
 	 */
-	private void readTransformacion109(TRANSFORMACION109TYPE transformacionType){
-		// TODO
-		
-	}
-	private void readTransformacion139(TRANSFORMACION139TYPE transformacionType){
-		// TODO
-		
-	}
-	private void readTransformacion189(TRANSFORMACION189TYPE transformacionType){
-		// TODO
-		
-	}
-	private void readTransformacion209(TRANSFORMACION209TYPE transformacionType){
-		// TODO
-		
-	}
-	private void readTransformacion239(TRANSFORMACION239TYPE transformacionType){
-		// TODO
-		
-	}
-	private void readTransformacion289(TRANSFORMACION289TYPE transformacionType){
-		// TODO
-		
-	}
-	private void readTransformacion309(TRANSFORMACION309TYPE transformacionType){
-		// TODO
-		
-	}
-	private void readTransformacion389(TRANSFORMACION389TYPE transformacionType){
-		// TODO
-		
-	}
+//	private void readTransformacion109(TRANSFORMACION109TYPE transformacionType){
+//		// TODO
+//		
+//	}
+//	private void readTransformacion139(TRANSFORMACION139TYPE transformacionType){
+//		// TODO
+//		
+//	}
+//	private void readTransformacion189(TRANSFORMACION189TYPE transformacionType){
+//		// TODO
+//		
+//	}
+//	private void readTransformacion209(TRANSFORMACION209TYPE transformacionType){
+//		// TODO
+//		
+//	}
+//	private void readTransformacion239(TRANSFORMACION239TYPE transformacionType){
+//		// TODO
+//		
+//	}
+//	private void readTransformacion289(TRANSFORMACION289TYPE transformacionType){
+//		// TODO
+//		
+//	}
+//	private void readTransformacion309(TRANSFORMACION309TYPE transformacionType){
+//		// TODO
+//		
+//	}
+//	private void readTransformacion389(TRANSFORMACION389TYPE transformacionType){
+//		// TODO
+//		
+//	}
 	
 
 	/* ***************************************

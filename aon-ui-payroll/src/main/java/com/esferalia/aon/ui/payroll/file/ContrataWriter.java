@@ -28,17 +28,15 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.Classpath;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.file.payroll.contract.model.IContratoType;
-import com.esferalia.aon.file.payroll.contract.model.IProrrogaType;
-import com.esferalia.aon.file.payroll.contract.model.ITransformacionType;
 import com.esferalia.aon.file.payroll.contrata.ContractContrataFactory;
-import com.esferalia.aon.file.payroll.contract.generated.contratos.CONTRATOS;
-import com.esferalia.aon.file.payroll.contract.generated.prorrogas.PRORROGAS;
-import com.esferalia.aon.file.payroll.contract.generated.prorrogas.PRORROGATIPOTYPE;
-import com.esferalia.aon.file.payroll.contract.generated.transformaciones.TRANSFORMACIONES;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATOS;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACIONES;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.sepe.api.contract.model.IContratoType;
+import com.esferalia.aon.sepe.api.contract.model.IProrrogaType;
+import com.esferalia.aon.sepe.api.contract.model.ITransformacionType;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class ContrataWriter {
@@ -51,11 +49,11 @@ public class ContrataWriter {
 	private final String TRANSFORMACIONES_SCHEMA_FILE_NAME = "EsquemaTransformaciones50.xsd";
 	private final String PRORROGAS_SCHEMA_FILE_NAME = "EsquemaProrrogas50.xsd";
 	
-	private com.esferalia.aon.file.payroll.contract.generated.contratos.ObjectFactory contratoFactory = new com.esferalia.aon.file.payroll.contract.generated.contratos.ObjectFactory();
-
-	private com.esferalia.aon.file.payroll.contract.generated.transformaciones.ObjectFactory transformacionFactory = new com.esferalia.aon.file.payroll.contract.generated.transformaciones.ObjectFactory();;
-	
-	private com.esferalia.aon.file.payroll.contract.generated.prorrogas.ObjectFactory prorrogaFactory = new com.esferalia.aon.file.payroll.contract.generated.prorrogas.ObjectFactory();;
+//	private com.esferalia.aon.file.payroll.contract.generated.contratos.ObjectFactory contratoFactory = new com.esferalia.aon.file.payroll.contract.generated.contratos.ObjectFactory();
+//
+//	private com.esferalia.aon.file.payroll.contract.generated.transformaciones.ObjectFactory transformacionFactory = new com.esferalia.aon.file.payroll.contract.generated.transformaciones.ObjectFactory();;
+//	
+//	private com.esferalia.aon.file.payroll.contract.generated.prorrogas.ObjectFactory prorrogaFactory = new com.esferalia.aon.file.payroll.contract.generated.prorrogas.ObjectFactory();;
 
 	private String fileName;
 	
@@ -105,28 +103,31 @@ public class ContrataWriter {
 		
 		CONTRATOS contratos = null;
 		TRANSFORMACIONES transformaciones = null;
-		PRORROGAS prorrogas = null;
+//		PRORROGAS prorrogas = null;
 		String modelPath = null;
 		ContractContrataFactory factory = new ContractContrataFactory();
 		if( contratoFile ){
 			ContrataContratosWriter writer = new ContrataContratosWriter();
 			IContratoType contratoType = writer.createFile(factory.createContratoModel(code), params);
-			contratos = contratoFactory.createCONTRATOS();
+//			contratos = contratoFactory.createCONTRATOS();
+			contratos = writer.getFactory().createCONTRATOS();
 			contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().add(contratoType);
 			modelPath = CONTRATA_CONTRATOS_MODEL_PATH;
 		} else if( transfonacionFile ) {
 			ContrataTransformacionesWriter writer = new ContrataTransformacionesWriter(); 
 			ITransformacionType transformacionType = writer.createFile(factory.createTransformacionesType(code), params);
-			transformaciones = transformacionFactory.createTRANSFORMACIONES();
+//			transformaciones = transformacionFactory.createTRANSFORMACIONES();
+			transformaciones = writer.getFactory().createTRANSFORMACIONES();
 			transformaciones.getTRANSFORMACION109AndTRANSFORMACION139AndTRANSFORMACION189().add(transformacionType);
 			modelPath = CONTRATA_TRANSFORMACIONES_MODEL_PATH;
-		} else if( prorrogaFile ) {
-			ContrataProrrogasWriter writer = new ContrataProrrogasWriter(); 
-			IProrrogaType prorrogaType = writer.createFile(factory.createProrrogasType(code), params);
-			prorrogas = prorrogaFactory.createPRORROGAS();
-			prorrogas.getPRORROGATIPO().add((PRORROGATIPOTYPE) prorrogaType);
-			modelPath = CONTRATA_PRORROGAS_MODEL_PATH;
-		}
+		} 
+//		else if( prorrogaFile ) {
+//			ContrataProrrogasWriter writer = new ContrataProrrogasWriter(); 
+//			IProrrogaType prorrogaType = writer.createFile(factory.createProrrogasType(code), params);
+//			prorrogas = prorrogaFactory.createPRORROGAS();
+//			prorrogas.getPRORROGATIPO().add((PRORROGATIPOTYPE) prorrogaType);
+//			modelPath = CONTRATA_PRORROGAS_MODEL_PATH;
+//		}
 		
 		
 		try {
@@ -141,10 +142,11 @@ public class ContrataWriter {
 			} else if( transfonacionFile ) {
 				marshaller.marshal( transformaciones, file );
 //				validateXmlPattern(file, TRANSFORMACIONES_SCHEMA_FILE_NAME);
-			} else if( prorrogaFile ) {
-				marshaller.marshal( prorrogas, file );
-//				validateXmlPattern(file, PRORROGAS_SCHEMA_FILE_NAME);
-			}
+			} 
+//			else if( prorrogaFile ) {
+//				marshaller.marshal( prorrogas, file );
+////				validateXmlPattern(file, PRORROGAS_SCHEMA_FILE_NAME);
+//			}
 			return file;
 		} catch (JAXBException e) {
 			String msg = "Error al generar el documento xml de contrata";
