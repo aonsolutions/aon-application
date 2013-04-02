@@ -24,6 +24,7 @@
 
 					<ui:decorate template="/com/code/aon/ui/commercial/facelet/target/searchContent.xhtml">
 						<ui:param name="controller" value="#{target}"/>
+						<ui:param name="searchController" value="#{targetSearch}" />
 						<ui:define name="additionalTargetSearchContent">
 
 							<ui:include src="/com/code/aon/ui/marketing/facelet/campaignAction/lookup.xhtml" >
