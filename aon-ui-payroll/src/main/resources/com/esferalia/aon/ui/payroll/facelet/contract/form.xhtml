@@ -20,7 +20,7 @@
 			
 				<c:if test="#{!contract.new}" >
 				
-					<aon:panelTabSet >
+					<aon:panelTabSet switchType="ajax" immediate="true">
 						
 						<aon:panelTab id="mainData" label="Datos Generales" >
 							<aon:panelGrid columns="2" 
@@ -42,30 +42,33 @@
 							</aon:panelCollapsible>
 						</aon:panelTab>
 
-						<aon:panelTab id="contrataData" label="Datos Contrat@"
-							actionListener="#{contract.onShowContrataData}">
+						<aon:panelTab id="contrataData" label="Datos Contrat@" 
+							actionListener="#{contractContrata.onContrataDataShow}">
 							
-							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_toolbar.xhtml" />
-						
-							<aon:panelGrid columns="4" >
-								<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
-								<aon:inputText disabled="#{true}" size="32" 
-									value="#{contract.to.workPlace.enterprise.registry.fullName}"/>
+							<aon:div rendered="#{contractContrata.enabledContrataEdition}">
+								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_toolbar.xhtml" />
+							
+								<aon:panelGrid columns="4" >
+									<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
+									<aon:inputText disabled="#{true}" size="32" 
+										value="#{contract.to.workPlace.enterprise.registry.fullName}"/>
+									
+									<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+										<ui:param name="lookupTo" value="#{contract.to.person}" />
+										<ui:param name="lookupDisabled" value="#{true}" />
+										<ui:param name="skipInputText" value="#{true}" />
+										<ui:param name="skipNewButton" value="#{true}" />
+										<ui:param name="lookupSuffix" value="-contrata" />
+										<ui:param name="lookupInputSuggestSize" value="40" />
+										<ui:param name="goToBackActionListener" value="contract.onPersonBack"/>
+									</ui:include>
+								</aon:panelGrid>
 								
-								<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
-									<ui:param name="lookupTo" value="#{contract.to.person}" />
-									<ui:param name="lookupDisabled" value="#{true}" />
-									<ui:param name="skipInputText" value="#{true}" />
-									<ui:param name="skipNewButton" value="#{true}" />
-									<ui:param name="lookupSuffix" value="-contrata" />
-									<ui:param name="lookupInputSuggestSize" value="40" />
-									<ui:param name="goToBackActionListener" value="contract.onPersonBack"/>
-								</ui:include>
-							</aon:panelGrid>
+								<br />
 							
-							<br />
-						
-							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_content.xhtml" />
+								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_content.xhtml" />
+							</aon:div>
+							
 						</aon:panelTab>
 
 						<aon:panelTab id="attachData" label="Documentos">

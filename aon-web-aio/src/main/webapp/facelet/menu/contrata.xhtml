@@ -52,7 +52,8 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="contrataBatch-contrata"
-										action="contrataBatch_search-contrata"  
+										action="contrataBatch_search-contrata"
+										disabled="#{true}"  
 										value="#{payrollBundle.payroll_contrataBatchWizard_module}" >
 										<aon:actionListener method="#{contrataBatch.onEditSearch}" />
 									</aon:commandLink>
@@ -60,8 +61,9 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="contractBatch-contrata" 
 										action="contractBatch_search-contrata"
+										disabled="#{true}"
 										actionListener="#{contractBatch.onEditSearch}"
-										value="#{payrollBundle.payroll_contractBatchWizard_module}" />
+										value="#{payrollBundle.payroll_contrata_contractBatch_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>

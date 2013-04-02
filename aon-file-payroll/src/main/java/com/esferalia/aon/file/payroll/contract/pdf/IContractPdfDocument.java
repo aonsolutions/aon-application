@@ -1,6 +1,7 @@
 package com.esferalia.aon.file.payroll.contract.pdf;
 
 import java.util.Collection;
+import java.util.Locale;
 
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
@@ -24,6 +25,8 @@ public interface IContractPdfDocument {
 	public Integer getNumberOfDocumentPages();
 	
 	public String getDocumentPath();
+
+	public void setLocale(Locale locale);
 	
 }
 	

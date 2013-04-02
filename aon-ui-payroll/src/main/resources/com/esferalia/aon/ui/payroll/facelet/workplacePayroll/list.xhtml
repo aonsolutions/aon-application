@@ -2,6 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html" >
 
@@ -70,7 +71,21 @@
 				<f:facet name="header">
 					<aon:outputText value="#{payrollBundle.payroll_activity}" />
 				</f:facet>
+				<!--  
 				<aon:outputText value="#{to.enterpriseActivity.cnae2009.code} - #{to.enterpriseActivity.description}" />
+				-->
+				
+				<aon:div>
+					<aon:outputText value="#{to.enterpriseActivity.cnae2009.code} - #{to.enterpriseActivity.description}" />
+					<aon:div style="display: inline;" rendered="#{not empty to.enterpriseActivity and !controller.existValidCCC}">
+						<aon:outputText value="&#160;"
+							styleClass="aon-margin-left aon-icon-commandButton aon-icon-exception" />
+						<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+							<aon:outputText value="#{payrollBundle.payroll_payrollWorkPlace_not_valid_enterpriseCCC}" />
+						</rich:toolTip>
+					</aon:div>
+				</aon:div>
+				
 			</aon:column>
 			
 		</ui:define>

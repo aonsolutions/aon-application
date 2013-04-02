@@ -84,6 +84,16 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument 
 	private Integer numberOfDocumentPages;
 	private Map<String, ContractPdfField> pdfFieldsMap;
 	protected String documentName;
+	private Locale locale;
+	
+	public Locale getLocale() {
+		return locale;
+	}
+
+	@Override
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
 	
 	public Collection<ContractPdfField> getPdfFields() {
 		return getPdfFieldsMap().values();

@@ -326,6 +326,23 @@ public class ContrataCodeTablesWriter {
 	private static void writeProperties( URL url, File file ) throws IOException {
 		BufferedWriter out = new BufferedWriter( new FileWriter(file) );
 		
+		out.write( " ################################### " );
+		out.newLine();
+		out.write( " # Values for represent Contrata (S.E.P.E.) "+getFileNameWithoutExtension(url)+" table codes." );
+		out.newLine();
+		out.write( " # Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter." );
+		out.newLine();
+		out.write( " #  ------------------------------------------------------------------------" );
+		out.newLine();
+		out.write( " #  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN." );
+		out.newLine();
+		out.write( " # " + obtainTableDescription(getFileNameWithoutExtension(url)) );
+		out.newLine();
+		out.write( " #  ------------------------------------------------------------------------" );
+		out.newLine();
+		out.write( " ################################### " );
+		out.newLine();
+		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 		String currentLine;
 		while((currentLine = reader.readLine()) != null) {
@@ -347,6 +364,24 @@ public class ContrataCodeTablesWriter {
 	 */
 	private static void writeQualificationsProperties( URL url, File file ) throws IOException {
 		BufferedWriter out = new BufferedWriter( new FileWriter(file) );
+		
+		out.write( " ################################### " );
+		out.newLine();
+		out.write( " # Values for represent Contrata (S.E.P.E.) "+getFileNameWithoutExtension(url)+" table codes." );
+		out.newLine();
+		out.write( " # Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter." );
+		out.newLine();
+		out.write( " #  ------------------------------------------------------------------------" );
+		out.newLine();
+		out.write( " #  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN." );
+		out.newLine();
+		out.write( " # " + obtainTableDescription(getFileNameWithoutExtension(url)) );
+		out.newLine();
+		out.write( " #  ------------------------------------------------------------------------" );
+		out.newLine();
+		out.write( " ################################### " );
+		out.newLine();
+		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 		String currentLine;
 		while((currentLine = reader.readLine()) != null) {

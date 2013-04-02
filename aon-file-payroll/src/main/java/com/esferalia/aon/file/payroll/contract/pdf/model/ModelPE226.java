@@ -10,6 +10,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
@@ -68,6 +69,16 @@ public class ModelPE226 extends AbstractContractModel {
 	final static String PE226_SIGN_MONTH = "mesfirma";
 	final static String PE226_SIGN_YEAR = "añofirma";
 	
+	/*
+	 * fileds with different labels
+	 */
+	final String ENTERPRISE_COUNTRY1 = "Texto1pais1";
+	final String ENTERPRISE_TOWN1 = "Texto2muni1";
+	final String WORKPLACE_COUNTRY1 = "Texto3pais2";
+	final String WORKPLACE_TOWN1 = "Texto4muni2";
+	final String EMPLOYEE_ADDRESS_TOWN1 = "Texto6muni3";
+	final String EMPLOYEE_ADDRESS_COUNTRY1 = "Texto7pais3";
+	
 	public final static String MODEL_NAME = "PE226";
 	
 	public ModelPE226(){
@@ -95,6 +106,41 @@ public class ModelPE226 extends AbstractContractModel {
 			}
 			
 			super.loadPdfCommonFields(contract);
+			
+			/*
+			 * FIXME: FIELDS OVERRIDES
+			 * same fileds named with different labels
+			 * must normalize pdf files of contract models 
+			 */
+			try {	
+				getPdfFieldsMap().get(ENTERPRISE_COUNTRY1).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getName(getLocale()));
+			} catch (StringIndexOutOfBoundsException aie) {
+				// do nothing
+			} catch (NullPointerException npe) {
+				// do nothing
+			}
+			getPdfFieldsMap().get(ENTERPRISE_TOWN1).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getCity());
+			try {
+				GeoZone country = obtainCountry(contract.getWorkPlace().getAddress().getGeozone());
+				getPdfFieldsMap().get(WORKPLACE_COUNTRY1).setValue(country.getName());
+			} catch (StringIndexOutOfBoundsException aie) {
+				// do nothing
+			} catch (NullPointerException npe) {
+				// do nothing
+			}
+			getPdfFieldsMap().get(EMPLOYEE_ADDRESS_TOWN1).setValue(contract.getPerson().getRegistry().getDefaultAddress()!=null?contract.getPerson().getRegistry().getDefaultAddress().getCity():null);
+			try {
+				GeoZone country = obtainCountry(contract.getPerson().getRegistry().getDefaultAddress().getGeozone());
+				getPdfFieldsMap().get(EMPLOYEE_ADDRESS_COUNTRY1).setValue(country.getName());
+			} catch (StringIndexOutOfBoundsException aie) {
+				// do nothing
+			} catch (NullPointerException npe) {
+				// do nothing
+			}
+			/*
+			 * FIXME: FIELDS OVERRIDES
+			 */
+			
 			
 			getPdfFieldsMap().get(PE226_REPRESENTATIVE_NAME).setValue("");
 			getPdfFieldsMap().get(PE226_REPRESENTATIVE_DOCUMENT).setValue("");

@@ -61,6 +61,7 @@ public interface IPayrollConstants {
 	String CONTRATA_BATCH_ATTACH_CONTROLLER_NAME = "contrataBatchAttach";
 	String CONTRATA_BATCH_CONTROLLER_NAME = "contrataBatch";
 	String CONTRATA_BATCH_DETAIL_CONTROLLER_NAME = "contrataBatchDetail";
+	String CONTRATA_COLLECTIONS_CONTROLLER_NAME = "contrataCollections";
 	String CONTRATA_LIST_CONTROLLER_NAME = "contrataList";
 	String ENTERPRISE_CONTROLLER="enterprise";
 	String ENTERPRISE_DIR_STAFF_CONTROLLER="enterpriseDirStaff";

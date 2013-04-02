@@ -643,11 +643,11 @@ public class ContractController extends BasicController implements IVariablesHan
 		}
 	}
 	
-	public void onShowContrataData(ActionEvent event){
-		ContractContrataController controller = (ContractContrataController) AonUtil.getRegisteredBean("contractContrata");
-		controller.initialize((Contract) this.getTo());
-		controller.onContractaDataShow(event);
-	}
+//	public void onShowContrataData(ActionEvent event){
+//		ContractContrataController controller = (ContractContrataController) AonUtil.getRegisteredBean("contractContrata");
+//		controller.initialize((Contract) this.getTo());
+//		controller.onContractaDataShow(event);
+//	}
 	
 
 	

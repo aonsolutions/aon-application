@@ -2,9 +2,8 @@ package com.esferalia.aon.ui.payroll.controller.contract;
 
 import java.util.Calendar;
 
-import javax.faces.event.AbortProcessingException;
-
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.contrata.enumeration.TBONVFOR;
 import com.esferalia.aon.payroll.contrata.enumeration.TEQPTIEM;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.ui.payroll.file.ContrataParams;
@@ -16,6 +15,9 @@ public class ContractContrataHandler {
 	private ContractCode contractCode;
 	
 	public ContrataParams getParams() {
+		if(params==null){
+			params = new ContrataParams();
+		}
 		return params;
 	}
 
@@ -34,6 +36,24 @@ public class ContractContrataHandler {
 	////////////////////////////////////////
 	// fields otros datos contrato
 	////////////////////////////////////////
+	
+	/**
+	 * <xsd:element name="NIVEL_FORMATIVO">
+			<xsd:annotation>
+				<xsd:documentation xml:lang="es">Código del nivel formativo.  
+				Sus posibles valores se encuentran codificados en la tabla TBONVFOR.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+			</xsd:annotation>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="\d{2}"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:element>
+	 */
+	public Boolean getShowNivelFormativo() {
+		return isContratoType();
+	}
+	
 	/**
 	 * <xsd:element name="TIPO_JORNADA">
 		<xsd:annotation>
@@ -52,6 +72,37 @@ public class ContractContrataHandler {
 	public Boolean getShowTipoJornada() {
 		if( getContractCode()==ContractCode.C300 || getContractCode()==ContractCode.C330 || getContractCode()==ContractCode.C350){
 			getParams().setTipoJornada(TEQPTIEM.TEQPTIEM_A);
+		}
+		return 
+				// contratos
+				getContractCode() == ContractCode.C200
+				|| getContractCode() == ContractCode.C230
+				|| getContractCode() == ContractCode.C250
+				|| getContractCode() == ContractCode.C300
+				|| getContractCode() == ContractCode.C330
+				|| getContractCode() == ContractCode.C350
+				|| getContractCode() == ContractCode.C421
+				|| getContractCode() == ContractCode.C450
+				|| getContractCode() == ContractCode.C501
+				|| getContractCode() == ContractCode.C502
+				|| getContractCode() == ContractCode.C503
+				|| getContractCode() == ContractCode.C510
+				|| getContractCode() == ContractCode.C520
+				|| getContractCode() == ContractCode.C530
+				|| getContractCode() == ContractCode.C540
+				|| getContractCode() == ContractCode.C541
+				|| getContractCode() == ContractCode.C550
+				|| getContractCode() == ContractCode.C552
+				// transformaciones
+				|| getContractCode() == ContractCode.C389
+//				|| getContractCode() == ContractCode.C339
+				|| getContractCode() == ContractCode.C309
+				|| getContractCode() == ContractCode.C289
+				|| getContractCode() == ContractCode.C239
+				|| getContractCode() == ContractCode.C209;
+	}
+	public boolean isAvailableTipoJornada() {
+		if( getContractCode()==ContractCode.C300 || getContractCode()==ContractCode.C330 || getContractCode()==ContractCode.C350){
 			return false;
 		}
 		return true;
@@ -231,8 +282,11 @@ public class ContractContrataHandler {
 	</xsd:element>
 	 * @return
 	 */
-	public Boolean getShowAcademicTitulation() {
-		return true;
+	public Boolean getShowTitulacionAcademica() {
+		return getContractCode()==ContractCode.C420 || getContractCode()==ContractCode.C520;
+	}
+	public boolean isTitulacionAcademicaRequired() {
+		return getParams().getNivelFormativo()!=null && getParams().getNivelFormativo()!=TBONVFOR.TBONVFOR_60;
 	}
 	
 	/**
@@ -252,12 +306,67 @@ public class ContractContrataHandler {
 	</xsd:element>
 	 * @return
 	 */
-	public Boolean getShowProfessionalCertificate() {
+	public Boolean getShowCertificadoProfesionalidad() {
 		Calendar cal = Calendar.getInstance();
 		cal.set(2010, 6, 18);
 		return getParams().getContract().getStartDate().after(cal.getTime()) 
 				&& ( getContractCode()==ContractCode.C420 || getContractCode()==ContractCode.C520
 				|| getContractCode()==ContractCode.C450 || getContractCode()==ContractCode.C550 );
+	}
+	public boolean isCertificadoProfesionalidadRequired() {
+		return getParams().getNivelFormativo() != null
+				&& getParams().getNivelFormativo() != TBONVFOR.TBONVFOR_33
+				&& getParams().getNivelFormativo() != TBONVFOR.TBONVFOR_51
+				&& getParams().getNivelFormativo() != TBONVFOR.TBONVFOR_54
+				&& getParams().getNivelFormativo() != TBONVFOR.TBONVFOR_55
+				&& getParams().getNivelFormativo() != TBONVFOR.TBONVFOR_59
+				&& getParams().getNivelFormativo() != TBONVFOR.TBONVFOR_60;
+	}
+	
+	public Boolean isTranscormacionType() {
+		return getContractCode() == ContractCode.C109
+				|| getContractCode() == ContractCode.C139
+				|| getContractCode() == ContractCode.C189
+				|| getContractCode() == ContractCode.C209
+				|| getContractCode() == ContractCode.C239
+				|| getContractCode() == ContractCode.C289
+				|| getContractCode() == ContractCode.C309
+//				|| getContractCode() == ContractCode.C339
+				|| getContractCode() == ContractCode.C389;
+	}
+	public Boolean isContratoType() {
+		return getContractCode() == ContractCode.C100
+				|| getContractCode() == ContractCode.C130
+				|| getContractCode() == ContractCode.C150
+				|| getContractCode() == ContractCode.C200
+				|| getContractCode() == ContractCode.C230
+				|| getContractCode() == ContractCode.C250
+				|| getContractCode() == ContractCode.C300
+				|| getContractCode() == ContractCode.C330
+				|| getContractCode() == ContractCode.C350
+				|| getContractCode() == ContractCode.C401
+				|| getContractCode() == ContractCode.C402
+				|| getContractCode() == ContractCode.C403
+				|| getContractCode() == ContractCode.C410
+				|| getContractCode() == ContractCode.C420
+				|| getContractCode() == ContractCode.C421
+				|| getContractCode() == ContractCode.C430
+				|| getContractCode() == ContractCode.C441
+				|| getContractCode() == ContractCode.C450
+				|| getContractCode() == ContractCode.C452
+				|| getContractCode() == ContractCode.C501
+				|| getContractCode() == ContractCode.C502
+				|| getContractCode() == ContractCode.C503
+				|| getContractCode() == ContractCode.C510
+				|| getContractCode() == ContractCode.C520
+				|| getContractCode() == ContractCode.C530
+				|| getContractCode() == ContractCode.C540
+				|| getContractCode() == ContractCode.C541
+				|| getContractCode() == ContractCode.C550
+				|| getContractCode() == ContractCode.C552
+				|| getContractCode() == ContractCode.C970
+				|| getContractCode() == ContractCode.C980
+				|| getContractCode() == ContractCode.C990;
 	}
 	
 	////////////////////////////////////////
@@ -304,15 +413,15 @@ public class ContractContrataHandler {
 				|| getContractCode()==ContractCode.C990;
 	}
 	public Boolean getShowDatosOfertaTrabajoPanel(){
-		// Datos generales para todos los contratos
+		// Datos comunes a todos los contratos
 		return true;
 	}
 	public Boolean getShowDiscapacidadPanel(){
-		// Datos generales para todos los contratos
+		// Datos comunes a todos los contratos
 		return true;
 	}
 	public Boolean getShowMayor52Panel(){
-		// Datos generales para todos los contratos
+		// Datos comunes a todos los contratos
 		return true;
 	}
 	public Boolean getShowAnexoGestionColectivaPanel(){
@@ -320,7 +429,7 @@ public class ContractContrataHandler {
 		return true;
 	}
 	public Boolean getShowCampainasPanel(){
-		// Datos generales para todos los contratos
+		// Datos comunes a todos los contratos
 		return true;
 	}
 	public Boolean getShowCausaInterinidadPanel(){
@@ -338,40 +447,57 @@ public class ContractContrataHandler {
 				|| getContractCode()==ContractCode.C550;
 	}
 	public Boolean getShowMedidasFomentoPanel(){
-		// TODO : contractCodes = 100, 130, 150, 200, 230, 250, 300, 330, 350
-		return true;
+		return getContractCode()==ContractCode.C100 || getContractCode()==ContractCode.C130
+				|| getContractCode()==ContractCode.C150 || getContractCode()==ContractCode.C200
+				|| getContractCode()==ContractCode.C230 || getContractCode()==ContractCode.C250
+				|| getContractCode()==ContractCode.C300 || getContractCode()==ContractCode.C330
+				|| getContractCode()==ContractCode.C350;
 	}
 	public Boolean getShowContratoExtranjeroPanel(){
-		// TODO : contractCodes = 100, 200, 401, 402, 501, 502
-		return true;
+		// TODO: create data input panel in view
+		return getContractCode()==ContractCode.C100 || getContractCode()==ContractCode.C200
+				|| getContractCode()==ContractCode.C401 || getContractCode()==ContractCode.C402
+				|| getContractCode()==ContractCode.C501 || getContractCode()==ContractCode.C502;
 	}
 	public Boolean getShowContratoEmprendedoresPanel(){
-		// TODO : contractCodes = 100, 150, 300, 350
-		return true;
+		// TODO: create data input panel in view
+		return getContractCode()==ContractCode.C100 || getContractCode()==ContractCode.C150
+				|| getContractCode()==ContractCode.C300 || getContractCode()==ContractCode.C350;
 	}
 	public Boolean getShowDatosBonificacionPanel(){
-		// TODO : contractCodes = 130, 150, 230, 250, 330, 350, 430, 450, 452, 530, 550, 552
-		return true;
+		// TODO: create data input panel in view
+		return getContractCode()==ContractCode.C130 || getContractCode()==ContractCode.C150
+				|| getContractCode()==ContractCode.C230 || getContractCode()==ContractCode.C250
+				|| getContractCode()==ContractCode.C330 || getContractCode()==ContractCode.C350
+				|| getContractCode()==ContractCode.C430 || getContractCode()==ContractCode.C450
+				|| getContractCode()==ContractCode.C452 || getContractCode()==ContractCode.C530
+				|| getContractCode()==ContractCode.C550 || getContractCode()==ContractCode.C552;
 	}
 	public Boolean getShowEmpresaInsercionPanel(){
-		// TODO : contractCodes = 150, 250, 350, 450, 452, 550, 552
-		return true;
+		// TODO: create data input panel in view
+		return getContractCode()==ContractCode.C150 || getContractCode()==ContractCode.C250
+				|| getContractCode()==ContractCode.C350 || getContractCode()==ContractCode.C450
+				|| getContractCode()==ContractCode.C452 || getContractCode()==ContractCode.C550
+				|| getContractCode()==ContractCode.C552;
 	}
 	public Boolean getShowDatosCopiaBasicaPanel(){
-		// TODO : contractCodes = 402, 450, 452, 550, 552, 990
-		return true;
+		// TODO: create data input panel in view
+		return getContractCode()==ContractCode.C402 || getContractCode()==ContractCode.C450
+				|| getContractCode()==ContractCode.C452 || getContractCode()==ContractCode.C550
+				|| getContractCode()==ContractCode.C552 || getContractCode()==ContractCode.C990;
 	}
 	public Boolean getShowContratoInsercionPanel(){
-		// TODO : contractCodes =  403, 502
-		return true;
+		// TODO: create data input panel in view
+		return getContractCode()==ContractCode.C403 || getContractCode()==ContractCode.C502;
 	}
 	public Boolean getShowDatosContratoPracticasPanel(){
-		// TODO : contractCodes =  420, 450, 520, 550
-		return true;
+		// TODO: create data input panel in view
+		return getContractCode()==ContractCode.C420 || getContractCode()==ContractCode.C450
+				|| getContractCode()==ContractCode.C520 || getContractCode()==ContractCode.C550;
 	}
 	public Boolean getShowDatosExclusionSocialPanel(){
-		// TODO : contractCodes = 450, 550
-		return true;
+		// TODO: create data input panel in view
+		return getContractCode()==ContractCode.C450 || getContractCode()==ContractCode.C550;
 	}
 	
 	

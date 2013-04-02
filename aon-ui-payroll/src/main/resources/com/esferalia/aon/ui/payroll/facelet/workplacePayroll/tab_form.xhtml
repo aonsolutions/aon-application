@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
@@ -23,11 +24,20 @@
 		
 		<aon:outputLabel for="PayrollWorkPlace_enterpriseActivity" 
 			value="#{payrollBundle.payroll_activity}" />
-		<aon:selectOneMenu id="PayrollWorkPlace_enterpriseActivity"
-			value="#{controller.to.enterpriseActivity}" >
-			<f:selectItem itemLabel="-" value="#{null}" />
-			<f:selectItems value="#{enterprisePayroll.activities}" />
-		</aon:selectOneMenu>	
+		<aon:div>
+			<aon:selectOneMenu id="PayrollWorkPlace_enterpriseActivity"
+				value="#{controller.to.enterpriseActivity}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{enterprisePayroll.activities}" />
+			</aon:selectOneMenu>
+			<aon:div style="display: inline;" rendered="#{!controller.new and not empty controller.to.enterpriseActivity and !controller.existValidCCC}">
+				<aon:outputText value="&#160;"
+					styleClass="aon-margin-left aon-icon-commandButton aon-icon-exception" />
+				<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+					<aon:outputText value="#{payrollBundle.payroll_payrollWorkPlace_not_valid_enterpriseCCC}" />
+				</rich:toolTip>
+			</aon:div>
+		</aon:div>
 						
 	</aon:panelGrid>
 	

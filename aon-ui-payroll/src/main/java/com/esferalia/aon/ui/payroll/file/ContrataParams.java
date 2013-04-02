@@ -60,7 +60,7 @@ public class ContrataParams {
 	private String actuation;
 	private Double financialYear;
 
-	private boolean permanentContractDevelopment;
+	private boolean indCosteDespido;
 	private TEOCOLDE codigoColectivoDespido;
 
 	// DATOS_GENERALESCONTRATOTYPE
@@ -107,6 +107,7 @@ public class ContrataParams {
 	private boolean interimData;
 	private boolean researchData;
 	private boolean reductionData;
+	private boolean medidasFomentoData;
 
 	private boolean showEmploymentProgramData;
 	private boolean showEttData;
@@ -120,12 +121,24 @@ public class ContrataParams {
 	private boolean showInterimData;
 	private boolean showResearchData;
 	private boolean showReductionData;
-	
+	private boolean showMedidasFomentoData;
 	
 	
 	
 	public boolean isShowEmploymentProgramData() {
 		return showEmploymentProgramData;
+	}
+	public boolean isMedidasFomentoData() {
+		return medidasFomentoData;
+	}
+	public void setMedidasFomentoData(boolean medidasFomentoData) {
+		this.medidasFomentoData = medidasFomentoData;
+	}
+	public boolean isShowMedidasFomentoData() {
+		return showMedidasFomentoData;
+	}
+	public void setShowMedidasFomentoData(boolean showMedidasFomentoData) {
+		this.showMedidasFomentoData = showMedidasFomentoData;
 	}
 	public void setShowEmploymentProgramData(boolean showEmploymentProgramData) {
 		this.showEmploymentProgramData = showEmploymentProgramData;
@@ -406,11 +419,11 @@ public class ContrataParams {
 	public void setCodigoColectivoDespido(TEOCOLDE codigoColectivoDespido) {
 		this.codigoColectivoDespido = codigoColectivoDespido;
 	}
-	public boolean isPermanentContractDevelopment() {
-		return permanentContractDevelopment;
+	public boolean isIndCosteDespido() {
+		return indCosteDespido;
 	}
-	public void setPermanentContractDevelopment(boolean permanentContractDevelopment) {
-		this.permanentContractDevelopment = permanentContractDevelopment;
+	public void setIndCosteDespido(boolean indCosteDespido) {
+		this.indCosteDespido = indCosteDespido;
 	}
 	public String getUsoLibreEmpresa() {
 		return usoLibreEmpresa;

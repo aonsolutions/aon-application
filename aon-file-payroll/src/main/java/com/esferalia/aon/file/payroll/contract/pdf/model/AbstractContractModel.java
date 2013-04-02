@@ -51,12 +51,10 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 	final String ENTERPRISE_NAME = "razsoc";
 	final String ENTERPRISE_ADDRESS = "domsocialem";
 	final String ENTERPRISE_COUNTRY = "Texto1pais";
-	final String ENTERPRISE_COUNTRY1 = "Texto1pais1";
 	final String ENTERPRISE_COUNTRY_CODE1 = "codpaisem1";
 	final String ENTERPRISE_COUNTRY_CODE2 = "codpaisem2";
 	final String ENTERPRISE_COUNTRY_CODE3 = "codpaisem3";
 	final String ENTERPRISE_TOWN = "Texto3mun";
-	final String ENTERPRISE_TOWN1 = "Texto2muni1";
 	final String ENTERPRISE_TOWN_CODE1 = "codmuniem1";
 	final String ENTERPRISE_TOWN_CODE2 = "codmuniem2";
 	final String ENTERPRISE_TOWN_CODE3 = "codmuniem3";
@@ -88,7 +86,6 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 	 * Contract workplace fields
 	 */
 	final String WORKPLACE_COUNTRY = "Texto4pais";
-	final String WORKPLACE_COUNTRY1 = "Texto3pais2";
 	final String WORKPLACE_COUNTRY_CODE1 = "codpaisct1";
 	final String WORKPLACE_COUNTRY_CODE2 = "codpaisct2";
 	final String WORKPLACE_COUNTRY_CODE3 = "codpaisct3";
@@ -114,14 +111,12 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 	final String EMPLOYEE_COUNTRY_CODE2 = "codnactra2";
 	final String EMPLOYEE_COUNTRY_CODE3 = "codnactra3";
 	final String EMPLOYEE_ADDRESS_TOWN = "Texto6mun";
-	final String EMPLOYEE_ADDRESS_TOWN1 = "Texto6muni3";
 	final String EMPLOYEE_ADDRESS_TOWN_CODE1 = "codmunitra1";
 	final String EMPLOYEE_ADDRESS_TOWN_CODE2 = "codmunitra2";
 	final String EMPLOYEE_ADDRESS_TOWN_CODE3 = "codmunitra3";
 	final String EMPLOYEE_ADDRESS_TOWN_CODE4 = "codmunitra4";
 	final String EMPLOYEE_ADDRESS_TOWN_CODE5 = "codmunitra5";
 	final String EMPLOYEE_ADDRESS_COUNTRY = "Texto7padom";
-	final String EMPLOYEE_ADDRESS_COUNTRY1 = "Texto7pais3";
 	final String EMPLOYEE_ADDRESS_COUNTRY_CODE1 = "codpaisdomtr1";
 	final String EMPLOYEE_ADDRESS_COUNTRY_CODE2 = "codpaisdomtr2";
 	final String EMPLOYEE_ADDRESS_COUNTRY_CODE3 = "codpaisdomtr3";
@@ -133,7 +128,17 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 	private Integer numberOfDocumentPages;
 	private Map<String, ContractPdfField> pdfFieldsMap;
 	protected String documentName;
+	private Locale locale;
 	
+	public Locale getLocale() {
+		return locale;
+	}
+
+	@Override
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
 	public Collection<ContractPdfField> getPdfFields() {
 		return getPdfFieldsMap().values();
 	}
@@ -347,8 +352,7 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		setPdfFieldValue(ENTERPRISE_NAME,contract.getWorkPlace().getEnterprise().getRegistry().getFullName());
 		setPdfFieldValue(ENTERPRISE_ADDRESS,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getFullAddress());
 		try {	
-			setPdfFieldValue(ENTERPRISE_COUNTRY,contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getName(Locale.getDefault()));
-			setPdfFieldValue(ENTERPRISE_COUNTRY1,contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getName(Locale.getDefault()));
+			setPdfFieldValue(ENTERPRISE_COUNTRY,contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getName(getLocale()));
 			setPdfFieldValue(ENTERPRISE_COUNTRY_CODE1,String.valueOf(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getIsoNum()).substring(0,1));
 			setPdfFieldValue(ENTERPRISE_COUNTRY_CODE2,String.valueOf(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getIsoNum()).substring(1,2));
 			setPdfFieldValue(ENTERPRISE_COUNTRY_CODE3,String.valueOf(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getIsoNum()).substring(2,3));
@@ -358,7 +362,6 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 			// do nothing
 		}
 		setPdfFieldValue(ENTERPRISE_TOWN,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getCity());
-		setPdfFieldValue(ENTERPRISE_TOWN1,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getCity());
 		setPdfFieldValue(ENTERPRISE_TOWN_CODE1,null);
 		setPdfFieldValue(ENTERPRISE_TOWN_CODE2,null);
 		setPdfFieldValue(ENTERPRISE_TOWN_CODE3,null);
@@ -402,7 +405,6 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		try {
 			GeoZone country = obtainCountry(contract.getWorkPlace().getAddress().getGeozone());
 			setPdfFieldValue(WORKPLACE_COUNTRY,country.getName());
-			setPdfFieldValue(WORKPLACE_COUNTRY1,country.getName());
 			setPdfFieldValue(WORKPLACE_COUNTRY_CODE1,String.valueOf(obtainCountryByValue(country).getIsoNum()).substring(0,1));
 			setPdfFieldValue(WORKPLACE_COUNTRY_CODE2,String.valueOf(obtainCountryByValue(country).getIsoNum()).substring(1,2));
 			setPdfFieldValue(WORKPLACE_COUNTRY_CODE3,String.valueOf(obtainCountryByValue(country).getIsoNum()).substring(2,3));
@@ -431,7 +433,7 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		setPdfFieldValue(EMPLOYEE_FORMATION_CODE1,null);
 		setPdfFieldValue(EMPLOYEE_FORMATION_CODE2,null);
 		try {
-			setPdfFieldValue(EMPLOYEE_COUNTRY,String.valueOf(contract.getPerson().getRegistry().getNationality().getName(Locale.getDefault())));
+			setPdfFieldValue(EMPLOYEE_COUNTRY,String.valueOf(contract.getPerson().getRegistry().getNationality().getName(getLocale())));
 			setPdfFieldValue(EMPLOYEE_COUNTRY_CODE1,String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(0,1));
 			setPdfFieldValue(EMPLOYEE_COUNTRY_CODE2,String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(1,2));
 			setPdfFieldValue(EMPLOYEE_COUNTRY_CODE3,String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(2,3));
@@ -441,7 +443,6 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 			// do nothing
 		}
 		setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN,contract.getPerson().getRegistry().getDefaultAddress()!=null?contract.getPerson().getRegistry().getDefaultAddress().getCity():null);
-		setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN1,contract.getPerson().getRegistry().getDefaultAddress()!=null?contract.getPerson().getRegistry().getDefaultAddress().getCity():null);
 		try {
 			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE1,null);
 			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE2,null);
@@ -456,7 +457,6 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		try {
 			GeoZone country = obtainCountry(contract.getPerson().getRegistry().getDefaultAddress().getGeozone());
 			setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY,country.getName());
-			setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY1,country.getName());
 			setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY_CODE1,String.valueOf(obtainCountryByValue(country).getIsoNum()).substring(0,1));
 			setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY_CODE2,String.valueOf(obtainCountryByValue(country).getIsoNum()).substring(1,2));
 			setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY_CODE3,String.valueOf(obtainCountryByValue(country).getIsoNum()).substring(2,3));
@@ -480,7 +480,7 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		return null;
 	}
 	
-	private GeoZone obtainCountry(GeoZone geoZone) throws ManagerBeanException {
+	protected GeoZone obtainCountry(GeoZone geoZone) throws ManagerBeanException {
 		IManagerBean geoTreeBean = BeanManager.getManagerBean(GeoTree.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(geoTreeBean.getFieldName(IEntityAlias.GEO_TREE_CHILD_ID), geoZone.getId());

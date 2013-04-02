@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +33,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Projection;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.sepe.api.contrata.contratos.FICHEROCONTRATOS;
@@ -55,15 +54,31 @@ import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class ContractContrataController {
 	
+	private static final String AVAILABLE_CONTRACT_CODE_COMMUNICATION = "421;";
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractContrataController.class.getName());
 	
+	private Contract contract;
 	private ContractAttachment contrataAttach;
 	private ContractContrataHandler handler;
 	private String backAction;
 	private Map<String, String> contractDataMap;
 	private boolean showContrataLoginWindow;
+	private boolean enabledContrataEdition;
 	
 	
+	public Contract getContract() {
+		return contract;
+	}
+	public void setContract(Contract contract) {
+		this.contract = contract;
+	}
+	public boolean isEnabledContrataEdition() {
+		return enabledContrataEdition;
+	}
+	public void setEnabledContrataEdition(boolean enabledContrataEdition) {
+		this.enabledContrataEdition = enabledContrataEdition;
+	}
 	public boolean isShowContrataLoginWindow() {
 		return showContrataLoginWindow;
 	}
@@ -108,23 +123,49 @@ public class ContractContrataController {
 		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME);
 		List<SelectItem> towns = new LinkedList<SelectItem>();
 		try {
-			RegistryAddress address = getHandler().getParams().getContract().getPerson().getRegistry().getDefaultAddress();
-			TreeSet<String> tree = new TreeSet<String>(bundle.keySet());
-			for(String key: tree){
-				if(address==null || address.getGeozone()==null || key.startsWith(address.getGeozone().getCode())){
-					String name = bundle.getString(key);
-					SelectItem item = new SelectItem(key, name);
-					towns.add(item);
+			if(getParams().getContract()!=null){
+				RegistryAddress address = getParams().getContract().getPerson().getRegistry().getDefaultAddress();
+				TreeSet<String> tree = new TreeSet<String>(bundle.keySet());
+				for(String key: tree){
+					if(address==null || address.getGeozone()==null || key.startsWith(address.getGeozone().getCode())){
+						String name = bundle.getString(key);
+						SelectItem item = new SelectItem(key, name);
+						towns.add(item);
+					}
 				}
 			}
-			return towns;
 		} catch (ManagerBeanException e) {
 			// NADA, se devuelve una lista vacia
 		}
-		return null;
+		return towns;
+	}
+	public List<SelectItem> getQualificationsNames(){
+		String BASE_NAME = "com.esferalia.aon.payroll.i18n.qualifications";
+		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME);
+		List<SelectItem> qualifications = new LinkedList<SelectItem>();
+		if(getParams().getNivelFormativo()!=null){
+			TreeSet<String> tree = new TreeSet<String>(bundle.keySet());
+			for(String key: tree){
+				if(key.startsWith(getParams().getNivelFormativo().getValue())){
+					String name = bundle.getString(key);
+					SelectItem item = new SelectItem(key, name);
+					qualifications.add(item);
+				}
+			}
+		}
+		return qualifications;
 	}
 	public boolean isNew(){
 		return getContrataAttach()==null||getContrataAttach().getId()==null;
+	}
+	public String getCommunicationAvailableCodes(){
+		return "Comunicación implementada para los contratos con código: "+AVAILABLE_CONTRACT_CODE_COMMUNICATION;
+	}
+	public boolean isCommunicationAvailable(){
+		if(getHandler().getContractCode()!=null){
+			return AVAILABLE_CONTRACT_CODE_COMMUNICATION.contains(getHandler().getContractCode().getValue());
+		}
+		return false;
 	}
 	public boolean isCommunicationResponseReceived(){
 		return obtainContrataResponseAttach()!=null;
@@ -138,6 +179,7 @@ public class ContractContrataController {
 		setDocument(null);
 		setUser(null);
 		setPasswd(null);
+		setHandler(null);
 	}
 	
 	public void initialize(Contract contract){
@@ -145,16 +187,26 @@ public class ContractContrataController {
 		PayrollUtils utils = new PayrollUtils();
 		contractDataMap = utils.getContractDataMap(contract);
 		
-		getHandler().getParams().setContract(contract);
+		getParams().setContract(contract);
 		getHandler().setContractCode(ContractCode.getContractCodeByValue(getContractDataMap().get(ContextVariable.TC2.getName())));
 
 		contrataAttach = obtainContrataAttach();
 	}
 	
-	public void onContractaDataShow(ActionEvent event) {
-		reset();
+	public void onContrataDataShow(ActionEvent event) {
+		setEnabledContrataEdition(true);
+		setContract((Contract)FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER).getTo());
 		
-		String code = getContractDataMap().get(ContextVariable.TC2.getName());
+		initialize(getContract());
+		
+		if( getHandler().getContractCode()==null ){
+			setEnabledContrataEdition(false);
+			String msg = "El código de contrato no puede ser nulo.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		
+		String code = getHandler().getContractCode().getValue();
 		
 		if( code.equals(ContractCode.C109.getValue())
 				 || code.equals(ContractCode.C139.getValue())
@@ -170,7 +222,9 @@ public class ContractContrataController {
 				 || code.equals(ContractCode.C418.getValue())
 				 || code.equals(ContractCode.C508.getValue())
 				 || code.equals(ContractCode.C518.getValue()) ){
-			String msg = "Tipo contrato no implementado para generar el fichero contrat@";
+			// Contratos de caracter administrativo
+			setEnabledContrataEdition(false);
+			String msg = "Tipo de contrato sin implementación para comunicaciones con Contrat@. (Códigos de contrato 408, 418, 508 y 518)";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -178,13 +232,13 @@ public class ContractContrataController {
 		try {
 			processXmlFile( getContrataAttach() );
 		} catch (ManagerBeanException e) {
-			String msg = "No se han podido obtener los datos del fichero (XML) de contrata previamente guardado.";
+			String msg = "No se han podido obtener los datos de Contrat@ previamente guardados.";
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(msg, e);
 		} catch (IOException e) {
-			String msg = "No se han podido obtener los datos del fichero (XML) de contrata previamente guardado.";
+			String msg = "No se han podido obtener los datos de Contrat@ previamente guardados.";
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -194,7 +248,7 @@ public class ContractContrataController {
 	
 	public void onAccept( ActionEvent event ) {
 		try {
-			generateXmlFile(getHandler().getParams().getContract());
+			generateXmlFile(getParams().getContract());
 			ContractAttachment attach = new ContractAttachment();
 			attach = getContrataAttach();
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
@@ -203,7 +257,7 @@ public class ContractContrataController {
 			ContractAttachController attachController = (ContractAttachController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_ATTACH_CONTROLLER);
 			attachController.initializeModel();
 		} catch (ManagerBeanException e) {
-			String msg = "No se ha podido guardar el documento (XML) de contrata";
+			String msg = "No se han podido guardar los datos de Contrat@";
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -269,7 +323,7 @@ public class ContractContrataController {
 	private void generateXmlFile(Contract contract) throws ManagerBeanException{
 		ContrataWriter writer = new ContrataWriter();
 		try {
-			File file = writer.createFile(getHandler().getParams());
+			File file = writer.createFile(getParams());
 			FileInputStream fis = new FileInputStream(file);
 			byte fileContent[] = new byte[(int)file.length()];
 			fis.read(fileContent);
@@ -283,7 +337,7 @@ public class ContractContrataController {
 			getContrataAttach().setDescription("Fichero contrat@");
 			fis.close();
 		} catch(IOException e) {
-			String msg = "No se ha podido generar el documento (XML) de contrata";
+			String msg = "No se han podido guardar los datos de Contrat@";
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -498,7 +552,7 @@ public class ContractContrataController {
 			}
 			is.close();
 		} catch(IOException e) {
-			String msg = "No se ha podido generar el documento de respuesta (XML) de contrata";
+			String msg = "No se han podido guardar los datos de respuesta de Contrat@";
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -513,7 +567,7 @@ public class ContractContrataController {
 			attachController.initializeModel();
 			return contrataResultAttach;
 		} catch (ManagerBeanException e) {
-			String msg = "No se ha podido generar el documento de respuesta (XML) de contrata";
+			String msg = "No se han podido guardar los datos de respuesta de Contrat@";
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -552,7 +606,7 @@ public class ContractContrataController {
 				return contratos;
 
 			} catch (JAXBException e) {
-				String msg = "Error al obtener los datos del documento xml de contrata";
+				String msg = "Error al obtener los datos de Contrat@";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg, e);
 			}

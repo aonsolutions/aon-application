@@ -1,6 +1,7 @@
 package com.esferalia.aon.ui.payroll.file;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.person.Person;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.ql.Criteria;
@@ -21,6 +23,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.sepe.api.contrata.contratos.*;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseCCC;
+import com.esferalia.aon.payroll.PayrollWorkPlace;
+import com.esferalia.aon.payroll.contrata.enumeration.TCHRGCOT;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -396,10 +400,48 @@ public class ContrataContratosWriter {
 		c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(contrataParams));
 		return c;
 	}
+	
+	/**
+	 * <xsd:complexType name="DATOS_EMPRESATYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos de la empresa que contrata</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="CIF_NIF_EMPRESA" type="CIFNIFTYPE">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">CIF/ NIF de la empresa que contrata</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="CODIGO_CUENTA_COTIZACION">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código de la cuenta de cotización de la empresa.  
+					Su composición corresponde a la unión de los datos de :  
+					régimen de cotización(4)-provincia(2)-número de cuenta de cotización(7)-dígito de control(2). 
+					Los posibles valores que puede tomar el régimen de cotización se encuentran codificados en la tabla TCHRGCOT.txt de la Ayuda XML 
+					- Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{15}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	 * @param params
+	 * @return
+	 * @throws ManagerBeanException
+	 */
 	private DATOSEMPRESATYPE createDatosEmpresa(ContrataParams params) throws ManagerBeanException {
 		DATOSEMPRESATYPE datos = factory.createDATOSEMPRESATYPE();
 		datos.setCIFNIFEMPRESA(createCifNif(params.getContract().getWorkPlace().getEnterprise().getRegistry().getDocument()));
-		datos.setCODIGOCUENTACOTIZACION(completeLength(getEnterpriseCCC(params.getContract().getWorkPlace().getEnterprise()),15,"0",false));
+		EnterpriseCCC ccc = getEnterpriseCCC(params.getContract().getWorkPlace());
+		// TODO: research about ccc quote regime
+//		ccc.getType()+ccc.getCcc();
+//		TCHRGCOT.TCHRGCOT_0111.getValue()++ccc.getCcc();
+		if(ccc!=null){
+			datos.setCODIGOCUENTACOTIZACION(TCHRGCOT.TCHRGCOT_0111.getValue()+ccc.getCcc());
+		}
 		return datos;
 	}
 
@@ -866,16 +908,18 @@ public class ContrataContratosWriter {
 	 * @param contrataParams
 	 * @return
 	 */
-	private DATOSMEDIDASFOMENTOTYPE createDatosMedidasFomento(ContrataParams contrataParams) {
-		// TODO 
-		DATOSMEDIDASFOMENTOTYPE datos = factory.createDATOSMEDIDASFOMENTOTYPE();
-		datos.setINDCOSTEDESPIDO(contrataParams.isPermanentContractDevelopment()?"1":"2");
-		if(contrataParams.isPermanentContractDevelopment()){
-			datos.setCODIGOCOLECTIVODESPIDO(contrataParams.getCodigoColectivoDespido()!=null?contrataParams.getCodigoColectivoDespido().getValue():null);
-		} else {
-			datos.setCODIGOCOLECTIVODESPIDO(null);
+	private DATOSMEDIDASFOMENTOTYPE createDatosMedidasFomento(ContrataParams params) {
+		if(params.isMedidasFomentoData()){
+			DATOSMEDIDASFOMENTOTYPE datos = factory.createDATOSMEDIDASFOMENTOTYPE();
+			datos.setINDCOSTEDESPIDO(params.isIndCosteDespido()?"1":"2");
+			if(params.isIndCosteDespido()){
+				datos.setCODIGOCOLECTIVODESPIDO(params.getCodigoColectivoDespido()!=null?params.getCodigoColectivoDespido().getValue():null);
+			} else {
+				datos.setCODIGOCOLECTIVODESPIDO(null);
+			}
+			return datos;
 		}
-		return datos;
+		return null;
 	}
 	/**
 	 * <xsd:complexType name="DATOS_ANEXOCONTRATORELEVOTYPE">
@@ -1660,11 +1704,14 @@ public class ContrataContratosWriter {
 	 * @return
 	 */
 	private DATOSCONTRATOINVESTIGACIONTYPE createDatosContratoInvestigacion(ContrataParams params) {
-		DATOSCONTRATOINVESTIGACIONTYPE datos = new  DATOSCONTRATOINVESTIGACIONTYPE();
-		datos.setINDEMPLEADOR(params.getIndEmpleador().getValue());
-		datos.setINDTRABAJADOR(params.getIndTrabajador().getValue());
-		datos.setINDRD632006(params.getIndRd632006()?"S":null);
-		return datos;
+		if(params.isResearchData()){
+			DATOSCONTRATOINVESTIGACIONTYPE datos = new  DATOSCONTRATOINVESTIGACIONTYPE();
+			datos.setINDEMPLEADOR(params.getIndEmpleador().getValue());
+			datos.setINDTRABAJADOR(params.getIndTrabajador().getValue());
+			datos.setINDRD632006(params.getIndRd632006()?"S":null);
+			return datos;
+		}
+		return null;
 	}
 	/**
 	 * <xsd:complexType name="DATOS_CONTRATOINSERCIONTYPE">
@@ -1775,10 +1822,11 @@ public class ContrataContratosWriter {
 	 * @return
 	 */
 	private DATOSCONTRATOPRACTICASTYPE createDatosContratoPracticas(ContrataParams params) {
-		// TODO
 		DATOSCONTRATOPRACTICASTYPE datos = new DATOSCONTRATOPRACTICASTYPE();
-		datos.setTITULACIONACADEMICA("");
-		datos.setINDCERTIFPROFESIONALIDAD("");
+		datos.setTITULACIONACADEMICA(params.getTitulacionAcademica());
+		if(params.getIndCertifProfesionalidad()!=null){
+			datos.setINDCERTIFPROFESIONALIDAD(params.getIndCertifProfesionalidad()?"S":"N");
+		}
 		return datos;
 	}
 	/**
@@ -1818,14 +1866,28 @@ public class ContrataContratosWriter {
 		return contractDataMap;
 	}
 	
-	private String getEnterpriseCCC(Enterprise enterprise) throws ManagerBeanException {
+	private PayrollWorkPlace getPayrollWorkPlace(WorkPlace workPlace) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), workPlace.getId());
+		Iterator<ITransferObject> it = bean.getList(criteria).iterator();
+		while(it.hasNext()){
+			return (PayrollWorkPlace) it.next();
+		}
+		return null;
+	}
+
+	private EnterpriseCCC getEnterpriseCCC(WorkPlace workPlace) throws ManagerBeanException {
+		PayrollWorkPlace pw = getPayrollWorkPlace(workPlace);
 		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), enterprise.getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_TYPE), CCCType.PRINCIPAL);
-		List<ITransferObject> list = bean.getList(criteria);
-		if(!list.isEmpty()){
-			return ((EnterpriseCCC)list.get(0)).getCcc();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), workPlace.getEnterprise().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ID), pw.getEnterpriseActivity().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_GEOZONE_ID), workPlace.getAddress().getGeozone().getId());
+
+		Iterator<ITransferObject> it = bean.getList(criteria).iterator();
+		while(it.hasNext()){
+			return (EnterpriseCCC) it.next();
 		}
 		return null;
 	}

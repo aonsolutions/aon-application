@@ -253,14 +253,11 @@ public class ContrataTransformacionesWriter {
 	 * @return
 	 */
 	private DATOSCOMUNICACOPIABASICATYPE createDatosComunicacionCopiaBasica(ContrataParams params) {
-		if(params.isEttData()){
-			DATOSCOMUNICACOPIABASICATYPE datos = factory.createDATOSCOMUNICACOPIABASICATYPE();
-			datos.setDOMICCENTROTRABAJO(params.getContract().getWorkPlace().getAddress().getFullAddress());
-			datos.setTEXTOCOPIABASICA(params.getTextoCopiaBasica());
-			datos.setTIPOFIRMA(params.getTipoFirmaCopiaBasica()!=null?params.getTipoFirmaCopiaBasica().getValue():null);
-			return datos;
-		}
-		return null;
+		DATOSCOMUNICACOPIABASICATYPE datos = factory.createDATOSCOMUNICACOPIABASICATYPE();
+		datos.setDOMICCENTROTRABAJO(params.getContract().getWorkPlace().getAddress().getFullAddress());
+		datos.setTEXTOCOPIABASICA(params.getTextoCopiaBasica());
+		datos.setTIPOFIRMA(params.getTipoFirmaCopiaBasica()!=null?params.getTipoFirmaCopiaBasica().getValue():null);
+		return datos;
 	}
 	
 	/**
@@ -347,8 +344,8 @@ public class ContrataTransformacionesWriter {
 	private DATOSMEDIDASFOMENTOTYPE createDatosMedidasFomento(ContrataParams contrataParams) {
 		// TODO 
 		DATOSMEDIDASFOMENTOTYPE datos = factory.createDATOSMEDIDASFOMENTOTYPE();
-		datos.setINDCOSTEDESPIDO(contrataParams.isPermanentContractDevelopment()?"1":"2");
-		if(contrataParams.isPermanentContractDevelopment()){
+		datos.setINDCOSTEDESPIDO(contrataParams.isIndCosteDespido()?"1":"2");
+		if(contrataParams.isIndCosteDespido()){
 			datos.setCODIGOCOLECTIVODESPIDO(contrataParams.getCodigoColectivoDespido()!=null?contrataParams.getCodigoColectivoDespido().getValue():null);
 		} else {
 			datos.setCODIGOCOLECTIVODESPIDO(null);

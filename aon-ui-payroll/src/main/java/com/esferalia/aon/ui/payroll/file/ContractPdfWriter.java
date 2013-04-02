@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 
+import javax.faces.context.FacesContext;
+
 import com.code.aon.common.util.Classpath;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfFactory;
@@ -15,6 +17,8 @@ import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractContrataController;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 
@@ -77,6 +81,9 @@ public class ContractPdfWriter {
 		pdfDocument = factory.createContractDocument(document);
 		PayrollUtils utils = new PayrollUtils();
 		String tc2 = utils.getContractDataMap(contract).get(ContextVariable.TC2.getName());
+		pdfDocument.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
+		// TODO: load pdf document with contrata data
+//		pdfDocument.setContrataData(obtainContrataData());
 		pdfDocument.loadPdfFields(ContractCode.getContractCodeByValue(tc2), contract);
 	}
 
@@ -86,7 +93,19 @@ public class ContractPdfWriter {
 	public void loadExistingPdf(String document, ContractAttachment contractPdfDraft) {
 		ContractPdfFactory factory = new ContractPdfFactory();
 		pdfDocument = factory.createContractDocument(document);
+		pdfDocument.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		pdfDocument.loadPdfFields(contractPdfDraft);
 	}
 	
+	private ContrataParams obtainContrataData() {
+		try {
+			// TODO: obtain contrata data to load pdf document
+//			ContractContrataController controller = (ContractContrataController) AonUtil.getRegisteredBean("contractContrata");
+//			controller.onContrataDataShow(null);
+//			return controller.getParams();
+		} catch (Exception e){
+			// no se carga ningun dato relacionado con contrata
+		}
+		return null;
+	}
 }

@@ -19,12 +19,23 @@
 				
 			<aon:commandButton id="contrata-sepe-comunication"
 				value="Comunicar al S.E.P.E."
+				disabled="#{!contractContrata.communicationAvailable}"
 				rendered="#{!contractContrata.new and !contractContrata.communicationResponseReceived}"
 				reRender="showContrataLoginWindow,contrataResponseContainer,contrataData,contractForm"
 				actionListener="#{contractContrata.onSendContrataFile}"
 				onclick="Richfaces.showModalPanel('waitProccess')" 
  				oncomplete="Richfaces.hideModalPanel('waitProccess')"
 				styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
+				
+			<c:if test="#{!contractContrata.new and !contractContrata.communicationResponseReceived and !contractContrata.communicationAvailable}">
+				<aon:div style="display: inline;">
+					<aon:outputText	value="&#160;" styleClass="aon-margin-left aon-icon-commandButton aon-icon-info" />
+					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+						<aon:outputText value="#{contractContrata.communicationAvailableCodes}" />
+					</rich:toolTip>
+				</aon:div>
+			</c:if>
+			
 			
 			<aon:commandButton id="contrata-sepe-dataQuery"
 				value="Consultar datos al S.E.P.E."
