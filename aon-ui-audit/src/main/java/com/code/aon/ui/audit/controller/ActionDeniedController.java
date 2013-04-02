@@ -491,13 +491,19 @@ public class ActionDeniedController {
 		return StringUtils.substringBefore(managedBean, "_");
 	}
 	
+	private boolean isMainOption( ApplicationOption option ) {
+		return ! StringUtils.contains(option.getAction(), "-");
+	}
+	
 	public void initEnabledManagedBeans() {
 		this.skipManagedBean = new SkipManagedBeanMap();
 		this.enabledManagedBeans = new HashMap<String, ApplicationOption>();
 		List<ApplicationOption> options = new ArrayList<ApplicationOption>( getOptions(true) );	
 		for( ApplicationOption option : options ) {
 			String managedBean = getManagedBean(option);
-			this.enabledManagedBeans.put(managedBean, option);
+			if ( isMainOption(option) || !this.enabledManagedBeans.containsKey(managedBean) ) {
+				this.enabledManagedBeans.put(managedBean, option);				
+			}
 		}
 		for( ApplicationOption option : this.deniedActionsMap.values() ) {
 			String managedBean = getManagedBean(option);
