@@ -12,6 +12,7 @@ import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -124,6 +125,7 @@ public class AccountingUtil {
 			period.setName(Integer.toString(year));
 			period.setInitiationDate(initiation.getTime());
 			period.setDeadline(deadline.getTime());
+			period.setStatus(AccountPeriodStatus.ACTIVE);
 			period =(Period) periodBean.insert(period);
 		}
 		return period;
