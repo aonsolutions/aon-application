@@ -59,7 +59,6 @@ import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.ui.pms.ProjectReservationPermission;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
-@SuppressWarnings("rawtypes")
 public class ProjectReservationController extends BasicController implements IPmsConstants {
 
 	private ReservationUtils reservationUtils;
@@ -239,7 +238,6 @@ public class ProjectReservationController extends BasicController implements IPm
 		this.invoiceToRectificate = invoiceToRectificate;
 	}
 
-	@SuppressWarnings("unchecked")
 	public DataModel getInvoiceModel() {
 		if (invoiceModel == null) {
 			invoiceModel = new ListDataModel(getReservationInvoiceList((ProjectReservation)getTo()));
@@ -269,17 +267,18 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	public List<SelectItem> getReservationTimes() {
-		List<SelectItem> hours = new LinkedList<SelectItem>();
 		DateFormat formatter = new SimpleDateFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_time2_pattern"));
-		Date now = new Date();
-		for (int i=0; i<24; i++) {
-			now = DateUtils.setMinutes(DateUtils.setHours(now, i), 0);
-			SelectItem item = new SelectItem(formatter.format(now));
+		Date fromDate = DateUtils.truncate(((ProjectReservation)getTo()).getStartDate(), Calendar.DATE);
+		Date toDate = DateUtils.addDays(fromDate, 1);
+
+		List<SelectItem> hours = new LinkedList<SelectItem>();
+		while (fromDate.before(toDate)) {
+			SelectItem item = new SelectItem(formatter.format(fromDate));
+			hours.add(item);
+			item = new SelectItem(formatter.format(DateUtils.setMinutes(fromDate, 30)));
 			hours.add(item);
 
-			now = DateUtils.setMinutes(now, 30);
-			item = new SelectItem(formatter.format(now));
-			hours.add(item);
+			fromDate = DateUtils.addHours(fromDate, 1);
 		}
 		return hours;
 	}
