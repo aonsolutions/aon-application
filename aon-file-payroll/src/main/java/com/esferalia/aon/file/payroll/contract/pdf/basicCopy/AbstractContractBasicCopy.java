@@ -320,7 +320,7 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument 
 		setPdfFieldValue(CONTRACT_REMUNERATION_EURO, "euros brutos");
 		setPdfFieldValue(CONTRACT_REMUNERATION_PERIOD, "mensuales");
 		setPdfFieldValue(CONTRACT_VACATIONS, "30 días naturales por año trabajado");
-		setPdfFieldValue(CONTRACT_SIGN_TOWN,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getCity());
+		setPdfFieldValue(CONTRACT_SIGN_TOWN,contract.getWorkPlace().getAddress().getCity());
 		setPdfFieldValue(CONTRACT_SING_DAY, String.valueOf(CommonUtil.getDay(new Date())));
 		dateFormatter.applyPattern("MMMM");
 		setPdfFieldValue(CONTRACT_SIGN_MONTH, dateFormatter.format(new Date()) );

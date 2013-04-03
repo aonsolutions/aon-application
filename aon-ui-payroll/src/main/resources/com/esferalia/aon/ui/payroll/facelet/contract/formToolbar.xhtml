@@ -28,7 +28,7 @@
 				title="Edicion manual del documento del contrato"
 				styleClass="aon-finding-toolbar-item aon-icon-pdf" >
 				<f:setPropertyActionListener
-					target="#{contractPdf.documentType}" value="CONTRACT_DOCUMENT_DRAFT" />
+					target="#{contractPdf.documentType}" value="CONTRACT" />
 				<f:setPropertyActionListener
 					target="#{contractPdf.backAction}" value="contract_form" />
 				<aon:actionListener method="#{contract.onContractDocumentShow}" />
@@ -40,11 +40,38 @@
 				title="Edicion manual del documento de la copia basica"
 				styleClass="aon-finding-toolbar-item aon-icon-pdf" >
 				<f:setPropertyActionListener
-					target="#{contractPdf.documentType}" value="BASIC_COPY_DRAFT" />
+					target="#{contractPdf.documentType}" value="BASIC_COPY" />
 				<f:setPropertyActionListener
 					target="#{contractPdf.backAction}" value="contract_form" />
 				<aon:actionListener method="#{contract.onContractDocumentShow}" />
 			</aon:commandButton>
+			<!--  
+			<aon:commandButton id="annex1Draft-edition"
+				action="contractPdfEdition_form" ajaxSingle="true" 
+				rendered="#{not empty contract.to.model and not contract.existDocument}"
+				value="Anexo I"
+				title="Anexo I. Acuerdo para la actividad formativa en contrato para la formación y  el aprendizaje en los supuestos que exista título de FP, certficado de profesionalidad y centro disponible."
+				styleClass="aon-finding-toolbar-item aon-icon-pdf" >
+				<f:setPropertyActionListener
+					target="#{contractPdf.documentType}" value="#{contract.annexPdfType}" />
+				<f:setPropertyActionListener
+					target="#{contractPdf.backAction}" value="contract_form" />
+				<aon:actionListener method="#{contract.onContractDocumentShow}" />
+			</aon:commandButton>
+			-->
+			<aon:commandButton id="annex2Draft-edition"
+				action="contractPdfEdition_form" ajaxSingle="true"
+				rendered="#{contract.trainingContract and contract.trainingCenterDefined}" 
+				value="Anexo II"
+				title="Anexo II. Acuerdo para la actividad formativa en contrato para la formación y el aprendizaje en los supuestos en que no exista título de FP, certificado de profesionalidad o centro disponible."
+				styleClass="aon-finding-toolbar-item aon-icon-pdf" >
+				<f:setPropertyActionListener
+					target="#{contractPdf.documentType}" value="ANNEX" />
+				<f:setPropertyActionListener
+					target="#{contractPdf.backAction}" value="contract_form" />
+				<aon:actionListener method="#{contract.onContractDocumentShow}" />
+			</aon:commandButton>
+
 		</ui:define>
 		<ui:define name="moreMenuContent">
 			<c:if test="#{!contract.skipPayrollData}" >

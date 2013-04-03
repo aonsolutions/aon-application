@@ -11,8 +11,8 @@
 
 		<aon:panelGrid columns="2" style="width: 80%;" >
 			
-			<aon:outputLabel for="workPlace" styleClass="aon-italic aon-margin-left"
-				style="font-size: 0.9em" value="#{companyBundle.company_workplace}" />
+			<aon:outputLabel for="workPlace" 
+				value="#{companyBundle.company_workplace}" />
 			<aon:selectOneMenu id="workPlace" required="true"
 				disabled="#{contract.enterprise==null or contract.enterprise.id==null}"
 				value="#{contract.to.workPlace}" >
@@ -42,6 +42,76 @@
 				<ui:param name="idRequired" value="#{true}" />
 				<ui:param name="lookupDisabled" value="#{false}" />
 			</ui:include>
+			
+			<aon:outputLabel for="Contract_tc2Code"
+				value="#{payrollBundle.payroll_contract_contract_code}" />
+			<aon:selectOneMenu id="Contract_tc2Code" required="true" 
+				value="#{contract.params.contractModelCode}">
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{payrollCollections.tc2List}" />
+				<a4j:support event="onchange" 
+						ajaxSingle="true"
+						reRender="contract_new_panel" />
+			</aon:selectOneMenu>
+			
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.params.cno}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+				<ui:param name="lookupDisabled" value="#{false}" />
+			</ui:include>
+			
+			<c:if test="#{!contract.skipPayrollData}" >
+				<aon:outputLabel  
+					value="#{payrollBundle.payroll_agreementLevel_category_level}" />
+				<aon:panelGrid id="agreementLevelCategory-content" columns="2" 
+					columnClasses="aon-panelGrid-even aon-noborder aon-italic, aon-panelGrid-even aon-noborder" >
+		
+					<aon:methodParam name="lookupChangeListener" value="#{contract.onChangeAgreement}" type="lookupChangeListener" />
+					<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/agreement/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{contract.agreement}" />
+						<ui:param name="skipInputText" value="#{true}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="lookupInputSuggestSize" value="30" />
+						<ui:param name="lookupReRender" value="agreementLevelCategory-content" />
+						<ui:define name="afterLookupContent">
+							<aon:outputText id="agreementLevelCategory-info" 
+								value="&#160;&#160;&#160;&#160;&#160;"
+								title="#{payrollBundle.payroll_contract_no_category_selected}"
+								styleClass="aon-icon-info"
+								rendered="#{contract.agreement.id!=null and contract.to.agreementLevelCategory.id==null}" />
+						</ui:define>
+					</ui:decorate>
+		
+					<aon:outputLabel for="agreementLevelCategory" 
+						value="#{payrollBundle.payroll_agreementLevel_category}" />
+					<aon:panelGroup>
+						<aon:selectOneMenu id="agreementLevelCategory" styleClass="aon-margin-left"
+							value="#{contract.to.agreementLevelCategory}" >
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{contract.agreementLevelCategories}" />
+						</aon:selectOneMenu>
+						<aon:outputLabel for="agreementLevelCategory-alias" styleClass="aon-margin-left aon-margin-right" 
+							value="#{payrollBundle.payroll_display_as}" />
+						<aon:inputText id="agreementLevelCategory-alias" maxLength="64"
+							value="#{contract.to.categoryDescription}" />
+					</aon:panelGroup>
+				</aon:panelGrid>
+			</c:if>
+			
+			<c:if test="#{contract.skipPayrollData}" >
+				<aon:outputLabel for="Contract_categoryDescription"  
+					value="#{payrollBundle.payroll_contract_category}" />
+				<aon:inputText id="Contract_categoryDescription" maxLength="64" size="56"
+					value="#{contract.to.categoryDescription}" />
+			</c:if>
+			
+			<aon:outputLabel for="quote_group"
+				value="#{payrollBundle.payroll_contract_quote_group}" />
+			<aon:selectOneMenu id="quote_group" required="true" 
+				value="#{contract.params.quoteGroup}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{payrollCollections.quoteGroups}" />
+			</aon:selectOneMenu>
 			
 			<aon:outputLabel for="ssRegime"
 				value="#{payrollBundle.payroll_contract_regime}" />
@@ -134,8 +204,6 @@
 				</aon:panelGroup>
 				
 			</aon:panelGrid>
-			
-	
 <!--  
 			<aon:outputLabel for="gross_salary"
 				value="#{payrollBundle.payroll_contract_gross_salary}" />
@@ -154,37 +222,59 @@
 					value="#{payrollBundle.payroll_contract_like_agreement}&#160;" />
 			</aon:div>
 -->			
-			
-			<aon:outputLabel for="Contract_tc2Code"
-				value="#{payrollBundle.payroll_contract_contract_code}" />
-			<aon:selectOneMenu id="Contract_tc2Code" required="true" 
-				value="#{contract.params.contractModelCode}">
-				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{payrollCollections.tc2List}" />
-			</aon:selectOneMenu>
-			
-			<aon:outputLabel for="quote_group"
-				value="#{payrollBundle.payroll_contract_quote_group}" />
-			<aon:selectOneMenu id="quote_group" required="true" 
-				value="#{contract.params.quoteGroup}" >
-				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{payrollCollections.quoteGroups}" />
-			</aon:selectOneMenu>
+		
+			<c:if test="#{contract.params.trainingContract}" >
+				<aon:outputLabel for="contract_bonus" value="#{payrollBundle.payroll_contract_subsidized}" />
+				<aon:selectBooleanCheckbox id="contract_bonus" value="#{contract.params.subsidized}" >
+					<!--  
+					<a4j:support event="onclick" 
+						ajaxSingle="true"
+						ignoreDumpResponses="true"
+						limitToList="true"
+						eventsQueue="bonus"
+						reRender="contract_new_panel, bonus_panel" />
+					-->
+				</aon:selectBooleanCheckbox>
 				
-			<aon:outputLabel for="irpf"
-				value="#{payrollBundle.payroll_contract_irpf_percent}" />
-			<aon:inputText id="irpf" size="10" required="true" 
-				value="#{contract.params.irpf}" >
-				<f:validateDoubleRange />
-			</aon:inputText>
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/trainingCenter/lookup.xhtml" >
+					<ui:param name="lookupTo" value="#{contract.params.trainingCenter}" />
+					<ui:param name="skipNewButton" value="#{true}" />
+					<ui:param name="lookupReRender" value="lookupTrainingCourse" />
+				</ui:include>
 			
-			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
-				<ui:param name="lookupTo" value="#{contract.params.cno}" />
-				<ui:param name="skipNewButton" value="#{true}" />
-				<ui:param name="lookupDisabled" value="#{false}" />
-			</ui:include>
-
+		<!--  
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/trainingCenter/course/lookup.xhtml" >
+					<ui:param name="lookupTo" value="#{contract.params.trainingCourse}" />
+					<ui:param name="skipNewButton" value="#{true}" />
+					<ui:param name="lookupDisabled" value="#{contract.params.trainingCenter.id==null}" />
+				</ui:include>
+		-->
+			</c:if>
+			
 		</aon:panelGrid>
+		
+<!--  
+		<aon:panel id="bonus_panel" 
+			rendered="#{contract.params.subsidized}">
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_salary_bonus_tab}" />
+			</f:facet>
+			<aon:dataTable id="listData" value="#{bonusConcept.model}"
+				var="to" rows="20" rendered="#{bonusConcept.model.rowCount > 0}" >	
+				<aon:rowSelector id="noBatched-select" toggleOnClick="#{false}"/>
+				<aon:column styleClass="aon-editDataTable-iconColumn">
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<aon:selectBooleanCheckbox 
+						value="#{contract.bonusRowChecked}"
+						valueChangeListener="#{contract.bonusRowSelected}" >
+					</aon:selectBooleanCheckbox>	
+				</aon:column>
+				<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/bonusConcept/list_content.xhtml" />
+			</aon:dataTable>	
+		</aon:panel>
+-->
 		
 	</aon:div>
 	
