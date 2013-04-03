@@ -81,7 +81,7 @@ public class Mod130Manager extends FiscalModelManager {
 			+" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)" 
 			+" INNER JOIN invoice i ON (id.invoice = i.id)"
 			+" WHERE " + DomainManager.getStaticSQLWhereClause("i.domain")
-			+" AND i.type != 1 " 			// No Ventas
+			+" AND i.type = 1 " 			// Ventas
 			+" AND it.tax_type = 2" 		// IRPF
 			+" AND i.tax_date >= ?"
 			+" AND i.tax_date <= ?";
