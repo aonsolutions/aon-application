@@ -22,6 +22,7 @@ import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.PaymentConcept;
+import com.esferalia.aon.payroll.TrainingCenter;
 
 public class PayrollAppParamsController{
 	
@@ -31,6 +32,9 @@ public class PayrollAppParamsController{
 	
 	public final static String CONTRATA_USER = "PAY_contrata_user_PAY";
 	public final static String CONTRATA_PASSWORD = "PAY_contrata_passwd_PAY";
+
+	public final static String DEFAULT_CONTRACT_CODE = "PAY_default_contractCode_PAY";
+	public final static String DEFAULT_TRAINING_CENTER = "PAY_default_trainingCenter_PAY";
 	
 	private PaymentConcept settleVacationConcept;
 	private PaymentConcept settleNoticeDayConcept;
@@ -39,6 +43,8 @@ public class PayrollAppParamsController{
 	private String contrataUser;
 	private String contrataPassword;
 	private Boolean validContrataLogin;
+	
+	private TrainingCenter defaultTrainingCenter;
 	
 	private Map<String, ApplicationParameter> parameters;
 
@@ -191,6 +197,32 @@ public class PayrollAppParamsController{
 		}
 	}
 
+	public TrainingCenter getDefaultTrainingCenter() {
+		if(defaultTrainingCenter==null){
+			initDefaultTrainingCenter();
+		}
+		return defaultTrainingCenter;
+	}
+	
+	public void setDefaultTrainingCenter(TrainingCenter defaultTrainingCenter) {
+		this.defaultTrainingCenter = defaultTrainingCenter;
+	}
+	
+	private void initDefaultTrainingCenter() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(TrainingCenter.class);
+			if(getParameter(DEFAULT_TRAINING_CENTER).getValue()!=null){
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_CENTER_ID), Integer.parseInt(getParameter(DEFAULT_TRAINING_CENTER).getValue()));
+				setDefaultTrainingCenter((TrainingCenter) bean.getList(criteria).get(0));
+			} else {
+				setDefaultTrainingCenter((TrainingCenter) bean.createNewTo());
+			}
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+	}
+
 	public Map<String, ApplicationParameter> getParameters() {
 		return parameters;
 	}
@@ -233,7 +265,6 @@ public class PayrollAppParamsController{
 	public void onLoad(ActionEvent event) {
 		try {
 			loadParameters();
-			setValidContrataLogin(null);
 		} catch (ManagerBeanException e) {
 			String msg = "Unable to load defaultParameters";
 			AonUtil.addErrorMessage(msg);
@@ -248,6 +279,7 @@ public class PayrollAppParamsController{
 		setContrataUser(null);
 		setContrataPassword(null);
 		setValidContrataLogin(null);
+		setDefaultTrainingCenter(null);
 		
 		parameters = new TreeMap<String, ApplicationParameter>();
 		IManagerBean managerBean = BeanManager.getManagerBean(ApplicationParameter.class);
@@ -296,6 +328,11 @@ public class PayrollAppParamsController{
 		// CONTRATA PARAMS
 		getParameter(CONTRATA_USER).setValue(getContrataUser());
 		getParameter(CONTRATA_PASSWORD).setValue(getContrataPassword());
+
+		// CONTRACT PARAMS
+		if(getDefaultTrainingCenter()!=null && getDefaultTrainingCenter().getId()!=null){
+			getParameter(DEFAULT_TRAINING_CENTER).setValue(getDefaultTrainingCenter().getId().toString());
+		}
 	}
 
 	private String getDraftTemplateName() throws ManagerBeanException {

@@ -1,8 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
@@ -15,9 +13,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
-import org.richfaces.event.UploadEvent;
-import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +21,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.ql.Criteria;
@@ -71,14 +65,11 @@ import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 public class ContractController extends BasicController implements IVariablesHandler {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractController.class.getName());
-	private static final int MAX_FILE_SIZE_MB = 3;
-	private static final int MAX_FILE_SIZE = MAX_FILE_SIZE_MB*1024*1024;
 	
 	private Enterprise enterprise;
 	private List<SelectItem> workPlaces;
 	private List<SelectItem> enterpriseCCCs;
 	private List<SelectItem> activities;
-	private AonFile aonFile;
 	private Agreement agreement;
 	
 	private ContractVariableHandler variableHandler;
@@ -123,13 +114,6 @@ public class ContractController extends BasicController implements IVariablesHan
 	}
 	public void setAgreement(Agreement agreement) {
 		this.agreement = agreement;
-	}
-	
-	public AonFile getAonFile() {
-		return this.aonFile;
-	}
-	public void setAonFile(AonFile aonFile) {
-		this.aonFile = aonFile;
 	}
 	
 	public Enterprise getEnterprise() {
@@ -382,7 +366,7 @@ public class ContractController extends BasicController implements IVariablesHan
 	public void onDownloadContract( ActionEvent event ) {
 		try {
 			Contract c = (Contract)this.getModel().getRowData();
-			download(c);
+			download(c, ContractAttachmentType.CONTRACT_DOCUMENT);
 		} catch (IOException e) {
 			String msg = "Imposible descargar el Contrato. (" +e.getMessage() + ")"; 
 			LOGGER.error(msg, e);
@@ -396,11 +380,11 @@ public class ContractController extends BasicController implements IVariablesHan
 		}
 	}
 
-	private void download(Contract c) throws IOException {
+	private void download(Contract c, ContractAttachmentType type) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-		searchContractAttachDocument(c);
-		byte[] buffer = getAonFile().getData();
+		ContractAttachment attach = obtainContractAttachDocument(c, type);
+		byte[] buffer = attach.getData();
 		InputStream in = new ByteArrayInputStream(buffer);
 		int bytes = in.read(buffer);
 		while (bytes != -1) {
@@ -413,40 +397,43 @@ public class ContractController extends BasicController implements IVariablesHan
 		context.responseComplete();
 	}
 	
-	public void searchContractAttachDocument(Contract contract) {
+	public ContractAttachment obtainContractAttachDocument(Contract contract, ContractAttachmentType type) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.CONTRACT_DOCUMENT);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), type);
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
-				ContractAttachment attach = (ContractAttachment) list.get(0);
-				AonFile f = new AonFile();
-				f.setData(attach.getData());
-				f.setFileName( attach.getDescription() );
-				f.setMimeType( attach.getMimeType() );
-				setAonFile(f);
-			} else {
-				setAonFile(null);
-			}
+				return (ContractAttachment) list.get(0);
+			} 
 		} catch (ManagerBeanException e) {
 			// NADA, el documento se queda vacio
 		}
+		return null;
 	}
 	
-	public boolean getExistDocument(){
+	public boolean getExistSignedContractDocument(){
 		try {
 			if(this.getModel().isRowAvailable()){
 				Contract c = (Contract)this.getModel().getRowData();
-				setAonFile(null);
-				searchContractAttachDocument(c);
-				if(getAonFile()!=null){
-					return true;
-				}
+				return obtainContractAttachDocument(c, ContractAttachmentType.CONTRACT_DOCUMENT) != null;
 			}
 		} catch (ManagerBeanException e) {
-			String msg = "Imposible obtener el documento. (" +e.getMessage() + ")"; 
+			String msg = "No se ha podido obtener el documento del contrato. (" +e.getMessage() + ")"; 
+			LOGGER.error(msg, e);
+		}
+		return false;
+	}
+	
+	public boolean getExistSignedBasicCopyDocument(){
+		try {
+			if(this.getModel().isRowAvailable()){
+				Contract c = (Contract)this.getModel().getRowData();
+				return obtainContractAttachDocument(c, ContractAttachmentType.BASIC_COPY) != null;
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "No se ha podido obtener el documento del contrato. (" +e.getMessage() + ")"; 
 			LOGGER.error(msg, e);
 		}
 		return false;

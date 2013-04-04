@@ -2645,6 +2645,14 @@
 					<key>PAY_contrata_passwd_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
+				<map-entry>
+					<key>PAY_default_contractCode_PAY</key>
+					<value>[NULL]</value>
+				</map-entry>
+				<map-entry>
+					<key>PAY_default_trainingCenter_PAY</key>
+					<value>[NULL]</value>
+				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>

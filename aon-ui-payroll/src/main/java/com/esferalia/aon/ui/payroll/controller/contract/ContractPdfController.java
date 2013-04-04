@@ -1,6 +1,9 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
+import java.io.ByteArrayInputStream;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
@@ -9,11 +12,13 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -21,6 +26,10 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MailConfigController;
+import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.SecurityInfo;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
@@ -382,10 +391,10 @@ public class ContractPdfController {
 	}
 	
 	public void onDocumentReload(ActionEvent event){
-		ContractAttachment attach = obtainContractPdfDraft();
 		try {
 			setContractPdfDraft(new ContractAttachment());
 			loadPdfDocument();
+			initialize();
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -395,20 +404,33 @@ public class ContractPdfController {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
 		}
-		
+	}
+	
+	public void onDownloadPdf( ActionEvent event ) {
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
-			attach.setData(getContractPdfWriter().buildPdf());
-			bean.update(attach);
-			ContractAttachController attachController = (ContractAttachController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_ATTACH_CONTROLLER);
-			attachController.initializeModel();
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new AbortProcessingException(e);
+			download();
+		} catch (IOException e) {
+			String msg = "No se ha podido descargar el documento. (" +e.getMessage() + ")"; 
+			LOGGER.error(msg, e);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
 		}
-		
-		onContractDocumentShow(event);
-		
+	}
+	
+	private void download() throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+		byte[] buffer = getContractPdfWriter().buildPdf();
+		InputStream in = new ByteArrayInputStream(buffer);
+		int bytes = in.read(buffer);
+		while (bytes != -1) {
+			response.getOutputStream().write(buffer, 0, bytes);
+			bytes = in.read(buffer);
+		}
+		in.close();
+		response.setContentType(MimeType.MIME_PDF.getName()); 
+		response.flushBuffer();
+		context.responseComplete();
 	}
 	
 	public enum PdfType {

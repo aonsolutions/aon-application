@@ -23,7 +23,7 @@
 			</aon:htmlCommandLink>
 			<aon:commandButton id="documentDraft-edition" 
 				action="contractPdfEdition_form" ajaxSingle="true"
-				rendered="#{not empty contract.to.model and not contract.existDocument}"
+				rendered="#{not empty contract.to.model and not contract.existSignedContractDocument}"
 				value="Contrato"
 				title="Edicion manual del documento del contrato"
 				styleClass="aon-finding-toolbar-item aon-icon-pdf" >
@@ -35,7 +35,7 @@
 			</aon:commandButton>
 			<aon:commandButton id="basicCopyDraft-edition"
 				action="contractPdfEdition_form" ajaxSingle="true" 
-				rendered="#{not empty contract.to.model and not contract.existDocument}"
+				rendered="#{not empty contract.to.model and not contract.existSignedBasicCopyDocument}"
 				value="Copia Basica"
 				title="Edicion manual del documento de la copia basica"
 				styleClass="aon-finding-toolbar-item aon-icon-pdf" >

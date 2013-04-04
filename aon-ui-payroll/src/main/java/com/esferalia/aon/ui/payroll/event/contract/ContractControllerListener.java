@@ -26,10 +26,13 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.TrainingCenter;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.ui.payroll.controller.AbstractVariableHandler.VariableData;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
@@ -42,9 +45,6 @@ public class ContractControllerListener extends ControllerAdapter{
 		ContractController controller = (ContractController) this.getController();
 		Contract contract = (Contract) controller.getTo();
 		contract.setStatus(ContractStatus.PENDING);
-		if(controller.getAonFile()!=null){
-			contract.setDocument(controller.getAonFile().getData());
-		}
 		if(controller.getParams().getContractModelCode()!=null){
 			contract.setModel(controller.getParams().getContractModelCode().getModel());
 		}
@@ -60,7 +60,6 @@ public class ContractControllerListener extends ControllerAdapter{
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
-		controller.searchContractAttachDocument((Contract) controller.getTo());
 		controller.setEnterprise(((Contract) controller.getTo()).getWorkPlace().getEnterprise());
 		controller.setWorkPlaces(null);
 		controller.setActivities(null);
@@ -72,6 +71,7 @@ public class ContractControllerListener extends ControllerAdapter{
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		PayrollAppParamsController params = (PayrollAppParamsController) AonUtil.getRegisteredBean(IPayrollConstants.PAYROLL_APP_PARAMS_CONTROLLER_NAME);
 		ContractController controller = (ContractController) this.getController();
 		Contract contract = (Contract) controller.getTo();
 		PayrollUtils utils = new PayrollUtils();
@@ -83,14 +83,21 @@ public class ContractControllerListener extends ControllerAdapter{
 		contract.setStartDate(new Date());
 		contract.setSeniorityDate(contract.getStartDate());
 		try {
+			controller.getParams().setContractModelCode(ContractModelCode.valueOf(params.getParameter(PayrollAppParamsController.DEFAULT_CONTRACT_CODE).getValue()));
 			IManagerBean bean = BeanManager.getManagerBean(Person.class);
 			contract.setPerson((Person) bean.createNewTo());
 			bean = BeanManager.getManagerBean(CNO.class);
 			controller.getParams().setCno((CNO) bean.createNewTo());
 			bean = BeanManager.getManagerBean(Agreement.class);
 			controller.setAgreement((Agreement) bean.createNewTo());
-			bean = BeanManager.getManagerBean(TrainingCenter.class);
-			controller.getParams().setTrainingCenter((TrainingCenter) bean.createNewTo());
+			if( controller.getParams().getContractModelCode().getCode() != null
+					&& controller.getParams().getContractModelCode().getCode() == ContractCode.C421 
+					&& params.getDefaultTrainingCenter()!=null && params.getDefaultTrainingCenter().getId()!=null){
+				controller.getParams().setTrainingCenter(params.getDefaultTrainingCenter());
+			} else {
+				bean = BeanManager.getManagerBean(TrainingCenter.class);
+				controller.getParams().setTrainingCenter((TrainingCenter) bean.createNewTo());
+			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error on afterBeanCreated";
 			LOGGER.error(msg);

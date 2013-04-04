@@ -9,9 +9,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.ui.util.AonUtil;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
 
@@ -44,9 +47,13 @@ public class PdfToImage {
 			Rectangle2D r2d = page.getBBox ();
 			pdfWallpaperImage = (BufferedImage) page.getImage ((int) width, (int) height, r2d, null, true, true);
 		} catch (FileNotFoundException e) {
+			String msg = "Se ha producido un error al obtener la pagina del contrato.";
 			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage(msg);
 		} catch (IOException e) {
+			String msg = "Se ha producido un error al obtener la pagina del contrato.";
 			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage(msg);
 		}
 	}
 	
@@ -68,7 +75,7 @@ public class PdfToImage {
 //			LOGGER.error(msg);
 //			AonUtil.addErrorMessage(msg);
 //		} 
-//		pdfImage = image;
+//		pdfWallpaperImage = image;
 //	}
 	
 	private static ByteBuffer getAsByteArray(URL url) throws IOException {

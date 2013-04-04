@@ -91,6 +91,35 @@
 				
 				<aon:div styleClass="aon-group">
 					<aon:div styleClass="aon-group-title">
+						<aon:outputText value="#{payrollBundle.payroll_contract_newContractData}"/>
+					</aon:div>
+					<aon:div styleClass="aon-group-body"> 
+						<aon:div styleClass="aon-group-body-internal">
+							<aon:panelGrid columns="2" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
+
+								<aon:panelGrid columns="2">
+									<aon:outputLabel for="contract_default_code" 
+										value="#{payrollBundle.payroll_contract_contract_code}" />
+									<aon:selectOneMenu id="contract_default_code"
+										value="#{payrollAppParams.parameters['PAY_default_contractCode_PAY'].value}" >
+										<f:selectItems value="#{payrollCollections.tc2List}" />
+									</aon:selectOneMenu>
+									
+									<c:if test="#{payrollCollections.trainingCenterTotalCount>0}">
+										<ui:include src="/com/esferalia/aon/ui/payroll/facelet/trainingCenter/lookup.xhtml" >
+											<ui:param name="lookupTo" value="#{payrollAppParams.defaultTrainingCenter}" />
+											<ui:param name="skipNewButton" value="#{true}" />
+											<ui:param name="lookupReRender" value="lookupTrainingCourse" />
+										</ui:include>
+									</c:if>
+								</aon:panelGrid>
+									
+							</aon:panelGrid>	
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				<aon:div styleClass="aon-group">
+					<aon:div styleClass="aon-group-title">
 						<aon:outputText value="#{payrollBundle.payroll_contract_contrataData}"/>
 					</aon:div>
 					<aon:div styleClass="aon-group-body"> 
@@ -153,6 +182,7 @@
 		</aon:form>
 		
 		<aon:lookupButtonPopup lookup="#{paymentConceptLookup}" />
+		<aon:lookupButtonPopup lookup="#{trainingCenterLookup}" />
 		
 	</ui:define>
 </ui:composition>
