@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.accounting.summary.SummaryCollection;
@@ -20,15 +21,22 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
+import com.code.aon.fiscal.IFiscalConstants;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.Mod130Key;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.model.FiscalModelManager;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.enumeration.TaxRegime;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod130Manager extends FiscalModelManager {
+
+	private static String SELECT_TAX_REGIME = "SELECT "
+		+" value FROM app_param "
+		+" WHERE " + DomainManager.getStaticSQLWhereClause("app_param.domain") 
+		+" AND name = '" + IFiscalConstants.FS_TAX_REGIME + "'";
 	
 	private static String SELECT_19 = "SELECT " 
 			+" SUM( IF(fmd.amount<0,fmd.amount,0) )"
@@ -140,7 +148,7 @@ public class Mod130Manager extends FiscalModelManager {
 		params.setFromDate(dateFrom);
 		params.setToDate(dateTo);
 		SummaryCollection sc = sp.getSummaryCollection(params,true);
-		double c01 = CommonUtil.round(sc.getCredit())==0.0?CommonUtil.round(sc.getDebit()*-1):sc.getCredit();
+		double c01 = sc.getCreditBalance( );
 		mod130.ensureDetail(Mod130Key.C01).addAccumulatedAmount(c01);
 //		 ------------------------------------------------------------------------
 		
@@ -166,8 +174,20 @@ public class Mod130Manager extends FiscalModelManager {
 		params.setFromDate(dateFrom);
 		params.setToDate(dateTo);
 		sc = sp.getSummaryCollection(params,true);
-		double c02 = CommonUtil.round(sc.getDebit())==0.0?CommonUtil.round(sc.getCredit()*-1):sc.getDebit(); 
-		mod130.ensureDetail(Mod130Key.C02).addAccumulatedAmount(c02);
+		double c02 = sc.getUnpaidBalance();
+
+		// Artículo 30. Determinación del rendimiento neto en el método de estimación 
+		// directa simplificada.
+		// El conjunto de las provisiones deducibles y los gastos de difícil justificación 
+		// se cuantificará aplicando el porcentaje del 5 por ciento sobre el rendimiento 
+		// neto, excluido este concepto. No obstante, no resultará de aplicación dicho 
+		// porcentaje de deducción cuando el contribuyente opte por la aplicación de la 
+		// reducción prevista en el artículo 26 de este Reglamento.
+		TaxRegime taxRegime = searchTaxRegime();
+		if (taxRegime == TaxRegime.EDS) {
+			c02 = CommonUtil.round(c02 + (c02 * 5 / 100) );
+		}
+		mod130.ensureDetail(Mod130Key.C02).addAccumulatedAmount(c02);		
 //		 ------------------------------------------------------------------------
 
 //		 Casilla 05. Haga constar en esta casilla la suma de las cantidades positivas 
@@ -296,6 +316,50 @@ public class Mod130Manager extends FiscalModelManager {
 		
 		mod130.calculate();
 		return mod130;
+	}
+
+	private TaxRegime searchTaxRegime() throws AonException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String value = null;
+		try {
+			String sessionName = HibernateUtil.getSessionFactoryName();
+			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(SELECT_TAX_REGIME,
+					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			DomainManager.fillHostVariables(ps, 1);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				value = rs.getString(1);
+			}
+			rs.close();
+			ps.close();
+			if (StringUtils.isEmpty(value)) {
+				return TaxRegime.BUSINESS_SOCIETY;
+			}
+			try {
+				int tr = Integer.parseInt(value);
+				return TaxRegime.values()[tr];
+			} catch (NumberFormatException e) {
+				return TaxRegime.BUSINESS_SOCIETY;
+			} catch (ArrayIndexOutOfBoundsException e) {
+				return TaxRegime.BUSINESS_SOCIETY;
+			}
+		} catch (SQLException e) {
+			throw new AonException(e.getMessage(), e);
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
 	}
 
 	private double getPreviousAmount(String select,FiscalModel fiscalModel, Mod130Key key) throws AonException {

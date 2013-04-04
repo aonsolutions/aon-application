@@ -120,7 +120,7 @@ public class Mod131Manager extends FiscalModelManager {
 		params.setFromDate(dateFrom);
 		params.setToDate(dateTo);
 		SummaryCollection sc = sp.getSummaryCollection(params,true);
-		double c03 = CommonUtil.round(sc.getCredit())==0.0?CommonUtil.round(sc.getDebit()*-1):sc.getCredit();
+		double c03 = sc.getCreditBalance();
 		mod131.ensureDetail(Mod131Key.C03).addAccumulatedAmount(c03);
 		
 //		Casilla 08. En su caso, se consignará en esta casilla la suma de las retenciones e ingresos 
