@@ -97,7 +97,7 @@ public class ModelPE230 extends AbstractAnnexModel {
 	
 	// TRAINING CENTER FIELDS
 	final static String PE230_TRAINING_CENTER_CODE = "numce";
-	final static String PE230_TRAINING_CENTER_DIR_STAFF_NAME = "persona3";
+	final static String PE230_TRAINING_CENTER_DIR_STAFF_NAME = "persona 3";
 	final static String PE230_TRAINING_CENTER_DIR_STAFF_NIF = "cif 3";
 	final static String PE230_TRAINING_CENTER_DIR_STAFF_CHARGE = "cargo 2";
 	final static String PE230_TRAINING_CENTER_NAME = "centro formativo";
@@ -257,8 +257,9 @@ public class ModelPE230 extends AbstractAnnexModel {
 			}
 			
 			TrainingCenter trainingCenter = obtainTrainingCenter(map.get(ContextVariable.TRAINING_CENTER.getName()));
+			RegistryDirStaff trainingCenterDirStaff = null;
 			if(trainingCenter != null){
-				RegistryDirStaff trainingCenterDirStaff = obtainRegistryDirStaff(trainingCenter.getRegistry());
+				trainingCenterDirStaff = obtainRegistryDirStaff(trainingCenter.getRegistry());
 				// TRAINING CENTER FIELDS
 				getPdfFieldsMap().get(PE230_TRAINING_CENTER_CODE).setValue(trainingCenter.getCode());
 				try {
@@ -366,7 +367,11 @@ public class ModelPE230 extends AbstractAnnexModel {
 			getPdfFieldsMap().get(PE230_SIGNATURE_EMPLOYEE).setValue(contract.getPerson().getFullName());
 			getPdfFieldsMap().get(PE230_SIGNATURE_EMPLOYEE_DIR_STAFF).setValue("");
 			getPdfFieldsMap().get(PE230_SIGNATURE_ENTERPRISE_DIR_STAFF).setValue(enterpriseDirStaff.getName());
-			getPdfFieldsMap().get(PE230_SIGNATURE_TRAINING_CENTER_DIR_STAFF).setValue("");
+			try {	
+				getPdfFieldsMap().get(PE230_SIGNATURE_TRAINING_CENTER_DIR_STAFF).setValue(trainingCenterDirStaff.getName());
+			} catch (NullPointerException npe) {
+				// do nothing
+			}
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

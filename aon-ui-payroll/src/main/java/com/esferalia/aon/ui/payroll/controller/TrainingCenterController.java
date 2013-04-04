@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
@@ -22,8 +23,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryDirStaff;
+import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -42,6 +45,36 @@ public class TrainingCenterController extends RegistryController {
 
 	/** The uploaded signature file. */
 	private AonFile signatureFile;
+	
+	/** Determines if the address has been changed and it hasn't been saved yet. */
+	private boolean addressDirty;
+
+	/** Determines if the phone has been changed and it hasn't been saved yet. */
+	private boolean phoneDirty;
+
+	/** Determines if the fax has been changed and it hasn't been saved yet. */
+	private boolean faxDirty;
+
+	/** Determines if the email has been changed and it hasn't been saved yet. */
+	private boolean emailDirty;
+
+	/** Determines if the web has been changed and it hasn't been saved yet. */
+	private boolean webDirty;
+	
+	/** The phone. */
+	private RegistryMedia phone;
+
+	/** The fax. */
+	private RegistryMedia fax;
+
+	/** The email. */
+	private RegistryMedia email;
+
+	/** The web. */
+	private RegistryMedia web;
+	
+	/** The main address. */
+	private RegistryAddress mainAddress;
 
 	/**
 	 * Gets the logo RegistryAttach.
@@ -118,6 +151,207 @@ public class TrainingCenterController extends RegistryController {
 	 */
 	public void setSignatureFile(AonFile signatureFile) {
 		this.signatureFile = signatureFile;
+	}
+	
+	/**
+	 * Checks if is the address is dirty.
+	 * 
+	 * @return true, if the address is dirty
+	 */
+	public boolean isAddressDirty() {
+		return addressDirty;
+	}
+
+	/**
+	 * Checks if the email is dirty.
+	 * 
+	 * @return true, if the email is dirty
+	 */
+	public boolean isEmailDirty() {
+		return emailDirty;
+	}
+
+	/**
+	 * Checks if the fax is dirty.
+	 * 
+	 * @return true, if the fax is dirty
+	 */
+	public boolean isFaxDirty() {
+		return faxDirty;
+	}
+
+	/**
+	 * Checks if the phone is dirty.
+	 * 
+	 * @return true, if the phone is dirty
+	 */
+	public boolean isPhoneDirty() {
+		return phoneDirty;
+	}
+
+	/**
+	 * Checks if the web is dirty.
+	 * 
+	 * @return true, if the web is dirty
+	 */
+	public boolean isWebDirty() {
+		return webDirty;
+	}
+	
+	/**
+	 * Gets the phone.
+	 * 
+	 * @return the phone
+	 */
+	public RegistryMedia getPhone() {
+		return phone;
+	}
+
+	/**
+	 * Sets the phone.
+	 * 
+	 * @param phone the phone
+	 */
+	public void setPhone(RegistryMedia phone) {
+		this.phone = phone;
+	}
+
+	/**
+	 * Gets the email.
+	 * 
+	 * @return the email
+	 */
+	public RegistryMedia getEmail() {
+		return email;
+	}
+
+	/**
+	 * Sets the email.
+	 * 
+	 * @param email the email
+	 */
+	public void setEmail(RegistryMedia email) {
+		this.email = email;
+	}
+
+	/**
+	 * Gets the fax.
+	 * 
+	 * @return the fax
+	 */
+	public RegistryMedia getFax() {
+		return fax;
+	}
+
+	/**
+	 * Sets the fax.
+	 * 
+	 * @param fax the fax
+	 */
+	public void setFax(RegistryMedia fax) {
+		this.fax = fax;
+	}
+
+	/**
+	 * Gets the web.
+	 * 
+	 * @return the web
+	 */
+	public RegistryMedia getWeb() {
+		return web;
+	}
+
+	/**
+	 * Sets the web.
+	 * 
+	 * @param web the web
+	 */
+	public void setWeb(RegistryMedia web) {
+		this.web = web;
+	}
+	
+    /**
+     * Gets the main address.
+     * 
+     * @return the main address
+     */
+    public RegistryAddress getMainAddress() {
+		return mainAddress;
+	}
+
+	/**
+	 * Sets the main address.
+	 * 
+	 * @param mainAddress the main address
+	 */
+	public void setMainAddress(RegistryAddress mainAddress) {
+		this.mainAddress = mainAddress;
+	}
+	
+	/**
+	 * Reset all the flags.
+	 */
+	public void resetDirty(){
+		addressDirty = false;
+		phoneDirty = false;
+		faxDirty = false;
+		emailDirty = false;
+		webDirty = false;
+	}
+
+	/**
+	 * Phone changed. Sets the flag phoneDirty = true
+	 * 
+	 * @param event the event
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	public void phoneChanged(ValueChangeEvent event) throws ManagerBeanException {
+		phoneDirty = true;
+	}
+
+	/**
+	 * Fax changed. Sets the flag faxDirty = true
+	 * 
+	 * @param event the event
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	public void faxChanged(ValueChangeEvent event) throws ManagerBeanException {
+		faxDirty = true;
+	}
+
+	/**
+	 * Email changed. Sets the flag emailDirty = true
+	 * 
+	 * @param event the event
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	public void emailChanged(ValueChangeEvent event) throws ManagerBeanException {
+		emailDirty = true;
+	}
+
+	/**
+	 * Web changed. Sets the flag webDirty = true
+	 * 
+	 * @param event the event
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	public void webChanged(ValueChangeEvent event) throws ManagerBeanException {
+		webDirty = true;
+	}
+
+	/**
+	 * Address changed. Sets the flag addressDirty = true
+	 * 
+	 * @param event the event
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	public void addressChanged(ValueChangeEvent event) throws ManagerBeanException {
+		addressDirty = true;
 	}
 
 	public void logoFileUploaded(UploadEvent event) {
