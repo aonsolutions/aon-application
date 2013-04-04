@@ -18,6 +18,7 @@ import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.finance.Creditor;
+import com.code.aon.fiscal.IFiscalConstants;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.RegistryMedia;
@@ -29,21 +30,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 
-public class FiscalParametersController {
+public class FiscalParametersController implements IFiscalConstants{
 	
 	public static final String FISCAL_PARAMS_BEAN_NAME = "fiscalParams";
-	
-	public static final String FS_DEFAULT_YEAR = "FS_DEFAULT_YEAR";
-	public static final String FS_DEFAULT_ADMINISTRATION = "FS_DEFAULT_ADMINISTRATION";
-	public static final String FS_ADMINISTRATION_CODE = "FS_ADMINISTRATION_CODE";
-	public static final String FS_TAX_REFUND_REGISTRY = "FS_TAX_REFUND_REGISTRY";
-	public static final String FS_TAX_REGIME = "FS_TAX_REGIME";
-	public static final String FS_ADMON_CREDITOR = "FS_ADMON_CREDITOR";
-	public static final String FS_PERM_ADDRESS_CHANGES = "FS_PERM_ADDRESS_CHANGES";
-	public static final String FS_CONCTACT_PERSON = "FS_CONCTACT_PERSON";
-	public static final String FS_CONCTACT_PHONE = "FS_CONCTACT_PHONE";
-	public static final String FS_CONCTACT_CELLULAR = "FS_CONCTACT_CELLULAR";
-	public static final String FS_CONCTACT_MAIL = "FS_CONCTACT_MAIL";
 	
 	private Map<String, ApplicationParameter> parameters;
 	private IManagerBean managerBean;
