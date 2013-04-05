@@ -39,7 +39,7 @@ public class ParentEntryCheck implements ICheckModule {
 			String select = 
 				"SELECT a.code,a.level,a.id"
 				+" FROM account a "
-				+" WHERE " + DomainManager.getSQLWhereClause("a.domain")
+				+" WHERE " + DomainManager.getSQLWhereClause("a.domain", Account.class)
 				+" ORDER BY a.code";
 			SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(select);
 			List<?> queryList = query
