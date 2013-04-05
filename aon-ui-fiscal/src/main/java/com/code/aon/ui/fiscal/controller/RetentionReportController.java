@@ -117,6 +117,7 @@ public class RetentionReportController implements ICollectionProvider, IFinanceM
 		getParams().setToSeries(null);
 		getParams().setToNumber(null);
 		getParams().setSecurityLevel(null);
+		getParams().setToCustomer(false);
 		setSummary(null);
 		setModel(null);
 	}
