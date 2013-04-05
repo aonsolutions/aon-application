@@ -9,6 +9,12 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.PayMethod;
+import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.file.tax.model.MOD340.MOD340Format;
 import com.code.aon.file.tax.model.MOD347.MOD347Format;
 import com.code.aon.fiscal.enumeration.FiscalBatchType;
@@ -24,6 +30,8 @@ import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
 import com.code.aon.fiscal.enumeration.VatType;
 import com.code.aon.fiscal.enumeration.WithholdingStatus;
+import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FiscalCollectionsController {
 
@@ -235,6 +243,22 @@ public class FiscalCollectionsController {
 		return fiscalModelStatuses;
 	}
 	
+	public List<SelectItem> getModelPayMethods() throws ManagerBeanException {
+		List<SelectItem> payMethods = new LinkedList<SelectItem>();
+		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_NAME));
+		for (ITransferObject ito : payMethodBean.getList(criteria)) {
+			PayMethod pMethod = (PayMethod)ito;
+			if (pMethod.getType() == PayMethodType.NEGOTIABLE_DOCUMENT ||
+				pMethod.getType() == PayMethodType.CASH_BASIS ) {
+				SelectItem item = new SelectItem(pMethod, pMethod.getName());
+				payMethods.add(item);
+			}
+		}
+		return payMethods;
+	}
+
 	public FiscalModelType getModel111() {
 		return FiscalModelType.M111;
 	}
