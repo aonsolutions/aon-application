@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
@@ -27,6 +26,11 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod111Manager extends FiscalModelManager {
+	
+	// TODO delegar en IDefaultAccount cuando lo suba
+	public static final String SALARY_ACCOUNT = "ACC_DEFAULT_SALARY_ACC";
+	public static final String SALARY_CHARGED_RETENTION_ACCOUNT = "ACC_SALARY_CHARGED_RET_ACC";
+
 	
 	private static String SELECT = "SELECT " 
 		+"i.type,it.percentage,i.rdocument,i.rname,"
@@ -142,14 +146,14 @@ public class Mod111Manager extends FiscalModelManager {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME),  IDefaultAccounts.SALARY_CHARGED_RETENTION_ACCOUNT );
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME),  SALARY_CHARGED_RETENTION_ACCOUNT );
 			List<ITransferObject> list = bean.getList(criteria);
 			if (list != null && list.size() > 0 ) {
 				ApplicationParameter ap = (ApplicationParameter) list.get(0);
 				int retentionAccount = Integer.parseInt(ap.getValue());
 				
 				criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME),  IDefaultAccounts.SALARY_ACCOUNT );
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME),  SALARY_ACCOUNT );
 				list = bean.getList(criteria);
 				if (list != null && list.size() > 0 ) {
 					ap = (ApplicationParameter) list.get(0);
