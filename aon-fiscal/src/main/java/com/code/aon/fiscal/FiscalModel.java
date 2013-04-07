@@ -14,6 +14,9 @@ public class FiscalModel extends FiscalModelDB {
 	
 	private static final long serialVersionUID = 1L;
 	
+	private boolean readRetentionFromAccount;
+	private int receiverCount;
+	
 	public FiscalModel() {
 		setStatus(FiscalModelStatus.PENDING);
 		setReplacement(false);
@@ -40,4 +43,23 @@ public class FiscalModel extends FiscalModelDB {
 	public boolean isExtraDeclaration() {
 		return (isReplacement() || isComplementary());
 	}
+
+	@Transient
+	public boolean isReadRetentionFromAccount() {
+		return readRetentionFromAccount;
+	}
+
+	public void setReadRetentionFromAccount(boolean readRetentionFromAccount) {
+		this.readRetentionFromAccount = readRetentionFromAccount;
+	}
+
+	@Transient
+	public int getReceiverCount() {
+		return receiverCount;
+	}
+
+	public void setReceiverCount(int receiverCount) {
+		this.receiverCount = receiverCount;
+	}
+	
 }
