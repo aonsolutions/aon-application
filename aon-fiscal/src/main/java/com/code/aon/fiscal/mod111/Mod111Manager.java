@@ -80,7 +80,9 @@ public class Mod111Manager extends FiscalModelManager {
 		Administration admin = fiscalModel.getAdministration(); 
 		IMod111Calculator calculator = factory.getCalculator( year , admin );
 		searchInvoices(mod111,calculator);
-		searchAccountEntries(mod111,calculator);
+		if (fiscalModel.isReadRetentionFromAccount()) {
+			searchAccountEntries(mod111,calculator);
+		}
 		super.fillDeclaredData(mod111);
 		mod111.calculate();
 		return mod111;
