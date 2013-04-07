@@ -7,6 +7,7 @@ import com.code.aon.config.enumeration.WithholdingType;
 
 public class RetentionCollectionParameters {
 
+	private boolean toCustomer;
 	private Date fromInvoiceDate;
 	private Date toInvoiceDate;
 	private String fromSeries;
@@ -24,6 +25,14 @@ public class RetentionCollectionParameters {
 		setToInvoiceDate(null);
 		setDate(new Date());
 		setWithholdingType(null);
+		setToCustomer(false);
+	}
+	public boolean isToCustomer() {
+		return toCustomer;
+	}
+
+	public void setToCustomer(boolean toCustomer) {
+		this.toCustomer = toCustomer;
 	}
 
 	public WithholdingType getWithholdingType() {

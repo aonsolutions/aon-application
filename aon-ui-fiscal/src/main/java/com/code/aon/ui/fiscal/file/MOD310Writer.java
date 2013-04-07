@@ -178,6 +178,9 @@ public class MOD310Writer implements IFinanceConstants{
 			if (finance != null) {
 				if (finance.getPayMethod() != null) {
 					if (finance.getPayMethod().getType() != PayMethodType.CASH_BASIS) {
+						if (finance.getBankAccount() == null) {
+							throw new ManagerBeanException("Si la forma de pago no es efectivo, el banco no puede estar vacio.");
+						}
 						declaration.setPayment("2");
 						declaration.setCcc1(finance.getBankAccount().getEntity());
 						declaration.setCcc2(finance.getBankAccount().getOffice());

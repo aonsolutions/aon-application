@@ -187,6 +187,8 @@
 				</aon:div>
 			</aon:panelGrid>
 			
+			<ui:insert name="extraHeader" />
+			
 			<c:if test="#{!skipDetail}">
 				<ui:include src="/com/code/aon/ui/fiscal/facelet/model/detail.xhtml">
 					<ui:param name="controller" value="#{controller}" />

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -14,8 +15,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.company.Company;
-import com.code.aon.company.Enterprise;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
@@ -26,6 +26,11 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod111Manager extends FiscalModelManager {
+	
+	// TODO delegar en IDefaultAccount cuando lo suba
+	public static final String SALARY_ACCOUNT = "ACC_DEFAULT_SALARY_ACC";
+	public static final String SALARY_CHARGED_RETENTION_ACCOUNT = "ACC_SALARY_CHARGED_RET_ACC";
+
 	
 	private static String SELECT = "SELECT " 
 		+"i.type,it.percentage,i.rdocument,i.rname,"
@@ -42,21 +47,16 @@ public class Mod111Manager extends FiscalModelManager {
 		+" AND i.tax_date <= ?"
 		+" GROUP BY i.type,it.percentage,i.rdocument,i.rname";
 	
-	private static String PAYROLL_SELECT = "SELECT " 
-		+" s.employee_document doc"
-		+" ,SUM(s.money_irpf_base) base"
-		+" ,SUM(s.inkind_irpf_base) inKindBase"
-		+" ,SUM(s.total_irpf) quota"
-		+" FROM salary s"
-		+" INNER JOIN contract c ON s.contract = c.id"
-		+" INNER JOIN workplace w ON c.workplace = w.id"
-		+" WHERE " + DomainManager.getStaticSQLWhereClause("s.domain")
-		+" AND w.enterprise = ?"
-		+" AND s.issue_date>=?"
-		+" AND s.issue_date<=?"
-		+" GROUP BY s.employee_document";
+	private static String SELECT_ACCOUNT = "SELECT " 
+			+" aed.account,aed.debit,aed.credit "
+			+" FROM account_entry ae " 
+			+" INNER JOIN account_entry_detail aed ON ae.id = aed.account_entry " 
+			+" WHERE " + DomainManager.getStaticSQLWhereClause("ae.domain") 
+			+" AND ae.entry_type = " + AccountEntryType.SALARY.ordinal()
+			+" AND ae.entry_date >= ?"
+			+" AND ae.entry_date <= ?"
+			+" ORDER BY ae.id";	
 	
-
 	@Override
 	public boolean accept(FiscalModelType type) {
 		return type == FiscalModelType.M111;
@@ -75,16 +75,26 @@ public class Mod111Manager extends FiscalModelManager {
 		Mod111 mod111 = (Mod111) declaration;
 		FiscalModel fiscalModel = mod111.getHeader();
 		mod111.initializeDetails();
-		Date dateFrom = getInitialDate(fiscalModel);	
-		Date dateTo = getDueDate(fiscalModel);
 		Mod111CalculatorFactory factory = new Mod111CalculatorFactory();
 		int year = fiscalModel.getYear();
 		Administration admin = fiscalModel.getAdministration(); 
 		IMod111Calculator calculator = factory.getCalculator( year , admin );
+		searchInvoices(mod111,calculator);
+		if (fiscalModel.isReadRetentionFromAccount()) {
+			searchAccountEntries(mod111,calculator);
+		}
+		super.fillDeclaredData(mod111);
+		mod111.calculate();
+		return mod111;
+	}
+
+	private void searchInvoices(Mod111 mod111, IMod111Calculator calculator) throws ManagerBeanException {
+		FiscalModel fiscalModel = mod111.getHeader();
+		Date dateFrom = getInitialDate(fiscalModel);	
+		Date dateTo = getDueDate(fiscalModel);
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		List<String> receiverDocuments = new ArrayList<String>();
-//		List<String> inKindReceiverDocuments = new ArrayList<String>();
 		String sessionName = HibernateUtil.getSessionFactoryName( FiscalModel.class.getName() );
 		try {
 			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(SELECT,
@@ -96,6 +106,7 @@ public class Mod111Manager extends FiscalModelManager {
 			ps.setDate(++i, new java.sql.Date( dateTo.getTime()));
 			rs = ps.executeQuery();
 			while (rs.next()) {
+				
 				double rentingAmount = rs.getDouble(5);
 				double retention = rs.getDouble(6);
 				String document = rs.getString(3);
@@ -103,8 +114,78 @@ public class Mod111Manager extends FiscalModelManager {
 					receiverDocuments.add(document);
 					mod111.ensureDetail(calculator.getKeyForReceivers()).addAccumulatedAmount(1);
 				}
+				
 				mod111.ensureDetail(calculator.getKeyForPerception()).addAccumulatedAmount(rentingAmount);
 				mod111.ensureDetail(calculator.getKeyForWitholding()).addAccumulatedAmount(retention);
+			}
+		} catch (NumberFormatException e) {
+			//Nothing
+		} catch (SQLException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	private void searchAccountEntries(Mod111 mod111, IMod111Calculator calculator) throws ManagerBeanException {
+		FiscalModel fiscalModel = mod111.getHeader();
+		Date dateFrom = getInitialDate(fiscalModel);	
+		Date dateTo = getDueDate(fiscalModel);
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName( FiscalModel.class.getName() );
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME),  SALARY_CHARGED_RETENTION_ACCOUNT );
+			List<ITransferObject> list = bean.getList(criteria);
+			if (list != null && list.size() > 0 ) {
+				ApplicationParameter ap = (ApplicationParameter) list.get(0);
+				int retentionAccount = Integer.parseInt(ap.getValue());
+				
+				criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME),  SALARY_ACCOUNT );
+				list = bean.getList(criteria);
+				if (list != null && list.size() > 0 ) {
+					ap = (ApplicationParameter) list.get(0);
+					int salaryAccount = Integer.parseInt(ap.getValue());	
+					ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(SELECT_ACCOUNT,
+							ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+					int i = 0;
+					int filled = DomainManager.fillHostVariables(ps, 1);
+					i = i + filled;
+					ps.setDate(++i, new java.sql.Date( dateFrom.getTime() ));
+					ps.setDate(++i, new java.sql.Date( dateTo.getTime()));
+					rs = ps.executeQuery();
+					boolean found = false;
+					while (rs.next()) {
+						int acc = rs.getInt(1);
+						double deb = rs.getDouble(2);
+						double cre = rs.getDouble(3);
+						if (acc == retentionAccount) {
+							found = true;
+							mod111.ensureDetail(calculator.getKeyForWitholding()).addAccumulatedAmount(cre);
+						}
+						if (acc == salaryAccount) {
+							found = true;
+							mod111.ensureDetail(calculator.getKeyForPerception()).addAccumulatedAmount(deb);
+						}
+					}
+					if (found) {
+						mod111.ensureDetail(calculator.getKeyForReceivers()).addAccumulatedAmount( fiscalModel.getReceiverCount());
+					}
+				}
 			}
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
@@ -122,7 +203,40 @@ public class Mod111Manager extends FiscalModelManager {
 				}
 			}
 		}
-		
+	}
+
+	@Override
+	public IFiscalDeclaration loadFiscalModel(FiscalModel fiscalModel) throws AonException {
+		Mod111 mod111 = new Mod111();
+		mod111.setFiscalModel(fiscalModel);
+		IManagerBean bean = BeanManager.getManagerBean(FiscalModelDetail.class);
+		Criteria criteria = new Criteria();
+		String alias = bean.getFieldName( IEntityAlias.FISCAL_MODEL_DETAIL_FISCAL_MODEL_ID );
+		criteria.addEqualExpression(alias, fiscalModel.getId());
+		List<ITransferObject> list = bean.getList(criteria);
+		for (ITransferObject to : list) {
+			FiscalModelDetail detail = (FiscalModelDetail) to;
+			mod111.addDetail(detail);
+		}
+		return mod111;
+	}
+	
+/*	
+	private static String PAYROLL_SELECT = "SELECT " 
+			+" s.employee_document doc"
+			+" ,SUM(s.money_irpf_base) base"
+			+" ,SUM(s.inkind_irpf_base) inKindBase"
+			+" ,SUM(s.total_irpf) quota"
+			+" FROM salary s"
+			+" INNER JOIN contract c ON s.contract = c.id"
+			+" INNER JOIN workplace w ON c.workplace = w.id"
+			+" WHERE " + DomainManager.getStaticSQLWhereClause("s.domain")
+			+" AND w.enterprise = ?"
+			+" AND s.issue_date>=?"
+			+" AND s.issue_date<=?"
+			+" GROUP BY s.employee_document";
+	
+
 		try {
 			Integer enterpriseId = null;
 			IManagerBean bean = BeanManager.getManagerBean(Company.class);
@@ -178,24 +292,8 @@ public class Mod111Manager extends FiscalModelManager {
 				}
 			}
 		}
-		super.fillDeclaredData(mod111);
-		mod111.calculate();
-		return mod111;
-	}
 
-	@Override
-	public IFiscalDeclaration loadFiscalModel(FiscalModel fiscalModel) throws AonException {
-		Mod111 mod111 = new Mod111();
-		mod111.setFiscalModel(fiscalModel);
-		IManagerBean bean = BeanManager.getManagerBean(FiscalModelDetail.class);
-		Criteria criteria = new Criteria();
-		String alias = bean.getFieldName( IEntityAlias.FISCAL_MODEL_DETAIL_FISCAL_MODEL_ID );
-		criteria.addEqualExpression(alias, fiscalModel.getId());
-		List<ITransferObject> list = bean.getList(criteria);
-		for (ITransferObject to : list) {
-			FiscalModelDetail detail = (FiscalModelDetail) to;
-			mod111.addDetail(detail);
-		}
-		return mod111;
-	}
+
+
+*/
 }

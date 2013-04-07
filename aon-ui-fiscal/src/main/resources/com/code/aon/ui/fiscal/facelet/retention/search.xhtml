@@ -41,6 +41,14 @@
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 					</aon:panelGrid>
 
+					<aon:outputText value="&#160;"/>
+					<aon:div styleClass="aon-margin-top aon-margin-bottom">
+						<aon:selectBooleanCheckbox id="report_toCustomer"
+							value="#{retentionReport.params.toCustomer}" />
+						<aon:outputLabel for="report_toCustomer" styleClass="aon-bold"
+							value="#{fiscalBundle.fiscal_sales_retention}" />
+					</aon:div>
+
 					<aon:outputLabel for="report_year"
 						value="#{fiscalBundle.fiscal_period}" />
 					<aon:panelGrid columns="2">
@@ -105,6 +113,7 @@
 					<aon:selectOneMenu id="report_order" value="#{retentionReport.order}" style="margin-left: 0.5em;">
 						<f:selectItems value="#{fiscalCollections.invoiceReportOrders}" />
 					</aon:selectOneMenu>
+
 
 				</ui:define>
 			</ui:decorate>
