@@ -118,6 +118,10 @@ public class RetentionReportController implements ICollectionProvider, IFinanceM
 		getParams().setToNumber(null);
 		getParams().setSecurityLevel(null);
 		getParams().setToCustomer(false);
+		onResetModel(event);
+	}
+	
+	public void onResetModel(ActionEvent event) {
 		setSummary(null);
 		setModel(null);
 	}
