@@ -27,7 +27,7 @@ public class ContrataCollectionsController {
 			ContrataCodeTablesCodeList = new LinkedList<SelectItem>();
 			ContrataCodeTables[] el = ContrataCodeTables.values();
 			for (ContrataCodeTables obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				ContrataCodeTablesCodeList.add(item);
 			}
@@ -48,7 +48,7 @@ public class ContrataCollectionsController {
 			STDIDETCCodeList = new LinkedList<SelectItem>();
 			STDIDETC[] el = STDIDETC.values();
 			for (STDIDETC obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				STDIDETCCodeList.add(item);
 			}
@@ -69,7 +69,7 @@ public class ContrataCollectionsController {
 			TABCCNAECodeList = new LinkedList<SelectItem>();
 			TABCCNAE[] el = TABCCNAE.values();
 			for (TABCCNAE obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TABCCNAECodeList.add(item);
 			}
@@ -90,7 +90,7 @@ public class ContrataCollectionsController {
 			TAICLAOC2011CodeList = new LinkedList<SelectItem>();
 			TAICLAOC2011[] el = TAICLAOC2011.values();
 			for (TAICLAOC2011 obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TAICLAOC2011CodeList.add(item);
 			}
@@ -111,7 +111,7 @@ public class ContrataCollectionsController {
 			TAUCOMAUCodeList = new LinkedList<SelectItem>();
 			TAUCOMAU[] el = TAUCOMAU.values();
 			for (TAUCOMAU obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TAUCOMAUCodeList.add(item);
 			}
@@ -132,7 +132,7 @@ public class ContrataCollectionsController {
 			TBONVFORCodeList = new LinkedList<SelectItem>();
 			TBONVFOR[] el = TBONVFOR.values();
 			for (TBONVFOR obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TBONVFORCodeList.add(item);
 			}
@@ -153,7 +153,7 @@ public class ContrataCollectionsController {
 			TBXCPAISCodeList = new LinkedList<SelectItem>();
 			TBXCPAIS[] el = TBXCPAIS.values();
 			for (TBXCPAIS obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TBXCPAISCodeList.add(item);
 			}
@@ -174,7 +174,7 @@ public class ContrataCollectionsController {
 			TCGPROVICodeList = new LinkedList<SelectItem>();
 			TCGPROVI[] el = TCGPROVI.values();
 			for (TCGPROVI obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TCGPROVICodeList.add(item);
 			}
@@ -195,7 +195,7 @@ public class ContrataCollectionsController {
 			TCHRGCOTCodeList = new LinkedList<SelectItem>();
 			TCHRGCOT[] el = TCHRGCOT.values();
 			for (TCHRGCOT obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TCHRGCOTCodeList.add(item);
 			}
@@ -216,7 +216,7 @@ public class ContrataCollectionsController {
 			TCMCSEXOCodeList = new LinkedList<SelectItem>();
 			TCMCSEXO[] el = TCMCSEXO.values();
 			for (TCMCSEXO obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TCMCSEXOCodeList.add(item);
 			}
@@ -237,7 +237,7 @@ public class ContrataCollectionsController {
 			TEHTPCTOCodeList = new LinkedList<SelectItem>();
 			TEHTPCTO[] el = TEHTPCTO.values();
 			for (TEHTPCTO obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TEHTPCTOCodeList.add(item);
 			}
@@ -258,7 +258,7 @@ public class ContrataCollectionsController {
 			TEIINTERCodeList = new LinkedList<SelectItem>();
 			TEIINTER[] el = TEIINTER.values();
 			for (TEIINTER obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TEIINTERCodeList.add(item);
 			}
@@ -279,7 +279,7 @@ public class ContrataCollectionsController {
 			TEJINDISCodeList = new LinkedList<SelectItem>();
 			TEJINDIS[] el = TEJINDIS.values();
 			for (TEJINDIS obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TEJINDISCodeList.add(item);
 			}
@@ -300,7 +300,7 @@ public class ContrataCollectionsController {
 			TEKLEYBOCodeList = new LinkedList<SelectItem>();
 			TEKLEYBO[] el = TEKLEYBO.values();
 			for (TEKLEYBO obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TEKLEYBOCodeList.add(item);
 			}
@@ -321,7 +321,7 @@ public class ContrataCollectionsController {
 			TELCOLBOCodeList = new LinkedList<SelectItem>();
 			TELCOLBO[] el = TELCOLBO.values();
 			for (TELCOLBO obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TELCOLBOCodeList.add(item);
 			}
@@ -342,7 +342,7 @@ public class ContrataCollectionsController {
 			TENLEYDECodeList = new LinkedList<SelectItem>();
 			TENLEYDE[] el = TENLEYDE.values();
 			for (TENLEYDE obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TENLEYDECodeList.add(item);
 			}
@@ -363,7 +363,7 @@ public class ContrataCollectionsController {
 			TEOCOLDECodeList = new LinkedList<SelectItem>();
 			TEOCOLDE[] el = TEOCOLDE.values();
 			for (TEOCOLDE obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TEOCOLDECodeList.add(item);
 			}
@@ -384,7 +384,7 @@ public class ContrataCollectionsController {
 			TEQPTIEMCodeList = new LinkedList<SelectItem>();
 			TEQPTIEM[] el = TEQPTIEM.values();
 			for (TEQPTIEM obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TEQPTIEMCodeList.add(item);
 			}
@@ -405,7 +405,7 @@ public class ContrataCollectionsController {
 			TERFIRCBCodeList = new LinkedList<SelectItem>();
 			TERFIRCB[] el = TERFIRCB.values();
 			for (TERFIRCB obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TERFIRCBCodeList.add(item);
 			}
@@ -426,7 +426,7 @@ public class ContrataCollectionsController {
 			TERRORESCodeList = new LinkedList<SelectItem>();
 			TERRORES[] el = TERRORES.values();
 			for (TERRORES obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TERRORESCodeList.add(item);
 			}
@@ -447,7 +447,7 @@ public class ContrataCollectionsController {
 			TESCETCOCodeList = new LinkedList<SelectItem>();
 			TESCETCO[] el = TESCETCO.values();
 			for (TESCETCO obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TESCETCOCodeList.add(item);
 			}
@@ -468,7 +468,7 @@ public class ContrataCollectionsController {
 			TETPGMEMCodeList = new LinkedList<SelectItem>();
 			TETPGMEM[] el = TETPGMEM.values();
 			for (TETPGMEM obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TETPGMEMCodeList.add(item);
 			}
@@ -489,7 +489,7 @@ public class ContrataCollectionsController {
 			TEUECCLLCodeList = new LinkedList<SelectItem>();
 			TEUECCLL[] el = TEUECCLL.values();
 			for (TEUECCLL obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TEUECCLLCodeList.add(item);
 			}
@@ -510,7 +510,7 @@ public class ContrataCollectionsController {
 			TEVACTCLCodeList = new LinkedList<SelectItem>();
 			TEVACTCL[] el = TEVACTCL.values();
 			for (TEVACTCL obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TEVACTCLCodeList.add(item);
 			}
@@ -531,7 +531,7 @@ public class ContrataCollectionsController {
 			TEWEINVECodeList = new LinkedList<SelectItem>();
 			TEWEINVE[] el = TEWEINVE.values();
 			for (TEWEINVE obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TEWEINVECodeList.add(item);
 			}
@@ -552,7 +552,7 @@ public class ContrataCollectionsController {
 			TEXTINVECodeList = new LinkedList<SelectItem>();
 			TEXTINVE[] el = TEXTINVE.values();
 			for (TEXTINVE obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TEXTINVECodeList.add(item);
 			}
@@ -573,7 +573,7 @@ public class ContrataCollectionsController {
 			TEYTRELECodeList = new LinkedList<SelectItem>();
 			TEYTRELE[] el = TEYTRELE.values();
 			for (TEYTRELE obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TEYTRELECodeList.add(item);
 			}
@@ -594,7 +594,7 @@ public class ContrataCollectionsController {
 			TFGGRCOTCodeList = new LinkedList<SelectItem>();
 			TFGGRCOT[] el = TFGGRCOT.values();
 			for (TFGGRCOT obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TFGGRCOTCodeList.add(item);
 			}
@@ -615,7 +615,7 @@ public class ContrataCollectionsController {
 			THPCOLFOCodeList = new LinkedList<SelectItem>();
 			THPCOLFO[] el = THPCOLFO.values();
 			for (THPCOLFO obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				THPCOLFOCodeList.add(item);
 			}
@@ -636,7 +636,7 @@ public class ContrataCollectionsController {
 			THYDISLECodeList = new LinkedList<SelectItem>();
 			THYDISLE[] el = THYDISLE.values();
 			for (THYDISLE obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				THYDISLECodeList.add(item);
 			}
@@ -657,7 +657,7 @@ public class ContrataCollectionsController {
 			TQNLEYRECodeList = new LinkedList<SelectItem>();
 			TQNLEYRE[] el = TQNLEYRE.values();
 			for (TQNLEYRE obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TQNLEYRECodeList.add(item);
 			}
@@ -678,7 +678,7 @@ public class ContrataCollectionsController {
 			TQOCOLRECodeList = new LinkedList<SelectItem>();
 			TQOCOLRE[] el = TQOCOLRE.values();
 			for (TQOCOLRE obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TQOCOLRECodeList.add(item);
 			}
@@ -699,7 +699,7 @@ public class ContrataCollectionsController {
 			TRCMODFOCodeList = new LinkedList<SelectItem>();
 			TRCMODFO[] el = TRCMODFO.values();
 			for (TRCMODFO obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TRCMODFOCodeList.add(item);
 			}
@@ -720,7 +720,7 @@ public class ContrataCollectionsController {
 			TRDACTFOCodeList = new LinkedList<SelectItem>();
 			TRDACTFO[] el = TRDACTFO.values();
 			for (TRDACTFO obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TRDACTFOCodeList.add(item);
 			}
@@ -741,7 +741,7 @@ public class ContrataCollectionsController {
 			TRWCOLDFCodeList = new LinkedList<SelectItem>();
 			TRWCOLDF[] el = TRWCOLDF.values();
 			for (TRWCOLDF obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TRWCOLDFCodeList.add(item);
 			}
@@ -762,7 +762,7 @@ public class ContrataCollectionsController {
 			TRXLEYDFCodeList = new LinkedList<SelectItem>();
 			TRXLEYDF[] el = TRXLEYDF.values();
 			for (TRXLEYDF obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TRXLEYDFCodeList.add(item);
 			}
@@ -783,7 +783,7 @@ public class ContrataCollectionsController {
 			TSATPCENCodeList = new LinkedList<SelectItem>();
 			TSATPCEN[] el = TSATPCEN.values();
 			for (TSATPCEN obj : el) {
-				String name = obj.getCode();
+				String name = obj.getDescription();
 				SelectItem item = new SelectItem(obj, name);
 				TSATPCENCodeList.add(item);
 			}

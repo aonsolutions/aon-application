@@ -434,9 +434,20 @@ public class ContractPdfController {
 	}
 	
 	public enum PdfType {
-		CONTRACT,
-		BASIC_COPY,
-		ANNEX;
+		CONTRACT("Contrato"),
+		BASIC_COPY("Copia basica"),
+		ANNEX("Anexo II");
+		
+		private String description;
+		
+		PdfType(String description) {
+			this.description = description;
+		}
+		
+		public String getDescription(){
+			return description;
+		}
+		
 	}
 	
 }

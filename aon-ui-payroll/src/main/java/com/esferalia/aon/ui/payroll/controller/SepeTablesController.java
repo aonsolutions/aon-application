@@ -42,7 +42,7 @@ public class SepeTablesController {
 	}
 
 	public String getSelectedTableLabel(){
-		return "(" + getTable().getCode() + ") " + getTable().getDescription();
+		return getTable().getDescription() + " (" + getTable().getCode() + ")";
 	}
 	
 	public void onInit(ActionEvent event){

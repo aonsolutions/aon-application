@@ -20,82 +20,31 @@
 			
 				<c:if test="#{!contract.new}" >
 				
+					<aon:panel style="width: 850px;">
+						<f:facet name="header">
+							<aon:outputText value="#{payrollBundle.payroll_person_data}" />
+						</f:facet>
+						<aon:panelGrid columns="4" styleClass="aon-width-all" >
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formPersonContent.xhtml" />
+						</aon:panelGrid>
+					</aon:panel>
+				
 					<aon:panelTabSet switchType="ajax" immediate="true">
 						
 						<aon:panelTab id="mainData" label="Datos Generales" >
-							<aon:panelGrid columns="2" 
-								columnClasses="aon-panelGrid-even aon-noborder aon-vertical-align-top, aon-panelGrid-even aon-noborder aon-vertical-align-top" >
-								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
-								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formPersonContent.xhtml" />
-							</aon:panelGrid>
-							
-							<br />
-							
-							<aon:panelCollapsible id="variablesPanel" expanded="true" actionListener="#{contract.onShowVariables}" >
-								<f:facet name="header">
-									<aon:outputText value="#{payrollBundle.payroll_contract_data_variables}" style="padding-left:18px;" styleClass="aon-icon-search"/>
-								</f:facet>
-								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid.xhtml" >
-									<ui:param name="controller" value="#{contract}" />
-									<ui:param name="showVariableFilter" value="true" />
-								</ui:include>
-							</aon:panelCollapsible>
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
 						</aon:panelTab>
 
 						<aon:panelTab id="contrataData" label="Datos Contrat@" 
 							actionListener="#{contractContrata.onContrataDataShow}">
-							
 							<aon:div rendered="#{contractContrata.enabledContrataEdition}">
 								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_toolbar.xhtml" />
-							
-								<aon:panelGrid columns="4" >
-									<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
-									<aon:inputText disabled="#{true}" size="32" 
-										value="#{contract.to.workPlace.enterprise.registry.fullName}"/>
-									
-									<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
-										<ui:param name="lookupTo" value="#{contract.to.person}" />
-										<ui:param name="lookupDisabled" value="#{true}" />
-										<ui:param name="skipInputText" value="#{true}" />
-										<ui:param name="skipNewButton" value="#{true}" />
-										<ui:param name="lookupSuffix" value="-contrata" />
-										<ui:param name="lookupInputSuggestSize" value="40" />
-										<ui:param name="goToBackActionListener" value="contract.onPersonBack"/>
-									</ui:include>
-								</aon:panelGrid>
-								
-								<br />
-							
 								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_content.xhtml" />
 							</aon:div>
-							
 						</aon:panelTab>
 
 						<aon:panelTab id="attachData" label="Documentos">
-							<aon:panelGrid columns="4" >
-								<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
-								<aon:inputText disabled="#{true}" size="32" 
-									value="#{contract.to.workPlace.enterprise.registry.fullName}"/>
-								
-								<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
-									<ui:param name="lookupTo" value="#{contract.to.person}" />
-									<ui:param name="lookupDisabled" value="#{true}" />
-									<ui:param name="skipInputText" value="#{true}" />
-									<ui:param name="skipNewButton" value="#{true}" />
-									<ui:param name="lookupSuffix" value="-document" />
-									<ui:param name="lookupInputSuggestSize" value="40" />
-									<ui:param name="goToBackActionListener" value="contract.onPersonBack"/>
-								</ui:include>
-							</aon:panelGrid>
-
-							<br />
-
-							<aon:panelCollapsible expanded="true" actionListener="#{contract.onShowDocuments}" >
-								<f:facet name="header">
-									<aon:outputText value="#{payrollBundle.payroll_documents}" style="padding-left:18px;" styleClass="aon-icon-attach-file"/>
-								</f:facet>
-								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/document/gridContent.xhtml" />
-							</aon:panelCollapsible>
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/document/gridContent.xhtml" />
 						</aon:panelTab>
 						
 					</aon:panelTabSet>

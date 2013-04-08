@@ -532,7 +532,7 @@ public class ContrataCodeTablesWriter {
 				out.newLine();
 				out.write( "\t\t\tfor ("+enumName+" obj : el) {");
 				out.newLine();
-				out.write( "\t\t\t\tString name = obj.getCode();");
+				out.write( "\t\t\t\tString name = obj.getDescription();");
 				out.newLine();
 				out.write( "\t\t\t\tSelectItem item = new SelectItem(obj, name);");
 				out.newLine();

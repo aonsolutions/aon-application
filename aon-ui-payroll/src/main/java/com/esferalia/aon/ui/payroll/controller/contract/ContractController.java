@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
@@ -252,9 +253,10 @@ public class ContractController extends BasicController implements IVariablesHan
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(ecBean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ID), contract.getActivity().getId());
 				List<ITransferObject> ecList = ecBean.getList(criteria);
+				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 				for(ITransferObject to: ecList){
 					EnterpriseCCC ccc = (EnterpriseCCC) to;
-					String name = ccc.getCcc();
+					String name = ccc.getType().getName(locale) +" ("+ ccc.getCcc()+")";
 					SelectItem item = new SelectItem(ccc, name);
 					getEnterpriseCCCs().add(item);
 				}

@@ -1,9 +1,13 @@
 package com.esferalia.aon.ui.payroll.controller.enterprise;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -17,8 +21,39 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.EnterpriseCCC;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 
 public class EnterpriseCCCController extends LinesController {
+	
+	public boolean isNewCCCLineAvailable(){
+		try {
+			if(this.getModel()!=null && this.getModel().getRowCount() < CCCType.values().length){
+				return true;
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Se ha producido un error al obtener el modelo de datos.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		return false;
+	}
+	
+	public List<SelectItem> getCCCTypes() {
+		List<CCCType> definedTypes = new LinkedList<CCCType>();
+		for(ITransferObject to: (List<ITransferObject>)this.getWrappedList()){
+			definedTypes.add(((EnterpriseCCC)to).getType());
+		}
+		List<SelectItem> cccTypes = new LinkedList<SelectItem>();
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		for( CCCType cccType : CCCType.values() ) {
+			if(!definedTypes.contains(cccType)){
+				String name = cccType.getName(locale);
+				SelectItem item = new SelectItem(cccType, name);
+				cccTypes.add(item);			
+			}
+		}
+		return cccTypes;
+	}
 	
 	public void onChangeCcc(ActionEvent event){
 		EnterpriseCCC ccc = (EnterpriseCCC) this.getTo();

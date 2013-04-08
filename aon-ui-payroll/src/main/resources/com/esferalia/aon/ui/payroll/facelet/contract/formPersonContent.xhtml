@@ -6,13 +6,6 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components" >
-
-	<aon:panelGrid columns="2" styleClass="aon-panelGrid-even"
-		columnClasses="aon-panelGrid-odd aon-bold, aon-panelGrid-even" >
-		
-		<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
-		<aon:inputText disabled="#{true}" size="32" 
-			value="#{contract.to.workPlace.enterprise.registry.fullName}"/>
 		
 		<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
 			<ui:param name="lookupTo" value="#{contract.to.person}" />
@@ -54,7 +47,5 @@
 		<aon:outputText value="#{registryBundle.registry_address}" />
 		<aon:inputText disabled="#{true}" size="32"
 			value="#{contract.to.person.registry.defaultAddress.fullAddress}"/>
-		
-	</aon:panelGrid>
 
 </ui:composition>

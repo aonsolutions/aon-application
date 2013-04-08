@@ -104,6 +104,9 @@ public enum ContextVariable implements IResourceable{
 	IMS_RATE("TARIFA_IMS", VariableType.DOUBLE, false),
 	SHORT_CONTRACT("CONTRATO_CORTA_DURACION", VariableType.BOOLEAN, false),
 	SENIORITY("AÑOS_ANTIGUEDAD", VariableType.DOUBLE, false),
+	TRAINING_CENTER("CENTRO_FORMATIVO", VariableType.TRAINING_CENTER_LOOKUP),
+	TRAINING_COURSE("CURSO_FORMATIVO", VariableType.TRAINING_COURSE_LOOKUP),
+	
 	
 	// Bajas, Incapacidad Temporal
 	MATERNITY("MTNAD", VariableType.BOOLEAN),
@@ -139,7 +142,6 @@ public enum ContextVariable implements IResourceable{
 	BONUS_AGE("DURACION", VariableType.DATE, false),
 	BONUS_START("INICIO", VariableType.DATE, false),
 	SUBSIDIZED("BONIFICADO", VariableType.BOOLEAN),
-	TRAINING_CENTER("CENTRO_FORMATIVO", VariableType.TRAINING_CENTER_LOOKUP),
 	
 	// Excel
 	OR("O", VariableType.BOOLEAN ),
