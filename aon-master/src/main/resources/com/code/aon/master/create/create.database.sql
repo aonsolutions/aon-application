@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.14.0
+# Version: 7.15.0
 # Created by: girazu
-# Creation Date: 12/03/2013 12:35
+# Creation Date: 08/04/2013 18:50
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1993,6 +1993,9 @@ CREATE TABLE `category` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico de la Categoria',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Categoria',
+  `type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de la Categoria',
+  `description` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion de la Categoria',
+  `url` varchar(256) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Url de la Categoria',
   PRIMARY KEY (`id`),
   KEY `IDX_CATEGORY_DOMAIN` (`domain`),
   CONSTRAINT `FK_CATEGORY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
@@ -5016,23 +5019,6 @@ CREATE TABLE `message_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Log de Mensajes';
 
 #
-# Structure for the `mk_campaign` table : 
-#
-
-CREATE TABLE `mk_campaign` (
-  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `active` tinyint(1) NOT NULL COMMENT 'Indica si la Campaña esta activa o no',
-  `description` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Campaña',
-  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
-  PRIMARY KEY (`id`),
-  KEY `IDX_MK_CAMPAIGN_DOMAIN` (`domain`),
-  KEY `IDX_MK_CAMPAIGN_SCOPE` (`scope`),
-  CONSTRAINT `FK_MK_CAMPAIGN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_MK_CAMPAIGN_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Campañas de Marketing';
-
-#
 # Structure for the `rattach` table : 
 #
 
@@ -5084,6 +5070,46 @@ CREATE TABLE `mk_template` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Plantilla de Marketing';
 
 #
+# Structure for the `newsletter` table : 
+#
+
+CREATE TABLE `newsletter` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL DEFAULT '1' COMMENT 'Identificador del Dominio',
+  `name` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del Boletin',
+  `date` date NOT NULL COMMENT 'Fecha del Boletin',
+  `layout` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Disposicion del Boletin',
+  `background_color` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Color de fondo del Boletin',
+  `title_color` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Color del titulo del Boletin',
+  `header_template` int(4) DEFAULT NULL COMMENT 'Identificador de la Plantilla de Cabecera',
+  `footer_template` int(4) DEFAULT NULL COMMENT 'Identificador de la Plantilla de Pie de Pagina',
+  PRIMARY KEY (`id`),
+  KEY `IDX_NEWSLETTER_DOMAIN` (`domain`),
+  KEY `IDX_NEWSLETTER_HEADER_TEMPLATE` (`header_template`),
+  KEY `IDX_NEWSLETTER_FOOTER_TEMPLATE` (`footer_template`),
+  CONSTRAINT `FK_NEWSLETTER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_NEWSLETTER_HEADER_TEMPLATE` FOREIGN KEY (`header_template`) REFERENCES `mk_template` (`id`),
+  CONSTRAINT `FK_NEWSLETTER_FOOTER_TEMPLATE` FOREIGN KEY (`footer_template`) REFERENCES `mk_template` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Boletin';
+
+#
+# Structure for the `mk_campaign` table : 
+#
+
+CREATE TABLE `mk_campaign` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `active` tinyint(1) NOT NULL COMMENT 'Indica si la Campaña esta activa o no',
+  `description` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Campaña',
+  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
+  PRIMARY KEY (`id`),
+  KEY `IDX_MK_CAMPAIGN_DOMAIN` (`domain`),
+  KEY `IDX_MK_CAMPAIGN_SCOPE` (`scope`),
+  CONSTRAINT `FK_MK_CAMPAIGN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_MK_CAMPAIGN_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Campañas de Marketing';
+
+#
 # Structure for the `mk_action` table : 
 #
 
@@ -5096,15 +5122,18 @@ CREATE TABLE `mk_action` (
   `end_date` datetime DEFAULT NULL COMMENT 'Fecha de finalizacion',
   `survey` int(4) DEFAULT NULL COMMENT 'Identificador del Cuestionario',
   `template` int(4) DEFAULT NULL COMMENT 'Identificador de la Plantilla',
+  `newsletter` int(4) DEFAULT NULL COMMENT 'Identificador del Boletin',
   `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion de la Accion',
   PRIMARY KEY (`id`),
   KEY `IDX_MK_ACTION_MK_TEMPLATE` (`template`),
   KEY `IDX_MK_ACTION_MK_CAMPAIGN` (`campaign`),
   KEY `IDX_MK_ACTION_SURVEY` (`survey`),
   KEY `IDX_MK_ACTION_DOMAIN` (`domain`),
+  KEY `IDX_MK_ACTION_NEWSLETTER` (`newsletter`),
   CONSTRAINT `FK_MK_ACTION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_MK_ACTION_MK_CAMPAIGN` FOREIGN KEY (`campaign`) REFERENCES `mk_campaign` (`id`),
   CONSTRAINT `FK_MK_ACTION_MK_TEMPLATE` FOREIGN KEY (`template`) REFERENCES `mk_template` (`id`),
+  CONSTRAINT `FK_MK_ACTION_NEWSLETTER` FOREIGN KEY (`newsletter`) REFERENCES `newsletter` (`id`),
   CONSTRAINT `FK_MK_ACTION_SURVEY` FOREIGN KEY (`survey`) REFERENCES `survey` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acciones de Marketing';
 
@@ -5175,6 +5204,51 @@ CREATE TABLE `model` (
   CONSTRAINT `FK_MODEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_MODEL_MAKE` FOREIGN KEY (`make`) REFERENCES `make` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Modelos';
+
+#
+# Structure for the `news` table : 
+#
+
+CREATE TABLE `news` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL DEFAULT '1' COMMENT 'Identificador del Dominio',
+  `title` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Titulo de la Noticia',
+  `description` varchar(1024) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Noticia',
+  `content` text COLLATE latin1_spanish_ci NOT NULL COMMENT 'Contenido de la Noticia',
+  `url` varchar(256) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Url de la Noticia',
+  `active` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Indica si la Noticia esta activa o no',
+  `rss` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si la Noticia se va a publicar en rss o no',
+  `init_date` date DEFAULT NULL COMMENT 'Fecha Noticia',
+  `end_date` date DEFAULT NULL COMMENT 'Fecha fin Noticia',
+  `category` int(4) NOT NULL COMMENT 'Categoria de la Noticia',
+  `rattach` int(4) DEFAULT NULL COMMENT 'Identificador del Archivo Adjunto',
+  PRIMARY KEY (`id`),
+  KEY `IDX_NEWS_DOMAIN` (`domain`),
+  KEY `IDX_NEWS_CATEGORY` (`category`),
+  KEY `IDX_NEWS_RATTACH` (`rattach`),
+  CONSTRAINT `FK_NEWS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_NEWS_CATEGORY` FOREIGN KEY (`category`) REFERENCES `category` (`id`),
+  CONSTRAINT `FK_NEWS_RATTACH` FOREIGN KEY (`rattach`) REFERENCES `rattach` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Noticias';
+
+#
+# Structure for the `newsletter_detail` table : 
+#
+
+CREATE TABLE `newsletter_detail` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL DEFAULT '1' COMMENT 'Identificador del Dominio',
+  `news` int(4) NOT NULL DEFAULT '0' COMMENT 'Identificador de la Noticia',
+  `newsletter` int(4) NOT NULL DEFAULT '0' COMMENT 'Identificador del Boletin',
+  `position` int(4) NOT NULL COMMENT 'Posicion dentro del Boletin',
+  PRIMARY KEY (`id`),
+  KEY `IDX_NEWSLETTER_DETAIL_DOMAIN` (`domain`),
+  KEY `IDX_NEWSLETTER_DETAIL_NEWS` (`news`),
+  KEY `IDX_NEWSLETTER_DETAIL_NEWSLETTER` (`newsletter`),
+  CONSTRAINT `FK_NEWSLETTER_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_NEWSLETTER_DETAIL_NEWS` FOREIGN KEY (`news`) REFERENCES `news` (`id`),
+  CONSTRAINT `FK_NEWSLETTER_DETAIL_NEWSLETTER` FOREIGN KEY (`newsletter`) REFERENCES `newsletter` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Noticias del Boletin';
 
 #
 # Structure for the `note` table : 
@@ -6968,7 +7042,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.14.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.15.0');
 
 COMMIT;
 
