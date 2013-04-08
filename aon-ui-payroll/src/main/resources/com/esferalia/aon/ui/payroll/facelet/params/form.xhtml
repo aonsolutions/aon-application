@@ -102,6 +102,7 @@
 										value="#{payrollBundle.payroll_contract_contract_code}" />
 									<aon:selectOneMenu id="contract_default_code"
 										value="#{payrollAppParams.parameters['PAY_default_contractCode_PAY'].value}" >
+										<f:selectItem itemValue="#{null}" itemLabel="-" />
 										<f:selectItems value="#{payrollCollections.tc2List}" />
 									</aon:selectOneMenu>
 									

@@ -2918,6 +2918,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<!--  **** SEPE TABLES VIEWER **** -->
+	<managed-bean>
+		<managed-bean-name>sepeTables</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.SepeTablesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!--
 		==========================================================
 		================== OPTIONAL LISTENER =====================
@@ -3815,6 +3822,17 @@
 		<navigation-case>
 			<from-outcome>contractLoader_form</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractLoader/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!--  **** SEPE TABLES VIEWER **** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>sepeTables_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/sepeTables/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>sepeCodes_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/sepeTables/code_list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

@@ -1,6 +1,8 @@
 package com.esferalia.aon.payroll.contrata.enumeration;
 
-import com.code.aon.common.enumeration.IStringEnum;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /** 
  * Enumeration for represent Contrata (S.E.P.E.) TRCMODFO table codes.
@@ -10,45 +12,61 @@ import com.code.aon.common.enumeration.IStringEnum;
  * *TRCMODFO 	MODALIDAD DE FORMACION						22-03-2012
  *  ------------------------------------------------------------------------
  */ 
-public enum TRCMODFO implements IStringEnum {
+public enum TRCMODFO {
 
 	TRCMODFO_D( "D", "A DISTANCIA", "20110831", "20131231" ),
 	TRCMODFO_M( "M", "MIXTA", "20110831", "20131231" ),
 	TRCMODFO_P( "P", "PRESENCIAL", "20110831", "20131231" ),
 	TRCMODFO_T( "T", "TELEFORMACIÓN", "20110831", null ),
 	;
-	private String value;
-	private String label;
+	public static final String TABLE_NAME = "TRCMODFO";
+	public static final String TABLE_DESCRIPTION = "*TRCMODFO 	MODALIDAD DE FORMACION						22-03-2012";
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	private String code;
+	private String description;
 	private String startDate;
 	private String endDate;
 
-	TRCMODFO( String value, String label, String startDate, String endDate ) {
-		this.value = value;
-		this.label = label;
+	TRCMODFO( String code, String description, String startDate, String endDate ) {
+		this.code = code;
+		this.description = description;
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}
 
-	@Override
-	public String getValue() {
-		return value;
+	public String getCode() {
+		return code;
 	}
 
-	public String getLabel() {
-		return label;
+	public String getDescription() {
+		return description;
 	}
 
-	public String getStartDate() {
-		return startDate;
+	public Date getStartDate(){
+		try {
+			if(startDate!=null){
+				return sdf.parse(startDate);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
 	}
 
-	public String getEndDate() {
-		return endDate;
+	public Date getEndDate(){
+		try {
+			if(endDate!=null){
+				return sdf.parse(endDate);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+	return null;
 	}
 
 	public static TRCMODFO getEnumByValue(String expression) {
 		for( TRCMODFO o : TRCMODFO.values() ) {
-			if ( o.getValue().equals(expression) ) {
+			if ( o.getCode().equals(expression) ) {
 				return o;
 			}
 		}

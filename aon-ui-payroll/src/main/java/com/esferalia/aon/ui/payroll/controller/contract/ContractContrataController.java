@@ -146,7 +146,7 @@ public class ContractContrataController {
 		if(getParams().getNivelFormativo()!=null){
 			TreeSet<String> tree = new TreeSet<String>(bundle.keySet());
 			for(String key: tree){
-				if(key.startsWith(getParams().getNivelFormativo().getValue())){
+				if(key.startsWith(getParams().getNivelFormativo().getCode())){
 					String name = bundle.getString(key);
 					SelectItem item = new SelectItem(key, name);
 					qualifications.add(item);

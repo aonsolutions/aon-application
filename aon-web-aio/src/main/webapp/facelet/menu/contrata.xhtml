@@ -53,15 +53,13 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="contrataBatch-contrata"
 										action="contrataBatch_search-contrata"
-										disabled="#{true}"  
 										value="#{payrollBundle.payroll_contrataBatchWizard_module}" >
 										<aon:actionListener method="#{contrataBatch.onEditSearch}" />
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="certifica2Batch"
-										action="certifica2Batch_search"
-										disabled="#{true}"  
+									<aon:commandLink id="certifica2Batch-contrata"
+										action="certifica2Batch_search-contrata"
 										actionListener="#{certifica2Batch.onEditSearch}"
 										value="#{payrollBundle.payroll_certifica2BatchWizard_module}" />
 								</aon:div>
@@ -143,6 +141,12 @@
 									<aon:commandLink id="cno-contrata"
 										action="cno_list-contrata"  
 										value="#{payrollBundle.payroll_cno_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="sepeTables-contrata"
+										action="sepeTables_list-contrata"
+										actionListener="#{sepeTables.onInit}"  
+										value="#{payrollBundle.payroll_sepeTables_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>

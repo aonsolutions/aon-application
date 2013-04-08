@@ -1,6 +1,8 @@
 package com.esferalia.aon.payroll.contrata.enumeration;
 
-import com.code.aon.common.enumeration.IStringEnum;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /** 
  * Enumeration for represent Contrata (S.E.P.E.) TESCETCO table codes.
@@ -10,7 +12,7 @@ import com.code.aon.common.enumeration.IStringEnum;
  * *TESCETCO	RELACIÓN CONTRACTUAL ET / CO / TE		
  *  ------------------------------------------------------------------------
  */ 
-public enum TESCETCO implements IStringEnum {
+public enum TESCETCO {
 
 	TESCETCO_E01( "E01", "CONTRATO TALLERES EMPLEO ALUMNO/TRABAJAD", "19990224", "0" ),
 	TESCETCO_E02( "E02", "CONTRATO DE TALLERES DE EMPLEO PERSONAL", "19990224", "0" ),
@@ -19,38 +21,54 @@ public enum TESCETCO implements IStringEnum {
 	TESCETCO_T01( "T01", "CONTRATO ESCUELA TALLER ALUMNO/TRABAJAD", "19880330", "0" ),
 	TESCETCO_T02( "T02", "CONTRATO DE ESC.TALLER PERSONAL UPD", "19880330", "0" ),
 	;
-	private String value;
-	private String label;
+	public static final String TABLE_NAME = "TESCETCO";
+	public static final String TABLE_DESCRIPTION = "*TESCETCO	RELACIÓN CONTRACTUAL ET / CO / TE		";
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	private String code;
+	private String description;
 	private String startDate;
 	private String endDate;
 
-	TESCETCO( String value, String label, String startDate, String endDate ) {
-		this.value = value;
-		this.label = label;
+	TESCETCO( String code, String description, String startDate, String endDate ) {
+		this.code = code;
+		this.description = description;
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}
 
-	@Override
-	public String getValue() {
-		return value;
+	public String getCode() {
+		return code;
 	}
 
-	public String getLabel() {
-		return label;
+	public String getDescription() {
+		return description;
 	}
 
-	public String getStartDate() {
-		return startDate;
+	public Date getStartDate(){
+		try {
+			if(startDate!=null){
+				return sdf.parse(startDate);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
 	}
 
-	public String getEndDate() {
-		return endDate;
+	public Date getEndDate(){
+		try {
+			if(endDate!=null){
+				return sdf.parse(endDate);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+	return null;
 	}
 
 	public static TESCETCO getEnumByValue(String expression) {
 		for( TESCETCO o : TESCETCO.values() ) {
-			if ( o.getValue().equals(expression) ) {
+			if ( o.getCode().equals(expression) ) {
 				return o;
 			}
 		}

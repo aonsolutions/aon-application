@@ -1,6 +1,8 @@
 package com.esferalia.aon.payroll.contrata.enumeration;
 
-import com.code.aon.common.enumeration.IStringEnum;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /** 
  * Enumeration for represent Contrata (S.E.P.E.) TEKLEYBO table codes.
@@ -10,7 +12,7 @@ import com.code.aon.common.enumeration.IStringEnum;
  * *TEKLEYBO	LEY BONIFICACIÓN						11-09-2012	
  *  ------------------------------------------------------------------------
  */ 
-public enum TEKLEYBO implements IStringEnum {
+public enum TEKLEYBO {
 
 	TEKLEYBO_01( "01", "LEY 64 / 1997", "19970517", "19990516" ),
 	TEKLEYBO_02( "02", "LEY 50 / 1998", "19990101", "19991231" ),
@@ -53,38 +55,54 @@ public enum TEKLEYBO implements IStringEnum {
 	TEKLEYBO_39( "39", "REAL DECRETO LEY 3 / 2012", "20120212", "20120707" ),
 	TEKLEYBO_40( "40", "LEY 3 / 2012", "20120708", "0" ),
 	;
-	private String value;
-	private String label;
+	public static final String TABLE_NAME = "TEKLEYBO";
+	public static final String TABLE_DESCRIPTION = "*TEKLEYBO	LEY BONIFICACIÓN						11-09-2012	";
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	private String code;
+	private String description;
 	private String startDate;
 	private String endDate;
 
-	TEKLEYBO( String value, String label, String startDate, String endDate ) {
-		this.value = value;
-		this.label = label;
+	TEKLEYBO( String code, String description, String startDate, String endDate ) {
+		this.code = code;
+		this.description = description;
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}
 
-	@Override
-	public String getValue() {
-		return value;
+	public String getCode() {
+		return code;
 	}
 
-	public String getLabel() {
-		return label;
+	public String getDescription() {
+		return description;
 	}
 
-	public String getStartDate() {
-		return startDate;
+	public Date getStartDate(){
+		try {
+			if(startDate!=null){
+				return sdf.parse(startDate);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
 	}
 
-	public String getEndDate() {
-		return endDate;
+	public Date getEndDate(){
+		try {
+			if(endDate!=null){
+				return sdf.parse(endDate);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+	return null;
 	}
 
 	public static TEKLEYBO getEnumByValue(String expression) {
 		for( TEKLEYBO o : TEKLEYBO.values() ) {
-			if ( o.getValue().equals(expression) ) {
+			if ( o.getCode().equals(expression) ) {
 				return o;
 			}
 		}

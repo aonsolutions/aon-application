@@ -440,7 +440,7 @@ public class ContrataContratosWriter {
 //		ccc.getType()+ccc.getCcc();
 //		TCHRGCOT.TCHRGCOT_0111.getValue()++ccc.getCcc();
 		if(ccc!=null){
-			datos.setCODIGOCUENTACOTIZACION(TCHRGCOT.TCHRGCOT_0111.getValue()+ccc.getCcc());
+			datos.setCODIGOCUENTACOTIZACION(TCHRGCOT.TCHRGCOT_0111.getCode()+ccc.getCcc());
 		}
 		return datos;
 	}
@@ -821,14 +821,14 @@ public class ContrataContratosWriter {
 //		"60";"ENSEÑANZAS UNIVERSITARIAS DE MÁSTER"
 //		"61";"DOCTORADO UNIVERSITARIO"
 //		"80";"SIN ESTUDIOS"
-		datos.setNIVELFORMATIVO(params.getNivelFormativo()!=null?params.getNivelFormativo().getValue():null);
+		datos.setNIVELFORMATIVO(params.getNivelFormativo()!=null?params.getNivelFormativo().getCode():null);
 //		Indicador de discapacidad.  
 //		Obligatorio con "S" para contratos de minusválidos.  
 //		Obligatorio con "C" para contratos de minusválidos en centros especiales de empleo. 
 //		Obligatorio con "E", "F" o "G" para contratos de minusválidos de enclaves laborales. 
 //		Sus posibles valores se encuentran codificados en la tabla TEJINDIS.txt de la Ayuda XML 
 		if(params.isDisabilityData()){
-			datos.setINDDISCAPACIDAD(params.getIndDiscapacidad()!=null?params.getIndDiscapacidad().getValue():null);
+			datos.setINDDISCAPACIDAD(params.getIndDiscapacidad()!=null?params.getIndDiscapacidad().getCode():null);
 		}
 		String cno = getContractDataMap(params.getContract()).get(ContextVariable.CNO.getName());
 		if(StringUtils.isEmpty(cno)){
@@ -840,13 +840,13 @@ public class ContrataContratosWriter {
 			datos.setIDOFERTA(completeLength(params.getOffer(), 17, ZERO_VALUE, false));
 		}
 		if( tc2.equals("403") || tc2.equals("503") ){
-			datos.setCODIGOPROGRAMAEMPLEO(params.getCodigoProgramaEmpleo()!=null?params.getCodigoProgramaEmpleo().getValue():null);
+			datos.setCODIGOPROGRAMAEMPLEO(params.getCodigoProgramaEmpleo()!=null?params.getCodigoProgramaEmpleo().getCode():null);
 		}
 		datos.setNACIONALIDADCT(completeLength(params.getContract().getWorkPlace().getAddress().getRegistry().getNationality().getIsoNum(),3,ZERO_VALUE,false));
 		// FIXME: falta por implementar: tabla con los municipios
 		datos.setMUNICIPIOCT(completeLength(params.getContract().getWorkPlace().getAddress().getGeozone().getCode(),5,ZERO_VALUE,false));
 		if(params.isOlderThan52Data()){
-			datos.setOTRASLEGISLACIONES(params.getOtrasLegislaciones()!=null?params.getOtrasLegislaciones().getValue():null);
+			datos.setOTRASLEGISLACIONES(params.getOtrasLegislaciones()!=null?params.getOtrasLegislaciones().getCode():null);
 		}
 		if(tc2.equals("430") || (tc2.equals("530") && !datos.getINDDISCAPACIDAD().equals("C") ) ){
 			String subsidized = getContractDataMap(params.getContract()).get(ContextVariable.SUBSIDIZED.getName());
@@ -913,7 +913,7 @@ public class ContrataContratosWriter {
 			DATOSMEDIDASFOMENTOTYPE datos = factory.createDATOSMEDIDASFOMENTOTYPE();
 			datos.setINDCOSTEDESPIDO(params.isIndCosteDespido()?"1":"2");
 			if(params.isIndCosteDespido()){
-				datos.setCODIGOCOLECTIVODESPIDO(params.getCodigoColectivoDespido()!=null?params.getCodigoColectivoDespido().getValue():null);
+				datos.setCODIGOCOLECTIVODESPIDO(params.getCodigoColectivoDespido()!=null?params.getCodigoColectivoDespido().getCode():null);
 			} else {
 				datos.setCODIGOCOLECTIVODESPIDO(null);
 			}
@@ -953,7 +953,7 @@ public class ContrataContratosWriter {
 	private DATOSANEXOCONTRATORELEVOTYPE createDatosAnexoContratoRelevo(ContrataParams params) {
 		if(params.isReliefData()){
 			DATOSANEXOCONTRATORELEVOTYPE datos = factory.createDATOSANEXOCONTRATORELEVOTYPE();
-			datos.setTIPOTRABAJADOR(params.getTipoTrabajadorRelevo().getValue());
+			datos.setTIPOTRABAJADOR(params.getTipoTrabajadorRelevo().getCode());
 			datos.setNOMBREAPELLIDOS(createNombreApellidos(params.getReliefPerson()));
 			return datos;
 		}
@@ -988,7 +988,7 @@ public class ContrataContratosWriter {
 	private DATOSETCOTYPE createDatosEtCote(ContrataParams params) {
 		if(params.isSchoolWorkshopData()){
 			DATOSETCOTYPE datos = factory.createDATOSETCOTYPE();
-			datos.setCODIGOETCOTE(params.getCodigoEtCoTe().getValue());
+			datos.setCODIGOETCOTE(params.getCodigoEtCoTe().getCode());
 			return datos;
 		}
 		return null;
@@ -1158,7 +1158,7 @@ public class ContrataContratosWriter {
 		DATOSCOMUNICACOPIABASICATYPE datos = factory.createDATOSCOMUNICACOPIABASICATYPE();
 		datos.setDOMICCENTROTRABAJO(params.getContract().getWorkPlace().getAddress().getFullAddress());
 		datos.setTEXTOCOPIABASICA(params.getTextoCopiaBasica());
-		datos.setTIPOFIRMA(params.getTipoFirmaCopiaBasica()!=null?params.getTipoFirmaCopiaBasica().getValue():null);
+		datos.setTIPOFIRMA(params.getTipoFirmaCopiaBasica()!=null?params.getTipoFirmaCopiaBasica().getCode():null);
 		return datos;
 	}
 	/**
@@ -1331,7 +1331,7 @@ public class ContrataContratosWriter {
 		// TODO
 		DATOSCONTRATOTIEMPOPARCIALTYPE datos = factory.createDATOSCONTRATOTIEMPOPARCIALTYPE();
 		datos.setACTIVIDADSINFECHACIERTA(params.getActividadSinFechaCierta());
-		datos.setCOLECTIVOEDAD(params.getColectivoEdad()!=null?params.getColectivoEdad().getValue():null);
+		datos.setCOLECTIVOEDAD(params.getColectivoEdad()!=null?params.getColectivoEdad().getCode():null);
 		datos.setFIJODISCONTINUOPERIODICO(params.getFijoDiscontinuoPeriodico()!=null && params.getFijoDiscontinuoPeriodico()?"S":"N");
 		datos.setHORASANUALESTIEMPOCOMPLETO(params.getHorasAnualesTiempoCompleto());
 		
@@ -1345,7 +1345,7 @@ public class ContrataContratosWriter {
 		datos.setINDICFORMACIONTEORICA(params.getIndicFormacionTeorica());
 		datos.setPORCENTAJEJUBILACIONPARCIAL(params.getPorcentajeJubilacionParcial());
 		datos.setPORCJORNADAPACTADA(params.getPorcJornadaPactada());
-		datos.setTIPOJORNADA(params.getTipoJornada()!=null?params.getTipoJornada().getValue():null);
+		datos.setTIPOJORNADA(params.getTipoJornada()!=null?params.getTipoJornada().getCode():null);
 		return datos;
 	}
 	/**
@@ -1706,8 +1706,8 @@ public class ContrataContratosWriter {
 	private DATOSCONTRATOINVESTIGACIONTYPE createDatosContratoInvestigacion(ContrataParams params) {
 		if(params.isResearchData()){
 			DATOSCONTRATOINVESTIGACIONTYPE datos = new  DATOSCONTRATOINVESTIGACIONTYPE();
-			datos.setINDEMPLEADOR(params.getIndEmpleador().getValue());
-			datos.setINDTRABAJADOR(params.getIndTrabajador().getValue());
+			datos.setINDEMPLEADOR(params.getIndEmpleador().getCode());
+			datos.setINDTRABAJADOR(params.getIndTrabajador().getCode());
 			datos.setINDRD632006(params.getIndRd632006()?"S":null);
 			return datos;
 		}
@@ -1772,7 +1772,7 @@ public class ContrataContratosWriter {
 	private DATOSCONTRATOINTERINIDADTYPE createDatosContratoInterinidad(ContrataParams params) {
 		if(params.isInterimData()){
 			DATOSCONTRATOINTERINIDADTYPE datos = new DATOSCONTRATOINTERINIDADTYPE();
-			datos.setCAUSAINTERINIDAD(params.getCausaInterinidad().getValue());
+			datos.setCAUSAINTERINIDAD(params.getCausaInterinidad().getCode());
 			return datos;
 		}
 		return null;

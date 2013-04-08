@@ -1,6 +1,8 @@
 package com.esferalia.aon.payroll.contrata.enumeration;
 
-import com.code.aon.common.enumeration.IStringEnum;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /** 
  * Enumeration for represent Contrata (S.E.P.E.) TEIINTER table codes.
@@ -10,7 +12,7 @@ import com.code.aon.common.enumeration.IStringEnum;
  * *TEIINTER	CAUSA OBJETO DE LA INTERINIDAD					
  *  ------------------------------------------------------------------------
  */ 
-public enum TEIINTER implements IStringEnum {
+public enum TEIINTER {
 
 	TEIINTER_A( "A", "TRABAJADOR CON DERECHO RESERVA DE PUESTO", "19800315", "0" ),
 	TEIINTER_B( "B", "TRABAJADOR POR MATERNIDAD SIN BONIFICACION DE CUOTAS", "19800315", "0" ),
@@ -28,38 +30,54 @@ public enum TEIINTER implements IStringEnum {
 	TEIINTER_N( "N", "PATERNIDAD", "20070324", "0" ),
 	TEIINTER_O( "O", "RIESGO DURANTE LA LACTANCIA NATURAL", "20070324", "0" ),
 	;
-	private String value;
-	private String label;
+	public static final String TABLE_NAME = "TEIINTER";
+	public static final String TABLE_DESCRIPTION = "*TEIINTER	CAUSA OBJETO DE LA INTERINIDAD					";
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	private String code;
+	private String description;
 	private String startDate;
 	private String endDate;
 
-	TEIINTER( String value, String label, String startDate, String endDate ) {
-		this.value = value;
-		this.label = label;
+	TEIINTER( String code, String description, String startDate, String endDate ) {
+		this.code = code;
+		this.description = description;
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}
 
-	@Override
-	public String getValue() {
-		return value;
+	public String getCode() {
+		return code;
 	}
 
-	public String getLabel() {
-		return label;
+	public String getDescription() {
+		return description;
 	}
 
-	public String getStartDate() {
-		return startDate;
+	public Date getStartDate(){
+		try {
+			if(startDate!=null){
+				return sdf.parse(startDate);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
 	}
 
-	public String getEndDate() {
-		return endDate;
+	public Date getEndDate(){
+		try {
+			if(endDate!=null){
+				return sdf.parse(endDate);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+	return null;
 	}
 
 	public static TEIINTER getEnumByValue(String expression) {
 		for( TEIINTER o : TEIINTER.values() ) {
-			if ( o.getValue().equals(expression) ) {
+			if ( o.getCode().equals(expression) ) {
 				return o;
 			}
 		}

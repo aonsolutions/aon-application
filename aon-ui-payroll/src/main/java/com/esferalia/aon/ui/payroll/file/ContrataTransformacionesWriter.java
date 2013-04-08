@@ -256,7 +256,7 @@ public class ContrataTransformacionesWriter {
 		DATOSCOMUNICACOPIABASICATYPE datos = factory.createDATOSCOMUNICACOPIABASICATYPE();
 		datos.setDOMICCENTROTRABAJO(params.getContract().getWorkPlace().getAddress().getFullAddress());
 		datos.setTEXTOCOPIABASICA(params.getTextoCopiaBasica());
-		datos.setTIPOFIRMA(params.getTipoFirmaCopiaBasica()!=null?params.getTipoFirmaCopiaBasica().getValue():null);
+		datos.setTIPOFIRMA(params.getTipoFirmaCopiaBasica()!=null?params.getTipoFirmaCopiaBasica().getCode():null);
 		return datos;
 	}
 	
@@ -346,7 +346,7 @@ public class ContrataTransformacionesWriter {
 		DATOSMEDIDASFOMENTOTYPE datos = factory.createDATOSMEDIDASFOMENTOTYPE();
 		datos.setINDCOSTEDESPIDO(contrataParams.isIndCosteDespido()?"1":"2");
 		if(contrataParams.isIndCosteDespido()){
-			datos.setCODIGOCOLECTIVODESPIDO(contrataParams.getCodigoColectivoDespido()!=null?contrataParams.getCodigoColectivoDespido().getValue():null);
+			datos.setCODIGOCOLECTIVODESPIDO(contrataParams.getCodigoColectivoDespido()!=null?contrataParams.getCodigoColectivoDespido().getCode():null);
 		} else {
 			datos.setCODIGOCOLECTIVODESPIDO(null);
 		}
@@ -564,7 +564,7 @@ public class ContrataTransformacionesWriter {
 	 */
 	private DATOSADICIONALESTRANSFORMACIONTYPE createDatosAdicionalesTransformacion(ContrataParams params) {
 		DATOSADICIONALESTRANSFORMACIONTYPE datos = factory.createDATOSADICIONALESTRANSFORMACIONTYPE();
-		datos.setINDDISCAPACIDAD(params.getIndDiscapacidad()!=null?params.getIndDiscapacidad().getValue():null);
+		datos.setINDDISCAPACIDAD(params.getIndDiscapacidad()!=null?params.getIndDiscapacidad().getCode():null);
 		// TODO
 		datos.setCODIGOCOLECTIVOREDUCCION(null);
 		return datos;
@@ -705,7 +705,7 @@ public class ContrataTransformacionesWriter {
 	private DATOSCONTRATOTIEMPOPARCIALTYPE createDatosContratoTiempoParcial(ContrataParams params) {
 		// TODO
 		DATOSCONTRATOTIEMPOPARCIALTYPE datos = factory.createDATOSCONTRATOTIEMPOPARCIALTYPE();		
-		datos.setTIPOJORNADA(params.getTipoJornada().getValue());
+		datos.setTIPOJORNADA(params.getTipoJornada().getCode());
 		String duracionconvenio = (params.getHorasConvenio()==null?"":completeLength(params.getHorasConvenio(), 4, "0", false))+(params.getMinutosConvenio()==null?"":completeLength(params.getMinutosConvenio(), 2, "0", false));
 		String duracionjornada = (params.getHorasJornada()==null?"":completeLength(params.getHorasJornada(), 4, "0", false))+(params.getMinutosJornada()==null?"":completeLength(params.getMinutosJornada(), 2, "0", false));
 	    datos.setHORASJORNADA(duracionjornada.isEmpty()?null:completeLength(duracionjornada, 6, "0", false));

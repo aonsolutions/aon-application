@@ -42,9 +42,9 @@ import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 public class ContrataWriter {
 	
 	private final String CONTRATA_XML_FILE_ENCODING = "ISO-8859-1";
-	private final String CONTRATA_CONTRATOS_MODEL_PATH = "com.esferalia.aon.file.payroll.contract.generated.contratos";
-	private final String CONTRATA_TRANSFORMACIONES_MODEL_PATH = "com.esferalia.aon.file.payroll.contract.generated.transformaciones";
-	private final String CONTRATA_PRORROGAS_MODEL_PATH = "com.esferalia.aon.file.payroll.contract.generated.prorrogas";
+	private final String CONTRATA_CONTRATOS_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.contratos";
+	private final String CONTRATA_TRANSFORMACIONES_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.transformaciones";
+	private final String CONTRATA_PRORROGAS_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.prorrogas";
 	private final String CONTRATOS_SCHEMA_FILE_NAME = "EsquemaContratos50.xsd";
 	private final String TRANSFORMACIONES_SCHEMA_FILE_NAME = "EsquemaTransformaciones50.xsd";
 	private final String PRORROGAS_SCHEMA_FILE_NAME = "EsquemaProrrogas50.xsd";
@@ -58,7 +58,7 @@ public class ContrataWriter {
 	private String fileName;
 	
 	public String getFileName() {
-		return fileName;
+		return fileName; 
 	}
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
@@ -149,8 +149,9 @@ public class ContrataWriter {
 //			}
 			return file;
 		} catch (JAXBException e) {
-			String msg = "Error al generar el documento xml de contrata";
+			String msg = "Error al generar el documento xml de contrata." ;
 			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage("[" + e + "]");
 			throw new AbortProcessingException(msg, e);
 		}
 	}

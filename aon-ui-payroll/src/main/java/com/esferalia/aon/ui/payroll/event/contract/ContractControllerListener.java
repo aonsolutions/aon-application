@@ -12,6 +12,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -83,14 +84,17 @@ public class ContractControllerListener extends ControllerAdapter{
 		contract.setStartDate(new Date());
 		contract.setSeniorityDate(contract.getStartDate());
 		try {
-			controller.getParams().setContractModelCode(ContractModelCode.valueOf(params.getParameter(PayrollAppParamsController.DEFAULT_CONTRACT_CODE).getValue()));
+			ApplicationParameter defaultContractCode = params.getParameter(PayrollAppParamsController.DEFAULT_CONTRACT_CODE);
+			if(defaultContractCode!=null && defaultContractCode.getValue()!=null){
+				controller.getParams().setContractModelCode(ContractModelCode.valueOf(defaultContractCode.getValue()));
+			}
 			IManagerBean bean = BeanManager.getManagerBean(Person.class);
 			contract.setPerson((Person) bean.createNewTo());
 			bean = BeanManager.getManagerBean(CNO.class);
 			controller.getParams().setCno((CNO) bean.createNewTo());
 			bean = BeanManager.getManagerBean(Agreement.class);
 			controller.setAgreement((Agreement) bean.createNewTo());
-			if( controller.getParams().getContractModelCode().getCode() != null
+			if( controller.getParams().getContractModelCode() != null
 					&& controller.getParams().getContractModelCode().getCode() == ContractCode.C421 
 					&& params.getDefaultTrainingCenter()!=null && params.getDefaultTrainingCenter().getId()!=null){
 				controller.getParams().setTrainingCenter(params.getDefaultTrainingCenter());

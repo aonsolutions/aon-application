@@ -1,6 +1,8 @@
 package com.esferalia.aon.payroll.contrata.enumeration;
 
-import com.code.aon.common.enumeration.IStringEnum;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /** 
  * Enumeration for represent Contrata (S.E.P.E.) TERRORES table codes.
@@ -10,7 +12,7 @@ import com.code.aon.common.enumeration.IStringEnum;
  * TERRORES 
  *  ------------------------------------------------------------------------
  */ 
-public enum TERRORES implements IStringEnum {
+public enum TERRORES {
 
 	TERRORES_CBC4001( "CBC4001", "No se ha comunicado la copia básica para este contrato", null, null ),
 	TERRORES_CBC6001( "CBC6001", "Copia básica del contrato realizada correctamente.", null, null ),
@@ -1305,38 +1307,54 @@ public enum TERRORES implements IStringEnum {
 	TERRORES_TDG0001( "TDG0001", "Tipo de vía pública: No existe en tablas.", null, null ),
 	TERRORES_TDP0001( "TDP0001", "Municipio: No existe en tabla.", null, null ),
 	;
-	private String value;
-	private String label;
+	public static final String TABLE_NAME = "TERRORES";
+	public static final String TABLE_DESCRIPTION = "TERRORES ";
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	private String code;
+	private String description;
 	private String startDate;
 	private String endDate;
 
-	TERRORES( String value, String label, String startDate, String endDate ) {
-		this.value = value;
-		this.label = label;
+	TERRORES( String code, String description, String startDate, String endDate ) {
+		this.code = code;
+		this.description = description;
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}
 
-	@Override
-	public String getValue() {
-		return value;
+	public String getCode() {
+		return code;
 	}
 
-	public String getLabel() {
-		return label;
+	public String getDescription() {
+		return description;
 	}
 
-	public String getStartDate() {
-		return startDate;
+	public Date getStartDate(){
+		try {
+			if(startDate!=null){
+				return sdf.parse(startDate);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
 	}
 
-	public String getEndDate() {
-		return endDate;
+	public Date getEndDate(){
+		try {
+			if(endDate!=null){
+				return sdf.parse(endDate);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+	return null;
 	}
 
 	public static TERRORES getEnumByValue(String expression) {
 		for( TERRORES o : TERRORES.values() ) {
-			if ( o.getValue().equals(expression) ) {
+			if ( o.getCode().equals(expression) ) {
 				return o;
 			}
 		}

@@ -1,6 +1,8 @@
 package com.esferalia.aon.payroll.contrata.enumeration;
 
-import com.code.aon.common.enumeration.IStringEnum;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /** 
  * Enumeration for represent Contrata (S.E.P.E.) TQNLEYRE table codes.
@@ -10,7 +12,7 @@ import com.code.aon.common.enumeration.IStringEnum;
  * *TQNLEYRE	LEYES DE REDUCCIÓN						26-07-2012
  *  ------------------------------------------------------------------------
  */ 
-public enum TQNLEYRE implements IStringEnum {
+public enum TQNLEYRE {
 
 	TQNLEYRE_01( "01", "REAL DECRETO LEY 1/2011", "20110213", "20120212" ),
 	TQNLEYRE_02( "02", "REAL DECRETO LEY 10/2011", "20110831", "20120211" ),
@@ -18,38 +20,54 @@ public enum TQNLEYRE implements IStringEnum {
 	TQNLEYRE_04( "04", "LEY 14 / 2011", "20120602", null ),
 	TQNLEYRE_05( "05", "LEY 3 / 2012", "20120708", null ),
 	;
-	private String value;
-	private String label;
+	public static final String TABLE_NAME = "TQNLEYRE";
+	public static final String TABLE_DESCRIPTION = "*TQNLEYRE	LEYES DE REDUCCIÓN						26-07-2012";
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	private String code;
+	private String description;
 	private String startDate;
 	private String endDate;
 
-	TQNLEYRE( String value, String label, String startDate, String endDate ) {
-		this.value = value;
-		this.label = label;
+	TQNLEYRE( String code, String description, String startDate, String endDate ) {
+		this.code = code;
+		this.description = description;
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}
 
-	@Override
-	public String getValue() {
-		return value;
+	public String getCode() {
+		return code;
 	}
 
-	public String getLabel() {
-		return label;
+	public String getDescription() {
+		return description;
 	}
 
-	public String getStartDate() {
-		return startDate;
+	public Date getStartDate(){
+		try {
+			if(startDate!=null){
+				return sdf.parse(startDate);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
 	}
 
-	public String getEndDate() {
-		return endDate;
+	public Date getEndDate(){
+		try {
+			if(endDate!=null){
+				return sdf.parse(endDate);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+	return null;
 	}
 
 	public static TQNLEYRE getEnumByValue(String expression) {
 		for( TQNLEYRE o : TQNLEYRE.values() ) {
-			if ( o.getValue().equals(expression) ) {
+			if ( o.getCode().equals(expression) ) {
 				return o;
 			}
 		}
