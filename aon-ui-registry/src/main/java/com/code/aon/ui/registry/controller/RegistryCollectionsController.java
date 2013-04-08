@@ -24,6 +24,7 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.Relationship;
 import com.code.aon.registry.Segment;
 import com.code.aon.registry.enumeration.AddressType;
+import com.code.aon.registry.enumeration.CategoryType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.NoteType;
@@ -279,6 +280,7 @@ public class RegistryCollectionsController {
 		List<SelectItem> users = new LinkedList<SelectItem>();
 		IManagerBean categoryBean = BeanManager.getManagerBean(Category.class);
 		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(categoryBean.getFieldName(IEntityAlias.CATEGORY_TYPE), CategoryType.REGISTRY_ATTACHMENT);
 		criteria.addOrder(categoryBean.getFieldName(IEntityAlias.CATEGORY_NAME));
 		Iterator<?> iter = categoryBean.getList(criteria).iterator();
 		while(iter.hasNext()){
@@ -308,6 +310,10 @@ public class RegistryCollectionsController {
     		addInfos.add(addInfo);
     	}
     	return addInfos;
+    }
+ 
+    public CategoryType[] getCategoryTypes() {
+    	return CategoryType.values();
     }
     
 }

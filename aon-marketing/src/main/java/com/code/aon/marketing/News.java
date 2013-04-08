@@ -1,0 +1,18 @@
+package com.code.aon.marketing;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import com.esferalia.aon.entity.master.NewsDB;
+
+@Entity
+@Table(name="news")
+public class News extends NewsDB {
+
+	private static final long serialVersionUID = 1L;
+
+    public News() {
+    	setActive(true);
+    }
+	
+}

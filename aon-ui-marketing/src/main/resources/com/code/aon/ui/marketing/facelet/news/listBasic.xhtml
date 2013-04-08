@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+					
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-150"
+		alias="News.title" >
+		<f:facet name="header">
+			<aon:outputText value="#{marketingBundle.marketing_news_title}" />
+		</f:facet>
+		<aon:outputText value="#{to.title}"/>
+	</aon:column>
+
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-150"
+		alias="News.category.name" >
+		<f:facet name="header">
+			<aon:outputText value="#{marketingBundle.marketing_news_channel}" />
+		</f:facet>
+		<aon:outputText value="#{to.category.name}"/>
+	</aon:column>
+
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-150"
+		alias="News.initDate" >
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_date}" />
+		</f:facet>
+		<aon:outputText value="#{to.initDate}" >
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+			timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>					
+	</aon:column>
+
+	<aon:column styleClass="aon-editDataTable-textColumn"
+		alias="News.description" >
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_description}" />
+		</f:facet>
+		<aon:outputText value="#{to.description}"/>
+	</aon:column>
+					
+</ui:composition>

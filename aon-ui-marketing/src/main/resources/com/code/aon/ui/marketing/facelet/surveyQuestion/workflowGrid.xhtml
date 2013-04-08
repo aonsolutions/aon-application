@@ -92,14 +92,14 @@
 									</aon:outputText>
 									<aon:selectOneMenu id="SurveyWorkflow_nextSurveyQuestion" rendered="#{formEdit}"
 										required="true" value="#{surveyWorkflow.to.nextSurveyQuestion.id}">
-										<f:selectItem value="#{null}" itemLabel="    " />
+										<f:selectItem itemLabel="-" value="#{null}" />
 										<f:selectItems value="#{surveyQuestion.questions}" />
 									</aon:selectOneMenu>
 									<f:facet name="footer">
 										<aon:selectOneMenu id="SurveyWorkflow_nextSurveyQuestion-New"
 											rendered="#{formNew}" required="true"
 											value="#{controller.to.nextSurveyQuestion.id}">
-											<f:selectItem value="#{null}" itemLabel="    " />
+											<f:selectItem itemLabel="-" value="#{null}" />
 											<f:selectItems value="#{surveyQuestion.questions}" />
 										</aon:selectOneMenu>
 									</f:facet>

@@ -57,7 +57,7 @@
 								styleClass="aon-finding-toolbar-item aon-icon-webmail2">
 							</aon:commandButton>								
 						</c:if>
-						<c:if test="#{communicationCenter.action.mediaType  == 'EMAIL'}" >
+						<c:if test="#{(communicationCenter.action.mediaType  == 'EMAIL') or (communicationCenter.action.mediaType  == 'NEWSLETTER')}" >
 							<aon:commandButton id="email"
 								action="communicationCenter_email"
 								actionListener="#{webmailMessage.onNewMessage}"
@@ -71,7 +71,7 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="menuGrid" columns="2" width="100%"
+				<aon:panelGrid columns="2" width="100%"
 					columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even">
 
 					<aon:outputLabel for="CommunicationCenter_date"
@@ -95,6 +95,15 @@
 						<c:if test="#{communicationCenter.templateSelected}" >
 							<ui:include src="/com/code/aon/ui/marketing/facelet/marketingTemplate/lookup.xhtml" >
 								<ui:param name="lookupTo" value="#{communicationCenter.template}" />
+								<ui:param name="lookupDisabled" value="#{true}" />
+								<ui:param name="goToBackActionListener"
+									value="communicationCenter.onTemplateBackActionListener" />
+							</ui:include>								
+						</c:if>					
+
+						<c:if test="#{communicationCenter.newsletterSelected}" >
+							<ui:include src="/com/code/aon/ui/marketing/facelet/newsletter/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{communicationCenter.newsletter}" />
 								<ui:param name="lookupDisabled" value="#{true}" />
 								<ui:param name="goToBackActionListener"
 									value="communicationCenter.onTemplateBackActionListener" />
@@ -147,7 +156,8 @@
 								</aon:div>
 							</aon:div>
 						</c:if>												
-						<c:if test="#{(communicationCenter.action.mediaType  == 'EMAIL') and (communicationCenter.pendingTargets &gt; 0)}" >
+						<c:if test="#{((communicationCenter.action.mediaType  == 'EMAIL') or (communicationCenter.action.mediaType  == 'NEWSLETTER')) 
+							and (communicationCenter.pendingTargets &gt; 0)}" >
 							<aon:outputLabel for="CommunicationCenter_numberOfTargetsInEmail"
 								value="#{marketingBundle.marketing_target_bulk_email}" />
 							<aon:div>

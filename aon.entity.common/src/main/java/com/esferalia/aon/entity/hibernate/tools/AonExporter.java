@@ -367,6 +367,9 @@ public class AonExporter extends GenericExporter{
 		map.put("ActionTarget","com.code.aon.marketing.ActionTarget");
 		map.put("MarketingCampaign","com.code.aon.marketing.MarketingCampaign");
 		map.put("MarketingAction","com.code.aon.marketing.MarketingAction");
+        map.put("News","com.code.aon.marketing.News");
+        map.put("Newsletter","com.code.aon.marketing.Newsletter");
+        map.put("NewsletterDetail","com.code.aon.marketing.NewsletterDetail");
 		map.put("Survey","com.code.aon.marketing.Survey");
 		map.put("SurveyQuestion","com.code.aon.marketing.SurveyQuestion");
 		map.put("SurveyResponse","com.code.aon.marketing.SurveyResponse");

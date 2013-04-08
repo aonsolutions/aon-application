@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import com.code.aon.common.annotations.Heritable;
+import com.code.aon.registry.enumeration.CategoryType;
 import com.esferalia.aon.entity.master.CategoryDB;
 
 @Entity
@@ -12,5 +13,9 @@ import com.esferalia.aon.entity.master.CategoryDB;
 public class Category extends CategoryDB  {
 
 	private static final long serialVersionUID = 1L;
+	
+    public Category() {
+    	setType( CategoryType.REGISTRY_ATTACHMENT );
+    }	
 
 }

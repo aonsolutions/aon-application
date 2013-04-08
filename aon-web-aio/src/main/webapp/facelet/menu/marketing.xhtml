@@ -44,6 +44,24 @@
 							</f:facet>							
 							<aon:div styleClass="aon-direct-access-list">	
 								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="channel" 
+										action="channel_list"
+										actionListener="#{channel.onSearch}" 
+										value="#{marketingBundle.marketing_channel_module}"/>	
+								</aon:div>							
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="news"
+										action="news_list"
+										actionListener="#{news.onSearch}"
+										value="#{marketingBundle.marketing_news_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="newsletter"
+										action="newsletter_list"
+										actionListener="#{newsletter.onSearch}"
+										value="#{marketingBundle.marketing_newsletter_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="marketingCampaign"
 										action="marketingCampaign_list"
 										actionListener="#{marketingCampaign.onSearch}"

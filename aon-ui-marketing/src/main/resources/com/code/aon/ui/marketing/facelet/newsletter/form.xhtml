@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="newsletterForm">
+			
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_newsletter_module}" />
+				<ui:param name="controller" value="#{newsletter}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:panelGrid columns="2">
+
+					<aon:outputLabel for="Newsletter_id"
+						rendered="#{!newsletter.new}" value="#{bundle.aon_id}" />
+					<aon:inputText id="Newsletter_id" value="#{newsletter.to.id}" required="true"
+						rendered="#{!newsletter.new}" size="15" disabled="true" />
+
+					<aon:outputLabel for="Newsletter_name"
+						value="#{bundle.aon_name}" />
+					<aon:inputText id="Newsletter_name" required="true"
+						value="#{newsletter.to.name}" size="32" maxlength="32" />
+						
+					<aon:outputLabel for="Newsletter_date"
+						value="#{bundle.aon_date}" />
+					<aon:selectInputDate id="Newsletter_date" required="true"
+						value="#{newsletter.to.date}" timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>								
+						
+					<aon:outputLabel for="Newsletter_layout"
+						value="#{marketingBundle.marketing_newsletter_layout}" />
+					<aon:selectOneMenu id="Newsletter_layout" required="true"
+						value="#{newsletter.to.layout}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{marketingCollections.newsletterLayouts}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="Newsletter_backgroundColor"
+						value="#{marketingBundle.marketing_newsletter_backgroundColor}" />
+					<rich:colorPicker id="Newsletter_backgroundColor"
+						value="#{newsletter.to.backgroundColor}" colorMode="rgb" />
+
+					<aon:outputLabel for="Newsletter_titleColor"
+						value="#{marketingBundle.marketing_newsletter_titleColor}" />
+					<rich:colorPicker id="Newsletter_titleColor"
+						value="#{newsletter.to.titleColor}" colorMode="rgb" />					
+
+					<aon:outputLabel for="Template_id-header"
+						value="#{marketingBundle.marketing_newsletter_headerTemplate}" />
+					<ui:include src="/com/code/aon/ui/marketing/facelet/marketingTemplate/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{newsletter.to.headerTemplate}" />
+						<ui:param name="lookupSuffix" value="-header" />
+						<ui:param name="skipLabel" value="#{true}" />
+					</ui:include>					
+
+					<aon:outputLabel for="Template_id-footer"
+						value="#{marketingBundle.marketing_newsletter_footerTemplate}" />
+					<ui:include src="/com/code/aon/ui/marketing/facelet/marketingTemplate/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{newsletter.to.footerTemplate}" />
+						<ui:param name="lookupSuffix" value="-footer" />
+						<ui:param name="skipLabel" value="#{true}" />
+					</ui:include>					
+						
+				</aon:panelGrid>
+
+				<aon:div styleClass="aon-form-group" rendered="#{!newsletter.new}">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel for="newsletterDetailData" value="#{marketingBundle.marketing_news_module}" />
+						</aon:div>
+					</aon:div>
+									
+					<ui:include src="/com/code/aon/ui/marketing/facelet/newsletterDetail/grid.xhtml" />
+
+				</aon:div>
+
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{marketingTemplateLookup}" />
+		<aon:lookupButtonPopup lookup="#{newsLookup}" />
+	</ui:define>
+</ui:composition>

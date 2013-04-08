@@ -225,6 +225,10 @@
 			<many-to-one property="category" />
 		</foreign-key>
 	</table>
+	
+	<table name="category">
+		<column name="type" type="com.code.aon.registry.enumeration.CategoryType"/>
+	</table>	
 
 	<table name="certifica2_batch">
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
@@ -903,7 +907,7 @@
 			<many-to-one property="subject"/>
 		</foreign-key>        
 	</table>
-	
+		
 	<table name="message_content">
 		<column name="content" type="text"/>
 	</table>
@@ -935,6 +939,20 @@
 	<table name="mk_template" class="com.esferalia.aon.entity.master.Template">
 		<column name="data" type="text"/>
 	</table>
+	
+	<table name="news">
+		<column name="content" type="text"/>
+	</table>	
+
+	<table name="newsletter">
+		<column name="layout" type="com.code.aon.marketing.enumeration.NewsletterLayout"/>
+		<foreign-key constraint-name="FK_NEWSLETTER_HEADER_TEMPLATE">
+			<many-to-one property="headerTemplate" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_NEWSLETTER_FOOTER_TEMPLATE">
+			<many-to-one property="footerTemplate" />
+		</foreign-key>
+	</table>	
 	
 	<table name="note">
 		<column name="note" type="text"/>

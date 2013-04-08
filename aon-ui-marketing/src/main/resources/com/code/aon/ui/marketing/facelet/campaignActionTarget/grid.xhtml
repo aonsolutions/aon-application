@@ -75,22 +75,24 @@
 				</f:facet>
 			</aon:column>		
 			
-			<aon:column alias="ActionTarget.user&lt;name"
-				styleClass="aon-editDataTable-textColumn aon-width-200">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_login_user}" />
-				</f:facet>				
-				<aon:outputText value="#{to.user.name}"
-					rendered="#{formList}" />
-				<ui:include src="/com/code/aon/ui/config/facelet/user/lookup.xhtml" >
-					<ui:param name="lookupTo" value="#{controller.to.user}" />
-					<ui:param name="skipLabel" value="#{true}" />
-					<ui:param name="skipInputText" value="#{true}" />
-					<ui:param name="lookupRendered" value="#{formEdit and (controller.to.user.id != null)}" />
-					<ui:param name="lookupReRender" value="campaignActionTargetData" />
-					<ui:param name="lookupInputSuggestSize" value="20"/>
-				</ui:include>
-			</aon:column>					
+			<c:if test="#{showUserColumn}" >
+				<aon:column alias="ActionTarget.user&lt;name"
+					styleClass="aon-editDataTable-textColumn aon-width-200">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_login_user}" />
+					</f:facet>				
+					<aon:outputText value="#{to.user.name}"
+						rendered="#{formList}" />
+					<ui:include src="/com/code/aon/ui/config/facelet/user/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{controller.to.user}" />
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="skipInputText" value="#{true}" />
+						<ui:param name="lookupRendered" value="#{formEdit and (controller.to.user.id != null)}" />
+						<ui:param name="lookupReRender" value="campaignActionTargetData" />
+						<ui:param name="lookupInputSuggestSize" value="20"/>
+					</ui:include>
+				</aon:column>					
+			</c:if>
 			
 			<c:if test="#{aonConfiguration.bean.marketingCampaign.showSurvey and showSurveyColumn}" >
 				<aon:column styleClass="aon-text-center aon-width-80">

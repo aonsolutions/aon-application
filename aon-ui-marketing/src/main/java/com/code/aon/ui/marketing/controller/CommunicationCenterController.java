@@ -45,6 +45,7 @@ import com.code.aon.groupware.Alarm;
 import com.code.aon.groupware.enumeration.AlarmSource;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.MarketingAction;
+import com.code.aon.marketing.Newsletter;
 import com.code.aon.marketing.Survey;
 import com.code.aon.marketing.SurveyQuestion;
 import com.code.aon.marketing.SurveyResponse;
@@ -94,6 +95,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 	
 	private Template template;
 	
+	private Newsletter newsletter;
+	
 	private Target target;
 	
 	private ActionTarget actionTarget;
@@ -131,6 +134,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 	private boolean surveySelected;
 	
 	private boolean templateSelected;
+	
+	private boolean newsletterSelected;
 	
 	private int pendingTargets;
 	
@@ -206,6 +211,20 @@ public class CommunicationCenterController implements IMarketingConstants {
 		this.templateSelected = (this.template.getId() != null);
 	}
 
+	public Newsletter getNewsletter() {
+		return newsletter;
+	}
+
+	public void setNewsletter(Newsletter newsletter) throws ManagerBeanException {
+		if ( newsletter != null ) {
+			this.newsletter = newsletter;
+		} else {
+			IManagerBean bean = BeanManager.getManagerBean(Newsletter.class);
+			this.newsletter = (Newsletter) bean.createNewTo();
+		}
+		this.newsletterSelected = (this.newsletter.getId() != null);
+	}
+
 	public Target getTarget() {
 		return target;
 	}
@@ -242,6 +261,10 @@ public class CommunicationCenterController implements IMarketingConstants {
 	
 	public boolean isTemplateSelected() {
 		return templateSelected;
+	}
+	
+	public boolean isNewsletterSelected() {
+		return newsletterSelected;
 	}
 
 	public int getPendingTargets() {
@@ -313,6 +336,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 			setTarget(null);
 			setSurvey(null);
 			setTemplate(null);
+			setNewsletter(null);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}
@@ -387,11 +411,29 @@ public class CommunicationCenterController implements IMarketingConstants {
 		QuestionValue questionValue = (QuestionValue) bean.get( this.questionValueId );
 		questionValue.copyValues(response);			
 	}
+	
+	private void updateAction( MarketingAction action) throws ManagerBeanException {
+		setAction(action);
+		ActionMediaType type = action.getMediaType();
+		if ( type == ActionMediaType.PHONE ) {
+			setSurvey( action.getSurvey() );	
+		} else {
+			setSurvey(null);
+		}
+		if ( (type == ActionMediaType.PHONE) || (type == ActionMediaType.EMAIL) ) {		
+			setTemplate( action.getTemplate() );
+		} else {
+			setTemplate( null );
+		}
+		if ( action.getMediaType() == ActionMediaType.NEWSLETTER ) {
+			setNewsletter( action.getNewsletter() );
+		} else {
+			setNewsletter(null);
+		}
+	}
 
 	private void updateAction( MarketingAction action, boolean includeCurrentTarget ) throws ManagerBeanException {
-		setAction(action);
-		setSurvey( action.getSurvey() );
-		setTemplate( action.getTemplate() );
+		updateAction(action);
 		if ( action.getMediaType() == ActionMediaType.PHONE ) {
 			nextActionTarget( includeCurrentTarget );	
 		} else {
@@ -737,9 +779,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		}
 		setActionTarget( at );			
 		updateActionTarget(true);
-		setAction(at.getAction());
-		setSurvey( action.getSurvey() );
-		setTemplate( action.getTemplate() );
+		updateAction( at.getAction() );
 		nextActionTarget(true);
 	}	
 	

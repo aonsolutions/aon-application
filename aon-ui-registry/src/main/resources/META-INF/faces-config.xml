@@ -41,7 +41,16 @@
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Category_name</value>
-		</managed-property>				
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Category_type</key>
+					<value>#{registryCollections.categoryTypes[0]}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>												
 	</managed-bean>
 
 	<!-- ************ REGISTRY ATTACHMENT TAG ************** -->

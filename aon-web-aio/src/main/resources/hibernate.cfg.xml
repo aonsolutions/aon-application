@@ -224,7 +224,10 @@
 		<!-- AON-MARKETING Mapping files --> 
 		<mapping class="com.code.aon.marketing.ActionTarget"/>
 		<mapping class="com.code.aon.marketing.MarketingCampaign"/>
-		<mapping class="com.code.aon.marketing.MarketingAction"/>	
+		<mapping class="com.code.aon.marketing.MarketingAction"/>
+		<mapping class="com.code.aon.marketing.News"/>
+		<mapping class="com.code.aon.marketing.Newsletter"/>	
+		<mapping class="com.code.aon.marketing.NewsletterDetail"/>
 		<mapping class="com.code.aon.marketing.Survey"/>
 		<mapping class="com.code.aon.marketing.SurveyQuestion"/>
 		<mapping class="com.code.aon.marketing.SurveyResponse"/>

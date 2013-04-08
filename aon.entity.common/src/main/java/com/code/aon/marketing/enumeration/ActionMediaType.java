@@ -27,7 +27,10 @@ public enum ActionMediaType implements IResourceable {
 	SMS,
 	
     /** MAIL. */
-	MAIL;
+	MAIL,
+	
+    /** NEWSLETTER. */
+	NEWSLETTER;
     
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.marketing.i18n.messages";
