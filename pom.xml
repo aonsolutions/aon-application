@@ -164,7 +164,7 @@
 		<module>aon-payroll-ctsql2mysql</module>
 		<module>aon-common-resources</module>
 		<module>aon.python</module>
-		
+		<module>aon.aeat.mipf</module>
 	</modules>
 
 	<scm>
