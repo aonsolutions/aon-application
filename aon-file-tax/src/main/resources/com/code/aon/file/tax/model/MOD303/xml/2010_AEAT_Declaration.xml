@@ -10,24 +10,31 @@
 	<field name="taxRefundRegistry" value="bean" bean="Declaration" property="taxRefundRegistryNumber" format="Numeric" pattern="9(1)" />
 	<field name="year" value="bean" bean="Declaration" property="year" format="Numeric" pattern="9(4)" />
 	<field name="period" value="bean" bean="Declaration" property="period" format="AlphaNumeric" pattern="X(2)" />
+
 	<field name="baseOutputVat4" value="bean" bean="Declaration" property="outputVat(4.0).taxableBase" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="percentOutputVat4" value="bean" bean="Declaration" property="outputVat(4.0).percent" format="DefNumeric" pattern="9(3)V99" />
 	<field name="quotaOutputVat4" value="bean" bean="Declaration" property="outputVat(4.0).quota" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="baseOutputVat8" value="bean" bean="Declaration" property="outputVat(8.0).taxableBase" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="percentOutputVat8" value="bean" bean="Declaration" property="outputVat(8.0).percent" format="DefNumeric" pattern="9(3)V99" />
-	<field name="quotaOutputVat8" value="bean" bean="Declaration" property="outputVat(8.0).quota" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="baseOutputVat18" value="bean" bean="Declaration" property="outputVat(18.0).taxableBase" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="percentOutputVat18" value="bean" bean="Declaration" property="outputVat(18.0).percent" format="DefNumeric" pattern="9(3)V99" />
-	<field name="quotaOutputVat18" value="bean" bean="Declaration" property="outputVat(18.0).quota" format="DefNumeric" pattern="S9(14)V99" />
+
+	<field name="baseOutputVat10" value="bean" bean="Declaration" property="outputVat(10.0).taxableBase" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="percentOutputVat10" value="bean" bean="Declaration" property="outputVat(10.0).percent" format="DefNumeric" pattern="9(3)V99" />
+	<field name="quotaOutputVat10" value="bean" bean="Declaration" property="outputVat(10.0).quota" format="DefNumeric" pattern="S9(14)V99" />
+
+	<field name="baseOutputVat21" value="bean" bean="Declaration" property="outputVat(21.0).taxableBase" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="percentOutputVat21" value="bean" bean="Declaration" property="outputVat(21.0).percent" format="DefNumeric" pattern="9(3)V99" />
+	<field name="quotaOutputVat121" value="bean" bean="Declaration" property="outputVat(21.0).quota" format="DefNumeric" pattern="S9(14)V99" />
+
 	<field name="baseSurcharge05" value="bean" bean="Declaration" property="surcharge(0.5).taxableBase" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="percentSurcharge05" value="bean" bean="Declaration" property="surcharge(0.5).percent" format="DefNumeric" pattern="9(3)V99" />
 	<field name="quotaSurcharge05" value="bean" bean="Declaration" property="surcharge(0.5).quota" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="baseSurcharge1" value="bean" bean="Declaration" property="surcharge(1.0).taxableBase" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="percentSurcharge1" value="bean" bean="Declaration" property="surcharge(1.0).percent" format="DefNumeric" pattern="9(3)V99" />
-	<field name="quotaSurcharge1" value="bean" bean="Declaration" property="surcharge(1.0).quota" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="baseSurcharge4" value="bean" bean="Declaration" property="surcharge(4.0).taxableBase" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="percentSurcharge4" value="bean" bean="Declaration" property="surcharge(4.0).percent" format="DefNumeric" pattern="9(3)V99" />
-	<field name="quotaSurcharge4" value="bean" bean="Declaration" property="surcharge(4.0).quota" format="DefNumeric" pattern="S9(14)V99" />
+	
+	<field name="baseSurcharge14" value="bean" bean="Declaration" property="surcharge(1.4).taxableBase" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="percentSurcharge14" value="bean" bean="Declaration" property="surcharge(1.4).percent" format="DefNumeric" pattern="9(3)V99" />
+	<field name="quotaSurcharge14" value="bean" bean="Declaration" property="surcharge(1.4).quota" format="DefNumeric" pattern="S9(14)V99" />
+	
+	<field name="baseSurcharge52" value="bean" bean="Declaration" property="surcharge(5.2).taxableBase" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="percentSurcharge52" value="bean" bean="Declaration" property="surcharge(5.2).percent" format="DefNumeric" pattern="9(3)V99" />
+	<field name="quotaSurcharge52" value="bean" bean="Declaration" property="surcharge(5.2).quota" format="DefNumeric" pattern="S9(14)V99" />
+	
 	<field name="baseIntracommunitary" value="bean" bean="Declaration" property="baseIntracommunitary" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="quotaIntracommunitary" value="bean" bean="Declaration" property="quotaIntracommunitary" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="outputTotal" value="bean" bean="Declaration" property="outputTotal" format="DefNumeric" pattern="S9(14)V99" />

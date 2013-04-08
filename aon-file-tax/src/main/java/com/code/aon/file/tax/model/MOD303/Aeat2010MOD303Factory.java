@@ -56,13 +56,13 @@ public class Aeat2010MOD303Factory implements IMOD303Factory {
 			try {
 				for (Declaration declaration : declarations) {
 					// Nos aseguramos de que vayan las claves de IVA que se requieren en la presentacion
-					String[] ensuredKeys = new String[]{"18.0","8.0","4.0"};
+					String[] ensuredKeys = new String[]{"21.0","10.0","4.0"};
 					for (String ensureKey : ensuredKeys) {
 						if (!declaration.getOutputVat().containsKey(ensureKey)) {;
 							declaration.getOutputVat().put(ensureKey, new Breakdown());
 						}
 					}
-					ensuredKeys = new String[]{"4.0","1.0","0.5"};
+					ensuredKeys = new String[]{"5.2","1.4","0.5"};
 					for (String ensureKey : ensuredKeys) {
 						if (!declaration.getSurcharge().containsKey(ensureKey)) {;
 							declaration.getSurcharge().put(ensureKey, new Breakdown());
