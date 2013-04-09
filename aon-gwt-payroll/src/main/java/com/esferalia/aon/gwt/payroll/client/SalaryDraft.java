@@ -20,8 +20,8 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.PaymentComparator;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Event;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
-import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
@@ -104,22 +104,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private static final int MAX_ZOOM = 200;
 	private static final int DEFAULT_ZOOM = 135;
 
-	private static final String GWT_HORIZONTAL_PANEL = "gwt-HorizontalPanel";
-
-	private static final DateTimeFormat MONTH_FORMAT = DateTimeFormat
-			.getFormat(PredefinedFormat.YEAR_MONTH_NUM);
-
 	private static final DateTimeFormat DATE_SHORT = DateTimeFormat
 			.getFormat(PredefinedFormat.DATE_SHORT);
 
 	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.YEAR_MONTH_NUM_DAY);
 
-	private static final NumberFormat PERCENT_FORMAT = NumberFormat
+	public static final NumberFormat PERCENT_FORMAT = NumberFormat
 			.getPercentFormat();
-
-	private static final NumberFormat CURRENCY_FORMAT = NumberFormat
-			.getFormat("#,##0.00");
 
 	private static Map<Scope, String> SCOPE_DESCRIPTIONS = new HashMap<Scope, String>() {
 		{
@@ -313,7 +305,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		void onEdit() {
 			// TODO Auto-generated method stub
 			PaymentDialog paymentDialog = new PaymentDialog();
-			paymentDialog.setNumberFormat(CURRENCY_FORMAT);
+			paymentDialog.setNumberFormat(AON.CURRENCY_FORMAT);
 			paymentDialog.setContextProvider(salaryDraftObject);
 			paymentDialog.setConcept(getConcept());
 			paymentDialog.setMonth(item.getMonth());
@@ -1194,11 +1186,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		Date firstDayOfMonth = DateUtils.getFirstDayOfMonth(date);
 
 		datesListBox.setItemText(0,
-				"Este mes ( " + MONTH_FORMAT.format(firstDayOfMonth) + " )");
+				"Este mes ( " + AON.MONTH_FORMAT.format(firstDayOfMonth) + " )");
 		datesListBox.setItemText(
 				1,
 				"A partir de este mes ( "
-						+ MONTH_FORMAT.format(firstDayOfMonth) + "...)");
+						+ AON.MONTH_FORMAT.format(firstDayOfMonth) + "...)");
 
 		if (DateUtils.equals(draftStartDate, firstDayOfMonth)) {
 			if (draftEndDate == null) {
@@ -1573,7 +1565,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		setDbStyleName(dbAmountLabel, amountBox.getText(), dbAmountLabel.getText());
 
 		HorizontalPanel amountsPanel = new HorizontalPanel();
-		amountsPanel.setStyleName(GWT_HORIZONTAL_PANEL);
+		amountsPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
 		amountsPanel.add(amountBox);
 		amountsPanel.add(dbAmountLabel);
 		amountsPanel.setCellWidth(dbAmountLabel, "50%");
@@ -1625,7 +1617,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		setDbStyleName(dbAmountLabel, null, dbAmountLabel.getText());
 
 		HorizontalPanel amountsPanel = new HorizontalPanel();
-		amountsPanel.setStyleName(GWT_HORIZONTAL_PANEL);
+		amountsPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
 		amountsPanel.setWidth("100%");
 		amountsPanel.add(new InlineLabel());
 		amountsPanel.add(dbAmountLabel);
@@ -1668,7 +1660,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		paymentsTable.setHTML(row, 2, description);
 
 		HorizontalPanel amountsPanel = new HorizontalPanel();
-		amountsPanel.setStyleName(GWT_HORIZONTAL_PANEL);
+		amountsPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
 		InlineLabel amountLabel = new InlineLabel();
 		amountLabel.setText(format(deduction.getAmount()));
 
@@ -1737,7 +1729,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			htmlPanel.add(getLabel(variable));
 
 			Panel valuePanel = new HorizontalPanel();
-			valuePanel.setStyleName(GWT_HORIZONTAL_PANEL);
+			valuePanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
 
 			TextBox variableTextBox = new TextBox();
 			VariableChangeHandler<TextBox> variableChangeHandler = new VariableChangeHandler<TextBox>(
@@ -1793,7 +1785,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 					context.size());
 
 			Panel expandPanel = new HorizontalPanel();
-			expandPanel.setStyleName(GWT_HORIZONTAL_PANEL);
+			expandPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
 			final Label expandLabel = new Label(
 					((SalaryDraft.this.scope.compareTo(scope) <= 0) ? "Ocultar"
 							: "Mostrar")
@@ -1896,7 +1888,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	private String format(Double amount) {
-		return amount == null ? null : CURRENCY_FORMAT.format((double) Math
+		return amount == null ? null : AON.CURRENCY_FORMAT.format((double) Math
 				.round(amount * 1000.00) / 1000.00);
 	}
 

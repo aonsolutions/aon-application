@@ -14,8 +14,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.mvel2.MVEL;
+import org.mvel2.ParserConfiguration;
+import org.mvel2.ParserContext;
 import org.mvel2.PropertyAccessException;
 import org.mvel2.UnresolveablePropertyException;
+import org.mvel2.ast.ASTNode;
 import org.mvel2.templates.TemplateRuntime;
 import org.mvel2.util.MethodStub;
 
@@ -66,7 +69,7 @@ public class ExpressionContext {
 			super(null, p, expression);
 			this.name = name;
 		}
-		
+
 		public String getName() {
 			return name;
 		}
@@ -117,21 +120,22 @@ public class ExpressionContext {
 		}
 	}
 
-	private static String getProperty(PropertyAccessException e ){
-		char expr [] = e.getExpr();
+	private static String getProperty(PropertyAccessException e) {
+		char expr[] = e.getExpr();
 		int end = e.getCursor();
-		int start = end - 1;  
-		while ( start >= 0 ){
-			if ( !Character.isJavaIdentifierPart(expr[start]) )
+		int start = end - 1;
+		while (start >= 0) {
+			if (!Character.isJavaIdentifierPart(expr[start]))
 				break;
-			else 
-				start --;
-		};
-		int offset = start + 1 ;
+			else
+				start--;
+		}
+		;
+		int offset = start + 1;
 		int len = end - offset;
-		return new String ( expr, offset , len );
+		return new String(expr, offset, len);
 	}
- 	
+
 	private Variables variables;
 
 	public ExpressionContext() {
@@ -238,9 +242,10 @@ public class ExpressionContext {
 			} catch (PropertyAccessException e) {
 				throwExpressionException(e);
 				throw new UndefinedVariablesException(getProperty(e));
-			} /*catch (RemoveVariableError e) {
-				throw new UndefinedVariablesException(e.getName());
-			} */catch (UnresolveablePropertyException e) {
+			} /*
+			 * catch (RemoveVariableError e) { throw new
+			 * UndefinedVariablesException(e.getName()); }
+			 */catch (UnresolveablePropertyException e) {
 				throw new UndefinedVariablesException(e.getName());
 			} catch (ExpressionExceptionWrapper e) {
 				throw e.getExpressionException();
@@ -310,20 +315,44 @@ public class ExpressionContext {
 		}
 	}
 
-	public static void main(String[] args) throws ExpressionException {
+	public static Set<String> getVariableSet(String script) {
+		ParserContext ctx = new ParserContext();
+		MVEL.analysisCompile(script, ctx);
+		
+		Set<String>  variables = new HashSet<String>();
+		
+		for (String input : ctx.getInputs().keySet()) {
+			if ( isJavaIdentifier(input) ) 
+				variables.add(input);
+		}
+		
+		
+		return variables ;
+		
+	}
 
-		ExpressionContext context = new ExpressionContext();
-		Date date = Calendar.getInstance().getTime();
-		try {
-			ExpressionImpl expr = new ExpressionImpl();
-			expr.setExpression(REMOVE_VARIABLE);
-			expr.setName("IMPORTE");
-			context.addExpression(expr, date, date);
-			List<ITimedResult<Object>> results = context.eval("IMPORTE * 100",
-					date, date);
-
-		} catch (RemoveVariableException e) {
-			e.printStackTrace();
+	public static Set<String> getVariableSet(String ...scripts) {
+		StringBuffer buffer =  new StringBuffer();
+		for (String script : scripts) {
+			buffer.append(script + ";" );
+		}
+		return getVariableSet(buffer.toString());
+	}
+	
+	private static boolean isJavaIdentifier(String string){
+		if ( ! Character.isJavaIdentifierStart(string.charAt(0)))
+			return false;
+		for ( int i = 1; i < string.length(); i++)
+			if ( !Character.isJavaIdentifierPart(string.charAt(i)) ) 
+				return false;
+		return true;
+	}
+	
+	
+	public static void main(String[] args) {
+		Set<String> vars = getVariableSet("DIAS_AÑO * 100");
+		for (String var : vars) {
+			System.out.println(var);
 		}
 	}
 

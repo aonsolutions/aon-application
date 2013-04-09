@@ -715,7 +715,7 @@ public class SQLContractSalaryCalculatorContext implements
 		}
 	}
 	
-	private static final Pattern ACTUAL_VAR_PATTERN = 
+	public static final Pattern ACTUAL_VAR_PATTERN = 
 		Pattern.compile("(\\w+)_ACTUAL");
 
 	private class ActualVar

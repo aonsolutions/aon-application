@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 
-public class Workplace implements Serializable {
+public class Workplace implements Serializable, HasId<Integer> {
 	
 	/**
 	 * 
@@ -16,7 +16,8 @@ public class Workplace implements Serializable {
 	public Workplace() {
 	}
 	
-	public int getId() {
+	@Override
+	public Integer getId() {
 		return id;
 	}
 	

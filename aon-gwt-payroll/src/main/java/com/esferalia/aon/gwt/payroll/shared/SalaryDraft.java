@@ -67,37 +67,6 @@ public class SalaryDraft extends SalaryPreview {
 		}
 	}
 
-	public static class StringVariable extends Variable {
-
-		private String value;
-
-		@Override
-		public Object getValue() {
-			return value;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			return super.equals(obj);
-		}
-	}
-
-	public static class NumberVariable extends Variable {
-
-		private Number value;
-
-		@Override
-		public Object getValue() {
-			return value;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			return super.equals(obj);
-		}
-
-	}
-	
 	private boolean hasDbSalary;
 
 

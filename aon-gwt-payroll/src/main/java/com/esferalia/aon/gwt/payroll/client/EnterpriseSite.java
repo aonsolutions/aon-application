@@ -47,6 +47,9 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		@Source("aon-menuBar.png")
 		ImageResource menuBar();
 
+		@Source("aon-tabBar.png")
+		ImageResource tabBar();
+
 		@Source("checkyes.png")
 		ImageResource checkYes();
 
@@ -61,6 +64,15 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 
 		@Source("protected.png")
 		ImageResource protecteD();
+
+		@Source("ine.png")
+		ImageResource ine();
+
+		@Source("workplace.png")
+		ImageResource workplace();
+
+		@Source("employee.png")
+		ImageResource employee();
 	}
 
 	interface Binder extends UiBinder<Widget, EnterpriseSite> {
@@ -158,6 +170,18 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	@Override
 	public void onWorkplaceContextMenu(Workplace workplace,
 			ContextMenuEvent event) {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void onEmployeeContextMenu(Employee employee, ContextMenuEvent event) {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void onEnterpriseContextMenu(Enterprise enterprise,
+			ContextMenuEvent event) {
+		// TODO Auto-generated method stub
 	}
 
 	@Override

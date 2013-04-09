@@ -25,6 +25,11 @@ public class DateUtils {
 		return date;
 	}
 
+	public static Date addMonths2Date( Date date, int months ) {
+		CalendarUtil.addMonthsToDate(date, months);
+		return date;
+	}
+
 	public static Date getFirstDayOfMonth ( ) {
 		return getFirstDayOfMonth(new Date());
 	}
@@ -32,7 +37,11 @@ public class DateUtils {
 	public static Date getLastDayOfMonth ( ) {
 		return getLastDayOfMonth(new Date());
 	}
-
+	
+	public static int getMonths(Date a, Date b) {
+		return ( a.getYear() - b.getYear() ) * 12 + 
+				( a.getMonth() - b.getMonth() );
+	}
 
 	public static boolean isAfterOrEquals(Date a, Date b ) {
 		if ( a == null ) 
@@ -63,6 +72,7 @@ public class DateUtils {
 	}
 	
 	
+
 	
 	public static Date getFirstDayOfMonth ( Date date ) {
 		Date firstDayOfMonth = CalendarUtil.copyDate(date);

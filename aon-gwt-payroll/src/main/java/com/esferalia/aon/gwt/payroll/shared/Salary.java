@@ -10,7 +10,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class Salary implements Serializable {
 	
 	
-	public enum Type {
+	public enum Type implements HasDescription{
 		SALARY,
 		EXTRA,
 		SETTLE,

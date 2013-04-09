@@ -5,17 +5,16 @@ import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.disableAutoCo
 import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.enableAutoCommit;
 import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.rollback;
-
 import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.PAYMENT_CONCEPT;
+import static com.esferalia.aon.payroll.sql.SQLConstants.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.PERSON;
 import static com.esferalia.aon.payroll.sql.SQLConstants.REGISTRY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
-import static com.esferalia.aon.payroll.sql.SQLConstants.PAYROLL_WORKPLACE;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,13 +26,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -41,11 +40,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
+
+import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
 import org.mvel2.ast.Function;
 import org.mvel2.util.MethodStub;
-
-import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
@@ -65,6 +65,8 @@ import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -78,6 +80,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -107,11 +110,11 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
-import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
 
@@ -456,12 +459,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	public AgreementDraft calculateAgreementDraft(AgreementDraft salaryDraft)
+	public AgreementDraft calculateAgreementDraft(AgreementDraft agreementDraft)
 			throws IllegalArgumentException {
 		try {
 			initFacesContext();
-			//calculate(salaryDraft);
-			return salaryDraft;
+			calculate(agreementDraft);
+			return agreementDraft;
 		} finally {
 			releaseFacesContext();
 		}
@@ -1339,6 +1342,77 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
+	
+	private static void calculate(AgreementDraft draft)
+			throws IllegalArgumentException {
+		try {
+			Connection connection = getConnection();
+
+			Set<Payment> dbPayments = SQLAgreementDraft.getPayments(connection,
+					draft.getId(), draft.getStartDate(), draft.getEndDate());
+			
+			Collection<Payment> allPayments = 
+					new CompositeItems<Payment>(draft.getDraftPayments(), dbPayments);
+			Set<String> variables = new HashSet<String>();
+			
+			Set<Payment> payments = new HashSet<Payment>();
+			for (Payment payment : allPayments) {
+				
+				if ( StringUtils.equals("REMOVE()", payment.getExpression()))
+					continue;
+				
+				variables.addAll(ExpressionContext.getVariableSet(
+						payment.getExpression(), payment.getIrpfExpression(),
+						payment.getQuoteExpression()));
+				variables.remove(payment.getName());
+				
+				payments.add(payment);
+			}
+
+			// Filter ContextVariable
+			List<String> contextVariables = new LinkedList<String>();
+			for (ContextVariable ctxVar : ContextVariable.values())
+				contextVariables.add(ctxVar.getName());
+			variables.removeAll(contextVariables);
+
+			// This is awfull ... very awful
+			List<String> privateVariables = new LinkedList<String>();
+			for (String var : variables) {
+				if (var.endsWith("_ACTUAL"))
+					privateVariables.add(var);
+			}
+			variables.removeAll(privateVariables);
+
+			Set<Level> dbLevels = SQLAgreementDraft.getLevels(connection,
+					draft.getId());
+			Set<Level> draftLevels  = draft.getDraftLevels();
+			
+			Set<Level> levels = new HashSet<Level>(draftLevels);
+			levels.addAll(dbLevels);
+			
+
+			Map<Integer, Set<String>> categories = SQLAgreementDraft
+					.getCategories(connection, draft.getId());
+			
+
+			Level agreementData = new Level();
+			agreementData.setId(0);
+			levels.add(agreementData);
+
+			SalaryTable salaryTable = SQLAgreementDraft.getSalaryTable(
+					connection, draft.getId(), draft.getStartDate(),
+					draft.getEndDate());
+
+			draft.setLevels(levels);
+			draft.setVariables(variables);
+			draft.setPayments(payments);
+			draft.setSalaryTable(salaryTable);
+			draft.setCategoriesMap(categories);
+		
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
 
 	private static void calculateAndSave(Connection conn, SalaryDraft draft)
 			throws SQLException {
@@ -1719,14 +1793,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			workplace.setDescription(rs.getString(tableCol(WORKPLACE,
 					WorkplaceColumns.DESCRIPTION)));
 
-			Object agreementId = rs.getObject(
-					tableCol(PAYROLL_WORKPLACE,
-							PayrollWorkplaceColumns.AGREEMENT));
+			Object agreementId = rs.getObject(tableCol(PAYROLL_WORKPLACE,
+					PayrollWorkplaceColumns.AGREEMENT));
 			if (agreementId != null) {
 				Agreement agreement = new Agreement();
-				agreement.setId((Integer)agreementId);
+				agreement.setId((Integer) agreementId);
 				agreement.setDescription(rs.getString(tableCol(AGREEMENT,
-							AgreementColumns.DESCRIPTION)));
+						AgreementColumns.DESCRIPTION)));
 				workplace.setAgreement(agreement);
 			}
 

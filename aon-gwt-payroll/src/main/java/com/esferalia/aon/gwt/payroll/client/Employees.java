@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -69,9 +70,13 @@ public class Employees extends ResizeComposite implements
 
 		void onSalaryPreviewSelected(SalaryPreviewDocument salaryPreviewDocument);
 
-		void onWorkplaceContextMenu(Workplace workplace, ContextMenuEvent event);
-
 		void onAgreementDraftSelected(AgreementDraftObject agreementDraftObject);
+		
+		void onEmployeeContextMenu(Employee employee, ContextMenuEvent event);
+
+		void onWorkplaceContextMenu(Workplace workplace, ContextMenuEvent event);
+		
+		void onEnterpriseContextMenu(Enterprise enterprise, ContextMenuEvent event);
 	}
 
 	interface Binder extends UiBinder<Widget, Employees> {
@@ -158,7 +163,7 @@ public class Employees extends ResizeComposite implements
 		this.formers = formers;
 
 	}
-
+	
 	@Override
 	public void onFailure(Throwable caught) {
 		// TODO Auto-generated method stub
@@ -210,7 +215,14 @@ public class Employees extends ResizeComposite implements
 			if (extended && (agreement != null)) {
 				TreeItem agreementItem = addImageItem(workplaceItem,
 						agreement.getDescription(), images.agreement());
-				AgreementDraftObject agreementDraftObject = new AgreementDraftObject();
+				
+				AgreementDraft agreementDraft = new AgreementDraft();
+				agreementDraft.setId(agreement.getId());
+				agreementDraft.setDescription(agreement.getDescription());
+				agreementDraft.setStartDate(DateUtils.getFirstDayOfMonth());
+				agreementDraft.setEndDate(DateUtils.getLastDayOfMonth());
+				AgreementDraftObject agreementDraftObject = 
+						new AgreementDraftObject(agreementDraft, employeesService);
 				agreementItem.setUserObject(agreementDraftObject);
 			} // TODO: extended ? Yes I'm know , it's awful.
 		}
@@ -326,9 +338,11 @@ public class Employees extends ResizeComposite implements
 		// it's much more clear than anything else. I promise
 		// to change ( even improve ) it soon.
 		if (userObject instanceof Enterprise) {
+			onEnterpiseContextMenu((Enterprise) userObject, event);
 		} else if (userObject instanceof Workplace) {
 			onWorkplaceContextMenu((Workplace) userObject, event);
 		} else if (userObject instanceof Employee) {
+			onEmployeeContextMenu((Employee) userObject, event);
 		} else if (userObject instanceof SalaryPreviewDocument) {
 		} else if (userObject instanceof Activity) {
 		} else if (userObject instanceof CostDocuments) {
@@ -356,6 +370,11 @@ public class Employees extends ResizeComposite implements
 				&& (elLeft + elWidth) > windowLeft;
 
 	}
+
+	EmployeesServiceAsync getEmployeesService() {
+		return employeesService;
+	}
+
 
 	private void onEnterpriseOpen(TreeItem enterpriseItem) {
 
@@ -521,6 +540,20 @@ public class Employees extends ResizeComposite implements
 			ContextMenuEvent event) {
 		for (Listener listener : listeners) {
 			listener.onWorkplaceContextMenu(workplace, event);
+		}
+	}
+
+	private void onEnterpiseContextMenu(Enterprise enterprise,
+			ContextMenuEvent event) {
+		for (Listener listener : listeners) {
+			listener.onEnterpriseContextMenu(enterprise, event);
+		}
+	}
+
+	private void onEmployeeContextMenu(Employee employee,
+			ContextMenuEvent event) {
+		for (Listener listener : listeners) {
+			listener.onEmployeeContextMenu(employee, event);
 		}
 	}
 

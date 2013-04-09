@@ -11,9 +11,10 @@ public class Payment extends Item<Payment.Type> {
 	String irpfExpression;
 	String quoteExpression;
 
-	public static enum Type {
+	public static enum Type implements HasDescription {
 		BASE_SALARY, SALARY_SUPPLEMENTS, STRUCTURAL_HOURS, NON_STRUCTURAL_HOURS, SPECIAL_BONUSES, SALARY_IN_KIND, COMPENSATION_OR_PREPAID_EXPENSES, SOCIAL_SECURITY_BENEFITS, MOVING_COMPENSATION, OTHER_NON_WAGE;
-
+		
+		
 		public String getDescription(){
 			return DESCRIPTIONS.get(this);
 		}

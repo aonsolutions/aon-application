@@ -3,12 +3,31 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
 	xmlns:s="urn:import:com.google.gwt.dom.builder.shared">
 
-	<ui:style>
+	<ui:style type='com.esferalia.aon.gwt.payroll.client.AgreementDraft.MyStyle'>
+	
 		.editor {
 			
 		}
 		
+		.label {
+			margin-top:10x;
+			font-weight: bold;
+			padding: 1px 0.5em;
+			white-space: nowrap;
+			background-color: #F2F2F2;
+		}
 
+		.field {
+			width: 100%;
+			padding: 1px 0.5em;
+		}
+
+		.highlight,
+		.highlight td  {
+    		border-color: #D3C061;
+    		background-color: #FBEDB6;
+    	}
+    	
 		.vertical-space {
 			height: 20px;
 		}
@@ -74,7 +93,7 @@
 			color: red !important;
 		}
 
-		@sprite .cell-warn {
+		@sprite .icon-warn {
 			width: auto; 
 			height: auto;
 			color: orange;
@@ -122,6 +141,10 @@
 			gwt-image: 'undo';
 			background-position: left center;
 		}
+		
+		.toolBar-checkBox input {
+			vertical-align: middle;
+		}
 
 	</ui:style>
 
@@ -155,13 +178,13 @@
 								<g:Button ui:field='acceptButton'
 									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
 									enabled="false" />
-								<g:ListBox ui:field="dateListBox" />
+								<g:ListBox ui:field="dateListBox" visible="false" />
 								<g:Button ui:field="fxButton"
 									styleName='aon-finding-toolbar-item {style.fxButton}' enabled="false" />
 								<g:Button ui:field="undoButton"
-									styleName='aon-finding-toolbar-item {style.undoButton}' />
+									styleName='aon-finding-toolbar-item {style.undoButton}' enabled="false" />
 								<g:Button ui:field='redoButton'
-									styleName="aon-finding-toolbar-item {style.redoButton}" />
+									styleName="aon-finding-toolbar-item {style.redoButton}" enabled="false" />
 								<g:ListBox ui:field='datesListBox'>
 									<g:item value="{ONLY_THIS_MONTH}">S&oacute;lo
 										este mes
@@ -169,6 +192,9 @@
 									<g:item value="{FROM_THIS_MONTH}">A partir de este mes</g:item>
 									<g:item value="{CUSTOM}">Personalizado...</g:item>
 								</g:ListBox>
+								<g:CheckBox ui:field='changesCheck'
+									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+									text="Cambios" checked="true" visible="false" />
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
@@ -178,13 +204,29 @@
 
 		</g:north>
 		<g:center>
-			<g:ScrollPanel styleName="{style.editor}">
+			<g:ScrollPanel styleName="{style.editor}" ui:field="mainScrollPane">
 				<g:VerticalPanel styleName="{style.document}">
 					<g:VerticalPanel ui:field="draftPanel" width="auto">
 
+						<g:Grid width="100%">
+							<g:row>
+								<g:customCell styleName="{style.label}">
+									<g:Label>Descripci&oacute;n
+									</g:Label>
+								</g:customCell>
+								<g:customCell  styleName="{style.field}">
+									<g:TextBox width="100%" ui:field="descriptionTextBox"></g:TextBox>
+								</g:customCell>
+							</g:row>
+						</g:Grid>
+
 						<g:HTML styleName="{style.vertical-space}" />
-						<g:FlexTable ui:field="contextTable"
-							styleName="aon-dataTable {style.edit-cells}" />
+
+						<g:ScrollPanel ui:field="salaryTableScrollPane">
+							<g:FlexTable ui:field="salaryTable"
+								styleName="aon-dataTable {style.edit-cells}" />
+						</g:ScrollPanel>
+
 						<g:HTML styleName="{style.vertical-space}" />
 
 						<g:FlexTable ui:field="eventsTable" styleName="aon-dataTable" />

@@ -125,6 +125,11 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 	public void setConceptId(Integer conceptId) {
 		this.conceptId = conceptId;
 	}
+	
+	@Override
+	public int hashCode() {
+		return id != null ? id : 0;
+	}
 
 	@Override
 	public boolean equals(Object obj) {

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 
-public class Employee implements Serializable {
+public class Employee implements Serializable, HasId<Integer> {
 
 	/**
 	 * 
@@ -22,7 +22,7 @@ public class Employee implements Serializable {
 	private Date startDate;
 	private Date endDate;
 	
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 	

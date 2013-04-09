@@ -105,9 +105,9 @@ public class SQLSalaryDraft {
 					ResultSet.CONCUR_UPDATABLE);
 
 			salaryQueryStmt.setInt(1, draft.getEmployee().getId());
-			salaryQueryStmt.setShort(2, enum2Short(draft.getType()));
-			salaryQueryStmt.setDate(3, date2sql(draft.getStartDate()));
-			salaryQueryStmt.setDate(4, date2sql(draft.getEndDate()));
+			salaryQueryStmt.setShort(2, SQLUtils.enum2Short(draft.getType()));
+			salaryQueryStmt.setDate(3, SQLUtils.date2sql(draft.getStartDate()));
+			salaryQueryStmt.setDate(4, SQLUtils.date2sql(draft.getEndDate()));
 			
 			rs = salaryQueryStmt.executeQuery();
 			while ( rs.next() ) {
@@ -167,8 +167,8 @@ public class SQLSalaryDraft {
 		PreparedStatement deleteStmt = null;
 		try {
 
-			java.sql.Date endDate = date2sql(variable.getEndDate());
-			java.sql.Date startDate = date2sql(variable.getStartDate());
+			java.sql.Date endDate = SQLUtils.date2sql(variable.getEndDate());
+			java.sql.Date startDate = SQLUtils.date2sql(variable.getStartDate());
 
 			String sql = "SELECT * " + " FROM " + SQLConstants.CONTRACT_DATA
 					+ " WHERE " + ContractDataColumns.CONTRACT + "= ? "
@@ -197,21 +197,21 @@ public class SQLSalaryDraft {
 				Date sqlStartDate = rs.getDate(ContractDataColumns.START_DATE);
 				Date sqlEndDate = rs.getDate(ContractDataColumns.END_DATE);
 
-				setInt(insertStmt, 1, rs.getInt(ContractDataColumns.DOMAIN));
-				setInt(insertStmt, 2, rs.getInt(ContractDataColumns.CONTRACT));
-				setString(insertStmt, 3, rs.getString(ContractDataColumns.NAME));
-				setString(insertStmt, 4,
+				SQLUtils.setInt(insertStmt, 1, rs.getInt(ContractDataColumns.DOMAIN));
+				SQLUtils.setInt(insertStmt, 2, rs.getInt(ContractDataColumns.CONTRACT));
+				SQLUtils.setString(insertStmt, 3, rs.getString(ContractDataColumns.NAME));
+				SQLUtils.setString(insertStmt, 4,
 						rs.getString(ContractDataColumns.EXPRESSION));
-				setDate(insertStmt, 5,sqlStartDate);
-				setDate(insertStmt, 6, sqlEndDate);
+				SQLUtils.setDate(insertStmt, 5,sqlStartDate);
+				SQLUtils.setDate(insertStmt, 6, sqlEndDate);
 
 				if (Period.compare(startDate, sqlStartDate) > 0) {
-					setDate(insertStmt, 6, date2sql(addDay(startDate, -1)));
+					SQLUtils.setDate(insertStmt, 6, SQLUtils.date2sql(addDay(startDate, -1)));
 					insertStmt.execute();
-					setDate(insertStmt, 6, sqlEndDate);
+					SQLUtils.setDate(insertStmt, 6, sqlEndDate);
 				}
 				if (Period.compare(endDate, sqlEndDate) < 0) {
-					setDate(insertStmt, 5, date2sql(addDay(endDate, 1)));
+					SQLUtils.setDate(insertStmt, 5, SQLUtils.date2sql(addDay(endDate, 1)));
 					insertStmt.execute();
 				}
 
@@ -252,8 +252,8 @@ public class SQLSalaryDraft {
 			queryStmt.setInt(1, domain);
 			queryStmt.setInt(2, parentDomain);
 			queryStmt.setString(3, variable.getName());
-			queryStmt.setDate(4, date2sql(variable.getEndDate()));
-			queryStmt.setDate(5, date2sql(variable.getStartDate()));
+			queryStmt.setDate(4, SQLUtils.date2sql(variable.getEndDate()));
+			queryStmt.setDate(5, SQLUtils.date2sql(variable.getStartDate()));
 
 			rs = queryStmt.executeQuery();
 
@@ -293,8 +293,8 @@ public class SQLSalaryDraft {
 			queryStmt = conn.prepareStatement(sql);
 			queryStmt.setInt(1, contract);
 			queryStmt.setString(2, variable.getName());
-			queryStmt.setDate(3, date2sql(variable.getEndDate()));
-			queryStmt.setDate(4, date2sql(variable.getStartDate()));
+			queryStmt.setDate(3, SQLUtils.date2sql(variable.getEndDate()));
+			queryStmt.setDate(4, SQLUtils.date2sql(variable.getStartDate()));
 
 			rs = queryStmt.executeQuery();
 
@@ -324,8 +324,8 @@ public class SQLSalaryDraft {
 			queryStmt = conn.prepareStatement(sql);
 			queryStmt.setInt(1, contract);
 			queryStmt.setString(2, variable.getName());
-			queryStmt.setDate(3, date2sql(variable.getEndDate()));
-			queryStmt.setDate(4, date2sql(variable.getStartDate()));
+			queryStmt.setDate(3, SQLUtils.date2sql(variable.getEndDate()));
+			queryStmt.setDate(4, SQLUtils.date2sql(variable.getStartDate()));
 
 			return rs.next();
 
@@ -344,12 +344,12 @@ public class SQLSalaryDraft {
 
 			insertStmt = conn.prepareStatement(CONTRACT_DATA_INSERT);
 
-			setInt(insertStmt, 1, domain);
-			setInt(insertStmt, 2, contract);
-			setString(insertStmt, 3, variable.getName());
-			setString(insertStmt, 4, variable.getExpression());
-			setDate(insertStmt, 5, date2sql(variable.getStartDate()));
-			setDate(insertStmt, 6, date2sql(variable.getEndDate()));
+			SQLUtils.setInt(insertStmt, 1, domain);
+			SQLUtils.setInt(insertStmt, 2, contract);
+			SQLUtils.setString(insertStmt, 3, variable.getName());
+			SQLUtils.setString(insertStmt, 4, variable.getExpression());
+			SQLUtils.setDate(insertStmt, 5, SQLUtils.date2sql(variable.getStartDate()));
+			SQLUtils.setDate(insertStmt, 6, SQLUtils.date2sql(variable.getEndDate()));
 
 			insertStmt.execute();
 
@@ -387,8 +387,8 @@ public class SQLSalaryDraft {
 		PreparedStatement deleteStmt = null;
 		try {
 
-			java.sql.Date endDate = date2sql(payment.getEndDate());
-			java.sql.Date startDate = date2sql(payment.getStartDate());
+			java.sql.Date endDate = SQLUtils.date2sql(payment.getEndDate());
+			java.sql.Date startDate = SQLUtils.date2sql(payment.getStartDate());
 
 			String sql = "SELECT * " + " FROM " + SQLConstants.CONTRACT_PAYMENT
 					+ " WHERE " + ContractPaymentColumns.ID + " = ? ";
@@ -410,40 +410,40 @@ public class SQLSalaryDraft {
 				// null.
 				// With 'getXXX' methods if the value is SQL NULL, the value
 				// returned is 0.
-				setInt(insertStmt, 1, rs.getInt(ContractPaymentColumns.DOMAIN));
-				setInt(insertStmt, 2,
+				SQLUtils.setInt(insertStmt, 1, rs.getInt(ContractPaymentColumns.DOMAIN));
+				SQLUtils.setInt(insertStmt, 2,
 						rs.getInt(ContractPaymentColumns.CONTRACT));
-				set(insertStmt, 3, rs.getObject(ContractPaymentColumns.TYPE),
+				SQLUtils.set(insertStmt, 3, rs.getObject(ContractPaymentColumns.TYPE),
 						Types.TINYINT); // Be care type can be null
-				set(insertStmt, 4, rs.getObject(ContractPaymentColumns.MONTH),
+				SQLUtils.set(insertStmt, 4, rs.getObject(ContractPaymentColumns.MONTH),
 						Types.TINYINT); // Be care month can be null
-				set(insertStmt, 5,
+				SQLUtils.set(insertStmt, 5,
 						rs.getObject(ContractPaymentColumns.SALARY_TYPE),
 						Types.TINYINT); // Be care salary type can be null
-				setString(insertStmt, 6,
+				SQLUtils.setString(insertStmt, 6,
 						rs.getString(ContractPaymentColumns.DESCRIPTION));
-				setString(insertStmt, 7,
+				SQLUtils.setString(insertStmt, 7,
 						rs.getString(ContractPaymentColumns.EXPRESSION));
-				setString(insertStmt, 8,
+				SQLUtils.setString(insertStmt, 8,
 						rs.getString(ContractPaymentColumns.IRPF_EXPRESSION));
-				setString(insertStmt, 9,
+				SQLUtils.setString(insertStmt, 9,
 						rs.getString(ContractPaymentColumns.QUOTE_EXPRESSION));
-				setDate(insertStmt, 10,
+				SQLUtils.setDate(insertStmt, 10,
 						rs.getDate(ContractPaymentColumns.START_DATE));
-				setDate(insertStmt, 11,
+				SQLUtils.setDate(insertStmt, 11,
 						rs.getDate(ContractPaymentColumns.END_DATE));
-				set(insertStmt, 12,
+				SQLUtils.set(insertStmt, 12,
 						rs.getObject(ContractPaymentColumns.PAYMENT_CONCEPT),
 						Types.INTEGER); // Be payment_concept month can be null
 
 				if (Period.compare(startDate, sqlStartDate) > 0) {
-					setDate(insertStmt, 11, date2sql(addDay(startDate, -1)));
+					SQLUtils.setDate(insertStmt, 11, SQLUtils.date2sql(addDay(startDate, -1)));
 					insertStmt.execute();
-					setDate(insertStmt, 11, sqlEndDate); // restores original
+					SQLUtils.setDate(insertStmt, 11, sqlEndDate); // restores original
 															// end date
 				}
 				if (Period.compare(endDate, sqlEndDate) < 0) {
-					setDate(insertStmt, 10, date2sql(addDay(endDate, 1)));
+					SQLUtils.setDate(insertStmt, 10, SQLUtils.date2sql(addDay(endDate, 1)));
 					insertStmt.execute();
 				}
 
@@ -498,8 +498,8 @@ public class SQLSalaryDraft {
 			queryStmt = conn.prepareStatement(sql);
 			queryStmt.setInt(1, contract);
 			queryStmt.setInt(2, payment.getConceptId());
-			queryStmt.setDate(3, date2sql(payment.getEndDate()));
-			queryStmt.setDate(4, date2sql(payment.getStartDate()));
+			queryStmt.setDate(3, SQLUtils.date2sql(payment.getEndDate()));
+			queryStmt.setDate(4, SQLUtils.date2sql(payment.getStartDate()));
 
 			rs = queryStmt.executeQuery();
 
@@ -537,8 +537,8 @@ public class SQLSalaryDraft {
 			queryStmt.setInt(1, domain);
 			queryStmt.setInt(2, parentDomain);
 			queryStmt.setInt(3, payment.getConceptId());
-			queryStmt.setDate(4, date2sql(payment.getEndDate()));
-			queryStmt.setDate(5, date2sql(payment.getStartDate()));
+			queryStmt.setDate(4, SQLUtils.date2sql(payment.getEndDate()));
+			queryStmt.setDate(5, SQLUtils.date2sql(payment.getStartDate()));
 
 			rs = queryStmt.executeQuery();
 
@@ -561,21 +561,21 @@ public class SQLSalaryDraft {
 
 			insertStmt = conn.prepareStatement(CONTRACT_PAYMENT_INSERT);
 
-			setInt(insertStmt, 1, domain);
-			setInt(insertStmt, 2, contract);
+			SQLUtils.setInt(insertStmt, 1, domain);
+			SQLUtils.setInt(insertStmt, 2, contract);
 
-			setShort(insertStmt, 3, enum2Short(payment.getType()));
-			setShort(insertStmt, 4, payment.getMonth());
-			setShort(insertStmt, 5, enum2Short(payment.getSalaryType()));
+			SQLUtils.setShort(insertStmt, 3, SQLUtils.enum2Short(payment.getType()));
+			SQLUtils.setShort(insertStmt, 4, payment.getMonth());
+			SQLUtils.setShort(insertStmt, 5, SQLUtils.enum2Short(payment.getSalaryType()));
 
-			setString(insertStmt, 6, payment.getDescription());
-			setString(insertStmt, 7, payment.getExpression());
-			setString(insertStmt, 8, payment.getIrpfExpression());
-			setString(insertStmt, 9, payment.getQuoteExpression());
-			setDate(insertStmt, 10, date2sql(payment.getStartDate()));
-			setDate(insertStmt, 11, date2sql(payment.getEndDate()));
+			SQLUtils.setString(insertStmt, 6, payment.getDescription());
+			SQLUtils.setString(insertStmt, 7, payment.getExpression());
+			SQLUtils.setString(insertStmt, 8, payment.getIrpfExpression());
+			SQLUtils.setString(insertStmt, 9, payment.getQuoteExpression());
+			SQLUtils.setDate(insertStmt, 10, SQLUtils.date2sql(payment.getStartDate()));
+			SQLUtils.setDate(insertStmt, 11, SQLUtils.date2sql(payment.getEndDate()));
 
-			setInt(insertStmt, 12, payment.getConceptId());
+			SQLUtils.setInt(insertStmt, 12, payment.getConceptId());
 
 			insertStmt.execute();
 
@@ -599,25 +599,25 @@ public class SQLSalaryDraft {
 
 			rs = stmt.executeQuery();
 			if (rs.next()) {
-				Payment.Type type = getPaymentType(rs
+				Payment.Type type = SQLUtils.getPaymentType(rs
 						.getObject(PaymentConceptColumns.TYPE));
 				if (payment.getType() == type)
 					payment.setType(null);
 				String description = rs
 						.getString(PaymentConceptColumns.DESCRIPTION);
-				if (sameString(description, payment.getDescription()))
+				if (SQLUtils.sameString(description, payment.getDescription()))
 					payment.setDescription(null);
 				String expression = rs
 						.getString(PaymentConceptColumns.EXPRESSION);
-				if (sameString(expression, payment.getExpression()))
+				if (SQLUtils.sameString(expression, payment.getExpression()))
 					payment.setExpression(null);
 				String irpfExpression = rs
 						.getString(PaymentConceptColumns.IRPF_EXPRESSION);
-				if (sameString(irpfExpression, payment.getIrpfExpression()))
+				if (SQLUtils.sameString(irpfExpression, payment.getIrpfExpression()))
 					payment.setIrpfExpression(null);
 				String quoteExpression = rs
 						.getString(PaymentConceptColumns.QUOTE_EXPRESSION);
-				if (sameString(quoteExpression, payment.getQuoteExpression()))
+				if (SQLUtils.sameString(quoteExpression, payment.getQuoteExpression()))
 					payment.setQuoteExpression(null);
 
 			}
@@ -655,8 +655,8 @@ public class SQLSalaryDraft {
 		PreparedStatement deleteStmt = null;
 		try {
 
-			java.sql.Date endDate = date2sql(deduction.getEndDate());
-			java.sql.Date startDate = date2sql(deduction.getStartDate());
+			java.sql.Date endDate = SQLUtils.date2sql(deduction.getEndDate());
+			java.sql.Date startDate = SQLUtils.date2sql(deduction.getStartDate());
 
 			String sql = "SELECT * " + " FROM "
 					+ SQLConstants.CONTRACT_DEDUCTION + " WHERE "
@@ -677,32 +677,32 @@ public class SQLSalaryDraft {
 				// null.
 				// With 'getXXX' methods if the value is SQL NULL, the value
 				// returned is 0.
-				setInt(insertStmt, 1,
+				SQLUtils.setInt(insertStmt, 1,
 						rs.getInt(ContractDeductionColumns.DOMAIN)); // NOT NULL
-				setInt(insertStmt, 2,
+				SQLUtils.setInt(insertStmt, 2,
 						rs.getInt(ContractDeductionColumns.CONTRACT)); // NOT  NULL
-				set(insertStmt, 3, rs.getObject(ContractDeductionColumns.TYPE),
+				SQLUtils.set(insertStmt, 3, rs.getObject(ContractDeductionColumns.TYPE),
 						Types.TINYINT); // DEFAULT NULL
-				set(insertStmt, 4,
+				SQLUtils.set(insertStmt, 4,
 						rs.getObject(ContractDeductionColumns.MONTH),
 						Types.TINYINT); // DEFAULT NULL
-				setString(insertStmt, 5,
+				SQLUtils.setString(insertStmt, 5,
 						rs.getString(ContractDeductionColumns.DESCRIPTION));
-				setString(insertStmt, 6,
+				SQLUtils.setString(insertStmt, 6,
 						rs.getString(ContractDeductionColumns.EXPRESSION));
-				setDate(insertStmt, 7, sqlStartDate);
-				setDate(insertStmt, 8, sqlEndDate);
+				SQLUtils.setDate(insertStmt, 7, sqlStartDate);
+				SQLUtils.setDate(insertStmt, 8, sqlEndDate);
 
-				set(insertStmt, 9,
+				SQLUtils.set(insertStmt, 9,
 						rs.getObject(ContractDeductionColumns.DEDUCTION_CONCEPT), Types.INTEGER);
 
 				if (Period.compare(startDate, sqlStartDate) > 0) {
-					setDate(insertStmt, 8, date2sql(addDay(startDate, -1)));
+					SQLUtils.setDate(insertStmt, 8, SQLUtils.date2sql(addDay(startDate, -1)));
 					insertStmt.execute();
-					setDate(insertStmt, 8, sqlEndDate); // restores original end date for subsequent inserts
+					SQLUtils.setDate(insertStmt, 8, sqlEndDate); // restores original end date for subsequent inserts
 				}
 				if (Period.compare(endDate, sqlEndDate) < 0) {
-					setDate(insertStmt, 7, date2sql(addDay(endDate, 1)));
+					SQLUtils.setDate(insertStmt, 7, SQLUtils.date2sql(addDay(endDate, 1)));
 					insertStmt.execute();
 				}
 
@@ -749,8 +749,8 @@ public class SQLSalaryDraft {
 			queryStmt.setInt(1, domain);
 			queryStmt.setInt(2, parentDomain);
 			queryStmt.setInt(3, deduction.getConceptId());
-			queryStmt.setDate(4, date2sql(deduction.getEndDate()));
-			queryStmt.setDate(5, date2sql(deduction.getStartDate()));
+			queryStmt.setDate(4, SQLUtils.date2sql(deduction.getEndDate()));
+			queryStmt.setDate(5, SQLUtils.date2sql(deduction.getStartDate()));
 
 			rs = queryStmt.executeQuery();
 
@@ -773,16 +773,16 @@ public class SQLSalaryDraft {
 
 			insertStmt = conn.prepareStatement(CONTRACT_DEDUCTION_INSERT);
 
-			setInt(insertStmt, 1, domain);
-			setInt(insertStmt, 2, contract);
-			setShort(insertStmt, 3, enum2Short(deduction.getType()));
-			setShort(insertStmt, 4, deduction.getMonth());
-			setString(insertStmt, 5, deduction.getDescription());
-			setString(insertStmt, 6, deduction.getExpression());
-			setDate(insertStmt, 7, date2sql(deduction.getStartDate()));
-			setDate(insertStmt, 8, date2sql(deduction.getEndDate()));
+			SQLUtils.setInt(insertStmt, 1, domain);
+			SQLUtils.setInt(insertStmt, 2, contract);
+			SQLUtils.setShort(insertStmt, 3, SQLUtils.enum2Short(deduction.getType()));
+			SQLUtils.setShort(insertStmt, 4, deduction.getMonth());
+			SQLUtils.setString(insertStmt, 5, deduction.getDescription());
+			SQLUtils.setString(insertStmt, 6, deduction.getExpression());
+			SQLUtils.setDate(insertStmt, 7, SQLUtils.date2sql(deduction.getStartDate()));
+			SQLUtils.setDate(insertStmt, 8, SQLUtils.date2sql(deduction.getEndDate()));
 
-			setInt(insertStmt, 9, deduction.getConceptId());
+			SQLUtils.setInt(insertStmt, 9, deduction.getConceptId());
 
 			insertStmt.execute();
 
@@ -806,17 +806,17 @@ public class SQLSalaryDraft {
 
 			rs = stmt.executeQuery();
 			if (rs.next()) {
-				Deduction.Type type = getDeductionType(rs
+				Deduction.Type type = SQLUtils.getDeductionType(rs
 						.getObject(DeductionConceptColumns.TYPE));
 				if (deduction.getType() == type)
 					deduction.setType(null);
 				String description = rs
 						.getString(DeductionConceptColumns.DESCRIPTION);
-				if (sameString(description, deduction.getDescription()))
+				if (SQLUtils.sameString(description, deduction.getDescription()))
 					deduction.setDescription(null);
 				String expression = rs
 						.getString(DeductionConceptColumns.EXPRESSION);
-				if (sameString(expression, deduction.getExpression()))
+				if (SQLUtils.sameString(expression, deduction.getExpression()))
 					deduction.setExpression(null);
 
 			}
@@ -842,7 +842,7 @@ public class SQLSalaryDraft {
 			paymentConcept.setId(rs.getInt(PaymentConceptColumns.ID));
 			paymentConcept
 					.setName(rs.getString(PaymentConceptColumns.CODE));
-			paymentConcept.setType(getPaymentType(rs
+			paymentConcept.setType(SQLUtils.getPaymentType(rs
 					.getInt(PaymentConceptColumns.TYPE)));
 			paymentConcept.setDescription(rs
 					.getString(PaymentConceptColumns.DESCRIPTION));
@@ -868,82 +868,5 @@ public class SQLSalaryDraft {
 		calendar.setTime(date);
 		calendar.add(Calendar.DAY_OF_MONTH, days);
 		return calendar.getTime();
-	}
-
-	private static java.sql.Date date2sql(Date date) {
-		return date != null ? new java.sql.Date(date.getTime()) : null;
-	}
-
-	private static Short enum2Short(Enum<?> type) {
-		return type == null ? null : (short) type.ordinal();
-	}
-
-	private static void setDate(PreparedStatement stmt, int parameterIndex,
-			Date x) throws SQLException {
-		set(stmt, parameterIndex, x, Types.DATE);
-	}
-
-	private static void setInt(PreparedStatement stmt, int parameterIndex,
-			Integer x) throws SQLException {
-		set(stmt, parameterIndex, x, Types.INTEGER);
-	}
-
-	private static void setString(PreparedStatement stmt, int parameterIndex,
-			String x) throws SQLException {
-		set(stmt, parameterIndex, x, Types.VARCHAR);
-	}
-
-	private static void setShort(PreparedStatement stmt, int parameterIndex,
-			Short x) throws SQLException {
-		set(stmt, parameterIndex, x, Types.SMALLINT);
-	}
-
-	private static void set(PreparedStatement stmt, int parameterIndex,
-			Object x, int targetSqlType) throws SQLException {
-		if (x != null)
-			stmt.setObject(parameterIndex, x, targetSqlType);
-		else
-			stmt.setNull(parameterIndex, targetSqlType);
-	}
-
-	private static boolean sameString(String s1, String s2) {
-		if (s1 == s2)
-			return true;
-		if (s1 == null)
-			return false;
-		if (s2 == null)
-			return false;
-
-		return s1.trim().equals(s2.trim());
-	}
-
-	private static Payment.Type getPaymentType(Object object) {
-		if (object == null)
-			return null;
-		if (!(object instanceof Number))
-			return null;
-		int ordinal = ((Number) object).intValue();
-		if (ordinal < 0)
-			return null;
-		Payment.Type types[] = Payment.Type.values();
-		if (ordinal >= types.length)
-			return null;
-
-		return types[ordinal];
-	}
-
-	private static Deduction.Type getDeductionType(Object object) {
-		if (object == null)
-			return null;
-		if (!(object instanceof Number))
-			return null;
-		int ordinal = ((Number) object).intValue();
-		if (ordinal < 0)
-			return null;
-		Deduction.Type types[] = Deduction.Type.values();
-		if (ordinal >= types.length)
-			return null;
-
-		return types[ordinal];
 	}
 }

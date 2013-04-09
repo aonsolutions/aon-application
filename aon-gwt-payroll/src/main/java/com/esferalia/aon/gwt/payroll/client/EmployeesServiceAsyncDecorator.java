@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -170,6 +171,16 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 				new AsyncCallbackWrapper<SalaryDraft>(callback));
 	}
 
+	@Override
+	public void calculateAgreementDraft(AgreementDraft agreementDraft,
+			AsyncCallback<AgreementDraft> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.calculateAgreementDraft(agreementDraft,
+				new AsyncCallbackWrapper<AgreementDraft>(callback));
+	}
+	
+	
 	@Override
 	public void getSalaryDraftReceiptHTML(SalaryDraft salaryPreview, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {

@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -51,6 +52,10 @@ public interface EmployeesServiceAsync {
 
 	void calculateSalaryDraft(SalaryDraft salaryDraft,
 			AsyncCallback<SalaryDraft> callback)
+			throws IllegalArgumentException;
+
+	void calculateAgreementDraft(AgreementDraft agreementDraft,
+			AsyncCallback<AgreementDraft> callback)
 			throws IllegalArgumentException;
 
 	void eval(String expression, SalaryDraft salaryDraft, AsyncCallback<Double> callback)

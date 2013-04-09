@@ -94,7 +94,7 @@ a, a:hover, a:visited {
 }
 
 .gwt-MenuBar-horizontal .gwt-MenuItem {
-    background-position: -2px 50% !important;
+    background-position: center !important;
     background-color:transparent;
     border: 1px solid transparent;
     color: #000000;
@@ -107,9 +107,8 @@ a, a:hover, a:visited {
 }
 
 .gwt-MenuBar-vertical .gwt-MenuItemSeparator .menuSeparatorInner {
-	border: 0px;
 	height: 1px;
-	margin: 2px 0px;
+	margin: 0px 4px;
 }
 
 .gwt-MenuBar-vertical .gwt-MenuItem {
@@ -189,10 +188,25 @@ a, a:hover, a:visited {
     background: inherit;
 }
 
+.gwt-SuggestBoxPopup .item .concept,
+.gwt-SuggestBoxPopup .item .employee,
+.gwt-SuggestBoxPopup .item .enterprise,
 .gwt-SuggestBoxPopup .item .payment_concept,
 .gwt-SuggestBoxPopup .item .employee_payment,
 .gwt-SuggestBoxPopup .item .enterprise_payment{
     padding-left: 15px;
+}
+
+@sprite .gwt-SuggestBoxPopup .item .concept{
+	gwt-image: "publiC"; 
+}
+
+@sprite .gwt-SuggestBoxPopup .item .employee{
+	gwt-image: "privatE"; 
+}
+
+@sprite .gwt-SuggestBoxPopup .item .enterprise{
+	gwt-image: "protecteD"; 
 }
 
 @sprite .gwt-SuggestBoxPopup .item .payment_concept{
@@ -401,6 +415,24 @@ td.datePickerMonth,
 	font-weight: bold;
 }
 
+
+.gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs{
+	background:none;
+}
+
+
+@sprite .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
+	gwt-image: "tabBar";
+	width: auto;
+	height:auto; 
+	background-repeat: repeat-x;
+} 
+.gwt-TabLayoutPanel .gwt-TabLayoutPanelContentContainer {
+    border: none;
+}
+
+
+
 @sprite .gwt-Warn {
 	width: auto; 
 	height: auto;
@@ -428,3 +460,17 @@ td.datePickerMonth,
 .aon-finding-toolbar-item[disabled] {
 	opacity: 0.3;
 }
+
+
+@sprite .aon-icon-ine {
+	gwt-image: "ine" ; 
+}
+
+@sprite .aon-icon-employee {
+	gwt-image: "employee" ; 
+}
+
+@sprite .aon-icon-workplace {
+	gwt-image: "workplace" ; 
+}
+

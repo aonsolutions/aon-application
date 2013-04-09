@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -33,6 +34,7 @@ public interface EmployeesService extends RemoteService {
 	ContextDescriptor getContext(SalaryDraft salaryDraft ) throws IllegalArgumentException;
 	Double eval(String expression, SalaryDraft salaryDraft ) throws IllegalArgumentException, EvalException;
 	SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft ) throws IllegalArgumentException;
+	AgreementDraft calculateAgreementDraft(AgreementDraft agreementDraft ) throws IllegalArgumentException;
 	String getSalaryDraftReceipt(SalaryDraft salaryDraft, String mime) throws IllegalArgumentException;
 	String getSalaryDraftReceiptHTML(SalaryDraft salaryDraft, int zoom) throws IllegalArgumentException;
 	String getSalaryPreviewReceiptHTML(SalaryPreview salaryPreview, int zoom) throws IllegalArgumentException;
