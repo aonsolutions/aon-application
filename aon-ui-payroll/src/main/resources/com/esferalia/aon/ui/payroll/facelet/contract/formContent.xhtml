@@ -99,14 +99,6 @@
 						value="#{contract.to.categoryDescription}" />
 				</aon:panelGroup>
 			</aon:panelGrid>
-		</c:if>
-		
-		<c:if test="#{contract.skipPayrollData}" >
-			<aon:outputLabel for="Contract_categoryDescription"  
-				value="#{payrollBundle.payroll_contract_category}" />
-			<aon:inputText id="Contract_categoryDescription" maxlength="64" size="56"
-				value="#{contract.to.categoryDescription}" />
-		</c:if>
 		
 			<aon:outputLabel for="quote_group"
 				value="#{payrollBundle.payroll_contract_quote_group}" />
@@ -115,7 +107,6 @@
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{payrollCollections.quoteGroups}" />
 			</aon:selectOneMenu>
-		<c:if test="#{contract.new}" >
 		</c:if>
 		
 		<aon:outputLabel for="startDate" value="#{bundle.aon_start_date}" />
@@ -155,15 +146,13 @@
 			popupDateFormat="#{bundle.aon_date_pattern}">
 		</aon:selectInputDate>
 		
-			<aon:outputLabel value="#{payrollBundle.payroll_contract_occupation}"
-				for="occupationType"/>
-			<aon:selectOneMenu id="occupationType" 
-				value="#{contract.params.occupationType}">
-				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{payrollCollections.occupationTypes}" />
-			</aon:selectOneMenu>
-		<c:if test="#{contract.new}" >
-		</c:if>
+		<aon:outputLabel value="#{payrollBundle.payroll_contract_occupation}"
+			for="occupationType"/>
+		<aon:selectOneMenu id="occupationType" 
+			value="#{contract.params.occupationType}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{payrollCollections.occupationTypes}" />
+		</aon:selectOneMenu>
 		
 
 <!--  
@@ -189,16 +178,22 @@
 			<ui:param name="lookupTo" value="#{contract.params.cno}" />
 			<ui:param name="skipNewButton" value="#{true}" />
 			<ui:param name="lookupDisabled" value="#{false}" />
-			<ui:param name="lookupReRender" value="Contract_categoryDescription" />
+			<ui:param name="lookupReRender" value="Contract_categoryDescription, trainingCenter, trainingCourse" />
 			<aon:methodParam name="lookupChangeListener" value="#{contract.onChangeCno}" type="lookupChangeListener" />
 		</ui:include>
-		<!--  
-		<c:if test="#{contract.new and contract.params.trainingContract}" >
-		-->
+		
+		<c:if test="#{!contract.skipPayrollData}" >
+			<aon:outputLabel for="Contract_categoryDescription"  
+				value="#{payrollBundle.payroll_contract_category}" />
+			<aon:inputText id="Contract_categoryDescription" maxlength="64" size="56"
+				value="#{contract.to.categoryDescription}" />
+		</c:if>
+		
 		<c:if test="#{contract.params.trainingContract}" >
-				<aon:outputLabel for="contract_bonus" value="#{payrollBundle.payroll_contract_subsidized}" />
-				<aon:selectBooleanCheckbox id="contract_bonus" value="#{contract.params.subsidized}" />
+				<aon:outputLabel for="contract_subsidized" value="#{payrollBundle.payroll_contract_subsidized}" />
+				<aon:selectBooleanCheckbox id="contract_subsidized" value="#{contract.params.subsidized}" />
 				
+				<!--  
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/trainingCenter/lookup.xhtml" >
 					<ui:param name="lookupTo" value="#{contract.params.trainingCenter}" />
 					<ui:param name="skipNewButton" value="#{true}" />
@@ -211,11 +206,12 @@
 					<ui:param name="skipNewButton" value="#{true}" />
 					<ui:param name="lookupDisabled" value="#{contract.params.trainingCenter.id==null}" />
 				</ui:include>
+				-->
 				
-				<!--  
 				<aon:outputLabel for="trainingCenter" value="#{payrollBundle.payroll_trainingCenter}" />				
 				<aon:selectOneMenu id="trainingCenter"
 					value="#{contract.params.trainingCenter}" >
+					<f:selectItem itemLabel=" - " itemValue="#{null}" />
 					<f:selectItems value="#{contract.trainingCenters}" />
 					<a4j:support event="onchange" ajaxSingle="true" reRender="trainingCourse"/>
 				</aon:selectOneMenu>
@@ -223,9 +219,9 @@
 				<aon:outputLabel for="trainingCourse" value="#{payrollBundle.payroll_trainingCourse}" />
 				<aon:selectOneMenu id="trainingCourse"
 					value="#{contract.params.trainingCourse}" >
+					<f:selectItem itemLabel=" - " itemValue="#{null}" />
 					<f:selectItems value="#{contract.trainingCourses}" />
 				</aon:selectOneMenu>
-				-->
 				
 		</c:if>
 		

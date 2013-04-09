@@ -95,6 +95,7 @@ public interface IPayrollConstants {
 	String IRPF_TEST_LAUNCHER_NAME = "irpfTestLauncher";
 	String SETTLE_CONTROLLER_NAME = "settle";
 	String SALARY_EXPENSE_CONTROLLER_NAME = "salaryExpense";
+	String TRAINING_CENTER_CONTROLLER_NAME = "trainingCenter";
 
 	// ************************************************************
 	// CONFIGURATION

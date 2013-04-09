@@ -360,6 +360,64 @@ public class ContractController extends BasicController implements IVariablesHan
 		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
 		return map.get(ContextVariable.TRAINING_CENTER.getName())!=null;
 	}
+	
+	public List<SelectItem> getTrainingCenters(){
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		CNO cno = getParams().getCno();
+		if(cno!=null && cno.getId()!=null){
+			List<TrainingCenter> centerList = new LinkedList<TrainingCenter>();
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(TrainingCourse.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_COURSE_CNO_ID), cno.getId());
+				for(ITransferObject to: bean.getList(criteria)){
+					TrainingCourse course = (TrainingCourse) to;
+					if(!centerList.contains(course.getTrainingCenter())){
+						centerList.add(course.getTrainingCenter());
+					}
+				}
+				if(centerList.size()==1){
+					getParams().setTrainingCenter(centerList.get(0));
+				}
+			} catch (ManagerBeanException e) {
+				String msg = "No se han podido cargar los centros formativos."; 
+				LOGGER.error(msg, e);
+				AonUtil.addErrorMessage(msg);
+			}
+			
+			for(TrainingCenter center: centerList){
+				SelectItem item = new SelectItem(center, center.getRegistry().getFullName());
+				list.add(item);
+			}
+		}
+		return list;
+	}
+
+	public List<SelectItem> getTrainingCourses(){
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		CNO cno = getParams().getCno();
+		TrainingCenter center = getParams().getTrainingCenter();
+		if( cno!=null && cno.getId()!=null
+				&& center!=null && center.getId()!=null ){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(TrainingCourse.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_COURSE_CNO_ID), cno.getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_COURSE_TRAINING_CENTER_ID), center.getId());
+				for(ITransferObject to: bean.getList(criteria)){
+					TrainingCourse course = (TrainingCourse) to;
+					SelectItem item = new SelectItem(course, course.getName());
+					list.add(item);
+				}
+			} catch (ManagerBeanException e) {
+				String msg = "No se han podido cargar los cursos formativos."; 
+				LOGGER.error(msg, e);
+				AonUtil.addErrorMessage(msg);
+			}
+		}
+		return list;
+	}
+	
 
 //	 * ************************************
 //	 * 			DOWNLOAD & UPLOAD METHODS		
@@ -449,7 +507,7 @@ public class ContractController extends BasicController implements IVariablesHan
 	
 	
 	public String onTrainingCenterDirectDebitReport() throws ManagerBeanException{
-		TrainingCenterController tcController = (TrainingCenterController) AonUtil.getRegisteredBean("trainingCenter");
+		TrainingCenterController tcController = (TrainingCenterController) AonUtil.getRegisteredBean(IPayrollConstants.TRAINING_CENTER_CONTROLLER_NAME);
 		try {
 			PayrollUtils utils = new PayrollUtils();
 			Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
