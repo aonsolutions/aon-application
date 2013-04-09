@@ -5,7 +5,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.fiscal.enumeration.FiscalModelStatus;
+import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.esferalia.aon.entity.master.FiscalModelDB;
 
 @Entity
@@ -45,6 +47,16 @@ public class FiscalModel extends FiscalModelDB {
 	}
 
 	@Transient
+	public boolean isCashBasis() {
+		return (getFinance() != null && getFinance().getPayMethod() != null && getFinance().getPayMethod().getType() == PayMethodType.CASH_BASIS);
+	}
+
+	@Transient
+	public boolean isModel111() {
+		return (getModel() == FiscalModelType.M111);
+	}
+
+	@Transient
 	public boolean isReadRetentionFromAccount() {
 		return readRetentionFromAccount;
 	}
@@ -61,5 +73,6 @@ public class FiscalModel extends FiscalModelDB {
 	public void setReceiverCount(int receiverCount) {
 		this.receiverCount = receiverCount;
 	}
+	
 	
 }

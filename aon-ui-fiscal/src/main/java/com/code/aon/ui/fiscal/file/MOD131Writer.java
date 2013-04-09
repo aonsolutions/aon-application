@@ -31,6 +31,7 @@ import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.fiscal.controller.FiscalParametersController;
@@ -71,7 +72,8 @@ public class MOD131Writer implements IFinanceConstants{
 		Declaration declaration = new  Declaration();
 		Company company = getCompany(fiscalModel.getDomain());
 		declaration.setDocument(company.getDocument());
-		declaration.setPerson(company.getRegistry().getType() == RegistryType.NATURAL);
+		declaration.setPerson(company.getRegistry().getType() == RegistryType.NATURAL 
+					|| company.getDocumentType() != DocumentType.CIF);
 		declaration.setStartPeriod(0);
 		declaration.setEndPeriod(0);
 		int year = fiscalModel.getYear();
