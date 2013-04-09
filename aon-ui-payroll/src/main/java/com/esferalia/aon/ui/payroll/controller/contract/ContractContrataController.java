@@ -217,6 +217,10 @@ public class ContractContrataController {
 				 || code.equals(ContractCode.C309.getValue())
 				 || code.equals(ContractCode.C389.getValue()) ){
 			// Transformaciones de contrato
+			setEnabledContrataEdition(false);
+//			String msg = "Transformaciones de contrato sin implementación para comunicaciones con Contrat@.";
+//			AonUtil.addErrorMessage(msg);
+//			throw new AbortProcessingException(msg);
 		}
 		if( code.equals(ContractCode.C408.getValue())
 				 || code.equals(ContractCode.C418.getValue())
@@ -224,9 +228,9 @@ public class ContractContrataController {
 				 || code.equals(ContractCode.C518.getValue()) ){
 			// Contratos de caracter administrativo
 			setEnabledContrataEdition(false);
-			String msg = "Tipo de contrato sin implementación para comunicaciones con Contrat@. (Códigos de contrato 408, 418, 508 y 518)";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
+//			String msg = "Tipo de contrato sin implementación para comunicaciones con Contrat@. (Códigos de contrato 408, 418, 508 y 518)";
+//			AonUtil.addErrorMessage(msg);
+//			throw new AbortProcessingException(msg);
 		}
 
 		try {

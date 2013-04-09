@@ -28,6 +28,7 @@ import com.esferalia.aon.payroll.contrata.enumeration.TCHRGCOT;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
@@ -437,10 +438,12 @@ public class ContrataContratosWriter {
 		datos.setCIFNIFEMPRESA(createCifNif(params.getContract().getWorkPlace().getEnterprise().getRegistry().getDocument()));
 		EnterpriseCCC ccc = getEnterpriseCCC(params.getContract().getWorkPlace());
 		// TODO: research about ccc quote regime
-//		ccc.getType()+ccc.getCcc();
-//		TCHRGCOT.TCHRGCOT_0111.getValue()++ccc.getCcc();
+		String quoteRegime = "0000";
+		if(params.getContract().getEnterpriseCCC().getActivity().getType()==EnterpriseActivityType.PRINCIPAL){
+			quoteRegime = TCHRGCOT.TCHRGCOT_0111.getCode();
+		}
 		if(ccc!=null){
-			datos.setCODIGOCUENTACOTIZACION(TCHRGCOT.TCHRGCOT_0111.getCode()+ccc.getCcc());
+			datos.setCODIGOCUENTACOTIZACION(quoteRegime+ccc.getCcc());
 		}
 		return datos;
 	}

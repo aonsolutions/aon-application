@@ -152,7 +152,6 @@ public class ModelPE230 extends AbstractAnnexModel {
 	
 	@Override
 	public void loadPdfFields(ContractCode code, Contract contract) throws UnsupportedContractDocumentException{
-		// TODO
 		try {
 			Map<String, String>  map = getContractDataMap(contract);
 			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
@@ -197,6 +196,7 @@ public class ModelPE230 extends AbstractAnnexModel {
 			
 			String phone = contract.getWorkPlace().getEnterprise().getRegistry().getPhone().getValue();
 			try {
+				phone = phone.replaceAll("[^0-9]", "");
 				getPdfFieldsMap().get(PE230_ENTERPRISE_PHONE_1).setValue(phone.substring(0, 1));
 				getPdfFieldsMap().get(PE230_ENTERPRISE_PHONE_2).setValue(phone.substring(1, 2));
 				getPdfFieldsMap().get(PE230_ENTERPRISE_PHONE_3).setValue(phone.substring(2, 3));
@@ -320,6 +320,7 @@ public class ModelPE230 extends AbstractAnnexModel {
 				
 				try {
 					String centerPhone = trainingCenter.getRegistry().getPhone().getValue();
+					centerPhone = centerPhone.replaceAll("[^0-9]", "");
 					getPdfFieldsMap().get(PE230_TRAINING_CENTER_PHONE_1).setValue(centerPhone.substring(0, 1));
 					getPdfFieldsMap().get(PE230_TRAINING_CENTER_PHONE_2).setValue(centerPhone.substring(1, 2));
 					getPdfFieldsMap().get(PE230_TRAINING_CENTER_PHONE_3).setValue(centerPhone.substring(2, 3));
@@ -397,11 +398,6 @@ public class ModelPE230 extends AbstractAnnexModel {
 		return null;
 	}
 
-	private Boolean isQuoteBonus(Contract contract) {
-		String subsidized = getContractDataMap(contract).get(ContextVariable.SUBSIDIZED.getName());
-		return Boolean.parseBoolean(subsidized);
-	}
-	
 	public Map<String, String> getContractDataMap(Contract contract) {
 		Map<String, String> map = new HashMap<String, String>();
 		try {

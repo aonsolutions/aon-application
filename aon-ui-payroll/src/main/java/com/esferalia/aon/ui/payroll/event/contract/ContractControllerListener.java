@@ -73,7 +73,12 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setEnterpriseCCCs(null);
 		controller.setParams(null);
 		controller.onShowVariables(null);
-		loadContractData();
+		try {
+			loadContractData();
+		} catch (ManagerBeanException e) {
+			String msg = "Error loading contract data";
+			LOGGER.error(msg);
+		}
 		searchAgreement();
 	}
 
@@ -101,14 +106,6 @@ public class ContractControllerListener extends ControllerAdapter{
 			controller.getParams().setCno((CNO) bean.createNewTo());
 			bean = BeanManager.getManagerBean(Agreement.class);
 			controller.setAgreement((Agreement) bean.createNewTo());
-			if( controller.getParams().getContractModelCode() != null
-					&& controller.getParams().getContractModelCode().getCode() == ContractCode.C421 
-					&& params.getDefaultTrainingCenter()!=null && params.getDefaultTrainingCenter().getId()!=null){
-				controller.getParams().setTrainingCenter(params.getDefaultTrainingCenter());
-			} else {
-				bean = BeanManager.getManagerBean(TrainingCenter.class);
-				controller.getParams().setTrainingCenter((TrainingCenter) bean.createNewTo());
-			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error on afterBeanCreated";
 			LOGGER.error(msg);
@@ -525,7 +522,7 @@ public class ContractControllerListener extends ControllerAdapter{
 		}
 	}
 	
-	private void loadContractData() {
+	private void loadContractData() throws ManagerBeanException {
 		ContractParams params = ((ContractController)this.getController()).getParams();
 		PayrollUtils utils = new PayrollUtils();
 		Map<String, String> map = utils.getContractDataMap((Contract) this.getController().getTo());
@@ -543,6 +540,8 @@ public class ContractControllerListener extends ControllerAdapter{
 		}
 		if(map.get(ContextVariable.CNO.getName())!=null){
 			params.setCno(obtainCno(map.get(ContextVariable.CNO.getName())));
+		} else {
+			params.setCno((CNO) BeanManager.getManagerBean(CNO.class).createNewTo());
 		}
 		if(map.get(ContextVariable.TC2.getName())!=null){
 			params.setContractModelCode( obtainContractModelCode(map.get(ContextVariable.TC2.getName()), ((Contract) this.getController().getTo()).getModel()) );

@@ -59,6 +59,7 @@ import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.IVariablesHandler;
+import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.controller.TrainingCenterController;
 import com.esferalia.aon.ui.payroll.controller.salary.SettleController;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
@@ -79,6 +80,7 @@ public class ContractController extends BasicController implements IVariablesHan
 	private boolean showNewContractModal;
 	private boolean skipPayrollData;
 
+	
 	public ContractParams getParams() {
 		if(params==null){
 			params = new ContractParams();
@@ -378,6 +380,15 @@ public class ContractController extends BasicController implements IVariablesHan
 				}
 				if(centerList.size()==1){
 					getParams().setTrainingCenter(centerList.get(0));
+				} else if(centerList.size()>1){
+					PayrollAppParamsController params = (PayrollAppParamsController) AonUtil.getRegisteredBean(IPayrollConstants.PAYROLL_APP_PARAMS_CONTROLLER_NAME);
+					if( getParams().getContractModelCode() != null
+							&& getParams().getContractModelCode().getCode() == ContractCode.C421 
+							&& params.getDefaultTrainingCenter()!=null && params.getDefaultTrainingCenter().getId()!=null){
+						if(centerList.contains(params.getDefaultTrainingCenter())){
+							getParams().setTrainingCenter(params.getDefaultTrainingCenter());
+						}
+					}
 				}
 			} catch (ManagerBeanException e) {
 				String msg = "No se han podido cargar los centros formativos."; 

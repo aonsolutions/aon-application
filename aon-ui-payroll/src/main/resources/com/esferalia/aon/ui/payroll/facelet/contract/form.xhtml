@@ -37,10 +37,14 @@
 
 						<aon:panelTab id="contrataData" label="Datos Contrat@" 
 							actionListener="#{contractContrata.onContrataDataShow}">
-							<aon:div rendered="#{contractContrata.enabledContrataEdition}">
+							<c:if test="#{contractContrata.enabledContrataEdition}">
 								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_toolbar.xhtml" />
 								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_content.xhtml" />
-							</aon:div>
+							</c:if>
+							<c:if test="#{!contractContrata.enabledContrataEdition}">
+								<aon:outputText style="color:red;padding-left:18px;" styleClass="aon-icon-wrong"
+									value="Tipo de contrato sin implementación para comunicaciones con Contrat@." />
+							</c:if>
 						</aon:panelTab>
 
 						<aon:panelTab id="attachData" label="Documentos">

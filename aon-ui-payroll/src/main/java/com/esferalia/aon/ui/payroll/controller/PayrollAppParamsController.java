@@ -332,6 +332,8 @@ public class PayrollAppParamsController{
 		// CONTRACT PARAMS
 		if(getDefaultTrainingCenter()!=null && getDefaultTrainingCenter().getId()!=null){
 			getParameter(DEFAULT_TRAINING_CENTER).setValue(getDefaultTrainingCenter().getId().toString());
+		} else {
+			getParameter(DEFAULT_TRAINING_CENTER).setValue(null);
 		}
 	}
 
