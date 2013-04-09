@@ -793,9 +793,11 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 
 	public void onNewEmail( ActionEvent event ) {
+		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 		if ( isTemplateSelected() ) {
-			MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 			TemplateController.initController(controller, getTemplate());
+		} else if ( isNewsletterSelected() ) {
+			NewsletterController.initController(controller, getNewsletter());
 		}
 	}
 
