@@ -46,6 +46,27 @@
 					accesskey="#{bundle.aon_key_print}">
 					<f:param name="reportKey" value="#{controller.beanName}Report" />
 				</aon:htmlCommandLink>
+				
+				<c:if test="#{!controller.new and controller.to.finished and !controller.to.model111 and controller.scriptPresent}">
+					<aon:htmlCommandLink id="#{toolbarID}-reportAeat"
+						value="AEAT OFICIAL"  
+						action="#{controller.aeatReport}"
+						rendered="#{controller.aeatOfficialReportEnabled}"
+						styleClass="aon-finding-toolbar-item aon-icon-aeat"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="#{controller.beanName}Report" />
+					</aon:htmlCommandLink>
+					
+					<aon:htmlCommandLink id="#{toolbarID}-reportDraftAeat"
+						value="AEAT BORRADOR"  
+						action="#{controller.aeatReport}"
+						rendered="#{controller.aeatDraftReportEnabled}"
+						styleClass="aon-finding-toolbar-item aon-icon-aeat"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="#{controller.beanName}Report" />
+					</aon:htmlCommandLink>
+				</c:if>
+				
 			</ui:define>
 		</ui:decorate>
 
