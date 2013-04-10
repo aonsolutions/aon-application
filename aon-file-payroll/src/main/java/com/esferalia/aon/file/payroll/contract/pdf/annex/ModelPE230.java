@@ -21,8 +21,10 @@ import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentEx
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.TrainingCenter;
+import com.esferalia.aon.payroll.TrainingCourse;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.payroll.enumeration.TrainingModality;
 import com.lowagie.text.pdf.PdfReader;
 
 
@@ -30,12 +32,12 @@ import com.lowagie.text.pdf.PdfReader;
 public class ModelPE230 extends AbstractAnnexModel {
 	
 	// HEADER FIELDS
-	final static String PE230_CP_YES = "m1";
-	final static String PE230_CP_NO = "m2";
-	final static String PE230_FP_YES = "m3";
-	final static String PE230_FP_NO = "m4";
-	final static String PE230_CENTER_AVAILABLE_YES = "m5";
-	final static String PE230_CENTER_AVAILABLE_NO = "m6";
+	final static String PE230_CP_NO = "m1";
+	final static String PE230_CP_YES = "m2";
+	final static String PE230_FP_NO = "m3";
+	final static String PE230_FP_YES = "m4";
+	final static String PE230_CENTER_AVAILABLE_NO = "m5";
+	final static String PE230_CENTER_AVAILABLE_YES = "m6";
 
 	final static String PE230_CP_NAME = "certificado profesionalidad";
 	final static String PE230_FP_TITLE = "titulo fp";
@@ -61,7 +63,7 @@ public class ModelPE230 extends AbstractAnnexModel {
 	
 	// EMPLOYEE FIELDS
 	final static String PE230_EMPLOYEE_NAME = "persona 2";
-	final static String PE230_EMPLOYEE_NIF = "cif 3";
+	final static String PE230_EMPLOYEE_NIF = "cif_trabajador";
 
 	// CONTRACT FIELDS
 	final static String PE230_COTNRACT_ID_NUMBER_1 = "c1";
@@ -160,17 +162,26 @@ public class ModelPE230 extends AbstractAnnexModel {
 			
 			super.loadPdfCommonFields(contract);
 			
-			
+			TrainingCourse trainingCourse = obtainTrainingCourse(map.get(ContextVariable.TRAINING_COURSE.getName()));
 			// HEADER FIELDS
-			getPdfFieldsMap().get(PE230_CP_YES).setValue("");
-			getPdfFieldsMap().get(PE230_CP_NO).setValue("");
-			getPdfFieldsMap().get(PE230_FP_YES).setValue("");
-			getPdfFieldsMap().get(PE230_FP_NO).setValue("");
-			getPdfFieldsMap().get(PE230_CENTER_AVAILABLE_YES).setValue("");
-			getPdfFieldsMap().get(PE230_CENTER_AVAILABLE_NO).setValue("");
+			if(trainingCourse.isProfessionalCertificate()){
+				getPdfFieldsMap().get(PE230_CP_YES).setValue("true");
+			} else {
+				getPdfFieldsMap().get(PE230_CP_NO).setValue("true");
+			}
+			if(trainingCourse.isFpTitle()){
+				getPdfFieldsMap().get(PE230_FP_YES).setValue("true");
+			} else {
+				getPdfFieldsMap().get(PE230_FP_NO).setValue("true");
+			}
+			if(trainingCourse.isCenterAvailable()){
+				getPdfFieldsMap().get(PE230_CENTER_AVAILABLE_YES).setValue("true");
+			} else {
+				getPdfFieldsMap().get(PE230_CENTER_AVAILABLE_NO).setValue("true");
+			}
 
-			getPdfFieldsMap().get(PE230_CP_NAME).setValue("");
-			getPdfFieldsMap().get(PE230_FP_TITLE).setValue("");
+			getPdfFieldsMap().get(PE230_CP_NAME).setValue(trainingCourse.getCertificationName());
+			getPdfFieldsMap().get(PE230_FP_TITLE).setValue(trainingCourse.getFpTitleName());
 			
 			// ENTERPRISE FIELDS
 			getPdfFieldsMap().get(PE230_ENTERPRISE_NAME).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getFullName());
@@ -243,7 +254,7 @@ public class ModelPE230 extends AbstractAnnexModel {
 			if(contract.getEndDate()!=null){
 				getPdfFieldsMap().get(PE230_COTNRACT_END_DATE).setValue(formatter.format(contract.getEndDate()));
 			}
-			getPdfFieldsMap().get(PE230_COTNRACT_OCCUPATION).setValue("");
+			getPdfFieldsMap().get(PE230_COTNRACT_OCCUPATION).setValue(trainingCourse.getOccupationName());
 			String cno = map.get(ContextVariable.CNO.getName());
 			if( !StringUtils.isEmpty(cno) ){
 				getPdfFieldsMap().get(PE230_COTNRACT_CNO_1).setValue(cno.substring(0, 1));
@@ -345,10 +356,15 @@ public class ModelPE230 extends AbstractAnnexModel {
 			}
 			
 			// TRAINING COURSE FIELDS
-			getPdfFieldsMap().get(PE230_TRAINING_COURSE_CLASSROOM).setValue("");
-			getPdfFieldsMap().get(PE230_TRAINING_COURSE_DISTANCE).setValue("");
-			getPdfFieldsMap().get(PE230_TRAINING_COURSE_PHONE_LEARNING).setValue("");
-			getPdfFieldsMap().get(PE230_TRAINING_COURSE_MIXED).setValue("");
+			if(trainingCourse.getModality()==TrainingModality.CLASSROOM){
+				getPdfFieldsMap().get(PE230_TRAINING_COURSE_CLASSROOM).setValue("true");
+			} else if(trainingCourse.getModality()==TrainingModality.DISTANCE){
+				getPdfFieldsMap().get(PE230_TRAINING_COURSE_DISTANCE).setValue("true");
+			} else if(trainingCourse.getModality()==TrainingModality.PHONE){
+				getPdfFieldsMap().get(PE230_TRAINING_COURSE_PHONE_LEARNING).setValue("true");
+			} else if(trainingCourse.getModality()==TrainingModality.MIX){
+				getPdfFieldsMap().get(PE230_TRAINING_COURSE_MIXED).setValue("true");
+			}
 			getPdfFieldsMap().get(PE230_TRAINING_COURSE_START_DATE).setValue("");
 			getPdfFieldsMap().get(PE230_TRAINING_COURSE_END_DATE).setValue("");
 			getPdfFieldsMap().get(PE230_TRAINING_COURSE_SCHEDULE).setValue("");
@@ -391,6 +407,21 @@ public class ModelPE230 extends AbstractAnnexModel {
 			Iterator<ITransferObject> it = bean.getList(criteria).iterator();
 			while( it.hasNext() ){
 				return (TrainingCenter) it.next();
+			}
+		} catch (ManagerBeanException e) {
+			// do nothing ...
+		}
+		return null;
+	}
+	
+	private TrainingCourse obtainTrainingCourse(String value) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(TrainingCourse.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_COURSE_ID), Integer.parseInt(value) );
+			Iterator<ITransferObject> it = bean.getList(criteria).iterator();
+			while( it.hasNext() ){
+				return (TrainingCourse) it.next();
 			}
 		} catch (ManagerBeanException e) {
 			// do nothing ...
