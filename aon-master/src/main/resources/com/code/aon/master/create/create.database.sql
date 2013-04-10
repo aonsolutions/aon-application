@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.15.0
+# Version: 7.15.1
 # Created by: girazu
-# Creation Date: 08/04/2013 18:50
+# Creation Date: 09/04/2013 17:35
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1986,6 +1986,33 @@ CREATE TABLE `catalogue_item` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos del Catalogo';
 
 #
+# Structure for the `rattach` table : 
+#
+
+CREATE TABLE `rattach` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del Archivo Adjunto de la Persona o Empresa',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `registry` int(4) NOT NULL DEFAULT '0' COMMENT 'Identificador del Registro de la Persona o Empresa',
+  `category` int(4) DEFAULT NULL COMMENT 'Categoria del Archivo Adjunto',
+  `mimeType` tinyint(2) DEFAULT '0' COMMENT 'Mime Type del Archivo Adjunto',
+  `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion del Archivo Adjunto',
+  `data` mediumblob COMMENT 'Archivo Adjunto en binario',
+  `type` tinyint(2) DEFAULT NULL COMMENT 'Tipo de Archivo Adjunto',
+  `scope` int(4) DEFAULT NULL COMMENT 'Ambito del Archivo Adjunto',
+  `security_level` tinyint(2) DEFAULT '0' COMMENT 'Nivel de seguridad del Archivo Adjunto',
+  `attach_date` date DEFAULT NULL COMMENT 'Fecha del Archivo Adjunto',
+  PRIMARY KEY (`id`),
+  KEY `IDX_RATTACH_SCOPE` (`scope`),
+  KEY `IDX_RATTACH_CATEGORY` (`category`),
+  KEY `IDX_RATTACH_REGISTRY` (`registry`),
+  KEY `IDX_RATTACH_DOMAIN` (`domain`),
+  CONSTRAINT `FK_RATTACH_CATEGORY` FOREIGN KEY (`category`) REFERENCES `category` (`id`),
+  CONSTRAINT `FK_RATTACH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_RATTACH_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
+  CONSTRAINT `FK_RATTACH_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Personas o Empresas';
+
+#
 # Structure for the `category` table : 
 #
 
@@ -1996,9 +2023,12 @@ CREATE TABLE `category` (
   `type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de la Categoria',
   `description` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion de la Categoria',
   `url` varchar(256) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Url de la Categoria',
+  `rattach` int(4) DEFAULT NULL COMMENT 'Identificador del Archivo Adjunto',
   PRIMARY KEY (`id`),
   KEY `IDX_CATEGORY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CATEGORY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  KEY `IDX_CATEGORY_RATTACH` (`rattach`),
+  CONSTRAINT `FK_CATEGORY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CATEGORY_RATTACH` FOREIGN KEY (`rattach`) REFERENCES `rattach` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias';
 
 #
@@ -5019,31 +5049,21 @@ CREATE TABLE `message_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Log de Mensajes';
 
 #
-# Structure for the `rattach` table : 
+# Structure for the `mk_campaign` table : 
 #
 
-CREATE TABLE `rattach` (
-  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del Archivo Adjunto de la Persona o Empresa',
+CREATE TABLE `mk_campaign` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `registry` int(4) NOT NULL DEFAULT '0' COMMENT 'Identificador del Registro de la Persona o Empresa',
-  `category` int(4) DEFAULT NULL COMMENT 'Categoria del Archivo Adjunto',
-  `mimeType` tinyint(2) DEFAULT '0' COMMENT 'Mime Type del Archivo Adjunto',
-  `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion del Archivo Adjunto',
-  `data` mediumblob COMMENT 'Archivo Adjunto en binario',
-  `type` tinyint(2) DEFAULT NULL COMMENT 'Tipo de Archivo Adjunto',
-  `scope` int(4) DEFAULT NULL COMMENT 'Ambito del Archivo Adjunto',
-  `security_level` tinyint(2) DEFAULT '0' COMMENT 'Nivel de seguridad del Archivo Adjunto',
-  `attach_date` date DEFAULT NULL COMMENT 'Fecha del Archivo Adjunto',
+  `active` tinyint(1) NOT NULL COMMENT 'Indica si la Campaña esta activa o no',
+  `description` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Campaña',
+  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   PRIMARY KEY (`id`),
-  KEY `IDX_RATTACH_SCOPE` (`scope`),
-  KEY `IDX_RATTACH_CATEGORY` (`category`),
-  KEY `IDX_RATTACH_REGISTRY` (`registry`),
-  KEY `IDX_RATTACH_DOMAIN` (`domain`),
-  CONSTRAINT `FK_RATTACH_CATEGORY` FOREIGN KEY (`category`) REFERENCES `category` (`id`),
-  CONSTRAINT `FK_RATTACH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_RATTACH_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
-  CONSTRAINT `FK_RATTACH_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Personas o Empresas';
+  KEY `IDX_MK_CAMPAIGN_DOMAIN` (`domain`),
+  KEY `IDX_MK_CAMPAIGN_SCOPE` (`scope`),
+  CONSTRAINT `FK_MK_CAMPAIGN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_MK_CAMPAIGN_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Campañas de Marketing';
 
 #
 # Structure for the `mk_template` table : 
@@ -5083,31 +5103,20 @@ CREATE TABLE `newsletter` (
   `title_color` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Color del titulo del Boletin',
   `header_template` int(4) DEFAULT NULL COMMENT 'Identificador de la Plantilla de Cabecera',
   `footer_template` int(4) DEFAULT NULL COMMENT 'Identificador de la Plantilla de Pie de Pagina',
+  `active` tinyint(1) DEFAULT '1' COMMENT 'Indica si el Boletin esta activo o no',
+  `width` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Ancho del Boletin',
+  `subject` varchar(128) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Asunto del Boletin',
+  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   PRIMARY KEY (`id`),
   KEY `IDX_NEWSLETTER_DOMAIN` (`domain`),
   KEY `IDX_NEWSLETTER_HEADER_TEMPLATE` (`header_template`),
   KEY `IDX_NEWSLETTER_FOOTER_TEMPLATE` (`footer_template`),
+  KEY `IDX_NEWSLETTER_SCOPE` (`scope`),
   CONSTRAINT `FK_NEWSLETTER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_NEWSLETTER_HEADER_TEMPLATE` FOREIGN KEY (`header_template`) REFERENCES `mk_template` (`id`),
-  CONSTRAINT `FK_NEWSLETTER_FOOTER_TEMPLATE` FOREIGN KEY (`footer_template`) REFERENCES `mk_template` (`id`)
+  CONSTRAINT `FK_NEWSLETTER_FOOTER_TEMPLATE` FOREIGN KEY (`footer_template`) REFERENCES `mk_template` (`id`),
+  CONSTRAINT `FK_NEWSLETTER_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Boletin';
-
-#
-# Structure for the `mk_campaign` table : 
-#
-
-CREATE TABLE `mk_campaign` (
-  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `active` tinyint(1) NOT NULL COMMENT 'Indica si la Campaña esta activa o no',
-  `description` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Campaña',
-  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
-  PRIMARY KEY (`id`),
-  KEY `IDX_MK_CAMPAIGN_DOMAIN` (`domain`),
-  KEY `IDX_MK_CAMPAIGN_SCOPE` (`scope`),
-  CONSTRAINT `FK_MK_CAMPAIGN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_MK_CAMPAIGN_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Campañas de Marketing';
 
 #
 # Structure for the `mk_action` table : 
@@ -5212,7 +5221,7 @@ CREATE TABLE `model` (
 CREATE TABLE `news` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL DEFAULT '1' COMMENT 'Identificador del Dominio',
-  `title` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Titulo de la Noticia',
+  `title` varchar(128) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Titulo de la Noticia',
   `description` varchar(1024) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Noticia',
   `content` text COLLATE latin1_spanish_ci NOT NULL COMMENT 'Contenido de la Noticia',
   `url` varchar(256) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Url de la Noticia',
@@ -5222,13 +5231,16 @@ CREATE TABLE `news` (
   `end_date` date DEFAULT NULL COMMENT 'Fecha fin Noticia',
   `category` int(4) NOT NULL COMMENT 'Categoria de la Noticia',
   `rattach` int(4) DEFAULT NULL COMMENT 'Identificador del Archivo Adjunto',
+  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   PRIMARY KEY (`id`),
   KEY `IDX_NEWS_DOMAIN` (`domain`),
   KEY `IDX_NEWS_CATEGORY` (`category`),
   KEY `IDX_NEWS_RATTACH` (`rattach`),
-  CONSTRAINT `FK_NEWS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  KEY `IDX_NEWS_SCOPE` (`scope`),
   CONSTRAINT `FK_NEWS_CATEGORY` FOREIGN KEY (`category`) REFERENCES `category` (`id`),
-  CONSTRAINT `FK_NEWS_RATTACH` FOREIGN KEY (`rattach`) REFERENCES `rattach` (`id`)
+  CONSTRAINT `FK_NEWS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_NEWS_RATTACH` FOREIGN KEY (`rattach`) REFERENCES `rattach` (`id`),
+  CONSTRAINT `FK_NEWS_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Noticias';
 
 #
@@ -6842,9 +6854,14 @@ CREATE TABLE `training_course` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `training_center` int(4) NOT NULL COMMENT 'Identificador del Centro Formativo',
   `code` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo del Curso Formativo',
-  `name` varchar(64) COLLATE latin1_spanish_ci NOT NULL DEFAULT '' COMMENT 'Nombre del Curso Formativo',
+  `certification_name` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Denominacion de la certificacion',
   `cno` int(4) DEFAULT NULL COMMENT 'CNO',
-  `modality` tinyint(1) DEFAULT NULL COMMENT 'Modalidad del Curso Formativo',
+  `modality` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Modalidad del Curso Formativo',
+  `fp_title_name` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Titulo de formacion profesional',
+  `occupation_name` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre de la ocupacion',
+  `professional_certificate` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Certificado de profesionalidad',
+  `fp_title` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Titulo de formacion profesional',
+  `center_available` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Centro disponible',
   PRIMARY KEY (`id`),
   KEY `IDX_TRAINING_COURSE_CNO` (`cno`),
   KEY `IDX_TRAINING_COURSE_DOMAIN` (`domain`),
@@ -7042,7 +7059,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.15.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.15.1');
 
 COMMIT;
 
