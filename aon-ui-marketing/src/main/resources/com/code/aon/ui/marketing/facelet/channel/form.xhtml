@@ -41,10 +41,17 @@
 					<aon:inputText id="Category_url" required="true"
 						value="#{channel.to.url}" size="80" maxlength="256" />
 						
+					<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{channel.to.registryAttachment}" />
+						<ui:param name="lookupLabel" value="#{marketingBundle.marketing_news_image}" />
+						<ui:param name="lookupControllerListener" value="#{newsletter.imageFilter}" />
+					</ui:include>													
+						
 				</aon:panelGrid>
 
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{documentLookup}" />		
 	</ui:define>
 </ui:composition>
 

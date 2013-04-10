@@ -31,6 +31,18 @@
 					<aon:inputText id="Newsletter_name" required="true"
 						value="#{newsletter.to.name}" size="32" maxlength="32" />
 						
+					<aon:outputLabel for="Newsletter_subject"
+						value="#{webmailBundle.webmail_subject}" />
+					<aon:inputText id="Newsletter_subject" required="true" 
+						value="#{newsletter.to.subject}" size="60" maxlength="128" />												
+						
+					<aon:outputLabel for="Newsletter_scope_id"
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Newsletter_scope_id" required="true"
+						value="#{newsletter.to.scope}">
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					</aon:selectOneMenu>
+						
 					<aon:outputLabel for="Newsletter_date"
 						value="#{bundle.aon_date}" />
 					<aon:selectInputDate id="Newsletter_date" required="true"
@@ -45,31 +57,37 @@
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{marketingCollections.newsletterLayouts}" />
 					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Newsletter_active"
+						value="#{bundle.aon_active}" />
+					<aon:selectBooleanCheckbox id="Newsletter_active" 
+						value="#{newsletter.to.active}" />
+						
+					<aon:outputLabel for="Newsletter_width"
+						value="#{marketingBundle.marketing_newsletter_width}" />
+					<aon:inputText id="Newsletter_width" 
+						value="#{newsletter.to.width}" size="16" maxlength="16" />																		
 					
 					<aon:outputLabel for="Newsletter_backgroundColor"
 						value="#{marketingBundle.marketing_newsletter_backgroundColor}" />
 					<rich:colorPicker id="Newsletter_backgroundColor"
-						value="#{newsletter.to.backgroundColor}" colorMode="rgb" />
+						value="#{newsletter.to.backgroundColor}" colorMode="hex" />
 
 					<aon:outputLabel for="Newsletter_titleColor"
 						value="#{marketingBundle.marketing_newsletter_titleColor}" />
 					<rich:colorPicker id="Newsletter_titleColor"
-						value="#{newsletter.to.titleColor}" colorMode="rgb" />					
-
-					<aon:outputLabel for="Template_id-header"
-						value="#{marketingBundle.marketing_newsletter_headerTemplate}" />
+						value="#{newsletter.to.titleColor}" colorMode="hex" />				
+						
 					<ui:include src="/com/code/aon/ui/marketing/facelet/marketingTemplate/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{newsletter.to.headerTemplate}" />
+						<ui:param name="lookupLabel" value="#{marketingBundle.marketing_newsletter_headerTemplate}" />
 						<ui:param name="lookupSuffix" value="-header" />
-						<ui:param name="skipLabel" value="#{true}" />
 					</ui:include>					
 
-					<aon:outputLabel for="Template_id-footer"
-						value="#{marketingBundle.marketing_newsletter_footerTemplate}" />
 					<ui:include src="/com/code/aon/ui/marketing/facelet/marketingTemplate/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{newsletter.to.footerTemplate}" />
+						<ui:param name="lookupLabel" value="#{marketingBundle.marketing_newsletter_footerTemplate}" />
 						<ui:param name="lookupSuffix" value="-footer" />
-						<ui:param name="skipLabel" value="#{true}" />
 					</ui:include>					
 						
 				</aon:panelGrid>

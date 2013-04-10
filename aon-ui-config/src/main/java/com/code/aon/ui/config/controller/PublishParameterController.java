@@ -1,4 +1,4 @@
-package com.code.aon.ui.infoweb.controller;
+package com.code.aon.ui.config.controller;
 
 import static com.code.aon.common.enumeration.AppParam.WEBINFO_FTP_PASSWORD;
 import static com.code.aon.common.enumeration.AppParam.WEBINFO_FTP_SERVER;
@@ -11,8 +11,7 @@ import static com.code.aon.common.enumeration.AppParam.WEBINFO_PUBLISH_URL;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.config.util.AppParamUtil;
-import com.code.aon.ui.infoweb.PublishProperties;
-
+import com.code.aon.ui.config.PublishProperties;
 
 public class PublishParameterController {
 
@@ -42,7 +41,7 @@ public class PublishParameterController {
 	
 	public PublishProperties getPublishProperties() {
 		PublishProperties fp = new PublishProperties();
-		fp.setFtpServer(AppParamUtil.getValue(WEBINFO_FTP_PASSWORD));
+		fp.setFtpServer(AppParamUtil.getValue(WEBINFO_FTP_SERVER));
 		fp.setFtpUser(AppParamUtil.getValue(WEBINFO_FTP_USER));
 		fp.setFtpPassword(AppParamUtil.getValue(WEBINFO_FTP_PASSWORD));
 		fp.setPreviewPath(AppParamUtil.getValue(WEBINFO_PREVIEW_PATH));

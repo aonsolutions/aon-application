@@ -3,6 +3,9 @@ package com.code.aon.ui.marketing.controller;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
@@ -13,6 +16,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.marketing.Newsletter;
 import com.code.aon.marketing.NewsletterDetail;
 import com.code.aon.marketing.Template;
@@ -21,6 +25,11 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.IController;
+import com.code.aon.ui.form.event.ControllerAdapter;
+import com.code.aon.ui.form.event.ControllerEvent;
+import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -31,6 +40,37 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class NewsletterController extends BasicController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(NewsletterController.class.getName());
+
+	private IControllerListener imageFilter;
+	
+	private List<MimeType> getImageMimeTypes() {
+		List<MimeType> list = new LinkedList<MimeType>();
+		for( MimeType mimeType : MimeType.values() ) {
+			if ( mimeType.getName().startsWith("image/") ) {
+				list.add(mimeType);
+			}
+		}
+		return list;
+	}
+	
+	public IControllerListener getImageFilter() {
+		if ( this.imageFilter == null ) {
+			this.imageFilter = new ControllerAdapter() {
+				@Override
+				public void beforeModelInitialized(ControllerEvent event)
+						throws ControllerListenerException {
+					IController controller = event.getController();
+					try {					
+						String alias = controller.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_MIME_TYPE);
+						controller.getCriteria().addInExpression(alias, getImageMimeTypes());
+					} catch (ManagerBeanException e) {
+						LOGGER.error("Error filtering documents", e);
+					}
+				}
+			};
+		}
+		return this.imageFilter;
+	}
 	
 	public void onSendEmail( ActionEvent event ) throws ManagerBeanException {
 		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
@@ -121,8 +161,7 @@ public class NewsletterController extends BasicController {
 		sb.append("</div>");		
 	}
 	
-	private static String getImageURL( NewsletterDetail nd ) {
-		RegistryAttachment ra = nd.getNews().getRegistryAttachment();
+	private static String getImageURL( RegistryAttachment ra ) {
 		if ( (ra != null) && (ra.getId() != null) ) {
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 			try {
@@ -138,7 +177,7 @@ public class NewsletterController extends BasicController {
 		sb.append("<tr><td>");
 		addTitle(nd, sb);
 		sb.append("</td></tr>");
-		String url = getImageURL(nd);
+		String url = getImageURL(nd.getNews().getRegistryAttachment());
 		if ( url != null ) {
 			sb.append("<tr><td>");
 			addImage(url, sb);
@@ -152,7 +191,7 @@ public class NewsletterController extends BasicController {
 	private static void addLeftAlignedImage( NewsletterDetail nd, StringBuffer sb ) {
 		sb.append("<tr><td>");
 		addTitle(nd, sb);
-		String url = getImageURL(nd);
+		String url = getImageURL(nd.getNews().getRegistryAttachment());
 		if ( url != null ) {
 			sb.append("<table  align=\"left\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tbody>");
 			sb.append("<tr><td>");
@@ -168,7 +207,7 @@ public class NewsletterController extends BasicController {
 	private static void addRightAlignedImage( NewsletterDetail nd, StringBuffer sb ) {
 		sb.append("<tr><td>");
 		addTitle(nd, sb);
-		String url = getImageURL(nd);
+		String url = getImageURL(nd.getNews().getRegistryAttachment());
 		if ( url != null ) {
 			sb.append("<table  align=\"right\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tbody>");
 			sb.append("<tr><td width=\"15\"/><td>");
@@ -182,7 +221,13 @@ public class NewsletterController extends BasicController {
 	}
 	
 	private static void addNewsletterDetail( NewsletterDetail nd, NewsletterLayout layout, StringBuffer sb ) {
-		sb.append("<table style=\"width: 667px;\"  cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tbody>");
+		sb.append("<table cellspacing=\"0\" cellpadding=\"0\" border=\"0");
+		if (! StringUtils.isEmpty(nd.getNewsletter().getWidth()) ) {
+			sb.append("\" style=\"width: ");
+			sb.append(nd.getNewsletter().getWidth());
+			
+		}
+		sb.append("\"><tbody>");		
 		switch ( layout ) {
 			case FULL_WIDTH_IMAGE:
 				addFullWidthImage(nd, sb);

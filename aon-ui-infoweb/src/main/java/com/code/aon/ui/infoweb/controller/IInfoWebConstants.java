@@ -13,8 +13,6 @@ public interface IInfoWebConstants {
 	String WEB_PAGE_CONTROLLER_NAME = "webPage";
 	
 	String WEB_PAGE_RESOURCE_CONTROLLER_NAME = "webPageResource";
-	
-	String PUBLISH_PARAMETER_CONTROLLER_NAME = "publishParameter";
 
 	// ************************************************************
 	// APP_PARAM

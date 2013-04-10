@@ -1,4 +1,19 @@
-package com.code.aon.ui.publisher.util;
+package com.code.aon.ui.config.util;
+
+import static com.code.aon.ui.config.controller.ConfigConstants.BUNDLE_NAME;
+import static com.code.aon.ui.config.controller.ConfigConstants.FTP_CONNECTED;
+import static com.code.aon.ui.config.controller.ConfigConstants.FTP_CONNECTING;
+import static com.code.aon.ui.config.controller.ConfigConstants.FTP_DISCONNECTED;
+import static com.code.aon.ui.config.controller.ConfigConstants.FTP_ERROR_CHANGE_DIRECTORY;
+import static com.code.aon.ui.config.controller.ConfigConstants.FTP_ERROR_CONNECTION;
+import static com.code.aon.ui.config.controller.ConfigConstants.FTP_ERROR_CREATE_DIRECTORY;
+import static com.code.aon.ui.config.controller.ConfigConstants.FTP_ERROR_CREATE_FILE;
+import static com.code.aon.ui.config.controller.ConfigConstants.FTP_ERROR_DELETE_DIRECTORY;
+import static com.code.aon.ui.config.controller.ConfigConstants.FTP_ERROR_DELETE_FILE;
+import static com.code.aon.ui.config.controller.ConfigConstants.FTP_ERROR_LOGIN;
+import static com.code.aon.ui.config.controller.ConfigConstants.FTP_LOGIN;
+import static com.code.aon.ui.config.controller.ConfigConstants.FTP_LOGOUT;
+import static com.code.aon.ui.config.controller.ConfigConstants.FTP_UPLOAD_FILE;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -20,13 +35,12 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.ILogger;
-import com.code.aon.ui.publisher.controller.IPublisherConstants;
 import com.code.aon.ui.util.AonUtil;
 
 /**
  * The Class FTPUtil.
  */
-public class FTPUtil implements IPublisherConstants {
+public class FTPUtil {
 
 	/** The Constant LOGGER. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(FTPUtil.class.getName());

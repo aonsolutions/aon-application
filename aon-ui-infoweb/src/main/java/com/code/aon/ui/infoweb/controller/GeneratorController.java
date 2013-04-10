@@ -2,6 +2,7 @@ package com.code.aon.ui.infoweb.controller;
 
 import static com.code.aon.common.enumeration.AppParam.WEBINFO_HOMEPAGE_ID;
 import static com.code.aon.common.enumeration.AppParam.WEBINFO_TEMPLATE_NAME;
+import static com.code.aon.ui.config.controller.ConfigConstants.PUBLISH_PARAMETER;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.BUNDLE_NAME;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.DIRECTORY_CREATION_ERROR;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.DIRECTORY_NOT_FOUND;
@@ -9,7 +10,6 @@ import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.DIRECTORY_NO_
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.IMAGE_COPY_ERROR;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.NO_PUBLISH_PARAMETERS;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.PAGE_WITHOUT_DETAIL;
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.PUBLISH_PARAMETER_CONTROLLER_NAME;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.WEB_GENERATED;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.WEB_GENERATION_ERROR;
 import static com.code.aon.ui.publisher.controller.IPublisherConstants.PUBLISH_ERROR;
@@ -64,15 +64,17 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.company.controller.CompanyImagesController;
+import com.code.aon.ui.config.PublishProperties;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.PublishParameterController;
+import com.code.aon.ui.config.util.FTPUtil;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.infoweb.PublishProperties;
 import com.code.aon.ui.infoweb.util.PathUtil;
 import com.code.aon.ui.infoweb.util.VelocityUtil;
 import com.code.aon.ui.infoweb.velocity.ImageHandler;
 import com.code.aon.ui.infoweb.velocity.MenuOptionHandler;
 import com.code.aon.ui.infoweb.velocity.VelocityConstants;
 import com.code.aon.ui.publisher.controller.IPublisherConstants;
-import com.code.aon.ui.publisher.util.FTPUtil;
 import com.code.aon.ui.publisher.util.ImageUtilEx;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -135,7 +137,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	}
 	
 	public void onInit(ActionEvent event) {
-		PublishParameterController ppc = (PublishParameterController) AonUtil.getRegisteredBean(PUBLISH_PARAMETER_CONTROLLER_NAME);
+		PublishParameterController ppc = (PublishParameterController) AonUtil.getRegisteredBean(PUBLISH_PARAMETER);
 		this.publishProperties = ppc.getPublishProperties();
 		this.generated = false;
 		this.published = false;		

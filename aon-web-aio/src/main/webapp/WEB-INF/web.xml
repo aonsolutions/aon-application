@@ -26,7 +26,7 @@
 		<url-pattern>/aonResource/*</url-pattern>
 	</servlet-mapping>
 
-	<!-- Logo Servlet -->
+	<!-- Documents Servlet -->
 	<servlet>
 		<servlet-name>LogoServlet</servlet-name>
 		<servlet-class>com.code.aon.ui.company.servlet.CompanyDocumentServlet</servlet-class>
@@ -34,6 +34,16 @@
 	<servlet-mapping>
 		<servlet-name>LogoServlet</servlet-name>
 		<url-pattern>/aonDocuments/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- RSS Servlet -->
+	<servlet>
+		<servlet-name>RSSServlet</servlet-name>
+		<servlet-class>com.code.aon.ui.marketing.servlet.RSSServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RSSServlet</servlet-name>
+		<url-pattern>/rss.xml</url-pattern>
 	</servlet-mapping>
 
 	<!-- GWT RPC Servlets -->

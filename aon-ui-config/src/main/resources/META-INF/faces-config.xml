@@ -65,6 +65,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ***************** PUBLISH PARAMETER ******************** -->
+	<managed-bean>
+		<managed-bean-name>publishParameter</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.controller.PublishParameterController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
 	<!-- ************ USER ************** -->
 	<managed-bean>
 		<managed-bean-name>user</managed-bean-name>
@@ -855,5 +862,13 @@
 			<to-view-id>/com/code/aon/ui/config/facelet/domain/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- =================== PUBLISH PARAMETER ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>publishParameter</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/publishParameter/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
 	
 </faces-config>

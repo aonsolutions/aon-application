@@ -32,7 +32,7 @@
 					<aon:outputLabel for="News_title"
 						value="#{marketingBundle.marketing_news_title}" />
 					<aon:inputText id="News_title" required="true"
-						value="#{news.to.title}" size="32" maxlength="32" />
+						value="#{news.to.title}" size="60" maxlength="128" />
 						
 					<aon:outputLabel for="News_category"
 						value="#{marketingBundle.marketing_news_channel}" />
@@ -42,6 +42,13 @@
 						<f:selectItems value="#{marketingCollections.channels}" />
 					</aon:selectOneMenu>												
 
+					<aon:outputLabel for="News_scope_id"
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="News_scope_id" required="true"
+						value="#{news.to.scope}">
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					</aon:selectOneMenu>
+					
 					<aon:outputLabel for="News_description"
 						value="#{bundle.aon_description}" />
 					<aon:inputTextarea id="News_description" required="true"
@@ -57,7 +64,7 @@
 						
 					<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{news.to.registryAttachment}" />
-						<ui:param name="lookupControllerListener" value="#{news.documentFilter}" />
+						<ui:param name="lookupControllerListener" value="#{newsletter.imageFilter}" />
 					</ui:include>
 						
 					<aon:outputLabel for="News_initDate"

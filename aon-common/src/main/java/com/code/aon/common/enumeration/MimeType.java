@@ -169,7 +169,12 @@ public enum MimeType implements IResourceable {
    /**
     * CSV file MIME Type.
     */
-   MIME_CSV ("text/csv", "csv");
+   MIME_CSV ("text/csv", "csv"),
+
+    /**
+     * RSS file MIME Type.
+     */
+    MIME_RSS ("application/rss+xml", "rss");
     
     /**
      * Messages file base path.

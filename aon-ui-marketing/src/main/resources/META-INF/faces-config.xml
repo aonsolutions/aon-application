@@ -724,7 +724,7 @@
 	<managed-bean>
 		<managed-bean-name>news</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.marketing.controller.NewsController
+			com.code.aon.ui.form.BasicController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -742,8 +742,25 @@
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>News_title</value>
-		</managed-property>								
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{newsScopeListener}</value>
+			</list-entries>
+		</managed-property>		
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>newsScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>News_scope_id</value>
+		</managed-property>
+	</managed-bean>	
 	
 	<!-- ************ NEWS LOOKUP ************** -->
 	<managed-bean>
@@ -811,6 +828,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{newsletterDetailChildListener}</value>
+				<value>#{newsletterScopeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -833,6 +851,17 @@
 			</map-entries>
 		</managed-property>		
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>newsletterScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>Newsletter_scope_id</value>
+		</managed-property>
+	</managed-bean>	
+	
 	
 	<!-- ************ NEWSLETTER DETAIL ************** -->
 	<managed-bean>
@@ -901,6 +930,15 @@
 			<value>com.code.aon.marketing.Newsletter</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Newsletter_active</key>
+					<value>#{true}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>							
+		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Newsletter_name</value>
 		</managed-property>									
@@ -909,6 +947,21 @@
 			<value>/com/code/aon/ui/marketing/facelet/newsletter/listBasic.xhtml</value>
 		</managed-property>
 	</managed-bean>	
+
+	<!-- ************ RSS Controller ************** -->
+	<managed-bean>
+		<managed-bean-name>rss</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.marketing.controller.RSSController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
+	<!-- =================== RSS ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>rss_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/marketing/facelet/rss/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>				
 
 	<!-- =================== Channel ================= -->	
 	<navigation-rule>

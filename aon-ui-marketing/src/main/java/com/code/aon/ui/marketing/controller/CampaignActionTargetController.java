@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.commercial.Target;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.MarketingAction;
@@ -134,6 +135,15 @@ public class CampaignActionTargetController extends LinesController {
 			};
 		}
 		return this.actionFilter;
+	}
+	
+	public void onClearStatus( ActionEvent event ) throws ManagerBeanException {
+		for( ITransferObject to : getManagerBean().getList(getCriteria()) ) {
+			ActionTarget at = (ActionTarget) to;
+			at.setStatus(ActionTargetStatus.PENDING);
+			at.setUser(null);
+			getManagerBean().update(at);
+		}
 	}
 	
 }

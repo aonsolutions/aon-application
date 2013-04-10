@@ -142,6 +142,13 @@
 							actionListener="#{campaignActionTargetSearch.onClearSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-rubber" >
 							<aon:actionListener method="#{campaignActionTargetSearch.onFilter}" />
+						</aon:commandButton>					
+						<aon:commandButton id="clearStatus"
+							value="#{marketingBundle.marketing_action_clear_status}"
+							reRender="campaignActionTargetDataDiv"
+							actionListener="#{campaignActionTarget.onClearStatus}"
+							styleClass="aon-finding-toolbar-item aon-icon-rubber" >
+							<aon:actionListener method="#{campaignActionTargetSearch.onFilter}" />
 						</aon:commandButton>							
 					</aon:div>
 									

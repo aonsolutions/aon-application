@@ -1,10 +1,10 @@
-package com.code.aon.ui.infoweb;
+package com.code.aon.ui.config;
 
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.ui.publisher.util.FTPUtil;
+import com.code.aon.ui.config.util.FTPUtil;
 
 public class PublishProperties {
 

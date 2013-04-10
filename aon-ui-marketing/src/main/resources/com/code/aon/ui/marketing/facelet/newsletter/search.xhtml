@@ -23,6 +23,11 @@
 						value="#{bundle.aon_name}" />
 					<aon:inputText id="Newsletter_name" size="80"
 						valueChangeListener="#{controller.addExpression}" />
+
+					<aon:outputLabel for="Newsletter_subject"
+						value="#{webmailBundle.webmail_subject}" />
+					<aon:inputText id="Newsletter_subject" size="80"
+						valueChangeListener="#{controller.addExpression}" />
 						
 					<aon:outputLabel for="Newsletter_url"
 						value="#{marketingBundle.marketing_news_url}" />
@@ -57,6 +62,15 @@
 						<f:selectItems value="#{marketingCollections.newsletterLayouts}" />		
 					</aon:selectOneMenu>	
 													
+					<aon:outputLabel for="Newsletter_active"				
+						value="#{bundle.aon_active}"/>
+					<aon:selectOneMenu id="Newsletter_active"
+						valueChangeListener="#{controller.addExpression}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+					</aon:selectOneMenu>
+														
 				</ui:define>
 			
 			</ui:decorate>

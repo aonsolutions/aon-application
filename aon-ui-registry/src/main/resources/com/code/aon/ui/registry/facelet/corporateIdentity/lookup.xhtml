@@ -7,7 +7,7 @@
 	<ui:include src="/com/code/aon/ui/resources/facelet/shared/lookupAudit.xhtml" >
 		<ui:param name="lookupBean" value="#{documentLookup}" />
 		<ui:param name="controller" value="#{corporateIdentityAttach}" />
-		<ui:param name="lookupLabel" value="#{bundle.aon_document}" />
+		<aon:valueParam name="lookupLabel" default="#{bundle.aon_document}"/>
 		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.description}"/>
 		<ui:param name="lookupInputSuggestExpression" value="#{lto.description} (#{lto.id})"/>		
 		<ui:param name="searchButtonTitle" value="#{registryBundle.registry_document_selection}" />

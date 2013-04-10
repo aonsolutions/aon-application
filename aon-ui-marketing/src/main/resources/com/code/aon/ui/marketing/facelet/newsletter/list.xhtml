@@ -38,6 +38,15 @@
 							<aon:outputText value="#{to.layout}"/>
 						</aon:column>
 
+	 					<aon:column styleClass="aon-editDataTable-iconColumn"
+	 						alias="Newsletter.active" >
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_active}" />
+							</f:facet>
+							<aon:outputText value="&#160;"
+								styleClass="#{(to.active)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" />
+						</aon:column>
+
 					</ui:define>
 				</ui:decorate> 
 

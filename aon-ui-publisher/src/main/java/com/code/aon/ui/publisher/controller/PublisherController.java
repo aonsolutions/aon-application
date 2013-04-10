@@ -12,7 +12,7 @@ import com.code.aon.common.DefaultLogger;
 import com.code.aon.common.ILogger;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ui.publisher.util.FTPUtil;
+import com.code.aon.ui.config.util.FTPUtil;
 import com.code.aon.ui.publisher.util.PathUtil;
 import com.code.aon.ui.util.AonUtil;
 
