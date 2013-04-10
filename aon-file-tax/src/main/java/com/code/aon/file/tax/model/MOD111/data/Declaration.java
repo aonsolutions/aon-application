@@ -154,7 +154,7 @@ public class Declaration {
 
 	public String getName() {
 		if ( isPerson() ) {
-			return StringUtils.substringAfter(getName(), " ");
+			return StringUtils.substringAfter(name, " ");
 		}
 		return name;
 	}

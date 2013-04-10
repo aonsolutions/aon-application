@@ -307,7 +307,7 @@ public abstract class FiscalModelController extends BasicController {
 					.getExternalContext().getResponse();
 			String fileName = getFileName();
 			MimeType mimeType = getMimeType();
-			response.setContentType(mimeType.getName());
+			response.setCharacterEncoding("US-ASCII");
 			response.setHeader("Content-disposition", "attachment; filename=\""
 					+ fileName + "." + mimeType.getExtension() + "\";");
 			ServletOutputStream output = response.getOutputStream();
