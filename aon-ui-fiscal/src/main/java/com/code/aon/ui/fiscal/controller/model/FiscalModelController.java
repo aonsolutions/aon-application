@@ -277,25 +277,27 @@ public abstract class FiscalModelController extends BasicController {
 	}
 
 	public void downloadDisk(ActionEvent event) throws ManagerBeanException {
-        try {
-    		FacesContext faces = FacesContext.getCurrentInstance();
-            HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
-        	String fileName = getFileName();
-        	MimeType mimeType = getMimeType();
-	        response.setContentType(mimeType.getName());
-	        response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "." + mimeType.getExtension()+"\";");
-	        ServletOutputStream output = response.getOutputStream();
-	        InputStream input = getFileOutput().getFile() != null
-	        		?new FileInputStream(getFileOutput().getFile())
-	        		:new ByteArrayInputStream(getFileOutput().getContent());
-	        int size = IOUtils.copy(input, output);
-	        if (size > 0) {
-		        response.setHeader("Content-Length", String.valueOf(size));
-	        }
-	        output.close();
-	        input.close();
-	        response.flushBuffer();
-	        faces.responseComplete();
+		try {
+			FacesContext faces = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) faces
+					.getExternalContext().getResponse();
+			String fileName = getFileName();
+			MimeType mimeType = getMimeType();
+			response.setCharacterEncoding("US-ASCII");
+			response.setHeader("Content-disposition", "attachment; filename=\""
+					+ fileName + "." + mimeType.getExtension() + "\";");
+			ServletOutputStream output = response.getOutputStream();
+			InputStream input = getFileOutput().getFile() != null ? new FileInputStream(
+					getFileOutput().getFile()) : new ByteArrayInputStream(
+					getFileOutput().getContent());
+			int size = IOUtils.copy(input, output);
+			if (size > 0) {
+				response.setHeader("Content-Length", String.valueOf(size));
+			}
+			output.close();
+			input.close();
+			response.flushBuffer();
+			faces.responseComplete();
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);
 		}
