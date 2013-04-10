@@ -664,7 +664,7 @@ public class ContrataCodeTablesWriter {
 				StringTokenizer token = new StringTokenizer(currentLine, "\t");
 				if(token.hasMoreTokens()){
 					String code = token.nextToken();
-					out.write( "\t"+"T_"+code.replace("*", "").toUpperCase()+"( \""+code+"\"" );
+					out.write( "\t"+"T_"+code.replace("*", "").toUpperCase()+"( \""+code.trim()+"\"" );
 					if(token.hasMoreTokens()){
 						String label = StringUtils.strip(token.nextToken());
 						out.write(", \""+(label.length()>80?(label.substring(0, 80)+"..."):label)+"\"");

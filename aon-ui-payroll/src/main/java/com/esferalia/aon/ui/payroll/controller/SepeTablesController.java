@@ -58,7 +58,7 @@ public class SepeTablesController {
 		List<Enum<?>> list = new ArrayList<Enum<?>>();
 		setTable(((ContrataCodeTables)getTablesModel().getRowData()));
 		try {
-			Class<?> clazz = Class.forName(ENUMERATIONS_PACKAGE_NAME+"."+getTable().getCode().replace("*", ""));
+			Class<?> clazz = Class.forName(ENUMERATIONS_PACKAGE_NAME+"."+getTable().getCode().trim().replace("*", ""));
 			clazz.getEnumConstants();
 			for (Object obj : clazz.getEnumConstants()) {
 				list.add((Enum<?>) obj);	

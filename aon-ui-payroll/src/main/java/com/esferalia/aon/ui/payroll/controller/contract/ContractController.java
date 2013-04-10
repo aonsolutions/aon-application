@@ -417,7 +417,7 @@ public class ContractController extends BasicController implements IVariablesHan
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_COURSE_TRAINING_CENTER_ID), center.getId());
 				for(ITransferObject to: bean.getList(criteria)){
 					TrainingCourse course = (TrainingCourse) to;
-					SelectItem item = new SelectItem(course, course.getName());
+					SelectItem item = new SelectItem(course, "("+course.getCode()+") "+course.getOccupationName());
 					list.add(item);
 				}
 			} catch (ManagerBeanException e) {

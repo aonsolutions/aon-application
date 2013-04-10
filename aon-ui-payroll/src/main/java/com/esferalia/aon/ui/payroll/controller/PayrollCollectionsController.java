@@ -50,6 +50,7 @@ import com.esferalia.aon.payroll.enumeration.QuoteType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
+import com.esferalia.aon.payroll.enumeration.TrainingModality;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -76,6 +77,7 @@ public class PayrollCollectionsController {
 	private List<SelectItem> quoteGroups;
 	private List<SelectItem> occupationTypes;
 	private List<SelectItem> ssRegimes;
+	private List<SelectItem> trainingModalities;
 	
 	private List<SelectItem> streetTypes;
 	private List<SelectItem> leaveReportTypes;
@@ -348,6 +350,21 @@ public class PayrollCollectionsController {
 			}
 		}
 		return ssRegimes;
+	}
+	
+	public List<SelectItem> getTrainingModalities() {
+		if (trainingModalities == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+					.getLocale();
+			trainingModalities = new LinkedList<SelectItem>();
+			TrainingModality[] types = TrainingModality.values();
+			for (TrainingModality type : types) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				trainingModalities.add(item);
+			}
+		}
+		return trainingModalities;
 	}
 	
 	public List<SelectItem> getLeaveReportTypes() {

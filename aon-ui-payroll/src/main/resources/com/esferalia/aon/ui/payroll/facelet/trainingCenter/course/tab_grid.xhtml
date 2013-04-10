@@ -11,7 +11,8 @@
 		
 		<ui:define name="columns">
 		
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column alias="TrainingCourse.code" 
+				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputLabel for="trainingCourse_code" value="#{bundle.aon_id}" />
 				</f:facet>
@@ -24,24 +25,63 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column alias="TrainingCourse.occupationName"
+				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="trainingCourse_name" value="#{bundle.aon_name}" />
+					<aon:outputLabel for="TrainingCourse_occupationName" value="#{payrollBundle.payroll_trainingCourse_occupationName}" />
 				</f:facet>
-				<aon:outputText value="#{to.name}" rendered="#{formList}" />
-				<aon:inputText id="trainingCourse_name" size="32" maxlength="64" 
-					value="#{trainingCourse.to.name}" rendered="#{formEdit}" />
+				<aon:outputText value="#{to.occupationName}" rendered="#{formList}" >
+					<aon:abbreviateConverter maxWidth="35" />
+				</aon:outputText>
+				<aon:inputText id="TrainingCourse_occupationName" size="32" maxlength="64" 
+					value="#{trainingCourse.to.occupationName}" rendered="#{formEdit}" />
 				<f:facet name="footer">
-					<aon:inputText id="trainingCourse_name-New" size="64" maxlength="64" 
-						value="#{trainingCourse.to.name}" rendered="#{formNew}" />
+					<aon:inputText id="TrainingCourse_occupationName-New" size="64" maxlength="64" 
+						value="#{trainingCourse.to.occupationName}" rendered="#{formNew}" />
 				</f:facet>
 			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			
+			<aon:column alias="TrainingCourse.certificationName"
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="TrainingCourse_certificationName" value="#{payrollBundle.payroll_trainingCourse_certificationName}" />
+				</f:facet>
+				<aon:outputText value="#{to.certificationName}" rendered="#{formList}" >
+					<aon:abbreviateConverter maxWidth="35" />
+				</aon:outputText>
+				<aon:inputText id="TrainingCourse_certificationName" size="32" maxlength="64" 
+					value="#{trainingCourse.to.certificationName}" rendered="#{formEdit}" />
+				<f:facet name="footer">
+					<aon:inputText id="TrainingCourse_certificationName-New" size="64" maxlength="64" 
+						value="#{trainingCourse.to.certificationName}" rendered="#{formNew}" />
+				</f:facet>
+			</aon:column>
+  
+			<aon:column alias="TrainingCourse.fpTitleName"
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="TrainingCourse_fpTitleName" value="#{payrollBundle.payroll_trainingCourse_fpTitleName}" />
+				</f:facet>
+				<aon:outputText value="#{to.fpTitleName}" rendered="#{formList}" >
+					<aon:abbreviateConverter maxWidth="35" />
+				</aon:outputText>
+				<aon:inputText id="TrainingCourse_fpTitleName" size="32" maxlength="64" 
+					value="#{trainingCourse.to.fpTitleName}" rendered="#{formEdit}" />
+				<f:facet name="footer">
+					<aon:inputText id="TrainingCourse_fpTitleName-New" size="64" maxlength="64" 
+						value="#{trainingCourse.to.fpTitleName}" rendered="#{formNew}" />
+				</f:facet>
+			</aon:column>
+  
+<!--  
+			<aon:column alias="TrainingCourse.CNO.title"
+				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputLabel for="CNO_id" value="#{payrollBundle.payroll_contract_cno}" />
 				</f:facet>
-				<aon:outputText value="#{to.CNO.fullDescription}" rendered="#{formList}" />
+				<aon:outputText value="#{to.CNO.fullDescription}" rendered="#{formList}" >
+					<aon:abbreviateConverter maxWidth="40" />
+				</aon:outputText>
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
 					<ui:param name="lookupTo" value="#{trainingCourse.to.CNO}" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
@@ -57,27 +97,76 @@
 					</ui:include>
 				</f:facet>
 			</aon:column>
+-->
 
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column alias="TrainingCourse.modality" 
+				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="trainingCourse_modality" value="#{payrollBundle.payroll_trainingCourse_modality}" />
+					<aon:outputLabel for="TrainingCourse_modality" value="#{payrollBundle.payroll_trainingCourse_modality}" />
 				</f:facet>
-					<aon:outputText value="#{(to.modality)?(payrollBundle.payroll_trainingCourse_modality_classroom):(payrollBundle.payroll_trainingCourse_modality_distance)}" rendered="#{formList}" />
-				<aon:selectOneMenu id="trainingCourse_modality" styleClass="aon-noborder" 
+				<aon:outputText value="#{to.modality}" rendered="#{formList}" />
+				<aon:selectOneMenu id="TrainingCourse_modality" styleClass="aon-noborder" 
 					value="#{trainingCourse.to.modality}" layout="pageDirection"
 					rendered="#{formEdit}">
-					<f:selectItem itemLabel="#{payrollBundle.payroll_trainingCourse_modality_distance}" itemValue="#{false}" />
-					<f:selectItem itemLabel="#{payrollBundle.payroll_trainingCourse_modality_classroom}" itemValue="#{true}" />
+					<f:selectItems value="#{payrollCollections.trainingModalities}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu id="trainingCourse_modality-New" styleClass="aon-noborder"
+					<aon:selectOneMenu id="TrainingCourse_modality-New" styleClass="aon-noborder"
 						value="#{trainingCourse.to.modality}" layout="pageDirection"
 						rendered="#{formNew}">
-						<f:selectItem itemLabel="#{payrollBundle.payroll_trainingCourse_modality_distance}" itemValue="#{false}" />
-						<f:selectItem itemLabel="#{payrollBundle.payroll_trainingCourse_modality_classroom}" itemValue="#{true}" />
+						<f:selectItems value="#{payrollCollections.trainingModalities}" />
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>
+  			
+  			<aon:column alias="TrainingCourse.professionalCertificate"
+  				 styleClass="aon-editDataTable-iconColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="TrainingCourse_professionalCertificate" value="#{payrollBundle.payroll_trainingCourse_professionalCertificate}" />
+				</f:facet>
+				<aon:div rendered="#{formList}" styleClass="#{to.professionalCertificate?'aon-icon-checked':'aon-icon-check'}">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:selectBooleanCheckbox id="TrainingCourse_professionalCertificate" styleClass="aon-margin-left"
+					value="#{trainingCourse.to.professionalCertificate}" rendered="#{formEdit}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox id="TrainingCourse_professionalCertificate-New" styleClass="aon-margin-left"
+						value="#{trainingCourse.to.professionalCertificate}" rendered="#{formNew}" />
+				</f:facet>
+			</aon:column>
+  			
+  			<aon:column alias="TrainingCourse.fpTitle"
+  				 styleClass="aon-editDataTable-iconColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="TrainingCourse_fpTitle" value="#{payrollBundle.payroll_trainingCourse_fpTitle}" />
+				</f:facet>
+				<aon:div rendered="#{formList}" styleClass="#{to.fpTitle?'aon-icon-checked':'aon-icon-check'}">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:selectBooleanCheckbox id="TrainingCourse_fpTitle" styleClass="aon-margin-left"
+					value="#{trainingCourse.to.fpTitle}" rendered="#{formEdit}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox id="TrainingCourse_fpTitle-New" styleClass="aon-margin-left"
+						value="#{trainingCourse.to.fpTitle}" rendered="#{formNew}" />
+				</f:facet>
+			</aon:column>
+  			
+  			<aon:column alias="TrainingCourse.centerAvailable" 
+  				 styleClass="aon-editDataTable-iconColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="TrainingCourse_centerAvailable" value="#{payrollBundle.payroll_trainingCourse_centerAvailable}" />
+				</f:facet>
+				<aon:div rendered="#{formList}" styleClass="#{to.centerAvailable?'aon-icon-checked':'aon-icon-check'}">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:selectBooleanCheckbox id="TrainingCourse_centerAvailable" styleClass="aon-margin-left"
+					value="#{trainingCourse.to.centerAvailable}" rendered="#{formEdit}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox id="TrainingCourse_centerAvailable-New" styleClass="aon-margin-left"
+						value="#{trainingCourse.to.centerAvailable}" rendered="#{formNew}" />
+				</f:facet>
+			</aon:column>
+  
 
 		</ui:define>
 	</ui:decorate>
