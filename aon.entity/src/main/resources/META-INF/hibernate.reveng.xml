@@ -1548,6 +1548,10 @@
 		</primary-key>
 	</table>
 	
+	<table name="training_course">
+		<column name="modality" type="com.esferalia.aon.payroll.enumeration.TrainingModality"/>
+	</table>
+	
 	<table name="user">
 		<column name="enterprise" exclude="true"/>
 		<column name="registry" exclude="true"/>
