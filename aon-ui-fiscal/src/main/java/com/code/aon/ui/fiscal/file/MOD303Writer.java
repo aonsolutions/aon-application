@@ -67,7 +67,8 @@ public class MOD303Writer {
 			SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
 			Declaration declaration = new  Declaration();
 			declaration.setYear(vatTaxDeclaration.getVatTax().getYear());
-			declaration.setPeriod(vatTaxDeclaration.getVatTax().getPeriod().getName());
+			Administration admon = vatTaxDeclaration.getAdministration();
+			declaration.setPeriod(vatTaxDeclaration.getVatTax().getPeriod().getName(admon));
 			if (vatTaxDeclaration.getRegistryBank() != null && vatTaxDeclaration.getRegistryBank().getBankAccount() != null) {
 				BankAccount ba = vatTaxDeclaration.getRegistryBank().getBankAccount();
 				declaration.setCcc1(ba.getEntity());
