@@ -153,7 +153,7 @@ public class SQLAgreementContextFactory
 			while ( rs.next() ) {
 				ExpressionImpl expr = 
 					new ExpressionImpl();
-				expr.setScope(ExpressionScope.APPLICATION);
+				expr.setScope(ExpressionScope.AGREEMENT);
 				expr.setName(rs.getString(AgreementLevelDataColumns.NAME));
 				expr.setExpression(rs.getString(AgreementLevelDataColumns.EXPRESSION));
 				Date start = Period.max(rs.getDate(AgreementLevelDataColumns.START_DATE), startDate);
@@ -262,7 +262,7 @@ public class SQLAgreementContextFactory
 					new ExpressionImpl();
 				expr.setName(rs.getString(SystemDataColumns.NAME));
 				expr.setExpression(rs.getString(SystemDataColumns.EXPRESSION));
-				expr.setScope(ExpressionScope.APPLICATION);
+				expr.setScope(ExpressionScope.SYSTEM);
 				Date start = Period.max(rs.getDate(SystemDataColumns.START_DATE), startDate);
 				Date end = Period.min ( rs.getDate(SystemDataColumns.END_DATE), endDate );
 				try {
