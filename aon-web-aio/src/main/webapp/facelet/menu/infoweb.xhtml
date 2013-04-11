@@ -84,7 +84,9 @@
 										<aon:commandLink id="publishParameter" 
 											action="publishParameter" 
 											actionListener="#{publishParameter.onInit}"
-											value="#{configBundle.config_publish_parameters_module}" />
+											value="#{configBundle.config_publish_parameters_module}" >
+											<f:setPropertyActionListener target="#{publishParameter.showOnlyFTP}" value="#{false}" />
+										</aon:commandLink>											
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="generator" 

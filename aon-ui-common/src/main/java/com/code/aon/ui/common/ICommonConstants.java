@@ -13,6 +13,8 @@ public interface ICommonConstants {
 	
 	/** Default Bundle */
 	String DEFAULT_BUNDLE = "bundle";
+	
+	String APPLICATION_BUNDLE_NAME = "appBundle";
 
 	/**	 */
 	String NUMERIC_ERROR = "aon_numeric_error";
@@ -87,6 +89,9 @@ public interface ICommonConstants {
 
 	/** The aonRole controller. */
 	String AON_ROLE_CONTROLLER_NAME = "aonRole";
+
+	/** The customize controller. */
+	String CUSTOMIZE_CONTROLLER_NAME = "customize";
 	
 	// ************************************************************
 	// CONFIGURATION

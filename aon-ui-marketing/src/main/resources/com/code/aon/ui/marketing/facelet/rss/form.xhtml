@@ -19,13 +19,12 @@
 				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_news_rss}" />
 				<ui:param name="toolbarDescription" value="&#160;" />
 				<ui:define name="toolbarContent">
-					<!--
-					<aon:htmlCommandLink id="downloadRSS"
-						value="#{marketingBundle.marketing_news_download_rss}" target="_blank"
-						actionListener="#{rss.onDownloadRSS}"
-						styleClass="aon-finding-toolbar-item aon-icon-mail-save"
-						accesskey="#{bundle.aon_key_accept}" />
-					-->
+					<aon:commandButton id="publishRSS" reRender="aonStatus"
+						value="#{marketingBundle.marketing_news_upload_rss}"
+						actionListener="#{rss.onPublish}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-accept" >
+						<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
+					</aon:commandButton>								
 				</ui:define>
 			</ui:decorate>			
 
@@ -53,6 +52,9 @@
 			</aon:div>
 			
 		</aon:form>
+		<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
+			<ui:param name="logPanelTitle" value="#{infowebBundle.infoweb_publish}" />
+		</ui:include>		
 	</ui:define>
 </ui:composition>
 

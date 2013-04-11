@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.cfg.AnnotationConfiguration;
@@ -30,6 +32,8 @@ import com.code.aon.ui.util.DataSourceUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
 public class RSSServlet extends HttpServlet {
+
+	private static final String CHANNEL_PARAMETER = "channel";
 
 	private static final long serialVersionUID = 1L;
 	
@@ -78,6 +82,16 @@ public class RSSServlet extends HttpServlet {
 		return configuration;
 	}	
 	
+	private Integer getChannelId( HttpServletRequest req ) {
+		String value = req.getParameter(CHANNEL_PARAMETER);
+		if (! StringUtils.isEmpty(value) ) {
+			if ( NumberUtils.isNumber(value) ) {
+				return NumberUtils.toInt(value);
+			}
+		}
+		return null;
+	}
+	
 	private byte[] getRSSData( HttpServletRequest req ) {
 		byte[] data = null;
 		SessionFactory factory = null;
@@ -86,7 +100,9 @@ public class RSSServlet extends HttpServlet {
 			if ( configuration != null ) {
 				factory = configuration.buildSessionFactory();
 				StatelessSession session = factory.openStatelessSession();
-				data = RSSController.getRSS(session, getURLPreffix(req));
+				Integer domainId = DataSourceUtil.getDomain(session.connection(), req.getServerName(), skipLdap);
+				Integer channelId = getChannelId(req);
+				data = RSSController.getRSS(session, domainId, channelId, getURLPreffix(req));
 				session.close();				
 			}				
 		} catch ( Throwable th ) {

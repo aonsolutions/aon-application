@@ -50,6 +50,10 @@ public interface IMarketingConstants {
 	
 	String TARGET_BULK_EMAIL_SENT = "marketing_target_bulk_email_sent";
 	
+	String RSS_PUBLISH_OK = "marketing_rss_publish_ok";
+	
+	String RSS_PUBLISH_ERROR = "marketing_rss_publish_error";	
+	
 	// ************************************************************
 	// CONFIGURATION
 	// ************************************************************

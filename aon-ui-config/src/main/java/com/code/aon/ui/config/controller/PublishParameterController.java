@@ -17,10 +17,20 @@ public class PublishParameterController {
 
 	private PublishProperties to;
 	
+	private boolean showOnlyFTP;
+	
 	public void onInit( ActionEvent event ) {
 		this.to = getPublishProperties();
 	}
 	
+	public boolean isShowOnlyFTP() {
+		return showOnlyFTP;
+	}
+
+	public void setShowOnlyFTP(boolean showOnlyFTP) {
+		this.showOnlyFTP = showOnlyFTP;
+	}
+
 	public PublishProperties getTo() {
 		return to;
 	}

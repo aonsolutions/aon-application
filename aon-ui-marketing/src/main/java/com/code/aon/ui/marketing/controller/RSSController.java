@@ -1,6 +1,10 @@
 package com.code.aon.ui.marketing.controller;
 
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+import static com.code.aon.ui.config.controller.ConfigConstants.PUBLISH_PARAMETER;
+import static com.code.aon.ui.marketing.controller.IMarketingConstants.BUNDLE_NAME;
+import static com.code.aon.ui.marketing.controller.IMarketingConstants.RSS_PUBLISH_ERROR;
+import static com.code.aon.ui.marketing.controller.IMarketingConstants.RSS_PUBLISH_OK;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -14,6 +18,7 @@ import java.util.Map;
 
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -28,13 +33,15 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.marketing.News;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.ui.config.PublishProperties;
 import com.code.aon.ui.config.controller.DomainSwitcher;
+import com.code.aon.ui.config.controller.PublishParameterController;
+import com.code.aon.ui.config.util.FTPUtil;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DownloadUtil;
 
 public class RSSController {
 
@@ -52,11 +59,16 @@ public class RSSController {
 	private static final String ITEM_ELEMENT = "item";
 	private static final String RSS_ELEMENT = "rss";
 	private static final String PUB_DATE_ELEMENT = "pubDate";
+	private static final String LAST_BUILD_DATE_ELEMENT = "lastBuildDate";
 	
 	private static SimpleDateFormat RFC822DATEFORMAT =
 			new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
 	
-	public Category category;
+	private Category category;
+
+	private PublishProperties publishProperties;
+	
+	private LogPanelController log = LogPanelController.getInstance();
 	
 	public Category getCategory() {
 		return category;
@@ -64,10 +76,6 @@ public class RSSController {
 
 	public void setCategory(Category category) {
 		this.category = category;
-	}
-	
-	public void onInit( ActionEvent event ) throws IOException {
-		setCategory(null);
 	}
 	
 	public String getDownloadURL() {
@@ -84,14 +92,15 @@ public class RSSController {
 		return url;
 	}
 
-	public void onDownloadRSS( ActionEvent event ) throws IOException {
+	private byte[] getRSS() throws IOException {
 		Document document = null;
 		StatelessSession session = null;
 		try {
 			String sfn = HibernateUtil.getSessionFactoryName(News.class.getName());
 			session = HibernateUtil.getSessionFactory(sfn).openStatelessSession();
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-			document = createDocument(session, ds.getDomainURL());			
+			Integer channelId = ( category != null ) ? category.getId() : null;
+			document = createDocument(session, ds.getDomainId(), channelId, ds.getDomainURL());			
 		} catch ( Throwable e ) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
@@ -100,10 +109,9 @@ public class RSSController {
 			}
 		}
 		if ( document != null ) {
-	        byte[] data = getData(document);
-			InputStream in = new ByteArrayInputStream(data);	
-	        DownloadUtil.downloadAttachment(RSS_FILE, MimeType.MIME_RSS, in, data.length);			
+	        return getData(document);			
 		}
+		return null;
 	}
 	
 	private static String getImageURL( RegistryAttachment ra, String urlPreffix ) {
@@ -118,6 +126,7 @@ public class RSSController {
 		channel.addElement(TITLE_ELEMENT).addText( category.getName() );
 		channel.addElement(LINK_ELEMENT).addText( category.getUrl() );
 		channel.addElement(DESCRIPTION_ELEMENT).addText( category.getDescription() );
+		channel.addElement(LAST_BUILD_DATE_ELEMENT).addText( RFC822DATEFORMAT.format(new Date()) );
 		String url = getImageURL(category.getRegistryAttachment(), urlPreffix);
 		if ( url != null ) {
 			Element image = channel.addElement(IMAGE_ELEMENT);
@@ -140,14 +149,18 @@ public class RSSController {
 		return item;
 	}
 	
-	private static Document createDocument( StatelessSession session, String urlPreffix ) {
+	private static Document createDocument( StatelessSession session, Integer domainId, Integer channelId, String urlPreffix ) {
 		 Document document = DocumentHelper.createDocument();
 		 Element root = document.addElement( RSS_ELEMENT );
 		 root.addAttribute("version", "2.0");
 		 
 		 Criteria criteria = session.createCriteria(News.class);
+		 criteria.add(Restrictions.eq("domain", domainId));
 		 criteria.add(Restrictions.eq("active", Boolean.TRUE));
 		 criteria.add(Restrictions.eq("rss", Boolean.TRUE));
+		 if ( channelId != null ) {
+			 criteria.add(Restrictions.eq("category.id", channelId));
+		 }
 		 Date now = new Date();
 		 Criterion initDateExpr1 = Restrictions.isNull("initDate");
 		 Criterion initDateExpr2 = Restrictions.le("initDate", now);
@@ -178,9 +191,44 @@ public class RSSController {
 		return sw.toString().getBytes(format.getEncoding());		
 	}
 	
-	public static byte[] getRSS( StatelessSession session, String urlPreffix ) throws IOException {
-		Document document = createDocument(session, urlPreffix);
+	public static byte[] getRSS( StatelessSession session, Integer domainId, Integer channelId, String urlPreffix ) throws IOException {
+		Document document = createDocument(session, domainId, channelId, urlPreffix);
 		return getData(document);		
+	}
+	
+	public void onInit(ActionEvent event) {
+		setCategory(null);
+		PublishParameterController ppc = (PublishParameterController) AonUtil.getRegisteredBean(PUBLISH_PARAMETER);
+		this.publishProperties = ppc.getPublishProperties();
+	}		
+
+	public void onPublish(ActionEvent event) throws IOException  {
+		byte[] data = getRSS();
+		if (! ArrayUtils.isEmpty(data) ) {
+			InputStream in = new ByteArrayInputStream(data);
+			upload(this.publishProperties.getPublishPath(), RSS_FILE, in, data.length);			
+		}
+	}	
+	
+	private void upload( String destination, String name, InputStream in, int length ) {
+		FTPUtil ftp = new FTPUtil(log);
+		try {
+			ftp.connect(publishProperties.getFtpProperties());
+			if ( ftp.isConnected() ) {
+				String path = ftp.getFTPPath(destination, name);
+				if ( ftp.upload(in, length, path) ) {
+					log.info( AonUtil.getMessage(BUNDLE_NAME, RSS_PUBLISH_OK) );		
+				} else {
+					log.error( AonUtil.getMessage(BUNDLE_NAME, RSS_PUBLISH_ERROR) );
+				}
+			}
+		} catch (Throwable th) {
+			LOGGER.error(th.getMessage(), th );
+			log.error( AonUtil.getMessage(BUNDLE_NAME, RSS_PUBLISH_ERROR) );
+		} finally {
+			ftp.close();
+		}
+		log.finish();
 	}
 	
 }

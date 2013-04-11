@@ -6,6 +6,7 @@ import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_EMA
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_PHONE;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_TITLE;
 import static com.code.aon.common.enumeration.AppParam.AON_HIDE_TRADEMARK;
+import static com.code.aon.ui.common.ICommonConstants.APPLICATION_BUNDLE_NAME;
 import static com.code.aon.ui.common.ICommonConstants.APPLICATION_TITLE;
 import static com.code.aon.ui.common.ICommonConstants.FAVICON_NAME;
 import static com.code.aon.ui.common.ICommonConstants.HEADER_LOGO_NAME;
@@ -110,7 +111,7 @@ public class CustomizeController {
 	private boolean hideTrademark;
 	
 	public CustomizeController() {
-		this.applicationTitle = AonUtil.getMessage("appBundle", APPLICATION_TITLE );
+		this.applicationTitle = AonUtil.getMessage(APPLICATION_BUNDLE_NAME, APPLICATION_TITLE );
 		this.supportTelephone = AonUtil.getMessage(SUPPORT_TELEPHONE_NUMBER) + " · " + AonUtil.getMessage(SUPPORT_TELEPHONE_NUMBER2);
 		this.supportEmail = AonUtil.getMessage(SUPPORT_SEND_EMAIL);
 		this.favicon = FAVICON_DEFAULT;

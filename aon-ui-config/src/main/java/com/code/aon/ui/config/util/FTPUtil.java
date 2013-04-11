@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -162,7 +163,7 @@ public class FTPUtil {
 		}
 	}		
 	
-	private String getFTPPath( String destination, String name ) {
+	public String getFTPPath( String destination, String name ) {
 		return destination + PATH_SEPARATOR + name;
 	}
 	
@@ -267,6 +268,20 @@ public class FTPUtil {
 			IOUtils.closeQuietly(in);
 		}
 		logger.error( AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_CREATE_FILE, destination) );
+	}	
+
+	public boolean upload(InputStream in, int length, String destination) {
+		boolean uploaded = false;
+		LOGGER.debug("Creating file: {}", destination);
+		try {
+			String name = FilenameUtils.getName(destination);
+			double kbs = length /1024.0;
+			logger.info( AonUtil.getMessage(BUNDLE_NAME, FTP_UPLOAD_FILE, name, kbs) );
+			uploaded = ftp.storeFile(destination, in);
+		} catch (IOException e) {
+			LOGGER.error( "Error creating file: " + destination, e );
+		}
+		return uploaded;
 	}	
 	
 	private  void uploadContent(File file, String destination) {

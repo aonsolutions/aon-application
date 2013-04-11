@@ -21,7 +21,7 @@
 	<aon:inputText id="FtpPassword" value="#{publishParameter.to.ftpPassword}"
 		size="20" required="true" />
 
-	<c:if test="#{!basicFTPConfiguration}">
+	<c:if test="#{!publishParameter.showOnlyFTP}">
 		<aon:outputLabel for="PreviewPath"
 			value="#{configBundle.config_preview_path}" />
 		<aon:inputText id="PreviewPath" value="#{publishParameter.to.previewPath}"
@@ -38,7 +38,7 @@
 	<aon:inputText id="PublishPath" value="#{publishParameter.to.publishPath}"
 		size="60" required="true" />
 
-	<c:if test="#{!basicFTPConfiguration}">
+	<c:if test="#{!publishParameter.showOnlyFTP}">
 		<aon:outputLabel for="PublishURL"
 			value="#{configBundle.config_pubish_url}" />
 		<aon:inputText id="PublishURL" value="#{publishParameter.to.publishURL}"

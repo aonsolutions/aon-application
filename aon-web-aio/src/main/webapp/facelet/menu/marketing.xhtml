@@ -35,12 +35,12 @@
 								</aon:div>							
 							</aon:panelGrid>
 						</c:if>
-					
-						<aon:panelGrid id="group_marketing_marketing"
+						
+						<aon:panelGrid id="group_marketing_news"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-marketing aon-direct-access-panel">
+							headerClass="aon-icon-report aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_module_marketing}" />
+								<aon:outputText value="#{marketingBundle.marketing_news_module}" />
 							</f:facet>							
 							<aon:div styleClass="aon-direct-access-list">	
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -62,10 +62,29 @@
 										value="#{marketingBundle.marketing_newsletter_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="publishParameter-marketing" 
+										action="publishParameter-marketing" 
+										actionListener="#{publishParameter.onInit}"
+										value="#{configBundle.config_publish_parameters_module}" >
+										<f:setPropertyActionListener target="#{publishParameter.showOnlyFTP}" value="#{true}" />
+									</aon:commandLink>
+								</aon:div>								
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="rss" action="rss_form"
 										actionListener="#{rss.onInit}"
 										value="#{marketingBundle.marketing_news_rss}" />
 								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+						
+					
+						<aon:panelGrid id="group_marketing_marketing"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-marketing aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_module_marketing}" />
+							</f:facet>							
+							<aon:div styleClass="aon-direct-access-list">	
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="marketingCampaign"
 										action="marketingCampaign_list"
@@ -118,7 +137,7 @@
 
 							<aon:panelGrid id="group_marketing_templates"
 								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-direct-access-panel aon-icon-general">
+								headerClass="aon-direct-access-panel aon-icon-mail">
 								<f:facet name="header">
 									<aon:outputText value="#{marketingBundle.marketing_template_module}" />
 								</f:facet>
