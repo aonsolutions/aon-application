@@ -2,7 +2,11 @@ package com.code.aon.ui.fiscal.file;
 
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -58,7 +62,14 @@ public class MOD115Writer implements IFinanceConstants{
 			declarations.add(declaration);
 		}
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		PrintWriter writer = new PrintWriter(output);
+		OutputStreamWriter wr = null;
+		try {
+			wr = new OutputStreamWriter(output,"ISO-8859-1");
+		} catch (UnsupportedEncodingException e) {
+			wr = new OutputStreamWriter(output);
+		}
+		PrintWriter writer = new PrintWriter(wr);
+//		PrintWriter writer = new PrintWriter(output);
 		MOD115 mod115 = new MOD115();
 		FileOutput fileOutput = new FileOutput();
 		fileOutput.setErrors(mod115.create(declarations, format, writer));
@@ -179,4 +190,12 @@ public class MOD115Writer implements IFinanceConstants{
 		return declaration;
 	}
 
+	
+	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
+		File a = new File("/home/ecastellano/TRABAJO/BD/ut8.txt");
+		PrintWriter pw = new PrintWriter(a, "ISO-8859-1");
+		pw.write("Ò—");
+		pw.flush();
+		pw.close();
+	}
 }
