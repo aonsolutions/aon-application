@@ -1342,7 +1342,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
-	
+
 	private static void calculate(AgreementDraft draft)
 			throws IllegalArgumentException {
 		try {
@@ -1350,22 +1350,22 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			Set<Payment> dbPayments = SQLAgreementDraft.getPayments(connection,
 					draft.getId(), draft.getStartDate(), draft.getEndDate());
-			
-			Collection<Payment> allPayments = 
-					new CompositeItems<Payment>(draft.getDraftPayments(), dbPayments);
+
+			Collection<Payment> allPayments = new CompositeItems<Payment>(
+					draft.getDraftPayments(), dbPayments);
 			Set<String> variables = new HashSet<String>();
-			
+
 			Set<Payment> payments = new HashSet<Payment>();
 			for (Payment payment : allPayments) {
-				
-				if ( StringUtils.equals("REMOVE()", payment.getExpression()))
+
+				if (StringUtils.equals("REMOVE()", payment.getExpression()))
 					continue;
-				
+
 				variables.addAll(ExpressionContext.getVariableSet(
 						payment.getExpression(), payment.getIrpfExpression(),
 						payment.getQuoteExpression()));
 				variables.remove(payment.getName());
-				
+
 				payments.add(payment);
 			}
 
@@ -1382,18 +1382,22 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					privateVariables.add(var);
 			}
 			variables.removeAll(privateVariables);
-
+			
+			// Clean system variables.
+			Set<String> systemVars = getSystemVariables(connection,
+					draft.getStartDate(), draft.getEndDate());
+			variables.removeAll(systemVars);
+			
+			
 			Set<Level> dbLevels = SQLAgreementDraft.getLevels(connection,
 					draft.getId());
-			Set<Level> draftLevels  = draft.getDraftLevels();
-			
+			Set<Level> draftLevels = draft.getDraftLevels();
+
 			Set<Level> levels = new HashSet<Level>(draftLevels);
 			levels.addAll(dbLevels);
-			
 
 			Map<Integer, Set<String>> categories = SQLAgreementDraft
 					.getCategories(connection, draft.getId());
-			
 
 			Level agreementData = new Level();
 			agreementData.setId(0);
@@ -1408,7 +1412,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			draft.setPayments(payments);
 			draft.setSalaryTable(salaryTable);
 			draft.setCategoriesMap(categories);
-		
+
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -1806,6 +1810,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			enterpriseHandler.getEnterprise().addWorkplace(workplace);
 		}
 
+	}
+
+	private static Set<String> getSystemVariables(Connection conn, Date start,
+			Date end) throws SQLException {
+		return getSystemDescriptions(conn, start, end).keySet();
 	}
 
 	private static Map<String, String> getSystemDescriptions(Connection conn,

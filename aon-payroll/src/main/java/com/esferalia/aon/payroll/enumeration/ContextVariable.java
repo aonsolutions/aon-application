@@ -51,6 +51,9 @@ public enum ContextVariable implements IResourceable{
 	WEEK_HOURS("HORAS_SEMANA", VariableType.DOUBLE, false),
 	SALARY_HOURS("HORAS_NOMINA", VariableType.DOUBLE, false),
 
+	NIGHT("NOCTURNO", VariableType.BOOLEAN, false),
+	//NIGHT_HOURS("HORAS_NOCHE", VariableType.INTEGER, false),
+
 	HOLIDAY_AMOUNT("IMPORTE_DIA_VACACIONES", VariableType.DOUBLE, false),
 	COMPENSATION_AMOUNT("IMPORTE_INDEMNIZACION", VariableType.DOUBLE, false),
 
