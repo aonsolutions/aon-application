@@ -2,7 +2,9 @@ package com.code.aon.ui.fiscal.file;
 
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -58,7 +60,14 @@ public class MOD123Writer implements IFinanceConstants{
 			declarations.add(declaration);
 		}
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		PrintWriter writer = new PrintWriter(output);
+		OutputStreamWriter wr = null;
+		try {
+			wr = new OutputStreamWriter(output,"ISO-8859-1");
+		} catch (UnsupportedEncodingException e) {
+			wr = new OutputStreamWriter(output);
+		}
+		PrintWriter writer = new PrintWriter(wr);
+//		PrintWriter writer = new PrintWriter(output);
 		MOD123 mod123 = new MOD123();
 		FileOutput fileOutput = new FileOutput();
 		fileOutput.setErrors(mod123.create(declarations, format, writer));
