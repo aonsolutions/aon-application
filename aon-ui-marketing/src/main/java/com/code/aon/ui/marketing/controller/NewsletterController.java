@@ -81,7 +81,7 @@ public class NewsletterController extends BasicController {
 
 	public static void initController( MessageController controller, Newsletter newsletter ) {
 		controller.setSkipSignature(true);
-		controller.setSubject(newsletter.getName());		
+		controller.setSubject(newsletter.getSubject());		
 		StringBuffer sb = new StringBuffer();
 		addHeader( newsletter, sb );
 		addNews( newsletter, sb );

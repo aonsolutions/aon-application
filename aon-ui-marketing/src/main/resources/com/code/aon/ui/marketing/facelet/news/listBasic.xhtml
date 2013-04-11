@@ -3,15 +3,17 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 					
-	<aon:column styleClass="aon-editDataTable-textColumn aon-width-200"
+	<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap"
 		alias="News.title" >
 		<f:facet name="header">
 			<aon:outputText value="#{marketingBundle.marketing_news_title}" />
 		</f:facet>
-		<aon:outputText value="#{to.title}"/>
+		<aon:outputText value="#{to.title}">
+			<aon:abbreviateConverter maxWidth="100" />
+		</aon:outputText>								
 	</aon:column>
 
-	<aon:column styleClass="aon-editDataTable-textColumn aon-width-150"
+	<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-200"
 		alias="News.category.name" >
 		<f:facet name="header">
 			<aon:outputText value="#{marketingBundle.marketing_news_channel}" />
@@ -28,14 +30,6 @@
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 			timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>					
-	</aon:column>
-
-	<aon:column styleClass="aon-editDataTable-textColumn"
-		alias="News.description" >
-		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_description}" />
-		</f:facet>
-		<aon:outputText value="#{to.description}"/>
 	</aon:column>
 					
 </ui:composition>
