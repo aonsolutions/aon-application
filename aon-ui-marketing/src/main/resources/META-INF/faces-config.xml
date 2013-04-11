@@ -741,7 +741,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>News_title</value>
+			<value>News_initDate desc,News_title</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -786,7 +786,7 @@
 		</managed-property>					
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>News_title</value>
+			<value>News_initDate desc,News_title</value>
 		</managed-property>									
 		<managed-property>
 			<property-name>listPagePath</property-name>
@@ -819,7 +819,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Newsletter_name</value>
+			<value>Newsletter_date desc,Newsletter_name</value>
 		</managed-property>								
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -940,7 +940,7 @@
 		</managed-property>							
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Newsletter_name</value>
+			<value>Newsletter_date desc,Newsletter_name</value>
 		</managed-property>									
 		<managed-property>
 			<property-name>listPagePath</property-name>
