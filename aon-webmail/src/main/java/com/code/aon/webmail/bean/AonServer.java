@@ -285,9 +285,7 @@ public class AonServer implements IMailConstants {
     
     private void sendMessage(Message message) throws WebmailException {
     	Transport transport = null;
-    	ClassLoader cl = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader( getClass().getClassLoader() );
             if ( (message != null) && (message.getFrom() != null) ) {
             	transport = getTransport(session, account);
                 message.setSentDate(new Date());
@@ -305,9 +303,6 @@ public class AonServer implements IMailConstants {
         	throw new WebmailException( "Unexpected error sending the message", e );        	
         } finally {
         	closeQuietly(transport);
-        	if ( cl != null ) {
-            	Thread.currentThread().setContextClassLoader( cl );	
-        	}
         }
     }
 
