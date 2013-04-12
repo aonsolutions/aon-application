@@ -12,10 +12,17 @@
 
 		<aon:form id="newsletterForm">
 			
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_newsletter_module}" />
 				<ui:param name="controller" value="#{newsletter}" />
-			</ui:include>
+				<ui:define name="beforeSpinToolbarContent" >
+					<aon:commandButton id="sendEmail"
+						reRender="showNewMessageWindow" immediate="true"
+						value="#{webmailBundle.webmail_send}"
+						actionListener="#{newsletter.onSendEmail}"
+						styleClass="aon-finding-toolbar-item aon-icon-webmail2" />	
+				</ui:define>								
+			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 			
@@ -107,5 +114,6 @@
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{marketingTemplateLookup}" />
 		<aon:lookupButtonPopup lookup="#{newsLookup}" />
+		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 	</ui:define>
 </ui:composition>
