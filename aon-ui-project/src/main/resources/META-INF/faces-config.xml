@@ -120,6 +120,7 @@
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{projectSearchListener}</value>
 				<value>#{projectActivityListener}</value>
+				<value>#{projectAttachChildListener}</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -160,6 +161,27 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>projectAttachChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>projectAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ProjectAttachment_project_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>	
 	
 	<!-- ************* PROJECT ACTIVITY ***************** -->
 	<managed-bean>
@@ -209,6 +231,64 @@
 		<managed-bean-class>com.code.aon.ui.project.controller.event.ProjectActivityControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+	
+	<!--  **** PROJECT ATTACHMENT **** --> 
+	<managed-bean>
+		<managed-bean-name>projectAttach</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.faces.controller.AttachmentController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.project.ProjectAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>projectAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ProjectAttachment_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>project</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>project.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{projectAttachControllerListener}</value> 
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>projectAttachControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.faces.controller.event.AttachmentControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
 
 	<!-- ************* ACTIVITIES IMPORTER ***************** -->
 	<managed-bean>

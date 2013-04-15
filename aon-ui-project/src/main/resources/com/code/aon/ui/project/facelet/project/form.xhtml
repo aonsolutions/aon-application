@@ -58,6 +58,11 @@
 						<aon:panelTab id="project_gantt" label="Gantt" actionListener="#{project.onGraphicTab}">
 							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/gantt.xhtml" />
 						</aon:panelTab>
+						<aon:panelTab id="documents" label="#{bundle.aon_documents}">
+							<ui:include	src="/com/code/aon/ui/project/facelet/projectAttachment/tab_grid.xhtml" >
+								<ui:param name="controller" value="#{projectAttach}" />
+							</ui:include>
+						</aon:panelTab>						
 					</aon:panelTabSet>
 				</c:if>
 				
