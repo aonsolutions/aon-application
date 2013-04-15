@@ -38,7 +38,7 @@ public class Deponent {
 	
 	public double getC004() {
 		double c004 = 0;
-		for (Operator r: getOperators()) {
+		for (Operator r: getRectifications()) {
 			c004 += r.getAmount();
 		}
 		return c004;
