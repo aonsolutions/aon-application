@@ -14,7 +14,6 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.fiscal.Mod347Detail;
 import com.code.aon.fiscal.Mod349;
 import com.code.aon.fiscal.Mod349Detail;
 import com.code.aon.fiscal.enumeration.Mod349Type;
@@ -37,7 +36,7 @@ public class Mod349Manager {
 		ResultSet rs = null;
 		try {
 			Mod349 mod349 = params.getMod349();
-			String sessionName = HibernateUtil.getSessionFactoryName(Mod347Detail.class.getName());
+			String sessionName = HibernateUtil.getSessionFactoryName(Mod349Detail.class.getName());
 			Connection conn = HibernateUtil.getSQLConnection(sessionName);
 			declaredPs = conn.prepareStatement(getDeclaredSentence(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			ps = conn.prepareStatement(getMainSentence(params),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -45,7 +44,7 @@ public class Mod349Manager {
 			ps.setDate(++i, new java.sql.Date( CommonUtil.getYearFirstDay(mod349.getYear()).getTime()));
 			ps.setDate(++i, new java.sql.Date( mod349.getPeriod().getDueDate(mod349.getYear()).getTime()));
 			rs = ps.executeQuery();
-			IManagerBean bean = BeanManager.getManagerBean(Mod347Detail.class);
+			IManagerBean bean = BeanManager.getManagerBean(Mod349Detail.class);
 			while (rs.next()) {
 				Mod349Detail detail = new Mod349Detail();
 				detail.setMod349(mod349);
