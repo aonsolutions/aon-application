@@ -268,7 +268,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{corporateIdentityAttachControllerListener}</value> 
-				<value>#{corporateIdentityAttachScopeListener}</value>
+				<value>#{registryAttachScopeListener}</value>
 				<value>#{corporateIdentitySearch}</value>
 			</list-entries>
 		</managed-property>
@@ -283,7 +283,7 @@
 	</managed-bean>
 	
 	<managed-bean>
-		<managed-bean-name>corporateIdentityAttachScopeListener</managed-bean-name>
+		<managed-bean-name>registryAttachScopeListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
@@ -467,7 +467,7 @@
 	<!-- ************ DOCUMENT LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>documentLookup</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -506,7 +506,51 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{corporateIdentityAttachScopeListener}</value>
+				<value>#{registryAttachScopeListener}</value>
+				<value>#{corporateIdentitySearch}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>
+
+	<!-- ************ IMAGE LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>imageLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>imageLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.registry.RegistryAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAttachment_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryAttachment_registryAttachmentType</key>
+					<value>#{registryCollections.registryAttachmentTypes[1].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/corporateIdentity/listBasic.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/corporateIdentity/searchBasicContent.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{registryAttachScopeListener}</value>
 				<value>#{corporateIdentitySearch}</value>
 			</list-entries>
 		</managed-property>		

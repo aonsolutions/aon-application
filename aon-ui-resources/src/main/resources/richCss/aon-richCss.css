@@ -1946,9 +1946,11 @@ color:#000;
 .aon-lookupInputText{
 	border:#808080 1px solid;
 	margin-right:0.2em;
+	vertical-align:top;
 	}
 .aon-lookupSuggestText{
 	border:#808080 1px solid;
+	vertical-align:top;
 	}
 .aon-lookupButton, .aon-lookupButtonPopup{
 	background:transparent url(images/aon-icon/aon-icon-lookup.png) scroll left center no-repeat;

@@ -11,7 +11,10 @@ import javax.faces.event.ActionEvent;
 import javax.faces.validator.ValidatorException;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
@@ -25,6 +28,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyImagesController extends RegistryAttachController implements ICompanyConstants {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyImagesController.class.getName());
+	
 	private BufferedImage image;
 	
 	private boolean ratio;
@@ -168,5 +173,20 @@ public class CompanyImagesController extends RegistryAttachController implements
 			setWidth( ImageUtil.getProportionalWidth(image, height));
 		}
 	}	
+
+	public void createContent(OutputStream out, Object data) throws IOException {
+		Integer id = (Integer) data;
+		if ( id != null ) {
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+				RegistryAttachment ra = (RegistryAttachment) bean.get(id);
+				if (! ArrayUtils.isEmpty(ra.getData()) ) {
+					out.write(ra.getData());
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error( e.getMessage(), e );
+			}
+		}
+	}
 	
 }
