@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.15.1
+# Version: 7.15.2
 # Created by: girazu
-# Creation Date: 09/04/2013 17:35
+# Creation Date: 16/04/2013 13:35
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -5097,7 +5097,7 @@ CREATE TABLE `newsletter` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL DEFAULT '1' COMMENT 'Identificador del Dominio',
   `name` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del Boletin',
-  `date` date NOT NULL COMMENT 'Fecha del Boletin',
+  `date` datetime NOT NULL COMMENT 'Fecha del Boletin',
   `layout` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Disposicion del Boletin',
   `background_color` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Color de fondo del Boletin',
   `title_color` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Color del titulo del Boletin',
@@ -5107,6 +5107,7 @@ CREATE TABLE `newsletter` (
   `width` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Ancho del Boletin',
   `subject` varchar(128) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Asunto del Boletin',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
+  `highlightFirst` tinyint(1) DEFAULT '0' COMMENT 'Indica si el Boletin destaca la primera noticia o no',
   PRIMARY KEY (`id`),
   KEY `IDX_NEWSLETTER_DOMAIN` (`domain`),
   KEY `IDX_NEWSLETTER_HEADER_TEMPLATE` (`header_template`),
@@ -5227,8 +5228,8 @@ CREATE TABLE `news` (
   `url` varchar(256) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Url de la Noticia',
   `active` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Indica si la Noticia esta activa o no',
   `rss` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si la Noticia se va a publicar en rss o no',
-  `init_date` date DEFAULT NULL COMMENT 'Fecha Noticia',
-  `end_date` date DEFAULT NULL COMMENT 'Fecha fin Noticia',
+  `init_date` datetime DEFAULT NULL COMMENT 'Fecha Noticia',
+  `end_date` datetime DEFAULT NULL COMMENT 'Fecha fin Noticia',
   `category` int(4) NOT NULL COMMENT 'Categoria de la Noticia',
   `rattach` int(4) DEFAULT NULL COMMENT 'Identificador del Archivo Adjunto',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
@@ -7059,7 +7060,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.15.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.15.2');
 
 COMMIT;
 
