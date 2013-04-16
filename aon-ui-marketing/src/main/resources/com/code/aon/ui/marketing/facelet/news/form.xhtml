@@ -69,16 +69,16 @@
 						
 					<aon:outputLabel for="News_initDate"
 						value="#{bundle.aon_start_date}" />
-					<aon:selectInputDate id="News_initDate"
+					<aon:selectInputDate id="News_initDate" inputSize="16"
 						value="#{news.to.initDate}" timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}">
+						popupDateFormat="#{bundle.aon_timestamp2_pattern}">
 					</aon:selectInputDate>		
 
 					<aon:outputLabel for="News_endDate"
 						value="#{bundle.aon_end_date}" />
-					<aon:selectInputDate id="News_endDate"
+					<aon:selectInputDate id="News_endDate" inputSize="16"
 						value="#{news.to.endDate}" timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}">
+						popupDateFormat="#{bundle.aon_timestamp2_pattern}">
 					</aon:selectInputDate>		
 
 					<aon:outputLabel for="News_rss"

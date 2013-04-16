@@ -123,15 +123,20 @@ public class NewsletterController extends BasicController {
 			criteria.addOrder(bean.getFieldName(IEntityAlias.NEWSLETTER_DETAIL_POSITION));
 			NewsletterLayout layout = newsletter.getLayout();
 			boolean alternate = (layout == NewsletterLayout.ALTERNATE_ALIGNED_IMAGE);
+			if ( newsletter.isHighlightFirst() ) {
+				layout = NewsletterLayout.FULL_WIDTH_IMAGE;
+			}
 			for( ITransferObject to : bean.getList(criteria) ) {
+				addNewsletterDetail( (NewsletterDetail) to, layout, sb );
 				if ( alternate ) {
 					if ( layout == NewsletterLayout.LEFT_ALIGNED_IMAGE) {
 						layout = NewsletterLayout.RIGHT_ALIGNED_IMAGE;
 					} else {
 						layout = NewsletterLayout.LEFT_ALIGNED_IMAGE;
 					}
+				} else {
+					layout = newsletter.getLayout();
 				}
-				addNewsletterDetail( (NewsletterDetail) to, layout, sb );
 			}
 		} catch ( ManagerBeanException e ) {
 			LOGGER.error( e.getMessage(), e);

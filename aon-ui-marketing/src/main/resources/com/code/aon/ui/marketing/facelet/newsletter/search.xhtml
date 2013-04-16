@@ -62,6 +62,15 @@
 						<f:selectItems value="#{marketingCollections.newsletterLayouts}" />		
 					</aon:selectOneMenu>	
 													
+					<aon:outputLabel for="Newsletter_highlightFirst"				
+						value="#{marketingBundle.marketing_newsletter_highlightFirst}"/>
+					<aon:selectOneMenu id="Newsletter_highlightFirst"
+						valueChangeListener="#{controller.addExpression}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+					</aon:selectOneMenu>
+													
 					<aon:outputLabel for="Newsletter_active"				
 						value="#{bundle.aon_active}"/>
 					<aon:selectOneMenu id="Newsletter_active"

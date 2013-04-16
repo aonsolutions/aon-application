@@ -52,9 +52,10 @@
 						
 					<aon:outputLabel for="Newsletter_date"
 						value="#{bundle.aon_date}" />
-					<aon:selectInputDate id="Newsletter_date" required="true"
+					<aon:selectInputDate id="Newsletter_date"
+						required="true"  inputSize="16"
 						value="#{newsletter.to.date}" timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}">
+						popupDateFormat="#{bundle.aon_timestamp2_pattern}">
 					</aon:selectInputDate>								
 						
 					<aon:outputLabel for="Newsletter_layout"
@@ -64,6 +65,11 @@
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{marketingCollections.newsletterLayouts}" />
 					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Newsletter_highlightFirst"
+						value="#{marketingBundle.marketing_newsletter_highlightFirst}" />
+					<aon:selectBooleanCheckbox id="Newsletter_highlightFirst" 
+						value="#{newsletter.to.highlightFirst}" />
 
 					<aon:outputLabel for="Newsletter_active"
 						value="#{bundle.aon_active}" />
