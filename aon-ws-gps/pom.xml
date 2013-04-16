@@ -106,12 +106,51 @@
 			<artifactId>jaxws-rt</artifactId>
 			<version>2.2.6</version>
 			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>activation</artifactId>
+					<groupId>javax.activation</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>istack-commons-runtime</artifactId>
+					<groupId>com.sun.istack</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>javax.annotation</artifactId>
+					<groupId>org.glassfish</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jsr181-api</artifactId>
+					<groupId>javax.jws</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>mimepull</artifactId>
+					<groupId>org.jvnet.mimepull</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>stax-api</artifactId>
+					<groupId>javax.xml.stream</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>txw2</artifactId>
+					<groupId>com.sun.xml.txw2</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>woodstox-core-asl</artifactId>
+					<groupId>org.codehaus.woodstox</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>c3p0</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>0.9.1.2</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate</artifactId>
 			<version>3.2.7.ga</version>
-			<scope>runtime</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>asm</groupId>
@@ -123,30 +162,29 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-annotations</artifactId>
-			<version>3.3.1.GA</version>
-			<scope>runtime</scope>
+			<artifactId>hibernate-tools</artifactId>
+			<version>3.2.3.GA</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-commons-annotations</artifactId>
-			<version>3.3.0.ga</version>
-			<scope>runtime</scope>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>c3p0</groupId>
-			<artifactId>c3p0</artifactId>
-			<version>0.9.1.2</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-  			<groupId>antlr</groupId>
-  			<artifactId>antlr</artifactId>
-  			<version>2.7.6</version>
-			<scope>runtime</scope>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.1</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
