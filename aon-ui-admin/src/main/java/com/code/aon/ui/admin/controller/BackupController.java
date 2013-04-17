@@ -50,6 +50,7 @@ public class BackupController {
 	
 	private Domain domain;
 	private boolean includeChildDomains;
+	private File backupFile;
 	
 	public boolean isIncludeChildDomains() {
 		return includeChildDomains;
@@ -58,9 +59,21 @@ public class BackupController {
 	public void setIncludeChildDomains(boolean includeChildDomains) {
 		this.includeChildDomains = includeChildDomains;
 	}
+	
+	public boolean isBackupAvailable() {
+		return (this.backupFile != null) && (this.backupFile.exists());
+	}
 
+	private void cleanBackupFile() {
+		if ( isBackupAvailable() ) {
+			this.backupFile.delete();
+			this.backupFile = null;
+		}
+	}
+	
 	public void onInit( ActionEvent event ) {
 		setIncludeChildDomains(false);
+		cleanBackupFile();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 			this.domain = (Domain) bean.get(DomainManager.getCurrentDomain());
@@ -77,26 +90,29 @@ public class BackupController {
 			if (this.domain.isEnableHeredity()) {
 				domains.add(domain.getParent().getId());
 			}
-		} else if ( domain.isDisableDomainManagement() && isIncludeChildDomains() ) {
+		} else if ( domain.isDomainManagement() && isIncludeChildDomains() ) {
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_PARENT_ID), this.domain.getId());
-			ProjectionList pl = new ProjectionList(Projection.property(IEntityAlias.DOMAIN_ID));
+			String idAlias = bean.getFieldName(IEntityAlias.DOMAIN_ID);
+			ProjectionList pl = new ProjectionList(Projection.property(idAlias));
 			domains.addAll( bean.getList(pl, criteria) );
 		}
 		return domains.toArray(new Integer[domains.size()]);
 	}
 	
-	public void onDump( ActionEvent event ) {
+	private String getBackupName() {
+		return StringUtils.replace(domain.getName(), ".", "-");
+	}
+	
+	public void onMakeBackup( ActionEvent event ) {
+		ZipOutputStream zipOut = null;
 		Connection connection = null;
-		HttpServletResponse response = null;
-		OutputStream out = null;
-		File tempFile = null;
         try {
-			String name = StringUtils.replace(domain.getName(), ".", "-");
-        	tempFile = File.createTempFile(name, "." + MimeType.MIME_ZIP.getExtension());
-			OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(tempFile) );
-			ZipOutputStream zipOut = new ZipOutputStream(fileOut);
+			String name = getBackupName();
+        	this.backupFile = File.createTempFile(name, "." + MimeType.MIME_ZIP.getExtension());
+			OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(this.backupFile) );
+			zipOut = new ZipOutputStream(fileOut);
 			zipOut.putNextEntry(new ZipEntry(name + ".sql"));
 
 			Properties properties = DataSourceUtil.getDBProperties();
@@ -106,24 +122,34 @@ public class BackupController {
 			dump.execute(getDomains(), writer);
 			
            	zipOut.closeEntry();
-			zipOut.close();
-
-			long size = tempFile.length();
-        	response = DownloadUtil.getResponse();
-        	out = DownloadUtil.initDownload(response, name, MimeType.MIME_ZIP, size);
-            InputStream fileIn = new BufferedInputStream( new FileInputStream(tempFile) );
-            IOUtils.copy( fileIn, out );
-            IOUtils.closeQuietly(fileIn);
-		} catch (Throwable e) {
+        } catch (Throwable e) {
 			LOGGER.error(">>>> onDump: ", e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		} finally {
+			IOUtils.closeQuietly(zipOut);
 			DbUtils.closeQuietly(connection);
+		}		
+	}
+	
+	public void onDownloadBackup( ActionEvent event ) {
+		HttpServletResponse response = null;
+		OutputStream out = null;
+        try {
+        	String name = getBackupName();
+			long size = this.backupFile.length();
+        	response = DownloadUtil.getResponse();
+        	out = DownloadUtil.initDownload(response, name, MimeType.MIME_ZIP, size);
+            InputStream fileIn = new BufferedInputStream( new FileInputStream(this.backupFile) );
+            IOUtils.copy( fileIn, out );
+            IOUtils.closeQuietly(fileIn);
+		} catch (Throwable e) {
+			LOGGER.error(">>>> onDownloadBackup: ", e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
 			DownloadUtil.finishDownload(response, out);
-			if ( (tempFile != null) && (tempFile.exists()) ) {
-	    		tempFile.delete();
-			}
+			cleanBackupFile();
 		}
 	}
 	
