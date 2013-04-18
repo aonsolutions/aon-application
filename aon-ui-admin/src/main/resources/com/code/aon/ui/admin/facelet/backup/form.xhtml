@@ -41,6 +41,13 @@
 						<aon:selectBooleanCheckbox id="Backup_childDomains"
 							value="#{backup.includeChildDomains}" />								
 					</c:if>
+
+					<c:if test="#{!domainSwitcher.domainManagementAvailable and !backup.backupAvailable}">						
+						<aon:outputLabel value="#{adminBundle.admin_domain_parent}" 
+							for="Backup_parentDomain"/>
+						<aon:selectBooleanCheckbox id="Backup_parentDomain"
+							value="#{backup.includeParentDomain}" />								
+					</c:if>
 						
 				</aon:panelGrid>
 		

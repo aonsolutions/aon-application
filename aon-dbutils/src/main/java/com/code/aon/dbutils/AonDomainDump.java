@@ -64,6 +64,13 @@ public class AonDomainDump implements Constants {
 		writeLine("");
 	}
 
+	private void updateForceHeredity( boolean reset ) {
+		for( TableInfo ti : tables.values() ) {
+			boolean fh = (!reset) && ArrayUtils.contains(TableUtil.FORCE_HEREDITY_TABLES, ti.getName());
+			ti.setForceHeredity( fh );
+		}
+	}
+	
 	public void execute(Integer[] domains, Writer writer ) throws AonSQLException {
 		try {
 			this.domains = domains;
@@ -73,6 +80,7 @@ public class AonDomainDump implements Constants {
 			writeLine(SET_FOREIGN_KEY_CHECKS_0);
 
 			TableUtil.updateBaseIds(connection, tables.values(), this.domains);
+			updateForceHeredity(domains.length > 1);
 
 			dumpActionTable();
 			

@@ -50,6 +50,7 @@ public class BackupController {
 	
 	private Domain domain;
 	private boolean includeChildDomains;
+	private boolean includeParentDomain;
 	private File backupFile;
 	
 	public boolean isIncludeChildDomains() {
@@ -60,6 +61,14 @@ public class BackupController {
 		this.includeChildDomains = includeChildDomains;
 	}
 	
+	public boolean isIncludeParentDomain() {
+		return includeParentDomain;
+	}
+
+	public void setIncludeParentDomain(boolean includeParentDomain) {
+		this.includeParentDomain = includeParentDomain;
+	}
+
 	public boolean isBackupAvailable() {
 		return (this.backupFile != null) && (this.backupFile.exists());
 	}
@@ -73,6 +82,7 @@ public class BackupController {
 	
 	public void onInit( ActionEvent event ) {
 		setIncludeChildDomains(false);
+		setIncludeParentDomain(false);
 		cleanBackupFile();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
@@ -87,7 +97,7 @@ public class BackupController {
 		List<Integer> domains = new LinkedList<Integer>();
 		domains.add(this.domain.getId());
 		if ( domain.getParent() != null ) {
-			if (this.domain.isEnableHeredity()) {
+			if (this.domain.isEnableHeredity() || isIncludeParentDomain()) {
 				domains.add(domain.getParent().getId());
 			}
 		} else if ( domain.isDomainManagement() && isIncludeChildDomains() ) {
