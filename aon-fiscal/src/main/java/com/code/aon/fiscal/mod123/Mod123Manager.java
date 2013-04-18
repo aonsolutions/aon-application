@@ -32,7 +32,7 @@ public class Mod123Manager extends FiscalModelManager {
 			+" FROM invoice_tax it "
 			+" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)" 
 			+" INNER JOIN invoice i ON (id.invoice = i.id)"
-			+" WHERE " + DomainManager.getSQLWhereClause("i.domain")
+			+" WHERE " + DomainManager.getStaticSQLWhereClause("i.domain")
 			+" AND i.type != 1 " 			// No Ventas
 			+" AND it.tax_type = 2" 		// IRPF
 			+" AND it.withholding_type = 2" // IRPF de capital mobiliario
