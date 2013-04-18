@@ -420,6 +420,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 				returnDetail.setVatQuota(returnDetail.getVatQuota() * (-1));
 				returnDetail.setRetentionQuota(returnDetail.getRetentionQuota() * (-1));
 				returnDetail.setUpdateEnabled(line == detailController.getCheckedCount());
+				detailController.getManagerBean().restoreNullSubPOJOs(returnDetail);
 				detailController.getManagerBean().insert(returnDetail);
 			}
 
