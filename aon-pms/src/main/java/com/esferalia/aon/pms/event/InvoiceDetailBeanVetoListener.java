@@ -10,6 +10,7 @@ import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 
@@ -17,12 +18,22 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
-    	((InvoiceDetail)evt.getTo()).setSkipServiceProcess(true);
+    	InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
+    	try {
+        	invoiceDetail.setSkipServiceProcess(isHotelInvoice(invoiceDetail));
+    	} catch (ManagerBeanException ex) {
+    		throw new ManagerBeanVetoListenerException(ex.getMessage(), ex);
+    	}
 	}
 
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
-    	((InvoiceDetail)evt.getTo()).setSkipServiceProcess(true);
+    	InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
+    	try {
+        	invoiceDetail.setSkipServiceProcess(isHotelInvoice(invoiceDetail));
+    	} catch (ManagerBeanException ex) {
+    		throw new ManagerBeanVetoListenerException(ex.getMessage(), ex);
+    	}
 	}	
 
 	@Override
@@ -51,5 +62,12 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
     		throw new ManagerBeanVetoListenerException(ex.getMessage(), ex);
     	}
     }
+
+	private boolean isHotelInvoice(InvoiceDetail invoiceDetail) throws ManagerBeanException {
+		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_ID), invoiceDetail.getWorkPlace().getId());
+		return (hotelBean.getCount(criteria) > 0);
+	}
 
 }

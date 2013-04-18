@@ -1,8 +1,5 @@
 package com.code.aon.finance.event;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +7,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.common.util.CommonUtil;
@@ -25,17 +21,12 @@ import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.finance.invoicing.remover.IInvoiceDetailRemover;
 import com.code.aon.finance.invoicing.remover.InvoiceRemoverFactory;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
-	
-	private static final String STMT = "SELECT SUM(id.taxable_base)" 
-			+" FROM invoice_detail id"
-			+" INNER JOIN item it ON id.item = it.id"
-			+" INNER JOIN product pr ON it.product =  pr.id"
-			+" WHERE id.invoice = ?"
-			+" AND pr.type = 1";
 	
 	@Override
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
@@ -74,6 +65,9 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		if (invoice.getProject() == null && detail.getProject() != null && detail.getProject().getId() != null) {
 			invoice.setProject(detail.getProject());
 		}
+		//if (invoice.getSeller() == null && detail.getSeller() != null && detail.getSeller().getId() != null) {
+			//invoice.setSeller(detail.getSeller());
+		//}
 		updateInvoiceTotals(invoice, detail.isSkipServiceProcess());
 		detail.setInvoice(invoice);
 	}
@@ -220,6 +214,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			invoice.setVatQuota(vatQuota);
 			invoice.setRetentionQuota(retentionQuota);
 			invoice.setTotal(CommonUtil.round(taxableBase + vatQuota - retentionQuota));
+
 			if (!skipServiceProcess) {
 				invoice.setService(isServiceInvoice(invoice, taxableBase));	
 			}
@@ -228,35 +223,13 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	}
 
 	private boolean isServiceInvoice(Invoice invoice, double invoiceTaxableBase) throws ManagerBeanException {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		try {
-			String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(STMT,
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			ps.setInt(1, invoice.getId());
-			rs = ps.executeQuery();
-			double serviceTaxableBase = 0;
-			if (rs.next()) {
-				serviceTaxableBase = rs.getDouble(1);	
-			}
-			return (serviceTaxableBase > CommonUtil.round(invoiceTaxableBase / 2));  
-		} catch (SQLException e) {
-			throw new ManagerBeanException(e.getMessage());
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Projection projection = Projection.sum(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_TAXABLE_BASE));
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE), ProductType.SERVICE);
+		Double amount = (Double)invoiceDetailBean.getUniqueResult(projection, criteria);
+		return (amount!=null) ? amount.doubleValue() > CommonUtil.round(invoiceTaxableBase / 2) : false;
 	}
-	
+
 }

@@ -30,6 +30,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		controller.setLongDescription(false);
 		try {
 			invoiceDetail.setProject((invoice.getProject() != null && invoice.getProject().getId() != null) ? invoice.getProject() : null);
+			//invoiceDetail.setSeller((invoice.getSeller() != null && invoice.getSeller().getId() != null) ? invoice.getSeller() : null);
 			invoiceDetail.setLine(calculateNextLine(invoice));
 			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 
@@ -60,7 +61,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		refreshInvoiceTotals((InvoiceDetailController)event.getController());
+		refreshInvoiceData((InvoiceDetailController)event.getController());
 	}
 
 	@Override
@@ -73,7 +74,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		event.getController().initializeModel();
-		refreshInvoiceTotals((InvoiceDetailController)event.getController());
+		refreshInvoiceData((InvoiceDetailController)event.getController());
 	}
 
 	@Override
@@ -85,7 +86,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanRemoved(ControllerEvent event)	throws ControllerListenerException {
-		refreshInvoiceTotals((InvoiceDetailController)event.getController());
+		refreshInvoiceData((InvoiceDetailController)event.getController());
 	}
 
 	private	Integer calculateNextLine(Invoice invoice) throws ManagerBeanException {
@@ -113,13 +114,14 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		}
 	}
 
-	private void refreshInvoiceTotals(InvoiceDetailController controller) {
+	private void refreshInvoiceData(InvoiceDetailController controller) {
 		InvoiceController invoiceController = (InvoiceController)controller.getMasterController();
 		Invoice invoice = (Invoice)invoiceController.getTo();
 		invoice.setTaxableBase(((InvoiceDetail)controller.getTo()).getInvoice().getTaxableBase());
 		invoice.setVatQuota(((InvoiceDetail)controller.getTo()).getInvoice().getVatQuota());
 		invoice.setRetentionQuota(((InvoiceDetail)controller.getTo()).getInvoice().getRetentionQuota());
 		invoice.setTotal(((InvoiceDetail)controller.getTo()).getInvoice().getTotal());
+		invoice.setService(((InvoiceDetail)controller.getTo()).getInvoice().isService());
 	}
 
 }
