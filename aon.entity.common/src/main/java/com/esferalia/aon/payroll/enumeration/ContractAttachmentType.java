@@ -19,7 +19,13 @@ public enum ContractAttachmentType implements IResourceable {
 	
 	SPEE_CONTRATA_RESPONSE,
 	
-	SPEE_CONTRATA_STATUS
+	SPEE_CONTRATA_STATUS,
+	
+	TRAINING_CENTER_DIRECT_DEBIT,
+	
+	TRAINING_ANNEX_I,
+
+	TRAINING_ANNEX_II
 	
 	;
 	
