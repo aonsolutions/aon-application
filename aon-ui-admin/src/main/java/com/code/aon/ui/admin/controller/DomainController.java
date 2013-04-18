@@ -270,32 +270,34 @@ public class DomainController extends BasicController {
 		}
 	}
 	
-	private void updateModules( DomainApplicationInfo appInfo ) throws ManagerBeanException {
-		List<Module> disabledModules = getDisabledModules();
-		for( Module module : disabledModules ) {
-			DomainModuleInfo info = appInfo.getModuleInfo(module);
-			if ( info == null ) {
-				info = new DomainModuleInfo(module);
-				appInfo.getApplicationModules().add(info);
-				LOGGER.debug( "Added: {}", module );
-			}			
-			info.setChecked(true);
-			info.setDisabled(true);
-			LOGGER.debug( "Checked and disabled: {}", info );
-		}
-		List<Module> visibleModules = AuditManager.getVisibleModules(getDomain().getId(), appInfo.getApplication().getId());
-		for( int i = appInfo.getApplicationModules().size()-1; i >= 0; i-- ) {
-			DomainModuleInfo info =  appInfo.getApplicationModules().get(i);
-			if (! visibleModules.contains(info.getModule()) ) {
-				appInfo.removeModuleInfo(info);
-				LOGGER.debug( "Removed from list: {}", info );
+	private void updateModules( DomainApplicationInfo appInfo, boolean sysAdmin ) throws ManagerBeanException {
+		if (! sysAdmin ) {
+			List<Module> disabledModules = getDisabledModules();
+			for( Module module : disabledModules ) {
+				DomainModuleInfo info = appInfo.getModuleInfo(module);
+				if ( info == null ) {
+					info = new DomainModuleInfo(module);
+					appInfo.getApplicationModules().add(info);
+					LOGGER.debug( "Added: {}", module );
+				}			
+				info.setChecked(true);
+				info.setDisabled(true);
+				LOGGER.debug( "Checked and disabled: {}", info );
+			}
+			List<Module> visibleModules = AuditManager.getVisibleModules(getDomain().getId(), appInfo.getApplication().getId());
+			for( int i = appInfo.getApplicationModules().size()-1; i >= 0; i-- ) {
+				DomainModuleInfo info =  appInfo.getApplicationModules().get(i);
+				if (! visibleModules.contains(info.getModule()) ) {
+					appInfo.removeModuleInfo(info);
+					LOGGER.debug( "Removed from list: {}", info );
+				}
 			}
 		}
 		joinManagementTreasury();
 		initPortalModules();
 		appInfo.updateApplicationModules();
 		appInfo.sortApplicationModules();
-		if (! AonUtil.getRoleManager().isSysAdmin() ) {
+		if (! sysAdmin ) {
 			DomainModuleInfo infoweb = this.aioInfo.getModuleInfo(Module.INFOWEB);
 			if ( infoweb != null ) {
 				this.aioInfo.getApplicationModules().remove(infoweb);
@@ -313,7 +315,7 @@ public class DomainController extends BasicController {
 
 	public void initApplicationInfos() throws ManagerBeanException {
 		this.aioInfo = DomainApplicationInfo.getApplicationInfos(getDomain(), AON_AIO_APPLICATION);
-		updateModules(this.aioInfo);
+		updateModules(this.aioInfo, AonUtil.getRoleManager().isSysAdmin());
 	}
 	
 	private void updatePortalModules() throws ManagerBeanException {
