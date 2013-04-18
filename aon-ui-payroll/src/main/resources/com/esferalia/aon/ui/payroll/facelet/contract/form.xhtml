@@ -29,13 +29,14 @@
 						</aon:panelGrid>
 					</aon:panel>
 				
-					<aon:panelTabSet switchType="ajax" immediate="true">
+					<aon:panelTabSet id="contract-panelTab" selectedTab="#{contract.selectedTab}" 
+						switchType="ajax" immediate="true">
 						
-						<aon:panelTab id="mainData" label="Datos Generales" >
+						<aon:panelTab id="mainData" label="#{payrollBundle.payroll_contract_general_data}" >
 							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
 						</aon:panelTab>
 
-						<aon:panelTab id="contrataData" label="Datos Contrat@" 
+						<aon:panelTab id="contrataData" label="#{payrollBundle.payroll_contract_specific_data}" 
 							actionListener="#{contractContrata.onContrataDataShow}">
 							<c:if test="#{contractContrata.enabledContrataEdition}">
 								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_toolbar.xhtml" />
@@ -47,8 +48,11 @@
 							</c:if>
 						</aon:panelTab>
 
-						<aon:panelTab id="attachData" label="Documentos">
-							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/document/gridContent.xhtml" />
+						<aon:panelTab id="attachData"  
+							label="#{payrollBundle.payroll_documents}">
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/document/gridContent.xhtml" >
+								<ui:param name="checkReRender" value="attachData" />
+							</ui:include>
 						</aon:panelTab>
 						
 					</aon:panelTabSet>
@@ -165,6 +169,10 @@
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/modalLogin.xhtml" />
+		
+		<c:if test="#{contract.to.pending}" >
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/pdfEdition/documentIssueModal.xhtml" />
+		</c:if>
 		
 	</ui:define>
 </ui:composition>

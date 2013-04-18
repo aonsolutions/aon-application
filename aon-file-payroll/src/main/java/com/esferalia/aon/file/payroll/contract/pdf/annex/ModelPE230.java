@@ -267,12 +267,11 @@ public class ModelPE230 extends AbstractAnnexModel {
 				getPdfFieldsMap().get(PE230_COTNRACT_CNO_8).setValue("");
 			}
 			
-			TrainingCenter trainingCenter = obtainTrainingCenter(map.get(ContextVariable.TRAINING_CENTER.getName()));
 			RegistryDirStaff trainingCenterDirStaff = null;
-			if(trainingCenter != null){
-				trainingCenterDirStaff = obtainRegistryDirStaff(trainingCenter.getRegistry());
+			if(trainingCourse != null){
+				trainingCenterDirStaff = obtainRegistryDirStaff(trainingCourse.getTrainingCenter().getRegistry());
 				// TRAINING CENTER FIELDS
-				getPdfFieldsMap().get(PE230_TRAINING_CENTER_CODE).setValue(trainingCenter.getCode());
+				getPdfFieldsMap().get(PE230_TRAINING_CENTER_CODE).setValue(trainingCourse.getTrainingCenter().getCode());
 				try {
 					getPdfFieldsMap().get(PE230_TRAINING_CENTER_DIR_STAFF_NAME).setValue(trainingCenterDirStaff.getName());
 					getPdfFieldsMap().get(PE230_TRAINING_CENTER_DIR_STAFF_NIF).setValue(trainingCenterDirStaff.getDocument());
@@ -292,45 +291,45 @@ public class ModelPE230 extends AbstractAnnexModel {
 				}
 				
 				try {	
-					getPdfFieldsMap().get(PE230_TRAINING_CENTER_NAME).setValue(trainingCenter.getRegistry().getFullName());
+					getPdfFieldsMap().get(PE230_TRAINING_CENTER_NAME).setValue(trainingCourse.getTrainingCenter().getRegistry().getFullName());
 				} catch (NullPointerException npe) {
 					// do nothing
 				}
 				try {	
-					getPdfFieldsMap().get(PE230_TRAINING_CENTER_NIF).setValue(trainingCenter.getRegistry().getDocument());
+					getPdfFieldsMap().get(PE230_TRAINING_CENTER_NIF).setValue(trainingCourse.getTrainingCenter().getRegistry().getDocument());
 				} catch (NullPointerException npe) {
 					// do nothing
 				}
 				try {	
-					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ADDRESS).setValue(trainingCenter.getRegistry().getDefaultAddress().getFullAddress());
+					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ADDRESS).setValue(trainingCourse.getTrainingCenter().getRegistry().getDefaultAddress().getFullAddress());
 				} catch (NullPointerException npe) {
 					// do nothing
 				}
 				try {	
-					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ZIP_1).setValue(trainingCenter.getRegistry().getDefaultAddress().getZip().substring(0, 1));
-					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ZIP_2).setValue(trainingCenter.getRegistry().getDefaultAddress().getZip().substring(1, 2));
+					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ZIP_1).setValue(trainingCourse.getTrainingCenter().getRegistry().getDefaultAddress().getZip().substring(0, 1));
+					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ZIP_2).setValue(trainingCourse.getTrainingCenter().getRegistry().getDefaultAddress().getZip().substring(1, 2));
 					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ZIP_3).setValue("");
-					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ZIP_3).setValue(trainingCenter.getRegistry().getDefaultAddress().getZip().substring(2, 3));
-					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ZIP_4).setValue(trainingCenter.getRegistry().getDefaultAddress().getZip().substring(3, 4));
-					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ZIP_5).setValue(trainingCenter.getRegistry().getDefaultAddress().getZip().substring(4, 5));
+					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ZIP_3).setValue(trainingCourse.getTrainingCenter().getRegistry().getDefaultAddress().getZip().substring(2, 3));
+					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ZIP_4).setValue(trainingCourse.getTrainingCenter().getRegistry().getDefaultAddress().getZip().substring(3, 4));
+					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ZIP_5).setValue(trainingCourse.getTrainingCenter().getRegistry().getDefaultAddress().getZip().substring(4, 5));
 				} catch (StringIndexOutOfBoundsException aie) {
 					// do nothing
 				} catch (NullPointerException npe) {
 					// do nothing
 				}
 				try {	
-					getPdfFieldsMap().get(PE230_TRAINING_CENTER_TOWN).setValue(trainingCenter.getRegistry().getDefaultAddress().getCity());
+					getPdfFieldsMap().get(PE230_TRAINING_CENTER_TOWN).setValue(trainingCourse.getTrainingCenter().getRegistry().getDefaultAddress().getCity());
 				} catch (NullPointerException npe) {
 					// do nothing
 				}
 				try {	
-					getPdfFieldsMap().get(PE230_TRAINING_CENTER_PROVINCE).setValue(trainingCenter.getRegistry().getDefaultAddress().getGeozone().getName());
+					getPdfFieldsMap().get(PE230_TRAINING_CENTER_PROVINCE).setValue(trainingCourse.getTrainingCenter().getRegistry().getDefaultAddress().getGeozone().getName());
 				} catch (NullPointerException npe) {
 					// do nothing
 				}
 				
 				try {
-					String centerPhone = trainingCenter.getRegistry().getPhone().getValue();
+					String centerPhone = trainingCourse.getTrainingCenter().getRegistry().getPhone().getValue();
 					centerPhone = centerPhone.replaceAll("[^0-9]", "");
 					getPdfFieldsMap().get(PE230_TRAINING_CENTER_PHONE_1).setValue(centerPhone.substring(0, 1));
 					getPdfFieldsMap().get(PE230_TRAINING_CENTER_PHONE_2).setValue(centerPhone.substring(1, 2));
@@ -348,7 +347,7 @@ public class ModelPE230 extends AbstractAnnexModel {
 				}
 				
 				try {	
-					String centerEmail = trainingCenter.getRegistry().getEmail().getValue();
+					String centerEmail = trainingCourse.getTrainingCenter().getRegistry().getEmail().getValue();
 					getPdfFieldsMap().get(PE230_TRAINING_CENTER_EMAIL).setValue(centerEmail);
 				} catch (NullPointerException npe) {
 					// do nothing
@@ -383,7 +382,11 @@ public class ModelPE230 extends AbstractAnnexModel {
 			getPdfFieldsMap().get(PE230_SIGNATURE_YEAR).setValue(formatter.format(new Date()));
 			getPdfFieldsMap().get(PE230_SIGNATURE_EMPLOYEE).setValue(contract.getPerson().getFullName());
 			getPdfFieldsMap().get(PE230_SIGNATURE_EMPLOYEE_DIR_STAFF).setValue("");
-			getPdfFieldsMap().get(PE230_SIGNATURE_ENTERPRISE_DIR_STAFF).setValue(enterpriseDirStaff.getName());
+			try {	
+				getPdfFieldsMap().get(PE230_SIGNATURE_ENTERPRISE_DIR_STAFF).setValue(enterpriseDirStaff.getName());
+			} catch (NullPointerException npe) {
+				// do nothing
+			}
 			try {	
 				getPdfFieldsMap().get(PE230_SIGNATURE_TRAINING_CENTER_DIR_STAFF).setValue(trainingCenterDirStaff.getName());
 			} catch (NullPointerException npe) {
@@ -397,21 +400,6 @@ public class ModelPE230 extends AbstractAnnexModel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	private TrainingCenter obtainTrainingCenter(String value) {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(TrainingCenter.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_CENTER_ID), Integer.parseInt(value) );
-			Iterator<ITransferObject> it = bean.getList(criteria).iterator();
-			while( it.hasNext() ){
-				return (TrainingCenter) it.next();
-			}
-		} catch (ManagerBeanException e) {
-			// do nothing ...
-		}
-		return null;
 	}
 	
 	private TrainingCourse obtainTrainingCourse(String value) {

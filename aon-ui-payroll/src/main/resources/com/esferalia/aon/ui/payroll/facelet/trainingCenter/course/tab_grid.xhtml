@@ -30,7 +30,8 @@
 				<f:facet name="header">
 					<aon:outputLabel for="TrainingCourse_occupationName" value="#{payrollBundle.payroll_trainingCourse_occupationName}" />
 				</f:facet>
-				<aon:outputText value="#{to.occupationName}" rendered="#{formList}" >
+				<aon:outputText value="#{to.occupationName}" rendered="#{formList}"
+					title="#{to.occupationName}" >
 					<aon:abbreviateConverter maxWidth="35" />
 				</aon:outputText>
 				<aon:inputText id="TrainingCourse_occupationName" size="32" maxlength="64" 
@@ -46,7 +47,8 @@
 				<f:facet name="header">
 					<aon:outputLabel for="TrainingCourse_certificationName" value="#{payrollBundle.payroll_trainingCourse_certificationName}" />
 				</f:facet>
-				<aon:outputText value="#{to.certificationName}" rendered="#{formList}" >
+				<aon:outputText value="#{to.certificationName}" rendered="#{formList}" 
+					title="#{to.certificationName}" >
 					<aon:abbreviateConverter maxWidth="35" />
 				</aon:outputText>
 				<aon:inputText id="TrainingCourse_certificationName" size="32" maxlength="64" 

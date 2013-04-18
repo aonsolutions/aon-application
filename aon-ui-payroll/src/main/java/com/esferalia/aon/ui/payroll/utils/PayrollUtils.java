@@ -232,7 +232,12 @@ public class PayrollUtils {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), contract.getStartDate());
+			if(contract.getEndDate()!=null){
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), contract.getEndDate());
+			} else {
+				criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
+			}
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
 				map.put(data.getName(), data.getExpression().replace('"', ' ').trim());

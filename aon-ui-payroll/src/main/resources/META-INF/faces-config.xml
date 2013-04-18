@@ -2807,6 +2807,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>TrainingCourse_occupationName</value>
+		</managed-property>
+		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>trainingCenter</value>
 		</managed-property>
@@ -3267,7 +3271,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>TrainingCourse_code</value>
+			<value>TrainingCourse_occupationName</value>
 		</managed-property>
 		<managed-property>
 			<property-name>suggestAlias</property-name>

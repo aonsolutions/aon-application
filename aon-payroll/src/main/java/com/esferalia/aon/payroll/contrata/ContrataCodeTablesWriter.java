@@ -194,7 +194,7 @@ public class ContrataCodeTablesWriter {
 					token.nextToken();
 					if(token.hasMoreTokens()){
 						String label = StringUtils.strip(token.nextToken());
-						out.write(", \""+(label.length()>80?(label.substring(0, 80)+"..."):label)+"\"");
+						out.write(", \""+(label)+"\"");
 						if(token.hasMoreTokens()){
 							token.nextToken();
 							if(token.hasMoreTokens()){
@@ -532,7 +532,7 @@ public class ContrataCodeTablesWriter {
 				out.newLine();
 				out.write( "\t\t\tfor ("+enumName+" obj : el) {");
 				out.newLine();
-				out.write( "\t\t\t\tString name = obj.getDescription();");
+				out.write( "\t\t\t\tString name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+\"...\"):obj.getDescription());");
 				out.newLine();
 				out.write( "\t\t\t\tSelectItem item = new SelectItem(obj, name);");
 				out.newLine();
@@ -655,7 +655,7 @@ public class ContrataCodeTablesWriter {
 					String label = StringUtils.strip(currentLine.substring(12, currentLine.length()));
 					
 					
-					out.write(", \""+(label.length()>80?(label.substring(0, 80)+"..."):label)+"\"");						
+					out.write(", \""+(label)+"\"");						
 					out.write(", \""+lastUpdateDate+"\" ),");
 					out.newLine();
 					continue;
@@ -667,7 +667,7 @@ public class ContrataCodeTablesWriter {
 					out.write( "\t"+"T_"+code.replace("*", "").toUpperCase()+"( \""+code.trim()+"\"" );
 					if(token.hasMoreTokens()){
 						String label = StringUtils.strip(token.nextToken());
-						out.write(", \""+(label.length()>80?(label.substring(0, 80)+"..."):label)+"\"");
+						out.write(", \""+(label)+"\"");
 						}
 						out.write(", \""+lastUpdateDate+"\" ),");
 				}

@@ -8,10 +8,10 @@
 		<ui:param name="lookupBean" value="#{trainingCourseLookup}" />
 		<ui:param name="controller" value="#{trainingCourse}" />
 		<ui:param name="lookupInputValue" value="#{lookupTo.code}"/>
-		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.name}"/>
-		<ui:param name="lookupInputSuggestExpression" value="#{lto.name} (#{lto.code})"/>
-		<ui:param name="searchButtonTitle" value="#{payrollBundle.payroll_trainingCourse_selection}" />
-		<ui:param name="lookupLabel" value="#{payrollBundle.payroll_trainingCourse}" />
+		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.occupationName}"/>
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.occupationName} (#{lto.code})"/>
+		<ui:param name="searchButtonTitle" value="#{payrollBundle.payroll_trainingCourse_occupationName_selection}" />
+		<ui:param name="lookupLabel" value="#{payrollBundle.payroll_trainingCourse_occupationName}" />
 		<ui:param name="skipGoToButton" value="#{true}" />
 		<ui:param name="skipNewButton" value="#{true}" />
 		<ui:param name="lookupInputSize" value="15" />

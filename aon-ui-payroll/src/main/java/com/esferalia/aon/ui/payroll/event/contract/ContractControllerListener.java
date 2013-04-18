@@ -58,6 +58,16 @@ public class ContractControllerListener extends ControllerAdapter{
 	}
 	
 	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		ContractController controller = (ContractController) this.getController();
+		Contract contract = (Contract) controller.getTo();
+		if(controller.getParams().getContractModelCode()!=null){
+			contract.setModel(controller.getParams().getContractModelCode().getModel());
+		}
+	}
+	
+	@Override
 	public void beforeBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
 		removeChildData(event);
@@ -67,6 +77,7 @@ public class ContractControllerListener extends ControllerAdapter{
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
+		controller.setSelectedTab(null);
 		controller.setEnterprise(((Contract) controller.getTo()).getWorkPlace().getEnterprise());
 		controller.setWorkPlaces(null);
 		controller.setActivities(null);
@@ -544,7 +555,8 @@ public class ContractControllerListener extends ControllerAdapter{
 			params.setCno((CNO) BeanManager.getManagerBean(CNO.class).createNewTo());
 		}
 		if(map.get(ContextVariable.TC2.getName())!=null){
-			params.setContractModelCode( obtainContractModelCode(map.get(ContextVariable.TC2.getName()), ((Contract) this.getController().getTo()).getModel()) );
+			Contract contract = (Contract) this.getController().getTo();
+			params.setContractModelCode( obtainContractModelCode(map.get(ContextVariable.TC2.getName()), contract.getModel()) );
 		}
 		if(map.get(ContextVariable.SUBSIDIZED.getName())!=null){
 			params.setSubsidized(new Boolean(map.get(ContextVariable.SUBSIDIZED.getName())));
@@ -577,7 +589,7 @@ public class ContractControllerListener extends ControllerAdapter{
 	public ContractModelCode obtainContractModelCode(String contractCode, ContractModel contractModel) {
 		ContractCode code = ContractCode.getContractCodeByValue(contractCode);
 		for( ContractModelCode o : ContractModelCode.values() ) {
-			if ( o.getModel() == contractModel && o.getCode() == code ) {
+			if ( (contractModel==null || o.getModel() == contractModel) && o.getCode() == code ) {
 				return o;
 			}
 		}

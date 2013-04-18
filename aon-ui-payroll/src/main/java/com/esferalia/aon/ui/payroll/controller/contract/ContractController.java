@@ -1,8 +1,10 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -18,13 +20,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.SingleCollectionProvider;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.ql.Criteria;
+import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
@@ -34,6 +39,7 @@ import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.AgreementLevelData;
@@ -61,6 +67,7 @@ import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.IVariablesHandler;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.controller.TrainingCenterController;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractPdfController.PdfType;
 import com.esferalia.aon.ui.payroll.controller.salary.SettleController;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
@@ -79,6 +86,7 @@ public class ContractController extends BasicController implements IVariablesHan
 
 	private boolean showNewContractModal;
 	private boolean skipPayrollData;
+	private boolean showDocumentIssueWindow;
 
 	
 	public ContractParams getParams() {
@@ -111,6 +119,12 @@ public class ContractController extends BasicController implements IVariablesHan
 	}
 	public void setShowNewContractModal(boolean showNewContractModal) {
 		this.showNewContractModal = showNewContractModal;
+	}
+	public boolean isShowDocumentIssueWindow() {
+		return showDocumentIssueWindow;
+	}
+	public void setShowDocumentIssueWindow(boolean showDocumentIssueWindow) {
+		this.showDocumentIssueWindow = showDocumentIssueWindow;
 	}
 	public Agreement getAgreement() {
 		return agreement;
@@ -362,6 +376,12 @@ public class ContractController extends BasicController implements IVariablesHan
 		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
 		return map.get(ContextVariable.TRAINING_CENTER.getName())!=null;
 	}
+
+	public boolean isTrainingCourseDefined(){
+		PayrollUtils utils = new PayrollUtils();
+		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
+		return map.get(ContextVariable.TRAINING_COURSE.getName())!=null;
+	}
 	
 	public List<SelectItem> getTrainingCenters(){
 		List<SelectItem> list = new LinkedList<SelectItem>();
@@ -428,6 +448,106 @@ public class ContractController extends BasicController implements IVariablesHan
 		}
 		return list;
 	}
+	
+	private String selectedTab;
+	
+	
+	
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
+	public void onShowDocumentIssueWindow(ActionEvent event){
+		setShowDocumentIssueWindow(false);
+		
+		ContractPdfController pdfDocument = (ContractPdfController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_PDF_CONTROLLER_NAME);
+		try {
+			if( !getExistSignedContractDocument() ){
+				pdfDocument.setDocumentType(PdfType.CONTRACT);
+				pdfDocument.generateDocument();
+				pdfDocument.onDocumentSave(event);
+			}
+			if( !getExistSignedBasicCopyDocument() ){
+				pdfDocument.setDocumentType(PdfType.BASIC_COPY);
+				pdfDocument.generateDocument();
+				pdfDocument.onDocumentSave(event);
+			}
+			if( isTrainingContract() && isTrainingCourseDefined() ){
+				pdfDocument.setDocumentType(PdfType.ANNEX);
+				pdfDocument.generateDocument();
+				pdfDocument.onDocumentSave(event);
+			}
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());
+		} catch (UnsupportedContractDocumentException e) {
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());
+		}
+		
+		try {
+			if( isTrainingCourseDefined() ){
+				ContractAttachment attach = obtainDirectDebitReport();
+				attach.setDescription( AonUtil.getMessage(IPayrollConstants.BUNDLE_NAME, "payroll_trainingCenter_directDebit"));
+				try {
+					BeanManager.getManagerBean(ContractAttachment.class).insertOrUpdate(attach);
+					ContractAttachController attachController = (ContractAttachController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_ATTACH_CONTROLLER);
+					attachController.initializeModel();
+				} catch (ManagerBeanException e) {
+					LOGGER.error(e.getMessage(), e);
+					AonUtil.addErrorMessage(e.getMessage());
+					throw new AbortProcessingException(e.getMessage());
+				}
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());
+		}
+		
+		setSelectedTab("attachData");
+		
+	}
+	
+	private ContractAttachment obtainDirectDebitReport() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), ((Contract)this.getTo()).getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT);
+		List<ITransferObject> list = bean.getList(criteria);
+		ContractAttachment attach = null;
+		if(!list.isEmpty()){
+			attach = (ContractAttachment) list.get(0);
+		} else {
+			attach = new ContractAttachment();
+		}
+		attach.setContract((Contract) this.getTo());
+		attach.setData(getReport("trainingDirectDebit"));
+		attach.setMimeType(MimeType.MIME_PDF);
+		attach.setAttachmentType(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT);
+		attach.setAttachDate(new Date());
+		return attach;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	private byte[] getReport( String report ) {
+		try {
+			ReportManager reportManager = new ReportManager();
+			reportManager.setCollectionProvider( new SingleCollectionProvider(this.getTo()) );
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			reportManager.execute( out, report);
+			return out.toByteArray();
+		} catch (Throwable e) {
+			LOGGER.error(">>>> onReport " + e.getMessage());
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}			
+	}	
 	
 
 //	 * ************************************
@@ -511,7 +631,7 @@ public class ContractController extends BasicController implements IVariablesHan
 	}
 	
 	public void onContractDocumentShow( ActionEvent event ) {
-		ContractPdfController controller = (ContractPdfController) AonUtil.getRegisteredBean("contractPdf");
+		ContractPdfController controller = (ContractPdfController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_PDF_CONTROLLER_NAME);
 		controller.onContractDocumentShow(event);
 	}
 	
@@ -522,11 +642,14 @@ public class ContractController extends BasicController implements IVariablesHan
 		try {
 			PayrollUtils utils = new PayrollUtils();
 			Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
-			if(map.get(ContextVariable.TRAINING_CENTER.getName())!=null){
-				String id = map.get(ContextVariable.TRAINING_CENTER.getName());
-				tcController.select(null, Integer.parseInt(id));
+			if(map.get(ContextVariable.TRAINING_COURSE.getName())!=null){
+				String courseId = map.get(ContextVariable.TRAINING_COURSE.getName());
+				TrainingCourse course = (TrainingCourse) BeanManager.getManagerBean(TrainingCourse.class).get(Integer.parseInt(courseId));
+				tcController.select(null, course.getTrainingCenter().getId());
 			}
 			ReportManager report = (ReportManager) AonUtil.getRegisteredBean("report");
+			report.setReportKey("trainingDirectDebit");
+			report.setOutputFormat(OutputFormat.PDF);
 			return report.onExecute();
 		} finally {
 			tcController.clearCriteria();

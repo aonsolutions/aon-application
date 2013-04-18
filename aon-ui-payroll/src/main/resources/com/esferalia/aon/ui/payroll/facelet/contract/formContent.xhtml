@@ -107,6 +107,14 @@
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{payrollCollections.quoteGroups}" />
 			</aon:selectOneMenu>
+			
+			<aon:outputLabel value="#{payrollBundle.payroll_contract_occupation}"
+				for="occupationType"/>
+			<aon:selectOneMenu id="occupationType" 
+				value="#{contract.params.occupationType}">
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{payrollCollections.occupationTypes}" />
+			</aon:selectOneMenu>
 		</c:if>
 		
 		<aon:outputLabel for="startDate" value="#{bundle.aon_start_date}" />
@@ -146,14 +154,6 @@
 			popupDateFormat="#{bundle.aon_date_pattern}">
 		</aon:selectInputDate>
 		
-		<aon:outputLabel value="#{payrollBundle.payroll_contract_occupation}"
-			for="occupationType"/>
-		<aon:selectOneMenu id="occupationType" 
-			value="#{contract.params.occupationType}">
-			<f:selectItem itemLabel="-" value="#{null}" />
-			<f:selectItems value="#{payrollCollections.occupationTypes}" />
-		</aon:selectOneMenu>
-		
 
 <!--  
 			<aon:outputLabel for="gross_salary"
@@ -174,15 +174,15 @@
 			</aon:div>
 -->			
 	
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
-			<ui:param name="lookupTo" value="#{contract.params.cno}" />
-			<ui:param name="skipNewButton" value="#{true}" />
-			<ui:param name="lookupDisabled" value="#{false}" />
-			<ui:param name="lookupReRender" value="Contract_categoryDescription, trainingCenter, trainingCourse" />
-			<aon:methodParam name="lookupChangeListener" value="#{contract.onChangeCno}" type="lookupChangeListener" />
-		</ui:include>
-		
 		<c:if test="#{!contract.skipPayrollData}" >
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.params.cno}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+				<ui:param name="lookupDisabled" value="#{false}" />
+				<ui:param name="lookupReRender" value="Contract_categoryDescription, trainingCenter, trainingCourse" />
+				<aon:methodParam name="lookupChangeListener" value="#{contract.onChangeCno}" type="lookupChangeListener" />
+			</ui:include>
+		
 			<aon:outputLabel for="Contract_categoryDescription"  
 				value="#{payrollBundle.payroll_contract_category}" />
 			<aon:inputText id="Contract_categoryDescription" maxlength="64" size="56"
@@ -200,14 +200,14 @@
 					<ui:param name="lookupReRender" value="lookupTrainingCourse" />
 					<ui:param name="lookupRendered" value="#{payrollCollections.trainingCenterTotalCount>0}" />
 				</ui:include>
+				-->
 			  
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/trainingCenter/course/lookup.xhtml" >
 					<ui:param name="lookupTo" value="#{contract.params.trainingCourse}" />
 					<ui:param name="skipNewButton" value="#{true}" />
-					<ui:param name="lookupDisabled" value="#{contract.params.trainingCenter.id==null}" />
 				</ui:include>
-				-->
 				
+				<!--  
 				<aon:outputLabel for="trainingCenter" value="#{payrollBundle.payroll_trainingCenter}" />				
 				<aon:selectOneMenu id="trainingCenter"
 					value="#{contract.params.trainingCenter}" >
@@ -222,6 +222,26 @@
 					<f:selectItem itemLabel=" - " itemValue="#{null}" />
 					<f:selectItems value="#{contract.trainingCourses}" />
 				</aon:selectOneMenu>
+				-->
+				
+				<!--  
+				<aon:outputLabel for="trainingCourse_schedule" value="#{payrollBundle.payroll_trainingCourse_schedule}" />
+				<aon:div>
+					<aon:outputLabel for="trainingCourse_startTime" value="#{bundle.aon_date_from}" />
+					<aon:selectOneMenu id="trainingCourse"
+						value="#{contract.params.trainingCourseStartTime}" >
+						<f:selectItem itemLabel=" - " itemValue="#{null}" />
+						<f:selectItems value="#{contract.trainingCourses}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="trainingCourse_endTime" value="#{bundle.aon_date_to}" />
+					<aon:selectOneMenu id="trainingCourse_endTime" value="#{reservation.endTime}"
+						value="#{contract.params.trainingCourseEndTime}" >
+						<f:selectItems value="#{reservation.reservationTimes}" />
+					</aon:selectOneMenu>
+					
+				</aon:div>
+				-->
 				
 		</c:if>
 		

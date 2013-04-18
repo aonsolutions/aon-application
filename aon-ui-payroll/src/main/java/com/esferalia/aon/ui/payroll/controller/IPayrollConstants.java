@@ -53,6 +53,7 @@ public interface IPayrollConstants {
 	String CONTRACT_BONUS_CONTROLLER = "contractBonus";
 	String CONTRACT_EMBARGO_CONTROLLER = "contractEmbargo";
 	String CONTRACT_PAYMENT_CONTROLLER = "contractPayment";
+	String CONTRACT_PDF_CONTROLLER_NAME = "contractPdf";
 	String CONTRACT_DEDUCTION_CONTROLLER = "contractDeduction";
 	String CONTRACT_DATA_CONTROLLER = "contractData";
 	String CONTRACT_GENERATION_WIZARD_CONTROLLER = "contractGenerationWizard";

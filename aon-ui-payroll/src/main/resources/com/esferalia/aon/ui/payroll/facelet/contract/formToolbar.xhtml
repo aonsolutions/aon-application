@@ -11,66 +11,27 @@
 		<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
 		<ui:param name="controller" value="#{contract}" />
 		<ui:param name="skipRemoveButton" value="#{contract.to.status!='PENDING'}" />
-		<ui:param name="showMoreMenu" value="#{!contract.new and !contract.skipPayrollData}" />
+		<ui:param name="showMoreMenu" value="#{!contract.new}" />
 		<ui:define name="beforeSpinToolbarContent">
+			<!--  
 			<aon:htmlCommandLink id="directDebit-report"
 				styleClass="aon-finding-toolbar-item aon-icon-pdf" 
-				value="Domiciliacion bancaria" ajaxSingle="true"
-				rendered="#{contract.trainingContract and contract.trainingCenterDefined}"
+				value="#{payrollBundle.payroll_trainingCenter_directDebit}" ajaxSingle="true"
+				rendered="#{contract.trainingContract and contract.trainingCourseDefined}"
 				action="#{contract.onTrainingCenterDirectDebitReport}" target="_blank" >
 				<f:param name="reportKey" value="trainingDirectDebit" />
 				<f:param name="outputFormat" value="PDF" />
 			</aon:htmlCommandLink>
-			<aon:commandButton id="documentDraft-edition" 
-				action="contractPdfEdition_form" ajaxSingle="true"
-				rendered="#{not empty contract.to.model and not contract.existSignedContractDocument}"
-				value="Contrato"
-				title="Edicion manual del documento del contrato"
-				styleClass="aon-finding-toolbar-item aon-icon-pdf" >
-				<f:setPropertyActionListener
-					target="#{contractPdf.documentType}" value="CONTRACT" />
-				<f:setPropertyActionListener
-					target="#{contractPdf.backAction}" value="contract_form" />
-				<aon:actionListener method="#{contract.onContractDocumentShow}" />
-			</aon:commandButton>
-			<aon:commandButton id="basicCopyDraft-edition"
-				action="contractPdfEdition_form" ajaxSingle="true" 
-				rendered="#{not empty contract.to.model and not contract.existSignedBasicCopyDocument}"
-				value="Copia Basica"
-				title="Edicion manual del documento de la copia basica"
-				styleClass="aon-finding-toolbar-item aon-icon-pdf" >
-				<f:setPropertyActionListener
-					target="#{contractPdf.documentType}" value="BASIC_COPY" />
-				<f:setPropertyActionListener
-					target="#{contractPdf.backAction}" value="contract_form" />
-				<aon:actionListener method="#{contract.onContractDocumentShow}" />
-			</aon:commandButton>
-			<!--  
-			<aon:commandButton id="annex1Draft-edition"
-				action="contractPdfEdition_form" ajaxSingle="true" 
-				rendered="#{not empty contract.to.model and not contract.existDocument}"
-				value="Anexo I"
-				title="Anexo I. Acuerdo para la actividad formativa en contrato para la formación y  el aprendizaje en los supuestos que exista título de FP, certficado de profesionalidad y centro disponible."
-				styleClass="aon-finding-toolbar-item aon-icon-pdf" >
-				<f:setPropertyActionListener
-					target="#{contractPdf.documentType}" value="#{contract.annexPdfType}" />
-				<f:setPropertyActionListener
-					target="#{contractPdf.backAction}" value="contract_form" />
-				<aon:actionListener method="#{contract.onContractDocumentShow}" />
-			</aon:commandButton>
 			-->
-			<aon:commandButton id="annex2Draft-edition"
-				action="contractPdfEdition_form" ajaxSingle="true"
-				rendered="#{contract.trainingContract and contract.trainingCenterDefined}" 
-				value="Anexo II"
-				title="Anexo II. Acuerdo para la actividad formativa en contrato para la formación y el aprendizaje en los supuestos en que no exista título de FP, certificado de profesionalidad o centro disponible."
-				styleClass="aon-finding-toolbar-item aon-icon-pdf" >
-				<f:setPropertyActionListener
-					target="#{contractPdf.documentType}" value="ANNEX" />
-				<f:setPropertyActionListener
-					target="#{contractPdf.backAction}" value="contract_form" />
-				<aon:actionListener method="#{contract.onContractDocumentShow}" />
-			</aon:commandButton>
+			
+			<aon:commandButton id="document-issue" 
+				value="#{payrollBundle.payroll_contract_documentIssue}"
+				rendered="#{!contract.new and contract.to.pending}"
+				reRender="contract-panelTab"
+				actionListener="#{contract.onShowDocumentIssueWindow}"
+				styleClass="aon-finding-toolbar-item aon-icon-new-page"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+ 				oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 
 		</ui:define>
 		<ui:define name="moreMenuContent">
@@ -117,44 +78,61 @@
 						target="#{irpfData.backAction}" value="contract_form" />
 				</aon:menuItem>
 			</c:if>
-<!--  
-			<aon:menuItem id="contrata"
-				value="#{payrollBundle.payroll_contract_contrataData}"
-				action="contrata_form" 
-				rendered="#{!contract.new}"
-				actionListener="#{contract.onShowContrataData}"
-				iconClass="aon-icon-contrata" >
-				<f:setPropertyActionListener
-					target="#{contractContrata.backAction}" value="contract_form" />
-			</aon:menuItem>
-			
-			<rich:menuSeparator id="menuSeparator" />
-			
-			<aon:menuItem id="documentDraft-edition" 
-				action="contractPdfEdition_form"
-				rendered="#{not empty contract.to.model and not contract.existDocument}"
-				value="Contrato"
-				title="Edicion manual del documento del contrato"
-				iconClass="aon-icon-pdf" >
-				<f:setPropertyActionListener
-					target="#{contractPdf.documentType}" value="CONTRACT_DOCUMENT_DRAFT" />
-				<f:setPropertyActionListener
-					target="#{contractPdf.backAction}" value="contract_form" />
-				<aon:actionListener method="#{contract.onContractDocumentShow}" />
-			</aon:menuItem>
-			<aon:menuItem id="basicCopyDraft-edition"
-				action="contractPdfEdition_form" 
-				rendered="#{not empty contract.to.model and not contract.existDocument}"
-				value="Copia Basica"
-				title="Edicion manual del documento de la copia basica"
-				iconClass="aon-icon-pdf" >
-				<f:setPropertyActionListener
-					target="#{contractPdf.documentType}" value="BASIC_COPY_DRAFT" />
-				<f:setPropertyActionListener
-					target="#{contractPdf.backAction}" value="contract_form" />
-				<aon:actionListener method="#{contract.onContractDocumentShow}" />
-			</aon:menuItem>
--->			
+			<rich:menuGroup 
+				value="Editar documentos"
+				iconClass="aon-menuGroup-styleClass">
+				<aon:menuItem id="documentDraft-edition" 
+					action="contractPdfEdition_form" ajaxSingle="true"
+					rendered="#{not empty contract.to.model and not contract.existSignedContractDocument}"
+					value="Contrato"
+					title="Edicion manual del documento del contrato"
+					iconClass="aon-icon-page" >
+					<f:setPropertyActionListener
+						target="#{contractPdf.documentType}" value="CONTRACT" />
+					<f:setPropertyActionListener
+						target="#{contractPdf.backAction}" value="contract_form" />
+					<aon:actionListener method="#{contract.onContractDocumentShow}" />
+				</aon:menuItem>
+				<aon:menuItem id="basicCopyDraft-edition"
+					action="contractPdfEdition_form" ajaxSingle="true" 
+					rendered="#{not empty contract.to.model and not contract.existSignedBasicCopyDocument}"
+					value="Copia Basica"
+					title="Edicion manual del documento de la copia basica"
+					iconClass="aon-icon-page" >
+					<f:setPropertyActionListener
+						target="#{contractPdf.documentType}" value="BASIC_COPY" />
+					<f:setPropertyActionListener
+						target="#{contractPdf.backAction}" value="contract_form" />
+					<aon:actionListener method="#{contract.onContractDocumentShow}" />
+				</aon:menuItem>
+				<!--  
+				<aon:menuItem id="annex1Draft-edition"
+					action="contractPdfEdition_form" ajaxSingle="true" 
+					rendered="#{not empty contract.to.model and not contract.existDocument}"
+					value="Anexo I"
+					title="Anexo I. Acuerdo para la actividad formativa en contrato para la formación y  el aprendizaje en los supuestos que exista título de FP, certficado de profesionalidad y centro disponible."
+					siconClass="aon-icon-page" >
+					<f:setPropertyActionListener
+						target="#{contractPdf.documentType}" value="#{contract.annexPdfType}" />
+					<f:setPropertyActionListener
+						target="#{contractPdf.backAction}" value="contract_form" />
+					<aon:actionListener method="#{contract.onContractDocumentShow}" />
+				</aon:menuItem>
+				-->
+				<aon:menuItem id="annex2Draft-edition"
+					action="contractPdfEdition_form" ajaxSingle="true"
+					rendered="#{contract.trainingContract and contract.trainingCourseDefined}" 
+					value="Anexo II"
+					title="Anexo II. Acuerdo para la actividad formativa en contrato para la formación y el aprendizaje en los supuestos en que no exista título de FP, certificado de profesionalidad o centro disponible."
+					iconClass="aon-icon-page" >
+					<f:setPropertyActionListener
+						target="#{contractPdf.documentType}" value="ANNEX" />
+					<f:setPropertyActionListener
+						target="#{contractPdf.backAction}" value="contract_form" />
+					<aon:actionListener method="#{contract.onContractDocumentShow}" />
+				</aon:menuItem>                
+			</rich:menuGroup>
+
 		</ui:define>
 	</ui:decorate>
 	

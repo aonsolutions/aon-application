@@ -200,7 +200,7 @@ public class ContractPdfController {
 		} else if(getDocumentType()==PdfType.BASIC_COPY){
 			attachType = ContractAttachmentType.BASIC_COPY_DRAFT;
 		} else if(getDocumentType()==PdfType.ANNEX){
-			attachType = null;
+			attachType = ContractAttachmentType.TRAINING_ANNEX_II;
 		}
 		
 		try {
@@ -261,35 +261,11 @@ public class ContractPdfController {
 	}
 	
 	public void onContractDocumentShow( ActionEvent event ) {
-		
-		initialize();
-		
-		setContractPdfWriter(null);
+		setZoomFactor(2);
+		setDocumentPage(1);
 		try {
-			if(getContract()==null || getContract().getId()==null){
-				String msg = "Error al obtener los datos de contrato";
-				LOGGER.error(msg);
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg);
-			}
-
-			beforeDocumentShow();
-			
-			if(getDocumentType()==PdfType.CONTRACT && getContractModel()==null){
-				String msg = "Modelo de contrato no reconocido.";
-				LOGGER.error(msg);
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg);
-			}
-			
-			setZoomFactor(2);
-			
-			loadPdfDocument();
-
-			setDocumentPage(1);
-			
+			generateDocument();
 			createPdfThumbnail();
-
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -299,6 +275,25 @@ public class ContractPdfController {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
 		}
+	}
+	
+	public void generateDocument() throws UnsupportedContractDocumentException, IOException{
+		initialize();
+		setContractPdfWriter(null);
+		if(getContract()==null || getContract().getId()==null){
+			String msg = "Error al obtener los datos de contrato";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		beforeDocumentShow();
+		if(getDocumentType()==PdfType.CONTRACT && getContractModel()==null){
+			String msg = "Modelo de contrato no reconocido.";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		loadPdfDocument();
 	}
 	
 	private void loadPdfDocument() throws UnsupportedContractDocumentException, IOException{
@@ -368,7 +363,7 @@ public class ContractPdfController {
 			attachType = ContractAttachmentType.BASIC_COPY_DRAFT;
 			attachName = attachType.getName(locale);
 		} else if(getDocumentType()==PdfType.ANNEX){
-			attachType = null;
+			attachType = ContractAttachmentType.TRAINING_ANNEX_II;
 			attachName = "Anexo II";
 		}
 		
@@ -431,6 +426,14 @@ public class ContractPdfController {
 		response.setContentType(MimeType.MIME_PDF.getName()); 
 		response.flushBuffer();
 		context.responseComplete();
+	}
+	
+	
+	public void onEmailDocuments(ActionEvent event){
+		
+	}
+	public void onPrintDocuments(ActionEvent event){
+		
 	}
 	
 	public enum PdfType {
