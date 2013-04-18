@@ -63,7 +63,7 @@ public class PmsReportManager {
 				//servicios (directos y compuestos) sin habitacion asignada 
 				//******************************************** 
 				"(SELECT PR.hotel," +
-				" IF ((P.code like '001%' OR P2.code like '001%' OR P.code like '002%' OR P2.code like '002%'), date(PRSD.effective_date) + INTERVAL 1 DAY, PRSD.effective_date)," +
+				" IF (((P.code like '001%' OR P2.code like '001%') AND PRS.extra=0), date(PRSD.effective_date) + INTERVAL 1 DAY, PRSD.effective_date)," +
 				" IF (P.composition=0, P.name, P2.name)," +
 				" IF (P.composition=0, P.code, P2.code)," +
 				" IF(PRS.extra=0, sum(PRR.adults+PRR.children)/count(distinct(PRS.id)), sum(PRSD.quantity))," +
@@ -95,7 +95,7 @@ public class PmsReportManager {
 				//********************************************
 				" UNION" +
 				" (SELECT PR.hotel," +
-				" IF ((P.code like '001%' OR P.code like '002%'), date(PRSD.effective_date) + INTERVAL 1 DAY, PRSD.effective_date)," +
+				" IF (((P.code like '001%') AND PRS.extra=0), date(PRSD.effective_date) + INTERVAL 1 DAY, PRSD.effective_date)," +
 				" P.name," +
 				" P.code," +
 				" sum(IF(PRS.extra=0, (PRR.adults+PRR.children), PRSD.quantity))," +
@@ -129,7 +129,7 @@ public class PmsReportManager {
 				//		********************************************		
 				" UNION" +
 				" (SELECT PR.hotel," +
-				" IF ((P2.code like '001%' OR P2.code like '002%'), date(PRSD.effective_date) + INTERVAL 1 DAY, PRSD.effective_date)," +
+				" IF (((P2.code like '001%') AND PRS.extra=0), date(PRSD.effective_date) + INTERVAL 1 DAY, PRSD.effective_date)," +
 				" P2.name," +
 				" P2.code," +
 				" sum(IF(PRS.extra=0, (PRR.adults+PRR.children), PRSD.quantity))," +
