@@ -1,7 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
 import java.io.ByteArrayInputStream;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -18,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -26,10 +24,6 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.IWebMailConstants;
-import com.code.aon.ui.webmail.controller.MailConfigController;
-import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.webmail.SecurityInfo;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
@@ -46,7 +40,7 @@ import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.ContractPdfWriter;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
-import com.esferalia.aon.ui.payroll.utils.PdfToImage;
+import com.esferalia.aon.ui.payroll.utils.PdfUtils;
 
 public class ContractPdfController {
 	
@@ -328,7 +322,7 @@ public class ContractPdfController {
 			fileName = ModelPE230.MODEL_NAME+".pdf"; 
 		}
 		URL url = getContractPdfWriter().getContractDocumentUrl(fileName);
-		PdfToImage.createPdfWallpaper(url, getDocumentPage(), getDocumentWidth().intValue(), getDocumentHeight().intValue());
+		PdfUtils.createPdfWallpaper(url, getDocumentPage(), getDocumentWidth().intValue(), getDocumentHeight().intValue());
 	}
 	
 	public void onChangeZoomFactor( ActionEvent event ) throws IOException, UnsupportedContractDocumentException {

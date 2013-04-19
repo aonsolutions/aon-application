@@ -25,10 +25,10 @@
 			-->
 			
 			<aon:commandButton id="document-issue" 
-				value="#{payrollBundle.payroll_contract_documentIssue}"
+				value="#{payrollBundle.payroll_contract_generate_document}"
 				rendered="#{!contract.new and contract.to.pending}"
 				reRender="contract-panelTab"
-				actionListener="#{contract.onShowDocumentIssueWindow}"
+				actionListener="#{contract.onGenerateDocument}"
 				styleClass="aon-finding-toolbar-item aon-icon-new-page"
 				onclick="Richfaces.showModalPanel('waitProccess')" 
  				oncomplete="Richfaces.hideModalPanel('waitProccess')" />

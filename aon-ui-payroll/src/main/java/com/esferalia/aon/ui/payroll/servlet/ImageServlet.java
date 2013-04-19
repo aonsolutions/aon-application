@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.ImageUtil;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
-import com.esferalia.aon.ui.payroll.utils.PdfToImage;
+import com.esferalia.aon.ui.payroll.utils.PdfUtils;
 
 public class ImageServlet extends HttpServlet implements IPayrollConstants{
 	private static final long serialVersionUID = 1L;
@@ -25,7 +25,7 @@ public class ImageServlet extends HttpServlet implements IPayrollConstants{
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		
-		BufferedImage contractWallpaper = PdfToImage.getPdfWallpaperImage();
+		BufferedImage contractWallpaper = PdfUtils.getPdfWallpaperImage();
 		if (contractWallpaper==null) {
 			throw new IllegalArgumentException("Se ha producido un error al obtener la página del contrato.");
 		}

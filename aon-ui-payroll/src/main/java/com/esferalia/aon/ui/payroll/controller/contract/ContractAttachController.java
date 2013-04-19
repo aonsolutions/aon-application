@@ -1,11 +1,13 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
+
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
@@ -16,18 +18,20 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.faces.controller.AttachmentController;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
-import com.esferalia.aon.payroll.ContractAttachment;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MailConfigController;
+import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.SecurityInfo;
+import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PRAcroForm;
-import com.lowagie.text.pdf.PdfCopy;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
+import com.esferalia.aon.ui.payroll.utils.PayrollEmailUtil;
+import com.esferalia.aon.ui.payroll.utils.PdfUtils;
 
 public class ContractAttachController extends AttachmentController {
 	
-	private ArrayList<ContractAttachment> checks = new ArrayList<ContractAttachment>();
+	private ArrayList<IAttachment> checks = new ArrayList<IAttachment>();
 	
 	private ContractAttachmentType type;
 		
@@ -58,7 +62,7 @@ public class ContractAttachController extends AttachmentController {
 	}
 	
 	public void rowSelected(ActionEvent event) throws ManagerBeanException{
-		ContractAttachment to = (ContractAttachment) getModel().getRowData();
+		IAttachment to = (IAttachment) getModel().getRowData();
 		if (checks.contains(to)) {
 			checks.remove(to);
 		} else {
@@ -73,18 +77,18 @@ public class ContractAttachController extends AttachmentController {
 	}
 
 	public boolean getRowChecked() throws ManagerBeanException{
-		ContractAttachment to = (ContractAttachment) getModel().getRowData();
+		IAttachment to = (IAttachment) getModel().getRowData();
 		return checks.contains(to);
 	}
 	
 	public void setRowChecked(boolean rowChecked) throws ManagerBeanException{
 		if (rowChecked) {
-			ContractAttachment to = (ContractAttachment) getModel().getRowData();
+			IAttachment to = (IAttachment) getModel().getRowData();
 			if (!checks.contains(to)) {
 				checks.add(to);
 			}
 		} else {
-			ContractAttachment to = (ContractAttachment) getModel().getRowData();
+			IAttachment to = (IAttachment) getModel().getRowData();
 			if (checks.contains(to)) {
 				checks.remove(to);
 			}
@@ -93,7 +97,7 @@ public class ContractAttachController extends AttachmentController {
 
 	public void checkAll(ActionEvent event) throws ManagerBeanException{
 		for (ITransferObject ito : this.getWrappedList()) {
-			ContractAttachment o = (ContractAttachment)ito;
+			IAttachment o = (IAttachment)ito;
 			if (!checks.contains(o)) {
 				checks.add( o );
 			}
@@ -101,104 +105,38 @@ public class ContractAttachController extends AttachmentController {
 	}
 
 	public void checkNone(ActionEvent event) {
-		checks = new ArrayList<ContractAttachment>();
+		clearChecks();
+	}
+	public void clearChecks() {
+		checks = new ArrayList<IAttachment>();
 	}
 	
 	public void onDownloadSelected(ActionEvent event){
-//		for (ContractAttachment attach : checks) {
-//			attach.getData();
-//			
-//		}
-		
-	
-//		FacesContext context = FacesContext.getCurrentInstance();
-//        String id = context.getExternalContext().getRequestParameterMap().get("index");
-//        IAttachment attachment = (IAttachment) getManagerBean().get(Integer.valueOf(id));
-//        DownloadUtil.downloadAttachment( checks.get(0) );    
-        
-		byte[] data = mergeSelectedDocuments(); 
-		
-        
-        InputStream in = new ByteArrayInputStream(data);
+		byte[] data = PdfUtils.mergePdf(checks);
+		InputStream in = new ByteArrayInputStream(data);
 		long size = ArrayUtils.getLength(data);
 		DownloadUtil.downloadAttachment("Contract-documents", MimeType.MIME_PDF, in, size);
-	    
-		
 	}
 	
-	public byte[] mergeSelectedDocuments() {
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		Document document = null;
-		PdfCopy writer = null;
+	public void onSendSelectedByEmail(ActionEvent event) throws ManagerBeanException, IOException {
+		sendSelectedByEmail(null, true);
+	}
+	private void sendSelectedByEmail(SecurityInfo securyInfo, boolean facturae) throws ManagerBeanException, IOException {
+		PayrollEmailUtil emailController = new PayrollEmailUtil();
 		
-		
-		
-		for (ContractAttachment attach : checks) {
-//			attach.getData();
-			
-			try {
-				PdfReader reader = new PdfReader(attach.getData());
-				int numberOfPages = reader.getNumberOfPages();
-				
-//				if (document == null) {
-					document = new Document(reader.getPageSizeWithRotation(1));
-					writer = new PdfCopy(document, outStream); // new
-					// FileOutputStream("C:\\Yuval@.pdf"));
-					// //this.getOutputStream());
-					document.open();
-//				}
-				PdfImportedPage page;
-				for (int i = 0; i < numberOfPages;) {
-					++i;
-					page = writer.getImportedPage(reader, i);
-					writer.addPage(page);
-					
-				}
-				
-				/**
-				 * PdfReader reader = new PdfReader("existing.pdf"); Document
-				 * document = new Document(reader.getPageSizeWithRotation(1));
-				 * PdfCopy copy = new PdfCopy(document, new
-				 * FileOutputStream(outFile)); document.open(); PdfImportedPage page =
-				 * copy.getImportedPage(reader, i); copy.addPage(page);
-				 * document.close();
-				 */
-				
-				PRAcroForm form = reader.getAcroForm();
-				if (form != null) {
-					writer.copyAcroForm(reader);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			
-			
-//		MergePdfByteArrays merger = new MergePdfByteArrays();
-//		// we create a reader for a certain document
-//		File docA = new File("c:\\1160895702325.pdf");
-//		File docB = new File("c:\\1160895953517.pdf");
-//
-//		GetBytesFromFile byteFromfile = new GetBytesFromFile();
-//		merger.add(byteFromfile.getBytesFromFile(docA));
-//		merger.add(byteFromfile.getBytesFromFile(docB));
-//		merger.close();
-			
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		if (mailConfig.getMailAccountCount() > 0) {
+//			Invoice invoice = getInvoice();
+			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+			messageController.initNewMessage();
+//			IAttachment attach = getInvoiceData(invoice);
+//			emailController.initMessageController(messageController, invoice, attach, facturae);
+			emailController.initMessageController(messageController, (Contract)this.getMasterController().getTo(), checks, facturae);
+			messageController.setShowNewMessageWindow(true);
+			messageController.setSecurityInfo(securyInfo);
+		} else {
+			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
 		}
-		
-		
-		
-		//tranform byteArrayOutputStream into file
-		byte[] array = outStream.toByteArray();
-		
-		
-		try {
-			document.close();
-			outStream.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return array;
 	}
 	
 }

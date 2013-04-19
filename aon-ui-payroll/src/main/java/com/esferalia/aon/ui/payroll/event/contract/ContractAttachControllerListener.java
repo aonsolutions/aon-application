@@ -18,6 +18,7 @@ public class ContractAttachControllerListener extends AttachmentControllerListen
 		super.beforeModelInitialized(event);
 		try {
 			ContractAttachController controller = (ContractAttachController) event.getController();
+			controller.clearChecks();
 			if ( controller.getType() != null ) {
 				IManagerBean attachBean = controller.getManagerBean();
 				Criteria criteria = controller.getCriteria();

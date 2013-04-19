@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -86,8 +85,6 @@ public class ContractController extends BasicController implements IVariablesHan
 
 	private boolean showNewContractModal;
 	private boolean skipPayrollData;
-	private boolean showDocumentIssueWindow;
-
 	
 	public ContractParams getParams() {
 		if(params==null){
@@ -119,12 +116,6 @@ public class ContractController extends BasicController implements IVariablesHan
 	}
 	public void setShowNewContractModal(boolean showNewContractModal) {
 		this.showNewContractModal = showNewContractModal;
-	}
-	public boolean isShowDocumentIssueWindow() {
-		return showDocumentIssueWindow;
-	}
-	public void setShowDocumentIssueWindow(boolean showDocumentIssueWindow) {
-		this.showDocumentIssueWindow = showDocumentIssueWindow;
 	}
 	public Agreement getAgreement() {
 		return agreement;
@@ -459,8 +450,7 @@ public class ContractController extends BasicController implements IVariablesHan
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
 	}
-	public void onShowDocumentIssueWindow(ActionEvent event){
-		setShowDocumentIssueWindow(false);
+	public void onGenerateDocument(ActionEvent event){
 		
 		ContractPdfController pdfDocument = (ContractPdfController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_PDF_CONTROLLER_NAME);
 		try {
@@ -526,7 +516,7 @@ public class ContractController extends BasicController implements IVariablesHan
 			attach = new ContractAttachment();
 		}
 		attach.setContract((Contract) this.getTo());
-		attach.setData(getReport("trainingDirectDebit"));
+		attach.setData(getReport(IPayrollConstants.TRAINING_DIRECT_DEBIT_REPORT_KEY));
 		attach.setMimeType(MimeType.MIME_PDF);
 		attach.setAttachmentType(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT);
 		attach.setAttachDate(new Date());
