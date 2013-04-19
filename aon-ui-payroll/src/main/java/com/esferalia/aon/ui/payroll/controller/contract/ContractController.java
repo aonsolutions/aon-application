@@ -913,6 +913,7 @@ public class ContractController extends BasicController implements IVariablesHan
 		}
 		public void setTrainingCourse(TrainingCourse trainingCourse) {
 			this.trainingCourse = trainingCourse;
+			setCno(trainingCourse.getCNO());
 		}
 		public Double getIrpf() {
 			return irpf;
