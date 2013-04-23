@@ -113,20 +113,31 @@
 							</aon:selectOneMenu>
 						</c:if>
 
-						<c:if test="#{aonConfiguration.bean.customer.showDeliveryData}">
-							<aon:outputText value="#{customerBundle.customer_delivery_info}" />
+						<c:if test="#{aonConfiguration.bean.customer.showFinanceFeeData or aonConfiguration.bean.customer.showDeliveryData}">
+							<aon:outputText value="#{customerBundle.customer_invoicing_info}" />
 							<aon:div>
-								<aon:selectBooleanCheckbox id="Customer_deliveryGrouped"
-									value="#{customer.to.deliveryGrouped}" />
-								<aon:outputLabel for="Customer_deliveryGrouped" styleClass="aon-italic"
-									value="#{customerBundle.customer_deliveryGrouped}" />
-								<aon:selectBooleanCheckbox id="Customer_deliveryValuated" styleClass="aon-margin-left"
-									value="#{customer.to.deliveryValuated}" />
-								<aon:outputLabel for="Customer_deliveryValuated" styleClass="aon-italic"
-									value="#{customerBundle.customer_deliveryValuated}" />
+								<c:if test="#{aonConfiguration.bean.customer.showDeliveryData}">
+									<aon:outputText	styleClass="aon-margin-left aon-bold"
+										value="#{financeBundle.finance_invoice_deliveries}:" />
+									<aon:selectBooleanCheckbox id="Customer_deliveryGrouped" styleClass="aon-margin-left"
+										value="#{customer.to.deliveryGrouped}" />
+									<aon:outputLabel for="Customer_deliveryGrouped" styleClass="aon-italic"
+										value="#{customerBundle.customer_invoiceGrouped}" />
+									<aon:selectBooleanCheckbox id="Customer_deliveryValuated" styleClass="aon-margin-left"
+										value="#{customer.to.deliveryValuated}" />
+									<aon:outputLabel for="Customer_deliveryValuated" styleClass="aon-italic"
+										value="#{customerBundle.customer_printValuated}" />
+								</c:if>
+
+								<aon:outputText	styleClass="aon-margin-left aon-bold"
+									value="#{projectBundle.project_projects}:" />
+								<aon:selectBooleanCheckbox id="Customer_projectGrouped" styleClass="aon-margin-left"
+									value="#{customer.to.projectGrouped}" />
+								<aon:outputLabel for="Customer_projectGrouped" styleClass="aon-italic"
+										value="#{customerBundle.customer_invoiceGrouped}" />
 							</aon:div>
 						</c:if>
-	
+
 						<c:if test="#{company.EInvoice}">
 							<aon:outputLabel for="Customer_eInvoice"
 								value="#{customerBundle.customer_eInvoice}" />
@@ -136,10 +147,10 @@
 							</aon:selectOneRadio>
 						</c:if>
 	
-						<c:if test="#{!customer.new and customer.invoicingGroup != null}">
+						<c:if test="#{!customer.new and customer.to.invoicingGroup.id != null}">
 							<aon:outputLabel value="#{customerBundle.customer_invoicingGroup}" />
 							<aon:div>
-								<aon:outputText	value="#{customer.invoicingGroup.parent.fullName}" />
+								<aon:outputText	value="#{customer.to.invoicingGroup.customer.registry.fullName}" />
 								<aon:commandLink id="invoicingGroup_link" immediate="true"
 									styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
 									value="&#160;" title="#{bundle.aon_go}"
@@ -199,8 +210,7 @@
 						</aon:panelTab>
 
 						<c:if test="#{aonConfiguration.bean.customer.showFinanceData and aonRole.financeOperator}">
-							<aon:panelTab id="finance"
-								label="#{registryBundle.registry_finance_data_module}">
+							<aon:panelTab id="finance" label="#{registryBundle.registry_finance_data_module}">
 								<aon:panel>
 									<f:facet name="header">
 										<aon:outputText	value="#{registryBundle.registry_banks_module}" />
@@ -223,8 +233,7 @@
 						</c:if>
 
 						<c:if test="#{aonConfiguration.bean.customer.showFinanceFeeData and aonRole.financeOperator and customerFee.model.rowCount > 0}">
-							<aon:panelTab id="fee"
-								label="#{financeBundle.finance_fees_module}">
+							<aon:panelTab id="fee" label="#{financeBundle.finance_fees_module}">
 								<ui:include	src="/com/code/aon/ui/finance/facelet/fee/tab_grid.xhtml" >
 									<ui:param name="removeButtonReRender" value="customerTab" />
 								</ui:include>
@@ -242,8 +251,7 @@
 						</c:if>
 
 						<c:if test="#{aonConfiguration.bean.customer.showNote and customerNote.model.rowCount > 0}">
-							<aon:panelTab id="rnotes"
-								label="#{registryBundle.registry_note}">
+							<aon:panelTab id="rnotes" label="#{registryBundle.registry_note}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/rnote/grid.xhtml">
 									<ui:param name="controller" value="#{customerNote}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
@@ -252,8 +260,7 @@
 						</c:if>
 
 						<c:if test="#{aonConfiguration.bean.customer.showRelationship and customerRelationship.model.rowCount > 0}">
-							<aon:panelTab id="rrelationship"
-								label="#{registryBundle.registry_relationship}">
+							<aon:panelTab id="rrelationship" label="#{registryBundle.registry_relationship}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/rrelationship/grid.xhtml">
 									<ui:param name="controller" value="#{customerRelationship}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
@@ -262,8 +269,7 @@
 						</c:if>
 
 						<c:if test="#{aonConfiguration.bean.customer.showRecordData and customerRecordData.model.rowCount > 0}">
-							<aon:panelTab id="recordData"
-								label="#{registryBundle.registry_rd_module}">
+							<aon:panelTab id="recordData" label="#{registryBundle.registry_rd_module}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/record_data/tab_include.xhtml">
 									<ui:param name="controller" value="#{customerRecordData}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
@@ -272,8 +278,7 @@
 						</c:if>
 
 						<c:if test="#{aonConfiguration.bean.customer.showSegment and customerSegment.model.rowCount > 0}">
-							<aon:panelTab id="segment"
-								label="#{registryBundle.registry_segment_module}">
+							<aon:panelTab id="segment" label="#{registryBundle.registry_segment_module}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/rsegment/tab_grid.xhtml">
 									<ui:param name="controller" value="#{customerSegment}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
@@ -282,8 +287,7 @@
 						</c:if>
 
 						<c:if test="#{aonConfiguration.bean.customer.showAddInfo and customerAddInfo.model.rowCount > 0}">
-							<aon:panelTab id="addInfo"
-								label="#{registryBundle.registry_addInfo}">
+							<aon:panelTab id="addInfo" label="#{registryBundle.registry_addInfo}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
 									<ui:param name="controller" value="#{customerAddInfo}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
@@ -292,8 +296,7 @@
 						</c:if>
 
 						<c:if test="#{aonConfiguration.bean.customer.showDirStaff and customerDirStaff.model.rowCount > 0}">
-							<aon:panelTab id="dirStaff"
-								label="#{registryBundle.registry_dir_staff}">
+							<aon:panelTab id="dirStaff" label="#{registryBundle.registry_dir_staff}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/rdirstaff/tab_grid.xhtml">
 									<ui:param name="controller" value="#{customerDirStaff}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
@@ -350,6 +353,8 @@
 			</c:if>
 			<c:if test="#{aonConfiguration.bean.customer.showFinanceFeeData}">
 				<aon:lookupButtonPopup lookup="#{itemLookup}" />
+				<aon:lookupButtonPopup lookup="#{invoicingGroupLookup}" />
+				<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 			</c:if>
 			<c:if test="#{aonConfiguration.bean.customer.showRelationship}">
 				<aon:lookupButtonPopup lookup="#{registryLookup}" />

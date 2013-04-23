@@ -13,7 +13,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
-import com.code.aon.finance.InvoicingGroup;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.stat.controller.RegistryStatEngineController;
@@ -24,19 +23,10 @@ public class CustomerController extends RegistryController implements ICustomerC
 	private static final String BASE_NAME = "com.code.aon.ui.registry.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_customer_report";
 
-    private InvoicingGroup invoicingGroup;
     private boolean showAlumnData;
     private boolean showAlumnUpdateConfirmWindow;
     private Integer courseAlumnCount;
 
-    public InvoicingGroup getInvoicingGroup() {
-    	return invoicingGroup;
-    }
-
-    public void setInvoicingGroup(InvoicingGroup invoicingGroup) {
-    	this.invoicingGroup = invoicingGroup;
-    }
-    
 	public boolean isShowAlumnData() {
 		return showAlumnData;
 	}
@@ -131,10 +121,9 @@ public class CustomerController extends RegistryController implements ICustomerC
 	}
 
 	public void onLoadInvoicingGroup(ActionEvent event) throws ManagerBeanException {
-		if (getInvoicingGroup() != null && getInvoicingGroup().getId() != null) {
-			BasicController customerController = (BasicController)AonUtil.getRegisteredBean(INVOICING_GROUP_CONTROLLER_NAME);
-			customerController.onLoad(event, getInvoicingGroup().getId(), CUSTOMER_FORM_NAME, CUSTOMER_CONTROLLER_NAME + ".select");
-		}
+		Customer customer = (Customer)getTo();
+		BasicController invoicingGroupController = (BasicController)AonUtil.getRegisteredBean(INVOICING_GROUP_CONTROLLER_NAME);
+		invoicingGroupController.onLoad(event, customer.getInvoicingGroup().getId(), CUSTOMER_FORM_NAME, CUSTOMER_CONTROLLER_NAME + ".select");
 	}
 
 }

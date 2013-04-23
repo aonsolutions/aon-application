@@ -2,7 +2,6 @@ package com.code.aon.ui.finance.controller;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -21,7 +20,6 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
-import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.IInvoicingFeedBack;
@@ -90,11 +88,10 @@ public class DeliveryInvoicingController implements IProgression, IFinanceConsta
 
 	public void onInitialize(ActionEvent event) throws ManagerBeanException {
 		InvoicingParameters params = new InvoicingParameters();
-		params.setCustomer((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
-		params.setConfidential(false);
+		params.initializeParams();
 		params.setInvoiceNumber(obtainMaxNumber(null));
 		params.setInvoiceDate(new Date());
-		params.setInvoiceRecordable(false);
+		params.setInvoiceRecordable(AonUtil.getRoleManager().isAccountingOperator());
 		setParams(params);
 
 		setProgressionPanelVisible(false);
@@ -150,10 +147,10 @@ public class DeliveryInvoicingController implements IProgression, IFinanceConsta
 
 			getEngine().setInvoicingDAO(new DeliveryInvoicingDAO());
 			getEngine().setInvoicingFeedBack(getInvoicingFeedBack());
+			getEngine().setHibernateSession(HibernateUtil.getSession(sessionName));
 			
 			HibernateUtil.beginTransaction(sessionName);
 			getEngine().invoice(getParams());
-			HibernateUtil.getSession(sessionName).flush();					
 			HibernateUtil.commitTransaction(sessionName);
 
 			Collection<Invoice> invoicedList = getEngine().getInvoicingDAO().getCollection();
@@ -163,11 +160,14 @@ public class DeliveryInvoicingController implements IProgression, IFinanceConsta
 					recording = true;
 					invoicesToRecord = invoicedList.size();
 					recordingInvoice = 0;
-					Iterator<Invoice> iter = invoicedList.iterator();
-					while (iter.hasNext()) {
-						Invoice invoice = iter.next();
+					for (Invoice invoice : invoicedList) {
+						invoice = (Invoice)HibernateUtil.getSession(sessionName).merge(invoice);
 						getAccountEntryInvoiceWriter().recordAndUpdateInvoice(invoice);
 						recordingInvoice++;
+						if (recordingInvoice % 20 == 0) {
+							HibernateUtil.getSession(sessionName).flush();
+							HibernateUtil.getSession(sessionName).clear();
+						}
 					}
 					HibernateUtil.getSession(sessionName).flush();
 					HibernateUtil.commitTransaction(sessionName);

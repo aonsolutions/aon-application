@@ -23,16 +23,11 @@ public class CustomerFee extends CustomerFeeDB implements ICalculable {
 
 	private static final long serialVersionUID = 113912434021805866L;
 
-	private Customer invoicingCustomer;
 	private String invoicingDescription;
 
     @Transient
 	public Customer getInvoicingCustomer() {
-		return (invoicingCustomer != null) ? invoicingCustomer : getCustomer();
-    }
-    @Transient
-	public void setInvoicingCustomer(Customer invoicingCustomer) {
-    	this.invoicingCustomer = invoicingCustomer;
+		return (getInvoicingGroup() != null && getInvoicingGroup().getId() != null) ? getInvoicingGroup().getCustomer() : getCustomer();
     }
 
     @Transient

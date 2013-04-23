@@ -28,9 +28,17 @@ public class Customer extends CustomerDB implements ITaxInfo,IScopable,IRegistry
     public Customer() {
     	setTransaction(InvoiceTransactionType.NATIONAL);
     	setStatus(CustomerStatus.ACTIVE);
+    	setProjectGrouped(true);
+    	setDeliveryGrouped(true);
+    	setDeliveryValuated(true);
     }
 
-	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
+    @Transient
+	public Customer getInvoicingCustomer() {
+		return (getInvoicingGroup() != null && getInvoicingGroup().getId() != null) ? getInvoicingGroup().getCustomer() : this;
+    }
+
+    @OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
 	public Set<RegistryAttachment> getDocuments() {
 		return documents;
 	}

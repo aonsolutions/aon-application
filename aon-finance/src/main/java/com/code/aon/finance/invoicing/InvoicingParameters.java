@@ -1,16 +1,21 @@
 package com.code.aon.finance.invoicing;
 
+import java.util.Calendar;
 import java.util.Date;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
 
 public class InvoicingParameters {
 	
+	private InvoicingGroup invoicingGroup;
 	private Customer customer;
 	private Item item;
 	private ProductCategory category;
@@ -30,6 +35,14 @@ public class InvoicingParameters {
 	private boolean invoiceRecordable;
 	private String invoiceComments;
 	
+	public InvoicingGroup getInvoicingGroup() {
+		return invoicingGroup;
+	}
+
+	public void setInvoicingGroup(InvoicingGroup invoicingGroup) {
+		this.invoicingGroup = invoicingGroup;
+	}
+
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -164,6 +177,18 @@ public class InvoicingParameters {
 
 	public void setInvoiceComments(String invoiceComments) {
 		this.invoiceComments = invoiceComments;
+	}
+
+	public void initializeParams() throws ManagerBeanException {
+		Calendar calendar = Calendar.getInstance();
+
+		setInvoicingGroup((InvoicingGroup)BeanManager.getManagerBean(InvoicingGroup.class).createNewTo());
+		setCustomer((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
+		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
+		setCategory(new ProductCategory());
+		setMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
+		setYear(calendar.get(Calendar.YEAR));
+		setConfidential(false);
 	}
 
 }

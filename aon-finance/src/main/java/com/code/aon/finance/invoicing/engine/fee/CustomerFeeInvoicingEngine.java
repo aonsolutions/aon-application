@@ -4,10 +4,10 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 
@@ -19,13 +19,10 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
-import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.InvoicingGroup;
-import com.code.aon.finance.InvoicingGroupDetail;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -36,7 +33,6 @@ import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.registry.Registry;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
@@ -44,6 +40,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 	private IInvoicingDAO invoicingDAO;
 	private IInvoicingFeedBack invoicingFeedBack;
 	private Session session;
+	private int detailLine;
 	
 	public IInvoicingDAO getInvoicingDAO() {
 		return invoicingDAO;
@@ -71,16 +68,21 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 
 	public void invoice(InvoicingParameters params) throws ManagerBeanException {
 		List<ITransferObject> feeList = obtainFeeList(createInvoicingCriteria(params), params);
-		invoiceFees(feeList, createInvoicingCriteria(params), params);
+		invoiceFees(feeList, params);
 	}
 
 	private Criteria createInvoicingCriteria(InvoicingParameters params) throws ManagerBeanException {
 		IManagerBean feeBean = BeanManager.getManagerBean(CustomerFee.class);
 		Criteria criteria = new Criteria();
-		Expression dateExpression = createFromToExpression(params.getMonth(), params.getYear());
-		criteria.addExpression(dateExpression);
 		criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
 		criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_SECURITY_LEVEL), getSecurityLevel(params.isConfidential()));
+		criteria.addExpression(createFromToExpression(params.getMonth(), params.getYear()));
+		if (params.getInvoicingGroup() != null && params.getInvoicingGroup().getId() != null) {
+			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_INVOICING_GROUP_ID), params.getInvoicingGroup().getId());
+		}
+		if (params.getCustomer() != null && params.getCustomer().getId() != null) {
+			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_ID), params.getCustomer().getId());
+		}
 		if (params.getItem() != null && params.getItem().getId() != null) {
 			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_ITEM_ID), params.getItem().getId());
 		}
@@ -90,13 +92,11 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null) {
 			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_WORK_PLACE_ID), params.getWorkPlace().getId());
 		}
-		criteria.addOrder(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_NAME));
-		criteria.addOrder(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_LINE));
 		return criteria;
 	}
 
 	private Expression createFromToExpression(Month month, int year) throws ManagerBeanException {
-		Calendar calendar = new GregorianCalendar();
+		Calendar calendar = Calendar.getInstance();
 		calendar.set(year, month.getValue(), 1, 0, 0, 0);
 		Date from = calendar.getTime();
 		calendar.add(Calendar.MONTH, 1);
@@ -111,65 +111,15 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 	}
 
 	private List<ITransferObject> obtainFeeList(Criteria criteria, InvoicingParameters params) throws ManagerBeanException {
-		IManagerBean feeBean = BeanManager.getManagerBean(CustomerFee.class);
-		Criteria feeCriteria = new Criteria();
-		feeCriteria.addExpression(criteria.getExpression());
-		feeCriteria.setOrderByList(criteria.getOrderByList());
-		feeCriteria = completeCriteriaWithCustomerData(feeCriteria, params.getCustomer());
-		List<ITransferObject> feeList = feeBean.getList(feeCriteria);
+		List<ITransferObject> feeList = BeanManager.getManagerBean(CustomerFee.class).getList(criteria);
 		for (ITransferObject ito : feeList) {
 			CustomerFee customerFee = (CustomerFee)ito;
-			InvoicingGroup invoicingGroup = getInvoicingGroupByChild(customerFee.getCustomer().getRegistry());
-			customerFee.setInvoicingDescription(obtainFeeDescription(customerFee, invoicingGroup, params));
-			if (invoicingGroup != null) {
-				customerFee.setInvoicingCustomer((Customer)BeanManager.getManagerBean(Customer.class).get(invoicingGroup.getParent().getId()));
-			}
+			customerFee.setInvoicingDescription(obtainFeeDescription(customerFee, params));
 		}
 		return orderFeeList(feeList);
 	}
 
-	private Criteria completeCriteriaWithCustomerData(Criteria criteria, Customer customer) throws ManagerBeanException {
-		IManagerBean feeBean = BeanManager.getManagerBean(CustomerFee.class);
-		if (customer != null && customer.getId() != null) {
-			Expression expression = ExpressionUtilities.getEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_ID), customer.getId());
-
-			InvoicingGroup group = getInvoicingGroupByParent(customer.getRegistry());
-			if (group != null) {
-				IManagerBean invoicingGroupDetailBean = BeanManager.getManagerBean(InvoicingGroupDetail.class);
-				Criteria groupCriteria = new Criteria();
-				groupCriteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IEntityAlias.INVOICING_GROUP_DETAIL_INVOICING_GROUP_ID), group.getId());
-				for (ITransferObject ito : invoicingGroupDetailBean.getList(groupCriteria)) {
-					InvoicingGroupDetail detail = (InvoicingGroupDetail)ito;
-					Expression groupExp = ExpressionUtilities.getEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_ID), detail.getChild().getId());
-					expression = ExpressionUtilities.getOrExpression(expression, groupExp);
-				}
-			}
-			criteria.addExpression(expression);
-		}
-		return criteria;
-	}
-
-	private InvoicingGroup getInvoicingGroupByParent(Registry registry) throws ManagerBeanException {
-		IManagerBean invoicingGroupBean = BeanManager.getManagerBean(InvoicingGroup.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_PARENT_ID), registry.getId());
-		for (ITransferObject ito : invoicingGroupBean.getList(criteria)) {
-			return (InvoicingGroup)ito;
-		}
-		return null;
-	}
-
-	private InvoicingGroup getInvoicingGroupByChild(Registry registry) throws ManagerBeanException {
-		IManagerBean invoicingGroupDetailBean = BeanManager.getManagerBean(InvoicingGroupDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IEntityAlias.INVOICING_GROUP_DETAIL_CHILD_ID), registry.getId());
-		for (ITransferObject ito : invoicingGroupDetailBean.getList(criteria)) {
-			return ((InvoicingGroupDetail)ito).getInvoicingGroup();
-		}
-		return null;
-	}
-
-	private String obtainFeeDescription(CustomerFee customerFee, InvoicingGroup group, InvoicingParameters params) {
+	private String obtainFeeDescription(CustomerFee customerFee, InvoicingParameters params) {
 		String description = customerFee.getDescription();
 		if (description.indexOf("${MONTH}") > 0) {
 			description = description.replace("${MONTH}", params.getMonth().getName(Locale.ROOT).toUpperCase());
@@ -177,8 +127,8 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		if (description.indexOf("${YEAR}") > 0) {
 			description = description.replace("${YEAR}", Integer.toString(params.getYear()));
 		}
-		if (group != null && !group.getParent().getId().equals(customerFee.getCustomer().getId())) {
-        	description += " - " + customerFee.getCustomer().getRegistry().getName() ;
+		if (!customerFee.getInvoicingCustomer().getId().equals(customerFee.getCustomer().getId())) {
+        	description += " - " + customerFee.getCustomer().getRegistry().getName();
         }
 		return (description.length()>1024)?description.substring(0, 1024):description;
 	}
@@ -192,13 +142,36 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 					CustomerFee fee2 = (CustomerFee)o2;
 					retValue = fee1.getInvoicingCustomer().getRegistry().getFullName().compareTo(fee2.getInvoicingCustomer().getRegistry().getFullName());
 					if (retValue == 0) {
-						boolean parent1 = fee1.getInvoicingCustomer().getRegistry().getId().equals(fee1.getCustomer().getRegistry().getId());
-						boolean parent2 = fee2.getInvoicingCustomer().getRegistry().getId().equals(fee2.getCustomer().getRegistry().getId());
-						retValue = !(parent1 ^ parent2) ? 0 : ((parent1) ? -1 : 1);
+						retValue = fee1.getInvoicingCustomer().getId().compareTo(fee2.getInvoicingCustomer().getId());
 						if (retValue == 0) {
-							retValue = fee1.getCustomer().getRegistry().getFullName().compareTo(fee2.getCustomer().getRegistry().getFullName());
+							if (fee1.getInvoicingGroup() == null || fee2.getInvoicingGroup() == null) {
+								retValue = (fee1.getInvoicingGroup() != null) ? 1 : (fee2.getInvoicingGroup() != null) ? -1 : 0;
+							} else {
+								retValue =  fee1.getInvoicingGroup().getId().compareTo(fee2.getInvoicingGroup().getId());
+							}
 							if (retValue == 0) {
-								retValue = (fee1.getLine() < fee2.getLine()) ? -1 : 1;
+								boolean parent1 = fee1.getInvoicingCustomer().getRegistry().getId().equals(fee1.getCustomer().getRegistry().getId());
+								boolean parent2 = fee2.getInvoicingCustomer().getRegistry().getId().equals(fee2.getCustomer().getRegistry().getId());
+								retValue = !(parent1 ^ parent2) ? 0 : ((parent1) ? -1 : 1);
+								if (retValue == 0) {
+									retValue = fee1.getCustomer().getRegistry().getFullName().compareTo(fee2.getCustomer().getRegistry().getFullName());
+									if (retValue == 0) {
+										retValue = fee1.getCustomer().getId().compareTo(fee2.getCustomer().getId());
+										if (retValue == 0) {
+											if (!fee1.getInvoicingCustomer().isProjectGrouped()) {
+												if (fee1.getProject() == null || fee2.getProject() == null) {
+													retValue = (fee1.getProject() != null) ? 1 : (fee2.getProject() != null) ? -1 : 0;
+												} else {
+													retValue =  fee1.getProject().getId().compareTo(fee2.getProject().getId());
+												}
+											}
+										
+											if (retValue == 0) {
+												retValue = (fee1.getLine() < fee2.getLine()) ? -1 : 1;
+											}
+										}
+									}
+								}
 							}
 						}
 					}
@@ -211,19 +184,18 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		return feeList;
 	}
 
-	private void invoiceFees(List<ITransferObject> feeList, Criteria criteria, InvoicingParameters params) throws ManagerBeanException {
+	private void invoiceFees(List<ITransferObject> feeList, InvoicingParameters params) throws ManagerBeanException {
 		int size = feeList.size();
 		getInvoicingFeedBack().setRowCount(size);
 		getInvoicingFeedBack().setCurrentRow(0);
 		int number = params.getInvoiceNumber();
-		int detailLine = 0;
-		Integer previousCustomerId = new Integer(Integer.MIN_VALUE);
 		Invoice invoice = null;
 		InvoiceDetail invoiceDetail = null;
+		CustomerFee previousFee = null;
 		int i = 0;
 		for (ITransferObject ito : feeList) {
-			CustomerFee customerFee = (CustomerFee)ito;
-			if (!previousCustomerId.equals(customerFee.getInvoicingCustomer().getId())) {
+			CustomerFee fee = (CustomerFee)ito;
+			if (breakInvoice(fee, previousFee)) {
 				if (invoice != null) {
 					if (!isReadOnly()) {
 						invoiceDetail = (InvoiceDetail)getHibernateSession().merge(invoiceDetail);	
@@ -239,22 +211,22 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 					}
 				}
 
-				invoice = createInvoice(customerFee, number, params);
-				getInvoicingDAO().insertInvoice(invoice);
+				invoice = createInvoice(fee, number, params);
+				invoice = getInvoicingDAO().insertInvoice(invoice);
 				getInvoicingFeedBack().addMessage("\t" + "Invoice: " + invoice.getReferenceCode());
 
 				number++;
 				detailLine = 0;
-				previousCustomerId = customerFee.getInvoicingCustomer().getId();
+				previousFee = fee;
 			}
 
-			invoiceDetail = createInvoiceDetail(customerFee, invoice, ++detailLine, params);
+			invoiceDetail = createInvoiceDetail(fee, invoice, params);
 			getInvoicingDAO().insertInvoiceDetail(invoiceDetail);
 
 			if (!isReadOnly()) {
-				customerFee = (CustomerFee)getHibernateSession().merge(customerFee);
+				fee = (CustomerFee)getHibernateSession().merge(fee);
 			}
-			getInvoicingDAO().updateSource(customerFee);
+			getInvoicingDAO().updateSource(fee);
 			getInvoicingFeedBack().addMessage("\t \t" + "InvoiceDetail: " + invoiceDetail.getDescription() + " price= " + invoiceDetail.getTaxableBase());
 			
 			i++;
@@ -279,25 +251,44 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		getInvoicingFeedBack().setCurrentRow(size);
 	}
 
+	private boolean breakInvoice(CustomerFee fee, CustomerFee previousFee) {
+		if (previousFee == null) {
+			return true;
+		}
+		if (!ObjectUtils.equals(fee.getInvoicingCustomer(), previousFee.getInvoicingCustomer())) {
+			return true;
+		}
+		if (fee.getInvoicingGroup() != null && !fee.getInvoicingGroup().isCustomerGrouped() && !ObjectUtils.equals(fee.getCustomer(), previousFee.getCustomer())) {
+			return true;
+		}
+		if (!fee.getInvoicingCustomer().isProjectGrouped() && !ObjectUtils.equals(fee.getProject(), previousFee.getProject())) {
+			return true;
+		}
+
+		return false;
+	}
+
 	private boolean isReadOnly() {
 		return (getInvoicingDAO() instanceof CustomerFeePreInvoicingDAO);
 	}
 
 	private Invoice createInvoice(CustomerFee customerFee, int number, InvoicingParameters params) throws ManagerBeanException {
 		Invoice invoice = new Invoice();
-		invoice.setNumber(calculateNextNumber(params.getInvoiceSeries(), number));
-		invoice.setIssueDate(params.getInvoiceDate());
-		Registry registry = customerFee.getInvoicingCustomer().getRegistry();
-		invoice.setRegistry(registry);
-		invoice.setRegistryDocument(registry.getDocument());
-		invoice.setRegistryDocumentType(registry.getDocumentType());
-		invoice.setRegistryDocumentCountry(registry.getDocumentCountry());
-		invoice.setRegistryName((registry.getName()==null) ? "" : registry.getName());
+		invoice.setProject(customerFee.getProject());
 		invoice.setSeries((params.getInvoiceSeries()==null) ? null : params.getInvoiceSeries().getCode());
-		invoice.setType(InvoiceType.SALES);
-		invoice.setStatus(InvoiceStatus.PENDING);
+		invoice.setNumber(calculateNextNumber(params.getInvoiceSeries(), number));
+		invoice.setRegistry(customerFee.getInvoicingCustomer().getRegistry());
+		invoice.setRegistryDocument(customerFee.getInvoicingCustomer().getRegistry().getDocument());
+		invoice.setRegistryDocumentType(customerFee.getInvoicingCustomer().getRegistry().getDocumentType());
+		invoice.setRegistryDocumentCountry(customerFee.getInvoicingCustomer().getRegistry().getDocumentCountry());
+		invoice.setRegistryName(customerFee.getInvoicingCustomer().getRegistry().getFullName());
+		invoice.setRegistryAddress(customerFee.getInvoicingCustomer().getRegistry().getDefaultAddress());
+		invoice.setIssueDate(params.getInvoiceDate());
 		invoice.setSecurityLevel(getSecurityLevel(params.isConfidential()));
+		invoice.setStatus(InvoiceStatus.PENDING);
+		invoice.setType(InvoiceType.SALES);
 		invoice.setComments(params.getInvoiceComments());
+		invoice.setSeller(customerFee.getSeller());
 		return invoice;
 	}
 	
@@ -328,19 +319,19 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		return (confidential) ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL;
 	}
 
-	private InvoiceDetail createInvoiceDetail(CustomerFee customerFee, Invoice invoice, int detailLine, InvoicingParameters params) {
+	private InvoiceDetail createInvoiceDetail(CustomerFee customerFee, Invoice invoice, InvoicingParameters params) {
 		InvoiceDetail invoiceDetail = new InvoiceDetail();
-		invoiceDetail.setSourceId(null);
 		invoiceDetail.setInvoice(invoice);
-		invoiceDetail.setLine(detailLine);
+		invoiceDetail.setProject(customerFee.getProject());
+		invoiceDetail.setLine(++detailLine);
 		invoiceDetail.setItem(customerFee.getItem());
         invoiceDetail.setDescription(customerFee.getInvoicingDescription());
-        invoiceDetail.setDiscountExpression(customerFee.getDiscountExpression());
-		invoiceDetail.setPrice(CommonUtil.round(customerFee.getPrice() * calculateCorrectionFactor(customerFee, params), 4));
 		invoiceDetail.setQuantity(customerFee.getQuantity());
+		invoiceDetail.setPrice(CommonUtil.round(customerFee.getPrice() * calculateCorrectionFactor(customerFee, params), 4));
+        invoiceDetail.setDiscountExpression(customerFee.getDiscountExpression());
 		invoiceDetail.setSource(InvoiceSource.FEE);
 		invoiceDetail.setSourceId((customerFee.getBillingDateYear() * 100) + customerFee.getBillingDateMonth().ordinal() + 1);
-		invoiceDetail.setTaxes(0.0);
+		invoiceDetail.setSeller(customerFee.getSeller());
 		invoiceDetail.setWorkPlace(customerFee.getWorkPlace());
 		invoiceDetail.getInvoice().setUpdateEnabled(false);
 		return invoiceDetail;
@@ -350,7 +341,9 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		if (customerFee.getPeriod().getValue() == 0) {
 			return 1;
 		} 
-		Calendar calendar = new GregorianCalendar(params.getYear(), params.getMonth().getValue(), 1, 0, 0, 0);
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(params.getYear(), params.getMonth().getValue(), 1, 0, 0, 0);
+
 		Date fromInv = calendar.getTime();
 		calendar.add(Calendar.MONTH, customerFee.getPeriod().getValue());
 		calendar.add(Calendar.DATE, -1);

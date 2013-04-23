@@ -238,13 +238,13 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return 0;
 	}
 	
-	public void loadProjects(Integer id) throws ManagerBeanException {
+	public void loadProjects(Integer registryId) throws ManagerBeanException {
 		this.projects = new LinkedList<SelectItem>();
-		if (id != null) {
+		if (registryId != null) {
 			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
 			Criteria criteria = new Criteria();
 			if (getInvoice().getType() == InvoiceType.SALES) {
-				criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), id);
+				criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), registryId);
 			}
 			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), new Boolean(true));
 			criteria.addOrder(projectBean.getFieldName(IEntityAlias.PROJECT_NAME));

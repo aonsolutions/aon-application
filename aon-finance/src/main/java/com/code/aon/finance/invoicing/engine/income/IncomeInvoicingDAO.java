@@ -49,9 +49,8 @@ public class IncomeInvoicingDAO implements IInvoicingDAO {
 
 	public void insertInvoiceDetail(InvoiceDetail invoiceDetail) {
 		try {
-			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
-			invoiceDetailBean.insert(invoiceDetail);
+			invoiceDetail = (InvoiceDetail)BeanManager.getManagerBean(InvoiceDetail.class).insert(invoiceDetail);
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error inserting invoiceDetail with id=" + invoiceDetail.getId(), e);
 		}

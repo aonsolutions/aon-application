@@ -27,6 +27,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IPayMethod;
 import com.code.aon.config.PayMethod;
+import com.code.aon.customer.Customer;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
@@ -48,6 +49,11 @@ public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableCo
 	public Delivery() {
 		setIssueTime( new Date());
 	}
+
+    @Transient
+    public int[] getPaymentDaysArray() {
+    	return paymentDaysArray;
+    }
 
     public void setPaymentDays(String paymentDays) {
         super.setPaymentDays( paymentDays );
@@ -77,15 +83,15 @@ public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableCo
     	return referenceCode;
     }
 
-    @Transient
-    public int[] getPaymentDaysArray() {
-    	return paymentDaysArray;
-    }
-
 	@Transient
 	public Date getDate() {
 		return getIssueTime();
 	}
+
+    @Transient
+	public Customer getInvoicingCustomer() {
+		return getCustomer().getInvoicingCustomer();
+    }
 
 	@Transient
 	public DiscountExpression getDiscountExpression() {

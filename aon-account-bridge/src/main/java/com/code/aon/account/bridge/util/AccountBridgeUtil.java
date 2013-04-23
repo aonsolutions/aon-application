@@ -45,8 +45,10 @@ public class AccountBridgeUtil {
 			account.setEntryEnabled(true);
 			account = (Account)BeanManager.getManagerBean(Account.class).insert(account);
 
+			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 			customer.setAccount(account);
-			customer = (Customer)BeanManager.getManagerBean(Customer.class).update(customer);
+			customerBean.restoreNullSubPOJOs(customer);
+			customer = (Customer)customerBean.update(customer);
 
 			return account;
 		} catch (ExpressionException ex) {

@@ -30,7 +30,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		controller.setLongDescription(false);
 		try {
 			invoiceDetail.setProject((invoice.getProject() != null && invoice.getProject().getId() != null) ? invoice.getProject() : null);
-			//invoiceDetail.setSeller((invoice.getSeller() != null && invoice.getSeller().getId() != null) ? invoice.getSeller() : null);
+			invoiceDetail.setSeller((invoice.getSeller() != null && invoice.getSeller().getId() != null) ? invoice.getSeller() : null);
 			invoiceDetail.setLine(calculateNextLine(invoice));
 			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 

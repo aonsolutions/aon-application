@@ -14,6 +14,7 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.seller.Seller;
 import com.code.aon.tas.ProjectTas;
 import com.code.aon.tas.enumeration.ProjectStatus;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -37,6 +38,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 
 		if (invoice.isUpdateEnabled()) {
 			Project project = (invoice.getProject() != null && invoice.getProject().getId() != null) ? invoice.getProject() : null;
+			Seller seller = (invoice.getSeller() != null && invoice.getSeller().getId() != null) ? invoice.getSeller() : null;
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
@@ -44,6 +46,9 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 				InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
 				if (invoiceDetail.getProject() == null || invoiceDetail.getProject().getId() == null) {
 					invoiceDetail.setProject(project);
+				}
+				if (invoiceDetail.getSeller() == null || invoiceDetail.getSeller().getId() == null) {
+					invoiceDetail.setSeller(seller);
 				}
 				invoiceDetail.setUpdateEnabled(isUpdateDetailsEnabled(invoice));
 				invoiceDetail.getInvoice().setUpdateEnabled(false);

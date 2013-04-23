@@ -42,6 +42,7 @@
     	<mapping class="com.code.aon.config.Tax"/>
     	<mapping class="com.code.aon.config.TaxDetail"/>
     	<mapping class="com.code.aon.customer.Customer"/>
+    	<mapping class="com.code.aon.customer.InvoicingGroup"/>
     	<mapping class="com.code.aon.finance.Finance"/>
     	<mapping class="com.code.aon.finance.Invoice"/>
     	<mapping class="com.code.aon.finance.InvoiceAddress"/>

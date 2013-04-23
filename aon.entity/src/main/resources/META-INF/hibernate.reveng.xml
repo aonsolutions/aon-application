@@ -745,15 +745,6 @@
 		<column name="withholding_type" type="com.code.aon.config.enumeration.WithholdingType"/>
 	</table>
 
-	<table name="invoicing_group">
-		<foreign-key constraint-name="FK_INVOICING_GROUP_REGISTRY">
-			<many-to-one property="parent"/>
-		</foreign-key>
-		<foreign-key constraint-name="FK_INVOICING_GROUP_DETAIL_REGISTRY">
-			<many-to-one property="child"/>
-		</foreign-key>
-	</table>
-
 	<table name="irpf_data">
 		<column name="deduct_home_loan" type="com.esferalia.aon.payroll.enumeration.DeductHomeLoan"/>
 		<column name="disability_level" type="com.esferalia.aon.payroll.enumeration.DisabilityLevel"/>

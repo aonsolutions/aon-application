@@ -35,6 +35,11 @@
 						<aon:outputText value="#{financeBundle.finance_invoicing_criteria}" />
 					</f:facet>
 					<aon:panelGrid columns="2">
+						<ui:include src="/com/code/aon/ui/customer/facelet/invoicingGroup/lookup.xhtml">
+							<ui:param name="lookupTo" value="#{deliveryInvoicing.params.invoicingGroup}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+						</ui:include>
+
 						<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 							<ui:param name="lookupTo" value="#{deliveryInvoicing.params.customer}" />
 							<ui:param name="skipNewButton" value="#{true}" />

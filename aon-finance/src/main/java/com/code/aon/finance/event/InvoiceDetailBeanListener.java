@@ -65,9 +65,9 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		if (invoice.getProject() == null && detail.getProject() != null && detail.getProject().getId() != null) {
 			invoice.setProject(detail.getProject());
 		}
-		//if (invoice.getSeller() == null && detail.getSeller() != null && detail.getSeller().getId() != null) {
-			//invoice.setSeller(detail.getSeller());
-		//}
+		if (invoice.getSeller() == null && detail.getSeller() != null && detail.getSeller().getId() != null) {
+			invoice.setSeller(detail.getSeller());
+		}
 		updateInvoiceTotals(invoice, detail.isSkipServiceProcess());
 		detail.setInvoice(invoice);
 	}

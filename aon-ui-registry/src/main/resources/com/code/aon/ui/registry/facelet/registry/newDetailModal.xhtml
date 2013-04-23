@@ -47,25 +47,31 @@
 											
 											<aon:div styleClass="aon-finding-toolbar-item-group">
 												<aon:commandButton id="#{detailId}-save"
-													value="#{bundle.aon_save}"
-													reRender="showNew#{detailId}Window,#{modalReRender}"
-													actionListener="#{detailController.onAccept}"
 													styleClass="aon-finding-toolbar-item aon-icon-accept"
+													value="#{bundle.aon_save}"
+													actionListener="#{detailController.onAccept}"
+													reRender="showNew#{detailId}Window,#{modalReRender}"
 													accesskey="#{bundle.aon_key_save}">
 													<rich:componentControl for="new#{detailId}ModalPanel"
 														event="onclick" operation="hide"/>																					
-													<f:setPropertyActionListener
-														target="#{showNewDetailWindow}"
+													<f:setPropertyActionListener target="#{showNewDetailWindow}"
 														value="#{false}" />
 												</aon:commandButton>
-												<aon:commandButton id="#{detailId}-cancel"
+												<aon:commandButton id="#{detailId}-cancel" immediate="true"
+													styleClass="aon-finding-toolbar-item aon-icon-cancel"
 													value="#{bundle.aon_cancel}"
-													reRender="showNew#{detailId}Window"
 													actionListener="#{detailController.onCancel}"
-													immediate="true"
-													styleClass="aon-finding-toolbar-item aon-icon-cancel">
-													<f:setPropertyActionListener
-														target="#{showNewDetailWindow}"
+													reRender="showNew#{detailId}Window,#{modalReRender}">
+													<f:setPropertyActionListener target="#{showNewDetailWindow}"
+														value="#{false}" />
+												</aon:commandButton>		
+												<aon:commandButton id="#{detailId}-remove" immediate="true"
+													styleClass="aon-finding-toolbar-item aon-icon-delete"
+													value="#{bundle.aon_remove}"
+													rendered="#{!detailController.new}"
+													actionListener="#{detailController.onRemove}"
+													reRender="showNew#{detailId}Window,#{modalReRender}">
+													<f:setPropertyActionListener target="#{showNewDetailWindow}"
 														value="#{false}" />
 												</aon:commandButton>		
 											</aon:div>

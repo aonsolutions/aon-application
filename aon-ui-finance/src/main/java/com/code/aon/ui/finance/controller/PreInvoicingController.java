@@ -2,17 +2,13 @@ package com.code.aon.ui.finance.controller;
 
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.config.Series;
-import com.code.aon.customer.Customer;
 import com.code.aon.finance.invoicing.ConsoleInvoicingFeedBack;
 import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.finance.invoicing.InvoicingParameters;
@@ -21,7 +17,6 @@ import com.code.aon.finance.invoicing.engine.InvoicingEngineFactory;
 import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingEngine;
 import com.code.aon.finance.invoicing.engine.fee.CustomerFeePreInvoicingDAO;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
-import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
 
 public class PreInvoicingController implements ICollectionProvider {
@@ -44,14 +39,7 @@ public class PreInvoicingController implements ICollectionProvider {
 
 	public void onInitialize(ActionEvent event) throws ManagerBeanException {
 		this.invoicingParams = new InvoicingParameters();
-		this.invoicingParams.setConfidential(false);
-		this.invoicingParams.setInvoiceDate(new Date());
-		this.invoicingParams.setCustomer((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
-		this.invoicingParams.setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
-		Calendar calendar = new GregorianCalendar();
-		calendar.setTime(new Date());
-		invoicingParams.setMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
-		invoicingParams.setYear(calendar.get(Calendar.YEAR));
+		invoicingParams.initializeParams();
 	}
 
 	public void onReport(ActionEvent event) throws InvoicingException, ManagerBeanException {

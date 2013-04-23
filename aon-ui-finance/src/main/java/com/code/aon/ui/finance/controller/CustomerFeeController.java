@@ -3,20 +3,27 @@ package com.code.aon.ui.finance.controller;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Tariff;
@@ -25,8 +32,12 @@ import com.code.aon.finance.CustomerFee;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.project.Project;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CustomerFeeController extends LinesController {
 
@@ -118,6 +129,53 @@ public class CustomerFeeController extends LinesController {
 			}
 			fee.setPrice(price);
 		}
+	}
+
+	public List<SelectItem> getProjects() throws ManagerBeanException {
+		Customer customer = (Customer)getMasterController().getTo();
+		List<SelectItem> projects = new LinkedList<SelectItem>();
+		IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), customer.getId());
+		criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), new Boolean(true));
+		criteria.addOrder(projectBean.getFieldName(IEntityAlias.PROJECT_NAME));
+		for (ITransferObject ito : projectBean.getList(criteria)) {
+			Project project = (Project)ito;
+			SelectItem item = new SelectItem(project, project.getName());
+			projects.add(item);
+		}
+		return projects;
+	}
+
+	public void removeProject(ActionEvent event) throws ManagerBeanException {
+		CustomerFee customerFee = (CustomerFee)getTo();
+		customerFee.setProject(null);
+	}
+
+	public String getFeeExtraInfo() {
+		String extraInfo = "";
+		try {
+			if (getModel().isRowAvailable()) {
+				CustomerFee customerFee = (CustomerFee)getModel().getRowData();
+				if (customerFee.getProject() != null && customerFee.getProject().getId() != null) {
+					extraInfo += "Expediente: " + customerFee.getProject().getName() + "\n";
+				}
+				if (customerFee.getInvoicingGroup() != null && customerFee.getInvoicingGroup().getId() != null) {
+					extraInfo += "Grupo Facturación: " + customerFee.getInvoicingGroup().getCustomer().getRegistry().getFullName() + "\n";
+				}
+				if (customerFee.getSeller() != null && customerFee.getSeller().getId() != null) {
+					extraInfo += "Comercial: " + customerFee.getSeller().getRegistry().getFullName() + "\n";
+				}
+				if (customerFee.getWorkPlace() != null && customerFee.getWorkPlace().getId() != null) {
+					extraInfo += "Centro de Trabajo: " + customerFee.getWorkPlace().getDescription() + "\n";
+				}
+			}
+		} catch (ManagerBeanException ex) {
+			String msg = "Error obtainign Fee Model.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		return extraInfo;
 	}
 
 	public String getReportTitle(){

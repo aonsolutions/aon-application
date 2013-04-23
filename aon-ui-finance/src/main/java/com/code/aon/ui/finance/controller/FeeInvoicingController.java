@@ -1,9 +1,7 @@
 package com.code.aon.ui.finance.controller;
 
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -19,11 +17,9 @@ import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
-import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.IInvoicingFeedBack;
@@ -34,8 +30,6 @@ import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
 import com.code.aon.finance.invoicing.engine.InvoicingEngineFactory;
 import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingDAO;
 import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingEngine;
-import com.code.aon.product.Item;
-import com.code.aon.product.ProductCategory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.finance.IFinanceMessages;
@@ -93,16 +87,8 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 	}
 
 	public void onInitialize(ActionEvent event) throws ManagerBeanException {
-		Calendar calendar = new GregorianCalendar();
-		calendar.setTime(new Date());
-
 		InvoicingParameters params = new InvoicingParameters();
-		params.setCustomer((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
-		params.setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
-		params.setCategory(new ProductCategory());
-		params.setMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
-		params.setYear(calendar.get(Calendar.YEAR));
-		params.setConfidential(false);
+		params.initializeParams();
 		params.setInvoiceNumber(obtainMaxNumber(null));
 		params.setInvoiceDate(new Date());
 		params.setInvoiceRecordable(AonUtil.getRoleManager().isAccountingOperator());
@@ -183,6 +169,7 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 							HibernateUtil.getSession(sessionName).clear();
 						}
 					}
+					HibernateUtil.getSession(sessionName).flush();
 					HibernateUtil.commitTransaction(sessionName);
 				}
 

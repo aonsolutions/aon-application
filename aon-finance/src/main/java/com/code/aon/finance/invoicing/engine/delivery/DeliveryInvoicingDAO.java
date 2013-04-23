@@ -49,9 +49,8 @@ public class DeliveryInvoicingDAO implements IInvoicingDAO {
 
 	public void insertInvoiceDetail(InvoiceDetail invoiceDetail) {
 		try {
-			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
-			invoiceDetailBean.insert(invoiceDetail);
+			invoiceDetail = (InvoiceDetail)BeanManager.getManagerBean(InvoiceDetail.class).insert(invoiceDetail);
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error inserting invoiceDetail with id=" + invoiceDetail.getId(), e);
 		}
@@ -71,7 +70,7 @@ public class DeliveryInvoicingDAO implements IInvoicingDAO {
 	public void createFinances(Invoice invoice, IPayMethod payMethod) throws ManagerBeanException {
 		double amount = getPriceStrategy().getTotalPrice(invoice, invoice);
 		if (amount != 0.0) {
-			if (payMethod.getPayment() != null && payMethod.getPayment().getId() != null) {
+			if (payMethod != null && payMethod.getPayment() != null && payMethod.getPayment().getId() != null) {
 				getFinanceGenerator().generateFinances(invoice, payMethod, amount, true);
 			} else {
 				getFinanceGenerator().generateFinances(invoice, amount, true);

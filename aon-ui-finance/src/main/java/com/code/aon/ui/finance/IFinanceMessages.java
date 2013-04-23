@@ -8,10 +8,6 @@ public interface IFinanceMessages {
 	String GENERATE_FINANCES_ERROR_KEY = "finance_generate_finances_error";
 	String CALCULATE_FINANCES_AMOUNT_ERROR_KEY = "finance_calculate_finances_amount_error";
 	String EMPTY_INVOICE_LIST_ERROR_KEY = "finance_empty_invoice_list_error";
-	String INVALID_INVOICING_GROUP_PARENT_KEY = "finance_invalid_invoicing_group_parent";
-	String INVALID_INVOICING_GROUP_CHILD_KEY = "finance_invalid_invoicing_group_child";
-	String INVALID_INVOICING_GROUP_DETAIL_PARENT_KEY = "finance_invalid_invoicing_group_detail_parent";
-	String INVALID_INVOICING_GROUP_DETAIL_CHILD_KEY = "finance_invalid_invoicing_group_detail_child";
 	String UNABLE_RECORD_INACCURACY_ERROR_KEY = "finance_unable_record_inaccuracy_error";
 	String UNABLE_RECORD_NO_AMORTIZATION_ERROR_KEY = "finance_unable_record_no_amortization_error";
 	String PAYMENT_INVALID_AMOUNT_ERROR = "finance_payment_invalid_amount_error";

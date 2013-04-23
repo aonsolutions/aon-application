@@ -13,12 +13,16 @@ public interface ICustomerConstants {
 	String CUSTOMER_SEARCH_LISTENER_NAME = "customerSearch";
 	
 	String INVOICING_GROUP_CONTROLLER_NAME = "invoicingGroup";
+	String INVOICING_GROUP_DETAIL_CONTROLLER_NAME = "invoicingGroupDetail";
+	String INVOICING_GROUP_FEE_CONTROLLER_NAME = "invoicingGroupFee";
 
 	// ************************************************************
 	// NAVIGATION
 	// ************************************************************
 
 	String CUSTOMER_FORM_NAME = "customer_form";
+	String CUSTOMER_FEE_TAB = "fee";
+	String INVOICING_GROUP_FORM_NAME = "invoicingGroup_form";
 
 	// ************************************************************
 	// CONFIGURATION

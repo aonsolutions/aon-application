@@ -35,6 +35,12 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2">
+					<ui:include src="/com/code/aon/ui/customer/facelet/invoicingGroup/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{preInvoicing.invoicingParams.invoicingGroup}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="lookupInputSize" value="10"/>
+					</ui:include>
+
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{preInvoicing.invoicingParams.customer}" />
 						<ui:param name="skipNewButton" value="#{true}" />
@@ -88,6 +94,7 @@
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{invoicingGroupLookup}" />
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 	</ui:define>

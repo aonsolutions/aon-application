@@ -284,6 +284,7 @@ public class AonExporter extends GenericExporter{
 		
 		//AON CUSTOMER 
 		map.put("Customer","com.code.aon.customer.Customer");
+		map.put("InvoicingGroup","com.code.aon.customer.InvoicingGroup");
 		
 		//AON FINANCE 
 		map.put("BankConcept","com.code.aon.finance.BankConcept");
@@ -301,8 +302,6 @@ public class AonExporter extends GenericExporter{
 		map.put("InvoiceAttachment","com.code.aon.finance.InvoiceAttachment");
 		map.put("InvoiceDetail","com.code.aon.finance.InvoiceDetail");
 		map.put("InvoiceTax","com.code.aon.finance.InvoiceTax");
-		map.put("InvoicingGroup","com.code.aon.finance.InvoicingGroup");
-		map.put("InvoicingGroupDetail","com.code.aon.finance.InvoicingGroupDetail");
         map.put("Pos","com.code.aon.finance.Pos");
         map.put("PosShift","com.code.aon.finance.PosShift");
         map.put("PosShiftCount","com.code.aon.finance.PosShiftCount");
@@ -465,7 +464,6 @@ public class AonExporter extends GenericExporter{
 		map.put("ProjectType","com.code.aon.project.ProjectType");
 
 		//AON-PMS
-        map.put("FinancePos","com.esferalia.aon.pms.FinancePos");		
         map.put("Hotel","com.esferalia.aon.pms.Hotel");
         map.put("ProjectReservation","com.esferalia.aon.pms.ProjectReservation");
         map.put("ProjectReservationDivert","com.esferalia.aon.pms.ProjectReservationDivert");

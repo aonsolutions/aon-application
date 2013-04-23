@@ -34,15 +34,34 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 	private IPriceStrategy priceStrategy;
 	private FinanceGenerator financeGenerator;
 	
+	public Collection<Invoice> getCollection() {
+		return invoicingCollection;
+	}
+	
+	private IPriceStrategy getPriceStrategy() {
+		if (priceStrategy == null) {
+			priceStrategy = new InvoicePriceStrategy();
+		}
+		return priceStrategy;
+	}
+	
+	public FinanceGenerator getFinanceGenerator() {
+		if (financeGenerator == null) {
+			financeGenerator = new FinanceGenerator();
+		}
+		return financeGenerator;
+	}
+
 	public CustomerFeeInvoicingDAO() {
 		invoicingCollection = new ArrayList<Invoice>();
 	}
 
 	public Invoice insertInvoice(Invoice invoice) {
 		try {
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-			invoice.setRegistryAddress(obtainAddress(invoice.getRegistry().getId()));
-			invoice = (Invoice)invoiceBean.insert(invoice);
+			if (invoice.getRegistryAddress() == null) {
+				invoice.setRegistryAddress(obtainAddress(invoice.getRegistry().getId()));
+			}
+			invoice = (Invoice)BeanManager.getManagerBean(Invoice.class).insert(invoice);
 			invoicingCollection.add(invoice);
 			return invoice;
 		} catch (ManagerBeanException e) {
@@ -53,9 +72,8 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 
 	public void insertInvoiceDetail(InvoiceDetail invoiceDetail) {
 		try {
-			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
-			invoiceDetail = (InvoiceDetail)invoiceDetailBean.insert(invoiceDetail);
+			invoiceDetail = (InvoiceDetail)BeanManager.getManagerBean(InvoiceDetail.class).insert(invoiceDetail);
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error inserting invoiceDetail with id=" + invoiceDetail.getId(), e);
 		}
@@ -64,18 +82,17 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 	public void updateSource(ITransferObject to) {
 		CustomerFee customerFee = (CustomerFee)to;
 		try {
-			IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
 			if (customerFee.getPeriod().equals(BillingPeriod.NO_PERIOD)) {
-				customerFeeBean.remove(customerFee);
+				BeanManager.getManagerBean(CustomerFee.class).remove(customerFee);
 			} else {
 				Calendar billingCalendar = new GregorianCalendar();
 				billingCalendar.setTime(customerFee.getBillingDate());
 				billingCalendar.add(Calendar.MONTH, customerFee.getPeriod().getValue());
 				customerFee.setBillingDate(billingCalendar.getTime());
 				if (customerFee.getFinalDate() != null && customerFee.getBillingDate().after(customerFee.getFinalDate())) {
-					customerFeeBean.remove(customerFee);
+					BeanManager.getManagerBean(CustomerFee.class).remove(customerFee);
 				} else {
-					customerFeeBean.update(customerFee);
+					BeanManager.getManagerBean(CustomerFee.class).update(customerFee);
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -86,7 +103,11 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 	public void createFinances(Invoice invoice, IPayMethod payMethod) throws ManagerBeanException {
 		double amount = getPriceStrategy().getTotalPrice(invoice, invoice);
 		if (amount != 0.0) {
-			getFinanceGenerator().generateFinances(invoice, amount, true);
+			if (payMethod != null && payMethod.getPayment() != null && payMethod.getPayment().getId() != null) {
+				getFinanceGenerator().generateFinances(invoice, payMethod, amount, true);
+			} else {
+				getFinanceGenerator().generateFinances(invoice, amount, true);
+			}
 		}
 	}
 
@@ -105,21 +126,4 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 		return null;
 	}
 
-	public Collection<Invoice> getCollection() {
-		return invoicingCollection;
-	}
-	
-	private IPriceStrategy getPriceStrategy() {
-		if (priceStrategy == null) {
-			priceStrategy = new InvoicePriceStrategy();
-		}
-		return priceStrategy;
-	}
-	
-	public FinanceGenerator getFinanceGenerator() {
-		if (financeGenerator == null) {
-			financeGenerator = new FinanceGenerator();
-		}
-		return financeGenerator;
-	}
 }

@@ -28,15 +28,19 @@ public class CustomerFeeControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		CustomerFeeController controller = (CustomerFeeController)event.getController();
+		Customer customer = (Customer)controller.getMasterController().getTo();
 		CustomerFee customerFee = (CustomerFee)controller.getTo();
 		customerFee.setQuantity(1.0);
 		customerFee.setInitialDate(CommonUtil.getDate(CommonUtil.getYear(new Date()), CommonUtil.getMonth(new Date()), 1));
 		customerFee.setBillingDate(customerFee.getInitialDate());
 		customerFee.setSecurityLevel(SecurityLevel.OFFICIAL);
+		if (customer.getInvoicingGroup() != null && customer.getInvoicingGroup().getId() != null) {
+			customerFee.setInvoicingGroup(customer.getInvoicingGroup());
+		}
 
 		controller.setLongDescription(false);
 		try {
-			customerFee.setLine(calculateNextLine((Customer)controller.getMasterController().getTo()));
+			customerFee.setLine(calculateNextLine(customer));
 
 			String companyCollections = ICompanyConstants.COLLECTIONS_CONTROLLER_NAME;
 			CompanyCollectionsController compCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(companyCollections);

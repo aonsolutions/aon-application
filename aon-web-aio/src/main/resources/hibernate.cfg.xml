@@ -156,6 +156,7 @@
 		
 		<!-- AON-CUSTOMER Mapping files -->	
 		<mapping class="com.code.aon.customer.Customer"/>
+		<mapping class="com.code.aon.customer.InvoicingGroup"/>
 
 		<!-- AON-FINANCE Mapping files -->	
 		<mapping class="com.code.aon.finance.BankConcept"/>
@@ -173,8 +174,6 @@
 		<mapping class="com.code.aon.finance.InvoiceAttachment"/>
 		<mapping class="com.code.aon.finance.InvoiceDetail"/>
 		<mapping class="com.code.aon.finance.InvoiceTax"/>
-		<mapping class="com.code.aon.finance.InvoicingGroup"/>
-		<mapping class="com.code.aon.finance.InvoicingGroupDetail"/>
 		<mapping class="com.code.aon.finance.Pos"/>
 		<mapping class="com.code.aon.finance.PosShift"/>
 		<mapping class="com.code.aon.finance.PosShiftCount"/>
