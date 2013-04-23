@@ -467,7 +467,7 @@
 	</table>
 
 	<table name="enterprise_activity">
-		<column name="type" type="com.esferalia.aon.payroll.enumeration.EnterpriseActivityType" />
+		<column name="type" type="com.esferalia.aon.payroll.enumeration.SSRegimeType"/>
 		<foreign-key constraint-name="FK_ENTERPRISE_ACTIVITY_CNAE">
 			<many-to-one property="cnae" />
 		</foreign-key>
