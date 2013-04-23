@@ -250,17 +250,17 @@ public class MOD340Writer implements IFinanceConstants{
 				inv.setDoneRegularization(0);
 				inv.setInvestementDate("00000000");
 				inv.setInvestementName("");
-		} else if ( transaction == InvoiceTransactionType.INTRACOMMUNITY) {
-			inv.setType(MOD340.INTRACOMMUNITARY);
-			inv.setIntracommunitaryType("A");
-			inv.setDeclaredKey(type == InvoiceType.SALES?"D":"R");
-			inv.setCountryKey("");
-			inv.setOperationPeriod(0);
-			inv.setDescription("");
-			inv.setAddress("");
-			inv.setCity("");
-			inv.setZip("");
-			inv.setOther("");
+//		} else if ( transaction == InvoiceTransactionType.INTRACOMMUNITY) {
+//			inv.setType(MOD340.INTRACOMMUNITARY);
+//			inv.setIntracommunitaryType("A");
+//			inv.setDeclaredKey(type == InvoiceType.SALES?"D":"R");
+//			inv.setCountryKey("");
+//			inv.setOperationPeriod(0);
+//			inv.setDescription("");
+//			inv.setAddress("");
+//			inv.setCity("");
+//			inv.setZip("");
+//			inv.setOther("");
 		} else {
 			inv.setType(MOD340.RECEIVED);
 			inv.setInvoiceCount(1); 
