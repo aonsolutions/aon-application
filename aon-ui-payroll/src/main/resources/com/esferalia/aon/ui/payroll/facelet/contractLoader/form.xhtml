@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="contractLoaderForm">
+
+    		<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="aonToolbar" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contractLoader_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_form}" />
+
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="execute"
+						value="#{accountingBundle.aon_loader_load}"
+						actionListener="#{contractLoader.onShowPanel}"
+						rendered="#{contractLoader.aonFile.size > 0}"
+						reRender="showNewMessageWindow"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"/>
+<!--  
+					<aon:htmlCommandLink  id="help" target="_new" 
+						value="#{bundle.aon_help}"
+						actionListener="#{aonLoader.onHelp}"
+						styleClass="aon-finding-toolbar-item aon-icon-menu-help"/>
+-->
+				</ui:define>
+			</ui:decorate>
+
+			<aon:panelGrid columns="2" style="width:700px; margin:10px;">
+				<aon:outputLabel for="attach_file" value="#{bundle.aon_fileupload_element}" />
+				<a4j:region>
+					<h:panelGrid id="attachGrid" columns="2">
+						<aon:outputText rendered="#{contractLoader.aonFile.size > 0}"
+							value="#{contractLoader.aonFile.fileName} - ( #{contractLoader.aonFile.size} bytes)" />
+						<aon:fileUpload id="attach_file"
+							addControlLabel="#{bundle.aon_fileUpload_add}"
+							stopControlLabel="#{bundle.aon_fileUpload_stop}"
+							stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+							uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+							fileUploadListener="#{contractLoader.fileUploaded}" immediateUpload="true"
+							autoclear="true" listWidth="0px" listHeight="0px">
+							<f:facet name="label">
+								<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+							</f:facet>
+							<a4j:support event="onuploadcomplete" reRender="attachGrid,aonToolbar,paramsGrid" />
+						</aon:fileUpload>
+					</h:panelGrid>
+				</a4j:region>
+			</aon:panelGrid>
+			
+			<aon:div id="paramsGrid">
+				<c:if test="#{contractLoader.aonFile.size > 0}">
+					<aon:panelGrid  columns="2" style="width:700px; margin:10px;">
+				
+					</aon:panelGrid>
+				</c:if>
+			</aon:div>
+		</aon:form>
+		
+		<aon:panelGroup id="showNewMessageWindow">
+			<c:if test="#{contractLoader.progressionPanelVisible}">
+				<aon:valueParam name="windowHeight" default="50" />
+				<rich:modalPanel id="showNewMessageModalPanel" domElementAttachment="parent"
+					showWhenRendered="#{contractLoader.progressionPanelVisible}"
+					minHeight="70" height="#{windowHeight}" width="250" >
+					
+					<f:facet name="header">
+						<aon:div styleClass="aon-popupWindow-title">
+							<aon:outputText value="Confirme, por favor." />
+						</aon:div>
+					</f:facet>
+					
+					<f:facet name="controls">
+						<aon:form>
+							<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+								actionListener="#{contractLoader.onStart}"
+								immediate="true">
+								<rich:componentControl for="showNewMessageWindow" operation="hide"
+									event="onclick" />
+							</aon:commandButton>
+						</aon:form>
+					</f:facet>				
+					<aon:form>	
+						<aon:commandButton id="launch"
+							value="Pulse para Comenzar la carga"
+							styleClass="aon-icon-accept"
+							disabled="#{!contractLoader.loadPressed}"
+							style="padding-left: 15px;"
+							actionListener="#{contractLoader.onLoad}"
+							reRender="paramsGrid">
+							<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
+						</aon:commandButton>
+					</aon:form>
+				</rich:modalPanel>
+				<ui:param name="closeButtonReRender" value="showNewMessageWindow" />
+				<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
+					<ui:param name="logPanelTitle" value="#{payrollBundle.payroll_contractLoader_module}" />
+				</ui:include>		
+			</c:if>
+		</aon:panelGroup>
+		
+	</ui:define>
+</ui:composition>

@@ -45,8 +45,9 @@ public class EnterpriseCCCController extends LinesController {
 		}
 		List<SelectItem> cccTypes = new LinkedList<SelectItem>();
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		EnterpriseCCC ccc = (EnterpriseCCC) this.getTo();
 		for( CCCType cccType : CCCType.values() ) {
-			if(!definedTypes.contains(cccType)){
+			if(!definedTypes.contains(cccType) || !this.isNew() && (ccc).getType().equals(cccType)){
 				String name = cccType.getName(locale);
 				SelectItem item = new SelectItem(cccType, name);
 				cccTypes.add(item);			

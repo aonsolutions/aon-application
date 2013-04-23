@@ -49,6 +49,7 @@ import com.esferalia.aon.ui.payroll.file.ContrataParams;
 import com.esferalia.aon.ui.payroll.file.ContrataReader;
 import com.esferalia.aon.ui.payroll.file.ContrataWriter;
 import com.esferalia.aon.ui.payroll.sepe.ContrataManager;
+import com.esferalia.aon.ui.payroll.utils.FileUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 
@@ -318,7 +319,7 @@ public class ContractContrataController {
 	private void processXmlFile(ContractAttachment contrataAttach) throws ManagerBeanException, IOException {
 		if(contrataAttach!=null){
 			ContrataReader reader = new ContrataReader();
-			ContrataParams params = reader.readFile( contrataAttach );
+			ContrataParams params = reader.readFile( new ByteArrayInputStream(contrataAttach.getData()), FileUtils.CONTRATOS_SCHEMA_FILE_NAME );
 			params.setContract(contrataAttach.getContract());
 			getHandler().setParams(params);
 		}

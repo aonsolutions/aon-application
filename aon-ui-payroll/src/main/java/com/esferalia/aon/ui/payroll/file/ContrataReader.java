@@ -1,8 +1,14 @@
 package com.esferalia.aon.ui.payroll.file;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
@@ -43,6 +49,7 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
 import com.esferalia.aon.sepe.api.contract.model.IProrrogaType;
 import com.esferalia.aon.sepe.api.contract.model.ITransformacionType;
+import com.esferalia.aon.ui.payroll.utils.FileUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 
@@ -50,103 +57,140 @@ public class ContrataReader {
 	
 	private final String CONTRATA_CONTRATOS_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.contratos";
 	private final String CONTRATA_TRANSFORMACIONES_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.transformaciones";
-	private final String CONTRATA_PRORROGAS_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.prorrogas";
 	
 	private ContrataParams params;
 	
-	public ContrataParams readFile(ContractAttachment attach) throws ManagerBeanException, IOException{
-		
-		
-		boolean contratoFile = false;
-		boolean transfonacionFile = false;
-		boolean prorrogaFile = false;
-		
-		String code = getContractDataMap(attach.getContract()).get(ContextVariable.TC2.getName());
+	private CONTRATOS contratos;
+	private TRANSFORMACIONES transformaciones;
+	
+	public CONTRATOS getContratos() {
+		return contratos;
+	}
 
-		if(code.equals(ContractCode.C109.getValue())
-				 || code.equals(ContractCode.C139.getValue())
-				 || code.equals(ContractCode.C189.getValue())
-				 || code.equals(ContractCode.C209.getValue())
-				 || code.equals(ContractCode.C239.getValue())
-				 || code.equals(ContractCode.C289.getValue())
-				 || code.equals(ContractCode.C309.getValue())
-//	TODO: nueva clave de contrato - Boletin Noticias RED 2012/05
-//				 || code.equals(ContractCode.C339.getValue())
-				 || code.equals(ContractCode.C389.getValue()) ){
-			transfonacionFile = true;
-		} else if (code.equals(ContractCode.C408.getValue())
-				 || code.equals(ContractCode.C418.getValue())
-				 || code.equals(ContractCode.C508.getValue())
-				 || code.equals(ContractCode.C518.getValue()) ){
-			String msg = "Contrato no implementado para el fichero contrat@";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		} else if( StringUtils.isBlank(code) ) {
-			// DO NOTHING
-			String msg = "Contrato no reconocido";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		} else {
-			contratoFile = true;
-		}
+	public void setContratos(CONTRATOS contratos) {
+		this.contratos = contratos;
+	}
+
+	public TRANSFORMACIONES getTransformaciones() {
+		return transformaciones;
+	}
+
+	public void setTransformaciones(TRANSFORMACIONES transformaciones) {
+		this.transformaciones = transformaciones;
+	}
+
+	public ContrataParams readFile(InputStream input, String encoding) throws ManagerBeanException, IOException{
 		
+		boolean isContratoFile = false;
+		boolean isTransfonacionFile = false;
 		
+//		String code = getContractDataMap(attach.getContract()).get(ContextVariable.TC2.getName());
 		
-		byte[] f = attach.getData();
-		if(f!=null && f.length>0){
-			File file = File.createTempFile("aon-temp", ".XML");
-			FileOutputStream fos = new FileOutputStream(file);
-			fos.write(f);
-			fos.close();
-			try {
+//		processContractCode(input, isContratoFile, isTransfonacionFile, isProrrogaFile);
+		
+		try {
+			InputStreamReader inputReader = new InputStreamReader(input,FileUtils.CONTRATA_XML_FILE_ENCODING);
+			LineNumberReader reader = new LineNumberReader(inputReader);
+			if (reader.ready()) {
+				String line = reader.readLine();
+				line = reader.readLine();
+				String contratoFile = "<CONTRATOS>";
+				String transformacionFile = "<TRANSFORMACION>";
+				String prorrogaFile = "<PRORROGA>";
+				if(line.equals(contratoFile)){
+					isContratoFile = true;
+				} else if(line.equals(transformacionFile)){
+					isTransfonacionFile = true;
+				} 
+			}
+			reader.close();
+			inputReader.close();
+//			input.close();
+		} catch (UnsupportedEncodingException e) {
+	
+		} catch (IOException e) {
 			
-				CONTRATOS contratos = null;
-				TRANSFORMACIONES transformaciones = null;
-//				PRORROGAS prorrogas = null;
-				if( contratoFile ){
+		}
+		// FIXME: the param isContratoFile is setted to true only for testing. CHANGE IT !!!!!!!!!!!!!
+		// FIXME: the param isContratoFile is setted to true only for testing. CHANGE IT !!!!!!!!!!!!!
+		// FIXME: the param isContratoFile is setted to true only for testing. CHANGE IT !!!!!!!!!!!!!
+		isContratoFile = true;
+		
+		if( !isContratoFile && !isTransfonacionFile ) {
+			String msg = "Código no válido, no se reconoce el contrato.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} 
+		
+		if( input!=null ){
+			try {
+				setContratos(null);
+				setTransformaciones(null);
+				if( isContratoFile ){
 					JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_CONTRATOS_MODEL_PATH);
 					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 					unmarshaller.setEventHandler(new ContractValidationEventHandler());
-					contratos = (CONTRATOS) unmarshaller.unmarshal(file);
-				} else if( transfonacionFile ) {
+					contratos = (CONTRATOS) unmarshaller.unmarshal(input);
+				} else if( isTransfonacionFile ) {
 					JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_TRANSFORMACIONES_MODEL_PATH);
 					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 					unmarshaller.setEventHandler(new ContractValidationEventHandler());
-					transformaciones = (TRANSFORMACIONES) unmarshaller.unmarshal(file);
+					transformaciones = (TRANSFORMACIONES) unmarshaller.unmarshal(input);
 				} 
-//				else if( prorrogaFile ) {
-//					JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_PRORROGAS_MODEL_PATH);
-//					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-//					unmarshaller.setEventHandler(new ContractValidationEventHandler());
-//					prorrogas = (PRORROGAS) unmarshaller.unmarshal(file);
-//				}
 				
-
 				this.params = new ContrataParams();
 				
-				
-				if( contratoFile ){
+				if( isContratoFile ){
 					IContratoType contratoType = (IContratoType) contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
 					completeContratosParams(contratoType, params);
-				} else if( transfonacionFile ) {
+				} else if( isTransfonacionFile ) {
 					ITransformacionType transformacionType = (ITransformacionType) transformaciones.getTRANSFORMACION109AndTRANSFORMACION139AndTRANSFORMACION189().get(0);
 					completeTransformacionesParams(transformacionType, params);
 				} 
-//				else if( prorrogaFile ) {
-//					IProrrogaType prorrogaType = (IProrrogaType) prorrogas.getPRORROGATIPO().get(0);
-//					completeProrrogasParams(prorrogaType, params);
-//				}
 
 				return params;
 			} catch (JAXBException e) {
 				String msg = "Error al obtener los datos del documento xml de contrata";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg, e);
+			} finally {
+				input.close();
 			}
 		}
 		return null;
 	}
 	
+	private void processContractCode(InputStream input, boolean isContratoFile, boolean isTransfonacionFile, boolean isProrrogaFile) {
+		isContratoFile = false;
+		isTransfonacionFile = false;
+		isProrrogaFile = false;
+		try {
+//			InputStream input = new ByteArrayInputStream(dataFile); 
+			InputStreamReader inputReader = new InputStreamReader(input,FileUtils.CONTRATA_XML_FILE_ENCODING);
+			LineNumberReader reader = new LineNumberReader(inputReader);
+			if (reader.ready()) {
+				String line = reader.readLine();
+				line = reader.readLine();
+				String contratoFile = "<CONTRATOS>";
+				String transformacionFile = "<TRANSFORMACION>";
+				String prorrogaFile = "<PRORROGA>";
+				if(line.equals(contratoFile)){
+					isContratoFile = true;
+				} else if(line.equals(transformacionFile)){
+					isTransfonacionFile = true;
+				} else if(line.equals(prorrogaFile)){
+					isProrrogaFile = true;
+				} 
+			}
+			reader.close();
+			input.close();
+		} catch (UnsupportedEncodingException e) {
+	
+		} catch (IOException e) {
+			
+		}
+	}
+
 	public void completeContratosParams(IContratoType o, ContrataParams params) throws JAXBException, IOException {
 		
 		if (o instanceof CONTRATO100TYPE) {

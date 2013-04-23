@@ -36,14 +36,6 @@
 			<f:selectItems value="#{contract.enterpriseCCCs}" />
 		</aon:selectOneMenu>
 		
-		<aon:outputLabel for="ssRegime"
-			value="#{payrollBundle.payroll_contract_regime}" />
-		<aon:selectOneMenu id="ssRegime" required="true" 
-			value="#{contract.to.regimeType}" >
-			<f:selectItem itemLabel="-" value="#{null}" />
-			<f:selectItems value="#{payrollCollections.ssRegimes}" />
-		</aon:selectOneMenu>
-		
 		<c:if test="#{contract.new}" >
 			<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{contract.to.person}" />

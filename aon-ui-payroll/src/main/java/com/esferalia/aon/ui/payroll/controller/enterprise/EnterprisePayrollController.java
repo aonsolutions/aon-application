@@ -17,7 +17,6 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.enumeration.CCCType;
-import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class EnterprisePayrollController {
@@ -87,7 +86,6 @@ public class EnterprisePayrollController {
     	IManagerBean bean = BeanManager.getManagerBean(EnterpriseActivity.class);
     	Criteria criteria = new Criteria();
     	criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
-    	criteria.addOrder(bean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_TYPE));
     	for (ITransferObject to : bean.getList(criteria)) {
     		EnterpriseActivity a = (EnterpriseActivity)to;
     		String label = getAbbreviatedSelectItemLabel(a.getDescription(), NAME_LENGHT_100);
@@ -107,7 +105,6 @@ public class EnterprisePayrollController {
 		IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
-		criteria.addEqualExpression(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_TYPE), EnterpriseActivityType.PRINCIPAL);
 		List<ITransferObject> activities = activityBean.getList(criteria);
 		if (! activities.isEmpty() ) {
 			setActivity( (EnterpriseActivity) activities.get(0) );

@@ -8,6 +8,7 @@ import java.util.List;
 public class TRA {
 	private String numeroAfiliacion;
 	private String ipf;
+	private String nacionalidad;
 	private AYN ayn;
 	private DAP dap;
 	private CUE cue;
@@ -31,6 +32,12 @@ public class TRA {
 	}
 	public void setIpf(String ipf) {
 		this.ipf = ipf;
+	}
+	public String getNacionalidad() {
+		return nacionalidad;
+	}
+	public void setNacionalidad(String nacionalidad) {
+		this.nacionalidad = nacionalidad;
 	}
 	public AYN getAyn() {
 		return ayn;

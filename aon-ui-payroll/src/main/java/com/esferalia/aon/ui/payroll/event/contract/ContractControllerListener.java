@@ -35,7 +35,6 @@ import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
-import com.esferalia.aon.ui.payroll.controller.AbstractVariableHandler.VariableData;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
@@ -52,6 +51,7 @@ public class ContractControllerListener extends ControllerAdapter{
 		ContractController controller = (ContractController) this.getController();
 		Contract contract = (Contract) controller.getTo();
 		contract.setStatus(ContractStatus.PENDING);
+		contract.setRegimeType(contract.getEnterpriseCCC()!=null?contract.getEnterpriseCCC().getActivity().getType():null);
 		if(controller.getParams().getContractModelCode()!=null){
 			contract.setModel(controller.getParams().getContractModelCode().getModel());
 		}
@@ -62,6 +62,7 @@ public class ContractControllerListener extends ControllerAdapter{
 			throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
 		Contract contract = (Contract) controller.getTo();
+		contract.setRegimeType(contract.getEnterpriseCCC()!=null?contract.getEnterpriseCCC().getActivity().getType():null);
 		if(controller.getParams().getContractModelCode()!=null){
 			contract.setModel(controller.getParams().getContractModelCode().getModel());
 		}
@@ -485,11 +486,13 @@ public class ContractControllerListener extends ControllerAdapter{
 
 	private void removeChildData(ControllerEvent event) throws ControllerListenerException {
 		ContractController controller = (ContractController) event.getController();
-		List list = (List) controller.getHandler().getVariablesModel().getWrappedData();
+		Contract contract = (Contract) controller.getTo();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			for(Object o: list){
-				ContractData data = (ContractData) ((VariableData) o).getVariableData();
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			for(ITransferObject to: bean.getList(criteria)){
+				ContractData data = (ContractData) to;
 				bean.remove(data);
 				
 			}
@@ -498,7 +501,6 @@ public class ContractControllerListener extends ControllerAdapter{
 			LOGGER.error(msg);
 			throw new ControllerListenerException(msg,e);
 		}
-		
 	}
 	
 	private void searchAgreement() {

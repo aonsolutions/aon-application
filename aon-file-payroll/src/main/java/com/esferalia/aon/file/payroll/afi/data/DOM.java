@@ -8,13 +8,14 @@ public class DOM {
 	private String tipoDomicilio;
 	private String tipoVia;
 	private String nombreVia;
-	private Integer numero;
+	private String numero;
 	private String bis;
 	private String bloque;
 	private String escalera;
 	private String piso;
 	private String puerta;
-	private String sms;
+	private String mensajeSms;
+	private String borrarSms;
 	
 	private LDD ldd;
 	
@@ -36,10 +37,10 @@ public class DOM {
 	public void setNombreVia(String nombreVia) {
 		this.nombreVia = nombreVia;
 	}
-	public Integer getNumero() {
+	public String getNumero() {
 		return numero;
 	}
-	public void setNumero(Integer numero) {
+	public void setNumero(String numero) {
 		this.numero = numero;
 	}
 	public String getBis() {
@@ -72,11 +73,17 @@ public class DOM {
 	public void setPuerta(String puerta) {
 		this.puerta = puerta;
 	}
-	public String getSms() {
-		return sms;
+	public String getMensajeSms() {
+		return mensajeSms;
 	}
-	public void setSms(String sms) {
-		this.sms = sms;
+	public void setMensajeSms(String mensajeSms) {
+		this.mensajeSms = mensajeSms;
+	}
+	public String getBorrarSms() {
+		return borrarSms;
+	}
+	public void setBorrarSms(String borrarSms) {
+		this.borrarSms = borrarSms;
 	}
 	public LDD getLdd() {
 		return ldd;

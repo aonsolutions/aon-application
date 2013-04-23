@@ -29,6 +29,7 @@ import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
@@ -439,7 +440,7 @@ public class ContrataContratosWriter {
 		EnterpriseCCC ccc = getEnterpriseCCC(params.getContract().getWorkPlace());
 		// TODO: research about ccc quote regime
 		String quoteRegime = "0000";
-		if(params.getContract().getEnterpriseCCC().getActivity().getType()==EnterpriseActivityType.PRINCIPAL){
+		if(params.getContract().getEnterpriseCCC().getActivity().getType()==SSRegimeType.GENERAL){
 			quoteRegime = TCHRGCOT.TCHRGCOT_0111.getCode();
 		}
 		if(ccc!=null){

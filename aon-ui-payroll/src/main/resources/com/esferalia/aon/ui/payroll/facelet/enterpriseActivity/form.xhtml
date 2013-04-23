@@ -33,14 +33,14 @@
 			<aon:inputText id="EnterpriseActivity_description" size="32"
 				maxlength="32" value="#{enterpriseActivity.to.description}"
 				required="true" />
-	
-			<aon:outputLabel for="EnterpriseActivity_type"
+		
+			<aon:outputLabel for="EnterpriseActivity_quoteRegime"
 				value="#{payrollBundle.payroll_activity_quoteRegime}" />
-			<aon:selectOneMenu id="EnterpriseActivity_type" required="true"
+			<aon:selectOneMenu id="EnterpriseActivity_quoteRegime" required="true"
 				value="#{enterpriseActivity.to.type}">
-				<f:selectItems value="#{payrollCollections.enterpriseActivityTypes}" />
+				<f:selectItems value="#{payrollCollections.ssRegimes}" />
 			</aon:selectOneMenu>
-	
+			
 			<ui:include src="/com/code/aon/ui/config/facelet/cnae2009/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{enterpriseActivity.to.cnae2009}" />
 			</ui:include>				

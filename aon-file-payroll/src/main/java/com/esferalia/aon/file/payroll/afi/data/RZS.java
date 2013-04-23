@@ -7,7 +7,7 @@ public class RZS {
 	
 	private String indicador;
 	private String tipoAlfabeticoEmpresario;
-//	private String razonSocial;
+	private String razonSocial;
 //	private String autorizacion;
 	
 	public String getIndicador() {
@@ -22,12 +22,12 @@ public class RZS {
 	public void setTipoAlfabeticoEmpresario(String tipoAlfabeticoEmpresario) {
 		this.tipoAlfabeticoEmpresario = tipoAlfabeticoEmpresario;
 	}
-//	public String getRazonSocial() {
-//		return razonSocial;
-//	}
-//	public void setRazonSocial(String razonSocial) {
-//		this.razonSocial = razonSocial;
-//	}
+	public String getRazonSocial() {
+		return razonSocial;
+	}
+	public void setRazonSocial(String razonSocial) {
+		this.razonSocial = razonSocial;
+	}
 //	public String getAutorizacion() {
 //		return autorizacion;
 //	}
