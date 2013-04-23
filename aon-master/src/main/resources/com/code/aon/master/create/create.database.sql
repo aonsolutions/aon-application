@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.15.2
+# Version: 7.16.0
 # Created by: girazu
-# Creation Date: 16/04/2013 13:35
+# Creation Date: 23/04/2013 16:55
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -305,6 +305,23 @@ CREATE TABLE `account` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables';
 
 #
+# Structure for the `invoicing_group` table : 
+#
+
+CREATE TABLE `invoicing_group` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `customer` int(4) NOT NULL COMMENT 'Identificador del Cliente',
+  `description` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Grupo de Facturacion',
+  `customer_grouped` tinyint(1) DEFAULT '1' COMMENT 'Indica si el Grupo de Facturacion agrupa los Clientes en una sola Factura',
+  PRIMARY KEY (`id`),
+  KEY `IDX_INVOICING_GROUP_CUSTOMER` (`customer`),
+  KEY `IDX_INVOICING_GROUP_DOMAIN` (`domain`),
+  CONSTRAINT `FK_INVOICING_GROUP_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`),
+  CONSTRAINT `FK_INVOICING_GROUP_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Grupos de Facturacion';
+
+#
 # Structure for the `tariff` table : 
 #
 
@@ -332,6 +349,8 @@ CREATE TABLE `customer` (
   `status` tinyint(2) DEFAULT NULL COMMENT 'Estado del Cliente',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   `e_invoice` tinyint(1) DEFAULT '0' COMMENT 'Indica si el Cliente desea recibir Facturas electronicas',
+  `invoicing_group` int(4) DEFAULT NULL COMMENT 'Identificador de Grupo de Facturacion',
+  `project_grouped` tinyint(1) DEFAULT '1' COMMENT 'Indica si el Cliente desea agrupar Proyectos en una sola Factura',
   `delivery_grouped` tinyint(1) DEFAULT '1' COMMENT 'Indica si el Cliente desea agrupar Albaranes en una sola Factura',
   `delivery_valuated` tinyint(1) DEFAULT '1' COMMENT 'Indica si el Cliente desea imprimir el Albaran valorado',
   `account` int(4) DEFAULT NULL COMMENT 'Identificador de la Cuenta Contable',
@@ -340,8 +359,10 @@ CREATE TABLE `customer` (
   KEY `IDX_CUSTOMER_SCOPE` (`scope`),
   KEY `IDX_CUSTOMER_DOMAIN` (`domain`),
   KEY `IDX_CUSTOMER_ACCOUNT` (`account`),
+  KEY `IDX_CUSTOMER_INVOICING_GROUP` (`invoicing_group`),
   CONSTRAINT `FK_CUSTOMER_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
   CONSTRAINT `FK_CUSTOMER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CUSTOMER_INVOICING_GROUP` FOREIGN KEY (`invoicing_group`) REFERENCES `invoicing_group` (`id`),
   CONSTRAINT `FK_CUSTOMER_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `FK_CUSTOMER_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `FK_CUSTOMER_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
@@ -3099,6 +3120,7 @@ CREATE TABLE `creditor` (
 CREATE TABLE `customer_fee` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico de la Cuota del Cliente',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `project` int(4) DEFAULT NULL COMMENT 'Identificador del Proyecto',
   `customer` int(4) DEFAULT NULL COMMENT 'Identificador del Cliente',
   `line` smallint(2) DEFAULT '1' COMMENT 'Numero de linea de Cuota',
   `item` int(4) DEFAULT NULL COMMENT 'Identificador del Articulo',
@@ -3111,15 +3133,23 @@ CREATE TABLE `customer_fee` (
   `billing_date` date DEFAULT NULL COMMENT 'Proxima fecha de facturación de la Cuota',
   `period` smallint(2) DEFAULT '1' COMMENT 'Periodo de facturacion en meses de la Cuota',
   `security_level` tinyint(2) DEFAULT '0' COMMENT 'Nivel de seguridad de la Cuota',
+  `invoicing_group` int(4) DEFAULT NULL COMMENT 'Identificador de Grupo de Facturacion',
+  `seller` int(4) DEFAULT NULL COMMENT 'Identificador de Agente Comercial',
   `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
   PRIMARY KEY (`id`),
   KEY `IDX_CUSTOMER_FEE_CUSTOMER` (`customer`),
   KEY `IDX_CUSTOMER_FEE_ITEM` (`item`),
   KEY `IDX_CUSTOMER_FEE_WORKPLACE` (`workplace`),
   KEY `IDX_CUSTOMER_FEE_DOMAIN` (`domain`),
+  KEY `IDX_CUSTOMER_FEE_INVOICING_GROUP` (`invoicing_group`),
+  KEY `IDX_CUSTOMER_FEE_PROJECT` (`project`),
+  KEY `IDX_CUSTOMER_FEE_SELLER` (`seller`),
   CONSTRAINT `FK_CUSTOMER_FEE_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`),
   CONSTRAINT `FK_CUSTOMER_FEE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CUSTOMER_FEE_INVOICING_GROUP` FOREIGN KEY (`invoicing_group`) REFERENCES `invoicing_group` (`id`),
   CONSTRAINT `FK_CUSTOMER_FEE_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
+  CONSTRAINT `FK_CUSTOMER_FEE_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
+  CONSTRAINT `FK_CUSTOMER_FEE_SELLER` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`),
   CONSTRAINT `FK_CUSTOMER_FEE_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuotas de Clientes';
 
@@ -4460,6 +4490,7 @@ CREATE TABLE `invoice_detail` (
   `source_id` int(4) DEFAULT NULL COMMENT 'Identificador del Origen del Detalle de la Factura',
   `taxable_base` double(15,4) DEFAULT '0.0000' COMMENT 'Base Imponible del Detalle de Factura',
   `taxes` double(15,3) DEFAULT '0.000' COMMENT 'Tasas del Detalle de Factura',
+  `seller` int(4) DEFAULT NULL COMMENT 'Identificador de Agente Comercial',
   `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
   `warehouse` int(4) DEFAULT NULL COMMENT 'Identificador del Almacen',
   PRIMARY KEY (`id`),
@@ -4470,10 +4501,12 @@ CREATE TABLE `invoice_detail` (
   KEY `IDX_INVOICE_DETAIL_ITEM` (`item`),
   KEY `IDX_INVOICE_DETAIL_WORKPLACE` (`workplace`),
   KEY `IDX_INVOICE_DETAIL_DOMAIN` (`domain`),
+  KEY `IDX_INVOICE_DETAIL_SELLER` (`seller`),
   CONSTRAINT `FK_INVOICE_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_INVOICE_DETAIL_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `FK_INVOICE_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_INVOICE_DETAIL_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
+  CONSTRAINT `FK_INVOICE_DETAIL_SELLER` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`),
   CONSTRAINT `FK_INVOICE_DETAIL_WAREHOUSE` FOREIGN KEY (`warehouse`) REFERENCES `warehouse` (`id`),
   CONSTRAINT `FK_INVOICE_DETAIL_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Factura';
@@ -4536,40 +4569,6 @@ CREATE TABLE `invoice_tax_account` (
   CONSTRAINT `FK_INVOICE_TAX_ACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_INVOICE_TAX_ACCOUNT_INVOICE_TAX` FOREIGN KEY (`invoice_tax`) REFERENCES `invoice_tax` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables asociadas a Impuestos de Facturas';
-
-#
-# Structure for the `invoicing_group` table : 
-#
-
-CREATE TABLE `invoicing_group` (
-  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `parent` int(4) NOT NULL COMMENT 'Grupo de Facturacion',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `IDX_INVOICING_GROUP_REGISTRY` (`parent`),
-  KEY `IDX_INVOICING_GROUP_DOMAIN` (`domain`),
-  CONSTRAINT `FK_INVOICING_GROUP_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_INVOICING_GROUP_REGISTRY` FOREIGN KEY (`parent`) REFERENCES `registry` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Grupos de Facturacion';
-
-#
-# Structure for the `invoicing_group_detail` table : 
-#
-
-CREATE TABLE `invoicing_group_detail` (
-  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador Unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `invoicing_group` int(4) NOT NULL COMMENT 'Grupo de Facturacion al que pertenece',
-  `child` int(4) NOT NULL COMMENT 'Componente asociado a un Grupo de Facturacion',
-  `grouped` tinyint(1) DEFAULT '0' COMMENT 'Indica si agrupa facturas o no',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `IDX_INVOICING_GROUP_DETAIL_REGISTRY` (`child`),
-  KEY `IDX_INVOICING_GROUP_DETAIL_INVOICING_GROUP` (`invoicing_group`),
-  KEY `IDX_INVOICING_GROUP_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_INVOICING_GROUP_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_INVOICING_GROUP_DETAIL_INVOICING_GROUP` FOREIGN KEY (`invoicing_group`) REFERENCES `invoicing_group` (`id`),
-  CONSTRAINT `FK_INVOICING_GROUP_DETAIL_REGISTRY` FOREIGN KEY (`child`) REFERENCES `registry` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de los Grupos de Facturacion';
 
 #
 # Structure for the `irpf_data` table : 
@@ -7060,7 +7059,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.15.2');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.16.0');
 
 COMMIT;
 
