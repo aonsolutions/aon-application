@@ -143,8 +143,8 @@
 	</bean>
 
 	<bean class="com.code.aon.customer.InvoicingGroup" sqlName="invoicing_group">
-		<alias names="id,customer_id,customer_name,customer_invoicingGroup_id" />
-		<hibernate names="id,customer.id,customer.name,customer.invoicingGroup.id" />
+		<alias names="id,customer_id,customer_name,customer_scope_id,customer_invoicingGroup_id" />
+		<hibernate names="id,customer.id,customer.name,customer.scope.id,customer.invoicingGroup.id" />
 	</bean>
 	
 	<!-- ** AON FINANCE  **************************************************** -->
