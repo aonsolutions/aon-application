@@ -3,10 +3,12 @@ package com.esferalia.aon.payroll;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Formula;
 
 import com.code.aon.common.IAttachment;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.IScopable;
 import com.esferalia.aon.entity.master.ContractAttachmentDB;
@@ -34,6 +36,11 @@ public class ContractAttachment extends ContractAttachmentDB implements IAttachm
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
+	}
+	
+	@Transient
+	public boolean isPdfType(){
+		return this.getMimeType()==MimeType.MIME_PDF;
 	}
 
 }

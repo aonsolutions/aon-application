@@ -66,7 +66,6 @@ import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.IVariablesHandler;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.controller.TrainingCenterController;
-import com.esferalia.aon.ui.payroll.controller.contract.ContractPdfController.PdfType;
 import com.esferalia.aon.ui.payroll.controller.salary.SettleController;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
@@ -455,17 +454,17 @@ public class ContractController extends BasicController implements IVariablesHan
 		ContractPdfController pdfDocument = (ContractPdfController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_PDF_CONTROLLER_NAME);
 		try {
 			if( !getExistSignedContractDocument() ){
-				pdfDocument.setDocumentType(PdfType.CONTRACT);
+				pdfDocument.setDocumentType(ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT);
 				pdfDocument.generateDocument();
 				pdfDocument.onDocumentSave(event);
 			}
 			if( !getExistSignedBasicCopyDocument() ){
-				pdfDocument.setDocumentType(PdfType.BASIC_COPY);
+				pdfDocument.setDocumentType(ContractAttachmentType.BASIC_COPY_DRAFT);
 				pdfDocument.generateDocument();
 				pdfDocument.onDocumentSave(event);
 			}
 			if( isTrainingContract() && isTrainingCourseDefined() ){
-				pdfDocument.setDocumentType(PdfType.ANNEX);
+				pdfDocument.setDocumentType(ContractAttachmentType.TRAINING_ANNEX_II);
 				pdfDocument.generateDocument();
 				pdfDocument.onDocumentSave(event);
 			}
@@ -619,12 +618,6 @@ public class ContractController extends BasicController implements IVariablesHan
 		}
 		return false;
 	}
-	
-	public void onContractDocumentShow( ActionEvent event ) {
-		ContractPdfController controller = (ContractPdfController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_PDF_CONTROLLER_NAME);
-		controller.onContractDocumentShow(event);
-	}
-	
 	
 	
 	public String onTrainingCenterDirectDebitReport() throws ManagerBeanException{

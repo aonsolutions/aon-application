@@ -88,10 +88,10 @@
 					title="Edicion manual del documento del contrato"
 					iconClass="aon-icon-page" >
 					<f:setPropertyActionListener
-						target="#{contractPdf.documentType}" value="CONTRACT" />
+						target="#{contractPdf.documentType}" value="#{contractPdf.contractPdfType}" />
 					<f:setPropertyActionListener
 						target="#{contractPdf.backAction}" value="contract_form" />
-					<aon:actionListener method="#{contract.onContractDocumentShow}" />
+					<aon:actionListener method="#{contractPdf.onContractDocumentShow}" />
 				</aon:menuItem>
 				<aon:menuItem id="basicCopyDraft-edition"
 					action="contractPdfEdition_form" ajaxSingle="true" 
@@ -100,10 +100,10 @@
 					title="Edicion manual del documento de la copia basica"
 					iconClass="aon-icon-page" >
 					<f:setPropertyActionListener
-						target="#{contractPdf.documentType}" value="BASIC_COPY" />
+						target="#{contractPdf.documentType}" value="#{contractPdf.basicCopyPdfType}" />
 					<f:setPropertyActionListener
 						target="#{contractPdf.backAction}" value="contract_form" />
-					<aon:actionListener method="#{contract.onContractDocumentShow}" />
+					<aon:actionListener method="#{contractPdf.onContractDocumentShow}" />
 				</aon:menuItem>
 				<!--  
 				<aon:menuItem id="annex1Draft-edition"
@@ -126,10 +126,10 @@
 					title="Anexo II. Acuerdo para la actividad formativa en contrato para la formación y el aprendizaje en los supuestos en que no exista título de FP, certificado de profesionalidad o centro disponible."
 					iconClass="aon-icon-page" >
 					<f:setPropertyActionListener
-						target="#{contractPdf.documentType}" value="ANNEX" />
+						target="#{contractPdf.documentType}" value="#{contractPdf.annexIIPdfType}" />
 					<f:setPropertyActionListener
 						target="#{contractPdf.backAction}" value="contract_form" />
-					<aon:actionListener method="#{contract.onContractDocumentShow}" />
+					<aon:actionListener method="#{contractPdf.onContractDocumentShow}" />
 				</aon:menuItem>                
 			</rich:menuGroup>
 

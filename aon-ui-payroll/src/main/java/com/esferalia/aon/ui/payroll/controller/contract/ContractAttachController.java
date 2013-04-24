@@ -25,7 +25,9 @@ import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.SecurityInfo;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.utils.PayrollEmailUtil;
 import com.esferalia.aon.ui.payroll.utils.PdfUtils;
 
@@ -97,8 +99,8 @@ public class ContractAttachController extends AttachmentController {
 
 	public void checkAll(ActionEvent event) throws ManagerBeanException{
 		for (ITransferObject ito : this.getWrappedList()) {
-			IAttachment o = (IAttachment)ito;
-			if (!checks.contains(o)) {
+			ContractAttachment o = (ContractAttachment) ito;
+			if (!checks.contains(o) && o.isPdfType()) {
 				checks.add( o );
 			}
 		}
@@ -126,11 +128,8 @@ public class ContractAttachController extends AttachmentController {
 		
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
 		if (mailConfig.getMailAccountCount() > 0) {
-//			Invoice invoice = getInvoice();
 			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 			messageController.initNewMessage();
-//			IAttachment attach = getInvoiceData(invoice);
-//			emailController.initMessageController(messageController, invoice, attach, facturae);
 			emailController.initMessageController(messageController, (Contract)this.getMasterController().getTo(), checks, facturae);
 			messageController.setShowNewMessageWindow(true);
 			messageController.setSecurityInfo(securyInfo);

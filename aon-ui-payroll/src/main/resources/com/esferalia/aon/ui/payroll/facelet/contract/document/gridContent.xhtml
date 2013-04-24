@@ -11,7 +11,7 @@
 		<ui:param name="controller" value="#{contractAttach}" />
 
 		<ui:define name="beginFormListContent" >
-			<aon:div 
+			<aon:div rendered="#{to.pdfType}" 
 				onmouseover="disableRowSelector();"
 				onmouseout="enableRowSelector();"
 				onmouseup="disableRowSelector();">
