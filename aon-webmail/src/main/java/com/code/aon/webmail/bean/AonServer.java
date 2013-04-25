@@ -7,6 +7,8 @@ import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.Properties;
 
+import javax.activation.CommandMap;
+import javax.activation.MailcapCommandMap;
 import javax.mail.Address;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -287,6 +289,7 @@ public class AonServer implements IMailConstants {
     	Transport transport = null;
         try {
             if ( (message != null) && (message.getFrom() != null) ) {
+                CommandMap.setDefaultCommandMap(new MailcapCommandMap());
             	transport = getTransport(session, account);
                 message.setSentDate(new Date());
                 message.setHeader(X_MAILER, WEBMAIL_MAILER);
