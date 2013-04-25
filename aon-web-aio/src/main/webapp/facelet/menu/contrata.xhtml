@@ -153,23 +153,21 @@
 							</aon:div>
 						</aon:panelGrid>
 						
-						<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-							<aon:panelGrid id="group_contrata_utilities"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-direct-access-panel aon-icon-config">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_utilities}" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="contractLoader"
-											action="contractLoader_form"
-											actionListener="#{contractLoader.onStart}"
-											value="#{payrollBundle.payroll_contractLoader_module}" />
-									</aon:div>
+						<aon:panelGrid id="group_contrata_utilities"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-config">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_utilities}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="contractLoader"
+										action="contractLoader_form"
+										actionListener="#{contractLoader.onStart}"
+										value="#{payrollBundle.payroll_contractLoader_module}" />
 								</aon:div>
-							</aon:panelGrid>
-						</c:if>
+							</aon:div>
+						</aon:panelGrid>
 					</aon:panelGroup>													
 					
 				</h:panelGrid>

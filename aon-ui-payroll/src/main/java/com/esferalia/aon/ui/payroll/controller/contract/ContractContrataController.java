@@ -37,19 +37,18 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.sepe.api.contrata.contratos.FICHEROCONTRATOS;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.sepe.api.contrata.contratos.FICHEROCONTRATOS;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.file.ContrataParams;
 import com.esferalia.aon.ui.payroll.file.ContrataReader;
 import com.esferalia.aon.ui.payroll.file.ContrataWriter;
 import com.esferalia.aon.ui.payroll.sepe.ContrataManager;
-import com.esferalia.aon.ui.payroll.utils.FileUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 
@@ -319,7 +318,7 @@ public class ContractContrataController {
 	private void processXmlFile(ContractAttachment contrataAttach) throws ManagerBeanException, IOException {
 		if(contrataAttach!=null){
 			ContrataReader reader = new ContrataReader();
-			ContrataParams params = reader.readFile( new ByteArrayInputStream(contrataAttach.getData()), FileUtils.CONTRATOS_SCHEMA_FILE_NAME );
+			ContrataParams params = reader.readFile( new ByteArrayInputStream(contrataAttach.getData()) );
 			params.setContract(contrataAttach.getContract());
 			getHandler().setParams(params);
 		}

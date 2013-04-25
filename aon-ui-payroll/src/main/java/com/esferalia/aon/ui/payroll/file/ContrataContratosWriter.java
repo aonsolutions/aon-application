@@ -795,7 +795,15 @@ public class ContrataContratosWriter {
 		String tc2 = getContractDataMap(params.getContract()).get(ContextVariable.TC2.getName());
 		DATOSGENERALESCONTRATOTYPE datos = factory.createDATOSGENERALESCONTRATOTYPE();
 		datos.setFECHAINICIO(getFormatedDate(params.getContract().getStartDate()));
-		datos.setFECHATERMINO(getFormatedDate(params.getContract().getEndDate()));
+		if( params.getContract().getEndDate()==null 
+				&& (tc2.equals("402") || tc2.equals("502") 
+				|| tc2.equals("420") || tc2.equals("520") || tc2.equals("430") || tc2.equals("530")  
+				|| tc2.equals("421") || tc2.equals("441")  || tc2.equals("541") || tc2.equals("452") 
+				|| tc2.equals("970")) ){
+			AonUtil.addErrorMessage("La fecha final es necesaria para este tipo de contrato.");
+		} else {
+			datos.setFECHATERMINO(getFormatedDate(params.getContract().getEndDate()));
+		}
 //		Indicador de convenio colectivo.   
 //		Obligatorio para : 
 //			- contratos de códigos 402 y 502 cuando su duración está entre 6 y 12 meses.   
@@ -813,24 +821,7 @@ public class ContrataContratosWriter {
 				datos.setINDCONVENIOCOLECTIVO(params.isCollectiveAgreement()?"S":"N");
 			}
 		}
-//		"11";"ESTUDIOS PRIMARIOS INCOMPLETOS"
-//		"22";"PRIMERA ETAPA DE EDUCACIÓN SECUNDARIA SIN TÍTULO DE GRADUADO ESCOLAR O EQUIVALENTE"              
-//		"23";"PRIMERA ETAPA DE EDUCACIÓN SECUNDARIA CON TÍTULO DE GRADUADO ESCOLAR O EQUIVALENTE"             
-//		"32";"ENSEÑANZAS DE BACHILLERATO"
-//		"33";"ENSEÑANZAS DE GRADO MEDIO DE FORMACIÓN PROFESIONAL ESPECÍFICA, ARTES PLÁSTICAS, DISEÑO Y DEPORTIVAS"                                            
-//		"51";"ENSEÑANZAS DE GRADO SUPERIOR DE FORMACIÓN PROFESIONAL ESPECÍFICA Y EQUIVALENTE, ARTES PLÁSTICAS, DISEÑO Y DEPORTIVAS"                          
-//		"54";"ENSEÑANZAS UNIVERSITARIAS DE PRIMER CICLO Y EQUIVALENTES O PERSONAS QUE HAN APROBADO 3 CURSOS COMPLETOS DE UNA LICENCIATURA O CRÉDITOS EQUIVALENTES (DIPLOMADOS)"                                
-//		"55";"ENSEÑANZAS UNIVERSITARIAS DE SEGUNDO CICLO Y EQUIVALENTES (LICENCIADOS)"
-//		"59";"ENSEÑANZAS UNIVERSITARIAS DE GRADO"
-//		"60";"ENSEÑANZAS UNIVERSITARIAS DE MÁSTER"
-//		"61";"DOCTORADO UNIVERSITARIO"
-//		"80";"SIN ESTUDIOS"
 		datos.setNIVELFORMATIVO(params.getNivelFormativo()!=null?params.getNivelFormativo().getCode():null);
-//		Indicador de discapacidad.  
-//		Obligatorio con "S" para contratos de minusválidos.  
-//		Obligatorio con "C" para contratos de minusválidos en centros especiales de empleo. 
-//		Obligatorio con "E", "F" o "G" para contratos de minusválidos de enclaves laborales. 
-//		Sus posibles valores se encuentran codificados en la tabla TEJINDIS.txt de la Ayuda XML 
 		if(params.isDisabilityData()){
 			datos.setINDDISCAPACIDAD(params.getIndDiscapacidad()!=null?params.getIndDiscapacidad().getCode():null);
 		}

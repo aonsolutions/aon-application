@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,7 +21,6 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
-import com.esferalia.aon.payroll.TrainingCenter;
 import com.esferalia.aon.payroll.TrainingCourse;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -66,36 +66,36 @@ public class ModelPE230 extends AbstractAnnexModel {
 	final static String PE230_EMPLOYEE_NIF = "cif_trabajador";
 
 	// CONTRACT FIELDS
-	final static String PE230_COTNRACT_ID_NUMBER_1 = "c1";
-	final static String PE230_COTNRACT_ID_NUMBER_2 = "c2";
-	final static String PE230_COTNRACT_ID_NUMBER_3 = "c3";
-	final static String PE230_COTNRACT_ID_NUMBER_4 = "c4";
-	final static String PE230_COTNRACT_ID_NUMBER_5 = "c5";
-	final static String PE230_COTNRACT_ID_NUMBER_6 = "c6";
-	final static String PE230_COTNRACT_ID_NUMBER_7 = "c7";
-	final static String PE230_COTNRACT_ID_NUMBER_8 = "c8";
-	final static String PE230_COTNRACT_ID_NUMBER_9 = "c9";
-	final static String PE230_COTNRACT_ID_NUMBER_10 = "c10";
-	final static String PE230_COTNRACT_ID_NUMBER_11 = "c11";
-	final static String PE230_COTNRACT_ID_NUMBER_12 = "c12";
-	final static String PE230_COTNRACT_ID_NUMBER_13 = "c13";
-	final static String PE230_COTNRACT_ID_NUMBER_14 = "c14";
-	final static String PE230_COTNRACT_ID_NUMBER_15 = "c15";
-	final static String PE230_COTNRACT_ID_NUMBER_16 = "c16";
+	final static String PE230_CONTRACT_ID_NUMBER_1 = "c1";
+	final static String PE230_CONTRACT_ID_NUMBER_2 = "c2";
+	final static String PE230_CONTRACT_ID_NUMBER_3 = "c3";
+	final static String PE230_CONTRACT_ID_NUMBER_4 = "c4";
+	final static String PE230_CONTRACT_ID_NUMBER_5 = "c5";
+	final static String PE230_CONTRACT_ID_NUMBER_6 = "c6";
+	final static String PE230_CONTRACT_ID_NUMBER_7 = "c7";
+	final static String PE230_CONTRACT_ID_NUMBER_8 = "c8";
+	final static String PE230_CONTRACT_ID_NUMBER_9 = "c9";
+	final static String PE230_CONTRACT_ID_NUMBER_10 = "c10";
+	final static String PE230_CONTRACT_ID_NUMBER_11 = "c11";
+	final static String PE230_CONTRACT_ID_NUMBER_12 = "c12";
+	final static String PE230_CONTRACT_ID_NUMBER_13 = "c13";
+	final static String PE230_CONTRACT_ID_NUMBER_14 = "c14";
+	final static String PE230_CONTRACT_ID_NUMBER_15 = "c15";
+	final static String PE230_CONTRACT_ID_NUMBER_16 = "c16";
 	
-	final static String PE230_COTNRACT_START_DATE = "fecha";
-	final static String PE230_COTNRACT_END_DATE = "fecha fin";
+	final static String PE230_CONTRACT_START_DATE = "fecha";
+	final static String PE230_CONTRACT_END_DATE = "fecha fin";
 	
-	final static String PE230_COTNRACT_OCCUPATION = "puesto trabajo";
+	final static String PE230_CONTRACT_OCCUPATION = "puesto trabajo";
 	
-	final static String PE230_COTNRACT_CNO_1 = "n1";
-	final static String PE230_COTNRACT_CNO_2 = "n2";
-	final static String PE230_COTNRACT_CNO_3 = "n3";
-	final static String PE230_COTNRACT_CNO_4 = "n4";
-	final static String PE230_COTNRACT_CNO_5 = "n5";
-	final static String PE230_COTNRACT_CNO_6 = "n6";
-	final static String PE230_COTNRACT_CNO_7 = "n7";
-	final static String PE230_COTNRACT_CNO_8 = "n8";
+	final static String PE230_CONTRACT_CNO_1 = "n1";
+	final static String PE230_CONTRACT_CNO_2 = "n2";
+	final static String PE230_CONTRACT_CNO_3 = "n3";
+	final static String PE230_CONTRACT_CNO_4 = "n4";
+	final static String PE230_CONTRACT_CNO_5 = "n5";
+	final static String PE230_CONTRACT_CNO_6 = "n6";
+	final static String PE230_CONTRACT_CNO_7 = "n7";
+	final static String PE230_CONTRACT_CNO_8 = "n8";
 	
 	// TRAINING CENTER FIELDS
 	final static String PE230_TRAINING_CENTER_CODE = "numce";
@@ -230,41 +230,41 @@ public class ModelPE230 extends AbstractAnnexModel {
 			getPdfFieldsMap().get(PE230_EMPLOYEE_NIF).setValue(contract.getPerson().getRegistry().getDocument());
 			
 			// CONTRACT FIELDS
-			getPdfFieldsMap().get(PE230_COTNRACT_ID_NUMBER_1).setValue("");
-			getPdfFieldsMap().get(PE230_COTNRACT_ID_NUMBER_2).setValue("");
-			getPdfFieldsMap().get(PE230_COTNRACT_ID_NUMBER_3).setValue("");
-			getPdfFieldsMap().get(PE230_COTNRACT_ID_NUMBER_4).setValue("");
-			getPdfFieldsMap().get(PE230_COTNRACT_ID_NUMBER_5).setValue("");
-			getPdfFieldsMap().get(PE230_COTNRACT_ID_NUMBER_6).setValue("");
-			getPdfFieldsMap().get(PE230_COTNRACT_ID_NUMBER_7).setValue("");
-			getPdfFieldsMap().get(PE230_COTNRACT_ID_NUMBER_8).setValue("");
-			getPdfFieldsMap().get(PE230_COTNRACT_ID_NUMBER_9).setValue("");
-			getPdfFieldsMap().get(PE230_COTNRACT_ID_NUMBER_10).setValue("");
-			getPdfFieldsMap().get(PE230_COTNRACT_ID_NUMBER_11).setValue("");
-			getPdfFieldsMap().get(PE230_COTNRACT_ID_NUMBER_12).setValue("");
-			getPdfFieldsMap().get(PE230_COTNRACT_ID_NUMBER_13).setValue("");
-			getPdfFieldsMap().get(PE230_COTNRACT_ID_NUMBER_14).setValue("");
-			getPdfFieldsMap().get(PE230_COTNRACT_ID_NUMBER_15).setValue("");
-			getPdfFieldsMap().get(PE230_COTNRACT_ID_NUMBER_16).setValue("");
+			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_1).setValue("");
+			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_2).setValue("");
+			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_3).setValue("");
+			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_4).setValue("");
+			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_5).setValue("");
+			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_6).setValue("");
+			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_7).setValue("");
+			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_8).setValue("");
+			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_9).setValue("");
+			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_10).setValue("");
+			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_11).setValue("");
+			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_12).setValue("");
+			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_13).setValue("");
+			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_14).setValue("");
+			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_15).setValue("");
+			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_16).setValue("");
 			
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			if(contract.getStartDate()!=null){
-				getPdfFieldsMap().get(PE230_COTNRACT_START_DATE).setValue(formatter.format(contract.getStartDate()));
+				getPdfFieldsMap().get(PE230_CONTRACT_START_DATE).setValue(formatter.format(contract.getStartDate()));
 			}
 			if(contract.getEndDate()!=null){
-				getPdfFieldsMap().get(PE230_COTNRACT_END_DATE).setValue(formatter.format(contract.getEndDate()));
+				getPdfFieldsMap().get(PE230_CONTRACT_END_DATE).setValue(formatter.format(contract.getEndDate()));
 			}
-			getPdfFieldsMap().get(PE230_COTNRACT_OCCUPATION).setValue(trainingCourse.getOccupationName());
+			getPdfFieldsMap().get(PE230_CONTRACT_OCCUPATION).setValue(trainingCourse.getOccupationName());
 			String cno = map.get(ContextVariable.CNO.getName());
 			if( !StringUtils.isEmpty(cno) ){
-				getPdfFieldsMap().get(PE230_COTNRACT_CNO_1).setValue(cno.substring(0, 1));
-				getPdfFieldsMap().get(PE230_COTNRACT_CNO_2).setValue(cno.substring(1, 2));
-				getPdfFieldsMap().get(PE230_COTNRACT_CNO_3).setValue(cno.substring(2, 3));
-				getPdfFieldsMap().get(PE230_COTNRACT_CNO_4).setValue(cno.substring(3, 4));
-				getPdfFieldsMap().get(PE230_COTNRACT_CNO_5).setValue("");
-				getPdfFieldsMap().get(PE230_COTNRACT_CNO_6).setValue("");
-				getPdfFieldsMap().get(PE230_COTNRACT_CNO_7).setValue("");
-				getPdfFieldsMap().get(PE230_COTNRACT_CNO_8).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_CNO_1).setValue(cno.substring(0, 1));
+				getPdfFieldsMap().get(PE230_CONTRACT_CNO_2).setValue(cno.substring(1, 2));
+				getPdfFieldsMap().get(PE230_CONTRACT_CNO_3).setValue(cno.substring(2, 3));
+				getPdfFieldsMap().get(PE230_CONTRACT_CNO_4).setValue(cno.substring(3, 4));
+				getPdfFieldsMap().get(PE230_CONTRACT_CNO_5).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_CNO_6).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_CNO_7).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_CNO_8).setValue("");
 			}
 			
 			RegistryDirStaff trainingCenterDirStaff = null;
@@ -364,8 +364,13 @@ public class ModelPE230 extends AbstractAnnexModel {
 			} else if(trainingCourse.getModality()==TrainingModality.MIX){
 				getPdfFieldsMap().get(PE230_TRAINING_COURSE_MIXED).setValue("true");
 			}
-			getPdfFieldsMap().get(PE230_TRAINING_COURSE_START_DATE).setValue("");
-			getPdfFieldsMap().get(PE230_TRAINING_COURSE_END_DATE).setValue("");
+			ContractData trainingCourseData = obtainContractData(contract, ContextVariable.TRAINING_COURSE.getName());
+			if(trainingCourseData.getStartDate()!=null){
+				getPdfFieldsMap().get(PE230_TRAINING_COURSE_START_DATE).setValue(formatter.format(trainingCourseData.getStartDate()));
+			}
+			if(trainingCourseData.getEndDate()!=null){
+				getPdfFieldsMap().get(PE230_TRAINING_COURSE_END_DATE).setValue(formatter.format(trainingCourseData.getEndDate()));
+			}
 			getPdfFieldsMap().get(PE230_TRAINING_COURSE_SCHEDULE).setValue("");
 			getPdfFieldsMap().get(PE230_TRAINING_COURSE_FIRST_YEAR_MAIN_HOURS).setValue("");
 			getPdfFieldsMap().get(PE230_TRAINING_COURSE_FIRST_YEAR_COMPLEMENTARY_HOURS).setValue("");
@@ -438,6 +443,22 @@ public class ModelPE230 extends AbstractAnnexModel {
 			return map;
 		}
 		return map;
+	}
+	
+	private ContractData obtainContractData(Contract contract, String name) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId() );
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), name );
+			List<ITransferObject> list = bean.getList(criteria);
+			if( !list.isEmpty() ){
+				return (ContractData) list.get(0);
+			}
+		} catch (ManagerBeanException e) {
+			// do nothing ...
+		}
+		return null;
 	}
 	
 }

@@ -19,6 +19,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Enterprise;
@@ -47,9 +48,8 @@ import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
-import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
-import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class ContractAfiLoader {
 	
@@ -139,10 +139,12 @@ public class ContractAfiLoader {
 					logError("La empresa " + emp.getRzs().getRazonSocial() + " no esta dada de alta. Se omiten los contratos incluidos en esta empresa.");
 					errors++;
 					logInfo("Se omiten los contratos de la empresa " + emp.getRzs().getRazonSocial());
+				} else if(emp.getTrabajadores().size()==0){
+					logWarn("La empresa " + emp.getRzs().getRazonSocial() + " no contiene datos de contratos.");
+					warnings++;
 				} else {
 					String quoteRegimeValue = emp.getCodigoCuentaCotizacionSeguridadSocial().substring(0, 4);
 					String cccValue = emp.getCodigoCuentaCotizacionSeguridadSocial().substring(4, emp.getCodigoCuentaCotizacionSeguridadSocial().length());
-					
 					EnterpriseCCC ccc = obtainCcc(enterprise, cccValue);
 					PayrollWorkPlace pwp = null;
 					if(ccc==null){
@@ -150,6 +152,10 @@ public class ContractAfiLoader {
 						errors++;
 						logInfo("Se omiten los contratos incluidos de la cuenta de cotizacion " + cccValue);
 					} else {
+						if( !ccc.getActivity().getQuoteRegimeCode().equals(quoteRegimeValue) ){
+							logError("Regimen incorrecto para la actividad" + ccc.getActivity().getDescription()+" ["+enterprise.getRegistry().getFullName()+"]");
+							errors++;
+						}
 						pwp = obtainWorkPlace(ccc);
 						if(pwp==null){
 							logWarn("No se ha dado de alta en la empresa el centro de trabajo para la actividad " + ccc.getActivity().getDescription());
@@ -161,9 +167,10 @@ public class ContractAfiLoader {
 							address.setRegistry(enterprise.getRegistry());
 							address.setAddressType(AddressType.DELEGATION);
 							address.setStreetType(StreetType.CL);
-							address.setAddress("Direccion autogenerada");
-							address.setNumber("s/n");
+							address.setAddress("");
+							address.setNumber("");
 							address.setGeozone(obtainGeoZone(cccValue.substring(0, 2)));
+							address.setDomain(enterprise.getDomain());
 							raddressBean.insert(address);
 							
 							IManagerBean wpBean = BeanManager.getManagerBean(WorkPlace.class);
@@ -185,12 +192,14 @@ public class ContractAfiLoader {
 							}
 							wp.setEnterprise(enterprise);
 							wp.setScope(enterprise.getScope());
+							wp.setDomain(enterprise.getDomain());
 							wpBean.insert(wp);
 							
 							IManagerBean pwpBean = BeanManager.getManagerBean(PayrollWorkPlace.class);
 							pwp = new PayrollWorkPlace();
 							pwp.setEnterpriseActivity(ccc.getActivity());
 							pwp.setWorkPlace(wp);
+							pwp.setDomain(enterprise.getDomain());
 							pwpBean.insert(pwp);
 						}
 						
@@ -243,7 +252,19 @@ public class ContractAfiLoader {
 								} else if(type.equals("M")){
 									registry.setDocumentType(DocumentType.OTHER);
 								} 
+								registry.setDomain(enterprise.getDomain());
 								registry = (Registry) registryBean.insert(registry);
+								
+								/*
+								 * REGISTRY ADDRESS
+								 */
+								IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
+								RegistryAddress address = new RegistryAddress();
+								address.setRegistry(registry);
+								address.setGeozone(obtainGeoZone(tra.getNumeroAfiliacion().substring(0, 2)));
+								address.setStreetType(StreetType.CL);
+								address.setDomain(enterprise.getDomain());
+								rAddressBean.insert(address);
 								
 								/*
 								 * PERSON
@@ -271,6 +292,7 @@ public class ContractAfiLoader {
 								}
 								person.setMaritalStatus(MaritalStatus.UNKNOWN);
 								person.setSocialSecurityNumber(tra.getNumeroAfiliacion());
+								person.setDomain(enterprise.getDomain());
 								person = (Person) personBean.insert(person);
 							}
 							
@@ -303,14 +325,10 @@ public class ContractAfiLoader {
 								contract.setCalendar(null);
 								contract.setDescription(null);
 								contract.setRegistration(null);
-								// FIXME how obtain regime type? (from contract code, ...)
-								if(obtainQuoteRegime(quoteRegimeValue) == EnterpriseActivityType.PRINCIPAL){
-									contract.setRegimeType(SSRegimeType.GENERAL);
-								} else {
-									contract.setRegimeType(null);
-								}
+								contract.setRegimeType(ccc.getActivity().getType());
 								
 								contract.setStatus(ContractStatus.PENDING);
+								contract.setDomain(enterprise.getDomain());
 								contract = (Contract) contractBean.insert(contract);
 								++i;
 								
@@ -327,6 +345,7 @@ public class ContractAfiLoader {
 									data.setEndDate(contract.getEndDate());
 									data.setName(ContextVariable.TC2.getName());
 									data.setExpression("\""+code.getValue()+"\"");
+									data.setDomain(enterprise.getDomain());
 									contractDataBean.insert(data);
 								} else{
 									logError("El codigo de contrato no es correcto para el trabajador " + person.getFullName() + " ("+person.getRegistry().getDocument()+")");
@@ -341,6 +360,7 @@ public class ContractAfiLoader {
 									data.setEndDate(contract.getEndDate());
 									data.setName( ContextVariable.QUOTE_GROUP.getName() );
 									data.setExpression("\"" + quoteGroup.getValue() + "\"");
+									data.setDomain(enterprise.getDomain());
 									contractDataBean.insert(data);
 								} else{
 									logError("El grupo de cotizacion no es correcto para el trabajador " + person.getFullName() + " ("+person.getRegistry().getDocument()+")");
@@ -369,6 +389,7 @@ public class ContractAfiLoader {
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_START_DATE), startDate);
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ENTERPRISE_CCC_ID), ccc.getId());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ID), workPlace.getId());
+		completeDomainCriteria("Contract", criteria);
 		Iterator<ITransferObject> it = bean.getList(criteria).iterator();
 		while(it.hasNext()){
 			return (Contract) it.next();
@@ -380,25 +401,19 @@ public class ContractAfiLoader {
 		IManagerBean bean = BeanManager.getManagerBean(Person.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PERSON_REGISTRY_DOCUMENT), document);
+		completeDomainCriteria("Person", criteria);
 		List<ITransferObject> list = bean.getList(criteria);
 		if(!list.isEmpty()){
 			return (Person) list.get(0);
 		}
 		return null;
 	}
-
-	private EnterpriseActivityType obtainQuoteRegime(String quoteRegimeValue) {
-		if(quoteRegimeValue.equals("0111")){
-			return EnterpriseActivityType.PRINCIPAL;
-		} else {
-			return EnterpriseActivityType.OTHERS;
-		}
-	}
 	
 	private GeoZone obtainGeoZone(String geozoneCode) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(GeoZone.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEO_ZONE_CODE), geozoneCode);
+		completeDomainCriteria("GeoZone", criteria);
 		List<ITransferObject> list = bean.getList(criteria);
 		if(!list.isEmpty()){
 			return (GeoZone) list.get(0);
@@ -409,23 +424,26 @@ public class ContractAfiLoader {
 		IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
 		Criteria criteria = new Criteria(); 
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_REGISTRY_DOCUMENT), cifnif);
+		completeDomainCriteria("Enterprise", criteria);
 		List<ITransferObject> list = bean.getList(criteria);
 		if(list.size()==0){
 			String msg = "No existe ninguna empresa con NIF " + cifnif;
 			logError(msg);
-			raiseException(0, msg);
+			return null;
 		} else if(list.size()>1){
-			String msg = "Existen varias empresa con NIF " + cifnif;
+			String msg = "Existen varias empresa con el NIF " + cifnif;
 			logError(msg);
-			raiseException(0, msg);
+			return null;
 		}
 		return (Enterprise) list.get(0);
 	}
+	
 	private PayrollWorkPlace obtainWorkPlace(EnterpriseCCC ccc) throws ManagerBeanException {
 		if(ccc!=null && ccc.getActivity()!=null){
 			IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYROLL_WORK_PLACE_ENTERPRISE_ACTIVITY_ID), ccc.getActivity().getId());
+			completeDomainCriteria("PayrollWorkPlace", criteria);
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				return (PayrollWorkPlace) list.get(0);
@@ -439,11 +457,23 @@ public class ContractAfiLoader {
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), enterprise.getId());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_GEOZONE_ID), obtainGeoZone(codigocuentacotizacion.substring(0, 2)).getId());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_CCC), codigocuentacotizacion.substring(0, codigocuentacotizacion.length()));
+		completeDomainCriteria("EnterpriseCCC", criteria);
 		List<ITransferObject> list = bean.getList(criteria);
 		if(!list.isEmpty()){
 			return (EnterpriseCCC) list.get(0);
 		}
 		return null;
+	}
+
+	private void completeDomainCriteria(String beanName, Criteria criteria) {
+		if(DomainManager.isDomainManagementAvailable()){
+			PayrollUtils utils = new PayrollUtils();
+			utils.getCurrentChildDomainIds();
+			List<Integer> idList = utils.getCurrentChildDomainIds();
+			idList.add(DomainManager.getCurrentDomain());
+			criteria.setSkipDomainFilter(true);
+			criteria.addInExpression(beanName+".domain", idList);
+		}
 	}
 	
 }

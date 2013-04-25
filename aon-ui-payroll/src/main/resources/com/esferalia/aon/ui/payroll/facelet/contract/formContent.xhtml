@@ -10,6 +10,14 @@
 	<aon:panelGrid columns="2" id="contract_panel" 
 		columnClasses="aon-panelGrid-odd aon-width-180, aon-panelGrid-even aon-width-auto" >
 			
+		<c:if test="#{contract.new}" >
+			<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.to.person}" />
+				<ui:param name="idRequired" value="#{true}" />
+				<ui:param name="lookupDisabled" value="#{false}" />
+			</ui:include>
+		</c:if>
+
 		<aon:outputLabel for="workPlace" 
 			value="#{companyBundle.company_workplace}" />
 		<aon:selectOneMenu id="workPlace" required="true"
@@ -21,7 +29,7 @@
 		
 		<aon:outputLabel for="enterpriseActivities" value="#{companyBundle.company_activity}" 
 			style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
-		<aon:selectOneMenu id="enterpriseActivities"
+		<aon:selectOneMenu id="enterpriseActivities" required="true"
 			disabled="#{contract.to.workPlace.id==null}"
 			value="#{contract.to.activity}" >
 			<f:selectItems value="#{contract.activities}" />
@@ -30,19 +38,11 @@
 
 		<aon:outputLabel for="enterpriseCCCs" value="#{companyBundle.company_enterprise_ccc}"
 			style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
-		<aon:selectOneMenu id="enterpriseCCCs"
+		<aon:selectOneMenu id="enterpriseCCCs" required="true"
 			disabled="#{contract.to.activity.id==null}"
 			value="#{contract.to.enterpriseCCC}" >
 			<f:selectItems value="#{contract.enterpriseCCCs}" />
 		</aon:selectOneMenu>
-		
-		<c:if test="#{contract.new}" >
-			<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
-				<ui:param name="lookupTo" value="#{contract.to.person}" />
-				<ui:param name="idRequired" value="#{true}" />
-				<ui:param name="lookupDisabled" value="#{false}" />
-			</ui:include>
-		</c:if>
 		
 		<aon:outputLabel for="Contract_tc2Code"
 			value="#{payrollBundle.payroll_contract_contract_code}" />
@@ -184,38 +184,32 @@
 		<c:if test="#{contract.params.trainingContract}" >
 				<aon:outputLabel for="contract_subsidized" value="#{payrollBundle.payroll_contract_subsidized}" />
 				<aon:selectBooleanCheckbox id="contract_subsidized" value="#{contract.params.subsidized}" />
-				
-				<!--  
-				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/trainingCenter/lookup.xhtml" >
-					<ui:param name="lookupTo" value="#{contract.params.trainingCenter}" />
-					<ui:param name="skipNewButton" value="#{true}" />
-					<ui:param name="lookupReRender" value="lookupTrainingCourse" />
-					<ui:param name="lookupRendered" value="#{payrollCollections.trainingCenterTotalCount>0}" />
-				</ui:include>
-				-->
-			  
+			
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/trainingCenter/course/lookup.xhtml" >
 					<ui:param name="lookupTo" value="#{contract.params.trainingCourse}" />
 					<ui:param name="skipNewButton" value="#{true}" />
 				</ui:include>
 				
-				<!--  
-				<aon:outputLabel for="trainingCenter" value="#{payrollBundle.payroll_trainingCenter}" />				
-				<aon:selectOneMenu id="trainingCenter"
-					value="#{contract.params.trainingCenter}" >
-					<f:selectItem itemLabel=" - " itemValue="#{null}" />
-					<f:selectItems value="#{contract.trainingCenters}" />
-					<a4j:support event="onchange" ajaxSingle="true" reRender="trainingCourse"/>
-				</aon:selectOneMenu>
+				<aon:outputText value="#{payrollBundle.payroll_trainingCourse_trainingCalendar}" />
+				<aon:div>
+					<aon:outputLabel for="trainingStartDate" 
+						styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" 
+						value="#{bundle.aon_start_date}" />
+					<aon:selectInputDate id="trainingStartDate" 
+						value="#{contract.params.trainingStartDate}"  
+						inputSize="10" renderAsPopup="true" enableManualInput="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+					<aon:outputLabel for="trainingEndDate" 
+						styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" 
+						value="#{bundle.aon_end_date}" />
+					<aon:selectInputDate id="trainingEndDate"
+						value="#{contract.params.trainingEndDate}"  
+						inputSize="10" renderAsPopup="true" enableManualInput="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+				</aon:div>
 
-				<aon:outputLabel for="trainingCourse" value="#{payrollBundle.payroll_trainingCourse}" />
-				<aon:selectOneMenu id="trainingCourse"
-					value="#{contract.params.trainingCourse}" >
-					<f:selectItem itemLabel=" - " itemValue="#{null}" />
-					<f:selectItems value="#{contract.trainingCourses}" />
-				</aon:selectOneMenu>
-				-->
-				
 				<!--  
 				<aon:outputLabel for="trainingCourse_schedule" value="#{payrollBundle.payroll_trainingCourse_schedule}" />
 				<aon:div>

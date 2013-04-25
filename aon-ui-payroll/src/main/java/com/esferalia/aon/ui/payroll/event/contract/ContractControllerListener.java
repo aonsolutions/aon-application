@@ -112,12 +112,10 @@ public class ContractControllerListener extends ControllerAdapter{
 			if(defaultContractCode!=null && defaultContractCode.getValue()!=null){
 				controller.getParams().setContractModelCode(ContractModelCode.valueOf(defaultContractCode.getValue()));
 			}
-			IManagerBean bean = BeanManager.getManagerBean(Person.class);
-			contract.setPerson((Person) bean.createNewTo());
-			bean = BeanManager.getManagerBean(CNO.class);
-			controller.getParams().setCno((CNO) bean.createNewTo());
-			bean = BeanManager.getManagerBean(Agreement.class);
-			controller.setAgreement((Agreement) bean.createNewTo());
+			contract.setPerson((Person) BeanManager.getManagerBean(Person.class).createNewTo());
+			controller.getParams().setCno((CNO) BeanManager.getManagerBean(CNO.class).createNewTo());
+			controller.getParams().setTrainingCourse((TrainingCourse) BeanManager.getManagerBean(TrainingCourse.class).createNewTo());
+			controller.setAgreement((Agreement) BeanManager.getManagerBean(Agreement.class).createNewTo());
 		} catch (ManagerBeanException e) {
 			String msg = "Error on afterBeanCreated";
 			LOGGER.error(msg);
@@ -291,8 +289,8 @@ public class ContractControllerListener extends ControllerAdapter{
 			if(controller.getParams().getTrainingCourse()!=null && controller.getParams().getTrainingCourse().getId()!=null){
 				data = new ContractData();
 				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setStartDate(controller.getParams().getTrainingStartDate());
+				data.setEndDate(controller.getParams().getTrainingEndDate());
 				data.setName( ContextVariable.TRAINING_COURSE.getName() );
 				data.setExpression("\"" + controller.getParams().getTrainingCourse().getId() + "\"");
 				bean.insert(data);
@@ -452,8 +450,8 @@ public class ContractControllerListener extends ControllerAdapter{
 			if(controller.getParams().getTrainingCourse()!=null && controller.getParams().getTrainingCourse().getId()!=null){
 				data = trainingCourseData!=null?trainingCourseData:new ContractData();
 				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setStartDate(controller.getParams().getTrainingStartDate());
+				data.setEndDate(controller.getParams().getTrainingEndDate());
 				data.setName( ContextVariable.TRAINING_COURSE.getName() );
 				data.setExpression("\"" + controller.getParams().getTrainingCourse().getId() + "\"");
 				bean.insertOrUpdate(data);
@@ -565,9 +563,16 @@ public class ContractControllerListener extends ControllerAdapter{
 		}
 		if(map.get(ContextVariable.TRAINING_CENTER.getName())!=null){
 			params.setTrainingCenter(obtainTrainingCenter(map.get(ContextVariable.TRAINING_CENTER.getName())));
+		} else {
+			params.setTrainingCenter((TrainingCenter) BeanManager.getManagerBean(TrainingCenter.class).createNewTo());
 		}
 		if(map.get(ContextVariable.TRAINING_COURSE.getName())!=null){
 			params.setTrainingCourse(obtainTrainingCourse(map.get(ContextVariable.TRAINING_COURSE.getName())));
+			ContractData data = obtainContractData(ContextVariable.TRAINING_COURSE.getName());
+			params.setTrainingStartDate(data.getStartDate());
+			params.setTrainingEndDate(data.getEndDate());
+		} else {
+			params.setTrainingCourse((TrainingCourse) BeanManager.getManagerBean(TrainingCourse.class).createNewTo());
 		}
 		
 	}

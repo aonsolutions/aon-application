@@ -1,9 +1,5 @@
 package com.esferalia.aon.ui.payroll.file;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,8 +22,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.person.Person;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.sepe.api.contrata.contratos.*;
-import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACIONES;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
@@ -44,11 +38,63 @@ import com.esferalia.aon.payroll.contrata.enumeration.TEXTINVE;
 import com.esferalia.aon.payroll.contrata.enumeration.TEYTRELE;
 import com.esferalia.aon.payroll.contrata.enumeration.THPCOLFO;
 import com.esferalia.aon.payroll.contrata.enumeration.THYDISLE;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
 import com.esferalia.aon.sepe.api.contract.model.IProrrogaType;
 import com.esferalia.aon.sepe.api.contract.model.ITransformacionType;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO100TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO130TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO150TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO200TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO230TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO250TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO300TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO330TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO350TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO401TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO402TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO403TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO410TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO420TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO421TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO430TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO441TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO450TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO452TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO501TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO502TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO503TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO510TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO520TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO530TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO540TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO541TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO550TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO552TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO970TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO980TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO990TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATOS;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSANEXOCONTRATORELEVOTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSBONIFICACIONTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCOMUNICACOPIABASICATYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOEXTRANJEROTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOINSERCIONTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOINTERINIDADTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOINVESTIGACIONTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOPRACTICASTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOTIEMPOPARCIALTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCOPIABASICATYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSEMPRESAINSERCIONTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSETCOTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSETTTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSEXCLUSIONSOCIALTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSGENERALESCONTRATOTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSMEDIDASFOMENTOTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSPROGEMPLEOPUBLICOTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSREDUCCIONRDL12011TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSTRABAJADORTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSUSOLIBREEMPRESATYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACIONES;
 import com.esferalia.aon.ui.payroll.utils.FileUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
@@ -60,6 +106,10 @@ public class ContrataReader {
 	
 	private ContrataParams params;
 	
+	private boolean isContratoFile = false;
+	private boolean isTransfonacionFile = false;
+	private boolean isProrrogaFile = false;
+
 	private CONTRATOS contratos;
 	private TRANSFORMACIONES transformaciones;
 	
@@ -79,15 +129,63 @@ public class ContrataReader {
 		this.transformaciones = transformaciones;
 	}
 
-	public ContrataParams readFile(InputStream input, String encoding) throws ManagerBeanException, IOException{
+	public ContrataParams readFile(ContractAttachment attach) throws ManagerBeanException, IOException{
+		return null;
+	}
+	
+
+	public ContrataParams readFile(InputStream input) throws ManagerBeanException, IOException{
 		
-		boolean isContratoFile = false;
-		boolean isTransfonacionFile = false;
+		processContractCode(input);
 		
-//		String code = getContractDataMap(attach.getContract()).get(ContextVariable.TC2.getName());
-		
-//		processContractCode(input, isContratoFile, isTransfonacionFile, isProrrogaFile);
-		
+		if( !isContratoFile && !isTransfonacionFile ) {
+			String msg = "Código no válido, no se reconoce el contrato.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	
+		try {
+			input.reset();
+			setContratos(null);
+			setTransformaciones(null);
+			if( isContratoFile ){
+				JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_CONTRATOS_MODEL_PATH);
+				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+				unmarshaller.setEventHandler(new ContractValidationEventHandler());
+				contratos = (CONTRATOS) unmarshaller.unmarshal(input);
+			} else if( isTransfonacionFile ) {
+				JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_TRANSFORMACIONES_MODEL_PATH);
+				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+				unmarshaller.setEventHandler(new ContractValidationEventHandler());
+				transformaciones = (TRANSFORMACIONES) unmarshaller.unmarshal(input);
+			} 
+			
+			this.params = new ContrataParams();
+			
+			if( isContratoFile ){
+				IContratoType contratoType = (IContratoType) contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
+				completeContratosParams(contratoType, params);
+			} else if( isTransfonacionFile ) {
+				ITransformacionType transformacionType = (ITransformacionType) transformaciones.getTRANSFORMACION109AndTRANSFORMACION139AndTRANSFORMACION189().get(0);
+				completeTransformacionesParams(transformacionType, params);
+			} 
+
+			return params;
+		} catch (JAXBException e) {
+			String msg = "Error al obtener los datos del documento xml de contrata";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.toString());
+			throw new AbortProcessingException(msg, e);
+		} finally {
+			input.close();
+		}
+	}
+	
+	private void processContractCode(InputStream input) {
+		isContratoFile = false;
+		isTransfonacionFile = false;
+		isProrrogaFile = false;
+	
 		try {
 			InputStreamReader inputReader = new InputStreamReader(input,FileUtils.CONTRATA_XML_FILE_ENCODING);
 			LineNumberReader reader = new LineNumberReader(inputReader);
@@ -105,89 +203,16 @@ public class ContrataReader {
 			}
 			reader.close();
 			inputReader.close();
-//			input.close();
 		} catch (UnsupportedEncodingException e) {
-	
-		} catch (IOException e) {
-			
-		}
-		// FIXME: the param isContratoFile is setted to true only for testing. CHANGE IT !!!!!!!!!!!!!
-		// FIXME: the param isContratoFile is setted to true only for testing. CHANGE IT !!!!!!!!!!!!!
-		// FIXME: the param isContratoFile is setted to true only for testing. CHANGE IT !!!!!!!!!!!!!
-		isContratoFile = true;
-		
-		if( !isContratoFile && !isTransfonacionFile ) {
-			String msg = "Código no válido, no se reconoce el contrato.";
+			String msg = "Error de codificacion";
 			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		} 
-		
-		if( input!=null ){
-			try {
-				setContratos(null);
-				setTransformaciones(null);
-				if( isContratoFile ){
-					JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_CONTRATOS_MODEL_PATH);
-					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-					unmarshaller.setEventHandler(new ContractValidationEventHandler());
-					contratos = (CONTRATOS) unmarshaller.unmarshal(input);
-				} else if( isTransfonacionFile ) {
-					JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_TRANSFORMACIONES_MODEL_PATH);
-					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-					unmarshaller.setEventHandler(new ContractValidationEventHandler());
-					transformaciones = (TRANSFORMACIONES) unmarshaller.unmarshal(input);
-				} 
-				
-				this.params = new ContrataParams();
-				
-				if( isContratoFile ){
-					IContratoType contratoType = (IContratoType) contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
-					completeContratosParams(contratoType, params);
-				} else if( isTransfonacionFile ) {
-					ITransformacionType transformacionType = (ITransformacionType) transformaciones.getTRANSFORMACION109AndTRANSFORMACION139AndTRANSFORMACION189().get(0);
-					completeTransformacionesParams(transformacionType, params);
-				} 
-
-				return params;
-			} catch (JAXBException e) {
-				String msg = "Error al obtener los datos del documento xml de contrata";
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg, e);
-			} finally {
-				input.close();
-			}
-		}
-		return null;
-	}
-	
-	private void processContractCode(InputStream input, boolean isContratoFile, boolean isTransfonacionFile, boolean isProrrogaFile) {
-		isContratoFile = false;
-		isTransfonacionFile = false;
-		isProrrogaFile = false;
-		try {
-//			InputStream input = new ByteArrayInputStream(dataFile); 
-			InputStreamReader inputReader = new InputStreamReader(input,FileUtils.CONTRATA_XML_FILE_ENCODING);
-			LineNumberReader reader = new LineNumberReader(inputReader);
-			if (reader.ready()) {
-				String line = reader.readLine();
-				line = reader.readLine();
-				String contratoFile = "<CONTRATOS>";
-				String transformacionFile = "<TRANSFORMACION>";
-				String prorrogaFile = "<PRORROGA>";
-				if(line.equals(contratoFile)){
-					isContratoFile = true;
-				} else if(line.equals(transformacionFile)){
-					isTransfonacionFile = true;
-				} else if(line.equals(prorrogaFile)){
-					isProrrogaFile = true;
-				} 
-			}
-			reader.close();
-			input.close();
-		} catch (UnsupportedEncodingException e) {
-	
+			AonUtil.addErrorMessage(e.toString());
+			throw new AbortProcessingException(msg, e);
 		} catch (IOException e) {
-			
+			String msg = "Error de lectura del archivo.";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.toString());
+			throw new AbortProcessingException(msg, e);
 		}
 	}
 

@@ -9,7 +9,7 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-		<ui:param name="toolbarTitle" value="#{contractPdf.documentType.description}" />
+		<ui:param name="toolbarTitle" value="#{contractPdf.documentType}" />
 		<ui:param name="toolbarDescription" value="#{contractPdf.new?bundle.aon_reset:bundle.aon_editing}" />
 		
 		<ui:define name="toolbarContent">

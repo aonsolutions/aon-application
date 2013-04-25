@@ -6,12 +6,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
 
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.hibernate.Session;
@@ -24,10 +22,10 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.company.Enterprise;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.ui.payroll.file.ContractAfiLoader;
-import com.esferalia.aon.ui.payroll.file.ContractContrataLoader;
 
 public class ContractLoaderController {
 	
@@ -39,9 +37,17 @@ public class ContractLoaderController {
 
 	private boolean progressionPanelVisible;
 	private boolean loadPressed;
-
+	
+	private List<Enterprise> newEnterpriseList;
+	
 	public boolean isProgressionPanelVisible() {
 		return progressionPanelVisible;
+	}
+	public List<Enterprise> getNewEnterpriseList() {
+		return newEnterpriseList;
+	}
+	public void setNewEnterpriseList(List<Enterprise> newEnterpriseList) {
+		this.newEnterpriseList = newEnterpriseList;
 	}
 	public void setProgressionPanelVisible(boolean progressionPanelVisible) {
 		this.progressionPanelVisible = progressionPanelVisible;
@@ -173,4 +179,5 @@ public class ContractLoaderController {
 //			throw new AbortProcessingException(e.getMessage());
 //		}
 	}
+	
 }

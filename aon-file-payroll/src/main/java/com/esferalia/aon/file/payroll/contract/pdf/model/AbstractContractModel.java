@@ -382,10 +382,10 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		 * Contract ccc fields
 		 */
 		if(contract.getEnterpriseCCC()!=null){
-			setPdfFieldValue(CCC_REG1,null);
-			setPdfFieldValue(CCC_REG2,null);
-			setPdfFieldValue(CCC_REG3,null);
-			setPdfFieldValue(CCC_REG4,null);
+			setPdfFieldValue(CCC_REG1,contract.getEnterpriseCCC().getActivity().getQuoteRegimeCode().substring(0, 1));
+			setPdfFieldValue(CCC_REG2,contract.getEnterpriseCCC().getActivity().getQuoteRegimeCode().substring(1, 2));
+			setPdfFieldValue(CCC_REG3,contract.getEnterpriseCCC().getActivity().getQuoteRegimeCode().substring(2, 3));
+			setPdfFieldValue(CCC_REG4,contract.getEnterpriseCCC().getActivity().getQuoteRegimeCode().substring(3, 4));
 			if(contract.getEnterpriseCCC().getCcc().length()==11){
 				setPdfFieldValue(CCC_PROV1,contract.getEnterpriseCCC().getCcc().substring(0, 1));
 				setPdfFieldValue(CCC_PROV2,contract.getEnterpriseCCC().getCcc().substring(1, 2));

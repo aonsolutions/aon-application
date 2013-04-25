@@ -182,7 +182,7 @@ public class ContractContrataLoader {
 //			LineNumberReader reader = new LineNumberReader(inputReader);
 			
 			ContrataReader contrataReader = new ContrataReader();
-			contrataReader.readFile( input, encoding );
+			contrataReader.readFile( input );
 			CONTRATOS contratos = contrataReader.getContratos();
 			
 			for(Object o: contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150()){

@@ -860,6 +860,8 @@ public class ContractController extends BasicController implements IVariablesHan
 		private Boolean subsidized;
 		private TrainingCenter trainingCenter;
 		private TrainingCourse trainingCourse;
+		private Date trainingStartDate;
+		private Date trainingEndDate;
 		
 		public boolean isAgreementSalaryCheck() {
 			return agreementSalaryCheck;
@@ -897,6 +899,18 @@ public class ContractController extends BasicController implements IVariablesHan
 		public void setTrainingCourse(TrainingCourse trainingCourse) {
 			this.trainingCourse = trainingCourse;
 			setCno(trainingCourse.getCNO());
+		}
+		public Date getTrainingStartDate() {
+			return trainingStartDate;
+		}
+		public void setTrainingStartDate(Date trainingStartDate) {
+			this.trainingStartDate = trainingStartDate;
+		}
+		public Date getTrainingEndDate() {
+			return trainingEndDate;
+		}
+		public void setTrainingEndDate(Date trainingEndDate) {
+			this.trainingEndDate = trainingEndDate;
 		}
 		public Double getIrpf() {
 			return irpf;
