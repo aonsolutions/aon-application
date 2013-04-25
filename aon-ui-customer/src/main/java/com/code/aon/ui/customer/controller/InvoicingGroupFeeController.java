@@ -23,7 +23,7 @@ public class InvoicingGroupFeeController extends LinesController implements ICus
 			CustomerFee customerFee = (CustomerFee)getModel().getRowData();
 			CustomerController customerController = (CustomerController)AonUtil.getRegisteredBean(CUSTOMER_CONTROLLER_NAME);
 			customerController.setSelectedTab(ICustomerConstants.CUSTOMER_FEE_TAB);
-			customerController.onLoad(event, customerFee.getCustomer().getId(), INVOICING_GROUP_FORM_NAME, INVOICING_GROUP_FEE_CONTROLLER_NAME + ".onSearch");
+			customerController.onLoad(event, customerFee.getCustomer().getId(), INVOICING_GROUP_FORM_NAME, INVOICING_GROUP_CONTROLLER_NAME + ".refreshChilds");
 		}
 	}
 

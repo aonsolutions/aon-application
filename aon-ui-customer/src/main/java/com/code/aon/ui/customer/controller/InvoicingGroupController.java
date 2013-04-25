@@ -7,6 +7,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class InvoicingGroupController extends BasicController implements ICustomerConstants {
@@ -33,7 +34,12 @@ public class InvoicingGroupController extends BasicController implements ICustom
 	public void onLoadCustomer(ActionEvent event) throws ManagerBeanException {
 		InvoicingGroup invoicingGroup = (InvoicingGroup)getTo();
 		BasicController customerController = (BasicController)AonUtil.getRegisteredBean(CUSTOMER_CONTROLLER_NAME);
-		customerController.onLoad(event, invoicingGroup.getCustomer().getId(), INVOICING_GROUP_FORM_NAME, null);
+		customerController.onLoad(event, invoicingGroup.getCustomer().getId(), INVOICING_GROUP_FORM_NAME, INVOICING_GROUP_CONTROLLER_NAME + ".refreshChilds");
+	}
+
+	public void refreshChilds(ActionEvent event) {
+		FormUtil.getController(INVOICING_GROUP_DETAIL_CONTROLLER_NAME).onSearch(event);
+		FormUtil.getController(INVOICING_GROUP_FEE_CONTROLLER_NAME).onSearch(event);
 	}
 
 }

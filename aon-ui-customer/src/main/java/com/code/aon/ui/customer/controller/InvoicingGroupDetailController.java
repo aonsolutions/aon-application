@@ -78,7 +78,7 @@ public class InvoicingGroupDetailController extends LinesController implements I
 		if (getModel().isRowAvailable()) {
 			Customer customer = (Customer)getModel().getRowData();
 			BasicController customerController = (BasicController)AonUtil.getRegisteredBean(CUSTOMER_CONTROLLER_NAME);
-			customerController.onLoad(event, customer.getId(), INVOICING_GROUP_FORM_NAME, INVOICING_GROUP_DETAIL_CONTROLLER_NAME + ".onSearch");
+			customerController.onLoad(event, customer.getId(), INVOICING_GROUP_FORM_NAME, INVOICING_GROUP_CONTROLLER_NAME + ".refreshChilds");
 		}
 	}
 
