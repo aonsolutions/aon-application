@@ -249,17 +249,22 @@ public class PurchaseOrderController {
 		int groupIndex = -1;
 		Supplier supplier = null;
 		Department dep = null;
+		WorkPlace wp = null;
 		PurchaseGroup purchaseGroup = null;
 		purchaseGroupList = new LinkedList<PurchaseOrderController.PurchaseGroup>();
 		for(ITransferObject to: bean.getList(criteria)){
 			ProposalDetail pd = (ProposalDetail) to;
-			if(groupIndex==-1 || !dep.equals(pd.getProposal().getDepartment()) || !supplier.equals(pd.getSupplier()) ){
+			if(groupIndex==-1 
+					|| !wp.equals(pd.getProposal().getWorkPlace()) 
+					|| !dep.equals(pd.getProposal().getDepartment()) 
+					|| !supplier.equals(pd.getSupplier()) ){
 				supplier = pd.getSupplier();
 				dep = pd.getProposal().getDepartment();
+				wp = pd.getProposal().getWorkPlace();
 				groupIndex++;
 				purchaseGroup = new PurchaseGroup();
 				purchaseGroup.setSupplier(supplier);
-				purchaseGroup.setWorkPlace(pd.getProposal().getWorkPlace());
+				purchaseGroup.setWorkPlace(wp);
 				purchaseGroup.setDepartment(dep);
 				purchaseGroup.setComments(pd.getProposal().getRemarks());
 				purchaseGroup.setGroupIndex(groupIndex);
