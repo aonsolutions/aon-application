@@ -178,7 +178,6 @@ public class ReservationRequestManager implements IReservationConstants {
 		operation.getAvailabilityQuery().setLanguageID(ES);
 		operation.addNewDistributor().setCode(TR);
 		message.getBody().setHITISOperationAbstract(operation);
-System.out.println(document.toString());
 		return document.toString();
 	}
 
@@ -444,7 +443,6 @@ System.out.println(document.toString());
 		operation.getReservationTransaction().getReservation().setExternalReservationID(request.getCode());
 		operation.getReservationTransaction().getReservation().addNewDistributor().setCode(TR);
 		message.getBody().setHITISOperationAbstract(operation);
-System.out.println(document.toString());
 		return document.toString();
 	}
 
@@ -526,7 +524,6 @@ System.out.println(document.toString());
 		operation.getReservationTransaction().getReservation().getStayDateRange().getDateTimeSpan().setDuration(nights);
 		operation.getReservationTransaction().getReservation().setReservationID(reservation.getCrsCode());
 		message.getBody().setHITISOperationAbstract(operation);
-System.out.println(document.toString());
 		return document.toString();
 	}
 

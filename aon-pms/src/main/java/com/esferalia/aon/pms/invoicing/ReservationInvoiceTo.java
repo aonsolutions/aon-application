@@ -210,7 +210,7 @@ public class ReservationInvoiceTo implements IReservationConstants {
 	}
 
 	public HotelService getLastService() {
-		return getServices().get(getServices().size()-1);
+		return getServices().get(getServicesCount()-1);
 	}
 
 	public int getFinancesCount() {
@@ -222,7 +222,7 @@ public class ReservationInvoiceTo implements IReservationConstants {
 	}
 
 	public Finance getLastFinance() {
-		return getFinances().get(getFinances().size()-1);
+		return getFinances().get(getFinancesCount()-1);
 	}
 
 	public class HotelService implements ICalculable {
