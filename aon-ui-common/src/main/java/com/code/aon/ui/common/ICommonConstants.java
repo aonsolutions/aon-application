@@ -52,6 +52,12 @@ public interface ICommonConstants {
 	/** The Company Document. */
 	String COMPANY_DOCUMENT = "aon_company_document";
 
+	/** Fax. */
+	String FAX = "aon_fax";
+
+	/** Phone. */
+	String PHONE = "aon_phone";
+	
 	/** The login user. */
 	String LOGIN_USER = "aon_login_user";
 	
@@ -73,6 +79,14 @@ public interface ICommonConstants {
 	String APPLICATION_TITLE = "aon_application_title";
 	
 	String MODULE_MANAGEMENT_FINANCE = "aon_module_management_finance";
+	
+	String TIMESTAMP_2_PATTERN = "aon_timestamp2_pattern";
+	
+	String DECIMAL_2_PATTERN = "aon_decimal2_pattern";
+	
+	String QUANTITY_PATTERN = "aon_quantity_pattern";
+	
+	String PERCENT_PATTERN = "aon_percent_pattern";
 	
 	// ************************************************************
 	// BEAN

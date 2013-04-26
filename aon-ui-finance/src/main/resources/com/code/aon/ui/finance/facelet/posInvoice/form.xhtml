@@ -290,7 +290,8 @@
 								<f:setPropertyActionListener target="#{posInvoice.showFinishTicketWindow}"
 									value="#{true}" />
 							</aon:commandButton>				
-							<aon:htmlCommandLink id="printTicket" immediate="true" target="_new"
+							<aon:htmlCommandLink id="printTicketPDF" immediate="true" target="_new"
+								rendered="#{posInvoiceParams.printPDF}"
 								styleClass="aon-big-commandButton aon-width-110"
 								value="3 #{bundle.aon_report}"
 								title="Alt+{Mayús}+3"
@@ -299,8 +300,17 @@
 								action="#{report.onExecute}" 
 								accesskey="3">
 								<f:param name="reportKey" value="posInvoice" /> 
-							</aon:htmlCommandLink>  	
-
+							</aon:htmlCommandLink>
+							<aon:commandButton id="printTicketRAW" immediate="true"
+								rendered="#{!posInvoiceParams.printPDF}"
+								styleClass="aon-big-commandButton aon-width-110"
+								value="3 #{bundle.aon_report}"
+								title="Alt+{Mayús}+3"
+								disabled="#{posInvoice.to.pos.id == null or posInvoice.new or posInvoice.toInvoiceTotalPrice == 0 or posInvoice.pendingAmount != 0}"
+								actionListener="#{posInvoice.onShowPrintTicket}"
+								reRender="showPrintTicketWindow" ajaxSingle="true"
+								accesskey="3">
+							</aon:commandButton>											
 							<aon:commandButton id="parkTicket" immediate="true"
 								styleClass="aon-big-commandButton aon-width-105"
 								value="4 #{financeBundle.finance_pos_suspend}"
@@ -409,6 +419,9 @@
 			<ui:param name="financeController" value="#{posInvoiceFinance}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/posInvoice/modalRecoverTicket.xhtml">
+			<ui:param name="invoiceController" value="#{posInvoice}" />
+		</ui:include>			
+		<ui:include src="/com/code/aon/ui/finance/facelet/posInvoice/modalPrintTicket.xhtml">
 			<ui:param name="invoiceController" value="#{posInvoice}" />
 		</ui:include>
 	</ui:define>

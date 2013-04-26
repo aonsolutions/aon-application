@@ -1,6 +1,8 @@
 package com.code.aon.ui.finance.controller;
 
 public interface IFinanceConstants {
+
+	String BUNDLE_NAME = "financeBundle";
 	
 	String COLLECTIONS_CONTROLLER_NAME = "financeCollections";
 	
@@ -61,6 +63,7 @@ public interface IFinanceConstants {
 	String POS_INVOICE_DETAIL_CONTROLLER_NAME = "posInvoiceDetail";
 	String POS_INVOICE_FINANCE_CONTROLLER_NAME = "posInvoiceFinance";
 	String POS_INVOICE_CONTROLLER_LISTENER_NAME = "posInvoiceControllerListener";
+	String POS_INVOICE_PARAMS_CONTROLLER_NAME = "posInvoiceParams";	
 
 	String BANK_STATEMENT_CONTROLLER_NAME = "bankStatement";
 	String BANK_STATEMENT_SEARCH_LISTENER_NAME = "bankStatementSearch";
@@ -89,4 +92,12 @@ public interface IFinanceConstants {
 	String AMORTIZATION_CONTROLLER_NAME = "amortization";
 	String AMORTIZATION_LIST_VIEW  = "amortization_list";
 	String AMORTIZATION_FORM_VIEW = "amortization_form";
+	
+	// ************************************************************
+	// MESSAGE
+	// ************************************************************
+	
+	String POS_ERROR_PRINT_TICKET = "finance_pos_error_print_ticket";
+	String FOOTER_TEXT_CONTENT_MSG_KEY_PREFIX = "finance_posInvoice_footerText_default";
+	
 }

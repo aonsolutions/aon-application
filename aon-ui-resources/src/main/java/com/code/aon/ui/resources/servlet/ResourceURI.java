@@ -26,6 +26,8 @@ public class ResourceURI {
 	
 	private static final String COMMON_RESOURCES_PATH = "/home/COMMON-RESOURCES";
 	
+	private static final String COMMON_RESOURCES_PATH_2 = "/usr/share/java";
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ResourceURI.class);
 	
 	private String path;
@@ -92,6 +94,9 @@ public class ResourceURI {
 		InputStream in = null;
 		if ( this.commonResource ) {
 			File file = new File( COMMON_RESOURCES_PATH, this.path );
+			if (! file.exists() ) {
+				file = new File( COMMON_RESOURCES_PATH_2, this.path );
+			}
 			LOGGER.debug("Request for resource: {}", file);
 			in = new BufferedInputStream( new FileInputStream(file) );
 		} else {

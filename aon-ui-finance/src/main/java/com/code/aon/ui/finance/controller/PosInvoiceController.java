@@ -29,7 +29,9 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.report.ReportException;
 import com.code.aon.seller.Seller;
+import com.code.aon.ui.finance.util.print.TicketPrinter;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -43,6 +45,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 	private boolean showPosSelectionWindow;
 	private boolean showFinishTicketWindow;
 	private boolean showRecoverTicketWindow;
+	private boolean showPrintTicketWindow;
 	private String recoverSeries;
 	private Integer recoverNumber;
 
@@ -432,4 +435,27 @@ public class PosInvoiceController extends SaleInvoiceController {
 		}
 	}
 
+	public boolean isShowPrintTicketWindow() {
+		return showPrintTicketWindow;
+	}
+
+	public void setShowPrintTicketWindow(boolean showPrintTicketWindow) {
+		this.showPrintTicketWindow = showPrintTicketWindow;
+	}
+
+	public void onShowPrintTicket(ActionEvent event) {
+		setShowPrintTicketWindow(true);
+	}
+
+	public String getTicketText() {
+		try {
+			TicketPrinter tp = new TicketPrinter();
+			return tp.execute( getInvoice() );			
+		} catch (ReportException ex) {
+			String msg = AonUtil.getMessage(BUNDLE_NAME, POS_ERROR_PRINT_TICKET);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+	
 }
