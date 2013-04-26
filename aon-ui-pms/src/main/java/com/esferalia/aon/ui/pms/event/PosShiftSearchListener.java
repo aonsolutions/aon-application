@@ -16,7 +16,9 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.finance.Pos;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 
@@ -104,6 +106,9 @@ public class PosShiftSearchListener extends ControllerSearchListener {
 		}
 		if (getPos() != null && getPos().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_POS_ID), getPos().getId());			
+		}
+		if (!AonUtil.getRoleManager().isConfig() && !AonUtil.getRoleManager().isSaleOperator()) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_USER_ID), UserUtils.getInstance().getLoggedUser().getId());			
 		}
 		if(getStartTimeFrom()!=null){
 			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_START_TIME), getStartTimeFrom());
