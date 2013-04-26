@@ -12,7 +12,7 @@
 	<ui:define name="content">
 		<aon:form id="posForm">
 		
-			<ui:param name="readOnly" value="#{aonRole.config and !aonRole.admin and !aonRole.saleOperator}" />
+			<ui:param name="readOnly" value="#{!aonRole.saleOperator}" />
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">

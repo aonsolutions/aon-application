@@ -139,6 +139,12 @@
 									</aon:div>
 									<c:if test="#{domainSwitcher.type == 'HOTEL'}">
 										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="pos_finance_bath" 
+												action="posFinance_search"
+												actionListener="#{posFinance.onEditSearch}"
+												value="#{pmsBundle.pms_posFinance_module}" />
+										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="paymentCardSettle" 
 												action="paymentCardSettle_search"
 												actionListener="#{paymentCardSettle.onEditSearch}"

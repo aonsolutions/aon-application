@@ -1,13 +1,11 @@
 package com.esferalia.aon.ui.pms.event;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -19,7 +17,6 @@ import com.code.aon.finance.Pos;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 
@@ -108,7 +105,6 @@ public class PosShiftSearchListener extends ControllerSearchListener {
 		if (getPos() != null && getPos().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_POS_ID), getPos().getId());			
 		}
-		checkDates();
 		if(getStartTimeFrom()!=null){
 			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_START_TIME), getStartTimeFrom());
 		}
@@ -123,31 +119,6 @@ public class PosShiftSearchListener extends ControllerSearchListener {
 		}
 	}
 	
-	private void checkDates() {
-		if(AonUtil.getRoleManager().isConfig() && !AonUtil.getRoleManager().isAdmin() && !AonUtil.getRoleManager().isSaleOperator()){
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(new Date());
-			cal.set(Calendar.HOUR_OF_DAY, 0);
-			cal.set(Calendar.MINUTE, 0);
-			cal.set(Calendar.SECOND, 0);
-			if(getStartTimeFrom()!=null && getStartTimeFrom().after(DateUtils.addDays(cal.getTime(), -1))){
-				setStartTimeFrom(DateUtils.addDays(cal.getTime(), -1));
-			}
-			if(getEndTimeFrom()!=null && getEndTimeFrom().after(DateUtils.addDays(cal.getTime(), -1))){
-				setEndTimeFrom(DateUtils.addDays(cal.getTime(), -1));
-			}
-			cal.set(Calendar.HOUR_OF_DAY, 23);
-			cal.set(Calendar.MINUTE, 59);
-			cal.set(Calendar.SECOND, 59);
-			if(getStartTimeTo()!=null && getStartTimeTo().after(DateUtils.addDays(cal.getTime(), -1))){
-				setStartTimeTo(DateUtils.addDays(cal.getTime(), -1));
-			}
-			if(getEndTimeTo()!=null && getEndTimeTo().after(DateUtils.addDays(cal.getTime(), -1))){
-				setEndTimeTo(DateUtils.addDays(cal.getTime(), -1));
-			}
-		}
-	}
-
 	public List<SelectItem> getHotelPosList() throws ManagerBeanException {
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		if(getHotel()!=null && getHotel().getId()!=null){
