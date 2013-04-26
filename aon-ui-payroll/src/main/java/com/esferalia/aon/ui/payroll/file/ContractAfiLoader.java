@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.file;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -49,11 +50,36 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
+import com.esferalia.aon.ui.payroll.utils.FileUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
-public class ContractAfiLoader {
+public class ContractAfiLoader implements IContractLoader{
 	
-	private String encoding = "ISO-8859-1";
+	public String getFileTypeDescription(){
+		return "Fichero AFI";
+	}
+	
+	public boolean isValidFile(BufferedReader reader, InputStream input) throws AonException{
+		try {
+			if (reader.ready()) {
+				String line = reader.readLine();
+				String afiOpenTag = "ETI";
+				String afiFileTag = "AFI";
+				if(!line.startsWith(afiOpenTag) 
+						|| !line.replaceFirst(afiOpenTag, "").startsWith(afiFileTag)){
+					return false;
+				}
+			}
+			reader.close();
+			input.close();
+		} catch (UnsupportedEncodingException e) {
+			raiseException(0, "La codificación no es válida");
+		} catch (IOException e) {
+			logError(e.getMessage());
+			raiseException(0, "Se produjo un error de entrada/salida");
+		}
+		return true;
+	}
 	
 	public void checkMetadata(InputStream input) throws AonException {
 		logInfo("Comienza el checkeo de la meta información.");
@@ -61,7 +87,7 @@ public class ContractAfiLoader {
 			raiseException(0, "La entrada está vacia!");
 		}
 		try {
-			InputStreamReader inputReader = new InputStreamReader(input, encoding);
+			InputStreamReader inputReader = new InputStreamReader(input, FileUtils.CONTRATA_XML_FILE_ENCODING);
 			LineNumberReader reader = new LineNumberReader(inputReader);
 			int i = 0;
 			if (reader.ready()) {
@@ -75,8 +101,6 @@ public class ContractAfiLoader {
 				}
 				logInfo("Fichero AFI detectado");
 			}
-			reader.close();
-			input.close();
 			if (i == 0) {
 				raiseException(0, "No existen datos en el canal de entrada");
 			}
@@ -119,12 +143,13 @@ public class ContractAfiLoader {
 		
 		int i = 0;
 		try {
+			input.reset();
 			int errors = 0;
 			int warnings = 0;
 			logInfo(" Comienza la carga de datos!");
 			
 			AFIReader afiReader = new AFIReader();
-			ETI eti = afiReader.readFile( input, encoding );
+			ETI eti = afiReader.readFile( input, FileUtils.CONTRATA_XML_FILE_ENCODING );
 			
 			if(eti.getEmpresas().isEmpty()){
 				String msg = "El fichero no contiene datos de ninguna empresa.";

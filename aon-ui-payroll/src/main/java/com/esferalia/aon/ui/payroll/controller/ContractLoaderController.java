@@ -4,9 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -18,14 +19,17 @@ import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
-import com.code.aon.company.Enterprise;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.ui.payroll.file.ContractAfiLoader;
+import com.esferalia.aon.ui.payroll.file.ContractContrataLoader;
+import com.esferalia.aon.ui.payroll.file.IContractLoader;
+import com.esferalia.aon.ui.payroll.utils.FileUtils;
 
 public class ContractLoaderController {
 	
@@ -38,16 +42,17 @@ public class ContractLoaderController {
 	private boolean progressionPanelVisible;
 	private boolean loadPressed;
 	
-	private List<Enterprise> newEnterpriseList;
+	private IContractLoader loader;
 	
+	
+	public IContractLoader getLoader() {
+		return loader;
+	}
+	public void setLoader(IContractLoader loader) {
+		this.loader = loader;
+	}
 	public boolean isProgressionPanelVisible() {
 		return progressionPanelVisible;
-	}
-	public List<Enterprise> getNewEnterpriseList() {
-		return newEnterpriseList;
-	}
-	public void setNewEnterpriseList(List<Enterprise> newEnterpriseList) {
-		this.newEnterpriseList = newEnterpriseList;
 	}
 	public void setProgressionPanelVisible(boolean progressionPanelVisible) {
 		this.progressionPanelVisible = progressionPanelVisible;
@@ -92,10 +97,18 @@ public class ContractLoaderController {
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
 		}
+		try {
+			initContractLoader();
+		} catch (AonException e) {
+			throw new AbortProcessingException(e.getMessage());
+		} catch (IOException e) {
+			throw new AbortProcessingException(e.getMessage());
+		}
 	}
 
 	public void onStart(ActionEvent event ) {
 		setAonFile(null);
+		setLoader(null);
 		setLog( null );
 		logString = null;
 		
@@ -111,19 +124,15 @@ public class ContractLoaderController {
 		Session session = HibernateUtil.getSession(sessionName);
 		logString = new StringWriter( );
 		setLog( new PrintWriter( logString ) );
-//		ContractContrataLoader loader = new ContractContrataLoader();
-		ContractAfiLoader loader = new ContractAfiLoader();
-//		Loader loader = new Loader(params);
 		try {
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 			ByteArrayInputStream input = new ByteArrayInputStream(getAonFile().getData());
 			loader.checkMetadata(input);
-			input = new ByteArrayInputStream(getAonFile().getData());
 			loader.validate(input);
-			input = new ByteArrayInputStream(getAonFile().getData());
 			loader.load(input,session);
+			input.close();
 			HibernateUtil.commitTransaction(sessionName);
 		} catch (Exception e) {
 			logger.finish();
@@ -148,7 +157,6 @@ public class ContractLoaderController {
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
-//	        loader.setFactoryManager(null);
 	        setLoadPressed(false);
 		}
 	}
@@ -166,18 +174,35 @@ public class ContractLoaderController {
 	}
 	
 	public void onHelp(ActionEvent event ) {
-//		try {
-//			FacesContext ctx = FacesContext.getCurrentInstance();
-//			ExternalContext ectx = ctx.getExternalContext();
-//			HttpServletResponse response = (HttpServletResponse) ectx.getResponse();
-//			response.setContentType( "text/html" );
-//			Loader loader = new Loader(params);
-//			loader.help(response.getWriter());
-//			ctx.responseComplete();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			throw new AbortProcessingException(e.getMessage());
-//		}
+		
+	}
+
+	public IContractLoader initContractLoader() throws AonException, IOException{
+		if (getAonFile() == null || getAonFile().getData()==null) {
+			throw new AbortProcessingException("La entrada está vacia!");
+		}
+
+		ByteArrayInputStream input = null;
+		InputStreamReader inputReader = null;
+		LineNumberReader reader = null;
+		try {
+			input = new ByteArrayInputStream(getAonFile().getData());
+			inputReader = new InputStreamReader(input, FileUtils.CONTRATA_XML_FILE_ENCODING);
+			reader = new LineNumberReader(inputReader);
+			loader = new ContractContrataLoader();
+			if(loader.isValidFile(reader, input)){
+				return loader;
+			} 
+			loader = new ContractAfiLoader();
+			if(loader.isValidFile(reader, input)){
+				return loader;
+			}
+			loader = null;
+		} finally {
+			reader.close();
+			input.close();
+		} 
+		return null;
 	}
 	
 }

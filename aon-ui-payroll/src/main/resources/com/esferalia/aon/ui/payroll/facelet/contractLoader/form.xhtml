@@ -24,14 +24,9 @@
 						value="#{accountingBundle.aon_loader_load}"
 						actionListener="#{contractLoader.onShowPanel}"
 						rendered="#{contractLoader.aonFile.size > 0}"
+						disabled="#{contractLoader.loader == null}"
 						reRender="showNewMessageWindow"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"/>
-<!--  
-					<aon:htmlCommandLink  id="help" target="_new" 
-						value="#{bundle.aon_help}"
-						actionListener="#{aonLoader.onHelp}"
-						styleClass="aon-finding-toolbar-item aon-icon-menu-help"/>
--->
 				</ui:define>
 			</ui:decorate>
 
@@ -58,92 +53,11 @@
 			</aon:panelGrid>
 			
 			<aon:div id="paramsGrid">
-				<c:if test="#{contractLoader.newEnterpriseList.size > 0}">
-					<aon:panelGrid columns="2" styleClass="aon-width-all"
-						columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-auto">
-					
-						<aon:div>
-							<aon:outputLabel value="#{securityBundle.aon_security_user_password}" for="passwd"/>
-							<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
-								<aon:outputText value="#{adminBundle.admin_new_domain_passwd_help}" />
-							</aon:div>
-						</aon:div>
-						<aon:inputSecret id="passwd" required="true" styleClass="aon-inputText"
-							value="#{adminNewDomain.password}" size="20" maxlength="20" />
+				<c:if test="#{contractLoader.loader != null}">
+					<aon:panelGrid columns="2" style="width:700px; margin:10px;">
 						
-						<aon:div>
-							<aon:outputLabel for="NewDomain_name" value="#{adminBundle.admin_new_domain_name}" />
-							<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
-								<aon:outputText value="#{adminBundle.admin_new_domain_name_help}"/>
-							</aon:div>
-						</aon:div>
-						<aon:div>
-							<aon:inputText id="NewDomain_name" required="true"
-								size="40" maxlength="64" 
-								value="#{adminNewDomain.domainName}" />
-							<aon:outputText value="#{adminNewDomain.domainSuffix}"
-								rendered="#{adminNewDomain.domainSuffix != null}" 
-								styleClass="aon-bold" style="margin-left: 5px;"/>
-						</aon:div>
-	 
-						<aon:div>
-							<aon:outputLabel for="NewDomain_description" value="#{adminBundle.admin_new_domain_description}" />
-							<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
-								<aon:outputText value="#{adminBundle.admin_new_domain_description_help}"/>
-							</aon:div>
-						</aon:div>
-						<aon:inputText id="NewDomain_description" required="true" size="40" maxlength="64" 
-							value="#{adminNewDomain.domainDescription}" />
-	 
-						<aon:div>
-							<aon:outputLabel for="Domain_enableHeredity" value="#{adminBundle.admin_new_domain_defaults}" />
-							<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
-								<aon:outputText value="#{adminBundle.admin_new_domain_defaults_help}"/>
-							</aon:div>
-						</aon:div>
-						<aon:div id="valuesDiv">
-							<c:if test="#{adminNewDomain.parentDomain != null}">
-								<aon:outputLabel for="Domain_enableHeredity"
-									value="#{adminBundle.admin_domain_enableHeredity}" />
-								<aon:selectBooleanCheckbox id="Domain_enableHeredity"
-									required="true" reRender="valuesDiv"
-									value="#{adminNewDomain.enableHeredity}" />
-							</c:if>
-							<c:if test="#{!adminNewDomain.enableHeredity}">
-								<aon:div styleClass="aon-margin-top">
-									<aon:selectOneMenu id="Domain_loadDefaults"
-										required="true" reRender="valuesDiv" 
-										value="#{adminNewDomain.loadDefaultValuesEnabled}">
-										<f:selectItem itemValue="#{true}" itemLabel="#{adminBundle.admin_new_domain_defaults_1}" />
-										<f:selectItem itemValue="#{false}" itemLabel="#{adminBundle.admin_new_domain_defaults_2}" />
-									</aon:selectOneMenu>				
-									<c:if test="#{adminNewDomain.loadDefaultValuesEnabled and (adminNewDomain.parentDomain == null)}">
-										<aon:div styleClass="aon-margin-top">
-											<aon:outputLabel for="Domain_domainManagement"
-												value="#{adminBundle.admin_domain_domainManagement}" />
-											<aon:selectBooleanCheckbox id="Domain_domainManagement"
-												value="#{adminNewDomain.domainManagement}" required="true" />
-											<aon:outputLabel for="Domain_type" style="margin-left:1em;"
-												value="#{adminBundle.admin_domain_type}" />
-											<aon:selectOneMenu id="Domain_type" 
-												value="#{adminNewDomain.type}" required="true" >
-												<f:selectItems value="#{adminCollections.newDomainTypes}" />
-											</aon:selectOneMenu>
-										</aon:div>		
-									</c:if>
-									<c:if test="#{!adminNewDomain.loadDefaultValuesEnabled}">
-										<aon:div styleClass="aon-margin-top">	
-											<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
-												<ui:param name="lookupTo" value="#{adminNewDomain.templateDomain}" />
-												<ui:param name="idRequired" value="#{true}" />
-												<ui:param name="skipLabel" value="#{true}" />							
-												<ui:param name="lookupControllerListener" value="#{adminNewDomain.templateDomainFilter}" />
-											</ui:include>
-										</aon:div>
-									</c:if>
-								</aon:div>
-							</c:if>
-						</aon:div>
+						<aon:outputText value="Documento detectado" />
+						<aon:outputText value="#{contractLoader.loader.fileTypeDescription}"/>
 						
 					</aon:panelGrid>
 				</c:if>

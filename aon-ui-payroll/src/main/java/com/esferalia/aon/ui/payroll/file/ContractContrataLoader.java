@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.file;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -7,6 +8,8 @@ import java.io.LineNumberReader;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -19,10 +22,12 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Enterprise;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.person.Person;
@@ -46,7 +51,6 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
-import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO100TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO130TYPE;
@@ -82,23 +86,17 @@ import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO980TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO990TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATOS;
 import com.esferalia.aon.ui.payroll.utils.FileUtils;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
-public class ContractContrataLoader {
+public class ContractContrataLoader implements IContractLoader{
 	
-	private String encoding = "ISO-8859-1";
-
-
-	public void checkMetadata(InputStream input) throws AonException {
-		logInfo("Comienza el checkeo de la meta información.");
-		if (input == null) {
-			raiseException(0, "La entrada está vacia!");
-		}
+	public String getFileTypeDescription(){
+		return "Fichero Contrat@";
+	}
+	
+	public boolean isValidFile(BufferedReader reader, InputStream input) throws AonException{
 		try {
-			InputStreamReader inputReader = new InputStreamReader(input,encoding);
-			LineNumberReader reader = new LineNumberReader(inputReader);
-			int i = 0;
 			if (reader.ready()) {
-				++i;
 				String line = reader.readLine();
 				String xmlDeclarationOpenTag = "<?xml";
 				String xmlDeclarationEncoding = "encoding=\"ISO-8859-1\"";
@@ -106,10 +104,35 @@ public class ContractContrataLoader {
 				if(!line.startsWith(xmlDeclarationOpenTag) 
 						|| !line.endsWith(xmlDeclarationEndTag)
 						|| !line.contains(xmlDeclarationEncoding)){
+					return false;
+				}
+				
+			}
+		} catch (UnsupportedEncodingException e) {
+			raiseException(0, "La codificación no es válida");
+		} catch (IOException e) {
+			logError(e.getMessage());
+			raiseException(0, "Se produjo un error de entrada/salida");
+		}
+		return true;
+	}
+	
+	public void checkMetadata(InputStream input) throws AonException {
+		logInfo("Comienza el checkeo de la meta información.");
+		if (input == null) {
+			raiseException(0, "La entrada está vacia!");
+		}
+		try {
+			InputStreamReader inputReader = new InputStreamReader(input, FileUtils.CONTRATA_XML_FILE_ENCODING);
+			LineNumberReader reader = new LineNumberReader(inputReader);
+			int i = 0;
+			if (reader.ready()) {
+				++i;
+				if(!isValidFile(reader, input)){
 					raiseException(i, "La declaración del fichero xml es incorrecta o no se corresponde con una declaracion válida");
 				}
 				++i;
-				line = reader.readLine();
+				String line = reader.readLine();
 				String contratoFile = "<CONTRATOS>";
 				String transformacionFile = "<TRANSFORMACION>";
 				String prorrogaFile = "<PRORROGA>";
@@ -123,8 +146,6 @@ public class ContractContrataLoader {
 					raiseException(i, "El fichero xml no se corresponde con un fichero de Contrat@ válido");
 				}
 			}
-			reader.close();
-			input.close();
 			if (i == 0) {
 				raiseException(0, "No existen datos en el canal de entrada");
 			}
@@ -140,6 +161,11 @@ public class ContractContrataLoader {
 	public void logInfo( String msg  ) {
 		LogPanelController logger = LogPanelController.getInstance();
 		logger.info(msg);
+	}
+	
+	public void logWarn( String msg  ) {
+		LogPanelController logger = LogPanelController.getInstance();
+		logger.warn(msg);
 	}
 	
 	public void logError( String msg  ) {
@@ -159,6 +185,7 @@ public class ContractContrataLoader {
 		logInfo("Comienza la validación de formato!");
 		
 		try {
+			input.reset();
 			FileUtils.validateContrataXmlPattern(input, FileUtils.CONTRATOS_SCHEMA_FILE_NAME, "");
 		} catch (IOException ioe) {
 			raiseException(0, ioe.getMessage());
@@ -175,172 +202,210 @@ public class ContractContrataLoader {
 		
 		int i = 0;
 		try {
+			input.reset();
 			int errors = 0;
 			int warnings = 0;
 			logInfo(" Comienza la carga de datos!");
-//			InputStreamReader inputReader = new InputStreamReader(input,getEncoding());
-//			LineNumberReader reader = new LineNumberReader(inputReader);
 			
 			ContrataReader contrataReader = new ContrataReader();
 			contrataReader.readFile( input );
 			CONTRATOS contratos = contrataReader.getContratos();
 			
+			if(contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().isEmpty()){
+				String msg = "El fichero no contiene datos de ningun contrato.";
+				logWarn(msg);
+				warnings++;
+			}
+			
 			for(Object o: contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150()){
-				++i;
 				
 				IContratoType contrato = (IContratoType) o;
 				ContractCode code = obtainContractCode(contrato);
 				
-				/*
-				 * REGISTRY
-				 */
-				IManagerBean registryBean = BeanManager.getManagerBean(Registry.class);
-				Registry registry = new Registry();
-				registry.setName(contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getNOMBRE());
-				registry.setAlias(null);
-				registry.setType(RegistryType.NATURAL);
-				registry.setConfidential(false);
-				registry.setSecurityLevel(SecurityLevel.OFFICIAL);
-				for(Country country: Country.values()){
-					if(String.valueOf(country.getIsoNum()).equals(contrato.getDATOSTRABAJADOR().getNACIONALIDAD())){
-						registry.setNationality(country);
-						registry.setDocumentCountry(country);
-					}
-				}
-				registry.setDocument(contrato.getDATOSTRABAJADOR().getIDENTIFICADORPFISICA().substring(1));
-				/*
-				"D";"D.N.I"
-				"E";"NUMERO IDENTIFICATIVO EXTRANJERO"
-				"U";"CIUDADANOS DE LA UE/EEE SIN NIE"
-				"W";"CIUD.QUE NO PERTENECEN A UE/EEE.SIN NIE"
-				 */
-				String type = contrato.getDATOSTRABAJADOR().getIDENTIFICADORPFISICA().substring(0, 1);
-				if(type.equals("D")){
-					registry.setDocumentType(DocumentType.NIF);
-				} else if(type.equals("E")){
-					registry.setDocumentType(DocumentType.NIE);
-				}
-				registry = (Registry) registryBean.insert(registry);
-				
-				/*
-				 * PERSON
-				 */
-				IManagerBean personBean = BeanManager.getManagerBean(Person.class);
-				Person person = new Person();
-				person.setRegistry(registry);
-				person.setName(contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getNOMBRE());
-				person.setFirstSurname(contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getPRIMERAPELLIDO());
-				person.setSecondSurname(contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO());
-				try {
-					person.setBirthDate(dateFormatter.parse(contrato.getDATOSTRABAJADOR().getFECHANACIMIENTO()));
-				} catch (ParseException e1) {
-					logError("Error de formato al obtener la fecha de nacimiento del trabajador " + person.getFullName());
-				}
-				if(StringUtils.isBlank(contrato.getDATOSTRABAJADOR().getSEXO())){
-					person.setGender(Gender.UNKNOWN);
-				} else if(contrato.getDATOSTRABAJADOR().getSEXO().equals("1")){
-					person.setGender(Gender.MALE);
-				} else if(contrato.getDATOSTRABAJADOR().getSEXO().equals("2")){
-					person.setGender(Gender.FEMALE);
-				}
-				person.setMaritalStatus(MaritalStatus.UNKNOWN);
-				if(!StringUtils.isBlank(contrato.getDATOSTRABAJADOR().getNUMEROSEGURIDADSOCIAL())){
-					person.setSocialSecurityNumber(contrato.getDATOSTRABAJADOR().getNUMEROSEGURIDADSOCIAL());
-				} else {
-					logError("No existe número de la S.S. para el trabajador " + person.getFullName());
-				}
-				person = (Person) personBean.insert(person);
-				
-				/*
-				 * CONTRACT
-				 */
-				IManagerBean contractBean = BeanManager.getManagerBean(Contract.class);
-				Contract contract = new Contract();
-				contract.setPerson(person);
-				try {
-					if(!StringUtils.isBlank(contrato.getDATOSGENERALESCONTRATO().getFECHAINICIO())){
-						contract.setStartDate(dateFormatter.parse(contrato.getDATOSGENERALESCONTRATO().getFECHAINICIO()));
-						contract.setSeniorityDate(dateFormatter.parse(contrato.getDATOSGENERALESCONTRATO().getFECHAINICIO()));
-					}
-					if(!StringUtils.isBlank(contrato.getDATOSGENERALESCONTRATO().getFECHATERMINO())){
-						contract.setEndDate(dateFormatter.parse(contrato.getDATOSGENERALESCONTRATO().getFECHATERMINO()));
-					}
-				} catch (ParseException e) {
-					logError("Error de formato al obtener la fecha de inicio y la fecha fin del contrato del trabajador " + person.getFullName());
-				}
 				Enterprise enterprise = obtainEnterprise(contrato.getDATOSEMPRESA().getCIFNIFEMPRESA().getCIFNIF());
 				if(enterprise==null){
-					String msg = "No se ha dado de alta la empresa del trabajador " + person.getFullName();
+					String msg = "No se ha dado de alta la empresa del trabajador " +" " 
+					+ contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getNOMBRE() +" "
+					+ contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getPRIMERAPELLIDO() +" "
+					+ contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO();
 					logError(msg);
 					raiseException(i, msg);
+				}
+				
+				Person person = obtainPerson(contrato.getDATOSTRABAJADOR().getIDENTIFICADORPFISICA().substring(1));
+				if(person!=null){
+					logWarn("Datos personales existentes para " + person.getFullName()+" ("+person.getRegistry().getDocument()+")");
+					warnings++;
+					logInfo("Se excluye la carga de los datos personales para " + person.getFullName()+" ("+person.getRegistry().getDocument()+")");
+				} else {
+					/*
+					 * REGISTRY
+					 */
+					IManagerBean registryBean = BeanManager.getManagerBean(Registry.class);
+					Registry registry = new Registry();
+					registry.setName(contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getNOMBRE());
+					registry.setAlias(null);
+					registry.setType(RegistryType.NATURAL);
+					registry.setConfidential(false);
+					registry.setSecurityLevel(SecurityLevel.OFFICIAL);
+					for(Country country: Country.values()){
+						if(String.valueOf(country.getIsoNum()).equals(contrato.getDATOSTRABAJADOR().getNACIONALIDAD())){
+							registry.setNationality(country);
+							registry.setDocumentCountry(country);
+						}
+					}
+					registry.setDocument(contrato.getDATOSTRABAJADOR().getIDENTIFICADORPFISICA().substring(1));
+					/*
+					"D";"D.N.I"
+					"E";"NUMERO IDENTIFICATIVO EXTRANJERO"
+					"U";"CIUDADANOS DE LA UE/EEE SIN NIE"
+					"W";"CIUD.QUE NO PERTENECEN A UE/EEE.SIN NIE"
+					 */
+					String type = contrato.getDATOSTRABAJADOR().getIDENTIFICADORPFISICA().substring(0, 1);
+					if(type.equals("D")){
+						registry.setDocumentType(DocumentType.NIF);
+					} else if(type.equals("E")){
+						registry.setDocumentType(DocumentType.NIE);
+					}
+					registry.setDomain(enterprise.getDomain());
+					registry = (Registry) registryBean.insert(registry);
+
+					/*
+					 * PERSON
+					 */
+					IManagerBean personBean = BeanManager.getManagerBean(Person.class);
+					person = new Person();
+					person.setRegistry(registry);
+					person.setName(contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getNOMBRE());
+					person.setFirstSurname(contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getPRIMERAPELLIDO());
+					person.setSecondSurname(contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO());
+					try {
+						person.setBirthDate(dateFormatter.parse(contrato.getDATOSTRABAJADOR().getFECHANACIMIENTO()));
+					} catch (ParseException e1) {
+						logError("Error de formato al obtener la fecha de nacimiento del trabajador " + person.getFullName());
+					}
+					if(StringUtils.isBlank(contrato.getDATOSTRABAJADOR().getSEXO())){
+						person.setGender(Gender.UNKNOWN);
+					} else if(contrato.getDATOSTRABAJADOR().getSEXO().equals("1")){
+						person.setGender(Gender.MALE);
+					} else if(contrato.getDATOSTRABAJADOR().getSEXO().equals("2")){
+						person.setGender(Gender.FEMALE);
+					}
+					person.setMaritalStatus(MaritalStatus.UNKNOWN);
+					if(!StringUtils.isBlank(contrato.getDATOSTRABAJADOR().getNUMEROSEGURIDADSOCIAL())){
+						person.setSocialSecurityNumber(contrato.getDATOSTRABAJADOR().getNUMEROSEGURIDADSOCIAL());
+					} else {
+						logError("No existe número de la S.S. para el trabajador " + person.getFullName());
+					}
+					person.setDomain(enterprise.getDomain());
+					person = (Person) personBean.insert(person);
+				}
+				
+				
+				Date startDate = null;
+				try {
+					startDate = dateFormatter.parse(contrato.getDATOSGENERALESCONTRATO().getFECHAINICIO());
+				} catch (ParseException e1) {
+					logError("Error de formato al obtener la fecha de inicio y la fecha fin del contrato del trabajador " + person.getFullName());
 				}
 				GeoZone wpGeoZone = obtainWorkPlaceGeoZone(contrato.getDATOSGENERALESCONTRATO().getMUNICIPIOCT());
 				EnterpriseCCC ccc = obtainCcc(enterprise, wpGeoZone, contrato.getDATOSEMPRESA().getCODIGOCUENTACOTIZACION().substring(4));
 				PayrollWorkPlace pwp = null;
 				if(ccc!=null){
-					contract.setEnterpriseCCC(ccc);
 					pwp = obtainWorkPlace(ccc, contrato.getDATOSEMPRESA().getCODIGOCUENTACOTIZACION());
 				} else {
 					logError("No se ha dado de alta en la empresa el CCC del trabajador " + person.getFullName());
 				}
-				if(pwp!=null){
-					contract.setWorkPlace(pwp.getWorkPlace());
-					contract.setActivity(pwp.getEnterpriseActivity());
-				} else {
+				if(pwp==null){
 					String msg = "No se ha dado de alta en la empresa el centro de trabajo del trabajador " + person.getFullName();
 					logError(msg);
 					raiseException(i, msg);
 				}
-				contract.setAgreementLevelCategory(null);
-				contract.setCategoryDescription(null);
-				contract.setCalendar(null);
-				contract.setDescription(null);
-				contract.setRegistration(null);
-				// FIXME how obtain regime type? (from contract code, ...)
-//				contrato.getDATOSEMPRESA().getCODIGOCUENTACOTIZACION().substring(0, 5);
-				contract.setRegimeType(SSRegimeType.GENERAL);
-				if(obtainContractModel(code)!=null){
-					contract.setModel(obtainContractModel(code));
+				
+				Contract contract = obtainContract(person, startDate, ccc, pwp.getWorkPlace());
+				if(contract!=null){
+					logWarn("Contrato existente para " + person.getFullName()+" ("+person.getRegistry().getDocument()+")");
+					warnings++;
+					logInfo("Se excluye la carga del contrato para " + person.getFullName()+" ("+person.getRegistry().getDocument()+")");
 				} else {
-					logError("No se ha podido obtener en modelo de contrato del trabajador " + person.getFullName());
-				}
-				contract.setStatus(ContractStatus.PROCESSED);
-				contract = (Contract) contractBean.insert(contract);
-				
-				/*
-				 * CONTRACT DATA
-				 */
-				IManagerBean contractDataBean = BeanManager.getManagerBean(ContractData.class);
-				ContractData data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName(ContextVariable.TC2.getName());
-				data.setExpression("\""+code.getValue()+"\"");
-				contractDataBean.insert(data);
-				
-				CNO cno = obtainCno(contrato.getDATOSGENERALESCONTRATO().getCODIGOOCUPACION());
-				if(cno!=null){
-					data = new ContractData();
+					
+					/*
+					 * CONTRACT
+					 */
+					IManagerBean contractBean = BeanManager.getManagerBean(Contract.class);
+					contract = new Contract();
+					contract.setPerson(person);
+					try {
+						if(!StringUtils.isBlank(contrato.getDATOSGENERALESCONTRATO().getFECHAINICIO())){
+							contract.setStartDate(dateFormatter.parse(contrato.getDATOSGENERALESCONTRATO().getFECHAINICIO()));
+							contract.setSeniorityDate(dateFormatter.parse(contrato.getDATOSGENERALESCONTRATO().getFECHAINICIO()));
+						}
+						if(!StringUtils.isBlank(contrato.getDATOSGENERALESCONTRATO().getFECHATERMINO())){
+							contract.setEndDate(dateFormatter.parse(contrato.getDATOSGENERALESCONTRATO().getFECHATERMINO()));
+						}
+					} catch (ParseException e) {
+						logError("Error de formato al obtener la fecha de inicio y la fecha fin del contrato del trabajador " + person.getFullName());
+					}
+					
+					contract.setEnterpriseCCC(ccc);
+					contract.setWorkPlace(pwp.getWorkPlace());
+					contract.setActivity(pwp.getEnterpriseActivity());
+					contract.setAgreementLevelCategory(null);
+					contract.setCategoryDescription(null);
+					contract.setCalendar(null);
+					contract.setDescription(null);
+					contract.setRegistration(null);
+					contract.setRegimeType(ccc.getActivity().getType());
+					if(obtainContractModel(code)!=null){
+						contract.setModel(obtainContractModel(code));
+					} else {
+						logError("No se ha podido obtener en modelo de contrato del trabajador " + person.getFullName());
+					}
+					contract.setStatus(ContractStatus.PENDING);
+					contract.setDomain(enterprise.getDomain());
+					contract = (Contract) contractBean.insert(contract);
+					++i;
+					
+					/*
+					 * CONTRACT DATA
+					 */
+					IManagerBean contractDataBean = BeanManager.getManagerBean(ContractData.class);
+					ContractData data = new ContractData();
 					data.setContract(contract);
 					data.setStartDate(contract.getStartDate());
 					data.setEndDate(contract.getEndDate());
-					data.setName(ContextVariable.CNO.getName());
-					data.setExpression("\""+cno.getCode()+"\"");
+					data.setName(ContextVariable.TC2.getName());
+					data.setExpression("\""+code.getValue()+"\"");
+					data.setDomain(enterprise.getDomain());
 					contractDataBean.insert(data);
+					
+					CNO cno = obtainCno(contrato.getDATOSGENERALESCONTRATO().getCODIGOOCUPACION());
+					if(cno!=null){
+						data = new ContractData();
+						data.setContract(contract);
+						data.setStartDate(contract.getStartDate());
+						data.setEndDate(contract.getEndDate());
+						data.setName(ContextVariable.CNO.getName());
+						data.setExpression("\""+cno.getCode()+"\"");
+						data.setDomain(enterprise.getDomain());
+						contractDataBean.insert(data);
+					}
+					
+					/*
+					 * CONTRACT ATTACH
+					 */
+					IManagerBean attachBean = BeanManager.getManagerBean(ContractAttachment.class);
+					ContractAttachment attach = new ContractAttachment();
+					attach.setContract(contract);
+					attach.setData(IOUtils.toByteArray(input));
+					attach.setAttachmentType(ContractAttachmentType.SPEE_CONTRATA_FILE);
+					attach.setMimeType(MimeType.MIME_XML);
+					attach.setDescription("Fichero contrat@");
+					attach.setDomain(enterprise.getDomain());
+					attachBean.insert(attach);
 				}
 				
-				/*
-				 * CONTRACT ATTACH
-				 */
-				IManagerBean attachBean = BeanManager.getManagerBean(ContractAttachment.class);
-				ContractAttachment attach = new ContractAttachment();
-				attach.setContract(contract);
-				attach.setData(IOUtils.toByteArray(input));
-				attach.setAttachmentType(ContractAttachmentType.SPEE_CONTRATA_FILE);
-				attach.setMimeType(MimeType.MIME_XML);
-				attach.setDescription("Fichero contrat@");
-				attachBean.insert(attach);
+				
 			}
 			
 			logInfo("" + i + " contratos insertados");
@@ -352,10 +417,38 @@ public class ContractContrataLoader {
 		}
 	}
 	
+	private Contract obtainContract(Person person, Date startDate, EnterpriseCCC ccc, WorkPlace workPlace) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PERSON_ID), person.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_START_DATE), startDate);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ENTERPRISE_CCC_ID), ccc.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ID), workPlace.getId());
+		completeDomainCriteria("Contract", criteria);
+		Iterator<ITransferObject> it = bean.getList(criteria).iterator();
+		while(it.hasNext()){
+			return (Contract) it.next();
+		}
+		return null;
+	}
+
+	private Person obtainPerson(String document) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Person.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PERSON_REGISTRY_DOCUMENT), document);
+		completeDomainCriteria("Person", criteria);
+		List<ITransferObject> list = bean.getList(criteria);
+		if(!list.isEmpty()){
+			return (Person) list.get(0);
+		}
+		return null;
+	}
+	
 	private GeoZone obtainWorkPlaceGeoZone(String municipioct) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(GeoZone.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEO_ZONE_CODE), municipioct.substring(0, 2));
+		completeDomainCriteria("GeoZone", criteria);
 		List<ITransferObject> list = bean.getList(criteria);
 		if(!list.isEmpty()){
 			return (GeoZone) list.get(0);
@@ -374,15 +467,16 @@ public class ContractContrataLoader {
 		IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
 		Criteria criteria = new Criteria(); 
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_REGISTRY_DOCUMENT), cifnif);
+		completeDomainCriteria("Enterprise", criteria);
 		List<ITransferObject> list = bean.getList(criteria);
 		if(list.size()==0){
 			String msg = "No existe ninguna empresa con NIF " + cifnif;
 			logError(msg);
-			raiseException(0, msg);
+			return null;
 		} else if(list.size()>1){
-			String msg = "Existen varias empresa con NIF " + cifnif;
+			String msg = "Existen varias empresa con el NIF " + cifnif;
 			logError(msg);
-			raiseException(0, msg);
+			return null;
 		}
 		return (Enterprise) list.get(0);
 	}
@@ -390,6 +484,7 @@ public class ContractContrataLoader {
 		IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYROLL_WORK_PLACE_ENTERPRISE_ACTIVITY_ID), ccc.getActivity().getId());
+		completeDomainCriteria("PayrollWorkPlace", criteria);
 		List<ITransferObject> list = bean.getList(criteria);
 		if(!list.isEmpty()){
 			return (PayrollWorkPlace) list.get(0);
@@ -402,6 +497,7 @@ public class ContractContrataLoader {
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), enterprise.getId());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_GEOZONE_ID), geozone.getId());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_CCC), codigocuentacotizacion);
+		completeDomainCriteria("EnterpriseCCC", criteria);
 		List<ITransferObject> list = bean.getList(criteria);
 		if(!list.isEmpty()){
 			return (EnterpriseCCC) list.get(0);
@@ -488,189 +584,16 @@ public class ContractContrataLoader {
 		}
 		return null;
 	}
-
-//	private void parseLine(int i, Object target, Column[] definition, String columns) throws AonException {
-//		String[] cols = StringUtils.splitByWholeSeparatorPreserveAllTokens(columns,getSep());
-//		if (cols == null || cols.length != definition.length) {
-//			raiseException(i, " El número de columnas no coincide con la definición, debe haber " + definition.length + " columnas");
-//		}
-//		int x = 0;
-//		for (Column c : definition) {
-//			Object data = parseData(i, cols[x], c );
-//			if (target != null) {
-//				try {
-//					if (c.getType() == 3 && data == null) {
-//						// Para evitar la excepcion "No value specified for 'Date'"
-//						// que lanza BeanUtils para las fecha nulas.
-//					} else {
-//						BeanUtils.setProperty(target, c.getName(), data);
-//					}
-//				} catch (IllegalAccessException e) {
-//					raiseException(i, e.getMessage());
-//				} catch (InvocationTargetException e) {
-//					raiseException(i, e.getMessage());
-//				}
-//			}
-//			++x;
-//		}
-//	}
-//
-//	private Object parseData(int i, String string, Column c) throws AonException {
-//		try {
-//			if (StringUtils.isBlank(string)) {
-//				return null;
-//			}
-//			string = StringUtils.trim(string);
-//			if ( string.length() > c.getLength() ) {
-//				raiseException(i, "Superada máxima longitud (" + c.getLength() + ")");	
-//			}
-//			if (c.getType() == 0) {
-//				return getInt(string); 
-//			} else if (c.getType()== 1) {
-//				return getDouble(string);
-//			} else if (c.getType() == 3) {
-//				return getDate(string);
-//			}
-//			return string;
-//		} catch (AonException e) {
-//			raiseException(i, "Col: " + c.getName() + " con valor '" + string +  "'. " + e.getMessage() );
-//			return null; //??
-//		}
-//	}
-//
-//	private Date getDate(String data) throws AonException {
-//		try {
-//			Date date = getParams().getDateFormatter().parse(data);
-//			String ensure = getParams().getDateFormatter().format(date);
-//			if (!StringUtils.equals(data, ensure)) {
-//				throw new AonException("Fecha no correcta");	
-//			}
-//			return date;
-//		} catch (ParseException e) {
-//			throw new AonException("Fecha no correcta");
-//		}
-//	}
-//	
-//	private Double getDouble(String data) throws AonException {
-//		try {
-//			double d = Double.parseDouble(data);
-//			return d;
-//		} catch (NumberFormatException e) {
-//			throw new AonException("Número decimal no correcto");
-//		}
-//	}
-//	
-//	private Integer getInt(String data) throws AonException {
-//		try {
-//			int d = Integer.parseInt(data);
-//			return d;
-//		} catch (NumberFormatException e) {
-//			throw new AonException("Número no correcto");
-//		}
-//	}
-//
-//	private void cacheId(String key, String identifier, Integer id) {
-//		Map<String, Integer> entityIds = getIds().get(key);
-//		if (entityIds == null) {
-//			entityIds = new HashMap<String, Integer>();
-//			getIds().put(key,entityIds);	
-//		}
-//		if (StringUtils.isBlank(identifier)) {
-//			identifier = Integer.toString(id);
-//		}
-//		entityIds.put(identifier, id);
-//	}
-//	
-//	private Integer getAonId(String key, String identifier) {
-//		Map<String, Integer> entityIds = getIds().get(key);
-//		if (entityIds != null) {
-//			return entityIds.get(identifier);
-//		}
-//		return null;
-//	}
-//
-//	@Override
-//	public ITransferObject ensureAonEntity(LoaderParams params, ILoadedPojo loadedPojo) throws AonException {
-//		ILoaderFactory<ILoadedPojo> factory = getFactoryManager().getFactory(loadedPojo.getClass());
-//		String key = factory.getKey();
-//		String identifier = loadedPojo.getIdentifier();
-//		ITransferObject to = getAonEntity(key, identifier);
-//		if (to == null) {
-//			to = factory.get(params, loadedPojo);
-//			if (to == null) {
-//				Integer id = insertAonEntity(params, loadedPojo);
-//				to = getAonEntity(key, StringUtils.isBlank(identifier)?Integer.toString(id):identifier);
-//			}
-//		}
-//		return to;
-//	}
-//
-//	@Override
-//	public ITransferObject get(String key, Integer aonId) throws AonException {
-//		if (aonId != null) {
-//			ILoaderFactory<ILoadedPojo> factory = getFactoryManager().getFactory(key);
-//			return factory.get(aonId);
-//		}
-//		return null;
-//	}
-//
-//	@Override
-//	public ITransferObject getAonEntity(String key, String identifier) throws AonException {
-//		if (StringUtils.isNotBlank(identifier)) {
-//			Integer id = getAonId(key, identifier);
-//			if (id != null) {
-//				ILoaderFactory<ILoadedPojo> factory = getFactoryManager().getFactory(key);
-//				return factory.get(id);
-//			}
-//		}
-//		return null;
-//	}
-//
-//	@Override
-//	public Integer insertAonEntity(LoaderParams params, ILoadedPojo loadedPojo) throws AonException {
-//		ILoaderFactory<ILoadedPojo> factory = getFactoryManager().getFactory(loadedPojo.getClass());
-//		Integer id = factory.insert(getParams(), loadedPojo );
-//		if (id != null) {
-//			cacheId(factory.getKey(), loadedPojo.getIdentifier(), id );	
-//		}
-//		return id;
-//	}
-//
-//	@Override
-//	public ITransferObject get(LoaderParams params, ILoadedPojo loadedPojo) throws AonException {
-//		ILoaderFactory<ILoadedPojo> factory = getFactoryManager().getFactory(loadedPojo.getClass());
-//		return factory.get(params,loadedPojo);
-//	}
-//	
-//	public void help(Writer output) {
-//		try {
-//			processTemplate(output);
-//			output.flush();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new AbortProcessingException(e.getMessage());
-//		}
-//	}
-//	
-//
-//	private VelocityHelper getVelocityHelper() {
-//		if ( this.velocityHelper == null ) {
-//			this.velocityHelper = new VelocityHelper();
-//			try {
-//				this.velocityHelper.init( VM_PATH_DEFAULT );
-//			} catch (Exception e) {
-//				LOGGER.error( "Velocity engine could not be initialized", e );
-//			}
-//		}
-//		return this.velocityHelper;
-//	}
-//	
-//	private void processTemplate(Writer output) throws IOException, AonException {
-//		TemplateHelper th = getVelocityHelper().getTemplateHelper();
-//		ResourceBundle bundle = ResourceBundle.getBundle(VM_HELP_BUNDLE);
-//		th.putInContext( VM_BUNDLE_KEY, bundle );
-//		th.putInContext( VM_FACTORIES_KEY, getFactoryManager().getFactories() );
-//		th.processTemplate(VM_HELP_TEMPLATE, output);
-//	}
+	
+	private void completeDomainCriteria(String beanName, Criteria criteria) {
+		if(DomainManager.isDomainManagementAvailable()){
+			PayrollUtils utils = new PayrollUtils();
+			utils.getCurrentChildDomainIds();
+			List<Integer> idList = utils.getCurrentChildDomainIds();
+			idList.add(DomainManager.getCurrentDomain());
+			criteria.setSkipDomainFilter(true);
+			criteria.addInExpression(beanName+".domain", idList);
+		}
+	}
 
 }

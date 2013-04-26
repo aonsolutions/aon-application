@@ -71,7 +71,7 @@ public class FileUtils {
 		} catch (IOException ioe) {
 			throw new IOException(ioe);
 		} catch (Exception e) {
-			String msg = "Error de formato al validar y generar el XML";
+			String msg = "Error de formato al validar el contenido";
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage("*** ERROR *** :" + e );
 			throw new AbortProcessingException(msg, e);
