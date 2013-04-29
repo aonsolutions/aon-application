@@ -28,6 +28,7 @@ import com.code.aon.commercial.TargetSeller;
 import com.code.aon.commercial.TargetSupplier;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
+import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.commercial.enumeration.TargetSellerStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
@@ -915,9 +916,12 @@ public class OfferController extends BasicController implements ISignatureContro
 
 	public String getReportTemplate() throws ManagerBeanException {
 		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
-		ApplicationParameter appParam = controller.obtainApplicationParameter(OFFER_TEMPLATE_PARAM);
-		if ( appParam != null ) {
-			return appParam.getValue();
+		Offer offer = (Offer) this.getTo();
+		if(offer!=null && offer.getType()!=OfferType.PROFORMA){
+			ApplicationParameter appParam = controller.obtainApplicationParameter(OFFER_TEMPLATE_PARAM);
+			if ( appParam != null ) {
+				return appParam.getValue();
+			}
 		}
 		return OFFER_CONTROLLER_NAME;
 	}
