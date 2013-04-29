@@ -12,7 +12,7 @@
 	<ui:define name="content">
 		<aon:form id="posForm">
 		
-			<ui:param name="readOnly" value="#{!aonRole.saleOperator}" />
+			<ui:param name="readOnly" value="#{!aonRole.auditor}" />
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
@@ -22,9 +22,6 @@
 				<ui:param name="skipSaveButton" value="#{readOnly}" />
 				<ui:param name="skipRemoveButton" value="#{readOnly}" />
 				<ui:param name="skipResetButton" value="#{readOnly}" />
-				
-				
-				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:htmlCommandLink id="posShift_report"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
