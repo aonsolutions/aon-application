@@ -6,12 +6,12 @@
 
 	<session-factory>
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
-		<property name="show_sql">true</property>		
+		<property name="show_sql">true</property>
 		<property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
-		<property name="connection.url">jdbc:mysql://db4:3306/grupoplayasol-com?autoReconnect=true</property>		
-		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
-		<property name="connection.username">dbuser</property>		
-		<property name="connection.password">serubd2000</property>		
+		<property name="connection.url">jdbc:mysql://db.cdhc46h3yjvt.eu-west-1.rds.amazonaws.com:3306/grupoplayasol-com?autoReconnect=true</property>
+		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>
+		<property name="connection.username">playasol</property>
+		<property name="connection.password">pl4y4s0l</property>
  
 		<!-- C3P0 Stuff -->
 		<property name="hibernate.c3p0.acquire_increment">1</property>
