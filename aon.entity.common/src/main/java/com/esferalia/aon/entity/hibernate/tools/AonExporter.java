@@ -219,7 +219,10 @@ public class AonExporter extends GenericExporter{
 		map.put("ProfileActionDenied","com.code.aon.audit.ProfileActionDenied");
 		map.put("ProfileModuleDenied","com.code.aon.audit.ProfileModuleDenied");		
 		map.put("Session","com.code.aon.audit.Session");
-
+		
+		//AON CARRIER
+		map.put("Carrier","com.esferalia.aon.carrier.Carrier");
+		
 		//AON CALENDAR 
 		map.put("Calendar","com.esferalia.aon.calendar.Calendar");
 		map.put("CalendarHoliday","com.esferalia.aon.calendar.CalendarHoliday");

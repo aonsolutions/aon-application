@@ -215,6 +215,12 @@
 	<table name="campaign">
 		<column name="status" type="com.code.aon.groupware.enumeration.CampaignStatus"/>
 	</table>
+	
+	<table name="carrier">
+		<primary-key>
+			<key-column name="registry" property="id" type="java.lang.Integer"/>
+		</primary-key>
+	</table>
 
 	<table name="cashflow_forecast" class="com.esferalia.aon.entity.master.CashFlowForecast">
 		<column name="payment_day" type="int"/>
@@ -438,6 +444,8 @@
 		<column name="bank_account" type="com.code.aon.config.BankAccount"/>
 		<column name="comments" type="text" />
 		<column name="remarks" type="text" />
+		<column name="shipping_period" type="com.esferalia.aon.carrier.enumeration.ShipmentPeriod" />
+		<column name="shipping_status" type="com.esferalia.aon.carrier.enumeration.ShipmentStatus" />
 	</table>
 
 	<table name="delivery_detail">
@@ -1380,6 +1388,7 @@
 		<column name="bank_account" type="com.code.aon.config.BankAccount"/>
 		<column name="comments" type="text"/>
 		<column name="remarks" type="text"/>
+		<column name="shipping_period" type="com.esferalia.aon.carrier.enumeration.ShipmentPeriod" />
 		<foreign-key constraint-name="FK_SALES_RADDRESS">
 			<many-to-one property="shippingAddress" />
 		</foreign-key>
