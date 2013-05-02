@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.16.0
+# Version: 7.16.1
 # Created by: girazu
-# Creation Date: 23/04/2013 16:55
+# Creation Date: 02/05/2013 17:55
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1918,6 +1918,22 @@ CREATE TABLE `campaign_project` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Campañas y Expedientes';
 
 #
+# Structure for the `carrier` table : 
+#
+
+CREATE TABLE `carrier` (
+  `registry` int(4) NOT NULL COMMENT 'Registro de la Agencia de Transporte',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
+  PRIMARY KEY (`registry`),
+  KEY `IDX_CARRIER_DOMAIN` (`domain`),
+  KEY `IDX_CARRIER_SCOPE` (`scope`),
+  CONSTRAINT `FK_CARRIER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CARRIER_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
+  CONSTRAINT `FK_CARRIER_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Agencias de Transporte';
+
+#
 # Structure for the `cashflow_forecast` table : 
 #
 
@@ -3275,6 +3291,23 @@ CREATE TABLE `delivery` (
   `pymnt_days` varchar(8) COLLATE latin1_spanish_ci DEFAULT '0' COMMENT 'Dias de pago',
   `bank` int(4) DEFAULT NULL COMMENT 'Identificador de la Entidad Bancaria',
   `bank_account` varchar(30) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
+  `carrier` int(4) DEFAULT NULL COMMENT 'Identificador de la agencia de transporte',
+  `number_plate` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de matricula',
+  `driver` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre del conductor',
+  `driver_document` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de Documento del conductor',
+  `total_packages` double(15,3) DEFAULT '0.000' COMMENT 'Numero total de bultos',
+  `total_weight` double(15,3) DEFAULT '0.000' COMMENT 'Peso total',
+  `shipping_alternative_address` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Primera parte de la Direccion de entrega',
+  `shipping_alternative_address2` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Segunda parte de la Direccion de entrega',
+  `shipping_alternative_zip` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo Postal de entrega',
+  `shipping_alternative_city` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Localidad de entrega',
+  `shipping_alternative_phone` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telefono de contacto de la entrega',
+  `shipping_alternative_recipient` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Destinatario de la entrega',
+  `shipping_contact` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre del contacto para la entrega',
+  `shipping_period` tinyint(2) DEFAULT '0' COMMENT 'Tipo de periodo de entrega',
+  `tracking_number` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de expedicion',
+  `shipping_status` tinyint(2) DEFAULT '0' COMMENT 'Estado de la entrega',
+  `status_modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion del estado',
   PRIMARY KEY (`id`),
   UNIQUE KEY `IDX_UNQ_DELIVERY_DOMAIN_SERIES_NUMBER` (`domain`,`series`,`number`),
   KEY `IDX_DELIVERY_WORKPLACE` (`workplace`),
@@ -3286,7 +3319,9 @@ CREATE TABLE `delivery` (
   KEY `IDX_DELIVERY_RADDRESS` (`address`),
   KEY `IDX_DELIVERY_PAY_METHOD` (`pay_method`),
   KEY `IDX_DELIVERY_DOMAIN` (`domain`),
+  KEY `IDX_DELIVERY_CARRIER` (`carrier`),
   CONSTRAINT `FK_DELIVERY_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
+  CONSTRAINT `FK_DELIVERY_CARRIER` FOREIGN KEY (`carrier`) REFERENCES `carrier` (`registry`),
   CONSTRAINT `FK_DELIVERY_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`),
   CONSTRAINT `FK_DELIVERY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_DELIVERY_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
@@ -3349,6 +3384,15 @@ CREATE TABLE `sales` (
   `pymnt_days` varchar(8) COLLATE latin1_spanish_ci DEFAULT '0' COMMENT 'Dias de pago',
   `bank` int(4) DEFAULT NULL COMMENT 'Identificador de la Entidad Bancaria',
   `bank_account` varchar(30) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
+  `carrier` int(4) DEFAULT NULL COMMENT 'Identificador de la Agencia de Transporte',
+  `shipping_alternative_address` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Primera parte de la Direccion de entrega',
+  `shipping_alternative_address2` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Segunda parte de la Direccion de entrega',
+  `shipping_alternative_zip` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo Postal de entrega',
+  `shipping_alternative_city` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Localidad de entrega',
+  `shipping_alternative_phone` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telefono de contacto de la entrega',
+  `shipping_alternative_recipient` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Destinatario de la entrega',
+  `shipping_contact` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre del contacto para la entrega',
+  `shipping_period` tinyint(2) DEFAULT '0' COMMENT 'Tipo de periodo de entrega',
   PRIMARY KEY (`id`),
   UNIQUE KEY `IDX_UNQ_SALES_DOMAIN_SERIES_NUMBER` (`domain`,`series`,`number`),
   KEY `IDX_SALES_SCOPE` (`scope`),
@@ -3361,7 +3405,9 @@ CREATE TABLE `sales` (
   KEY `IDX_SALES_PAY_METHOD` (`pay_method`),
   KEY `IDX_SALES_WORKPLACE` (`workplace`),
   KEY `IDX_SALES_DOMAIN` (`domain`),
+  KEY `IDX_SALES_CARRIER` (`carrier`),
   CONSTRAINT `FK_SALES_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
+  CONSTRAINT `FK_SALES_CARRIER` FOREIGN KEY (`carrier`) REFERENCES `carrier` (`registry`),
   CONSTRAINT `FK_SALES_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`),
   CONSTRAINT `FK_SALES_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SALES_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
@@ -7059,7 +7105,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.16.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.16.1');
 
 COMMIT;
 
