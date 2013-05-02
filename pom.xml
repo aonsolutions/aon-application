@@ -67,6 +67,7 @@
 		<module>aon-ui-admin</module>
 
 		<!-- ENTITY -->
+		<module>aon-carrier</module>
 		<module>aon-company</module>
 		<module>aon-config</module>
 		<module>aon-customer</module>
@@ -103,8 +104,9 @@
 		<module>aon-academy</module>    
 
 		<!-- UI MODULES -->
-    		<module>aon-ui-academy</module>
+		<module>aon-ui-academy</module>
 		<module>aon-ui-audabridge</module>
+		<module>aon-ui-carrier</module>
 		<module>aon-ui-company</module>
 		<module>aon-ui-config</module>
 		<module>aon-ui-customer</module>
