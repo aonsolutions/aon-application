@@ -12,6 +12,7 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_posShift_module}" />
 				<ui:param name="controller" value="#{posShift}" />
+				<ui:param name="skipResetButton" value="#{!aonRole.auditor}" />
 				
 				<ui:define name="additionalToolbarContent">
 				

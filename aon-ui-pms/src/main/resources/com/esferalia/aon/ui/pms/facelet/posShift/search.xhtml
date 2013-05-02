@@ -13,6 +13,7 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_posShift_module}" />
 				<ui:param name="controller" value="#{posShift}" />
+				<ui:param name="skipResetButton" value="#{!aonRole.auditor}" />
 			</ui:include>
 				
 			<ui:decorate
