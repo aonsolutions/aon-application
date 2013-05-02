@@ -2,6 +2,7 @@ package com.code.aon.ui.warehouse.event;
 
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
@@ -16,8 +17,19 @@ import com.code.aon.ui.warehouse.controller.DeliveryController;
 import com.code.aon.ui.warehouse.controller.IWarehouseConstants;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
+import com.esferalia.aon.carrier.Carrier;
 
 public class DeliveryControllerListener extends ControllerAdapter implements IWarehouseConstants {
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		DeliveryController controller = (DeliveryController) event.getController();
+		if(!controller.isShippingAlternativeAddress()){
+			emptyShippingAlternativeAddress((Delivery)controller.getTo());
+		}
+		controller.setShippingAlternativeAddress(controller.isShippingAlternativeAddressDefined());
+	}
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
@@ -45,6 +57,11 @@ public class DeliveryControllerListener extends ControllerAdapter implements IWa
 			controller.loadProjects(((Delivery)controller.getTo()).getCustomer().getRegistry().getId());
 	        controller.setWarehouse(controller.obtainWarehouse((Delivery)controller.getTo()));
 			controller.loadDefaultPayMethod(((Delivery)controller.getTo()).getCustomer().getRegistry().getId(), true);
+			
+			if(((Delivery)controller.getTo()).getCarrier()==null){
+				((Delivery)controller.getTo()).setCarrier((Carrier) BeanManager.getManagerBean(Carrier.class).createNewTo());
+			}
+			controller.setShippingAlternativeAddress(controller.isShippingAlternativeAddressDefined());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
@@ -54,6 +71,15 @@ public class DeliveryControllerListener extends ControllerAdapter implements IWa
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		IController deliveryDetailController = FormUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
 		deliveryDetailController.onReset(null);
+	}
+	
+	private void emptyShippingAlternativeAddress(Delivery delivery) {
+		delivery.setShippingAlternativeAddress(null);
+		delivery.setShippingAlternativeAddress2(null);
+		delivery.setShippingAlternativeZip(null);
+		delivery.setShippingAlternativeCity(null);
+		delivery.setShippingAlternativePhone(null);
+		delivery.setShippingAlternativeRecipient(null);
 	}
 
 }

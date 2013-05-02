@@ -370,14 +370,19 @@
 					</aon:panel>
 				</aon:div>
 
-				<aon:div styleClass="aon-padding-top">
-					<aon:panel rendered="#{!sales.new}">
-						<f:facet name="header">
-							<aon:outputText value="#{salesBundle.sales_detail}" />
-						</f:facet>
-						<ui:include src="/com/code/aon/ui/sales/facelet/sales/formDetail.xhtml" />
-					</aon:panel>
-				</aon:div>
+				<c:if test="#{!sales.new}">
+					<aon:panelTabSet selectedTab="#{sales.selectedTab}">
+						<aon:panelTab id="salesDetail" 
+							label="#{salesBundle.sales_detail}">
+							<ui:include src="/com/code/aon/ui/sales/facelet/sales/formDetail.xhtml" />
+						</aon:panelTab>
+						<aon:panelTab id="salesShipment" 
+							label="#{carrierBundle.carrier_shipment}">
+							<ui:include src="/com/code/aon/ui/sales/facelet/sales/formShipment.xhtml" />
+						</aon:panelTab>
+					</aon:panelTabSet>
+				</c:if>
+				
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />

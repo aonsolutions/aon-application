@@ -79,10 +79,28 @@ public class SalesController extends BasicController implements ISalesConstants 
 	private int invoiceNumber;
 	private Date invoiceDate;
 	private SalesEmailUtil emailUtil;
+	private String selectedTab;
+	private boolean shippingAlternativeAddress;
 	
     public SalesController() {
     	this.emailUtil = new SalesEmailUtil();
     }
+
+	public boolean isShippingAlternativeAddress() {
+		return shippingAlternativeAddress;
+	}
+
+	public void setShippingAlternativeAddress(boolean shippingAlternativeAddress) {
+		this.shippingAlternativeAddress = shippingAlternativeAddress;
+	}
+
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
 
 	public List<SelectItem> getAddresses() {
 		return addresses;
@@ -549,6 +567,21 @@ public class SalesController extends BasicController implements ISalesConstants 
 			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
 			invoiceController.onLoad(event, invoice.getId(), SALES_FORM_NAME, SALES_CONTROLLER_NAME + ".refresh");
 		}
+	}
+	
+	public boolean isShippingAlternativeAddressDefined() {
+		Sales sales = (Sales) this.getTo();
+		if(sales!=null){
+			if( StringUtils.isNotBlank(sales.getShippingAlternativeAddress())
+				|| StringUtils.isNotBlank(sales.getShippingAlternativeAddress2())
+				|| StringUtils.isNotBlank(sales.getShippingAlternativeZip())
+				|| StringUtils.isNotBlank(sales.getShippingAlternativeCity())
+				|| StringUtils.isNotBlank(sales.getShippingAlternativePhone())
+				|| StringUtils.isNotBlank(sales.getShippingAlternativeRecipient()) ){
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

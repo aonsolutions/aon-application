@@ -81,10 +81,28 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 	private int invoiceNumber;
 	private Date invoiceDate;
 	private WarehouseEmailUtil emailUtil;
+	private String selectedTab;
+	private boolean shippingAlternativeAddress;
 	
     public DeliveryController() {
     	this.emailUtil = new WarehouseEmailUtil();
     }
+
+	public boolean isShippingAlternativeAddress() {
+		return shippingAlternativeAddress;
+	}
+
+	public void setShippingAlternativeAddress(boolean shippingAlternativeAddress) {
+		this.shippingAlternativeAddress = shippingAlternativeAddress;
+	}
+
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
 
 	public List<SelectItem> getAddresses() {
 		return addresses;
@@ -503,6 +521,21 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 			return appParam.getValue();
 		}
 		return DELIVERY_CONTROLLER_NAME;
+	}
+	
+	public boolean isShippingAlternativeAddressDefined() {
+		Delivery delivery = (Delivery) this.getTo();
+		if(delivery!=null){
+			if( StringUtils.isNotBlank(delivery.getShippingAlternativeAddress())
+				|| StringUtils.isNotBlank(delivery.getShippingAlternativeAddress2())
+				|| StringUtils.isNotBlank(delivery.getShippingAlternativeZip())
+				|| StringUtils.isNotBlank(delivery.getShippingAlternativeCity())
+				|| StringUtils.isNotBlank(delivery.getShippingAlternativePhone())
+				|| StringUtils.isNotBlank(delivery.getShippingAlternativeRecipient()) ){
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

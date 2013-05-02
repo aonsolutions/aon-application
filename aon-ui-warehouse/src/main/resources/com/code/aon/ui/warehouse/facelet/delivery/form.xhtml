@@ -347,15 +347,20 @@
 						</aon:panelGrid>
 					</aon:panel>
 				</aon:div>
-
-				<aon:div styleClass="aon-padding-top">
-					<aon:panel rendered="#{!delivery.new}">
-						<f:facet name="header">
-							<aon:outputText value="#{warehouseBundle.warehouse_delivery_detail}" />
-						</f:facet>
-						<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/formDetail.xhtml" />
-					</aon:panel>
-				</aon:div>
+				
+				<c:if test="#{!delivery.new}">
+					<aon:panelTabSet selectedTab="#{sales.selectedTab}">
+						<aon:panelTab id="deliveryDetail" 
+							label="#{warehouseBundle.warehouse_delivery_detail}">
+							<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/formDetail.xhtml" />
+						</aon:panelTab>
+						<aon:panelTab id="deliveryShipment" 
+							label="#{carrierBundle.carrier_shipment}">
+							<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/formShipment.xhtml" />
+						</aon:panelTab>
+					</aon:panelTabSet>
+				</c:if>
+				
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
