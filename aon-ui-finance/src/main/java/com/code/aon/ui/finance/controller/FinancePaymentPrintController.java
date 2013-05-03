@@ -2,10 +2,8 @@ package com.code.aon.ui.finance.controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
@@ -13,18 +11,10 @@ import javax.faces.model.DataModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.finance.Finance;
-import com.code.aon.finance.enumeration.FinanceStatus;
-import com.code.aon.finance.enumeration.FinanceTrackingType;
-import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
@@ -100,49 +90,7 @@ public class FinancePaymentPrintController implements ICollectionProvider, IFina
 	public void onExecuteReport(){
 		ReportManager report = (ReportManager) AonUtil.getRegisteredBean("report");
 		report.onExecute();
-		batchFinances();
 		clearCheckedFinances();
-	}
-	
-	private void batchFinances() {
-		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
-		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		String sessionName = HibernateUtil.getSessionFactoryName(FinancePaymentPrintController.class.getName());
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(Finance.class);
-
-			HibernateUtil.setBeginTransaction(false);
-			HibernateUtil.setCloseSession(false);
-			HibernateUtil.beginTransaction(sessionName);
-
-			for(Finance finance: getCheckedFinances()){
-				finance.setFinanceStatus(FinanceStatus.BATCHED);
-				bean.update(finance);
-				createFinanceTracking(finance);
-			}
-
-			HibernateUtil.getSession(sessionName).flush();
-			HibernateUtil.commitTransaction(sessionName);
-		} catch (Exception e) {
-			try {
-				HibernateUtil.rollbackTransaction(sessionName);
-			} catch (DAOException daoe) {
-				String msg =  "Unable to rollback transaction!";
-				throw new AbortProcessingException(msg);
-			}
-			String msg =  "Error batching finance. " + e.getMessage();
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		} finally {
-			HibernateUtil.closeSession(sessionName);
-			HibernateUtil.setCloseSession(mustCloseSession);
-			HibernateUtil.setBeginTransaction(mustBeginTransaction);
-		}
-	}
-	
-	private void createFinanceTracking(Finance finance){
-		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_PAYMENT_PRINT);
-		FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.BATCHED, message);
 	}
 	
 	public void onEditSearchPayment(ActionEvent event){
