@@ -21,10 +21,12 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Company;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RecordData;
@@ -38,6 +40,7 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.controller.ConfigurationController;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
@@ -682,11 +685,15 @@ public class CompanyParentController extends BasicController implements ICompany
 	}
 	
 	public String getSaleInvoiceTemplateValue(){
-		return saleInvoiceTemplate==null?SaleInvoiceTemplate.DEFAULT.getValue():saleInvoiceTemplate.getValue();
+		return (saleInvoiceTemplate==null?SaleInvoiceTemplate.DEFAULT.getValue():saleInvoiceTemplate.getValue()) + getSaleInvoiceTemplateSuffix();
 	}
 	
 	public String getInvoicePrintTemplateValue(){
-		return saleInvoiceTemplate==null?INVOICE_PRINT_REPORT_KEY:saleInvoiceTemplate.getValue().replaceFirst(SALE_INVOICE_REPORT_KEY, INVOICE_PRINT_REPORT_KEY);
+		return (saleInvoiceTemplate==null?INVOICE_PRINT_REPORT_KEY:saleInvoiceTemplate.getValue().replaceFirst(SALE_INVOICE_REPORT_KEY, INVOICE_PRINT_REPORT_KEY)) + getSaleInvoiceTemplateSuffix();
+	}
+
+	private String getSaleInvoiceTemplateSuffix(){
+		return (DomainSwitcher.getDomainType(DomainManager.getCurrentDomain()) == DomainType.HOTEL)?("Hotel"):("");
 	}
 	
 	public boolean isPrintLogo() {
