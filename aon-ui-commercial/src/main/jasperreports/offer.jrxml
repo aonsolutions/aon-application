@@ -160,7 +160,7 @@
 					<font size="14" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[(!$F{proforma} ? $R{offer_offer_title}.toUpperCase() : $R{offer_invoice}.toUpperCase())
-+ ($F{normal} ? "" : $F{type}.getName($P{REPORT_LOCALE}).toUpperCase())]]></textFieldExpression>
++ " " + ($F{normal} ? "" : $F{type}.getName($P{REPORT_LOCALE}).toUpperCase())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-73" x="397" y="38" width="48" height="13"/>
