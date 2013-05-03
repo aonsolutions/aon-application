@@ -188,6 +188,7 @@
 		<criteria provider="#{invoicePrint}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="printRecordData" value="#{company.isPrintRecordData}" />
@@ -202,6 +203,7 @@
 		<collection provider="#{selectedInvoice}" forceRefresh="true" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="printRecordData" value="#{company.isPrintRecordData}" />
