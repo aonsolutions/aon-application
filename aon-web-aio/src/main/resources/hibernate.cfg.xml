@@ -99,6 +99,9 @@
 		<mapping class="com.esferalia.aon.calendar.CalendarPeriod"/>
 		<mapping class="com.esferalia.aon.calendar.Holiday"/>	
 		<mapping class="com.esferalia.aon.calendar.HolidayDetail"/>			
+		
+		<!-- AON-CARRIER Mapping files -->	
+		<mapping class="com.esferalia.aon.carrier.Carrier"/>
 
 		<!-- AON-COMMERCIAL Mapping files -->	
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
