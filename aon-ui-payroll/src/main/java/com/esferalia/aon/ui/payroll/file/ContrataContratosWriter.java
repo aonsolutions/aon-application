@@ -2,7 +2,6 @@ package com.esferalia.aon.ui.payroll.file;
 
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,7 +11,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.Enterprise;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.person.Person;
 import com.code.aon.person.enumeration.Gender;
@@ -20,17 +19,72 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.sepe.api.contrata.contratos.*;
+import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.contrata.enumeration.TCHRGCOT;
-import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
+import com.esferalia.aon.sepe.api.contrata.contratos.CIFNIFTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO100TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO130TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO150TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO200TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO230TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO250TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO300TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO330TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO350TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO401TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO402TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO403TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO410TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO420TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO421TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO430TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO441TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO450TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO452TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO501TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO502TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO503TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO510TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO520TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO530TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO540TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO541TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO550TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO552TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO970TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO980TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO990TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSANEXOCONTRATORELEVOTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSBONIFICACIONTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCOMUNICACOPIABASICATYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOEXTRANJEROTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOINSERCIONTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOINTERINIDADTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOINVESTIGACIONTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOPRACTICASTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCONTRATOTIEMPOPARCIALTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSCOPIABASICATYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSEMPRESAINSERCIONTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSEMPRESATYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSETCOTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSETTTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSEXCLUSIONSOCIALTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSGENERALESCONTRATOTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSMEDIDASFOMENTOTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSPROGEMPLEOPUBLICOTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSREDUCCIONFORMACIONTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSREDUCCIONRDL12011TYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSTRABAJADORTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSUSOLIBREEMPRESATYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.NOMBREAPELLIDOSTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.ObjectFactory;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class ContrataContratosWriter {
@@ -257,6 +311,8 @@ public class ContrataContratosWriter {
 		c.setDATOSCONTRATOTIEMPOPARCIAL(createDatosContratoTiempoParcial(contrataParams));
 		c.setDATOSETCOTE(createDatosEtCote(contrataParams));
 		c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(contrataParams));
+		c.setDATOSETT(createDatosEtt(contrataParams));
+		c.setDATOSREDUCCIONFORMACION(createDatosReduccionFormacion(contrataParams));
 		return c;
 	}
 	private CONTRATO430TYPE createContract430(IContratoType contratoType, ContrataParams contrataParams) throws ManagerBeanException{
@@ -1840,6 +1896,51 @@ public class ContrataContratosWriter {
 		datos.setMODALIDADEXCLUSION("000");
 		return datos;
 	}
+	
+	/**
+	 * <xsd:complexType name="DATOS_REDUCCION_FORMACIONTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos de reducción de cuotas para los contratos de formación. Opcional para los contratos de formación iniciados a partir del 31/08/2011.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="CODIGO_COLECTIVO_REDUCCION_FORMACION">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Colectivo de reducción. 
+					Sus posibles valores se encuentran codificados en la tabla TQOCOLRE.txt de la Ayuda XML - Ultima versión - Tablas de códigos. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="PORCENTAJE_REDUCCION_FORMACION">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Porcentaje de reducción de la cuota. 
+					Solo admite 2 valores : 75% para empresas con más de 250 trabajadores y 100% para empresas con menos de 250 trabajadores. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="2"/>
+						<xsd:maxLength value="3"/>
+						<xsd:pattern value="([0-9])+"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	 * @param contrataParams
+	 * @return
+	 */
+	private DATOSREDUCCIONFORMACIONTYPE createDatosReduccionFormacion(ContrataParams contrataParams) {
+		DATOSREDUCCIONFORMACIONTYPE datos = new DATOSREDUCCIONFORMACIONTYPE();
+		if(contrataParams.isReductionData()){
+			datos.setCODIGOCOLECTIVOREDUCCIONFORMACION(contrataParams.getCodigoColectivoReduccion()!=null?contrataParams.getCodigoColectivoReduccion().getCode():null);
+			datos.setPORCENTAJEREDUCCIONFORMACION(contrataParams.getPorcentajeReduccion());
+			return datos;
+		}
+		return null;
+	}
 
 	
 	/* ***************************************
@@ -1915,7 +2016,9 @@ public class ContrataContratosWriter {
 	}
 	
 	private Integer getMonthsBetweenDates(Date startDate, Date endDate) {
-//		CommonUtil.
+		if(startDate!=null && endDate!=null){
+			return (int) ((CommonUtil.getDaysBetweenDates(startDate, endDate, true))/30);
+		}
 		return null;
 	}
 	

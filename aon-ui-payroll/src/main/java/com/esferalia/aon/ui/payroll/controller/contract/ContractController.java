@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +29,11 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.RegistryDirStaff;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -437,6 +443,48 @@ public class ContractController extends BasicController implements IVariablesHan
 			}
 		}
 		return list;
+	}
+	
+	public TrainingCenter getTrainingCenter(){
+		return getParams().getTrainingCourse().getTrainingCenter();
+	}
+	
+	public RegistryDirStaff getTrainingCenterDirStaff() throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
+		Criteria criteria = new Criteria();
+		String alias = bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID);
+		criteria.addEqualExpression(alias, getTrainingCenter().getId());
+		alias = bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE);
+		Expression exp1 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias, new Date());
+		Expression exp2 = ExpressionUtilities.getNullExpression(alias);
+		criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+		Iterator<ITransferObject> iter = bean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return (RegistryDirStaff)iter.next();
+		}
+		return null;
+	}
+	
+	public InputStream getTrainingCenterLogo() throws IOException, ManagerBeanException{
+		RegistryAttachment attach = obtainTrainingCenterLogo();
+		if(attach != null){
+			return new ByteArrayInputStream(attach.getData());
+		}
+		return null;
+	}
+	
+	public RegistryAttachment obtainTrainingCenterLogo() throws ManagerBeanException {
+		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
+		Criteria criteria = new Criteria();
+		String alias = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
+		criteria.addEqualExpression(alias, getTrainingCenter().getId());
+		String type = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
+		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
+		Iterator<ITransferObject> iter = registryAttachBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return (RegistryAttachment)iter.next();
+		}
+		return null;
 	}
 	
 	private String selectedTab;

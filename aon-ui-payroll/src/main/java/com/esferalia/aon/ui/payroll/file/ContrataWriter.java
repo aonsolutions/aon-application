@@ -17,6 +17,7 @@ import org.xml.sax.SAXException;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.contrata.ContractContrataFactory;
+import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATOS;
 import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACIONES;
 import com.esferalia.aon.payroll.Contract;

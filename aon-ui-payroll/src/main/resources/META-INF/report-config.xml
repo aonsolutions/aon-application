@@ -171,9 +171,9 @@
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="signatureImageFile" value="#{company.getSignatureAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="centerLogoImageFile" value="#{trainingCenter.getLogoAsInputStream}" />
-			<param id="trainingCenter" value="#{trainingCenter.getTo}" />
-			<param id="trainingCenterDirStaff" value="#{trainingCenter.obtainDirStaff}" />
+			<param id="centerLogoImageFile" value="#{contract.getTrainingCenterLogo}" />
+			<param id="trainingCenter" value="#{contract.getTrainingCenter}" />
+			<param id="trainingCenterDirStaff" value="#{contract.getTrainingCenterDirStaff}" />
 			<param id="parentDomainName" value="#{parentDomain.getName}" />
 			<param id="parentDomainPhone" value="#{parentDomain.getPhone}" />
 		</params>

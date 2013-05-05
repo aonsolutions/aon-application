@@ -3,10 +3,10 @@ package com.esferalia.aon.ui.payroll.controller.contract;
 import java.util.Calendar;
 
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.contrata.enumeration.TBONVFOR;
 import com.esferalia.aon.payroll.contrata.enumeration.TEQPTIEM;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.esferalia.aon.ui.payroll.file.ContrataParams;
 
 
 public class ContractContrataHandler {

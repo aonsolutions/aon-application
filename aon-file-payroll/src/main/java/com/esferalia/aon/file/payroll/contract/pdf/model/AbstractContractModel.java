@@ -26,6 +26,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
+import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -104,6 +105,7 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 	final String EMPLOYEE_NIF = "dnitra";
 	final String EMPLOYEE_BIRTH_DATE = "fechanac";
 	final String EMPLOYEE_NSS = "numafinss";
+	final String EMPLOYEE_FORMATION_LEVEL = "litnivaca";
 	final String EMPLOYEE_FORMATION_CODE1 = "codnivaca1";
 	final String EMPLOYEE_FORMATION_CODE2 = "codnivaca2";
 	final String EMPLOYEE_COUNTRY = "Texto5nacion1";
@@ -228,7 +230,7 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		return null;
 	}
 
-	public abstract void loadPdfFields(ContractCode code, Contract contract) throws UnsupportedContractDocumentException;
+	public abstract void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException;
 
 	public void loadPdfFields(ContractAttachment contractPdfDraft) {
 		try {
@@ -326,7 +328,7 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		}
 	}
 	
-	public void loadPdfCommonFields(Contract contract) throws ManagerBeanException{
+	public void loadPdfCommonFields(Contract contract, ContrataParams contrataParams) throws ManagerBeanException{
 		/* 
 		 * Contract enterprise fields
 		 */
@@ -430,8 +432,11 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 			setPdfFieldValue(EMPLOYEE_BIRTH_DATE,formatter.format(contract.getPerson().getBirthDate()));
 		}
 		setPdfFieldValue(EMPLOYEE_NSS,contract.getPerson().getSocialSecurityNumber());
-		setPdfFieldValue(EMPLOYEE_FORMATION_CODE1,null);
-		setPdfFieldValue(EMPLOYEE_FORMATION_CODE2,null);
+		if(contrataParams!=null){
+			setPdfFieldValue(EMPLOYEE_FORMATION_LEVEL,contrataParams.getNivelFormativo().getDescription());
+			setPdfFieldValue(EMPLOYEE_FORMATION_CODE1,contrataParams.getNivelFormativo().getCode().substring(0, 1));
+			setPdfFieldValue(EMPLOYEE_FORMATION_CODE2,contrataParams.getNivelFormativo().getCode().substring(1, 2));
+		}
 		try {
 			setPdfFieldValue(EMPLOYEE_COUNTRY,String.valueOf(contract.getPerson().getRegistry().getNationality().getName(getLocale())));
 			setPdfFieldValue(EMPLOYEE_COUNTRY_CODE1,String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(0,1));

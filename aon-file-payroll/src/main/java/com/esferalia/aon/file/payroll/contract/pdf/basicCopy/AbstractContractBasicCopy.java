@@ -24,6 +24,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
+import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -184,7 +185,7 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument 
 		return null;
 	}
 
-	public abstract void loadPdfFields(ContractCode code, Contract contract) throws UnsupportedContractDocumentException;
+	public abstract void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException;
 
 	public void loadPdfFields(ContractAttachment contractPdfDraft) {
 		try {

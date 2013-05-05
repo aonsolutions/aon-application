@@ -17,12 +17,15 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.Classpath;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryDirStaff;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
+import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -145,7 +148,7 @@ public abstract class AbstractAnnexModel implements IContractPdfDocument {
 		return null;
 	}
 
-	public abstract void loadPdfFields(ContractCode code, Contract contract) throws UnsupportedContractDocumentException;
+	public abstract void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException;
 
 	public void loadPdfFields(ContractAttachment contractPdfDraft) {
 		try {
@@ -243,7 +246,9 @@ public abstract class AbstractAnnexModel implements IContractPdfDocument {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), registry.getId());
-		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE), new Date());
+		Expression exp1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE), new Date());
+		Expression exp2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE));
+		criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
 		List<ITransferObject> list = bean.getList(criteria);
 		if(!list.isEmpty()){
 			return (RegistryDirStaff) list.get(0);

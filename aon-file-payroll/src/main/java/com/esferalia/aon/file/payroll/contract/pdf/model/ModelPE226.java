@@ -1,7 +1,10 @@
 package com.esferalia.aon.file.payroll.contract.pdf.model;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -10,12 +13,15 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
+import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.TrainingCourse;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.lowagie.text.pdf.PdfReader;
@@ -43,7 +49,8 @@ public class ModelPE226 extends AbstractContractModel {
 	final static String PE226_CNO2 = "cno2";
 	final static String PE226_CNO3 = "cno3";
 	final static String PE226_CNO4 = "cno4";
-
+	final static String PE226_WORKPLACE_ADDRESS = "calletrab";
+	
 	/*
 	 * Contract page 2
 	 */
@@ -86,7 +93,7 @@ public class ModelPE226 extends AbstractContractModel {
 	}
 	
 	@Override
-	public void loadPdfFields(ContractCode code, Contract contract) throws UnsupportedContractDocumentException{
+	public void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		// TODO
 		try {
 			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
@@ -105,7 +112,7 @@ public class ModelPE226 extends AbstractContractModel {
 				throw new UnsupportedContractDocumentException("El modelo de contrato seleccionado es incorrecto");
 			}
 			
-			super.loadPdfCommonFields(contract);
+			super.loadPdfCommonFields(contract, contrataParams);
 			
 			/*
 			 * FIXME: FIELDS OVERRIDES
@@ -155,17 +162,65 @@ public class ModelPE226 extends AbstractContractModel {
 			getPdfFieldsMap().get(PE226_EMPLOYEE_OPT1).setValue("");
 			getPdfFieldsMap().get(PE226_EMPLOYEE_OPT2).setValue("");
 			getPdfFieldsMap().get(PE226_EMPLOYEE_OPT3).setValue("");
-			getPdfFieldsMap().get(PE226_EMPLOYEE_PROFFESION).setValue("");
-			getPdfFieldsMap().get(PE226_EMPLOYEE_CATEGORY).setValue(contract.getCategoryDescription());
 			
 			Map<String, String>  map = getContractDataMap(contract);
-			String cno = map.get(ContextVariable.CNO.getName());
+			TrainingCourse trainingCourse = obtainTrainingCourse(map.get(ContextVariable.TRAINING_COURSE.getName()));
+			
+			getPdfFieldsMap().get(PE226_EMPLOYEE_PROFFESION).setValue(trainingCourse.getOccupationName());
+			getPdfFieldsMap().get(PE226_EMPLOYEE_CATEGORY).setValue(trainingCourse.getOccupationName());
+			
+//			String cno = map.get(ContextVariable.CNO.getName());
+			String cno = trainingCourse.getCNO().getCode();
 			if( !StringUtils.isEmpty(cno) ){
 				getPdfFieldsMap().get(PE226_CNO1).setValue(cno.substring(0, 1));
 				getPdfFieldsMap().get(PE226_CNO2).setValue(cno.substring(1, 2));
 				getPdfFieldsMap().get(PE226_CNO3).setValue(cno.substring(2, 3));
 				getPdfFieldsMap().get(PE226_CNO4).setValue(cno.substring(3, 4));
 			}
+			
+			getPdfFieldsMap().get(PE226_WORKPLACE_ADDRESS).setValue(contract.getWorkPlace().getAddress().getFullAddress()+", "+contract.getWorkPlace().getAddress().getGeozone().getName());
+			
+			/*
+			 * PAGE 2
+			 */
+			if(contrataParams!=null){
+				SimpleDateFormat dateFormatter = new SimpleDateFormat();
+//				getPdfFieldsMap().get(PE226_YEAR_1_JOURNAL).setValue();
+//				getPdfFieldsMap().get(PE226_YEAR_2_3_JOURNAL).setValue(); 
+				getPdfFieldsMap().get(PE226_TOTAL_HOURS).setValue(contrataParams.getHorasFormacion());
+				if(contrataParams.getMinutosFormacion()!=null && !contrataParams.getMinutosFormacion().equals("00")){
+					getPdfFieldsMap().get(PE226_TOTAL_HOURS).setValue(getPdfFieldsMap().get(PE226_TOTAL_HOURS).getValue()+":"+contrataParams.getMinutosFormacion());
+				}
+//				getPdfFieldsMap().get(PE226_JOURNAL_PERCENT).setValue();
+//				getPdfFieldsMap().get(PE226_COLLECTIVE_AGREEMENT).setValue();
+//				getPdfFieldsMap().get(PE226_JOURNAL_HORUS).setValue();
+				getPdfFieldsMap().get(PE226_CONTRACT_DURATION).setValue(getMonthsBetweenDates(contract.getStartDate(), contract.getEndDate())+" meses");
+				dateFormatter.applyPattern("dd/MM/yyyy");
+				getPdfFieldsMap().get(PE226_START_DATE).setValue(dateFormatter.format(contract.getStartDate()));
+				getPdfFieldsMap().get(PE226_END_DATE).setValue(dateFormatter.format(contract.getEndDate()));
+				getPdfFieldsMap().get(PE226_TEST_PERIOD).setValue("Según convenio");
+				getPdfFieldsMap().get(PE226_SALARY).setValue("Según convenio");
+				getPdfFieldsMap().get(PE226_SALARY_PERIOD).setValue("mensuales");
+				getPdfFieldsMap().get(PE226_VACATIONS).setValue("Según convenio");
+				
+				if( contrataParams.getPorcentajeReduccion().equals("75") ){
+					getPdfFieldsMap().get(PE226_REDUCCTION_75).setValue("true");
+				} else if( contrataParams.getPorcentajeReduccion().equals("100") ){
+					getPdfFieldsMap().get(PE226_REDUCTION_100).setValue("true");
+				}
+				
+//			getPdfFieldsMap().get(PE226_COLLECTIVE_AGREEMENT2).setValue();
+//			getPdfFieldsMap().get(PE226_MORE_CLAUSE).setValue();
+				
+				getPdfFieldsMap().get(PE226_SIGN_TOWN).setValue(contract.getWorkPlace().getAddress().getCity());
+				dateFormatter.applyPattern("dd");
+				getPdfFieldsMap().get(PE226_SING_DAY).setValue(dateFormatter.format(contract.getStartDate()));
+				dateFormatter.applyPattern("MMMM");
+				getPdfFieldsMap().get(PE226_SIGN_MONTH).setValue(dateFormatter.format(contract.getStartDate()));
+				dateFormatter.applyPattern("yy");
+				getPdfFieldsMap().get(PE226_SIGN_YEAR).setValue(dateFormatter.format(contract.getStartDate()));
+			}
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -186,7 +241,12 @@ public class ModelPE226 extends AbstractContractModel {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), contract.getStartDate());
+			if(contract.getEndDate()!=null){
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), contract.getEndDate());
+			} else {
+				criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
+			}
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
 				map.put(data.getName(), data.getExpression().replace('"', ' ').trim());
@@ -198,6 +258,27 @@ public class ModelPE226 extends AbstractContractModel {
 		return map;
 	}
 	
+	private Integer getMonthsBetweenDates(Date startDate, Date endDate) {
+		if(startDate!=null && endDate!=null){
+			return (int) ((CommonUtil.getDaysBetweenDates(startDate, endDate, true))/30);
+		}
+		return null;
+	}
+	
+	private TrainingCourse obtainTrainingCourse(String value) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(TrainingCourse.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_COURSE_ID), Integer.parseInt(value) );
+			Iterator<ITransferObject> it = bean.getList(criteria).iterator();
+			while( it.hasNext() ){
+				return (TrainingCourse) it.next();
+			}
+		} catch (ManagerBeanException e) {
+			// do nothing ...
+		}
+		return null;
+	}
 }
 	
 	

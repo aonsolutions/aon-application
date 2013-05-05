@@ -29,6 +29,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
 import com.esferalia.aon.file.payroll.contract.pdf.basicCopy.BasicCopy;
+import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -66,6 +67,7 @@ public class ContractPdfController {
 	private ContractAttachment contractPdfDraft;	
 	private String backAction;
 	private ContractAttachmentType documentType;
+	private ContrataParams contrataParams;
 	
 	public Integer getDocumentPage() {
 		return documentPage;
@@ -181,7 +183,12 @@ public class ContractPdfController {
 	public ContractAttachmentType getAnnexIIPdfType(){
 		return ContractAttachmentType.TRAINING_ANNEX_II;
 	}
-	
+	public ContrataParams getContrataParams() {
+		return contrataParams;
+	}
+	public void setContrataParams(ContrataParams contrataParams) {
+		this.contrataParams = contrataParams;
+	}
 	private void initialize() {
 		setContract((Contract) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER).getTo());
 		setContractPdfDraft( obtainContractPdfDraft() );
@@ -287,25 +294,32 @@ public class ContractPdfController {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+		ContractContrataController contrata = (ContractContrataController) AonUtil.getRegisteredBean("contractContrata");
+		contrata.onContrataDataShow(null);
+		if(contrata.getContrataAttach()!=null && contrata.getContrataAttach().getId()!=null){
+			setContrataParams(contrata.getHandler().getParams());
+		} else {
+			setContrataParams(null);
+		}
 		loadPdfDocument();
 	}
 	
 	private void loadPdfDocument() throws UnsupportedContractDocumentException, IOException{
 		if(getDocumentType()==ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT){
 			if(getContractPdfDraft()==null || getContractPdfDraft().getId()==null){
-				getContractPdfWriter().loadNewPdf(getContractModel(), getContract());
+				getContractPdfWriter().loadNewPdf(getContractModel(), getContract(), getContrataParams());
 			} else {
 				getContractPdfWriter().loadExistingPdf(getContractPdfDraft(), getContract());
 			}
 		} else if(getDocumentType()==ContractAttachmentType.BASIC_COPY_DRAFT){
 			if(getContractPdfDraft()==null || getContractPdfDraft().getId()==null){
-				getContractPdfWriter().loadNewPdf(BasicCopy.BASIC_COPY_NAME, getContract());
+				getContractPdfWriter().loadNewPdf(BasicCopy.BASIC_COPY_NAME, getContract(), getContrataParams());
 			} else {
 				getContractPdfWriter().loadExistingPdf(BasicCopy.BASIC_COPY_NAME, getContractPdfDraft());
 			}
 		} else if(getDocumentType()==ContractAttachmentType.TRAINING_ANNEX_II){
 			if(getContractPdfDraft()==null || getContractPdfDraft().getId()==null){
-				getContractPdfWriter().loadNewPdf(ModelPE230.MODEL_NAME, getContract());
+				getContractPdfWriter().loadNewPdf(ModelPE230.MODEL_NAME, getContract(), getContrataParams());
 			} else {
 				getContractPdfWriter().loadExistingPdf(ModelPE230.MODEL_NAME, getContractPdfDraft());
 			}

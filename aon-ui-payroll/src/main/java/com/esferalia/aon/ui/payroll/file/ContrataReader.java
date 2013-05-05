@@ -22,6 +22,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.person.Person;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
@@ -38,6 +39,7 @@ import com.esferalia.aon.payroll.contrata.enumeration.TEXTINVE;
 import com.esferalia.aon.payroll.contrata.enumeration.TEYTRELE;
 import com.esferalia.aon.payroll.contrata.enumeration.THPCOLFO;
 import com.esferalia.aon.payroll.contrata.enumeration.THYDISLE;
+import com.esferalia.aon.payroll.contrata.enumeration.TQOCOLRE;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
 import com.esferalia.aon.sepe.api.contract.model.IProrrogaType;
 import com.esferalia.aon.sepe.api.contract.model.ITransformacionType;
@@ -91,6 +93,7 @@ import com.esferalia.aon.sepe.api.contrata.contratos.DATOSEXCLUSIONSOCIALTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSGENERALESCONTRATOTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSMEDIDASFOMENTOTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSPROGEMPLEOPUBLICOTYPE;
+import com.esferalia.aon.sepe.api.contrata.contratos.DATOSREDUCCIONFORMACIONTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSREDUCCIONRDL12011TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSTRABAJADORTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSUSOLIBREEMPRESATYPE;
@@ -502,6 +505,7 @@ public class ContrataReader {
 		completeDatosEtCote(o.getDATOSETCOTE());
 		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
 		completeDatosEtt(o.getDATOSETT()); 
+		completeDatosReduccionFormacion(o.getDATOSREDUCCIONFORMACION()); 
 		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
 		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
 	}
@@ -777,6 +781,13 @@ public class ContrataReader {
 			params.setEttName(datos.getRAZONSOCIALEMPRESAUSUARIA());
 			params.setEttContractTemplate(!StringUtils.isBlank(datos.getINDCTOPLANTILLA()) && datos.getINDCTOPLANTILLA().equals("S"));
 			params.setEttForeignEnterprise(!StringUtils.isBlank(datos.getINDEMPRESAEXTRANJERA()) && datos.getINDEMPRESAEXTRANJERA().equals("S"));
+		}
+	}
+	private void completeDatosReduccionFormacion(DATOSREDUCCIONFORMACIONTYPE datos) {
+		if(datos != null){
+			params.setReductionData(true);
+			params.setCodigoColectivoReduccion(TQOCOLRE.getEnumByValue(datos.getCODIGOCOLECTIVOREDUCCIONFORMACION()));
+			params.setPorcentajeReduccion(datos.getPORCENTAJEREDUCCIONFORMACION());
 		}
 	}
 	private void completeDatosContratoExtranjero(DATOSCONTRATOEXTRANJEROTYPE datos) {

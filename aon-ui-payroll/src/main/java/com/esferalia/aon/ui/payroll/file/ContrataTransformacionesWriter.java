@@ -17,6 +17,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.sepe.api.contrata.transformaciones.*;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseCCC;

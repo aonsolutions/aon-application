@@ -19,6 +19,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryDirStaff;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
+import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.TrainingCourse;
@@ -153,7 +154,7 @@ public class ModelPE230 extends AbstractAnnexModel {
 	}
 	
 	@Override
-	public void loadPdfFields(ContractCode code, Contract contract) throws UnsupportedContractDocumentException{
+	public void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		try {
 			Map<String, String>  map = getContractDataMap(contract);
 			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
@@ -372,7 +373,9 @@ public class ModelPE230 extends AbstractAnnexModel {
 				getPdfFieldsMap().get(PE230_TRAINING_COURSE_END_DATE).setValue(formatter.format(trainingCourseData.getEndDate()));
 			}
 			getPdfFieldsMap().get(PE230_TRAINING_COURSE_SCHEDULE).setValue("");
-			getPdfFieldsMap().get(PE230_TRAINING_COURSE_FIRST_YEAR_MAIN_HOURS).setValue("");
+			if(contrataParams!=null){
+				getPdfFieldsMap().get(PE230_TRAINING_COURSE_FIRST_YEAR_MAIN_HOURS).setValue(contrataParams.getHorasFormacion());
+			}
 			getPdfFieldsMap().get(PE230_TRAINING_COURSE_FIRST_YEAR_COMPLEMENTARY_HOURS).setValue("");
 			getPdfFieldsMap().get(PE230_TRAINING_COURSE_NEXT_YEAR_MAIN_HOURS).setValue("");
 			getPdfFieldsMap().get(PE230_TRAINING_COURSE_NEXT_YEAR_COMPLEMENTARY_HOURS).setValue("");

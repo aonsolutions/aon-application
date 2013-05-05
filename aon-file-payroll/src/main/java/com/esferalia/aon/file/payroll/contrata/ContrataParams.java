@@ -1,4 +1,4 @@
-package com.esferalia.aon.ui.payroll.file;
+package com.esferalia.aon.file.payroll.contrata;
 
 import java.util.Date;
 

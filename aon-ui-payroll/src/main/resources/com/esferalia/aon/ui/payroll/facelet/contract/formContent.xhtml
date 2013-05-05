@@ -196,7 +196,7 @@
 						styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" 
 						value="#{bundle.aon_start_date}" />
 					<aon:selectInputDate id="trainingStartDate" 
-						value="#{contract.params.trainingStartDate}"  
+						value="#{contract.params.trainingStartDate}" required="#{contract.params.trainingCourse.id!=null}"
 						inputSize="10" renderAsPopup="true" enableManualInput="true"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}" />
@@ -204,7 +204,7 @@
 						styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" 
 						value="#{bundle.aon_end_date}" />
 					<aon:selectInputDate id="trainingEndDate"
-						value="#{contract.params.trainingEndDate}"  
+						value="#{contract.params.trainingEndDate}" required="#{contract.params.trainingCourse.id!=null}"  
 						inputSize="10" renderAsPopup="true" enableManualInput="true"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}" />

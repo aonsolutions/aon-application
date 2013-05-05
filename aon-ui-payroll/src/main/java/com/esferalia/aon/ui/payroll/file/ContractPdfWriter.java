@@ -12,6 +12,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfFactory;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
+import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -73,10 +74,10 @@ public class ContractPdfWriter {
 		return pdfDocument.buildPdf();
 	}
 	
-	public void loadNewPdf(ContractModel model, Contract contract) throws IOException, UnsupportedContractDocumentException {
-		loadNewPdf(model.toString(), contract);
+	public void loadNewPdf(ContractModel model, Contract contract, ContrataParams contrataParams) throws IOException, UnsupportedContractDocumentException {
+		loadNewPdf(model.toString(), contract, contrataParams);
 	}
-	public void loadNewPdf(String document, Contract contract) throws IOException, UnsupportedContractDocumentException {
+	public void loadNewPdf(String document, Contract contract, ContrataParams contrataParams) throws IOException, UnsupportedContractDocumentException {
 		ContractPdfFactory factory = new ContractPdfFactory();
 		pdfDocument = factory.createContractDocument(document);
 		PayrollUtils utils = new PayrollUtils();
@@ -84,7 +85,7 @@ public class ContractPdfWriter {
 		pdfDocument.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		// TODO: load pdf document with contrata data
 //		pdfDocument.setContrataData(obtainContrataData());
-		pdfDocument.loadPdfFields(ContractCode.getContractCodeByValue(tc2), contract);
+		pdfDocument.loadPdfFields(ContractCode.getContractCodeByValue(tc2), contract, contrataParams);
 	}
 
 	public void loadExistingPdf(ContractAttachment contractPdfDraft, Contract contract) {

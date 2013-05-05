@@ -3,6 +3,7 @@ package com.esferalia.aon.file.payroll.contract.pdf;
 import java.util.Collection;
 import java.util.Locale;
 
+import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -12,7 +13,7 @@ public interface IContractPdfDocument {
 	
 	public byte[] buildPdf();
 
-	public void loadPdfFields(ContractCode code, Contract contract) throws UnsupportedContractDocumentException;
+	public void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException;
 	
 	public void loadPdfFields(ContractAttachment contractPdfDraft);
 	

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
+import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.lowagie.text.pdf.PdfReader;
@@ -19,7 +20,7 @@ public class BasicCopy extends AbstractContractBasicCopy {
 	}
 	
 	@Override
-	public void loadPdfFields(ContractCode code, Contract contract) throws UnsupportedContractDocumentException{
+	public void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		// TODO
 		
 		try {

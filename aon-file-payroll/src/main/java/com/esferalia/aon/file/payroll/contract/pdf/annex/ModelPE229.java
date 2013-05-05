@@ -11,6 +11,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
+import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -29,7 +30,7 @@ public class ModelPE229 extends AbstractAnnexModel {
 	}
 	
 	@Override
-	public void loadPdfFields(ContractCode code, Contract contract) throws UnsupportedContractDocumentException{
+	public void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		// TODO
 		try {
 			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
