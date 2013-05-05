@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>7.16</version>
+		<version>7.17-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>aon.web.parent</artifactId>
@@ -15,9 +15,9 @@
 	</properties>
 
 	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.16.x/aon.web.parent</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.16.x/aon.web.parent</connection>
-		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.16.x/aon.web.parent</url>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon.web.parent</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon.web.parent</connection>
+		<url>http://dev.esferalia.com/websvn/wsvn/aon.web.parent</url>
 	</scm>
 	<build>
 		<plugins>
