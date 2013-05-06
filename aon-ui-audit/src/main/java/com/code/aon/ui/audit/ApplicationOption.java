@@ -1,5 +1,6 @@
 package com.code.aon.ui.audit;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,8 +16,10 @@ import com.code.aon.ui.util.AonUtil;
 /**
  * The Class ApplicationOption.
  */
-public class ApplicationOption {
-	
+public class ApplicationOption implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	public static final String ID_PATTERN = "(id)";
 	
 	public static final String VALUE_PATTERN = "(value)";

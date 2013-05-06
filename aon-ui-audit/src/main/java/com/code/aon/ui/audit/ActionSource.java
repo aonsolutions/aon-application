@@ -1,5 +1,7 @@
 package com.code.aon.ui.audit;
 
+import java.io.Serializable;
+
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
@@ -8,7 +10,9 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.ui.util.AonUtil;
 
-public class ActionSource {
+public class ActionSource implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private String method;
 	

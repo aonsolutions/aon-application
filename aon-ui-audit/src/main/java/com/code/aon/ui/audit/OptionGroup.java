@@ -1,5 +1,6 @@
 package com.code.aon.ui.audit;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,9 @@ import com.code.aon.ui.util.AonUtil;
 /**
  * The Class OptionGroup.
  */
-public class OptionGroup {
+public class OptionGroup implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 	
 	/** The id. */
 	private String id;
