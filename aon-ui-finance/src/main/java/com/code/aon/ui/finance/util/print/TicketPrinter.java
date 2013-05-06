@@ -4,7 +4,10 @@ import static com.code.aon.ui.common.ICommonConstants.DECIMAL_2_PATTERN;
 import static com.code.aon.ui.common.ICommonConstants.PERCENT_PATTERN;
 import static com.code.aon.ui.common.ICommonConstants.QUANTITY_PATTERN;
 import static com.code.aon.ui.common.ICommonConstants.TIMESTAMP_2_PATTERN;
+import static com.code.aon.ui.finance.controller.IFinanceConstants.BUNDLE_NAME;
+import static com.code.aon.ui.finance.controller.IFinanceConstants.POS_GIFT_RECEIPT;
 import static com.code.aon.ui.finance.controller.IFinanceConstants.POS_INVOICE_PARAMS_CONTROLLER_NAME;
+import static com.code.aon.ui.finance.controller.IFinanceConstants.POS_RECEIPT;
 import static com.code.aon.ui.finance.controller.IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME;
 
 import java.text.DecimalFormat;
@@ -43,6 +46,10 @@ import com.code.aon.ui.util.AonUtil;
 
 public class TicketPrinter {
 	
+	private static final String PRODUCTO_LABEL = "PRODUCTO";
+
+	private static final String IMPORTE_LABEL = "IMPORTE";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(TicketPrinter.class.getName());
 	
 	private static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(AonUtil.getMessage(TIMESTAMP_2_PATTERN));
@@ -273,34 +280,44 @@ public class TicketPrinter {
 		}
 	}
 	
-	private String getDetailHeader() {
+	private String getDetailHeader( boolean gift ) {
 		StringBuffer sb = new StringBuffer();
 		append( sb, getBold(true) );
 		append( sb, getUnderline2() );
-		sb.append( StringUtils.rightPad("PRODUCTO", getLeftColumnWidth()) );
-		append( sb, getUnderlineOff() );
-		sb.append( "  " );
-		append( sb, getUnderline2() );
-		sb.append( StringUtils.leftPad("IMPORTE", MAX_PRICE_SIZE) );
+		if ( gift ) {
+			sb.append( StringUtils.rightPad(PRODUCTO_LABEL, this.width) );
+		} else {
+			sb.append( StringUtils.rightPad(PRODUCTO_LABEL, getLeftColumnWidth()) );
+			append( sb, getUnderlineOff() );
+			sb.append( "  " );
+			append( sb, getUnderline2() );
+			sb.append( StringUtils.leftPad(IMPORTE_LABEL, MAX_PRICE_SIZE) );			
+		}
 		append( sb, getBold(false) );
 		append( sb, getUnderlineOff() );
 		sb.append( LINE_FEED );
 		return sb.toString();
 	}
 
-	private String getDetailLines( Invoice invoice ) {
+	private String getDetailLines( Invoice invoice, boolean gift ) {
 		StringBuffer sb = new StringBuffer();
 		for( InvoiceDetail id : invoice.getLines() ) {
 			if ( id.getQuantity() > 1 ) {
 				sb.append( QUANTITY_FORMAT.format(id.getQuantity()) );
-				sb.append( " x " );
-				sb.append( PRICE_FORMAT.format(id.getSalesPrice()) );
+				if (! gift ) {
+					sb.append( " x " );
+					sb.append( PRICE_FORMAT.format(id.getSalesPrice()) );					
+				}
 				sb.append( LINE_FEED );
 			}
-			String description = StringUtils.substring(id.getDescription(), 0, getLeftColumnWidth() );
-			sb.append( StringUtils.rightPad( description, getLeftColumnWidth()) );
-			sb.append( StringUtils.leftPad( PRICE_FORMAT.format(id.getTotalSalesPrice()), (MAX_PRICE_SIZE+COLUMN_SPACE)) );
-			sb.append( LINE_FEED );
+			if ( gift ) {
+				sb.append( getLine(id.getDescription()) );
+			} else {
+				String description = StringUtils.substring(id.getDescription(), 0, getLeftColumnWidth() );
+				sb.append( StringUtils.rightPad( description, getLeftColumnWidth()) );
+				sb.append( StringUtils.leftPad( PRICE_FORMAT.format(id.getTotalSalesPrice()), (MAX_PRICE_SIZE+COLUMN_SPACE)) );
+				sb.append( LINE_FEED );
+			}
 		}
 		return sb.toString();
 	}
@@ -376,7 +393,7 @@ public class TicketPrinter {
 		return sb.toString();
 	}
 	
-	private String getTicket( Invoice invoice ) throws ManagerBeanException {
+	private String getTicket( Invoice invoice, boolean gift ) throws ManagerBeanException {
 		PosInvoiceParamsController pipc = (PosInvoiceParamsController) AonUtil.getRegisteredBean(POS_INVOICE_PARAMS_CONTROLLER_NAME);
 		pipc.onInit(null);
 		SaleInvoiceController sic = (SaleInvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
@@ -408,34 +425,43 @@ public class TicketPrinter {
 			append( sb, getFeedLines(1) );
 		}
 
-		sb.append( getCenteredLine("FACTURA SIMPLIFICADA") );
+		if ( gift ) {
+			String label = AonUtil.getMessage(BUNDLE_NAME, POS_GIFT_RECEIPT);
+			sb.append( getCenteredLine(StringUtils.upperCase(label)) );	
+		} else {
+			String label = AonUtil.getMessage(BUNDLE_NAME, POS_RECEIPT);
+			sb.append( getCenteredLine(StringUtils.upperCase(label)) );				
+		}
 		sb.append( getLine(getNumberDate(invoice)) );
 		if ( pipc.getPrintSellerName() == ReportPrintOption.HEADER ) {
 			appendSeller(sb, invoice);
 		}
 
 		append( sb, getFeedLines(1) );
-		sb.append( getDetailHeader() );
-		sb.append( getDetailLines(invoice) );
-		append( sb, getFeedLines(1) );
-		sb.append( getTotalVAT(invoice, priceStrategy) );
-		append( sb, getFeedLines(1) );
-		sb.append( getFinances(invoice) );
-		append( sb, getFeedLines(1) );
-		sb.append( getTaxBreakDownHeader() );
-		sb.append( getTaxBreakDowns(invoice, priceStrategy) );
+		sb.append( getDetailHeader(gift) );
+		sb.append( getDetailLines(invoice, gift) );
+		if (! gift ) {
+			append( sb, getFeedLines(1) );
+			sb.append( getTotalVAT(invoice, priceStrategy) );
+			append( sb, getFeedLines(1) );
+			sb.append( getFinances(invoice) );
+			append( sb, getFeedLines(1) );
+			sb.append( getTaxBreakDownHeader() );
+			sb.append( getTaxBreakDowns(invoice, priceStrategy) );
+		}
 		
 		append( sb, getFeedLines(2) );
 		
 		if ( pipc.getPrintDirStaff() == ReportPrintOption.FOOTER ) {
-			append( sb, getFeedLines(1) );
 			sb.append( getLine(getCompanyDocument(company)) );
 			sb.append( getLine(getAddress(enterprise.obtainAddress())) );
 			sb.append( getLine(getContact(enterprise)) );
+			append( sb, getFeedLines(1) );
 		}
 		
 		if ( pipc.getPrintSellerName() == ReportPrintOption.FOOTER ) {
 			appendSeller(sb, invoice);
+			append( sb, getFeedLines(1) );
 		}
 		if ( pipc.isPrintDomain() ) {
 			sb.append( getCenteredLine(company.getWeb().getValue()) );
@@ -449,7 +475,7 @@ public class TicketPrinter {
 		return new String(Base64.encodeBase64(sb.toString().getBytes()));
 	}
 
-	public String execute( Invoice invoice ) throws ReportException {
+	public String execute( Invoice invoice, boolean gift ) throws ReportException {
 		String ticket = null;
 		boolean initTransState = HibernateUtil.mustBeginTransaction();
 		boolean initSessionState = HibernateUtil.mustCloseSession();
@@ -461,7 +487,7 @@ public class TicketPrinter {
 			HibernateUtil.beginTransaction(sessionFactoryName);
 
 			HibernateUtil.getSession(sessionFactoryName).refresh(invoice);
-			ticket = getTicket(invoice);
+			ticket = getTicket(invoice, gift);
 
 			HibernateUtil.commitTransaction(sessionFactoryName);
 			HibernateUtil.closeSession(sessionFactoryName);

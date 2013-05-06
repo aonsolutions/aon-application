@@ -330,7 +330,8 @@
 								<f:setPropertyActionListener target="#{posInvoice.showRecoverTicketWindow}"
 									value="#{true}" />
 							</aon:commandButton>				
-							<aon:htmlCommandLink id="printGiftReceipt" immediate="true" target="_new"
+							<aon:htmlCommandLink id="printGiftReceiptPDF" immediate="true" target="_new"
+								rendered="#{posInvoiceParams.printPDF}"
 								styleClass="aon-big-commandButton aon-width-110"
 								value="6 #{financeBundle.finance_pos_gift_receipt}"
 								title="Alt+{Mayús}+6"
@@ -340,6 +341,17 @@
 								accesskey="6">
 								<f:param name="reportKey" value="posInvoice" /> 
 							</aon:htmlCommandLink>  	
+							<aon:commandButton id="printGiftTicketRAW" immediate="true"
+								rendered="#{!posInvoiceParams.printPDF}"
+								styleClass="aon-big-commandButton aon-width-110"
+								value="6 #{financeBundle.finance_pos_gift_receipt}"
+								title="Alt+{Mayús}+6"
+								disabled="#{posInvoice.to.pos.id == null or posInvoice.new or posInvoice.toInvoiceTotalPrice == 0 or posInvoice.pendingAmount != 0}"
+								actionListener="#{posInvoice.onShowPrintGiftTicket}"
+								reRender="showPrintTicketWindow" ajaxSingle="true"
+								accesskey="6">
+							</aon:commandButton>											
+							
 
 							<aon:confirmButton id="cancelTicket" immediate="true"
 								styleClass="aon-big-commandButton aon-width-105"

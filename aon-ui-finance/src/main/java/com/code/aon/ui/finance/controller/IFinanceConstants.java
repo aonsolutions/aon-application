@@ -99,5 +99,7 @@ public interface IFinanceConstants {
 	
 	String POS_ERROR_PRINT_TICKET = "finance_pos_error_print_ticket";
 	String FOOTER_TEXT_CONTENT_MSG_KEY_PREFIX = "finance_posInvoice_footerText_default";
+	String POS_RECEIPT = "finance_pos_receipt";
+	String POS_GIFT_RECEIPT = "finance_pos_gift_receipt";
 	
 }

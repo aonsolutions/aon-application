@@ -46,6 +46,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 	private boolean showFinishTicketWindow;
 	private boolean showRecoverTicketWindow;
 	private boolean showPrintTicketWindow;
+	private boolean giftTicket;
 	private String recoverSeries;
 	private Integer recoverNumber;
 
@@ -445,12 +446,18 @@ public class PosInvoiceController extends SaleInvoiceController {
 
 	public void onShowPrintTicket(ActionEvent event) {
 		setShowPrintTicketWindow(true);
+		this.giftTicket = false;
 	}
 
+	public void onShowPrintGiftTicket(ActionEvent event) {
+		setShowPrintTicketWindow(true);
+		this.giftTicket = true;
+	}
+	
 	public String getTicketText() {
 		try {
 			TicketPrinter tp = new TicketPrinter();
-			return tp.execute( getInvoice() );			
+			return tp.execute( getInvoice(), giftTicket );			
 		} catch (ReportException ex) {
 			String msg = AonUtil.getMessage(BUNDLE_NAME, POS_ERROR_PRINT_TICKET);
 			AonUtil.addErrorMessage(msg);
