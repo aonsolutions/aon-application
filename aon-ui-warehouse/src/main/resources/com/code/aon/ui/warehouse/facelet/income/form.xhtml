@@ -152,26 +152,26 @@
 						value="#{bundle.aon_scope}" />
 					<aon:selectOneMenu id="Income_scope" 
 						value="#{income.to.scope}"
-						disabled="#{!income.pending}">
+						disabled="#{true}">
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Income_warehouse" 
-						value="#{warehouseBundle.warehouse_warehouse}" />
-					<aon:selectOneMenu id="Income_warehouse" 
-						value="#{income.warehouse}"
-						disabled="#{!income.new}">
-						<f:selectItems value="#{warehouseCollections.warehouses}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Income_workPlace" 
 						value="#{companyBundle.company_workplace}" />
 					<aon:selectOneMenu id="Income_workPlace" 
 						value="#{income.to.workPlace}"
-						disabled="#{!income.pending}"
+						disabled="#{incomeDetail.model.rowCount>0}"
 						valueChangeListener="#{income.onWorkPlaceChanged}" 
-						reRender="Income_warehouse">
+						reRender="Income_warehouse, Income_scope">
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Income_warehouse" 
+						value="#{warehouseBundle.warehouse_warehouse}" />
+					<aon:selectOneMenu id="Income_warehouse" 
+						value="#{income.warehouse}" required="#{true}"
+						disabled="#{incomeDetail.model.rowCount>0}">
+						<f:selectItems value="#{income.warehouses}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Income_defaultPayMethod" 

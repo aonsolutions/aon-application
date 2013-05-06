@@ -275,7 +275,6 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 			Customer customer = (Customer)event.getNewValue();
 			isBlocked(customer);
 			((Delivery)this.getTo()).setCustomer(customer);
-			((Delivery)this.getTo()).setScope(customer.getScope());
 			loadAddresses(customer.getId());
 			loadProjects(customer.getId());
 			loadDefaultPayMethod(customer.getId(), false);
@@ -380,6 +379,7 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			WorkPlace workPlace = (WorkPlace)event.getNewValue();
 			((Delivery)this.getTo()).setWorkPlace(workPlace);
+			((Delivery)this.getTo()).setScope(workPlace.getScope());
 			setWarehouse(obtainWarehouse(((Delivery)this.getTo())));
 		}
 	}
@@ -395,19 +395,32 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
 			criteria = new Criteria();
 			criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), delivery.getWorkPlace().getId());
+			criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
 			iterator = warehouseBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				return (Warehouse)iterator.next();
-			} else {
-				criteria = new Criteria();
-				criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
-				iterator = warehouseBean.getList(criteria).iterator();
-				if (iterator.hasNext()) {
-					return (Warehouse)iterator.next();
-				}
-			}
+			} 
 		}
 		return null;
+	}
+	
+	public List<SelectItem> getWarehouses() throws ManagerBeanException {
+		WorkPlace workPlace = ((Delivery)this.getTo()).getWorkPlace();
+		LinkedList<SelectItem> warehouses = new LinkedList<SelectItem>();
+		if(workPlace!=null){
+			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
+			criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
+			List<ITransferObject> c = warehouseBean.getList(criteria);
+			Iterator<ITransferObject> iter = c.iterator();
+			while (iter.hasNext()) {
+				Warehouse warehouse = (Warehouse) iter.next();
+				SelectItem item = new SelectItem(warehouse, warehouse.getName());
+				warehouses.add(item);
+			}
+		}
+		return warehouses;
 	}
 
 	public double getTaxableBase(){

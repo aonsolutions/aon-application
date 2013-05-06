@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
@@ -307,11 +308,18 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 			Supplier supplier = (Supplier)event.getNewValue();
 			isBlocked(supplier);
 			((Purchase)this.getTo()).setSupplier(supplier);
-			((Purchase)this.getTo()).setScope(supplier.getScope());
 			loadAddresses(supplier.getId());
 			loadDefaultPayMethod(supplier.getId(), false);
 		} else {
 			setAddresses(null);
+		}
+	}
+	
+	public void onWorkPlaceChanged(ValueChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			WorkPlace workPlace = (WorkPlace)event.getNewValue();
+			((Purchase)this.getTo()).setWorkPlace(workPlace);
+			((Purchase)this.getTo()).setScope(workPlace.getScope());
 		}
 	}
 

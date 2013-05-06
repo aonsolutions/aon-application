@@ -26,7 +26,9 @@ public class IncomeControllerListener extends ControllerAdapter implements IWare
 		try {
 			((Income)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
 			((Income)controller.getTo()).setStatus(IncomeStatus.PENDING);
-			((Income)controller.getTo()).setWorkPlace((WorkPlace)((SelectItem)companyColls.getCurrentUserWorkPlaces().get(0)).getValue());
+			WorkPlace workPlace = (WorkPlace)((SelectItem)companyColls.getCurrentUserWorkPlaces().get(0)).getValue();
+			((Income)controller.getTo()).setWorkPlace(workPlace);
+			((Income)controller.getTo()).setScope(workPlace.getScope());
 			controller.setAddresses(null);
 	        controller.setWarehouse(controller.obtainWarehouse((Income)controller.getTo()));
 			controller.setDefaultPayMethod(null);
@@ -79,5 +81,5 @@ public class IncomeControllerListener extends ControllerAdapter implements IWare
 			}
 		}
 	}
-
+	
 }

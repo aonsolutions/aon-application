@@ -186,7 +186,7 @@
 						value="#{bundle.aon_scope}" />
 					<aon:selectOneMenu id="Sales_scope" 
 						value="#{sales.to.scope}"
-						disabled="#{!sales.pending}">
+						disabled="true">
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 
@@ -201,7 +201,9 @@
 						value="#{companyBundle.company_workplace}" />
 					<aon:selectOneMenu id="Sales_workPlace" 
 						value="#{sales.to.workPlace}"
-						disabled="#{!sales.pending}">
+						disabled="#{!sales.pending}"
+						valueChangeListener="#{sales.onWorkPlaceChanged}" 
+						reRender="Sales_scope">
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
 

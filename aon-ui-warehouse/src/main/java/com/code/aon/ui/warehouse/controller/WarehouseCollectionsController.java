@@ -36,18 +36,16 @@ public class WarehouseCollectionsController {
 	}
 	
 	public List<SelectItem> getWarehouses() throws ManagerBeanException {
-		if (warehouses == null) {
-			warehouses = new LinkedList<SelectItem>();
-			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
-			Criteria criteria = new Criteria();
-			criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
-			List<ITransferObject> c = warehouseBean.getList(criteria);
-			Iterator<ITransferObject> iter = c.iterator();
-			while (iter.hasNext()) {
-				Warehouse warehouse = (Warehouse) iter.next();
-				SelectItem item = new SelectItem(warehouse, warehouse.getName());
-				warehouses.add(item);
-			}
+		warehouses = new LinkedList<SelectItem>();
+		IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
+		List<ITransferObject> c = warehouseBean.getList(criteria);
+		Iterator<ITransferObject> iter = c.iterator();
+		while (iter.hasNext()) {
+			Warehouse warehouse = (Warehouse) iter.next();
+			SelectItem item = new SelectItem(warehouse, warehouse.getName());
+			warehouses.add(item);
 		}
 		return warehouses;
 	}

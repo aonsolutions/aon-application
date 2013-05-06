@@ -316,13 +316,20 @@ public class SalesController extends BasicController implements ISalesConstants 
 			Customer customer = (Customer)event.getNewValue();
 			isBlocked(customer);
 			((Sales)this.getTo()).setCustomer(customer);
-			((Sales)this.getTo()).setScope(customer.getScope());
 			loadAddresses(customer.getId());
 			loadProjects(customer.getId());
 			loadDefaultPayMethod(customer.getId(), false);
 		} else {
 			setAddresses(null);
 			setProjects(null);
+		}
+	}
+	
+	public void onWorkPlaceChanged(ValueChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			WorkPlace workPlace = (WorkPlace)event.getNewValue();
+			((Sales)this.getTo()).setWorkPlace(workPlace);
+			((Sales)this.getTo()).setScope(workPlace.getScope());
 		}
 	}
 

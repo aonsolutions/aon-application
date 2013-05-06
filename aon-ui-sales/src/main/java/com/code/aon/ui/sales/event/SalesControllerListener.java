@@ -1,11 +1,16 @@
 package com.code.aon.ui.sales.event;
 
+import javax.faces.model.SelectItem;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesStatus;
+import com.code.aon.ui.company.controller.CompanyCollectionsController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -13,6 +18,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.sales.controller.ISalesConstants;
 import com.code.aon.ui.sales.controller.SalesController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.carrier.Carrier;
 
 public class SalesControllerListener extends ControllerAdapter implements ISalesConstants {
@@ -29,14 +35,22 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		SalesController controller = (SalesController)event.getController();
-		((Sales)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
-		((Sales)controller.getTo()).setStatus(SalesStatus.PENDING);
-		((Sales)controller.getTo()).setDocumentType(DocumentType.NORMAL);
-		controller.setAddresses(null);
-		controller.setProjects(null);
-		controller.setDefaultPayMethod(null);
-		controller.resetSalesPayMethod();
+		try {
+			((Sales)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
+			((Sales)controller.getTo()).setStatus(SalesStatus.PENDING);
+			WorkPlace workPlace = (WorkPlace)((SelectItem)companyColls.getCurrentUserWorkPlaces().get(0)).getValue();
+			((Sales)controller.getTo()).setWorkPlace(workPlace);
+			((Sales)controller.getTo()).setScope(workPlace.getScope());
+			((Sales)controller.getTo()).setDocumentType(DocumentType.NORMAL);
+			controller.setAddresses(null);
+			controller.setProjects(null);
+			controller.setDefaultPayMethod(null);
+			controller.resetSalesPayMethod();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage());
+		}
 	}
 
 	@Override

@@ -11,7 +11,8 @@
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:define name="columns">
 
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column alias="WorkPlace.description" 
+				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputLabel for="WorkPlace_description" value="#{bundle.aon_description}" />
 				</f:facet>
@@ -27,7 +28,8 @@
 				</f:facet>								
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column alias="WorkPlace.address.streetType, WorkPlace.address.address, WorkPlace.address.number, WorkPlace.address.address2, WorkPlace.address.address3, WorkPlace.address.alias"
+				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputLabel for="WorkPlace_address_id" value="#{companyBundle.company_workplace_address}" />
 				</f:facet>
@@ -57,7 +59,28 @@
 				</f:facet>								
 			</aon:column>			
 			
-			<aon:column styleClass="aon-width-100">
+			<aon:column alias="WorkPlace.scope.description" 
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="WorkPlace_scope" value="#{bundle.aon_scope}" />
+				</f:facet>
+				<aon:outputText value="#{to.scope.description}"  rendered="#{formList}"/>
+				<aon:selectOneMenu id="WorkPlace_scope" 
+					rendered="#{formEdit}" required="true"
+					value="#{controller.to.scope}">
+					<f:selectItems value="#{configCollections.currentUserScopes}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="WorkPlace_scope-New" 
+						rendered="#{formNew}" required="true"
+						value="#{controller.to.scope}">
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column alias="WorkPlace.active"
+				styleClass="aon-width-100">
 				<f:facet name="header">
 					<aon:outputLabel for="WorkPlace_active" value="#{bundle.aon_active}" />
 				</f:facet>

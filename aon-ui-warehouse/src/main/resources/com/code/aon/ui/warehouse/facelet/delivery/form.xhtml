@@ -161,26 +161,26 @@
 						value="#{bundle.aon_scope}" />
 					<aon:selectOneMenu id="Delivery_scope" 
 						value="#{delivery.to.scope}"
-						disabled="#{!delivery.pending}">
+						disabled="true">
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Delivery_warehouse" 
-						value="#{warehouseBundle.warehouse_warehouse}" />
-					<aon:selectOneMenu id="Delivery_warehouse" 
-						value="#{delivery.warehouse}"
-						disabled="#{!delivery.new}">
-						<f:selectItems value="#{warehouseCollections.warehouses}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Delivery_workPlace" 
 						value="#{companyBundle.company_workplace}" />
 					<aon:selectOneMenu id="Delivery_workPlace" 
 						value="#{delivery.to.workPlace}"
-						disabled="#{!delivery.pending}"
+						disabled="#{deliveryDetail.model.rowCount>0}"
 						valueChangeListener="#{delivery.onWorkPlaceChanged}" 
-						reRender="Delivery_warehouse">
+						reRender="Delivery_warehouse,Delivery_scope">
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Delivery_warehouse" 
+						value="#{warehouseBundle.warehouse_warehouse}" />
+					<aon:selectOneMenu id="Delivery_warehouse" 
+						value="#{delivery.warehouse}"
+						disabled="#{deliveryDetail.model.rowCount>0}">
+						<f:selectItems value="#{delivery.warehouses}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Delivery_defaultPayMethod" 
