@@ -36,6 +36,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
@@ -387,7 +388,6 @@ public class OfferController extends BasicController implements ISignatureContro
 			Target target = (Target)event.getNewValue();
 			getOffer().setTarget(target);
 			getOffer().setTariff(target.getTariff());
-			getOffer().setScope(target.getScope());
 			loadAddresses(target.getId());
 			loadProjects(target.getId());
 			loadCommercial(target.getId());
@@ -395,6 +395,14 @@ public class OfferController extends BasicController implements ISignatureContro
 		} else {
 			setAddresses(null);
 			setProjects(null);
+		}
+	}
+	
+	public void onWorkPlaceChanged(ValueChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			WorkPlace workPlace = (WorkPlace)event.getNewValue();
+			((Offer)this.getTo()).setWorkPlace(workPlace);
+			((Offer)this.getTo()).setScope(workPlace.getScope());
 		}
 	}
 	
