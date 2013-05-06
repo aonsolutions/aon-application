@@ -289,12 +289,12 @@
 						</ui:include>
 					</c:if>
 
-					<aon:outputLabel for="Offer_workPlace" 
-						value="#{companyBundle.company_workplace}" />
-					<aon:selectOneMenu id="Offer_workPlace" 
-						value="#{offer.to.workPlace}"
-						disabled="#{offer.readOnly}">
-						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+					<aon:outputLabel for="Offer_scope" 
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Offer_scope" 
+						value="#{offer.to.scope}"
+						disabled="true">
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Offer_tariff" 
@@ -306,12 +306,14 @@
 						<f:selectItems value="#{configCollections.tariffs}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Offer_scope" 
-						value="#{bundle.aon_scope}" />
-					<aon:selectOneMenu id="Offer_scope" 
-						value="#{offer.to.scope}"
-						disabled="#{offer.readOnly}">
-						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					<aon:outputLabel for="Offer_workPlace" 
+						value="#{companyBundle.company_workplace}" />
+					<aon:selectOneMenu id="Offer_workPlace" 
+						value="#{offer.to.workPlace}"
+						disabled="#{offer.readOnly}"
+						valueChangeListener="#{offer.onWorkPlaceChanged}" 
+						reRender="Offer_scope">
+						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Offer_defaultPayMethod" 
