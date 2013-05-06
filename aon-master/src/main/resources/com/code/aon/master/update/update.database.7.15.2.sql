@@ -9,8 +9,8 @@ BEGIN;
 ALTER TABLE `customer` ADD `invoicing_group` int(4) DEFAULT NULL COMMENT 'Identificador de Grupo de Facturacion' AFTER `e_invoice`;
 ALTER TABLE `customer` ADD KEY `IDX_CUSTOMER_INVOICING_GROUP` (`invoicing_group`);
 ALTER TABLE `customer` ADD CONSTRAINT `FK_CUSTOMER_INVOICING_GROUP` FOREIGN KEY (`invoicing_group`) REFERENCES `invoicing_group` (`id`);
-UPDATE `customer` SET `invoicing_group` = (SELECT `invoicing_group` FROM `invoicing_group_detail` WHERE `child` = `customer`.`registry`);
-UPDATE `customer` SET `invoicing_group` = (SELECT `id` FROM `invoicing_group` WHERE `parent` = `customer`.`registry`);
+UPDATE `customer` SET `invoicing_group` = (SELECT `invoicing_group` FROM `invoicing_group_detail` WHERE `child` = `customer`.`registry`) WHERE `invoicing_group` IS NULL;
+UPDATE `customer` SET `invoicing_group` = (SELECT `id` FROM `invoicing_group` WHERE `parent` = `customer`.`registry`) WHERE `invoicing_group` IS NULL;
 
 ALTER TABLE `customer` ADD `project_grouped` tinyint(1) DEFAULT '1' COMMENT 'Indica si el Cliente desea agrupar Proyectos en una sola Factura' AFTER `invoicing_group`;
 
