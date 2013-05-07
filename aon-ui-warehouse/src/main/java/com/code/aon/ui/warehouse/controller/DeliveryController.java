@@ -40,6 +40,8 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.report.ReportException;
@@ -450,7 +452,9 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 			criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_PROJECT_ID), to.getProject().getId());
 		}
 		if (to.getRegistryAddress() != null && to.getRegistryAddress().getId() != null) {
-			criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_SHIPPING_ADDRESS_ID), to.getRegistryAddress().getId());
+			Expression exp1 = ExpressionUtilities.getEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_SHIPPING_ADDRESS_ID), to.getRegistryAddress().getId());
+			Expression exp2 = ExpressionUtilities.getNullExpression(salesBean.getFieldName(IEntityAlias.SALES_SHIPPING_ADDRESS_ID));
+			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
 		}
 		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_STATUS), SalesStatus.PENDING);
 		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_SECURITY_LEVEL), to.getSecurityLevel());
