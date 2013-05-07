@@ -259,7 +259,7 @@ public class RoomBookingController implements ICollectionProvider {
 		List<Object[]> list = new LinkedList<Object[]>();
 		String hotelName = notAssignedOccupation!=null?((String) ((Object[])notAssignedOccupation)[0]):null;
 		Integer roomCount = notAssignedOccupation!=null?((BigInteger) ((Object[])notAssignedOccupation)[1]).intValue():null;
-		Integer guestCount = notAssignedOccupation!=null?((Integer) ((Object[])notAssignedOccupation)[2]).intValue():null;
+		Integer guestCount = notAssignedOccupation!=null?((BigDecimal) ((Object[])notAssignedOccupation)[2]).intValue():null;
 		Date startDate = notAssignedOccupation!=null?((Date) ((Object[])notAssignedOccupation)[3]):null;
 		Date endDate = notAssignedOccupation!=null?((Date) ((Object[])notAssignedOccupation)[4]):null;
 		while(startDate.before(endDate) ){
