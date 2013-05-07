@@ -1,5 +1,18 @@
 package com.code.aon.ui.company.controller;
 
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_ADDRESS_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_HEADER_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_INTERNET_DATA_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_LOGO_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NAME_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NIF_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_RECORD_DATA_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_S_INVOICE_FOOTER_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_SMART_CARD_PARAM;
+import static com.code.aon.ui.company.controller.ICompanyConstants.INVOICE_PRINT_REPORT_KEY;
+import static com.code.aon.ui.company.controller.ICompanyConstants.SALE_INVOICE_REPORT_KEY;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -13,7 +26,6 @@ import javax.faces.event.ValueChangeEvent;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,10 +33,11 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.Company;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
-import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RecordData;
@@ -49,36 +62,6 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class CompanyParentController extends BasicController implements ICompanyController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyParentController.class.getName());
-	
-	public static final String PRINT_HEADER_PARAM = "APP_PRINT_HEADER_PARAM";
-	
-	public static final String PRINT_RECORD_DATA_PARAM = "APP_PRINT_RECORD_DATA_PARAM";
-	
-	public static final String SALE_INVOICE_TEMPLATE_PARAM = "APP_SALE_INVOICE_TEMPLATE_PARAM";
-	
-	public static final String OFFER_TEMPLATE_PARAM = "APP_OFFER_TEMPLATE_PARAM";
-	
-	public static final String DELIVERY_TEMPLATE_PARAM = "APP_DELIVERY_TEMPLATE_PARAM";
-	
-	public static final String PRINT_LOGO_PARAM = "APP_PRINT_LOGO_PARAM";
-	
-	public static final String PRINT_NAME_PARAM = "APP_PRINT_NAME_PARAM";
-	
-	public static final String PRINT_NIF_PARAM = "APP_PRINT_NIF_PARAM";
-	
-	public static final String PRINT_ADDRESS_PARAM = "APP_PRINT_ADDRESS_PARAM";
-	
-	public static final String PRINT_INTERNET_DATA_PARAM = "APP_PRINT_INTERNET_DATA_PARAM";
-
-	public static final String PRINT_SALE_INVOICE_FOOTER = "APP_PRINT_S_INVOICE_FOOTER_PARAM";
-
-	public static final String SMART_CARD_PARAM = "APP_SMART_CARD_PARAM";
-	
-	public static final String SALE_INVOICE_REPORT_KEY_PARAM = "REPORT_saleInvoice";
-	
-	public static final String SALE_INVOICE_REPORT_KEY = "saleInvoice";
-	
-	public static final String INVOICE_PRINT_REPORT_KEY = "invoicePrint";
 	
 	/** The logo attach. */
 	private RegistryAttachment logoAttach;
@@ -792,95 +775,63 @@ public class CompanyParentController extends BasicController implements ICompany
 	}	
 
 	public boolean obtainPrintHeader() throws ManagerBeanException { 
-		ApplicationParameter appParam = obtainApplicationParameter(PRINT_HEADER_PARAM);
-		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
+		return AppParamUtil.getValueAsBoolean(APP_PRINT_HEADER_PARAM);
 	}
 
 	public boolean obtainPrintRecordData() throws ManagerBeanException {
-		ApplicationParameter appParam = obtainApplicationParameter(PRINT_RECORD_DATA_PARAM);
-		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
+		return AppParamUtil.getValueAsBoolean(APP_PRINT_RECORD_DATA_PARAM);
 	}
 	
 	public SaleInvoiceTemplate obtainSaleInvoiceTemplate() throws ManagerBeanException {
-		ApplicationParameter appParam = obtainApplicationParameter(SALE_INVOICE_TEMPLATE_PARAM);
-		return (appParam == null?null:SaleInvoiceTemplate.getEnumByValue(appParam.getValue()));
+		String value = AppParamUtil.getValue(APP_SALE_INVOICE_TEMPLATE_PARAM);
+		return (value == null?null:SaleInvoiceTemplate.getEnumByValue(value));
 	}
 	
 	public boolean obtainPrintLogo() throws ManagerBeanException {
-		ApplicationParameter appParam = obtainApplicationParameter(PRINT_LOGO_PARAM);
-		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
+		return AppParamUtil.getValueAsBoolean(APP_PRINT_LOGO_PARAM);
 	}
 	
 	public ReportPrintOption obtainPrintName() throws ManagerBeanException {
-		ApplicationParameter appParam = obtainApplicationParameter(PRINT_NAME_PARAM);
-		return getReportPrintOptionValue(appParam);
+		return getReportPrintOptionValue(APP_PRINT_NAME_PARAM);
 	}
 	
 	public ReportPrintOption obtainPrintNif() throws ManagerBeanException {
-		ApplicationParameter appParam = obtainApplicationParameter(PRINT_NIF_PARAM);
-		return getReportPrintOptionValue(appParam);
+		return getReportPrintOptionValue(APP_PRINT_NIF_PARAM);
 	}
 	
 	public ReportPrintOption obtainPrintAddress() throws ManagerBeanException {
-		ApplicationParameter appParam = obtainApplicationParameter(PRINT_ADDRESS_PARAM);
-		return getReportPrintOptionValue(appParam);
+		return getReportPrintOptionValue(APP_PRINT_ADDRESS_PARAM);
 	}
 	
 	public ReportPrintOption obtainPrintInternetData() throws ManagerBeanException {
-		ApplicationParameter appParam = obtainApplicationParameter(PRINT_INTERNET_DATA_PARAM);
-		return getReportPrintOptionValue(appParam);
+		return getReportPrintOptionValue(APP_PRINT_INTERNET_DATA_PARAM);
 	}
 	
 	public boolean obtainPrintSaleInvoiceFooter() throws ManagerBeanException {
-		ApplicationParameter appParam = obtainApplicationParameter(PRINT_SALE_INVOICE_FOOTER);
-		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
+		return AppParamUtil.getValueAsBoolean(APP_PRINT_S_INVOICE_FOOTER_PARAM);
 	}
 	
 	public boolean obtainSmartCard() throws ManagerBeanException {
-		ApplicationParameter appParam = obtainApplicationParameter(SMART_CARD_PARAM);
-		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
+		return AppParamUtil.getValueAsBoolean(APP_SMART_CARD_PARAM);
 	}
 	
 	public void searchCustomReportTemplate() throws ManagerBeanException {
-		ApplicationParameter invoiceTemplateParam = obtainApplicationParameter(SALE_INVOICE_TEMPLATE_PARAM);
-		if( invoiceTemplateParam!=null && SaleInvoiceTemplate.getEnumByValue(invoiceTemplateParam.getValue())!=SaleInvoiceTemplate.DEFAULT ){
+		String invoiceTemplateParam = AppParamUtil.getValue(APP_SALE_INVOICE_TEMPLATE_PARAM);
+		if( invoiceTemplateParam!=null && SaleInvoiceTemplate.getEnumByValue(invoiceTemplateParam)!=SaleInvoiceTemplate.DEFAULT ){
 			setCustomReportTemplate(false);
 		} else {
-			ApplicationParameter customInvoiceReportKey = obtainApplicationParameter(SALE_INVOICE_REPORT_KEY_PARAM);
+			String customInvoiceReportKey = AppParamUtil.getValue(AppParam.REPORT_saleInvoice);
 			setCustomReportTemplate(customInvoiceReportKey != null);
 		}
 	}
 
-	private ReportPrintOption getReportPrintOptionValue(ApplicationParameter appParam) {
-		return appParam == null?null:(appParam.getValue() == null?null:ReportPrintOption.values()[Integer.parseInt(appParam.getValue())]);
-	}
-	
-	public ApplicationParameter obtainApplicationParameter(String paramName) throws ManagerBeanException{
-		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), paramName);
-		Iterator<ITransferObject> iter = appParamBean.getList(criteria, 0, 1).iterator();
-		if(iter.hasNext()){
-			return (ApplicationParameter)iter.next();
+	private ReportPrintOption getReportPrintOptionValue(AppParam appParam) {
+		Integer value = AppParamUtil.getValueAsInteger(appParam);
+		if ( value != null ) {
+			return ReportPrintOption.values()[value];
 		}
 		return null;
 	}
-	
-	public void updateParam(String paramName, String value) throws ManagerBeanException {
-		boolean update = true;
-		ApplicationParameter param = obtainApplicationParameter(paramName);
-		if ( param == null ) {
-			param = new ApplicationParameter();
-			param.setName(paramName);
-		} else if ( StringUtils.equals(value, param.getValue()) ) {
-			update = false;
-		}
-		if ( update ) {
-			param.setValue(value);
-			IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			appParamBean.insertOrUpdate(param);			
-		}
-	}	
 
 	/**
 	 * Checks if is e invoice.

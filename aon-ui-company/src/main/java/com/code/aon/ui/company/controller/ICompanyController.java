@@ -3,7 +3,6 @@ package com.code.aon.ui.company.controller;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
-import com.code.aon.config.ApplicationParameter;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
@@ -52,9 +51,6 @@ public interface ICompanyController extends IController {
 	boolean obtainPrintSaleInvoiceFooter() throws ManagerBeanException;
 	boolean obtainSmartCard() throws ManagerBeanException;
 	void searchCustomReportTemplate() throws ManagerBeanException;
-
-	ApplicationParameter obtainApplicationParameter(String printHeaderParam)  throws ManagerBeanException;
-	void updateParam(String paramName, String value) throws ManagerBeanException;
 
 	RegistryAddress getMainAddress();
 	void setPhone(RegistryMedia phone);

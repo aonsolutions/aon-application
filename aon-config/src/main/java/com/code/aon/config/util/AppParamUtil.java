@@ -25,7 +25,7 @@ public class AppParamUtil {
 			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(APPLICATION_PARAMETER_NAME), ap.getValue());
-			List<ITransferObject> list = bean.getList(criteria);
+			List<ITransferObject> list = bean.getList(criteria, 0, 1);
 			if (! list.isEmpty() ) {
 				return (ApplicationParameter) list.get(0);
 			}
@@ -62,6 +62,10 @@ public class AppParamUtil {
 		return insertParameter(ap);
     }	
 
+	public static ApplicationParameter insertParameter( AppParam appParam, boolean value ) {
+		return insertParameter(appParam, new Boolean(value).toString());
+    }	
+	
 	public static boolean removeParameter( AppParam appParam ) {
 		ApplicationParameter ap = getParameter(appParam);
 		if ( ap != null ) {
@@ -79,6 +83,30 @@ public class AppParamUtil {
 		ApplicationParameter ap = getParameter(appParam);
 		if ( ap != null ) {
 			return StringUtils.trimToNull(ap.getValue());
+		}
+		return null;
+	}
+
+	public static boolean getValueAsBoolean( AppParam appParam, boolean _default ) {
+		String value = getValue(appParam);
+		if ( value != null ) {
+			return Boolean.valueOf(value);
+		}
+		return _default;
+	}
+
+	public static boolean getValueAsBoolean( AppParam appParam ) {
+		return getValueAsBoolean(appParam, false);
+	}
+
+	public static Integer getValueAsInteger( AppParam appParam ) {
+		String value = getValue(appParam);
+		if ( value != null ) {
+			try {
+				return Integer.parseInt(value);
+			} catch ( NumberFormatException e ) {
+				LOGGER.error( e.getMessage(), e );
+			}
 		}
 		return null;
 	}

@@ -112,5 +112,13 @@ public interface ICompanyConstants {
 	String REPORT_SALARY_PARAM = "PAY_REPORT_salary_PAY";
 	
 	String REPORT_SALARY_DRAFT_PARAM = "PAY_REPORT_salaryDraft_PAY";
+
+	// ************************************************************
+	// REPORT
+	// ************************************************************
+
+	String SALE_INVOICE_REPORT_KEY = "saleInvoice";
+	
+	String INVOICE_PRINT_REPORT_KEY = "invoicePrint";	
 	
 }

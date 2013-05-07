@@ -1,9 +1,21 @@
 package com.code.aon.ui.company.event;
 
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_ADDRESS_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_HEADER_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_INTERNET_DATA_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_LOGO_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NAME_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NIF_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_RECORD_DATA_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_S_INVOICE_FOOTER_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_SMART_CARD_PARAM;
+
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
-import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.company.controller.ICompanyController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -52,28 +64,24 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 	}
 	
 	private void updateParams( ICompanyController companyController ) throws ManagerBeanException {
-		updateParam(companyController, CompanyController.PRINT_HEADER_PARAM, companyController.isPrintHeader());
-		updateParam(companyController, CompanyController.PRINT_RECORD_DATA_PARAM, companyController.isPrintRecordData());
-		updateParam(companyController, CompanyController.SALE_INVOICE_TEMPLATE_PARAM, companyController.getSaleInvoiceTemplate());
-		updateParam(companyController, CompanyController.PRINT_LOGO_PARAM, companyController.isPrintLogo());
-		updateParam(companyController, CompanyController.PRINT_NAME_PARAM, companyController.getPrintName());
-		updateParam(companyController, CompanyController.PRINT_NIF_PARAM, companyController.getPrintNif());
-		updateParam(companyController, CompanyController.PRINT_ADDRESS_PARAM, companyController.getPrintAddress());
-		updateParam(companyController, CompanyController.PRINT_INTERNET_DATA_PARAM, companyController.getPrintInternetData());
-		updateParam(companyController, CompanyController.PRINT_SALE_INVOICE_FOOTER, companyController.isPrintSaleInvoiceFooter());
-		updateParam(companyController, CompanyController.SMART_CARD_PARAM, companyController.isSmartCard());		
+		AppParamUtil.insertParameter(APP_PRINT_HEADER_PARAM, companyController.isPrintHeader());
+		AppParamUtil.insertParameter(APP_PRINT_RECORD_DATA_PARAM, companyController.isPrintRecordData());
+		updateParam(APP_SALE_INVOICE_TEMPLATE_PARAM, companyController.getSaleInvoiceTemplate());
+		AppParamUtil.insertParameter(APP_PRINT_LOGO_PARAM, companyController.isPrintLogo());
+		updateParam(APP_PRINT_NAME_PARAM, companyController.getPrintName());
+		updateParam(APP_PRINT_NIF_PARAM, companyController.getPrintNif());
+		updateParam(APP_PRINT_ADDRESS_PARAM, companyController.getPrintAddress());
+		updateParam(APP_PRINT_INTERNET_DATA_PARAM, companyController.getPrintInternetData());
+		AppParamUtil.insertParameter(APP_PRINT_S_INVOICE_FOOTER_PARAM, companyController.isPrintSaleInvoiceFooter());
+		AppParamUtil.insertParameter(APP_SMART_CARD_PARAM, companyController.isSmartCard());	
 	}
 	
-	private void updateParam(ICompanyController companyController, String paramName, boolean value) throws ManagerBeanException {
-		companyController.updateParam(paramName, new Boolean(value).toString());
+	private void updateParam(AppParam appParam, ReportPrintOption value) throws ManagerBeanException {
+		AppParamUtil.insertParameter(appParam, (value != null) ? String.valueOf(value.ordinal()) : null);
 	}
 	
-	private void updateParam(ICompanyController companyController, String paramName, ReportPrintOption value) throws ManagerBeanException {
-		companyController.updateParam(paramName, (value != null) ? String.valueOf(value.ordinal()) : null);
-	}
-	
-	private void updateParam(ICompanyController companyController, String paramName, SaleInvoiceTemplate value) throws ManagerBeanException {
-		companyController.updateParam(paramName, (value != null) ? value.getValue() : null);
+	private void updateParam(AppParam appParam, SaleInvoiceTemplate value) throws ManagerBeanException {
+		AppParamUtil.insertParameter(appParam, (value != null) ? value.getValue() : null);
 	}
 	
 }
