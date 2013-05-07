@@ -1,7 +1,5 @@
 package com.code.aon.ui.commercial.controller;
 
-import static com.code.aon.ui.company.controller.CompanyParentController.OFFER_TEMPLATE_PARAM;
-import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
 import java.io.IOException;
@@ -35,12 +33,13 @@ import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.finance.Invoice;
@@ -70,7 +69,6 @@ import com.code.aon.tas.TasItem;
 import com.code.aon.ui.commercial.util.CommercialEmailUtil;
 import com.code.aon.ui.commercial.util.OfferImportManager;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -923,12 +921,11 @@ public class OfferController extends BasicController implements ISignatureContro
 	}
 
 	public String getReportTemplate() throws ManagerBeanException {
-		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
 		Offer offer = (Offer) this.getTo();
-		if(offer!=null && offer.getType()!=OfferType.PROFORMA){
-			ApplicationParameter appParam = controller.obtainApplicationParameter(OFFER_TEMPLATE_PARAM);
-			if ( appParam != null ) {
-				return appParam.getValue();
+		if(offer!=null && offer.getType()!=OfferType.PROFORMA) {
+			String value = AppParamUtil.getValue(AppParam.APP_OFFER_TEMPLATE_PARAM);
+			if ( value != null ) {
+				return value;
 			}
 		}
 		return OFFER_CONTROLLER_NAME;
