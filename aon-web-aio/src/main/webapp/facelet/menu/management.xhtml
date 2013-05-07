@@ -62,8 +62,11 @@
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="aon_invoicing_group-management"
 											action="invoicingGroup_list-management"
-											value="#{customerBundle.customer_invoicing_group_module}" />
-									</aon:div>										
+											actionListener="#{invoicingGroup.onEditSearch}"
+											value="#{customerBundle.customer_invoicing_group_module}">
+											<aon:actionListener method="#{invoicingGroup.onSearch}"/>
+										</aon:commandLink>
+									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
 						
