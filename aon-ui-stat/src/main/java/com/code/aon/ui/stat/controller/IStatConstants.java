@@ -22,6 +22,7 @@ public interface IStatConstants {
 	String SALES_INVOICE_CONTROLLER_NAME = "saleInvoice";
 	String STAT_CONTROLLER_NAME = "stat";
 	String TAS_STAT_CONTROLLER_NAME = "tasStat";
+	String COMMERCIAL_TRACKING_CONTROLLER_NAME = "commercialTracking";
 
 	// ************************************************************
 	// NAVIGATION

@@ -1,5 +1,8 @@
 package com.code.aon.ui.stat.controller;
 
+import static com.code.aon.ui.stat.controller.IStatConstants.COMMERCIAL_TRACKING_CONTROLLER_NAME;
+import static com.code.aon.ui.stat.controller.IStatConstants.OFFER_CONTROLLER_NAME;
+
 import java.sql.PreparedStatement;
 import java.util.Calendar;
 import java.util.Date;
@@ -116,8 +119,6 @@ public class CommercialStatEngineController {
 	private String zoneName;
 	private String targetName;
 	private List<CommercialTracking> activitiesList;
-	private static final String COMMERCIAL_TRACKING_CONTROLLER_NAME = "commercialTracking";
-	private static final String OFFER_CONTROLLER_NAME = "offer";
 	private String offerBackAction;
 	private IPriceStrategy priceStrategy;
 

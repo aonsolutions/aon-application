@@ -1,5 +1,9 @@
 package com.code.aon.ui.stat.controller;
 
+import static com.code.aon.ui.stat.controller.IStatConstants.DELIVERY_CONTROLLER_NAME;
+import static com.code.aon.ui.stat.controller.IStatConstants.OFFER_CONTROLLER_NAME;
+import static com.code.aon.ui.stat.controller.IStatConstants.SALES_CONTROLLER_NAME;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,6 +32,7 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.sales.Sales;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
@@ -392,22 +397,21 @@ public class RegistryStatEngineController {
 		FormUtil.getController("invoicePrint").setCriteria(criteria);
 	}
 	public void onDeliveryPdf(ActionEvent event) throws ManagerBeanException {
-		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_ID), ((Delivery) this.getPendingDeliveryModel().getRowData()).getId());
-		FormUtil.getController("delivery").setCriteria(criteria);
+		Integer deliveryId = ((Delivery) this.getPendingDeliveryModel().getRowData()).getId();
+		BasicController controller = (BasicController) FormUtil.getController(DELIVERY_CONTROLLER_NAME);
+		controller.select(event, deliveryId);
 	}
 	public void onSalesPdf(ActionEvent event) throws ManagerBeanException {
 		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_ID), ((Sales) this.getPendingSalesModel().getRowData()).getId());
-		FormUtil.getController("sales").setCriteria(criteria);
+		FormUtil.getController(SALES_CONTROLLER_NAME).setCriteria(criteria);
 	}
+
 	public void onOfferPdf(ActionEvent event) throws ManagerBeanException {
-		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerBean.getFieldName(IEntityAlias.OFFER_ID), ((Offer) this.getPendingOfferModel().getRowData()).getId());
-		FormUtil.getController("offer").setCriteria(criteria);
+		Integer offerId = ((Offer) this.getPendingOfferModel().getRowData()).getId();
+		BasicController controller = (BasicController) FormUtil.getController(OFFER_CONTROLLER_NAME);
+		controller.select(event, offerId);
 	}
 	
 }
