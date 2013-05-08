@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.event;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.code.aon.common.BeanManager;
@@ -26,11 +27,35 @@ public class CompanyWorkPlaceControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		addCurrentToPayrollWorkPlace();
 	}
-	
+
+	@Override
+	public void afterBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		if(!existPayrollWorkPlace()){
+			addCurrentToPayrollWorkPlace();
+		}
+	}
+
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
 		removeCurrentToPayrollWorkPlace();
+	}
+	
+	private boolean existPayrollWorkPlace() {
+		WorkPlace w = (WorkPlace) this.getController().getTo();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), w.getId());
+			Iterator<ITransferObject> it = bean.getList(criteria).iterator();
+			while(it.hasNext()){
+				return true;
+			}
+		} catch (ManagerBeanException e) {
+			// do nothing
+		}
+		return false;
 	}
 	
 	private void addCurrentToPayrollWorkPlace() throws ControllerListenerException {
@@ -39,7 +64,7 @@ public class CompanyWorkPlaceControllerListener extends ControllerAdapter {
 			IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
 			PayrollWorkPlace pw = new PayrollWorkPlace();
 			pw.setWorkPlace(w);
-			bean.insertOrUpdate(pw);
+			bean.insert(pw);
 		} catch (ManagerBeanException e) {
 			String message = "Error al actualizar el centro de trabajo";
 			AonUtil.addErrorMessage(message);

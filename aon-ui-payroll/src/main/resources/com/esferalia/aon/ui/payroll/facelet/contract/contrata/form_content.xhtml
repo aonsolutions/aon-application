@@ -156,17 +156,29 @@
 				<aon:outputLabel for="formationDuration" 
 					rendered="#{contractContrata.handler.showHorasMinutosFormacion}"
 					value="#{payrollBundle.payroll_contract_formation_hours}" />
-				<aon:div rendered="#{contractContrata.handler.showHorasMinutosFormacion}" id="formationDuration">
+				<aon:div id="formationDuration"
+					rendered="#{contractContrata.handler.showHorasMinutosFormacion}" >
 					<aon:outputLabel for="formationHours" styleClass="aon-italic aon-margin-right"
 						value="#{payrollBundle.payroll_hours}:" />
 					<aon:inputText id="formationHours" size="4" maxlength="4"
 						disabled="#{contractContrata.params.indicFormacionTeorica=='S'}" 
-						value="#{contractContrata.params.horasFormacion}"/>
+						value="#{contractContrata.params.horasFormacion}">
+						<a4j:support event="onblur" reRender="formatinoWorkingDaysPercent" />
+					</aon:inputText>
 					<aon:outputLabel for="formationMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
 						value="#{payrollBundle.payroll_minutes}:" />
 					<aon:inputText id="formationMinutes" size="2" maxlength="2"
 						disabled="#{contractContrata.params.indicFormacionTeorica=='S'}" 
-						value="#{contractContrata.params.minutosFormacion}"/>
+						value="#{contractContrata.params.minutosFormacion}">
+						<a4j:support event="onblur" reRender="formatinoWorkingDaysPercent" />
+					</aon:inputText>
+					<aon:div id="formatinoWorkingDaysPercent" style="display:inline;"
+						rendered="#{not empty contractContrata.params.horasFormacion and not empty contractContrata.params.horasJornada}">
+						<aon:outputText styleClass="aon-italic aon-margin-left"
+							value="#{contractContrata.params.horasFormacion*100/contractContrata.params.horasJornada}" />
+						<aon:outputText styleClass="aon-italic aon-margin-left"
+							value="% de la jornada" />
+					</aon:div>
 				</aon:div>
 				
 				<aon:outputLabel for="ageCollective" 

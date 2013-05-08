@@ -23,6 +23,7 @@ import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.TrainingCourse;
+import com.esferalia.aon.payroll.contrata.enumeration.TEQPTIEM;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.TrainingModality;
@@ -374,7 +375,24 @@ public class ModelPE230 extends AbstractAnnexModel {
 			}
 			getPdfFieldsMap().get(PE230_TRAINING_COURSE_SCHEDULE).setValue("");
 			if(contrataParams!=null){
-				getPdfFieldsMap().get(PE230_TRAINING_COURSE_FIRST_YEAR_MAIN_HOURS).setValue(contrataParams.getHorasFormacion());
+				
+				Integer durationInMonths = getMonthsBetweenDates(contract.getStartDate(), contract.getEndDate());
+				Integer horasFormacion = Integer.parseInt(contrataParams.getHorasFormacion());
+				
+				if(contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_A){
+					
+				} else if (contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_D){
+					horasFormacion *= durationInMonths;
+					horasFormacion *= 4;
+					horasFormacion *= 30;
+				} else if (contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_M){
+					horasFormacion *= durationInMonths;
+				} else if (contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_S){
+					horasFormacion *= durationInMonths;
+					horasFormacion *= 4;
+				}
+				
+				getPdfFieldsMap().get(PE230_TRAINING_COURSE_FIRST_YEAR_MAIN_HOURS).setValue(String.valueOf(horasFormacion));
 			}
 			getPdfFieldsMap().get(PE230_TRAINING_COURSE_FIRST_YEAR_COMPLEMENTARY_HOURS).setValue("");
 			getPdfFieldsMap().get(PE230_TRAINING_COURSE_NEXT_YEAR_MAIN_HOURS).setValue("");
@@ -460,6 +478,13 @@ public class ModelPE230 extends AbstractAnnexModel {
 			}
 		} catch (ManagerBeanException e) {
 			// do nothing ...
+		}
+		return null;
+	}
+	
+	private Integer getMonthsBetweenDates(Date startDate, Date endDate) {
+		if(startDate!=null && endDate!=null){
+			return (int) ((CommonUtil.getDaysBetweenDates(startDate, endDate, true))/30);
 		}
 		return null;
 	}

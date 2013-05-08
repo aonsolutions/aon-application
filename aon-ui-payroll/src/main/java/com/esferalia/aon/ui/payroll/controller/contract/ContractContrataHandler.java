@@ -125,8 +125,7 @@ public class ContractContrataHandler {
 	 */
 	public Boolean getShowHorasMinutosJornada() {
 		if( isPartialTimeContract(getContractCode()) ){
-			return ( getContractCode() != ContractCode.C300
-					&& getContractCode() != ContractCode.C330 && getContractCode() != ContractCode.C350 )
+			return ( getContractCode() != ContractCode.C300 && getContractCode() != ContractCode.C330 && getContractCode() != ContractCode.C350 )
 					|| ( getParams().getActividadSinFechaCierta()==null || !getParams().getActividadSinFechaCierta().equals("S") );
 		}
 		return false;
@@ -507,7 +506,15 @@ public class ContractContrataHandler {
 	}	
 	
 	private boolean isPartialTimeContract(ContractCode contractCode) {
-		return contractCode.getValue().startsWith("2") || contractCode.getValue().startsWith("5");
+		return getContractCode()==ContractCode.C200 || getContractCode()==ContractCode.C230
+				|| getContractCode()==ContractCode.C250 || getContractCode()==ContractCode.C300
+				|| getContractCode()==ContractCode.C330 || getContractCode()==ContractCode.C350
+				|| getContractCode()==ContractCode.C421 || getContractCode()==ContractCode.C450
+				|| getContractCode()==ContractCode.C501 || getContractCode()==ContractCode.C502
+				|| getContractCode()==ContractCode.C503 || getContractCode()==ContractCode.C510
+				|| getContractCode()==ContractCode.C520 || getContractCode()==ContractCode.C530
+				|| getContractCode()==ContractCode.C540 || getContractCode()==ContractCode.C541
+				|| getContractCode()==ContractCode.C550 || getContractCode()==ContractCode.C552;
 	}
 	
 }

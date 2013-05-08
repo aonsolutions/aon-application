@@ -192,11 +192,13 @@ public class ModelPE226 extends AbstractContractModel {
 			 */
 			if(contrataParams!=null){
 				SimpleDateFormat dateFormatter = new SimpleDateFormat();
-				getPdfFieldsMap().get(PE226_YEAR_1_JOURNAL).setValue("30 h.");
-				getPdfFieldsMap().get(PE226_YEAR_2_3_JOURNAL).setValue("34 h."); 
-				getPdfFieldsMap().get(PE226_TOTAL_HOURS).setValue(contrataParams.getHorasFormacion());
-				getPdfFieldsMap().get(PE226_TOTAL_HOURS).setValue("40 h.");
-				getPdfFieldsMap().get(PE226_JOURNAL_PERCENT).setValue("75");
+				getPdfFieldsMap().get(PE226_YEAR_1_JOURNAL).setValue(String.valueOf(Integer.parseInt(contrataParams.getHorasJornada())));
+				getPdfFieldsMap().get(PE226_YEAR_2_3_JOURNAL).setValue(""); 
+				
+				Integer horasJornada = Integer.parseInt(contrataParams.getHorasJornada());
+				Integer horasFormacion = Integer.parseInt(contrataParams.getHorasFormacion());
+				getPdfFieldsMap().get(PE226_TOTAL_HOURS).setValue(String.valueOf(horasJornada - horasFormacion));
+				getPdfFieldsMap().get(PE226_JOURNAL_PERCENT).setValue(String.valueOf(100-(horasFormacion*100/horasJornada)));
 				
 				PayrollWorkPlace pw = obtainPayrollWorkPlace(contract.getWorkPlace());
 				if(pw!=null && pw.getAgreement()!=null){
