@@ -278,6 +278,7 @@ public class NewDomainController {
 		domain.setName(name);
 		domain.setDescription(description);
 		domain.setEnableHeredity( isEnableHeredity() );
+		domain.setMaxDefinedUsers(0);
 		if ( isDomainManagement() ) {
 			domain.setSubDomainSuffix(name);
 		}
