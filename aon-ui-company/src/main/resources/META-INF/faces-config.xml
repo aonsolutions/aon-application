@@ -39,13 +39,19 @@
 			<value>company</value>
 		</managed-property>
 		<managed-property>
-			<property-name>listenerClasses</property-name>
+			<property-name>basicListenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{companyControllerListener}</value>
 				<value>#{companyLogoControllerListener}</value>
 				<value>#{companySignatureControllerListener}</value>
 				<value>#{companyAppParamControllerListener}</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{companyAddressChildListener}</value>
 				<value>#{companyWorkPlaceChildListener}</value>
 				<value>#{companyRPayMethodChildListener}</value>

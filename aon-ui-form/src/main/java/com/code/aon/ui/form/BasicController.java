@@ -83,10 +83,6 @@ public class BasicController extends AbstractPojoController implements IControll
 
 	private int selectedIndex;
 
-	private List<IControllerListener> listenerClasses;
-	
-	private List<IControllerListener> optionalListenerClasses;
-
 	private List<DataModelListener> dataModelListeners;
 
 	private boolean interfaceListenersFlag;
@@ -264,31 +260,12 @@ public class BasicController extends AbstractPojoController implements IControll
 	}
 
 	/**
-	 * Return a list containing the listeners associated to controller.
-	 * 
-	 * @return List<IControllerListener>
-	 */
-	public List<IControllerListener> getListenerClasses() {
-		return listenerClasses;
-	}
-
-	/**
 	 * Set a list containing the listeners associated to controller.
 	 * 
 	 * @param listenerClasses
 	 */
 	public void setListenerClasses(List<IControllerListener> listenerClasses) {
-		this.listenerClasses = listenerClasses;
-		addListeners( this.listenerClasses );
-	}
-
-	/**
-	 * Return a list containing the optional listeners associated to controller.
-	 * 
-	 * @return List<IControllerListener>
-	 */
-	public List<IControllerListener> getOptionalListenerClasses() {
-		return optionalListenerClasses;
+		addListeners( listenerClasses );
 	}
 
 	/**
@@ -297,8 +274,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @param listenerClasses
 	 */
 	public void setOptionalListenerClasses(List<IControllerListener> listenerClasses) {
-		this.optionalListenerClasses = listenerClasses;
-		addListeners( this.optionalListenerClasses );
+		addListeners( listenerClasses );
 	}
 	
 	/**
@@ -972,7 +948,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * Add all listeners from variable listenerClasses to controller.
 	 * 
 	 */
-	private void addListeners( List<IControllerListener> listenerClasses ) {
+	protected void addListeners( List<IControllerListener> listenerClasses ) {
 		Iterator<IControllerListener> iter = listenerClasses.iterator();
 		while (iter.hasNext()) {
 			IControllerListener listener = iter.next();

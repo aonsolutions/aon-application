@@ -18,6 +18,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
@@ -26,6 +28,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +55,7 @@ import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -122,8 +126,14 @@ public class CompanyParentController extends BasicController implements ICompany
 	private boolean customReportTemplate;
 	
 	private boolean bigLogo;
+	
+	private List<IControllerListener> listenerClasses;
+	
+    public CompanyParentController() {
+    	this.listenerClasses = new LinkedList<IControllerListener>();
+    }
 
-    /**
+	/**
      * Gets the company label.
      * 
      * @return the company label
@@ -335,18 +345,26 @@ public class CompanyParentController extends BasicController implements ICompany
 	 * @param event the event
 	 */
 	public void onLoad(ActionEvent event) {
-		onLoad();
+		onLoad(true);
 	}
 	
 	/**
 	 * On load.
 	 */
-	private void onLoad(){
+	private void onLoad( boolean activeListeners ) {
 		try {
+			if ( activeListeners && (listenerClasses != null) ) {
+				addListeners(listenerClasses);
+				listenerClasses = null;
+			}
 			initializeModel();
 			if(this.getModel().getRowCount() > 0){
 				this.getModel().setRowIndex(0);
+				StopWatch sw = new StopWatch();
+				sw.start();
 				onSelect(null);
+				sw.stop();
+				LOGGER.info( "Time: {}", sw.toString());
 				loadMainAddress();
 			}else{
 				this.onReset(null);
@@ -453,7 +471,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	 */
 	public RegistryAddress obtainAddress() throws ManagerBeanException{
 		if(this.getTo() == null){
-			this.onLoad();
+			this.onLoad(false);
 		}
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();
@@ -541,7 +559,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	 */
 	public RegistryAttachment obtainCompanyLogo() throws ManagerBeanException {
 		if(this.getTo() == null){
-			this.onLoad();
+			this.onLoad(false);
 		}
 		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
@@ -565,7 +583,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	 */
 	public RegistryAttachment obtainCompanySignature() throws ManagerBeanException {
 		if(this.getTo() == null){
-			this.onLoad();
+			this.onLoad(false);
 		}
 		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
@@ -587,7 +605,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	 */
 	public Company obtainCompany(){
 		if(this.getTo() == null){
-			this.onLoad();
+			this.onLoad(false);
 		}
 		return (Company)this.getTo();
 	}
@@ -599,7 +617,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	 */
 	public RegistryMedia obtainPhone(){
 		if(this.getPhone() == null){
-			this.onLoad();
+			this.onLoad(false);
 		}
 		return this.getPhone();
 	}
@@ -611,7 +629,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	 */
 	public RegistryMedia obtainFax(){
 		if(this.getFax() == null){
-			this.onLoad();
+			this.onLoad(false);
 		}
 		return this.getFax();
 	}
@@ -623,7 +641,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	 */
 	public RegistryMedia obtainWeb(){
 		if(this.getWeb() == null){
-			this.onLoad();
+			this.onLoad(false);
 		}
 		return this.getWeb();
 	}
@@ -635,7 +653,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	 */
 	public RegistryMedia obtainEmail(){
 		if(this.getEmail()== null){
-			this.onLoad();
+			this.onLoad(false);
 		}
 		return this.getEmail();
 	}
@@ -768,7 +786,7 @@ public class CompanyParentController extends BasicController implements ICompany
 
 	public boolean isHideHeaderContent() {
 		if ( getTo() == null ) {
-			this.onLoad();
+			this.onLoad(false);
 		}
 		setHideHeaderContent(isNew());
 		return isNew();
@@ -840,7 +858,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	 */
 	public boolean isEInvoice() {
 		if(this.getTo() == null){
-			this.onLoad();
+			this.onLoad(false);
 		}
 		return ( (Company) getTo()).isEInvoice();
 	}
@@ -872,6 +890,18 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	public boolean isBigLogo() {
 		return bigLogo;
+	}
+
+	public void setBasicListenerClasses(List<IControllerListener> basicListenerClasses) {
+		addListeners(basicListenerClasses);
 	}	
+
+	public void setListenerClasses(List<IControllerListener> listenerClasses) {
+		this.listenerClasses.addAll(listenerClasses);
+	}
+
+	public void setOptionalListenerClasses(List<IControllerListener> listenerClasses) {
+		this.listenerClasses.addAll(listenerClasses);
+	}
 	
 }
