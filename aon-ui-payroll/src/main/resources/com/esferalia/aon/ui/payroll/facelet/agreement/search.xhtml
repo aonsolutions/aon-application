@@ -14,15 +14,16 @@
 				<ui:param name="controller" value="#{agreement}" />
 			</ui:include>
 
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{agreement}" />
+				<ui:param name="searchAction" value="agreement_grid" />
+				
 				<ui:define name="searchContent">
-
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/searchContent.xhtml" />								
-
 				</ui:define>
+				
 			</ui:decorate>
+			
 		</aon:form>
 	</ui:define>
 </ui:composition>

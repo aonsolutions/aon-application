@@ -2171,7 +2171,7 @@
 	<!-- ************ AGREEMENT ************** -->
 	<managed-bean>
 		<managed-bean-name>agreement</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.agreement.AgreementController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -2188,17 +2188,6 @@
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Agreement_description</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{agreementSalaryTable}</value>
-				<value>#{agreementLevelListener}</value>
-				<value>#{agreementPaymentLinesListener}</value>
-				<value>#{agreementExtraListener}</value>
-				<value>#{agreementTreeControlerListener}</value>
-			</list-entries>
 		</managed-property>
 	</managed-bean>
 	<managed-bean>
@@ -3306,6 +3295,10 @@
 		<navigation-case>
 			<from-outcome>agreement_search</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/agreement/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>agreement_grid</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/agreement/grid.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>agreement_formTree</from-outcome>
