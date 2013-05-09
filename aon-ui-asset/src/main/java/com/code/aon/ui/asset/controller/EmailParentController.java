@@ -19,7 +19,9 @@ import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.webmail.EmailSender;
-import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.IMailAccount;
+import com.code.aon.webmail.db.MailAccount;
+import com.code.aon.webmail.enumeration.ConnectionSecurity;
 
 public class EmailParentController {
 	
@@ -42,7 +44,7 @@ public class EmailParentController {
 		if ( this.sender == null ) {
 //			String domain = "localhost";
 			String login = "admin";
-			MailAccount mailAccount = getDefaultMailAccount();
+			IMailAccount mailAccount = getDefaultMailAccount();
 			
 			if ( mailAccount != null ) {
 				Address from = new InternetAddress(username, username);
@@ -56,13 +58,13 @@ public class EmailParentController {
 		return this.sender;
 	}
 	
-	private MailAccount getDefaultMailAccount() {
+	private IMailAccount getDefaultMailAccount() {
 		MailAccount	mailAccount=new MailAccount();
-		mailAccount.setHost("mail.esferalia.com");
+		mailAccount.setIncomingHost("mail.esferalia.com");
 		mailAccount.setEmail("eagirrezabal@esferalia.com");
 		mailAccount.setOutgoingHost("mail.esferalia.com");
 		mailAccount.setOutgoingPort(25);
-		mailAccount.setOutgoingSsl(false);
+		mailAccount.setOutgoingSecurity(ConnectionSecurity.NONE);
 		mailAccount.setOutgoingVerification(true);
 		mailAccount.setProtocol("imap");
 		mailAccount.setMailUsername("test@esferalia.com");

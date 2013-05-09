@@ -1,6 +1,7 @@
 package com.code.aon.ui.asset.controller;
 
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -35,8 +36,8 @@ import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.webmail.IMailAccount;
-import com.code.aon.webmail.WebmailUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ActivityDialogController extends EmailParentController{
@@ -343,14 +344,14 @@ public class ActivityDialogController extends EmailParentController{
 		
 //		from field
 		AuthPrincipal user = AonUtil.getAuthPrincipal();
-		String domain = user.getDomain();
 		String login = user.getShortName();
 		IMailAccount mailAccount;
-		try {
-			mailAccount = WebmailUtil.getDefaultAccount(domain,login);
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage( "El usuario " + login + " no tiene definida ninguna cuenta de correo" );
-			throw new AbortProcessingException( e.getMessage(), e);
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		mailAccount = mailConfig.getDefaultMailAccount(false);
+		if ( mailAccount == null ) {
+			String message = "El usuario " + login + " no tiene definida ninguna cuenta de correo";
+			AonUtil.addErrorMessage( message );
+			throw new AbortProcessingException( message );
 		}
 		String from = mailAccount.getEmail();
 			
