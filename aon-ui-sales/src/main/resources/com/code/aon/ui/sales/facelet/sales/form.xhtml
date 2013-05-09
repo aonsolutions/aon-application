@@ -378,7 +378,7 @@
 							label="#{salesBundle.sales_detail}">
 							<ui:include src="/com/code/aon/ui/sales/facelet/sales/formDetail.xhtml" />
 						</aon:panelTab>
-						<c:if test="#{aonRole.warehouseOperator}">
+						<c:if test="#{actionDenied.moduleEnabled['warehouse']}">
 							<aon:panelTab id="salesShipment" 
 								label="#{carrierBundle.carrier_shipment}">
 								<ui:include src="/com/code/aon/ui/sales/facelet/sales/formShipment.xhtml" />
