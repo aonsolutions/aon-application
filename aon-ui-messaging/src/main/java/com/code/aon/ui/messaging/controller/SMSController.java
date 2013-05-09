@@ -33,7 +33,7 @@ import com.code.aon.messaging.sms.SynchronizedSender;
 import com.code.aon.messaging.util.Utils;
 import com.code.aon.ui.messaging.PriceTariff;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.webmail.Contact;
+import com.code.aon.webmail.IContact;
 
 public class SMSController implements Serializable {
 
@@ -301,9 +301,9 @@ public class SMSController implements Serializable {
 
 	public void accept(ActionEvent event) {
 		SMSContactController bean = (SMSContactController) AonUtil.getRegisteredBean( SMS_CONTACT_MANAGED_BEAN );
-		List<Contact> lst = bean.getSelectedRows();
+		List<IContact> lst = bean.getSelectedRows();
 	    for (int i = 0, max = lst.size(); i < max; i++) {
-	    	Contact e = lst.get(i);
+	    	IContact e = lst.get(i);
 	    	if ( e.getCellularPhone() != null ) {
 	    		String r = Utils.parsePhoneNumber( e.getCellularPhone() );
 	    		this.message.add( r );

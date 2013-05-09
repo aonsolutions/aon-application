@@ -14,7 +14,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.FormUtil;
-import com.code.aon.webmail.Contact;
+import com.code.aon.webmail.IContact;
 import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class SMSContactController {
@@ -72,7 +72,7 @@ public class SMSContactController {
 			List<ITransferObject> lst = bean.getList( criteria );
             for (int i = 0, max = lst.size(); i < max; i++) {
             	SelectionContact sc = new SelectionContact();
-            	sc.setContact( (Contact) lst.get(i) );
+            	sc.setContact( (IContact) lst.get(i) );
             	sc.setSelected( Boolean.FALSE );
             	contacts.add( sc );
             }
@@ -91,8 +91,8 @@ public class SMSContactController {
 	/**
 	 * @return the selectedRows
 	 */
-	public List<Contact> getSelectedRows() {
-	    List<Contact> selectedRows = new ArrayList<Contact>();
+	public List<IContact> getSelectedRows() {
+	    List<IContact> selectedRows = new ArrayList<IContact>();
         selectedRows.clear();
         for (int i = contacts.size()-1; i >= 0 ; i--) {
             if (contacts.get(i).isSelected()) {
@@ -115,7 +115,7 @@ public class SMSContactController {
 		
 		private boolean selected;
 		
-		private Contact contact;
+		private IContact contact;
 
 		/**
 		 * @return the selected
@@ -149,14 +149,14 @@ public class SMSContactController {
 		/**
 		 * @return the contact
 		 */
-		public Contact getContact() {
+		public IContact getContact() {
 			return contact;
 		}
 
 		/**
 		 * @param the contact
 		 */
-		public void setContact(Contact contact) {
+		public void setContact(IContact contact) {
 			this.contact = contact;
 		}
 		
