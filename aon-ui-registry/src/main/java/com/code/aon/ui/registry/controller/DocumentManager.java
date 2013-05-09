@@ -1,16 +1,8 @@
 package com.code.aon.ui.registry.controller;
 
-import static com.code.aon.ldap.IAonObjectClasses.CONFIG;
-import static com.code.aon.ldap.IAonObjectClasses.DOMAIN;
-import static com.code.aon.ldap.ILdapConstants.DOCUMENT_MANAGEMENT_ATTRIBUTE;
-import static com.code.aon.ldap.ILdapConstants.MAX_DOCUMENT_SIZE_ATTRIBUTE;
-import static com.code.aon.ldap.ILdapConstants.MAX_TOTAL_DOCUMENT_SIZE_ATTRIBUTE;
 import static com.code.aon.ui.common.ICommonConstants.DEFAULT_BUNDLE;
 import static com.code.aon.ui.common.ICommonConstants.DOCUMENT_SIZE_MESSAGE;
-import static com.code.aon.ui.common.ICommonConstants.DOMAIN_RESOLVER_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.USED_SPACE_MESSAGE;
-
-import javax.naming.Name;
 
 import org.apache.commons.io.FileUtils;
 import org.hibernate.Query;
@@ -24,10 +16,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Domain;
-import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.Entry;
-import com.code.aon.ldap.NameResolver;
-import com.code.aon.ui.common.controller.DomainResolver;
 import com.code.aon.ui.util.AonUtil;
 
 public class DocumentManager {
@@ -53,43 +41,10 @@ public class DocumentManager {
 	public DocumentManager() {
 		this.maxDocumentSize = MINIMUM_MAX_DOCUMENT_SIZE * MB_SIZE;
 		this.maxTotalDocumentSize = MINIMUM_MAX_TOTAL_DOCUMENT_SIZE * MB_SIZE;
-		if (! AonUtil.isSkipLdap() ) {
-			initLdap();	
-		} else {
-			initDB();
-		}
-	}
-
-	private void initLdap() {
-		DomainResolver domainResolver = (DomainResolver) AonUtil.getRegisteredBean(DOMAIN_RESOLVER_CONTROLLER_NAME);
-		String domainName = domainResolver.getDomain();		
-		Name domainDN = NameResolver.getDomainDN(domainName);
-		boolean documentManagement = false;
-		BasicLdap ldap = new BasicLdap();
-		Entry domain = ldap.get(domainDN, DOMAIN);
-		if ( (domain != null) && domain.containsKey(DOCUMENT_MANAGEMENT_ATTRIBUTE) ) {
-			documentManagement = domain.toBoolean(DOCUMENT_MANAGEMENT_ATTRIBUTE);
-		}
-		if ( documentManagement ) {
-			init(domain);
-		} else {
-			Entry config = ldap.get(domainDN, CONFIG);
-			if (config != null) {
-				init(config);
-			}
-		}
+		init();
 	}
 	
-	private void init( Entry entry ) {
-		if ( entry.containsKey(MAX_DOCUMENT_SIZE_ATTRIBUTE) ) {
-			maxDocumentSize = entry.toInteger(MAX_DOCUMENT_SIZE_ATTRIBUTE) * MB_SIZE;
-		}		
-		if ( entry.containsKey(MAX_TOTAL_DOCUMENT_SIZE_ATTRIBUTE) ) {
-			maxTotalDocumentSize = entry.toInteger(MAX_TOTAL_DOCUMENT_SIZE_ATTRIBUTE) * MB_SIZE;
-		}
-	}
-	
-	private void initDB() {
+	private void init() {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 			Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());

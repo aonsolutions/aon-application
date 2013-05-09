@@ -25,7 +25,6 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.jaas.valves.BackDoorAuthenticationValve;
-import com.code.aon.ldap.util.DomainUtil;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 05/11/2007
@@ -76,7 +75,7 @@ public class BackDoorAuthenticationFilter implements Filter, IConstants {
 	}
 	
 	private String getUserName( AuthPrincipal principal, HttpServletRequest httpRequest) {
-		String domain = DomainUtil.getDomain(httpRequest.getServerName());
+		String domain = httpRequest.getServerName();
 		String username = principal.getShortName() + IConstants.IDENTITY_SEPARATOR 
 			+ domain + httpRequest.getContextPath();
 		return username;

@@ -302,11 +302,6 @@
 		<param-value>ALL</param-value>
 	</context-param>
 
-	<context-param>
-		<param-name>com.code.aon.skipLdap</param-name>
-		<param-value>true</param-value>
-	</context-param>
-
 	<!-- <context-param> <param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name> 
 		<param-value>../aon-desktop/richFaces3.3.3.Final/</param-value> </context-param> -->
 	<!-- RichFaces Filter -->

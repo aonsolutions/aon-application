@@ -21,7 +21,6 @@ import com.code.aon.manager.BasicProfile;
 import com.code.aon.manager.Domain;
 import com.code.aon.manager.Role;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.LdapBasicController;
 
 public class ProfileController extends LdapBasicController implements IManagerConstants {
 

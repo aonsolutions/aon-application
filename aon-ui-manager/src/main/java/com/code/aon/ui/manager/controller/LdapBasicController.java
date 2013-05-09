@@ -1,4 +1,4 @@
-package com.code.aon.ui.webmail.controller;
+package com.code.aon.ui.manager.controller;
 
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.ID_DUPLICATED;

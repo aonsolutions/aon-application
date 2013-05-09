@@ -3,7 +3,6 @@ package com.code.aon.ui.util;
 import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.common.ICommonConstants.AON_ROLE_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.CONFIGURATION_CONTROLLER_NAME;
-import static com.code.aon.ui.common.ICommonConstants.SKIP_LDAP;
 
 import java.text.MessageFormat;
 import java.util.Collections;
@@ -25,7 +24,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -630,17 +628,6 @@ public class AonUtil {
 				StringUtils.contains(userAgent, "iPhone");
 	}    
 
-    /**
-     * Checks if is skip ldap.
-     *
-     * @return true, if is skip ldap
-     */
-    public static boolean isSkipLdap() {
-		FacesContext fc = FacesContext.getCurrentInstance();
-		String value = fc.getExternalContext().getInitParameter(SKIP_LDAP);		
-		return BooleanUtils.toBoolean(value);
-	}
- 
     /**
      * Sort the list of SelectItem
      * 

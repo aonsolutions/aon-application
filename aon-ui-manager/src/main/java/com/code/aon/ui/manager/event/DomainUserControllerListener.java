@@ -18,7 +18,6 @@ import com.code.aon.ui.manager.controller.DomainUserController;
 import com.code.aon.ui.manager.controller.IManagerConstants;
 import com.code.aon.ui.manager.controller.ManagerController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.IWebMailConstants;
 
 public class DomainUserControllerListener extends ControllerAdapter implements IManagerConstants {
 
@@ -90,9 +89,9 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 	}
 
 	private void updateWebmail( DomainUser user ) {
-		ManagerController.updateController(IWebMailConstants.BEAN_SIGNATURE, user.getId());
-		ManagerController.updateController(IWebMailConstants.BEAN_MAIL_ACCOUNT, user.getId());
-		ManagerController.updateController(IWebMailConstants.BEAN_CONTACT, user.getId());
+		ManagerController.updateController(IManagerConstants.BEAN_SIGNATURE, user.getId());
+		ManagerController.updateController(IManagerConstants.BEAN_MAIL_ACCOUNT, user.getId());
+		ManagerController.updateController(IManagerConstants.BEAN_CONTACT, user.getId());
 	}	
 
 	private void updateDBUser( DomainUserController duc, DomainUser domainUser ) throws ControllerListenerException {

@@ -52,18 +52,14 @@ import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
+import com.code.aon.manager.MailAccount;
+import com.code.aon.manager.Signature;
 import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.manager.converter.LdapTransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.IWebMailConstants;
-import com.code.aon.ui.webmail.controller.LdapBasicController;
-import com.code.aon.ui.webmail.controller.MailAccountController;
-import com.code.aon.ui.webmail.controller.SignatureController;
-import com.code.aon.ui.webmail.converter.LdapTransferObjectConverter;
-import com.code.aon.webmail.MailAccount;
-import com.code.aon.webmail.Signature;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainUserController extends LdapBasicController implements IManagerConstants {
@@ -159,7 +155,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 	private Signature addDefaultSignature( DomainUser user, String companyName ) throws ManagerBeanException {
 		Signature signature = new Signature();
 		initDefaultSignature(signature, user, companyName);
-		SignatureController controller = (SignatureController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_SIGNATURE);
+		SignatureController controller = (SignatureController) AonUtil.getRegisteredBean(IManagerConstants.BEAN_SIGNATURE);
 		controller.updateBaseDN(user.getId());
 		controller.getManagerBean().insert( signature );
 		return signature;
@@ -196,7 +192,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		account.setOutgoingSsl(outgoingSsl);
 		boolean outgoingVerification = BooleanUtils.toBoolean(properties.getProperty(MAIL_ACCOUNT_OUTGOING_VERIFICATION));
 		account.setOutgoingVerification(outgoingVerification);
-		MailAccountController controller = (MailAccountController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MAIL_ACCOUNT);
+		MailAccountController controller = (MailAccountController) AonUtil.getRegisteredBean(IManagerConstants.BEAN_MAIL_ACCOUNT);
 		controller.updateBaseDN(user.getId());
 		controller.getManagerBean().insert( account );				
 	}

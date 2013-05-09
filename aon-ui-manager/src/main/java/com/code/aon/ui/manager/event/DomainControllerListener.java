@@ -29,7 +29,6 @@ import com.code.aon.ui.manager.controller.DomainUserController;
 import com.code.aon.ui.manager.controller.IManagerConstants;
 import com.code.aon.ui.manager.controller.ManagerController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.IWebMailConstants;
 
 public class DomainControllerListener extends ControllerAdapter implements IManagerConstants {
 
@@ -173,8 +172,8 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
 		ddbc.updateBaseDN(domain.getId());		
 		ManagerController.updateController(ALIAS_CONTROLLER_NAME, domain.getId());
-		ManagerController.updateController(IWebMailConstants.BEAN_SIGNATURE, domain.getId());
-		ManagerController.updateController(IWebMailConstants.BEAN_MAIL_ACCOUNT, domain.getId());		
+		ManagerController.updateController(IManagerConstants.BEAN_SIGNATURE, domain.getId());
+		ManagerController.updateController(IManagerConstants.BEAN_MAIL_ACCOUNT, domain.getId());		
 	}
 	
 	private void initCompanyData( DomainController dc) {

@@ -1,4 +1,4 @@
-package com.code.aon.ui.webmail.converter;
+package com.code.aon.ui.manager.converter;
 
 import java.io.Serializable;
 

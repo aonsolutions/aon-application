@@ -1,7 +1,5 @@
 package com.code.aon.ui.company.servlet;
 
-import static com.code.aon.ui.common.ICommonConstants.SKIP_LDAP;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +7,6 @@ import java.io.OutputStream;
 import java.sql.Connection;
 import java.util.Properties;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +19,6 @@ import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
@@ -45,13 +41,6 @@ public class CompanyDocumentServlet extends HttpServlet {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDocumentServlet.class.getName());
 	
 	private static final String COMPANY_LOGO = "company.logo";
-	
-	private boolean skipLdap;
-
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-		this.skipLdap = BooleanUtils.toBoolean(getServletContext().getInitParameter(SKIP_LDAP));        
-    }
 	
 	private void finishDownload( HttpServletResponse response, OutputStream out ) {
 		IOUtils.closeQuietly(out);
@@ -87,7 +76,7 @@ public class CompanyDocumentServlet extends HttpServlet {
 	private Properties getConnectionProperties( HttpServletRequest req ) {
 		String server = req.getServerName();
 		String context = req.getContextPath(); 
-		return DataSourceUtil.getDBProperties(server, context, skipLdap);
+		return DataSourceUtil.getDBProperties(server, context);
 	}
 	
 	private Connection getConnection( HttpServletRequest req ) throws AonException {
@@ -145,7 +134,7 @@ public class CompanyDocumentServlet extends HttpServlet {
 				connection = getConnection(req);
 				if ( connection != null ) {
 					if ( companyLogo ) {
-						Integer domainId = DataSourceUtil.getDomain(connection, req.getServerName(), skipLdap);
+						Integer domainId = DataSourceUtil.getDomain(connection, req.getServerName());
 						Integer companyId = getCompanyId(connection, domainId);
 						attachment = CompanyDisplay.getLogo(connection, domainId, companyId);
 					} else {

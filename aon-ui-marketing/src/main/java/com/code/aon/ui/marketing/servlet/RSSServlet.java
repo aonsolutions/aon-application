@@ -1,14 +1,11 @@
 package com.code.aon.ui.marketing.servlet;
 
-import static com.code.aon.ui.common.ICommonConstants.SKIP_LDAP;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.SessionFactory;
@@ -41,13 +37,6 @@ public class RSSServlet extends HttpServlet {
 	
 	private static final String HIBERNATE_CONFIGURATION_FILE = "/hibernate.rss.cfg.xml";
 
-	private boolean skipLdap;
-
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-		this.skipLdap = BooleanUtils.toBoolean(getServletContext().getInitParameter(SKIP_LDAP));        
-    }
-	
 	private void finishDownload( HttpServletResponse response, OutputStream out ) {
 		IOUtils.closeQuietly(out);
 		if ( response != null ) {
@@ -68,7 +57,7 @@ public class RSSServlet extends HttpServlet {
 	private Properties getConnectionProperties( HttpServletRequest req ) {
 		String server = req.getServerName();
 		String context = req.getContextPath(); 
-		return DataSourceUtil.getDBProperties(server, context, skipLdap);
+		return DataSourceUtil.getDBProperties(server, context);
 	}
 	
 	private Configuration getConfiguration( HttpServletRequest req ) {
@@ -100,7 +89,7 @@ public class RSSServlet extends HttpServlet {
 			if ( configuration != null ) {
 				factory = configuration.buildSessionFactory();
 				StatelessSession session = factory.openStatelessSession();
-				Integer domainId = DataSourceUtil.getDomain(session.connection(), req.getServerName(), skipLdap);
+				Integer domainId = DataSourceUtil.getDomain(session.connection(), req.getServerName());
 				Integer channelId = getChannelId(req);
 				data = RSSController.getRSS(session, domainId, channelId, getURLPreffix(req));
 				session.close();				

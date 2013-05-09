@@ -49,10 +49,8 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.config.event.BankAccountValidationListener;
 import com.code.aon.ui.manager.UserType;
+import com.code.aon.ui.manager.converter.LdapTransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.IWebMailConstants;
-import com.code.aon.ui.webmail.controller.LdapBasicController;
-import com.code.aon.ui.webmail.converter.LdapTransferObjectConverter;
 
 public class DomainController extends LdapBasicController implements IAonObjectClasses, IManagerConstants {
 
@@ -417,8 +415,8 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 
 	public void onBackToDomain( ActionEvent event ) {
 		Domain domain = getDomain();
-		ManagerController.updateController(IWebMailConstants.BEAN_SIGNATURE, domain.getId(), false);
-		ManagerController.updateController(IWebMailConstants.BEAN_MAIL_ACCOUNT, domain.getId(), false);				
+		ManagerController.updateController(IManagerConstants.BEAN_SIGNATURE, domain.getId(), false);
+		ManagerController.updateController(IManagerConstants.BEAN_MAIL_ACCOUNT, domain.getId(), false);				
 	}
 	
 }

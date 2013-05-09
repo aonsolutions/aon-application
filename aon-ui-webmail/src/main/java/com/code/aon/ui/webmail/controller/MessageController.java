@@ -64,7 +64,6 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonMessageTracer;
-import com.code.aon.webmail.Contact;
 import com.code.aon.webmail.EmailSecurity;
 import com.code.aon.webmail.IContact;
 import com.code.aon.webmail.IMailAccount;
@@ -78,6 +77,7 @@ import com.code.aon.webmail.bean.AonMessageUtils;
 import com.code.aon.webmail.bean.AonServer;
 import com.code.aon.webmail.bean.BundleConstants;
 import com.code.aon.webmail.dao.IWebMailAlias;
+import com.code.aon.webmail.db.Contact;
 import com.sun.mail.imap.AppendUID;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.util.LineOutputStream;
@@ -972,7 +972,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 
 	public void saveToContacts(ActionEvent event) throws WebmailException, ManagerBeanException {
 		String email = message.getSenderEmail();
-		IController contactController = FormUtil.getController(BEAN_CONTACT);
+		IController contactController = FormUtil.getController(BEAN_CONTACT_DB);
 		IManagerBean contactsBean = contactController.getManagerBean();
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(contactsBean.getFieldName(IWebMailAlias.CONTACT_EMAIL), email);
@@ -983,11 +983,11 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 			contact.setDisplayName(contactName);
 			int pos = contactName.indexOf(' ');
 			if ( pos != -1 ) {
-				contact.setName(contactName.substring(0, pos));
+				contact.setDisplayName(contactName.substring(0, pos));
 				String surname = StringUtils.trimToNull( StringUtils.substring(contactName, pos+1) );
 				contact.setSurname(surname);
 			} else {
-				contact.setName(contactName);
+				contact.setDisplayName(contactName);
 			}
 
 			contactsBean.insert(contact);		

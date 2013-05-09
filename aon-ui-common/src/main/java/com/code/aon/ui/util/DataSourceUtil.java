@@ -25,7 +25,7 @@ public class DataSourceUtil {
 	public static Properties getDBProperties() {
 		String server = AonUtil.getServerName();
 		String context = AonUtil.getContextPath();
-    	return DataSourceUtil.getDBProperties(server, context, AonUtil.isSkipLdap());
+    	return DataSourceUtil.getDBProperties(server, context);
 	}
 	
 	/**
@@ -36,20 +36,19 @@ public class DataSourceUtil {
 	 * @param skipLdap the skip ldap
 	 * @return the DB properties
 	 */
-	public static Properties getDBProperties( String server, String context, boolean skipLdap ) {
-    	String domain = DomainResolver.getDomain(server, skipLdap);
+	public static Properties getDBProperties( String server, String context) {
     	String application = DomainResolver.getApplication(context);
-    	return ConnectionProvider.getDBProperties(domain, application);
+    	return ConnectionProvider.getDBProperties(server, application);
 	}	
  
-	public static Integer getDomain( Connection connection, String host, boolean skipLdap ) throws SQLException {
+	public static Integer getDomain( Connection connection, String host ) throws SQLException {
 		ResultSetHandler<Object> h = new ScalarHandler<Object>();
 		QueryRunner run = new QueryRunner();
 		Long count = (Long) run.query( connection, "SELECT count(id) FROM domain", h); 
 		if ( count == 1 ) {
 			return (Integer) run.query( connection, "SELECT id FROM domain", h);
 		}
-		String domainName = DomainResolver.getDomain(host, skipLdap);		
+		String domainName = host;		
 		Integer domainId = null;
 		do {
 			domainId = (Integer) run.query( connection, "SELECT id FROM domain WHERE name =?", h, domainName);

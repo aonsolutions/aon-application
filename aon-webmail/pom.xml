@@ -26,12 +26,6 @@
 		   <scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.common.ldap</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcmail-jdk14</artifactId>
 			<version>1.38</version>

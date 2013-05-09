@@ -49,7 +49,6 @@ import com.code.aon.ui.manager.BeanManagerEx;
 import com.code.aon.ui.manager.UserType;
 import com.code.aon.ui.manager.util.ManagerLogger;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.LdapBasicController;
 import com.code.aon.ui.webmail.controller.MailConfigController;
 
 public class ManagerController implements IManagerConstants {

@@ -491,6 +491,116 @@
 			<value>aonConfig</value>
 		</managed-property>								
 	</managed-bean>			
+	
+	<!-- ************ SIGNATURE ************** -->
+	<managed-bean>
+		<managed-bean-name>signature</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.manager.controller.SignatureController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.manager.Signature</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>signature</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Signature_name</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{signatureControllerListener}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>	
+			
+	
+	<!-- ************ MAILACCOUNT ************** -->
+	<managed-bean>
+		<managed-bean-name>mailAccount</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.manager.controller.MailAccountController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.manager.MailAccount</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>mailAccount</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>MailAccount_email</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{mailAccountControllerListener}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>
+	
+	<!-- ************* CONTACT ***************** -->
+	<managed-bean>
+		<managed-bean-name>contact</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.controller.ContactController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.manager.Contact</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contact</value>
+		</managed-property>								
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Contact_displayName</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{contactControllerListener}</value>
+			</list-entries>
+		</managed-property>				
+	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>contactControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.webmail.event.ContactControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
+	
 			
 	<!-- =================== Main ================= -->
 	<navigation-rule>

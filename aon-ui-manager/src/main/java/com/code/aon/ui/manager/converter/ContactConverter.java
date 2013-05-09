@@ -1,4 +1,4 @@
-package com.code.aon.ui.webmail.converter;
+package com.code.aon.ui.manager.converter;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -7,8 +7,8 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.ui.webmail.controller.ContactController;
-import com.code.aon.webmail.Contact;
+import com.code.aon.ui.manager.controller.ContactController;
+import com.code.aon.webmail.db.Contact;
 
 public class ContactConverter implements Converter {
 

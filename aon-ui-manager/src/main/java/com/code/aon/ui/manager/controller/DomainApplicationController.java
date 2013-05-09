@@ -27,7 +27,6 @@ import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.LdapBasicController;
 
 public class DomainApplicationController extends LdapBasicController implements IManagerConstants {
 	

@@ -98,9 +98,7 @@ public class ActionDeniedController {
 		for( ApplicationOption option : getOptions(getDeniedActions(user)) ) {
 			this.deniedActionsMap.put(option.getAction(), option);
 		}
-		if ( AonUtil.isSkipLdap() ) {
-			this.listener = new UserLoookupListener();	
-		}
+		this.listener = new UserLoookupListener();	
 		initEnabledManagedBeans();
 		this.moduleEnabled = new ModuleEnabledMap();
 	}

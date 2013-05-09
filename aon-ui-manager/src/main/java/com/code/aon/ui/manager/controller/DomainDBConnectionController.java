@@ -25,9 +25,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.manager.converter.LdapTransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.LdapBasicController;
-import com.code.aon.ui.webmail.converter.LdapTransferObjectConverter;
 
 public class DomainDBConnectionController extends LdapBasicController implements IManagerConstants {
 

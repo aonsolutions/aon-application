@@ -21,7 +21,6 @@ import org.apache.commons.validator.EmailValidator;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.Alias;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.LdapBasicController;
 
 public class AliasController extends LdapBasicController {
 

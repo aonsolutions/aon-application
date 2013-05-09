@@ -1,5 +1,7 @@
 package com.code.aon.ui.groupware.event;
 
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -35,9 +37,9 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.groupware.controller.NoticeController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.WebmailException;
-import com.code.aon.webmail.WebmailUtil;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonServer;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -169,7 +171,8 @@ public class NoticeControllerListener extends ControllerAdapter {
 		String content = "DE: " + notice.getSource() + "\nEMPRESA: " + notice.getCompany() + "\nTELEFONO: " + notice.getPhone() + "\nASUNTO: " + notice.getSubject();
 		
 		try {
-			IMailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
+			MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+			IMailAccount mailAccount = mailConfig.getDefaultMailAccount(false);			
 			AonServer server = new AonServer(mailAccount);
 			server.createBasicFolders();
 			InternetAddress iafrom = new InternetAddress(from, username);
@@ -186,8 +189,6 @@ public class NoticeControllerListener extends ControllerAdapter {
 		} catch (MessagingException e) {
 			LOGGER.error(e.getMessage(), e);
 		} catch (WebmailException e) {
-			LOGGER.error(e.getMessage(), e);
-		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}

@@ -1,5 +1,7 @@
 package com.code.aon.ui.company.util;
 
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,10 +40,10 @@ import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.IMailAccount;
-import com.code.aon.webmail.WebmailUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyEmailUtil implements ICompanyConstants {
@@ -51,18 +53,6 @@ public class CompanyEmailUtil implements ICompanyConstants {
 	private EmailSender sender;
 	
 	private Company company;
-
-	private IMailAccount getDefaultMailAccount( AuthPrincipal user ) {		
-		String domain = user.getDomain();
-		String login = user.getShortName();
-		IMailAccount mailAccount;
-		try {
-			mailAccount = WebmailUtil.getDefaultAccount(domain,login);
-		} catch (ManagerBeanException e) {
-			throw new AbortProcessingException( e.getMessage(), e);
-		}
-		return mailAccount;
-	}
 	
 	public Company getCompany() {
 		if (company == null) {
@@ -74,11 +64,12 @@ public class CompanyEmailUtil implements ICompanyConstants {
 	
 	public EmailSender getEmailSender() throws UnsupportedEncodingException {
 		if ( this.sender == null ) {
-			AuthPrincipal user = AonUtil.getAuthPrincipal();
-			IMailAccount mailAccount = getDefaultMailAccount( user );
+			MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+			IMailAccount mailAccount = mailConfig.getDefaultMailAccount(false);			
 			if ( mailAccount != null ) {
 				changeMailAccount(mailAccount);
 			} else {
+				AuthPrincipal user = AonUtil.getAuthPrincipal();
 				String text = AonUtil.getMessage(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNT); 
 				String message = MessageFormat.format(text, user.getShortName() );
 				throw new AbortProcessingException( message );

@@ -322,15 +322,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
-	<!-- ************* CHANGE PASSWORD DB ***************** -->
-	<managed-bean>
-		<managed-bean-name>changePassword</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.config.controller.ChangeDBPasswordController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
 		
 	<managed-bean>
 		<managed-bean-name>domainSwitcherListeners</managed-bean-name>

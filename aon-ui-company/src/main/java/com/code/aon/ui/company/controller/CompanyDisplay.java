@@ -41,11 +41,11 @@ public class CompanyDisplay {
 	private boolean bigLogo;
 	
 	public CompanyDisplay() {
-		this(AonUtil.getServerName(), AonUtil.isSkipLdap(), null );
+		this(AonUtil.getServerName(), null );
 	}
 
-	public CompanyDisplay( String host, boolean skipLdap, Properties dbProperties ) {
-		init(host, skipLdap, dbProperties);
+	public CompanyDisplay( String host, Properties dbProperties ) {
+		init(host, dbProperties);
 	}
 	
 	public String getCompanyLabel() {
@@ -171,12 +171,12 @@ public class CompanyDisplay {
 		return null;			
 	}		
 	
-	private void init( String host, boolean skipLdap, Properties dbProperties ) {
+	private void init( String host, Properties dbProperties ) {
 		Connection connection = null;
 		try {
 			connection = getConnection(dbProperties);
 			if ( connection != null ) {
-				Integer domainId = DataSourceUtil.getDomain(connection, host, skipLdap);
+				Integer domainId = DataSourceUtil.getDomain(connection, host);
 				if (domainId != null) {
 					Object[] values = getCompany(connection, domainId);
 					Integer companyId = (Integer) values[0];

@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.Role;
-import com.code.aon.ui.webmail.controller.LdapBasicController;
 
 public class RoleController extends LdapBasicController {
 	

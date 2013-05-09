@@ -23,7 +23,6 @@ public interface IWebMailConstants {
 	// ************************************************************
 	String BEAN_LOGIN = "webmailLogin";
 	String BEAN_USER = "user";
-	String BEAN_MAIL_ACCOUNT = "mailAccount";
 	String BEAN_MAIL_ACCOUNT_DB = "mailAccountDB";
 	String BEAN_WEBMAIL = "webmail";
 	String BEAN_TREE = "webmailTree";
@@ -32,9 +31,7 @@ public interface IWebMailConstants {
 	String BEAN_ATTACH = "webmailAttach";
 	String BEAN_SEARCH = "webmailSearch";
 	String BEAN_INPUTFILE = "inputFile";
-	String BEAN_CONTACT = "contact";
 	String BEAN_CONTACT_DB = "contactDB";
-	String BEAN_SIGNATURE = "signature";
 	String BEAN_SIGNATURE_DB = "signatureDB";
 	String BEAN_AUTOCOMPLETEEMAILDICC = "autoCompleteEmailDictionary";
 	String BEAN_AUTOCOMPLETEEMAIL = "autoCompleteEmailBean";

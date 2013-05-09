@@ -33,12 +33,6 @@
 		<converter-id>aon.EmptyStringConverter</converter-id>
 		<converter-class>com.code.aon.ui.common.converter.EmptyStringConverter</converter-class>
 	</converter>
-
-   	<!-- ************* LDAP NAME CONVERTER ***************** -->
-	<converter>
-		<converter-for-class>javax.naming.Name</converter-for-class>
-		<converter-class>com.code.aon.ui.common.converter.LdapNameConverter</converter-class>
-	</converter>	
 	
 	<!-- ************ TIMEZONE CONTROLLER	************** -->
 	<managed-bean>

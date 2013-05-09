@@ -39,11 +39,9 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import com.code.aon.common.util.PrincipalUtil;
 import com.code.aon.common.util.Classpath;
+import com.code.aon.common.util.PrincipalUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ldap.IAonObjectClasses;
-import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.LocaleElement;
 import com.code.aon.ui.util.AonUtil;
@@ -53,7 +51,7 @@ import com.sun.org.apache.xerces.internal.jaxp.JAXPConstants;
  * The Class ConfigurationController is used to set some default configurable
  * parameters of the application.
  */
-public class ConfigurationController implements Serializable, ICommonConstants, JAXPConstants, ILdapConstants, IAonObjectClasses {
+public class ConfigurationController implements Serializable, ICommonConstants, JAXPConstants {
 	
 	private static final long serialVersionUID = -1159615075844874762L;
 	

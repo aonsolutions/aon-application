@@ -17,9 +17,8 @@ import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.manager.converter.LdapTransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.LdapBasicController;
-import com.code.aon.ui.webmail.converter.LdapTransferObjectConverter;
 
 public class DomainApplicationUserController extends LdapBasicController {
 	

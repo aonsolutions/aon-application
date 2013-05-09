@@ -8,7 +8,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.mail.MessagingException;
 import javax.mail.Quota;
-import javax.naming.Name;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -18,11 +17,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.Entry;
-import com.code.aon.ldap.IAonObjectClasses;
-import com.code.aon.ldap.ILdapConstants;
-import com.code.aon.ldap.NameResolver;
 import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
@@ -160,43 +154,10 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 		return resolver.getResolveLocal().get(filePath );
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void initConfig(AuthPrincipal principal) {
 		this.maxAttachmentSize = -1;
 		this.rejectedExtensions = Collections.emptyList();
 		setEnableDragAndDrop(!AonUtil.isChrome());
-		if (! AonUtil.isSkipLdap() ) {
-			BasicLdap ldap = new BasicLdap();
-			Name userDN = NameResolver.getUserDN(principal.getDomain(), principal.getShortName());
-			if ( ldap.exists(userDN, IAonObjectClasses.USER) ) {
-				Entry user = ldap.get( userDN, IAonObjectClasses.USER, ILdapConstants.OBJECT_CLASS_ATTRIBUTE, REJECTED_EXTENSIONS, MAX_ATTACHMENT_SIZE);
-				if ( (user != null) && user.hasObjectClass(WEBMAIL_CONFIG) ) {
-					if ( user.containsKey(REJECTED_EXTENSIONS) ) {
-						this.rejectedExtensions = (List) user.get(REJECTED_EXTENSIONS);
-					}
-					if ( user.containsKey(MAX_ATTACHMENT_SIZE) ) {
-						this.maxAttachmentSize = user.toInteger(MAX_ATTACHMENT_SIZE);
-					}
-				}			
-			}
-			if ( (maxAttachmentSize == -1) || rejectedExtensions.isEmpty() ) {
-				Name domainDN = NameResolver.getDomainDN(principal.getDomain());	
-				if ( ldap.exists(domainDN, IAonObjectClasses.DOMAIN) ) {
-					Entry domain = ldap.get( domainDN, IAonObjectClasses.DOMAIN, ILdapConstants.OBJECT_CLASS_ATTRIBUTE, REJECTED_EXTENSIONS, MAX_ATTACHMENT_SIZE);
-					if ( (domain != null) && domain.hasObjectClass(WEBMAIL_CONFIG) ) {
-						if ( rejectedExtensions.isEmpty() && domain.containsKey(REJECTED_EXTENSIONS) ) {
-							this.rejectedExtensions = (List) domain.get(REJECTED_EXTENSIONS);
-						}
-						if ( (maxAttachmentSize == -1) && domain.containsKey(MAX_ATTACHMENT_SIZE) ) {
-							this.maxAttachmentSize = domain.toInteger(MAX_ATTACHMENT_SIZE);
-						}
-					}				
-				}
-			}
-			for( int i = 0; i < rejectedExtensions.size(); i++ ) {
-				rejectedExtensions.set(i, rejectedExtensions.get(i).toLowerCase());
-			}			
-		}
 	}
 
 	public String isValidFile( AonFile file ) {

@@ -72,48 +72,6 @@
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 	
-	<!-- ************ SIGNATURE ************** -->
-	<managed-bean>
-		<managed-bean-name>signature</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.webmail.controller.SignatureController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>-1</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.webmail.Signature</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>signature</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Signature_name</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{signatureControllerListener}</value>
-			</list-entries>
-		</managed-property>		
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>signatureControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.webmail.event.SignatureControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>	
-
 
 	<!-- ************ SIGNATURE DB ************** -->
 	<managed-bean>
@@ -145,6 +103,14 @@
 		</managed-property>				
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>signatureControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.webmail.event.SignatureControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
+
 
 	<!-- ************ AUTOCOMPLETE ************** -->
 
@@ -156,47 +122,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ************ MAILACCOUNT ************** -->
-	<managed-bean>
-		<managed-bean-name>mailAccount</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.webmail.controller.MailAccountController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>-1</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.webmail.MailAccount</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>mailAccount</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>MailAccount_email</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{mailAccountControllerListener}</value>
-			</list-entries>
-		</managed-property>		
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>mailAccountControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.webmail.event.MailAccountControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>	
 
 	<!-- ************ MAIL ACCOUNT DB ************** -->
 	<managed-bean>
@@ -227,6 +152,15 @@
 			</list-entries>
 		</managed-property>		
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>mailAccountControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.webmail.event.MailAccountControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
+	
 
 	<!-- ************ BWLIST ************** -->
 
@@ -238,45 +172,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ************* CONTACT ***************** -->
-	<managed-bean>
-		<managed-bean-name>contact</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.webmail.controller.ContactController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.webmail.Contact</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>contact</value>
-		</managed-property>								
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Contact_displayName</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{contactControllerListener}</value>
-			</list-entries>
-		</managed-property>				
-	</managed-bean>	
-
-	<managed-bean>
-		<managed-bean-name>contactControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.webmail.event.ContactControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>	
 	
 	<!-- ************ CONTACT DB ************** -->
 	<managed-bean>

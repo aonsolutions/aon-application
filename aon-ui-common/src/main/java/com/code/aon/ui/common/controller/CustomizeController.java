@@ -271,7 +271,7 @@ public class CustomizeController {
 			if ( dbProperties != null ) {
 				connection =  ConnectionProvider.getConnection(dbProperties);
 				if ( connection != null ) {
-					this.domainId = DataSourceUtil.getDomain(connection, AonUtil.getServerName(), AonUtil.isSkipLdap() );
+					this.domainId = DataSourceUtil.getDomain(connection, AonUtil.getServerName() );
 					if (this.domainId != null) {
 						this.companyId = getCompanyId(connection);
 						if ( this.companyId != null ) {

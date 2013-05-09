@@ -2,30 +2,13 @@ package com.code.aon.ui.common.controller;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.ldap.IAonObjectClasses;
-import com.code.aon.ldap.ILdapConstants;
-import com.code.aon.ldap.util.DomainUtil;
 import com.code.aon.ui.util.AonUtil;
 
 /**
  * The Class DomainResolver.
  */
-public class DomainResolver implements ILdapConstants, IAonObjectClasses {
+public class DomainResolver {
 	
-    /**
-     * Gets the domain.
-     *
-     * @param host the server name
-     * @param skipLdap the skip ldap
-     * @return the domain
-     */
-    public static String getDomain( String host, boolean skipLdap ) {
-    	if (! skipLdap ) {
-    		return DomainUtil.getDomain(host);
-    	}
-    	return host;    	
-    }
-    
 	/**
 	 * Gets the application name.
 	 * 
@@ -42,7 +25,7 @@ public class DomainResolver implements ILdapConstants, IAonObjectClasses {
      * @return the domain
      */
     public String getDomain() {
-    	return getDomain(AonUtil.getServerName(), AonUtil.isSkipLdap());
+    	return AonUtil.getServerName();
     }
     
 }

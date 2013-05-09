@@ -13,7 +13,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
-import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -28,21 +27,15 @@ import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.groupware.Notice;
-import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.Entry;
-import com.code.aon.ldap.IAonObjectClasses;
-import com.code.aon.ldap.ILdapConstants;
-import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.db.MailAccount;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.sun.faces.util.MessageFactory;
 
-public class NoticeController extends BasicController implements IAonObjectClasses, ILdapConstants {
+public class NoticeController extends BasicController {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(NoticeController.class);
 	public final static Integer SELECT_ONE_VALUE = -1;
@@ -202,13 +195,12 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	}
 
 	private void chargeMails() {
-		String domain = AonUtil.getAuthPrincipal().getDomain();
 		mailList = "";
 
 		String SEP = "";
 		try {
 			for (User user : getSelectedUsers()) {
-				String userEmail = getUserMail(domain, user);
+				String userEmail = getUserMail(user);
 				if (! StringUtils.isEmpty(userEmail) ) {
 					mailList += SEP + userEmail;
 					SEP = ", ";					
@@ -220,11 +212,10 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	}
 
 	private void chargeSMS() {
-		String domain = AonUtil.getAuthPrincipal().getDomain();
 		resetSMS();
 		try {
 			for (User user : getSelectedUsers()) {
-				String userSMS = getUserSMS(domain, user);
+				String userSMS = getUserSMS(user);
 				if (! StringUtils.isEmpty(userSMS) ) {
 					this.recipients.add(userSMS);
 				}
@@ -234,48 +225,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
 		}
 	}
 
-	private String getUserSMS(String domain, User user) {
-		if ( AonUtil.isSkipLdap() ) {
-			return getDBUserSMS(user);
-		}
-		return getLdapUserSMS(domain, user.getLogin());
-	}
-	
-	private String getUserMail(String domain, User user) {
-		if ( AonUtil.isSkipLdap() ) {
-			return getDBUserMail(user);
-		}
-		return getLdapUserMail(domain, user.getLogin());
-	}
-
-	private String getLdapUserMail(String domain, String username) {
-		Name userDN = NameResolver.getUserDN(domain, username);
-		BasicLdap ldap = new BasicLdap();
-		String email = null;
-		if (ldap.exists(userDN, USER)) {
-			email = "<" + username + "@" + domain + ">";
-			Entry userEntry = ldap.get(userDN, USER, MAIL_ATTRIBUTE, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
-			if (userEntry != null) {
-				String alternativeEmail = null;
-				String name = username;
-				String cn = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
-				String sn = userEntry.getAsString(SURNAME_ATTRIBUTE);
-				name = cn + " " + sn;
-				if (userEntry.containsKey(MAIL_ATTRIBUTE)) {
-					alternativeEmail = userEntry.getAsString(MAIL_ATTRIBUTE);
-				}
-				email = name + " " + email;
-				if (!StringUtils.isEmpty(alternativeEmail)) {
-					email = email + ", " + name + " <" + alternativeEmail + ">";
-				}
-			} else {
-				LOGGER.error("Error obteniendo propiedades del usuario " + username);
-			}
-		}
-		return email;
-	}
-
-	private String getDBUserMail( User user ) {
+	private String getUserMail( User user ) {
 		try {
 			IManagerBean  bean = BeanManager.getManagerBean(MailAccount.class);
 			Criteria criteria = new Criteria();
@@ -291,24 +241,8 @@ public class NoticeController extends BasicController implements IAonObjectClass
 		}
 		return null;
 	}
-	
-	private String getLdapUserSMS(String domain, String username) {
-		Name userDN = NameResolver.getUserDN(domain, username);
-		BasicLdap ldap = new BasicLdap();
-		String sms = null;
-		if (ldap.exists(userDN, USER)) {
-			Entry userEntry = ldap.get(userDN, USER, MOBILE_ATTRIBUTE, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
-			if ((userEntry != null) && userEntry.containsKey(MOBILE_ATTRIBUTE)) {
-				String cn = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
-				String sn = userEntry.getAsString(SURNAME_ATTRIBUTE);
-				String name = cn + " " + sn;
-				sms = name + "-" + userEntry.getAsString(MOBILE_ATTRIBUTE);
-			}
-		}
-		return sms;
-	}
 
-	private String getDBUserSMS(User user) {
+	private String getUserSMS(User user) {
 		try {
 			if ( user.getRegistry() != null ) {
 				IManagerBean  bean = BeanManager.getManagerBean(RegistryMedia.class);

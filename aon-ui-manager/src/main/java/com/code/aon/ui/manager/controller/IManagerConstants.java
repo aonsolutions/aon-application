@@ -22,6 +22,9 @@ public interface IManagerConstants {
 	String COMPANY_BASIC_CONTROLLER_NAME = "companyBasic";
 	String ALIAS_CONTROLLER_NAME = "alias";
 	String CONFIG_CONTROLLER_NAME = "aonConfig";
+	String BEAN_CONTACT = "contact";
+	String BEAN_SIGNATURE = "signature";
+	String BEAN_MAIL_ACCOUNT = "mailAccount";	
 	
 	// Applications
 	String AON_DESKTOP = "aon-desktop";

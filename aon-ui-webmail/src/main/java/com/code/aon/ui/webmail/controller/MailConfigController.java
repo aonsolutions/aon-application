@@ -1,10 +1,7 @@
 package com.code.aon.ui.webmail.controller;
 
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_CONTACT;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_CONTACT_DB;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT_DB;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
@@ -80,20 +77,15 @@ public class MailConfigController {
 	private boolean skipDefaultAccountColumn;
 	
 	public MailConfigController() {
-		if ( AonUtil.isSkipLdap() ) {
-			SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(BEAN_SIGNATURE_DB);
-			setSignature(signature);
-			MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
-			setMailAccount(account);			
-			ContactDBController contact = (ContactDBController) AonUtil.getRegisteredBean(BEAN_CONTACT_DB);
-			setContact(contact);			
-		}
+		SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(BEAN_SIGNATURE_DB);
+		setSignature(signature);
+		MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
+		setMailAccount(account);			
+		ContactDBController contact = (ContactDBController) AonUtil.getRegisteredBean(BEAN_CONTACT_DB);
+		setContact(contact);			
 	}
 	
 	public IContactController getContact() {
-		if ( contact == null ) {
-			contact = (IContactController) AonUtil.getRegisteredBean(BEAN_CONTACT);
-		}
 		return contact;
 	}
 
@@ -102,9 +94,6 @@ public class MailConfigController {
 	}
 
 	public ISignatureController getSignature() {
-		if ( signature == null ) {
-			signature = (ISignatureController) AonUtil.getRegisteredBean(BEAN_SIGNATURE);
-		}
 		return signature;
 	}
 
@@ -113,9 +102,6 @@ public class MailConfigController {
 	}
 
 	public IMailAccountController getMailAccount() {
-		if ( mailAccount == null ) {
-			mailAccount = (IMailAccountController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT);
-		}
 		return mailAccount;
 	}
 
