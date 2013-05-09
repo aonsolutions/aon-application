@@ -1,8 +1,6 @@
 package com.code.aon.ui.document.controller;
 
 
-import static com.code.aon.document.BasicAlfresco.SERVER_ADMIN_PASSWORD;
-import static com.code.aon.document.BasicAlfresco.SERVER_ADMIN_USER;
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
 import static com.code.aon.ui.company.controller.ICompanyConstants.ENTERPRISE_CONTROLLER_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT_DB;
@@ -11,7 +9,6 @@ import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATUR
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.model.SelectItem;
@@ -30,7 +27,6 @@ import com.code.aon.company.Enterprise;
 import com.code.aon.config.User;
 import com.code.aon.document.AlfrescoGroup;
 import com.code.aon.document.AlfrescoUserManager;
-import com.code.aon.document.BasicAlfresco;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.controller.LoggedUser;
@@ -89,10 +85,8 @@ public class ManagerController implements IEnterpriseController {
 			LOGGER.error( e.getMessage(), e );
 		}
 		this.projectListener = new EnterpriseProjectListener(this, ! isMainEnterprise());
-		if ( AonUtil.isSkipLdap() ) {
-			LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
-			lu.setCompanyName(enterprise.getRegistry().getFullName());
-		}
+		LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
+		lu.setCompanyName(enterprise.getRegistry().getFullName());
 	}
 	
 	public boolean isAlfrescoReady() {
@@ -100,7 +94,7 @@ public class ManagerController implements IEnterpriseController {
 	}
 
 	public boolean isAlfrescoManagementEnabled() {
-		return AonUtil.isSkipLdap();
+		return true;
 	}
 	
 	public boolean isAdministrator() {
@@ -162,21 +156,19 @@ public class ManagerController implements IEnterpriseController {
 	}
 	
 	public void initWebmail() {
-		if ( AonUtil.isSkipLdap() ) {
-			SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(BEAN_SIGNATURE_DB);
-			MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
-			MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
-			try {
-				signature.updateUser(null);
-				mailConfig.setSignature(signature);
-				account.updateUser(null);
-				mailConfig.setMailAccount(account);
-			} catch (ManagerBeanException e) {
-				LOGGER.error(">>>> initWebmail exception ",e);
-				AonUtil.addErrorMessage(e.getMessage());
-				throw new AbortProcessingException(e.getMessage(), e);
-			}			
-		}
+		SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(BEAN_SIGNATURE_DB);
+		MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		try {
+			signature.updateUser(null);
+			mailConfig.setSignature(signature);
+			account.updateUser(null);
+			mailConfig.setMailAccount(account);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> initWebmail exception ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}			
 	}
 
 	public Enterprise resolveParentEnterprise() {
@@ -197,14 +189,8 @@ public class ManagerController implements IEnterpriseController {
 	}
 
 	public void initAlfrescoUser( User user ) {
-		if ( AonUtil.isSkipLdap() ) {
-			this.alfrescoUser = user.getLogin();
-			this.alfrescoPassword = user.getPassword();
-		} else {
-			Properties properties = BasicAlfresco.getAlfrescoProperties();
-			this.alfrescoUser = properties.getProperty(SERVER_ADMIN_USER, "admin");
-			this.alfrescoPassword = properties.getProperty(SERVER_ADMIN_PASSWORD, "admin");
-		}
+		this.alfrescoUser = user.getLogin();
+		this.alfrescoPassword = user.getPassword();
 	}	
 	
 	public Enterprise getParentEnterprise() {
