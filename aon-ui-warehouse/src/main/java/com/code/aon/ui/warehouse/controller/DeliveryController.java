@@ -39,8 +39,6 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.report.ReportException;
@@ -450,9 +448,7 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 			criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_PROJECT_ID), to.getProject().getId());
 		}
 		if (to.getRegistryAddress() != null && to.getRegistryAddress().getId() != null) {
-			Expression exp1 = ExpressionUtilities.getEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_SHIPPING_ADDRESS_ID), to.getRegistryAddress().getId());
-			Expression exp2 = ExpressionUtilities.getNullExpression(salesBean.getFieldName(IEntityAlias.SALES_SHIPPING_ADDRESS_ID));
-			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+			criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_SHIPPING_ADDRESS_ID), to.getRegistryAddress().getId());
 		}
 		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_STATUS), SalesStatus.PENDING);
 		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_SECURITY_LEVEL), to.getSecurityLevel());
@@ -460,8 +456,26 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_ISSUE_DATE));
 		criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_SERIES));
 		criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_NUMBER));
-
 		getSalesTransferManager().setSalesList(salesBean.getList(criteria));
+
+		// se tienen en cuenta los pedidos cuyo address = null
+		criteria = new Criteria();
+		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_CUSTOMER_ID), to.getCustomer().getId());
+		if (to.getProject() != null && to.getProject().getId() != null) {
+			criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_PROJECT_ID), to.getProject().getId());
+		}
+		if (to.getRegistryAddress() != null && to.getRegistryAddress().getId() != null) {
+			// FIXME: create constants
+//			criteria.addNullExpression(salesBean.getFieldName(IEntityAlias.SALES_SHIPPING_ADDRESS));
+			criteria.addNullExpression("Sales.shippingAddress");
+		}
+		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_STATUS), SalesStatus.PENDING);
+		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_SECURITY_LEVEL), to.getSecurityLevel());
+		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_WORK_PLACE_ID), to.getWorkPlace().getId());
+		criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_ISSUE_DATE));
+		criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_SERIES));
+		criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_NUMBER));
+		getSalesTransferManager().getSalesList().addAll(salesBean.getList(criteria));
 	}
 
 	public void onSalesTransfer(ActionEvent event) throws ManagerBeanException {

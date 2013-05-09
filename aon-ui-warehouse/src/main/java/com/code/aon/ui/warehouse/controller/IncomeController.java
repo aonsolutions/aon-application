@@ -31,8 +31,6 @@ import com.code.aon.purchase.bridge.IncomeManager;
 import com.code.aon.purchase.bridge.PurchaseTransferManager;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.supplier.Supplier;
@@ -381,19 +379,32 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		IManagerBean purchaseBean = BeanManager.getManagerBean(Purchase.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SUPPLIER_ID), to.getSupplier().getId());
-		if (to.getRegistryAddress() != null && to.getRegistryAddress().getId() != null) {
-			Expression exp1 = ExpressionUtilities.getEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_REGISTRY_ADDRESS_ID), to.getRegistryAddress().getId());
-			Expression exp2 = ExpressionUtilities.getNullExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_REGISTRY_ADDRESS_ID));
-			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
-		}
 		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_STATUS), PurchaseStatus.PENDING);
 		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SECURITY_LEVEL), to.getSecurityLevel());
 		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_WORK_PLACE_ID), to.getWorkPlace().getId());
+		if (to.getRegistryAddress() != null && to.getRegistryAddress().getId() != null) {
+			criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_REGISTRY_ADDRESS_ID), to.getRegistryAddress().getId());
+		}
 		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_ISSUE_DATE));
 		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SERIES));
 		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_NUMBER));
-
 		getPurchaseTransferManager().setPurchaseList(purchaseBean.getList(criteria));
+
+		// se tienen en cuenta los pedidos cuyo address = null
+		criteria = new Criteria();
+		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SUPPLIER_ID), to.getSupplier().getId());
+		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_STATUS), PurchaseStatus.PENDING);
+		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SECURITY_LEVEL), to.getSecurityLevel());
+		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_WORK_PLACE_ID), to.getWorkPlace().getId());
+		if (to.getRegistryAddress() != null && to.getRegistryAddress().getId() != null) {
+			// FIXME: create constants
+//			criteria.addNullExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_REGISTRY_ADDRESS));
+			criteria.addNullExpression("Purchase.registryAddress");
+		}
+		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_ISSUE_DATE));
+		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SERIES));
+		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_NUMBER));
+		getPurchaseTransferManager().getPurchaseList().addAll(purchaseBean.getList(criteria));
 	}
 
 	public boolean isTransferedGreatherThanPending() {

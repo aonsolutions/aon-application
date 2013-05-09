@@ -2,12 +2,9 @@ package com.esferalia.aon.ui.payroll.event.contract;
 
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import javax.faces.event.AbortProcessingException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +22,6 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
-import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
 import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE226;
@@ -45,12 +40,11 @@ import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
-import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
-import com.esferalia.aon.ui.payroll.controller.contract.ContractPdfController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController.ContractParams;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractPdfController;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class ContractControllerListener extends ControllerAdapter{
@@ -593,8 +587,8 @@ public class ContractControllerListener extends ControllerAdapter{
 			try {
 				if( !controller.getExistSignedContractDocument() ){
 					pdfDocController.setDocumentType(ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT);
+					pdfDocController.loadDocument();
 					if(!pdfDocController.isNew()){
-						pdfDocController.loadDocument();
 						ModelPE226 pdfDocument = (ModelPE226) pdfDocController.getContractPdfWriter().getPdfDocument();
 						params.setWorkSchedule(pdfDocument.getPdfFieldsMap().get("jornhoraefec").getValue());
 					}
@@ -608,8 +602,8 @@ public class ContractControllerListener extends ControllerAdapter{
 			try {
 				if( controller.isTrainingContract() && controller.isTrainingCourseDefined() ){
 					pdfDocController.setDocumentType(ContractAttachmentType.TRAINING_ANNEX_II);
+					pdfDocController.loadDocument();
 					if(!pdfDocController.isNew()){
-						pdfDocController.loadDocument();
 						ModelPE230 pdfDocument = (ModelPE230) pdfDocController.getContractPdfWriter().getPdfDocument();
 						params.setTrainingSchedule(pdfDocument.getPdfFieldsMap().get("horario").getValue());
 					}

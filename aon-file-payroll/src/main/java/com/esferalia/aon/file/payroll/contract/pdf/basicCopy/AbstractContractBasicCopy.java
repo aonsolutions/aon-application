@@ -312,21 +312,24 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument 
 		dateFormatter.applyPattern("dd/MM/yyyy");
 		setPdfFieldValue(CONTRACT_START_DATE,dateFormatter.format(contract.getStartDate()));
 		setPdfFieldValue(CONTRACT_TYPE, contract.getModel().getName(Locale.getDefault()));
-		setPdfFieldValue(CONTRACT_TOTAL_DURATION,null);
+		Integer durationInMonths = getMonthsBetweenDates(contract.getStartDate(), contract.getEndDate());
+		if(durationInMonths!=null){
+			setPdfFieldValue(CONTRACT_TOTAL_DURATION,durationInMonths!=null?durationInMonths+" meses":"");
+		}
 		setPdfFieldValue(CONTRACT_CATEGORY, contract.getCategoryDescription());
-		setPdfFieldValue(CONTRACT_JOURNAL_HOURS_1,null);
-		setPdfFieldValue(CONTRACT_JOURNAL_HOURS_2,null);
-		setPdfFieldValue(CONTRACT_JOURNAL, "HORAS SEMANALES");
-		setPdfFieldValue(CONTRACT_REMUNERATION,null);
-		setPdfFieldValue(CONTRACT_REMUNERATION_EURO, "euros brutos");
-		setPdfFieldValue(CONTRACT_REMUNERATION_PERIOD, "mensuales");
-		setPdfFieldValue(CONTRACT_VACATIONS, "30 días naturales por año trabajado");
+		setPdfFieldValue(CONTRACT_REMUNERATION,"Según Convenio");
+//		setPdfFieldValue(CONTRACT_REMUNERATION_EURO, "euros brutos");
+		setPdfFieldValue(CONTRACT_REMUNERATION_EURO, "");
+//		setPdfFieldValue(CONTRACT_REMUNERATION_PERIOD, "mensuales");
+		setPdfFieldValue(CONTRACT_REMUNERATION_PERIOD, "");
+//		setPdfFieldValue(CONTRACT_VACATIONS, "30 días naturales por año trabajado");
+		setPdfFieldValue(CONTRACT_VACATIONS, "Según Convenio");
 		setPdfFieldValue(CONTRACT_SIGN_TOWN,contract.getWorkPlace().getAddress().getCity());
-		setPdfFieldValue(CONTRACT_SING_DAY, String.valueOf(CommonUtil.getDay(new Date())));
+		setPdfFieldValue(CONTRACT_SING_DAY, String.valueOf(CommonUtil.getDay(contract.getStartDate())));
 		dateFormatter.applyPattern("MMMM");
-		setPdfFieldValue(CONTRACT_SIGN_MONTH, dateFormatter.format(new Date()) );
+		setPdfFieldValue(CONTRACT_SIGN_MONTH, dateFormatter.format(contract.getStartDate()) );
 		dateFormatter.applyPattern("yy");
-		setPdfFieldValue(CONTRACT_SIGN_YEAR, dateFormatter.format(new Date()));
+		setPdfFieldValue(CONTRACT_SIGN_YEAR, dateFormatter.format(contract.getStartDate()));
 	}
 	
 	private RegistryDirStaff obtainRegistryDirStaff(Contract contract) throws ManagerBeanException {
@@ -356,6 +359,13 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument 
 	}
 	private String getInputTextHeight(AcroFields form, String key){
 		return Float.toString(form.getFieldPositions(key)[4]-form.getFieldPositions(key)[2]);
+	}
+	
+	private Integer getMonthsBetweenDates(Date startDate, Date endDate) {
+		if(startDate!=null && endDate!=null){
+			return (int) ((CommonUtil.getDaysBetweenDates(startDate, endDate, true))/30);
+		}
+		return null;
 	}
 	
 }
