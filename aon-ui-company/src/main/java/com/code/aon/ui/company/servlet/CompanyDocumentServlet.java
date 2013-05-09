@@ -1,12 +1,12 @@
 package com.code.aon.ui.company.servlet;
 
 import static com.code.aon.ui.common.ICommonConstants.SKIP_LDAP;
-import static com.code.aon.ui.company.controller.CompanyDisplay.HIBERNATE_CONFIGURATION_FILE;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Connection;
 import java.util.Properties;
 
 import javax.servlet.ServletConfig;
@@ -15,26 +15,26 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.dbutils.handlers.ArrayHandler;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.SessionFactory;
-import org.hibernate.StatelessSession;
-import org.hibernate.cfg.AnnotationConfiguration;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonException;
+import com.code.aon.common.BasicAttachment;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.ConnectionProvider;
 import com.code.aon.common.util.MimeResolver;
-import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.company.controller.CompanyDisplay;
 import com.code.aon.ui.util.DataSourceUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
@@ -90,24 +90,43 @@ public class CompanyDocumentServlet extends HttpServlet {
 		return DataSourceUtil.getDBProperties(server, context, skipLdap);
 	}
 	
-	private Configuration getConfiguration( HttpServletRequest req ) {
-		AnnotationConfiguration configuration = null;
+	private Connection getConnection( HttpServletRequest req ) throws AonException {
+		Connection connection = null;
 		Properties properties = getConnectionProperties(req);
 		if ( (properties != null) && (!properties.isEmpty()) ) {
-			configuration = new AnnotationConfiguration();
-			configuration.addProperties(properties);
-			configuration.configure(HIBERNATE_CONFIGURATION_FILE);			
+			connection =  ConnectionProvider.getConnection(properties);
 		}
-		return configuration;
+		return connection;
 	}	
 	
-	public static Integer getCompanyId( StatelessSession session, Integer domainId ) {
-		Query query = session.createQuery("SELECT id FROM Company c WHERE c.domain = ?");
-		return (Integer) query.setInteger(0, domainId).uniqueResult();
+	private Integer getCompanyId( Connection connection, Integer domainId ) {
+		QueryRunner run = new QueryRunner();
+		try {
+			ResultSetHandler<Integer> h = new ScalarHandler<Integer>();
+			return run.query( connection, 
+				    "SELECT registry FROM company WHERE domain=? LIMIT 1", h, domainId); 
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
+		return null;			
 	}
 	
-	private RegistryAttachment getAttachment( HttpServletRequest req ) {
-		RegistryAttachment attachment = null;
+	public static BasicAttachment getAttachment( Connection connection, Integer id ) {
+		QueryRunner run = new QueryRunner();
+		try {
+			ResultSetHandler<Object[]> h = new ArrayHandler();
+			Object[] values = run.query( connection, 
+				    "SELECT id, description, mimeType, data FROM rattach WHERE id = ? and data is not null LIMIT 1",
+				    h, id);
+			return CompanyDisplay.convert(values);
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
+		return null;			
+	}			
+	
+	private IAttachment getAttachment( HttpServletRequest req ) {
+		BasicAttachment attachment = null;
 		boolean companyLogo = false;
 		Integer attachmentId = null;
 		String uri = StringUtils.substringBefore(req.getRequestURI(), ";");
@@ -121,37 +140,28 @@ public class CompanyDocumentServlet extends HttpServlet {
 			}
 		}
 		if ( companyLogo || (attachmentId != null) ) {		
-			SessionFactory factory = null;
+			Connection connection = null;
 			try {
-				Configuration configuration = getConfiguration(req);
-				if ( configuration != null ) {
-					factory = configuration.buildSessionFactory();
-					StatelessSession session = factory.openStatelessSession();
-					Criteria criteria = session.createCriteria(RegistryAttachment.class);
+				connection = getConnection(req);
+				if ( connection != null ) {
 					if ( companyLogo ) {
-						Integer domainId = DataSourceUtil.getDomain(session.connection(), req.getServerName(), skipLdap);
-						Integer companyId = getCompanyId(session, domainId);
-						criteria.add(Restrictions.eq("registry.id", companyId));
-						criteria.add(Restrictions.eq("registryAttachmentType", RegistryAttachmentType.LOGO));
+						Integer domainId = DataSourceUtil.getDomain(connection, req.getServerName(), skipLdap);
+						Integer companyId = getCompanyId(connection, domainId);
+						attachment = CompanyDisplay.getLogo(connection, domainId, companyId);
 					} else {
-						criteria.add(Restrictions.eq("id", attachmentId));
+						attachment = getAttachment(connection, attachmentId);
 					}
-					criteria.add(Restrictions.isNotNull("data"));
-					attachment = (RegistryAttachment) criteria.uniqueResult();
-					if ( attachmentId != null ) {
+					if ( (attachmentId != null) && (attachment != null) ) {
 						String md5Value = StringUtils.substringAfter(value, "-");
 						if (! StringUtils.equals(attachment.getMD5(), md5Value) ) {
 							attachment = null;
 						}
-					}
-					session.close();				
+					}			
 				}				
 			} catch ( Throwable th ) {
 				LOGGER.error( "Error getting company name and logo", th );
 			} finally {
-				if ( factory != null ) {
-					factory.close();	
-				}
+				DbUtils.closeQuietly(connection);
 			}
 		}
 		return attachment;
@@ -169,7 +179,7 @@ public class CompanyDocumentServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse res)throws ServletException, IOException {
 		OutputStream out = null;
 		try {
-			RegistryAttachment attachment = getAttachment(req);
+			IAttachment attachment = getAttachment(req);
 			if ( attachment != null ) {
 				MimeType type = getMimeType(attachment);
 				String name = getName(attachment, type);

@@ -5,35 +5,32 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
+import java.sql.Connection;
 import java.util.Properties;
 
 import javax.faces.event.ActionEvent;
 import javax.imageio.ImageIO;
 
+import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.StatelessSession;
-import org.hibernate.cfg.AnnotationConfiguration;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonException;
+import com.code.aon.common.BasicAttachment;
 import com.code.aon.common.IAttachment;
-import com.code.aon.company.Company;
-import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.ConnectionProvider;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DataSourceUtil;
 
 public class CompanyDisplay {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDisplay.class.getName());
-	
-	public static final String HIBERNATE_CONFIGURATION_FILE = "/hibernate.company.cfg.xml";
 	
 	private String companyLabel;
 	
@@ -97,15 +94,13 @@ public class CompanyDisplay {
 		}
 	}
 
-	private Configuration getConfiguration( Properties dbs ) {
-		AnnotationConfiguration configuration = null;
+	private Connection getConnection( Properties dbs ) throws AonException {
+		Connection connection = null;
 		Properties properties = (dbs != null) ? dbs : DataSourceUtil.getDBProperties();
 		if ( (properties != null) && (!properties.isEmpty()) ) {
-			configuration = new AnnotationConfiguration();
-			configuration.addProperties(properties);
-			configuration.configure(HIBERNATE_CONFIGURATION_FILE);			
+			connection =  ConnectionProvider.getConnection(properties);
 		}
-		return configuration;
+		return connection;
 	}
 	
 	private boolean calculateBigLog() {
@@ -121,8 +116,8 @@ public class CompanyDisplay {
 		return true;
 	}
 	
-	public void update( Company company, RegistryAttachment attachment ) {
-		this.companyLabel = company.getName();
+	private void update( String companyName, IAttachment attachment ) {
+		this.companyLabel = companyName;
 		if ( attachment != null ) {
 			this.logo = attachment;
 			this.bigLogo = calculateBigLog();
@@ -131,42 +126,70 @@ public class CompanyDisplay {
 	}
 	
 	public void update( ActionEvent event ) {
-		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		update( (Company) controller.getTo(), controller.getLogoAttach());
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);  
+		update( controller.obtainCompany().getName(), controller.getLogoAttach());
 	}
 	
-	private void init( String host, boolean skipLdap, Properties dbProperties ) {
-		SessionFactory factory = null;
+	private Object[] getCompany( Connection connection, Integer domainId ) {
+		QueryRunner run = new QueryRunner();
 		try {
-			Configuration configuration = getConfiguration(dbProperties);
-			if ( configuration != null ) {
-				factory = configuration.buildSessionFactory();
-				StatelessSession session = factory.openStatelessSession();
-				Criteria companyCriteria = session.createCriteria(Company.class);
-				Integer domainId = DataSourceUtil.getDomain(session.connection(), host, skipLdap);
+			ResultSetHandler<Object[]> h = new ArrayHandler();
+			return run.query( connection, 
+				    "SELECT r.id, r.name FROM company as c, registry as r WHERE c.domain=? AND c.registry = r.id LIMIT 1",
+				    h, domainId); 
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
+		return null;			
+	}			
+	
+	public static BasicAttachment convert( Object[] values ) {
+		if (! ArrayUtils.isEmpty(values) ) {
+			BasicAttachment logo = new BasicAttachment();
+			logo.setId( (Integer) values[0] );
+			logo.setDescription( (String) values[1] );
+			if ( values[2] != null ) {
+				logo.setMimeType( MimeType.values()[(Integer) values[2]] );	
+			}
+			logo.setData( (byte[]) values[3] );
+			return logo;
+		}
+		return null;
+	}
+	
+	public static BasicAttachment getLogo( Connection connection, Integer domainId, Integer companyId ) {
+		QueryRunner run = new QueryRunner();
+		try {
+			ResultSetHandler<Object[]> h = new ArrayHandler();
+			Object[] values = run.query( connection, 
+				    "SELECT id, description, mimeType, data FROM rattach WHERE domain = ? and registry =? and type=0 and data is not null LIMIT 1",
+				    h, domainId, companyId);
+			return convert(values);
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
+		return null;			
+	}		
+	
+	private void init( String host, boolean skipLdap, Properties dbProperties ) {
+		Connection connection = null;
+		try {
+			connection = getConnection(dbProperties);
+			if ( connection != null ) {
+				Integer domainId = DataSourceUtil.getDomain(connection, host, skipLdap);
 				if (domainId != null) {
-					companyCriteria.add(Restrictions.eq("domain", domainId));	
-					List<?> companyList = companyCriteria.list();
-					if (! companyList.isEmpty() ) {
-						Company company = (Company) companyList.get(0); 
-						Criteria logoCriteria = session.createCriteria(RegistryAttachment.class);
-						logoCriteria.add(Restrictions.eq("domain", domainId));
-						logoCriteria.add(Restrictions.eq("registry.id", company.getId()));
-						logoCriteria.add(Restrictions.eq("registryAttachmentType", RegistryAttachmentType.LOGO));
-						logoCriteria.add(Restrictions.isNotNull("data"));
-						List<?> logoList = logoCriteria.list();
-						RegistryAttachment logo = logoList.isEmpty() ? null : (RegistryAttachment) logoList.get(0);
-						update(company, logo);
+					Object[] values = getCompany(connection, domainId);
+					Integer companyId = (Integer) values[0];
+					if ( companyId != null ) {
+						IAttachment logo = getLogo(connection, domainId, companyId);
+						update( (String) values[1], logo);
 					}
-				}
-				session.close();				
+				}			
 			}
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error getting company name and logo", th );
 		} finally {
-			if ( factory != null ) {
-				factory.close();	
-			}
+			DbUtils.closeQuietly(connection);
 		}
 	}
 	
