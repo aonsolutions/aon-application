@@ -498,23 +498,26 @@ public class ContractController extends BasicController implements IVariablesHan
 		this.selectedTab = selectedTab;
 	}
 	public void onGenerateDocument(ActionEvent event){
+		generateDocument();
+	}
+	public void generateDocument(){
 		
 		ContractPdfController pdfDocument = (ContractPdfController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_PDF_CONTROLLER_NAME);
 		try {
 			if( !getExistSignedContractDocument() ){
 				pdfDocument.setDocumentType(ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT);
-				pdfDocument.generateDocument();
-				pdfDocument.onDocumentSave(event);
+				pdfDocument.loadDocument();
+				pdfDocument.saveDocument();
 			}
 			if( !getExistSignedBasicCopyDocument() ){
 				pdfDocument.setDocumentType(ContractAttachmentType.BASIC_COPY_DRAFT);
-				pdfDocument.generateDocument();
-				pdfDocument.onDocumentSave(event);
+				pdfDocument.loadDocument();
+				pdfDocument.saveDocument();
 			}
 			if( isTrainingContract() && isTrainingCourseDefined() ){
 				pdfDocument.setDocumentType(ContractAttachmentType.TRAINING_ANNEX_II);
-				pdfDocument.generateDocument();
-				pdfDocument.onDocumentSave(event);
+				pdfDocument.loadDocument();
+				pdfDocument.saveDocument();
 			}
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -910,6 +913,8 @@ public class ContractController extends BasicController implements IVariablesHan
 		private TrainingCourse trainingCourse;
 		private Date trainingStartDate;
 		private Date trainingEndDate;
+		private String workSchedule;
+		private String trainingSchedule;
 		
 		public boolean isAgreementSalaryCheck() {
 			return agreementSalaryCheck;
@@ -959,6 +964,18 @@ public class ContractController extends BasicController implements IVariablesHan
 		}
 		public void setTrainingEndDate(Date trainingEndDate) {
 			this.trainingEndDate = trainingEndDate;
+		}
+		public String getWorkSchedule() {
+			return workSchedule;
+		}
+		public void setWorkSchedule(String workSchedule) {
+			this.workSchedule = workSchedule;
+		}
+		public String getTrainingSchedule() {
+			return trainingSchedule;
+		}
+		public void setTrainingSchedule(String trainingSchedule) {
+			this.trainingSchedule = trainingSchedule;
 		}
 		public Double getIrpf() {
 			return irpf;

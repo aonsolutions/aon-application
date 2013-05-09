@@ -310,7 +310,6 @@ public class ModelPE230 extends AbstractAnnexModel {
 				try {	
 					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ZIP_1).setValue(trainingCourse.getTrainingCenter().getRegistry().getDefaultAddress().getZip().substring(0, 1));
 					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ZIP_2).setValue(trainingCourse.getTrainingCenter().getRegistry().getDefaultAddress().getZip().substring(1, 2));
-					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ZIP_3).setValue("");
 					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ZIP_3).setValue(trainingCourse.getTrainingCenter().getRegistry().getDefaultAddress().getZip().substring(2, 3));
 					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ZIP_4).setValue(trainingCourse.getTrainingCenter().getRegistry().getDefaultAddress().getZip().substring(3, 4));
 					getPdfFieldsMap().get(PE230_TRAINING_CENTER_ZIP_5).setValue(trainingCourse.getTrainingCenter().getRegistry().getDefaultAddress().getZip().substring(4, 5));

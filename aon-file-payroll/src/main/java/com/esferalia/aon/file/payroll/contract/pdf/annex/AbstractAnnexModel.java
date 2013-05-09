@@ -63,6 +63,7 @@ public abstract class AbstractAnnexModel implements IContractPdfDocument {
 		return getPdfFieldsMap().values();
 	}
 	
+	@Override
 	public Map<String, ContractPdfField> getPdfFieldsMap() {
 		if(pdfFieldsMap==null){
 			pdfFieldsMap = new HashMap<String, ContractPdfField>();

@@ -2,6 +2,7 @@ package com.esferalia.aon.file.payroll.contract.pdf;
 
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Map;
 
 import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
@@ -28,6 +29,8 @@ public interface IContractPdfDocument {
 	public String getDocumentPath();
 
 	public void setLocale(Locale locale);
+
+	public Map<String, ContractPdfField> getPdfFieldsMap();
 	
 }
 	

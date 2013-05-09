@@ -209,6 +209,18 @@
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}" />
 				</aon:div>
+				
+				<aon:outputLabel for="Contract_workSchedule"  
+					value="Horario del trabajo efectivo" />
+				<aon:inputText id="Contract_workSchedule" maxlength="80" size="96"
+					value="#{contract.params.workSchedule}" />
+
+				<aon:outputLabel for="Contract_trainingSchedule"  
+					value="Horario de la actividad formativa" />
+				<aon:inputText id="Contract_trainingSchedule" maxlength="25" size="32"
+					value="#{contract.params.trainingSchedule}" />
+				
+				
 
 				<!--  
 				<aon:outputLabel for="trainingCourse_schedule" value="#{payrollBundle.payroll_trainingCourse_schedule}" />

@@ -39,6 +39,10 @@ public class ContractPdfWriter {
 		return instance;
 	}
 	
+	public IContractPdfDocument getPdfDocument(){
+		return pdfDocument;
+	}
+	
 	public URL getContractDocumentUrl() {
 		return contractDocumentUrl;
 	}

@@ -29,6 +29,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
 import com.esferalia.aon.file.payroll.contract.pdf.basicCopy.BasicCopy;
+import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE226;
 import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
@@ -265,7 +266,7 @@ public class ContractPdfController {
 		setZoomFactor(2);
 		setDocumentPage(1);
 		try {
-			generateDocument();
+			loadDocument();
 			createPdfThumbnail();
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -278,7 +279,7 @@ public class ContractPdfController {
 		}
 	}
 	
-	public void generateDocument() throws UnsupportedContractDocumentException, IOException{
+	public void loadDocument() throws UnsupportedContractDocumentException, IOException{
 		initialize();
 		setContractPdfWriter(null);
 		if(getContract()==null || getContract().getId()==null){
@@ -308,6 +309,7 @@ public class ContractPdfController {
 		if(getDocumentType()==ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT){
 			if(getContractPdfDraft()==null || getContractPdfDraft().getId()==null){
 				getContractPdfWriter().loadNewPdf(getContractModel(), getContract(), getContrataParams());
+				completeNewPdfFields(ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT);
 			} else {
 				getContractPdfWriter().loadExistingPdf(getContractPdfDraft(), getContract());
 			}
@@ -320,9 +322,19 @@ public class ContractPdfController {
 		} else if(getDocumentType()==ContractAttachmentType.TRAINING_ANNEX_II){
 			if(getContractPdfDraft()==null || getContractPdfDraft().getId()==null){
 				getContractPdfWriter().loadNewPdf(ModelPE230.MODEL_NAME, getContract(), getContrataParams());
+				completeNewPdfFields(ContractAttachmentType.TRAINING_ANNEX_II);
 			} else {
 				getContractPdfWriter().loadExistingPdf(ModelPE230.MODEL_NAME, getContractPdfDraft());
 			}
+		}
+	}
+	
+	private void completeNewPdfFields(ContractAttachmentType attachType) {
+		ContractController controller = (ContractController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
+		if(attachType==ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT){
+			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("jornhoraefec").setValue(controller.getParams().getWorkSchedule());
+		} else if(attachType==ContractAttachmentType.TRAINING_ANNEX_II) {
+			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("horario").setValue(controller.getParams().getTrainingSchedule());
 		}
 	}
 	
@@ -361,6 +373,10 @@ public class ContractPdfController {
 	}
 	
 	public void onDocumentSave(ActionEvent event) {
+		saveDocument();
+	}
+	
+	public void saveDocument() {
 		ContractAttachmentType attachType = null;
 		String attachName = null;
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();

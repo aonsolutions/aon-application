@@ -1,9 +1,13 @@
 package com.esferalia.aon.ui.payroll.event.contract;
 
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.faces.event.AbortProcessingException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +25,11 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
+import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
+import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
+import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
+import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE226;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
@@ -29,6 +38,7 @@ import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.TrainingCenter;
 import com.esferalia.aon.payroll.TrainingCourse;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.payroll.enumeration.ContractModelCode;
@@ -39,6 +49,7 @@ import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractPdfController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController.ContractParams;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
@@ -84,14 +95,14 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setActivities(null);
 		controller.setEnterpriseCCCs(null);
 		controller.setParams(null);
-		controller.onShowVariables(null);
+//		controller.onShowVariables(null);
 		try {
 			loadContractData();
 		} catch (ManagerBeanException e) {
 			String msg = "Error loading contract data";
 			LOGGER.error(msg);
 		}
-		searchAgreement();
+//		searchAgreement();
 	}
 
 	@Override
@@ -127,12 +138,13 @@ public class ContractControllerListener extends ControllerAdapter{
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		insertContractData();
 		ContractController controller = (ContractController) this.getController();
-		controller.getHandler().initializeVariables(null);
-		if(controller.isShowNewContractModal()){
-			controller.setShowNewContractModal(false);
-			EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_TREE_CONTROLLER);
-			tree.loadTree();
-		}
+//		controller.getHandler().initializeVariables(null);
+//		if(controller.isShowNewContractModal()){
+//			controller.setShowNewContractModal(false);
+//			EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_TREE_CONTROLLER);
+//			tree.loadTree();
+//		}
+		controller.generateDocument();
 	}
 
 	@Override
@@ -534,7 +546,8 @@ public class ContractControllerListener extends ControllerAdapter{
 	}
 	
 	private void loadContractData() throws ManagerBeanException {
-		ContractParams params = ((ContractController)this.getController()).getParams();
+		ContractController controller = (ContractController) this.getController();
+		ContractParams params = controller.getParams();
 		PayrollUtils utils = new PayrollUtils();
 		Map<String, String> map = utils.getContractDataMap((Contract) this.getController().getTo());
 		
@@ -561,18 +574,51 @@ public class ContractControllerListener extends ControllerAdapter{
 		if(map.get(ContextVariable.SUBSIDIZED.getName())!=null){
 			params.setSubsidized(new Boolean(map.get(ContextVariable.SUBSIDIZED.getName())));
 		}
-		if(map.get(ContextVariable.TRAINING_CENTER.getName())!=null){
-			params.setTrainingCenter(obtainTrainingCenter(map.get(ContextVariable.TRAINING_CENTER.getName())));
-		} else {
-			params.setTrainingCenter((TrainingCenter) BeanManager.getManagerBean(TrainingCenter.class).createNewTo());
-		}
-		if(map.get(ContextVariable.TRAINING_COURSE.getName())!=null){
-			params.setTrainingCourse(obtainTrainingCourse(map.get(ContextVariable.TRAINING_COURSE.getName())));
-			ContractData data = obtainContractData(ContextVariable.TRAINING_COURSE.getName());
-			params.setTrainingStartDate(data.getStartDate());
-			params.setTrainingEndDate(data.getEndDate());
-		} else {
-			params.setTrainingCourse((TrainingCourse) BeanManager.getManagerBean(TrainingCourse.class).createNewTo());
+		if(params.isTrainingContract()){
+			if(map.get(ContextVariable.TRAINING_CENTER.getName())!=null){
+				params.setTrainingCenter(obtainTrainingCenter(map.get(ContextVariable.TRAINING_CENTER.getName())));
+			} else {
+				params.setTrainingCenter((TrainingCenter) BeanManager.getManagerBean(TrainingCenter.class).createNewTo());
+			}
+			if(map.get(ContextVariable.TRAINING_COURSE.getName())!=null){
+				params.setTrainingCourse(obtainTrainingCourse(map.get(ContextVariable.TRAINING_COURSE.getName())));
+				ContractData data = obtainContractData(ContextVariable.TRAINING_COURSE.getName());
+				params.setTrainingStartDate(data.getStartDate());
+				params.setTrainingEndDate(data.getEndDate());
+			} else {
+				params.setTrainingCourse((TrainingCourse) BeanManager.getManagerBean(TrainingCourse.class).createNewTo());
+			}
+
+			ContractPdfController pdfDocController = (ContractPdfController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_PDF_CONTROLLER_NAME);
+			try {
+				if( !controller.getExistSignedContractDocument() ){
+					pdfDocController.setDocumentType(ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT);
+					if(!pdfDocController.isNew()){
+						pdfDocController.loadDocument();
+						ModelPE226 pdfDocument = (ModelPE226) pdfDocController.getContractPdfWriter().getPdfDocument();
+						params.setWorkSchedule(pdfDocument.getPdfFieldsMap().get("jornhoraefec").getValue());
+					}
+				}
+			} catch (IOException e) {
+				LOGGER.error("Error de lectura del documento del contrato");
+			} catch (UnsupportedContractDocumentException e) {
+				LOGGER.error("Documento no compantible con el tipo de contrato");
+			}
+			
+			try {
+				if( controller.isTrainingContract() && controller.isTrainingCourseDefined() ){
+					pdfDocController.setDocumentType(ContractAttachmentType.TRAINING_ANNEX_II);
+					if(!pdfDocController.isNew()){
+						pdfDocController.loadDocument();
+						ModelPE230 pdfDocument = (ModelPE230) pdfDocController.getContractPdfWriter().getPdfDocument();
+						params.setTrainingSchedule(pdfDocument.getPdfFieldsMap().get("horario").getValue());
+					}
+				}
+			} catch (IOException e) {
+				LOGGER.error("Error de lectura del Anexo");
+			} catch (UnsupportedContractDocumentException e) {
+				LOGGER.error("Documento no compantible con el tipo de contrato");
+			}
 		}
 		
 	}
