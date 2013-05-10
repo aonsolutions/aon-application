@@ -465,9 +465,7 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 			criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_PROJECT_ID), to.getProject().getId());
 		}
 		if (to.getRegistryAddress() != null && to.getRegistryAddress().getId() != null) {
-			// FIXME: create constants
-//			criteria.addNullExpression(salesBean.getFieldName(IEntityAlias.SALES_SHIPPING_ADDRESS));
-			criteria.addNullExpression("Sales.shippingAddress");
+			criteria.addNullExpression(salesBean.getFieldName(IEntityAlias.SALES_SHIPPING_ADDRESS));
 		}
 		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_STATUS), SalesStatus.PENDING);
 		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_SECURITY_LEVEL), to.getSecurityLevel());

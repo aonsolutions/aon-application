@@ -397,9 +397,7 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SECURITY_LEVEL), to.getSecurityLevel());
 		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_WORK_PLACE_ID), to.getWorkPlace().getId());
 		if (to.getRegistryAddress() != null && to.getRegistryAddress().getId() != null) {
-			// FIXME: create constants
-//			criteria.addNullExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_REGISTRY_ADDRESS));
-			criteria.addNullExpression("Purchase.registryAddress");
+			criteria.addNullExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_REGISTRY_ADDRESS));
 		}
 		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_ISSUE_DATE));
 		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SERIES));
