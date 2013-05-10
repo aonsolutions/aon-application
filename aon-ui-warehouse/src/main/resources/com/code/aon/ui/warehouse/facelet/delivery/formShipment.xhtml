@@ -93,18 +93,23 @@
 				
 			<aon:outputLabel for="Delivery_modificationTime"
 				value="#{warehouseBundle.warehouse_delivery_shipment_deliveryTime}" />
-			<aon:selectInputDate id="Delivery_modificationTime"
-				direction="auto"
-				value="#{delivery.to.statusModificationDate}" 
-				timeZone="#{timeZoneController.timeZone}"
-				popupDateFormat="#{bundle.aon_date_pattern}"/>
+			<aon:div id="Delivery_modificationTime">
+				<aon:selectOneMenu id="Delivery_modificationTime-hour" value="#{delivery.to.statusModificationHour}">
+					<f:selectItem itemValue="#{null}" itemLabel=" - " />
+					<f:selectItems value="#{delivery.hours}" />
+				</aon:selectOneMenu>
+				<aon:outputText value=" : " />
+				<aon:selectOneMenu id="Delivery_modificationTime-minute" value="#{delivery.to.statusModificationMinute}">
+					<f:selectItem itemValue="#{null}" itemLabel=" - " />
+					<f:selectItems value="#{delivery.minutes}" />
+				</aon:selectOneMenu>
+			</aon:div>
 				
 			<aon:outputLabel for="Delivery_totalWeight"
 				value="#{warehouseBundle.warehouse_delivery_shipment_totalWeight}" />
 			<aon:inputText id="Delivery_totalWeight"  
 				value="#{delivery.to.totalWeight}" />
-				
-		
+			
 		</aon:panelGrid>
 		
 		<br />

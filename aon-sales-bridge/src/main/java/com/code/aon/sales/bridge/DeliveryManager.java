@@ -90,7 +90,17 @@ public class DeliveryManager {
 		delivery.setPaymentDays(sales.getPaymentDays());
 		delivery.setBank(sales.getBank());
 		delivery.setBankAccount(sales.getBankAccount());
-
+		
+		delivery.setCarrier(sales.getCarrier());
+		delivery.setShippingPeriod(sales.getShippingPeriod());
+		delivery.setShippingContact(sales.getShippingContact());
+		delivery.setShippingAlternativeRecipient(sales.getShippingAlternativeRecipient());
+		delivery.setShippingAlternativeAddress(sales.getShippingAlternativeAddress());
+		delivery.setShippingAlternativeAddress2(sales.getShippingAlternativeAddress2());
+		delivery.setShippingAlternativeZip(sales.getShippingAlternativeZip());
+		delivery.setShippingAlternativeCity(sales.getShippingAlternativeCity());
+		delivery.setShippingAlternativePhone(sales.getShippingAlternativePhone());
+		
 		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
 		return (Delivery)deliveryBean.insert(delivery);
 	}

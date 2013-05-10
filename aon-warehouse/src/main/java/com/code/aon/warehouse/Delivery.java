@@ -1,5 +1,6 @@
 package com.code.aon.warehouse;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +16,7 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,5 +148,31 @@ public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableCo
 			LOGGER.error("Error obtaining deliveryDetail orderedList", e);
 		}
 		return null;
+	}
+	
+	@Transient
+	public String getStatusModificationHour(){
+		if(this.getStatusModificationDate()!=null){
+			return new SimpleDateFormat("HH").format(this.getStatusModificationDate());
+		}
+		return null;
+	}
+	public void setStatusModificationHour(String hour){
+		if(this.getStatusModificationDate()!=null && hour!=null){
+			this.setStatusModificationDate(DateUtils.setHours(this.getStatusModificationDate(), Integer.parseInt(hour)));
+		}
+	}
+	
+	@Transient
+	public String getStatusModificationMinute(){
+		if(this.getStatusModificationDate()!=null){
+			return new SimpleDateFormat("mm").format(this.getStatusModificationDate());
+		}
+		return null;
+	}
+	public void setStatusModificationMinute(String minute){
+		if(this.getStatusModificationDate()!=null && minute!=null){
+			this.setStatusModificationDate(DateUtils.setMinutes(this.getStatusModificationDate(), Integer.parseInt(minute)));
+		}
 	}
 }

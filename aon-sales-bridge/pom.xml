@@ -47,6 +47,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.carrier</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.entity</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>

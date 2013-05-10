@@ -560,5 +560,23 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		}
 		return false;
 	}
+	
+	public List<SelectItem> getHours() {
+		List<SelectItem> hours = new LinkedList<SelectItem>();
+		for(int i=0; i<24; i++){
+			SelectItem item = new SelectItem(String.format("%02d", i));
+			hours.add(item);
+		}
+		return hours;
+	}
+	
+	public List<SelectItem> getMinutes() {
+		List<SelectItem> minutes = new LinkedList<SelectItem>();
+		for(int i=0; i<60; i++){
+			SelectItem item = new SelectItem(String.format("%02d", i));
+			minutes.add(item);
+		}
+		return minutes;
+	}
 
 }
