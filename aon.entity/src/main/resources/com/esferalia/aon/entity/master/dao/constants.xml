@@ -384,11 +384,21 @@
 		<alias 	names="description,discountExpr,domain,id,item_id,price,proposal_department_id,proposal_id,proposal_issueDate,proposal_status,proposal_itemReturn,proposal_transferStatus,proposal_workPlace_id,quantity,status,supplier_id" />
 		<hibernate names="description,discountExpr,domain,id,item.id,price,proposal.department.id,proposal.id,proposal.issueDate,proposal.status,proposal.itemReturn,proposal.transferStatus,proposal.workPlace.id,quantity,status,supplier.id" />
   	</bean>
+	<bean class="com.code.aon.purchase.Purchase" sqlName="purchase">
+  		<alias 	names="bankAccount,bank_id,comments,daysBetweenPayments,daysToFirstPayment,discountExpression,documentType,domain,emailCommunication,id,issueDate,number,numberOfPayments,payMethod_id,paymentDays,project_id,registryAddress,registryAddress_id,remarks,scope_id,securityLevel,series,status,supplier_id,workPlace_id" />
+		<hibernate names="bankAccount,bank.id,comments,daysBetweenPayments,daysToFirstPayment,discountExpression,documentType,domain,emailCommunication,id,issueDate,number,numberOfPayments,payMethod.id,paymentDays,project.id,registryAddress,registryAddress.id,remarks,scope.id,securityLevel,series,status,supplier.id,workPlace.id" />
+  	</bean>
 
 	<!-- ** AON REGISTRY  **************************************************** -->
 	<bean class="com.code.aon.person.Person" sqlName="person">
 		<alias names="birthDate,gender,id,maritalStatus,registry_id,socialSecurityNumber,name,firstSurname,secondSurname,registry_document,registry_documentCountry,registry_documentType"/>
 		<hibernate names="birthDate,gender,id,maritalStatus,registry.id,socialSecurityNumber,name,firstSurname,secondSurname,registry.document,registry.documentCountry,registry.documentType"/>
+	</bean>
+
+	<!-- ** AON SALES  **************************************************** -->
+	<bean class="com.code.aon.sales.Sales" sqlName="sales">
+		<alias names="bankAccount,bank_id,carrier_id,comments,customer_id,daysBetweenPayments,daysToFirstPayment,discountExpression,documentType,domain,id,issueDate,number,numberOfPayments,payMethod_id,paymentDays,project_id,remarks,scope_id,securityLevel,seller_id,series,shippingAddress,shippingAddress_id,shippingAlternativeAddress,shippingAlternativeAddress2,shippingAlternativeCity,shippingAlternativePhone,shippingAlternativeRecipient,shippingAlternativeZip,shippingContact,shippingPeriod,status,workPlace_id"/>
+		<hibernate names="bankAccount,bank.id,carrier.id,comments,customer.id,daysBetweenPayments,daysToFirstPayment,discountExpression,documentType,domain,id,issueDate,number,numberOfPayments,payMethod.id,paymentDays,project.id,remarks,scope.id,securityLevel,seller.id,series,shippingAddress,shippingAddress.id,shippingAlternativeAddress,shippingAlternativeAddress2,shippingAlternativeCity,shippingAlternativePhone,shippingAlternativeRecipient,shippingAlternativeZip,shippingContact,shippingPeriod,status,workPlace.id"/>
 	</bean>
 
 	<!-- ** AON SELLER  **************************************************** -->
