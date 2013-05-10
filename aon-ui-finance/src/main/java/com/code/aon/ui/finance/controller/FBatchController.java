@@ -484,8 +484,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	}
 
 	public void onBackFinanceBatch(ActionEvent event) throws ManagerBeanException {
-		FBatchController fBatchController = (FBatchController) AonUtil.getRegisteredBean(FINANCE_BATCH_CONTROLLER_NAME);
-		fBatchController.refresh(event);
+		refresh(event);
 
 		loadDetails();
 		loadAvailableFinances();

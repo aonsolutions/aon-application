@@ -30,6 +30,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.hibernate.TypeResolver;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.domain.IDomain;
@@ -1210,6 +1211,7 @@ public class BasicController extends AbstractPojoController implements IControll
 		if (getSelectedIndex() != -1) {
 			setRowData(getTo());
 		}
+		HibernateUtil.getSession(HibernateUtil.getSessionFactoryName()).refresh(getTo());
 	}
 	
 	/**
