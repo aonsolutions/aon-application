@@ -24,15 +24,14 @@
 				action="#{contractPdf.backAction}"
 				styleClass="aon-finding-toolbar-item aon-icon-cancel" />
 
-<!--  
 			<aon:commandButton id="contract-refresh"
 				value="#{payrollBundle.payroll_reload}"
 				rendered="#{!contractPdf.new}"
+				reRender="#{toolbarReRender}"
 				action="contractPdfEdition_form"
 				actionListener="#{contractPdf.onDocumentReload}"
 				onclick="if (!confirm('#{payrollBundle.payroll_refresh_confirm}')) { return false;}"
-				styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
--->
+				styleClass="aon-finding-toolbar-item aon-icon-refresh" />
 
 			<aon:htmlCommandLink id="document-download" 
 				value="&#160;" target="_blank" 

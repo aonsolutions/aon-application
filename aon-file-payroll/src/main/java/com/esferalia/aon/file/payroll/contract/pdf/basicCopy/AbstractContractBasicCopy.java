@@ -65,8 +65,8 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument 
 	final String CONTRACT_TYPE = "cto";
 	final String CONTRACT_TOTAL_DURATION = "totaldura1";
 	final String CONTRACT_CATEGORY = "catetraba";
-	final String CONTRACT_JOURNAL_HOURS_1 = "horasjornada1";
-	final String CONTRACT_JOURNAL_HOURS_2 = "horasjornada2";
+	final String CONTRACT_JOURNAL_HOURS_1 = "horasjorna1";
+	final String CONTRACT_JOURNAL_HOURS_2 = "horasjorna2";
 	final String CONTRACT_JOURNAL = "jornada";
 	final String CONTRACT_REMUNERATION = "retribu";
 	final String CONTRACT_REMUNERATION_EURO = "euros";

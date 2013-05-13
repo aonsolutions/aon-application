@@ -503,31 +503,65 @@ public class ContractController extends BasicController implements IVariablesHan
 	public void generateDocument(){
 		
 		ContractPdfController pdfDocument = (ContractPdfController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_PDF_CONTROLLER_NAME);
+		// Documento del contrato
 		try {
-			if( !getExistSignedContractDocument() ){
-				pdfDocument.setDocumentType(ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT);
-				pdfDocument.loadDocument();
-				pdfDocument.saveDocument();
-			}
-			if( !getExistSignedBasicCopyDocument() ){
-				pdfDocument.setDocumentType(ContractAttachmentType.BASIC_COPY_DRAFT);
-				pdfDocument.loadDocument();
-				pdfDocument.saveDocument();
-			}
+			pdfDocument.setDocumentType(ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT);
+			pdfDocument.loadDocument(true);
+			pdfDocument.saveDocument();
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage("No se ha podido generar el documento del contrato");
+			AonUtil.addErrorMessage(e.getMessage());
+		} catch (UnsupportedContractDocumentException e) {
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage("No se ha podido generar el documento del contrato");
+			AonUtil.addErrorMessage(e.getMessage());
+		} catch (Exception e){
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage("No se ha podido generar el documento del contrato");
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+		
+		// Documento de la copia basica
+		try {
+			pdfDocument.setDocumentType(ContractAttachmentType.BASIC_COPY_DRAFT);
+			pdfDocument.loadDocument(true);
+			pdfDocument.saveDocument();
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
+			AonUtil.addErrorMessage(e.getMessage());
+		} catch (UnsupportedContractDocumentException e) {
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
+			AonUtil.addErrorMessage(e.getMessage());
+		} catch (Exception e){
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+		
+		// Documento del anexxo ii de contrato de formacion (421)
+		try {
 			if( isTrainingContract() && isTrainingCourseDefined() ){
 				pdfDocument.setDocumentType(ContractAttachmentType.TRAINING_ANNEX_II);
-				pdfDocument.loadDocument();
+				pdfDocument.loadDocument(true);
 				pdfDocument.saveDocument();
 			}
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage("No se ha podido generar el documento del anexo II");
 			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage());
 		} catch (UnsupportedContractDocumentException e) {
 			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage("No se ha podido generar el documento del anexo II");
 			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage());
+		} catch (Exception e){
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage("No se ha podido generar el documento del anexo II");
+			AonUtil.addErrorMessage(e.getMessage());
 		}
+		
 		
 		try {
 			if( isTrainingCourseDefined() ){
@@ -539,14 +573,13 @@ public class ContractController extends BasicController implements IVariablesHan
 					attachController.initializeModel();
 				} catch (ManagerBeanException e) {
 					LOGGER.error(e.getMessage(), e);
+					AonUtil.addErrorMessage("No se ha podido generar el documento de la domiciliacion bancaria");
 					AonUtil.addErrorMessage(e.getMessage());
-					throw new AbortProcessingException(e.getMessage());
 				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage());
 		}
 		
 		setSelectedTab("attachData");

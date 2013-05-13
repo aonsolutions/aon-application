@@ -587,7 +587,7 @@ public class ContractControllerListener extends ControllerAdapter{
 			try {
 				if( !controller.getExistSignedContractDocument() ){
 					pdfDocController.setDocumentType(ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT);
-					pdfDocController.loadDocument();
+					pdfDocController.loadDocument(false);
 					if(!pdfDocController.isNew()){
 						ModelPE226 pdfDocument = (ModelPE226) pdfDocController.getContractPdfWriter().getPdfDocument();
 						params.setWorkSchedule(pdfDocument.getPdfFieldsMap().get("jornhoraefec").getValue());
@@ -602,7 +602,7 @@ public class ContractControllerListener extends ControllerAdapter{
 			try {
 				if( controller.isTrainingContract() && controller.isTrainingCourseDefined() ){
 					pdfDocController.setDocumentType(ContractAttachmentType.TRAINING_ANNEX_II);
-					pdfDocController.loadDocument();
+					pdfDocController.loadDocument(false);
 					if(!pdfDocController.isNew()){
 						ModelPE230 pdfDocument = (ModelPE230) pdfDocController.getContractPdfWriter().getPdfDocument();
 						params.setTrainingSchedule(pdfDocument.getPdfFieldsMap().get("horario").getValue());

@@ -376,22 +376,25 @@ public class ModelPE230 extends AbstractAnnexModel {
 			if(contrataParams!=null){
 				
 				Integer durationInMonths = getMonthsBetweenDates(contract.getStartDate(), contract.getEndDate());
-				Integer horasFormacion = Integer.parseInt(contrataParams.getHorasFormacion());
 				
-				if(contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_A){
+				if(contrataParams.getHorasFormacion()!=null){
+					Integer horasFormacion = Integer.parseInt(contrataParams.getHorasFormacion());
 					
-				} else if (contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_D){
-					horasFormacion *= durationInMonths;
-					horasFormacion *= 4;
-					horasFormacion *= 30;
-				} else if (contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_M){
-					horasFormacion *= durationInMonths;
-				} else if (contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_S){
-					horasFormacion *= durationInMonths;
-					horasFormacion *= 4;
+					if(contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_A){
+						
+					} else if (contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_D){
+						horasFormacion *= durationInMonths;
+						horasFormacion *= 4;
+						horasFormacion *= 30;
+					} else if (contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_M){
+						horasFormacion *= durationInMonths;
+					} else if (contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_S){
+						horasFormacion *= durationInMonths;
+						horasFormacion *= 4;
+					}
+					
+					getPdfFieldsMap().get(PE230_TRAINING_COURSE_FIRST_YEAR_MAIN_HOURS).setValue(String.valueOf(horasFormacion));
 				}
-				
-				getPdfFieldsMap().get(PE230_TRAINING_COURSE_FIRST_YEAR_MAIN_HOURS).setValue(String.valueOf(horasFormacion));
 			}
 			getPdfFieldsMap().get(PE230_TRAINING_COURSE_FIRST_YEAR_COMPLEMENTARY_HOURS).setValue("");
 			getPdfFieldsMap().get(PE230_TRAINING_COURSE_NEXT_YEAR_MAIN_HOURS).setValue("");

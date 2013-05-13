@@ -1,10 +1,8 @@
 package com.esferalia.aon.file.payroll.contract.pdf.basicCopy;
 
 import java.io.IOException;
-import java.util.Date;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
@@ -34,9 +32,9 @@ public class BasicCopy extends AbstractContractBasicCopy {
 			super.loadPdfCommonFields(contract);
 			
 			if(contrataParams!=null){
-				Integer horasJornada = Integer.parseInt(contrataParams.getHorasJornada());
+				String horasJornada = contrataParams.getHorasJornada();
 				if(horasJornada!=null){
-					getPdfFieldsMap().get(CONTRACT_JOURNAL_HOURS_1).setValue(String.valueOf(horasJornada));;				
+					getPdfFieldsMap().get(CONTRACT_JOURNAL_HOURS_1).setValue(String.valueOf(Integer.parseInt(horasJornada)));				
 //					getPdfFieldsMap().get(CONTRACT_JOURNAL_HOURS_2).setValue(String.valueOf(minutosJornada));;
 					
 					if(contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_A){
