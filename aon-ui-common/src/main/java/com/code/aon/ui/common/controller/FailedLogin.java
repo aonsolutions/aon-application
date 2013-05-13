@@ -4,8 +4,11 @@
 package com.code.aon.ui.common.controller;
 
 import static com.code.aon.common.util.BeanServerUtil.SESSION_MANAGER;
+import static com.code.aon.ui.common.ICommonConstants.DEFAULT_BUNDLE_RESOURCE;
 
 import java.text.MessageFormat;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.management.MBeanServer;
 
@@ -32,12 +35,18 @@ public class FailedLogin {
 	private static final String LOGIN_ERROR_DEFAULT = "aon_login_error_default";
 
 	private String message;
+	
+	private boolean showError;
 
 	public FailedLogin() {
+		init( AonUtil.getCurrentLocale() );
+	}
+	
+	public void init( Locale locale ) {
 		AuthenticationLoginException e = getLoginException(); 
 		if ( e != null ) {
-			setMessage( getMessage(e) );
-		}
+			setMessage( getMessage(e, locale) );
+		}		
 	}
 	
     private AuthenticationLoginException getLoginException() {
@@ -52,20 +61,21 @@ public class FailedLogin {
     	return null;
     }    
 	
-	private String getMessageString( AuthenticationLoginException e ) {
+	private String getMessageString( AuthenticationLoginException e, Locale locale ) {
 		String message = null;
 		String errorId = e.getMessage();
 		if ( errorId.startsWith(LOGIN_ERROR_PREFFIX) ) {
 			errorId = LOGIN_ERROR_DEFAULT;
 		}
 		if ( message == null ) {
-			message = AonUtil.getMessage( errorId );
+			ResourceBundle bundle = ResourceBundle.getBundle(DEFAULT_BUNDLE_RESOURCE, locale);
+			message = bundle.getString(errorId);
 		}
 		return message;	
 	}
 	
-	private String getMessage( AuthenticationLoginException e ) {
-		MessageFormat messageFormat = new MessageFormat( getMessageString(e) );
+	private String getMessage( AuthenticationLoginException e, Locale locale ) {
+		MessageFormat messageFormat = new MessageFormat( getMessageString(e, locale) );
 		Object[] arguments;
 		if ( e.getArg().getClass().isArray() ) {
 			arguments = (Object[]) e.getArg();
@@ -87,6 +97,14 @@ public class FailedLogin {
 	 */
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public boolean isShowError() {
+		return showError;
+	}
+
+	public void setShowError(boolean showError) {
+		this.showError = showError;
 	}
 
 }

@@ -14,6 +14,8 @@ public interface ICommonConstants {
 	/** Default Bundle */
 	String DEFAULT_BUNDLE = "bundle";
 	
+	String DEFAULT_BUNDLE_RESOURCE = "com.code.aon.ui.common.i18n.messages";
+	
 	String APPLICATION_BUNDLE_NAME = "appBundle";
 
 	/**	 */

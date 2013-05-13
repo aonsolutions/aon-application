@@ -40,14 +40,8 @@ public class CompanyDisplay {
 	
 	private boolean bigLogo;
 	
-	public CompanyDisplay() {
-		this(AonUtil.getServerName(), null );
-	}
+	private boolean init;
 
-	public CompanyDisplay( String host, Properties dbProperties ) {
-		init(host, dbProperties);
-	}
-	
 	public String getCompanyLabel() {
 		return companyLabel;
 	}
@@ -77,6 +71,9 @@ public class CompanyDisplay {
 	}
 
 	public boolean isShow() {
+		if (! this.init ) {
+			init(AonUtil.getServerName(), AonUtil.getContextPath());
+		}
 		return !StringUtils.isEmpty(this.companyLabel) || isLogoDefined();
 	}
 	
@@ -94,9 +91,9 @@ public class CompanyDisplay {
 		}
 	}
 
-	private Connection getConnection( Properties dbs ) throws AonException {
+	private Connection getConnection( String server, String context ) throws AonException {
 		Connection connection = null;
-		Properties properties = (dbs != null) ? dbs : DataSourceUtil.getDBProperties();
+		Properties properties = DataSourceUtil.getDBProperties(server, context);
 		if ( (properties != null) && (!properties.isEmpty()) ) {
 			connection =  ConnectionProvider.getConnection(properties);
 		}
@@ -171,10 +168,10 @@ public class CompanyDisplay {
 		return null;			
 	}		
 	
-	private void init( String host, Properties dbProperties ) {
+	public void init( String host, String context ) {
 		Connection connection = null;
 		try {
-			connection = getConnection(dbProperties);
+			connection = getConnection(host, context);
 			if ( connection != null ) {
 				Integer domainId = DataSourceUtil.getDomain(connection, host);
 				if (domainId != null) {
@@ -190,7 +187,15 @@ public class CompanyDisplay {
 			LOGGER.error( "Error getting company name and logo", th );
 		} finally {
 			DbUtils.closeQuietly(connection);
+			this.init = true;
 		}
+	}
+	
+	public String getLogoStyle() {
+		if ( isBigLogo() ) {
+			return "width:200px;";
+		}
+		return null;
 	}
 	
 }
