@@ -70,7 +70,8 @@ public class PurchasePrintController extends PurchaseController {
 			for( ITransferObject to : list ) {
 				if ( logPanel.isActivePoll() ) {
 					super.fireBeforeEmailSend(event, to);
-					emailUtil.sendPurchase( (Purchase) to, getMoreRecipients(), subject, content  );					
+					emailUtil.sendPurchase( (Purchase) to, getMoreRecipients(), subject, content  );
+					super.setPurchaseSended((Purchase) to);
 				} else {
 					break;
 				}

@@ -134,6 +134,8 @@ public abstract class AbstractAnnexModel implements IContractPdfDocument {
 				}
 			}
 			
+			afterBuildPdf(reader, stamp);
+			
 //    		stamp.setFormFlattening(true);
 			stamp.setFormFlattening(false);
 			stamp.close();
@@ -149,6 +151,10 @@ public abstract class AbstractAnnexModel implements IContractPdfDocument {
 		return null;
 	}
 
+	public void afterBuildPdf(PdfReader reader, PdfStamper stamp){
+		
+	}
+	
 	public abstract void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException;
 
 	public void loadPdfFields(ContractAttachment contractPdfDraft) {

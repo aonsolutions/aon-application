@@ -1,6 +1,7 @@
 package com.esferalia.aon.file.payroll.contract.pdf.annex;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,18 +17,25 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryDirStaff;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.TrainingCourse;
-import com.esferalia.aon.payroll.contrata.enumeration.TEQPTIEM;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.TrainingModality;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Image;
+import com.lowagie.text.pdf.AcroFields;
+import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfStamper;
 
 
 
@@ -150,12 +158,16 @@ public class ModelPE230 extends AbstractAnnexModel {
 	
 	public final static String MODEL_NAME = "PE230";
 	
+	private TrainingCourse trainingCourse;
+	private Contract contract;
+	
 	public ModelPE230(){
 		super.documentName = MODEL_NAME;
 	}
 	
 	@Override
 	public void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException{
+		this.contract = contract;
 		try {
 			Map<String, String>  map = getContractDataMap(contract);
 			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
@@ -164,26 +176,29 @@ public class ModelPE230 extends AbstractAnnexModel {
 			
 			super.loadPdfCommonFields(contract);
 			
-			TrainingCourse trainingCourse = obtainTrainingCourse(map.get(ContextVariable.TRAINING_COURSE.getName()));
-			// HEADER FIELDS
-			if(trainingCourse.isProfessionalCertificate()){
-				getPdfFieldsMap().get(PE230_CP_YES).setValue("true");
-			} else {
-				getPdfFieldsMap().get(PE230_CP_NO).setValue("true");
+			trainingCourse = obtainTrainingCourse(map.get(ContextVariable.TRAINING_COURSE.getName()));
+			
+			if(trainingCourse != null){
+				// HEADER FIELDS
+				if(trainingCourse.isProfessionalCertificate()){
+					getPdfFieldsMap().get(PE230_CP_YES).setValue("true");
+				} else {
+					getPdfFieldsMap().get(PE230_CP_NO).setValue("true");
+				}
+				if(trainingCourse.isFpTitle()){
+					getPdfFieldsMap().get(PE230_FP_YES).setValue("true");
+				} else {
+					getPdfFieldsMap().get(PE230_FP_NO).setValue("true");
+				}
+				if(trainingCourse.isCenterAvailable()){
+					getPdfFieldsMap().get(PE230_CENTER_AVAILABLE_YES).setValue("true");
+				} else {
+					getPdfFieldsMap().get(PE230_CENTER_AVAILABLE_NO).setValue("true");
+				}
+				
+				getPdfFieldsMap().get(PE230_CP_NAME).setValue(trainingCourse.getCertificationName());
+				getPdfFieldsMap().get(PE230_FP_TITLE).setValue(trainingCourse.getFpTitleName());
 			}
-			if(trainingCourse.isFpTitle()){
-				getPdfFieldsMap().get(PE230_FP_YES).setValue("true");
-			} else {
-				getPdfFieldsMap().get(PE230_FP_NO).setValue("true");
-			}
-			if(trainingCourse.isCenterAvailable()){
-				getPdfFieldsMap().get(PE230_CENTER_AVAILABLE_YES).setValue("true");
-			} else {
-				getPdfFieldsMap().get(PE230_CENTER_AVAILABLE_NO).setValue("true");
-			}
-
-			getPdfFieldsMap().get(PE230_CP_NAME).setValue(trainingCourse.getCertificationName());
-			getPdfFieldsMap().get(PE230_FP_TITLE).setValue(trainingCourse.getFpTitleName());
 			
 			// ENTERPRISE FIELDS
 			getPdfFieldsMap().get(PE230_ENTERPRISE_NAME).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getFullName());
@@ -256,38 +271,42 @@ public class ModelPE230 extends AbstractAnnexModel {
 			if(contract.getEndDate()!=null){
 				getPdfFieldsMap().get(PE230_CONTRACT_END_DATE).setValue(formatter.format(contract.getEndDate()));
 			}
-			getPdfFieldsMap().get(PE230_CONTRACT_OCCUPATION).setValue(trainingCourse.getOccupationName());
-			String cno = map.get(ContextVariable.CNO.getName());
-			if( !StringUtils.isEmpty(cno) ){
-				getPdfFieldsMap().get(PE230_CONTRACT_CNO_1).setValue(cno.substring(0, 1));
-				getPdfFieldsMap().get(PE230_CONTRACT_CNO_2).setValue(cno.substring(1, 2));
-				getPdfFieldsMap().get(PE230_CONTRACT_CNO_3).setValue(cno.substring(2, 3));
-				getPdfFieldsMap().get(PE230_CONTRACT_CNO_4).setValue(cno.substring(3, 4));
-				getPdfFieldsMap().get(PE230_CONTRACT_CNO_5).setValue("");
-				getPdfFieldsMap().get(PE230_CONTRACT_CNO_6).setValue("");
-				getPdfFieldsMap().get(PE230_CONTRACT_CNO_7).setValue("");
-				getPdfFieldsMap().get(PE230_CONTRACT_CNO_8).setValue("");
+			if(trainingCourse != null){
+				getPdfFieldsMap().get(PE230_CONTRACT_OCCUPATION).setValue(trainingCourse.getOccupationName());
+				String cno = map.get(ContextVariable.CNO.getName());
+				if( !StringUtils.isEmpty(cno) ){
+					getPdfFieldsMap().get(PE230_CONTRACT_CNO_1).setValue(cno.substring(0, 1));
+					getPdfFieldsMap().get(PE230_CONTRACT_CNO_2).setValue(cno.substring(1, 2));
+					getPdfFieldsMap().get(PE230_CONTRACT_CNO_3).setValue(cno.substring(2, 3));
+					getPdfFieldsMap().get(PE230_CONTRACT_CNO_4).setValue(cno.substring(3, 4));
+					getPdfFieldsMap().get(PE230_CONTRACT_CNO_5).setValue("");
+					getPdfFieldsMap().get(PE230_CONTRACT_CNO_6).setValue("");
+					getPdfFieldsMap().get(PE230_CONTRACT_CNO_7).setValue("");
+					getPdfFieldsMap().get(PE230_CONTRACT_CNO_8).setValue("");
+				}
 			}
 			
+			// TRAINING CENTER FIELDS
 			RegistryDirStaff trainingCenterDirStaff = null;
 			if(trainingCourse != null){
-				trainingCenterDirStaff = obtainRegistryDirStaff(trainingCourse.getTrainingCenter().getRegistry());
-				// TRAINING CENTER FIELDS
 				getPdfFieldsMap().get(PE230_TRAINING_CENTER_CODE).setValue(trainingCourse.getTrainingCenter().getCode());
+				trainingCenterDirStaff = obtainRegistryDirStaff(trainingCourse.getTrainingCenter().getRegistry());
 				try {
-					getPdfFieldsMap().get(PE230_TRAINING_CENTER_DIR_STAFF_NAME).setValue(trainingCenterDirStaff.getName());
-					getPdfFieldsMap().get(PE230_TRAINING_CENTER_DIR_STAFF_NIF).setValue(trainingCenterDirStaff.getDocument());
-					String rDirStaddCharge = null;
-					if ( enterpriseDirStaff.isShareHolder() ){
-						rDirStaddCharge = "Socio";
-					} else if ( enterpriseDirStaff.isRepresentative() ){
-						rDirStaddCharge = "Apoderado";
-					} else if( enterpriseDirStaff.isDirector() ){
-						rDirStaddCharge = "Administrador";
-					} else if ( enterpriseDirStaff.isRepresentativeLabor() ){
-						rDirStaddCharge = "Representante laboral";
+					if(trainingCenterDirStaff != null){
+						getPdfFieldsMap().get(PE230_TRAINING_CENTER_DIR_STAFF_NAME).setValue(trainingCenterDirStaff.getName());
+						getPdfFieldsMap().get(PE230_TRAINING_CENTER_DIR_STAFF_NIF).setValue(trainingCenterDirStaff.getDocument());
+						String rDirStaddCharge = null;
+						if ( enterpriseDirStaff.isShareHolder() ){
+							rDirStaddCharge = "Socio";
+						} else if ( enterpriseDirStaff.isRepresentative() ){
+							rDirStaddCharge = "Apoderado";
+						} else if( enterpriseDirStaff.isDirector() ){
+							rDirStaddCharge = "Administrador";
+						} else if ( enterpriseDirStaff.isRepresentativeLabor() ){
+							rDirStaddCharge = "Representante laboral";
+						}
+						getPdfFieldsMap().get(PE230_TRAINING_CENTER_DIR_STAFF_CHARGE).setValue(rDirStaddCharge);
 					}
-					getPdfFieldsMap().get(PE230_TRAINING_CENTER_DIR_STAFF_CHARGE).setValue(rDirStaddCharge);
 				} catch (NullPointerException npe) {
 					// do nothing
 				}
@@ -353,45 +372,33 @@ public class ModelPE230 extends AbstractAnnexModel {
 				} catch (NullPointerException npe) {
 					// do nothing
 				}
-			}
-			
-			// TRAINING COURSE FIELDS
-			if(trainingCourse.getModality()==TrainingModality.CLASSROOM){
-				getPdfFieldsMap().get(PE230_TRAINING_COURSE_CLASSROOM).setValue("true");
-			} else if(trainingCourse.getModality()==TrainingModality.DISTANCE){
-				getPdfFieldsMap().get(PE230_TRAINING_COURSE_DISTANCE).setValue("true");
-			} else if(trainingCourse.getModality()==TrainingModality.PHONE){
-				getPdfFieldsMap().get(PE230_TRAINING_COURSE_PHONE_LEARNING).setValue("true");
-			} else if(trainingCourse.getModality()==TrainingModality.MIX){
-				getPdfFieldsMap().get(PE230_TRAINING_COURSE_MIXED).setValue("true");
-			}
-			ContractData trainingCourseData = obtainContractData(contract, ContextVariable.TRAINING_COURSE.getName());
-			if(trainingCourseData.getStartDate()!=null){
-				getPdfFieldsMap().get(PE230_TRAINING_COURSE_START_DATE).setValue(formatter.format(trainingCourseData.getStartDate()));
-			}
-			if(trainingCourseData.getEndDate()!=null){
-				getPdfFieldsMap().get(PE230_TRAINING_COURSE_END_DATE).setValue(formatter.format(trainingCourseData.getEndDate()));
+				
+				// TRAINING COURSE FIELDS
+				if(trainingCourse.getModality()==TrainingModality.CLASSROOM){
+					getPdfFieldsMap().get(PE230_TRAINING_COURSE_CLASSROOM).setValue("true");
+				} else if(trainingCourse.getModality()==TrainingModality.DISTANCE){
+					getPdfFieldsMap().get(PE230_TRAINING_COURSE_DISTANCE).setValue("true");
+				} else if(trainingCourse.getModality()==TrainingModality.PHONE){
+					getPdfFieldsMap().get(PE230_TRAINING_COURSE_PHONE_LEARNING).setValue("true");
+				} else if(trainingCourse.getModality()==TrainingModality.MIX){
+					getPdfFieldsMap().get(PE230_TRAINING_COURSE_MIXED).setValue("true");
+				}
+				ContractData trainingCourseData = obtainContractData(contract, ContextVariable.TRAINING_COURSE.getName());
+				if(trainingCourseData.getStartDate()!=null){
+					getPdfFieldsMap().get(PE230_TRAINING_COURSE_START_DATE).setValue(formatter.format(trainingCourseData.getStartDate()));
+				}
+				if(trainingCourseData.getEndDate()!=null){
+					getPdfFieldsMap().get(PE230_TRAINING_COURSE_END_DATE).setValue(formatter.format(trainingCourseData.getEndDate()));
+				}
 			}
 			getPdfFieldsMap().get(PE230_TRAINING_COURSE_SCHEDULE).setValue("");
 			if(contrataParams!=null){
 				
 				Integer durationInMonths = getMonthsBetweenDates(contract.getStartDate(), contract.getEndDate());
 				
-				if(contrataParams.getHorasFormacion()!=null){
-					Integer horasFormacion = Integer.parseInt(contrataParams.getHorasFormacion());
+				if(durationInMonths!=null){
 					
-					if(contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_A){
-						
-					} else if (contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_D){
-						horasFormacion *= durationInMonths;
-						horasFormacion *= 4;
-						horasFormacion *= 30;
-					} else if (contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_M){
-						horasFormacion *= durationInMonths;
-					} else if (contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_S){
-						horasFormacion *= durationInMonths;
-						horasFormacion *= 4;
-					}
+					Integer horasFormacion = (durationInMonths<6)?(258):(516);
 					
 					getPdfFieldsMap().get(PE230_TRAINING_COURSE_FIRST_YEAR_MAIN_HOURS).setValue(String.valueOf(horasFormacion));
 				}
@@ -421,6 +428,66 @@ public class ModelPE230 extends AbstractAnnexModel {
 				// do nothing
 			}
 			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	@Override
+	public void afterBuildPdf(PdfReader reader, PdfStamper stamp){
+		try {
+			if(trainingCourse!=null && trainingCourse.getId()!=null){
+				RegistryAttachment attach = obtainRegistrySignature(trainingCourse.getTrainingCenter().getRegistry());
+				if(attach!=null && attach.getId()!=null && attach.getData()!=null){
+					PdfContentByte content = stamp.getOverContent(reader.getNumberOfPages());
+					Image image = Image.getInstance(attach.getData());
+					AcroFields form = stamp.getAcroFields();
+					float absoluteX = form.getFieldPositions(PE230_SIGNATURE_TRAINING_CENTER_DIR_STAFF)[1];
+					float absoluteY = form.getFieldPositions(PE230_SIGNATURE_TRAINING_CENTER_DIR_STAFF)[2]; 
+					image.setAbsolutePosition(absoluteX, absoluteY+10);
+					image.scaleToFit(110, 110);
+					content.addImage(image);
+				}
+			}
+		} catch (DocumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			if(trainingCourse!=null && trainingCourse.getId()!=null){
+				RegistryAttachment attach = obtainRegistrySignature(contract.getWorkPlace().getEnterprise().getRegistry());
+				if(attach!=null && attach.getId()!=null && attach.getData()!=null){
+					PdfContentByte content = stamp.getOverContent(reader.getNumberOfPages());
+					Image image = Image.getInstance(attach.getData());
+					AcroFields form = stamp.getAcroFields();
+					float absoluteX = form.getFieldPositions(PE230_SIGNATURE_ENTERPRISE_DIR_STAFF)[1];
+					float absoluteY = form.getFieldPositions(PE230_SIGNATURE_ENTERPRISE_DIR_STAFF)[2]; 
+					image.setAbsolutePosition(absoluteX, absoluteY+10);
+					image.scaleToFit(110, 110);
+					content.addImage(image);
+				}
+			}
+		} catch (DocumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -487,6 +554,20 @@ public class ModelPE230 extends AbstractAnnexModel {
 	private Integer getMonthsBetweenDates(Date startDate, Date endDate) {
 		if(startDate!=null && endDate!=null){
 			return (int) ((CommonUtil.getDaysBetweenDates(startDate, endDate, true))/30);
+		}
+		return null;
+	}
+	
+	public RegistryAttachment obtainRegistrySignature(Registry registry) throws ManagerBeanException {
+		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
+		Criteria criteria = new Criteria();
+		String alias = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
+		criteria.addEqualExpression(alias, registry.getId());
+		String type = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
+		criteria.addEqualExpression(type, RegistryAttachmentType.SIGNATURE);
+		Iterator<ITransferObject> iter = registryAttachBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return ((RegistryAttachment)iter.next());
 		}
 		return null;
 	}
