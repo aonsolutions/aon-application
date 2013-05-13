@@ -30,6 +30,8 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 	private PurchaseDocumentType[] purchaseDocumentTypes;
 	
 	private Item item;
+
+	private boolean emailCommunication;
 	
 	public String getPreffix() throws ManagerBeanException {
 		return REGISTRY_SEARCH_PREFFIX;
@@ -76,6 +78,14 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 		this.item = item;
 	}
 	
+	public boolean isEmailCommunication() {
+		return emailCommunication;
+	}
+
+	public void setEmailCommunication(boolean emailCommunication) {
+		this.emailCommunication = emailCommunication;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
@@ -85,6 +95,7 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 		PurchaseDocumentType[] defaultCosumentTypes = {PurchaseDocumentType.NORMAL};
 		setPurchaseDocumentTypes(defaultCosumentTypes);
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
+		setEmailCommunication(false);
 	}
 	
 	@Override
@@ -110,6 +121,7 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 		if ((getItem() != null) && (getItem().getId() != null)) {
 			criteria.addEqualExpression("Purchase.lines.item.id", getItem().getId());
 		}				
+		criteria.addEqualExpression(getFieldName(IEntityAlias.PURCHASE_EMAIL_COMMUNICATION), isEmailCommunication());			
 	}
 	
 }

@@ -59,6 +59,19 @@
 		<aon:outputText value="#{to.status}" />
 	</aon:column>
 
+	<aon:column alias="Purchase.emailCommunication"
+		styleClass="aon-editDataTable-iconColumn">
+		<f:facet name="header">
+			<aon:outputText value="email" />
+		</f:facet>
+		<aon:div>
+			<aon:outputText value="&#160;" style="padding-left: 15px;"
+				styleClass="aon-icon-check" rendered="#{!to.emailCommunication}" />
+			<aon:outputText value="&#160;" style="padding-left: 15px;"
+				styleClass="aon-icon-checked" rendered="#{to.emailCommunication}" />
+		</aon:div>
+	</aon:column>
+
 	<c:if test="#{aonRole.purchaseOperator}">
 		<aon:column styleClass="aon-editDataTable-numberColumn">
 			<f:facet name="header">

@@ -525,7 +525,15 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		} else {
 			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
 		}
-	}		
+	}	
+	
+	public void onEmailSended( ActionEvent event ) throws ManagerBeanException {
+		Purchase purchase = (Purchase) this.getTo();
+		purchase.setEmailCommunication(true);
+		IManagerBean bean = BeanManager.getManagerBean(Purchase.class);
+		bean.restoreNullSubPOJOs(purchase);
+		bean.update(purchase);
+	}
 	
 	@SuppressWarnings("unchecked")
 	public byte[] getPurchaseData(Purchase purchase) throws ManagerBeanException {

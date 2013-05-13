@@ -121,6 +121,13 @@
 								<aon:outputText value=")" 
 									rendered="#{proposal.to.itemReturn}" styleClass="aon-margin-right" />
 								
+								<aon:outputText id="purchase-emailCommunication"
+									rendered="#{purchase.to.emailCommunication}"
+									title="#{purchaseBundle.purchase_emailCommunication}"
+									value="&#160;"
+									styleClass="aon-icon-mailForward aon-margin-left aon-padding-left aon-padding-right" />
+									
+									
 								<aon:outputText styleClass="aon-margin-left aon-margin-right"
 									value="#{purchase.to.status}" />
 								<aon:outputText styleClass="aon-italic aon-margin-left"
@@ -390,7 +397,10 @@
 		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalIncome.xhtml" />
 		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalInvoice.xhtml" />
-		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" >
+			<aon:methodParam name="sendActionListener"
+				value="#{purchase.onEmailSended}" type="actionListener" />
+		</ui:include>
 		<ui:include src="/com/code/aon/ui/project/facelet/project/modalProject.xhtml">
 			<ui:param name="controller" value="#{purchase}" />
 			<ui:param name="detailReRender" value="purchaseDetails" />
