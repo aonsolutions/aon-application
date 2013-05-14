@@ -53,6 +53,10 @@ public class CustomizeBean {
 	
 	private static final String FONT_STYLE_DEFAULT = "black";
 	
+	private static final String FAVICON_DEFAULT = "/images/favicon.ico";
+	
+	private static final String LOGIN_LOGO_DEFAULT = "/com/code/aon/ui/resources/facelet/login/css/images/login/aon-solutions.gif";	
+	
 	private String favicon;
 	
 	private String loginLogo;
@@ -83,10 +87,12 @@ public class CustomizeBean {
 	
 	public CustomizeBean() {
 		this.fontStyle = getColorStyle(FONT_STYLE_DEFAULT);
-		ResourceResolver resolver = new ResourceResolver();
-		this.loginLogo = resolver.getResolve().get("/com/code/aon/ui/resources/facelet/login/css/images/login/aon-solutions.gif");
-		this.favicon = resolver.getResolve().get("/images/favicon.ico");
 	}
+	
+	public void initResources( ResourceResolver resolver ) {
+		this.loginLogo = resolver.getResolve().get(LOGIN_LOGO_DEFAULT);
+		this.favicon = resolver.getResolve().get(FAVICON_DEFAULT);
+	}	
 
 	public void initMessages( Locale locale ) {
 		bundle = ResourceBundle.getBundle(DEFAULT_BUNDLE_RESOURCE, locale);
@@ -96,10 +102,6 @@ public class CustomizeBean {
 		this.supportEmail = bundle.getString(SUPPORT_SEND_EMAIL);
 	}	
 	
-	public ResourceBundle getBundle() {
-		return bundle;
-	}
-
 	/**
 	 * Calculate application version.
 	 * 
@@ -115,6 +117,32 @@ public class CustomizeBean {
 		} catch (Throwable e) {
 			LOGGER.warn("Imposible determinar la versión");
 		}
+	}	
+	
+	public void init( Properties dbProperties, String server ) {
+		Connection connection = null;
+		try {
+			if ( dbProperties != null ) {
+				connection =  ConnectionProvider.getConnection(dbProperties);
+				if ( connection != null ) {
+					this.domainId = DataSourceUtil.getDomain(connection, server );
+					if (this.domainId != null) {
+						this.companyId = getCompanyId(connection);
+						if ( this.companyId != null ) {
+							loadValues(connection);	
+						}
+					}
+				}				
+			}
+		} catch ( Throwable th ) {
+			LOGGER.error( "Error loading customization values", th );
+		} finally {
+			DbUtils.closeQuietly(connection);
+		}
+	}
+	
+	public ResourceBundle getBundle() {
+		return bundle;
 	}	
 	
 	private Integer getCompanyId( Connection connection ) {
@@ -135,29 +163,6 @@ public class CustomizeBean {
 		}		
 		return null;		
 	}	
-	
-	public void init( String server, String context) {
-		Connection connection = null;
-		try {
-			Properties dbProperties = DataSourceUtil.getDBProperties(server, context);
-			if ( dbProperties != null ) {
-				connection =  ConnectionProvider.getConnection(dbProperties);
-				if ( connection != null ) {
-					this.domainId = DataSourceUtil.getDomain(connection, server );
-					if (this.domainId != null) {
-						this.companyId = getCompanyId(connection);
-						if ( this.companyId != null ) {
-							loadValues(connection);	
-						}
-					}
-				}				
-			}
-		} catch ( Throwable th ) {
-			LOGGER.error( "Error getting company name and logo", th );
-		} finally {
-			DbUtils.closeQuietly(connection);
-		}
-	}
 	
 	private Integer getCompanyDomain( Connection connection ) {
 		QueryRunner run = new QueryRunner();
@@ -181,7 +186,7 @@ public class CustomizeBean {
 		return null;
 	}	
 	
-	private String getImageRef( Connection connection, String name ) {
+	protected String getImageRef( Connection connection, String name ) {
 		String ref = null;
 		QueryRunner run = new QueryRunner();
 		try {
@@ -196,7 +201,7 @@ public class CustomizeBean {
 		return ref;
 	}
 	
-	private void loadValues( Connection connection ) {
+	protected void loadValues( Connection connection ) {
 		this.domainId = getCompanyDomain(connection);
 		updateApplicationTitle(connection);
 		updateSupportTelephone(connection);

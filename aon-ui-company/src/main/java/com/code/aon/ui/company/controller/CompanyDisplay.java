@@ -72,7 +72,7 @@ public class CompanyDisplay {
 
 	public boolean isShow() {
 		if (! this.init ) {
-			init(AonUtil.getServerName(), AonUtil.getContextPath());
+			init(DataSourceUtil.getDBProperties(), AonUtil.getServerName());
 		}
 		return !StringUtils.isEmpty(this.companyLabel) || isLogoDefined();
 	}
@@ -91,9 +91,8 @@ public class CompanyDisplay {
 		}
 	}
 
-	private Connection getConnection( String server, String context ) throws AonException {
+	private Connection getConnection( Properties properties ) throws AonException {
 		Connection connection = null;
-		Properties properties = DataSourceUtil.getDBProperties(server, context);
 		if ( (properties != null) && (!properties.isEmpty()) ) {
 			connection =  ConnectionProvider.getConnection(properties);
 		}
@@ -168,10 +167,10 @@ public class CompanyDisplay {
 		return null;			
 	}		
 	
-	public void init( String host, String context ) {
+	public void init( Properties dbProperties, String host ) {
 		Connection connection = null;
 		try {
-			connection = getConnection(host, context);
+			connection = getConnection(dbProperties);
 			if ( connection != null ) {
 				Integer domainId = DataSourceUtil.getDomain(connection, host);
 				if (domainId != null) {

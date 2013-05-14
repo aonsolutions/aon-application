@@ -1,11 +1,15 @@
 package com.code.aon.ui.dbutils.controller;
 
 import static com.code.aon.ui.dbutils.controller.IDbutilsConstants.BUNDLE_NAME;
+import static com.code.aon.ui.dbutils.controller.IDbutilsConstants.BUNDLE_RESOURCE;
 import static com.code.aon.ui.dbutils.controller.IDbutilsConstants.DOMAIN_NOT_EXIST;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.MessageFormat;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -29,32 +33,10 @@ public class DatabaseUptodate {
 	private String connectionErrorMessage;
 	private VersionManager versionManager;
 	
+	private boolean init;
+	
 	public DatabaseUptodate() {
 		versionManager = new VersionManager();		
-		try {
-			this.properties = DataSourceUtil.getDBProperties();
-			if ( this.properties != null ) {
-				setUpdatable(versionManager.getAvailableUpdateScripts(getCurrentVersion()) != null);
-				connectionAvailable = true;				
-			} else {
-				String server = AonUtil.getServerName();
-				connectionErrorMessage = AonUtil.getMessage(BUNDLE_NAME, DOMAIN_NOT_EXIST, server);
-			}
-		} catch (AonException e) {
-			connectionAvailable = false;
-			connectionErrorMessage = e.getMessage()
-				+ (e.getCause()==null?"": (". " + e.getCause().getMessage()));
-			if (StringUtils.contains(connectionErrorMessage,Environment.PASS)) {
-				int i = StringUtils.indexOf(connectionErrorMessage, Environment.PASS);
-				i = i + Environment.PASS.length();
-				int x = StringUtils.indexOf(connectionErrorMessage, ",", i);
-				connectionErrorMessage =
-						StringUtils.substring(connectionErrorMessage, 0, i+2)
-						+ "*********"
-						+ StringUtils.substring(connectionErrorMessage, x-1);
-						
-			}
-		}		
 	}
 	
 	public String getCurrentVersion() throws AonException {
@@ -112,6 +94,9 @@ public class DatabaseUptodate {
 	}
 	
 	public boolean isUptodate() {
+		if (! this.init ) {
+			init(DataSourceUtil.getDBProperties(), AonUtil.getServerName(), AonUtil.getCurrentLocale());
+		}
 		return updatable;
 	}
 
@@ -122,6 +107,35 @@ public class DatabaseUptodate {
 	public String getConnectionErrorMessage() {
 		return connectionErrorMessage;
 	}
-	
+
+	public void init( Properties dbProperties, String server, Locale locale ) {
+		try {
+			this.properties = dbProperties;
+			if ( this.properties != null ) {
+				setUpdatable(versionManager.getAvailableUpdateScripts(getCurrentVersion()) != null);
+				connectionAvailable = true;				
+			} else {
+				ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_RESOURCE, locale);
+	    		MessageFormat mf = new MessageFormat( bundle.getString(DOMAIN_NOT_EXIST) ); 
+				connectionErrorMessage =  mf.format( new Object[]{server} );
+			}
+		} catch (AonException e) {
+			connectionAvailable = false;
+			connectionErrorMessage = e.getMessage()
+				+ (e.getCause()==null?"": (". " + e.getCause().getMessage()));
+			if (StringUtils.contains(connectionErrorMessage,Environment.PASS)) {
+				int i = StringUtils.indexOf(connectionErrorMessage, Environment.PASS);
+				i = i + Environment.PASS.length();
+				int x = StringUtils.indexOf(connectionErrorMessage, ",", i);
+				connectionErrorMessage =
+						StringUtils.substring(connectionErrorMessage, 0, i+2)
+						+ "*********"
+						+ StringUtils.substring(connectionErrorMessage, x-1);
+						
+			}
+		} finally {
+			this.init = true;
+		}
+	}
 	
 }

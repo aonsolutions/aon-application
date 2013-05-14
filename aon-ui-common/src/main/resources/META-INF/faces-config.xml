@@ -81,7 +81,7 @@
 	<!-- ***************** CUSTOMIZE ******************** --> 
 	<managed-bean>
 		<managed-bean-name>customize</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.common.controller.CustomizeController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.resources.bean.CustomizeController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
