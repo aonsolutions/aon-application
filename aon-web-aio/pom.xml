@@ -1000,7 +1000,7 @@
 					<groupId>com.code.aon</groupId>
 					<artifactId>aon.jaas</artifactId>
 					<version>${project.version}</version>
-					<scope>runtime</scope>
+					<scope>provided</scope>
 				</dependency>
 			</dependencies>
 		</profile>

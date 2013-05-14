@@ -28,7 +28,6 @@ import javax.faces.event.ValueChangeEvent;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -360,11 +359,7 @@ public class CompanyParentController extends BasicController implements ICompany
 			initializeModel();
 			if(this.getModel().getRowCount() > 0){
 				this.getModel().setRowIndex(0);
-				StopWatch sw = new StopWatch();
-				sw.start();
 				onSelect(null);
-				sw.stop();
-				LOGGER.info( "Time: {}", sw.toString());
 				loadMainAddress();
 			}else{
 				this.onReset(null);
