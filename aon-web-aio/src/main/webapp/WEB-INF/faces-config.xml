@@ -229,8 +229,6 @@
 			<value>#{companyCustomizeChildListener}</value>
 			<!--  aon.ui.registry -->
 			<value>#{corporateIdentityChildListener}</value>
-			<!--  aon.ui.payroll -->
-			<value>#{companyWorkPlaceControllerListener}</value>
 		</list-entries>
 	</managed-bean>
 	
