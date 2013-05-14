@@ -85,6 +85,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 			principal.setDomain(domainName);
 			principal.setDomainId(domain.getId());
 			this.dataBaseName = domain.getDataBaseName();
+			principal.setDatabaseName(this.dataBaseName);
 			connection = dbUtil.createConnection(this.dataBaseName);
 			dbUtil.setConnection(connection);
 			String applicationName = StringUtils.substringAfter( contextPath, "/" );

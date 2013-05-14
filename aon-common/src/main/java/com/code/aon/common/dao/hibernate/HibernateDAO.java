@@ -84,13 +84,14 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 		try {
 			return (ITransferObject) session.get(entityName, pk);
 		} catch (HibernateException he) {
-			if (sessionManager.mustCloseSession()) {
-				sessionManager.closeSession();
-			}
 			if (he.getCause() != null) {
 				throw new DAOException(he.getCause().getMessage(), he.getCause());	
 			}
 			throw new DAOException(he.getMessage(), he);
+		} finally {
+			if (sessionManager.mustCloseSession()) {
+				sessionManager.closeSession();
+			}
 		}
 	}
 

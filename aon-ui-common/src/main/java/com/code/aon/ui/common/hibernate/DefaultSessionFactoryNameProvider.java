@@ -28,9 +28,7 @@ public class DefaultSessionFactoryNameProvider implements ISessionFactoryNamePro
 	public String getName( String pojoClass ) {
        	AuthPrincipal principal = AonUtil.getAuthPrincipal();
        	if (principal != null) {
-       		String name = principal.getName();
-       		int index = name.indexOf('@');
-       		return (index > -1)? name.substring(index + 1, name.length()): name;
+       		return principal.getDatabaseName();
        	}
         return HibernateUtil.DEFAULT_SESSION_FACTORY_NAME;
 	}

@@ -31,6 +31,7 @@ public class AuthPrincipal implements Principal, Serializable {
     private String domain;
     /** Principal context */
     private String context;
+    private String databaseName;
     private Integer domainId;
     private Integer userId;
     private Integer applicationId;
@@ -113,6 +114,13 @@ public class AuthPrincipal implements Principal, Serializable {
 
 	public Integer getDomainId() {
 		return domainId;
+	}
+	public String getDatabaseName() {
+		return databaseName;
+	}
+
+	public void setDatabaseName(String databaseName) {
+		this.databaseName = databaseName;
 	}
 
 	public void setDomainId(Integer domainId) {
