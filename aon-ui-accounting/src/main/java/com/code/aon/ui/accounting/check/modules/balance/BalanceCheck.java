@@ -29,6 +29,7 @@ import com.code.aon.ui.util.AonUtil;
 
 import com.esferalia.aon.entity.IEntityAlias;
 
+@Deprecated
 public class BalanceCheck implements ICheckModule{
 
 	private String label = "Chequeo de cuentas ausentes o duplicadas en los balances oficiales.";

@@ -3,7 +3,7 @@ package com.code.aon.accounting;
 /**
  * The Class DefaultAccounts.
  */
-public class DefaultAccounts {
+public interface IDefaultAccounts {
 
 	public static final String SALES_ACCOUNT = "ACC_DEFAULT_SALES_ACC";
 	public static final String PURCHASE_ACCOUNT = "ACC_DEFAULT_PURCHASE_ACC";

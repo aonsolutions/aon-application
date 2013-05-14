@@ -19,7 +19,7 @@ import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.SocialInsuranceEntry;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
@@ -71,7 +71,7 @@ public class SocialInsuranceEntryController {
 
 	public Account getSocialInsuranceAccount() throws ManagerBeanException {
 		if (socialInsuranceAccount == null) {
-			socialInsuranceAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.SOCIAL_INSURANCE_ACCOUNT);
+			socialInsuranceAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.SOCIAL_INSURANCE_ACCOUNT);
 		}
 		return socialInsuranceAccount;
 	}
@@ -202,7 +202,7 @@ public class SocialInsuranceEntryController {
 		AccountEntry adjustEntry = null;
 		if (dif != 0) {
 			adjustEntry = new AccountEntry();
-			Account companySocialInsuranceAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.COMPANY_SOCIAL_INSURANCE_ACCOUNT);
+			Account companySocialInsuranceAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.COMPANY_SOCIAL_INSURANCE_ACCOUNT);
 			IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 			IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 

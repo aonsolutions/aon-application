@@ -39,6 +39,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.esferalia.aon.entity.IEntityAlias;
 
+@Deprecated
 public class BalanceManager {
 	
 	private static final String EMPTY = "";

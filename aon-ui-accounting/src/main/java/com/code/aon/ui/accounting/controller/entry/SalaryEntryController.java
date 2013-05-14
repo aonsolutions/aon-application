@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.SalaryEntry;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
@@ -129,7 +129,7 @@ public class SalaryEntryController {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 
 			AccountEntryDetail detail = new AccountEntryDetail();
-			detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.SALARY_ACCOUNT));
+			detail.setAccount(getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.SALARY_ACCOUNT));
 			detail.setAccountEntry(entry);
 			detail.setBalancingAccount(null);
 			detail.setConcept(getEntry().getConcept());
@@ -138,7 +138,7 @@ public class SalaryEntryController {
 
 			if (getEntry().getAllowance() != 0) {
 				detail = new AccountEntryDetail();
-				detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.ALLOWANCE_ACCOUNT));
+				detail.setAccount(getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.ALLOWANCE_ACCOUNT));
 				detail.setAccountEntry(entry);
 				detail.setBalancingAccount(null);
 				detail.setConcept(getEntry().getConcept());
@@ -148,7 +148,7 @@ public class SalaryEntryController {
 
 			if (getEntry().getCompensation() != 0) {
 				detail = new AccountEntryDetail();
-				detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.COMPENSATION_ACCOUNT));
+				detail.setAccount(getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.COMPENSATION_ACCOUNT));
 				detail.setAccountEntry(entry);
 				detail.setBalancingAccount(null);
 				detail.setConcept(getEntry().getConcept());
@@ -158,7 +158,7 @@ public class SalaryEntryController {
 
 			if (getEntry().getCompanySocialInsurance() != 0) {
 				detail = new AccountEntryDetail();
-				detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.COMPANY_SOCIAL_INSURANCE_ACCOUNT));
+				detail.setAccount(getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.COMPANY_SOCIAL_INSURANCE_ACCOUNT));
 				detail.setAccountEntry(entry);
 				detail.setBalancingAccount(null);
 				detail.setConcept(getEntry().getConcept());
@@ -168,7 +168,7 @@ public class SalaryEntryController {
 
 			if (getEntry().getRetention() != 0) {
 				detail = new AccountEntryDetail();
-				detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.SALARY_CHARGED_RETENTION_ACCOUNT));
+				detail.setAccount(getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.SALARY_CHARGED_RETENTION_ACCOUNT));
 				detail.setAccountEntry(entry);
 				detail.setBalancingAccount(null);
 				detail.setConcept(getEntry().getConcept());
@@ -177,7 +177,7 @@ public class SalaryEntryController {
 			}
 
 			detail = new AccountEntryDetail();
-			detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.SOCIAL_INSURANCE_ACCOUNT));
+			detail.setAccount(getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.SOCIAL_INSURANCE_ACCOUNT));
 			detail.setAccountEntry(entry);
 			detail.setBalancingAccount(null);
 			detail.setConcept(getEntry().getConcept());
@@ -189,7 +189,7 @@ public class SalaryEntryController {
 			if (getEntry().getRegistryBank() != null && getEntry().getRegistryBank().getId() != null) {
 				detail.setAccount(getAccountBridgeUtil().obtainRBankAccount(getEntry().getRegistryBank()));
 			} else {
-				detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.PENDING_SALARY_ACCOUNT));
+				detail.setAccount(getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PENDING_SALARY_ACCOUNT));
 			}
 			detail.setAccountEntry(entry);
 			detail.setBalancingAccount(null);

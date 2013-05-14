@@ -29,7 +29,7 @@ import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.AccountHelper;
-import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.InvoiceEntryDetail;
 import com.code.aon.accounting.InvoiceEntryHeader;
 import com.code.aon.accounting.Period;
@@ -353,9 +353,9 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		WithholdingType withholdingType = (header != null && getHeader().getWithholdingType() != null) ? getHeader().getWithholdingType() : WithholdingType.PROFESSIONAL;
 		SecurityLevel securityLevel = (header != null && getHeader().getSecurityLevel() != null) ? getHeader().getSecurityLevel() : SecurityLevel.OFFICIAL;
 		AccountAppParamsController c = (AccountAppParamsController) AonUtil.getRegisteredBean(IAccountingConstants.ACCOUNT_APP_PARAM_CONTROLLER_NAME);
-		ApplicationParameter param = c.getParameter(DefaultAccounts.DEFAULT_INVOICE_SERIES);
+		ApplicationParameter param = c.getParameter(IDefaultAccounts.DEFAULT_INVOICE_SERIES);
 		String series = (header != null && !StringUtils.isEmpty(getHeader().getSeries())) ? getHeader().getSeries() : (param != null) ? param.getValue() : null;
-		ApplicationParameter taxParam = c.getParameter(DefaultAccounts.DEFAULT_VAT_PERCENT);
+		ApplicationParameter taxParam = c.getParameter(IDefaultAccounts.DEFAULT_VAT_PERCENT);
 		Double taxPercent = null;
 		Double surPercent = null;
 		if (header != null) {
@@ -376,7 +376,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				}
 			}
 		}
-		ApplicationParameter retParam = c.getParameter(DefaultAccounts.DEFAULT_RETENTION_PERCENT);
+		ApplicationParameter retParam = c.getParameter(IDefaultAccounts.DEFAULT_RETENTION_PERCENT);
 		Double retPercent = null;
 		if (header != null) {
 			retPercent = getHeader().getRetPercent();
@@ -577,7 +577,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		AccountAppParamsController c = (AccountAppParamsController) AonUtil
 				.getRegisteredBean(IAccountingConstants.ACCOUNT_APP_PARAM_CONTROLLER_NAME);
 		try {
-			ApplicationParameter param = c.getParameter(DefaultAccounts.DEFAULT_VAT_PERCENT);
+			ApplicationParameter param = c.getParameter(IDefaultAccounts.DEFAULT_VAT_PERCENT);
 			if (param != null) {
 				String value = param.getValue();
 				Integer id = Integer.parseInt(value);
@@ -599,7 +599,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		if (getHeader().isWithholding()) {
 			try {
 				ApplicationParameter param = c
-						.getParameter(DefaultAccounts.DEFAULT_RETENTION_PERCENT);
+						.getParameter(IDefaultAccounts.DEFAULT_RETENTION_PERCENT);
 				if (param != null) {
 					String value = param.getValue();
 					Integer id = Integer.parseInt(value);
@@ -971,11 +971,11 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		Account account;
 		Account balancingAccount = null;
 		if (invoice.getType().equals(InvoiceType.SALES)) {
-			account = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.CHARGE_VAT_ACCOUNT);
+			account = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.CHARGE_VAT_ACCOUNT);
 		} else {
-			account = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.PAID_VAT_ACCOUNT);
+			account = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PAID_VAT_ACCOUNT);
 			if (ignoreTaxFree) {
-				balancingAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.CHARGE_VAT_ACCOUNT);		
+				balancingAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.CHARGE_VAT_ACCOUNT);		
 			}
 		}
 
@@ -1393,9 +1393,9 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				}
 				if (getHeader().isWithholding()) {
 					if (isSales()) {
-						getHeader().setRetentionAccount( getAccountingUtil().obtainDefaultAccount(DefaultAccounts.PAID_RETENTION_ACCOUNT) );
+						getHeader().setRetentionAccount( getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PAID_RETENTION_ACCOUNT) );
 					} else {
-						getHeader().setRetentionAccount( getAccountingUtil().obtainDefaultAccount(DefaultAccounts.CHARGED_RETENTION_ACCOUNT) );
+						getHeader().setRetentionAccount( getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.CHARGED_RETENTION_ACCOUNT) );
 					}
 				} else {
 					getHeader().setRetentionAccount( null );

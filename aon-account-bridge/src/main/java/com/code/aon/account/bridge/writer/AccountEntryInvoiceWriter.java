@@ -19,7 +19,7 @@ import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.AmortizationInvoice;
-import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.AccountPeriodStatus;
@@ -292,9 +292,9 @@ public class AccountEntryInvoiceWriter {
 			Account pl = null;
 			if (profitLoss != 0.0) {
 				if (profitLoss > 0) {
-					pl = obtainDefaultAccount(DefaultAccounts.ASSET_PROFIT_ACCOUNT);
+					pl = obtainDefaultAccount(IDefaultAccounts.ASSET_PROFIT_ACCOUNT);
 				} else {
-					pl = obtainDefaultAccount(DefaultAccounts.ASSET_LOST_ACCOUNT);
+					pl = obtainDefaultAccount(IDefaultAccounts.ASSET_LOST_ACCOUNT);
 				}
 				basesPerAccount.put(pl , profitLoss);
 			}
@@ -329,7 +329,7 @@ public class AccountEntryInvoiceWriter {
 
 	private Account obtainSalesDefaultAccount() throws ManagerBeanException {
 		if (salesDefaultAccount == null) {
-			salesDefaultAccount = obtainDefaultAccount(DefaultAccounts.SALES_ACCOUNT);
+			salesDefaultAccount = obtainDefaultAccount(IDefaultAccounts.SALES_ACCOUNT);
 		}
 		if (salesDefaultAccount == null) {
 			throw new ManagerBeanException("Revise el valor de la cuenta contable de ventas en los Parámetros Contables.");
@@ -357,7 +357,7 @@ public class AccountEntryInvoiceWriter {
 
 	private Account obtainPurchaseDefaultAccount() throws ManagerBeanException {
 		if (purchaseDefaultAccount == null) {
-			purchaseDefaultAccount = obtainDefaultAccount(DefaultAccounts.PURCHASE_ACCOUNT);
+			purchaseDefaultAccount = obtainDefaultAccount(IDefaultAccounts.PURCHASE_ACCOUNT);
 		}
 		if (purchaseDefaultAccount == null) {
 			throw new ManagerBeanException("Revise el valor de la cuenta contable de compras en los Parámetros Contables.");

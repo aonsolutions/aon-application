@@ -8,6 +8,7 @@ import com.code.aon.accounting.BalanceDetail;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.LinesController;
 
+@Deprecated
 public class BalanceDetailController extends LinesController {
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException {

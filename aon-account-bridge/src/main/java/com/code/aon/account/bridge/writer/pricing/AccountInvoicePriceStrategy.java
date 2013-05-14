@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
-import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tax;
@@ -56,14 +56,14 @@ public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 		try {
 			if (taxType.equals(TaxType.RETENTION)) {
 				if (invoiceType.equals(InvoiceType.SALES)) {
-					return getAccountingUtil().obtainDefaultAccount(DefaultAccounts.PAID_RETENTION_ACCOUNT);
+					return getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PAID_RETENTION_ACCOUNT);
 				} 
-				return getAccountingUtil().obtainDefaultAccount(DefaultAccounts.CHARGED_RETENTION_ACCOUNT);
+				return getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.CHARGED_RETENTION_ACCOUNT);
 			} 
 			if (invoiceType.equals(InvoiceType.SALES)) {
-				return getAccountingUtil().obtainDefaultAccount(DefaultAccounts.CHARGE_VAT_ACCOUNT);
+				return getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.CHARGE_VAT_ACCOUNT);
 			} 
-			return getAccountingUtil().obtainDefaultAccount(DefaultAccounts.PAID_VAT_ACCOUNT);
+			return getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PAID_VAT_ACCOUNT);
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error obtaining Tax Account", e);
 		}

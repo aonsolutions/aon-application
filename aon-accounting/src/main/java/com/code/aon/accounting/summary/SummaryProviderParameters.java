@@ -2,6 +2,7 @@ package com.code.aon.accounting.summary;
 
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,12 +12,17 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.account.util.AccountUtil;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.Quarter;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.ast.sql.SqlRenderer;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class SummaryProviderParameters implements Cloneable{
 
@@ -468,6 +474,45 @@ public class SummaryProviderParameters implements Cloneable{
 			return out.toString();
 		}
 		return null;
+	}
+
+	public SummaryProviderParameters getPreviousPeriodParameters() {
+		SummaryProviderParameters  previous = null;
+		try {
+			previous = this.clone();
+			if (previous.getFromDate() != null) {
+				Calendar c = Calendar.getInstance();
+				c.setTime(previous.getFromDate());
+				c.add(Calendar.YEAR, -1);
+				previous.setFromDate(c.getTime());
+			}
+			if (previous.getToDate() != null) {
+				Calendar c = Calendar.getInstance();
+				c.setTime(previous.getToDate());
+				c.add(Calendar.YEAR, -1);
+				previous.setToDate(c.getTime());
+			}
+			if (previous.getPeriod() != null) {
+				IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+				Criteria criteria = new Criteria();
+				String deadlineAlias = periodBean.getFieldName(IEntityAlias.PERIOD_INITIATION_DATE);
+				criteria.addLessThanExpression(deadlineAlias, previous.getPeriod().getInitiationDate());
+				criteria.addOrder(deadlineAlias, false);
+				List<ITransferObject> list = periodBean.getList(criteria);
+				if (list.size() > 0 ) {
+					previous.setPeriod( (Period) list.get(0));
+				} else {
+					previous = null;
+				}
+			}
+			return previous;
+		} catch (CloneNotSupportedException e) {
+			previous = null;
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+			previous = null;
+		}
+		return previous;
 	}
 
 }

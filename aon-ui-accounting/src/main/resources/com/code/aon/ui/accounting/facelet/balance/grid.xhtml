@@ -93,11 +93,11 @@
 				</aon:outputText>
 				<aon:inputText 
 					rendered="#{to==balanceDetail.to}"
-					value="#{balanceDetail.to.description}" maxlength="128" size="50" />
+					value="#{balanceDetail.to.description}" maxlength="128" size="30" />
 				<f:facet name="footer">
 					<aon:inputText 
 						rendered="#{balanceDetail.new}"
-						value="#{balanceDetail.to.description}" maxlength="128" size="50" />
+						value="#{balanceDetail.to.description}" maxlength="128" size="30" />
 				</f:facet>
 			</aon:column>
 
@@ -111,15 +111,15 @@
 					<aon:abbreviateConverter maxWidth="50" />
 				</aon:outputText>
 				<h:inputTextarea styleClass="aon-form-input-text"
-					rendered="#{to==balanceDetail.to}" cols="50" rows="3" 
+					rendered="#{to==balanceDetail.to}" cols="20" rows="3" 
 					value="#{balanceDetail.to.accounts}" maxlength="100"  />
 				<f:facet name="footer">
 					<h:inputTextarea styleClass="aon-form-input-text"
-						rendered="#{balanceDetail.new}" cols="50" rows="3"
+						rendered="#{balanceDetail.new}" cols="20" rows="3"
 						value="#{balanceDetail.to.accounts}" maxlength="100" />
 				</f:facet>
 			</aon:column>
-
+<!-- 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 				<f:facet name="header">
 					<aon:outputText value="#{accountingBundle.accounting_balance_sheet_notes}" />
@@ -135,7 +135,7 @@
 						value="#{balanceDetail.to.notes}" maxlength="100"  />
 				</f:facet>
 			</aon:column>
-
+ -->
 			<aon:column styleClass="aon-editDataTable-iconColumn aon-width-60">
 				<f:facet name="header">
 					<aon:div>

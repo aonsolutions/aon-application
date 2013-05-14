@@ -12,7 +12,7 @@ import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
@@ -165,7 +165,7 @@ public class LoanEntryController  {
 		accountEntryDetailBean.insert(detail);
 		// Tercer Apunte
 		detail = new AccountEntryDetail();
-		detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT));;
+		detail.setAccount(getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT));;
 		detail.setAccountEntry(entry);
 		detail.setConcept(getLoan().getDescription());
 		detail.setDebit(getLoan().getExpenses());

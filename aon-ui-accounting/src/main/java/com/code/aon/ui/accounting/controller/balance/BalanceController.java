@@ -12,6 +12,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
+@Deprecated
 public class BalanceController extends BasicController {
 
 	public void onLoadDefaults(ActionEvent event) {

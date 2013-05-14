@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,10 +80,13 @@ public class AmortizationType extends AmortizationTypeDB {
 	@Transient
 	private String getAccountDescription(String account) {
 		String sessionFactoryName =HibernateUtil.getSessionFactoryName(AmortizationType.class.getName());
-		Connection c = HibernateUtil.getSQLConnection(sessionFactoryName);
+		Session session = null;  
+		Connection c = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
+			session = HibernateUtil.getSession(sessionFactoryName);
+			c = session.connection();
 			ps = c.prepareStatement(SELECT,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			ps.setInt(1, DomainManager.getCurrentDomain());
 			ps.setInt(2, DomainManager.getCurrentDomain());
@@ -107,6 +111,9 @@ public class AmortizationType extends AmortizationTypeDB {
 					ps.close();
 				} catch (SQLException e) {
 				}
+			}
+			if (HibernateUtil.mustCloseSession()) {
+				HibernateUtil.closeSession(sessionFactoryName);	
 			}
 		}
 	}

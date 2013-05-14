@@ -23,6 +23,7 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
+@Deprecated
 public class BalanceDefaults {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(BalanceDefaults.class.getName()); 

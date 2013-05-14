@@ -75,102 +75,6 @@
 		</managed-property>
 	</managed-bean>
 
-	<!-- **************** BALANCE************************** -->
-	<managed-bean>
-		<managed-bean-name>balance</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.accounting.controller.balance.BalanceController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.accounting.Balance</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>balance</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{balanceDetailListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>balanceDetailListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>balanceDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>BalanceDetail_balance_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-
-	<!-- **************** BALANCE DETAIL ************************** -->
-	<managed-bean>
-		<managed-bean-name>balanceDetail</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.accounting.controller.balance.BalanceDetailController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>-1</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.accounting.BalanceDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>balanceDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>balance</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>balance.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>BalanceDetail_sortKey</value>
-		</managed-property>
-	</managed-bean>
-
-	<!--**************** BALANCE SHEET CONTROLLER ************************** -->
-	<managed-bean>
-		<managed-bean-name>balanceSheet</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.accounting.controller.balance.BalanceSheetController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
 	<!-- **************** AMORTIZATION ************************** -->
 	<managed-bean>
 		<managed-bean-name>amortization</managed-bean-name>
@@ -705,7 +609,7 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ********** TRIAL BALANCE REPORT CONTROLLER ********* -->
+	<!-- ********** COST CENTER CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>costCenter</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.accounting.controller.CostCenterController</managed-bean-class>
@@ -902,6 +806,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!--**************** BALANCE SHEET CONTROLLER ************************** -->
+	<managed-bean>
+		<managed-bean-name>balanceSheetResolver</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.balance.BalanceSheetResolverController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ****************************************** -->
 	<!-- ******** Navigation Rules **************** -->
 	<!-- ****************************************** -->
@@ -919,36 +830,6 @@
 		<navigation-case>
 			<from-outcome>annualFinancialStatements_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/annualFinancialStatements/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<!-- **************** BALANCE ************************** -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>balance_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/form.xhtml</to-view-id>
-		</navigation-case>
-
-		<navigation-case>
-			<from-outcome>balance_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/list.xhtml</to-view-id>
-		</navigation-case>
-
-		<navigation-case>
-			<from-outcome>balance_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>balance_sheet_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/sheet/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>balance_sheet_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/sheet/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -1239,6 +1120,151 @@
 		<navigation-case>
 			<from-outcome>aonLoader_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/aonLoader/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+
+	<!--  **** BALANCE SHEET RESOLVER PAGES  **** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>balanceSheetResolver_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/resolve/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>balanceSheetResolver_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/resolve/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+
+	<!-- ****************************************************** -->
+	<!-- **************** DEPRECATED ************************** -->
+	<!-- ****************************************************** -->
+
+	<!-- **************** BALANCE************************** -->
+	<managed-bean>
+		<managed-bean-name>balance</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.balance.BalanceController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.accounting.Balance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>balance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{balanceDetailListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>balanceDetailListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>balanceDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>BalanceDetail_balance_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- **************** BALANCE DETAIL ************************** -->
+	<managed-bean>
+		<managed-bean-name>balanceDetail</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.balance.BalanceDetailController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.accounting.BalanceDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>balanceDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>balance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>balance.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>BalanceDetail_sortKey</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!--**************** BALANCE SHEET CONTROLLER ************************** -->
+	<managed-bean>
+		<managed-bean-name>balanceSheet</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.balance.BalanceSheetController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+
+	<!-- **************** BALANCE ************************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>balance_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/form.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>balance_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/list.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>balance_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>balance_sheet_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/sheet/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>balance_sheet_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/sheet/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

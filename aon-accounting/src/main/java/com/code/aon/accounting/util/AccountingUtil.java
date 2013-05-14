@@ -9,7 +9,7 @@ import java.util.List;
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.AccountPeriodStatus;
@@ -51,7 +51,7 @@ public class AccountingUtil {
 	}
 	
 	public Account obtainCashAccount() throws ManagerBeanException {
-		return obtainDefaultAccount(DefaultAccounts.CASH_ACCOUNT);
+		return obtainDefaultAccount(IDefaultAccounts.CASH_ACCOUNT);
 	}
 
 	public Date getFirstPeriodInitialDate() throws ManagerBeanException {

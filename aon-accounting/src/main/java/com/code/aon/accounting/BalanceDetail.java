@@ -10,6 +10,7 @@ import com.esferalia.aon.entity.master.BalanceDetailDB;
 
 @Entity
 @Table(name="balance_detail")
+@Deprecated
 public class BalanceDetail extends BalanceDetailDB {
 		
 	private static final long serialVersionUID = 1L;

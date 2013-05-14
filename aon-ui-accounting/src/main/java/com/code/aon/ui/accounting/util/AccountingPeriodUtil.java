@@ -8,7 +8,7 @@ import javax.faces.event.AbortProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.Period;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -28,7 +28,7 @@ public class AccountingPeriodUtil {
 	public static Period getDefaultPeriod() throws ManagerBeanException {
 		AccountAppParamsController c = (AccountAppParamsController) AonUtil
 				.getRegisteredBean(ACCOUNT_APP_PARAM_CONTROLLER_NAME);
-		ApplicationParameter param = c.getParameter(DefaultAccounts.DEFAULT_PERIOD);
+		ApplicationParameter param = c.getParameter(IDefaultAccounts.DEFAULT_PERIOD);
 		if (param != null && param.getValue() != null) {
 			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 			try {

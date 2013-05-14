@@ -30,6 +30,7 @@ import com.code.aon.ui.accounting.controller.report.TrialBalanceController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.util.AonUtil;
 
+@Deprecated
 public class BalanceSheetController implements ICollectionProvider {
 
 	private DataModel balanceModel;
