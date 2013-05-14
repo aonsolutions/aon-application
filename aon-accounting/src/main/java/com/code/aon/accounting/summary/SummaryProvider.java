@@ -1,5 +1,6 @@
 package com.code.aon.accounting.summary;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,10 +13,12 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
+import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
@@ -46,8 +49,44 @@ public class SummaryProvider {
 		}
 		return null;
 	}
-	
 	public SummaryCollection getSummaryCollection(SummaryProviderParameters params, boolean withPreviousBalance) throws ManagerBeanException {
+		String sessionName = HibernateUtil.getSessionFactoryName(Account.class.getName());
+		Session s = null;
+		Connection c = null;
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		try {
+			HibernateUtil.setCloseSession( false );
+			HibernateUtil.setBeginTransaction( false  );
+			HibernateUtil.startSession(sessionName);
+			HibernateUtil.beginTransaction(sessionName);
+			s = HibernateUtil.getSession(sessionName);
+			c = s.connection();
+			SummaryCollection sc = getSummaryCollection(c,params,withPreviousBalance); 
+			HibernateUtil.commitTransaction(sessionName);
+			return sc;
+		} catch (DAOException e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException e1) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg, e);
+			}
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
+			if (c != null) {
+//				try {
+//					c.close();
+//				} catch (SQLException e) {
+//				}
+			}
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession( mustCloseSession );
+			HibernateUtil.setBeginTransaction( mustBeginTransaction );
+		}
+	}
+	
+	public SummaryCollection getSummaryCollection(Connection conn, SummaryProviderParameters params, boolean withPreviousBalance) throws ManagerBeanException {
 		if (params.getFromDate() == null && (params.getPeriod() == null || params.getPeriod().getId() == null)) {
 			throw new ManagerBeanException("Se necesita una fecha de inicio para el cálculo de saldos.");
 		}
@@ -57,15 +96,7 @@ public class SummaryProvider {
 		ResultSet previousAcumSet = null;
 		PreparedStatement acumStmt = null;
 		ResultSet acumSet = null;
-		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
-		String sessionName = HibernateUtil.getSessionFactoryName();
 		try {
-			HibernateUtil.setCloseSession( false );
-			HibernateUtil.setBeginTransaction( false  );
-			HibernateUtil.startSession(sessionName);
-			HibernateUtil.beginTransaction(sessionName);
-
 			AccountingUtil accountingUtil = new AccountingUtil();
 			// Primera fecha de toda la contabilidad.
 			Date accountInitialDate = accountingUtil.getFirstPeriodInitialDate(); 
@@ -84,7 +115,7 @@ public class SummaryProvider {
 			if (previousAcumEnabled) {
 				previousAcumEnabled = (firstDate.after(accountInitialDate));
 				if (previousAcumEnabled) {
-					previousAcumStmt = prepareAcumStmt(sessionName,params,true);
+					previousAcumStmt = prepareAcumStmt(conn,params,true);
 					previousAcumStmt.setDate(2,new java.sql.Date( accountInitialDate.getTime()) );
 					previousAcumStmt.setDate(3,new java.sql.Date( firstDate.getTime()) );
 				}
@@ -99,12 +130,12 @@ public class SummaryProvider {
 								   !params.isLowerLevelVisible() && 
 								   params.getAccountLevel() ==  5;			
 			String sentence = getAccountSentence(params,uniqueSearch);
-			accountStmt = HibernateUtil.getSQLConnection(sessionName).prepareStatement(sentence);
+			accountStmt = conn.prepareStatement(sentence);
 			if (uniqueSearch) {
 				fillHostVariables(accountStmt,params);
 			} else {
 				// Si es necesario ver las cuentas inferiores se prepara el cursor que buscará los acumulados.
-				acumStmt = prepareAcumStmt(sessionName,params,false);
+				acumStmt = prepareAcumStmt(conn,params,false);
 				acumStmt.setDate(2,new java.sql.Date( firstDate.getTime()) );
 				Date until = (params.getPeriod() != null && params.getPeriod().getDeadline() != null)
 						?params.getPeriod().getDeadline()			// Fecha fin del ejercicio
@@ -124,10 +155,10 @@ public class SummaryProvider {
 			// cuentas inferiores susceptibles de entrar en el listado.
 			Map<String,Summary> map = new TreeMap<String, Summary>();
 			if (params.isLowerLevelVisible() || params.getAccountLevel() < 5 ) {
-				fillMap( map, params );
+				fillMap(conn, map, params );
 			}
 			// ------------------------------------------------------------------------
-			
+
 			accountSet = accountStmt.executeQuery();
 			while (accountSet.next()) {
 				Summary summary;
@@ -135,26 +166,16 @@ public class SummaryProvider {
 				populateSummaryOnMap(map,summary,params);
 			}
 			
-			HibernateUtil.commitTransaction(sessionName);
 			return getSummaryCollection(params, map);
 		} catch (Exception e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
 			closeResultSet(acumSet);
 			closeStatement(acumStmt);
 			closeResultSet(previousAcumSet);
 			closeStatement(previousAcumStmt);
 			closeResultSet(accountSet);
 			closeStatement(accountStmt);
-			try {
-				HibernateUtil.rollbackTransaction(sessionName);
-			} catch (DAOException daoe) {
-				String msg = "Unable to rollback transaction!";
-				LOGGER.error(msg, e);
-			}
-			throw new ManagerBeanException(e.getMessage(), e);
-		} finally {
-			HibernateUtil.closeSession(sessionName);
-			HibernateUtil.setCloseSession( mustCloseSession );
-			HibernateUtil.setBeginTransaction( mustBeginTransaction );
 		}
 		
 	}
@@ -269,7 +290,7 @@ public class SummaryProvider {
 		}
 	}
 
-	private void fillMap(Map<String, Summary> map, SummaryProviderParameters params) throws ManagerBeanException, ExpressionException {
+	private void fillMap(Connection conn, Map<String, Summary> map, SummaryProviderParameters params) throws ManagerBeanException, ExpressionException {
 		IManagerBean bean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		if (params.isLowerLevelVisible()) {
@@ -389,7 +410,7 @@ public class SummaryProvider {
 		return buf.toString();
 	}
 	
-	private PreparedStatement prepareAcumStmt(String sessionName, SummaryProviderParameters params, boolean forPrevious) throws SQLException {
+	private PreparedStatement prepareAcumStmt(Connection conn, SummaryProviderParameters params, boolean forPrevious) throws SQLException {
 		StringBuffer buf = new StringBuffer();
 		buf.append("SELECT SUM(aed.debit) debit,SUM(aed.credit) credit");
 		if (params.isMonthlyGrouping()) {
@@ -417,7 +438,7 @@ public class SummaryProvider {
 		if (params.isMonthlyGrouping()) {
 			buf.append(" GROUP BY MONTH(ae.entry_date)");
 		}
-		return HibernateUtil.getSQLConnection(sessionName).prepareStatement(buf.toString());
+		return conn.prepareStatement(buf.toString());
 	}
 
 	public SummaryCollection getTotalExpensesSummaryCollection(SummaryProviderParameters params) throws ManagerBeanException {

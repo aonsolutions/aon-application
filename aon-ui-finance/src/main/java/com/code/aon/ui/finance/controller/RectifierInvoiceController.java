@@ -1,6 +1,7 @@
 package com.code.aon.ui.finance.controller;
 
 import java.io.StringWriter;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,6 +14,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+
+import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -147,12 +150,16 @@ public class RectifierInvoiceController implements IFinanceConstants {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Session session = null;
+		Connection conn = null; 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
+			
+			session = HibernateUtil.getSession(sessionName);
 			
 			StringWriter stmt = new StringWriter();
 			stmt.append("SELECT i.id,sum(f.amount+f.expenses)");
@@ -170,9 +177,8 @@ public class RectifierInvoiceController implements IFinanceConstants {
 				stmt.append(" AND i.issue_date <= ?");
 			}
 			stmt.append(" GROUP BY i.id ORDER BY i.id");
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString(), 
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-
+			conn = session.connection();
+			ps = conn.prepareStatement(stmt.toString(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			ps.setInt(++i, getCustomer().getId());
 			if (getFromDate() != null) {
@@ -215,7 +221,12 @@ public class RectifierInvoiceController implements IFinanceConstants {
 				} catch (SQLException e) {
 				}
 			}
-
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);

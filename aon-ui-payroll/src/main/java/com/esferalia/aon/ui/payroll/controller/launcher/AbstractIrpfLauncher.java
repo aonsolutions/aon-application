@@ -22,6 +22,8 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import org.hibernate.Session;
+
 import com.aeat.jaxb.TipoRetenedorError2011;
 import com.aeat.jaxb.TipoRetenidoError2011;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -47,36 +49,51 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHandler{
 	
 	{
-		String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());
-		Connection connection = HibernateUtil.getSQLConnection(sessionFactory);
 		Date date = Calendar.getInstance().getTime();
+		String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
-			IrpfCalculator.registerCalculator(Administration.ALAVA, 
-				new GeozoneIrpfCalculator(connection, Administration.ALAVA, date));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			IrpfCalculator.registerCalculator(Administration.GIPUZKOA, 
-				new GeozoneIrpfCalculator(connection, Administration.GIPUZKOA, date));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			IrpfCalculator.registerCalculator(Administration.BIZKAIA, 
-				new GeozoneIrpfCalculator(connection, Administration.BIZKAIA, date));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			IrpfCalculator.registerCalculator(Administration.NAVARRA, 
-				new GeozoneIrpfCalculator(connection, Administration.NAVARRA, date));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+			try {
+				IrpfCalculator.registerCalculator(Administration.ALAVA, 
+					new GeozoneIrpfCalculator(conn, Administration.ALAVA, date));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				IrpfCalculator.registerCalculator(Administration.GIPUZKOA, 
+					new GeozoneIrpfCalculator(conn, Administration.GIPUZKOA, date));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				IrpfCalculator.registerCalculator(Administration.BIZKAIA, 
+					new GeozoneIrpfCalculator(conn, Administration.BIZKAIA, date));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				IrpfCalculator.registerCalculator(Administration.NAVARRA, 
+					new GeozoneIrpfCalculator(conn, Administration.NAVARRA, date));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} finally {
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 	
@@ -295,15 +312,29 @@ public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHan
 	}
 
 	public void onExecute(ActionEvent event) {
-		String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());
-		connection = HibernateUtil.getSQLConnection(sessionFactory);
+		String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+		Session session = null;
+		try {
+			session = HibernateUtil.getSession(sessionName);
+			connection = session.connection();
 		
-		buildCriteria();
-		
-		setPollEnabled(true);
-		TestThread thread =  
-			new TestThread();
-		thread.start();
+			buildCriteria();
+			
+			setPollEnabled(true);
+			TestThread thread =  
+				new TestThread();
+			thread.start();
+		} finally {
+			if (HibernateUtil.mustCloseSession()) {
+				if (connection != null) {
+					try {
+						connection.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
+		}
 	}
 	
 	public void downloadDisk(ActionEvent event) {

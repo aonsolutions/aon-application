@@ -251,7 +251,7 @@ public class ContractSalaryCalculatorContext
 
 		private Connection getConnection() {
 			String sessionFactoryName = HibernateUtil.getSessionFactoryName(Contract.class.getName());
-			return HibernateUtil.getSQLConnection(sessionFactoryName);
+			return HibernateUtil.getSession(sessionFactoryName).connection();
 		}
 		
 		private Criteria getCriteria() {

@@ -1,10 +1,12 @@
 package com.code.aon.accounting.util;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,6 +128,9 @@ public class VatManager {
 	}
 	
 	public boolean validateVAT(VatManagerParams params) throws ManagerBeanException {
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Session s = null;
+		Connection c = null; 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -164,9 +169,9 @@ public class VatManager {
 			stmt.append("   and inv.type != 1");
 			stmt.append("   and inv.investment = ?");
 			stmt.append(" )");
-			String sessionName = HibernateUtil.getSessionFactoryName();
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString(),
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			s = HibernateUtil.getSession(sessionName);
+			c = s.connection();
+			ps = c .prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			ps.setString(++i, params.getSeries().getCode());
 			ps.setInt(++i, params.getFirstNumber());
@@ -207,6 +212,9 @@ public class VatManager {
 					ps.close();
 				} catch (SQLException e) {
 				}
+			}
+			if (HibernateUtil.mustCloseSession()) {
+					HibernateUtil.closeSession(sessionName);
 			}
 		}
 		

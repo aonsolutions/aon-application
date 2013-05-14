@@ -1,11 +1,14 @@
 package com.code.aon.fiscal.mod111;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.hibernate.Session;
 
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.AonException;
@@ -72,33 +75,48 @@ public class Mod111Manager extends FiscalModelManager {
 	
 	@Override
 	public Mod111 initializeFiscalModelDetails(IFiscalDeclaration declaration) throws AonException {
-		Mod111 mod111 = (Mod111) declaration;
-		FiscalModel fiscalModel = mod111.getHeader();
-		mod111.initializeDetails();
-		Mod111CalculatorFactory factory = new Mod111CalculatorFactory();
-		int year = fiscalModel.getYear();
-		Administration admin = fiscalModel.getAdministration(); 
-		IMod111Calculator calculator = factory.getCalculator( year , admin );
-		searchInvoices(mod111,calculator);
-		if (fiscalModel.isReadRetentionFromAccount()) {
-			searchAccountEntries(mod111,calculator);
+		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
+		Connection conn = null;
+		Session session = null;
+		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+			Mod111 mod111 = (Mod111) declaration;
+			FiscalModel fiscalModel = mod111.getHeader();
+			mod111.initializeDetails();
+			Mod111CalculatorFactory factory = new Mod111CalculatorFactory();
+			int year = fiscalModel.getYear();
+			Administration admin = fiscalModel.getAdministration(); 
+			IMod111Calculator calculator = factory.getCalculator( year , admin );
+			searchInvoices(conn, mod111,calculator);
+			if (fiscalModel.isReadRetentionFromAccount()) {
+				searchAccountEntries(conn, mod111,calculator);
+			}
+			super.fillDeclaredData(mod111);
+			mod111.calculate();
+			return mod111;
+		} finally {
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
-		super.fillDeclaredData(mod111);
-		mod111.calculate();
-		return mod111;
 	}
 
-	private void searchInvoices(Mod111 mod111, IMod111Calculator calculator) throws ManagerBeanException {
+	private void searchInvoices(Connection conn, Mod111 mod111, IMod111Calculator calculator) throws ManagerBeanException {
 		FiscalModel fiscalModel = mod111.getHeader();
 		Date dateFrom = getInitialDate(fiscalModel);	
 		Date dateTo = getDueDate(fiscalModel);
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		List<String> receiverDocuments = new ArrayList<String>();
-		String sessionName = HibernateUtil.getSessionFactoryName( FiscalModel.class.getName() );
 		try {
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(SELECT,
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(SELECT,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			int filled = DomainManager.fillHostVariables(ps, 1);
 			i = i + filled;
@@ -138,13 +156,12 @@ public class Mod111Manager extends FiscalModelManager {
 		}
 	}
 
-	private void searchAccountEntries(Mod111 mod111, IMod111Calculator calculator) throws ManagerBeanException {
+	private void searchAccountEntries(Connection conn, Mod111 mod111, IMod111Calculator calculator) throws ManagerBeanException {
 		FiscalModel fiscalModel = mod111.getHeader();
 		Date dateFrom = getInitialDate(fiscalModel);	
 		Date dateTo = getDueDate(fiscalModel);
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName( FiscalModel.class.getName() );
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
 			Criteria criteria = new Criteria();
@@ -153,15 +170,13 @@ public class Mod111Manager extends FiscalModelManager {
 			if (list != null && list.size() > 0 ) {
 				ApplicationParameter ap = (ApplicationParameter) list.get(0);
 				int retentionAccount = Integer.parseInt(ap.getValue());
-				
 				criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME),  SALARY_ACCOUNT );
 				list = bean.getList(criteria);
 				if (list != null && list.size() > 0 ) {
 					ap = (ApplicationParameter) list.get(0);
 					int salaryAccount = Integer.parseInt(ap.getValue());	
-					ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(SELECT_ACCOUNT,
-							ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+					ps = conn.prepareStatement(SELECT_ACCOUNT, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 					int i = 0;
 					int filled = DomainManager.fillHostVariables(ps, 1);
 					i = i + filled;
@@ -252,8 +267,7 @@ public class Mod111Manager extends FiscalModelManager {
 			if (enterpriseId == null) {
 				throw new AonException("No existe ninguna empresa (enterprise) definida en el dominio activo."); 
 			}
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(PAYROLL_SELECT,
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(PAYROLL_SELECT,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			int filled = DomainManager.fillHostVariables(ps, 1);
 			i = i + filled;

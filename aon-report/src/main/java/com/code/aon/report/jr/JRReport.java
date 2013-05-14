@@ -7,7 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -138,21 +138,25 @@ public class JRReport {
 	}
 	
 	private String getCustomTemplate( String reportKey ) {
+		String factoryName = HibernateUtil.getSessionFactoryName();
+		Session session = HibernateUtil.getSession(factoryName);
 		try {
-			String factoryName = HibernateUtil.getSessionFactoryName();
-			Session session = HibernateUtil.getSession(factoryName);
 			String name = "REPORT_" + reportKey;
 	        String select = "SELECT app_param.value " 
 			        		+" FROM ApplicationParameter as app_param " 
 			        		+" WHERE "+ DomainManager.getSQLWhereClause("app_param.domain")
 			        		+" AND app_param.name = '" + name + "'";
 			Query query = session.createQuery(select);
-			List<String> list = query.list();
+			List<String> list = (List<String>) query.list();
 			if (! list.isEmpty() ) {
 				return list.get(0);
 			}
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error retrieving report app param", th );
+		} finally {
+			if (HibernateUtil.mustCloseSession()) {
+				HibernateUtil.closeSession(factoryName);
+			}
 		}
 		return null;
 	}
@@ -308,9 +312,6 @@ public class JRReport {
 				fillMap.put(JRParameter.REPORT_LOCALE, locale);
 				JRDataSource ds = null;
 				if(config.getCollectionProvider() == null){
-					Connection c = HibernateUtil.getSQLConnection();
-					fillMap.put(JRParameter.REPORT_CONNECTION, c);
-
 					JRDataSourceProvider jrdsp  = null;
 					if (hasCache) {
 						jrdsp = getJRPagedDataSourceProvider(criteria, config.getFetchMode().getPageCount());

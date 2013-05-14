@@ -1,6 +1,7 @@
 package com.code.aon.ui.fiscal.controller;
 
 import java.io.StringWriter;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,6 +14,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.hibernate.Session;
+
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
@@ -22,6 +25,7 @@ import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
+import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.report.ReportException;
 import com.code.aon.report.dynamic.DynaElements;
 import com.code.aon.report.dynamic.DynaReport;
@@ -58,7 +62,12 @@ public class InvoiceReportController {
 	public List<InvoiceReport> getInvoiceList(InvoiceReportParams params) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			// ---------------------------------------------------------------------------
 			StringWriter stmt = new StringWriter();
 			stmt.append(" SELECT i.id,i.type,i.transaction,i.investment,i.tax_date,i.issue_date,i.reference_code,i.series,i.number,i.rdocument,i.rname ");
@@ -134,9 +143,7 @@ public class InvoiceReportController {
 			stmt.append(" GROUP BY i.id,i.type,i.transaction,i.investment,i.tax_date,i.issue_date,i.reference_code,i.rdocument,i.rname ");
 			stmt.append(" ,i.service,i.rectification_type,i.rectification_invoice,it.tax_type,it.percentage,it.surcharge");
 			stmt.append(" ,it.vat_deduction_type,it.withholding_type,it.deductible_quota ");
-			String sessionName = HibernateUtil.getSessionFactoryName();
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString(),
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			if (params.getFromTaxDate() != null) {
 				ps.setDate(++i, new java.sql.Date( params.getFromTaxDate().getTime()));
@@ -208,6 +215,15 @@ public class InvoiceReportController {
 					ps.close();
 				} catch (SQLException e) {
 				}
+			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
 			}
 		}
 	}

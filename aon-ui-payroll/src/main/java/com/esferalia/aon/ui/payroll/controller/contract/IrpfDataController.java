@@ -166,8 +166,9 @@ public class IrpfDataController extends LinesController {
 	}
 	protected Connection getConnection(){
 		String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());
-		return  HibernateUtil.getSQLConnection(sessionFactory);
+		return  HibernateUtil.getSession(sessionFactory).connection();
 	}
+	
 	public Criteria getCtxCriteria() {
 		Contract contract = (Contract) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER).getTo();
 		Criteria criteria = new Criteria();

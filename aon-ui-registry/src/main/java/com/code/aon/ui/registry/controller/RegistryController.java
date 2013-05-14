@@ -229,11 +229,25 @@ public class RegistryController extends BasicController {
 	}
 	
 	public void onDetailReport(ActionEvent event){
+		Class<?> pojoClass = null;
 		try {
-			Class<?> pojoClass = (Class<?>) Class.forName( getPojo() );
-			String sessionName = HibernateUtil.getSessionFactoryName(pojoClass.getName());
+			pojoClass = (Class<?>) Class.forName( getPojo() );
+		} catch (ClassNotFoundException e) {
+			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
+		
+		String sessionName = HibernateUtil.getSessionFactoryName(pojoClass.getName());
+		Connection conn = null;
+		Session session = null;
+		PreparedStatement ps = null;
+		
+		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+			
 			FacesContext faces = FacesContext.getCurrentInstance();
-			Connection c = HibernateUtil.getSQLConnection(sessionName);
 			String select = "SELECT"
 			+ getDetailColumns()
 			+ getSqlTables(pojoClass);
@@ -245,7 +259,7 @@ public class RegistryController extends BasicController {
 			} else {
 				select = select.substring(0,i) + " GROUP BY `" + AonUtil.getMessage("aon_id") + "` " + select.substring(i+1);
 			}
-			PreparedStatement ps = c.prepareStatement(select);
+			ps = conn.prepareStatement(select);
 			ReportExporter rm = new ReportExporter();
 			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
 			String fileName = "Listado Detallado";
@@ -271,10 +285,22 @@ public class RegistryController extends BasicController {
 			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
-		} catch (ClassNotFoundException e) {
-			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
+		} finally {
+			if ( ps != null ) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 	

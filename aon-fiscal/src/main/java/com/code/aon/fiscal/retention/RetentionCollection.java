@@ -3,6 +3,7 @@ package com.code.aon.fiscal.retention;
 
 
 import java.io.StringWriter;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -17,6 +19,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 
 public class RetentionCollection {
@@ -24,7 +27,13 @@ public class RetentionCollection {
 	public List<Retention> getRetentionList(RetentionCollectionParameters params) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+
 			StringWriter stmt = new StringWriter();
 			stmt.append("SELECT it.withholding_type,it.percentage,SUM(id.taxable_base)");
 			stmt.append(" ,SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) RET ");
@@ -61,9 +70,7 @@ public class RetentionCollection {
 			}
 			stmt.append(" GROUP BY it.withholding_type,it.percentage");
 			stmt.append(" ORDER BY it.withholding_type,it.percentage");
-			String sessionName = HibernateUtil.getSessionFactoryName();
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString(),
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			if (params.getFromInvoiceDate() != null) {
 				ps.setDate(++i, new java.sql.Date( params.getFromInvoiceDate().getTime()));
@@ -112,6 +119,15 @@ public class RetentionCollection {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 
 	}
@@ -119,7 +135,13 @@ public class RetentionCollection {
 	public List<Retention> getRetentionDetailList(RetentionCollectionParameters params, InvoiceReportOrder order) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+
 			StringWriter stmt = new StringWriter();
 			stmt.append(" SELECT i.type,i.transaction,i.investment,i.tax_date,i.issue_date,i.reference_code,i.series,i.number,i.rdocument,i.rname ");
 			stmt.append("  ,it.percentage,SUM(id.taxable_base) ");
@@ -179,9 +201,7 @@ public class RetentionCollection {
 			} else if (order == InvoiceReportOrder.INVOICE_REGISTRY_NAME) {
 				stmt.append(" ORDER BY i.rname,i.series,i.number");
 			}
-			String sessionName = HibernateUtil.getSessionFactoryName();
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString(),
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			if (params.getFromInvoiceDate() != null) {
 				ps.setDate(++i, new java.sql.Date( params.getFromInvoiceDate().getTime()));
@@ -245,6 +265,15 @@ public class RetentionCollection {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 
 	}
@@ -252,7 +281,13 @@ public class RetentionCollection {
 	public List<Retention> getGroupedRetentionDetailList(RetentionCollectionParameters params, InvoiceReportOrder order) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+
 			StringWriter stmt = new StringWriter();
 			stmt.append(" SELECT i.rdocument,i.rname,SUM(id.taxable_base) ");
 			stmt.append("  ,SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) IVA");
@@ -295,9 +330,7 @@ public class RetentionCollection {
 			}
 			stmt.append(" GROUP BY i.rdocument,i.rname");
 			stmt.append(" ORDER BY i.rdocument,i.rname");
-			String sessionName = HibernateUtil.getSessionFactoryName();
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString(),
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			if (params.getFromInvoiceDate() != null) {
 				ps.setDate(++i, new java.sql.Date( params.getFromInvoiceDate().getTime()));
@@ -348,6 +381,15 @@ public class RetentionCollection {
 					ps.close();
 				} catch (SQLException e) {
 				}
+			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
 			}
 		}
 

@@ -99,7 +99,8 @@ public class AonServletUtils {
 
 	protected static Connection getConnection() {
 		String sessionName = HibernateUtil.getSessionFactoryName();
-		Connection connection = HibernateUtil.getSQLConnection(sessionName);
+		Connection connection = HibernateUtil.getSession(sessionName).connection();
+		//Connection connection = HibernateUtil.getSQLConnection(sessionName);
 		return connection;
 	}
 

@@ -7,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.hibernate.Session;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -14,6 +16,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.Mod349;
 import com.code.aon.fiscal.Mod349Detail;
 import com.code.aon.fiscal.enumeration.Mod349Type;
@@ -34,10 +37,14 @@ public class Mod349Manager {
 		PreparedStatement ps = null; 
 		ResultSet declaredRs = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+			
 			Mod349 mod349 = params.getMod349();
-			String sessionName = HibernateUtil.getSessionFactoryName(Mod349Detail.class.getName());
-			Connection conn = HibernateUtil.getSQLConnection(sessionName);
 			declaredPs = conn.prepareStatement(getDeclaredSentence(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			ps = conn.prepareStatement(getMainSentence(params),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
@@ -102,8 +109,16 @@ public class Mod349Manager {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
-
 	}
 
 	private String getMainSentence(Mod349Parameters params) {

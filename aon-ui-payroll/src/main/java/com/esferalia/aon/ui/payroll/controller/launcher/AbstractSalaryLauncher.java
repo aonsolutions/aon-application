@@ -30,6 +30,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.hibernate.Session;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
@@ -41,6 +42,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
@@ -176,15 +178,29 @@ public abstract class AbstractSalaryLauncher
 	}
 	
 	public void onExecute(ActionEvent event) {
-		buildCriteria();
+		String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+		Session session = null;
+		try {
+			session = HibernateUtil.getSession(sessionName);
+			connection = session.connection();
 
-		String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());
-		connection = HibernateUtil.getSQLConnection(sessionFactory);
-		
-		setPollEnabled(true);
-		TestThread thread =  
-			new TestThread();
-		thread.start();
+			buildCriteria();
+
+			setPollEnabled(true);
+			TestThread thread =  
+				new TestThread();
+			thread.start();
+		} finally {
+			if (HibernateUtil.mustCloseSession()) {
+				if (connection != null) {
+					try {
+						connection.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
+		}
 	}
 	
 	protected Connection getConnection(){

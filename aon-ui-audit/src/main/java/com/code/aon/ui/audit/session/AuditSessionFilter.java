@@ -15,9 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Session;
-import com.code.aon.common.dao.hibernate.DefaultSessionFactoryNameProvider;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.hibernate.ISessionFactoryNameProvider;
 import com.code.aon.common.util.PrincipalUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.audit.AuditManager;
@@ -32,12 +29,12 @@ public class AuditSessionFilter implements Filter {
 	}
 	
 	private void insertLoginAudit( HttpSession httpSession, HttpServletRequest request ) {
-		ISessionFactoryNameProvider nameProvider = HibernateUtil.getSessionFactoryNameProvider();
-		HibernateUtil.setSessionFactoryNameProvider(DefaultSessionFactoryNameProvider.getInstance());
+//		ISessionFactoryNameProvider nameProvider = HibernateUtil.getSessionFactoryNameProvider();
+//		HibernateUtil.setSessionFactoryNameProvider(DefaultSessionFactoryNameProvider.getInstance());
 		AuthPrincipal principal = PrincipalUtil.getAuthPrincipal();
 		int domainId = principal.getDomainId();
 		AuditManager.insertLoginAudit(httpSession, request, domainId, principal );
-		HibernateUtil.setSessionFactoryNameProvider(nameProvider);
+//		HibernateUtil.setSessionFactoryNameProvider(nameProvider);
 	}
 
 	@Override

@@ -5,12 +5,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.io.IOUtils;
+import org.hibernate.Session;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
@@ -62,20 +64,32 @@ public class SQLScriptController  {
 		setStatements(null);
 	}
 
-	@SuppressWarnings("deprecation")
 	public void onExecute(ActionEvent event) {
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		Connection conn = null;
+		Session session = null;
 		try {
-			Connection c = HibernateUtil.getSQLConnection();
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			ByteArrayInputStream input = new ByteArrayInputStream(getAonFile().getData());
-
 			AonSQLFile sqlFile = new AonSQLFile(input);
-			AonSQLScript script = new AonSQLScript(sqlFile, c);
+			AonSQLScript script = new AonSQLScript(sqlFile, conn);
 			script.execute();
 			AonUtil.addInfoMessage("Proceso realizado correctamente.");
 		} catch (AonSQLException e) {
 			AonUtil.addErrorMessage("Se han producido errores en la importación.");
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
+		} finally {
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 

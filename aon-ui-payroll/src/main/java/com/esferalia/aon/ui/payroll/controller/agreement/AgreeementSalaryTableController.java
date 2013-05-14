@@ -18,6 +18,8 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.hibernate.Session;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -25,21 +27,19 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.PaymentType;
-import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 
 public class AgreeementSalaryTableController extends ControllerAdapter implements IController {
@@ -133,23 +133,40 @@ public class AgreeementSalaryTableController extends ControllerAdapter implement
 	
 	@SuppressWarnings("deprecation")
 	private Set<String> newVariables(Agreement agreement, Date startDate, Date endDate) throws SQLException {
-		Connection sqlConnection = HibernateUtil.getSQLConnection();
-		SQLAgreementPaymentsFactory factory = new SQLAgreementPaymentsFactory(sqlConnection, startDate,endDate); 
-		Collection<IContractPayment> payments = factory.create(agreement.getId());
-		Set<String> userVariables = new LinkedHashSet<String>();
-		for (IContractPayment payment : payments) {
-			PaymentType type = payment.getType();
-			String expression = payment.getExpression();
-			if( type == PaymentType.BASE_SALARY && expression!=null){
-				Set<String> expressionVariables = ExpressionContext.getVariables(expression);
-				for (String variable : expressionVariables) {
-					if ( this.isUserVariable( variable)) {
-						userVariables.add(variable);
+		String sessionName = HibernateUtil.getSessionFactoryName(Agreement.class.getName());
+		Connection conn = null;
+		Session session = null;
+		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+		
+			SQLAgreementPaymentsFactory factory = new SQLAgreementPaymentsFactory(conn, startDate,endDate); 
+			Collection<IContractPayment> payments = factory.create(agreement.getId());
+			Set<String> userVariables = new LinkedHashSet<String>();
+			for (IContractPayment payment : payments) {
+				PaymentType type = payment.getType();
+				String expression = payment.getExpression();
+				if( type == PaymentType.BASE_SALARY && expression!=null){
+					Set<String> expressionVariables = ExpressionContext.getVariables(expression);
+					for (String variable : expressionVariables) {
+						if ( this.isUserVariable( variable)) {
+							userVariables.add(variable);
+						}
 					}
 				}
 			}
+			return userVariables;
+		} finally {
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
-		return userVariables;
 	}
 	
 	@Override

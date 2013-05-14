@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,6 +14,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.Session;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
@@ -103,12 +105,16 @@ public class InvoiceIntegrityController {
 	}
 	
 	public void onPreview(ActionEvent event) {
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(MAIN_STMT,
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+
+			ps = conn.prepareStatement(MAIN_STMT,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 1;
 			i = DomainManager.fillHostVariables(ps, i);
 			ps.setDate(++i, new java.sql.Date( getStartDate().getTime()));
@@ -145,6 +151,15 @@ public class InvoiceIntegrityController {
 					ps.close();
 				} catch (SQLException e) {
 				}
+			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
 			}
 		}
 	}
@@ -193,12 +208,15 @@ public class InvoiceIntegrityController {
 
 	
 	public void onBreakDown(ActionEvent event) {
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(STMT,
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+			ps = conn.prepareStatement(STMT,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			ps.setInt(++i, getRegistry());
 			ps.setDate(++i, new java.sql.Date( getStartDate().getTime()));
@@ -236,6 +254,15 @@ public class InvoiceIntegrityController {
 					ps.close();
 				} catch (SQLException e) {
 				}
+			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
 			}
 		}
 	}
@@ -320,13 +347,18 @@ public class InvoiceIntegrityController {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 
-			ips = HibernateUtil.getSQLConnection(sessionName).prepareStatement(INVOICE_UPDATE_STMT);
-			fps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(FINANCE_UPDATE_STMT);
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+
+			ips = conn.prepareStatement(INVOICE_UPDATE_STMT);
+			fps = conn.prepareStatement(FINANCE_UPDATE_STMT);
 
 			List<BreakDown> list =  (List<BreakDown>) getBreakDownModel().getWrappedData();
 			for (BreakDown b : list) {
@@ -376,7 +408,12 @@ public class InvoiceIntegrityController {
 				} catch (SQLException e) {
 				}
 			}
-
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);

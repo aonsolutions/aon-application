@@ -1,5 +1,6 @@
 package com.code.aon.stat.engine;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
 
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.ManagerBeanException;
@@ -18,6 +20,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.finance.Invoice;
 import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 
@@ -45,14 +48,19 @@ public class StatEngine {
 			throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT YEAR(i.issue_date) YEAR,COUNT(DISTINCT i.id),");
 			stmt.append(" SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("id.domain"));
-
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
 			}
@@ -69,12 +77,7 @@ public class StatEngine {
 			}
 			stmt.append(" GROUP BY YEAR(i.issue_date)");
 			stmt.append(" ORDER BY YEAR(i.issue_date) DESC");
-
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), 
-					ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
-
+			ps = conn.prepareStatement(stmt.toString(),ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
 				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
@@ -117,6 +120,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 
@@ -132,7 +144,12 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT MONTH(i.issue_date) MONTH,COUNT(DISTINCT i.id),");
 			stmt.append(" SUM(id.taxable_base)");
@@ -157,9 +174,7 @@ public class StatEngine {
 			stmt.append(" GROUP BY MONTH(i.issue_date)");
 			stmt.append(" ORDER BY MONTH(i.issue_date)");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
 				ps
 						.setDate(1, new java.sql.Date(params.getFromDate()
@@ -205,6 +220,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 
@@ -215,7 +239,13 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT i.issue_date DAY,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
@@ -239,9 +269,7 @@ public class StatEngine {
 			stmt.append(" GROUP BY DAY(i.issue_date)");
 			stmt.append(" ORDER BY DAY(i.issue_date)");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
 				ps
 						.setDate(1, new java.sql.Date(params.getFromDate()
@@ -291,6 +319,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 
@@ -300,8 +337,12 @@ public class StatEngine {
 		List<Stat> stats = new LinkedList<Stat>();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT r.id,r.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
@@ -326,9 +367,7 @@ public class StatEngine {
 			stmt.append(" GROUP BY r.id,r.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,r.id,r.name");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
 				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
@@ -369,6 +408,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 
@@ -377,8 +425,12 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
-
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			StringBuffer stmt = new StringBuffer();
 			stmt.append(" SELECT YEAR(i.issue_date) YEAR,c.id,c.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
@@ -405,9 +457,7 @@ public class StatEngine {
 			stmt.append(" GROUP BY c.id");
 			stmt.append(" ORDER BY c.name");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
 				ps.setDate(1, new java.sql.Date(params.getFromDate()
 								.getTime()));
@@ -451,6 +501,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 
@@ -459,7 +518,13 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT p.id,p.name,COUNT(DISTINCT i.id),SUM(id.taxable_base),SUM(id.quantity)");
 			stmt.append(" FROM invoice_detail id ");
@@ -491,9 +556,7 @@ public class StatEngine {
 			stmt.append(" GROUP BY p.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,p.id,p.name");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
 				ps
 						.setDate(1, new java.sql.Date(params.getFromDate()
@@ -542,6 +605,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 
 	}
@@ -552,8 +624,12 @@ public class StatEngine {
 		List<Stat> stats = new LinkedList<Stat>();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT r.id,r.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
@@ -584,9 +660,7 @@ public class StatEngine {
 			stmt.append(" GROUP BY r.id");
 			stmt.append(" ORDER BY YEAR(i.issue_date),c.id");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
 				ps
 						.setDate(1, new java.sql.Date(params.getFromDate()
@@ -632,6 +706,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 
@@ -641,8 +724,12 @@ public class StatEngine {
 		List<Stat> stats = new LinkedList<Stat>();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT r.id,r.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
 			stmt.append("FROM invoice_detail id  ");
@@ -673,9 +760,7 @@ public class StatEngine {
 			stmt.append(" GROUP BY r.id,r.name");
 			stmt.append(" ORDER BY YEAR(i.issue_date),c.id");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
 				ps
 						.setDate(1, new java.sql.Date(params.getFromDate()
@@ -721,6 +806,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 
@@ -736,7 +830,12 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT MONTH(i.issue_date) MONTH,COUNT(DISTINCT i.id),");
 			stmt.append(" SUM(id.taxable_base), YEAR(i.issue_date)");
@@ -761,7 +860,7 @@ public class StatEngine {
 			stmt.append(" GROUP BY MONTH(i.issue_date)");
 			stmt.append(" ORDER BY YEAR(i.issue_date),MONTH(i.issue_date)");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
+			ps = conn.prepareStatement(
 					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
@@ -809,6 +908,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 
@@ -819,7 +927,12 @@ public class StatEngine {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT MONTH(i.issue_date) MONTH,COUNT(DISTINCT i.id),SUM(id.taxable_base),YEAR(i.issue_date) YEAR");
 			stmt.append(" FROM invoice_detail id  ");
@@ -847,9 +960,7 @@ public class StatEngine {
 			stmt.append(" GROUP BY MONTH(i.issue_date)");
 			stmt.append(" ORDER BY YEAR(i.issue_date),MONTH(i.issue_date)");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
 				ps
 						.setDate(1, new java.sql.Date(params.getFromDate()
@@ -897,6 +1008,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 
@@ -904,7 +1024,12 @@ public class StatEngine {
 			throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT r.id,r.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id ");
@@ -929,9 +1054,7 @@ public class StatEngine {
 			stmt.append(" GROUP BY r.id,r.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,r.id,r.name");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
 				ps
 						.setDate(1, new java.sql.Date(params.getFromDate()
@@ -976,6 +1099,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 
@@ -986,7 +1118,12 @@ public class StatEngine {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT p.id,p.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
@@ -1016,13 +1153,9 @@ public class StatEngine {
 			stmt.append(" GROUP BY p.id,p.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,p.id,p.name");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -1064,6 +1197,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 
@@ -1072,7 +1214,12 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT p.id,p.name,COUNT(DISTINCT i.id),SUM(id.taxable_base),SUM(id.quantity)");
 			stmt.append(" FROM invoice_detail id ");
@@ -1098,9 +1245,7 @@ public class StatEngine {
 			stmt.append(" GROUP BY p.id,p.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,p.id,p.name");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
 				ps
 						.setDate(1, new java.sql.Date(params.getFromDate()
@@ -1146,6 +1291,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 
@@ -1154,7 +1308,12 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT c.id,c.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
@@ -1181,9 +1340,7 @@ public class StatEngine {
 			stmt.append(" GROUP BY c.id,c.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,c.id,c.name");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
 				ps
 						.setDate(1, new java.sql.Date(params.getFromDate()
@@ -1228,6 +1385,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 
 	}
@@ -1237,8 +1403,12 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
-
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			StringBuffer stmt = new StringBuffer();
 			stmt.append(" SELECT c.id,c.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
 			stmt.append(" FROM offer_detail od  ");
@@ -1276,13 +1446,9 @@ public class StatEngine {
 			stmt.append(" GROUP BY c.id");
 			stmt.append(" ORDER BY SUM(od.price*od.quantity) DESC,c.name");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -1317,6 +1483,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 
@@ -1325,7 +1500,12 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			StringBuffer stmt = new StringBuffer();
 			stmt.append(" SELECT r.id,r.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
 			stmt.append(" FROM offer_detail od  ");
@@ -1360,9 +1540,7 @@ public class StatEngine {
 			stmt.append(" GROUP BY r.id");
 			stmt.append(" ORDER BY SUM(od.price*od.quantity) DESC");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
 				ps
 						.setDate(1, new java.sql.Date(params.getFromDate()
@@ -1400,6 +1578,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 
@@ -1408,7 +1595,13 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append(" SELECT g.id,g.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
 			stmt.append(" FROM offer_detail od  ");
@@ -1444,9 +1637,7 @@ public class StatEngine {
 			stmt.append(" GROUP BY g.id");
 			stmt.append(" ORDER BY SUM(od.price*od.quantity) DESC");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
 				ps
 						.setDate(1, new java.sql.Date(params.getFromDate()
@@ -1484,6 +1675,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 
@@ -1492,7 +1692,12 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT p.id,p.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
 			stmt.append(" FROM offer_detail od ");
@@ -1533,13 +1738,9 @@ public class StatEngine {
 			stmt.append(" GROUP BY p.name");
 			stmt.append(" ORDER BY SUM(od.price*od.quantity) DESC,p.id,p.name");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -1577,6 +1778,15 @@ public class StatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 
 	}
@@ -1586,7 +1796,12 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			StringBuffer stmt = new StringBuffer();
 			stmt.append(" SELECT r.id,r.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
 			stmt.append(" FROM  offer o");
@@ -1621,10 +1836,7 @@ public class StatEngine {
 			stmt.append(s);
 			stmt.append(" GROUP BY r.id");
 			stmt.append(" ORDER BY SUM(od.price*od.quantity) DESC");
-
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
 				ps
 						.setDate(1, new java.sql.Date(params.getFromDate()
@@ -1661,6 +1873,15 @@ public class StatEngine {
 					ps.close();
 				} catch (SQLException e) {
 				}
+			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
 			}
 		}
 	}

@@ -17,6 +17,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.CriteriaUtilities;
@@ -52,15 +53,29 @@ public class SellerController extends RegistryController {
 	}
 
 	public void onDetailReport(ActionEvent event){
+		Class<?> pojoClass = null;
 		try {
-			Class<?> pojoClass = (Class<?>) Class.forName( getPojo() );
-			String sessionName = HibernateUtil.getSessionFactoryName(pojoClass.getName());
+			pojoClass = (Class<?>) Class.forName( getPojo() );
+		} catch (ClassNotFoundException e) {
+			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
+		
+		String sessionName = HibernateUtil.getSessionFactoryName(pojoClass.getName());
+		Connection conn = null;
+		Session session = null;
+		PreparedStatement ps = null;
+		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+
+			
 			String mappingPrefix = pojoClass.getSimpleName();
 			Table table = pojoClass.getAnnotation(Table.class);
 			String masterTable = table.name();
 			
 			FacesContext faces = FacesContext.getCurrentInstance();
-			Connection c = HibernateUtil.getSQLConnection(sessionName);
 			String REGISTRY_BUNDLE = "registryBundle";
 			String CONFIG_BUNDLE = "configBundle";
 			String select = "SELECT" 
@@ -154,7 +169,7 @@ public class SellerController extends RegistryController {
 				select = select.substring(0,i) + " GROUP BY `" + AonUtil.getMessage("aon_id") + "` " + select.substring(i+1);
 			}
 			
-			PreparedStatement ps = c.prepareStatement(select);
+			ps = conn.prepareStatement(select);
 			ReportExporter rm = new ReportExporter();
 			
 			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
@@ -181,10 +196,22 @@ public class SellerController extends RegistryController {
 			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
-		} catch (ClassNotFoundException e) {
-			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
+		} finally {
+			if ( ps != null ) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 	

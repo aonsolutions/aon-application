@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.dbutils.DbUtils;
+import org.hibernate.Session;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
@@ -17,6 +18,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.fiscal.FiscalBatch;
 import com.code.aon.fiscal.FiscalBatchDetail;
+import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -57,12 +59,15 @@ public abstract class AbstractFiscalBatchModel implements IFiscalBatchModel {
 
 	@Override
 	public List<Batchable> getPendingList(FiscalBatch fiscalBatch) throws AonException {
-		String sessionFactoryName =HibernateUtil.getSessionFactoryName(FiscalBatch.class.getName());
-		Connection c = HibernateUtil.getSQLConnection(sessionFactoryName);
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
-			ps = c.prepareStatement(getSelect(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+			ps = conn.prepareStatement(getSelect(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			ps.setInt(1, DomainManager.getCurrentDomain());
 			ps.setInt(2, DomainManager.getCurrentDomain());
 			ps.setInt(3, fiscalBatch.getYear());
@@ -89,6 +94,15 @@ public abstract class AbstractFiscalBatchModel implements IFiscalBatchModel {
 		} finally {
 			DbUtils.closeQuietly(ps);
 			DbUtils.closeQuietly(rs);
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 	

@@ -1,6 +1,7 @@
 package com.code.aon.fiscal.mod131;
 
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Session;
 
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
@@ -100,140 +102,157 @@ public class Mod131Manager extends FiscalModelManager {
 	
 	@Override
 	public Mod131 initializeFiscalModelDetails(IFiscalDeclaration declaration) throws AonException {
-		Mod131 mod131 = (Mod131) declaration;
-		FiscalModel fiscalModel = mod131.getHeader();
-		mod131.initializeDetails();
-		mod131.calculate();
-		
-		Date dateFrom = getInitialDate(fiscalModel);	
-		Date dateTo = getDueDate(fiscalModel);
-		
-//		Casilla 03. Consigne en esta casilla el volumen de ventas o ingresos de las actividades 
-//		a que se refiere este apartado correspondientes al trimestre por el que se realiza el pago
-//		fraccionado, incluidas las subvenciones corrientes y excluidas las subvenciones de capital
-//		y las indemnizaciones.
-
-		SummaryProvider sp = new SummaryProvider();
-		SummaryProviderParameters params = new SummaryProviderParameters();
-		params.setAccountExpression( "70*|71*|72*|73*|75*|76*|77*|78*|79*" );
-		params.setAccountLevel(5);
-		params.setFromDate(dateFrom);
-		params.setToDate(dateTo);
-		SummaryCollection sc = sp.getSummaryCollection(params,true);
-		double c03 = sc.getCreditBalance();
-		mod131.ensureDetail(Mod131Key.C03).addAccumulatedAmount(c03);
-		
-//		Casilla 08. En su caso, se consignará en esta casilla la suma de las retenciones e ingresos 
-//		a cuenta que, habiendo sido practicados sobre las contraprestaciones procedentes de las 
-//		actividades económicas en estimación objetiva cuyos rendimientos están sujetos a retención o 
-//		ingreso a cuenta, correspondan al trimestre a que se refiere el pago fraccionado.
-		mod131.ensureDetail(Mod131Key.C08).addAccumulatedAmount(getC08(dateFrom,dateTo));		
-
-//		Casilla 09. Podrán cumplimentar esta casilla únicamente los contribuyentes que tengan 
-//		derecho a la deducción por obtención de rendimientos de actividades económicas a efectos
-//		del pago fraccionado por cumplir el siguiente requisito:
-//		Que la suma del importe de la casilla 01 o, en el supuesto de que no pudiera determinarse 
-//		ningún dato-base, el resultado de elevar al año el 25 por 100 de la casilla 03 del primer
-//		trimestre del ejercicio o del primer trimestre de inicio de actividades y/o, en su caso, 
-//		para actividades agrícolas, ganaderas y forestales, el resultado de elevar al año el 25 
-//		por 100 de la casilla 05 del primer trimestre del ejercicio o del primer trimestre de 
-//		inicio de actividades, sea igual o inferior a 12.000 euros. En los supuestos de inicio 
-//		de la actividad a lo largo del ejercicio en la elevación al año se tendrán en consideración 
-//		los días que resten hasta el final del año.
-//		Además, si el contribuyente también está obligado a presentar el modelo 130 para declarar 
-//		el pago fraccionado correspondiente a las actividades económicas en estimación directa
-//		que realice, como sucede, entre otros, en el supuesto a que se refiere el segundo párrafo 
-//		del artículo 35 del Reglamento del Impuesto, deberá adicionar a las magnitudes anteriores
-//		el resultado de elevar al año el importe de la casilla 03, y/o el resultado de elevar al 
-//		año el 25 por 100 de la casilla 08, ambos del primer trimestre del ejercicio o del primer 
-//		trimestre de inicio de actividades.
-//		Si la suma total de estas magnitudes no excede de 12.000 euros, se consignará en esta 
-//		casilla 09 el importe obtenido de dividir entre cuatro la cuantía de la deducción por 
-//		obtención de rendimientos de actividades económicas, prevista en el apartado 1 del 
-//		artículo 80 bis de la Ley del Impuesto, que corresponda a efectos de los pagos fraccionados.
-//		Para calcular la cuantía de esta deducción deberá tenerse en cuenta que:
-//		- Cuando la suma de las magnitudes anteriormente indicadas (incluidas, en su caso, las 
-//		  referidas al modelo 130) sea igual o inferior a 8.000 euros anuales, esta deducción asciende
-//		  a 400 euros.
-//		- Cuando dicha suma esté comprendida entre 8.000,01 y 12.000 euros anuales, la cuantía 
-//		  de la deducción vendrá determinada por la siguiente operación: (400 euros menos el 
-//		  producto de multiplicar por 0,1 la diferencia entre la suma de las magnitudes indicadas 
-//		  y 8.000 euros anuales).
-
-		double previousC03 = getC09_03(SELECT_09_03,fiscalModel,Mod131Key.C03);
-		double previousC08 = getC09_08(SELECT_09_08,fiscalModel,Mod131Key.C08);
-		double c09 = 0;
-		if ( CommonUtil.round(previousC03 + previousC08) <= 12000 ) {
-			if ( CommonUtil.round(previousC03 + previousC08) <= 8000 ) {
-				c09 = CommonUtil.round( 400.0 / 4 );		
-			} else {
-				c09 = CommonUtil.round( (400.0 - ((previousC03 + previousC08 - 8000) * 0.1)) / 4);
-			}
-		}
-		mod131.ensureDetail(Mod131Key.C09).addAccumulatedAmount(c09);
-		
-//		Casilla 11. Si en la casilla 10 anterior se hubiera obtenido una cantidad positiva, 
-//		se hará constar en la casilla 11 el importe de los resultados negativos que, en su 
-//		caso, se hubieran obtenido en la casilla 15 de cualquiera de las declaraciones 
-//		anteriores, modelo 131, del mismo ejercicio y que no hubieran sido deducidos 
-//		anteriormente, teniendo en cuenta que en ningún caso podrá figurar en la casilla 11 
-//		un importe superior a la cantidad positiva consignada en la casilla 10.
-		mod131.calculate();
-		double c10 = mod131.getDetail( Mod131Key.C10 ).getAmount();
-		double c11 = 0.0;
-		if (c10 > 0) {
-			double previousC11 = getPreviousAmount(SELECT_11,fiscalModel,Mod131Key.C11);
-			double previousC15 = getPreviousAmount(SELECT_15,fiscalModel,Mod131Key.C15);
-			previousC15 = CommonUtil.round( previousC15 * (-1));
-			c11 = CommonUtil.round( previousC15 - previousC11 );
-			c11 = c11>c10?c10:c11;
-		}
-		mod131.ensureDetail(Mod131Key.C11).addAccumulatedAmount(c11);
-		
-		
-//		Casilla 12. Si en la casilla 10 se hubiera obtenido una cantidad positiva y el 
-//		contribuyente está realizando pagos por préstamos destinados a la adquisición 
-//		o rehabilitación de su vivienda habitual, se hará constar, en su caso, en la casilla 
-//		12 el importe de la deducción a que se refiere el artículo 110.3.d) del Reglamento del Impuesto.
-//		Si únicamente se hubiese cumplimentado el apartado I y/o el apartado II de este modelo, 
-//		dicha deducción está constituida por la suma de los importes resultantes de aplicar el 
-//		porcentaje del 0,5 por 100 sobre la cantidad consignada en la casilla 01 y el porcentaje 
-//		del 2 por 100 sobre la cantidad consignada en la casilla 03. Si solamente se hubiese 
-//		cumplimentado el apartado III, la deducción está constituida por el importe resultante 
-//		de aplicar el porcentaje del 2 por 100 sobre la cantidad consignada en la casilla 05.
-//		En cualquier caso, deberá tenerse en cuenta que el importe consignado en la casilla 12 
-//		no podrá ser superior a la diferencia positiva entre las casillas 10 y 11 anteriores y 
-//		que la deducción por este concepto tiene como límite máximo la cantidad de 660,14 euros 
-//		anuales, por lo que en la casilla 12 no podrá figurar en ningún caso un importe superior 
-//		a dicha cantidad, sin que tampoco pueda superar la citada cantidad el conjunto de los 
-//		importes consignados en las casillas 12 de los cuatro modelos 131 del mismo ejercicio.
-		if (mod131.isPermanentAddressChanges() && CommonUtil.round(c10 - c11) > 0 ) {
-			double c12 = 0.0;
+		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
+		Connection conn = null;
+		Session session = null;
+		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+			Mod131 mod131 = (Mod131) declaration;
+			FiscalModel fiscalModel = mod131.getHeader();
+			mod131.initializeDetails();
 			mod131.calculate();
-			double c01 = mod131.getDetail( Mod131Key.AC01 ).getAmount();
-			c03 = mod131.getDetail( Mod131Key.C03 ).getAmount();
-			double c05 = mod131.getDetail( Mod131Key.C05 ).getAmount();
-
-			if (c01 > 0 && c05 > 0 ) { // no resultará aplicable cuando el contribuyente realice simultáneamente   
-			   						   // actividades agrícolas y actividades distintas de éstas.
-				c12 = CommonUtil.round(c01 * 0.5 / 100);
-				if (c03 > 0 ) {
-					c12 = CommonUtil.round(c03 * 2 / 100);
-					c12 = c12 + (c12>660.14?660.14:c12);
-				} else  if (c05 > 0 ) {
-					c12 = CommonUtil.round(c05 * 2 / 100);
-					c12 = c12 + (c12>660.14?660.14:c12);
+			
+			Date dateFrom = getInitialDate(fiscalModel);	
+			Date dateTo = getDueDate(fiscalModel);
+			
+	//		Casilla 03. Consigne en esta casilla el volumen de ventas o ingresos de las actividades 
+	//		a que se refiere este apartado correspondientes al trimestre por el que se realiza el pago
+	//		fraccionado, incluidas las subvenciones corrientes y excluidas las subvenciones de capital
+	//		y las indemnizaciones.
+	
+			SummaryProvider sp = new SummaryProvider();
+			SummaryProviderParameters params = new SummaryProviderParameters();
+			params.setAccountExpression( "70*|71*|72*|73*|75*|76*|77*|78*|79*" );
+			params.setAccountLevel(5);
+			params.setFromDate(dateFrom);
+			params.setToDate(dateTo);
+			SummaryCollection sc = sp.getSummaryCollection(conn,params,false);
+			double c03 = sc.getCreditBalance();
+			mod131.ensureDetail(Mod131Key.C03).addAccumulatedAmount(c03);
+			
+	//		Casilla 08. En su caso, se consignará en esta casilla la suma de las retenciones e ingresos 
+	//		a cuenta que, habiendo sido practicados sobre las contraprestaciones procedentes de las 
+	//		actividades económicas en estimación objetiva cuyos rendimientos están sujetos a retención o 
+	//		ingreso a cuenta, correspondan al trimestre a que se refiere el pago fraccionado.
+			mod131.ensureDetail(Mod131Key.C08).addAccumulatedAmount(getC08(conn,dateFrom,dateTo));		
+	
+	//		Casilla 09. Podrán cumplimentar esta casilla únicamente los contribuyentes que tengan 
+	//		derecho a la deducción por obtención de rendimientos de actividades económicas a efectos
+	//		del pago fraccionado por cumplir el siguiente requisito:
+	//		Que la suma del importe de la casilla 01 o, en el supuesto de que no pudiera determinarse 
+	//		ningún dato-base, el resultado de elevar al año el 25 por 100 de la casilla 03 del primer
+	//		trimestre del ejercicio o del primer trimestre de inicio de actividades y/o, en su caso, 
+	//		para actividades agrícolas, ganaderas y forestales, el resultado de elevar al año el 25 
+	//		por 100 de la casilla 05 del primer trimestre del ejercicio o del primer trimestre de 
+	//		inicio de actividades, sea igual o inferior a 12.000 euros. En los supuestos de inicio 
+	//		de la actividad a lo largo del ejercicio en la elevación al año se tendrán en consideración 
+	//		los días que resten hasta el final del año.
+	//		Además, si el contribuyente también está obligado a presentar el modelo 130 para declarar 
+	//		el pago fraccionado correspondiente a las actividades económicas en estimación directa
+	//		que realice, como sucede, entre otros, en el supuesto a que se refiere el segundo párrafo 
+	//		del artículo 35 del Reglamento del Impuesto, deberá adicionar a las magnitudes anteriores
+	//		el resultado de elevar al año el importe de la casilla 03, y/o el resultado de elevar al 
+	//		año el 25 por 100 de la casilla 08, ambos del primer trimestre del ejercicio o del primer 
+	//		trimestre de inicio de actividades.
+	//		Si la suma total de estas magnitudes no excede de 12.000 euros, se consignará en esta 
+	//		casilla 09 el importe obtenido de dividir entre cuatro la cuantía de la deducción por 
+	//		obtención de rendimientos de actividades económicas, prevista en el apartado 1 del 
+	//		artículo 80 bis de la Ley del Impuesto, que corresponda a efectos de los pagos fraccionados.
+	//		Para calcular la cuantía de esta deducción deberá tenerse en cuenta que:
+	//		- Cuando la suma de las magnitudes anteriormente indicadas (incluidas, en su caso, las 
+	//		  referidas al modelo 130) sea igual o inferior a 8.000 euros anuales, esta deducción asciende
+	//		  a 400 euros.
+	//		- Cuando dicha suma esté comprendida entre 8.000,01 y 12.000 euros anuales, la cuantía 
+	//		  de la deducción vendrá determinada por la siguiente operación: (400 euros menos el 
+	//		  producto de multiplicar por 0,1 la diferencia entre la suma de las magnitudes indicadas 
+	//		  y 8.000 euros anuales).
+	
+			double previousC03 = getC09_03(conn,SELECT_09_03,fiscalModel,Mod131Key.C03);
+			double previousC08 = getC09_08(conn,SELECT_09_08,fiscalModel,Mod131Key.C08);
+			double c09 = 0;
+			if ( CommonUtil.round(previousC03 + previousC08) <= 12000 ) {
+				if ( CommonUtil.round(previousC03 + previousC08) <= 8000 ) {
+					c09 = CommonUtil.round( 400.0 / 4 );		
+				} else {
+					c09 = CommonUtil.round( (400.0 - ((previousC03 + previousC08 - 8000) * 0.1)) / 4);
 				}
-				if (CommonUtil.round(c10 - c11) < c12) {
-					c12 = CommonUtil.round(c10 - c11); 
+			}
+			mod131.ensureDetail(Mod131Key.C09).addAccumulatedAmount(c09);
+			
+	//		Casilla 11. Si en la casilla 10 anterior se hubiera obtenido una cantidad positiva, 
+	//		se hará constar en la casilla 11 el importe de los resultados negativos que, en su 
+	//		caso, se hubieran obtenido en la casilla 15 de cualquiera de las declaraciones 
+	//		anteriores, modelo 131, del mismo ejercicio y que no hubieran sido deducidos 
+	//		anteriormente, teniendo en cuenta que en ningún caso podrá figurar en la casilla 11 
+	//		un importe superior a la cantidad positiva consignada en la casilla 10.
+			mod131.calculate();
+			double c10 = mod131.getDetail( Mod131Key.C10 ).getAmount();
+			double c11 = 0.0;
+			if (c10 > 0) {
+				double previousC11 = getPreviousAmount(conn,SELECT_11,fiscalModel,Mod131Key.C11);
+				double previousC15 = getPreviousAmount(conn,SELECT_15,fiscalModel,Mod131Key.C15);
+				previousC15 = CommonUtil.round( previousC15 * (-1));
+				c11 = CommonUtil.round( previousC15 - previousC11 );
+				c11 = c11>c10?c10:c11;
+			}
+			mod131.ensureDetail(Mod131Key.C11).addAccumulatedAmount(c11);
+			
+			
+	//		Casilla 12. Si en la casilla 10 se hubiera obtenido una cantidad positiva y el 
+	//		contribuyente está realizando pagos por préstamos destinados a la adquisición 
+	//		o rehabilitación de su vivienda habitual, se hará constar, en su caso, en la casilla 
+	//		12 el importe de la deducción a que se refiere el artículo 110.3.d) del Reglamento del Impuesto.
+	//		Si únicamente se hubiese cumplimentado el apartado I y/o el apartado II de este modelo, 
+	//		dicha deducción está constituida por la suma de los importes resultantes de aplicar el 
+	//		porcentaje del 0,5 por 100 sobre la cantidad consignada en la casilla 01 y el porcentaje 
+	//		del 2 por 100 sobre la cantidad consignada en la casilla 03. Si solamente se hubiese 
+	//		cumplimentado el apartado III, la deducción está constituida por el importe resultante 
+	//		de aplicar el porcentaje del 2 por 100 sobre la cantidad consignada en la casilla 05.
+	//		En cualquier caso, deberá tenerse en cuenta que el importe consignado en la casilla 12 
+	//		no podrá ser superior a la diferencia positiva entre las casillas 10 y 11 anteriores y 
+	//		que la deducción por este concepto tiene como límite máximo la cantidad de 660,14 euros 
+	//		anuales, por lo que en la casilla 12 no podrá figurar en ningún caso un importe superior 
+	//		a dicha cantidad, sin que tampoco pueda superar la citada cantidad el conjunto de los 
+	//		importes consignados en las casillas 12 de los cuatro modelos 131 del mismo ejercicio.
+			if (mod131.isPermanentAddressChanges() && CommonUtil.round(c10 - c11) > 0 ) {
+				double c12 = 0.0;
+				mod131.calculate();
+				double c01 = mod131.getDetail( Mod131Key.AC01 ).getAmount();
+				c03 = mod131.getDetail( Mod131Key.C03 ).getAmount();
+				double c05 = mod131.getDetail( Mod131Key.C05 ).getAmount();
+	
+				if (c01 > 0 && c05 > 0 ) { // no resultará aplicable cuando el contribuyente realice simultáneamente   
+				   						   // actividades agrícolas y actividades distintas de éstas.
+					c12 = CommonUtil.round(c01 * 0.5 / 100);
+					if (c03 > 0 ) {
+						c12 = CommonUtil.round(c03 * 2 / 100);
+						c12 = c12 + (c12>660.14?660.14:c12);
+					} else  if (c05 > 0 ) {
+						c12 = CommonUtil.round(c05 * 2 / 100);
+						c12 = c12 + (c12>660.14?660.14:c12);
+					}
+					if (CommonUtil.round(c10 - c11) < c12) {
+						c12 = CommonUtil.round(c10 - c11); 
+					}
+					mod131.ensureDetail(Mod131Key.C12).addAccumulatedAmount(c12);
 				}
-				mod131.ensureDetail(Mod131Key.C12).addAccumulatedAmount(c12);
+			}
+	
+			
+			mod131.calculate();
+			return mod131;
+		} finally {
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
 			}
 		}
-
-		
-		mod131.calculate();
-		return mod131;
 	}
 
 	@Override
@@ -252,14 +271,12 @@ public class Mod131Manager extends FiscalModelManager {
 		return mod131;
 	}
 	
-	private double getPreviousAmount(String select,FiscalModel fiscalModel, Mod131Key key) throws AonException {
+	private double getPreviousAmount(Connection conn,String select,FiscalModel fiscalModel, Mod131Key key) throws AonException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		double retention = 0;
 		try {
-			String sessionName = HibernateUtil.getSessionFactoryName();
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(select,
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(select,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			int filled = DomainManager.fillHostVariables(ps, 1);
 			i = i + filled;
@@ -293,14 +310,12 @@ public class Mod131Manager extends FiscalModelManager {
 		}
 	}
 	
-	private double getC08(Date dateFrom, Date dateTo) throws AonException {
+	private double getC08(Connection conn,Date dateFrom, Date dateTo) throws AonException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		double retention = 0;
 		try {
-			String sessionName = HibernateUtil.getSessionFactoryName();
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(SELECT_08,
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(SELECT_08,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			int filled = DomainManager.fillHostVariables(ps, 1);
 			i = i + filled;
@@ -330,14 +345,12 @@ public class Mod131Manager extends FiscalModelManager {
 			}
 		}
 	}
-	private double getC09_03(String select,FiscalModel fiscalModel, Mod131Key key) throws AonException {
+	private double getC09_03(Connection conn,String select,FiscalModel fiscalModel, Mod131Key key) throws AonException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		double c03 = 0;
 		try {
-			String sessionName = HibernateUtil.getSessionFactoryName();
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(select,
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(select,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			int filled = DomainManager.fillHostVariables(ps, 1);
 			i = i + filled;
@@ -381,14 +394,12 @@ public class Mod131Manager extends FiscalModelManager {
 		}
 	}
 	
-	private double getC09_08(String select,FiscalModel fiscalModel, Mod131Key key) throws AonException {
+	private double getC09_08(Connection conn,String select,FiscalModel fiscalModel, Mod131Key key) throws AonException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		double c08 = 0;
 		try {
-			String sessionName = HibernateUtil.getSessionFactoryName();
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(select,
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(select,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			int filled = DomainManager.fillHostVariables(ps, 1);
 			i = i + filled;

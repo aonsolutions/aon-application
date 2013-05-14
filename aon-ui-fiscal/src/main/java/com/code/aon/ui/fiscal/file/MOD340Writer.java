@@ -3,12 +3,15 @@ package com.code.aon.ui.fiscal.file;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.hibernate.Session;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -24,6 +27,7 @@ import com.code.aon.file.tax.model.MOD340.data.Deponent;
 import com.code.aon.file.tax.model.MOD340.data.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.util.FinanceUtil;
+import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.mod340.Model340Parameters;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -67,9 +71,14 @@ public class MOD340Writer implements IFinanceConstants{
 		ResultSet taxRs = null;
 		PreparedStatement sumPs = null;
 		ResultSet sumRs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+
 			Deponent deponent = getDeponent();
-			String sessionName = HibernateUtil.getSessionFactoryName();
 			StringWriter stmt = new StringWriter();
 			stmt.append(" SELECT i.id invoice_id");
 			stmt.append(", i.type type");
@@ -90,7 +99,7 @@ public class MOD340Writer implements IFinanceConstants{
 			stmt.append( DomainManager.getSQLWhereClause("i.domain") );
 			appendParams(stmt);
 			stmt.append(" ORDER BY i.series,i.number");
-			invoicesPs  = HibernateUtil.getSQLConnection(sessionName).prepareStatement( stmt.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			invoicesPs  = conn.prepareStatement( stmt.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			
 			stmt = new StringWriter();
 			stmt.append(" SELECT count(DISTINCT it.percentage) ");
@@ -98,7 +107,7 @@ public class MOD340Writer implements IFinanceConstants{
 			stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
 			stmt.append("  WHERE id.invoice = ?");
 			stmt.append("  AND it.tax_type = 1"); // Solo IVA
-			sumPs  = HibernateUtil.getSQLConnection(sessionName).prepareStatement( stmt.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);			
+			sumPs  = conn.prepareStatement( stmt.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);			
 
 			stmt = new StringWriter();
 			stmt.append(" SELECT it.tax_type tax_type");
@@ -115,7 +124,7 @@ public class MOD340Writer implements IFinanceConstants{
 			stmt.append("  WHERE id.invoice = ?");
 			stmt.append("  AND it.tax_type = 1"); // Solo IVA
 			stmt.append("  GROUP BY id.invoice,it.percentage,it.surcharge");
-			taxPs  = HibernateUtil.getSQLConnection(sessionName).prepareStatement( stmt.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);			
+			taxPs  = conn.prepareStatement( stmt.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);			
 			appendParams(invoicesPs);
 			invoicesRs = invoicesPs.executeQuery();
 			List<Invoice> invoices = new LinkedList<Invoice>();
@@ -169,14 +178,21 @@ public class MOD340Writer implements IFinanceConstants{
 			invoicesRs.close();
 			invoicesPs.close();
 		} catch (IOException e) {
-			finalize(taxPs, taxRs);
-			finalize(invoicesPs, invoicesRs);
 			throw new Fd0Exception("ERROR", e.getMessage());
 		} catch (SQLException e) {
+			throw new Fd0Exception("ERROR", e.getMessage());
+		} finally {
 			finalize(taxPs, taxRs);
 			finalize(invoicesPs, invoicesRs);
-			e.printStackTrace();
-			throw new Fd0Exception("ERROR", e.getMessage());
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 
@@ -315,4 +331,5 @@ public class MOD340Writer implements IFinanceConstants{
 			}
 		}
 	}
+	
 }

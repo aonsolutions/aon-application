@@ -1,8 +1,11 @@
 package com.code.aon.warehouse.stock;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import org.hibernate.Session;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -32,12 +35,16 @@ public class StockManager {
 	public double getPurchasePrice(Stock stock ) throws ManagerBeanException{
 		if (stock == null) return 0.0;
 		if (stock.getItem() == null) return 0.0;
+		String sessionName = HibernateUtil.getSessionFactoryName(Stock.class.getName());
+		
+		Connection conn = null;
+		Session session = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String sessionName = HibernateUtil.getSessionFactoryName();
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(incomeStmt,
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+			ps = conn.prepareStatement(incomeStmt,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			ps.setInt(1, stock.getItem().getId());
 			rs = ps.executeQuery();
 			double price = 0.0;
@@ -59,6 +66,15 @@ public class StockManager {
 					ps.close();
 				} catch (SQLException e) {
 				}
+			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
 			}
 		}
 	}

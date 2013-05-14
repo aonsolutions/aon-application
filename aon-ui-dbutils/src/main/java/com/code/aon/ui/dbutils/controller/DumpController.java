@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.GregorianCalendar;
 
 import javax.faces.context.FacesContext;
@@ -16,6 +18,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,25 +95,42 @@ public class DumpController implements DBUtilsListener {
 	}
 
 	private void dump() throws IOException {
-		GregorianCalendar gc = new GregorianCalendar();
-		String prefix = "dbdump_" + gc.get(GregorianCalendar.DATE) + "_" + (gc.get(GregorianCalendar.MONTH) + 1) + "_"
-				+ gc.get(GregorianCalendar.YEAR) + "_" + gc.get(GregorianCalendar.HOUR) + "_" + gc.get(GregorianCalendar.MINUTE) + "_";
-		File file = File.createTempFile(prefix, ".sql");
-		FileOutputStream fos = new FileOutputStream(file);
-		MySQLDBDumper dumper = new MySQLDBDumper(HibernateUtil.getSQLConnection(), fos);
-		dumper.addDBUtilsListener(this);
-		setMsg("CREANDO COPIA: " + file);
-		DBUtilsRunner thread = new DBUtilsRunner(dumper);
-		thread.run(); // No se lanza como otro hilo a posta.
-		// new Thread(thread,"COPIA-SEGURIDAD").start();
-		FileReader reader = new FileReader(file);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		IOUtils.copy(reader, baos);
-		if (getAonFile() == null) {
-			setAonFile(new AonFile());
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		Connection conn = null;
+		Session session = null;
+		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+			GregorianCalendar gc = new GregorianCalendar();
+			String prefix = "dbdump_" + gc.get(GregorianCalendar.DATE) + "_" + (gc.get(GregorianCalendar.MONTH) + 1) + "_"
+					+ gc.get(GregorianCalendar.YEAR) + "_" + gc.get(GregorianCalendar.HOUR) + "_" + gc.get(GregorianCalendar.MINUTE) + "_";
+			File file = File.createTempFile(prefix, ".sql");
+			FileOutputStream fos = new FileOutputStream(file);
+			MySQLDBDumper dumper = new MySQLDBDumper(conn, fos);
+			dumper.addDBUtilsListener(this);
+			setMsg("CREANDO COPIA: " + file);
+			DBUtilsRunner thread = new DBUtilsRunner(dumper);
+			thread.run(); // No se lanza como otro hilo a posta.
+			// new Thread(thread,"COPIA-SEGURIDAD").start();
+			FileReader reader = new FileReader(file);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			IOUtils.copy(reader, baos);
+			if (getAonFile() == null) {
+				setAonFile(new AonFile());
+			}
+			getAonFile().setFileName(file.getName());
+			getAonFile().setData(baos.toByteArray());
+		} finally {
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
-		getAonFile().setFileName(file.getName());
-		getAonFile().setData(baos.toByteArray());
 	}
 
 	@Override

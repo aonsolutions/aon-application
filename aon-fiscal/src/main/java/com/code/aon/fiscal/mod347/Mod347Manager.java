@@ -2,11 +2,13 @@ package com.code.aon.fiscal.mod347;
 
 
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -16,6 +18,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.Province;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.Mod347;
 import com.code.aon.fiscal.Mod347Detail;
 import com.code.aon.fiscal.enumeration.Mod347Type;
@@ -34,22 +37,24 @@ public class Mod347Manager {
 	private static final String FOURTH_QUARTER_ALIAS = "fourthQuarter";
 
 	public Mod347 generateDetails(Mod347Parameters params) throws ManagerBeanException {
+		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
+		Connection conn = null;
+		Session session = null;
 		PreparedStatement ps = null; 
 		ResultSet rs = null;
-		
 		PreparedStatement ps1 = null;
 		ResultSet rs1 = null;
-		
 		try {
 			Mod347 mod347 = params.getMod347();
-			String sessionName = HibernateUtil.getSessionFactoryName(Mod347Detail.class.getName());
-			ps1 = HibernateUtil.getSQLConnection(sessionName).prepareStatement(
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection(); 
+			ps1 = conn.prepareStatement(
 					"SELECT geozone.code FROM raddress,geozone WHERE "
 					+DomainManager.getSQLWhereClause("raddress.domain")
 					+" AND raddress.geozone = geozone.id"
 					+" AND raddress.registry = ? AND raddress.type = 0",
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(getSentence(params),
+			ps = conn.prepareStatement(getSentence(params),
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			ps.setDate(++i, new java.sql.Date( CommonUtil.getYearFirstDay(mod347.getYear()).getTime()));
@@ -131,6 +136,15 @@ public class Mod347Manager {
 					ps.close();
 				} catch (SQLException e) {
 				}
+			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
 			}
 		}
 

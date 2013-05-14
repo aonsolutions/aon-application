@@ -856,7 +856,7 @@ public class IrpfDraftController extends BasicController implements IIrpfControl
 	
 	private static Connection getConnection(){
 		String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());
-		return  HibernateUtil.getSQLConnection(sessionFactory);
+		return  HibernateUtil.getSession(sessionFactory).connection();
 	}
 
 	{

@@ -1,5 +1,6 @@
 package com.code.aon.stat.engine;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -181,7 +183,13 @@ public class TasStatEngine {
 	public List<TasStatHeader> getTasHeaders(TasStatParams params) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT r.id,r.document,r.name,ti.id,ti.publicCode,mk.name,md.name");
 			stmt.append(" FROM project_tas pt");
@@ -224,8 +232,7 @@ public class TasStatEngine {
 			stmt.append(" GROUP BY r.id,r.document,r.name,ti.publicCode,mk.name,md.name");
 			stmt.append(" ORDER BY r.name");
 
-			ps = HibernateUtil.getSQLConnection().prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			if (params.getFromDate() != null) {
 				ps.setDate(++i, new java.sql.Date(params.getFromDate().getTime()));
@@ -284,6 +291,15 @@ public class TasStatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 
@@ -291,7 +307,6 @@ public class TasStatEngine {
 		if (header == null || header.getTasItem() == null) {
 			throw new ManagerBeanException("Vehículo no identificado (id null).");
 		}
-		fillHeader(header);
 		PreparedStatement offerPs = null;
 		PreparedStatement invoicePs = null;
 		PreparedStatement salesPs = null;
@@ -300,7 +315,15 @@ public class TasStatEngine {
 		PreparedStatement incomePs = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+
+			fillHeader(conn, header);
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append(TAS_ITEM_STATEMENT);
 			stmt.append(" AND " + DomainManager.getStaticSQLWhereClause("ti.domain") );
@@ -312,13 +335,13 @@ public class TasStatEngine {
 			}
 			stmt.append(" ORDER BY p.date desc");
 
-			offerPs = HibernateUtil.getSQLConnection().prepareStatement(OFFER_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			invoicePs = HibernateUtil.getSQLConnection().prepareStatement(INVOICE_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			salesPs = HibernateUtil.getSQLConnection().prepareStatement(SALES_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			purchasePs = HibernateUtil.getSQLConnection().prepareStatement(PURCHASE_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			deliveryPs = HibernateUtil.getSQLConnection().prepareStatement(DELIVERY_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			incomePs = HibernateUtil.getSQLConnection().prepareStatement(INCOME_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			ps = HibernateUtil.getSQLConnection().prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			offerPs = conn.prepareStatement(OFFER_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			invoicePs = conn.prepareStatement(INVOICE_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			salesPs = conn.prepareStatement(SALES_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			purchasePs = conn.prepareStatement(PURCHASE_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			deliveryPs = conn.prepareStatement(DELIVERY_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			incomePs = conn.prepareStatement(INCOME_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			ps.setString(++i, header.getPublicCode());
 			if (params.getFromDate() != null) {
@@ -350,6 +373,36 @@ public class TasStatEngine {
 				} catch (SQLException e) {
 				}
 			}
+			if (invoicePs != null) {
+				try {
+					invoicePs.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (salesPs != null) {
+				try {
+					salesPs.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (purchasePs != null) {
+				try {
+					purchasePs.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (deliveryPs != null) {
+				try {
+					deliveryPs.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (incomePs != null) {
+				try {
+					incomePs.close();
+				} catch (SQLException e) {
+				}
+			}
 			if (ps != null) {
 				try {
 					ps.close();
@@ -361,6 +414,15 @@ public class TasStatEngine {
 					offerPs.close();
 				} catch (SQLException e) {
 				}
+			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
 			}
 		}
 	}
@@ -522,15 +584,16 @@ public class TasStatEngine {
 		return detail;
 	}
 
-	private void fillHeader(TasStatHeader header) throws ManagerBeanException {
+	private void fillHeader(Connection conn, TasStatHeader header) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT ti.description,ti.add_info");
 			stmt.append(" FROM tas_item ti");
 			stmt.append(" WHERE ti.id=?");
-			ps = HibernateUtil.getSQLConnection().prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
+			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			ps.setInt(++i, header.getTasItem());

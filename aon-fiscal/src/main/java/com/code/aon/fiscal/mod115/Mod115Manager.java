@@ -1,11 +1,14 @@
 package com.code.aon.fiscal.mod115;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.hibernate.Session;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
@@ -56,18 +59,21 @@ public class Mod115Manager extends FiscalModelManager {
 	
 	@Override
 	public Mod115 initializeFiscalModelDetails(IFiscalDeclaration declaration) throws AonException {
-		Mod115 mod115 = (Mod115) declaration;
-		FiscalModel fiscalModel = mod115.getHeader();
-		mod115.initializeDetails();
-		Date dateFrom = getInitialDate(fiscalModel);	
-		Date dateTo = getDueDate(fiscalModel);
+		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
+		Connection conn = null;
+		Session session = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		List<String> lessorDocuments = new ArrayList<String>();
 		try {
-			String sessionName = HibernateUtil.getSessionFactoryName();
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(SELECT,
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			Mod115 mod115 = (Mod115) declaration;
+			FiscalModel fiscalModel = mod115.getHeader();
+			mod115.initializeDetails();
+			Date dateFrom = getInitialDate(fiscalModel);	
+			Date dateTo = getDueDate(fiscalModel);
+			List<String> lessorDocuments = new ArrayList<String>();
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection(); 
+			ps = conn.prepareStatement(SELECT,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			int filled = DomainManager.fillHostVariables(ps, 1);
 			i = i + filled;
@@ -102,6 +108,15 @@ public class Mod115Manager extends FiscalModelManager {
 					ps.close();
 				} catch (SQLException e) {
 				}
+			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
 			}
 		}
 	}

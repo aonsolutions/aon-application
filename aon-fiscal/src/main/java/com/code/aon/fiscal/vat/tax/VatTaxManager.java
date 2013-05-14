@@ -1,6 +1,7 @@
 package com.code.aon.fiscal.vat.tax;
 
 import java.io.StringWriter;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -24,6 +26,7 @@ import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
+import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDetail;
 import com.code.aon.fiscal.enumeration.Period;
@@ -62,7 +65,13 @@ public class VatTaxManager {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		TaxColumn column = TaxColumn.ACUMULADO; 
+		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
+		Connection conn = null;
+		Session session = null;
 		try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+
 			StringWriter stmt = new StringWriter();
 			String quotaStmt = "IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) )";
 			stmt.append("SELECT i.type,i.rectification_type,i.service,it.percentage,it.surcharge,it.vat_deduction_type,i.transaction,i.investment,");
@@ -85,9 +94,7 @@ public class VatTaxManager {
 				stmt.append(" AND i.status = 1 ");
 			}
 			stmt.append(" GROUP BY i.type,i.rectification_type,i.service,it.percentage,it.surcharge,it.vat_deduction_type,i.transaction,i.investment");
-			String sessionName = HibernateUtil.getSessionFactoryName();
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString(),
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(stmt.toString(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			ps.setDate(++i, new java.sql.Date( dateFrom.getTime() ));
 			ps.setDate(++i, new java.sql.Date( dateTo.getTime()));
@@ -151,6 +158,15 @@ public class VatTaxManager {
 					ps.close();
 				} catch (SQLException e) {
 				}
+			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 package com.code.aon.ui.warehouse.controller;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
+
+import org.hibernate.Session;
 
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
@@ -56,30 +59,34 @@ public class OrderProposalController implements ICollectionProvider{
 
 	@Override
 	public Collection<?> getCollection(boolean forceRefresh) throws ManagerBeanException {
-		String sessionName = HibernateUtil.getSessionFactoryName(ItemWarehouse.class.getName()); 
-        String stmt = 
-    		"SELECT "
-    		+"  p.code,p.name,c.id,c.name,w.name,iw.warehouse,iw.stock_min,iw.stock_max,IFNULL(s.quantity,0)"
-    		+" FROM item_warehouse iw"
-    		+" INNER JOIN item i ON iw.item = i.id"
-    		+" INNER JOIN product p ON i.product = p.id"
-    		+" LEFT OUTER JOIN pcategory c ON p.category = c.id"
-    		+" LEFT OUTER JOIN stock s ON iw.item = s.item AND iw.warehouse = s.warehouse"
-    		+" INNER JOIN warehouse w ON iw.warehouse = w.id"
-    		+" WHERE " + DomainManager.getSQLWhereClause("iw.domain")
-    		+" AND IFNULL(s.quantity,0) <= iw.stock_min";
-        if (getWarehouse() != null) {
-        	stmt += " AND iw.warehouse = " + getWarehouse().getId();
-        }
-        if (getCategory() != null) {
-        	stmt += " AND c.id = " + getCategory().getId();
-        }
-        stmt += " ORDER BY iw.warehouse,c.id";
+		String sessionName = HibernateUtil.getSessionFactoryName(ItemWarehouse.class.getName());
+		Connection conn = null;
+		Session session = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-		try {
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt,
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+
+        try {
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
+	        String stmt = 
+	    		"SELECT "
+	    		+"  p.code,p.name,c.id,c.name,w.name,iw.warehouse,iw.stock_min,iw.stock_max,IFNULL(s.quantity,0)"
+	    		+" FROM item_warehouse iw"
+	    		+" INNER JOIN item i ON iw.item = i.id"
+	    		+" INNER JOIN product p ON i.product = p.id"
+	    		+" LEFT OUTER JOIN pcategory c ON p.category = c.id"
+	    		+" LEFT OUTER JOIN stock s ON iw.item = s.item AND iw.warehouse = s.warehouse"
+	    		+" INNER JOIN warehouse w ON iw.warehouse = w.id"
+	    		+" WHERE " + DomainManager.getSQLWhereClause("iw.domain")
+	    		+" AND IFNULL(s.quantity,0) <= iw.stock_min";
+	        if (getWarehouse() != null) {
+	        	stmt += " AND iw.warehouse = " + getWarehouse().getId();
+	        }
+	        if (getCategory() != null) {
+	        	stmt += " AND c.id = " + getCategory().getId();
+	        }
+	        stmt += " ORDER BY iw.warehouse,c.id";
+			ps = conn.prepareStatement(stmt,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			rs = ps.executeQuery();
 			List<OrderProposal> list = new LinkedList<OrderProposal>(); 
 			while (rs.next()) {
@@ -110,6 +117,15 @@ public class OrderProposalController implements ICollectionProvider{
 					ps.close();
 				} catch (SQLException e) {
 				}
+			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
 			}
 		}
 	}

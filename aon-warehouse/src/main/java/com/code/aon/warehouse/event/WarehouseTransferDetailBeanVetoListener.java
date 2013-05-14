@@ -34,7 +34,7 @@ public class WarehouseTransferDetailBeanVetoListener extends ManagerBeanVetoList
 	}
 
 	private void updateStockable(Integer id) throws ManagerBeanException {
-		String select = "SELECT wtd.item item, wt.source_warehouse source, wt.target_warehouse target, stockable.quantity quantity " 
+		String select = "SELECT wtd.item item, wt.source_warehouse source, wt.target_warehouse target, wtd.quantity quantity " 
 						+ " FROM warehouse_transfer_detail as wtd " 
 						+ " INNER JOIN warehouse_transfer as wt ON wtd.warehouse_transfer = wt.id"
 						+ " WHERE wtd.id = " + id;

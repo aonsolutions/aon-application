@@ -20,6 +20,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
 
 import com.code.aon.commercial.Question;
 import com.code.aon.commercial.Target;
@@ -177,15 +178,18 @@ public class TargetController extends RegistryController implements ICommercialC
 	}
 
 	public void onDetailReport(ActionEvent event){
+		String sessionName = HibernateUtil.getSessionFactoryName(Target.class.getName());
+		Connection conn = null;
+		Session session = null;
+		PreparedStatement ps = null;
 		try {
-			Class<?> pojoClass = (Class<?>) Class.forName( getPojo() );
-			String sessionName = HibernateUtil.getSessionFactoryName(pojoClass.getName());
-			String mappingPrefix = pojoClass.getSimpleName();
-			Table table = pojoClass.getAnnotation(Table.class);
-			String masterTable = table.name();
+			session = HibernateUtil.getSession(sessionName);
+			conn = session.connection();
 			
+			String mappingPrefix = Target.class.getSimpleName();
+			Table table = Target.class.getAnnotation(Table.class);
+			String masterTable = table.name();
 			FacesContext faces = FacesContext.getCurrentInstance();
-			Connection c = HibernateUtil.getSQLConnection(sessionName);
 			String REGISTRY_BUNDLE = "registryBundle";
 			String COMMERCIAL_BUNDLE = "commercialBundle";
 			String select = "SELECT" 
@@ -273,7 +277,7 @@ public class TargetController extends RegistryController implements ICommercialC
 			tableMapping.put(mappingPrefix + ".profiles.question", "q");
 			
 			Map<String,Class<?>> pojoMapping = new HashMap<String, Class<?>>();
-			pojoMapping.put(mappingPrefix, pojoClass);
+			pojoMapping.put(mappingPrefix, Target.class);
 			pojoMapping.put(mappingPrefix + ".scope", Scope.class);
 			pojoMapping.put(mappingPrefix + ".registry", Registry.class);
 			pojoMapping.put(mappingPrefix + ".registry.medias", RegistryMedia.class);
@@ -306,7 +310,7 @@ public class TargetController extends RegistryController implements ICommercialC
 			System.out.println( select );
 			System.out.println( " ----------------------" );
 			
-			PreparedStatement ps = c.prepareStatement(select);
+			ps = conn.prepareStatement(select);
 			ReportExporter rm = new ReportExporter();
 			
 			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
@@ -333,10 +337,22 @@ public class TargetController extends RegistryController implements ICommercialC
 			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
-		} catch (ClassNotFoundException e) {
-			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
+		} finally {
+			if ( ps != null ) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (HibernateUtil.mustCloseSession()) {
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+					}
+				}
+				HibernateUtil.closeSession(sessionName);
+			}
 		}
 	}
 	
