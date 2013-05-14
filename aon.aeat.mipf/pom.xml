@@ -76,11 +76,22 @@
 						<mapping>
 							<directory>/usr/share/java/aon.mipf</directory>
 							<filemode>755</filemode>
-							<username>root</username>
-							<groupname>root</groupname>
+							<username>tomcat</username>
+							<groupname>tomcat</groupname>
 							<sources>
 								<source>
-									<location>src/main/resources</location>
+									<location>src/main/resources/tool</location>
+								</source>
+							</sources>
+						</mapping>
+						<mapping>
+							<directory>/var/log/aon.mipf</directory>
+							<filemode>755</filemode>
+							<username>tomcat</username>
+							<groupname>tomcat</groupname>
+							<sources>
+								<source>
+									<location>src/main/resources/logFile</location>
 								</source>
 							</sources>
 						</mapping>
