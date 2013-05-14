@@ -4,8 +4,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.accounting.AccountEntry;
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.IAccountingConstants;

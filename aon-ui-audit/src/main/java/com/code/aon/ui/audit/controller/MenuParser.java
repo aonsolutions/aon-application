@@ -418,7 +418,7 @@ public class MenuParser {
 	        	Map<String,String> viewIdMap = new HashMap<String, String>();
 		        for (URL url : urls) {
 		            try {
-		            	LOGGER.info("Faces config URL: {}", url);
+		            	LOGGER.debug("Faces config URL: {}", url);
 		        		Document document = getDocument(url);
 		        		if ( document != null ) {
 		        			parseFacesConfig( document, viewIdMap );
