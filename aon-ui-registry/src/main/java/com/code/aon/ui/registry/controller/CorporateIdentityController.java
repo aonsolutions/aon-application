@@ -88,7 +88,12 @@ public class CorporateIdentityController extends RegistryAttachController {
 			IManagerBean bean = BeanManager.getManagerBean(Scope.class);
 			Criteria criteria = new Criteria();
 			criteria.setSkipDomainFilter(true);
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SCOPE_DOMAIN), this.domain.getId());
+			List<Integer> list = new LinkedList<Integer>();
+			list.add(this.domain.getId());
+			if ( this.domain.isEnableHeredity() ) {
+				list.add(this.domain.getParent().getId());
+			}
+			criteria.addInExpression(bean.getFieldName(IEntityAlias.SCOPE_DOMAIN), list );
 			criteria.addOrder(bean.getFieldName(IEntityAlias.SCOPE_DESCRIPTION));
 			for (ITransferObject ito : bean.getList(criteria)) {
 				Scope scope = (Scope)ito;

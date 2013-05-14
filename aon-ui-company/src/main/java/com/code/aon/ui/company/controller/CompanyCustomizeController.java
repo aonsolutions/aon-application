@@ -44,6 +44,8 @@ public class CompanyCustomizeController extends RegistryAttachController {
 		setColor( AppParamUtil.getValue(AON_CUSTOMIZE_FONT_COLOR) );
 		setSupportPhone( AppParamUtil.getValue(AON_CUSTOMIZE_SUPPORT_PHONE) );
 		setSupportEmail( AppParamUtil.getValue(AON_CUSTOMIZE_SUPPORT_EMAIL) );
+		onEditSearch(event);
+		onSearch(event);
 	}
 
 	public void onSave( ActionEvent event ) {
