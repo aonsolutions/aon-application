@@ -390,19 +390,19 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_NUMBER));
 		getPurchaseTransferManager().setPurchaseList(purchaseBean.getList(criteria));
 
-		// se tienen en cuenta los pedidos cuyo address = null
-		criteria = new Criteria();
-		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SUPPLIER_ID), to.getSupplier().getId());
-		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_STATUS), PurchaseStatus.PENDING);
-		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SECURITY_LEVEL), to.getSecurityLevel());
-		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_WORK_PLACE_ID), to.getWorkPlace().getId());
+		// si el albaran no tiene address definido, se tienen tambien en cuenta los pedidos cuyo address = null
 		if (to.getRegistryAddress() != null && to.getRegistryAddress().getId() != null) {
+			criteria = new Criteria();
+			criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SUPPLIER_ID), to.getSupplier().getId());
+			criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_STATUS), PurchaseStatus.PENDING);
+			criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SECURITY_LEVEL), to.getSecurityLevel());
+			criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_WORK_PLACE_ID), to.getWorkPlace().getId());
 			criteria.addNullExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_REGISTRY_ADDRESS));
+			criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_ISSUE_DATE));
+			criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SERIES));
+			criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_NUMBER));
+			getPurchaseTransferManager().getPurchaseList().addAll(purchaseBean.getList(criteria));
 		}
-		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_ISSUE_DATE));
-		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SERIES));
-		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_NUMBER));
-		getPurchaseTransferManager().getPurchaseList().addAll(purchaseBean.getList(criteria));
 	}
 
 	public boolean isTransferedGreatherThanPending() {

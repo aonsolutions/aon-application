@@ -458,22 +458,22 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_NUMBER));
 		getSalesTransferManager().setSalesList(salesBean.getList(criteria));
 
-		// se tienen en cuenta los pedidos cuyo address = null
-		criteria = new Criteria();
-		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_CUSTOMER_ID), to.getCustomer().getId());
-		if (to.getProject() != null && to.getProject().getId() != null) {
-			criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_PROJECT_ID), to.getProject().getId());
-		}
+		// si el albaran no tiene address definido, se tienen tambien en cuenta los pedidos cuyo address = null
 		if (to.getRegistryAddress() != null && to.getRegistryAddress().getId() != null) {
+			criteria = new Criteria();
+			criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_CUSTOMER_ID), to.getCustomer().getId());
+			if (to.getProject() != null && to.getProject().getId() != null) {
+				criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_PROJECT_ID), to.getProject().getId());
+			}
 			criteria.addNullExpression(salesBean.getFieldName(IEntityAlias.SALES_SHIPPING_ADDRESS));
+			criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_STATUS), SalesStatus.PENDING);
+			criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_SECURITY_LEVEL), to.getSecurityLevel());
+			criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_WORK_PLACE_ID), to.getWorkPlace().getId());
+			criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_ISSUE_DATE));
+			criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_SERIES));
+			criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_NUMBER));
+			getSalesTransferManager().getSalesList().addAll(salesBean.getList(criteria));
 		}
-		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_STATUS), SalesStatus.PENDING);
-		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_SECURITY_LEVEL), to.getSecurityLevel());
-		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_WORK_PLACE_ID), to.getWorkPlace().getId());
-		criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_ISSUE_DATE));
-		criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_SERIES));
-		criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_NUMBER));
-		getSalesTransferManager().getSalesList().addAll(salesBean.getList(criteria));
 	}
 
 	public void onSalesTransfer(ActionEvent event) throws ManagerBeanException {
