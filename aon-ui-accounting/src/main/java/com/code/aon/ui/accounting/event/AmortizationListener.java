@@ -2,10 +2,14 @@ package com.code.aon.ui.accounting.event;
 
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.amortization.AmortizationController;
+import com.code.aon.ui.accounting.controller.amortization.AmortizationDetailController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class AmortizationListener extends ControllerAdapter {
 
@@ -17,9 +21,17 @@ public class AmortizationListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		AmortizationController ac = (AmortizationController) event.getController();
-		ac.onCalculate(null);
-		ac.resetInvoices();
+		
+		try {
+			AmortizationController ac = (AmortizationController) event.getController();
+			ac.calculate();
+			AmortizationDetailController ad = (AmortizationDetailController) AonUtil.getRegisteredBean(IAccountingConstants.AMORTIZATION_DETAIL_CONTROLLER);
+			ad.initModel();
+			ad.onSearch(null);
+			ac.resetInvoices();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(),e);
+		}
 	}
 	
 	@Override

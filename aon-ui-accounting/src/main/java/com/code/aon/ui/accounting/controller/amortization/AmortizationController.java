@@ -185,9 +185,7 @@ public class AmortizationController extends BasicController {
 	public void onCalculate(ActionEvent event) {
 		try {
 			accept(event);
-			Amortization a = (Amortization) getTo();
-			AmortizationManager am = new AmortizationManager();
-			am.generateDetails(a);
+			calculate();
 			AmortizationDetailController ad = (AmortizationDetailController) AonUtil.getRegisteredBean(IAccountingConstants.AMORTIZATION_DETAIL_CONTROLLER);
 			ad.initModel();
 			ad.onSearch(event);
@@ -199,6 +197,12 @@ public class AmortizationController extends BasicController {
 
 	}
 	
+	public void calculate() throws ManagerBeanException {
+		Amortization a = (Amortization) getTo();
+		AmortizationManager am = new AmortizationManager();
+		am.generateDetails(a);
+	}
+
 	public boolean isFixedAssetAccountSynchronizable() {
 		Amortization to = (Amortization) getTo();
 		return isAccountSynchronizable(to.getFixedAssetAccount(), IAccountingConstants.EMPTY);
