@@ -24,6 +24,12 @@
 			<scope>provided</scope>
 		</dependency>		
 		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security.bridge</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 		    <groupId>commons-dbutils</groupId>
 		    <artifactId>commons-dbutils</artifactId>
 		    <version>1.5</version>
