@@ -45,13 +45,15 @@
 			<artifactId>freemarker</artifactId>
 			<version>2.3.19</version>
 			<scope>compile</scope>
-		</dependency>		
+		</dependency>
+<!-- 		
 		<dependency>
 			<groupId>xbrl.saxon</groupId>
 			<artifactId>saxon</artifactId>
 			<version>8.2</version>
 			<scope>runtime</scope>
 		</dependency>
+ -->
 	</dependencies>
     <profiles>
       	<profile>
