@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
-import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
@@ -114,21 +114,21 @@ public class LoaderUtils {
 	
 	public Account getOutputVatAccount() throws ManagerBeanException {
 		if (outputVatAccount == null) {
-			outputVatAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.CHARGE_VAT_ACCOUNT);
+			outputVatAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.CHARGE_VAT_ACCOUNT);
 		}
 		return outputVatAccount;
 	}
 
 	public Account getInputVatAccount() throws ManagerBeanException {
 		if (inputVatAccount == null) {
-			inputVatAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.PAID_VAT_ACCOUNT);  
+			inputVatAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PAID_VAT_ACCOUNT);  
 		}
 		return inputVatAccount;
 	}
 	
 	public Account getRetentionAccount() throws ManagerBeanException {
 		if (retentionAccount == null) {
-			retentionAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.PAID_RETENTION_ACCOUNT);
+			retentionAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PAID_RETENTION_ACCOUNT);
 		}
 		return retentionAccount;
 	}
