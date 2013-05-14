@@ -25,7 +25,6 @@ import com.code.aon.fiscal.enumeration.Mod347Type;
 import com.code.aon.fiscal.enumeration.Mod349Status;
 import com.code.aon.fiscal.enumeration.Mod349Type;
 import com.code.aon.fiscal.enumeration.Period;
-import com.code.aon.fiscal.enumeration.RentingStatus;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
 import com.code.aon.fiscal.enumeration.VatType;
@@ -35,7 +34,6 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class FiscalCollectionsController {
 
-	private List<SelectItem> rentingStatuses;
 	private List<SelectItem> withholdingStatuses;
 	private List<SelectItem> vatTaxStatuses;
 	private List<SelectItem> vatTaxDeclarationStatuses;
@@ -50,19 +48,6 @@ public class FiscalCollectionsController {
 	private List<SelectItem> mod340Formats;
 	private List<SelectItem> fiscalBatchTypes;
 	private List<SelectItem> fiscalModelStatuses;
-
-	public List<SelectItem> getRentingStatuses() {
-		if (rentingStatuses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			rentingStatuses = new LinkedList<SelectItem>();
-			for (RentingStatus status:RentingStatus.values()) {
-				String name = status.getName(locale);
-				SelectItem item = new SelectItem(status, name);
-				rentingStatuses.add(item);
-			}
-		}
-		return rentingStatuses;
-	}
 
 	public List<SelectItem> getWithholdingStatuses() {
 		if (withholdingStatuses == null) {

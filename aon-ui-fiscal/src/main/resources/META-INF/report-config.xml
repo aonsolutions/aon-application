@@ -85,17 +85,6 @@
 		<template path="/com/code/aon/ui/fiscal/report/vatTax_declaraction.jasper"/>
 	</report>
 	
-	<!--  *********  Declaracion de IVA ********* -->
-	<report id="rentingReport" description="Declaracion de IRPF 115">
-		<template path="/com/code/aon/ui/fiscal/report/renting.jasper"/>
-		<bean key="com.code.aon.fiscal.Renting" />
-		<collection provider="#{renting}" forceRefresh="true"/>
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
-			<param id="company" value="#{company.obtainCompany}" />
-		</params>
-	</report>
-	
 	<!--  *********  Declaracion del modelo 111  ********* -->
 	<report id="mod111Report" description="Declaracion del modelo 111">
 		<template path="/com/code/aon/ui/fiscal/report/fiscalModel.jasper"/>

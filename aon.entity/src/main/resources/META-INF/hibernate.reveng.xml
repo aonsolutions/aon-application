@@ -25,7 +25,9 @@
 	<!--  ************** -->
 	<table-filter match-name="instructor" exclude="true" />
 	<table-filter match-name="enterprise_agreement" exclude="true" />
-	
+    <table-filter match-name="fs_renting" exclude="true" />
+	<table-filter match-name="fs_renting_detail" exclude="true" />
+		
 	<!--  *********************************** -->
 	<!--  TABLAS VALIDAS QUE NO LEVANTAN POJO -->
 	<!--  *********************************** -->
@@ -608,19 +610,6 @@
 		<column name="acu_amount" property="accumulatedAmount"/>
 		<column name="dec_amount" property="declaredAmount"/>
 		<column name="res_amount" property="resultAmount"/>
-	</table>
-
-	<table name="fs_renting" class="com.esferalia.aon.entity.master.Renting">
-		<column name="administration" type="com.code.aon.config.enumeration.Administration"/>		
-		<column name="status" type="com.code.aon.fiscal.enumeration.RentingStatus"/>		
-		<column name="period" type="com.code.aon.fiscal.enumeration.Period"/>		
-		<column name="comments" type="text"/>
-		<column name="year" type="java.lang.Integer"/>
-	</table>
-
-	<table name="fs_renting_detail" class="com.esferalia.aon.entity.master.RentingDetail">
-		<column name="type" type="com.code.aon.fiscal.enumeration.RentingDetailKind"/>
-		<column name="accrual_period" type="int"/>
 	</table>
 
 	<table name="fs_vat" class="com.esferalia.aon.entity.master.VatTax">

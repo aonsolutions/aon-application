@@ -7,13 +7,6 @@
 <bean-config>
 
 	<bean description="">
-		<pojo>com.code.aon.fiscal.Renting</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.fiscal.event.RentingBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
-	<bean description="">
 		<pojo>com.code.aon.fiscal.FiscalModel</pojo>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.fiscal.event.FiscalModelBeanVetoListener</vetoListener>

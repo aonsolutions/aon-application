@@ -198,8 +198,6 @@
 		<mapping class="com.code.aon.fiscal.Mod347Detail"/>
 		<mapping class="com.code.aon.fiscal.Mod349"/>
 		<mapping class="com.code.aon.fiscal.Mod349Detail"/>
-		<mapping class="com.code.aon.fiscal.Renting"/>
-		<mapping class="com.code.aon.fiscal.RentingDetail"/>
 		<mapping class="com.code.aon.fiscal.VatTax"/>
 		<mapping class="com.code.aon.fiscal.VatTaxDeclaration"/>
 		<mapping class="com.code.aon.fiscal.VatTaxDetail"/>
