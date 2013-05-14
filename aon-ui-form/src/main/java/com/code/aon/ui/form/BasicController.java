@@ -32,6 +32,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.hibernate.TypeResolver;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.domain.IDomain;
 import com.code.aon.common.enumeration.IConfidentialable;
@@ -71,7 +72,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	private ITransferObject to;
 
 	/** Represent the model of data that we are going to interact with */
-	protected DataModel model;
+	protected transient DataModel model;
 
 	private boolean isNew;
 
@@ -450,7 +451,15 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * transactions.
 	 */
 	protected void accept() {
+		String sessionName = HibernateUtil.getSessionFactoryName(getPojo());
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		try {
+			HibernateUtil.setCloseSession( false );
+			HibernateUtil.setBeginTransaction( false  );
+			HibernateUtil.startSession(sessionName);
+			HibernateUtil.beginTransaction(sessionName);
+		
 			ControllerEvent evt = new ControllerEvent(this);
 			if (isNew) {
 				controllerListenerSupport.fireBeforeBeanAdded(evt);
@@ -462,14 +471,21 @@ public class BasicController extends AbstractPojoController implements IControll
 				this.to = update();
 				controllerListenerSupport.fireAfterBeanUpdated(evt);
 			}
-		} catch (ControllerListenerException e) {
+			HibernateUtil.commitTransaction(sessionName);
+		} catch (Throwable e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException e1) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg, e);
+			}
 			LOGGER.error(">>>> onAccept ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onAccept ",e);
-			addMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession( mustCloseSession );
+			HibernateUtil.setBeginTransaction( mustBeginTransaction );
 		}
 	}
 
@@ -503,24 +519,38 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @param event
 	 */
 	public void remove(ActionEvent event) {
+		String sessionName = HibernateUtil.getSessionFactoryName(getPojo());
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		try {
+			HibernateUtil.setCloseSession( false );
+			HibernateUtil.setBeginTransaction( false  );
+			HibernateUtil.startSession(sessionName);
+			HibernateUtil.beginTransaction(sessionName);
+		
 			ControllerEvent evt = new ControllerEvent(this);
 			controllerListenerSupport.fireBeforeBeanRemoved(evt);
 			remove();
 			initializeModel();
 			controllerListenerSupport.fireAfterBeanRemoved(evt);
-		} catch (ControllerListenerException e) {
+			
+			HibernateUtil.commitTransaction(sessionName);
+		} catch (Throwable e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException e1) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg, e);
+			}
 			LOGGER.error(">>>> onRemove exception ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onRemove exception ",e);
-			addMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession( mustCloseSession );
+			HibernateUtil.setBeginTransaction( mustBeginTransaction );
 		}
 	}
-	
-	
 
 	@Override
 	public void onBack(ActionEvent event) {
