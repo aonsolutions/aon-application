@@ -19,11 +19,11 @@ public class WarehouseTransferDetailBeanListener extends ManagerBeanListenerAdap
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
 		WarehouseTransferDetail wtd = (WarehouseTransferDetail) evt.getTo();
 		Warehouse source = wtd.getWarehouseTransfer().getSourceWarehouse();
-		if (source != null) {
+		if (source != null && source.getId() != null) {
 			updateStock(wtd, source,false);	
 		}
 		Warehouse target = wtd.getWarehouseTransfer().getTargetWarehouse();
-		if (target  != null) {
+		if (target  != null && target.getId() != null) {
 			updateStock(wtd, target,true);	
 		}
 		
@@ -33,11 +33,11 @@ public class WarehouseTransferDetailBeanListener extends ManagerBeanListenerAdap
 	public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
 		WarehouseTransferDetail wtd = (WarehouseTransferDetail) evt.getTo();
 		Warehouse source = wtd.getWarehouseTransfer().getSourceWarehouse();
-		if (source != null) {
+		if (source != null && source.getId() != null) {
 			updateStock(wtd, source,false);	
 		}
 		Warehouse target = wtd.getWarehouseTransfer().getTargetWarehouse();
-		if (target  != null) {
+		if (target  != null && target.getId() != null) {
 			updateStock(wtd, target,true);	
 		}
 	}
