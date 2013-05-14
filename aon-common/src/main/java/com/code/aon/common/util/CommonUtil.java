@@ -2,7 +2,6 @@ package com.code.aon.common.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -369,32 +368,6 @@ public class CommonUtil {
 		month = (month * 6) + 5; 
 		Date tmp = getDate(getYear(date), month, getDay(date));
 		return getMonthLastDay(tmp);
-	}
-	
-	public static void main(String[] args) {
-		Date date = getDate(2012, 7, 23);
-		
-		SimpleDateFormat formatter= new SimpleDateFormat("dd/MM/yyyy");
-		System.out.println( "Fecha ..: " + formatter.format(date));
-		System.out.println( "Primer dia del año ..: " + formatter.format(getYearFirstDay(date)));
-		System.out.println( "Último dia del año ..: " + formatter.format(getYearLastDay(date)));
-		System.out.println();
-		System.out.println( "Primer dia del semestre ..: " + formatter.format(getHalfYearFirstDay(date)));
-		System.out.println( "Último dia del semestre ..: " + formatter.format(getHalfYearLastDay(date)));
-		System.out.println();
-		System.out.println( "Primer dia del cuatrimestre ..: " + formatter.format(getFourMonthFirstDay(date)));
-		System.out.println( "Último dia del cuatrimestre ..: " + formatter.format(getFourMonthLastDay(date)));
-		System.out.println();
-		System.out.println( "Primer dia del trimestre ..: " + formatter.format(getQuarterFirstDay(date)));
-		System.out.println( "Último dia del trimestre ..: " + formatter.format(getQuarterLastDay(date)));
-		System.out.println();
-		System.out.println( "Primer dia del bimestre ..: " + formatter.format(getBiMonthFirstDay(date)));
-		System.out.println( "Último dia del bimestre ..: " + formatter.format(getBiMonthLastDay(date)));
-		System.out.println();
-		System.out.println( "Primer dia del mes ..: " + formatter.format(getMonthFirstDay(date)));
-		System.out.println( "Último dia del mes ..: " + formatter.format(getMonthLastDay(date)));
-
-		getYearLastDay(date);
 	}
 
 }

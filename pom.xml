@@ -21,16 +21,11 @@
 	</properties>
 
 	<modules>
-		<!-- PARENT MODULES -->
-		<module>aon-web-parent</module>
 
 		<!-- MAVEN PLUGINS -->
 		<module>aon-alias-maven-plugin</module>
 		<module>aon-maven-plugin</module>
 		<module>aon.mock.entity.maven.plugin</module>
-		<!--
-		<module>aon.test.entity.maven.plugin</module>
-		-->
 
 		<!-- DB MODULES -->
 		<module>aon-master</module>
@@ -48,12 +43,9 @@
 		<module>aon-ui-audit</module>
 		<module>aon-jaas</module>
 		<module>aon-common</module>
-		<module>aon-common-ldap</module>
 		<module>aon-report</module>
-		<module>aon-ldap</module>
 		<module>aon-ql</module>
 		<module>aon-rich-components</module>
-		<module>aon-security-bridge</module>
 		<module>aon-ui-common</module>
 		<module>aon-ui-form</module>
 		<module>aon-ui-report</module>
@@ -61,8 +53,6 @@
 		<module>aon-webmail</module>
 		<module>aon-ui-webmail</module>
 		<module>aon-jsf-bridge</module>
-		<module>aon-manager</module>
-		<module>aon-ui-manager</module>
 		<module>aon-admin</module>
 		<module>aon-ui-admin</module>
 
@@ -99,7 +89,6 @@
 		<module>aon-marketing</module>
 		<module>aon-purchase-bridge</module>
 		<module>aon-tas</module>
-		<module>aon.test.entity</module>
 		<module>aon-pms</module>
 		<module>aon-academy</module>    
 
@@ -137,7 +126,6 @@
 		<module>aon-ui-purchase</module>
 		<module>aon-ui-warehouse</module>
 		<module>aon-ui-tas</module>
-		<module>aon-ui-document</module>
 		<module>aon-ui-pms</module>
 
 		<!-- GWT MODULES -->
