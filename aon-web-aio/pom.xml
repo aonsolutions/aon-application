@@ -105,7 +105,7 @@
 	</build>
 	<dependencies>
 	
-		<!--  EXTERNAL LIBRARIES -->
+		<!--  EXTERNAL LIBRARIES  -->
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
