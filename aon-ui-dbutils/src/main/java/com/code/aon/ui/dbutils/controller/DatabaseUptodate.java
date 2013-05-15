@@ -1,6 +1,5 @@
 package com.code.aon.ui.dbutils.controller;
 
-import static com.code.aon.ui.dbutils.controller.IDbutilsConstants.BUNDLE_NAME;
 import static com.code.aon.ui.dbutils.controller.IDbutilsConstants.BUNDLE_RESOURCE;
 import static com.code.aon.ui.dbutils.controller.IDbutilsConstants.DOMAIN_NOT_EXIST;
 
@@ -38,26 +37,29 @@ public class DatabaseUptodate {
 	public DatabaseUptodate() {
 		versionManager = new VersionManager();		
 	}
-	
-	public String getCurrentVersion() throws AonException {
-		if (currentVersion == null) {
-			Connection connection = null;
-			try {
-				connection = ConnectionProvider.getConnection(properties);
-				setCurrentVersion( versionManager.getDatabaseVersion(connection) );
-			} catch (AonSQLException e) {
-				AonUtil.addErrorMessage("Imposible conseguir el número de versión");
-				throw new AonException(e.getMessage(),e);
-			} finally {
-				if (connection != null) {
-					try {
-						connection.close();
-					} catch (SQLException e) {
-					}
-				}				
-			}
-		}
+
+	public String getCurrentVersion() {
+		ensureInit();
 		return currentVersion;
+	}
+	
+	private String updateCurrentVersion() throws AonException {
+		Connection connection = null;
+		try {
+			connection = ConnectionProvider.getConnection(properties);
+			setCurrentVersion( versionManager.getDatabaseVersion(connection) );
+		} catch (AonSQLException e) {
+			AonUtil.addErrorMessage("Imposible conseguir el número de versión");
+			throw new AonException(e.getMessage(),e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}				
+		}
+		return this.currentVersion;
 	}
 	
 	public void setCurrentVersion(String currentVersion) {
@@ -93,10 +95,14 @@ public class DatabaseUptodate {
 		}
 	}
 	
-	public boolean isUptodate() {
+	private void ensureInit() {
 		if (! this.init ) {
 			init(DataSourceUtil.getDBProperties(), AonUtil.getServerName(), AonUtil.getCurrentLocale());
-		}
+		}		
+	}
+	
+	public boolean isUptodate() {
+		ensureInit();
 		return updatable;
 	}
 
@@ -112,7 +118,8 @@ public class DatabaseUptodate {
 		try {
 			this.properties = dbProperties;
 			if ( this.properties != null ) {
-				setUpdatable(versionManager.getAvailableUpdateScripts(getCurrentVersion()) != null);
+				String version = updateCurrentVersion();
+				setUpdatable(versionManager.getAvailableUpdateScripts(version) != null);
 				connectionAvailable = true;				
 			} else {
 				ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_RESOURCE, locale);

@@ -25,7 +25,7 @@ ResourceBundle securityBundle = ResourceBundle.getBundle("com.code.aon.bridge.i1
 ResourceBundle companyBundle = ResourceBundle.getBundle("com.code.aon.ui.company.i18n.messages", request.getLocale());
 %>	
 <head>
-	<title>AON-AIO</title>
+	<title><%=customize.getApplicationTitle()%></title>
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8"/>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="Expires" content="0" />
