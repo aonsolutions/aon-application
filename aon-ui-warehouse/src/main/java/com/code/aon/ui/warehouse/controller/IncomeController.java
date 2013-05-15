@@ -433,9 +433,6 @@ public class IncomeController extends BasicController implements IWarehouseConst
 			}
 		}
 		refresh(null);
-		if(((Income) this.getTo()).getProject()==null){
-			((Income) this.getTo()).setProject((Project) BeanManager.getManagerBean(Project.class).createNewTo());
-		}
 		IController detailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
 		detailController.onSearch(null);
 		setShowPurchaseTransferWindow(false);
