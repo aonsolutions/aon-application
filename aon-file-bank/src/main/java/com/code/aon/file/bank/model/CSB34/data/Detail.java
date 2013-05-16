@@ -47,12 +47,12 @@ public abstract class Detail {
 		this.concept = concept;
 	}
 	public String getConceptPart1() {
-		if (concept.length() > 36)
+		if (concept != null && concept.length() > 36)
 			return concept.substring(0, 36);
 		return concept;
 	}
 	public String getConceptPart2() {
-		if (concept.length() > 36) {
+		if (concept != null && concept.length() > 36) {
 			if (concept.length() > 72)
 				return concept.substring(36, 72);
 			return concept.substring(36);

@@ -85,10 +85,12 @@ public class AEB34Writer implements IFinanceConstants {
 		receiver.setCode(finance.getRegistryDocument());
 		receiver.setName(finance.getRegistryName());
 		IAddress iAddress = obtainInvoiceAddress(finance.getInvoice(), finance.getRegistry());
-		receiver.setAddress(iAddress.getFullAddress());
-		receiver.setZip(iAddress.getZip());
-		receiver.setCity(iAddress.getCity());
-		receiver.setProvince(iAddress.getGeozone().getName());
+		if (iAddress != null) {
+			receiver.setAddress(iAddress.getFullAddress());
+			receiver.setZip(iAddress.getZip());
+			receiver.setCity(iAddress.getCity());
+			receiver.setProvince(iAddress.getGeozone().getName());
+		}
 
 		Account account = new Account();
 		account.parse(finance.getBankAccount().getValue());

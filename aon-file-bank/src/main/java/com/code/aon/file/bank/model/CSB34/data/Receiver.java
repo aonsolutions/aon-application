@@ -30,12 +30,12 @@ public class Receiver{
 		this.address = address;
 	}
 	public String getAddressPart1() {
-		if (address.length() > 36)
+		if (address != null && address.length() > 36)
 			return address.substring(0, 36);
 		return address;
 	}
 	public String getAddressPart2() {
-		if (address.length() > 36) {
+		if (address != null && address.length() > 36) {
 			if (address.length() > 72)
 				return address.substring(36, 72);
 			return address.substring(36);

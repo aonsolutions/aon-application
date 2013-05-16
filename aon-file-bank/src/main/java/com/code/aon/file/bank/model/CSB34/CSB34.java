@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.file.bank.model.CSB34.checks.CheckDetail;
 import com.code.aon.file.bank.model.CSB34.checks.CheckMaster;
 import com.code.aon.file.bank.model.CSB34.data.Detail;
@@ -130,19 +132,27 @@ public class CSB34 extends AbstractFileFiller{
 					}
 					if (createLine("Beneficiario_2", properties) != null)			
 						++numreg;
-					if (createLine("Beneficiario_3", properties) != null)			
-						++numreg;
-					if (detail.getReceiver().getAddressPart2() != null) {
+					if (StringUtils.isNotEmpty(detail.getReceiver().getAddressPart1())) {
+						if (createLine("Beneficiario_3", properties) != null)			
+							++numreg;
+					}
+					if (StringUtils.isNotEmpty(detail.getReceiver().getAddressPart2())) {
 						if (createLine("Beneficiario_4", properties) != null)			
 							++numreg;
 					}
-					if (createLine("Beneficiario_5", properties) != null)
-						++numreg;
-					if (createLine("Beneficiario_6", properties) != null)			
-						++numreg;
-					if (createLine("Beneficiario_7", properties) != null)			
-						++numreg;
-					if (detail.getConceptPart2() != null) {
+					if (StringUtils.isNotEmpty(detail.getReceiver().getZipAndCity())) {
+						if (createLine("Beneficiario_5", properties) != null)
+							++numreg;
+					}
+					if (StringUtils.isNotEmpty(detail.getReceiver().getProvince())) {
+						if (createLine("Beneficiario_6", properties) != null)			
+							++numreg;
+					}
+					if (StringUtils.isNotEmpty(detail.getConceptPart1())) {
+						if (createLine("Beneficiario_7", properties) != null)			
+							++numreg;
+					}
+					if (StringUtils.isNotEmpty(detail.getConceptPart2())) {
 						if (createLine("Beneficiario_8", properties) != null)			
 							++numreg;
 					}
