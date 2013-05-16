@@ -889,7 +889,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	@Override
 	public void onCalculateFailure(Throwable throwable) {
 		// TODO Auto-generated method stub
-
+		Window.alert(throwable.getMessage());
 	}
 
 	private void setDbVisible(boolean visible) {

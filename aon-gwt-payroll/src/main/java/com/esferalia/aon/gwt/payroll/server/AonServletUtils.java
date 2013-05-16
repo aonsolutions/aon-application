@@ -97,26 +97,26 @@ public class AonServletUtils {
 		}
 	}
 
-	protected static Connection getConnection() {
+	public static Connection getConnection() {
 		String sessionName = HibernateUtil.getSessionFactoryName();
 		Connection connection = HibernateUtil.getSession(sessionName).connection();
 		//Connection connection = HibernateUtil.getSQLConnection(sessionName);
 		return connection;
 	}
 
-	protected static void rollback(Connection conn) {
+	public static void rollback(Connection conn) {
 		try {
 			conn.rollback();
 		} catch (SQLException e) {
 		}
 	}
 
-	protected static void commit(Connection conn) throws SQLException {
+	public static void commit(Connection conn) throws SQLException {
 		conn.commit();
 	}
 
 
-	protected static void execute(Connection connection, String... sqls)
+	public static void execute(Connection connection, String... sqls)
 			throws SQLException {
 		Statement stmt = null;
 		try {
@@ -130,27 +130,27 @@ public class AonServletUtils {
 		}
 	}
 
-	protected static void disableAutoCommit(Connection conn) throws SQLException {
+	public static void disableAutoCommit(Connection conn) throws SQLException {
 		conn.setAutoCommit(false);
 	}
 
-	protected static void enableAutoCommit(Connection conn) {
+	public static void enableAutoCommit(Connection conn) {
 		try {
 			conn.setAutoCommit(true);
 		} catch (SQLException e) {
 		}
 	}
 
-	protected static String getExtn(String path) {
+	public static String getExtn(String path) {
 		return path.substring(path.lastIndexOf('.') + 1);
 	}
 
-	protected static String getWithoutExtn(String path) {
+	public static String getWithoutExtn(String path) {
 		String fileName = path.substring(path.lastIndexOf('/') + 1);
 		return fileName.substring(0, fileName.lastIndexOf('.'));
 	}
 
-	protected static Integer getEnterpriseID() {
+	public static Integer getEnterpriseID() {
 		EnterpriseController controller = (EnterpriseController) AonUtil
 				.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
 		controller.initialAction();
@@ -158,7 +158,7 @@ public class AonServletUtils {
 		return enterprise.getId();
 	}
 
-	protected static void initFacesContext(ServletContext context,
+	public static void initFacesContext(ServletContext context,
 			HttpServletRequest request, HttpServletResponse response) {
 
 		try {
@@ -189,7 +189,7 @@ public class AonServletUtils {
 		}
 	}
 
-	protected static void releaseFacesContext() {
+	public static void releaseFacesContext() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		if (facesContext != null) {
 			facesContext.release();

@@ -123,7 +123,7 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	@Override
 	public void onEnterpriseSelected(Enterprise enterprise) {
 		detailPanel.setWidget(jsf);
-		jsf.enterpriseSelected();
+		jsf.enterpriseSelected(enterprise.getId());
 	}
 
 	@Override
@@ -194,5 +194,10 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 			AgreementDraftObject agreementDraftDocument) {
 		// TODO Auto-generated method stub
 
+	}
+	@Override
+	public void onEventsDraftSelected(EventsDraftObject eventsDraftObject) {
+		// TODO Auto-generated method stub
+		
 	}
 }

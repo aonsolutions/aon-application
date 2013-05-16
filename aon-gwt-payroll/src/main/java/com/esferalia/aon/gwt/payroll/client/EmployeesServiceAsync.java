@@ -2,17 +2,20 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
+import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -20,6 +23,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface EmployeesServiceAsync {
 	void getEnterprise(AsyncCallback<Enterprise> callback)
+			throws IllegalArgumentException;
+
+	void getEnterprises(AsyncCallback<Enterprise[]> callback)
 			throws IllegalArgumentException;
 
 	void getAvailablePayments(int employeeId,
@@ -58,10 +64,12 @@ public interface EmployeesServiceAsync {
 			AsyncCallback<AgreementDraft> callback)
 			throws IllegalArgumentException;
 
-	void eval(String expression, SalaryDraft salaryDraft, AsyncCallback<Double> callback)
-			throws IllegalArgumentException, EvalException;
+	void eval(String expression, SalaryDraft salaryDraft,
+			AsyncCallback<Double> callback) throws IllegalArgumentException,
+			EvalException;
 
-	void getContext(SalaryDraft salaryDraft, AsyncCallback<ContextDescriptor> callback)
+	void getContext(SalaryDraft salaryDraft,
+			AsyncCallback<ContextDescriptor> callback)
 			throws IllegalArgumentException;
 
 	void getSalaryDraftReceipt(SalaryDraft salaryDraft, String mime,
@@ -76,4 +84,15 @@ public interface EmployeesServiceAsync {
 	void getEmployees(int workplaceId, Date endDate, String pattern,
 			int offset, int limit, AsyncCallback<List<Employee>> callback)
 			throws IllegalArgumentException;
+
+	void saveEvents(Events events, Date startDate, Date endDate,
+			AsyncCallback<Void> callback) throws IllegalArgumentException;
+
+	void getEvents(Integer workplaceId, Date startDate, Date endDate,
+			int offset, int limit, String names[],
+			AsyncCallback<Events> callback) throws IllegalArgumentException;
+
+	void getAvailPeriod(Integer workplaceId, String name,
+			AsyncCallback<Period> callback) throws IllegalArgumentException;
+
 }

@@ -86,6 +86,6 @@ public class StringUtils {
 		StringBuffer buffer = new StringBuffer();
 		for ( int i= 0; i < times ; i++ )
 			buffer.append(str);
-		return str.toString();
+		return buffer.toString();
 	}		
 }

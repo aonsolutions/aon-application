@@ -11,12 +11,14 @@
 	<aon:div id="jsf" style="display:none;">
 
 		<aon:form style="display:none" >
+			<aon:inputText id="jsfEnterpriseText" value="#{employeeTree.enterpriseId}"/>
 			<aon:commandButton id="jsfEnterpriseButton"
 				reRender="xhtmlPanel" 
 				actionListener="#{employeeTree.onEnterpriseSelected}" />
 			<script type="text/javascript" >
             	<![CDATA[
-					enterpriseSelected = function(){
+					enterpriseSelected = function(id){
+						#{rich:element('jsfEnterpriseText')}.value = id;
 						#{rich:element('jsfEnterpriseButton')}.click();	
 					}
             	]]>

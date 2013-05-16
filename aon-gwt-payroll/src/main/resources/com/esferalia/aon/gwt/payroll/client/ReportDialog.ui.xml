@@ -1,0 +1,131 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'
+	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
+
+	<ui:Style>
+		.form {
+			padding: 10px;
+		}
+		
+		.label {
+			margin-top: 10x;
+			font-weight: bold;
+			padding: 1px 0.5em;
+			white-space: nowrap;
+			background-color: #F2F2F2;
+		}
+		
+		.labeltop {
+			margin-top: 10x;
+			font-weight: bold;
+			padding: 1px 0.5em;
+			vertical-align: top;
+			white-space: nowrap;
+			background-color: #F2F2F2;
+		}
+		
+		.field {
+			padding: 1px 0.5em;
+		}
+		
+		.buttons {
+			padding-top: 10px;
+			text-align: right;
+		}
+		
+		.info {
+			
+		}
+		
+		.warn {
+			
+		}
+		
+		.error {
+			
+		}
+		
+		.messages {
+			padding-left: 0.5em;
+			padding-bottom: 10px;
+		}
+		
+		.form textarea {
+			resize: none;
+		}
+	</ui:Style>
+	<g:HTMLPanel styleName="aon-width-all aon-height-all">
+
+		<div class="{style.messages}">
+		</div>
+
+		<table class="aon-width-all {style.form} ">
+			<tr>
+				<td colspan="2">&nbsp;
+				</td>
+			</tr>
+			<tr>
+				<td class="{style.label}">
+					<g:Label text="Desde" />
+				</td>
+				<td class="{style.field}">
+					<datepicker:DateBox ui:field="startDateBox"  />
+				</td>
+			</tr>
+			<tr>
+				<td class="{style.label}">
+					<g:Label text="Hasta" />
+				</td>
+				<td class="{style.field}">
+					<datepicker:DateBox ui:field="endDateBox" />
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" >&nbsp;
+				</td>
+			</tr>
+			<tr>
+				<td class="{style.label}" colspan="2">
+					<g:Label text="Selecciona : " ui:field="selectLabel" />
+				</td>
+			</tr>
+			<tr>
+				<td class="{style.field} aon-width-all" colspan="2">
+					<cell:DataGrid ui:field="selectDataGrid" />
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">&nbsp;
+				</td>
+			</tr>
+			<tr>
+				<td class="{style.label}">
+					<g:Label text="Separado por" />
+				</td>
+				<td class="{style.field}">
+					<g:TextBox ui:field="separatorTextBox" maxLength="5" />
+				</td>
+			</tr>
+			<tr>
+				<td class="{style.label}">
+					<g:Label text="Delimitadro de texto" />
+				</td>
+				<td class="{style.field}">
+					<g:TextBox ui:field="textDelimiterTextBox"  maxLength="5"/>
+				</td>
+			</tr>
+			<tr>
+				<td class="{style.field}" colspan="2">&nbsp;</td>
+			</tr>
+		</table>
+
+		<div class="{style.buttons} {style.form} ">
+			<g:Button ui:field="cancelButton">Cancelar</g:Button>
+			<g:Button ui:field="acceptButton">Aceptar</g:Button>
+		</div>
+
+	</g:HTMLPanel>
+
+</ui:UiBinder>

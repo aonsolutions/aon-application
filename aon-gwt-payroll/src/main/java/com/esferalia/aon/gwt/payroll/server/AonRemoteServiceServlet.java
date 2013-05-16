@@ -6,7 +6,9 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
@@ -14,12 +16,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.salary.ISalary;
 import com.google.gwt.user.server.Base64Utils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.user.server.rpc.SerializationPolicy;
@@ -40,6 +49,27 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		controller.initialAction();
 		Enterprise enterprise = (Enterprise) controller.getTo();
 		return enterprise.getId();
+	}
+
+	int [] getEnterpriseIDs() throws ManagerBeanException {
+		
+		IManagerBean beanManager = BeanManager
+				.getManagerBean(com.code.aon.company.Enterprise.class);
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				beanManager.getFieldName(IEntityAlias.ENTERPRISE_DOMAIN),
+				getDomainID() );
+
+		List<ITransferObject> tos = beanManager.getList(criteria);
+		
+		int ids [] = new int [tos.size()];
+		for (int i = 0 ; i < tos.size(); i++) {
+			ids[i] = ((Enterprise) tos.get(i)).getId();
+		}
+		
+		return ids;
+
 	}
 
 	Integer getDomainID() {

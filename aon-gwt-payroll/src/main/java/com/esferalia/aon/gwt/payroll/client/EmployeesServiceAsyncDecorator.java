@@ -6,16 +6,18 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.Date;
 import java.util.List;
 
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
+import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -60,12 +62,20 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 	}
 
 	@Override
-	public void getAvailablePayments(int employeeId, AsyncCallback<List<Payment>> callback)
+	public void getEnterprises(AsyncCallback<Enterprise[]> callback)
 			throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync
-				.getAvailablePayments(employeeId, new AsyncCallbackWrapper<List<Payment>>(
-						callback));
+				.getEnterprises(new AsyncCallbackWrapper<Enterprise[]>(callback));
+	}
+
+	@Override
+	public void getAvailablePayments(int employeeId,
+			AsyncCallback<List<Payment>> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getAvailablePayments(employeeId,
+				new AsyncCallbackWrapper<List<Payment>>(callback));
 	}
 
 	public void getWorkplaceCosts(int workplaceId,
@@ -127,14 +137,14 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 				offset, limit, new AsyncCallbackWrapper<List<Employee>>(
 						callback));
 	}
-	
+
 	@Override
 	public void saveSalaryDraft(SalaryDraft salaryDraft,
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.saveSalaryDraft(salaryDraft,
 				new AsyncCallbackWrapper<Void>(callback));
-		
+
 	}
 
 	@Override
@@ -145,23 +155,26 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.saveSalary(salaryDraft,
 				new AsyncCallbackWrapper<SalaryDraft>(callback));
 	}
-	
+
 	@Override
 	public void eval(String expression, SalaryDraft salaryDraft,
-			AsyncCallback<Double> callback) throws IllegalArgumentException, EvalException {
+			AsyncCallback<Double> callback) throws IllegalArgumentException,
+			EvalException {
 		AON.start();
 		employeesServiceAsync.eval(expression, salaryDraft,
 				new AsyncCallbackWrapper<Double>(callback));
-		
+
 	}
+
 	@Override
 	public void getContext(SalaryDraft salaryDraft,
-			AsyncCallback<ContextDescriptor> callback) throws IllegalArgumentException {
+			AsyncCallback<ContextDescriptor> callback)
+			throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getContext(salaryDraft,
 				new AsyncCallbackWrapper<ContextDescriptor>(callback));
 	}
-	
+
 	@Override
 	public void calculateSalaryDraft(SalaryDraft salaryDraft,
 			AsyncCallback<SalaryDraft> callback)
@@ -179,8 +192,7 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.calculateAgreementDraft(agreementDraft,
 				new AsyncCallbackWrapper<AgreementDraft>(callback));
 	}
-	
-	
+
 	@Override
 	public void getSalaryDraftReceiptHTML(SalaryDraft salaryPreview, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
@@ -195,5 +207,31 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		AON.start();
 		employeesServiceAsync.getSalaryDraftReceipt(salaryDraft, mime,
 				new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void saveEvents(Events events, Date startDate, Date endDate,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.saveEvents(events, startDate, endDate,
+				new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void getEvents(Integer workplaceId, Date startDate, Date endDate,
+			int offset, int limit, String names[],
+			AsyncCallback<Events> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getEvents(workplaceId, startDate, endDate,
+				offset, limit, names,
+				new AsyncCallbackWrapper<Events>(callback));
+	}
+
+	@Override
+	public void getAvailPeriod(Integer workplaceId, String name,
+			AsyncCallback<Period> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getAvailPeriod(workplaceId, name,
+				new AsyncCallbackWrapper<Period>(callback));
 	}
 }

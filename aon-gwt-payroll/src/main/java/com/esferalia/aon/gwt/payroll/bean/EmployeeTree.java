@@ -21,9 +21,19 @@ public class EmployeeTree {
 
 	private Selection selection;
 
+	private Integer enterpriseId;
 	private Integer workplaceId;
 	private Integer employeeId;
 	private Integer activityId;
+	
+	
+	public Integer getEnterpriseId() {
+		return enterpriseId;
+	}
+	
+	public void setEnterpriseId(Integer enterpriseId) {
+		this.enterpriseId = enterpriseId;
+	}
 
 	public Integer getActivityId() {
 		return activityId;
@@ -118,7 +128,12 @@ public class EmployeeTree {
 
 	}
 
-	public void onEnterpriseSelected(ActionEvent event) {
+	public void onEnterpriseSelected(ActionEvent event)
+			throws ManagerBeanException {
+		BasicController controller = (BasicController) AonUtil
+				.getRegisteredBean(IPayrollConstants.ENTERPRISE_CONTROLLER);
+		controller.load(event, enterpriseId);
+
 		this.selection = Selection.ENTERPRISE;
 	}
 

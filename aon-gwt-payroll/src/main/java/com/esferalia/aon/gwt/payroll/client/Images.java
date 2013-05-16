@@ -11,9 +11,19 @@ import com.google.gwt.user.client.ui.Tree;
  */
 public interface Images extends ClientBundle, Tree.Resources {
 
+	ImageResource aet();
+
 	ImageResource draft();
 
+	ImageResource calc();
+
 	ImageResource data();
+
+	ImageResource euro();
+
+	ImageResource person();
+
+	ImageResource family();
 
 	ImageResource calendar();
 

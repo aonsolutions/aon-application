@@ -2,18 +2,24 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
-import com.esferalia.aon.gwt.payroll.client.CalcDialog.AcceptEvent;
-import com.esferalia.aon.gwt.payroll.client.CalcDialog.AcceptHandler;
 import com.esferalia.aon.gwt.payroll.client.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
+import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.gwt.payroll.shared.gps.ReportConstants;
 import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -84,6 +90,19 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		@Source("protected.png")
 		ImageResource protecteD();
 
+	}
+
+	interface AonResources extends ClientBundle {
+		@NotStrict
+		@Source("aon.css")
+		CssResource css();
+
+		@Source("draft.png")
+		ImageResource draft();
+
+		@Source("salaries.png")
+		ImageResource salaries();
+
 		@Source("ine.png")
 		ImageResource ine();
 
@@ -149,8 +168,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 			SafeHtml safeValue = SafeHtmlUtils.fromString(value);
 
 			// Use the template to create the Cell's html.
-			SafeStyles styles = SafeStylesUtils.forWhiteSpace(WhiteSpace.NOWRAP);
-			
+			SafeStyles styles = SafeStylesUtils
+					.forWhiteSpace(WhiteSpace.NOWRAP);
+
 			SafeHtml rendered = templates.cell(styles, safeValue);
 			sb.append(rendered);
 		}
@@ -189,6 +209,24 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 			};
 
 			addColumn(descriptionColumn, "Centro");
+		}
+
+	}
+
+	static class WorkPlaceReportDialog extends ReportDialog<Workplace> {
+
+		public WorkPlaceReportDialog() {
+
+			// Full name.
+			Column<Workplace, String> descriptionColumn = new Column<Workplace, String>(
+					new MyTextCell()) {
+				@Override
+				public String getValue(Workplace workplace) {
+					return workplace.getDescription();
+				}
+			};
+
+			addColumn(descriptionColumn, "Hotel");
 		}
 
 	}
@@ -435,6 +473,126 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 
 	}
 
+	static abstract class GPSReportEnterpriseCommand implements
+			ScheduledCommand, AcceptHandler {
+
+		WorkPlaceReportDialog reportDialog;
+
+		public GPSReportEnterpriseCommand(String caption) {
+			reportDialog = new WorkPlaceReportDialog();
+			reportDialog.setCaption(caption);
+			reportDialog.addAcceptHandler(this);
+		}
+
+		@Override
+		public void execute() {
+			reportDialog.center();
+			reportDialog.show();
+
+		}
+
+		public void setEnterprise(Enterprise enterprise) {
+			reportDialog.setData(enterprise.getWorkplaces());
+		}
+
+		Date getStartDate() {
+			return reportDialog.getStartDate();
+		}
+
+		Date getEndDate() {
+			return reportDialog.getEndDate();
+		}
+
+		boolean isAllSelected() {
+			return reportDialog.isAllSelected();
+		}
+
+		Set<Workplace> getSelected() {
+			return reportDialog.getSelectedData();
+		}
+
+		void submit(String fileName, Map<String, String> params) {
+
+			StringBuffer query = new StringBuffer("?");
+			for (Entry<String, String> param : params.entrySet())
+				query.append(param.getKey() + "=" + param.getValue() + "&");
+
+			String url = URL.encode(GWT.getModuleBaseURL() + "gps/" + fileName
+					+ query);
+
+			Window.open(url, "_blank", null);
+		}
+
+	}
+
+	static class FTEReportEnterpriseCommand extends GPSReportEnterpriseCommand
+			implements ReportConstants {
+
+		public FTEReportEnterpriseCommand(String caption) {
+			super(caption);
+		}
+
+		// --------------------------------------
+		// AcceptHandler
+		// --------------------------------------
+		@Override
+		public void onAccept(WorkPlaceReportDialog.AcceptEvent event) {
+			DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd");
+			String fileName = "Informe FTE(" + format.format(getStartDate())
+					+ ".." + format.format(getStartDate()) + ").csv";
+
+			Map<String, String> params = new HashMap<String, String>();
+			DateTimeFormat paramFormat = DateTimeFormat
+					.getFormat(DATE_FORMAT_PATTERN);
+			params.put(START_DATE_PARAM, paramFormat.format(getStartDate()));
+			params.put(END_DATE_PARAM, paramFormat.format(getEndDate()));
+
+			for (Workplace workplace : getSelected()) {
+				params.put(WORKPLACE_PARAM, workplace.getId().toString());
+			}
+
+			params.put(REPORT_FTE_PARAM, Boolean.toString(true));
+
+			submit(fileName, params);
+		}
+
+	}
+
+	static class CTRLReportEnterpriseCommand extends GPSReportEnterpriseCommand
+			implements ReportConstants {
+
+		public CTRLReportEnterpriseCommand(String caption) {
+			super(caption);
+		}
+
+		// --------------------------------------
+		// AcceptHandler
+		// --------------------------------------
+		@Override
+		public void onAccept(WorkPlaceReportDialog.AcceptEvent event) {
+			DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd");
+			String fileName = "Informe Control Festivos, Libres y Vacaciones ("
+					+ format.format(getStartDate()) + ".."
+					+ format.format(getStartDate()) + ").csv";
+
+			DateTimeFormat paramFormat = DateTimeFormat
+					.getFormat(DATE_FORMAT_PATTERN);
+			Map<String, String> params = new HashMap<String, String>();
+			params.put(START_DATE_PARAM, paramFormat.format(getStartDate()));
+			params.put(END_DATE_PARAM, paramFormat.format(getEndDate()));
+
+			for (Workplace workplace : getSelected()) {
+				params.put(WORKPLACE_PARAM, workplace.getId().toString());
+			}
+
+			params.put(REPORT_CTRL_PARAM, Boolean.toString(true));
+
+			submit(fileName, params);
+
+		}
+
+	}
+
 	class WorkplaceContextMenu extends ContextMenu {
 
 		CalcWorkplaceCommand calcCmd;
@@ -471,6 +629,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 	class EnterpriseContextMenu extends ContextMenu {
 
 		CalcEnterpriseCommand calcCmd;
+		FTEReportEnterpriseCommand fteReportCmd;
+		CTRLReportEnterpriseCommand ctrlReportCmd;
 
 		public EnterpriseContextMenu() {
 
@@ -499,10 +659,21 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 					AON.AON_ICON_TASK_START, AON.AON_ICON_CMD_BUTTON);
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
 					AON.AON_ICON_CMD_BUTTON);
+			addSeparator();
+			addItem("Informe FTE",
+					fteReportCmd = new FTEReportEnterpriseCommand(
+							"Informe FTE..."), AON.AON_ICON_EXCEL,
+					AON.AON_ICON_CMD_BUTTON);
+			addItem("Informe Control Festivos, Libres y Vacaciones",
+					ctrlReportCmd = new CTRLReportEnterpriseCommand(
+							"Informe Control Festivos, Libres y Vacaciones..."),
+					AON.AON_ICON_EXCEL, AON.AON_ICON_CMD_BUTTON);
 		}
 
 		void setEnterprise(Enterprise enterprise) {
 			calcCmd.setEnterprise(enterprise);
+			fteReportCmd.setEnterprise(enterprise);
+			ctrlReportCmd.setEnterprise(enterprise);
 		}
 
 	}
@@ -571,6 +742,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		}
 	}
 
+	private static EmployeeTree singlenton;
+
 	interface Binder extends UiBinder<Widget, EmployeeTree> {
 	}
 
@@ -594,6 +767,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 	private Salary salary;
 	private SalaryDraft salaryDraft;
 	private SalaryPreview salaryPreview;
+	private EventsDraft eventsDraft;
 	private AgreementDraft agreementDraft;
 
 	private ResultsPanel resultsPanel;
@@ -612,6 +786,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 
 		// Inject rich styles.
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
+		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
@@ -631,6 +806,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		cost = new Cost();
 		salary = new Salary();
 		documents = new Documents();
+		eventsDraft = new EventsDraft();
 		salaryDraft = new SalaryDraft();
 		salaryPreview = new SalaryPreview();
 		agreementDraft = new AgreementDraft();
@@ -643,12 +819,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		enterpriseContextMenu = new EnterpriseContextMenu();
 		workplaceContextMenu = new WorkplaceContextMenu();
 
+		singlenton = this;
+
+		export2JS();
+
 	}
 
 	@Override
 	public void onEnterpriseSelected(Enterprise enterprise) {
 		employeeDetail.setWidget(jsf);
-		jsf.enterpriseSelected();
+		jsf.enterpriseSelected(enterprise.getId());
 	}
 
 	@Override
@@ -737,6 +917,17 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		agreementDraft.setAgreementDraftObject(agreementDraftObject);
 	}
 
+	@Override
+	public void onEventsDraftSelected(EventsDraftObject eventsDraftObject) {
+		employeeDetail.setWidget(eventsDraft);
+		eventsDraft.setEventsDraftObject(eventsDraftObject);
+
+	}
+
+	// ------------------------------------------
+	//
+	// ------------------------------------------
+
 	@UiHandler("footPanel")
 	void onFootMinimize(MinimizeEvent event) {
 		closeFootPanel();
@@ -767,4 +958,45 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		EmployeeTree.this.splitLayoutPanel.setWidgetSize(
 				EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
 	}
+
+	private static void showSalaryDraft(int employeeId, String startDateString,
+			String endDateString) {
+		EmployeeTree employeeTree = getEmployeeTree();
+		DateTimeFormat dateTimeFormat = DateTimeFormat
+				.getFormat(CalculateService.DATE_FORMAT_PATTERN);
+
+		com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft = new com.esferalia.aon.gwt.payroll.shared.SalaryDraft();
+		Employee employee = new Employee();
+		employee.setId(employeeId);
+		salaryDraft.setEmployee(employee);
+		Date startDate = dateTimeFormat.parse(startDateString);
+		salaryDraft.setStartDate(startDate);
+		Date endDate = dateTimeFormat.parse(endDateString);
+		salaryDraft.setEndDate(endDate);
+		salaryDraft.setIssueDate(endDate);
+
+		EmployeesServiceAsync employeesServiceAsync = employeeTree.employees
+				.getEmployeesService();
+		SalaryDraftObject draftObject = new SalaryDraftObject(salaryDraft,
+				employeesServiceAsync);
+
+		employeeTree.employeeDetail.setWidget(employeeTree.salaryDraft);
+		employeeTree.salaryDraft.setSalaryDraftObject(draftObject);
+	}
+
+	private static void showEmployee(int employeeId) {
+		EmployeeTree employeeTree = getEmployeeTree();
+		employeeTree.employeeDetail.setWidget(employeeTree.jsf);
+		employeeTree.jsf.employeeSelected(employeeId);
+	}
+
+	private static EmployeeTree getEmployeeTree() {
+		return singlenton;
+	}
+
+	private static native void export2JS() /*-{
+											$wnd.showEmployee = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::showEmployee(I));
+											$wnd.showSalaryDraft = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::showSalaryDraft(ILjava/lang/String;Ljava/lang/String;));
+											}-*/;
+
 }

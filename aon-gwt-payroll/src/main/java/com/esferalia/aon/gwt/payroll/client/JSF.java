@@ -30,8 +30,8 @@ class JSF extends HTML implements Handler{
 		getElement().getStyle().clearDisplay();
 	}
 	
-	public final native void enterpriseSelected() /*-{
-		$wnd.enterpriseSelected();
+	public final native void enterpriseSelected(Integer id) /*-{
+		$wnd.enterpriseSelected(id);
 	}-*/;
 
 	public final native void workplaceSelected(Integer id) /*-{

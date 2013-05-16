@@ -1,0 +1,35 @@
+.aon-iCon {
+    padding: 1px 0px 1px 18px;
+}
+
+.aon-link {
+	border: 0 none;
+    cursor: pointer;
+    text-align: left;
+}
+
+@sprite .aon-icon-ine {
+	gwt-image: "ine" ; 
+}
+
+@sprite .aon-icon-employee {
+	gwt-image: "employee" ; 
+}
+
+@sprite .aon-icon-workplace {
+	gwt-image: "workplace" ; 
+}
+
+@sprite .aon-icon-draft {
+	gwt-image: "draft" ; 
+}
+
+@sprite .aon-icon-salaries {
+	gwt-image: "salaries" ; 
+}
+
+.aon-dataTable .selected {
+    border: 1px solid #D3C061;
+    background: none repeat scroll 0 0 #FFFADC;
+}
+

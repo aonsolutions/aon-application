@@ -51,6 +51,8 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			"#,##0.000", ES_DECIMAL_FOMAT_SYMBOLS);
 	private static final DecimalFormat INTEGER_FORMAT = new DecimalFormat(
 			"#,###", ES_DECIMAL_FOMAT_SYMBOLS);
+	private static final DecimalFormat CURRENCY_FORMAT = new DecimalFormat(
+			"#,##0.00", ES_DECIMAL_FOMAT_SYMBOLS);
 
 	private static class SalaryBuilderListener implements
 			ISalaryBuilderListener, IListener {
@@ -69,7 +71,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 		private void printMsg(String html, String styles) {
 			if (html != null)
-				out.printf("<div class='%s aon-icon2 aon-bold %s'>%s</div>",
+				out.printf("<div class='%s aon-iCon aon-bold %s'>%s</div>",
 						styles, getRowStyle(), html);
 		}
 
@@ -98,7 +100,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 		@Override
 		public void onDebug(String msg) {
-			out.printf("<div class='aon-icon2 %s' >%s</div>", getRowStyle(),
+			out.printf("<div class='aon-iCon %s' >%s</div>", getRowStyle(),
 					msg);
 		}
 
@@ -276,8 +278,13 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 				try {
 					ISalary salary = calculator
 							.calculate(sqlContractSalaryCalculatorContext);
-					listener.onDebug("Calculada n&oacute;mina de <span class='aon-input-required' >"
-							+ salary.getEmployeeName() + "</span>. ");
+					int employeeId = sqlContractSalaryCalculatorContext.getId();
+					listener.onDebug(String
+							.format("Calculada n&oacute;mina de <a class='aon-icon-employee aon-iCon aon-link aon-input-required' onclick='showEmployee(%d)' >&nbsp;%s</a>."
+									+ " L&iacute;quido total a percibir <a class='aon-icon-draft aon-iCon aon-link aon-input-required' onclick='showSalaryDraft(%d,\"%s\",\"%s\")' >&nbsp;%s</a>",
+									employeeId, salary.getEmployeeName(), 
+									employeeId, DATE_FORMAT.format(startDate), DATE_FORMAT.format(endDate), CURRENCY_FORMAT.format(salary.getTotalLiquid())));
+
 					salaries++;
 				} catch (Exception e) {
 					listener.onError(e.getMessage());

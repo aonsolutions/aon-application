@@ -7,6 +7,7 @@ import java.util.List;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
+import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
@@ -263,6 +264,7 @@ public class SalaryDraftObject implements IContextProvider{
 	// -------------------------------------------
 	// SalaryDraft Delegated
 	// -------------------------------------------
+	
 
 	public Type getType() {
 		return salaryDraft.getType();
@@ -274,6 +276,10 @@ public class SalaryDraftObject implements IContextProvider{
 
 	public Date getEndDate() {
 		return salaryDraft.getEndDate();
+	}
+
+	public Employee getEmployee(){
+		return salaryDraft.getEmployee();
 	}
 
 	public List<Payment> getPayments() {

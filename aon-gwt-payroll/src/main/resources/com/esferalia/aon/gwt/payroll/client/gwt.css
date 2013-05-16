@@ -462,15 +462,3 @@ td.datePickerMonth,
 }
 
 
-@sprite .aon-icon-ine {
-	gwt-image: "ine" ; 
-}
-
-@sprite .aon-icon-employee {
-	gwt-image: "employee" ; 
-}
-
-@sprite .aon-icon-workplace {
-	gwt-image: "workplace" ; 
-}
-

@@ -4,8 +4,11 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EnumEventMetaData;
+import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EventMetaData;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -15,7 +18,6 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -48,8 +50,8 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Employees extends ResizeComposite implements
-		AsyncCallback<Enterprise>, OpenHandler<TreeItem>,
-		SelectionHandler<TreeItem>, ScrollHandler, ContextMenuHandler {
+		OpenHandler<TreeItem>, SelectionHandler<TreeItem>, ScrollHandler,
+		ContextMenuHandler {
 
 	interface Listener {
 		void onEmployeeSelected(Employee employee);
@@ -70,13 +72,16 @@ public class Employees extends ResizeComposite implements
 
 		void onSalaryPreviewSelected(SalaryPreviewDocument salaryPreviewDocument);
 
+		void onEventsDraftSelected(EventsDraftObject eventsDraftObject);
+
 		void onAgreementDraftSelected(AgreementDraftObject agreementDraftObject);
-		
+
 		void onEmployeeContextMenu(Employee employee, ContextMenuEvent event);
 
 		void onWorkplaceContextMenu(Workplace workplace, ContextMenuEvent event);
-		
-		void onEnterpriseContextMenu(Enterprise enterprise, ContextMenuEvent event);
+
+		void onEnterpriseContextMenu(Enterprise enterprise,
+				ContextMenuEvent event);
 	}
 
 	interface Binder extends UiBinder<Widget, Employees> {
@@ -116,6 +121,7 @@ public class Employees extends ResizeComposite implements
 	 * The last scroll position.
 	 */
 	private int lastScrollPos = 0;
+
 	private List<TreeItem> employeeCentinels;
 
 	public Employees() {
@@ -145,7 +151,21 @@ public class Employees extends ResizeComposite implements
 			}
 		});
 
-		employeesService.getEnterprise(this);
+		// employeesService.getEnterprise(this);
+		employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getLocalizedMessage());
+			}
+
+			@Override
+			public void onSuccess(Enterprise[] enterprises) {
+				for (Enterprise enterprise : enterprises)
+					Employees.this.onEnterprise(enterprise);
+			}
+
+		});
 
 		scrollPanel.addScrollHandler(this);
 
@@ -163,12 +183,6 @@ public class Employees extends ResizeComposite implements
 		this.formers = formers;
 
 	}
-	
-	@Override
-	public void onFailure(Throwable caught) {
-		// TODO Auto-generated method stub
-		Window.alert(caught.getLocalizedMessage());
-	}
 
 	public void addListener(Listener listener) {
 		listeners.add(listener);
@@ -178,8 +192,7 @@ public class Employees extends ResizeComposite implements
 		listeners.remove(listener);
 	}
 
-	@Override
-	public void onSuccess(Enterprise enterprise) {
+	public void onEnterprise(Enterprise enterprise) {
 
 		List<Workplace> workplaces = enterprise.getWorkplaces();
 
@@ -211,18 +224,43 @@ public class Employees extends ResizeComposite implements
 
 			addImageItem(workplaceItem, "Costos", images.costs());
 
+			if (extended) {
+				TreeItem eventsItem = addImageItem(workplaceItem,
+						"Incidencias", images.data());
+
+				// --------------------------------------------------------------
+				//
+
+				EventMetaData metaData = new EnumEventMetaData("FTE",
+						"Desempe\u00F1o (FTE)", "", "4", "8", "10", "12", "L",
+						"LT", "LR", "F", "FT", "FR", "V", "B", "P", "AI", "M");
+
+				EventsDraftObject eventsDraftObject = new EventsDraftObject(
+						workplace.getId(), employeesService, metaData);
+				Date date = new Date();
+				eventsDraftObject.setEndDate(DateUtils
+						.getLastDayOfWorkWeek(date));
+				eventsDraftObject.setStartDate(DateUtils
+						.getFirstDayOfWorkWeek(date));
+
+				eventsItem.setUserObject(eventsDraftObject);
+
+			}
+
 			Agreement agreement = workplace.getAgreement();
+
 			if (extended && (agreement != null)) {
+
 				TreeItem agreementItem = addImageItem(workplaceItem,
 						agreement.getDescription(), images.agreement());
-				
+
 				AgreementDraft agreementDraft = new AgreementDraft();
 				agreementDraft.setId(agreement.getId());
 				agreementDraft.setDescription(agreement.getDescription());
 				agreementDraft.setStartDate(DateUtils.getFirstDayOfMonth());
 				agreementDraft.setEndDate(DateUtils.getLastDayOfMonth());
-				AgreementDraftObject agreementDraftObject = 
-						new AgreementDraftObject(agreementDraft, employeesService);
+				AgreementDraftObject agreementDraftObject = new AgreementDraftObject(
+						agreementDraft, employeesService);
 				agreementItem.setUserObject(agreementDraftObject);
 			} // TODO: extended ? Yes I'm know , it's awful.
 		}
@@ -279,9 +317,11 @@ public class Employees extends ResizeComposite implements
 			onSalariesSelected((SalaryDocuments) userObject);
 		} else if (userObject instanceof ISpinnable<?>) {
 			onDocumentsSelected((ISpinnable<IDocument>) userObject);
+		} else if (userObject instanceof EventsDraftObject) {
+			onEventsDraftSelected((EventsDraftObject) userObject);
 		} else if (userObject instanceof AgreementDraftObject) {
 			onAgreementDraftSelected((AgreementDraftObject) userObject);
-		} 
+		}
 
 	}
 
@@ -371,10 +411,17 @@ public class Employees extends ResizeComposite implements
 
 	}
 
+	public SalaryDraftObject getSalaryDraftObject(int employeeId) {
+		return null;
+	}
+
+	// ------------------------------------------
+	//
+	// ------------------------------------------
+
 	EmployeesServiceAsync getEmployeesService() {
 		return employeesService;
 	}
-
 
 	private void onEnterpriseOpen(TreeItem enterpriseItem) {
 
@@ -550,14 +597,20 @@ public class Employees extends ResizeComposite implements
 		}
 	}
 
-	private void onEmployeeContextMenu(Employee employee,
-			ContextMenuEvent event) {
+	private void onEmployeeContextMenu(Employee employee, ContextMenuEvent event) {
 		for (Listener listener : listeners) {
 			listener.onEmployeeContextMenu(employee, event);
 		}
 	}
 
-	private void onAgreementDraftSelected(AgreementDraftObject agreementDraftObject) {
+	private void onEventsDraftSelected(EventsDraftObject eventsDraftObject) {
+		for (Listener listener : listeners) {
+			listener.onEventsDraftSelected(eventsDraftObject);
+		}
+	}
+
+	private void onAgreementDraftSelected(
+			AgreementDraftObject agreementDraftObject) {
 		for (Listener listener : listeners) {
 			listener.onAgreementDraftSelected(agreementDraftObject);
 		}
@@ -622,6 +675,20 @@ public class Employees extends ResizeComposite implements
 				SalaryDraftObject draftObject = new SalaryDraftObject(
 						salaryDraft, employeesService);
 				salaryDraftItem.setUserObject(draftObject);
+
+				// Agencia Tributaria
+				TreeItem aetItem = addImageItem(employeeItem,
+						"Agencia Tributaria", images.aet());
+				TreeItem aetPersonalDataItem = addImageItem(aetItem,
+						"Datos personales", images.person());
+				TreeItem aetFamilyDataItem = addImageItem(aetItem,
+						"Ascendientes y descendientes", images.family());
+				TreeItem aetEconomicDataItem = addImageItem(aetItem,
+						"Datos econ\u00f3micos", images.euro());
+				TreeItem aetReglarizationDataItem = addImageItem(aetItem,
+						"Datos regularizaci\u00f3n", images.calendar());
+				TreeItem aetResultsItem = addImageItem(aetItem, "Resultados",
+						images.calc());
 			}
 
 			added++;
@@ -842,7 +909,7 @@ public class Employees extends ResizeComposite implements
 	}
 
 	private int getEmployeesOffset() {
-		return 2;
+		return 3;
 	}
 
 	private void showEndDate(boolean endDate) {

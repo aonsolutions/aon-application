@@ -173,7 +173,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 			TaxCalculator taxCalculator = 
 				TaxCalculator.getTaxCalculator(ctx);
 			
-			Date issueDate = ctx.getIssueDate();
 			Date chargeDate = ctx.getChargeDate();
 			
 			Collection<IContractPayment> payments =  ctx.getContractPayments();
@@ -387,7 +386,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 	
 	private Double resolveDeduction(ExpressionContext ctx,IContractDeduction d, Date start, Date end ) throws ExpressionException {
 		String concept = d.getName();
-		String expression = d.getExpression() ;
 		DeductionType type = d.getType()  ;
 
 		List<ITimedResult<Double>> results =  
@@ -397,7 +395,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		
 		for (ITimedResult<Double> result : results) {
 			Double value = result.getValue();
-			if ( value == 0 ) 
+			if ( value == null || value == 0 ) 
 				continue;
 			String description  = null;
 			try  {

@@ -74,13 +74,16 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.EvalSyntaxErrorException;
 import com.esferalia.aon.gwt.payroll.shared.EvalWarning;
+import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
+import com.esferalia.aon.gwt.payroll.sql.SQLEvents;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -140,6 +143,27 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Integer registryID = getEnterpriseID();
 			Connection connection = getConnection();
 			return getEnterprise(registryID, connection);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();
+		}
+	}
+
+	public Enterprise [] getEnterprises() throws IllegalArgumentException {
+		try {
+			initFacesContext();
+			int registryIDs[] = getEnterpriseIDs();
+			Connection connection = getConnection();
+			Enterprise enterprises[] = new Enterprise[registryIDs.length];
+			for (int i = 0 ; i < registryIDs.length ; i++) {
+				enterprises[i] = getEnterprise(registryIDs[i], connection);
+			}
+			return enterprises;
+			
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} catch (Exception e) {
@@ -724,6 +748,51 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			payments.addAll(enterprisePayments);
 
 			return payments;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();
+		}
+	}
+	
+	public void saveEvents(Events events, Date startDate, Date endDate ){
+		try {
+			initFacesContext();
+			int domainId = getDomainID();
+			Connection conn = getConnection();
+			SQLEvents.completeEvents(conn, events, startDate, endDate);
+			SQLEvents.saveEvents(conn, events, startDate, endDate, domainId);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();
+		}
+	}
+
+	public Events getEvents(Integer workplaceId, Date startDate, Date endDate, int offset,
+			int limit, String names []){
+		try {
+			initFacesContext();
+			Connection conn = getConnection();
+			return SQLEvents.getEvents(conn, workplaceId, startDate, endDate, offset, limit);
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();
+		}
+		
+	}
+	
+	public Period getAvailPeriod(Integer workplaceId, String name) {
+		try {
+			initFacesContext();
+			Connection conn = getConnection();
+			return SQLEvents.getAvailPeriods(conn, workplaceId,name);
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -1382,13 +1451,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					privateVariables.add(var);
 			}
 			variables.removeAll(privateVariables);
-			
+
 			// Clean system variables.
 			Set<String> systemVars = getSystemVariables(connection,
 					draft.getStartDate(), draft.getEndDate());
 			variables.removeAll(systemVars);
-			
-			
+
 			Set<Level> dbLevels = SQLAgreementDraft.getLevels(connection,
 					draft.getId());
 			Set<Level> draftLevels = draft.getDraftLevels();
