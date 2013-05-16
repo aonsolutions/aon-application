@@ -10,7 +10,7 @@
 
 	<aon:panelGroup id="showConfirmWindow">
 		<c:if test="#{controller.showAlumnUpdateConfirmWindow}">
-			<rich:modalPanel id="confirmModalPanel" minHeight="110" minWidth="530" 
+			<rich:modalPanel id="confirmModalPanel" minHeight="170" minWidth="610" 
 				rendered="#{controller.showAlumnUpdateConfirmWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
@@ -18,19 +18,36 @@
 						<aon:outputText value="#{bundle.aon_confirm_title}" />
 					</aon:div>
 				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showConfirmWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{controller.showAlumnUpdateConfirmWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
 				<aon:form id="confirmForm">
 				<aon:div styleClass="aon-popupWindow-content">
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;" >
-									<aon:div style="margin-bottom:30px;">
-
+									
+									<aon:div style="margin-bottom:5px;">
 										<aon:outputFormat styleClass="aon-bold"
-											value="#{academyBundle.academy_course_alumn_update_confirm}" >
+											value="#{academyBundle.academy_course_alumn_update_alert}" >
 											<f:param value="#{controller.courseAlumnCount}"/>
+											<f:param value="#{(controller.courseAlumnCount>1)?('s'):('')}"/>
 										</aon:outputFormat>
+									</aon:div>
 										
+									<aon:div style="margin-bottom:20px;">
+										<aon:outputText styleClass="aon-bold"
+											value="#{academyBundle.academy_course_alumn_update_confirm}" />
 									</aon:div>
 
 									<aon:panelGrid columns="2" style="width: 100%;" styleClass="aon-panelGrid-formatting"
@@ -48,7 +65,7 @@
 										
 										<aon:commandButton id="confirm-accept_update"
 											styleClass="aon-commandButton"
-											value="#{bundle.aon_update} #{bundle.aon_all}"
+											value="#{bundle.aon_save} y #{bundle.aon_update}"
 											actionListener="#{controller.acceptAndUpdate}">
 											<rich:componentControl for="confirmModalPanel"
 												event="onclick" operation="hide"/>																					

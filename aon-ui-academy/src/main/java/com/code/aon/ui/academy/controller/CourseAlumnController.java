@@ -5,15 +5,20 @@ import static com.code.aon.ui.academy.controller.IAcademyConstants.COURSE_CONTRO
 import java.io.Serializable;
 import java.util.List;
 
+import javax.faces.event.ActionEvent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.academy.Course;
+import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ui.customer.controller.CustomerController;
+import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
@@ -21,6 +26,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CourseAlumnController extends LinesController {
@@ -80,5 +86,15 @@ public class CourseAlumnController extends LinesController {
 		}
 		return this.customerFilter;
 	}	
+	
+	public void onLoadAlumn(ActionEvent event) throws ManagerBeanException{
+		CourseAlumn courseAlumn = (CourseAlumn) this.getModel().getRowData();
+		CustomerController controller = (CustomerController)AonUtil.getRegisteredBean(ICustomerConstants.CUSTOMER_CONTROLLER_NAME);
+		controller.onLoad(event, courseAlumn.getCustomer().getId(), "course_form", "courseAlumn.onRefresAlumn");
+	}
+
+	public void onRefresAlumn(ActionEvent event){
+		this.initializeModel();
+	}
 	
 }

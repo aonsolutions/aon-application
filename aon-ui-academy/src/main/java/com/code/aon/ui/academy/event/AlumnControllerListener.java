@@ -11,6 +11,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.customer.controller.CustomerController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -26,7 +27,7 @@ public class AlumnControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		CustomerController controller = (CustomerController) this.getController();
 		try {
-			controller.setCourseAlumnCount( obtainCaurseAlumnList().size() );
+			controller.setCourseAlumnCount( obtainCourseAlumnList().size() );
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException();
 		}
@@ -36,7 +37,8 @@ public class AlumnControllerListener extends ControllerAdapter {
 	public void afterBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		CustomerController controller = (CustomerController) this.getController();
-		if(controller.getCourseAlumnCount( ) > 0){
+		Customer customer = (Customer)controller.getTo();
+		if(customer.getStatus() == CustomerStatus.INACTIVE && controller.isUpdateCourseAlumn()){
 			try {
 				updateAlumnCourse();
 			} catch (ManagerBeanException e) {
@@ -45,14 +47,15 @@ public class AlumnControllerListener extends ControllerAdapter {
 		}
 	}
 	
-	private List<ITransferObject> obtainCaurseAlumnList() throws ManagerBeanException{
+	private List<ITransferObject> obtainCourseAlumnList() throws ManagerBeanException{
 		Customer customer = (Customer) this.getController().getTo();
 		IManagerBean bean = BeanManager.getManagerBean(CourseAlumn.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.COURSE_ALUMN_CUSTOMER_ID), customer.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
 		return bean.getList(criteria);
 	}
-
+	
 	private void updateAlumnCourse() throws ManagerBeanException {
 		// inicio de la transaccion
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
@@ -65,7 +68,7 @@ public class AlumnControllerListener extends ControllerAdapter {
 				HibernateUtil.beginTransaction(sessionName);
 				// BEGIN operaciones de la transaccion
 				IManagerBean bean = BeanManager.getManagerBean(CourseAlumn.class);
-				List<ITransferObject> list = obtainCaurseAlumnList();
+				List<ITransferObject> list = obtainCourseAlumnList();
 				for(ITransferObject to: list){
 					CourseAlumn ca = (CourseAlumn) to;
 					ca.setStatus(CourseAlumnStatus.INACTIVE);

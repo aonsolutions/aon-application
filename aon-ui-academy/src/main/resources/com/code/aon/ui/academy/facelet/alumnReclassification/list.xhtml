@@ -16,10 +16,9 @@
 					<aon:commandButton id="accept"
 						value="#{bundle.aon_accept}"
 						rendered="#{!(empty alumnReclassification.checkList)}"
-						action="customer_list" actionListener="#{alumnReclassification.onAssign}"
+						action="alumn_list" actionListener="#{alumnReclassification.onAssign}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						accesskey="#{bundle.aon_key_accept}" >
-					</aon:commandButton>				
+						accesskey="#{bundle.aon_key_accept}" />				
 					<aon:commandButton id="search"
 						value="#{bundle.aon_search}"
 						action="alumnReclassification_search" actionListener="#{alumnReclassification.onEditSearch}"

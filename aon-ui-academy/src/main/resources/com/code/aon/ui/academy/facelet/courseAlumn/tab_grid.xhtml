@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
@@ -77,9 +78,17 @@
 		</ui:define>
 
 		<ui:define name="endFormListContent">
-			<aon:goToButton controller="#{customer}"
-				onmouseover="disableRowSelector();" oncomplete="enableRowSelector();" onmouseout="enableRowSelector();"
-				property="#{controller.selectedTO.customer}" rendered="true" />
+			<aon:div  
+				onmouseover="disableRowSelector();"
+				onmouseout="enableRowSelector();"
+				onmouseup="disableRowSelector();">
+				<aon:commandLink id="incomeDetailSourceLink" immediate="true"
+					styleClass="aon-button-goto" style="padding-right: 20px;"
+					value="&#160;" title="#{bundle.aon_go}" 
+					actionListener="#{controller.onLoadAlumn}"
+					action="customer_form"
+					reRender="aonContent" />
+			</aon:div>
 		</ui:define>
 
 	</ui:decorate>

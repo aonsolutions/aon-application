@@ -26,6 +26,15 @@ public class CustomerController extends RegistryController implements ICustomerC
     private boolean showAlumnData;
     private boolean showAlumnUpdateConfirmWindow;
     private Integer courseAlumnCount;
+	private boolean updateCourseAlumn;
+	
+	public boolean isUpdateCourseAlumn() {
+		return updateCourseAlumn;
+	}
+	
+	public void setUpdateCourseAlumn(boolean updateCourseAlumn) {
+		this.updateCourseAlumn = updateCourseAlumn;
+	}
 
 	public boolean isShowAlumnData() {
 		return showAlumnData;
@@ -90,21 +99,25 @@ public class CustomerController extends RegistryController implements ICustomerC
 			throw new AbortProcessingException(msg, ex);
 		}
 	}
-
+	
 	@Override
 	public void accept(ActionEvent event) {
+		setUpdateCourseAlumn(false);
 		Customer customer = (Customer)getTo();
-		if (isShowAlumnData() && customer.getStatus() == CustomerStatus.INACTIVE && getCourseAlumnCount() > 0) {
+		if (customer.getStatus() == CustomerStatus.INACTIVE && getCourseAlumnCount() > 0) {
 			setShowAlumnUpdateConfirmWindow(true);
 		} else {
 			super.accept(event);
 		}
 	}
+	
 	public void acceptOnly(ActionEvent event) {
-		setCourseAlumnCount(0);
+		setUpdateCourseAlumn(false);
 		super.accept(event);
 	}
+
 	public void acceptAndUpdate(ActionEvent event) {
+		setUpdateCourseAlumn(true);
 		super.accept(event);
 	}
 
