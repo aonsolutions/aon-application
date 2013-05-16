@@ -23,7 +23,6 @@ public class CustomerController extends RegistryController implements ICustomerC
 	private static final String BASE_NAME = "com.code.aon.ui.registry.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_customer_report";
 
-    private boolean showAlumnData;
     private boolean showAlumnUpdateConfirmWindow;
     private Integer courseAlumnCount;
 	private boolean updateCourseAlumn;
@@ -34,14 +33,6 @@ public class CustomerController extends RegistryController implements ICustomerC
 	
 	public void setUpdateCourseAlumn(boolean updateCourseAlumn) {
 		this.updateCourseAlumn = updateCourseAlumn;
-	}
-
-	public boolean isShowAlumnData() {
-		return showAlumnData;
-	}
-
-	public void setShowAlumnData(boolean showAlumnData) {
-		this.showAlumnData = showAlumnData;
 	}
 	
 	public boolean isShowAlumnUpdateConfirmWindow() {
