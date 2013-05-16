@@ -406,19 +406,20 @@ public class ReportManager {
 	 * @throws ReportException
 	 *             If an error ocurred.
 	 */
-	@SuppressWarnings("unchecked")
-	private Collection getCollection(JRReport report) throws ReportException {
+	private Collection<?> getCollection(JRReport report) throws ReportException {
+		Collection<?> collection = null;
 		ReportConfig config = report.getReportConfig();
 		String provider = config.getCollectionProvider();
 		ICollectionProvider collectionProvider = getCollectionProvider();
 		if ((collectionProvider == null) && (provider != null)) {
+			LOGGER.info( "Report {} collectionProvider, {}", report.getReportConfig().getId(), provider );			
 			if (provider.startsWith("#")) {
 				String providerName = strip(provider);
 				Object c = AonUtil.getRegisteredBean(providerName);
 				if (c instanceof ICollectionProvider) {
 					collectionProvider = (ICollectionProvider) c;
 				} else if (c instanceof Collection) {
-					return (Collection) c;
+					collection = (Collection<?>) c;
 				}
 			} else {
 				try {
@@ -430,14 +431,18 @@ public class ReportManager {
 				}
 			}
 		}
-		if (collectionProvider != null) {
+		if ( (collection == null) && (collectionProvider != null) ) {
 			try {
-				return collectionProvider.getCollection(config.isForceRefresh());
+				LOGGER.info( "Report {} getting collection...", report.getReportConfig().getId() );
+				collection = collectionProvider.getCollection(config.isForceRefresh());
 			} catch (ManagerBeanException e) {
 				throw new ReportException(e.getMessage(), e);
 			}
 		}
-		return null;
+		if ( LOGGER.isInfoEnabled() && (collection != null) ) {
+			LOGGER.info( "Report {} collection size {}", report.getReportConfig().getId(), collection.size() );
+		}
+		return collection;
 	}
 
 	private void resolveCustomParameters(JRReport report) {

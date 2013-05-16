@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -270,6 +269,7 @@ public class JRReport {
 	public String run(OutputFormat outputFormat, OutputStream out,
 			ResourceBundle bundle, Locale locale, Criteria criteria, Collection<?> collection, Map<Object,Object>... params) throws ReportException {
 		try {
+			LOGGER.info("START Report {}({}) {}", new Object[]{config.getId(), outputFormat, (criteria!=null)?criteria:""});
 			setGeneratedPages( 0 );
 			if (JRExporterFactoryManager.accept(outputFormat)) {
 				Date startDate = new Date();
@@ -292,7 +292,7 @@ public class JRReport {
 						}
 					}
 				}
-
+				
 				passDefaultParameters(fillMap);
 				passCustomParameters(fillMap);
 				passDynamicParameters( fillMap );
@@ -334,7 +334,7 @@ public class JRReport {
 				exporter.setParameters(exporterMap);
 				exporter.exportReport();
 				long  delay = (new Date()).getTime() - startDate.getTime(); 
-				LOGGER.info(" Report execution : {} seconds.",((double)(delay/1000)));
+				LOGGER.info("END Report {}: {} seconds.", config.getId(), ((double)(delay/1000)));
 				if (hasCache) {
 					cleanCache(fillMap);
 				}

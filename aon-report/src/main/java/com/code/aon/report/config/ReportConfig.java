@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  * Configuration file <code>report</code> element.
  * 
@@ -252,4 +254,15 @@ public class ReportConfig {
 	public void setDynamicParamsProvider(String dynamicParamsProvider) {
 		this.dynamicParamsProvider = dynamicParamsProvider;
 	}
+	
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+				append("id", id).
+				append("forceRefresh", forceRefresh).
+				append("description", description).
+				append("template", template).
+				toString();
+	}
+	
 }

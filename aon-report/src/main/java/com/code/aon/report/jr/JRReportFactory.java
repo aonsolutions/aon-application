@@ -82,7 +82,7 @@ public class JRReportFactory {
 	 *            The report object.
 	 */
 	public static void register(String id, JRReport report) {
-		LOGGER.info("Registering Report ..: {}={}",id,report);
+		LOGGER.info("Registering Report: {}", report.getReportConfig());
 		map.put(id, report);
 	}
 }
