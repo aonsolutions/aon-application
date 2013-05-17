@@ -451,14 +451,15 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * transactions.
 	 */
 	protected void accept() {
-		String sessionName = HibernateUtil.getSessionFactoryName(getPojo());
-		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		// SE COMENTA ESTE CODIGO POR DAR UN NonUniqueObjectException.
+		//String sessionName = HibernateUtil.getSessionFactoryName(getPojo());
+		//boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		//boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		try {
-			HibernateUtil.setCloseSession( false );
-			HibernateUtil.setBeginTransaction( false  );
-			HibernateUtil.startSession(sessionName);
-			HibernateUtil.beginTransaction(sessionName);
+			//HibernateUtil.setCloseSession( false );
+			//HibernateUtil.setBeginTransaction( false  );
+			//HibernateUtil.startSession(sessionName);
+			//HibernateUtil.beginTransaction(sessionName);
 		
 			ControllerEvent evt = new ControllerEvent(this);
 			if (isNew) {
@@ -471,21 +472,21 @@ public class BasicController extends AbstractPojoController implements IControll
 				this.to = update();
 				controllerListenerSupport.fireAfterBeanUpdated(evt);
 			}
-			HibernateUtil.commitTransaction(sessionName);
+			//HibernateUtil.commitTransaction(sessionName);
 		} catch (Throwable e) {
-			try {
-				HibernateUtil.rollbackTransaction(sessionName);
-			} catch (DAOException e1) {
-				String msg = "Unable to rollback transaction!";
-				LOGGER.error(msg, e);
-			}
+			//try {
+				//HibernateUtil.rollbackTransaction(sessionName);
+			//} catch (DAOException e1) {
+				//String msg = "Unable to rollback transaction!";
+				//LOGGER.error(msg, e);
+			//}
 			LOGGER.error(">>>> onAccept ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
-		} finally {
-			HibernateUtil.closeSession(sessionName);
-			HibernateUtil.setCloseSession( mustCloseSession );
-			HibernateUtil.setBeginTransaction( mustBeginTransaction );
+		//} finally {
+			//HibernateUtil.closeSession(sessionName);
+			//HibernateUtil.setCloseSession( mustCloseSession );
+			//HibernateUtil.setBeginTransaction( mustBeginTransaction );
 		}
 	}
 
@@ -519,14 +520,14 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @param event
 	 */
 	public void remove(ActionEvent event) {
-		String sessionName = HibernateUtil.getSessionFactoryName(getPojo());
-		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		//String sessionName = HibernateUtil.getSessionFactoryName(getPojo());
+		//boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		//boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		try {
-			HibernateUtil.setCloseSession( false );
-			HibernateUtil.setBeginTransaction( false  );
-			HibernateUtil.startSession(sessionName);
-			HibernateUtil.beginTransaction(sessionName);
+			//HibernateUtil.setCloseSession( false );
+			//HibernateUtil.setBeginTransaction( false  );
+			//HibernateUtil.startSession(sessionName);
+			//HibernateUtil.beginTransaction(sessionName);
 		
 			ControllerEvent evt = new ControllerEvent(this);
 			controllerListenerSupport.fireBeforeBeanRemoved(evt);
@@ -534,21 +535,21 @@ public class BasicController extends AbstractPojoController implements IControll
 			initializeModel();
 			controllerListenerSupport.fireAfterBeanRemoved(evt);
 			
-			HibernateUtil.commitTransaction(sessionName);
+			//HibernateUtil.commitTransaction(sessionName);
 		} catch (Throwable e) {
-			try {
-				HibernateUtil.rollbackTransaction(sessionName);
-			} catch (DAOException e1) {
-				String msg = "Unable to rollback transaction!";
-				LOGGER.error(msg, e);
-			}
+			//try {
+				//HibernateUtil.rollbackTransaction(sessionName);
+			//} catch (DAOException e1) {
+				//String msg = "Unable to rollback transaction!";
+				//LOGGER.error(msg, e);
+			//}
 			LOGGER.error(">>>> onRemove exception ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
-		} finally {
-			HibernateUtil.closeSession(sessionName);
-			HibernateUtil.setCloseSession( mustCloseSession );
-			HibernateUtil.setBeginTransaction( mustBeginTransaction );
+		//} finally {
+			//HibernateUtil.closeSession(sessionName);
+			//HibernateUtil.setCloseSession( mustCloseSession );
+			//HibernateUtil.setBeginTransaction( mustBeginTransaction );
 		}
 	}
 
