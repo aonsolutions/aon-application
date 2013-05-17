@@ -23,6 +23,7 @@ customize.init(login.getDbProperties(), request.getServerName());
 companyDisplay.init(login.getDbProperties(), request.getServerName());
 ResourceBundle securityBundle = ResourceBundle.getBundle("com.code.aon.bridge.i18n.messages", request.getLocale());
 ResourceBundle companyBundle = ResourceBundle.getBundle("com.code.aon.ui.company.i18n.messages", request.getLocale());
+ResourceBundle dbutilsBundle = ResourceBundle.getBundle("com.code.aon.ui.dbutils.i18n.messages", request.getLocale());
 %>	
 <head>
 	<title><%=customize.getApplicationTitle()%></title>
@@ -39,10 +40,68 @@ ResourceBundle companyBundle = ResourceBundle.getBundle("com.code.aon.ui.company
 
 
 	<c:if test="${dbUptodate.uptodate and dbUptodate.connectionAvailable}">
-		<%@include file="uptodatePanel.jsp" %>
+		<table style="padding: 5px;margin-left: auto;margin-right: auto;margin-top: 200px;border:#ccc 1px solid;background-color:#e2f1f5;">
+			<tbody>
+				<tr>
+					<td>
+						<span style="font-weight:bold;font-size:1.2em;">
+							<%=dbutilsBundle.getString("dbutils_database_uptodate")%>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="aon-scroll-area" style="width: 90%;">
+							<div style="width: 100%; border: solid 1px black;margin-top: 20px;">
+								<div style="margin: 5px;">
+									<span class="aon-outputText">
+										<%=dbutilsBundle.getString("dbutils_database_version")%>: <%=dbUptodate.getCurrentVersion()%>
+									</span>
+								</div>
+							</div>
+							<div style="width: 100%; border: solid 2px red;text-align: center;;margin-top: 20px;">
+								<div style="margin: 5px; color:red; font-size: 1.2em;">
+									<span class="aon-outputText">
+										<%=dbutilsBundle.getString("dbutils_update")%>
+									</span>
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</c:if>	
 	<c:if test="${!dbUptodate.connectionAvailable}">
-		<%@include file="connectionError.jsp" %>
+		<table style="padding: 5px;margin-left: auto;margin-right: auto;margin-top: 200px;border:#ccc 1px solid;background-color:#e2f1f5;">
+			<tbody>
+				<tr>
+					<td>
+						<span style="font-weight:bold;font-size:1.2em;">ERROR</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="aon-scroll-area" style="width: 90%;">
+							<div style="width: 100%; border: solid 1px black;margin-top: 20px;">
+								<div style="margin: 5px;">
+									<span class="aon-outputText">
+										<%=dbutilsBundle.getString("dbutils_database_error")%>
+									</span>
+								</div>
+							</div>
+							<div style="width: 100%; border: solid 2px red;text-align: center;;margin-top: 20px;">
+								<div style="margin: 5px; color:red; font-size: 1.2em;">
+									<span class="aon-outputText">
+										<%=dbUptodate.getConnectionErrorMessage()%>
+									</span>
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</c:if>
 	<c:if test="${!dbUptodate.uptodate and dbUptodate.connectionAvailable}">	
 		<div class="aon-login">
