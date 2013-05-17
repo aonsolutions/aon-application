@@ -40,7 +40,10 @@ public class PurchaseDetailBeanVetoListener extends ManagerBeanVetoListenerAdapt
 			throw new ManagerBeanVetoListenerException("La Cantidad a devolver del Pedido no puede ser positiva.");
 		}
 
-		if (purchaseDetail.getDelivered() == 0) {
+		if (purchaseDetail.isForcePendingQuantityCancel()) {
+			purchaseDetail.setQuantity(purchaseDetail.getDelivered());
+			purchaseDetail.setStatus(PurchaseDetailStatus.SETTLED);
+		} else if (purchaseDetail.getDelivered() == 0) {
 			purchaseDetail.setStatus(PurchaseDetailStatus.PENDING);
 		} else if ( Math.abs(purchaseDetail.getDelivered()) >= Math.abs(purchaseDetail.getQuantity()) ) {
 			purchaseDetail.setQuantity(purchaseDetail.getDelivered());

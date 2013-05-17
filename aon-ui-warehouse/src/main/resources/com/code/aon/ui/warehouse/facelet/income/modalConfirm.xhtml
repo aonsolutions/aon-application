@@ -18,18 +18,37 @@
 						<aon:outputText value="#{bundle.aon_confirm_title}" />
 					</aon:div>
 				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showConfirmWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{controller.showConfirmWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
 				<aon:form id="confirmForm">
 				<aon:div styleClass="aon-popupWindow-content">
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
-								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;" >
-									<aon:div style="margin-bottom:30px;">
-										<aon:outputText value="#{warehouseBundle.warehouse_income_purchase_quantity_update}" />
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 0.1em;" >
+						
+									<aon:div style="margin-bottom:20px;">
+										<aon:outputText style="display: inline-block;" styleClass="aon-bold" 
+											rendered="#{controller.transferedGreatherThanPending}"
+											value="#{warehouseBundle.warehouse_income_purchase_quantity_update}" />
+										<aon:div styleClass="aon-underline aon-margin-top aon-margin-bottom" 
+											rendered="#{controller.transferedGreatherThanPending and controller.existsDetailToCancel}" />
+										<aon:outputText style="display: inline-block;" styleClass="aon-bold" 
+											rendered="#{controller.existsDetailToCancel}"
+											value="#{warehouseBundle.warehouse_income_purchase_pending_cancel}" />
 									</aon:div>
 
-									<aon:panelGrid columns="2" style="width: 100%;" styleClass="aon-panelGrid-formatting"
-										columnClasses="aon-panelGrid-even aon-text-right aon-noborder,aon-panelGrid-even aon-text-left aon-noborder">
+									<aon:div styleClass="aon-width-all aon-text-center">
 										<aon:commandButton id="confirm-accept"
 											styleClass="aon-commandButton"
 											value="#{bundle.aon_confirm}"
@@ -40,16 +59,8 @@
 												target="#{controller.showConfirmWindow}"
 												value="#{false}" />
 										</aon:commandButton>
+									</aon:div>
 
-										<aon:commandButton id="confirm-back"
-											styleClass="aon-commandButton"
-											value="#{bundle.aon_back}" 
-											reRender="showConfirmWindow" immediate="true">
-											<f:setPropertyActionListener
-												target="#{controller.showConfirmWindow}"
-												value="#{false}" />
-										</aon:commandButton>
-									</aon:panelGrid>
 								</aon:div>
 							</aon:div>
 						</aon:div>

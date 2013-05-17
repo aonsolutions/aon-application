@@ -413,9 +413,23 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		}
 		return transferedGreatherThanPending;
 	}
+
+	public boolean isExistsDetailToCancel() {
+		Iterator<PurchaseDetail> iterator = getPurchaseTransferManager().getCheckedDetails().iterator();
+		while (iterator.hasNext()) {
+			if(((PurchaseDetail)iterator.next()).isForcePendingQuantityCancel()){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean checkConfirmWindowShow(){
+		return isTransferedGreatherThanPending() || isExistsDetailToCancel();
+	}
 	
 	public void onPurchaseTransfer(ActionEvent event) throws ManagerBeanException {
-		if(isTransferedGreatherThanPending()){
+		if(checkConfirmWindowShow()){
 			setShowConfirmWindow(true);
 		} else {
 			confirmPurchaseTrasfer(event);

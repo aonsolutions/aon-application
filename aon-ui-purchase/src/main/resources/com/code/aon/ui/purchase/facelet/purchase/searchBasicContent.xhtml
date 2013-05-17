@@ -67,11 +67,13 @@
 		<f:selectItems value="#{purchaseCollections.documentTypes}"/>
 	</aon:selectManyCheckbox>							
 	
-	<aon:outputText value="&#160;" />
-	<aon:div>
-		<aon:selectBooleanCheckbox id="emailCommunication" value="#{searchController.emailCommunication}" />
-		<aon:outputLabel for="emailCommunication" value="#{purchaseBundle.purchase_emailCommunication}" />
-	</aon:div>
+	<aon:outputLabel for="Purchase_emailCommunication" 
+		value="#{purchaseBundle.purchase_emailSend}" />
+	<aon:selectManyCheckbox id="Purchase_emailCommunication"
+		value="#{searchController.emailCommunication}">
+		<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+		<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+	</aon:selectManyCheckbox>
 								
 
 </ui:composition>

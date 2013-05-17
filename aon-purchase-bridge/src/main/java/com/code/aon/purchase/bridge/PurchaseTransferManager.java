@@ -131,6 +131,7 @@ public class PurchaseTransferManager {
 		} else if( purchaseDetail.getTransfered()==0 && detailChecks.contains(purchaseDetail)){
 			detailChecks.remove(purchaseDetail);
 		}
+		purchaseDetail.setForcePendingQuantityCancel(false);
 	}
 	public void onTransferedChanged(ValueChangeEvent event) {
 		double value = (event.getNewValue()!=null) ? ((Double)event.getNewValue()).doubleValue() : 0;
@@ -186,9 +187,8 @@ public class PurchaseTransferManager {
 		purchaseChecks = new ArrayList<Purchase>();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void checkAllPurchases(ActionEvent event) {
-		Iterator iterator = purchaseList.iterator();
+		Iterator<ITransferObject> iterator = purchaseList.iterator();
 		while (iterator.hasNext()) {
 			Purchase purchase = (Purchase)iterator.next();
 			setPurchaseRowChecked(purchase, true);
@@ -241,6 +241,7 @@ public class PurchaseTransferManager {
 				detailChecks.remove(detail);
 			}
 		}
+		detail.setForcePendingQuantityCancel(false);
 	}
 
 	public ArrayList<PurchaseDetail> getCheckedDetails() {
@@ -251,9 +252,8 @@ public class PurchaseTransferManager {
 		detailChecks = new ArrayList<PurchaseDetail>();
 	}
 
-	@SuppressWarnings("unchecked")
 	private void checkAllDetails(List<ITransferObject> purchaseDetailList) {
-		Iterator iterator = purchaseDetailList.iterator();
+		Iterator<ITransferObject> iterator = purchaseDetailList.iterator();
 		while (iterator.hasNext()) {
 			PurchaseDetail detail = (PurchaseDetail)iterator.next();
 			if (!detailChecks.contains(detail)) {
@@ -263,9 +263,8 @@ public class PurchaseTransferManager {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void checkNoneDetails(List<ITransferObject> purchaseDetailList) {
-		Iterator iterator = purchaseDetailList.iterator();
+		Iterator<ITransferObject> iterator = purchaseDetailList.iterator();
 		while (iterator.hasNext()) {
 			PurchaseDetail detail = (PurchaseDetail)iterator.next();
 			if (detailChecks.contains(detail)) {
@@ -287,4 +286,24 @@ public class PurchaseTransferManager {
 		return false;
 	}
 
+	public boolean isTransferedLessThanPending() {
+		return isTransferedLessThanPending((PurchaseDetail) getDetailModel().getRowData());
+	}
+
+	public boolean isTransferedLessThanPending(PurchaseDetail purchaseDetail) {
+		if( purchaseDetail.getTransfered() < purchaseDetail.getPendingQuantity() ){
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * PURCHASE DETAIL TO CLOSE CHECK LIST CONTROL
+	 */
+	
+	public void detailToCloseRowSelected(ActionEvent event){
+		PurchaseDetail detail = (PurchaseDetail)detailModel.getRowData();
+		detail.setForcePendingQuantityCancel(!detail.isForcePendingQuantityCancel());
+	}
+	
 }

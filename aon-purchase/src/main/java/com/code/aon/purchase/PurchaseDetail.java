@@ -28,6 +28,7 @@ public class PurchaseDetail extends PurchaseDetailDB implements ICalculable {
 	private static final long serialVersionUID = 1L;
 	private final static Logger LOGGER = LoggerFactory.getLogger(PurchaseDetail.class);
 	private double transfered;
+	private boolean forcePendingQuantityCancel;
 
     public void setPrice(double price) {
         super.setPrice(CommonUtil.round(price, 4));
@@ -44,7 +45,14 @@ public class PurchaseDetail extends PurchaseDetailDB implements ICalculable {
 	public void setTransfered(double transfered) {
 		this.transfered = transfered;
 	}
-	
+	@Transient
+	public boolean isForcePendingQuantityCancel() {
+		return forcePendingQuantityCancel;
+	}
+	public void setForcePendingQuantityCancel(boolean forcePendingQuantityCancel) {
+		this.forcePendingQuantityCancel = forcePendingQuantityCancel;
+	}
+
 	@Transient
 	public boolean isPending() {
 		return getStatus() == PurchaseDetailStatus.PENDING;

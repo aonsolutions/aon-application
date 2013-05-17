@@ -41,9 +41,11 @@ public class PurchaseCollectionsController {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			documentTypes = new LinkedList<SelectItem>();
 			for (PurchaseDocumentType type : PurchaseDocumentType.values()) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				documentTypes.add(item);
+				if(type!=PurchaseDocumentType.SAMPLE){
+					String name = type.getName(locale);
+					SelectItem item = new SelectItem(type, name);
+					documentTypes.add(item);
+				}
 			}
 		}
 		return documentTypes;

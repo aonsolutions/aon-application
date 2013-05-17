@@ -31,7 +31,7 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 	
 	private Item item;
 
-	private boolean emailCommunication;
+	private Boolean[] emailCommunication;
 	
 	public String getPreffix() throws ManagerBeanException {
 		return REGISTRY_SEARCH_PREFFIX;
@@ -78,11 +78,11 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 		this.item = item;
 	}
 	
-	public boolean isEmailCommunication() {
+	public Boolean[] getEmailCommunication() {
 		return emailCommunication;
 	}
 
-	public void setEmailCommunication(boolean emailCommunication) {
+	public void setEmailCommunication(Boolean[] emailCommunication) {
 		this.emailCommunication = emailCommunication;
 	}
 
@@ -95,7 +95,7 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 		PurchaseDocumentType[] defaultCosumentTypes = {PurchaseDocumentType.NORMAL};
 		setPurchaseDocumentTypes(defaultCosumentTypes);
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
-		setEmailCommunication(false);
+		setEmailCommunication(null);
 	}
 	
 	@Override
@@ -121,7 +121,10 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 		if ((getItem() != null) && (getItem().getId() != null)) {
 			criteria.addEqualExpression("Purchase.lines.item.id", getItem().getId());
 		}				
-		criteria.addEqualExpression(getFieldName(IEntityAlias.PURCHASE_EMAIL_COMMUNICATION), isEmailCommunication());			
+		if (!ArrayUtils.isEmpty(getEmailCommunication())) {
+			String type = getController().resolveAlias(IEntityAlias.PURCHASE_EMAIL_COMMUNICATION);
+			addEnumToCriteria(criteria, type, getEmailCommunication());
+		}
 	}
 	
 }

@@ -11,7 +11,7 @@
 	<aon:panelGroup id="showPurchaseTransferWindow">
 		<c:if test="#{income.showPurchaseTransferWindow}">
 			<rich:modalPanel id="purchaseTransferModalPanel" minHeight="580"
-				minWidth="775" rendered="#{income.showPurchaseTransferWindow}"
+				minWidth="850" rendered="#{income.showPurchaseTransferWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -114,6 +114,17 @@
 											</aon:outputText>
 										</aon:column>
 
+										<!--  
+										<aon:column styleClass="#{income.purchaseTransferManager.selectedPurchaseId==to.id?'aon-highlight':''}">
+											<f:facet name="header">
+												<aon:outputText value="#{warehouseBundle.warehouse_income_quantity_pending}" />
+											</f:facet>
+											<aon:outputText value="#{income.purchaseTransferManager.purchaseTotalPrice}">
+												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+											</aon:outputText>
+										</aon:column>
+										-->
+
 										<aon:column styleClass="#{income.purchaseTransferManager.selectedPurchaseId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
 												<aon:outputText value="#{bundle.aon_total}" />
@@ -142,21 +153,37 @@
 									<aon:div id="detailDataContainer">
 										<aon:dataTable id="detailData" value="#{income.purchaseTransferManager.detailModel}"
 											var="to" rows="0" rendered="#{income.purchaseTransferManager.detailModel.rowCount > 0}"
-											columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+											columnClasses="aon-editDataTable-textColumn, 
+												aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
 												aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, 
 												aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
-												aon-editDataTable-iconColumn">
+												aon-editDataTable-textColumn, aon-editDataTable-iconColumn">
 	
 											<aon:column>
 												<f:facet name="header">
 													<aon:outputText value="&#160;" />
 												</f:facet>
-												<aon:selectBooleanCheckbox id="DetailCheck"
+												<aon:selectBooleanCheckbox id="Detail_Row_checked"
 													value="#{income.purchaseTransferManager.detailRowChecked}"
-													valueChangeListener="#{income.purchaseTransferManager.detailRowSelected}"
-													reRender="purchaseData,detailDataContainer" ajaxSingle="true" />	
+													valueChangeListener="#{income.purchaseTransferManager.detailRowSelected}">
+													<a4j:support event="onclick" 
+														ajaxSingle="true"
+														ignoreDumpResponses="true"
+														limitToList="true"
+														eventsQueue="detailCheckList"
+														reRender="purchaseData,detailDataContainer" />
+												</aon:selectBooleanCheckbox>
 											</aon:column>
-	
+											
+											<aon:column>
+												<f:facet name="header">
+													<h:outputText value="#{productBundle.product_item_supplier_code_abrv}" />
+												</f:facet>
+												<aon:outputText value="#{to.itemSupplierCode}">
+													<aon:abbreviateConverter maxWidth="50" />
+												</aon:outputText>
+											</aon:column>
+											
 											<aon:column>
 												<f:facet name="header">
 													<h:outputText value="#{productBundle.product_item}" />
@@ -177,10 +204,19 @@
 	
 											<aon:column>
 												<f:facet name="header">
-													<aon:outputLabel value="#{bundle.aon_discount}" />
+													<aon:outputLabel value="#{bundle.aon_discount_abrv}" />
 												</f:facet>
 												<aon:outputText value="#{to.discountExpression.discountExpr}">
 													<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
+												</aon:outputText>
+											</aon:column>
+	
+											<aon:column>
+												<f:facet name="header">
+													<h:outputText value="#{warehouseBundle.warehouse_income_ordered}" />
+												</f:facet>
+												<aon:outputText value="#{(to.quantity)}">
+													<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 												</aon:outputText>
 											</aon:column>
 	
@@ -204,14 +240,25 @@
 												</aon:inputText>	
 											</aon:column>
 	
-											<aon:column>
+											<aon:column id="buttonColumn">
 												<f:facet name="header">
 													<h:outputText value="&#160;" />
 												</f:facet>
-												<aon:outputText value="&#160;"
-													rendered="#{income.purchaseTransferManager.transferedGreatherThanPending}" 
-													styleClass="aon-icon-commandButton aon-icon-errorwarning" 
-													title="#{warehouseBundle.warehouse_income_transfered_gt_quantity}" /> 
+												<aon:div>
+													<aon:outputText value="&#160;&#160;&#160;"
+														rendered="#{income.purchaseTransferManager.transferedGreatherThanPending}" 
+														styleClass="aon-padding-right aon-icon-point-orange" 
+														title="#{warehouseBundle.warehouse_income_transfered_gt_quantity}" />
+													
+													<aon:commandButton value="&#160;" immediate="true"
+														rendered="#{income.purchaseTransferManager.detailRowChecked and income.purchaseTransferManager.transferedLessThanPending}" 
+														title="#{(to.forcePendingQuantityCancel)?(warehouseBundle.warehouse_income_purchase_product_transfered):(warehouseBundle.warehouse_income_purchase_product_pending)}"
+														styleClass="aon-icon-commandButton #{(to.forcePendingQuantityCancel)?('aon-icon-point-red'):('aon-icon-point-light-green')}"
+														actionListener="#{income.purchaseTransferManager.detailToCloseRowSelected}"
+														reRender="buttonColumn" ajaxSingle="true">
+													</aon:commandButton>
+													
+												</aon:div>
 											</aon:column>
 	
 										</aon:dataTable>
