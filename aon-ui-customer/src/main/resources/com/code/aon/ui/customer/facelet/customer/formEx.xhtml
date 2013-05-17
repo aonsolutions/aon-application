@@ -12,7 +12,7 @@
 		<aon:form id="customerForm">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{(showAlumnData)?(academyBundle.academy_alumns):(customerBundle.customer_module)}" />
+				<ui:param name="toolbarTitle" value="#{(customer.showAlumnData)?(academyBundle.academy_alumns):(customerBundle.customer_module)}" />
 				<ui:param name="controller" value="#{customer}" />
 				<ui:param name="showMoreMenu" value="#{!customer.new}" />
 				<ui:define name="moreMenuContent">
@@ -24,7 +24,7 @@
 						</aon:menuItem>
 						<rich:menuSeparator id="historyMenuSeparator" />
 					</c:if>
-					<c:if test="#{showAlumnData}">
+					<c:if test="#{customer.showAlumnData}">
 						<c:if test="#{aonConfiguration.bean.customer.showCourse}">
 							<aon:menuItem id="course-button"
 								value="#{academyBundle.academy_courses}"
@@ -315,7 +315,7 @@
 							</aon:panelTab>
 						</c:if>
 
-						<c:if test="#{showAlumnData}">
+						<c:if test="#{customer.showAlumnData}">
 							<c:if test="#{aonConfiguration.bean.customer.showAbsence and customerAbsence.showTab}">
 								<aon:panelTab id="absence" label="#{academyBundle.academy_absences}">
 									<ui:include	src="/com/code/aon/ui/academy/facelet/customerAbsence/tab_grid.xhtml">
@@ -436,7 +436,7 @@
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
 			</c:if>
-			<c:if test="#{showAlumnData}">
+			<c:if test="#{customer.showAlumnData}">
 				<c:if test="#{aonConfiguration.bean.customer.showLoan}">
 					<ui:include src="/com/code/aon/ui/academy/facelet/customerLoan/newLoanModal.xhtml">
 						<ui:param name="loanController" value="#{customerLoan}" />

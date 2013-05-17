@@ -26,12 +26,10 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="customer-academy" 
-										action="customer_search-academy"
+									<aon:commandLink id="alumn" 
+										action="alumn_search"
 										actionListener="#{customer.onEditSearch}"
-										value="#{academyBundle.academy_alumns}" >
-										<f:setPropertyActionListener target="#{customer.showAlumnData}" value="#{true}" />
-									</aon:commandLink>
+										value="#{academyBundle.academy_alumns}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="course" 

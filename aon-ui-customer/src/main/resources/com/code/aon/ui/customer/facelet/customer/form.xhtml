@@ -7,8 +7,8 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<ui:include src="/com/code/aon/ui/customer/facelet/customer/formEx.xhtml" >
-		<ui:param name="showAlumnData" value="false" />
-	</ui:include>
+	<aon:set var="#{customer.showAlumnData}" value="#{false}" />
+	
+	<ui:include src="/com/code/aon/ui/customer/facelet/customer/formEx.xhtml" />
 	
 </ui:composition>

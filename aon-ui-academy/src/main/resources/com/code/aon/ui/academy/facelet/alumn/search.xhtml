@@ -3,8 +3,9 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
+	<aon:set var="#{customer.showAlumnData}" value="#{true}" />
+	
 	<ui:include src="/com/code/aon/ui/customer/facelet/customer/searchEx.xhtml" >
-		<ui:param name="showAlumnData" value="true" />
 		<aon:methodParam name="searchAction" value="alumn_list" />
 		<aon:methodParam name="resetAction" value="alumn_form" />
 		<aon:methodParam name="backAction" value="alumn_list" />

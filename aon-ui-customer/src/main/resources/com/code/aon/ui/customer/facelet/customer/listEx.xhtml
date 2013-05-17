@@ -12,10 +12,10 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{(showAlumnData)?(academyBundle.academy_alumns):(customerBundle.customer_module)}" />
+				<ui:param name="toolbarTitle" value="#{(customer.showAlumnData)?(academyBundle.academy_alumns):(customerBundle.customer_module)}" />
 				<ui:param name="controller" value="#{customer}" />
 				<ui:define name="additionalToolbarContent">
-					<c:if test="#{showAlumnData}">
+					<c:if test="#{customer.showAlumnData}">
 						<aon:htmlCommandLink id="alumnReport-excel-report" value="&#160;" 
 							target="_new" rendered="#{!customer.new}"
 							action="#{report.onExecute}"
@@ -35,7 +35,7 @@
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
 					</c:if>
-					<c:if test="#{!showAlumnData}">
+					<c:if test="#{!customer.showAlumnData}">
 						<aon:htmlCommandLink id="customerReport-excel-report" value="&#160;" 
 							target="_new" rendered="#{!customer.new}"
 							action="#{report.onExecute}"
