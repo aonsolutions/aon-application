@@ -695,7 +695,7 @@
 				<textFieldExpression><![CDATA[$F{shippingContact}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" positionType="Float" x="45" y="159" width="200" height="23" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-119" positionType="Float" x="95" y="159" width="150" height="23" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{shippingAlternativeAddressDefined}]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
@@ -711,13 +711,13 @@
 				<textFieldExpression><![CDATA[$F{carrier}.getRegistry().getFullName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-112" positionType="Float" x="0" y="159" width="45" height="23" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-112" positionType="Float" x="0" y="159" width="95" height="23" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{shippingAlternativeAddressDefined}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<leftPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Bottom">
+				<textElement verticalAlignment="Bottom">
 					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{warehouse_delivery_carrier}+":"]]></textFieldExpression>
@@ -734,8 +734,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$R{warehouse_delivery_shipment_totalPackages}+":"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" positionType="Float" x="297" y="159" width="50" height="23" isRemoveLineWhenBlank="true">
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-119" positionType="Float" x="297" y="159" width="45" height="23" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{shippingAlternativeAddressDefined}]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
@@ -751,7 +751,7 @@
 				<textFieldExpression><![CDATA[$F{totalPackages}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-112" positionType="Float" x="347" y="159" width="45" height="23" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-112" positionType="Float" x="342" y="159" width="30" height="23" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{shippingAlternativeAddressDefined}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -762,8 +762,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$R{warehouse_delivery_shipment_totalWeight}+":"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" positionType="Float" x="392" y="159" width="50" height="23" isRemoveLineWhenBlank="true">
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-119" positionType="Float" x="372" y="159" width="45" height="23" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{shippingAlternativeAddressDefined}]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
@@ -779,7 +779,7 @@
 				<textFieldExpression><![CDATA[$F{totalWeight}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-112" positionType="Float" x="442" y="159" width="45" height="23" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-112" positionType="Float" x="417" y="159" width="40" height="23" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{shippingAlternativeAddressDefined}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -791,7 +791,7 @@
 				<textFieldExpression><![CDATA[$R{warehouse_delivery_shipment_schedule}+":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" positionType="Float" x="487" y="159" width="50" height="23" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-119" positionType="Float" x="457" y="159" width="80" height="23" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{shippingAlternativeAddressDefined}]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
