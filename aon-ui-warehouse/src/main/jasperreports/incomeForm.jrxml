@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="144"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -292,7 +292,7 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="600" splitType="Stretch">
+		<band height="232" splitType="Stretch">
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-112" x="2" y="3" width="69" height="23"/>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
@@ -1900,7 +1900,7 @@
 							</box>
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
 								<reportElement key="textField-13" x="0" y="0" width="69" height="12">
-									<printWhenExpression><![CDATA[new Boolean(false && ($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0))]]></printWhenExpression>
+									<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0))]]></printWhenExpression>
 								</reportElement>
 								<box rightPadding="2">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1971,136 +1971,10 @@
 				<textFieldExpression><![CDATA[((org.apache.commons.lang.ArrayUtils.getLength($V{cellulars})>0)?(($V{cellulars}[0]).trim()):(""))
 + ((org.apache.commons.lang.ArrayUtils.getLength($V{cellulars})>1)?(" - " + ($V{cellulars}[1]).trim()):(""))]]></textFieldExpression>
 			</textField>
-			<frame>
-				<reportElement positionType="Float" x="0" y="246" width="516" height="83" isPrintWhenDetailOverflows="true"/>
-				<textField isBlankWhenNull="true">
-					<reportElement key="textField-119" positionType="FixRelativeToBottom" mode="Opaque" x="331" y="29" width="139" height="23" isPrintWhenDetailOverflows="true"/>
-					<box leftPadding="3" bottomPadding="2">
-						<pen lineWidth="0.5" lineStyle="Solid"/>
-						<topPen lineWidth="0.0" lineStyle="Solid"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid"/>
-						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font size="8"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{supplier}.getRegistry().getPayMethod().getBankAccount().getEntity()+" . "+$F{supplier}.getRegistry().getPayMethod().getBankAccount().getOffice()+" . "+$F{supplier}.getRegistry().getPayMethod().getBankAccount().getControl()+" . "+$F{supplier}.getRegistry().getPayMethod().getBankAccount().getAccount() :$F{bankAccount}.getEntity()+" . "+$F{bankAccount}.getOffice()+" . "+$F{bankAccount}.getControl()+" . "+ $F{bankAccount}.getAccount() )]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="false">
-					<reportElement key="textField-118" positionType="FixRelativeToBottom" mode="Opaque" x="10" y="29" width="68" height="23" isPrintWhenDetailOverflows="true"/>
-					<textElement verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$R{warehouse_delivery_text_financial3}+ ":"]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="false">
-					<reportElement key="textField-118" positionType="FixRelativeToBottom" mode="Opaque" x="10" y="4" width="68" height="23" isPrintWhenDetailOverflows="true"/>
-					<textElement verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$R{warehouse_delivery_text_financial2}+ ":"]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="false">
-					<reportElement key="textField-118" positionType="FixRelativeToBottom" mode="Opaque" x="239" y="4" width="82" height="23" isPrintWhenDetailOverflows="true"/>
-					<textElement textAlignment="Right" verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$R{warehouse_delivery_bank}+ ":"]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement key="textField-119" positionType="FixRelativeToBottom" mode="Opaque" x="79" y="4" width="124" height="23" isPrintWhenDetailOverflows="true" forecolor="#000000"/>
-					<box leftPadding="3" bottomPadding="2">
-						<pen lineWidth="0.5" lineStyle="Solid"/>
-						<topPen lineWidth="0.0" lineStyle="Solid"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid"/>
-						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font size="8"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{supplier}.getRegistry().getPayMethod().getPayment().getName():$F{payMethod}.getName())]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement key="textField-119" positionType="FixRelativeToBottom" mode="Opaque" x="331" y="4" width="139" height="23" isPrintWhenDetailOverflows="true"/>
-					<box leftPadding="3" bottomPadding="2">
-						<pen lineWidth="0.5" lineStyle="Solid"/>
-						<topPen lineWidth="0.0" lineStyle="Solid"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid"/>
-						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font size="8"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{supplier}.getRegistry().getPayMethod().getBank().getName():$F{bank}.getName())]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="false">
-					<reportElement key="textField-118" positionType="FixRelativeToBottom" mode="Opaque" x="239" y="29" width="82" height="23" isPrintWhenDetailOverflows="true"/>
-					<textElement textAlignment="Right" verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$R{warehouse_delivery_bank_account}+ ":"]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="false">
-					<reportElement key="textField-118" positionType="FixRelativeToBottom" mode="Opaque" x="10" y="54" width="69" height="23" isPrintWhenDetailOverflows="true"/>
-					<textElement verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$R{warehouse_delivery_text_financial1}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement key="textField-119" positionType="FixRelativeToBottom" mode="Opaque" x="79" y="29" width="124" height="23" isPrintWhenDetailOverflows="true"/>
-					<box leftPadding="3" bottomPadding="2">
-						<pen lineWidth="0.5" lineStyle="Solid"/>
-						<topPen lineWidth="0.0" lineStyle="Solid"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid"/>
-						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font size="8"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($P{defaultPayMethod}.booleanValue() ?  " "+$F{supplier}.getRegistry().getPayMethod().getNumberOfPayments()+" ":" "+ $F{numberOfPayments}+" " )]]></textFieldExpression>
-				</textField>
-			</frame>
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="103" splitType="Stretch">
-			<line>
-				<reportElement key="line-10" positionType="FixRelativeToBottom" x="3" y="4" width="537" height="1"/>
-			</line>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-135" positionType="FixRelativeToBottom" x="78" y="10" width="68" height="23"/>
-				<textElement verticalAlignment="Bottom">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{warehouse_delivery_date}+ ":"]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-136" positionType="FixRelativeToBottom" x="80" y="46" width="68" height="23"/>
-				<textElement verticalAlignment="Bottom">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{warehouse_delivery_name}+ ":"]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-137" positionType="FixRelativeToBottom" x="234" y="10" width="83" height="23"/>
-				<textElement verticalAlignment="Bottom">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{warehouse_delivery_sign}+ ":"]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-138" positionType="FixRelativeToBottom" x="3" y="10" width="68" height="23"/>
-				<textElement verticalAlignment="Bottom">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{warehouse_delivery_arrived}+ ":"]]></textFieldExpression>
-			</textField>
-		</band>
+		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
 		<band height="16" splitType="Stretch">
