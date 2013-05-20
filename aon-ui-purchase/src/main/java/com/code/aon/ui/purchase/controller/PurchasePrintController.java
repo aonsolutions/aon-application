@@ -35,7 +35,6 @@ public class PurchasePrintController extends PurchaseController {
 			if (mailConfig.getMailAccountCount() > 0) {
 				MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 				messageController.initNewMessage();
-				messageController.setAppendSignature(true);
 				PurchaseController controller = (PurchaseController) AonUtil.getRegisteredBean(IPurchaseConstants.PURCHASE_CONTROLLER_NAME);
 				PurchaseEmailUtil emailUtil = controller.getEmailController();
 				messageController.setSubject( emailUtil.getEmailSubject() );

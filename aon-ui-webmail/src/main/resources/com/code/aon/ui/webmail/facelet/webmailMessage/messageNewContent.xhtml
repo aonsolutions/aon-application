@@ -65,7 +65,7 @@
 						<aon:outputLabel for="NewMail_From" 
 							value="#{webmailBundle.webmail_from}: " />
 					</aon:div>							
-					<aon:selectOneMenu id="NewMail_From" reRender="messageContent"
+					<aon:selectOneMenu id="NewMail_From" reRender="messageContent,NewMail_optionsGrid"
 						rendered="#{mailConfig.mailAccountCount &gt; 1}"
 						converter="#{mailConfig.mailAccountConverter}"
 						valueChangeListener="#{webmailMessage.onMailAccountChanged}"
@@ -177,8 +177,39 @@
 					</c:if>
 
 				</aon:panelGrid>
-			</aon:div>
-			
+				<aon:panelGrid id="NewMail_optionsGrid"
+					columns="2" cellpadding="0" cellspacing="0" style="width:100%;"
+					columnClasses="aon-panelGrid-odd aon-width-130 aon-noborder-top,aon-panelGrid-even aon-noborder-top">
+
+					<aon:outputText id="NewMail_optionLabel" value=""
+						rendered="#{webmailMessage.showAppendSignature or webmailMessage.showSaveSent}" />
+					<aon:div id="NewMail_optionDiv"
+						rendered="#{webmailMessage.showAppendSignature or webmailMessage.showSaveSent}">
+						<aon:outputLabel for="NewMail_saveSent"
+							rendered="#{webmailMessage.showSaveSent}"
+							value="#{webmailBundle.webmail_save_sent}" />
+						<aon:selectBooleanCheckbox
+							id="NewMail_saveSent"
+							rendered="#{webmailMessage.showSaveSent}"
+							value="#{webmailMessage.saveSent}" />
+						<aon:div layout="inline" styleClass="aon-margin-left">
+							<aon:outputLabel for="NewMail_appendSignature"
+								rendered="#{webmailMessage.showAppendSignature}"
+								value="#{webmailBundle.webmail_signature_include}" />
+							<aon:selectBooleanCheckbox
+								id="NewMail_appendSignature"
+								value="#{webmailMessage.appendSignature}"
+								rendered="#{webmailMessage.showAppendSignature}">
+								<a4j:support event="onchange" ajaxSingle="true"
+									actionListener="#{webmailMessage.onAppendSignatureChanged}"
+									reRender="messageContent" />
+							</aon:selectBooleanCheckbox>
+						</aon:div>								
+					</aon:div>
+
+				</aon:panelGrid>
+
+			</aon:div>			
 			
 			<!-- Message Body -->
 			<aon:div id="messageContent" styleClass="padding-top">

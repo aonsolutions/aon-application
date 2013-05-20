@@ -35,8 +35,7 @@ public class TemplateController extends BasicController {
 	}
 
 	public static void initController( MessageController controller, Template template ) {
-		controller.setAppendSignature(true);
-		controller.setSkipSignature(!template.isAppendSignature());
+		controller.setAppendSignature(template.isAppendSignature());
 		controller.setSubject(template.getSubject());		
 		if (! StringUtils.isEmpty(template.getData()) ) {
 			controller.updateMessageBody(template.getData());	

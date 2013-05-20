@@ -110,6 +110,7 @@ color:#000;
 .aon-border-left{border-left:#ccc 1px solid;}
 .aon-border-right{border-right:#ccc 1px solid;}
 .aon-border-top{border-top:#ccc 1px solid;}
+.aon-noborder-top{border-top:0 !important;}
 .aon-border-bottom{border-bottom:#ccc 1px solid;}
 .aon-border-left-black{border-left:#000 2px solid;}
 .aon-border-right-black{border-right:#000 2px solid;}

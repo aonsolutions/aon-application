@@ -1,7 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.finance.IFinanceMessages.BUNDLE_KEY;
-import static com.code.aon.ui.finance.IFinanceMessages.FINANCE_INVOICE_SEND_EMAIL_FNINISH;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
@@ -50,7 +48,8 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 			if (mailConfig.getMailAccountCount() > 0) {
 				MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 				messageController.initNewMessage();
-				messageController.setAppendSignature(true);
+				messageController.setAppendSignature(false);
+				messageController.setSaveSent(false);
 				InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
 				FinanceEmailUtil emailUtil = controller.getEmailController();
 				messageController.setSubject( emailUtil.getEmailSubject() );

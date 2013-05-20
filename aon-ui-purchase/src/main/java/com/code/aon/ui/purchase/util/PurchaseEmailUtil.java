@@ -39,7 +39,6 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseMess
 	public void initMessageController( MessageController messageController, Purchase purchase, List<String> moreRecipients ) throws ManagerBeanException, IOException, ReportException {
 		String[] emails = getEmails( purchase, moreRecipients );
 		initMessageController(messageController, emails);
-		messageController.setAppendSignature(true);
 		messageController.updateMessageBody( getEmailContent(getEmailBody(purchase), AonUtil.getMessage(BUNDLE_KEY, PURCHASE_EMAIL_BODY_HEADER)) );
 		messageController.setSubject( getEmailSubject(purchase) );
 		messageController.addAttachment( getReport(purchase, REPORT_KEY) );

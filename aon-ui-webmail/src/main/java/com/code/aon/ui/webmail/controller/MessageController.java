@@ -1,6 +1,7 @@
 package com.code.aon.ui.webmail.controller;
 
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
+import static com.code.aon.webmail.bean.IMailConstants.IMAP;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -68,6 +69,7 @@ import com.code.aon.ui.webmail.bean.AonMessageTracer;
 import com.code.aon.webmail.EmailSecurity;
 import com.code.aon.webmail.IContact;
 import com.code.aon.webmail.IMailAccount;
+import com.code.aon.webmail.ISignature;
 import com.code.aon.webmail.SecurityInfo;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.WebmailUtil;
@@ -141,7 +143,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
     
     private boolean appendSignature;
     
-    private boolean skipSignature;
+    private boolean saveSent;
     
 	/**
 	 * @return the message
@@ -413,7 +415,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 	//***************************************************************
 	
 	private void storeMessage( AonServer server, AonMessage aonMessage, boolean draft ) {
-		if ( server.isIMAP() ) {
+		if ( isSaveSent() && server.isIMAP() ) {
 	    	Message[] messages = new Message[1];
 			messages[0] = aonMessage.getMessage();
 			try {
@@ -578,6 +580,8 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 	}
 	
 	public void initNewMessage(){
+		saveSent = true;
+		appendSignature = true;
 		senderMailAccount = resolveMailAccount();
 		recipientsTo = null;
 		recipientsCc = null;
@@ -1012,17 +1016,17 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		}
 	}	
 	
+	public void onAppendSignatureChanged(ActionEvent event) throws ManagerBeanException {
+		updateContent( getSenderMailAccount() );
+	}	
+	
 	private boolean includeSignature( IMailAccount mailAccount ) {
-		return (!skipSignature) && (!AonUtil.isAppleDevice()) && (mailAccount.getISignature() != null);
+		return isAppendSignature() && (!AonUtil.isAppleDevice()) && (mailAccount.getISignature() != null);
 	}
 	
 	private void updateContent( IMailAccount mailAccount ) {
 		if ( includeSignature(mailAccount) ) {
-			if ( isAppendSignature() ) {
-				content = StringUtils.defaultString(messageBody) + mailAccount.getISignature().getSignature();
-			} else {
-				content = mailAccount.getISignature().getSignature() + StringUtils.defaultString(messageBody);	
-			}
+			content = StringUtils.defaultString(messageBody) + mailAccount.getISignature().getSignature();
 		} else {
 			content = StringUtils.defaultString(messageBody);	
 		}		
@@ -1159,14 +1163,6 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		this.appendSignature = appendSignature;
 	}
 
-	public boolean isSkipSignature() {
-		return skipSignature;
-	}
-
-	public void setSkipSignature(boolean skipSignature) {
-		this.skipSignature = skipSignature;
-	}
-
 	public AonMessage getSentMessage() {
 		return sentMessage;
 	}
@@ -1185,16 +1181,34 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		}
 	}
 
+	public boolean isShowAppendSignature() {
+		if (getSenderMailAccount() != null) {
+			ISignature signature = getSenderMailAccount().getISignature();
+			return (signature != null) && (signature.getName() != null);
+		}
+		return false;
+	}	
+	
+	public boolean isShowSaveSent() {
+		return (getSenderMailAccount() != null) && IMAP.equals(getSenderMailAccount().getProtocol());
+	}
+	
+	public boolean isSaveSent() {
+		return saveSent;
+	}
+
+	public void setSaveSent(boolean saveSent) {
+		this.saveSent = saveSent;
+	}
+
 	public boolean isIncluded() {
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		Map<String,Object> map = ctx.getExternalContext().getRequestMap();
 		Boolean value = (Boolean) map.get(MESSAGE_WINDOW_INCLUDED);
 		if (value == null) {
 			map.put(MESSAGE_WINDOW_INCLUDED, Boolean.TRUE);
-			LOGGER.info( "MailTemplate first time" );
 			return false;
 		}
-		LOGGER.info( "MailTemplate INCLUDED" );
 		return true;
 	}
 	

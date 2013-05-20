@@ -794,6 +794,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 
 	public void onNewEmail( ActionEvent event ) {
 		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+		controller.setSaveSent(false);
 		if ( isTemplateSelected() ) {
 			TemplateController.initController(controller, getTemplate());
 		} else if ( isNewsletterSelected() ) {
@@ -805,7 +806,6 @@ public class CommunicationCenterController implements IMarketingConstants {
 		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 		controller.onNewMessage(event);
 		controller.setShowNewMessageWindow(true);
-		controller.setAppendSignature(true);
 		if ( isTemplateSelected() ) {
 			TemplateController.initController(controller, getTemplate());	
 		}
