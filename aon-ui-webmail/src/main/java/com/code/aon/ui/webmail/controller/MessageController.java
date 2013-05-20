@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.faces.context.FacesContext;
@@ -83,6 +84,8 @@ import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.util.LineOutputStream;
 
 public class MessageController implements IWebMailConstants, BundleConstants {
+
+	private static final String MESSAGE_WINDOW_INCLUDED = "com.code.aon.ui.webmail.MessageWindow";
 
 	private static final int MAX_LENGTH_STRING = 120;
 
@@ -449,7 +452,6 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		    	parentMessage.getParent().getFolder().expunge();
 	    	}
 	    	deleteDraftMessage( server );
-    		refreshDraftFolder();
 		} catch (Throwable th) {
 			AonUtil.addErrorMessage(th.getMessage());
 			throw new AbortProcessingException(th);
@@ -473,6 +475,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
     		}
     		imapFolder.close(true);
     		this.draftMessageUID = null;
+    		refreshDraftFolder();
     	}    	
     }
 
@@ -1180,6 +1183,19 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		} else {
 			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
 		}
+	}
+
+	public boolean isIncluded() {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		Map<String,Object> map = ctx.getExternalContext().getRequestMap();
+		Boolean value = (Boolean) map.get(MESSAGE_WINDOW_INCLUDED);
+		if (value == null) {
+			map.put(MESSAGE_WINDOW_INCLUDED, Boolean.TRUE);
+			LOGGER.info( "MailTemplate first time" );
+			return false;
+		}
+		LOGGER.info( "MailTemplate INCLUDED" );
+		return true;
 	}
 	
 }
