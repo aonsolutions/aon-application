@@ -125,6 +125,20 @@
 					</aon:div>
 					<aon:div styleClass="aon-group-body"> 
 						<aon:div styleClass="aon-group-body-internal">
+						
+							<aon:panel style="width: 300px;">
+								<aon:selectBooleanCheckbox id="test_enviroment"
+									value="#{payrollAppParams.contrataTestEnviroment}" />
+								<aon:outputLabel for="test_enviroment"
+									style="#{(payrollAppParams.contrataTestEnviroment)?('color: red; font-weight:bold;'):('text-decoration: line-through;')}"
+									value="ENTORNO TEST ACTIVADO" />
+<!--  
+								<aon:outputLabel for="test_enviroment"
+									styleClass="#{(payrollAppParams.contrataTestEnviroment)?('aon-message-error'):('')}"
+									value="ENTORNO TEST ACTIVADO" />
+-->
+							</aon:panel>
+							
 							<aon:panelGrid columns="2" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
 
 								<aon:panelGrid columns="2" style="width: 300px;">

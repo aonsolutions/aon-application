@@ -244,7 +244,7 @@ public abstract class AbstractAnnexModel implements IContractPdfDocument {
 		}
 		reader.close();
 	}
-	
+
 	public void loadPdfCommonFields(Contract contract) throws ManagerBeanException{
 		
 	}

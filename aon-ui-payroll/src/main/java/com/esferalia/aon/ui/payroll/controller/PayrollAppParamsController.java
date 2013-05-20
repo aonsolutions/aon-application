@@ -32,6 +32,7 @@ public class PayrollAppParamsController{
 	
 	public final static String CONTRATA_USER = "PAY_contrata_user_PAY";
 	public final static String CONTRATA_PASSWORD = "PAY_contrata_passwd_PAY";
+	public final static String CONTRATA_TEST_ENVIRONMENT_ACTIVE = "PAY_contrata_test_env_active_PAY";
 
 	public final static String DEFAULT_CONTRACT_CODE = "PAY_default_contractCode_PAY";
 	public final static String DEFAULT_TRAINING_CENTER = "PAY_default_trainingCenter_PAY";
@@ -43,6 +44,8 @@ public class PayrollAppParamsController{
 	private String contrataUser;
 	private String contrataPassword;
 	private Boolean validContrataLogin;
+
+	private Boolean contrataTestEnviroment;
 	
 	private TrainingCenter defaultTrainingCenter;
 	
@@ -113,6 +116,29 @@ public class PayrollAppParamsController{
 				setContrataPassword(getParameter(CONTRATA_PASSWORD).getValue());
 			} else {
 				setContrataPassword("");
+			}
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+	}
+	
+	public Boolean getContrataTestEnviroment() {
+		if(contrataTestEnviroment==null){
+			initContrataTestEnviroment();
+		}
+		return contrataTestEnviroment;
+	}
+	
+	public void setContrataTestEnviroment(Boolean contrataTestEnviroment) {
+		this.contrataTestEnviroment = contrataTestEnviroment;
+	}
+	
+	private void initContrataTestEnviroment() {
+		try {
+			if(getParameter(CONTRATA_TEST_ENVIRONMENT_ACTIVE).getValue()!=null){
+				setContrataTestEnviroment(new Boolean(getParameter(CONTRATA_TEST_ENVIRONMENT_ACTIVE).getValue()));
+			} else {
+				setContrataTestEnviroment(true);
 			}
 		} catch (ManagerBeanException e) {
 			// NADA
@@ -280,6 +306,7 @@ public class PayrollAppParamsController{
 		setContrataPassword(null);
 		setValidContrataLogin(null);
 		setDefaultTrainingCenter(null);
+		setContrataTestEnviroment(null);
 		
 		parameters = new TreeMap<String, ApplicationParameter>();
 		IManagerBean managerBean = BeanManager.getManagerBean(ApplicationParameter.class);
@@ -328,6 +355,7 @@ public class PayrollAppParamsController{
 		// CONTRATA PARAMS
 		getParameter(CONTRATA_USER).setValue(getContrataUser());
 		getParameter(CONTRATA_PASSWORD).setValue(getContrataPassword());
+		getParameter(CONTRATA_TEST_ENVIRONMENT_ACTIVE).setValue(getContrataTestEnviroment().toString());
 
 		// CONTRACT PARAMS
 		if(getDefaultTrainingCenter()!=null && getDefaultTrainingCenter().getId()!=null){

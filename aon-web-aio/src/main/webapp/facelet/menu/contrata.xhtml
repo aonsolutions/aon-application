@@ -113,9 +113,17 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="agreement" 
+									<aon:commandLink id="agreement-contrata" 
 										action="agreement_grid"
 										value="#{payrollBundle.payroll_agreement_module}"/>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="calendar-contrata"
+										action="#{calendar.initialAction}"
+										actionListener="#{calendar.onEditSearch}"
+										value="#{calendarBundle.aon_calendar_calendar_module}">
+										<aon:actionListener method="#{calendar.onInitialize}" />
+									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="trainingCenter-contrata"

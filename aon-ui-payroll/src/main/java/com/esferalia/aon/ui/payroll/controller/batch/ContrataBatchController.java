@@ -9,11 +9,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.IStringEnum;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ql.Criteria;
@@ -68,9 +70,9 @@ public class ContrataBatchController extends BasicController {
 	}
 	
 	public void changeBatchStatus(FileStatus status) {
-		ContrataBatch b = (ContrataBatch) getTo();
-		if(b != null){
-			b.setStatus(status);
+		ContrataBatch batch = (ContrataBatch) getTo();
+		if(batch != null){
+			batch.setStatus(status);
 			super.accept(null);
 		}
 	}
@@ -94,8 +96,9 @@ public class ContrataBatchController extends BasicController {
 	public void onReset(ActionEvent event) {
 		setRecorded(false);
 		super.onReset(event);
-		ContrataBatch b = (ContrataBatch) getTo();
-		b.setStatus(FileStatus.PENDING);
+		ContrataBatch batch = (ContrataBatch) getTo();
+		batch.setDate(new Date());
+		batch.setStatus(FileStatus.PENDING);
 		if(!isRecorded()){
 			ContractListController list = (ContractListController) FormUtil.getController(IPayrollConstants.CONTRATA_LIST_CONTROLLER_NAME);
 			list.onSearch(event);
@@ -220,6 +223,53 @@ public class ContrataBatchController extends BasicController {
 			AonUtil.addErrorMessage(msg);
 		}
 		return null;
+	}
+	
+	public List<SelectItem> getBatchFileTypes(){
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		for(BatchFileType type: BatchFileType.values()){
+			SelectItem item = new SelectItem(type, type.getValue());
+			list.add(item);
+		}
+		return list;
+	}
+	
+	public enum BatchFileType implements IStringEnum {
+		
+		CONTRACT("Contrato"),
+
+		PRORROGATION("Prórroga"),
+
+//	    Transformación a indefinido
+//	    Llamamiento de fijo discontinuo
+
+		BASIC_COPY("Copia Básica"),
+		
+//	    Contrato de grupo
+//	    Horas Complementarias
+//	    Incluir contrato de Oficina de Empleo
+		
+		LEARNING_ANNEX("Anexo de Formación"),
+		
+//	    Corrección de contrato
+//	    Corrección de prórroga
+//	    Corrección de transformaciones
+//	    Corrección de llamamientos
+//	    Corrección de horas complementarias
+		
+		;
+		
+		BatchFileType(String value){
+			this.value = value;
+		}
+
+		private String value;
+
+		@Override
+		public String getValue() {
+			return value;
+		}
+		
 	}
 
 }

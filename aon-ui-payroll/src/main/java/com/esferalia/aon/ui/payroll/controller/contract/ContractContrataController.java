@@ -284,27 +284,21 @@ public class ContractContrataController {
 		}
 		return null;
 	}
+	
 	private ContractAttachment obtainContrataResponseAttach(){
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), getParams().getContract().getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA_RESPONSE);
-			List<ITransferObject> list = bean.getList(criteria);
-			if(!list.isEmpty()){
-				return (ContractAttachment) list.get(0);
-			}
-		} catch (ManagerBeanException e) {
-			// NOTHING TO DO
-		}
-		return null;
+		return obtainContrataStatusAttach(ContractAttachmentType.SPEE_CONTRATA_RESPONSE);
 	}
+
 	private ContractAttachment obtainContrataStatusAttach(){
+		return obtainContrataStatusAttach(ContractAttachmentType.SPEE_CONTRATA_STATUS);
+	}
+	
+	private ContractAttachment obtainContrataStatusAttach(ContractAttachmentType type){
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), getParams().getContract().getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA_STATUS);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), type);
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				return (ContractAttachment) list.get(0);
@@ -364,6 +358,7 @@ public class ContractContrataController {
 	public void onSendContrataFile(ActionEvent event){
 		if(!isShowContrataLoginWindow()){
 			searchContrataLogin();
+			searchTestEnvironment();
 		}
 		if( StringUtils.isBlank(getUser()) || StringUtils.isBlank(getPasswd()) ){
 			setShowContrataLoginWindow(true);
@@ -394,6 +389,7 @@ public class ContractContrataController {
 		}
 		if(!isShowContrataLoginWindow()){
 			searchContrataLogin();
+			searchTestEnvironment();
 		}
 		if( StringUtils.isBlank(getUser()) || StringUtils.isBlank(getPasswd()) ){
 			setShowContrataLoginWindow(true);
@@ -465,6 +461,16 @@ public class ContractContrataController {
 		setUser(appParams.getContrataUser());
 		setPasswd(appParams.getContrataPassword());
 	}
+
+	private void searchTestEnvironment() {
+		PayrollAppParamsController appParams = (PayrollAppParamsController) AonUtil.getRegisteredBean(IPayrollConstants.PAYROLL_APP_PARAMS_CONTROLLER_NAME);
+		try {
+			appParams.loadParameters();
+		} catch (ManagerBeanException e) {
+			// no se cargan los datos del entorno
+		}
+		setContrataTestEnv(appParams.getContrataTestEnviroment());
+	}
 	
 	private void afterCommunicationFinished() {
 		PayrollAppParamsController appParams = (PayrollAppParamsController) AonUtil.getRegisteredBean(IPayrollConstants.PAYROLL_APP_PARAMS_CONTROLLER_NAME);
@@ -488,6 +494,7 @@ public class ContractContrataController {
 	private String mainUser;
 	private String passwd;
 	private boolean contrataLoginRemember;
+	private boolean contrataTestEnv;
 	
 	public String getDocument() {
 		return document;
@@ -519,9 +526,15 @@ public class ContractContrataController {
 	public void setPasswd(String passwd) {
 		this.passwd = passwd;
 	}
+	public boolean isContrataTestEnv() {
+		return contrataTestEnv;
+	}
+	public void setContrataTestEnv(boolean contrataTestEnv) {
+		this.contrataTestEnv = contrataTestEnv;
+	}
 	
 	private void sendContrataFile(){
-		xmlResult = ContrataManager.processDataComunication(getContrataAttach().getData(), getUser(), getUser(), getPasswd());
+		xmlResult = ContrataManager.processDataComunication(isContrataTestEnv(), getContrataAttach().getData(), getUser(), getUser(), getPasswd());
 //		ContrataManager.processDataComunication(getContrataAttach().getData(), getUser(), getUser(), getPasswd());
 		System.out.println("RESPUESTA RESULTANTE DE LA COMUNICACION CON EL S.E.P.E. :  " );
 		System.out.println(xmlResult);
@@ -529,7 +542,7 @@ public class ContractContrataController {
 
 	private void contrataDataQuery(){
 		
-		xmlResult = ContrataManager.processDataQuery(getDocument(), getUser(), getUser(), getPasswd());
+		xmlResult = ContrataManager.processDataQuery(isContrataTestEnv(), getDocument(), getUser(), getUser(), getPasswd());
 		
 //		setXmlResult(result);
 		
@@ -540,13 +553,10 @@ public class ContractContrataController {
 	
 	
 	private ContractAttachment saveCommunicationResultFile(ContractAttachmentType type){
-		ContractAttachment contrataResultAttach = new ContractAttachment();
-		try {
-			InputStream is = new ByteArrayInputStream(xmlResult.getBytes());
-			byte fileContent[] = new byte[(int)xmlResult.length()];
-			is.read(fileContent);
+		ContractAttachment contrataResultAttach = obtainContrataStatusAttach(type);
+		if(contrataResultAttach==null){
+			contrataResultAttach = new ContractAttachment();
 			contrataResultAttach.setContract(getParams().getContract());
-			contrataResultAttach.setData(fileContent);
 			contrataResultAttach.setAttachmentType(type);
 			contrataResultAttach.setMimeType(MimeType.MIME_XML);
 			if(type == ContractAttachmentType.SPEE_CONTRATA_RESPONSE){
@@ -554,6 +564,12 @@ public class ContractContrataController {
 			} else if(type == ContractAttachmentType.SPEE_CONTRATA_STATUS){
 				contrataResultAttach.setDescription("Estado contrat@");
 			}
+		}
+		try {
+			InputStream is = new ByteArrayInputStream(xmlResult.getBytes());
+			byte fileContent[] = new byte[(int)xmlResult.length()];
+			is.read(fileContent);
+			contrataResultAttach.setData(fileContent);
 			is.close();
 		} catch(IOException e) {
 			String msg = "No se han podido guardar los datos de respuesta de Contrat@";

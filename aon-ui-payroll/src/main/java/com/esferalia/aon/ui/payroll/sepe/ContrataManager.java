@@ -1,6 +1,9 @@
 package com.esferalia.aon.ui.payroll.sepe;
 
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import com.esferalia.aon.sepe.api.SWComunicacionDatos.SWComunicacionDatos;
 import com.esferalia.aon.sepe.api.SWComunicacionDatos.SWComunicacionDatosService;
 import com.esferalia.aon.sepe.api.SWConsultaDatos.SWConsultaDatos;
@@ -9,13 +12,30 @@ import com.esferalia.aon.sepe.api.SWConsultaDatos.SWConsultaDatosService;
 public class ContrataManager {
 	
 	private final static String IDIOMA = "14";
+	
 	private final static String COMUNIDAD = "99";
 	
-	public static String processDataComunication(byte[] data, String connectedUser, String mainUser, String passwd){
-		return processDataComunication(new String(data), connectedUser, mainUser, passwd);
+	// COMMUNICATION ADDRESS LOCATION
+//	FIXME: secure http ?? 
+//	private final static String COMMUNICATION_PRODUCTION_ENVIRONMENT = 	"https://www.sepe.es/ccomunicacto/services/SWComunicacionDatos";
+	private final static String COMMUNICATION_PRODUCTION_ENVIRONMENT = 	"http://www.sepe.es/ccomunicacto/services/SWComunicacionDatos";
+	
+	private final static String COMMUNICATION_TEST_ENVIRONMENT = 		"http://www.sepe.es/ecomunicacto/services/SWComunicacionDatos";
+
+	// QUIERY ADDRESS LOCATION
+//	FIXME: secure http ?? 
+//	private final static String QUERY_PRODUCTION_ENVIRONMENT = 			"https://www.sepe.es/ccomunicacto/services/SWConsultaDatos";
+	private final static String QUERY_PRODUCTION_ENVIRONMENT = 			"http://www.sepe.es/ccomunicacto/services/SWConsultaDatos";
+	
+	private final static String QUERY_TEST_ENVIRONMENT = 				"http://www.sepe.es/ecomunicacto/services/SWConsultaDatos";
+
+	
+	public static String processDataComunication(boolean isTestEnv, byte[] data, String connectedUser, String mainUser, String passwd){
+		return processDataComunication(isTestEnv, new String(data), connectedUser, mainUser, passwd);
 	}
 	
-	public static String processDataComunication(String document, String connectedUser, String mainUser, String passwd){
+	public static String processDataComunication(boolean isTestEnv, String document, String connectedUser, String mainUser, String passwd){
+//		SWComunicacionDatosService service = new SWComunicacionDatosService(obtainContrataEnviroment(true));
 		SWComunicacionDatosService service = new SWComunicacionDatosService();
 		SWComunicacionDatos datos = service.getSWComunicacionDatos();
 		
@@ -49,13 +69,18 @@ public class ContrataManager {
 		
 	}
 
-	public static String processDataQuery(String document, String connectedUser, String mainUser, String passwd){
-		SWConsultaDatosService service = new SWConsultaDatosService();
-		SWConsultaDatos datos = service.getSWConsultaDatos();
+	public static String processDataQuery(boolean isTestEnv, String document, String connectedUser, String mainUser, String passwd){
+		try {
+			SWConsultaDatosService service = new SWConsultaDatosService(new URL(obtainContrataEnvironment(false, isTestEnv)));
+//		SWConsultaDatosService service = new SWConsultaDatosService();
+			SWConsultaDatos datos = service.getSWConsultaDatos();
+			String result = datos.servicioConsulta(document, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+			return result;
+		} catch (MalformedURLException e) {
+			// nada, no se comunica
+		}
 		
-		String result = datos.servicioConsulta(document, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
-		
-		return result;
+		return null;
 		
 		
 //		Comunidad e idioma:
@@ -73,13 +98,21 @@ public class ContrataManager {
 		
 	}
 	
+	private static String obtainContrataEnvironment(boolean isCommunication, boolean isTestEnv) {
+		if(isCommunication){
+				return isTestEnv ? COMMUNICATION_TEST_ENVIRONMENT : COMMUNICATION_PRODUCTION_ENVIRONMENT;
+		} else {
+				return isTestEnv ? QUERY_TEST_ENVIRONMENT : QUERY_PRODUCTION_ENVIRONMENT;
+		}
+	}
+	
 	public static void main(String[] args) throws Exception {
 		
 		String DOCUMENTO = "";
 		String USUARIO_CONECTADO = "A01306190";
 		String USUARIO_PRINCIPAL = "A01306190";
 		String PASSWORD = "945121010";
-		String result = processDataComunication(DOCUMENTO, USUARIO_CONECTADO, USUARIO_PRINCIPAL, PASSWORD);
+		String result = processDataComunication(true, DOCUMENTO, USUARIO_CONECTADO, USUARIO_PRINCIPAL, PASSWORD);
 		
 //		String DOCUMENTO = "C7534747";
 //		String result = processDataQuery(DOCUMENTO, USUARIO_CONECTADO, USUARIO_PRINCIPAL, PASSWORD);

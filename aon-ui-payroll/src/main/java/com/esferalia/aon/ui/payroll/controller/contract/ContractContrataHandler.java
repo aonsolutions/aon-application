@@ -2,6 +2,8 @@ package com.esferalia.aon.ui.payroll.controller.contract;
 
 import java.util.Calendar;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.contrata.enumeration.TBONVFOR;
@@ -167,7 +169,7 @@ public class ContractContrataHandler {
 	 * @return
 	 */
 	public Boolean getShowHorasMinutosFormacion() {
-		return getContractCode()==ContractCode.C421 && getParams().getIndicFormacionTeorica()!=null && !getParams().getIndicFormacionTeorica().equals("S");
+		return getContractCode()==ContractCode.C421 ;
 	}
 
 	/**
@@ -187,7 +189,8 @@ public class ContractContrataHandler {
 	 * @return
 	 */
 	public Boolean getShowIndicFormacionTeorica() {
-		return getContractCode()==ContractCode.C421;
+		return getContractCode()==ContractCode.C421 
+				&& StringUtils.isBlank(getParams().getHorasFormacion()) && StringUtils.isBlank(getParams().getMinutosFormacion());
 	}
 	
 	/**

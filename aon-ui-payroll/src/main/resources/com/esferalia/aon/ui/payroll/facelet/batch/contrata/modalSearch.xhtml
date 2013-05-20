@@ -11,17 +11,25 @@
 	<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/modalSearch.xhtml">
 
 		<ui:define name="modalContent" >
+
+			<aon:outputLabel for="Contrata_fileType" value="Tipo de comunicacion" />
+			<aon:selectOneMenu id="Contrata_fileType" required="true" 
+				value="#{contrataList.fileType}">
+				<f:selectItems value="#{contrataBatch.batchFileTypes}"  />
+			</aon:selectOneMenu>
+
 			<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{controller.person}" />
 				<ui:param name="skipNewButton" value="#{true}" />
+				<ui:param name="skipGoToButton" value="#{true}" />
 			</ui:include>
 			
 		</ui:define>
-		
+
 		<ui:define name="afterFormContent" >
 			<aon:lookupButtonPopup lookup="#{personLookup}" />
 		</ui:define>
-	
+		
 	</ui:decorate>
 	
 </ui:composition>

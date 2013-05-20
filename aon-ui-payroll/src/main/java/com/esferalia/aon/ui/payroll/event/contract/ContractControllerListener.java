@@ -131,14 +131,13 @@ public class ContractControllerListener extends ControllerAdapter{
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		insertContractData();
-		ContractController controller = (ContractController) this.getController();
+//		ContractController controller = (ContractController) this.getController();
 //		controller.getHandler().initializeVariables(null);
 //		if(controller.isShowNewContractModal()){
 //			controller.setShowNewContractModal(false);
 //			EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_TREE_CONTROLLER);
 //			tree.loadTree();
 //		}
-		controller.generateDocument();
 	}
 
 	@Override

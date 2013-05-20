@@ -15,7 +15,6 @@ import com.code.aon.person.Person;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class ContractListController extends BasicController {
@@ -73,6 +72,7 @@ public class ContractListController extends BasicController {
 		this.enterprise = enterprise;
 	}
 
+	@Override
 	public void onSearch(ActionEvent event) {
 		getCheckHandler().clearCheckedList();
 		try {

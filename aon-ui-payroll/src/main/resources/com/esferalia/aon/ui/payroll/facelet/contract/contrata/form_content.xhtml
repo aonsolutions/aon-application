@@ -15,7 +15,7 @@
 				<aon:panel styleClass="aon-width-all">
 					<f:facet name="header">
 						<aon:outputText style="color:red;" 
-							value="Estado de la comunicación con el S.E.P.E. (ENTORNO DE PRUEBAS)" />
+							value="Estado de la comunicación con el S.E.P.E. #{contractContrata.contrataTestEnv?'(ENTORNO DE PRUEBAS)':''}" />
 					</f:facet>
 					<aon:outputText value="#{contractContrata.xmlResult}" escape="false" />
 				</aon:panel>
@@ -145,7 +145,6 @@
 					rendered="#{contractContrata.handler.showIndicFormacionTeorica}"
 					value="#{payrollBundle.payroll_contract_formation_received}" />
 				<aon:selectOneRadio id="formationReceived"
-					required="true" 
 					rendered="#{contractContrata.handler.showIndicFormacionTeorica}"
 					value="#{contractContrata.params.indicFormacionTeorica}" >
 					<f:selectItem itemLabel="#{payrollBundle.payroll_yes}" itemValue="S" />
@@ -163,16 +162,16 @@
 					<aon:inputText id="formationHours" size="4" maxlength="4"
 						disabled="#{contractContrata.params.indicFormacionTeorica=='S'}" 
 						value="#{contractContrata.params.horasFormacion}">
-						<a4j:support event="onblur" reRender="formatinoWorkingDaysPercent" />
+						<a4j:support event="onblur" reRender="formationWorkingDaysPercent, otherDataPanel2" />
 					</aon:inputText>
 					<aon:outputLabel for="formationMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
 						value="#{payrollBundle.payroll_minutes}:" />
 					<aon:inputText id="formationMinutes" size="2" maxlength="2"
 						disabled="#{contractContrata.params.indicFormacionTeorica=='S'}" 
 						value="#{contractContrata.params.minutosFormacion}">
-						<a4j:support event="onblur" reRender="formatinoWorkingDaysPercent" />
+						<a4j:support event="onblur" reRender="formationWorkingDaysPercent, otherDataPanel2" />
 					</aon:inputText>
-					<aon:div id="formatinoWorkingDaysPercent" style="display:inline;"
+					<aon:div id="formationWorkingDaysPercent" style="display:inline;"
 						rendered="#{not empty contractContrata.params.horasFormacion and not empty contractContrata.params.horasJornada}">
 						<aon:outputText styleClass="aon-italic aon-margin-left"
 							value="#{contractContrata.params.horasFormacion*100/contractContrata.params.horasJornada}" />

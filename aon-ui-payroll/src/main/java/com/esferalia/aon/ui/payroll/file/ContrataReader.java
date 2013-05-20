@@ -814,7 +814,9 @@ public class ContrataReader {
 		if(datos != null){
 			params.setActividadSinFechaCierta(datos.getACTIVIDADSINFECHACIERTA());
 			params.setColectivoEdad(THPCOLFO.getEnumByValue(datos.getCOLECTIVOEDAD()));
-			params.setFijoDiscontinuoPeriodico(datos.getFIJODISCONTINUOPERIODICO().equals("S"));
+			if(datos.getFIJODISCONTINUOPERIODICO()!=null){
+				params.setFijoDiscontinuoPeriodico(datos.getFIJODISCONTINUOPERIODICO().equals("S"));
+			}
 			params.setHorasAnualesTiempoCompleto(datos.getHORASANUALESTIEMPOCOMPLETO());
 			params.setHorasConvenio(getHoras(datos.getHORASCONVENIO()));
 			params.setMinutosConvenio(getMinutos(datos.getHORASCONVENIO()));

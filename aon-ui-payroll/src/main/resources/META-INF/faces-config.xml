@@ -1546,7 +1546,7 @@
 	<!-- ************* CONTRACT LIST ***************** -->
 	<managed-bean>
 		<managed-bean-name>contrataList</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.ContractListController</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.ContrataListController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -2640,6 +2640,10 @@
 				</map-entry>
 				<map-entry>
 					<key>PAY_default_trainingCenter_PAY</key>
+					<value>[NULL]</value>
+				</map-entry>
+				<map-entry>
+					<key>PAY_contrata_test_env_active_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
 			</map-entries>

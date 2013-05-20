@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.file;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
@@ -90,6 +91,7 @@ import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 public class ContrataContratosWriter {
 	
 	private final String ZERO_VALUE = "0";
+	private final String BLANK_1 = " ";
 	
 	private ObjectFactory factory = new ObjectFactory();
 	
@@ -885,7 +887,7 @@ public class ContrataContratosWriter {
 		if(StringUtils.isEmpty(cno)){
 			AonUtil.addErrorMessage("El trabajador no tiene definido el código de ocupacion (CNO).");
 		} else {
-			datos.setCODIGOOCUPACION(completeLength(cno, 8, ZERO_VALUE, true));
+			datos.setCODIGOOCUPACION(completeLength(cno, 8,  BLANK_1, true));
 		}
 		if(params.isOfferData()){
 			datos.setIDOFERTA(completeLength(params.getOffer(), 17, ZERO_VALUE, false));
@@ -895,7 +897,8 @@ public class ContrataContratosWriter {
 		}
 		datos.setNACIONALIDADCT(completeLength(params.getContract().getWorkPlace().getAddress().getRegistry().getNationality().getIsoNum(),3,ZERO_VALUE,false));
 		// FIXME: falta por implementar: tabla con los municipios
-		datos.setMUNICIPIOCT(completeLength(params.getContract().getWorkPlace().getAddress().getGeozone().getCode(),5,ZERO_VALUE,false));
+//		datos.setMUNICIPIOCT(completeLength(params.getContract().getWorkPlace().getAddress().getGeozone().getCode(),5,ZERO_VALUE,false));
+		datos.setMUNICIPIOCT(params.getTownCode());
 		if(params.isOlderThan52Data()){
 			datos.setOTRASLEGISLACIONES(params.getOtrasLegislaciones()!=null?params.getOtrasLegislaciones().getCode():null);
 		}
@@ -903,7 +906,14 @@ public class ContrataContratosWriter {
 			String subsidized = getContractDataMap(params.getContract()).get(ContextVariable.SUBSIDIZED.getName());
 			datos.setTEMPORALMINUSVBONIFICADO(Boolean.parseBoolean(subsidized)?"S":"N");
 		}
-		if(tc2.equals("421")){
+		
+		Calendar formationStart = Calendar.getInstance();
+		formationStart.set(2010, 5, 18);
+		Calendar formationEnd = Calendar.getInstance();
+		formationEnd.set(2011, 7, 30);
+		if(tc2.equals("421") 
+				&& params.getContract().getStartDate().after(formationStart.getTime()) 
+				&& params.getContract().getStartDate().before(formationEnd.getTime())){
 			String subsidized = getContractDataMap(params.getContract()).get(ContextVariable.SUBSIDIZED.getName());
 			datos.setFORMACIONBONIFICADO(Boolean.parseBoolean(subsidized)?"S":"N");
 		}
@@ -1380,12 +1390,14 @@ public class ContrataContratosWriter {
 	 */
 	private DATOSCONTRATOTIEMPOPARCIALTYPE createDatosContratoTiempoParcial(ContrataParams params) {
 		// TODO
+		String tc2 = getContractDataMap(params.getContract()).get(ContextVariable.TC2.getName());
 		DATOSCONTRATOTIEMPOPARCIALTYPE datos = factory.createDATOSCONTRATOTIEMPOPARCIALTYPE();
 		datos.setACTIVIDADSINFECHACIERTA(params.getActividadSinFechaCierta());
 		datos.setCOLECTIVOEDAD(params.getColectivoEdad()!=null?params.getColectivoEdad().getCode():null);
-		datos.setFIJODISCONTINUOPERIODICO(params.getFijoDiscontinuoPeriodico()!=null && params.getFijoDiscontinuoPeriodico()?"S":"N");
+		if( tc2.equals("200") || tc2.equals("230") || tc2.equals("250") ){
+			datos.setFIJODISCONTINUOPERIODICO(params.getFijoDiscontinuoPeriodico()!=null && params.getFijoDiscontinuoPeriodico()?"S":"N");
+		}
 		datos.setHORASANUALESTIEMPOCOMPLETO(params.getHorasAnualesTiempoCompleto());
-		
 		String duracionconvenio = (params.getHorasConvenio()==null?"":completeLength(params.getHorasConvenio(), 4, "0", false))+(params.getMinutosConvenio()==null?"":completeLength(params.getMinutosConvenio(), 2, "0", false));
 		String duracionjornada = (params.getHorasJornada()==null?"":completeLength(params.getHorasJornada(), 4, "0", false))+(params.getMinutosJornada()==null?"":completeLength(params.getMinutosJornada(), 2, "0", false));
 		String duracionformacion = (params.getHorasFormacion()==null?"":completeLength(params.getHorasFormacion(), 4, "0", false))+(params.getMinutosFormacion()==null?"":completeLength(params.getMinutosFormacion(), 2, "0", false));
@@ -1393,7 +1405,10 @@ public class ContrataContratosWriter {
 		datos.setHORASFORMACION(duracionformacion.isEmpty()?null:completeLength(duracionformacion, 6, "0", false));
 		datos.setHORASJORNADA(duracionjornada.isEmpty()?null:completeLength(duracionjornada, 6, "0", false));
 		
-		datos.setINDICFORMACIONTEORICA(params.getIndicFormacionTeorica());
+		if( tc2.equals("421") && duracionformacion.isEmpty() ){
+			datos.setINDICFORMACIONTEORICA(params.getIndicFormacionTeorica());
+		}
+		
 		datos.setPORCENTAJEJUBILACIONPARCIAL(params.getPorcentajeJubilacionParcial());
 		datos.setPORCJORNADAPACTADA(params.getPorcJornadaPactada());
 		datos.setTIPOJORNADA(params.getTipoJornada()!=null?params.getTipoJornada().getCode():null);
