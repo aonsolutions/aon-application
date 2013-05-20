@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,11 +53,11 @@ public class IncomeDetail extends IncomeDetailDB implements ICalculable, IStocka
 			Iterator<?> iterator = itemSupplierBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				ItemSupplier itemSupplier = (ItemSupplier)iterator.next();
-				return !StringUtils.isEmpty(itemSupplier.getCode()) ? itemSupplier.getCode() : getItem().getProduct().getCode();
+				return itemSupplier.getCode();
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Can't get ItemSupplier.code", e);
 		}
-		return getItem().getProduct().getCode();
+		return null;
 	}  
 }

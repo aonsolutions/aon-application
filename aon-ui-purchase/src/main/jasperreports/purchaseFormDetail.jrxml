@@ -39,8 +39,7 @@
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{printValue}?$R{aon_amount}:""
-]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{printValue}?$R{aon_amount}:""]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-1" mode="Opaque" x="74" y="1" width="239" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -96,7 +95,7 @@
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_code}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{purchase_item_supplier_code_abrv}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -177,7 +176,7 @@
 					<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
 				</textField>
 			</elementGroup>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-6" x="0" y="0" width="74" height="12"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
