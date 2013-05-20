@@ -67,6 +67,7 @@
 		<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 			<ui:decorate template="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" >
 				<ui:param name="skipSendButton" value="true" />
+				<ui:param name="skipRecipients" value="true" />
 				<ui:param name="skipAttachments" value="true" />
 				<ui:param name="windowHeight" value="420" />
 				<ui:define name="additionalToolbarContent">
