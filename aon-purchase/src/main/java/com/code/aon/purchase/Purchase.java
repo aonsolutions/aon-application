@@ -29,6 +29,7 @@ import com.code.aon.config.IPayMethod;
 import com.code.aon.config.PayMethod;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.purchase.enumeration.PurchaseDocumentType;
+import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.PurchaseDB;
@@ -97,7 +98,12 @@ public class Purchase extends PurchaseDB implements IHeaderObject, ICalculableCo
 	public boolean isConfidential() {
 		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
 	}
-
+	
+	@Transient
+	public boolean isServed() {
+		return getStatus() == PurchaseStatus.SERVED;
+	}
+	
 	@Transient
 	public void setConfidential(boolean confidential) {
 		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
