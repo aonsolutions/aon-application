@@ -494,7 +494,8 @@ public class ProjectReservationController extends BasicController implements IPm
 		if (isConfirmNoShow()) {
 			reservation.setCheckStatus(ReservationCheckStatus.NO_SHOW);
 		}
-		reservation.setStatus((cancelOk || reservation.isBlocked()) ? ReservationStatus.CANCELLED : ReservationStatus.BLOCKED);
+		//reservation.setStatus((cancelOk || reservation.isBlocked()) ? ReservationStatus.CANCELLED : ReservationStatus.BLOCKED);
+		reservation.setStatus(ReservationStatus.CANCELLED );
 		accept(event);
 
 		IController reservationRoomController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
