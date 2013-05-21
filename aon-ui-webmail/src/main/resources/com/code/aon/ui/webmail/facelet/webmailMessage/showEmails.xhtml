@@ -10,10 +10,10 @@
 
 <ui:composition>
 
-	<aon:form id="showEmailsForm">
-		<aon:panelGroup id="showEmailWindow">
+	<aon:form>
+		<aon:panelGroup id="showEmailWindow#{messageSuffix}">
 			<c:if test="#{webmailMessage.showEmailsWindow}">
-				<rich:modalPanel id="showEmailsModalPanel"
+				<rich:modalPanel id="showEmailsModalPanel#{messageSuffix}"
 					rendered="#{webmailMessage.showEmailsWindow}" showWhenRendered="true"
 					minHeight="390" height="390" width="650" top="50" zindex="2000">
 					<f:facet name="header">
@@ -34,55 +34,56 @@
 					</f:facet>
 					<f:facet name="controls">
 						<aon:commandButton type="button" styleClass="aon-popupWindow-close"
-							immediate="true" reRender="showEmailWindow,newMessageHeader">
+							immediate="true" reRender="showEmailWindow#{messageSuffix},newMessageHeader#{messageSuffix}">
 							<f:setPropertyActionListener target="#{webmailMessage.showEmailsWindow}"
 								value="#{false}" />
-							<rich:componentControl for="showEmailsModalPanel" operation="hide"
+							<rich:componentControl for="showEmailsModalPanel#{messageSuffix}" operation="hide"
 								event="onclick" />
 						</aon:commandButton>
 					</f:facet>
 	
 	
 					<aon:div styleClass="aon-toolbar">
-						<aon:commandButton id="selectEmail"
+						<aon:commandButton id="selectEmail#{messageSuffix}"
 							actionListener="#{webmailMessage.onAcceptAllEmailItems}"
 							value="#{webmailBundle.webmail_accept}"
-							reRender="showEmailWindow,newMessageHeader"
+							reRender="showEmailWindow#{messageSuffix},newMessageHeader#{messageSuffix}"
 							styleClass="aon-icon-commandButton aon-icon-accept">
 							<f:setPropertyActionListener target="#{webmailMessage.showEmailsWindow}"
 								value="#{false}" />
-							<rich:componentControl for="showEmailsModalPanel" operation="hide"
+							<rich:componentControl for="showEmailsModalPanel#{messageSuffix}" operation="hide"
 								event="onclick" />
 						</aon:commandButton>
 					</aon:div>
 					<aon:div>
 	
-						<aon:dataTable id="emailData" style="width:100%" rows="#{multiSelectionEmailBean.pageSize}"
+						<aon:dataTable id="emailData#{messageSuffix}" style="width:100%"
+							rows="#{multiSelectionEmailBean.pageSize}"
 							value="#{multiSelectionEmailBean.model}" var="to"
 							rendered="#{multiSelectionEmailBean.model.rowCount > 0}"
 							columnClasses="aon-editDataTable-iconColumn aon-width-50,
 								aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 	
-							<aon:rowSelector reRender="messageSelected"
+							<aon:rowSelector reRender="messageSelected#{messageSuffix}"
 								actionListener="#{multiSelectionEmailBean.onToggleSelected}" />
 	
-							<aon:column id="selectionCol">
+							<aon:column>
 								<f:facet name="header">
 									<aon:div>
-										<aon:commandButton id="selectButton" style="margin-right:10px;"
+										<aon:commandButton id="selectButton#{messageSuffix}" style="margin-right:10px;"
 											actionListener="#{multiSelectionEmailBean.onSelectAllPageContacts}"
-											reRender="messageSelected"
+											reRender="messageSelected#{messageSuffix}"
 											styleClass="aon-icon-commandButton-disabled aon-icon-checkAll">
 										</aon:commandButton>
 						
-										<aon:commandButton id="deselectButton"
+										<aon:commandButton id="deselectButton#{messageSuffix}"
 											actionListener="#{multiSelectionEmailBean.onDeselectAllPageContacts}"
-											reRender="messageSelected"
+											reRender="messageSelected#{messageSuffix}"
 											styleClass="aon-icon-commandButton-disabled aon-icon-checkNone">
 										</aon:commandButton>
 									</aon:div>
 								</f:facet>
-								<aon:selectBooleanCheckbox id="messageSelected"
+								<aon:selectBooleanCheckbox id="messageSelected#{messageSuffix}"
 									styleClass="aon-float-left" value="#{to.readOnlySelected}">
 								</aon:selectBooleanCheckbox>
 							</aon:column>
@@ -101,7 +102,7 @@
 							</aon:column>
 						</aon:dataTable>
 	
-						<aon:dataScroller2 for="emailData" showNote="true" />
+						<aon:dataScroller2 for="emailData#{messageSuffix}" showNote="true" />
 	
 					</aon:div>
 				</rich:modalPanel>

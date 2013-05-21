@@ -25,7 +25,7 @@
 					<ui:define name="beforeSpinToolbarContent">
 						<aon:commandButton value="&#160;" id="email"
 							title="#{webmailBundle.webmail_send_email}"
-							actionListener="#{purchase.onSendByEmail}"
+							actionListener="#{purchase.onSendByEmail}" reRender="showNewMessageWindow-Purchase"
 							rendered="#{purchaseDetail.model.rowCount > 0 and purchaseDetail.to == null}"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 						</aon:commandButton>									
@@ -398,6 +398,7 @@
 		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalIncome.xhtml" />
 		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalInvoice.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" >
+			<ui:param name="messageSuffix" value="-Purchase" />
 			<aon:methodParam name="sendActionListener"
 				value="#{purchase.onEmailSended}" type="actionListener" />
 		</ui:include>

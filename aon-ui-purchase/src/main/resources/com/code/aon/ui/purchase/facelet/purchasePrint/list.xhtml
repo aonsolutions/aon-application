@@ -20,7 +20,7 @@
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton value="&#160;" id="sendEmail"
 						actionListener="#{purchasePrint.onInitSendEmail}"
-						reRender="showNewMessageWindow"
+						reRender="showNewMessageWindow-Purchase"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 					</aon:commandButton>	
 					<aon:htmlCommandLink id="purchasePrint-report"
@@ -66,6 +66,7 @@
 
 		<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 			<ui:decorate template="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" >
+				<ui:param name="messageSuffix" value="-Purchase" />
 				<ui:param name="skipSendButton" value="true" />
 				<ui:param name="skipRecipients" value="true" />
 				<ui:param name="skipAttachments" value="true" />

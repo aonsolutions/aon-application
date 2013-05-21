@@ -10,11 +10,12 @@
 
 <ui:composition>
 
-	<c:if test="#{!webmailMessage.included}">
-		<aon:panelGroup id="showNewMessageWindow">
+	<c:if test="#{!webmailMessage.included or (messageSuffix != null)}">
+		<aon:panelGroup id="showNewMessageWindow#{messageSuffix}">
 			<c:if test="#{webmailMessage.showNewMessageWindow}">
 				<aon:valueParam name="windowHeight" default="600" />
-				<rich:modalPanel id="showNewMessageModalPanel" domElementAttachment="parent"
+				<rich:modalPanel id="showNewMessageModalPanel#{messageSuffix}"
+					domElementAttachment="parent"
 					showWhenRendered="#{webmailMessage.showNewMessageWindow}"
 					minHeight="420" height="#{windowHeight}" width="680" >
 					
@@ -28,10 +29,10 @@
 						<aon:form>
 							<aon:commandButton type="button" styleClass="aon-popupWindow-close"
 								actionListener="#{webmailMessage.onCancelSend}"
-								immediate="true" reRender="showNewMessageWindow">
+								immediate="true" reRender="showNewMessageWindow#{messageSuffix}">
 								<f:setPropertyActionListener target="#{webmailMessage.showNewMessageWindow}"
 									value="#{false}" />
-								<rich:componentControl for="showNewMessageWindow" operation="hide"
+								<rich:componentControl for="showNewMessageWindow#{messageSuffix}" operation="hide"
 									event="onclick" />
 							</aon:commandButton>
 						</aon:form>
@@ -44,7 +45,7 @@
 						<aon:valueParam name="inputTextSize" default="70" />
 						<aon:valueParam name="skipSaveDraftButton" default="true" />				
 						<aon:valueParam name="skipSendCancelButton" default="true" />
-						<aon:valueParam name="sendButtonReRender" default="showNewMessageWindow" />
+						<aon:valueParam name="sendButtonReRender" default="showNewMessageWindow#{messageSuffix}" />
 						<aon:valueParam name="contentHeight" default="250" />
 						<aon:valueParam name="innerToolbar" default="true" />
 					</ui:include>
