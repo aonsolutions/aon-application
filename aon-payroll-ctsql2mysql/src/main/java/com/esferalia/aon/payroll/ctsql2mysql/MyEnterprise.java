@@ -276,14 +276,11 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 						MysqlDB.enum2short(RegistryType.LEGAL), 
 						Country.ES.getValue(),
 						DefaultMysqlDB.enum2short(SecurityLevel.OFFICIAL));
-				mysqlDB.insertCustomer(registry,null, false, false,null,status, /*null,*/ scopeId,false, true,true);
+				//Integer group = mysqlDB.insertInvoicing_group(registry, null, true);
+				mysqlDB.insertCustomer(registry,null, false, false,null,status, /*null,*/ scopeId,false, null,true,true, true, null);
 			}
 			
-			Integer group = mysqlDB.insertInvoicing_group(registry);
 
-			for (Map.Entry<String, Integer> child  : customerChilds.entrySet()) {
-				mysqlDB.insertInvoicing_group_detail(group, child.getValue(), false);
-			}
 			customerId = registry;
 			cliente.visitEmprbanc_cliente(this);
 		}
@@ -416,7 +413,11 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 				true, 
 				passwd,
 				null,
-				(short) 0);
+				(short) 0,
+				null,
+				null,
+				null,
+				null);
 		Integer applicationId = 
 				mysqlDB.getApplicationId("aon-aio");
 
@@ -483,7 +484,8 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 					bankAccount, 
 					null,
 					null,
-					true);
+					true,
+					null);
 		}
 
 	}

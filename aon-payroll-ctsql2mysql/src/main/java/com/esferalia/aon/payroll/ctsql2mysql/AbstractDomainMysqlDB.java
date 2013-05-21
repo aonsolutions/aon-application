@@ -66,13 +66,10 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Pcategory
-	 * @param pcategory_group Identificador del Grupo de Categorias
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForPcategory( Integer pcategory_group){
+	protected Integer getDomainForPcategory(){
 		Integer domain = null;
-			if ( ( domain = getDomainForPcategory_groupPk( pcategory_group ) ) != null )
-				return domain;
 		return domain;
 	}
 
@@ -80,15 +77,16 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Pcategory
 	 * @param id Identificador unico de la Categoria
 	 * @param name Nombre de la Categoria
-	 * @param detail_pattern Patron para los detalles de Articulos
-	 * @param pcategory_group Identificador del Grupo de Categorias
+	 * @param detail Nombre del detalle de los Articulos
+	 * @param detail2 Nombre del detalle 2 de los Articulos
+	 * @param detail3 Nombre del detalle 3 de los Articulos
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertPcategory(String name, String detail_pattern, Integer pcategory_group)
+	public int insertPcategory(String name, String detail, String detail2, String detail3)
 	throws SQLException {
-		Integer domain = getDomainForPcategory( pcategory_group);
-		Integer id =  super.insertPcategory( domain != null ? domain : getDefaultDomain(), name, detail_pattern, pcategory_group );
+		Integer domain = getDomainForPcategory();
+		Integer id =  super.insertPcategory( domain != null ? domain : getDefaultDomain(), name, detail, detail2, detail3 );
 		if ( domain != null ) { 
 			pcategoryDomains.put(id, domain);
 		}
@@ -100,14 +98,15 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico de la Categoria
 	 * @param domain Identificador del Dominio
 	 * @param name Nombre de la Categoria
-	 * @param detail_pattern Patron para los detalles de Articulos
-	 * @param pcategory_group Identificador del Grupo de Categorias
+	 * @param detail Nombre del detalle de los Articulos
+	 * @param detail2 Nombre del detalle 2 de los Articulos
+	 * @param detail3 Nombre del detalle 3 de los Articulos
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertPcategory(Integer domain, String name, String detail_pattern, Integer pcategory_group)
+	public int insertPcategory(Integer domain, String name, String detail, String detail2, String detail3)
 	throws SQLException {
-		Integer id =  super.insertPcategory(domain, name, detail_pattern, pcategory_group);
+		Integer id =  super.insertPcategory(domain, name, detail, detail2, detail3);
 		pcategoryDomains.put(id, domain );
 		return id;
 	}
@@ -290,13 +289,19 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Customer
+	 * @param account Identificador de la Cuenta Contable
+	 * @param invoicing_group Identificador de Grupo de Facturacion
 	 * @param registry Registro del Cliente
 	 * @param scope Identificador del Ambito
 	 * @param tariff Tarifa asociada al Cliente
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForCustomer( Integer registry , Integer scope , Integer tariff){
+	protected Integer getDomainForCustomer( Integer account , Integer invoicing_group , Integer registry , Integer scope , Integer tariff){
 		Integer domain = null;
+			if ( ( domain = getDomainForAccountPk( account ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForInvoicing_groupPk( invoicing_group ) ) != null )
+				return domain;
 			if ( ( domain = getDomainForRegistryPk( registry ) ) != null )
 				return domain;
 			if ( ( domain = getDomainForScopePk( scope ) ) != null )
@@ -316,14 +321,17 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param status Estado del Cliente
 	 * @param scope Identificador del Ambito
 	 * @param e_invoice Indica si el Cliente desea recibir Facturas electronicas
+	 * @param invoicing_group Identificador de Grupo de Facturacion
+	 * @param project_grouped Indica si el Cliente desea agrupar Proyectos en una sola Factura
 	 * @param delivery_grouped Indica si el Cliente desea agrupar Albaranes en una sola Factura
 	 * @param delivery_valuated Indica si el Cliente desea imprimir el Albaran valorado
+	 * @param account Identificador de la Cuenta Contable
 	 * @throws SQLException
 	*/
-	public void insertCustomer(Integer registry, Integer tariff, Boolean surcharge, Boolean withholding, Short transaction, Short status, Integer scope, Boolean e_invoice, Boolean delivery_grouped, Boolean delivery_valuated)
+	public void insertCustomer(Integer registry, Integer tariff, Boolean surcharge, Boolean withholding, Short transaction, Short status, Integer scope, Boolean e_invoice, Integer invoicing_group, Boolean project_grouped, Boolean delivery_grouped, Boolean delivery_valuated, Integer account)
 	throws SQLException {
-		Integer domain = getDomainForCustomer( registry , scope , tariff);
-		 super.insertCustomer( registry, domain != null ? domain : getDefaultDomain(), tariff, surcharge, withholding, transaction, status, scope, e_invoice, delivery_grouped, delivery_valuated );
+		Integer domain = getDomainForCustomer( account , invoicing_group , registry , scope , tariff);
+		 super.insertCustomer( registry, domain != null ? domain : getDefaultDomain(), tariff, surcharge, withholding, transaction, status, scope, e_invoice, invoicing_group, project_grouped, delivery_grouped, delivery_valuated, account );
 		if ( domain != null ) { 
 			customerDomains.put(registry, domain);
 		}
@@ -340,13 +348,16 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param status Estado del Cliente
 	 * @param scope Identificador del Ambito
 	 * @param e_invoice Indica si el Cliente desea recibir Facturas electronicas
+	 * @param invoicing_group Identificador de Grupo de Facturacion
+	 * @param project_grouped Indica si el Cliente desea agrupar Proyectos en una sola Factura
 	 * @param delivery_grouped Indica si el Cliente desea agrupar Albaranes en una sola Factura
 	 * @param delivery_valuated Indica si el Cliente desea imprimir el Albaran valorado
+	 * @param account Identificador de la Cuenta Contable
 	 * @throws SQLException
 	*/
-	public void insertCustomer(Integer registry, Integer domain, Integer tariff, Boolean surcharge, Boolean withholding, Short transaction, Short status, Integer scope, Boolean e_invoice, Boolean delivery_grouped, Boolean delivery_valuated)
+	public void insertCustomer(Integer registry, Integer domain, Integer tariff, Boolean surcharge, Boolean withholding, Short transaction, Short status, Integer scope, Boolean e_invoice, Integer invoicing_group, Boolean project_grouped, Boolean delivery_grouped, Boolean delivery_valuated, Integer account)
 	throws SQLException {
-		 super.insertCustomer(registry, domain, tariff, surcharge, withholding, transaction, status, scope, e_invoice, delivery_grouped, delivery_valuated);
+		 super.insertCustomer(registry, domain, tariff, surcharge, withholding, transaction, status, scope, e_invoice, invoicing_group, project_grouped, delivery_grouped, delivery_valuated, account);
 		customerDomains.put(registry, domain );
 			}
 
@@ -386,13 +397,14 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param terminal Numero de terminal
 	 * @param port_configuration Configuracion de puerto
 	 * @param pos_version Version actual
+	 * @param active Indica si el TPV esta activo o no
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertPos(Integer workplace, String name, Boolean invoiceable, Integer item, Double initial_amount, Boolean pin_pad, String commerce, String signature_password, String terminal, String port_configuration, String pos_version)
+	public int insertPos(Integer workplace, String name, Boolean invoiceable, Integer item, Double initial_amount, Boolean pin_pad, String commerce, String signature_password, String terminal, String port_configuration, String pos_version, Boolean active)
 	throws SQLException {
 		Integer domain = getDomainForPos( item , workplace);
-		Integer id =  super.insertPos( domain != null ? domain : getDefaultDomain(), workplace, name, invoiceable, item, initial_amount, pin_pad, commerce, signature_password, terminal, port_configuration, pos_version );
+		Integer id =  super.insertPos( domain != null ? domain : getDefaultDomain(), workplace, name, invoiceable, item, initial_amount, pin_pad, commerce, signature_password, terminal, port_configuration, pos_version, active );
 		if ( domain != null ) { 
 			posDomains.put(id, domain);
 		}
@@ -414,12 +426,13 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param terminal Numero de terminal
 	 * @param port_configuration Configuracion de puerto
 	 * @param pos_version Version actual
+	 * @param active Indica si el TPV esta activo o no
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertPos(Integer domain, Integer workplace, String name, Boolean invoiceable, Integer item, Double initial_amount, Boolean pin_pad, String commerce, String signature_password, String terminal, String port_configuration, String pos_version)
+	public int insertPos(Integer domain, Integer workplace, String name, Boolean invoiceable, Integer item, Double initial_amount, Boolean pin_pad, String commerce, String signature_password, String terminal, String port_configuration, String pos_version, Boolean active)
 	throws SQLException {
-		Integer id =  super.insertPos(domain, workplace, name, invoiceable, item, initial_amount, pin_pad, commerce, signature_password, terminal, port_configuration, pos_version);
+		Integer id =  super.insertPos(domain, workplace, name, invoiceable, item, initial_amount, pin_pad, commerce, signature_password, terminal, port_configuration, pos_version, active);
 		posDomains.put(id, domain );
 		return id;
 	}
@@ -1043,8 +1056,8 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico
 	 * @param type Tipo de Nomina
 	 * @param contract Contrato
-	 * @param start_date Fecha de inicio liquidaciùn
-	 * @param end_date Fecha de finalizacion liquidaciùn
+	 * @param start_date Fecha de inicio liquidaciÛn
+	 * @param end_date Fecha de finalizacion liquidaciÛn
 	 * @param enterprise_name Nombre de la empresa
 	 * @param enterprise_address Domicilio de la empresa
 	 * @param enterprise_document Numero de Documento de la Empresa
@@ -1053,16 +1066,16 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param social_security_number Numero de la seguridad social
 	 * @param employee_document Numero de Documento de la Persona
 	 * @param seniority_date Fecha de antiguedad
-	 * @param quote_group Grupo de Cotizaciùn
+	 * @param quote_group Grupo de CotizaciÛn
 	 * @param category Categoria o grupo profesional
-	 * @param registration Nùmero libro de matricula
+	 * @param registration N˙mero libro de matricula
 	 * @param time_units total dias/horas
 	 * @param total_payment Total devengado
 	 * @param total_deduction Total a deducir
 	 * @param total_liquid Liquido total a percibir
 	 * @param total_enterprise Cuota total de la empresa
-	 * @param issue_date Fecha de emisiùn
-	 * @param remuneration Remuneraciùn mensual
+	 * @param issue_date Fecha de emisiÛn
+	 * @param remuneration RemuneraciÛn mensual
 	 * @param pro_ext_base Base prorraterreada de pagas extras
 	 * @param it_base Base de IT
 	 * @param raw_cgc_base Base efectiva de cotizacion por contingencias comunes 
@@ -1070,11 +1083,11 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param hextra_base Base de cotizacion adicional por horas extraordinarias estructurales
 	 * @param non_hextra_base Base de cotizacion adicional por horas extraordinarias no estructurales
 	 * @param cgp_base Base de cotizacion por contingencias profesionales
-	 * @param money_irpf_base Salario en dinero sujeto a retenciùn I.R.P.F
-	 * @param inkind_irpf_base Salario en especie sujeto a retenciùn I.R.P.F
-	 * @param irpf_base Base sujeta a retenciùn I.R.P.F
+	 * @param money_irpf_base Salario en dinero sujeto a retenciÛn I.R.P.F
+	 * @param inkind_irpf_base Salario en especie sujeto a retenciÛn I.R.P.F
+	 * @param irpf_base Base sujeta a retenciÛn I.R.P.F
 	 * @param social_security_contributions Aportaciones a la Seguridad Social
-	 * @param total_irpf Total retenciùn aplicada 
+	 * @param total_irpf Total retenciÛn aplicada 
 	 * @param charge_date Fecha de cobro
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -1095,8 +1108,8 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param type Tipo de Nomina
 	 * @param contract Contrato
-	 * @param start_date Fecha de inicio liquidaciùn
-	 * @param end_date Fecha de finalizacion liquidaciùn
+	 * @param start_date Fecha de inicio liquidaciÛn
+	 * @param end_date Fecha de finalizacion liquidaciÛn
 	 * @param enterprise_name Nombre de la empresa
 	 * @param enterprise_address Domicilio de la empresa
 	 * @param enterprise_document Numero de Documento de la Empresa
@@ -1105,16 +1118,16 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param social_security_number Numero de la seguridad social
 	 * @param employee_document Numero de Documento de la Persona
 	 * @param seniority_date Fecha de antiguedad
-	 * @param quote_group Grupo de Cotizaciùn
+	 * @param quote_group Grupo de CotizaciÛn
 	 * @param category Categoria o grupo profesional
-	 * @param registration Nùmero libro de matricula
+	 * @param registration N˙mero libro de matricula
 	 * @param time_units total dias/horas
 	 * @param total_payment Total devengado
 	 * @param total_deduction Total a deducir
 	 * @param total_liquid Liquido total a percibir
 	 * @param total_enterprise Cuota total de la empresa
-	 * @param issue_date Fecha de emisiùn
-	 * @param remuneration Remuneraciùn mensual
+	 * @param issue_date Fecha de emisiÛn
+	 * @param remuneration RemuneraciÛn mensual
 	 * @param pro_ext_base Base prorraterreada de pagas extras
 	 * @param it_base Base de IT
 	 * @param raw_cgc_base Base efectiva de cotizacion por contingencias comunes 
@@ -1122,11 +1135,11 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param hextra_base Base de cotizacion adicional por horas extraordinarias estructurales
 	 * @param non_hextra_base Base de cotizacion adicional por horas extraordinarias no estructurales
 	 * @param cgp_base Base de cotizacion por contingencias profesionales
-	 * @param money_irpf_base Salario en dinero sujeto a retenciùn I.R.P.F
-	 * @param inkind_irpf_base Salario en especie sujeto a retenciùn I.R.P.F
-	 * @param irpf_base Base sujeta a retenciùn I.R.P.F
+	 * @param money_irpf_base Salario en dinero sujeto a retenciÛn I.R.P.F
+	 * @param inkind_irpf_base Salario en especie sujeto a retenciÛn I.R.P.F
+	 * @param irpf_base Base sujeta a retenciÛn I.R.P.F
 	 * @param social_security_contributions Aportaciones a la Seguridad Social
-	 * @param total_irpf Total retenciùn aplicada 
+	 * @param total_irpf Total retenciÛn aplicada 
 	 * @param charge_date Fecha de cobro
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -1199,12 +1212,15 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Supplier
+	 * @param account Identificador de la Cuenta Contable
 	 * @param registry Registro del Proveedor
 	 * @param scope Identificador del Ambito
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForSupplier( Integer registry , Integer scope){
+	protected Integer getDomainForSupplier( Integer account , Integer registry , Integer scope){
 		Integer domain = null;
+			if ( ( domain = getDomainForAccountPk( account ) ) != null )
+				return domain;
 			if ( ( domain = getDomainForRegistryPk( registry ) ) != null )
 				return domain;
 			if ( ( domain = getDomainForScopePk( scope ) ) != null )
@@ -1219,12 +1235,13 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param transaction Tipo de transacciones del Proveedor
 	 * @param status Estado del Proveedor
 	 * @param scope Identificador del Ambito
+	 * @param account Identificador de la Cuenta Contable
 	 * @throws SQLException
 	*/
-	public void insertSupplier(Integer registry, Boolean withholding, Short transaction, Short status, Integer scope)
+	public void insertSupplier(Integer registry, Boolean withholding, Short transaction, Short status, Integer scope, Integer account)
 	throws SQLException {
-		Integer domain = getDomainForSupplier( registry , scope);
-		 super.insertSupplier( registry, domain != null ? domain : getDefaultDomain(), withholding, transaction, status, scope );
+		Integer domain = getDomainForSupplier( account , registry , scope);
+		 super.insertSupplier( registry, domain != null ? domain : getDefaultDomain(), withholding, transaction, status, scope, account );
 		if ( domain != null ) { 
 			supplierDomains.put(registry, domain);
 		}
@@ -1238,11 +1255,12 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param transaction Tipo de transacciones del Proveedor
 	 * @param status Estado del Proveedor
 	 * @param scope Identificador del Ambito
+	 * @param account Identificador de la Cuenta Contable
 	 * @throws SQLException
 	*/
-	public void insertSupplier(Integer registry, Integer domain, Boolean withholding, Short transaction, Short status, Integer scope)
+	public void insertSupplier(Integer registry, Integer domain, Boolean withholding, Short transaction, Short status, Integer scope, Integer account)
 	throws SQLException {
-		 super.insertSupplier(registry, domain, withholding, transaction, status, scope);
+		 super.insertSupplier(registry, domain, withholding, transaction, status, scope, account);
 		supplierDomains.put(registry, domain );
 			}
 
@@ -1810,11 +1828,14 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Loan
+	 * @param account Identificador de la Cuenta Contable
 	 * @param rbank Banco por el que se paga el Prestamo
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForLoan( Integer rbank){
+	protected Integer getDomainForLoan( Integer account , Integer rbank){
 		Integer domain = null;
+			if ( ( domain = getDomainForAccountPk( account ) ) != null )
+				return domain;
 			if ( ( domain = getDomainForRbankPk( rbank ) ) != null )
 				return domain;
 		return domain;
@@ -1836,13 +1857,14 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param recurrence Periodicidad
 	 * @param pay_day Dia de Pago
 	 * @param status Estado
+	 * @param account Identificador de la Cuenta Contable
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertLoan(String description, Date loan_date, String term, String interest, String review, Double amount, Double expenses, Integer rbank, Short security_level, Double fee_amount, Integer recurrence, Integer pay_day, Short status)
+	public int insertLoan(String description, Date loan_date, String term, String interest, String review, Double amount, Double expenses, Integer rbank, Short security_level, Double fee_amount, Integer recurrence, Integer pay_day, Short status, Integer account)
 	throws SQLException {
-		Integer domain = getDomainForLoan( rbank);
-		Integer id =  super.insertLoan( domain != null ? domain : getDefaultDomain(), description, loan_date, term, interest, review, amount, expenses, rbank, security_level, fee_amount, recurrence, pay_day, status );
+		Integer domain = getDomainForLoan( account , rbank);
+		Integer id =  super.insertLoan( domain != null ? domain : getDefaultDomain(), description, loan_date, term, interest, review, amount, expenses, rbank, security_level, fee_amount, recurrence, pay_day, status, account );
 		if ( domain != null ) { 
 			loanDomains.put(id, domain);
 		}
@@ -1866,12 +1888,13 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param recurrence Periodicidad
 	 * @param pay_day Dia de Pago
 	 * @param status Estado
+	 * @param account Identificador de la Cuenta Contable
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertLoan(Integer domain, String description, Date loan_date, String term, String interest, String review, Double amount, Double expenses, Integer rbank, Short security_level, Double fee_amount, Integer recurrence, Integer pay_day, Short status)
+	public int insertLoan(Integer domain, String description, Date loan_date, String term, String interest, String review, Double amount, Double expenses, Integer rbank, Short security_level, Double fee_amount, Integer recurrence, Integer pay_day, Short status, Integer account)
 	throws SQLException {
-		Integer id =  super.insertLoan(domain, description, loan_date, term, interest, review, amount, expenses, rbank, security_level, fee_amount, recurrence, pay_day, status);
+		Integer id =  super.insertLoan(domain, description, loan_date, term, interest, review, amount, expenses, rbank, security_level, fee_amount, recurrence, pay_day, status, account);
 		loanDomains.put(id, domain );
 		return id;
 	}
@@ -2151,10 +2174,10 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Salary_payment
 	 * @param id Identificador unico
 	 * @param salary Recibo del pago de salarios
-	 * @param type Tipo de Percepciùn Salarial
+	 * @param type Tipo de PercepciÛn Salarial
 	 * @param payment_concept Codigo del concepto
 	 * @param description Descripcion
-	 * @param expression Fùrmula
+	 * @param expression FÛrmula
 	 * @param amount Importe
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -2174,10 +2197,10 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param salary Recibo del pago de salarios
-	 * @param type Tipo de Percepciùn Salarial
+	 * @param type Tipo de PercepciÛn Salarial
 	 * @param payment_concept Codigo del concepto
 	 * @param description Descripcion
-	 * @param expression Fùrmula
+	 * @param expression FÛrmula
 	 * @param amount Importe
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -2387,16 +2410,19 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Mk_action
-	 * @param campaign Identificador de la Campaùa
+	 * @param campaign Identificador de la CampaÒa
 	 * @param template Identificador de la Plantilla
+	 * @param newsletter Identificador del Boletin
 	 * @param survey Identificador del Cuestionario
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForMk_action( Integer campaign , Integer template , Integer survey){
+	protected Integer getDomainForMk_action( Integer campaign , Integer template , Integer newsletter , Integer survey){
 		Integer domain = null;
 			if ( ( domain = getDomainForMk_campaignPk( campaign ) ) != null )
 				return domain;
 			if ( ( domain = getDomainForMk_templatePk( template ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForNewsletterPk( newsletter ) ) != null )
 				return domain;
 			if ( ( domain = getDomainForSurveyPk( survey ) ) != null )
 				return domain;
@@ -2406,20 +2432,21 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	/**
 	 * Mk_action
 	 * @param id Identificador unico
-	 * @param campaign Identificador de la Campaùa
+	 * @param campaign Identificador de la CampaÒa
 	 * @param media_type Tipo de contacto de la Accion
 	 * @param start_date Fecha de inicio
 	 * @param end_date Fecha de finalizacion
 	 * @param survey Identificador del Cuestionario
 	 * @param template Identificador de la Plantilla
+	 * @param newsletter Identificador del Boletin
 	 * @param description Descripcion de la Accion
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertMk_action(Integer campaign, Integer media_type, Timestamp start_date, Timestamp end_date, Integer survey, Integer template, String description)
+	public int insertMk_action(Integer campaign, Integer media_type, Timestamp start_date, Timestamp end_date, Integer survey, Integer template, Integer newsletter, String description)
 	throws SQLException {
-		Integer domain = getDomainForMk_action( campaign , template , survey);
-		Integer id =  super.insertMk_action( domain != null ? domain : getDefaultDomain(), campaign, media_type, start_date, end_date, survey, template, description );
+		Integer domain = getDomainForMk_action( campaign , template , newsletter , survey);
+		Integer id =  super.insertMk_action( domain != null ? domain : getDefaultDomain(), campaign, media_type, start_date, end_date, survey, template, newsletter, description );
 		if ( domain != null ) { 
 			mk_actionDomains.put(id, domain);
 		}
@@ -2430,19 +2457,20 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Mk_action
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campaùa
+	 * @param campaign Identificador de la CampaÒa
 	 * @param media_type Tipo de contacto de la Accion
 	 * @param start_date Fecha de inicio
 	 * @param end_date Fecha de finalizacion
 	 * @param survey Identificador del Cuestionario
 	 * @param template Identificador de la Plantilla
+	 * @param newsletter Identificador del Boletin
 	 * @param description Descripcion de la Accion
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertMk_action(Integer domain, Integer campaign, Integer media_type, Timestamp start_date, Timestamp end_date, Integer survey, Integer template, String description)
+	public int insertMk_action(Integer domain, Integer campaign, Integer media_type, Timestamp start_date, Timestamp end_date, Integer survey, Integer template, Integer newsletter, String description)
 	throws SQLException {
-		Integer id =  super.insertMk_action(domain, campaign, media_type, start_date, end_date, survey, template, description);
+		Integer id =  super.insertMk_action(domain, campaign, media_type, start_date, end_date, survey, template, newsletter, description);
 		mk_actionDomains.put(id, domain );
 		return id;
 	}
@@ -2717,6 +2745,71 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	
+	private Map<Integer,Integer> payroll_batch_attachDomains = new HashMap<Integer,Integer>();
+
+	protected Integer getDomainForPayroll_batch_attachPk(Integer id){
+		return payroll_batch_attachDomains.get(id);
+	}
+	
+	/**
+	 * Payroll_batch_attach
+	 * @param scope Ambito del Archivo Adjunto
+	 * @returns domain's ID
+	*/
+	protected Integer getDomainForPayroll_batch_attach( Integer scope){
+		Integer domain = null;
+			if ( ( domain = getDomainForScopePk( scope ) ) != null )
+				return domain;
+		return domain;
+	}
+
+	/**
+	 * Payroll_batch_attach
+	 * @param id Identificador unico
+	 * @param source_batch Identificador de la Remesa
+	 * @param source_type Tipo de la Remesa
+	 * @param mimeType Mime Type del Archivo Adjunto
+	 * @param description Descripcion del Archivo Adjunto
+	 * @param data Archivo Adjunto en binario
+	 * @param type Tipo de Archivo Adjunto
+	 * @param scope Ambito del Archivo Adjunto
+	 * @param attach_date Fecha del Archivo Adjunto
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertPayroll_batch_attach(Integer source_batch, Short source_type, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
+	throws SQLException {
+		Integer domain = getDomainForPayroll_batch_attach( scope);
+		Integer id =  super.insertPayroll_batch_attach( domain != null ? domain : getDefaultDomain(), source_batch, source_type, mimeType, description, data, type, scope, attach_date );
+		if ( domain != null ) { 
+			payroll_batch_attachDomains.put(id, domain);
+		}
+		return id;
+	}
+
+	/**
+	 * Payroll_batch_attach
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param source_batch Identificador de la Remesa
+	 * @param source_type Tipo de la Remesa
+	 * @param mimeType Mime Type del Archivo Adjunto
+	 * @param description Descripcion del Archivo Adjunto
+	 * @param data Archivo Adjunto en binario
+	 * @param type Tipo de Archivo Adjunto
+	 * @param scope Ambito del Archivo Adjunto
+	 * @param attach_date Fecha del Archivo Adjunto
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertPayroll_batch_attach(Integer domain, Integer source_batch, Short source_type, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
+	throws SQLException {
+		Integer id =  super.insertPayroll_batch_attach(domain, source_batch, source_type, mimeType, description, data, type, scope, attach_date);
+		payroll_batch_attachDomains.put(id, domain );
+		return id;
+	}
+
+	
 	private Map<Integer,Integer> favorite_categoryDomains = new HashMap<Integer,Integer>();
 
 	protected Integer getDomainForFavorite_categoryPk(Integer id){
@@ -2844,7 +2937,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico
 	 * @param balance Identificador del Balance
 	 * @param code Codigo del Detalle en el Balance
-	 * @param description Descripciùn del detalle de balance
+	 * @param description DescripciÛn del detalle de balance
 	 * @param accounts Cuentas separadas por comas, que forman el acumulado.
 	 * @param sortKey Orden el que aparecera en el listado.
 	 * @param notes Notas en el Balance
@@ -2872,7 +2965,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param balance Identificador del Balance
 	 * @param code Codigo del Detalle en el Balance
-	 * @param description Descripciùn del detalle de balance
+	 * @param description DescripciÛn del detalle de balance
 	 * @param accounts Cuentas separadas por comas, que forman el acumulado.
 	 * @param sortKey Orden el que aparecera en el listado.
 	 * @param notes Notas en el Balance
@@ -3008,120 +3101,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	throws SQLException {
 		Integer id =  super.insertFs_mod347(domain, year, administration, comments, status, security_level, complementary, replacement, number, replaced_number);
 		fs_mod347Domains.put(id, domain );
-		return id;
-	}
-
-	
-	private Map<Integer,Integer> product_accountDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForProduct_accountPk(Integer id){
-		return product_accountDomains.get(id);
-	}
-	
-	/**
-	 * Product_account
-	 * @param account Identificador de la Cuenta Contable
-	 * @param product Identificador del Producto
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForProduct_account( Integer account , Integer product){
-		Integer domain = null;
-			if ( ( domain = getDomainForAccountPk( account ) ) != null )
-				return domain;
-			if ( ( domain = getDomainForProductPk( product ) ) != null )
-				return domain;
-		return domain;
-	}
-
-	/**
-	 * Product_account
-	 * @param id Identificador unico de la Cuenta Contable del Producto
-	 * @param product Identificador del Producto
-	 * @param account Identificador de la Cuenta Contable
-	 * @param type Tipo de Cuenta Contable del Producto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertProduct_account(Integer product, Integer account, Short type)
-	throws SQLException {
-		Integer domain = getDomainForProduct_account( account , product);
-		Integer id =  super.insertProduct_account( domain != null ? domain : getDefaultDomain(), product, account, type );
-		if ( domain != null ) { 
-			product_accountDomains.put(id, domain);
-		}
-		return id;
-	}
-
-	/**
-	 * Product_account
-	 * @param id Identificador unico de la Cuenta Contable del Producto
-	 * @param domain Identificador del Dominio
-	 * @param product Identificador del Producto
-	 * @param account Identificador de la Cuenta Contable
-	 * @param type Tipo de Cuenta Contable del Producto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertProduct_account(Integer domain, Integer product, Integer account, Short type)
-	throws SQLException {
-		Integer id =  super.insertProduct_account(domain, product, account, type);
-		product_accountDomains.put(id, domain );
-		return id;
-	}
-
-	
-	private Map<Integer,Integer> pcategory_treeDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForPcategory_treePk(Integer id){
-		return pcategory_treeDomains.get(id);
-	}
-	
-	/**
-	 * Pcategory_tree
-	 * @param child Identificador de la Categoria hijo
-	 * @param parent Identificador de la Categoria padre
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForPcategory_tree( Integer child , Integer parent){
-		Integer domain = null;
-			if ( ( domain = getDomainForPcategoryPk( child ) ) != null )
-				return domain;
-			if ( ( domain = getDomainForPcategoryPk( parent ) ) != null )
-				return domain;
-		return domain;
-	}
-
-	/**
-	 * Pcategory_tree
-	 * @param id Identificador unico del Nodo del Arbol de Categorias
-	 * @param parent Identificador de la Categoria padre
-	 * @param child Identificador de la Categoria hijo
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertPcategory_tree(Integer parent, Integer child)
-	throws SQLException {
-		Integer domain = getDomainForPcategory_tree( child , parent);
-		Integer id =  super.insertPcategory_tree( domain != null ? domain : getDefaultDomain(), parent, child );
-		if ( domain != null ) { 
-			pcategory_treeDomains.put(id, domain);
-		}
-		return id;
-	}
-
-	/**
-	 * Pcategory_tree
-	 * @param id Identificador unico del Nodo del Arbol de Categorias
-	 * @param domain Identificador del Dominio
-	 * @param parent Identificador de la Categoria padre
-	 * @param child Identificador de la Categoria hijo
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertPcategory_tree(Integer domain, Integer parent, Integer child)
-	throws SQLException {
-		Integer id =  super.insertPcategory_tree(domain, parent, child);
-		pcategory_treeDomains.put(id, domain );
 		return id;
 	}
 
@@ -3523,72 +3502,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	
-	private Map<Integer,Integer> certifica2_batch_attachDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForCertifica2_batch_attachPk(Integer id){
-		return certifica2_batch_attachDomains.get(id);
-	}
-	
-	/**
-	 * Certifica2_batch_attach
-	 * @param certifica2_batch Identificador de la remesa
-	 * @param scope Ambito del Archivo Adjunto
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForCertifica2_batch_attach( Integer certifica2_batch , Integer scope){
-		Integer domain = null;
-			if ( ( domain = getDomainForCertifica2_batchPk( certifica2_batch ) ) != null )
-				return domain;
-			if ( ( domain = getDomainForScopePk( scope ) ) != null )
-				return domain;
-		return domain;
-	}
-
-	/**
-	 * Certifica2_batch_attach
-	 * @param id Identificador unico del Archivo Adjunto
-	 * @param certifica2_batch Identificador de la remesa
-	 * @param mimeType Mime Type del Archivo Adjunto
-	 * @param description Descripcion del Archivo Adjunto
-	 * @param data Archivo Adjunto en binario
-	 * @param type Tipo de Archivo Adjunto
-	 * @param scope Ambito del Archivo Adjunto
-	 * @param attach_date Fecha del Archivo Adjunto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCertifica2_batch_attach(Integer certifica2_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
-	throws SQLException {
-		Integer domain = getDomainForCertifica2_batch_attach( certifica2_batch , scope);
-		Integer id =  super.insertCertifica2_batch_attach( domain != null ? domain : getDefaultDomain(), certifica2_batch, mimeType, description, data, type, scope, attach_date );
-		if ( domain != null ) { 
-			certifica2_batch_attachDomains.put(id, domain);
-		}
-		return id;
-	}
-
-	/**
-	 * Certifica2_batch_attach
-	 * @param id Identificador unico del Archivo Adjunto
-	 * @param domain Identificador del Dominio
-	 * @param certifica2_batch Identificador de la remesa
-	 * @param mimeType Mime Type del Archivo Adjunto
-	 * @param description Descripcion del Archivo Adjunto
-	 * @param data Archivo Adjunto en binario
-	 * @param type Tipo de Archivo Adjunto
-	 * @param scope Ambito del Archivo Adjunto
-	 * @param attach_date Fecha del Archivo Adjunto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCertifica2_batch_attach(Integer domain, Integer certifica2_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
-	throws SQLException {
-		Integer id =  super.insertCertifica2_batch_attach(domain, certifica2_batch, mimeType, description, data, type, scope, attach_date);
-		certifica2_batch_attachDomains.put(id, domain );
-		return id;
-	}
-
-	
 	private Map<Integer,Integer> process_taskDomains = new HashMap<Integer,Integer>();
 
 	protected Integer getDomainForProcess_taskPk(Integer id){
@@ -3597,7 +3510,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Process_task
-	 * @param campaign Identificador de la Campaùa
+	 * @param campaign Identificador de la CampaÒa
 	 * @param process_detail Identificador del Detalle de Proceso
 	 * @param task Identificador de la Tarea
 	 * @returns domain's ID
@@ -3615,8 +3528,8 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 
 	/**
 	 * Process_task
-	 * @param id Identificador unico de la Relacion entre Campaùas, Actividades y Tareas
-	 * @param campaign Identificador de la Campaùa
+	 * @param id Identificador unico de la Relacion entre CampaÒas, Actividades y Tareas
+	 * @param campaign Identificador de la CampaÒa
 	 * @param process_detail Identificador del Detalle de Proceso
 	 * @param task Identificador de la Tarea
 	 * @returns auto-generated key
@@ -3634,9 +3547,9 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 
 	/**
 	 * Process_task
-	 * @param id Identificador unico de la Relacion entre Campaùas, Actividades y Tareas
+	 * @param id Identificador unico de la Relacion entre CampaÒas, Actividades y Tareas
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campaùa
+	 * @param campaign Identificador de la CampaÒa
 	 * @param process_detail Identificador del Detalle de Proceso
 	 * @param task Identificador de la Tarea
 	 * @returns auto-generated key
@@ -4021,6 +3934,83 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	
+	private Map<Integer,Integer> newsDomains = new HashMap<Integer,Integer>();
+
+	protected Integer getDomainForNewsPk(Integer id){
+		return newsDomains.get(id);
+	}
+	
+	/**
+	 * News
+	 * @param category Categoria de la Noticia
+	 * @param rattach Identificador del Archivo Adjunto
+	 * @param scope Identificador del Ambito
+	 * @returns domain's ID
+	*/
+	protected Integer getDomainForNews( Integer category , Integer rattach , Integer scope){
+		Integer domain = null;
+			if ( ( domain = getDomainForCategoryPk( category ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForRattachPk( rattach ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForScopePk( scope ) ) != null )
+				return domain;
+		return domain;
+	}
+
+	/**
+	 * News
+	 * @param id Identificador unico
+	 * @param title Titulo de la Noticia
+	 * @param description Descripcion de la Noticia
+	 * @param content Contenido de la Noticia
+	 * @param url Url de la Noticia
+	 * @param active Indica si la Noticia esta activa o no
+	 * @param rss Indica si la Noticia se va a publicar en rss o no
+	 * @param init_date Fecha Noticia
+	 * @param end_date Fecha fin Noticia
+	 * @param category Categoria de la Noticia
+	 * @param rattach Identificador del Archivo Adjunto
+	 * @param scope Identificador del Ambito
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertNews(String title, String description, String content, String url, Boolean active, Boolean rss, Timestamp init_date, Timestamp end_date, Integer category, Integer rattach, Integer scope)
+	throws SQLException {
+		Integer domain = getDomainForNews( category , rattach , scope);
+		Integer id =  super.insertNews( domain != null ? domain : getDefaultDomain(), title, description, content, url, active, rss, init_date, end_date, category, rattach, scope );
+		if ( domain != null ) { 
+			newsDomains.put(id, domain);
+		}
+		return id;
+	}
+
+	/**
+	 * News
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param title Titulo de la Noticia
+	 * @param description Descripcion de la Noticia
+	 * @param content Contenido de la Noticia
+	 * @param url Url de la Noticia
+	 * @param active Indica si la Noticia esta activa o no
+	 * @param rss Indica si la Noticia se va a publicar en rss o no
+	 * @param init_date Fecha Noticia
+	 * @param end_date Fecha fin Noticia
+	 * @param category Categoria de la Noticia
+	 * @param rattach Identificador del Archivo Adjunto
+	 * @param scope Identificador del Ambito
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertNews(Integer domain, String title, String description, String content, String url, Boolean active, Boolean rss, Timestamp init_date, Timestamp end_date, Integer category, Integer rattach, Integer scope)
+	throws SQLException {
+		Integer id =  super.insertNews(domain, title, description, content, url, active, rss, init_date, end_date, category, rattach, scope);
+		newsDomains.put(id, domain );
+		return id;
+	}
+
+	
 	private Map<Integer,Integer> action_entryDomains = new HashMap<Integer,Integer>();
 
 	protected Integer getDomainForAction_entryPk(Integer id){
@@ -4155,7 +4145,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	/**
 	 * System_payment
 	 * @param id Identificador unico
-	 * @param type Tipo de Percepciùn Salarial
+	 * @param type Tipo de PercepciÛn Salarial
 	 * @param payment_concept Identificador unico del concepto
 	 * @param description Descripcion
 	 * @param description_decorable 
@@ -4183,7 +4173,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * System_payment
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Percepciùn Salarial
+	 * @param type Tipo de PercepciÛn Salarial
 	 * @param payment_concept Identificador unico del concepto
 	 * @param description Descripcion
 	 * @param description_decorable 
@@ -4326,6 +4316,62 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 
 
 	
+	private Map<Integer,Integer> contrata_batch_detailDomains = new HashMap<Integer,Integer>();
+
+	protected Integer getDomainForContrata_batch_detailPk(Integer id){
+		return contrata_batch_detailDomains.get(id);
+	}
+	
+	/**
+	 * Contrata_batch_detail
+	 * @param contract Identificador del Contrato
+	 * @param contrata_batch Identificador de la Remesa
+	 * @returns domain's ID
+	*/
+	protected Integer getDomainForContrata_batch_detail( Integer contract , Integer contrata_batch){
+		Integer domain = null;
+			if ( ( domain = getDomainForContractPk( contract ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForContrata_batchPk( contrata_batch ) ) != null )
+				return domain;
+		return domain;
+	}
+
+	/**
+	 * Contrata_batch_detail
+	 * @param id Identificador unico
+	 * @param contrata_batch Identificador de la Remesa
+	 * @param contract Identificador del Contrato
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertContrata_batch_detail(Integer contrata_batch, Integer contract)
+	throws SQLException {
+		Integer domain = getDomainForContrata_batch_detail( contract , contrata_batch);
+		Integer id =  super.insertContrata_batch_detail( domain != null ? domain : getDefaultDomain(), contrata_batch, contract );
+		if ( domain != null ) { 
+			contrata_batch_detailDomains.put(id, domain);
+		}
+		return id;
+	}
+
+	/**
+	 * Contrata_batch_detail
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param contrata_batch Identificador de la Remesa
+	 * @param contract Identificador del Contrato
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertContrata_batch_detail(Integer domain, Integer contrata_batch, Integer contract)
+	throws SQLException {
+		Integer id =  super.insertContrata_batch_detail(domain, contrata_batch, contract);
+		contrata_batch_detailDomains.put(id, domain );
+		return id;
+	}
+
+	
 	private Map<Integer,Integer> account_entry_fbatchDomains = new HashMap<Integer,Integer>();
 
 	protected Integer getDomainForAccount_entry_fbatchPk(Integer id){
@@ -4392,13 +4438,16 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Seller
 	 * @param commission_type Identificador del Tipo de Comision
 	 * @param registry Registro del Agente Comercial
+	 * @param scope Identificador del Ambito
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForSeller( Integer commission_type , Integer registry){
+	protected Integer getDomainForSeller( Integer commission_type , Integer registry , Integer scope){
 		Integer domain = null;
 			if ( ( domain = getDomainForCommission_typePk( commission_type ) ) != null )
 				return domain;
 			if ( ( domain = getDomainForRegistryPk( registry ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForScopePk( scope ) ) != null )
 				return domain;
 		return domain;
 	}
@@ -4408,12 +4457,13 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param registry Registro del Agente Comercial
 	 * @param commission_type Identificador del Tipo de Comision
 	 * @param status Estado del Agente Comercial
+	 * @param scope Identificador del Ambito
 	 * @throws SQLException
 	*/
-	public void insertSeller(Integer registry, Integer commission_type, Short status)
+	public void insertSeller(Integer registry, Integer commission_type, Short status, Integer scope)
 	throws SQLException {
-		Integer domain = getDomainForSeller( commission_type , registry);
-		 super.insertSeller( registry, domain != null ? domain : getDefaultDomain(), commission_type, status );
+		Integer domain = getDomainForSeller( commission_type , registry , scope);
+		 super.insertSeller( registry, domain != null ? domain : getDefaultDomain(), commission_type, status, scope );
 		if ( domain != null ) { 
 			sellerDomains.put(registry, domain);
 		}
@@ -4425,11 +4475,12 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param commission_type Identificador del Tipo de Comision
 	 * @param status Estado del Agente Comercial
+	 * @param scope Identificador del Ambito
 	 * @throws SQLException
 	*/
-	public void insertSeller(Integer registry, Integer domain, Integer commission_type, Short status)
+	public void insertSeller(Integer registry, Integer domain, Integer commission_type, Short status, Integer scope)
 	throws SQLException {
-		 super.insertSeller(registry, domain, commission_type, status);
+		 super.insertSeller(registry, domain, commission_type, status, scope);
 		sellerDomains.put(registry, domain );
 			}
 
@@ -4791,64 +4842,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	
-	private Map<Integer,Integer> tax_accountDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForTax_accountPk(Integer id){
-		return tax_accountDomains.get(id);
-	}
-	
-	/**
-	 * Tax_account
-	 * @param account Identificador de la Cuenta Contable
-	 * @param tax Identificador del Impuesto
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForTax_account( Integer account , Integer tax){
-		Integer domain = null;
-			if ( ( domain = getDomainForAccountPk( account ) ) != null )
-				return domain;
-			if ( ( domain = getDomainForTaxPk( tax ) ) != null )
-				return domain;
-		return domain;
-	}
-
-	/**
-	 * Tax_account
-	 * @param id Identificador unico de la Cuenta Contable del Impuesto
-	 * @param tax Identificador del Impuesto
-	 * @param account Identificador de la Cuenta Contable
-	 * @param type Tipo de Cuenta Contable del Impuesto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertTax_account(Integer tax, Integer account, Short type)
-	throws SQLException {
-		Integer domain = getDomainForTax_account( account , tax);
-		Integer id =  super.insertTax_account( domain != null ? domain : getDefaultDomain(), tax, account, type );
-		if ( domain != null ) { 
-			tax_accountDomains.put(id, domain);
-		}
-		return id;
-	}
-
-	/**
-	 * Tax_account
-	 * @param id Identificador unico de la Cuenta Contable del Impuesto
-	 * @param domain Identificador del Dominio
-	 * @param tax Identificador del Impuesto
-	 * @param account Identificador de la Cuenta Contable
-	 * @param type Tipo de Cuenta Contable del Impuesto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertTax_account(Integer domain, Integer tax, Integer account, Short type)
-	throws SQLException {
-		Integer id =  super.insertTax_account(domain, tax, account, type);
-		tax_accountDomains.put(id, domain );
-		return id;
-	}
-
-	
 	private Map<Integer,Integer> inventoryDomains = new HashMap<Integer,Integer>();
 
 	protected Integer getDomainForInventoryPk(Integer id){
@@ -4922,7 +4915,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param line Numero de linea de Condicion
 	 * @param name Nombre de la Condicion Comercial
 	 * @param description Descripcion de la Condicion Comercial
-	 * @param term_general Indica si la Condiciùn es particular o general
+	 * @param term_general Indica si la CondiciÛn es particular o general
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -4943,7 +4936,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param line Numero de linea de Condicion
 	 * @param name Nombre de la Condicion Comercial
 	 * @param description Descripcion de la Condicion Comercial
-	 * @param term_general Indica si la Condiciùn es particular o general
+	 * @param term_general Indica si la CondiciÛn es particular o general
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -5392,7 +5385,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param first_surname Primer apellido
 	 * @param second_surname Segundo apellido
 	 * @param ss_number Numero seguridad social
-	 * @param quote_group Grupo de CotizaciÛn
+	 * @param quote_group Grupo de Cotizaci√≥n
 	 * @param contract_type Tipo de contrato
 	 * @param contract_duration Duracion contrato
 	 * @param contract_duration_indicator Indicador duracion contrato
@@ -5436,7 +5429,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param first_surname Primer apellido
 	 * @param second_surname Segundo apellido
 	 * @param ss_number Numero seguridad social
-	 * @param quote_group Grupo de CotizaciÛn
+	 * @param quote_group Grupo de Cotizaci√≥n
 	 * @param contract_type Tipo de contrato
 	 * @param contract_duration Duracion contrato
 	 * @param contract_duration_indicator Indicador duracion contrato
@@ -5738,60 +5731,51 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	
-	private Map<Integer,Integer> supplier_accountDomains = new HashMap<Integer,Integer>();
+	private Map<Integer,Integer> training_centerDomains = new HashMap<Integer,Integer>();
 
-	protected Integer getDomainForSupplier_accountPk(Integer id){
-		return supplier_accountDomains.get(id);
+	protected Integer getDomainForTraining_centerPk(Integer registry){
+		return training_centerDomains.get(registry);
 	}
 	
 	/**
-	 * Supplier_account
-	 * @param account Identificador de la Cuenta Contable
-	 * @param supplier Identificador del Proveedor
+	 * Training_center
+	 * @param registry Registro del Centro Formativo
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForSupplier_account( Integer account , Integer supplier){
+	protected Integer getDomainForTraining_center( Integer registry){
 		Integer domain = null;
-			if ( ( domain = getDomainForAccountPk( account ) ) != null )
-				return domain;
-			if ( ( domain = getDomainForSupplierPk( supplier ) ) != null )
+			if ( ( domain = getDomainForRegistryPk( registry ) ) != null )
 				return domain;
 		return domain;
 	}
 
 	/**
-	 * Supplier_account
-	 * @param id Identificador unico de la Cuenta Contable del Proveedor
-	 * @param supplier Identificador del Proveedor
-	 * @param account Identificador de la Cuenta Contable
-	 * @returns auto-generated key
+	 * Training_center
+	 * @param registry Registro del Centro Formativo
+	 * @param code Codigo del centro formativo
 	 * @throws SQLException
 	*/
-	public int insertSupplier_account(Integer supplier, Integer account)
+	public void insertTraining_center(Integer registry, String code)
 	throws SQLException {
-		Integer domain = getDomainForSupplier_account( account , supplier);
-		Integer id =  super.insertSupplier_account( domain != null ? domain : getDefaultDomain(), supplier, account );
+		Integer domain = getDomainForTraining_center( registry);
+		 super.insertTraining_center( registry, domain != null ? domain : getDefaultDomain(), code );
 		if ( domain != null ) { 
-			supplier_accountDomains.put(id, domain);
+			training_centerDomains.put(registry, domain);
 		}
-		return id;
 	}
 
 	/**
-	 * Supplier_account
-	 * @param id Identificador unico de la Cuenta Contable del Proveedor
+	 * Training_center
+	 * @param registry Registro del Centro Formativo
 	 * @param domain Identificador del Dominio
-	 * @param supplier Identificador del Proveedor
-	 * @param account Identificador de la Cuenta Contable
-	 * @returns auto-generated key
+	 * @param code Codigo del centro formativo
 	 * @throws SQLException
 	*/
-	public int insertSupplier_account(Integer domain, Integer supplier, Integer account)
+	public void insertTraining_center(Integer registry, Integer domain, String code)
 	throws SQLException {
-		Integer id =  super.insertSupplier_account(domain, supplier, account);
-		supplier_accountDomains.put(id, domain );
-		return id;
-	}
+		 super.insertTraining_center(registry, domain, code);
+		training_centerDomains.put(registry, domain );
+			}
 
 	
 	private Map<Integer,Integer> bankDomains = new HashMap<Integer,Integer>();
@@ -5991,16 +5975,16 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param start_date Fecha inicio del modelo
 	 * @param end_date Fecha fin del modelo
 	 * @param fiscal_exclusion Exclusion a la obligacion de tributar
-	 * @param issue_date Fecha de emisiùn
-	 * @param annual_remuneration Retribuciones totales (dinerarias y en especie). Importe ùntegro
+	 * @param issue_date Fecha de emisiÛn
+	 * @param annual_remuneration Retribuciones totales (dinerarias y en especie). Importe Ìntegro
 	 * @param irregular_18_2_reduction Reducciones por irregularidad ( Atr. 18.2 LIRPF)
-	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Atr. 18.3: Disposiciones transitorias 11ù y 12 ù de la LIRPF)
+	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Atr. 18.3: Disposiciones transitorias 11™ y 12 ™ de la LIRPF)
 	 * @param deduccibles_expenses Gastos deducibles ( Atr 19.2, letras a, b y c de la LINRPF: Seguridad Social, Mutualidades ...)
-	 * @param spousal_support Pension compensatoria a favor del cùnyuge. Importe fijado judicialmente
+	 * @param spousal_support Pension compensatoria a favor del cÛnyuge. Importe fijado judicialmente
 	 * @param food_annuity Anualidades por alimentos en favor de los hijos. Importe fijado judicialmente
-	 * @param deduct_home_loan Comunicaciùn de pagos por la adquisiùn o rehabilitaciùn de la vivienda habitual utilizando financiaciùn ajena
-	 * @param request_irpf Tipo de retenciùn solicitado
-	 * @param contract_type Contrato o relaciùn
+	 * @param deduct_home_loan ComunicaciÛn de pagos por la adquisiÛn o rehabilitaciÛn de la vivienda habitual utilizando financiaciÛn ajena
+	 * @param request_irpf Tipo de retenciÛn solicitado
+	 * @param contract_type Contrato o relaciÛn
 	 * @param ceuta_melilla Los datos anteriores corresponden a rendimientos obtenidos en Ceuta o Melilla
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -6030,16 +6014,16 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param start_date Fecha inicio del modelo
 	 * @param end_date Fecha fin del modelo
 	 * @param fiscal_exclusion Exclusion a la obligacion de tributar
-	 * @param issue_date Fecha de emisiùn
-	 * @param annual_remuneration Retribuciones totales (dinerarias y en especie). Importe ùntegro
+	 * @param issue_date Fecha de emisiÛn
+	 * @param annual_remuneration Retribuciones totales (dinerarias y en especie). Importe Ìntegro
 	 * @param irregular_18_2_reduction Reducciones por irregularidad ( Atr. 18.2 LIRPF)
-	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Atr. 18.3: Disposiciones transitorias 11ù y 12 ù de la LIRPF)
+	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Atr. 18.3: Disposiciones transitorias 11™ y 12 ™ de la LIRPF)
 	 * @param deduccibles_expenses Gastos deducibles ( Atr 19.2, letras a, b y c de la LINRPF: Seguridad Social, Mutualidades ...)
-	 * @param spousal_support Pension compensatoria a favor del cùnyuge. Importe fijado judicialmente
+	 * @param spousal_support Pension compensatoria a favor del cÛnyuge. Importe fijado judicialmente
 	 * @param food_annuity Anualidades por alimentos en favor de los hijos. Importe fijado judicialmente
-	 * @param deduct_home_loan Comunicaciùn de pagos por la adquisiùn o rehabilitaciùn de la vivienda habitual utilizando financiaciùn ajena
-	 * @param request_irpf Tipo de retenciùn solicitado
-	 * @param contract_type Contrato o relaciùn
+	 * @param deduct_home_loan ComunicaciÛn de pagos por la adquisiÛn o rehabilitaciÛn de la vivienda habitual utilizando financiaciÛn ajena
+	 * @param request_irpf Tipo de retenciÛn solicitado
+	 * @param contract_type Contrato o relaciÛn
 	 * @param ceuta_melilla Los datos anteriores corresponden a rendimientos obtenidos en Ceuta o Melilla
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -6052,6 +6036,85 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	
+	private Map<Integer,Integer> newsletterDomains = new HashMap<Integer,Integer>();
+
+	protected Integer getDomainForNewsletterPk(Integer id){
+		return newsletterDomains.get(id);
+	}
+	
+	/**
+	 * Newsletter
+	 * @param header_template Identificador de la Plantilla de Cabecera
+	 * @param footer_template Identificador de la Plantilla de Pie de Pagina
+	 * @param scope Identificador del Ambito
+	 * @returns domain's ID
+	*/
+	protected Integer getDomainForNewsletter( Integer header_template , Integer footer_template , Integer scope){
+		Integer domain = null;
+			if ( ( domain = getDomainForMk_templatePk( header_template ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForMk_templatePk( footer_template ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForScopePk( scope ) ) != null )
+				return domain;
+		return domain;
+	}
+
+	/**
+	 * Newsletter
+	 * @param id Identificador unico
+	 * @param name Nombre del Boletin
+	 * @param date Fecha del Boletin
+	 * @param layout Disposicion del Boletin
+	 * @param background_color Color de fondo del Boletin
+	 * @param title_color Color del titulo del Boletin
+	 * @param header_template Identificador de la Plantilla de Cabecera
+	 * @param footer_template Identificador de la Plantilla de Pie de Pagina
+	 * @param active Indica si el Boletin esta activo o no
+	 * @param width Ancho del Boletin
+	 * @param subject Asunto del Boletin
+	 * @param scope Identificador del Ambito
+	 * @param highlightFirst Indica si el Boletin destaca la primera noticia o no
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertNewsletter(String name, Timestamp date, Short layout, String background_color, String title_color, Integer header_template, Integer footer_template, Boolean active, String width, String subject, Integer scope, Boolean highlightFirst)
+	throws SQLException {
+		Integer domain = getDomainForNewsletter( header_template , footer_template , scope);
+		Integer id =  super.insertNewsletter( domain != null ? domain : getDefaultDomain(), name, date, layout, background_color, title_color, header_template, footer_template, active, width, subject, scope, highlightFirst );
+		if ( domain != null ) { 
+			newsletterDomains.put(id, domain);
+		}
+		return id;
+	}
+
+	/**
+	 * Newsletter
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param name Nombre del Boletin
+	 * @param date Fecha del Boletin
+	 * @param layout Disposicion del Boletin
+	 * @param background_color Color de fondo del Boletin
+	 * @param title_color Color del titulo del Boletin
+	 * @param header_template Identificador de la Plantilla de Cabecera
+	 * @param footer_template Identificador de la Plantilla de Pie de Pagina
+	 * @param active Indica si el Boletin esta activo o no
+	 * @param width Ancho del Boletin
+	 * @param subject Asunto del Boletin
+	 * @param scope Identificador del Ambito
+	 * @param highlightFirst Indica si el Boletin destaca la primera noticia o no
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertNewsletter(Integer domain, String name, Timestamp date, Short layout, String background_color, String title_color, Integer header_template, Integer footer_template, Boolean active, String width, String subject, Integer scope, Boolean highlightFirst)
+	throws SQLException {
+		Integer id =  super.insertNewsletter(domain, name, date, layout, background_color, title_color, header_template, footer_template, active, width, subject, scope, highlightFirst);
+		newsletterDomains.put(id, domain );
+		return id;
+	}
+
+	
 	private Map<Integer,Integer> fs_modelDomains = new HashMap<Integer,Integer>();
 
 	protected Integer getDomainForFs_modelPk(Integer id){
@@ -6060,10 +6123,13 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Fs_model
+	 * @param finance Identificador de Vencimiento
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForFs_model(){
+	protected Integer getDomainForFs_model( Integer finance){
 		Integer domain = null;
+			if ( ( domain = getDomainForFinancePk( finance ) ) != null )
+				return domain;
 		return domain;
 	}
 
@@ -6077,17 +6143,19 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param security_level Nivel de seguridad
 	 * @param complementary Declaracion complementaria
 	 * @param replacement Declaracion sustitutiva
+	 * @param withoutActivity Sin Actividad
 	 * @param model Tipo de modelo
 	 * @param number Numero de Declaracion
 	 * @param replaced_number Numero de Declaracion complementada o sustituida
 	 * @param comments Comentarios de la Declaracion
+	 * @param finance Identificador de Vencimiento
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertFs_model(Integer year, Short period, Short administration, Short status, Short security_level, Boolean complementary, Boolean replacement, String model, Integer number, Integer replaced_number, String comments)
+	public int insertFs_model(Integer year, Short period, Short administration, Short status, Short security_level, Boolean complementary, Boolean replacement, Boolean withoutActivity, String model, Integer number, Integer replaced_number, String comments, Integer finance)
 	throws SQLException {
-		Integer domain = getDomainForFs_model();
-		Integer id =  super.insertFs_model( domain != null ? domain : getDefaultDomain(), year, period, administration, status, security_level, complementary, replacement, model, number, replaced_number, comments );
+		Integer domain = getDomainForFs_model( finance);
+		Integer id =  super.insertFs_model( domain != null ? domain : getDefaultDomain(), year, period, administration, status, security_level, complementary, replacement, withoutActivity, model, number, replaced_number, comments, finance );
 		if ( domain != null ) { 
 			fs_modelDomains.put(id, domain);
 		}
@@ -6105,16 +6173,18 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param security_level Nivel de seguridad
 	 * @param complementary Declaracion complementaria
 	 * @param replacement Declaracion sustitutiva
+	 * @param withoutActivity Sin Actividad
 	 * @param model Tipo de modelo
 	 * @param number Numero de Declaracion
 	 * @param replaced_number Numero de Declaracion complementada o sustituida
 	 * @param comments Comentarios de la Declaracion
+	 * @param finance Identificador de Vencimiento
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertFs_model(Integer domain, Integer year, Short period, Short administration, Short status, Short security_level, Boolean complementary, Boolean replacement, String model, Integer number, Integer replaced_number, String comments)
+	public int insertFs_model(Integer domain, Integer year, Short period, Short administration, Short status, Short security_level, Boolean complementary, Boolean replacement, Boolean withoutActivity, String model, Integer number, Integer replaced_number, String comments, Integer finance)
 	throws SQLException {
-		Integer id =  super.insertFs_model(domain, year, period, administration, status, security_level, complementary, replacement, model, number, replaced_number, comments);
+		Integer id =  super.insertFs_model(domain, year, period, administration, status, security_level, complementary, replacement, withoutActivity, model, number, replaced_number, comments, finance);
 		fs_modelDomains.put(id, domain );
 		return id;
 	}
@@ -6190,15 +6260,24 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	/**
 	 * Customer_fee
 	 * @param customer Identificador del Cliente
+	 * @param invoicing_group Identificador de Grupo de Facturacion
 	 * @param item Identificador del Articulo
+	 * @param project Identificador del Proyecto
+	 * @param seller Identificador de Agente Comercial
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForCustomer_fee( Integer customer , Integer item , Integer workplace){
+	protected Integer getDomainForCustomer_fee( Integer customer , Integer invoicing_group , Integer item , Integer project , Integer seller , Integer workplace){
 		Integer domain = null;
 			if ( ( domain = getDomainForCustomerPk( customer ) ) != null )
 				return domain;
+			if ( ( domain = getDomainForInvoicing_groupPk( invoicing_group ) ) != null )
+				return domain;
 			if ( ( domain = getDomainForItemPk( item ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForProjectPk( project ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForSellerPk( seller ) ) != null )
 				return domain;
 			if ( ( domain = getDomainForWorkplacePk( workplace ) ) != null )
 				return domain;
@@ -6208,6 +6287,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	/**
 	 * Customer_fee
 	 * @param id Identificador unico de la Cuota del Cliente
+	 * @param project Identificador del Proyecto
 	 * @param customer Identificador del Cliente
 	 * @param line Numero de linea de Cuota
 	 * @param item Identificador del Articulo
@@ -6217,17 +6297,19 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param discount_expr Descuentos de la Cuota
 	 * @param initial_date Fecha de inicio de la Cuota
 	 * @param final_date Fecha de finalizacion de la Cuota
-	 * @param billing_date Proxima fecha de facturaciùn de la Cuota
+	 * @param billing_date Proxima fecha de facturaciÛn de la Cuota
 	 * @param period Periodo de facturacion en meses de la Cuota
 	 * @param security_level Nivel de seguridad de la Cuota
+	 * @param invoicing_group Identificador de Grupo de Facturacion
+	 * @param seller Identificador de Agente Comercial
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertCustomer_fee(Integer customer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Date initial_date, Date final_date, Date billing_date, Integer period, Short security_level, Integer workplace)
+	public int insertCustomer_fee(Integer project, Integer customer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Date initial_date, Date final_date, Date billing_date, Integer period, Short security_level, Integer invoicing_group, Integer seller, Integer workplace)
 	throws SQLException {
-		Integer domain = getDomainForCustomer_fee( customer , item , workplace);
-		Integer id =  super.insertCustomer_fee( domain != null ? domain : getDefaultDomain(), customer, line, item, description, quantity, price, discount_expr, initial_date, final_date, billing_date, period, security_level, workplace );
+		Integer domain = getDomainForCustomer_fee( customer , invoicing_group , item , project , seller , workplace);
+		Integer id =  super.insertCustomer_fee( domain != null ? domain : getDefaultDomain(), project, customer, line, item, description, quantity, price, discount_expr, initial_date, final_date, billing_date, period, security_level, invoicing_group, seller, workplace );
 		if ( domain != null ) { 
 			customer_feeDomains.put(id, domain);
 		}
@@ -6238,6 +6320,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Customer_fee
 	 * @param id Identificador unico de la Cuota del Cliente
 	 * @param domain Identificador del Dominio
+	 * @param project Identificador del Proyecto
 	 * @param customer Identificador del Cliente
 	 * @param line Numero de linea de Cuota
 	 * @param item Identificador del Articulo
@@ -6247,16 +6330,18 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param discount_expr Descuentos de la Cuota
 	 * @param initial_date Fecha de inicio de la Cuota
 	 * @param final_date Fecha de finalizacion de la Cuota
-	 * @param billing_date Proxima fecha de facturaciùn de la Cuota
+	 * @param billing_date Proxima fecha de facturaciÛn de la Cuota
 	 * @param period Periodo de facturacion en meses de la Cuota
 	 * @param security_level Nivel de seguridad de la Cuota
+	 * @param invoicing_group Identificador de Grupo de Facturacion
+	 * @param seller Identificador de Agente Comercial
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertCustomer_fee(Integer domain, Integer customer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Date initial_date, Date final_date, Date billing_date, Integer period, Short security_level, Integer workplace)
+	public int insertCustomer_fee(Integer domain, Integer project, Integer customer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Date initial_date, Date final_date, Date billing_date, Integer period, Short security_level, Integer invoicing_group, Integer seller, Integer workplace)
 	throws SQLException {
-		Integer id =  super.insertCustomer_fee(domain, customer, line, item, description, quantity, price, discount_expr, initial_date, final_date, billing_date, period, security_level, workplace);
+		Integer id =  super.insertCustomer_fee(domain, project, customer, line, item, description, quantity, price, discount_expr, initial_date, final_date, billing_date, period, security_level, invoicing_group, seller, workplace);
 		customer_feeDomains.put(id, domain );
 		return id;
 	}
@@ -6352,10 +6437,13 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Pm_type_detail
+	 * @param account Identificador de la Cuenta Contable
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForPm_type_detail(){
+	protected Integer getDomainForPm_type_detail( Integer account){
 		Integer domain = null;
+			if ( ( domain = getDomainForAccountPk( account ) ) != null )
+				return domain;
 		return domain;
 	}
 
@@ -6364,13 +6452,14 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico
 	 * @param type Tipo de Forma de Pago
 	 * @param description Descripcion del detalle
+	 * @param account Identificador de la Cuenta Contable
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertPm_type_detail(Short type, String description)
+	public int insertPm_type_detail(Short type, String description, Integer account)
 	throws SQLException {
-		Integer domain = getDomainForPm_type_detail();
-		Integer id =  super.insertPm_type_detail( domain != null ? domain : getDefaultDomain(), type, description );
+		Integer domain = getDomainForPm_type_detail( account);
+		Integer id =  super.insertPm_type_detail( domain != null ? domain : getDefaultDomain(), type, description, account );
 		if ( domain != null ) { 
 			pm_type_detailDomains.put(id, domain);
 		}
@@ -6383,12 +6472,13 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param type Tipo de Forma de Pago
 	 * @param description Descripcion del detalle
+	 * @param account Identificador de la Cuenta Contable
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertPm_type_detail(Integer domain, Short type, String description)
+	public int insertPm_type_detail(Integer domain, Short type, String description, Integer account)
 	throws SQLException {
-		Integer id =  super.insertPm_type_detail(domain, type, description);
+		Integer id =  super.insertPm_type_detail(domain, type, description, account);
 		pm_type_detailDomains.put(id, domain );
 		return id;
 	}
@@ -6677,62 +6767,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	
-	private Map<Integer,Integer> pm_type_detail_accountDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForPm_type_detail_accountPk(Integer id){
-		return pm_type_detail_accountDomains.get(id);
-	}
-	
-	/**
-	 * Pm_type_detail_account
-	 * @param account Identificador de la Cuenta Contable
-	 * @param pm_type_detail Identificador del Detalle por Tipo de Forma de Pago
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForPm_type_detail_account( Integer account , Integer pm_type_detail){
-		Integer domain = null;
-			if ( ( domain = getDomainForAccountPk( account ) ) != null )
-				return domain;
-			if ( ( domain = getDomainForPm_type_detailPk( pm_type_detail ) ) != null )
-				return domain;
-		return domain;
-	}
-
-	/**
-	 * Pm_type_detail_account
-	 * @param id Identificador unico
-	 * @param pm_type_detail Identificador del Detalle por Tipo de Forma de Pago
-	 * @param account Identificador de la Cuenta Contable
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertPm_type_detail_account(Integer pm_type_detail, Integer account)
-	throws SQLException {
-		Integer domain = getDomainForPm_type_detail_account( account , pm_type_detail);
-		Integer id =  super.insertPm_type_detail_account( domain != null ? domain : getDefaultDomain(), pm_type_detail, account );
-		if ( domain != null ) { 
-			pm_type_detail_accountDomains.put(id, domain);
-		}
-		return id;
-	}
-
-	/**
-	 * Pm_type_detail_account
-	 * @param id Identificador unico
-	 * @param domain Identificador del Dominio
-	 * @param pm_type_detail Identificador del Detalle por Tipo de Forma de Pago
-	 * @param account Identificador de la Cuenta Contable
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertPm_type_detail_account(Integer domain, Integer pm_type_detail, Integer account)
-	throws SQLException {
-		Integer id =  super.insertPm_type_detail_account(domain, pm_type_detail, account);
-		pm_type_detail_accountDomains.put(id, domain );
-		return id;
-	}
-
-	
 	private Map<Integer,Integer> commission_categoryDomains = new HashMap<Integer,Integer>();
 
 	protected Integer getDomainForCommission_categoryPk(Integer id){
@@ -6810,8 +6844,8 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 
 	/**
 	 * Academic_year
-	 * @param id Identificador unico del Aùo Academico
-	 * @param description Descripcion del Aùo Academico
+	 * @param id Identificador unico del AÒo Academico
+	 * @param description Descripcion del AÒo Academico
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -6827,9 +6861,9 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 
 	/**
 	 * Academic_year
-	 * @param id Identificador unico del Aùo Academico
+	 * @param id Identificador unico del AÒo Academico
 	 * @param domain Identificador del Dominio
-	 * @param description Descripcion del Aùo Academico
+	 * @param description Descripcion del AÒo Academico
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -6837,118 +6871,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	throws SQLException {
 		Integer id =  super.insertAcademic_year(domain, description);
 		academic_yearDomains.put(id, domain );
-		return id;
-	}
-
-	
-	private Map<Integer,Integer> bank_concept_accountDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForBank_concept_accountPk(Integer id){
-		return bank_concept_accountDomains.get(id);
-	}
-	
-	/**
-	 * Bank_concept_account
-	 * @param account Identificador de la Cuenta Contable
-	 * @param bank_concept Identificador del Concepto bancario
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForBank_concept_account( Integer account , Integer bank_concept){
-		Integer domain = null;
-			if ( ( domain = getDomainForAccountPk( account ) ) != null )
-				return domain;
-			if ( ( domain = getDomainForBank_conceptPk( bank_concept ) ) != null )
-				return domain;
-		return domain;
-	}
-
-	/**
-	 * Bank_concept_account
-	 * @param id Identificador unico
-	 * @param bank_concept Identificador del Concepto bancario
-	 * @param account Identificador de la Cuenta Contable
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertBank_concept_account(Integer bank_concept, Integer account)
-	throws SQLException {
-		Integer domain = getDomainForBank_concept_account( account , bank_concept);
-		Integer id =  super.insertBank_concept_account( domain != null ? domain : getDefaultDomain(), bank_concept, account );
-		if ( domain != null ) { 
-			bank_concept_accountDomains.put(id, domain);
-		}
-		return id;
-	}
-
-	/**
-	 * Bank_concept_account
-	 * @param id Identificador unico
-	 * @param domain Identificador del Dominio
-	 * @param bank_concept Identificador del Concepto bancario
-	 * @param account Identificador de la Cuenta Contable
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertBank_concept_account(Integer domain, Integer bank_concept, Integer account)
-	throws SQLException {
-		Integer id =  super.insertBank_concept_account(domain, bank_concept, account);
-		bank_concept_accountDomains.put(id, domain );
-		return id;
-	}
-
-	
-	private Map<Integer,Integer> creditor_accountDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForCreditor_accountPk(Integer id){
-		return creditor_accountDomains.get(id);
-	}
-	
-	/**
-	 * Creditor_account
-	 * @param account Identificador de la Cuenta Contable
-	 * @param creditor Identificador del Acreedor
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForCreditor_account( Integer account , Integer creditor){
-		Integer domain = null;
-			if ( ( domain = getDomainForAccountPk( account ) ) != null )
-				return domain;
-			if ( ( domain = getDomainForCreditorPk( creditor ) ) != null )
-				return domain;
-		return domain;
-	}
-
-	/**
-	 * Creditor_account
-	 * @param id Identificador unico de la Cuenta Contable del Acreedor
-	 * @param creditor Identificador del Acreedor
-	 * @param account Identificador de la Cuenta Contable
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCreditor_account(Integer creditor, Integer account)
-	throws SQLException {
-		Integer domain = getDomainForCreditor_account( account , creditor);
-		Integer id =  super.insertCreditor_account( domain != null ? domain : getDefaultDomain(), creditor, account );
-		if ( domain != null ) { 
-			creditor_accountDomains.put(id, domain);
-		}
-		return id;
-	}
-
-	/**
-	 * Creditor_account
-	 * @param id Identificador unico de la Cuenta Contable del Acreedor
-	 * @param domain Identificador del Dominio
-	 * @param creditor Identificador del Acreedor
-	 * @param account Identificador de la Cuenta Contable
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCreditor_account(Integer domain, Integer creditor, Integer account)
-	throws SQLException {
-		Integer id =  super.insertCreditor_account(domain, creditor, account);
-		creditor_accountDomains.put(id, domain );
 		return id;
 	}
 
@@ -6964,7 +6886,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
 	 * @param finance Identificador de Vencimiento
 	 * @param pm_type_detail Identificador del Detalle por Tipo de Forma de Pago
-	 * @param rbank Identificador de la Cuenta Bancaria de la Compaùia
+	 * @param rbank Identificador de la Cuenta Bancaria de la CompaÒia
 	 * @returns domain's ID
 	*/
 	protected Integer getDomainForFinance_tracking( Integer bank_statement_link , Integer finance , Integer pm_type_detail , Integer rbank){
@@ -6988,7 +6910,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param type Tipo de Seguimiento
 	 * @param description Descripcion del Seguimiento
 	 * @param pm_type_detail Identificador del Detalle por Tipo de Forma de Pago
-	 * @param rbank Identificador de la Cuenta Bancaria de la Compaùia
+	 * @param rbank Identificador de la Cuenta Bancaria de la CompaÒia
 	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
 	 * @param amount Importe del Seguimiento
 	 * @param recorded Indica si esta contabilizado o no
@@ -7014,7 +6936,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param type Tipo de Seguimiento
 	 * @param description Descripcion del Seguimiento
 	 * @param pm_type_detail Identificador del Detalle por Tipo de Forma de Pago
-	 * @param rbank Identificador de la Cuenta Bancaria de la Compaùia
+	 * @param rbank Identificador de la Cuenta Bancaria de la CompaÒia
 	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
 	 * @param amount Importe del Seguimiento
 	 * @param recorded Indica si esta contabilizado o no
@@ -7186,7 +7108,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Sales_detail
 	 * @param id Identificador unico del Detalle del Pedido de Venta
 	 * @param sales Identificador del Pedido de Venta
-	 * @param line Numero de lùnea del Detalle dentro del Pedido
+	 * @param line Numero de linea del Detalle dentro del Pedido
 	 * @param item Identificador del Articulo del Detalle de Pedido
 	 * @param description Descripcion del Detalle de Pedido
 	 * @param quantity Cantidad del Detalle de Pedido
@@ -7214,7 +7136,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico del Detalle del Pedido de Venta
 	 * @param domain Identificador del Dominio
 	 * @param sales Identificador del Pedido de Venta
-	 * @param line Numero de lùnea del Detalle dentro del Pedido
+	 * @param line Numero de linea del Detalle dentro del Pedido
 	 * @param item Identificador del Articulo del Detalle de Pedido
 	 * @param description Descripcion del Detalle de Pedido
 	 * @param quantity Cantidad del Detalle de Pedido
@@ -7324,14 +7246,14 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param fax Fax
 	 * @param email Email
 	 * @param note Nota
-	 * @param organization Organizaciùn
+	 * @param organization OrganizaciÛn
 	 * @param title Cargo
-	 * @param organizationAddress Direcciùn de la Organizaciùn
-	 * @param organizationPostalCode Codigo postal de la Organizaciùn
-	 * @param organizationCity Localidad de la Organizaciùn
-	 * @param organizationState Estado de la Organizaciùn
-	 * @param organizationPhone Telefono de la Organizaciùn
-	 * @param organizationFax Fax de la Organizaciùn
+	 * @param organizationAddress DirecciÛn de la OrganizaciÛn
+	 * @param organizationPostalCode Codigo postal de la OrganizaciÛn
+	 * @param organizationCity Localidad de la OrganizaciÛn
+	 * @param organizationState Estado de la OrganizaciÛn
+	 * @param organizationPhone Telefono de la OrganizaciÛn
+	 * @param organizationFax Fax de la OrganizaciÛn
 	 * @param web Web
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -7362,14 +7284,14 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param fax Fax
 	 * @param email Email
 	 * @param note Nota
-	 * @param organization Organizaciùn
+	 * @param organization OrganizaciÛn
 	 * @param title Cargo
-	 * @param organizationAddress Direcciùn de la Organizaciùn
-	 * @param organizationPostalCode Codigo postal de la Organizaciùn
-	 * @param organizationCity Localidad de la Organizaciùn
-	 * @param organizationState Estado de la Organizaciùn
-	 * @param organizationPhone Telefono de la Organizaciùn
-	 * @param organizationFax Fax de la Organizaciùn
+	 * @param organizationAddress DirecciÛn de la OrganizaciÛn
+	 * @param organizationPostalCode Codigo postal de la OrganizaciÛn
+	 * @param organizationCity Localidad de la OrganizaciÛn
+	 * @param organizationState Estado de la OrganizaciÛn
+	 * @param organizationPhone Telefono de la OrganizaciÛn
+	 * @param organizationFax Fax de la OrganizaciÛn
 	 * @param web Web
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -7403,14 +7325,14 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	/**
 	 * System_deduction
 	 * @param id Identificador unico
-	 * @param type Tipo de Deducciùn
+	 * @param type Tipo de DeducciÛn
 	 * @param deduction_concept Identificador unico del concepto
 	 * @param description Descripcion
 	 * @param description_decorable 
-	 * @param expression Fùrmula
+	 * @param expression FÛrmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
-	 * @param month Mes de la deducciùn
+	 * @param month Mes de la deducciÛn
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -7428,14 +7350,14 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * System_deduction
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Deducciùn
+	 * @param type Tipo de DeducciÛn
 	 * @param deduction_concept Identificador unico del concepto
 	 * @param description Descripcion
 	 * @param description_decorable 
-	 * @param expression Fùrmula
+	 * @param expression FÛrmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
-	 * @param month Mes de la deducciùn
+	 * @param month Mes de la deducciÛn
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -7548,62 +7470,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		 super.insertRoom(asset, domain, hotel, item);
 		roomDomains.put(asset, domain );
 			}
-
-	
-	private Map<Integer,Integer> rbank_accountDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForRbank_accountPk(Integer id){
-		return rbank_accountDomains.get(id);
-	}
-	
-	/**
-	 * Rbank_account
-	 * @param account Identificador de la Cuenta Contable
-	 * @param rbank Identificador de la Cuenta Bancaria
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForRbank_account( Integer account , Integer rbank){
-		Integer domain = null;
-			if ( ( domain = getDomainForAccountPk( account ) ) != null )
-				return domain;
-			if ( ( domain = getDomainForRbankPk( rbank ) ) != null )
-				return domain;
-		return domain;
-	}
-
-	/**
-	 * Rbank_account
-	 * @param id Identificador unico de la Cuenta Contable de la Cuenta Bancaria
-	 * @param rbank Identificador de la Cuenta Bancaria
-	 * @param account Identificador de la Cuenta Contable
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertRbank_account(Integer rbank, Integer account)
-	throws SQLException {
-		Integer domain = getDomainForRbank_account( account , rbank);
-		Integer id =  super.insertRbank_account( domain != null ? domain : getDefaultDomain(), rbank, account );
-		if ( domain != null ) { 
-			rbank_accountDomains.put(id, domain);
-		}
-		return id;
-	}
-
-	/**
-	 * Rbank_account
-	 * @param id Identificador unico de la Cuenta Contable de la Cuenta Bancaria
-	 * @param domain Identificador del Dominio
-	 * @param rbank Identificador de la Cuenta Bancaria
-	 * @param account Identificador de la Cuenta Contable
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertRbank_account(Integer domain, Integer rbank, Integer account)
-	throws SQLException {
-		Integer id =  super.insertRbank_account(domain, rbank, account);
-		rbank_accountDomains.put(id, domain );
-		return id;
-	}
 
 	
 	private Map<Integer,Integer> modelDomains = new HashMap<Integer,Integer>();
@@ -8231,7 +8097,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Fs_renting
-	 * @param rbank Banco de la Compaùia
+	 * @param rbank Banco de la CompaÒia
 	 * @returns domain's ID
 	*/
 	protected Integer getDomainForFs_renting( Integer rbank){
@@ -8285,7 +8151,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param extra_charge Recargo
 	 * @param delay_interest Intereses de demora
 	 * @param total_tax_debt Total deuda tributaria
-	 * @param rbank Banco de la Compaùia
+	 * @param rbank Banco de la CompaÒia
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -8344,7 +8210,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param extra_charge Recargo
 	 * @param delay_interest Intereses de demora
 	 * @param total_tax_debt Total deuda tributaria
-	 * @param rbank Banco de la Compaùia
+	 * @param rbank Banco de la CompaÒia
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -9002,7 +8868,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param description Descripcion
 	 * @param expression Expresion
 	 * @param type Tipo de Costo
-	 * @param code Cùdigo
+	 * @param code CÛdigo
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -9025,7 +8891,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param description Descripcion
 	 * @param expression Expresion
 	 * @param type Tipo de Costo
-	 * @param code Cùdigo
+	 * @param code CÛdigo
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -9046,7 +8912,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	/**
 	 * Fbatch
 	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
-	 * @param rbank Banco de la Compaùia utilizado en la Remesa
+	 * @param rbank Banco de la CompaÒia utilizado en la Remesa
 	 * @returns domain's ID
 	*/
 	protected Integer getDomainForFbatch( Integer bank_statement_link , Integer rbank){
@@ -9065,7 +8931,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param issue_date Fecha de emision de la Remesa
 	 * @param type Tipo de Remesa
 	 * @param status Estado de la Remesa
-	 * @param rbank Banco de la Compaùia utilizado en la Remesa
+	 * @param rbank Banco de la CompaÒia utilizado en la Remesa
 	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
 	 * @param payment Indica si es un pago o un cobro
 	 * @param security_level Nivel de seguridad
@@ -9090,7 +8956,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param issue_date Fecha de emision de la Remesa
 	 * @param type Tipo de Remesa
 	 * @param status Estado de la Remesa
-	 * @param rbank Banco de la Compaùia utilizado en la Remesa
+	 * @param rbank Banco de la CompaÒia utilizado en la Remesa
 	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
 	 * @param payment Indica si es un pago o un cobro
 	 * @param security_level Nivel de seguridad
@@ -9583,7 +9449,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param units Numero de Habitaciones
 	 * @param item Identificador del Tipo de Habitacion
 	 * @param adults Numero de adultos
-	 * @param children Numero de niùos
+	 * @param children Numero de niÒos
 	 * @param babies Numero de bebes
 	 * @param crs_code Codigo de Reserva en CRS
 	 * @param tariff_code Codigo de Tarifa
@@ -9621,7 +9487,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param units Numero de Habitaciones
 	 * @param item Identificador del Tipo de Habitacion
 	 * @param adults Numero de adultos
-	 * @param children Numero de niùos
+	 * @param children Numero de niÒos
 	 * @param babies Numero de bebes
 	 * @param crs_code Codigo de Reserva en CRS
 	 * @param tariff_code Codigo de Tarifa
@@ -9710,7 +9576,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Survey_response
-	 * @param campaign_action Identificador de la Accion de la Campaùa
+	 * @param campaign_action Identificador de la Accion de la CampaÒa
 	 * @param survey Identificador del Cuestionario
 	 * @param target Identificador del Cliente Potencial
 	 * @param user Identificador del Usuario
@@ -9737,7 +9603,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param survey Identificador del Cuestionario
 	 * @param target Identificador del Cliente Potencial
 	 * @param user Identificador del Usuario
-	 * @param campaign_action Identificador de la Accion de la Campaùa
+	 * @param campaign_action Identificador de la Accion de la CampaÒa
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -9760,7 +9626,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param survey Identificador del Cuestionario
 	 * @param target Identificador del Cliente Potencial
 	 * @param user Identificador del Usuario
-	 * @param campaign_action Identificador de la Accion de la Campaùa
+	 * @param campaign_action Identificador de la Accion de la CampaÒa
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -9768,6 +9634,76 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	throws SQLException {
 		Integer id =  super.insertSurvey_response(domain, creationDate, response_date, survey, target, user, campaign_action);
 		survey_responseDomains.put(id, domain );
+		return id;
+	}
+
+	
+	private Map<Integer,Integer> training_courseDomains = new HashMap<Integer,Integer>();
+
+	protected Integer getDomainForTraining_coursePk(Integer id){
+		return training_courseDomains.get(id);
+	}
+	
+	/**
+	 * Training_course
+	 * @param cno CNO
+	 * @param training_center Identificador del Centro Formativo
+	 * @returns domain's ID
+	*/
+	protected Integer getDomainForTraining_course( Integer cno , Integer training_center){
+		Integer domain = null;
+			if ( ( domain = getDomainForTraining_centerPk( training_center ) ) != null )
+				return domain;
+		return domain;
+	}
+
+	/**
+	 * Training_course
+	 * @param id Identificador unico
+	 * @param training_center Identificador del Centro Formativo
+	 * @param code Codigo del Curso Formativo
+	 * @param certification_name Denominacion de la certificacion
+	 * @param cno CNO
+	 * @param modality Modalidad del Curso Formativo
+	 * @param fp_title_name Titulo de formacion profesional
+	 * @param occupation_name Nombre de la ocupacion
+	 * @param professional_certificate Certificado de profesionalidad
+	 * @param fp_title Titulo de formacion profesional
+	 * @param center_available Centro disponible
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertTraining_course(Integer training_center, String code, String certification_name, Integer cno, Short modality, String fp_title_name, String occupation_name, Boolean professional_certificate, Boolean fp_title, Boolean center_available)
+	throws SQLException {
+		Integer domain = getDomainForTraining_course( cno , training_center);
+		Integer id =  super.insertTraining_course( domain != null ? domain : getDefaultDomain(), training_center, code, certification_name, cno, modality, fp_title_name, occupation_name, professional_certificate, fp_title, center_available );
+		if ( domain != null ) { 
+			training_courseDomains.put(id, domain);
+		}
+		return id;
+	}
+
+	/**
+	 * Training_course
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param training_center Identificador del Centro Formativo
+	 * @param code Codigo del Curso Formativo
+	 * @param certification_name Denominacion de la certificacion
+	 * @param cno CNO
+	 * @param modality Modalidad del Curso Formativo
+	 * @param fp_title_name Titulo de formacion profesional
+	 * @param occupation_name Nombre de la ocupacion
+	 * @param professional_certificate Certificado de profesionalidad
+	 * @param fp_title Titulo de formacion profesional
+	 * @param center_available Centro disponible
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertTraining_course(Integer domain, Integer training_center, String code, String certification_name, Integer cno, Short modality, String fp_title_name, String occupation_name, Boolean professional_certificate, Boolean fp_title, Boolean center_available)
+	throws SQLException {
+		Integer id =  super.insertTraining_course(domain, training_center, code, certification_name, cno, modality, fp_title_name, occupation_name, professional_certificate, fp_title, center_available);
+		training_courseDomains.put(id, domain );
 		return id;
 	}
 
@@ -9910,7 +9846,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	/**
 	 * Contract_payment
 	 * @param id Identificador unico
-	 * @param type Tipo de Percepciùn Salarial
+	 * @param type Tipo de PercepciÛn Salarial
 	 * @param contract Contrato
 	 * @param payment_concept Identificador unico del concepto
 	 * @param description Descripcion
@@ -9939,7 +9875,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Contract_payment
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Percepciùn Salarial
+	 * @param type Tipo de PercepciÛn Salarial
 	 * @param contract Contrato
 	 * @param payment_concept Identificador unico del concepto
 	 * @param description Descripcion
@@ -9958,6 +9894,66 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	throws SQLException {
 		Integer id =  super.insertContract_payment(domain, type, contract, payment_concept, description, description_decorable, expression, irpf_expression, quote_expression, start_date, month, end_date, salary_type);
 		contract_paymentDomains.put(id, domain );
+		return id;
+	}
+
+	
+	private Map<Integer,Integer> fs_activityDomains = new HashMap<Integer,Integer>();
+
+	protected Integer getDomainForFs_activityPk(Integer id){
+		return fs_activityDomains.get(id);
+	}
+	
+	/**
+	 * Fs_activity
+	 * @returns domain's ID
+	*/
+	protected Integer getDomainForFs_activity(){
+		Integer domain = null;
+		return domain;
+	}
+
+	/**
+	 * Fs_activity
+	 * @param id Identificador unico
+	 * @param year Ejercicio del Lote
+	 * @param epigraph Epigrafe IAE
+	 * @param description Descripcion del epigrafe
+	 * @param farmer Actividad agricola
+	 * @param max_person Valor maximo de personas
+	 * @param max_import Valor maximo de importe
+	 * @param vat_percent IVA - porcentaje aplicable
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertFs_activity(Integer year, String epigraph, String description, Boolean farmer, Double max_person, Double max_import, Double vat_percent)
+	throws SQLException {
+		Integer domain = getDomainForFs_activity();
+		Integer id =  super.insertFs_activity( domain != null ? domain : getDefaultDomain(), year, epigraph, description, farmer, max_person, max_import, vat_percent );
+		if ( domain != null ) { 
+			fs_activityDomains.put(id, domain);
+		}
+		return id;
+	}
+
+	/**
+	 * Fs_activity
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param year Ejercicio del Lote
+	 * @param epigraph Epigrafe IAE
+	 * @param description Descripcion del epigrafe
+	 * @param farmer Actividad agricola
+	 * @param max_person Valor maximo de personas
+	 * @param max_import Valor maximo de importe
+	 * @param vat_percent IVA - porcentaje aplicable
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertFs_activity(Integer domain, Integer year, String epigraph, String description, Boolean farmer, Double max_person, Double max_import, Double vat_percent)
+	throws SQLException {
+		Integer id =  super.insertFs_activity(domain, year, epigraph, description, farmer, max_person, max_import, vat_percent);
+		fs_activityDomains.put(id, domain );
 		return id;
 	}
 
@@ -9984,18 +9980,18 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Irpf_regularization
 	 * @param id Identificador unico
 	 * @param contract Identificador del contrato
-	 * @param reason Causa de regularizaciùn
+	 * @param reason Causa de regularizaciÛn
 	 * @param effective_date Fecha de entrada en vigor
-	 * @param paid_irpf Retenciones practicadas con anterioridad a la regularizaciùn.
-	 * @param paid_remuneration Retribuciones ya satisfechas con anterioridad a la regularizaciùn.
-	 * @param prior_annual_irpf Retenciones anuales anteriores a la regularizaciùn.
-	 * @param prior_annual_remuneration Retribucines anulaes consideradas con anterioridad a la regularizaciùn.
-	 * @param prior_base_irpf Base para calcular el tipo de retenciùn determinado antes de la regularizaciùn.
-	 * @param prior_irpf Tipo de retenciùn aplicado antes de la regularizaciùn.
-	 * @param prior_in_ceuta_melilla Los rendimientos anteriores a la regularizaciùn fueron obtenidos en Ceuta o Melilla
-	 * @param prior_minimun_personal_family Mùnimo personal y familiar para calcular el tipo de retenciùn determinado antes de la regularizaciùn.
-	 * @param prior_deduct_home_loan En algùn momento antes de la regularizaciùn se aplico la minoraciùn por pagos por la adquisiùn o rehabilitaciùn de la vivienda
-	 * @param prior_deduct_home_loan_amount Importe de la minoraciùn por pagos por la adquisiùn o rehabilitaciùn de la vivienda antes de la regularizaciùn
+	 * @param paid_irpf Retenciones practicadas con anterioridad a la regularizaciÛn.
+	 * @param paid_remuneration Retribuciones ya satisfechas con anterioridad a la regularizaciÛn.
+	 * @param prior_annual_irpf Retenciones anuales anteriores a la regularizaciÛn.
+	 * @param prior_annual_remuneration Retribucines anulaes consideradas con anterioridad a la regularizaciÛn.
+	 * @param prior_base_irpf Base para calcular el tipo de retenciÛn determinado antes de la regularizaciÛn.
+	 * @param prior_irpf Tipo de retenciÛn aplicado antes de la regularizaciÛn.
+	 * @param prior_in_ceuta_melilla Los rendimientos anteriores a la regularizaciÛn fueron obtenidos en Ceuta o Melilla
+	 * @param prior_minimun_personal_family MÌnimo personal y familiar para calcular el tipo de retenciÛn determinado antes de la regularizaciÛn.
+	 * @param prior_deduct_home_loan En alg˙n momento antes de la regularizaciÛn se aplico la minoraciÛn por pagos por la adquisiÛn o rehabilitaciÛn de la vivienda
+	 * @param prior_deduct_home_loan_amount Importe de la minoraciÛn por pagos por la adquisiÛn o rehabilitaciÛn de la vivienda antes de la regularizaciÛn
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -10014,18 +10010,18 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param contract Identificador del contrato
-	 * @param reason Causa de regularizaciùn
+	 * @param reason Causa de regularizaciÛn
 	 * @param effective_date Fecha de entrada en vigor
-	 * @param paid_irpf Retenciones practicadas con anterioridad a la regularizaciùn.
-	 * @param paid_remuneration Retribuciones ya satisfechas con anterioridad a la regularizaciùn.
-	 * @param prior_annual_irpf Retenciones anuales anteriores a la regularizaciùn.
-	 * @param prior_annual_remuneration Retribucines anulaes consideradas con anterioridad a la regularizaciùn.
-	 * @param prior_base_irpf Base para calcular el tipo de retenciùn determinado antes de la regularizaciùn.
-	 * @param prior_irpf Tipo de retenciùn aplicado antes de la regularizaciùn.
-	 * @param prior_in_ceuta_melilla Los rendimientos anteriores a la regularizaciùn fueron obtenidos en Ceuta o Melilla
-	 * @param prior_minimun_personal_family Mùnimo personal y familiar para calcular el tipo de retenciùn determinado antes de la regularizaciùn.
-	 * @param prior_deduct_home_loan En algùn momento antes de la regularizaciùn se aplico la minoraciùn por pagos por la adquisiùn o rehabilitaciùn de la vivienda
-	 * @param prior_deduct_home_loan_amount Importe de la minoraciùn por pagos por la adquisiùn o rehabilitaciùn de la vivienda antes de la regularizaciùn
+	 * @param paid_irpf Retenciones practicadas con anterioridad a la regularizaciÛn.
+	 * @param paid_remuneration Retribuciones ya satisfechas con anterioridad a la regularizaciÛn.
+	 * @param prior_annual_irpf Retenciones anuales anteriores a la regularizaciÛn.
+	 * @param prior_annual_remuneration Retribucines anulaes consideradas con anterioridad a la regularizaciÛn.
+	 * @param prior_base_irpf Base para calcular el tipo de retenciÛn determinado antes de la regularizaciÛn.
+	 * @param prior_irpf Tipo de retenciÛn aplicado antes de la regularizaciÛn.
+	 * @param prior_in_ceuta_melilla Los rendimientos anteriores a la regularizaciÛn fueron obtenidos en Ceuta o Melilla
+	 * @param prior_minimun_personal_family MÌnimo personal y familiar para calcular el tipo de retenciÛn determinado antes de la regularizaciÛn.
+	 * @param prior_deduct_home_loan En alg˙n momento antes de la regularizaciÛn se aplico la minoraciÛn por pagos por la adquisiÛn o rehabilitaciÛn de la vivienda
+	 * @param prior_deduct_home_loan_amount Importe de la minoraciÛn por pagos por la adquisiÛn o rehabilitaciÛn de la vivienda antes de la regularizaciÛn
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -10045,7 +10041,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Cashflow_forecast
-	 * @param rbank Identificador de Banco de la Compaùia
+	 * @param rbank Identificador de Banco de la CompaÒia
 	 * @returns domain's ID
 	*/
 	protected Integer getDomainForCashflow_forecast( Integer rbank){
@@ -10062,7 +10058,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param description Descripcion
 	 * @param start_date Fecha de inicio de aplicacion
 	 * @param due_date Fecha final de aplicacion
-	 * @param rbank Identificador de Banco de la Compaùia
+	 * @param rbank Identificador de Banco de la CompaÒia
 	 * @param amount Importe
 	 * @param payment_day Dia de pago
 	 * @param january Aplicable en enero
@@ -10098,7 +10094,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param description Descripcion
 	 * @param start_date Fecha de inicio de aplicacion
 	 * @param due_date Fecha final de aplicacion
-	 * @param rbank Identificador de Banco de la Compaùia
+	 * @param rbank Identificador de Banco de la CompaÒia
 	 * @param amount Importe
 	 * @param payment_day Dia de pago
 	 * @param january Aplicable en enero
@@ -10204,13 +10200,14 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Tag
 	 * @param id Identificador unico
 	 * @param name Nombre de la Etiqueta
+	 * @param type Tipo de Etiqueta
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertTag(String name)
+	public int insertTag(String name, Short type)
 	throws SQLException {
 		Integer domain = getDomainForTag();
-		Integer id =  super.insertTag( domain != null ? domain : getDefaultDomain(), name );
+		Integer id =  super.insertTag( domain != null ? domain : getDefaultDomain(), name, type );
 		if ( domain != null ) { 
 			tagDomains.put(id, domain);
 		}
@@ -10222,12 +10219,13 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param name Nombre de la Etiqueta
+	 * @param type Tipo de Etiqueta
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertTag(Integer domain, String name)
+	public int insertTag(Integer domain, String name, Short type)
 	throws SQLException {
-		Integer id =  super.insertTag(domain, name);
+		Integer id =  super.insertTag(domain, name, type);
 		tagDomains.put(id, domain );
 		return id;
 	}
@@ -10356,62 +10354,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	
-	private Map<Integer,Integer> customer_accountDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForCustomer_accountPk(Integer id){
-		return customer_accountDomains.get(id);
-	}
-	
-	/**
-	 * Customer_account
-	 * @param account Identificador de la Cuenta Contable
-	 * @param customer Identificador del Cliente
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForCustomer_account( Integer account , Integer customer){
-		Integer domain = null;
-			if ( ( domain = getDomainForAccountPk( account ) ) != null )
-				return domain;
-			if ( ( domain = getDomainForCustomerPk( customer ) ) != null )
-				return domain;
-		return domain;
-	}
-
-	/**
-	 * Customer_account
-	 * @param id Identificador unico de la Cuenta Contable del Cliente
-	 * @param customer Identificador del Cliente
-	 * @param account Identificador de la Cuenta Contable
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCustomer_account(Integer customer, Integer account)
-	throws SQLException {
-		Integer domain = getDomainForCustomer_account( account , customer);
-		Integer id =  super.insertCustomer_account( domain != null ? domain : getDefaultDomain(), customer, account );
-		if ( domain != null ) { 
-			customer_accountDomains.put(id, domain);
-		}
-		return id;
-	}
-
-	/**
-	 * Customer_account
-	 * @param id Identificador unico de la Cuenta Contable del Cliente
-	 * @param domain Identificador del Dominio
-	 * @param customer Identificador del Cliente
-	 * @param account Identificador de la Cuenta Contable
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCustomer_account(Integer domain, Integer customer, Integer account)
-	throws SQLException {
-		Integer id =  super.insertCustomer_account(domain, customer, account);
-		customer_accountDomains.put(id, domain );
-		return id;
-	}
-
-	
 	private Map<Integer,Integer> survey_questionDomains = new HashMap<Integer,Integer>();
 
 	protected Integer getDomainForSurvey_questionPk(Integer id){
@@ -10478,7 +10420,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Course
-	 * @param academic_year Aùo Academico del Curso
+	 * @param academic_year AÒo Academico del Curso
 	 * @param level Nivel del Curso
 	 * @param subject Materia del Curso
 	 * @param workplace Identificador del Centro de Trabajo
@@ -10504,7 +10446,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param description Descripcion del Curso
 	 * @param start_date Fecha inicio del Curso
 	 * @param end_date Fecha fin del Curso
-	 * @param academic_year Aùo Academico del Curso
+	 * @param academic_year AÒo Academico del Curso
 	 * @param subject Materia del Curso
 	 * @param level Nivel del Curso
 	 * @param workplace Identificador del Centro de Trabajo
@@ -10532,7 +10474,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param description Descripcion del Curso
 	 * @param start_date Fecha inicio del Curso
 	 * @param end_date Fecha fin del Curso
-	 * @param academic_year Aùo Academico del Curso
+	 * @param academic_year AÒo Academico del Curso
 	 * @param subject Materia del Curso
 	 * @param level Nivel del Curso
 	 * @param workplace Identificador del Centro de Trabajo
@@ -10616,12 +10558,15 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Rbank
+	 * @param account Identificador de la Cuenta Contable
 	 * @param bank Identificador de la Entidad Bancaria
 	 * @param registry Identificador del Registro de la Persona o Empresa
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForRbank( Integer bank , Integer registry){
+	protected Integer getDomainForRbank( Integer account , Integer bank , Integer registry){
 		Integer domain = null;
+			if ( ( domain = getDomainForAccountPk( account ) ) != null )
+				return domain;
 			if ( ( domain = getDomainForBankPk( bank ) ) != null )
 				return domain;
 			if ( ( domain = getDomainForRegistryPk( registry ) ) != null )
@@ -10638,13 +10583,14 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param sufix Sufijo de Cuenta Bancaria para Remesas
 	 * @param alias Alias de la Cuenta Bancaria
 	 * @param active Indica si la Cuenta Bancaria esta activa o no
+	 * @param account Identificador de la Cuenta Contable
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertRbank(Integer registry, Integer bank, String bank_account, String sufix, String alias, Boolean active)
+	public int insertRbank(Integer registry, Integer bank, String bank_account, String sufix, String alias, Boolean active, Integer account)
 	throws SQLException {
-		Integer domain = getDomainForRbank( bank , registry);
-		Integer id =  super.insertRbank( domain != null ? domain : getDefaultDomain(), registry, bank, bank_account, sufix, alias, active );
+		Integer domain = getDomainForRbank( account , bank , registry);
+		Integer id =  super.insertRbank( domain != null ? domain : getDefaultDomain(), registry, bank, bank_account, sufix, alias, active, account );
 		if ( domain != null ) { 
 			rbankDomains.put(id, domain);
 		}
@@ -10661,12 +10607,13 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param sufix Sufijo de Cuenta Bancaria para Remesas
 	 * @param alias Alias de la Cuenta Bancaria
 	 * @param active Indica si la Cuenta Bancaria esta activa o no
+	 * @param account Identificador de la Cuenta Contable
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertRbank(Integer domain, Integer registry, Integer bank, String bank_account, String sufix, String alias, Boolean active)
+	public int insertRbank(Integer domain, Integer registry, Integer bank, String bank_account, String sufix, String alias, Boolean active, Integer account)
 	throws SQLException {
-		Integer id =  super.insertRbank(domain, registry, bank, bank_account, sufix, alias, active);
+		Integer id =  super.insertRbank(domain, registry, bank, bank_account, sufix, alias, active, account);
 		rbankDomains.put(id, domain );
 		return id;
 	}
@@ -10750,6 +10697,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	/**
 	 * Sales
 	 * @param bank Identificador de la Entidad Bancaria
+	 * @param carrier Identificador de la Agencia de Transporte
 	 * @param customer Identificador del Cliente
 	 * @param pay_method Identificador de la Forma de Pago
 	 * @param project Identificador del Proyecto
@@ -10759,9 +10707,11 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForSales( Integer bank , Integer customer , Integer pay_method , Integer project , Integer shipping_address , Integer scope , Integer seller , Integer workplace){
+	protected Integer getDomainForSales( Integer bank , Integer carrier , Integer customer , Integer pay_method , Integer project , Integer shipping_address , Integer scope , Integer seller , Integer workplace){
 		Integer domain = null;
 			if ( ( domain = getDomainForBankPk( bank ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForCarrierPk( carrier ) ) != null )
 				return domain;
 			if ( ( domain = getDomainForCustomerPk( customer ) ) != null )
 				return domain;
@@ -10805,13 +10755,22 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param pymnt_days Dias de pago
 	 * @param bank Identificador de la Entidad Bancaria
 	 * @param bank_account Numero de cuenta en la Entidad Bancaria
+	 * @param carrier Identificador de la Agencia de Transporte
+	 * @param shipping_alternative_address Primera parte de la Direccion de entrega
+	 * @param shipping_alternative_address2 Segunda parte de la Direccion de entrega
+	 * @param shipping_alternative_zip Codigo Postal de entrega
+	 * @param shipping_alternative_city Localidad de entrega
+	 * @param shipping_alternative_phone Telefono de contacto de la entrega
+	 * @param shipping_alternative_recipient Destinatario de la entrega
+	 * @param shipping_contact Nombre del contacto para la entrega
+	 * @param shipping_period Tipo de periodo de entrega
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertSales(Integer project, Integer customer, String series, Integer number, Integer shipping_address, Integer seller, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
+	public int insertSales(Integer project, Integer customer, String series, Integer number, Integer shipping_address, Integer seller, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account, Integer carrier, String shipping_alternative_address, String shipping_alternative_address2, String shipping_alternative_zip, String shipping_alternative_city, String shipping_alternative_phone, String shipping_alternative_recipient, String shipping_contact, Short shipping_period)
 	throws SQLException {
-		Integer domain = getDomainForSales( bank , customer , pay_method , project , shipping_address , scope , seller , workplace);
-		Integer id =  super.insertSales( domain != null ? domain : getDefaultDomain(), project, customer, series, number, shipping_address, seller, discount_expr, issue_date, pay_method, document_type, security_level, status, comments, remarks, workplace, scope, number_of_pymnts, days_to_first_pymnt, days_between_pymnts, pymnt_days, bank, bank_account );
+		Integer domain = getDomainForSales( bank , carrier , customer , pay_method , project , shipping_address , scope , seller , workplace);
+		Integer id =  super.insertSales( domain != null ? domain : getDefaultDomain(), project, customer, series, number, shipping_address, seller, discount_expr, issue_date, pay_method, document_type, security_level, status, comments, remarks, workplace, scope, number_of_pymnts, days_to_first_pymnt, days_between_pymnts, pymnt_days, bank, bank_account, carrier, shipping_alternative_address, shipping_alternative_address2, shipping_alternative_zip, shipping_alternative_city, shipping_alternative_phone, shipping_alternative_recipient, shipping_contact, shipping_period );
 		if ( domain != null ) { 
 			salesDomains.put(id, domain);
 		}
@@ -10844,12 +10803,21 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param pymnt_days Dias de pago
 	 * @param bank Identificador de la Entidad Bancaria
 	 * @param bank_account Numero de cuenta en la Entidad Bancaria
+	 * @param carrier Identificador de la Agencia de Transporte
+	 * @param shipping_alternative_address Primera parte de la Direccion de entrega
+	 * @param shipping_alternative_address2 Segunda parte de la Direccion de entrega
+	 * @param shipping_alternative_zip Codigo Postal de entrega
+	 * @param shipping_alternative_city Localidad de entrega
+	 * @param shipping_alternative_phone Telefono de contacto de la entrega
+	 * @param shipping_alternative_recipient Destinatario de la entrega
+	 * @param shipping_contact Nombre del contacto para la entrega
+	 * @param shipping_period Tipo de periodo de entrega
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertSales(Integer domain, Integer project, Integer customer, String series, Integer number, Integer shipping_address, Integer seller, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
+	public int insertSales(Integer domain, Integer project, Integer customer, String series, Integer number, Integer shipping_address, Integer seller, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account, Integer carrier, String shipping_alternative_address, String shipping_alternative_address2, String shipping_alternative_zip, String shipping_alternative_city, String shipping_alternative_phone, String shipping_alternative_recipient, String shipping_contact, Short shipping_period)
 	throws SQLException {
-		Integer id =  super.insertSales(domain, project, customer, series, number, shipping_address, seller, discount_expr, issue_date, pay_method, document_type, security_level, status, comments, remarks, workplace, scope, number_of_pymnts, days_to_first_pymnt, days_between_pymnts, pymnt_days, bank, bank_account);
+		Integer id =  super.insertSales(domain, project, customer, series, number, shipping_address, seller, discount_expr, issue_date, pay_method, document_type, security_level, status, comments, remarks, workplace, scope, number_of_pymnts, days_to_first_pymnt, days_between_pymnts, pymnt_days, bank, bank_account, carrier, shipping_alternative_address, shipping_alternative_address2, shipping_alternative_zip, shipping_alternative_city, shipping_alternative_phone, shipping_alternative_recipient, shipping_contact, shipping_period);
 		salesDomains.put(id, domain );
 		return id;
 	}
@@ -10958,6 +10926,56 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		incomeDomains.put(id, domain );
 		return id;
 	}
+
+	
+	private Map<Integer,Integer> carrierDomains = new HashMap<Integer,Integer>();
+
+	protected Integer getDomainForCarrierPk(Integer registry){
+		return carrierDomains.get(registry);
+	}
+	
+	/**
+	 * Carrier
+	 * @param registry Registro de la Agencia de Transporte
+	 * @param scope Identificador del Ambito
+	 * @returns domain's ID
+	*/
+	protected Integer getDomainForCarrier( Integer registry , Integer scope){
+		Integer domain = null;
+			if ( ( domain = getDomainForRegistryPk( registry ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForScopePk( scope ) ) != null )
+				return domain;
+		return domain;
+	}
+
+	/**
+	 * Carrier
+	 * @param registry Registro de la Agencia de Transporte
+	 * @param scope Identificador del Ambito
+	 * @throws SQLException
+	*/
+	public void insertCarrier(Integer registry, Integer scope)
+	throws SQLException {
+		Integer domain = getDomainForCarrier( registry , scope);
+		 super.insertCarrier( registry, domain != null ? domain : getDefaultDomain(), scope );
+		if ( domain != null ) { 
+			carrierDomains.put(registry, domain);
+		}
+	}
+
+	/**
+	 * Carrier
+	 * @param registry Registro de la Agencia de Transporte
+	 * @param domain Identificador del Dominio
+	 * @param scope Identificador del Ambito
+	 * @throws SQLException
+	*/
+	public void insertCarrier(Integer registry, Integer domain, Integer scope)
+	throws SQLException {
+		 super.insertCarrier(registry, domain, scope);
+		carrierDomains.put(registry, domain );
+			}
 
 	
 	private Map<Integer,Integer> enterprise_activityDomains = new HashMap<Integer,Integer>();
@@ -11107,6 +11125,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico
 	 * @param fs_model Identificador de la Declaracion
 	 * @param type Clave de la Declaracion
+	 * @param description Descripcion
 	 * @param acu_amount Importe acumulado
 	 * @param dec_amount Importe declarado
 	 * @param res_amount Importe resultado
@@ -11115,10 +11134,10 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertFs_model_detail(Integer fs_model, String type, Double acu_amount, Double dec_amount, Double res_amount, Double adj_amount, Double amount)
+	public int insertFs_model_detail(Integer fs_model, String type, String description, Double acu_amount, Double dec_amount, Double res_amount, Double adj_amount, Double amount)
 	throws SQLException {
 		Integer domain = getDomainForFs_model_detail( fs_model);
-		Integer id =  super.insertFs_model_detail( domain != null ? domain : getDefaultDomain(), fs_model, type, acu_amount, dec_amount, res_amount, adj_amount, amount );
+		Integer id =  super.insertFs_model_detail( domain != null ? domain : getDefaultDomain(), fs_model, type, description, acu_amount, dec_amount, res_amount, adj_amount, amount );
 		if ( domain != null ) { 
 			fs_model_detailDomains.put(id, domain);
 		}
@@ -11131,6 +11150,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param fs_model Identificador de la Declaracion
 	 * @param type Clave de la Declaracion
+	 * @param description Descripcion
 	 * @param acu_amount Importe acumulado
 	 * @param dec_amount Importe declarado
 	 * @param res_amount Importe resultado
@@ -11139,9 +11159,9 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertFs_model_detail(Integer domain, Integer fs_model, String type, Double acu_amount, Double dec_amount, Double res_amount, Double adj_amount, Double amount)
+	public int insertFs_model_detail(Integer domain, Integer fs_model, String type, String description, Double acu_amount, Double dec_amount, Double res_amount, Double adj_amount, Double amount)
 	throws SQLException {
-		Integer id =  super.insertFs_model_detail(domain, fs_model, type, acu_amount, dec_amount, res_amount, adj_amount, amount);
+		Integer id =  super.insertFs_model_detail(domain, fs_model, type, description, acu_amount, dec_amount, res_amount, adj_amount, amount);
 		fs_model_detailDomains.put(id, domain );
 		return id;
 	}
@@ -11204,6 +11224,62 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 		return id;
 	}
 
+
+	
+	private Map<Integer,Integer> product_tagDomains = new HashMap<Integer,Integer>();
+
+	protected Integer getDomainForProduct_tagPk(Integer id){
+		return product_tagDomains.get(id);
+	}
+	
+	/**
+	 * Product_tag
+	 * @param product Identificador del Producto
+	 * @param tag Identificador de la Etiqueta
+	 * @returns domain's ID
+	*/
+	protected Integer getDomainForProduct_tag( Integer product , Integer tag){
+		Integer domain = null;
+			if ( ( domain = getDomainForProductPk( product ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForTagPk( tag ) ) != null )
+				return domain;
+		return domain;
+	}
+
+	/**
+	 * Product_tag
+	 * @param id Identificador unico
+	 * @param product Identificador del Producto
+	 * @param tag Identificador de la Etiqueta
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertProduct_tag(Integer product, Integer tag)
+	throws SQLException {
+		Integer domain = getDomainForProduct_tag( product , tag);
+		Integer id =  super.insertProduct_tag( domain != null ? domain : getDefaultDomain(), product, tag );
+		if ( domain != null ) { 
+			product_tagDomains.put(id, domain);
+		}
+		return id;
+	}
+
+	/**
+	 * Product_tag
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param product Identificador del Producto
+	 * @param tag Identificador de la Etiqueta
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertProduct_tag(Integer domain, Integer product, Integer tag)
+	throws SQLException {
+		Integer id =  super.insertProduct_tag(domain, product, tag);
+		product_tagDomains.put(id, domain );
+		return id;
+	}
 
 	
 	private Map<Integer,Integer> fbatch_detailDomains = new HashMap<Integer,Integer>();
@@ -11470,30 +11546,30 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico
 	 * @param contract Identificador del contrato
 	 * @param effective_date Fecha de entrada en vigor
-	 * @param base_irpf Base para calcular el tipo de retenciùn
-	 * @param minimun_personal_family Mùnimo personal y familiar para calcular el tipo de retenciùn
-	 * @param deduct_home_loan_amount Minoraciùn por pagos de prùstamo para vivienda habitual
-	 * @param deduct_80_bis Deduccion Arttùculo 80 bis LIRPF
-	 * @param irpf Tipo retenciùn apliclabe 
+	 * @param base_irpf Base para calcular el tipo de retenciÛn
+	 * @param minimun_personal_family MÌnimo personal y familiar para calcular el tipo de retenciÛn
+	 * @param deduct_home_loan_amount MinoraciÛn por pagos de prÈstamo para vivienda habitual
+	 * @param deduct_80_bis Deduccion ArttÌculo 80 bis LIRPF
+	 * @param irpf Tipo retenciÛn apliclabe 
 	 * @param annual_irpf Importe anual de las retenciones e ingresos a cuenta
-	 * @param annual_remuneration Retribuciones anuales. Importe ùntegro
+	 * @param annual_remuneration Retribuciones anuales. Importe Ìntegro
 	 * @param irregular_18_2_reduction Reducciones por irregularidad ( Art. 18.2 LIRPF). Importe
-	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Art. 18.3: DD.TT 11ù y 12 ù de la LIRPF). Importe
+	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Art. 18.3: DD.TT 11™ y 12 ™ de la LIRPF). Importe
 	 * @param deduccibles_expenses Gastos deducibles. Importe anual
 	 * @param work_remuneration_reduction Reducciones por rendimiento del trabajo 
-	 * @param work_prolongation_reduction Reducciones por prolongaciùn de la actividad 
+	 * @param work_prolongation_reduction Reducciones por prolongaciÛn de la actividad 
 	 * @param work_moving_reduction Reducciones por movilidad geografica 
 	 * @param work_disability_reduction Reducciones por discapacidad 
 	 * @param social_security_pensioner Por ser pensionista de la s. social/cl. Pasivas o desempleado
-	 * @param two_or_more_descendents_min Por tener mùs de dos descendientes con derecho a mùnimo
-	 * @param spousal_support Pension compensatoria a favor del cùnyuge. Importe anual
+	 * @param two_or_more_descendents_min Por tener m·s de dos descendientes con derecho a mÌnimo
+	 * @param spousal_support Pension compensatoria a favor del cÛnyuge. Importe anual
 	 * @param food_annuity Anualidades por alimentos en favor de los hijos. Importe anual
-	 * @param minimun_personal Mùnimo personal
-	 * @param minimun_ascendents Mùnimo por descendientes
-	 * @param minimun_descendents Mùnimo por descendientes
-	 * @param minimun_disability Mùnimo por discapacidad
-	 * @param descendents_minor_3_total Descendientes computados menores de tres aùos. Total
-	 * @param descendents_minor_3_entirely Descendientes computados menores de tres aùos. Por entero
+	 * @param minimun_personal MÌnimo personal
+	 * @param minimun_ascendents MÌnimo por descendientes
+	 * @param minimun_descendents MÌnimo por descendientes
+	 * @param minimun_disability MÌnimo por discapacidad
+	 * @param descendents_minor_3_total Descendientes computados menores de tres aÒos. Total
+	 * @param descendents_minor_3_entirely Descendientes computados menores de tres aÒos. Por entero
 	 * @param descendents_remainder_total Resto de descendientes computados . Total
 	 * @param descendents_remainder_entirely Resto de descendientes computados . Por entero
 	 * @param descendents_33_65_total Descendientes con discapacidad >= 33% y < 65%. Total
@@ -11502,15 +11578,15 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param descendents_moving_entirely Descendientes con discapacidad, movilidad reducida. Por entero
 	 * @param descendents_65_total Descendientes con discapacidad > 65%. Total
 	 * @param descendents_65_entirely Descendientes con discapacidad > 65%. Por entero
-	 * @param descendents_first Detalle del cùmputo de descendientes. Hijo 1ù
-	 * @param descendents_second Detalle del cùmputo de descendientes. Hijo 2ù
-	 * @param descendents_third Detalle del cùmputo de descendientes. Hijo 3ù
-	 * @param descendents_fourth_subsequent_total Detalle del cùmputo de descendientes. Hijo 4ù y sucesivos. Total
-	 * @param descendents_fourth_subsequent_entirely Detalle del cùmputo de descendientes. Hijo 4ù y sucesivos. Por entero
-	 * @param ascendents_minor_75_total Ascendientes computados menores de 75 aùos. Total
-	 * @param ascendents_minor_75_entirely Ascendientes computados menores de 75 aùos. Por entero
-	 * @param ascendents_mayor_75_total Ascendientes computados mayores de 75 aùos. Total
-	 * @param ascendents_mayor_75_entirely Ascendientes computados mayores de 75 aùos. Por entero
+	 * @param descendents_first Detalle del cÛmputo de descendientes. Hijo 1∫
+	 * @param descendents_second Detalle del cÛmputo de descendientes. Hijo 2∫
+	 * @param descendents_third Detalle del cÛmputo de descendientes. Hijo 3∫
+	 * @param descendents_fourth_subsequent_total Detalle del cÛmputo de descendientes. Hijo 4∫ y sucesivos. Total
+	 * @param descendents_fourth_subsequent_entirely Detalle del cÛmputo de descendientes. Hijo 4∫ y sucesivos. Por entero
+	 * @param ascendents_minor_75_total Ascendientes computados menores de 75 aÒos. Total
+	 * @param ascendents_minor_75_entirely Ascendientes computados menores de 75 aÒos. Por entero
+	 * @param ascendents_mayor_75_total Ascendientes computados mayores de 75 aÒos. Total
+	 * @param ascendents_mayor_75_entirely Ascendientes computados mayores de 75 aÒos. Por entero
 	 * @param ascendents_33_65_total Ascendientes con discapacidad >= 33% y < 65%. Total
 	 * @param ascendents_33_65_entirely Ascendientes con discapacidad >= 33% y < 65%. Por entero
 	 * @param ascendents_moving_total Ascendientes con discapacidad, movilidad reducida. Total
@@ -11536,30 +11612,30 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param contract Identificador del contrato
 	 * @param effective_date Fecha de entrada en vigor
-	 * @param base_irpf Base para calcular el tipo de retenciùn
-	 * @param minimun_personal_family Mùnimo personal y familiar para calcular el tipo de retenciùn
-	 * @param deduct_home_loan_amount Minoraciùn por pagos de prùstamo para vivienda habitual
-	 * @param deduct_80_bis Deduccion Arttùculo 80 bis LIRPF
-	 * @param irpf Tipo retenciùn apliclabe 
+	 * @param base_irpf Base para calcular el tipo de retenciÛn
+	 * @param minimun_personal_family MÌnimo personal y familiar para calcular el tipo de retenciÛn
+	 * @param deduct_home_loan_amount MinoraciÛn por pagos de prÈstamo para vivienda habitual
+	 * @param deduct_80_bis Deduccion ArttÌculo 80 bis LIRPF
+	 * @param irpf Tipo retenciÛn apliclabe 
 	 * @param annual_irpf Importe anual de las retenciones e ingresos a cuenta
-	 * @param annual_remuneration Retribuciones anuales. Importe ùntegro
+	 * @param annual_remuneration Retribuciones anuales. Importe Ìntegro
 	 * @param irregular_18_2_reduction Reducciones por irregularidad ( Art. 18.2 LIRPF). Importe
-	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Art. 18.3: DD.TT 11ù y 12 ù de la LIRPF). Importe
+	 * @param irregular_18_3_reduction Reducciones por irregularidad ( Art. 18.3: DD.TT 11™ y 12 ™ de la LIRPF). Importe
 	 * @param deduccibles_expenses Gastos deducibles. Importe anual
 	 * @param work_remuneration_reduction Reducciones por rendimiento del trabajo 
-	 * @param work_prolongation_reduction Reducciones por prolongaciùn de la actividad 
+	 * @param work_prolongation_reduction Reducciones por prolongaciÛn de la actividad 
 	 * @param work_moving_reduction Reducciones por movilidad geografica 
 	 * @param work_disability_reduction Reducciones por discapacidad 
 	 * @param social_security_pensioner Por ser pensionista de la s. social/cl. Pasivas o desempleado
-	 * @param two_or_more_descendents_min Por tener mùs de dos descendientes con derecho a mùnimo
-	 * @param spousal_support Pension compensatoria a favor del cùnyuge. Importe anual
+	 * @param two_or_more_descendents_min Por tener m·s de dos descendientes con derecho a mÌnimo
+	 * @param spousal_support Pension compensatoria a favor del cÛnyuge. Importe anual
 	 * @param food_annuity Anualidades por alimentos en favor de los hijos. Importe anual
-	 * @param minimun_personal Mùnimo personal
-	 * @param minimun_ascendents Mùnimo por descendientes
-	 * @param minimun_descendents Mùnimo por descendientes
-	 * @param minimun_disability Mùnimo por discapacidad
-	 * @param descendents_minor_3_total Descendientes computados menores de tres aùos. Total
-	 * @param descendents_minor_3_entirely Descendientes computados menores de tres aùos. Por entero
+	 * @param minimun_personal MÌnimo personal
+	 * @param minimun_ascendents MÌnimo por descendientes
+	 * @param minimun_descendents MÌnimo por descendientes
+	 * @param minimun_disability MÌnimo por discapacidad
+	 * @param descendents_minor_3_total Descendientes computados menores de tres aÒos. Total
+	 * @param descendents_minor_3_entirely Descendientes computados menores de tres aÒos. Por entero
 	 * @param descendents_remainder_total Resto de descendientes computados . Total
 	 * @param descendents_remainder_entirely Resto de descendientes computados . Por entero
 	 * @param descendents_33_65_total Descendientes con discapacidad >= 33% y < 65%. Total
@@ -11568,15 +11644,15 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param descendents_moving_entirely Descendientes con discapacidad, movilidad reducida. Por entero
 	 * @param descendents_65_total Descendientes con discapacidad > 65%. Total
 	 * @param descendents_65_entirely Descendientes con discapacidad > 65%. Por entero
-	 * @param descendents_first Detalle del cùmputo de descendientes. Hijo 1ù
-	 * @param descendents_second Detalle del cùmputo de descendientes. Hijo 2ù
-	 * @param descendents_third Detalle del cùmputo de descendientes. Hijo 3ù
-	 * @param descendents_fourth_subsequent_total Detalle del cùmputo de descendientes. Hijo 4ù y sucesivos. Total
-	 * @param descendents_fourth_subsequent_entirely Detalle del cùmputo de descendientes. Hijo 4ù y sucesivos. Por entero
-	 * @param ascendents_minor_75_total Ascendientes computados menores de 75 aùos. Total
-	 * @param ascendents_minor_75_entirely Ascendientes computados menores de 75 aùos. Por entero
-	 * @param ascendents_mayor_75_total Ascendientes computados mayores de 75 aùos. Total
-	 * @param ascendents_mayor_75_entirely Ascendientes computados mayores de 75 aùos. Por entero
+	 * @param descendents_first Detalle del cÛmputo de descendientes. Hijo 1∫
+	 * @param descendents_second Detalle del cÛmputo de descendientes. Hijo 2∫
+	 * @param descendents_third Detalle del cÛmputo de descendientes. Hijo 3∫
+	 * @param descendents_fourth_subsequent_total Detalle del cÛmputo de descendientes. Hijo 4∫ y sucesivos. Total
+	 * @param descendents_fourth_subsequent_entirely Detalle del cÛmputo de descendientes. Hijo 4∫ y sucesivos. Por entero
+	 * @param ascendents_minor_75_total Ascendientes computados menores de 75 aÒos. Total
+	 * @param ascendents_minor_75_entirely Ascendientes computados menores de 75 aÒos. Por entero
+	 * @param ascendents_mayor_75_total Ascendientes computados mayores de 75 aÒos. Total
+	 * @param ascendents_mayor_75_entirely Ascendientes computados mayores de 75 aÒos. Por entero
 	 * @param ascendents_33_65_total Ascendientes con discapacidad >= 33% y < 65%. Total
 	 * @param ascendents_33_65_entirely Ascendientes con discapacidad >= 33% y < 65%. Por entero
 	 * @param ascendents_moving_total Ascendientes con discapacidad, movilidad reducida. Total
@@ -11602,10 +11678,13 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Category
+	 * @param rattach Identificador del Archivo Adjunto
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForCategory(){
+	protected Integer getDomainForCategory( Integer rattach){
 		Integer domain = null;
+			if ( ( domain = getDomainForRattachPk( rattach ) ) != null )
+				return domain;
 		return domain;
 	}
 
@@ -11613,13 +11692,17 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Category
 	 * @param id Identificador unico de la Categoria
 	 * @param name Nombre de la Categoria
+	 * @param type Tipo de la Categoria
+	 * @param description Descripcion de la Categoria
+	 * @param url Url de la Categoria
+	 * @param rattach Identificador del Archivo Adjunto
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertCategory(String name)
+	public int insertCategory(String name, Short type, String description, String url, Integer rattach)
 	throws SQLException {
-		Integer domain = getDomainForCategory();
-		Integer id =  super.insertCategory( domain != null ? domain : getDefaultDomain(), name );
+		Integer domain = getDomainForCategory( rattach);
+		Integer id =  super.insertCategory( domain != null ? domain : getDefaultDomain(), name, type, description, url, rattach );
 		if ( domain != null ) { 
 			categoryDomains.put(id, domain);
 		}
@@ -11631,12 +11714,16 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico de la Categoria
 	 * @param domain Identificador del Dominio
 	 * @param name Nombre de la Categoria
+	 * @param type Tipo de la Categoria
+	 * @param description Descripcion de la Categoria
+	 * @param url Url de la Categoria
+	 * @param rattach Identificador del Archivo Adjunto
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertCategory(Integer domain, String name)
+	public int insertCategory(Integer domain, String name, Short type, String description, String url, Integer rattach)
 	throws SQLException {
-		Integer id =  super.insertCategory(domain, name);
+		Integer id =  super.insertCategory(domain, name, type, description, url, rattach);
 		categoryDomains.put(id, domain );
 		return id;
 	}
@@ -11674,7 +11761,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico
 	 * @param action Identificador de la Accion
 	 * @param target Identificador del Cliente Potencial
-	 * @param status Estado del Cliente Potencial de la Accion de Campaùa
+	 * @param status Estado del Cliente Potencial de la Accion de CampaÒa
 	 * @param survey_response Identificador de la Respuesta de Cuestionario
 	 * @param comments Comentarios
 	 * @param user Identificador del Usuario
@@ -11697,7 +11784,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param action Identificador de la Accion
 	 * @param target Identificador del Cliente Potencial
-	 * @param status Estado del Cliente Potencial de la Accion de Campaùa
+	 * @param status Estado del Cliente Potencial de la Accion de CampaÒa
 	 * @param survey_response Identificador de la Respuesta de Cuestionario
 	 * @param comments Comentarios
 	 * @param user Identificador del Usuario
@@ -11720,10 +11807,16 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Tax
+	 * @param purchase_account Identificador de la Cuenta Contable de Compras
+	 * @param sales_account Identificador de la Cuenta Contable de Ventas
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForTax(){
+	protected Integer getDomainForTax( Integer purchase_account , Integer sales_account){
 		Integer domain = null;
+			if ( ( domain = getDomainForAccountPk( purchase_account ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForAccountPk( sales_account ) ) != null )
+				return domain;
 		return domain;
 	}
 
@@ -11737,13 +11830,15 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param start_date Fecha de inicio de vigencia
 	 * @param vat_deduction_type Tipo de deduccion del IVA
 	 * @param withholding_type Tipo de retencion
+	 * @param sales_account Identificador de la Cuenta Contable de Ventas
+	 * @param purchase_account Identificador de la Cuenta Contable de Compras
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertTax(String name, Short tax_type, Double percentage, Double surcharge, Date start_date, Short vat_deduction_type, Short withholding_type)
+	public int insertTax(String name, Short tax_type, Double percentage, Double surcharge, Date start_date, Short vat_deduction_type, Short withholding_type, Integer sales_account, Integer purchase_account)
 	throws SQLException {
-		Integer domain = getDomainForTax();
-		Integer id =  super.insertTax( domain != null ? domain : getDefaultDomain(), name, tax_type, percentage, surcharge, start_date, vat_deduction_type, withholding_type );
+		Integer domain = getDomainForTax( purchase_account , sales_account);
+		Integer id =  super.insertTax( domain != null ? domain : getDefaultDomain(), name, tax_type, percentage, surcharge, start_date, vat_deduction_type, withholding_type, sales_account, purchase_account );
 		if ( domain != null ) { 
 			taxDomains.put(id, domain);
 		}
@@ -11761,12 +11856,14 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param start_date Fecha de inicio de vigencia
 	 * @param vat_deduction_type Tipo de deduccion del IVA
 	 * @param withholding_type Tipo de retencion
+	 * @param sales_account Identificador de la Cuenta Contable de Ventas
+	 * @param purchase_account Identificador de la Cuenta Contable de Compras
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertTax(Integer domain, String name, Short tax_type, Double percentage, Double surcharge, Date start_date, Short vat_deduction_type, Short withholding_type)
+	public int insertTax(Integer domain, String name, Short tax_type, Double percentage, Double surcharge, Date start_date, Short vat_deduction_type, Short withholding_type, Integer sales_account, Integer purchase_account)
 	throws SQLException {
-		Integer id =  super.insertTax(domain, name, tax_type, percentage, surcharge, start_date, vat_deduction_type, withholding_type);
+		Integer id =  super.insertTax(domain, name, tax_type, percentage, surcharge, start_date, vat_deduction_type, withholding_type, sales_account, purchase_account);
 		taxDomains.put(id, domain );
 		return id;
 	}
@@ -11797,7 +11894,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param endDate Fecha de finalizacion
 	 * @param remote_address IP remota
 	 * @param remote_host Equipo remoto
-	 * @param session_id Identificador web de la sesiùn
+	 * @param session_id Identificador web de la sesiÛn
 	 * @param startDate Fecha de inicio
 	 * @param application Identificador de la Aplicacion
 	 * @param user_id Identificador del Usuario
@@ -11821,7 +11918,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param endDate Fecha de finalizacion
 	 * @param remote_address IP remota
 	 * @param remote_host Equipo remoto
-	 * @param session_id Identificador web de la sesiùn
+	 * @param session_id Identificador web de la sesiÛn
 	 * @param startDate Fecha de inicio
 	 * @param application Identificador de la Aplicacion
 	 * @param user_id Identificador del Usuario
@@ -11844,12 +11941,12 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Invoicing_group
-	 * @param parent Grupo de Facturacion
+	 * @param customer Identificador del Cliente
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForInvoicing_group( Integer parent){
+	protected Integer getDomainForInvoicing_group( Integer customer){
 		Integer domain = null;
-			if ( ( domain = getDomainForRegistryPk( parent ) ) != null )
+			if ( ( domain = getDomainForCustomerPk( customer ) ) != null )
 				return domain;
 		return domain;
 	}
@@ -11857,14 +11954,16 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	/**
 	 * Invoicing_group
 	 * @param id Identificador unico
-	 * @param parent Grupo de Facturacion
+	 * @param customer Identificador del Cliente
+	 * @param description Descripcion del Grupo de Facturacion
+	 * @param customer_grouped Indica si el Grupo de Facturacion agrupa los Clientes en una sola Factura
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoicing_group(Integer parent)
+	public int insertInvoicing_group(Integer customer, String description, Boolean customer_grouped)
 	throws SQLException {
-		Integer domain = getDomainForInvoicing_group( parent);
-		Integer id =  super.insertInvoicing_group( domain != null ? domain : getDefaultDomain(), parent );
+		Integer domain = getDomainForInvoicing_group( customer);
+		Integer id =  super.insertInvoicing_group( domain != null ? domain : getDefaultDomain(), customer, description, customer_grouped );
 		if ( domain != null ) { 
 			invoicing_groupDomains.put(id, domain);
 		}
@@ -11875,13 +11974,15 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Invoicing_group
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param parent Grupo de Facturacion
+	 * @param customer Identificador del Cliente
+	 * @param description Descripcion del Grupo de Facturacion
+	 * @param customer_grouped Indica si el Grupo de Facturacion agrupa los Clientes en una sola Factura
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoicing_group(Integer domain, Integer parent)
+	public int insertInvoicing_group(Integer domain, Integer customer, String description, Boolean customer_grouped)
 	throws SQLException {
-		Integer id =  super.insertInvoicing_group(domain, parent);
+		Integer id =  super.insertInvoicing_group(domain, customer, description, customer_grouped);
 		invoicing_groupDomains.put(id, domain );
 		return id;
 	}
@@ -12037,11 +12138,11 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param incoming_host Host del correo entrante
 	 * @param protocol Protocolo utilizado (IMAP)
 	 * @param incoming_port Puerto del correo entrante
-	 * @param incoming_security Seguridad de conexiùn del correo entrante
+	 * @param incoming_security Seguridad de conexiÛn del correo entrante
 	 * @param outgoing_verification Indica si hay autentificacion en el correo saliente
 	 * @param outgoing_host Host del servidor de correo saliente
 	 * @param outgoing_port Puerto del servidor de correo saliente
-	 * @param outgoing_security Seguridad de conexiùn del correo saliente
+	 * @param outgoing_security Seguridad de conexiÛn del correo saliente
 	 * @param mail_username Nombre del usuario
 	 * @param password Clave del usuario
 	 * @param default_account Indica si es la cuenta de correo por defecto
@@ -12075,11 +12176,11 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param incoming_host Host del correo entrante
 	 * @param protocol Protocolo utilizado (IMAP)
 	 * @param incoming_port Puerto del correo entrante
-	 * @param incoming_security Seguridad de conexiùn del correo entrante
+	 * @param incoming_security Seguridad de conexiÛn del correo entrante
 	 * @param outgoing_verification Indica si hay autentificacion en el correo saliente
 	 * @param outgoing_host Host del servidor de correo saliente
 	 * @param outgoing_port Puerto del servidor de correo saliente
-	 * @param outgoing_security Seguridad de conexiùn del correo saliente
+	 * @param outgoing_security Seguridad de conexiÛn del correo saliente
 	 * @param mail_username Nombre del usuario
 	 * @param password Clave del usuario
 	 * @param default_account Indica si es la cuenta de correo por defecto
@@ -12109,12 +12210,15 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Creditor
+	 * @param account Identificador de la Cuenta Contable
 	 * @param registry Registro del Acreedor
 	 * @param scope Identificador del Ambito
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForCreditor( Integer registry , Integer scope){
+	protected Integer getDomainForCreditor( Integer account , Integer registry , Integer scope){
 		Integer domain = null;
+			if ( ( domain = getDomainForAccountPk( account ) ) != null )
+				return domain;
 			if ( ( domain = getDomainForRegistryPk( registry ) ) != null )
 				return domain;
 			if ( ( domain = getDomainForScopePk( scope ) ) != null )
@@ -12129,12 +12233,13 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param transaction Tipo de transacciones del Acreedor
 	 * @param status Estado del Acreedor
 	 * @param scope Identificador del Ambito
+	 * @param account Identificador de la Cuenta Contable
 	 * @throws SQLException
 	*/
-	public void insertCreditor(Integer registry, Boolean withholding, Short transaction, Short status, Integer scope)
+	public void insertCreditor(Integer registry, Boolean withholding, Short transaction, Short status, Integer scope, Integer account)
 	throws SQLException {
-		Integer domain = getDomainForCreditor( registry , scope);
-		 super.insertCreditor( registry, domain != null ? domain : getDefaultDomain(), withholding, transaction, status, scope );
+		Integer domain = getDomainForCreditor( account , registry , scope);
+		 super.insertCreditor( registry, domain != null ? domain : getDefaultDomain(), withholding, transaction, status, scope, account );
 		if ( domain != null ) { 
 			creditorDomains.put(registry, domain);
 		}
@@ -12148,11 +12253,12 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param transaction Tipo de transacciones del Acreedor
 	 * @param status Estado del Acreedor
 	 * @param scope Identificador del Ambito
+	 * @param account Identificador de la Cuenta Contable
 	 * @throws SQLException
 	*/
-	public void insertCreditor(Integer registry, Integer domain, Boolean withholding, Short transaction, Short status, Integer scope)
+	public void insertCreditor(Integer registry, Integer domain, Boolean withholding, Short transaction, Short status, Integer scope, Integer account)
 	throws SQLException {
-		 super.insertCreditor(registry, domain, withholding, transaction, status, scope);
+		 super.insertCreditor(registry, domain, withholding, transaction, status, scope, account);
 		creditorDomains.put(registry, domain );
 			}
 
@@ -12166,6 +12272,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	/**
 	 * Delivery
 	 * @param bank Identificador de la Entidad Bancaria
+	 * @param carrier Identificador de la agencia de transporte
 	 * @param customer Identificador del Cliente
 	 * @param pay_method Identificador de la Forma de Pago
 	 * @param project Identificador del Proyecto
@@ -12174,9 +12281,11 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForDelivery( Integer bank , Integer customer , Integer pay_method , Integer project , Integer address , Integer scope , Integer workplace){
+	protected Integer getDomainForDelivery( Integer bank , Integer carrier , Integer customer , Integer pay_method , Integer project , Integer address , Integer scope , Integer workplace){
 		Integer domain = null;
 			if ( ( domain = getDomainForBankPk( bank ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForCarrierPk( carrier ) ) != null )
 				return domain;
 			if ( ( domain = getDomainForCustomerPk( customer ) ) != null )
 				return domain;
@@ -12198,7 +12307,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico del Albaran de Venta
 	 * @param project Identificador del Proyecto
 	 * @param series Serie del Albaran
-	 * @param number Nùmero del Albaran
+	 * @param number Numero del Albaran
 	 * @param customer Identificador del Cliente
 	 * @param address Identificador de la Direccion de envio del Albaran
 	 * @param issue_time Fecha de emision del Albaran
@@ -12215,13 +12324,30 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param pymnt_days Dias de pago
 	 * @param bank Identificador de la Entidad Bancaria
 	 * @param bank_account Numero de cuenta en la Entidad Bancaria
+	 * @param carrier Identificador de la agencia de transporte
+	 * @param number_plate Numero de matricula
+	 * @param driver Nombre del conductor
+	 * @param driver_document Numero de Documento del conductor
+	 * @param total_packages Numero total de bultos
+	 * @param total_weight Peso total
+	 * @param shipping_alternative_address Primera parte de la Direccion de entrega
+	 * @param shipping_alternative_address2 Segunda parte de la Direccion de entrega
+	 * @param shipping_alternative_zip Codigo Postal de entrega
+	 * @param shipping_alternative_city Localidad de entrega
+	 * @param shipping_alternative_phone Telefono de contacto de la entrega
+	 * @param shipping_alternative_recipient Destinatario de la entrega
+	 * @param shipping_contact Nombre del contacto para la entrega
+	 * @param shipping_period Tipo de periodo de entrega
+	 * @param tracking_number Numero de expedicion
+	 * @param shipping_status Estado de la entrega
+	 * @param status_modification_date Fecha de modificacion del estado
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertDelivery(Integer project, String series, Integer number, Integer customer, Integer address, Timestamp issue_time, Integer pay_method, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
+	public int insertDelivery(Integer project, String series, Integer number, Integer customer, Integer address, Timestamp issue_time, Integer pay_method, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account, Integer carrier, String number_plate, String driver, String driver_document, Double total_packages, Double total_weight, String shipping_alternative_address, String shipping_alternative_address2, String shipping_alternative_zip, String shipping_alternative_city, String shipping_alternative_phone, String shipping_alternative_recipient, String shipping_contact, Short shipping_period, String tracking_number, Short shipping_status, Timestamp status_modification_date)
 	throws SQLException {
-		Integer domain = getDomainForDelivery( bank , customer , pay_method , project , address , scope , workplace);
-		Integer id =  super.insertDelivery( domain != null ? domain : getDefaultDomain(), project, series, number, customer, address, issue_time, pay_method, security_level, status, comments, remarks, workplace, scope, number_of_pymnts, days_to_first_pymnt, days_between_pymnts, pymnt_days, bank, bank_account );
+		Integer domain = getDomainForDelivery( bank , carrier , customer , pay_method , project , address , scope , workplace);
+		Integer id =  super.insertDelivery( domain != null ? domain : getDefaultDomain(), project, series, number, customer, address, issue_time, pay_method, security_level, status, comments, remarks, workplace, scope, number_of_pymnts, days_to_first_pymnt, days_between_pymnts, pymnt_days, bank, bank_account, carrier, number_plate, driver, driver_document, total_packages, total_weight, shipping_alternative_address, shipping_alternative_address2, shipping_alternative_zip, shipping_alternative_city, shipping_alternative_phone, shipping_alternative_recipient, shipping_contact, shipping_period, tracking_number, shipping_status, status_modification_date );
 		if ( domain != null ) { 
 			deliveryDomains.put(id, domain);
 		}
@@ -12234,7 +12360,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param project Identificador del Proyecto
 	 * @param series Serie del Albaran
-	 * @param number Nùmero del Albaran
+	 * @param number Numero del Albaran
 	 * @param customer Identificador del Cliente
 	 * @param address Identificador de la Direccion de envio del Albaran
 	 * @param issue_time Fecha de emision del Albaran
@@ -12251,12 +12377,29 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param pymnt_days Dias de pago
 	 * @param bank Identificador de la Entidad Bancaria
 	 * @param bank_account Numero de cuenta en la Entidad Bancaria
+	 * @param carrier Identificador de la agencia de transporte
+	 * @param number_plate Numero de matricula
+	 * @param driver Nombre del conductor
+	 * @param driver_document Numero de Documento del conductor
+	 * @param total_packages Numero total de bultos
+	 * @param total_weight Peso total
+	 * @param shipping_alternative_address Primera parte de la Direccion de entrega
+	 * @param shipping_alternative_address2 Segunda parte de la Direccion de entrega
+	 * @param shipping_alternative_zip Codigo Postal de entrega
+	 * @param shipping_alternative_city Localidad de entrega
+	 * @param shipping_alternative_phone Telefono de contacto de la entrega
+	 * @param shipping_alternative_recipient Destinatario de la entrega
+	 * @param shipping_contact Nombre del contacto para la entrega
+	 * @param shipping_period Tipo de periodo de entrega
+	 * @param tracking_number Numero de expedicion
+	 * @param shipping_status Estado de la entrega
+	 * @param status_modification_date Fecha de modificacion del estado
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertDelivery(Integer domain, Integer project, String series, Integer number, Integer customer, Integer address, Timestamp issue_time, Integer pay_method, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
+	public int insertDelivery(Integer domain, Integer project, String series, Integer number, Integer customer, Integer address, Timestamp issue_time, Integer pay_method, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account, Integer carrier, String number_plate, String driver, String driver_document, Double total_packages, Double total_weight, String shipping_alternative_address, String shipping_alternative_address2, String shipping_alternative_zip, String shipping_alternative_city, String shipping_alternative_phone, String shipping_alternative_recipient, String shipping_contact, Short shipping_period, String tracking_number, Short shipping_status, Timestamp status_modification_date)
 	throws SQLException {
-		Integer id =  super.insertDelivery(domain, project, series, number, customer, address, issue_time, pay_method, security_level, status, comments, remarks, workplace, scope, number_of_pymnts, days_to_first_pymnt, days_between_pymnts, pymnt_days, bank, bank_account);
+		Integer id =  super.insertDelivery(domain, project, series, number, customer, address, issue_time, pay_method, security_level, status, comments, remarks, workplace, scope, number_of_pymnts, days_to_first_pymnt, days_between_pymnts, pymnt_days, bank, bank_account, carrier, number_plate, driver, driver_document, total_packages, total_weight, shipping_alternative_address, shipping_alternative_address2, shipping_alternative_zip, shipping_alternative_city, shipping_alternative_phone, shipping_alternative_recipient, shipping_contact, shipping_period, tracking_number, shipping_status, status_modification_date);
 		deliveryDomains.put(id, domain );
 		return id;
 	}
@@ -12414,15 +12557,16 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param delivery Indica si es una Serie para Albaranes
 	 * @param invoice Indica si es una Serie para Facturas
 	 * @param rectification Indica si es una Serie para Facturas rectificativas
+	 * @param pos Indica si es una Serie para TPV
 	 * @param security_level Nivel de seguridad de la Serie
 	 * @param active Indica si la Serie esta activa o no
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertSeries(String code, Integer scope, String description, Boolean tas, Boolean offer, Boolean sales, Boolean delivery, Boolean invoice, Boolean rectification, Short security_level, Boolean active)
+	public int insertSeries(String code, Integer scope, String description, Boolean tas, Boolean offer, Boolean sales, Boolean delivery, Boolean invoice, Boolean rectification, Boolean pos, Short security_level, Boolean active)
 	throws SQLException {
 		Integer domain = getDomainForSeries( scope);
-		Integer id =  super.insertSeries( code, domain != null ? domain : getDefaultDomain(), scope, description, tas, offer, sales, delivery, invoice, rectification, security_level, active );
+		Integer id =  super.insertSeries( code, domain != null ? domain : getDefaultDomain(), scope, description, tas, offer, sales, delivery, invoice, rectification, pos, security_level, active );
 		if ( domain != null ) { 
 			seriesDomains.put(id, domain);
 		}
@@ -12442,14 +12586,15 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param delivery Indica si es una Serie para Albaranes
 	 * @param invoice Indica si es una Serie para Facturas
 	 * @param rectification Indica si es una Serie para Facturas rectificativas
+	 * @param pos Indica si es una Serie para TPV
 	 * @param security_level Nivel de seguridad de la Serie
 	 * @param active Indica si la Serie esta activa o no
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertSeries(String code, Integer domain, Integer scope, String description, Boolean tas, Boolean offer, Boolean sales, Boolean delivery, Boolean invoice, Boolean rectification, Short security_level, Boolean active)
+	public int insertSeries(String code, Integer domain, Integer scope, String description, Boolean tas, Boolean offer, Boolean sales, Boolean delivery, Boolean invoice, Boolean rectification, Boolean pos, Short security_level, Boolean active)
 	throws SQLException {
-		Integer id =  super.insertSeries(code, domain, scope, description, tas, offer, sales, delivery, invoice, rectification, security_level, active);
+		Integer id =  super.insertSeries(code, domain, scope, description, tas, offer, sales, delivery, invoice, rectification, pos, security_level, active);
 		seriesDomains.put(id, domain );
 		return id;
 	}
@@ -12464,7 +12609,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	/**
 	 * Fs_vat_declaration
 	 * @param fs_vat Identificador de la Declaracion
-	 * @param rbank Banco de la Compaùia
+	 * @param rbank Banco de la CompaÒia
 	 * @returns domain's ID
 	*/
 	protected Integer getDomainForFs_vat_declaration( Integer fs_vat , Integer rbank){
@@ -12496,7 +12641,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param prev_deposit Ingresado anteriormente
 	 * @param prev_pay_back Devuelto anteriormente
 	 * @param total_tax_debt Total deuda tributaria
-	 * @param rbank Banco de la Compaùia
+	 * @param rbank Banco de la CompaÒia
 	 * @param compensable Compensar o devolver
 	 * @param status Estado de la Declaracion
 	 * @returns auto-generated key
@@ -12533,7 +12678,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param prev_deposit Ingresado anteriormente
 	 * @param prev_pay_back Devuelto anteriormente
 	 * @param total_tax_debt Total deuda tributaria
-	 * @param rbank Banco de la Compaùia
+	 * @param rbank Banco de la CompaÒia
 	 * @param compensable Compensar o devolver
 	 * @param status Estado de la Declaracion
 	 * @returns auto-generated key
@@ -12695,7 +12840,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param item Identificador del Tipo de Habitacion
 	 * @param tariff Identificador de la Tarifa
 	 * @param adults Numero de adultos
-	 * @param children Numero de niùos
+	 * @param children Numero de niÒos
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -12719,7 +12864,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param item Identificador del Tipo de Habitacion
 	 * @param tariff Identificador de la Tarifa
 	 * @param adults Numero de adultos
-	 * @param children Numero de niùos
+	 * @param children Numero de niÒos
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -12846,7 +12991,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Contact
-	 * @param contact_data Identificador de la Informaciùn del Contacto
+	 * @param contact_data Identificador de la InformaciÛn del Contacto
 	 * @param user_id Identificador del Usuario
 	 * @returns domain's ID
 	*/
@@ -12864,7 +13009,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico
 	 * @param user_id Identificador del Usuario
 	 * @param displayName Mostrar Como
-	 * @param contact_data Identificador de la Informaciùn del Contacto
+	 * @param contact_data Identificador de la InformaciÛn del Contacto
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -12884,7 +13029,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param user_id Identificador del Usuario
 	 * @param displayName Mostrar Como
-	 * @param contact_data Identificador de la Informaciùn del Contacto
+	 * @param contact_data Identificador de la InformaciÛn del Contacto
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -13019,7 +13164,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Rrelationship
 	 * @param registry Identificador de la Persona o Empresa que tiene la Relacion
 	 * @param related_registry Identificador de la Persona o Empresa relacionada
-	 * @param relationship Identificador del Tipo de Relaciùn
+	 * @param relationship Identificador del Tipo de RelaciÛn
 	 * @returns domain's ID
 	*/
 	protected Integer getDomainForRrelationship( Integer registry , Integer related_registry , Integer relationship){
@@ -13038,7 +13183,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico de la Relacion
 	 * @param registry Identificador de la Persona o Empresa que tiene la Relacion
 	 * @param related_registry Identificador de la Persona o Empresa relacionada
-	 * @param relationship Identificador del Tipo de Relaciùn
+	 * @param relationship Identificador del Tipo de RelaciÛn
 	 * @param comments Comentarios de la Relacion
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -13059,7 +13204,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param registry Identificador de la Persona o Empresa que tiene la Relacion
 	 * @param related_registry Identificador de la Persona o Empresa relacionada
-	 * @param relationship Identificador del Tipo de Relaciùn
+	 * @param relationship Identificador del Tipo de RelaciÛn
 	 * @param comments Comentarios de la Relacion
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -13193,9 +13338,9 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Campaign
-	 * @param campaign_type Identificador del Tipo de Campaùa
+	 * @param campaign_type Identificador del Tipo de CampaÒa
 	 * @param process Identificador del Proceso
-	 * @param workgroup Grupo de Trabajo supervisor de la Campaùa
+	 * @param workgroup Grupo de Trabajo supervisor de la CampaÒa
 	 * @returns domain's ID
 	*/
 	protected Integer getDomainForCampaign( Integer campaign_type , Integer process , Integer workgroup){
@@ -13211,15 +13356,15 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 
 	/**
 	 * Campaign
-	 * @param id Identificador unico de la Campaùa
-	 * @param campaign_type Identificador del Tipo de Campaùa
-	 * @param description Descripcion de la Campaùa
+	 * @param id Identificador unico de la CampaÒa
+	 * @param campaign_type Identificador del Tipo de CampaÒa
+	 * @param description Descripcion de la CampaÒa
 	 * @param process Identificador del Proceso
-	 * @param start_date Fecha de inicio de la Campaùa
-	 * @param end_date Fecha de finalizacion de la Campaùa
-	 * @param workgroup Grupo de Trabajo supervisor de la Campaùa
-	 * @param manual Tipo de Campaùa
-	 * @param status Estado de la Campaùa
+	 * @param start_date Fecha de inicio de la CampaÒa
+	 * @param end_date Fecha de finalizacion de la CampaÒa
+	 * @param workgroup Grupo de Trabajo supervisor de la CampaÒa
+	 * @param manual Tipo de CampaÒa
+	 * @param status Estado de la CampaÒa
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -13235,16 +13380,16 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 
 	/**
 	 * Campaign
-	 * @param id Identificador unico de la Campaùa
+	 * @param id Identificador unico de la CampaÒa
 	 * @param domain Identificador del Dominio
-	 * @param campaign_type Identificador del Tipo de Campaùa
-	 * @param description Descripcion de la Campaùa
+	 * @param campaign_type Identificador del Tipo de CampaÒa
+	 * @param description Descripcion de la CampaÒa
 	 * @param process Identificador del Proceso
-	 * @param start_date Fecha de inicio de la Campaùa
-	 * @param end_date Fecha de finalizacion de la Campaùa
-	 * @param workgroup Grupo de Trabajo supervisor de la Campaùa
-	 * @param manual Tipo de Campaùa
-	 * @param status Estado de la Campaùa
+	 * @param start_date Fecha de inicio de la CampaÒa
+	 * @param end_date Fecha de finalizacion de la CampaÒa
+	 * @param workgroup Grupo de Trabajo supervisor de la CampaÒa
+	 * @param manual Tipo de CampaÒa
+	 * @param status Estado de la CampaÒa
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
@@ -13346,12 +13491,12 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	/**
 	 * Contract_deduction
 	 * @param id Identificador unico
-	 * @param type Tipo de Deducciùn
+	 * @param type Tipo de DeducciÛn
 	 * @param deduction_concept Identificador unico del concepto
 	 * @param contract Contrato
 	 * @param description Descripcion
 	 * @param description_decorable 
-	 * @param expression Fùrmula
+	 * @param expression FÛrmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
 	 * @param month Mes de la percepcion
@@ -13372,12 +13517,12 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Contract_deduction
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param type Tipo de Deducciùn
+	 * @param type Tipo de DeducciÛn
 	 * @param deduction_concept Identificador unico del concepto
 	 * @param contract Contrato
 	 * @param description Descripcion
 	 * @param description_decorable 
-	 * @param expression Fùrmula
+	 * @param expression FÛrmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
 	 * @param month Mes de la percepcion
@@ -13659,62 +13804,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	
-	private Map<Integer,Integer> loan_accountDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForLoan_accountPk(Integer id){
-		return loan_accountDomains.get(id);
-	}
-	
-	/**
-	 * Loan_account
-	 * @param account Cuenta Contable
-	 * @param loan Prestamo
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForLoan_account( Integer account , Integer loan){
-		Integer domain = null;
-			if ( ( domain = getDomainForAccountPk( account ) ) != null )
-				return domain;
-			if ( ( domain = getDomainForLoanPk( loan ) ) != null )
-				return domain;
-		return domain;
-	}
-
-	/**
-	 * Loan_account
-	 * @param id Identificador Unico
-	 * @param loan Prestamo
-	 * @param account Cuenta Contable
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertLoan_account(Integer loan, Integer account)
-	throws SQLException {
-		Integer domain = getDomainForLoan_account( account , loan);
-		Integer id =  super.insertLoan_account( domain != null ? domain : getDefaultDomain(), loan, account );
-		if ( domain != null ) { 
-			loan_accountDomains.put(id, domain);
-		}
-		return id;
-	}
-
-	/**
-	 * Loan_account
-	 * @param id Identificador Unico
-	 * @param domain Identificador del Dominio
-	 * @param loan Prestamo
-	 * @param account Cuenta Contable
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertLoan_account(Integer domain, Integer loan, Integer account)
-	throws SQLException {
-		Integer id =  super.insertLoan_account(domain, loan, account);
-		loan_accountDomains.put(id, domain );
-		return id;
-	}
-
-	
 	private Map<Integer,Integer> salary_embargoDomains = new HashMap<Integer,Integer>();
 
 	protected Integer getDomainForSalary_embargoPk(Integer id){
@@ -13858,81 +13947,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	
-	private Map<Integer,Integer> fs_prof_retentionDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForFs_prof_retentionPk(Integer id){
-		return fs_prof_retentionDomains.get(id);
-	}
-	
-	/**
-	 * Fs_prof_retention
-	 * @param enterprise Identificador de Empresa
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForFs_prof_retention( Integer enterprise){
-		Integer domain = null;
-			if ( ( domain = getDomainForEnterprisePk( enterprise ) ) != null )
-				return domain;
-		return domain;
-	}
-
-	/**
-	 * Fs_prof_retention
-	 * @param id Identificador unico
-	 * @param enterprise Identificador de Empresa
-	 * @param payment_date Fecha de Pago
-	 * @param document Numero de Documento del Profesional
-	 * @param document_type Tipo de documento (NIF, CIF...) del Profesional
-	 * @param document_country Pais del documento del Profesional
-	 * @param name Nombre completo del Profesional
-	 * @param concept Concepto
-	 * @param taxable_base Base Imponible
-	 * @param percent Porcentaje de  retencion
-	 * @param quota Cuota de retencion
-	 * @param in_kind Indica si el importe es en especie (1) o dinerario (0)
-	 * @param withholding_key Clave de retencion
-	 * @param withholding_subkey Subclave de retencion
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertFs_prof_retention(Integer enterprise, Date payment_date, String document, Short document_type, String document_country, String name, String concept, Double taxable_base, Double percent, Double quota, Boolean in_kind, String withholding_key, String withholding_subkey)
-	throws SQLException {
-		Integer domain = getDomainForFs_prof_retention( enterprise);
-		Integer id =  super.insertFs_prof_retention( domain != null ? domain : getDefaultDomain(), enterprise, payment_date, document, document_type, document_country, name, concept, taxable_base, percent, quota, in_kind, withholding_key, withholding_subkey );
-		if ( domain != null ) { 
-			fs_prof_retentionDomains.put(id, domain);
-		}
-		return id;
-	}
-
-	/**
-	 * Fs_prof_retention
-	 * @param id Identificador unico
-	 * @param domain Identificador del Dominio
-	 * @param enterprise Identificador de Empresa
-	 * @param payment_date Fecha de Pago
-	 * @param document Numero de Documento del Profesional
-	 * @param document_type Tipo de documento (NIF, CIF...) del Profesional
-	 * @param document_country Pais del documento del Profesional
-	 * @param name Nombre completo del Profesional
-	 * @param concept Concepto
-	 * @param taxable_base Base Imponible
-	 * @param percent Porcentaje de  retencion
-	 * @param quota Cuota de retencion
-	 * @param in_kind Indica si el importe es en especie (1) o dinerario (0)
-	 * @param withholding_key Clave de retencion
-	 * @param withholding_subkey Subclave de retencion
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertFs_prof_retention(Integer domain, Integer enterprise, Date payment_date, String document, Short document_type, String document_country, String name, String concept, Double taxable_base, Double percent, Double quota, Boolean in_kind, String withholding_key, String withholding_subkey)
-	throws SQLException {
-		Integer id =  super.insertFs_prof_retention(domain, enterprise, payment_date, document, document_type, document_country, name, concept, taxable_base, percent, quota, in_kind, withholding_key, withholding_subkey);
-		fs_prof_retentionDomains.put(id, domain );
-		return id;
-	}
-
-	
 	private Map<Integer,Integer> irpf_data_descendientsDomains = new HashMap<Integer,Integer>();
 
 	protected Integer getDomainForIrpf_data_descendientsPk(Integer id){
@@ -14071,14 +14085,20 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Product
+	 * @param purchase_account Identificador de la Cuenta Contable de Compras
+	 * @param sales_account Identificador de la Cuenta Contable de Ventas
 	 * @param brand Marca Comercial del Producto
 	 * @param category Categoria del Producto
 	 * @param retention Retencion del Producto
 	 * @param vat IVA del Producto
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForProduct( Integer brand , Integer category , Integer retention , Integer vat){
+	protected Integer getDomainForProduct( Integer purchase_account , Integer sales_account , Integer brand , Integer category , Integer retention , Integer vat){
 		Integer domain = null;
+			if ( ( domain = getDomainForAccountPk( purchase_account ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForAccountPk( sales_account ) ) != null )
+				return domain;
 			if ( ( domain = getDomainForBrandPk( brand ) ) != null )
 				return domain;
 			if ( ( domain = getDomainForPcategoryPk( category ) ) != null )
@@ -14104,13 +14124,15 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param type Tipo de Producto
 	 * @param composition Indica si el Producto es una Composicion
 	 * @param composition_price Indica si el Precio lo determina la Composicion
+	 * @param sales_account Identificador de la Cuenta Contable de Ventas
+	 * @param purchase_account Identificador de la Cuenta Contable de Compras
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertProduct(String name, String code, Integer brand, Integer category, Boolean inventoriable, Short status, Integer vat, Integer retention, Short type, Boolean composition, Boolean composition_price)
+	public int insertProduct(String name, String code, Integer brand, Integer category, Boolean inventoriable, Short status, Integer vat, Integer retention, Short type, Boolean composition, Boolean composition_price, Integer sales_account, Integer purchase_account)
 	throws SQLException {
-		Integer domain = getDomainForProduct( brand , category , retention , vat);
-		Integer id =  super.insertProduct( domain != null ? domain : getDefaultDomain(), name, code, brand, category, inventoriable, status, vat, retention, type, composition, composition_price );
+		Integer domain = getDomainForProduct( purchase_account , sales_account , brand , category , retention , vat);
+		Integer id =  super.insertProduct( domain != null ? domain : getDefaultDomain(), name, code, brand, category, inventoriable, status, vat, retention, type, composition, composition_price, sales_account, purchase_account );
 		if ( domain != null ) { 
 			productDomains.put(id, domain);
 		}
@@ -14132,12 +14154,14 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param type Tipo de Producto
 	 * @param composition Indica si el Producto es una Composicion
 	 * @param composition_price Indica si el Precio lo determina la Composicion
+	 * @param sales_account Identificador de la Cuenta Contable de Ventas
+	 * @param purchase_account Identificador de la Cuenta Contable de Compras
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertProduct(Integer domain, String name, String code, Integer brand, Integer category, Boolean inventoriable, Short status, Integer vat, Integer retention, Short type, Boolean composition, Boolean composition_price)
+	public int insertProduct(Integer domain, String name, String code, Integer brand, Integer category, Boolean inventoriable, Short status, Integer vat, Integer retention, Short type, Boolean composition, Boolean composition_price, Integer sales_account, Integer purchase_account)
 	throws SQLException {
-		Integer id =  super.insertProduct(domain, name, code, brand, category, inventoriable, status, vat, retention, type, composition, composition_price);
+		Integer id =  super.insertProduct(domain, name, code, brand, category, inventoriable, status, vat, retention, type, composition, composition_price, sales_account, purchase_account);
 		productDomains.put(id, domain );
 		return id;
 	}
@@ -14355,6 +14379,8 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico del Articulo
 	 * @param product Identificador del Producto
 	 * @param detail Detalle del Articulo
+	 * @param detail2 Detalle 2 del Articulo
+	 * @param detail3 Detalle 3 del Articulo
 	 * @param description Descripcion del Articulo
 	 * @param price Precio del Articulo
 	 * @param status Estado del Articulo
@@ -14367,10 +14393,10 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertItem(Integer product, String detail, String description, Double price, Short status, Double expenses_percent, Double expenses_fixed, Double profit_percent, Double purchase_price, Boolean internet, String barcode)
+	public int insertItem(Integer product, String detail, String detail2, String detail3, String description, Double price, Short status, Double expenses_percent, Double expenses_fixed, Double profit_percent, Double purchase_price, Boolean internet, String barcode)
 	throws SQLException {
 		Integer domain = getDomainForItem( product);
-		Integer id =  super.insertItem( domain != null ? domain : getDefaultDomain(), product, detail, description, price, status, expenses_percent, expenses_fixed, profit_percent, purchase_price, internet, barcode );
+		Integer id =  super.insertItem( domain != null ? domain : getDefaultDomain(), product, detail, detail2, detail3, description, price, status, expenses_percent, expenses_fixed, profit_percent, purchase_price, internet, barcode );
 		if ( domain != null ) { 
 			itemDomains.put(id, domain);
 		}
@@ -14383,6 +14409,8 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param product Identificador del Producto
 	 * @param detail Detalle del Articulo
+	 * @param detail2 Detalle 2 del Articulo
+	 * @param detail3 Detalle 3 del Articulo
 	 * @param description Descripcion del Articulo
 	 * @param price Precio del Articulo
 	 * @param status Estado del Articulo
@@ -14395,9 +14423,9 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertItem(Integer domain, Integer product, String detail, String description, Double price, Short status, Double expenses_percent, Double expenses_fixed, Double profit_percent, Double purchase_price, Boolean internet, String barcode)
+	public int insertItem(Integer domain, Integer product, String detail, String detail2, String detail3, String description, Double price, Short status, Double expenses_percent, Double expenses_fixed, Double profit_percent, Double purchase_price, Boolean internet, String barcode)
 	throws SQLException {
-		Integer id =  super.insertItem(domain, product, detail, description, price, status, expenses_percent, expenses_fixed, profit_percent, purchase_price, internet, barcode);
+		Integer id =  super.insertItem(domain, product, detail, detail2, detail3, description, price, status, expenses_percent, expenses_fixed, profit_percent, purchase_price, internet, barcode);
 		itemDomains.put(id, domain );
 		return id;
 	}
@@ -14663,7 +14691,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico
 	 * @param contract Contrato
 	 * @param description Descripcion
-	 * @param expression Fùrmula
+	 * @param expression FÛrmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
 	 * @param bonus_concept Concepto de bonificacion
@@ -14686,7 +14714,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param contract Contrato
 	 * @param description Descripcion
-	 * @param expression Fùrmula
+	 * @param expression FÛrmula
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
 	 * @param bonus_concept Concepto de bonificacion
@@ -14863,6 +14891,56 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	
+	private Map<Integer,Integer> contrata_batchDomains = new HashMap<Integer,Integer>();
+
+	protected Integer getDomainForContrata_batchPk(Integer id){
+		return contrata_batchDomains.get(id);
+	}
+	
+	/**
+	 * Contrata_batch
+	 * @returns domain's ID
+	*/
+	protected Integer getDomainForContrata_batch(){
+		Integer domain = null;
+		return domain;
+	}
+
+	/**
+	 * Contrata_batch
+	 * @param id Identificador unico
+	 * @param date Fecha de la Remesa
+	 * @param status Indica el estado de la Remesa
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertContrata_batch(Timestamp date, Short status)
+	throws SQLException {
+		Integer domain = getDomainForContrata_batch();
+		Integer id =  super.insertContrata_batch( domain != null ? domain : getDefaultDomain(), date, status );
+		if ( domain != null ) { 
+			contrata_batchDomains.put(id, domain);
+		}
+		return id;
+	}
+
+	/**
+	 * Contrata_batch
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param date Fecha de la Remesa
+	 * @param status Indica el estado de la Remesa
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertContrata_batch(Integer domain, Timestamp date, Short status)
+	throws SQLException {
+		Integer id =  super.insertContrata_batch(domain, date, status);
+		contrata_batchDomains.put(id, domain );
+		return id;
+	}
+
+	
 	private Map<Integer,Integer> geozoneDomains = new HashMap<Integer,Integer>();
 
 	protected Integer getDomainForGeozonePk(Integer id){
@@ -14911,54 +14989,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	throws SQLException {
 		Integer id =  super.insertGeozone(domain, name, code, system);
 		geozoneDomains.put(id, domain );
-		return id;
-	}
-
-	
-	private Map<Integer,Integer> pcategory_groupDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForPcategory_groupPk(Integer id){
-		return pcategory_groupDomains.get(id);
-	}
-	
-	/**
-	 * Pcategory_group
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForPcategory_group(){
-		Integer domain = null;
-		return domain;
-	}
-
-	/**
-	 * Pcategory_group
-	 * @param id Identificador unico del Grupo de Categorias
-	 * @param name Nombre del Grupo de Categorias
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertPcategory_group(String name)
-	throws SQLException {
-		Integer domain = getDomainForPcategory_group();
-		Integer id =  super.insertPcategory_group( domain != null ? domain : getDefaultDomain(), name );
-		if ( domain != null ) { 
-			pcategory_groupDomains.put(id, domain);
-		}
-		return id;
-	}
-
-	/**
-	 * Pcategory_group
-	 * @param id Identificador unico del Grupo de Categorias
-	 * @param domain Identificador del Dominio
-	 * @param name Nombre del Grupo de Categorias
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertPcategory_group(Integer domain, String name)
-	throws SQLException {
-		Integer id =  super.insertPcategory_group(domain, name);
-		pcategory_groupDomains.put(id, domain );
 		return id;
 	}
 
@@ -15033,10 +15063,10 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Salary_deduction
 	 * @param id Identificador unico
 	 * @param salary Recibo del pago de salarios
-	 * @param type Tipo de deducciùn Salarial
+	 * @param type Tipo de deducciÛn Salarial
 	 * @param deduction_concept Codigo del concepto
 	 * @param description Descripcion
-	 * @param expression Fùrmula
+	 * @param expression FÛrmula
 	 * @param amount Importe
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -15056,10 +15086,10 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param salary Recibo del pago de salarios
-	 * @param type Tipo de deducciùn Salarial
+	 * @param type Tipo de deducciÛn Salarial
 	 * @param deduction_concept Codigo del concepto
 	 * @param description Descripcion
-	 * @param expression Fùrmula
+	 * @param expression FÛrmula
 	 * @param amount Importe
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -15081,15 +15111,19 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	/**
 	 * Invoice
 	 * @param rectification_invoice Relacion de rectificacion de Facturas
+	 * @param pos Identificador del TPV
 	 * @param project Identificador del Proyecto
 	 * @param raddress Identificador de la Direccion de envio de la Factura
 	 * @param registry Identificador del Cliente o Proveedor
 	 * @param scope Ambito de la Factura
+	 * @param seller Identificador de Agente Comercial
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForInvoice( Integer rectification_invoice , Integer project , Integer raddress , Integer registry , Integer scope){
+	protected Integer getDomainForInvoice( Integer rectification_invoice , Integer pos , Integer project , Integer raddress , Integer registry , Integer scope , Integer seller){
 		Integer domain = null;
 			if ( ( domain = getDomainForInvoicePk( rectification_invoice ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForPosPk( pos ) ) != null )
 				return domain;
 			if ( ( domain = getDomainForProjectPk( project ) ) != null )
 				return domain;
@@ -15098,6 +15132,8 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 			if ( ( domain = getDomainForRegistryPk( registry ) ) != null )
 				return domain;
 			if ( ( domain = getDomainForScopePk( scope ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForSellerPk( seller ) ) != null )
 				return domain;
 		return domain;
 	}
@@ -15120,7 +15156,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param security_level Nivel de seguridad de la Factura
 	 * @param status Estado de la Factura
 	 * @param type Tipo de Factura (Compra o Venta)
-	 * @param taxFree Indica si la Factura esta exenta de Impuestos
 	 * @param surcharge Indica si la Factura tiene recargo de equivalencia
 	 * @param withholding Indica si la Factura aplica retencion de impuestos
 	 * @param comments Comentarios de la Factura
@@ -15133,6 +15168,8 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param rectification_type Tipo de rectificacion (Normal o Especial)
 	 * @param rectification_invoice Relacion de rectificacion de Facturas
 	 * @param advance Indica si la Factura es un anticipo
+	 * @param pos Identificador del TPV
+	 * @param seller Identificador de Agente Comercial
 	 * @param taxable_base Base Imponible de la Factura
 	 * @param vat_quota Cuota de IVA de la Factura
 	 * @param retention_quota Cuota de IRPF de la Factura
@@ -15144,10 +15181,10 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoice(Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Boolean advance, Double taxable_base, Double vat_quota, Double retention_quota, Double total, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
+	public int insertInvoice(Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean surcharge, Boolean withholding, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Boolean advance, Integer pos, Integer seller, Double taxable_base, Double vat_quota, Double retention_quota, Double total, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
 	throws SQLException {
-		Integer domain = getDomainForInvoice( rectification_invoice , project , raddress , registry , scope);
-		Integer id =  super.insertInvoice( domain != null ? domain : getDefaultDomain(), project, series, number, reference_code, registry, rdocument, rdocument_type, rdocument_country, rname, raddress, issue_date, tax_date, security_level, status, type, taxFree, surcharge, withholding, comments, remarks, investment, transaction, signed, scope, service, rectification_type, rectification_invoice, advance, taxable_base, vat_quota, retention_quota, total, creation_user, creation_date, modification_user, modification_date );
+		Integer domain = getDomainForInvoice( rectification_invoice , pos , project , raddress , registry , scope , seller);
+		Integer id =  super.insertInvoice( domain != null ? domain : getDefaultDomain(), project, series, number, reference_code, registry, rdocument, rdocument_type, rdocument_country, rname, raddress, issue_date, tax_date, security_level, status, type, surcharge, withholding, comments, remarks, investment, transaction, signed, scope, service, rectification_type, rectification_invoice, advance, pos, seller, taxable_base, vat_quota, retention_quota, total, creation_user, creation_date, modification_user, modification_date );
 		if ( domain != null ) { 
 			invoiceDomains.put(id, domain);
 		}
@@ -15173,7 +15210,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param security_level Nivel de seguridad de la Factura
 	 * @param status Estado de la Factura
 	 * @param type Tipo de Factura (Compra o Venta)
-	 * @param taxFree Indica si la Factura esta exenta de Impuestos
 	 * @param surcharge Indica si la Factura tiene recargo de equivalencia
 	 * @param withholding Indica si la Factura aplica retencion de impuestos
 	 * @param comments Comentarios de la Factura
@@ -15186,6 +15222,8 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param rectification_type Tipo de rectificacion (Normal o Especial)
 	 * @param rectification_invoice Relacion de rectificacion de Facturas
 	 * @param advance Indica si la Factura es un anticipo
+	 * @param pos Identificador del TPV
+	 * @param seller Identificador de Agente Comercial
 	 * @param taxable_base Base Imponible de la Factura
 	 * @param vat_quota Cuota de IVA de la Factura
 	 * @param retention_quota Cuota de IRPF de la Factura
@@ -15197,9 +15235,9 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoice(Integer domain, Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Boolean advance, Double taxable_base, Double vat_quota, Double retention_quota, Double total, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
+	public int insertInvoice(Integer domain, Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean surcharge, Boolean withholding, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Boolean advance, Integer pos, Integer seller, Double taxable_base, Double vat_quota, Double retention_quota, Double total, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
 	throws SQLException {
-		Integer id =  super.insertInvoice(domain, project, series, number, reference_code, registry, rdocument, rdocument_type, rdocument_country, rname, raddress, issue_date, tax_date, security_level, status, type, taxFree, surcharge, withholding, comments, remarks, investment, transaction, signed, scope, service, rectification_type, rectification_invoice, advance, taxable_base, vat_quota, retention_quota, total, creation_user, creation_date, modification_user, modification_date);
+		Integer id =  super.insertInvoice(domain, project, series, number, reference_code, registry, rdocument, rdocument_type, rdocument_country, rname, raddress, issue_date, tax_date, security_level, status, type, surcharge, withholding, comments, remarks, investment, transaction, signed, scope, service, rectification_type, rectification_invoice, advance, pos, seller, taxable_base, vat_quota, retention_quota, total, creation_user, creation_date, modification_user, modification_date);
 		invoiceDomains.put(id, domain );
 		return id;
 	}
@@ -15277,17 +15315,20 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param invoice Identificador de la Factura
 	 * @param item Identificador del Articulo del Detalle de Factura
 	 * @param project Identificador del Proyecto
+	 * @param seller Identificador de Agente Comercial
 	 * @param warehouse Identificador del Almacen
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForInvoice_detail( Integer invoice , Integer item , Integer project , Integer warehouse , Integer workplace){
+	protected Integer getDomainForInvoice_detail( Integer invoice , Integer item , Integer project , Integer seller , Integer warehouse , Integer workplace){
 		Integer domain = null;
 			if ( ( domain = getDomainForInvoicePk( invoice ) ) != null )
 				return domain;
 			if ( ( domain = getDomainForItemPk( item ) ) != null )
 				return domain;
 			if ( ( domain = getDomainForProjectPk( project ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForSellerPk( seller ) ) != null )
 				return domain;
 			if ( ( domain = getDomainForWarehousePk( warehouse ) ) != null )
 				return domain;
@@ -15301,7 +15342,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico del Detalle de la Factura
 	 * @param invoice Identificador de la Factura
 	 * @param project Identificador del Proyecto
-	 * @param line Numero de lùnea del Detalle dentro de la Factura
+	 * @param line Numero de linea del Detalle dentro de la Factura
 	 * @param item Identificador del Articulo del Detalle de Factura
 	 * @param description Descripcion del Detalle de Factura
 	 * @param quantity Cantidad del Detalle de Factura
@@ -15311,15 +15352,16 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param source_id Identificador del Origen del Detalle de la Factura
 	 * @param taxable_base Base Imponible del Detalle de Factura
 	 * @param taxes Tasas del Detalle de Factura
+	 * @param seller Identificador de Agente Comercial
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @param warehouse Identificador del Almacen
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoice_detail(Integer invoice, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short source, Integer source_id, Double taxable_base, Double taxes, Integer workplace, Integer warehouse)
+	public int insertInvoice_detail(Integer invoice, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short source, Integer source_id, Double taxable_base, Double taxes, Integer seller, Integer workplace, Integer warehouse)
 	throws SQLException {
-		Integer domain = getDomainForInvoice_detail( invoice , item , project , warehouse , workplace);
-		Integer id =  super.insertInvoice_detail( domain != null ? domain : getDefaultDomain(), invoice, project, line, item, description, quantity, price, discount_expr, source, source_id, taxable_base, taxes, workplace, warehouse );
+		Integer domain = getDomainForInvoice_detail( invoice , item , project , seller , warehouse , workplace);
+		Integer id =  super.insertInvoice_detail( domain != null ? domain : getDefaultDomain(), invoice, project, line, item, description, quantity, price, discount_expr, source, source_id, taxable_base, taxes, seller, workplace, warehouse );
 		if ( domain != null ) { 
 			invoice_detailDomains.put(id, domain);
 		}
@@ -15332,7 +15374,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param invoice Identificador de la Factura
 	 * @param project Identificador del Proyecto
-	 * @param line Numero de lùnea del Detalle dentro de la Factura
+	 * @param line Numero de linea del Detalle dentro de la Factura
 	 * @param item Identificador del Articulo del Detalle de Factura
 	 * @param description Descripcion del Detalle de Factura
 	 * @param quantity Cantidad del Detalle de Factura
@@ -15342,14 +15384,15 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param source_id Identificador del Origen del Detalle de la Factura
 	 * @param taxable_base Base Imponible del Detalle de Factura
 	 * @param taxes Tasas del Detalle de Factura
+	 * @param seller Identificador de Agente Comercial
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @param warehouse Identificador del Almacen
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoice_detail(Integer domain, Integer invoice, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short source, Integer source_id, Double taxable_base, Double taxes, Integer workplace, Integer warehouse)
+	public int insertInvoice_detail(Integer domain, Integer invoice, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short source, Integer source_id, Double taxable_base, Double taxes, Integer seller, Integer workplace, Integer warehouse)
 	throws SQLException {
-		Integer id =  super.insertInvoice_detail(domain, invoice, project, line, item, description, quantity, price, discount_expr, source, source_id, taxable_base, taxes, workplace, warehouse);
+		Integer id =  super.insertInvoice_detail(domain, invoice, project, line, item, description, quantity, price, discount_expr, source, source_id, taxable_base, taxes, seller, workplace, warehouse);
 		invoice_detailDomains.put(id, domain );
 		return id;
 	}
@@ -16246,64 +16289,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	
-	private Map<Integer,Integer> invoicing_group_detailDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForInvoicing_group_detailPk(Integer id){
-		return invoicing_group_detailDomains.get(id);
-	}
-	
-	/**
-	 * Invoicing_group_detail
-	 * @param invoicing_group Grupo de Facturacion al que pertenece
-	 * @param child Componente asociado a un Grupo de Facturacion
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForInvoicing_group_detail( Integer invoicing_group , Integer child){
-		Integer domain = null;
-			if ( ( domain = getDomainForInvoicing_groupPk( invoicing_group ) ) != null )
-				return domain;
-			if ( ( domain = getDomainForRegistryPk( child ) ) != null )
-				return domain;
-		return domain;
-	}
-
-	/**
-	 * Invoicing_group_detail
-	 * @param id Identificador Unico
-	 * @param invoicing_group Grupo de Facturacion al que pertenece
-	 * @param child Componente asociado a un Grupo de Facturacion
-	 * @param grouped Indica si agrupa facturas o no
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertInvoicing_group_detail(Integer invoicing_group, Integer child, Boolean grouped)
-	throws SQLException {
-		Integer domain = getDomainForInvoicing_group_detail( invoicing_group , child);
-		Integer id =  super.insertInvoicing_group_detail( domain != null ? domain : getDefaultDomain(), invoicing_group, child, grouped );
-		if ( domain != null ) { 
-			invoicing_group_detailDomains.put(id, domain);
-		}
-		return id;
-	}
-
-	/**
-	 * Invoicing_group_detail
-	 * @param id Identificador Unico
-	 * @param domain Identificador del Dominio
-	 * @param invoicing_group Grupo de Facturacion al que pertenece
-	 * @param child Componente asociado a un Grupo de Facturacion
-	 * @param grouped Indica si agrupa facturas o no
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertInvoicing_group_detail(Integer domain, Integer invoicing_group, Integer child, Boolean grouped)
-	throws SQLException {
-		Integer id =  super.insertInvoicing_group_detail(domain, invoicing_group, child, grouped);
-		invoicing_group_detailDomains.put(id, domain );
-		return id;
-	}
-
-	
 	private Map<Integer,Integer> commission_itemDomains = new HashMap<Integer,Integer>();
 
 	protected Integer getDomainForCommission_itemPk(Integer id){
@@ -16553,9 +16538,9 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Offer_detail
 	 * @param id Identificador unico del Detalle de Presupuesto
 	 * @param offer Identificador del Presupuesto
-	 * @param line Numero de lùnea del Detalle dentro del Presupuesto
+	 * @param line Numero de linea del Detalle dentro del Presupuesto
 	 * @param item Identificador del Articulo
-	 * @param description Descripciùn del Articulo
+	 * @param description DescripciÛn del Articulo
 	 * @param quantity Cantidad del Articulo
 	 * @param price Precio del Articulo
 	 * @param discount_expr Descuentos del Articulo
@@ -16578,9 +16563,9 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico del Detalle de Presupuesto
 	 * @param domain Identificador del Dominio
 	 * @param offer Identificador del Presupuesto
-	 * @param line Numero de lùnea del Detalle dentro del Presupuesto
+	 * @param line Numero de linea del Detalle dentro del Presupuesto
 	 * @param item Identificador del Articulo
-	 * @param description Descripciùn del Articulo
+	 * @param description DescripciÛn del Articulo
 	 * @param quantity Cantidad del Articulo
 	 * @param price Precio del Articulo
 	 * @param discount_expr Descuentos del Articulo
@@ -16641,19 +16626,20 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param document Impreso (.pdf) del contrato.
 	 * @param description Descripcion
 	 * @param status Estado de notificacion del contrato
-	 * @param registration Nùmero libro de matricula
+	 * @param registration N˙mero libro de matricula
 	 * @param seniority_date Fecha de antiguedad
 	 * @param enterprise_activity Actividad
 	 * @param ss_regime Regimen de la Seguridad Social
 	 * @param agreement_level_category Identificador unico de la Categoria Profesional
 	 * @param model Indica el modelo de documento del contrato
+	 * @param category_description Categoria o grupo profesional
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertContract(Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, Blob document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category, Short model)
+	public int insertContract(Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, Blob document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category, Short model, String category_description)
 	throws SQLException {
 		Integer domain = getDomainForContract( agreement_level_category , calendar , enterprise_activity , enterprise_ccc , person , workplace);
-		Integer id =  super.insertContract( domain != null ? domain : getDefaultDomain(), person, workplace, enterprise_ccc, start_date, end_date, calendar, document, description, status, registration, seniority_date, enterprise_activity, ss_regime, agreement_level_category, model );
+		Integer id =  super.insertContract( domain != null ? domain : getDefaultDomain(), person, workplace, enterprise_ccc, start_date, end_date, calendar, document, description, status, registration, seniority_date, enterprise_activity, ss_regime, agreement_level_category, model, category_description );
 		if ( domain != null ) { 
 			contractDomains.put(id, domain);
 		}
@@ -16673,18 +16659,19 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param document Impreso (.pdf) del contrato.
 	 * @param description Descripcion
 	 * @param status Estado de notificacion del contrato
-	 * @param registration Nùmero libro de matricula
+	 * @param registration N˙mero libro de matricula
 	 * @param seniority_date Fecha de antiguedad
 	 * @param enterprise_activity Actividad
 	 * @param ss_regime Regimen de la Seguridad Social
 	 * @param agreement_level_category Identificador unico de la Categoria Profesional
 	 * @param model Indica el modelo de documento del contrato
+	 * @param category_description Categoria o grupo profesional
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertContract(Integer domain, Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, Blob document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category, Short model)
+	public int insertContract(Integer domain, Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, Blob document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category, Short model, String category_description)
 	throws SQLException {
-		Integer id =  super.insertContract(domain, person, workplace, enterprise_ccc, start_date, end_date, calendar, document, description, status, registration, seniority_date, enterprise_activity, ss_regime, agreement_level_category, model);
+		Integer id =  super.insertContract(domain, person, workplace, enterprise_ccc, start_date, end_date, calendar, document, description, status, registration, seniority_date, enterprise_activity, ss_regime, agreement_level_category, model, category_description);
 		contractDomains.put(id, domain );
 		return id;
 	}
@@ -17009,6 +16996,64 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 
 
 	
+	private Map<Integer,Integer> newsletter_detailDomains = new HashMap<Integer,Integer>();
+
+	protected Integer getDomainForNewsletter_detailPk(Integer id){
+		return newsletter_detailDomains.get(id);
+	}
+	
+	/**
+	 * Newsletter_detail
+	 * @param news Identificador de la Noticia
+	 * @param newsletter Identificador del Boletin
+	 * @returns domain's ID
+	*/
+	protected Integer getDomainForNewsletter_detail( Integer news , Integer newsletter){
+		Integer domain = null;
+			if ( ( domain = getDomainForNewsPk( news ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForNewsletterPk( newsletter ) ) != null )
+				return domain;
+		return domain;
+	}
+
+	/**
+	 * Newsletter_detail
+	 * @param id Identificador unico
+	 * @param news Identificador de la Noticia
+	 * @param newsletter Identificador del Boletin
+	 * @param position Posicion dentro del Boletin
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertNewsletter_detail(Integer news, Integer newsletter, Integer position)
+	throws SQLException {
+		Integer domain = getDomainForNewsletter_detail( news , newsletter);
+		Integer id =  super.insertNewsletter_detail( domain != null ? domain : getDefaultDomain(), news, newsletter, position );
+		if ( domain != null ) { 
+			newsletter_detailDomains.put(id, domain);
+		}
+		return id;
+	}
+
+	/**
+	 * Newsletter_detail
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param news Identificador de la Noticia
+	 * @param newsletter Identificador del Boletin
+	 * @param position Posicion dentro del Boletin
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertNewsletter_detail(Integer domain, Integer news, Integer newsletter, Integer position)
+	throws SQLException {
+		Integer id =  super.insertNewsletter_detail(domain, news, newsletter, position);
+		newsletter_detailDomains.put(id, domain );
+		return id;
+	}
+
+	
 	private Map<Integer,Integer> fs_mod349_detailDomains = new HashMap<Integer,Integer>();
 
 	protected Integer getDomainForFs_mod349_detailPk(Integer id){
@@ -17092,7 +17137,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Company
-	 * @param registry Registro de la Compaùia
+	 * @param registry Registro de la CompaÒia
 	 * @returns domain's ID
 	*/
 	protected Integer getDomainForCompany( Integer registry){
@@ -17104,11 +17149,11 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 
 	/**
 	 * Company
-	 * @param registry Registro de la Compaùia
-	 * @param active Indica si la Compaùia es activa o inactiva
-	 * @param surcharge Indica si la Compaùia tiene de recargo de equivalencia
-	 * @param withholding Indica si la Compaùia aplica retencion de impuestos
-	 * @param e_invoice Indica si la Compaùia desea emitir Facturas electronicas
+	 * @param registry Registro de la CompaÒia
+	 * @param active Indica si la CompaÒia es activa o inactiva
+	 * @param surcharge Indica si la CompaÒia tiene de recargo de equivalencia
+	 * @param withholding Indica si la CompaÒia aplica retencion de impuestos
+	 * @param e_invoice Indica si la CompaÒia desea emitir Facturas electronicas
 	 * @throws SQLException
 	*/
 	public void insertCompany(Integer registry, Boolean active, Boolean surcharge, Boolean withholding, Boolean e_invoice)
@@ -17122,12 +17167,12 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 
 	/**
 	 * Company
-	 * @param registry Registro de la Compaùia
+	 * @param registry Registro de la CompaÒia
 	 * @param domain Identificador del Dominio
-	 * @param active Indica si la Compaùia es activa o inactiva
-	 * @param surcharge Indica si la Compaùia tiene de recargo de equivalencia
-	 * @param withholding Indica si la Compaùia aplica retencion de impuestos
-	 * @param e_invoice Indica si la Compaùia desea emitir Facturas electronicas
+	 * @param active Indica si la CompaÒia es activa o inactiva
+	 * @param surcharge Indica si la CompaÒia tiene de recargo de equivalencia
+	 * @param withholding Indica si la CompaÒia aplica retencion de impuestos
+	 * @param e_invoice Indica si la CompaÒia desea emitir Facturas electronicas
 	 * @throws SQLException
 	*/
 	public void insertCompany(Integer registry, Integer domain, Boolean active, Boolean surcharge, Boolean withholding, Boolean e_invoice)
@@ -17745,72 +17790,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	
-	private Map<Integer,Integer> leave_batch_attachDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForLeave_batch_attachPk(Integer id){
-		return leave_batch_attachDomains.get(id);
-	}
-	
-	/**
-	 * Leave_batch_attach
-	 * @param leave_batch Identificador de la remesa
-	 * @param scope Ambito del Archivo Adjunto
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForLeave_batch_attach( Integer leave_batch , Integer scope){
-		Integer domain = null;
-			if ( ( domain = getDomainForLeave_batchPk( leave_batch ) ) != null )
-				return domain;
-			if ( ( domain = getDomainForScopePk( scope ) ) != null )
-				return domain;
-		return domain;
-	}
-
-	/**
-	 * Leave_batch_attach
-	 * @param id Identificador unico del Archivo Adjunto
-	 * @param leave_batch Identificador de la remesa
-	 * @param mimeType Mime Type del Archivo Adjunto
-	 * @param description Descripcion del Archivo Adjunto
-	 * @param data Archivo Adjunto en binario
-	 * @param type Tipo de Archivo Adjunto
-	 * @param scope Ambito del Archivo Adjunto
-	 * @param attach_date Fecha del Archivo Adjunto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertLeave_batch_attach(Integer leave_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
-	throws SQLException {
-		Integer domain = getDomainForLeave_batch_attach( leave_batch , scope);
-		Integer id =  super.insertLeave_batch_attach( domain != null ? domain : getDefaultDomain(), leave_batch, mimeType, description, data, type, scope, attach_date );
-		if ( domain != null ) { 
-			leave_batch_attachDomains.put(id, domain);
-		}
-		return id;
-	}
-
-	/**
-	 * Leave_batch_attach
-	 * @param id Identificador unico del Archivo Adjunto
-	 * @param domain Identificador del Dominio
-	 * @param leave_batch Identificador de la remesa
-	 * @param mimeType Mime Type del Archivo Adjunto
-	 * @param description Descripcion del Archivo Adjunto
-	 * @param data Archivo Adjunto en binario
-	 * @param type Tipo de Archivo Adjunto
-	 * @param scope Ambito del Archivo Adjunto
-	 * @param attach_date Fecha del Archivo Adjunto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertLeave_batch_attach(Integer domain, Integer leave_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
-	throws SQLException {
-		Integer id =  super.insertLeave_batch_attach(domain, leave_batch, mimeType, description, data, type, scope, attach_date);
-		leave_batch_attachDomains.put(id, domain );
-		return id;
-	}
-
-	
 	private Map<Integer,Integer> agreement_paymentDomains = new HashMap<Integer,Integer>();
 
 	protected Integer getDomainForAgreement_paymentPk(Integer id){
@@ -17883,72 +17862,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	throws SQLException {
 		Integer id =  super.insertAgreement_payment(domain, agreement, payment_concept, type, expression, description, start_date, end_date, month, salary_type, description_decorable, irpf_expression, quote_expression);
 		agreement_paymentDomains.put(id, domain );
-		return id;
-	}
-
-	
-	private Map<Integer,Integer> fan_batch_attachDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForFan_batch_attachPk(Integer id){
-		return fan_batch_attachDomains.get(id);
-	}
-	
-	/**
-	 * Fan_batch_attach
-	 * @param fan_batch Identificador de la remesa
-	 * @param scope Ambito del Archivo Adjunto
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForFan_batch_attach( Integer fan_batch , Integer scope){
-		Integer domain = null;
-			if ( ( domain = getDomainForFan_batchPk( fan_batch ) ) != null )
-				return domain;
-			if ( ( domain = getDomainForScopePk( scope ) ) != null )
-				return domain;
-		return domain;
-	}
-
-	/**
-	 * Fan_batch_attach
-	 * @param id Identificador unico del Archivo Adjunto
-	 * @param fan_batch Identificador de la remesa
-	 * @param mimeType Mime Type del Archivo Adjunto
-	 * @param description Descripcion del Archivo Adjunto
-	 * @param data Archivo Adjunto en binario
-	 * @param type Tipo de Archivo Adjunto
-	 * @param scope Ambito del Archivo Adjunto
-	 * @param attach_date Fecha del Archivo Adjunto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertFan_batch_attach(Integer fan_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
-	throws SQLException {
-		Integer domain = getDomainForFan_batch_attach( fan_batch , scope);
-		Integer id =  super.insertFan_batch_attach( domain != null ? domain : getDefaultDomain(), fan_batch, mimeType, description, data, type, scope, attach_date );
-		if ( domain != null ) { 
-			fan_batch_attachDomains.put(id, domain);
-		}
-		return id;
-	}
-
-	/**
-	 * Fan_batch_attach
-	 * @param id Identificador unico del Archivo Adjunto
-	 * @param domain Identificador del Dominio
-	 * @param fan_batch Identificador de la remesa
-	 * @param mimeType Mime Type del Archivo Adjunto
-	 * @param description Descripcion del Archivo Adjunto
-	 * @param data Archivo Adjunto en binario
-	 * @param type Tipo de Archivo Adjunto
-	 * @param scope Ambito del Archivo Adjunto
-	 * @param attach_date Fecha del Archivo Adjunto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertFan_batch_attach(Integer domain, Integer fan_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
-	throws SQLException {
-		Integer id =  super.insertFan_batch_attach(domain, fan_batch, mimeType, description, data, type, scope, attach_date);
-		fan_batch_attachDomains.put(id, domain );
 		return id;
 	}
 
@@ -18332,72 +18245,6 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	}
 
 	
-	private Map<Integer,Integer> contract_batch_attachDomains = new HashMap<Integer,Integer>();
-
-	protected Integer getDomainForContract_batch_attachPk(Integer id){
-		return contract_batch_attachDomains.get(id);
-	}
-	
-	/**
-	 * Contract_batch_attach
-	 * @param contract_batch Identificador de la remesa
-	 * @param scope Ambito del Archivo Adjunto
-	 * @returns domain's ID
-	*/
-	protected Integer getDomainForContract_batch_attach( Integer contract_batch , Integer scope){
-		Integer domain = null;
-			if ( ( domain = getDomainForContract_batchPk( contract_batch ) ) != null )
-				return domain;
-			if ( ( domain = getDomainForScopePk( scope ) ) != null )
-				return domain;
-		return domain;
-	}
-
-	/**
-	 * Contract_batch_attach
-	 * @param id Identificador unico del Archivo Adjunto
-	 * @param contract_batch Identificador de la remesa
-	 * @param mimeType Mime Type del Archivo Adjunto
-	 * @param description Descripcion del Archivo Adjunto
-	 * @param data Archivo Adjunto en binario
-	 * @param type Tipo de Archivo Adjunto
-	 * @param scope Ambito del Archivo Adjunto
-	 * @param attach_date Fecha del Archivo Adjunto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertContract_batch_attach(Integer contract_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
-	throws SQLException {
-		Integer domain = getDomainForContract_batch_attach( contract_batch , scope);
-		Integer id =  super.insertContract_batch_attach( domain != null ? domain : getDefaultDomain(), contract_batch, mimeType, description, data, type, scope, attach_date );
-		if ( domain != null ) { 
-			contract_batch_attachDomains.put(id, domain);
-		}
-		return id;
-	}
-
-	/**
-	 * Contract_batch_attach
-	 * @param id Identificador unico del Archivo Adjunto
-	 * @param domain Identificador del Dominio
-	 * @param contract_batch Identificador de la remesa
-	 * @param mimeType Mime Type del Archivo Adjunto
-	 * @param description Descripcion del Archivo Adjunto
-	 * @param data Archivo Adjunto en binario
-	 * @param type Tipo de Archivo Adjunto
-	 * @param scope Ambito del Archivo Adjunto
-	 * @param attach_date Fecha del Archivo Adjunto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertContract_batch_attach(Integer domain, Integer contract_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
-	throws SQLException {
-		Integer id =  super.insertContract_batch_attach(domain, contract_batch, mimeType, description, data, type, scope, attach_date);
-		contract_batch_attachDomains.put(id, domain );
-		return id;
-	}
-
-	
 	private Map<Integer,Integer> enterprise_agreementDomains = new HashMap<Integer,Integer>();
 
 	protected Integer getDomainForEnterprise_agreementPk(Integer id){
@@ -18450,6 +18297,75 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	throws SQLException {
 		Integer id =  super.insertEnterprise_agreement(domain, enterprise, agreement);
 		enterprise_agreementDomains.put(id, domain );
+		return id;
+	}
+
+	
+	private Map<Integer,Integer> fs_activity_infoDomains = new HashMap<Integer,Integer>();
+
+	protected Integer getDomainForFs_activity_infoPk(Integer id){
+		return fs_activity_infoDomains.get(id);
+	}
+	
+	/**
+	 * Fs_activity_info
+	 * @param fs_activity Actividad fiscal
+	 * @returns domain's ID
+	*/
+	protected Integer getDomainForFs_activity_info( Integer fs_activity){
+		Integer domain = null;
+			if ( ( domain = getDomainForFs_activityPk( fs_activity ) ) != null )
+				return domain;
+		return domain;
+	}
+
+	/**
+	 * Fs_activity_info
+	 * @param id Identificador unico
+	 * @param fs_activity Actividad fiscal
+	 * @param info_key Clave de informacion
+	 * @param line Numero de linea
+	 * @param type Tipo de linea
+	 * @param value Valor de la informacion
+	 * @param factor Factor
+	 * @param base Rendimiento neto
+	 * @param unit Unidades
+	 * @param min_value Valor minimo
+	 * @param max_value Valor maximo
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertFs_activity_info(Integer fs_activity, String info_key, Integer line, Short type, String value, Double factor, Double base, String unit, Double min_value, Double max_value)
+	throws SQLException {
+		Integer domain = getDomainForFs_activity_info( fs_activity);
+		Integer id =  super.insertFs_activity_info( domain != null ? domain : getDefaultDomain(), fs_activity, info_key, line, type, value, factor, base, unit, min_value, max_value );
+		if ( domain != null ) { 
+			fs_activity_infoDomains.put(id, domain);
+		}
+		return id;
+	}
+
+	/**
+	 * Fs_activity_info
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param fs_activity Actividad fiscal
+	 * @param info_key Clave de informacion
+	 * @param line Numero de linea
+	 * @param type Tipo de linea
+	 * @param value Valor de la informacion
+	 * @param factor Factor
+	 * @param base Rendimiento neto
+	 * @param unit Unidades
+	 * @param min_value Valor minimo
+	 * @param max_value Valor maximo
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertFs_activity_info(Integer domain, Integer fs_activity, String info_key, Integer line, Short type, String value, Double factor, Double base, String unit, Double min_value, Double max_value)
+	throws SQLException {
+		Integer id =  super.insertFs_activity_info(domain, fs_activity, info_key, line, type, value, factor, base, unit, min_value, max_value);
+		fs_activity_infoDomains.put(id, domain );
 		return id;
 	}
 
@@ -18595,7 +18511,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Campaign_project
-	 * @param campaign Identificador de la Campaùa
+	 * @param campaign Identificador de la CampaÒa
 	 * @param project Identificador del Expediente
 	 * @returns domain's ID
 	*/
@@ -18610,8 +18526,8 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 
 	/**
 	 * Campaign_project
-	 * @param id Identificador unico de la Relacion de Campaùas y Expedientes
-	 * @param campaign Identificador de la Campaùa
+	 * @param id Identificador unico de la Relacion de CampaÒas y Expedientes
+	 * @param campaign Identificador de la CampaÒa
 	 * @param project Identificador del Expediente
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -18628,9 +18544,9 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 
 	/**
 	 * Campaign_project
-	 * @param id Identificador unico de la Relacion de Campaùas y Expedientes
+	 * @param id Identificador unico de la Relacion de CampaÒas y Expedientes
 	 * @param domain Identificador del Dominio
-	 * @param campaign Identificador de la Campaùa
+	 * @param campaign Identificador de la CampaÒa
 	 * @param project Identificador del Expediente
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -19367,10 +19283,13 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Bank_concept
+	 * @param account Identificador de la Cuenta Contable
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForBank_concept(){
+	protected Integer getDomainForBank_concept( Integer account){
 		Integer domain = null;
+			if ( ( domain = getDomainForAccountPk( account ) ) != null )
+				return domain;
 		return domain;
 	}
 
@@ -19378,13 +19297,14 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Bank_concept
 	 * @param id Identificador unico
 	 * @param name Nombre del Concepto
+	 * @param account Identificador de la Cuenta Contable
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertBank_concept(String name)
+	public int insertBank_concept(String name, Integer account)
 	throws SQLException {
-		Integer domain = getDomainForBank_concept();
-		Integer id =  super.insertBank_concept( domain != null ? domain : getDefaultDomain(), name );
+		Integer domain = getDomainForBank_concept( account);
+		Integer id =  super.insertBank_concept( domain != null ? domain : getDefaultDomain(), name, account );
 		if ( domain != null ) { 
 			bank_conceptDomains.put(id, domain);
 		}
@@ -19396,12 +19316,13 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
 	 * @param name Nombre del Concepto
+	 * @param account Identificador de la Cuenta Contable
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertBank_concept(Integer domain, String name)
+	public int insertBank_concept(Integer domain, String name, Integer account)
 	throws SQLException {
-		Integer id =  super.insertBank_concept(domain, name);
+		Integer id =  super.insertBank_concept(domain, name, account);
 		bank_conceptDomains.put(id, domain );
 		return id;
 	}
@@ -19611,8 +19532,8 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	/**
 	 * Mk_campaign
 	 * @param id Identificador unico
-	 * @param active Indica si la Campaùa esta activa o no
-	 * @param description Descripcion de la Campaùa
+	 * @param active Indica si la CampaÒa esta activa o no
+	 * @param description Descripcion de la CampaÒa
 	 * @param scope Identificador del Ambito
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -19631,8 +19552,8 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Mk_campaign
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param active Indica si la Campaùa esta activa o no
-	 * @param description Descripcion de la Campaùa
+	 * @param active Indica si la CampaÒa esta activa o no
+	 * @param description Descripcion de la CampaÒa
 	 * @param scope Identificador del Ambito
 	 * @returns auto-generated key
 	 * @throws SQLException
@@ -19712,7 +19633,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Bank_statement
-	 * @param rbank Identificador de Banco de la Compaùia
+	 * @param rbank Identificador de Banco de la CompaÒia
 	 * @returns domain's ID
 	*/
 	protected Integer getDomainForBank_statement( Integer rbank){
@@ -19725,7 +19646,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	/**
 	 * Bank_statement
 	 * @param id Identificador unico
-	 * @param rbank Identificador de Banco de la Compaùia
+	 * @param rbank Identificador de Banco de la CompaÒia
 	 * @param lot_number Numero de lote
 	 * @param operation_date Fecha de operacion
 	 * @param common_concept Concepto comun
@@ -19743,7 +19664,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertBank_statement(Integer rbank, Integer lot_number, Date operation_date, Short common_concept, String own_concept, Boolean payment, Double amount, Integer document, String reference1, String reference2, String description, Short reliability, Short security_level, Short status, String comments)
+	public int insertBank_statement(Integer rbank, Integer lot_number, Date operation_date, Short common_concept, String own_concept, Boolean payment, Double amount, String document, String reference1, String reference2, String description, Short reliability, Short security_level, Short status, String comments)
 	throws SQLException {
 		Integer domain = getDomainForBank_statement( rbank);
 		Integer id =  super.insertBank_statement( domain != null ? domain : getDefaultDomain(), rbank, lot_number, operation_date, common_concept, own_concept, payment, amount, document, reference1, reference2, description, reliability, security_level, status, comments );
@@ -19757,7 +19678,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Bank_statement
 	 * @param id Identificador unico
 	 * @param domain Identificador del Dominio
-	 * @param rbank Identificador de Banco de la Compaùia
+	 * @param rbank Identificador de Banco de la CompaÒia
 	 * @param lot_number Numero de lote
 	 * @param operation_date Fecha de operacion
 	 * @param common_concept Concepto comun
@@ -19775,7 +19696,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertBank_statement(Integer domain, Integer rbank, Integer lot_number, Date operation_date, Short common_concept, String own_concept, Boolean payment, Double amount, Integer document, String reference1, String reference2, String description, Short reliability, Short security_level, Short status, String comments)
+	public int insertBank_statement(Integer domain, Integer rbank, Integer lot_number, Date operation_date, Short common_concept, String own_concept, Boolean payment, Double amount, String document, String reference1, String reference2, String description, Short reliability, Short security_level, Short status, String comments)
 	throws SQLException {
 		Integer id =  super.insertBank_statement(domain, rbank, lot_number, operation_date, common_concept, own_concept, payment, amount, document, reference1, reference2, description, reliability, security_level, status, comments);
 		bank_statementDomains.put(id, domain );
@@ -19965,16 +19886,20 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param enterprise Identificador de la Empresa
 	 * @param registry Identificador del Registry
 	 * @param active Indica si el Usuario esta activo o no
-	 * @param password Contraseùa del Usuario
-	 * @param passwordExpiration Fecha de Expiracion de la Contraseùa
+	 * @param password ContraseÒa del Usuario
+	 * @param passwordExpiration Fecha de Expiracion de la ContraseÒa
 	 * @param toolbar Tipo de Barra de Herramientas del Usuario
+	 * @param locale Locale del Usuario
+	 * @param pageLimit Limite de filas en pantalla del Usuario
+	 * @param linesPageLimit Limite de filas en pantalla en lineas del Usuario
+	 * @param initAction Nombre la acicÛn de inicio del Usuario
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertUser(String name, String login, Integer enterprise, Integer registry, Boolean active, String password, Date passwordExpiration, Short toolbar)
+	public int insertUser(String name, String login, Integer enterprise, Integer registry, Boolean active, String password, Date passwordExpiration, Short toolbar, String locale, Integer pageLimit, Integer linesPageLimit, String initAction)
 	throws SQLException {
 		Integer domain = getDomainForUser( enterprise , registry);
-		Integer id =  super.insertUser( domain != null ? domain : getDefaultDomain(), name, login, enterprise, registry, active, password, passwordExpiration, toolbar );
+		Integer id =  super.insertUser( domain != null ? domain : getDefaultDomain(), name, login, enterprise, registry, active, password, passwordExpiration, toolbar, locale, pageLimit, linesPageLimit, initAction );
 		if ( domain != null ) { 
 			userDomains.put(id, domain);
 		}
@@ -19990,15 +19915,19 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param enterprise Identificador de la Empresa
 	 * @param registry Identificador del Registry
 	 * @param active Indica si el Usuario esta activo o no
-	 * @param password Contraseùa del Usuario
-	 * @param passwordExpiration Fecha de Expiracion de la Contraseùa
+	 * @param password ContraseÒa del Usuario
+	 * @param passwordExpiration Fecha de Expiracion de la ContraseÒa
 	 * @param toolbar Tipo de Barra de Herramientas del Usuario
+	 * @param locale Locale del Usuario
+	 * @param pageLimit Limite de filas en pantalla del Usuario
+	 * @param linesPageLimit Limite de filas en pantalla en lineas del Usuario
+	 * @param initAction Nombre la acicÛn de inicio del Usuario
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertUser(Integer domain, String name, String login, Integer enterprise, Integer registry, Boolean active, String password, Date passwordExpiration, Short toolbar)
+	public int insertUser(Integer domain, String name, String login, Integer enterprise, Integer registry, Boolean active, String password, Date passwordExpiration, Short toolbar, String locale, Integer pageLimit, Integer linesPageLimit, String initAction)
 	throws SQLException {
-		Integer id =  super.insertUser(domain, name, login, enterprise, registry, active, password, passwordExpiration, toolbar);
+		Integer id =  super.insertUser(domain, name, login, enterprise, registry, active, password, passwordExpiration, toolbar, locale, pageLimit, linesPageLimit, initAction);
 		userDomains.put(id, domain );
 		return id;
 	}

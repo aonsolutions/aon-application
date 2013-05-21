@@ -17,6 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.BitSet;
@@ -400,7 +401,7 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		super.insertCustomer(registry, domain, null, false, false, null,
 				status,
 				// null,
-				scope, false, true, true);
+				scope, false, null,  true, true, true, null);
 
 		super.insertTarget(domain, registry, null, (short) 0, false, false,
 				(short) 0, status, scope);
@@ -792,7 +793,11 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 				maxTotalDocumentSize, 
 				maxDefinedUsers, 
 				active, 
-				owner);
+				owner,
+				owner,
+				new Timestamp(System.currentTimeMillis()),
+				null,
+				null);
 		
 		
 		
@@ -842,7 +847,11 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 				maxTotalDocumentSize, 
 				maxDefinedUsers, 
 				active, 
-				owner);
+				owner,
+				owner,
+				new Timestamp(System.currentTimeMillis()),
+				null,
+				null);
 		
 		
 		String login = user;
@@ -860,7 +869,11 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 				active, 
 				password, 
 				passwordExpiration, 
-				enum2short(toolbar));
+				enum2short(toolbar),
+				null,
+				null,
+				null,
+				null);
 		
 		
 		AuditLevel audit_level = AuditLevel.NONE;

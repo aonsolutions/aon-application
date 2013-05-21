@@ -85,7 +85,7 @@ public class MyFsProfRetention extends DefaultCtsqlDBVisitor {
 		String name =  (nombre!=null?nombre:"") 
 			+(apellido!=null?" " + apellido:"")
 			+(apellido2!=null?" " + apellido2:"");
-		
+		/*
 		mysqlDB.insertFs_prof_retention(
 				enterprise, 
 				paymentDate, 
@@ -100,6 +100,7 @@ public class MyFsProfRetention extends DefaultCtsqlDBVisitor {
 				inKind, 
 				withholdingKey, 
 				withholdingSubkey);
+				*/
 	}
 
 	private boolean outOfDate ( Date date ) {

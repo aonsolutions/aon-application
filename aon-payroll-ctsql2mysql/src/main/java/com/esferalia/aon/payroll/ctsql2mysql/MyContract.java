@@ -644,6 +644,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 					activityId,
 					enum2short(ssRegimeType),
 					this.agreementCategoryId,
+					null,
 					null);
 		
 		String ingEspEmp = 
@@ -727,7 +728,11 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 						true, 
 						passwd,
 						null,
-						(short) 0);
+						(short) 0,
+						null,
+						null,
+						null,
+						null);
 			
 			Integer domainId = 
 					mysqlDB.getDomainForEnterprisePk(enterprise);
