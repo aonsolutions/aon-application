@@ -446,7 +446,6 @@ public class IncomeController extends BasicController implements IWarehouseConst
 				incomeManager.transferIncomeDetail((Income)this.getTo(), purchaseDetail, getWarehouse());
 			}
 		}
-		refresh(null);
 		IController detailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
 		detailController.onSearch(null);
 		setShowPurchaseTransferWindow(false);

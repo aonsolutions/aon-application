@@ -137,7 +137,7 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		Iterator<?> iterator = incomeDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
-			info.append("<p>&#160;&#160;&#160;&#160;");
+			info.append("<aon:div>");
 			info.append(AonUtil.getMessage("purchaseBundle", "purchase_transfered_to"));
 			info.append(" ");
 			info.append(AonUtil.getMessage("purchaseBundle", "purchase_to_income"));
@@ -154,7 +154,7 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 				info.append(AonUtil.getMessage("purchaseBundle", "purchase_detail_units"));
 				info.append(")");
 			}
-			info.append("</p>");
+			info.append("</aon:div>");
 		}
 		return info.toString();
 	}
