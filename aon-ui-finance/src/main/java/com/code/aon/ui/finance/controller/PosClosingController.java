@@ -169,33 +169,4 @@ public class PosClosingController implements IFinanceConstants {
 
 	}
 
-/*   
-    public void onAccept( ActionEvent event ){
-        try {
-            if(getPosShift().getPos().isInvoiceable()){
-                PosInvoicing posInvoicing = new PosInvoicing();
-                try {
-                    posInvoicing.completeInvoice(getPosShift());
-                } catch (Exception e) {
-                    String msg = "Error al completar la factura de caja";
-                    AonUtil.addErrorMessage(msg +"("+ e.getMessage()+")");
-                    throw new AbortProcessingException(msg, e);
-                }
-            } else {
-                getPosShift().setInvoice(null);
-            }
-            IManagerBean bean = BeanManager.getManagerBean(PosShift.class);
-            getPosShift().setEndTime(new Date());
-            PosShift ps = (PosShift) bean.update(getPosShift());
-            setPosShift((PosShift) bean.get(ps.getId()));
-            selectPosShift( event );
-        } catch (ManagerBeanException e) {
-            String msg = "Error al grabar el cierre de caja";
-            AonUtil.addErrorMessage(msg +"("+ e.getMessage()+")");
-            throw new AbortProcessingException(msg, e);
-        }
-    }   
-   
-   */
-           
 }
