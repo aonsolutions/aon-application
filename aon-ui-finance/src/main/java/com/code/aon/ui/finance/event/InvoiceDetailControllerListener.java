@@ -108,8 +108,8 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 			InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 			InvoiceController invoiceController = (InvoiceController)controller.getMasterController();
 			Invoice invoice = (Invoice)invoiceController.getTo();
-			if (invoice.getPos() != null && invoice.getPos().getId() != null) {
-				invoiceDetail.setWorkPlace(invoice.getPos().getWorkPlace());
+			if (invoice.getPosShift() != null && invoice.getPosShift().getId() != null) {
+				invoiceDetail.setWorkPlace(invoice.getPosShift().getPos().getWorkPlace());
 			}
 		}
 	}

@@ -43,8 +43,8 @@ public class InvoiceAddressControllerListener extends ControllerAdapter {
 		to.setStreetType(StreetType.CL);
 
 		Invoice invoice = (Invoice)invoiceAddressController.getMasterController().getTo();
-		if (invoice.getPos() != null && invoice.getPos().getId() != null) {
-			to.setGeozone(invoice.getPos().getWorkPlace().getAddress().getGeozone());
+		if (invoice.getPosShift() != null && invoice.getPosShift().getId() != null) {
+			to.setGeozone(invoice.getPosShift().getPos().getWorkPlace().getAddress().getGeozone());
 		} else {
 			try {
 				to.setGeozone(getCompanyUtil().getCompanyGeoZone());

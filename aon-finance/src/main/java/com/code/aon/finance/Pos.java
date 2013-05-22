@@ -11,4 +11,8 @@ public class Pos extends PosDB {
 
 	private static final long serialVersionUID = 1L;
 
+	public Pos() {
+		setActive(true);
+	}
+
 }

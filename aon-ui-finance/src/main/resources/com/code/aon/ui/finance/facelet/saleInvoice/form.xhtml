@@ -431,7 +431,7 @@
 				</aon:div>
 
 				<aon:panelGrid columns="4" style="width: 100%;"
-					rendered="#{saleInvoice.to.seller.id != null or saleInvoice.to.pos.id != null}"
+					rendered="#{saleInvoice.to.seller.id != null or saleInvoice.to.posShift.id != null}"
 					columnClasses="aon-panelGrid-odd aon-width-140,
 						aon-panelGrid-even aon-width-500,
 						aon-panelGrid-odd aon-width-100,
@@ -444,10 +444,10 @@
 							value="#{saleInvoice.onSellerChanged}" type="lookupChangeListener" />
 					</ui:include>
 
-					<aon:outputLabel for="Invoice_pos"
+					<aon:outputLabel for="Invoice_posShift"
 						value="#{financeBundle.finance_pos}" />
-					<aon:outputText id="Invoice_pos"
-						value="#{saleInvoice.to.pos.name}" />
+					<aon:outputText id="Invoice_posShift"
+						value="#{saleInvoice.to.posShift.pos.name}" />
 
 				</aon:panelGrid>
 

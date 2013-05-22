@@ -39,6 +39,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.role.BasicRoleManager;
+import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
@@ -50,7 +51,6 @@ import com.esferalia.aon.pms.invoicing.PenalizationInvoicing;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
-import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class EarlyCheckOutController implements IPmsConstants {
 
@@ -482,8 +482,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 			throw new AbortProcessingException(msg);
 		}
 
-		PmsUtils pmsUtils = new PmsUtils();
-		if (isChargeCheckOut() && isCashOrCardPayment() && !pmsUtils.isUserPosOpen()) {
+		if (isChargeCheckOut() && isCashOrCardPayment() && !PosUtils.isUserPosShiftOpened()) {
 			String msg = "No se puede Facturar en Metálico/Tarjetas. El Usuario no ha abierto la Caja.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);

@@ -115,6 +115,11 @@
 		<hibernate names="domain,id,registry.id,scope.id,registry.name,registry.document,registry.documentCountry,registry.documentType"/>
 	</bean>
 	
+	<bean class="com.code.aon.company.WorkplaceDepartment" sqlName="workplace_department">
+		<alias names="id,domain,workPlace_id,department_id,department_name,catalogue_id,active"/>
+		<hibernate names="id,domain,workPlace.id,department.id,department.name,catalogue.id,active"/>
+	</bean>
+	
 	<!-- ** AON CONFIG  **************************************************** -->
 	<bean class="com.code.aon.config.ApplicationUser">
 		<alias names="active,domain,domainApplication_id,id,user_id,user_domain"/>
@@ -164,8 +169,8 @@
 	</bean>
 
 	<bean class="com.code.aon.finance.Invoice" sqlName="invoice">
-		<alias names="id,series,number,referenceCode,project,project_id,registry_id,registryAddress_id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,surcharge,withholding,comments,remarks,investment,transaction,signed,scope_id,service,rectificationType,rectificationInvoice,rectificationInvoice_id,advance,pos_id,seller_id,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,modificationUser,modificationDate" />
-		<hibernate names="id,series,number,referenceCode,project,project.id,registry.id,registryAddress.id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,surcharge,withholding,comments,remarks,investment,transaction,signed,scope.id,service,rectificationType,rectificationInvoice,rectificationInvoice.id,advance,pos.id,seller.id,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,modificationUser,modificationDate" />
+		<alias names="id,series,number,referenceCode,project,project_id,registry_id,registryAddress_id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,surcharge,withholding,comments,remarks,investment,transaction,signed,scope_id,service,rectificationType,rectificationInvoice,rectificationInvoice_id,advance,posShift_id,posShift_pos_id,seller_id,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,modificationUser,modificationDate" />
+		<hibernate names="id,series,number,referenceCode,project,project.id,registry.id,registryAddress.id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,surcharge,withholding,comments,remarks,investment,transaction,signed,scope.id,service,rectificationType,rectificationInvoice,rectificationInvoice.id,advance,posShift.id,posShift.pos.id,seller.id,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,modificationUser,modificationDate" />
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoiceDetail" sqlName="invoice_detail">
@@ -179,8 +184,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.finance.Finance" sqlName="finance">
-		<alias names="advance,amount,bankAccount,bank_id,bank_code,concept,dueDate,expenses,financeStatus,financeGroup,financeGroup_id,id,invoice_id,invoice_project_id,invoice_series,invoice_number,invoice_referenceCode,invoice_issueDate,invoice_type,invoice_rectificationType,invoice_advance,invoice_service,invoice_creationDate,invoice_creationUser,payMethod_id,payMethod_name,payMethod_type,payment,payroll,registry_id,registryName,registryDocument,registryDocumentType,registryDocumentCountry,securityLevel,scope_id," />
-		<hibernate names="advance,amount,bankAccount,bank.id,bank.code,concept,dueDate,expenses,financeStatus,financeGroup,financeGroup.id,id,invoice&lt;id,invoice&lt;project.id,invoice&lt;series,invoice&lt;number,invoice&lt;referenceCode,invoice&lt;issueDate,invoice&lt;type,invoice&lt;rectificationType,invoice&lt;advance,invoice&lt;service,invoice&lt;creationDate,invoice&lt;creationUser,payMethod.id,payMethod.name,payMethod.type,payment,payroll,registry.id,registryName,registryDocument,registryDocumentType,registryDocumentCountry,securityLevel,scope.id," />
+		<alias names="advance,amount,bankAccount,bank_id,bank_code,concept,dueDate,expenses,financeStatus,financeGroup,financeGroup_id,id,invoice_id,invoice_project_id,invoice_series,invoice_number,invoice_referenceCode,invoice_issueDate,invoice_type,invoice_rectificationType,invoice_advance,invoice_service,invoice_posShift_id,invoice_posShift_pos_id,invoice_posShift_pos_name,invoice_posShift_pos_workPlace_id,invoice_posShift_pos_department_id,invoice_posShift_shift,invoice_posShift_startTime,invoice_posShift_endTime,invoice_creationDate,invoice_creationUser,payMethod,payMethod_id,payMethod_name,payMethod_type,payment,payroll,registry_id,registryName,registryDocument,registryDocumentType,registryDocumentCountry,securityLevel,scope_id," />
+		<hibernate names="advance,amount,bankAccount,bank.id,bank.code,concept,dueDate,expenses,financeStatus,financeGroup,financeGroup.id,id,invoice&lt;id,invoice&lt;project.id,invoice&lt;series,invoice&lt;number,invoice&lt;referenceCode,invoice&lt;issueDate,invoice&lt;type,invoice&lt;rectificationType,invoice&lt;advance,invoice&lt;service,invoice&lt;posShift.id,invoice&lt;posShift.pos.id,invoice&lt;posShift.pos.name,invoice&lt;posShift.pos.workPlace.id,invoice&lt;posShift.pos.department.id,invoice&lt;posShift.shift,invoice&lt;posShift.startTime,invoice&lt;posShift.endTime,invoice&lt;creationDate,invoice&lt;creationUser,payMethod,payMethod.id,payMethod.name,payMethod.type,payment,payroll,registry.id,registryName,registryDocument,registryDocumentType,registryDocumentCountry,securityLevel,scope.id," />
 	</bean>
 	
 	<bean class="com.code.aon.finance.FinanceTracking" sqlName="finance_tracking">
@@ -199,13 +204,13 @@
 	</bean>
 
 	<bean class="com.code.aon.finance.Pos" sqlName="pos">
-		<alias names="id,domain,workPlace_id,workPlace_description,workPlace_scope_id,name,invoiceable,item_id,initialAmount,pinPad,commerce,signaturePassword,terminal,portConfiguration,posVersion,active"/>
-		<hibernate names="id,domain,workPlace.id,workPlace.description,workPlace.scope.id,name,invoiceable,item.id,initialAmount,pinPad,commerce,signaturePassword,terminal,portConfiguration,posVersion,active"/>
+		<alias names="id,domain,department_id,workPlace_id,workPlace_description,workPlace_scope_id,name,series,customer_id,displayMode,pinPad,commerce,signaturePassword,terminal,portConfiguration,posVersion,active"/>
+		<hibernate names="id,domain,department.id,workPlace.id,workPlace.description,workPlace.scope.id,name,series,customer.id,displayMode,pinPad,commerce,signaturePassword,terminal,portConfiguration,posVersion,active"/>
 	</bean> 
 
 	<bean class="com.code.aon.finance.PosShift" sqlName="pos_shift">
-		<alias names="id,domain,pos_id,pos_workPlace_id,pos_workPlace_scope_id,pos_invoiceable,shift,user_id,user_login,startTime,endTime,initialAmount,remarks,invoice_id,pos_pinPad"/>
-		<hibernate names="id,domain,pos.id,pos.workPlace.id,pos.workPlace.scope.id,pos.invoiceable,shift,user.id,user.login,startTime,endTime,initialAmount,remarks,invoice.id,pos.pinPad"/>
+		<alias names="id,domain,pos_id,pos_workPlace_id,pos_department,pos_department_id,pos_workPlace_scope_id,shift,username,startTime,endTime,initialAmount,remarks"/>
+		<hibernate names="id,domain,pos.id,pos.workPlace.id,pos.department,pos.department.id,pos.workPlace.scope.id,shift,username,startTime,endTime,initialAmount,remarks"/>
 	</bean> 
 
 	<bean class="com.code.aon.finance.PosShiftCount" sqlName="pos_shift_count">

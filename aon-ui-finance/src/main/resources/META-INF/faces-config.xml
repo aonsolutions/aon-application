@@ -3519,6 +3519,49 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************* POS FINANCE ***************** -->
+	<managed-bean>
+		<managed-bean-name>posFinance</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.controller.PosFinanceController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.Finance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>posFinance</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Finance_dueDate,Finance_invoice_posShift_pos_name,Finance_invoice_posShift_shift</value>
+		</managed-property>			
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{posFinanceSearch}</value>
+				<value>#{posFinanceScopeListener}</value>
+			</list-entries>
+		</managed-property>				
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>posFinanceSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.event.PosFinanceSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>posFinanceScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>Finance_scope_id</value>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************ INVOICE TAX ************* -->
 	<managed-bean>
 		<managed-bean-name>invoiceTax</managed-bean-name>
@@ -3546,7 +3589,7 @@
 	<!-- ************* POS ***************** -->
 	<managed-bean>
 		<managed-bean-name>pos</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.finance.controller.PosController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -3565,6 +3608,8 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{posSearch}</value>
+				<value>#{posScopeListener}</value>
+				<value>#{posControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -3574,6 +3619,103 @@
 		<managed-bean-class>com.code.aon.ui.finance.event.PosSearchListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>posScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>Pos_workPlace_scope_id</value>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>posControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.PosControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************* POS SHIFT ***************** -->
+	<managed-bean>
+		<managed-bean-name>posShift</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.controller.PosShiftController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.PosShift</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>posShift</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>PosShift_startTime desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{posShiftSearch}</value>
+				<value>#{posShiftScopeListener}</value>
+				<value>#{posShiftControllerListener}</value>
+			</list-entries>
+		</managed-property>				
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>posShiftSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.event.PosShiftSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>posShiftScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>PosShift_pos_workPlace_scope_id</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>posShiftControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.event.PosShiftControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************* POS SHIFT COUNT ***************** -->
+	<managed-bean>
+		<managed-bean-name>posShiftCount</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.controller.PosShiftCountController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.PosShiftCount</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>posShiftCount</value>
+		</managed-property>		
+	</managed-bean>
+	
+	<!-- ************* POS OPENING ***************** -->
+	<managed-bean>
+		<managed-bean-name>posOpening</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.controller.PosOpeningController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>		
+	</managed-bean>
+	
+	<!-- ************* POS CLOSING ***************** -->
+	<managed-bean>
+		<managed-bean-name>posClosing</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.controller.PosClosingController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>				
+	</managed-bean>
 	
 	<!--  **** BANK CONCEPT **** -->
 	<managed-bean>
@@ -4054,6 +4196,22 @@
 	    </navigation-case>
 	</navigation-rule>
 	
+  	<!-- =================== Pos Finance ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>posFinance_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/posFinance/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>posFinance_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/posFinance/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>posFinance_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/posFinance/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>  
+
   	<!-- =================== Pos ========================== -->
 	<navigation-rule>
 		<navigation-case>
@@ -4070,6 +4228,38 @@
 		</navigation-case>
 	</navigation-rule>  
 
+  	<!-- =================== Pos Shift ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>posShift_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/posShift/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>posShift_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/posShift/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>posShift_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/posShift/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>  
+
+  	<!-- =================== Pos Opening ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>posOpening_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/posShift/opening/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>  
+
+  	<!-- =================== Pos Closing ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>posClosing_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/posShift/closing/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>  
+	
 	<!-- =================== No Fee Customer ========================== -->
 	<navigation-rule>
 	    <navigation-case>

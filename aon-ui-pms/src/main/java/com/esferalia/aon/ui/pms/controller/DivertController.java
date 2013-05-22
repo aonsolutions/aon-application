@@ -26,7 +26,6 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservationDivert;
 import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
-import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class DivertController extends BasicController {
 	

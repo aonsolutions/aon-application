@@ -5,13 +5,13 @@
 <hibernate-configuration>
 
 	<session-factory>
-		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
-		<property name="show_sql">false</property>
 		<property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
 		<property name="connection.url">jdbc:mysql://db.cdhc46h3yjvt.eu-west-1.rds.amazonaws.com:3306/grupoplayasol-com?autoReconnect=true</property>
 		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>
 		<property name="connection.username">playasol</property>
 		<property name="connection.password">pl4y4s0l</property>
+		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
+		<property name="show_sql">false</property>
  
 		<!-- C3P0 Stuff -->
 		<property name="hibernate.c3p0.acquire_increment">1</property>
@@ -29,6 +29,7 @@
     	<mapping class="com.code.aon.asset.AssetActivity"/>
     	<mapping class="com.code.aon.asset.AssetFeature"/>
     	<mapping class="com.code.aon.asset.Feature"/>
+    	<mapping class="com.code.aon.company.Department"/>
     	<mapping class="com.code.aon.company.Enterprise"/>
     	<mapping class="com.code.aon.company.WorkPlace"/>
     	<mapping class="com.code.aon.config.ApplicationParameter"/>
@@ -49,6 +50,8 @@
     	<mapping class="com.code.aon.finance.InvoiceAttachment"/>
     	<mapping class="com.code.aon.finance.InvoiceDetail"/>
     	<mapping class="com.code.aon.finance.Pos"/>
+    	<mapping class="com.code.aon.finance.PosShift"/>
+    	<mapping class="com.code.aon.finance.PosShiftCount"/>
     	<mapping class="com.code.aon.geozone.GeoZone"/>
     	<mapping class="com.code.aon.product.Brand"/>
     	<mapping class="com.code.aon.product.Catalogue"/>

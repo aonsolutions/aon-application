@@ -21,7 +21,7 @@ public class InvoicingGroupController extends BasicController implements ICustom
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
 	}
-	
+
 	public void onCustomerChanged(LookupChangeEvent event) throws ManagerBeanException {
 		InvoicingGroup invoicingGroup = (InvoicingGroup)getTo();
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {

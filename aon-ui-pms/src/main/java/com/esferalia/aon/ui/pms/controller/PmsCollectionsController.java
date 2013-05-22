@@ -29,7 +29,6 @@ import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
-import com.esferalia.aon.pms.enumeration.Shift;
 import com.esferalia.aon.pms.reservation.IReservationConstants;
 
 public class PmsCollectionsController {
@@ -38,7 +37,6 @@ public class PmsCollectionsController {
 	private List<SelectItem> reservationStatuses;
 	private List<SelectItem> reservationDivertStatuses;
 	private List<SelectItem> bookingHolders;
-	private List<SelectItem> shifts;
 
 	public Hotel getHotel() {
 		return null;
@@ -258,34 +256,36 @@ public class PmsCollectionsController {
 		return bookingHolders;
 	}
 
-	public List<SelectItem> getShifts() {
-		if (shifts == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			shifts = new LinkedList<SelectItem>();
-			for (Shift shift : Shift.values()) {
-				String name = shift.getName(locale);
-				SelectItem item = new SelectItem(shift, name);
-				shifts.add(item);
-			}
-		}
-		return shifts;
-	}
-	
 	public List<SelectItem> getDirectPayMethods() throws ManagerBeanException {
 		List<PayMethodType> directPayMethods = new LinkedList<PayMethodType>();
 		directPayMethods.add(PayMethodType.CASH_BASIS);
 		directPayMethods.add(PayMethodType.DEBIT_CARD);
 		directPayMethods.add(PayMethodType.CREDIT_CARD);
+		directPayMethods.add(PayMethodType.CHEQUE);
 		directPayMethods.add(PayMethodType.BANK_TRANSFER);
+		return getPayMethods(directPayMethods);
+	}
 
+	public List<SelectItem> getNoCashDirectPayMethods() throws ManagerBeanException {
+		List<PayMethodType> noCashDirectPayMethods = new LinkedList<PayMethodType>();
+		noCashDirectPayMethods.add(PayMethodType.DEBIT_CARD);
+		noCashDirectPayMethods.add(PayMethodType.CREDIT_CARD);
+		noCashDirectPayMethods.add(PayMethodType.CHEQUE);
+		noCashDirectPayMethods.add(PayMethodType.BANK_TRANSFER);
+		return getPayMethods(noCashDirectPayMethods);
+	}
+
+	private List<SelectItem> getPayMethods(List<PayMethodType> payMethodTypes) throws ManagerBeanException {
 		List<SelectItem> payMethods = new LinkedList<SelectItem>();
 		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
 		Criteria criteria = new Criteria();
-		criteria.addExpression(ExpressionUtilities.getInExpression(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), directPayMethods));
+		if (payMethodTypes != null && payMethodTypes.size() > 0) {
+			criteria.addExpression(ExpressionUtilities.getInExpression(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), payMethodTypes));
+		}
 		criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_NAME));
 		for (ITransferObject ito : payMethodBean.getList(criteria)) {
-			PayMethod pMethod = (PayMethod)ito;
-			SelectItem item = new SelectItem(pMethod, pMethod.getName());
+			PayMethod payMethod = (PayMethod)ito;
+			SelectItem item = new SelectItem(payMethod, payMethod.getName());
 			payMethods.add(item);
 		}
 		return payMethods;

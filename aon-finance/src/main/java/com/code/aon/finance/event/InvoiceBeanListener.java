@@ -97,7 +97,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 	}
 
 	private boolean isUpdateDetailsEnabled(Invoice invoice) {
-		return (invoice.isSales()) ? invoice.getPos() == null || invoice.getPos().getId() == null : invoice.isPurchase();	
+		return (invoice.isSales()) ? invoice.getPosShift() == null || invoice.getPosShift().getId() == null : invoice.isPurchase();	
 	}
 
 	private void updateTotals(Invoice invoice) throws ManagerBeanException {

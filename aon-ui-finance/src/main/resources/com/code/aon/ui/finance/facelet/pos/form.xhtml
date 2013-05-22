@@ -20,58 +20,90 @@
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:panelGrid id="posPanel" columns="2">
-					<aon:outputLabel value="#{companyBundle.company_workplace}" />
-					<aon:selectOneMenu 
-						value="#{pos.to.workPlace}" >
+				<aon:panelGrid columns="2" styleClass="aon-width-half">
+
+					<aon:outputLabel for="Pos_workPlace" value="#{companyBundle.company_workplace}" />
+					<aon:selectOneMenu id="Pos_workPlace"
+						value="#{pos.to.workPlace}" required="true"
+						valueChangeListener="#{pos.onWorkPlaceChanged}"
+						reRender="posForm">
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
-					
-					<aon:outputLabel for="Pos_name" value="#{financeBundle.finance_pos_name}" />
-					<aon:inputText id="Pos_name" value="#{pos.to.name}" 
-						size="32" maxlength="32" required="true" />
-					
-					<aon:outputLabel value="#{pmsBundle.pms_invoiceable}" />
-					<aon:selectBooleanCheckbox value="#{pos.to.invoiceable}" >
-						<a4j:support event="onclick" reRender="posPanel" ignoreDumpResponses="true" ajaxSingle="true" />
-					</aon:selectBooleanCheckbox>
-					
-					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
-						<ui:param name="lookupTo" value="#{pos.to.item}" />
-						<ui:param name="idRequired" value="#{true}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-						<ui:param name="lookupRendered" value="#{pos.to.invoiceable}" />
-					</ui:include>
-					
-					<aon:outputLabel for="Pos_initialAmount" value="#{pmsBundle.pms_pos_openingAmount}" />
-					<aon:inputText id="Pos_initialAmount" value="#{pos.to.initialAmount}" 
-						size="20" maxlength="17" />
 
-					<aon:outputLabel value="#{bundle.aon_active}" />
-					<aon:selectBooleanCheckbox value="#{pos.to.active}" />
-					
+					<c:if test="#{companyCollections.departmentsCount > 0}">
+						<aon:outputLabel for="Pos_department" value="#{companyBundle.company_department}" />
+						<aon:selectOneMenu id="Pos_department"
+							value="#{pos.to.department}">
+							<f:selectItem itemLabel=" - " itemValue="null" />
+							<f:selectItems value="#{companyCollections.departments}" />
+						</aon:selectOneMenu>
+					</c:if>
+
+					<aon:outputLabel for="Pos_name" value="#{financeBundle.finance_pos_name}" />
+					<aon:inputText id="Pos_name" 
+						value="#{pos.to.name}" 
+						size="32" maxlength="32" required="true" />
+
+					<c:if test="#{pos.to.series != null or pos.workPlaceSeriesCount > 1}">
+						<aon:outputLabel for="Pos_series" value="#{bundle.aon_series}" />
+						<aon:div>
+							<aon:selectOneMenu id="Pos_series"
+								value="#{pos.to.series}"
+								rendered="#{pos.to.series == null}">
+								<f:selectItem itemLabel=" - " itemValue="" />
+								<f:selectItems value="#{pos.workPlaceSeries}" />
+							</aon:selectOneMenu>
+							<aon:outputText styleClass="aon-bold aon-padding-right"
+								value="#{pos.to.series}" 
+								rendered="#{pos.to.series != null}" />
+							<aon:commandLink id="remove_series" immediate="true"
+								styleClass="aon-editDataTable-button aon-icon-delete" style="padding-right: 20px;"
+								value="&#160;" title="#{bundle.aon_remove}"
+								rendered="#{pos.to.series != null}"
+								actionListener="#{pos.onDeleteSeries}"
+								reRender="posForm" />
+						</aon:div>
+					</c:if>
+
+					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{pos.to.customer}" />
+					</ui:include>
+
+					<aon:outputLabel for="Pos_displayMode" value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="Pos_displayMode"
+						value="#{pos.to.displayMode}" required="true">
+						<f:selectItems value="#{financeCollections.posDisplayModes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Pos_active" value="#{bundle.aon_status}" />
+					<aon:selectOneRadio id="Pos_active"
+						value="#{pos.to.active}" required="true">
+						<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="#{false}" />
+					</aon:selectOneRadio>
+
 <!--
-					<aon:outputLabel for="Pos_pinPad" value="#{pmsBundle.pos_pin_pad}" />
+					<aon:outputLabel for="Pos_pinPad" value="#{financeBundle.finance_pos_pin_pad}" />
 					<aon:selectBooleanCheckbox id="Pos_pinPad" value="#{pos.to.pinPad}" >
 						<a4j:support event="onclick" reRender="posPanel" ignoreDumpResponses="true" ajaxSingle="true" />
 					</aon:selectBooleanCheckbox>
 					
 					<c:if test="#{pos.to.pinPad}">
-						<aon:outputLabel for="Pos_commerce" value="#{pmsBundle.pos_commerce}" />
+						<aon:outputLabel for="Pos_commerce" value="#{financeBundle.finance_pos_commerce}" />
 						<aon:inputText id="Pos_commerce" value="#{pos.to.commerce}" 
 							size="20" maxlength="20" required="true" />
 
-						<aon:outputLabel for="Pos_terminal" value="#{pmsBundle.pos_terminal}" />
+						<aon:outputLabel for="Pos_terminal" value="#{financeBundle.finance_pos_terminal}" />
 						<aon:inputText id="Pos_terminal" value="#{pos.to.terminal}" 
 							size="4" maxlength="4" required="true" >
 							<f:validateLongRange minimum="1" maximum="1000" />
 						</aon:inputText>
 
-						<aon:outputLabel for="Pos_signaturePassword" value="#{pmsBundle.pos_signature_password}" />
+						<aon:outputLabel for="Pos_signaturePassword" value="#{financeBundle.finance_pos_signature_password}" />
 						<aon:inputText id="Pos_signaturePassword" value="#{pos.to.signaturePassword}" 
 							size="32" maxlength="32" required="true" />
 
-						<aon:outputLabel for="Pos_portConfiguration" value="#{pmsBundle.pos_port_configuration}" />
+						<aon:outputLabel for="Pos_portConfiguration" value="#{financeBundle.finance_pos_port_configuration}" />
 						<aon:selectOneMenu id="Pos_portConfiguration"
 							value="#{pos.to.portConfiguration}">
 							<f:selectItem itemLabel="-" value="#{null}" />
@@ -89,7 +121,7 @@
 							<f:selectItem itemLabel="COM10" itemValue="COM10:,19200,N,8,1" />
 						</aon:selectOneMenu>
 
-						<aon:outputLabel for="Pos_posVersion" value="#{pmsBundle.pos_version}" />
+						<aon:outputLabel for="Pos_posVersion" value="#{financeBundle.finance_pos_version}" />
 						<aon:selectOneMenu id="Pos_posVersion"
 							value="#{pos.to.posVersion}">
 							<f:selectItem itemLabel="-" value="#{null}" />

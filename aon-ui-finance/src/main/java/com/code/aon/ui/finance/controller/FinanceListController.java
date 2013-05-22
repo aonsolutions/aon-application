@@ -7,6 +7,7 @@ import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -106,6 +107,15 @@ public class FinanceListController extends BasicController implements IFinanceCo
 		}
 		return length;
 	}
+
+	public Double getSelectedAmount(){
+		Double total = 0.0;
+		for (Finance finance : getCheckedFinances()) {
+			total += CommonUtil.round(finance.getTotalAmount());
+		}
+		return CommonUtil.round(total);
+	}
+
 
 	public void onLoadFinance(ActionEvent event) throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {

@@ -81,4 +81,11 @@
 		</vetoListeners>
 	</bean>
 	
+	<bean description="">
+		<pojo>com.code.aon.finance.Pos</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.finance.event.PosBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
 </bean-config>

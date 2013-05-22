@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:dataTable id="totalShiftCountDataList" 
+		value="#{controller.totalShiftCountModel}" var="to" rows="0">
+
+		<c:if test="#{!readOnly}">
+			<aon:column styleClass="aon-editDataTable-iconColumn aon-width-20">
+				<f:facet name="footer">
+					<aon:commandButton id="posShiftCount-new" 
+						title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+						styleClass="aon-editDataTable-button aon-icon-reset"
+						rendered="#{!posShiftCount.new}" 
+						actionListener="#{posShiftCount.onReset}"
+						accesskey="#{bundle.aon_key_new_line}" 
+						focus="PosShiftCount_payMethod"/>
+				</f:facet>
+			</aon:column>
+		</c:if>
+
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+			<f:facet name="header">
+				<aon:outputLabel for="PosShiftCount_payMethod" value="#{configBundle.config_pay_method}" />
+			</f:facet>
+			<aon:outputText value="#{to.payMethod.name}" />
+			<c:if test="#{!readOnly}">
+				<f:facet name="footer">
+					<aon:selectOneMenu id="PosShiftCount_payMethod" 
+						value="#{posShiftCount.to.payMethod}" required="true"
+						rendered="#{posShiftCount.new}">
+						<f:selectItem itemLabel=" - " itemValue="#{null}" />
+						<f:selectItems value="#{configCollections.directPayMethods}" />
+						<a4j:support event="onchange" reRender="PosShiftCountAmountDiv" ignoreDupResponses="true" ajaxSingle="true" />
+						<a4j:support event="oninputchanged" reRender="PosShiftCountAmountDiv" ignoreDupResponses="true" ajaxSingle="true" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</c:if>
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-auto">
+			<f:facet name="header">
+				<aon:outputLabel for="PosShiftCount_amount" value="#{financeBundle.finance_cash}" />
+			</f:facet>
+			<aon:outputText value="#{to.countAmount}" >
+				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+			</aon:outputText>
+			<c:if test="#{!readOnly}">
+				<f:facet name="footer">
+					<aon:div id="PosShiftCountAmountDiv" style="display:inline;" rendered="#{posShiftCount.new}">
+						<aon:inputText id="PosShiftCount_amount"
+							value="#{posShiftCount.to.amount}" required="true"
+							size="5" maxlength="8" />
+						<aon:commandButton id="posShiftCount-calculator" immediate="true"
+							styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
+							value="&#160;"
+							rendered="#{posShiftCount.to.payMethod.type=='CASH_BASIS'}"
+							actionListener="#{controller.onShowCalculatorWindow}"
+							reRender="showCalculatorWindow"
+							ajaxSingle="true">
+							<f:setPropertyActionListener target="#{controller.calculator.showCalculatorWindow}"
+								value="#{true}" />
+							<f:setPropertyActionListener target="#{controller.calculator.initialAmount}"
+								value="#{controller.to.initialAmount}" />
+							<f:setPropertyActionListener target="#{controller.calculator.recipient}"
+								value="#{posShiftCount.to}" />
+							<f:setPropertyActionListener target="#{controller.calculator.headerLabel}"
+								value="#{financeBundle.finance_pos_cash_count}" />
+							<f:setPropertyActionListener target="#{controller.calculator.footerLabel}"
+								value="#{financeBundle.finance_pos_bank_income}" />
+						</aon:commandButton>
+					</aon:div>
+				</f:facet>
+			</c:if>
+		</aon:column>
+
+		<c:if test="#{showInvoiceData}">
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-90">
+				<f:facet name="header">
+					<aon:outputLabel value="#{financeBundle.finance_invoice_module}" />
+				</f:facet>
+				<aon:outputText value="#{to.financeAmount}" >
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+				</aon:outputText>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-90">
+				<f:facet name="header">
+					<aon:outputLabel value="#{financeBundle.finance_difference}" />
+				</f:facet>
+				<aon:outputText value="#{to.countAmount - to.financeAmount}" >
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+				</aon:outputText>
+			</aon:column>
+		</c:if>
+
+		<c:if test="#{!readOnly}">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-40 aon-nowrap">
+				<f:facet name="footer">
+					<aon:div rendered="#{posShiftCount.new}">
+						<aon:commandButton id="posShiftCount-save" 
+							title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
+							styleClass="aon-editDataTable-button aon-icon-accept"
+							actionListener="#{controller.onAcceptCount}"
+							accesskey="#{bundle.aon_key_save_line}" />
+						<aon:commandButton id="posShiftCount-cancel" immediate="true"
+							title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
+							styleClass="aon-editDataTable-button aon-icon-cancel"
+							actionListener="#{posShiftCount.onCancel}"
+							accesskey="#{bundle.aon_key_cancel_line}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+		</c:if>
+
+	</aon:dataTable>
+
+</ui:composition>

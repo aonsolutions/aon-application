@@ -1048,8 +1048,12 @@
 		<column name="type" type="com.code.aon.config.enumeration.PayMethodType" /> 
 	</table>
 	
+	<table name="pos">
+		<column name="display_mode" type="com.code.aon.finance.enumeration.PosDisplayMode"/>
+	</table>
+		
 	<table name="pos_shift">
-		<column name="shift" type="com.esferalia.aon.pms.enumeration.Shift"/>
+		<column name="shift" type="com.code.aon.finance.enumeration.Shift"/>
 		<column name="remarks" type="text"/>
 	</table>
 		

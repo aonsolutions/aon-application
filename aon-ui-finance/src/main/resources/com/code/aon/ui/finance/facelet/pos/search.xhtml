@@ -2,6 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -20,15 +21,40 @@
 				<ui:define name="searchContent">
 
 					<aon:outputLabel value="#{companyBundle.company_workplace}" />
-					<aon:selectOneMenu 
-						value="#{posSearch.workPlace}" >
-						<f:selectItem itemLabel=" - " itemValue="null" />
+					<aon:selectOneMenu id="Pos_workPlace"
+						value="#{posSearch.workPlace}"
+						reRender="Pos_department">
+						<f:selectItem itemLabel=" - " itemValue="#{null}" />
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
+
+					<c:if test="#{companyCollections.departmentsCount > 0}">
+						<aon:outputLabel value="#{companyBundle.company_department}" />
+						<aon:selectOneMenu id="Pos_department"
+							value="#{posSearch.department}" >
+							<f:selectItem itemLabel=" - " itemValue="null" />
+							<f:selectItems value="#{companyCollections.departments}" />
+						</aon:selectOneMenu>
+					</c:if>
 
 					<aon:outputLabel value="#{financeBundle.finance_pos_name}" />
 					<aon:inputText id="Pos_name" 
 						valueChangeListener="#{pos.addExpression}" />
+
+					<aon:outputLabel value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="Pos_displayMode"
+						converter="aon.EnumConverter"
+						valueChangeListener="#{pos.addExpression}">
+						<f:selectItem itemLabel="-" value="#{null}" />		
+						<f:selectItems value="#{financeCollections.posDisplayModes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel value="#{bundle.aon_status}" />
+					<aon:selectOneRadio id="Pos_active"
+						valueChangeListener="#{controller.addExpression}">
+						<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="#{false}" />
+					</aon:selectOneRadio>				
 
 				</ui:define>
 			</ui:decorate>				

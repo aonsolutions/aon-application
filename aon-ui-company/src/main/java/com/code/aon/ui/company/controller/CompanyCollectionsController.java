@@ -275,5 +275,9 @@ public class CompanyCollectionsController {
 		return list;
 	}
 	
+	public int getDepartmentsCount() throws ManagerBeanException {
+		return BeanManager.getManagerBean(Department.class).getCount(null);
+	}
+	
 }
 

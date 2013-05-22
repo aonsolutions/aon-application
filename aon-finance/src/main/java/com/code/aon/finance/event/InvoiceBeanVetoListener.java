@@ -303,7 +303,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void updateRectifiedInvoices(Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Invoice rectified = invoice.getRectificationInvoice();
-		if (rectified.getRectificationInvoice() != null && rectified.getRectificationInvoice().getId() == invoice.getId()) {
+		if (rectified.getRectificationInvoice() != null && rectified.getRectificationInvoice().getId().intValue() == invoice.getId().intValue()) {
 			rectified.setRectificationType(RectificationType.NONE);
 			rectified.setRectificationInvoice(null);
 			rectified.setUpdateEnabled(false);

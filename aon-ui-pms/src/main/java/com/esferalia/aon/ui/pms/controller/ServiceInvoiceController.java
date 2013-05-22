@@ -36,6 +36,7 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -53,7 +54,6 @@ import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo.HotelService;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.ui.pms.IPmsMessages;
-import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class ServiceInvoiceController extends BasicController implements IPmsConstants, ICalculableContainer {
 	
@@ -128,8 +128,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	@Override
 	public void onReset(ActionEvent event) {
 		try {
-			PmsUtils pmsUtils = new PmsUtils();
-			if (!pmsUtils.isUserPosOpen()) {
+			if (!PosUtils.isUserPosShiftOpened()) {
 				String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
@@ -508,8 +507,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 			throw new AbortProcessingException(msg);
 		}
 		try {
-			PmsUtils pmsUtils = new PmsUtils();
-			if (!pmsUtils.isUserPosOpen()) {
+			if (!PosUtils.isUserPosShiftOpened()) {
 				setShowRectificationWindow(false);
 				String msg = "No se puede Abonar. El Usuario no ha abierto la Caja.";
 				AonUtil.addErrorMessage(msg);

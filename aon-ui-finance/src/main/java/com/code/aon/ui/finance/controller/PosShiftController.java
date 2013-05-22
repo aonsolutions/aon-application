@@ -1,0 +1,297 @@
+package com.code.aon.ui.finance.controller;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
+import javax.faces.model.SelectItem;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.Department;
+import com.code.aon.company.WorkPlace;
+import com.code.aon.config.PayMethod;
+import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.finance.Finance;
+import com.code.aon.finance.Pos;
+import com.code.aon.finance.PosShift;
+import com.code.aon.finance.PosShiftCount;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
+
+public class PosShiftController extends BasicController implements IFinanceConstants {
+
+	private WorkPlace workPlace;
+	private Department department;
+	private CashCalculator calculator;
+	private DataModel totalShiftCountModel;
+	private DataModel financeModel;
+
+	public WorkPlace getWorkPlace() {
+		return workPlace;
+	}
+
+	public void setWorkPlace(WorkPlace workPlace) {
+		this.workPlace = workPlace;
+	}
+
+	public Department getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(Department department) {
+		this.department = department;
+	}
+
+	public CashCalculator getCalculator() {
+		if (calculator == null) {
+			calculator = new CashCalculator();
+		}
+		return calculator;
+	}
+
+	public void setCalculator(CashCalculator calculator) {
+		this.calculator = calculator;
+	}
+
+	public DataModel getTotalShiftCountModel() {
+		if (totalShiftCountModel == null) {
+			totalShiftCountModel = new ListDataModel(getTotalShiftCountList((PosShift)getTo()));
+		}
+		return totalShiftCountModel;
+	}
+
+	public void setTotalShiftCountModel(DataModel totalShiftCountModel) {
+		this.totalShiftCountModel = totalShiftCountModel;
+	}
+
+	public DataModel getFinanceModel() {
+		if (financeModel == null) {
+			financeModel = new ListDataModel(getFinanceList((PosShift)getTo()));
+		}
+		return financeModel;
+	}
+
+	public void setFinanceModel(DataModel financeModel) {
+		this.financeModel = financeModel;
+	}
+
+	private List<PayMethodCount> getTotalShiftCountList(PosShift posShift) {
+		List<PayMethodCount> totalShiftCountList = new LinkedList<PayMethodCount>();
+		for (PayMethod payMethod : posShift.getTotalShiftCountMap().keySet()) {
+			double[] totals = posShift.getTotalShiftCountMap().get(payMethod);
+
+			PayMethodCount payMethodCount = new PayMethodCount();
+			payMethodCount.setPayMethod(payMethod);
+			payMethodCount.setCountAmount(totals[0]);
+			payMethodCount.setFinanceAmount(totals[1]);
+			
+			totalShiftCountList.add(payMethodCount);
+		}
+		Collections.sort(totalShiftCountList);
+		return totalShiftCountList;
+	}
+
+	private List<ITransferObject> getFinanceList(PosShift posShift) {
+		try {
+			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAYMENT), new Boolean(false));
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_POS_SHIFT_ID), posShift.getId());
+			criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_NAME));
+			criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_REFERENCE_CODE));
+			return financeBean.getList(criteria);
+		} catch (ManagerBeanException ex) {
+			String msg = "Error al cargar los datos de Cobros.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, ex);
+		}
+	}
+
+	public boolean isCountCashOk() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			return isCountCashOk((PosShift)getModel().getRowData());
+		}
+		return true;
+	}
+
+	public boolean isCountCashOk(PosShift posShift) throws ManagerBeanException {
+		return isCountOk(posShift, PayMethodType.CASH_BASIS);
+	}
+
+	public boolean isCountCardOk() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			return isCountCardOk((PosShift)getModel().getRowData());
+		}
+		return true;
+	}
+
+	public boolean isCountCardOk(PosShift posShift) throws ManagerBeanException {
+		return isCountOk(posShift, PayMethodType.CREDIT_CARD) && isCountOk(posShift, PayMethodType.DEBIT_CARD);
+	}
+
+	public boolean isCountChequeOk() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			return isCountChequeOk((PosShift)getModel().getRowData());
+		}
+		return true;
+	}
+
+	public boolean isCountChequeOk(PosShift posShift) throws ManagerBeanException {
+		return isCountOk(posShift, PayMethodType.CHEQUE);
+	}
+
+	public boolean isCountTransferOk() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			return isCountTransferOk((PosShift)getModel().getRowData());
+		}
+		return true;
+	}
+
+	public boolean isCountTransferOk(PosShift posShift) throws ManagerBeanException {
+		return isCountOk(posShift, PayMethodType.BANK_TRANSFER);
+	}
+
+	private boolean isCountOk(PosShift posShift, PayMethodType type) throws ManagerBeanException {
+		double countTotal = 0;
+		double financeTotal = 0;
+		if (posShift.getEndTime() != null) {
+			for (PayMethod payMethod : posShift.getTotalShiftCountMap().keySet()) {
+				if (type == payMethod.getType()) {
+					countTotal = CommonUtil.round(countTotal + posShift.getTotalShiftCountMap().get(payMethod)[0]);
+					financeTotal = CommonUtil.round(financeTotal + posShift.getTotalShiftCountMap().get(payMethod)[1]);
+				}
+			}
+		}
+		return countTotal == financeTotal;
+	}
+
+	public List<SelectItem> getWorkPlacePos() throws ManagerBeanException {
+		List<SelectItem> posList = new LinkedList<SelectItem>();
+		if (getWorkPlace() != null && getWorkPlace().getId() != null) {
+			IManagerBean posBean = BeanManager.getManagerBean(Pos.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(posBean.getFieldName(IEntityAlias.POS_WORK_PLACE_ID), getWorkPlace().getId());
+			if (getDepartment() != null && getDepartment().getId() != null) {
+				criteria.addEqualExpression(posBean.getFieldName(IEntityAlias.POS_DEPARTMENT_ID), getDepartment().getId());
+			}
+			criteria.addEqualExpression(posBean.getFieldName(IEntityAlias.POS_ACTIVE), new Boolean(true));
+			criteria.addOrder(posBean.getFieldName(IEntityAlias.POS_NAME));
+			for (ITransferObject ito : posBean.getList(criteria)) {
+				Pos pos = (Pos)ito;
+				SelectItem posItem = new SelectItem(pos, pos.getName());
+				posList.add(posItem);
+			}
+		}
+		return posList;
+	}
+
+	public void onInitialAmountChanged(ValueChangeEvent event) {
+		if (event.getNewValue() != null) {
+			((PosShift)getTo()).setTotalShiftCountMap(null);
+			setTotalShiftCountModel(null);
+		}
+	}
+
+	public void onShowCalculatorWindow(ActionEvent event) {
+		getCalculator().initialize();
+	}
+
+	public void onAcceptCalculatorWindow(ActionEvent event) {
+		((PosShift)getTo()).setTotalShiftCountMap(null);
+		setTotalShiftCountModel(null);
+	}
+
+	public String getFinancePayMethod() throws ManagerBeanException {
+		Finance finance = (Finance)getFinanceModel().getRowData();
+		String invoicePayMethodName = (finance.getPayMethod().getName().equals(finance.getInvoice().getPayMethod())) ? "" : finance.getInvoice().getPayMethod();
+		return (invoicePayMethodName.equals("") ? "" : invoicePayMethodName + "/") + finance.getPayMethod().getName();
+	}
+
+	public void onAcceptCount(ActionEvent event) {
+		((PosShiftCount)FormUtil.getController(POS_SHIFT_COUNT_CONTROLLER_NAME).getTo()).setPosShift((PosShift)getTo());
+		FormUtil.getController(POS_SHIFT_COUNT_CONTROLLER_NAME).onAccept(event);
+		((PosShift)getTo()).setTotalShiftCountMap(null);
+		setTotalShiftCountModel(null);
+	}
+
+	public void onLoadReservation(ActionEvent event) throws ManagerBeanException {
+		if (getFinanceModel().isRowAvailable()) {
+			Finance finance = (Finance)getFinanceModel().getRowData();
+			BasicController reservationController = (BasicController)AonUtil.getRegisteredBean(RESERVATION_CONTROLLER_NAME);
+			reservationController.onLoad(event, finance.getInvoice().getProject().getId(), POS_SHIFT_FORM_NAME, POS_SHIFT_CONTROLLER_NAME + ".onBackPosShift");
+		}
+	}
+
+	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
+		if (getFinanceModel().isRowAvailable()) {
+			Finance finance = (Finance)getFinanceModel().getRowData();
+			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+			invoiceController.onLoad(event, finance.getInvoice().getId(), POS_SHIFT_FORM_NAME, POS_SHIFT_CONTROLLER_NAME + ".onBackPosShift");
+		}
+	}
+
+	public void onBackPosShift(ActionEvent event) throws ManagerBeanException {
+		((PosShift)getTo()).setTotalShiftCountMap(null);
+		setTotalShiftCountModel(null);
+		setFinanceModel(null);
+	}
+
+	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {
+		//SelectedInvoiceController controller = (SelectedInvoiceController)AonUtil.getRegisteredBean(IPmsConstants.SELECTED_INVOICE_CONTROLLER_NAME);
+		//controller.setTo(((Finance)getFinanceModel().getRowData()).getInvoice());
+	}
+
+
+	public class PayMethodCount implements Comparable<Object> {
+		private PayMethod payMethod;
+		private double countAmount;
+		private double financeAmount;
+		
+		public PayMethod getPayMethod() {
+			return payMethod;
+		}
+
+		public void setPayMethod(PayMethod payMethod) {
+			this.payMethod = payMethod;
+		}
+
+		public double getCountAmount() {
+			return countAmount;
+		}
+
+		public void setCountAmount(double countAmount) {
+			this.countAmount = countAmount;
+		}
+
+		public double getFinanceAmount() {
+			return financeAmount;
+		}
+
+		public void setFinanceAmount(double financeAmount) {
+			this.financeAmount = financeAmount;
+		}
+
+		@Override
+		public int compareTo(Object obj) {
+			if (obj instanceof PayMethodCount) {
+				PayMethodCount payMethodCount = (PayMethodCount)obj;
+				return this.getPayMethod().getName().compareTo(payMethodCount.getPayMethod().getName());
+			}
+			return 0;
+		}
+
+	}
+
+}

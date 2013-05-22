@@ -99,7 +99,7 @@
 													<f:selectItems value="#{configCollections.directPayMethods}" />
 												</c:if>
 												<c:if test="#{financeController.financesCashAlready}">
-													<f:selectItems value="#{configCollections.cardPayMethods}" />
+													<f:selectItems value="#{configCollections.noCashDirectPayMethods}" />
 												</c:if>
 											</aon:selectOneMenu>
 											<aon:outputText value="#{posFinanceTo.payMethod.name}"

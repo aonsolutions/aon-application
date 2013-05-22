@@ -24,13 +24,14 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.Pos;
+import com.code.aon.finance.PosShift;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.report.ReportException;
 import com.code.aon.seller.Seller;
+import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.finance.util.print.TicketPrinter;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -39,10 +40,9 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class PosInvoiceController extends SaleInvoiceController {
 
-	private Pos pos;
+	private PosShift posShift;
 	private Seller seller;
 	private List<Invoice> suspendedInvoiceList;
-	private boolean showPosSelectionWindow;
 	private boolean showFinishTicketWindow;
 	private boolean showRecoverTicketWindow;
 	private boolean showPrintTicketWindow;
@@ -56,12 +56,12 @@ public class PosInvoiceController extends SaleInvoiceController {
 		setInvoiceFinanceControllerName(POS_INVOICE_FINANCE_CONTROLLER_NAME);
 	}
 
-	public Pos getPos() {
-		return pos;
+	public PosShift getPosShift() {
+		return posShift;
 	}
 
-	public void setPos(Pos pos) {
-		this.pos= pos;
+	public void setPosShift(PosShift posShift) {
+		this.posShift = posShift;
 	}
 
 	public Seller getSeller() {
@@ -70,14 +70,6 @@ public class PosInvoiceController extends SaleInvoiceController {
 
 	public void setSeller(Seller seller) {
 		this.seller= seller;
-	}
-
-	public boolean isShowPosSelectionWindow() {
-		return showPosSelectionWindow;
-	}
-
-	public void setShowPosSelectionWindow(boolean value) {
-		this.showPosSelectionWindow = value;
 	}
 
 	public boolean isShowFinishTicketWindow() {
@@ -117,11 +109,11 @@ public class PosInvoiceController extends SaleInvoiceController {
 	}
 
 	public void onLoad(ActionEvent event) throws ManagerBeanException {
-		FinanceCollectionsController financeCollections = (FinanceCollectionsController)AonUtil.getRegisteredBean(IFinanceConstants.COLLECTIONS_CONTROLLER_NAME);
-		if (financeCollections.getCurrentUserPosCount() == 1) {
-			setPos((Pos)financeCollections.getCurrentUserPosList().get(0));
-		} else {
-			setPos((Pos)BeanManager.getManagerBean(Pos.class).createNewTo());
+		setPosShift(PosUtils.getUserPosShift());
+		if (getPosShift() == null) {
+			String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 		setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
 
@@ -234,7 +226,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 			if (!isNew()) {
 				criteria.addNotEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), getInvoice().getId());
 			}
-			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_POS_ID), getPos().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_POS_SHIFT_POS_ID), getPosShift().getPos().getId());
 			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
 			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), new Date());
 			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_STATUS), InvoiceStatus.PENDING);
@@ -287,7 +279,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 	public void onRecoverTicket(ActionEvent event) {
 		try {
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_POS_ID), getPos().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_POS_SHIFT_POS_ID), getPosShift().getPos().getId());
 			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
 			if (getRecoverSeries() == null) {
 				criteria.addNullExpression(getFieldName(IEntityAlias.INVOICE_SERIES));
@@ -398,7 +390,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 			returnInvoice.setSurcharge(invoice.isSurcharge());
 			returnInvoice.setWithholding(invoice.isWithholding());
 			returnInvoice.setTransaction(invoice.getTransaction());
-			returnInvoice.setPos(invoice.getPos());
+			returnInvoice.setPosShift(invoice.getPosShift());
 			returnInvoice.setSeller(getSeller());
 			getManagerBean().restoreNullSubPOJOs(returnInvoice);
 			returnInvoice = (Invoice)getManagerBean().insert(returnInvoice);

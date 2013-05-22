@@ -349,16 +349,7 @@ public class ConfigCollectionsController {
 	}
 
 	public List<SelectItem> getPayMethods() throws ManagerBeanException {
-		List<SelectItem> payMethods = new LinkedList<SelectItem>();
-		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_NAME));
-		for (ITransferObject ito : payMethodBean.getList(criteria)) {
-			PayMethod pMethod = (PayMethod)ito;
-			SelectItem item = new SelectItem(pMethod, pMethod.getName());
-			payMethods.add(item);
-		}
-		return payMethods;
+		return getPayMethods(null);
 	}
 
 	public List<SelectItem> getDirectPayMethods() throws ManagerBeanException {
@@ -366,33 +357,27 @@ public class ConfigCollectionsController {
 		directPayMethods.add(PayMethodType.CASH_BASIS);
 		directPayMethods.add(PayMethodType.DEBIT_CARD);
 		directPayMethods.add(PayMethodType.CREDIT_CARD);
-
-		List<SelectItem> payMethods = new LinkedList<SelectItem>();
-		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
-		Criteria criteria = new Criteria();
-		criteria.addExpression(ExpressionUtilities.getInExpression(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), directPayMethods));
-		criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_NAME));
-		for (ITransferObject ito : payMethodBean.getList(criteria)) {
-			PayMethod pMethod = (PayMethod)ito;
-			SelectItem item = new SelectItem(pMethod, pMethod.getName());
-			payMethods.add(item);
-		}
-		return payMethods;
+		return getPayMethods(directPayMethods);
 	}
 
-	public List<SelectItem> getCardPayMethods() throws ManagerBeanException {
-		List<PayMethodType> directPayMethods = new LinkedList<PayMethodType>();
-		directPayMethods.add(PayMethodType.DEBIT_CARD);
-		directPayMethods.add(PayMethodType.CREDIT_CARD);
+	public List<SelectItem> getNoCashDirectPayMethods() throws ManagerBeanException {
+		List<PayMethodType> noCashDirectPayMethods = new LinkedList<PayMethodType>();
+		noCashDirectPayMethods.add(PayMethodType.DEBIT_CARD);
+		noCashDirectPayMethods.add(PayMethodType.CREDIT_CARD);
+		return getPayMethods(noCashDirectPayMethods);
+	}
 
+	private List<SelectItem> getPayMethods(List<PayMethodType> payMethodTypes) throws ManagerBeanException {
 		List<SelectItem> payMethods = new LinkedList<SelectItem>();
 		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
 		Criteria criteria = new Criteria();
-		criteria.addExpression(ExpressionUtilities.getInExpression(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), directPayMethods));
+		if (payMethodTypes != null && payMethodTypes.size() > 0) {
+			criteria.addExpression(ExpressionUtilities.getInExpression(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), payMethodTypes));
+		}
 		criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_NAME));
 		for (ITransferObject ito : payMethodBean.getList(criteria)) {
-			PayMethod pMethod = (PayMethod)ito;
-			SelectItem item = new SelectItem(pMethod, pMethod.getName());
+			PayMethod payMethod = (PayMethod)ito;
+			SelectItem item = new SelectItem(payMethod, payMethod.getName());
 			payMethods.add(item);
 		}
 		return payMethods;

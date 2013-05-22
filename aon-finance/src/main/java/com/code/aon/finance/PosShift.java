@@ -1,7 +1,8 @@
 package com.code.aon.finance;
 
-import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -10,13 +11,19 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
-import com.code.aon.finance.Finance;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.PosShiftDB;
 
@@ -25,10 +32,12 @@ import com.esferalia.aon.entity.master.PosShiftDB;
 public class PosShift extends PosShiftDB {
 
 	private static final long serialVersionUID = 1L;
+	private static final Logger LOGGER = LoggerFactory.getLogger(Finance.class.getName());
 	
 	private Set<PosShiftCount> posShiftCount = new HashSet<PosShiftCount>();
-	
-	@OneToMany(mappedBy = "posShift", cascade={CascadeType.ALL})
+	private Map<PayMethod, double[]> totalShiftCountMap;
+
+	@OneToMany(mappedBy = "posShift", cascade={CascadeType.REMOVE})
 	public Set<PosShiftCount> getPosShiftCount() {
 		return posShiftCount;
 	}
@@ -37,38 +46,89 @@ public class PosShift extends PosShiftDB {
 	}
 	
 	@Transient
-	public double getFinalAmount() throws ManagerBeanException {
-		IManagerBean posShiftCountBean = BeanManager.getManagerBean(PosShiftCount.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(posShiftCountBean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_POS_SHIFT_ID), getId());
-		Projection projection = Projection.sum(posShiftCountBean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_AMOUNT));
-		Object value = posShiftCountBean.getUniqueResult(projection, criteria);
-		return (value == null) ? 0 : ((Double)value).doubleValue();
-	}
-	
-	@Transient
-	public Double getTotalCashAmount() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(PosShiftCount.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_POS_SHIFT_ID), this.getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_PAY_METHOD_TYPE), PayMethodType.CASH_BASIS);
-		Projection projection = Projection.sum(bean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_AMOUNT));
-		Double cashAmount = ((Double) bean.getUniqueResult(projection, criteria));
-		return cashAmount!=null?cashAmount:0;
-	}
-	
-	@Transient
-	public Double getTotalInvoiceAmount() throws ManagerBeanException {
-		if( !this.getPos().isInvoiceable() ){
-			IManagerBean bean = BeanManager.getManagerBean(Finance.class);
-			Criteria criteria = new Criteria();
-			criteria.addBetweenExpression(bean.getFieldName(IEntityAlias.FINANCE_INVOICE_CREATION_DATE),this.getStartTime(), this.getEndTime()!=null?this.getEndTime():new Date());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FINANCE_INVOICE_CREATION_USER), this.getUser().getLogin());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE), PayMethodType.CASH_BASIS);
-			Projection projection = Projection.sum(bean.getFieldName(IEntityAlias.FINANCE_AMOUNT));
-			return (Double) bean.getUniqueResult(projection, criteria);
+	public Map<PayMethod, double[]> getTotalShiftCountMap() {
+		if (totalShiftCountMap == null) {
+			totalShiftCountMap = calculateTotalShiftCountMap();
 		}
-		return null;
+		return totalShiftCountMap;
+	}
+
+	public void setTotalShiftCountMap(Map<PayMethod,double[]> totalShiftCountMap) {
+		this.totalShiftCountMap = totalShiftCountMap;
+	}
+
+	@Transient
+	private Map<PayMethod,double[]> calculateTotalShiftCountMap() {
+		Map<PayMethod,double[]> totalShiftCountMap = new HashMap<PayMethod, double[]>();
+		try {
+			IManagerBean posShiftCountBean = BeanManager.getManagerBean(PosShiftCount.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(posShiftCountBean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_POS_SHIFT_ID), getId());
+			criteria.addOrder(posShiftCountBean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_PAY_METHOD_NAME));
+			for (ITransferObject ito : posShiftCountBean.getList(criteria)) {
+				PosShiftCount posShiftCount = (PosShiftCount)ito;
+				double[] totals = (totalShiftCountMap.containsKey(posShiftCount.getPayMethod())) ? totalShiftCountMap.get(posShiftCount.getPayMethod()) : new double[2];
+				totals[0] = CommonUtil.round(totals[0] + posShiftCount.getAmount());
+				totalShiftCountMap.put(posShiftCount.getPayMethod(), totals);
+			}
+
+			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAYMENT), new Boolean(false));
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_POS_SHIFT_ID), getId());
+			criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_NAME));
+			Projection projection = Projection.group(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD));
+			for (Object obj : financeBean.getList(new ProjectionList(projection), criteria)) {
+				PayMethod payMethod = (PayMethod)obj;
+				Criteria sumCriteria = new Criteria();
+				sumCriteria.addExpression(criteria.getExpression());
+				sumCriteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_ID), payMethod.getId());
+				projection = Projection.sum(financeBean.getFieldName(IEntityAlias.FINANCE_AMOUNT));
+				Object value = financeBean.getUniqueResult(projection, sumCriteria);
+
+				double[] totals = (totalShiftCountMap.containsKey(payMethod)) ? totalShiftCountMap.get(payMethod) : new double[2];
+				totals[1] = CommonUtil.round(totals[1] + ((value == null) ? 0 : ((Double)value).doubleValue()));
+				totalShiftCountMap.put(payMethod, totals);
+			}
+
+			for (PayMethod payMethod : totalShiftCountMap.keySet()) {
+				if (payMethod.getType() == PayMethodType.CASH_BASIS) {
+					double totals[] = totalShiftCountMap.get(payMethod);
+					totals[0] = CommonUtil.round(totals[0] - getInitialAmount());
+					totalShiftCountMap.put(payMethod, totals);
+					break;
+				}
+			}
+		} catch (ManagerBeanException ex) {
+			LOGGER.error("Error obtaining totalShiftCountMap.", ex);
+		}
+		return totalShiftCountMap;
+	}
+
+	@Transient
+	public double getAmount() throws ManagerBeanException {
+		return getInitialAmount();
+	}
+
+	@Transient
+	public void setAmount(double amount) throws ManagerBeanException {
+		setInitialAmount(amount);
+	}
+
+	@Transient
+	public Double getTotalCountCashAmount() throws ManagerBeanException {
+		return getPosShiftCountAmount(PayMethodType.CASH_BASIS);
+	}
+
+	@Transient
+	private double getPosShiftCountAmount(PayMethodType type) throws ManagerBeanException {
+		double value = 0;
+		for (PayMethod payMethod : getTotalShiftCountMap().keySet()) {
+			if (type == payMethod.getType()) {
+				value = CommonUtil.round(value + getTotalShiftCountMap().get(payMethod)[0]);
+			}
+		}
+		return value;
 	}
 
 }

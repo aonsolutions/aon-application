@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -26,14 +27,38 @@
 							</f:facet>
 							<aon:outputText value="#{to.workPlace.description}" />
 						</aon:column>
-	
+
+						<c:if test="#{companyCollections.departmentsCount > 0}">
+							<aon:column alias="Pos.department.name">
+								<f:facet name="header">
+									<aon:outputText value="#{companyBundle.company_department}" />
+								</f:facet>
+								<aon:outputText value="#{to.department.name}" />
+							</aon:column>
+						</c:if>
+
 						<aon:column alias="Pos.name">
 							<f:facet name="header">
 								<aon:outputText value="#{financeBundle.finance_pos_name}" />
 							</f:facet>
 							<aon:outputText value="#{to.name}" />
 						</aon:column>
-	
+
+						<aon:column alias="Pos.displayMode">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_type}" />
+							</f:facet>
+							<aon:outputText value="#{to.displayMode}" />
+						</aon:column>
+
+						<aon:column alias="Pos.active">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{bundle.aon_active}" rendered="#{to.active}" />
+							<aon:outputText value="#{bundle.aon_inactive}" rendered="#{!to.active}" />
+						</aon:column>
+
 					</ui:define>
 				</ui:decorate>
 			</aon:div>

@@ -18,6 +18,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.registry.RegistryBank;
+import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.ProjectReservation;
@@ -25,7 +26,6 @@ import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.invoicing.NoShowInvoiceTo;
 import com.esferalia.aon.pms.invoicing.NoShowInvoicing;
 import com.esferalia.aon.ui.pms.event.NoShowInvoiceSearchListener;
-import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class NoShowInvoiceController extends BasicController{
 
@@ -133,8 +133,7 @@ public class NoShowInvoiceController extends BasicController{
 	}
 	
 	private boolean validateNoShowInvoice() throws ManagerBeanException {
-		PmsUtils pmsUtils = new PmsUtils();
-		if (isCashOrCardPayment() && !pmsUtils.isUserPosOpen()) {
+		if (isCashOrCardPayment() && !PosUtils.isUserPosShiftOpened()) {
 			String msg = "No se puede Facturar en Metálico/Tarjetas. El Usuario no ha abierto la Caja.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);

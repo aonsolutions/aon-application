@@ -488,10 +488,22 @@ color:#000;
  .aon-icon-card{
 	background:transparent url(images/aon-icon/aon-icon-card.png) scroll left center no-repeat;	
  }
- .aon-icon-pay{
+ .aon-icon-cheque{
+	background:transparent url(images/aon-icon/aon-icon-cheque.png) scroll left center no-repeat;	
+ }
+ .aon-icon-bank{
+	background:transparent url(images/aon-icon/aon-icon-bank.png) scroll left center no-repeat;	
+ }
+ .aon-icon-safeBox{
+	background:transparent url(images/aon-icon/aon-icon-safeBox.png) scroll left center no-repeat;	
+ }
+ .aon-icon-open-safeBox{
+	background:transparent url(images/aon-icon/aon-icon-open-safeBox.png) scroll left center no-repeat;	
+ }
+.aon-icon-pay{
 	background:transparent url(images/aon-icon/aon-icon-pay.png) scroll left center no-repeat;	
  }
-.aon-icon-return{
+ .aon-icon-return{
 	background:transparent url(images/aon-icon/aon-icon-return.png) scroll left center no-repeat;	
  }
  .aon-icon-fraction{

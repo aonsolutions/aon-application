@@ -39,6 +39,7 @@ import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -57,7 +58,6 @@ import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.pms.reservation.ReservationRequestManager;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.ui.pms.ProjectReservationPermission;
-import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class ProjectReservationController extends BasicController implements IPmsConstants {
 
@@ -507,8 +507,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void onInvoiceShow(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		try {
-			PmsUtils pmsUtils = new PmsUtils();
-			if (reservation.isGuestHolder() && !pmsUtils.isUserPosOpen()) {
+			if (reservation.isGuestHolder() && !PosUtils.isUserPosShiftOpened()) {
 				setShowInvoiceWindow(false);
 				String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
 				AonUtil.addErrorMessage(msg);
@@ -788,8 +787,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		try {
 			Invoice invoice = (Invoice)getInvoiceModel().getRowData();
-			PmsUtils pmsUtils = new PmsUtils();
-			if ((reservation.isGuestHolder() || invoice.isService()) && !pmsUtils.isUserPosOpen()) {
+			if ((reservation.isGuestHolder() || invoice.isService()) && !PosUtils.isUserPosShiftOpened()) {
 				setShowRectificationWindow(false);
 				String msg = "No se puede Abonar. El Usuario no ha abierto la Caja.";
 				AonUtil.addErrorMessage(msg);
