@@ -63,8 +63,8 @@
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;">
 									<aon:selectOneRadio styleClass="aon-padding-bottom"
 										value="#{controller.newBatch}">
-										<f:selectItem itemLabel="#{pmsBundle.pms_create_finance_batch}" itemValue="#{true}" />
-										<f:selectItem itemLabel="#{pmsBundle.pms_modify_finance_batch}" itemValue="#{false}" />
+										<f:selectItem itemLabel="#{financeBundle.finance_create_finance_batch}" itemValue="#{true}" />
+										<f:selectItem itemLabel="#{financeBundle.finance_modify_finance_batch}" itemValue="#{false}" />
 										<a4j:support event="onclick" ajaxSingle="true" 
 											actionListener="#{controller.onBatchModeChanged}" reRender="financeBatchGrid" />
 									</aon:selectOneRadio>

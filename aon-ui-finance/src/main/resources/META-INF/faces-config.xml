@@ -3700,7 +3700,11 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>posShiftCount</value>
-		</managed-property>		
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>PosShiftCount_payMethod_name</value>
+		</managed-property>
 	</managed-bean>
 	
 	<!-- ************* POS OPENING ***************** -->

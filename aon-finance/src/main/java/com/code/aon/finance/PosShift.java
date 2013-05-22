@@ -116,6 +116,11 @@ public class PosShift extends PosShiftDB {
 	}
 
 	@Transient
+	public Double getTotalCountAmount() throws ManagerBeanException {
+		return getPosShiftCountAmount(null);
+	}
+
+	@Transient
 	public Double getTotalCountCashAmount() throws ManagerBeanException {
 		return getPosShiftCountAmount(PayMethodType.CASH_BASIS);
 	}
@@ -124,7 +129,7 @@ public class PosShift extends PosShiftDB {
 	private double getPosShiftCountAmount(PayMethodType type) throws ManagerBeanException {
 		double value = 0;
 		for (PayMethod payMethod : getTotalShiftCountMap().keySet()) {
-			if (type == payMethod.getType()) {
+			if (type == null || type == payMethod.getType()) {
 				value = CommonUtil.round(value + getTotalShiftCountMap().get(payMethod)[0]);
 			}
 		}

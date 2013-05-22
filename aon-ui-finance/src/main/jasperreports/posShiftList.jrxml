@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="239"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -12,15 +12,14 @@
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<field name="id" class="java.lang.Integer"/>
-	<field name="pos" class="com.code.aon.finance.Pos"/>
-	<field name="user" class="com.code.aon.config.User"/>
 	<field name="domain" class="java.lang.Integer"/>
-	<field name="shift" class="com.esferalia.aon.pms.enumeration.Shift"/>
+	<field name="pos" class="com.code.aon.finance.Pos"/>
+	<field name="shift" class="com.code.aon.finance.enumeration.Shift"/>
 	<field name="startTime" class="java.util.Date"/>
 	<field name="endTime" class="java.util.Date"/>
 	<field name="initialAmount" class="java.lang.Double"/>
 	<field name="posShiftCount" class="java.util.Set"/>
-	<field name="finalAmount" class="java.lang.Double"/>
+	<field name="totalCountAmount" class="java.lang.Double"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -43,7 +42,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report_posShift_list}]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd/MM/yyyy HH.mm.ss" isBlankWhenNull="true">
+			<textField pattern="dd/MM/yyyy HH.mm" isBlankWhenNull="true">
 				<reportElement key="textField-2" x="390" y="1" width="145" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -73,7 +72,7 @@
 					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_hotel_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_workPlace}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-57" mode="Opaque" x="88" y="0" width="74" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -139,11 +138,11 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
 					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_initial_amount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_initial_amount_abrv}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-59" mode="Opaque" x="423" y="0" width="56" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -153,11 +152,11 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
 					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_final_amount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_final_amount_abrv}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-59" mode="Opaque" x="479" y="0" width="56" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -167,7 +166,7 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
 					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
@@ -266,7 +265,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{finalAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{totalCountAmount} + $F{initialAmount}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-56" x="479" y="0" width="56" height="14"/>
@@ -279,7 +278,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{finalAmount}-$F{initialAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{totalCountAmount}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
