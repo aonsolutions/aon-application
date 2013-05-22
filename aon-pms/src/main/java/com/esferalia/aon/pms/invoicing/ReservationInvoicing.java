@@ -108,6 +108,7 @@ public class ReservationInvoicing implements IReservationConstants {
 
 			RectificationInvoicingManager rectificationManager = new RectificationInvoicingManager();
 			Invoice rectifier = rectificationManager.rectifyInvoice(invoice, series, number, date, comments);
+			rectifier.setPosShift(reservationInvoiceTo.getPosShift());
 			recordInvoice(rectifier);
 
 			if (invoice.isService() && !reservationInvoiceTo.isEarlyCheckOut() && invoice.getProject() != null && invoice.getProject().getId() != null) {
@@ -152,6 +153,7 @@ public class ReservationInvoicing implements IReservationConstants {
 		invoice.setScope((!reservationInvoiceTo.isService()) ? reservation.getHotelReservation().getScope() : reservationInvoiceTo.getHotel().getScope());
 		invoice.setService(reservationInvoiceTo.isService() || (reservationInvoiceTo.isEarlyCheckOut() && reservation.isAgencyHolder()));
 		invoice.setComments(reservationInvoiceTo.getComments());
+		invoice.setPosShift(reservationInvoiceTo.getPosShift());
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		return (Invoice)invoiceBean.insert(invoice);

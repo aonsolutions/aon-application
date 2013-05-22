@@ -116,6 +116,7 @@ public class NoShowInvoiceController extends BasicController{
 				noShowInvoiceTo.setPayMethod(getNoShowPayMethod());
 				noShowInvoiceTo.setRegistryBank(getNoShowBank());
 				noShowInvoiceTo.setFinanceDate(getNoShowPaymentDate());
+				noShowInvoiceTo.setPosShift(PosUtils.getUserPosShift());
 	
 				NoShowInvoicing noShowInvoicing = new NoShowInvoicing();
 				int count = noShowInvoicing.invoice(noShowInvoiceTo, getCheckedReservations());
@@ -165,6 +166,7 @@ public class NoShowInvoiceController extends BasicController{
 					noShowInvoiceTo.setGuestReservation(search.isGuestReservationSearch());
 					noShowInvoiceTo.setIssueDate(new Date());
 					noShowInvoiceTo.setKeepAdvance(search.isGuestReservationSearch());
+					noShowInvoiceTo.setPosShift(PosUtils.getUserPosShift());
 
 					NoShowInvoicing noShowInvoicing = new NoShowInvoicing();
 					noShowInvoicing.invoice(noShowInvoiceTo, reservations);

@@ -530,6 +530,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			}
 			setReservationInvoiceTo(new ReservationInvoiceTo(false));
 			getReservationInvoiceTo().setIssueDate(reservation.getStartDate());
+			getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
 			fillInvoiceData(reservation);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
@@ -796,6 +797,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			setReservationInvoiceTo(new ReservationInvoiceTo(false));
 			getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
 			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+			getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);

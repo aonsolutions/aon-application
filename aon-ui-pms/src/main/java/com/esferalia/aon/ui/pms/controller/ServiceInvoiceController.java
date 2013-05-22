@@ -418,6 +418,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 				}
 				getReservationInvoiceTo().setComments(obtainInvoiceComments(getReservationInvoiceTo().getServices()));
 				getReservationInvoiceTo().setDirectCustomer(true);
+				getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
 
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 				Invoice invoice = reservationInvoicing.invoice(getReservationInvoiceTo(), reservation);
@@ -518,6 +519,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 			getReservationInvoiceTo().setHotel(obtainRectificationHotel());
 			getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
 			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+			getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);

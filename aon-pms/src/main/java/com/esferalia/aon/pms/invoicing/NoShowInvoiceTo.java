@@ -3,6 +3,7 @@ package com.esferalia.aon.pms.invoicing;
 import java.util.Date;
 
 import com.code.aon.config.PayMethod;
+import com.code.aon.finance.PosShift;
 import com.code.aon.registry.RegistryBank;
 import com.esferalia.aon.pms.reservation.IReservationConstants;
 
@@ -15,6 +16,7 @@ public class NoShowInvoiceTo implements IReservationConstants {
 	private RegistryBank registryBank;
 	private Date financeDate;
 	private boolean keepAdvance;
+	private PosShift posShift;
 
 	public boolean isGuestReservation() {
 		return guestReservation;
@@ -64,6 +66,13 @@ public class NoShowInvoiceTo implements IReservationConstants {
 	}
 	public void setKeepAdvance(boolean keepAdvance) {
 		this.keepAdvance = keepAdvance;
+	}
+
+	public PosShift getPosShift() {
+		return posShift;
+	}
+	public void setPosShift(PosShift posShift) {
+		this.posShift = posShift;
 	}
 
 }

@@ -8,6 +8,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.InvoiceAddress;
+import com.code.aon.finance.PosShift;
 import com.code.aon.product.Item;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.ICalculable;
@@ -38,6 +39,7 @@ public class ReservationInvoiceTo implements IReservationConstants {
 	private Date earlyCheckOutDate;
 	private int penaltyDays;
 	private double penaltyAmount;
+	private PosShift posShift;
 	private List<HotelService> services;
 	private List<Finance> finances;
 
@@ -179,6 +181,14 @@ public class ReservationInvoiceTo implements IReservationConstants {
 
 	public void setPenaltyAmount(double penaltyAmount) {
 		this.penaltyAmount = penaltyAmount;
+	}
+
+	public PosShift getPosShift() {
+		return posShift;
+	}
+
+	public void setPosShift(PosShift posShift) {
+		this.posShift = posShift;
 	}
 
 	public List<HotelService> getServices() {

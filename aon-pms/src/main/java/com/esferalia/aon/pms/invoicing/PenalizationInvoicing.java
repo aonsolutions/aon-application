@@ -87,6 +87,7 @@ public class PenalizationInvoicing implements IReservationConstants {
 		invoice.setScope(reservation.getHotelReservation().getScope());
 		invoice.setService(false);
 		invoice.setComments(reservationInvoiceTo.getComments());
+		invoice.setPosShift(reservationInvoiceTo.getPosShift());
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		return (Invoice)invoiceBean.insert(invoice);

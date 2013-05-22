@@ -101,6 +101,7 @@ public class AdvanceInvoiceController extends BasicController{
 				advanceInvoiceTo.setPayMethod(getAdvancePayMethod());
 				advanceInvoiceTo.setRegistryBank(getAdvanceBank());
 				advanceInvoiceTo.setFinanceDate(getAdvancePaymentDate());
+				advanceInvoiceTo.setPosShift(PosUtils.getUserPosShift());
 	
 				AdvanceInvoicing advanceInvoicing = new AdvanceInvoicing();
 				int count = advanceInvoicing.invoice(advanceInvoiceTo, getCheckedReservations());

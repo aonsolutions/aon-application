@@ -104,6 +104,7 @@ public class AdvanceInvoicing {
 		invoice.setType(InvoiceType.SALES);
 		invoice.setScope(reservation.getHotelReservation().getScope());
 		invoice.setAdvance(true);
+		invoice.setPosShift(advanceInvoiceTo.getPosShift());
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		return (Invoice)invoiceBean.insert(invoice);

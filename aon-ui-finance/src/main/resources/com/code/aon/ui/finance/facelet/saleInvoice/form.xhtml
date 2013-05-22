@@ -444,10 +444,13 @@
 							value="#{saleInvoice.onSellerChanged}" type="lookupChangeListener" />
 					</ui:include>
 
-					<aon:outputLabel for="Invoice_posShift"
-						value="#{financeBundle.finance_pos}" />
-					<aon:outputText id="Invoice_posShift"
-						value="#{saleInvoice.to.posShift.pos.name}" />
+					<aon:outputLabel value="#{financeBundle.finance_pos}" />
+					<aon:div styleClass="aon-bold">
+						<aon:outputText value="#{saleInvoice.to.posShift.pos.name}" />
+						<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
+							<aon:outputText value=" (#{saleInvoice.to.posShift.pos.workPlace.description})" />
+						</c:if>
+					</aon:div>
 
 				</aon:panelGrid>
 

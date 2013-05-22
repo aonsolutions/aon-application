@@ -400,6 +400,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 					getReservationInvoiceTo().setComments("SALIDA ANTICIPADA");
 					getReservationInvoiceTo().setPenaltyDays(getEarlyCheckOutPenaltyDays());
 					getReservationInvoiceTo().setPenaltyAmount(getEarlyCheckOutPenaltyAmount());
+					getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
 
 					if (getReservation().isAgencyHolder() || !isChargeCheckOut()) {
 						getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());

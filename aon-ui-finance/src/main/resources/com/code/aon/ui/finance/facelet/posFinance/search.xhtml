@@ -58,15 +58,15 @@
 
 					<aon:outputLabel value="#{bundle.aon_date}" />
 					<aon:div>
-						<aon:outputLabel for="PosFinance_dueDate_from"
+						<aon:outputLabel for="PosFinance_dueDate-from"
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
-						<aon:selectInputDate id="PosFinance_dueDate_from"
+						<aon:selectInputDate id="PosFinance_dueDate-from"
 							valueChangeListener="#{posFinance.addGreaterThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
-						<aon:outputLabel for="PosFinance_dueDate_to"
+						<aon:outputLabel for="PosFinance_dueDate-to"
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
-						<aon:selectInputDate id="PosFinance_dueDate_to"
+						<aon:selectInputDate id="PosFinance_dueDate-to"
 							valueChangeListener="#{posFinance.addLessThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
