@@ -2,6 +2,7 @@ package com.code.aon.ui.purchase.controller;
 
 
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -512,7 +513,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		return emailUtil;
 	}
 
-	public void onSendByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
+	public void onShowEmailMessage( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
 		PurchaseReportManager purchaseReportManager = (PurchaseReportManager) AonUtil.getRegisteredBean(PURCHASE_REPORT_CONTROLLER_NAME);
 		purchaseReportManager.setValued(true);
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
@@ -527,7 +528,9 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		}
 	}	
 	
-	public void onEmailSended( ActionEvent event ) throws ManagerBeanException {
+	public void onEmailSend( ActionEvent event ) throws ManagerBeanException {
+		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+		messageController.onSend(event);
 		updatePurchaseCommunication((Purchase) this.getTo());
 	}
 	
