@@ -528,10 +528,10 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	}	
 	
 	public void onEmailSended( ActionEvent event ) throws ManagerBeanException {
-		setPurchaseSended((Purchase) this.getTo());
+		updatePurchaseCommunication((Purchase) this.getTo());
 	}
 	
-	protected void setPurchaseSended(Purchase purchase) throws ManagerBeanException{
+	protected void updatePurchaseCommunication(Purchase purchase) throws ManagerBeanException{
 		purchase.setEmailCommunication(true);
 		IManagerBean bean = BeanManager.getManagerBean(Purchase.class);
 		bean.restoreNullSubPOJOs(purchase);

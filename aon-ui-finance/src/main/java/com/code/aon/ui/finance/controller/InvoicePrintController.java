@@ -77,7 +77,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 			emailUtil.changeMailAccount(account);
 			List<ITransferObject> list = getManagerBean().getList(getCriteria());
 			for( ITransferObject to : list ) {
-				emailUtil.sendInvoice( (Invoice) to, subject, content  );	
+				emailUtil.sendInvoice( (Invoice) to, subject, content, messageController.isSaveSent()  );	
 			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
@@ -85,7 +85,8 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 			throw new AbortProcessingException(th.getMessage(), th);
 		} finally {
 			LogPanelController logger = LogPanelController.getInstance();
-			logger.info( AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_SEND_EMAIL_FNINISH) );			
+			logger.info( AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_SEND_EMAIL_FNINISH) );
+			logger.finish();
 			messageController.setShowNewMessageWindow(false);
 		}
 	}	

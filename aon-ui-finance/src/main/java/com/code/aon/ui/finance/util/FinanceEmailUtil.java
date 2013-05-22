@@ -30,6 +30,7 @@ import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.bean.AonMessage;
 
 public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessages, IFinanceConstants {
 
@@ -118,7 +119,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 		return aonFile;
 	}
 	
-	public void sendInvoice( Invoice invoice, String subject, String content ) {
+	public void sendInvoice( Invoice invoice, String subject, String content, boolean saveSent ) {
 		LogPanelController logger = LogPanelController.getInstance();
 		AonFile file = null;
 		AonFile xml = null;
@@ -134,7 +135,10 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 				String _content = formatEmailBody(invoice, content );
 				file = getInvoiceFile(invoice);
 				xml = getInvoiceXml(invoice);
-				getEmailSender().sendMessage(recipients, _subject, _content, MimeType.MIME_HTML, file, xml );
+				AonMessage aonMessage = getEmailSender().sendMessage(recipients, _subject, _content, MimeType.MIME_HTML, file, xml );
+				if ( saveSent ) {
+					getEmailSender().storeMessage(aonMessage);
+				}
 				String text = AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_SEND_EMAIL);
 				String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName(), ArrayUtils.toString(emails) );
 				logger.info( message );

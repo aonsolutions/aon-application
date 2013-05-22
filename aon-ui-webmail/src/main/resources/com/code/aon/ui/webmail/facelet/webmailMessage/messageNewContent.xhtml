@@ -75,23 +75,25 @@
 					</aon:selectOneMenu>
 					
 					<c:if test="#{!skipRecipients}" >
-						<aon:div styleClass="aon-text-right">							
-							<aon:commandButton id="addToEmail#{messageSuffix}"
-								reRender="showEmailWindow#{messageSuffix}" disabled="#{disableContacts}"
-								actionListener="#{webmailMessage.openEmailsToPanelPopup}"
-								styleClass="new-mail-button"
-								value="#{webmailBundle.webmail_to}"/>							
-						</aon:div>
-						<aon:div>
-							<aon:inputText id="NewMail_to#{messageSuffix}"
-								size="#{inputTextSize}"
-								value="#{webmailMessage.recipientsTo}"/>
-							<c:if test="#{!disableContacts}" >
-								<ui:include src="/com/code/aon/ui/webmail/facelet/util/suggestEmail.xhtml">
-									<ui:param name="inputId" value="NewMail_to#{messageSuffix}" />
-								</ui:include>	
-							</c:if>							
-						</aon:div>
+						<c:if test="#{!skipToEmail}" >
+							<aon:div styleClass="aon-text-right">							
+								<aon:commandButton id="addToEmail#{messageSuffix}"
+									reRender="showEmailWindow#{messageSuffix}" disabled="#{disableContacts}"
+									actionListener="#{webmailMessage.openEmailsToPanelPopup}"
+									styleClass="new-mail-button"
+									value="#{webmailBundle.webmail_to}"/>							
+							</aon:div>
+							<aon:div>
+								<aon:inputText id="NewMail_to#{messageSuffix}"
+									size="#{inputTextSize}"
+									value="#{webmailMessage.recipientsTo}"/>
+								<c:if test="#{!disableContacts}" >
+									<ui:include src="/com/code/aon/ui/webmail/facelet/util/suggestEmail.xhtml">
+										<ui:param name="inputId" value="NewMail_to#{messageSuffix}" />
+									</ui:include>	
+								</c:if>							
+							</aon:div>
+						</c:if>
 	
 						<aon:div styleClass="aon-text-right">						
 							<aon:commandButton id="addCcEmail#{messageSuffix}"

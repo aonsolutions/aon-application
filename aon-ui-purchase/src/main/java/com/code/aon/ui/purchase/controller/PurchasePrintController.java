@@ -37,6 +37,7 @@ public class PurchasePrintController extends PurchaseController {
 				messageController.initNewMessage();
 				PurchaseController controller = (PurchaseController) AonUtil.getRegisteredBean(IPurchaseConstants.PURCHASE_CONTROLLER_NAME);
 				PurchaseEmailUtil emailUtil = controller.getEmailController();
+				emailUtil.initMessageController(messageController);
 				messageController.setSubject( emailUtil.getEmailSubject() );
 				String body = emailUtil.getEmailBody();
 				messageController.updateMessageBody( emailUtil.getEmailContent(body, AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, IPurchaseMessages.PURCHASE_EMAIL_BODY_HEADER)) );
@@ -69,8 +70,8 @@ public class PurchasePrintController extends PurchaseController {
 			for( ITransferObject to : list ) {
 				if ( logPanel.isActivePoll() ) {
 					super.fireBeforeEmailSend(event, to);
-					emailUtil.sendPurchase( (Purchase) to, getMoreRecipients(), subject, content  );
-					super.setPurchaseSended((Purchase) to);
+					emailUtil.sendPurchase( (Purchase) to, getMoreRecipients(), messageController.getRecipientsCc(), messageController.getRecipientsBcc(), subject, content  );
+					super.updatePurchaseCommunication((Purchase) to);
 				} else {
 					break;
 				}
@@ -80,8 +81,10 @@ public class PurchasePrintController extends PurchaseController {
 			AonUtil.addErrorMessage(th.getMessage());
 			throw new AbortProcessingException(th.getMessage(), th);
 		} finally {
-			logger.info( AonUtil.getMessage(BUNDLE_KEY, IPurchaseMessages.PURCHASE_SEND_EMAIL_FNINISH) );			
+			logger.info( AonUtil.getMessage(BUNDLE_KEY, IPurchaseMessages.PURCHASE_SEND_EMAIL_FNINISH) );
+			logger.finish();
 			messageController.setShowNewMessageWindow(false);
+			this.initializeModel();
 		}
 	}	
 	

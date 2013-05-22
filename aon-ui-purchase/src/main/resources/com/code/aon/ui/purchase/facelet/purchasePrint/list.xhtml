@@ -68,9 +68,9 @@
 			<ui:decorate template="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" >
 				<ui:param name="messageSuffix" value="-Purchase" />
 				<ui:param name="skipSendButton" value="true" />
-				<ui:param name="skipRecipients" value="true" />
+				<ui:param name="skipToEmail" value="true" />
 				<ui:param name="skipAttachments" value="true" />
-				<ui:param name="windowHeight" value="420" />
+				<ui:param name="windowHeight" value="470" />
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="send"
 						value="#{webmailBundle.webmail_send}"
@@ -84,6 +84,7 @@
 			
 			<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
 				<ui:param name="logPanelTitle" value="#{purchaseBundle.purchase_send_email_title}" />
+				<ui:param name="closeButtonReRender" value="aonContent" />
 			</ui:include>		
 		</c:if>
 

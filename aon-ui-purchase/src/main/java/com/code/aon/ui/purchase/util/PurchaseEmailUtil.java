@@ -1,6 +1,5 @@
 package com.code.aon.ui.purchase.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
@@ -26,15 +25,19 @@ import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.purchase.IPurchaseMessages;
 import com.code.aon.ui.purchase.controller.IPurchaseConstants;
-import com.code.aon.ui.purchase.controller.PurchaseController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.bean.AonMessage;
 
 public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseMessages, IPurchaseConstants {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseEmailUtil.class.getName());
 
 	private static final String REPORT_KEY = "purchaseForm";
+
+	public void initMessageController( MessageController messageController ) throws ManagerBeanException, IOException, ReportException {
+		initMessageController(messageController, null);
+	}
 
 	public void initMessageController( MessageController messageController, Purchase purchase, List<String> moreRecipients ) throws ManagerBeanException, IOException, ReportException {
 		String[] emails = getEmails( purchase, moreRecipients );
@@ -100,10 +103,10 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseMess
 	}
 	
 	public void sendPurchase( Purchase purchase, String subject, String content ) {
-		sendPurchase( purchase, null, subject, content );
+		sendPurchase( purchase, null, null, null, subject, content );
 	}
 	
-	public void sendPurchase( Purchase purchase, List<String> moreRecipients, String subject, String content ) {
+	public void sendPurchase( Purchase purchase, List<String> moreRecipients, String recipientsCc, String recipientsBcc, String subject, String content ) {
 		LogPanelController logger = LogPanelController.getInstance();
 		AonFile file = null;
 		AonFile xml = null;
@@ -117,8 +120,14 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseMess
 				Address[] recipients = getEmailAddresses(emails, purchase.getSupplier().getRegistry().getFullName() );
 				String _subject = formatEmailSubject(purchase, subject);
 				String _content = formatEmailBody(purchase, content );
-				file = getPurchaseFile(purchase);
-				getEmailSender().sendMessage(recipients, _subject, _content, MimeType.MIME_HTML, file );
+				file = getReport(purchase, REPORT_KEY);
+				
+				AonMessage aonMessage = getEmailSender().createMessage(recipients, _subject);
+				getEmailSender().addMessageContent(aonMessage, _content, MimeType.MIME_HTML, null, file);
+				aonMessage.setRecipientsCc(recipientsCc);
+				aonMessage.setRecipientsBcc(recipientsBcc);
+				getEmailSender().sendMessage(aonMessage);
+				
 				String text = AonUtil.getMessage(BUNDLE_KEY, PURCHASE_SEND_EMAIL);
 				String message = MessageFormat.format(text, purchase.getReferenceCode(), purchase.getSupplier().getRegistry().getFullName(), ArrayUtils.toString(emails) );
 				logger.info( message );
@@ -138,22 +147,4 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseMess
 		}
 	}
 	
-	private AonFile getPurchaseFile( Purchase purchase ) throws IOException, ReportException, ManagerBeanException {
-		PurchaseController controller = (PurchaseController) AonUtil.getRegisteredBean(PURCHASE_CONTROLLER_NAME);
-		return getPurchaseFile(controller.getPurchaseData(purchase), purchase);
-	}
-	
-	public AonFile getPurchaseFile( byte[] data, Purchase purchase ) throws IOException {
-		PurchaseController controller = (PurchaseController) AonUtil.getRegisteredBean(PURCHASE_CONTROLLER_NAME);
-		String fileName = controller.getDescription( purchase );
-		
-		File file = File.createTempFile( fileName, ".pdf" );
-		FileUtils.writeByteArrayToFile(file, data);
-		AonFile aonFile = new AonFile();
-		aonFile.setFile(file);	
-		aonFile.setFileName( fileName + ".pdf" );
-		aonFile.setMimeType(MimeType.MIME_PDF);
-		return aonFile;
-	}
-
 }
