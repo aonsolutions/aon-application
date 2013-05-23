@@ -15,7 +15,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.PayMethod;
@@ -164,17 +163,17 @@ public class PosShiftController extends BasicController implements IFinanceConst
 	}
 
 	private boolean isCountOk(PosShift posShift, PayMethodType type) throws ManagerBeanException {
-		double countTotal = 0;
-		double financeTotal = 0;
 		if (posShift.getEndTime() != null) {
 			for (PayMethod payMethod : posShift.getTotalShiftCountMap().keySet()) {
 				if (type == payMethod.getType()) {
-					countTotal = CommonUtil.round(countTotal + posShift.getTotalShiftCountMap().get(payMethod)[0]);
-					financeTotal = CommonUtil.round(financeTotal + posShift.getTotalShiftCountMap().get(payMethod)[1]);
+					double[] totals = posShift.getTotalShiftCountMap().get(payMethod);
+					if (totals[0] != totals[1]) {
+						return false;
+					}
 				}
 			}
 		}
-		return countTotal == financeTotal;
+		return true;
 	}
 
 	public List<SelectItem> getWorkPlacePos() throws ManagerBeanException {
