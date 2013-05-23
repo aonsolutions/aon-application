@@ -110,6 +110,7 @@ public class PosClosingController implements IFinanceConstants {
 
 		try {
 			setPosShift((PosShift)BeanManager.getManagerBean(PosShift.class).insertOrUpdate(getPosShift()));
+            ((PosShiftController)FormUtil.getController(POS_SHIFT_CONTROLLER_NAME)).load(event, getPosShift().getId());
 		} catch (ManagerBeanException ex) {
 			String msg = "Error en el proceso de Cierre de Caja.";
 			AonUtil.addErrorMessage(msg);
