@@ -842,18 +842,45 @@
 		</params>
 	</report>
 
-	<!--  *********  Pos Closing Cash Count  ********* -->
-	<report id="cashDetailCount" description="Pos closing cash count Report">
-		<template path="/com/code/aon/ui/finance/report/cashDetailCount.jasper" />
-		<collection provider="#{cashCalculator}" />
+	<!--  *********  Pos Shift Cash Count  ********* -->
+	<report id="posShiftCashCount" description="Pos Shift Cash Count Report">
+		<template path="/com/code/aon/ui/finance/report/posShiftCashCount.jasper" />
+		<collection provider="#{posShift.calculator}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="posShift" value="#{cashCalculator.getPosShift}" />
-			<param id="initialAmount" value="#{cashCalculator.isInitialAmount}" />
-			<param id="calcTotal" value="#{cashCalculator.getCalcTotal}" />
+			<param id="posShift" value="#{posShift.getTo}" />
+			<param id="calculator" value="#{posShift.getCalculator}" />
+		</params>
+	</report>
+
+	<!--  *********  Pos Opening Cash Count  ********* -->
+	<report id="posOpeningCashCount" description="Pos Opening Cash Count Report">
+		<template path="/com/code/aon/ui/finance/report/posShiftCashCount.jasper" />
+		<collection provider="#{posOpening.calculator}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="posShift" value="#{posOpening.getPosShift}" />
+			<param id="calculator" value="#{posOpening.getCalculator}" />
+		</params>
+	</report>
+
+	<!--  *********  Pos Opening Cash Count  ********* -->
+	<report id="posClosingCashCount" description="Pos Closing Cash Count Report">
+		<template path="/com/code/aon/ui/finance/report/posShiftCashCount.jasper" />
+		<collection provider="#{posClosing.calculator}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="posShift" value="#{posClosing.getPosShift}" />
+			<param id="calculator" value="#{posClosing.getCalculator}" />
 		</params>
 	</report>
 
