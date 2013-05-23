@@ -62,13 +62,12 @@ public class PosClosingController implements IFinanceConstants {
 		List<PayMethodCount> totalShiftCountList = new LinkedList<PayMethodCount>();
 		for (PayMethod payMethod : posShift.getTotalShiftCountMap().keySet()) {
 			double[] totals = posShift.getTotalShiftCountMap().get(payMethod);
-
-			PayMethodCount payMethodCount = new PayMethodCount();
-			payMethodCount.setPayMethod(payMethod);
-			payMethodCount.setCountAmount(totals[0]);
-			payMethodCount.setFinanceAmount(totals[1]);
-			
-			totalShiftCountList.add(payMethodCount);
+			if (totals[0] != 0) {
+				PayMethodCount payMethodCount = new PayMethodCount();
+				payMethodCount.setPayMethod(payMethod);
+				payMethodCount.setCountAmount(totals[0]);
+				totalShiftCountList.add(payMethodCount);
+			}
 		}
 		Collections.sort(totalShiftCountList);
 		return totalShiftCountList;
@@ -132,7 +131,6 @@ public class PosClosingController implements IFinanceConstants {
 	public class PayMethodCount implements Comparable<Object> {
 		private PayMethod payMethod;
 		private double countAmount;
-		private double financeAmount;
 		
 		public PayMethod getPayMethod() {
 			return payMethod;
@@ -148,14 +146,6 @@ public class PosClosingController implements IFinanceConstants {
 
 		public void setCountAmount(double countAmount) {
 			this.countAmount = countAmount;
-		}
-
-		public double getFinanceAmount() {
-			return financeAmount;
-		}
-
-		public void setFinanceAmount(double financeAmount) {
-			this.financeAmount = financeAmount;
 		}
 
 		@Override
