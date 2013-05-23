@@ -56,21 +56,6 @@
 								value="#{posShift.to.pos.workPlace.description}"
 								rendered="#{!posShift.new}" />
 
-							<c:if test="#{companyCollections.departmentsCount > 0}">
-								<aon:outputLabel for="PosShift_pos_department" value="#{companyBundle.company_department}" />
-								<aon:selectOneMenu id="PosShift_pos_department"
-									value="#{posShift.department}"
-									rendered="#{posShift.new}">
-									<f:selectItem itemLabel=" - " itemValue="null" />
-									<f:selectItems value="#{companyCollections.departments}" />
-									<a4j:support event="onchange" reRender="PosShift_pos" ignoreDupResponses="true" ajaxSingle="true" />
-									<a4j:support event="oninputchanged" reRender="PosShift_pos" ignoreDupResponses="true" ajaxSingle="true" />
-								</aon:selectOneMenu>
-								<aon:outputText styleClass="aon-bold"
-									value="#{posShift.to.pos.department.name}"
-									rendered="#{!posShift.new}" />
-							</c:if>
-
 							<aon:outputLabel for="PosShift_pos" value="#{financeBundle.finance_pos}" />
 							<aon:selectOneMenu id="PosShift_pos"
 								value="#{posShift.to.pos}" required="true"
@@ -83,24 +68,20 @@
 								rendered="#{!posShift.new}" />
 
 							<aon:outputLabel for="PosShift_shift" value="#{financeBundle.finance_pos_shift}" />
-							<aon:panelGrid columns="2" columnClasses="aon-width-150, aon-width-auto">
-								<aon:selectOneMenu id="PosShift_shift"
-									value="#{posShift.to.shift}" required="true"
-									rendered="#{!readOnly}">
-									<f:selectItems value="#{financeCollections.shifts}" />
-								</aon:selectOneMenu>
-								<aon:outputText styleClass="aon-bold"
-									value="#{posShift.to.shift}"
-									rendered="#{readOnly}" />
-								<c:if test="#{!posShift.new}">
-									<aon:div>
-										<aon:outputLabel value="#{bundle.aon_login_user}:"
-											styleClass="aon-margin-right aon-italic" />
-										<aon:outputText value="#{posShift.to.username}" 
-											styleClass="aon-bold" />
-									</aon:div>
-								</c:if>
-							</aon:panelGrid>
+							<aon:selectOneMenu id="PosShift_shift"
+								value="#{posShift.to.shift}" required="true"
+								rendered="#{!readOnly}">
+								<f:selectItems value="#{financeCollections.shifts}" />
+							</aon:selectOneMenu>
+							<aon:outputText styleClass="aon-bold"
+								value="#{posShift.to.shift}"
+								rendered="#{readOnly}" />
+
+							<c:if test="#{!posShift.new}">
+								<aon:outputLabel value="#{bundle.aon_login_user}" />
+								<aon:outputText value="#{posShift.userName}" 
+									styleClass="aon-bold" />
+							</c:if>
 
 							<aon:outputLabel for="PosShift_startTime" value="#{financeBundle.finance_pos_opening}" />
 							<aon:panelGrid columns="2" columnClasses="aon-width-150, aon-width-auto">
@@ -158,7 +139,7 @@
 
 							<aon:outputLabel for="PosShift_endTime" value="#{financeBundle.finance_pos_closing}" />
 							<aon:selectInputDate id="PosShift_endTime"
-								value="#{posShift.to.endTime}" required="#{posShift.totalShiftCountModel.rowCount > 0}"
+								value="#{posShift.to.endTime}"
 								rendered="#{!readOnly}" 
 								size="20" inputSize="16" 
 								renderAsPopup="true" enableManualInput="true"
@@ -181,7 +162,7 @@
 					</aon:panel>
 
 					<aon:div>
-						<c:if test="#{posShift.to.endTime != null}">
+						<c:if test="#{!posShift.new}">
 							<aon:panel id="posShiftCountPanel">
 								<f:facet name="header">
 									<aon:outputLabel value="#{financeBundle.finance_total_count}" />

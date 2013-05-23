@@ -44,12 +44,6 @@
 							<aon:outputText styleClass="aon-bold"
 								value="#{posClosing.posShift.pos.workPlace.description}" />
 
-							<c:if test="#{companyCollections.departmentsCount > 0}">
-								<aon:outputLabel value="#{companyBundle.company_department}" />
-								<aon:outputText styleClass="aon-bold"
-									value="#{posClosing.posShift.pos.department.name}" />
-							</c:if>
-
 							<aon:outputLabel value="#{financeBundle.finance_pos}" />
 							<aon:outputText styleClass="aon-bold"
 								value="#{posClosing.posShift.pos.name}" />

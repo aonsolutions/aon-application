@@ -18,6 +18,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.User;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Pos;
@@ -194,6 +195,18 @@ public class PosShiftController extends BasicController implements IFinanceConst
 			}
 		}
 		return posList;
+	}
+
+	public String getUserName() throws ManagerBeanException {
+		String userName = ((PosShift)getTo()).getUsername();
+		IManagerBean userBean = BeanManager.getManagerBean(User.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(userBean.getFieldName(IEntityAlias.USER_LOGIN), userName);
+		for (ITransferObject ito : userBean.getList(criteria)) {
+			userName = userName + " (" + ((User)ito).getName() + ")";
+			break;
+		}
+		return userName;
 	}
 
 	public void onInitialAmountChanged(ValueChangeEvent event) {

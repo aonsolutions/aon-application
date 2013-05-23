@@ -38,21 +38,6 @@
 						value="#{posOpening.posShift.pos.workPlace.description}"
 						rendered="#{posOpening.posShift.id != null}" />
 
-					<c:if test="#{companyCollections.departmentsCount > 0}">
-						<aon:outputLabel for="PosShift_pos_department" value="#{companyBundle.company_department}" />
-						<aon:selectOneMenu id="PosShift_pos_department"
-							value="#{posOpening.department}"
-							rendered="#{posOpening.posShift.id == null}">
-							<f:selectItem itemLabel=" - " itemValue="null" />
-							<f:selectItems value="#{companyCollections.departments}" />
-							<a4j:support event="onchange" reRender="PosShift_pos,PosShift_shift" ignoreDupResponses="true" ajaxSingle="true" />
-							<a4j:support event="oninputchanged" reRender="PosShift_pos,PosShift_shift" ignoreDupResponses="true" ajaxSingle="true" />
-						</aon:selectOneMenu>
-						<aon:outputText styleClass="aon-bold"
-							value="#{posOpening.posShift.pos.department.name}"
-							rendered="#{posOpening.posShift.id != null}" />
-					</c:if>
-
 					<aon:outputLabel for="PosShift_pos" value="#{financeBundle.finance_pos}" />
 					<aon:selectOneMenu id="PosShift_pos"
 						value="#{posOpening.posShift.pos}" required="true" 
