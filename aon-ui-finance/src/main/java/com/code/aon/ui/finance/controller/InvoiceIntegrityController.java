@@ -14,13 +14,11 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.hibernate.Session;
 
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.finance.Invoice;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.util.AonUtil;
@@ -105,14 +103,11 @@ public class InvoiceIntegrityController {
 	}
 	
 	public void onPreview(ActionEvent event) {
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 
 			ps = conn.prepareStatement(MAIN_STMT,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 1;
@@ -139,28 +134,14 @@ public class InvoiceIntegrityController {
 			String msg = "No se pudo generar la lista de facturas.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
+		} catch (AonConnectionException e) {
+			String msg = "No se pudo generar la lista de facturas.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 	
@@ -208,14 +189,11 @@ public class InvoiceIntegrityController {
 
 	
 	public void onBreakDown(ActionEvent event) {
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			ps = conn.prepareStatement(STMT,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			ps.setInt(++i, getRegistry());
@@ -242,28 +220,14 @@ public class InvoiceIntegrityController {
 			String msg = "No se pudo generar la lista de facturas.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
+		} catch (AonConnectionException e) {
+			String msg = "No se pudo generar la lista de facturas.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -343,19 +307,9 @@ public class InvoiceIntegrityController {
 	public void onUpdate(ActionEvent event) {
 		PreparedStatement ips = null;
 		PreparedStatement fps = null;
-		
-		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
-		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			HibernateUtil.setBeginTransaction(false);
-			HibernateUtil.setCloseSession(false);
-			HibernateUtil.beginTransaction(sessionName);
-
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 
 			ips = conn.prepareStatement(INVOICE_UPDATE_STMT);
 			fps = conn.prepareStatement(FINANCE_UPDATE_STMT);
@@ -385,44 +339,16 @@ public class InvoiceIntegrityController {
 					fps.execute();
 				}
 			}
-			HibernateUtil.commitTransaction(sessionName);
 			onBreakDown(event);
 		} catch (Exception e) {
-			try {
-				HibernateUtil.rollbackTransaction(sessionName);
-			} catch (DAOException daoe) {
-			}
 			String msg = "No se pudo generar la lista de facturas.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		} finally {
-			if (ips != null) {
-				try {
-					ips.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (fps != null) {
-				try {
-					fps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-				}
-			}
-			HibernateUtil.closeSession(sessionName);
-			HibernateUtil.setCloseSession(mustCloseSession);
-			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+			DatabaseUtil.closeQuietly(ips);
+			DatabaseUtil.closeQuietly(fps);
+			DatabaseUtil.closeQuietly(conn);
 		}
-
-		
-		
-		
-		
 	}
 	
 	public class BreakDown {

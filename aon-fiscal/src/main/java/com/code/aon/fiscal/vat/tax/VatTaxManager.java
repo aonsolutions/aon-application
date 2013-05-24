@@ -12,31 +12,39 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.VatDeductionType;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
-import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDetail;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.TaxColumn;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class VatTaxManager {
+	
+	private String domainName;
+	
+	public VatTaxManager(String domainName) {
+		this.domainName = domainName;
+	}
+	public String getDomainName() {
+		return domainName;
+	}
 
 	public List<VatTaxDetail> getVatTax(VatTaxParameters params) throws ManagerBeanException {
 		Calendar c = Calendar.getInstance();
@@ -65,12 +73,9 @@ public class VatTaxManager {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		TaxColumn column = TaxColumn.ACUMULADO; 
-		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(getDomainName());
 
 			StringWriter stmt = new StringWriter();
 			String quotaStmt = "IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) )";
@@ -146,28 +151,12 @@ public class VatTaxManager {
 			return list;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 

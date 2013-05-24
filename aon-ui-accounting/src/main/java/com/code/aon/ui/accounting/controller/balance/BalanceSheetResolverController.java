@@ -101,7 +101,7 @@ public class BalanceSheetResolverController {
 	}
 	
 	private void initializeParameters() {
-		parameters = new SummaryProviderParameters();
+		parameters = new SummaryProviderParameters(AonUtil.getDomainName());
 		try {
 			parameters.setPeriod(AccountingPeriodUtil.getDefaultPeriod());
 		} catch (ManagerBeanException e) {
@@ -279,7 +279,7 @@ public class BalanceSheetResolverController {
 		BalanceMVELContext previousCtx = null;
 		boolean mustShowPreviousYear = false;
 		if (getParameters().isPreviousPeriodVisible()) {
-			SummaryProviderParameters previousParams = new SummaryProviderParameters();
+			SummaryProviderParameters previousParams = new SummaryProviderParameters(AonUtil.getDomainName());
 			previousParams = getParameters().getPreviousPeriodParameters();
 			if (previousParams != null) {
 				previousCtx = new BalanceMVELContext(previousParams);

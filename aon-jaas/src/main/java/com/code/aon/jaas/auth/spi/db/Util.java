@@ -1,13 +1,10 @@
 package com.code.aon.jaas.auth.spi.db;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
@@ -21,68 +18,32 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.pool.AonConnectionException;
+import com.code.aon.pool.ConnectionInfo;
+
 public class Util {
 	
-	public static final String URL = "hibernate.connection.url";
-	
-	public static final String DRIVER_CLASS = "hibernate.connection.driver_class";
-	
-	public static final String USER = "hibernate.connection.username";
-	
-	public static final String PASSWORD = "hibernate.connection.password";
-
 	private static final String DB_SEP = "`";
-	
-	public static final String MYSQL = "mysql";
-	
 	private String AON_SUPPORT_ENABLED = "AON_SUPPORT_ENABLED";
-	
 	private final static Logger LOGGER = LoggerFactory.getLogger(Util.class);
-	
-	private Properties properties;
-	
+
+	private ConnectionInfo info;
 	private Connection connection;
 
-	public Util(Properties properties) {
-		this.properties = properties;
+	public Util(ConnectionInfo info) {
+		this.info = info;
 	}
 	
-	private String getConnectionURL( String name ) {
-		if ( StringUtils.isEmpty(name) ) {
-			return properties.getProperty(URL);
-		}
-		return properties.getProperty(URL) + "/" + name;
+	public Connection createMetadataConnection() throws AonConnectionException {
+		setConnection(info.getMetadataConnection());
+		return connection;
 	}
 	
-	public Connection createConnection(String name) throws SQLException, ClassNotFoundException {
-		Class.forName(properties.getProperty(DRIVER_CLASS));
-		String url = getConnectionURL(name);
-		String user = properties.getProperty(USER);
-		String password = properties.getProperty(PASSWORD);
-		Connection connection = DriverManager.getConnection(url, user, password);
-		setConnection(connection);
+	public Connection createConnection(String name) throws AonConnectionException {
+		setConnection(info.getDomainConnection(name));
 		return connection;
 	}
 
-	public Properties getConnectionProperties( String domainName ) {
-		Connection connection = null;
-		try {
-			connection = createConnection(MYSQL);
-			Domain domain = getDomain(domainName);
-			if ( domain != null ) {
-				Properties cp = new Properties();
-				cp.putAll(this.properties);
-				cp.put(URL, getConnectionURL(domain.getDataBaseName()));
-				return cp;
-			}
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-		} finally {
-			DbUtils.closeQuietly(connection);
-		}
-		return null;
-	}
-	
 	public void setConnection(Connection connection) {
 		this.connection = connection;
 	}

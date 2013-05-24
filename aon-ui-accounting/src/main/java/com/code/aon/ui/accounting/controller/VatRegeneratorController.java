@@ -39,7 +39,7 @@ public class VatRegeneratorController {
 		try {
 			setValidated(true);
 			VatManager vm = new VatManager();
-			getParams().setValid( vm.validateVAT(getParams()) );
+			getParams().setValid( vm.validateVAT(getParams(),AonUtil.getDomainName()) );
 		} catch (ManagerBeanException e) {
 			String msg = "- Se produjeron errores al regenerar el número en Facturas de IVA Soportado.";
 			AonUtil.addErrorMessage(msg);

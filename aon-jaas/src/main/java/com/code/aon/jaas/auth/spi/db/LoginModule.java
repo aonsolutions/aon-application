@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.management.MBeanServer;
@@ -21,7 +20,6 @@ import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.jaas.auth.AuthPrincipal;
@@ -30,6 +28,8 @@ import com.code.aon.jaas.auth.SimpleGroup;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.auth.spi.UsernamePasswordLoginModule;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
+import com.code.aon.pool.AonConnectionException;
+import com.code.aon.pool.ConnectionInfo;
 
 public class LoginModule extends UsernamePasswordLoginModule {
 
@@ -58,7 +58,14 @@ public class LoginModule extends UsernamePasswordLoginModule {
 		HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
 		this.contextPath = StringUtils.defaultIfEmpty(request.getContextPath(), DEFAULT_CONTEXT_PATH);
 		this.domainName = request.getServerName();
-		initConnection();
+		ConnectionInfo ci = null;
+		try {
+			ci = ConnectionInfo.getDefaultConnectionInfo();
+			this.dbUtil = new Util(ci);
+		} catch (AonConnectionException e) {
+			// nothinf
+		}
+		
 	}
 
 	/**
@@ -70,11 +77,11 @@ public class LoginModule extends UsernamePasswordLoginModule {
 	 */
 	protected String getUsersPassword() throws LoginException {
 		AuthPrincipal principal = (AuthPrincipal) getIdentity();
-		Connection mainConnection = null;
+		Connection metadataConnection = null;
 		Connection connection = null;
 
 		try {
-			mainConnection = dbUtil.createConnection(Util.MYSQL);
+			metadataConnection = dbUtil.createMetadataConnection();
 			Domain domain = dbUtil.getDomain(domainName);
 			if ( domain == null ) {
 				throw new AuthenticationLoginException( "aon_login_err_2", domainName );
@@ -125,17 +132,13 @@ public class LoginModule extends UsernamePasswordLoginModule {
 				}
 			}
 			return user.getPassword();
-		} catch (SQLException ex) {
-			LoginException le = new LoginException("Query failed");
-			le.initCause(ex);
-			throw le;
-		} catch (ClassNotFoundException e) {
-			LoginException le = new LoginException("JDBC driver not found");
+		} catch (AonConnectionException e) {
+			LoginException le = new LoginException("Database Connection failure");
 			le.initCause(e);
 			throw le;
 		} finally {
-			DbUtils.closeQuietly(mainConnection);
-			DbUtils.closeQuietly(connection);
+			closeQuietly(metadataConnection);
+			closeQuietly(connection);
 		}
 	}
 
@@ -178,23 +181,22 @@ public class LoginModule extends UsernamePasswordLoginModule {
 				}
 			}
 			return groups;
-		} catch (SQLException ex) {
-			LoginException le = new LoginException("Query failed");
-			le.initCause(ex);
-			throw le;
-		} catch (ClassNotFoundException e) {
-			LoginException le = new LoginException("JDBC driver not found");
+		} catch (AonConnectionException e) {
+			LoginException le = new LoginException("Database Connection failure");
 			le.initCause(e);
 			throw le;
 		} finally {
-			DbUtils.closeQuietly(connection);
+			closeQuietly(connection);
 		}
 	}
 	
 	@Override
 	public boolean login() throws LoginException {
 		try {
-			return super.login();
+			if (dbUtil == null) {
+				throw new AuthenticationLoginException( "aon_login_domain_inactive", "BD" );	
+			}
+			return super.login(); 
 		} catch ( AuthenticationLoginException e ) {
 			settingFailedLoginException( e );
 			throw e;
@@ -208,16 +210,6 @@ public class LoginModule extends UsernamePasswordLoginModule {
 	private MBeanServer getMBeanServer() {
 		return (MBeanServer) MBeanServerFactory.findMBeanServer(null).get(0);
 	}	
-	
-	private void initConnection() {
-		try {
-			ObjectName oname = new ObjectName(IConstants.MAIN_DEPLOYER_OBJECT_NAME);
-			Properties properties = (Properties) getMBeanServer().invoke(oname, "getConnectionProperties", null, null);
-			this.dbUtil = new Util(properties);
-		} catch (Exception e) {
-			log.error( "Error on initConnection", e );
-		}
-	}
 		
     /**
      * Set Failed Login Exception.
@@ -232,6 +224,15 @@ public class LoginModule extends UsernamePasswordLoginModule {
     	} catch (Throwable th) {
     		log.error( "Error setting FailedLoginException", th );
         }
-	}	
+	}
 	
+    private void closeQuietly(Connection conn) {
+        try {
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (SQLException e) { 
+        	// Nothing
+        }
+    }
 }

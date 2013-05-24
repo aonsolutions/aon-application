@@ -142,7 +142,7 @@ public class AccountEntryDetailController extends LinesController {
 
 		AccountEntryDetail detail = (AccountEntryDetail) getModel().getRowData();
 
-		SummaryProviderParameters spp = new SummaryProviderParameters();
+		SummaryProviderParameters spp = new SummaryProviderParameters(AonUtil.getDomainName());
 		spp.setAccountExpression(account.getCode());
 		Period period = detail.getAccountEntry().getAccountPeriod();
 		spp.setPeriod(period);

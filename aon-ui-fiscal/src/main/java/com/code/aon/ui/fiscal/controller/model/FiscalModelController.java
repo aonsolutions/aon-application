@@ -63,7 +63,8 @@ public abstract class FiscalModelController extends BasicController {
 
 	public IFiscalModelManager getFiscalModelManager() throws AonException {
 		if (manager == null) {
-			FiscalModelManagerFactory factory = new FiscalModelManagerFactory();
+			String domainName = AonUtil.getDomainName();
+			FiscalModelManagerFactory factory = new FiscalModelManagerFactory(domainName);
 			manager = factory.getManager(getModelType());
 		}
 		return manager;

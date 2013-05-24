@@ -8,21 +8,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Session;
-
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.Mod115Key;
 import com.code.aon.fiscal.model.FiscalModelManager;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -43,6 +42,16 @@ public class Mod115Manager extends FiscalModelManager {
 			+" AND i.tax_date <= ?"
 			+" GROUP BY i.type,it.percentage,i.rdocument,i.rname";
 
+	private String domainName;
+	
+	public Mod115Manager(String domainName) {
+		this.domainName = domainName;
+	}
+	
+	public String getDomainName() {
+		return domainName;
+	}
+
 	
 	@Override
 	public boolean accept(FiscalModelType type) {
@@ -59,9 +68,7 @@ public class Mod115Manager extends FiscalModelManager {
 	
 	@Override
 	public Mod115 initializeFiscalModelDetails(IFiscalDeclaration declaration) throws AonException {
-		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
 		Connection conn = null;
-		Session session = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -71,8 +78,7 @@ public class Mod115Manager extends FiscalModelManager {
 			Date dateFrom = getInitialDate(fiscalModel);	
 			Date dateTo = getDueDate(fiscalModel);
 			List<String> lessorDocuments = new ArrayList<String>();
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection(); 
+			conn = DatabaseUtil.getConnection(getDomainName());
 			ps = conn.prepareStatement(SELECT,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			int filled = DomainManager.fillHostVariables(ps, 1);
@@ -96,28 +102,12 @@ public class Mod115Manager extends FiscalModelManager {
 			return mod115;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new AonException(e.getMessage(),e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 

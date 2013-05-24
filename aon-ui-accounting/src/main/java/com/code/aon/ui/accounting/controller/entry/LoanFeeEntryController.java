@@ -184,7 +184,7 @@ public class LoanFeeEntryController {
 	public Double getOutstandingBalance() {
 		try {
 			SummaryProvider sp = new SummaryProvider();
-			SummaryProviderParameters params = new SummaryProviderParameters();
+			SummaryProviderParameters params = new SummaryProviderParameters(AonUtil.getDomainName());
 			if (getRelatedAccount() != null) {
 				params.setAccountExpression( getRelatedAccount().getCode());
 				params.setAccountLevel(5);
@@ -206,7 +206,7 @@ public class LoanFeeEntryController {
 			Account account = getRelatedAccount();
 			StatementController c = (StatementController) AonUtil.getRegisteredBean(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
 			c.onReset(event);
-			SummaryProviderParameters spp = new SummaryProviderParameters();
+			SummaryProviderParameters spp = new SummaryProviderParameters(AonUtil.getDomainName());
 			spp.setAccountExpression(account.getCode());
 			
 			Period period = getAccountingUtil().getPeriod( getEntry().getFeeDate() );

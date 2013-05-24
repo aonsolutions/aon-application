@@ -19,7 +19,18 @@ public class StatParams {
 	private Integer invoiceType;
 	private OfferStatus[] offerStatuses;
 	private WorkPlace workPlace;
+	private String domainName;
 	
+	public StatParams (String domainName) {
+		this.domainName = domainName;
+	}
+	
+	public String getDomainName() {
+		return domainName;
+	}
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
+	}
 	public Integer getInvoiceType() {
 		return invoiceType;
 	}

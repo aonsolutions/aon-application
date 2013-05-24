@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,7 +18,6 @@ import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.MimeResolver;
 import com.code.aon.ui.company.controller.CompanyDisplay;
-import com.code.aon.ui.util.DataSourceUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
 /**
@@ -73,19 +71,15 @@ public class CompanyLogoServlet extends HttpServlet {
 		OutputStream out = null;
 		try {
 			String server = req.getServerName();
-			String context = req.getContextPath();
 			CompanyDisplay companyDisplay = new CompanyDisplay();
-			Properties dbProperties = DataSourceUtil.getDBProperties(server, context);
-			if ( dbProperties != null ) {
-				companyDisplay.init(dbProperties, server);
-				if ( companyDisplay.isLogoDefined() ) {
-					IAttachment logo = companyDisplay.getLogo();
-					MimeType type = getMimeType(logo);
-					out = DownloadUtil.initDownload(res, null, type, logo.getSize());
-					InputStream in = new ByteArrayInputStream(companyDisplay.getCompanyLogo());
-					IOUtils.copyLarge(in, out);
-				}								
-			}
+			companyDisplay.init(server);
+			if ( companyDisplay.isLogoDefined() ) {
+				IAttachment logo = companyDisplay.getLogo();
+				MimeType type = getMimeType(logo);
+				out = DownloadUtil.initDownload(res, null, type, logo.getSize());
+				InputStream in = new ByteArrayInputStream(companyDisplay.getCompanyLogo());
+				IOUtils.copyLarge(in, out);
+			}								
 		} catch (Throwable th) {
 			LOGGER.error( th.getMessage(), th );
 			throw new ServletException(th.getMessage(), th);

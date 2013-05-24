@@ -10,8 +10,6 @@ public interface IConstants {
 	
 	String SESSION_MANAGER_OBJECT_NAME = "jboss.admin:service=AonSessionManager";
 	
-	String MAIN_DEPLOYER_OBJECT_NAME = "jboss.admin:service=AonMainDeployer";
-
 	String ADMIN_IDENTITY_SEPARATOR = "=";
 	
 	/** Separator between shortName and Domain. */
@@ -24,19 +22,19 @@ public interface IConstants {
 	String DEFAULT_ROLE = "User";
 	
 	/** Default domain IP. */
-	String DEFAULT_DOMAIN_IP = "127.0.0.1";
+	//String DEFAULT_DOMAIN_IP = "127.0.0.1";
 	
 	/** Default domain name. */
-	String DEFAULT_DOMAIN_NAME = "localhost";
+	//String DEFAULT_DOMAIN_NAME = "localhost";
 
 	/** Default context path. */
 	String DEFAULT_CONTEXT_PATH = "/aon-aio";
 	
 	String BASE64_ENCODING = "BASE64";
 	
-	String CONFIG_RESOURCE_NAME = "deployed.xml";
+	//String CONFIG_RESOURCE_NAME = "deployed.xml";
 	
     /** Default Config Resource name. */
-	String DEFAULT_CONFIG_RESOURCE_NAME = "/conf/aon.workspace/" + CONFIG_RESOURCE_NAME;
+	//String DEFAULT_CONFIG_RESOURCE_NAME = "/conf/aon.workspace/" + CONFIG_RESOURCE_NAME;
 
 }

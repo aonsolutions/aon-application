@@ -14,8 +14,19 @@ public class TasStatParams {
 	private String privateCode;
 	private String description;
 	private String addInfo;
-
+	private String domainName;
 	
+	public TasStatParams(String domainName) {
+		this.domainName = domainName; 	
+	}
+
+	public String getDomainName() {
+		return domainName;
+	}
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
+	}
+
 
 	public Date getFromDate() {
 		return fromDate;

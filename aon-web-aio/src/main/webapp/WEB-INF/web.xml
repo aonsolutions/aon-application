@@ -178,7 +178,7 @@
 			session. Works with server state saving.
 		</description>
 		<param-name>com.sun.faces.numberOfViewsInSession</param-name>
-		<param-value>50</param-value>
+		<param-value>5</param-value>
 	</context-param>
 
 	<context-param>
@@ -192,7 +192,7 @@
 			configured value.
 		</description>
 		<param-name>com.sun.faces.numberOfLogicalViews</param-name>
-		<param-value>50</param-value>
+		<param-value>5</param-value>
 	</context-param>
 
 	<context-param>
@@ -310,9 +310,6 @@
 		<param-value>ALL</param-value>
 	</context-param>
 
-	<!-- <context-param> <param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name> 
-		<param-value>../aon-desktop/richFaces3.3.3.Final/</param-value> </context-param> -->
-	<!-- RichFaces Filter -->
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
@@ -331,16 +328,30 @@
 		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>
 
+	<!-- MBEAN REGISTRATION -->
+	<listener>
+		<listener-class>
+			com.code.aon.aio.servlet.SecurityLifecycleListener
+		</listener-class>
+	</listener>
+	
 	<!-- DOMAIN MANAGER CONFIGURATION -->
 	<listener>
 		<listener-class>
 			com.code.aon.ui.common.domain.ServletContextDomainListener
 		</listener-class>
 	</listener>
+	
+	<!-- Audit Filter -->
+	<filter>
+		<filter-name>AuditFilter</filter-name>
+		<filter-class>com.code.aon.ui.audit.session.AuditSessionFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>AuditFilter</filter-name>
+		<url-pattern>/index.jsp</url-pattern>
+	</filter-mapping> 
 
-	<!-- Audit Filter <filter> <filter-name>AuditFilter</filter-name> <filter-class>com.code.aon.ui.audit.session.AuditSessionFilter</filter-class> 
-		</filter> <filter-mapping> <filter-name>AuditFilter</filter-name> <url-pattern>/index.jsp</url-pattern> 
-		</filter-mapping> -->
 	<!-- Listener, that enables Audit Sessions per User. -->
 	<listener>
 		<listener-class>com.code.aon.ui.audit.session.AuditSessionListener</listener-class>
@@ -437,5 +448,5 @@
 	<security-role>
 		<role-name>TaskMonitoring</role-name>
 	</security-role>
-
+	
 </web-app>

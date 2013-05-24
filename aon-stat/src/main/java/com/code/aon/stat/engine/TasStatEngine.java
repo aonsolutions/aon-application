@@ -8,13 +8,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Session;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Country;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.stat.tas.TasStatDetail;
 import com.code.aon.stat.tas.TasStatDetailType;
@@ -183,12 +183,9 @@ public class TasStatEngine {
 	public List<TasStatHeader> getTasHeaders(TasStatParams params) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName();
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
 
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT r.id,r.document,r.name,ti.id,ti.publicCode,mk.name,md.name");
@@ -278,28 +275,12 @@ public class TasStatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -315,12 +296,9 @@ public class TasStatEngine {
 		PreparedStatement incomePs = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName();
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
 
 			fillHeader(conn, header);
 
@@ -366,64 +344,18 @@ public class TasStatEngine {
 			return details;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (invoicePs != null) {
-				try {
-					invoicePs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (salesPs != null) {
-				try {
-					salesPs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (purchasePs != null) {
-				try {
-					purchasePs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (deliveryPs != null) {
-				try {
-					deliveryPs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (incomePs != null) {
-				try {
-					incomePs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (offerPs != null) {
-				try {
-					offerPs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(invoicePs);
+			DatabaseUtil.closeQuietly(salesPs);
+			DatabaseUtil.closeQuietly(purchasePs );
+			DatabaseUtil.closeQuietly(deliveryPs);
+			DatabaseUtil.closeQuietly(incomePs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(offerPs);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 	

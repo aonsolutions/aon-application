@@ -40,7 +40,9 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.person.Person;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
@@ -97,11 +99,14 @@ public class AonServletUtils {
 		}
 	}
 
-	public static Connection getConnection() {
-		String sessionName = HibernateUtil.getSessionFactoryName();
-		Connection connection = HibernateUtil.getSession(sessionName).connection();
-		//Connection connection = HibernateUtil.getSQLConnection(sessionName);
-		return connection;
+	public static Connection getConnection() throws SQLException {
+		try {
+			String domainName = AonUtil.getDomainName();
+			Connection connection = DatabaseUtil.getConnection(domainName);
+			return connection;
+		} catch (AonConnectionException e) {
+			throw new SQLException(e.getMessage(),e);
+		}
 	}
 
 	public static void rollback(Connection conn) {

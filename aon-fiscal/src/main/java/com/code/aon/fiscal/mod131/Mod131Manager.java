@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.Session;
 
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
@@ -18,9 +17,9 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
@@ -28,6 +27,7 @@ import com.code.aon.fiscal.enumeration.Mod131Key;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.model.FiscalModelManager;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -88,6 +88,16 @@ public class Mod131Manager extends FiscalModelManager {
 			+" AND fmd.type = ? "
 			+" ORDER by fm.period";
 	
+	private String domainName;
+	
+	public Mod131Manager(String domainName) {
+		this.domainName = domainName;
+	}
+	
+	public String getDomainName() {
+		return domainName;
+	}
+
 	@Override
 	public boolean accept(FiscalModelType type) {
 		return type == FiscalModelType.M131;
@@ -102,12 +112,10 @@ public class Mod131Manager extends FiscalModelManager {
 	
 	@Override
 	public Mod131 initializeFiscalModelDetails(IFiscalDeclaration declaration) throws AonException {
-		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(getDomainName());
+			
 			Mod131 mod131 = (Mod131) declaration;
 			FiscalModel fiscalModel = mod131.getHeader();
 			mod131.initializeDetails();
@@ -122,7 +130,7 @@ public class Mod131Manager extends FiscalModelManager {
 	//		y las indemnizaciones.
 	
 			SummaryProvider sp = new SummaryProvider();
-			SummaryProviderParameters params = new SummaryProviderParameters();
+			SummaryProviderParameters params = new SummaryProviderParameters(getDomainName());
 			params.setAccountExpression( "70*|71*|72*|73*|75*|76*|77*|78*|79*" );
 			params.setAccountLevel(5);
 			params.setFromDate(dateFrom);
@@ -242,16 +250,10 @@ public class Mod131Manager extends FiscalModelManager {
 			
 			mod131.calculate();
 			return mod131;
+		} catch (AonConnectionException e) {
+			throw new AonException(e.getMessage(),e);
 		} finally {
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 

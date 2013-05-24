@@ -106,8 +106,11 @@ public class SummaryProviderParameters implements Cloneable{
 	
 	private boolean totalExpensesSummary;
 	private boolean grossMarginSummary;
+	
+	private String domainName;
 
-	public SummaryProviderParameters() {
+	public SummaryProviderParameters(String domain) {
+		setDomainName(domain);
 		setAccountExpression(null);
 		setAccountDescription(null);
 		setAccountAlias(null);
@@ -134,6 +137,14 @@ public class SummaryProviderParameters implements Cloneable{
 		setCoverVisible(false);
 		setTotalExpensesSummary(false);
 		setGrossMarginSummary(false);
+	}
+	
+
+	public String getDomainName() {
+		return domainName;
+	}
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
 	}
 
 	public String getAccountExpression() {
@@ -366,7 +377,8 @@ public class SummaryProviderParameters implements Cloneable{
 
 	@Override
 	public SummaryProviderParameters clone() throws CloneNotSupportedException {
-		SummaryProviderParameters cloned = new SummaryProviderParameters();
+		SummaryProviderParameters cloned = new SummaryProviderParameters(getDomainName());
+		cloned.setDomainName(getDomainName());
 		cloned.setAccountAlias(getAccountAlias());
 		if (getAccountCostCenters() != null) {
 			List<String> list = new LinkedList<String>();

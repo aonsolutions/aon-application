@@ -33,6 +33,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.common.role.BasicRoleManager;
@@ -224,9 +225,8 @@ public class AonUtil {
 	 * @return the context path
 	 */
 	public static String getContextPath() {
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		ExternalContext ec = ctx.getExternalContext();
-		return StringUtils.defaultIfEmpty(ec.getRequestContextPath(), AON_AIO_APPLICATION);
+		HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
+		return StringUtils.defaultIfEmpty(request.getContextPath(), AON_AIO_APPLICATION);
 	}
 
 	/**
@@ -235,8 +235,7 @@ public class AonUtil {
 	 * @return the server name
 	 */
 	public static String getServerName() {
-    	ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
-    	HttpServletRequest request = (HttpServletRequest) ectx.getRequest();
+		HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
 		return request.getServerName();
 	}
 	
@@ -652,7 +651,15 @@ public class AonUtil {
 	 * @return AuthPrincipal
 	 */
 	public static AuthPrincipal getAuthPrincipal() {
-		return AonUtil.getConfigurationController().getAuthPrincipal(); 		
+		HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
+		if (request != null) {
+			return (AuthPrincipal) request.getUserPrincipal();	
+		}
+		return null;
+	}
+	
+	public static String getDomainName() {
+		return getAuthPrincipal().getDomain();
 	}
     
 }

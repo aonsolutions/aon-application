@@ -36,7 +36,7 @@ public class LoanController extends BasicController{
 	public Double getOutstandingBalance() {
 		try {
 			SummaryProvider sp = new SummaryProvider();
-			SummaryProviderParameters params = new SummaryProviderParameters();
+			SummaryProviderParameters params = new SummaryProviderParameters(AonUtil.getDomainName());
 			if (getRelatedAccount() != null) {
 				Loan loan = (Loan) getTo();
 				params.setAccountExpression( getRelatedAccount().getCode());
@@ -60,7 +60,7 @@ public class LoanController extends BasicController{
 			Account account = getRelatedAccount();
 			StatementController c = (StatementController) AonUtil.getRegisteredBean(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
 			c.onReset(event);
-			SummaryProviderParameters spp = new SummaryProviderParameters();
+			SummaryProviderParameters spp = new SummaryProviderParameters(AonUtil.getDomainName());
 			spp.setAccountExpression(account.getCode());
 			spp.setAccountLevel(5);
 			spp.setLowerLevelVisible(false);

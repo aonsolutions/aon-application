@@ -15,8 +15,6 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import org.hibernate.Session;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -26,6 +24,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.bridge.invoicing.RectificationInvoicingManager;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -150,7 +149,6 @@ public class RectifierInvoiceController implements IFinanceConstants {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
-		Session session = null;
 		Connection conn = null; 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -158,8 +156,6 @@ public class RectifierInvoiceController implements IFinanceConstants {
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
-			
-			session = HibernateUtil.getSession(sessionName);
 			
 			StringWriter stmt = new StringWriter();
 			stmt.append("SELECT i.id,sum(f.amount+f.expenses)");
@@ -177,7 +173,7 @@ public class RectifierInvoiceController implements IFinanceConstants {
 				stmt.append(" AND i.issue_date <= ?");
 			}
 			stmt.append(" GROUP BY i.id ORDER BY i.id");
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			ps = conn.prepareStatement(stmt.toString(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			ps.setInt(++i, getCustomer().getId());
@@ -209,24 +205,10 @@ public class RectifierInvoiceController implements IFinanceConstants {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-				}
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+			
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);

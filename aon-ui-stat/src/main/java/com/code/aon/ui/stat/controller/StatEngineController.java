@@ -464,7 +464,7 @@ public class StatEngineController {
 	}
 
 	public void onReset(ActionEvent event) {
-		params = new StatParams();
+		params = new StatParams(AonUtil.getDomainName());
 		params.setLocale(FacesContext.getCurrentInstance().getViewRoot()
 				.getLocale());
 		Calendar c = Calendar.getInstance();
@@ -612,7 +612,7 @@ public class StatEngineController {
 	private void getDayStatititics() {
 		try {
 			Calendar cal = new GregorianCalendar();
-			StatParams params = new StatParams();
+			StatParams params = new StatParams(AonUtil.getDomainName());
 			params.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
 			cal = new GregorianCalendar();
 			cal.set(Calendar.YEAR, currentYear);
@@ -665,7 +665,7 @@ public class StatEngineController {
 				Integer day = Integer.parseInt(paramss.get("day"));
 				setCurrentDay(day);
 			}
-			StatParams params = new StatParams();
+			StatParams params = new StatParams(AonUtil.getDomainName());
 			params.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
 			refreshControllerDates(params);
 			params.setWorkPlace(this.getParams().getWorkPlace());
@@ -726,7 +726,7 @@ public class StatEngineController {
 
 			}
 
-			StatParams parameters = new StatParams();
+			StatParams parameters = new StatParams(AonUtil.getDomainName());
 			parameters.setFromDate(fecini.getTime());
 			parameters.setToDate(fecfin.getTime());
 			

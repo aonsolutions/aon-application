@@ -18,6 +18,11 @@ public class Mod347Parameters {
 	private boolean excludeInputIntracommunitaryServices;
 	private boolean excludeInputNationalZero;
 	private boolean groupedByNIF;
+	private String domainName;
+	
+	public Mod347Parameters(String domainName) {
+		this.domainName = domainName;
+	}
 	
 	public void initialize() {
 		setTaxDateEnabled(false);
@@ -34,6 +39,13 @@ public class Mod347Parameters {
 		setGroupedByNIF(false);
 	}
 	
+	public String getDomainName() {
+		return domainName;
+	}
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
+	}
+
 	public Mod347 getMod347() {
 		return mod347;
 	}

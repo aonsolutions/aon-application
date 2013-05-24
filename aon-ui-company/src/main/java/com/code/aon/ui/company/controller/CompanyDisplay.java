@@ -6,12 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
-import java.util.Properties;
+import java.sql.SQLException;
 
 import javax.faces.event.ActionEvent;
 import javax.imageio.ImageIO;
 
-import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
@@ -20,13 +19,12 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonException;
 import com.code.aon.common.BasicAttachment;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.util.ConnectionProvider;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DataSourceUtil;
 
 public class CompanyDisplay {
 	
@@ -70,9 +68,9 @@ public class CompanyDisplay {
 		this.logoKey = logoKey;
 	}
 
-	public boolean isShow() {
+	public boolean isShow() throws AonConnectionException {
 		if (! this.init ) {
-			init(DataSourceUtil.getDBProperties(), AonUtil.getServerName());
+			init(AonUtil.getServerName());
 		}
 		return !StringUtils.isEmpty(this.companyLabel) || isLogoDefined();
 	}
@@ -91,14 +89,6 @@ public class CompanyDisplay {
 		}
 	}
 
-	private Connection getConnection( Properties properties ) throws AonException {
-		Connection connection = null;
-		if ( (properties != null) && (!properties.isEmpty()) ) {
-			connection =  ConnectionProvider.getConnection(properties);
-		}
-		return connection;
-	}
-	
 	private boolean calculateBigLog() {
 		if ( isLogoDefined() ) {
 			InputStream in = new ByteArrayInputStream( getCompanyLogo() );
@@ -126,17 +116,12 @@ public class CompanyDisplay {
 		update( controller.obtainCompany().getName(), controller.getLogoAttach());
 	}
 	
-	private Object[] getCompany( Connection connection, Integer domainId ) {
+	private Object[] getCompany( Connection connection, Integer domainId ) throws SQLException {
 		QueryRunner run = new QueryRunner();
-		try {
-			ResultSetHandler<Object[]> h = new ArrayHandler();
-			return run.query( connection, 
-				    "SELECT r.id, r.name FROM company as c, registry as r WHERE c.domain=? AND c.registry = r.id LIMIT 1",
-				    h, domainId); 
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-		}		
-		return null;			
+		ResultSetHandler<Object[]> h = new ArrayHandler();
+		return run.query( connection, 
+			    "SELECT r.id, r.name FROM company as c, registry as r WHERE c.domain=? AND c.registry = r.id LIMIT 1",
+			    h, domainId); 
 	}			
 	
 	public static BasicAttachment convert( Object[] values ) {
@@ -167,25 +152,31 @@ public class CompanyDisplay {
 		return null;			
 	}		
 	
-	public void init( Properties dbProperties, String host ) {
+	public void init( String host ) throws AonConnectionException {
 		Connection connection = null;
 		try {
-			connection = getConnection(dbProperties);
+			connection = DatabaseUtil.getConnection(host);
 			if ( connection != null ) {
-				Integer domainId = DataSourceUtil.getDomain(connection, host);
+				Integer domainId = DatabaseUtil.getDomain(connection, host);
 				if (domainId != null) {
 					Object[] values = getCompany(connection, domainId);
-					Integer companyId = (Integer) values[0];
-					if ( companyId != null ) {
-						IAttachment logo = getLogo(connection, domainId, companyId);
-						update( (String) values[1], logo);
+					if (values != null) {
+						Integer companyId = (Integer) values[0];
+						if ( companyId != null ) {
+							IAttachment logo = getLogo(connection, domainId, companyId);
+							update( (String) values[1], logo);
+						}
 					}
 				}			
 			}
+		} catch ( SQLException e ) {
+			LOGGER.error( "Error getting company name and logo", e );
+			throw new AonConnectionException(e.getMessage(),e);
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error getting company name and logo", th );
+			throw new AonConnectionException(th.getMessage(),th);
 		} finally {
-			DbUtils.closeQuietly(connection);
+			DatabaseUtil.closeQuietly(connection);
 			this.init = true;
 		}
 	}

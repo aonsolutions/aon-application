@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Properties;
+import java.sql.Connection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,16 +15,15 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.hibernate.SessionFactory;
-import org.hibernate.StatelessSession;
-import org.hibernate.cfg.AnnotationConfiguration;
-import org.hibernate.cfg.Configuration;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.marketing.News;
 import com.code.aon.ui.marketing.controller.RSSController;
-import com.code.aon.ui.util.DataSourceUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
 public class RSSServlet extends HttpServlet {
@@ -34,8 +33,6 @@ public class RSSServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(RSSServlet.class.getName());
-	
-	private static final String HIBERNATE_CONFIGURATION_FILE = "/hibernate.rss.cfg.xml";
 
 	private void finishDownload( HttpServletResponse response, OutputStream out ) {
 		IOUtils.closeQuietly(out);
@@ -54,23 +51,6 @@ public class RSSServlet extends HttpServlet {
 		return "http://" + server + context;
 	}
 	
-	private Properties getConnectionProperties( HttpServletRequest req ) {
-		String server = req.getServerName();
-		String context = req.getContextPath(); 
-		return DataSourceUtil.getDBProperties(server, context);
-	}
-	
-	private Configuration getConfiguration( HttpServletRequest req ) {
-		AnnotationConfiguration configuration = null;
-		Properties properties = getConnectionProperties(req);
-		if ( (properties != null) && (!properties.isEmpty()) ) {
-			configuration = new AnnotationConfiguration();
-			configuration.addProperties(properties);
-			configuration.configure(HIBERNATE_CONFIGURATION_FILE);			
-		}
-		return configuration;
-	}	
-	
 	private Integer getChannelId( HttpServletRequest req ) {
 		String value = req.getParameter(CHANNEL_PARAMETER);
 		if (! StringUtils.isEmpty(value) ) {
@@ -83,23 +63,20 @@ public class RSSServlet extends HttpServlet {
 	
 	private byte[] getRSSData( HttpServletRequest req ) {
 		byte[] data = null;
-		SessionFactory factory = null;
+		String sessionName = HibernateUtil.getSessionFactoryName(News.class.getName());
+		Connection c = null;
 		try {
-			Configuration configuration = getConfiguration(req);
-			if ( configuration != null ) {
-				factory = configuration.buildSessionFactory();
-				StatelessSession session = factory.openStatelessSession();
-				Integer domainId = DataSourceUtil.getDomain(session.connection(), req.getServerName());
-				Integer channelId = getChannelId(req);
-				data = RSSController.getRSS(session, domainId, channelId, getURLPreffix(req));
-				session.close();				
-			}				
+			Session session = HibernateUtil.getSession(sessionName);
+			String domainName = req.getServerName(); 
+			c =  DatabaseUtil.getConnection(domainName);
+			Integer domainId = DatabaseUtil.getDomain(c,domainName);
+			Integer channelId = getChannelId(req);
+			data = RSSController.getRSS(session, domainId, channelId, getURLPreffix(req));
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error getting rss", th );
 		} finally {
-			if ( factory != null ) {
-				factory.close();	
-			}
+			DatabaseUtil.closeQuietly(c);
+			HibernateUtil.closeSession(sessionName);
 		}
 		return data;
 	}

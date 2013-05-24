@@ -7,6 +7,18 @@ public class Mod349Parameters {
 	private Mod349 mod349;
 	private boolean taxDateEnabled;
 	private boolean groupedByNIF;
+	private String domainName;
+	
+	public Mod349Parameters(String domainName) {
+		this.domainName = domainName;		
+	}
+	
+	public String getDomainName() {
+		return domainName;
+	}
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
+	}
 	
 	public void initialize() {
 		setTaxDateEnabled(false);

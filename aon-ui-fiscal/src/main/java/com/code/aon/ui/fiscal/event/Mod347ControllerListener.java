@@ -10,6 +10,7 @@ import com.code.aon.ui.fiscal.controller.mod347.Mod347Controller;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class Mod347ControllerListener extends ControllerAdapter {
 
@@ -17,7 +18,7 @@ public class Mod347ControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		Mod347Controller c = (Mod347Controller) event.getController();
 
-		Mod347Parameters params = new Mod347Parameters();
+		Mod347Parameters params = new Mod347Parameters(AonUtil.getDomainName());
 		params.initialize();
 		c.setParams(params);
 		

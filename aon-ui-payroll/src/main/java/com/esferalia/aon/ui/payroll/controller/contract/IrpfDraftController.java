@@ -6,19 +6,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.aeat.jaxb.TipoRetenedorError2011;
 import com.aeat.jaxb.TipoRetenedorSalida2011;
@@ -49,17 +44,17 @@ import com.aeat.jaxb.TipoRetenidoSalida2011.Reduccion.RdtosTrabajo;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.enumeration.Administration;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.IrpfResult;
-import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
 import com.esferalia.aon.payroll.irpf.GeozoneIrpfCalculator;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
@@ -73,8 +68,6 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
 public class IrpfDraftController extends BasicController implements IIrpfController {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(IrpfDraftController.class.getName());
 
 	private Date date = 
 		Calendar.getInstance().getTime();
@@ -690,10 +683,6 @@ public class IrpfDraftController extends BasicController implements IIrpfControl
 		return bite != null ? bite.intValue() : 0;
 	}
 
-	private Integer toInteger(Integer integer){
-		return integer != null ? integer : 0;
-	}
-
 	private Double toDouble(BigDecimal bigDecimal){
 		return bigDecimal != null ? bigDecimal.doubleValue() : 0.00;
 	}
@@ -791,27 +780,33 @@ public class IrpfDraftController extends BasicController implements IIrpfControl
 				SQLConstants.CONTRACT + "."+ ContractColumns.ID, 
 				contract.getId());
 		
-		Connection connection =  getConnection();
-
-		SQLAEAT2011Factory factory =  
-			new SQLAEAT2011Factory(connection, date, criteria);
-		
-		Entrada2011Handler entrada2011Handler = 
-			new DefaultEntrada2011Handler(new CallbackHandler() {
-				
-				@Override
-				public void onSalida(TipoRetenedorSalida2011 retenedorSalida2011,
-						TipoRetenidoSalida2011 retenidoSalida2011) {
-					IrpfDraftController.this.retenidoSalida2011 = retenidoSalida2011;
-				}
-				
-				@Override
-				public void onError(TipoRetenedorError2011 retenedorError2011,
-						TipoRetenidoError2011 retenidoError2011) {
-				}
-			});
-		
-		factory.forEachTipoRetenidoEntrada2011(entrada2011Handler);
+		Connection connection =  null;
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			SQLAEAT2011Factory factory =  
+				new SQLAEAT2011Factory(connection, date, criteria);
+			
+			Entrada2011Handler entrada2011Handler = 
+				new DefaultEntrada2011Handler(new CallbackHandler() {
+					
+					@Override
+					public void onSalida(TipoRetenedorSalida2011 retenedorSalida2011,
+							TipoRetenidoSalida2011 retenidoSalida2011) {
+						IrpfDraftController.this.retenidoSalida2011 = retenidoSalida2011;
+					}
+					
+					@Override
+					public void onError(TipoRetenedorError2011 retenedorError2011,
+							TipoRetenidoError2011 retenidoError2011) {
+					}
+				});
+			
+			factory.forEachTipoRetenidoEntrada2011(entrada2011Handler);
+		} catch (AonConnectionException e) {
+			throw new SQLException(e.getMessage(),e);
+		} finally {
+			DatabaseUtil.closeQuietly(connection);
+		}
 
 	}
 	
@@ -853,42 +848,45 @@ public class IrpfDraftController extends BasicController implements IIrpfControl
 			}
 		}
 	}
-	
-	private static Connection getConnection(){
-		String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());
-		return  HibernateUtil.getSession(sessionFactory).connection();
-	}
 
 	{
-		Connection connection = getConnection();
-		Date date = Calendar.getInstance().getTime();
+		Connection connection = null;
 		try {
-			IrpfCalculator.registerCalculator(Administration.ALAVA, 
-				new GeozoneIrpfCalculator(connection, Administration.ALAVA, date));
-		} catch (SQLException e) {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			Date date = Calendar.getInstance().getTime();
+			try {
+				IrpfCalculator.registerCalculator(Administration.ALAVA, 
+					new GeozoneIrpfCalculator(connection, Administration.ALAVA, date));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				IrpfCalculator.registerCalculator(Administration.GIPUZKOA, 
+					new GeozoneIrpfCalculator(connection, Administration.GIPUZKOA, date));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				IrpfCalculator.registerCalculator(Administration.BIZKAIA, 
+					new GeozoneIrpfCalculator(connection, Administration.BIZKAIA, date));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				IrpfCalculator.registerCalculator(Administration.NAVARRA, 
+					new GeozoneIrpfCalculator(connection, Administration.NAVARRA, date));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (AonConnectionException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			IrpfCalculator.registerCalculator(Administration.GIPUZKOA, 
-				new GeozoneIrpfCalculator(connection, Administration.GIPUZKOA, date));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			IrpfCalculator.registerCalculator(Administration.BIZKAIA, 
-				new GeozoneIrpfCalculator(connection, Administration.BIZKAIA, date));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			IrpfCalculator.registerCalculator(Administration.NAVARRA, 
-				new GeozoneIrpfCalculator(connection, Administration.NAVARRA, date));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
+		} finally {
+			DatabaseUtil.closeQuietly(connection);
 		}
 	}
 	

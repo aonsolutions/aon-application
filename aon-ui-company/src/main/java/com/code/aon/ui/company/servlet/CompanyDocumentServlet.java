@@ -5,14 +5,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
@@ -24,14 +22,12 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonException;
 import com.code.aon.common.BasicAttachment;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.util.ConnectionProvider;
 import com.code.aon.common.util.MimeResolver;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.ui.company.controller.CompanyDisplay;
-import com.code.aon.ui.util.DataSourceUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
 public class CompanyDocumentServlet extends HttpServlet {
@@ -72,21 +68,6 @@ public class CompanyDocumentServlet extends HttpServlet {
 		}
 		return name;		
 	}
-	
-	private Properties getConnectionProperties( HttpServletRequest req ) {
-		String server = req.getServerName();
-		String context = req.getContextPath(); 
-		return DataSourceUtil.getDBProperties(server, context);
-	}
-	
-	private Connection getConnection( HttpServletRequest req ) throws AonException {
-		Connection connection = null;
-		Properties properties = getConnectionProperties(req);
-		if ( (properties != null) && (!properties.isEmpty()) ) {
-			connection =  ConnectionProvider.getConnection(properties);
-		}
-		return connection;
-	}	
 	
 	private Integer getCompanyId( Connection connection, Integer domainId ) {
 		QueryRunner run = new QueryRunner();
@@ -131,10 +112,10 @@ public class CompanyDocumentServlet extends HttpServlet {
 		if ( companyLogo || (attachmentId != null) ) {		
 			Connection connection = null;
 			try {
-				connection = getConnection(req);
+				connection = DatabaseUtil.getConnection(req.getServerName());
 				if ( connection != null ) {
 					if ( companyLogo ) {
-						Integer domainId = DataSourceUtil.getDomain(connection, req.getServerName());
+						Integer domainId = DatabaseUtil.getDomain(connection, req.getServerName());
 						Integer companyId = getCompanyId(connection, domainId);
 						attachment = CompanyDisplay.getLogo(connection, domainId, companyId);
 					} else {
@@ -150,7 +131,7 @@ public class CompanyDocumentServlet extends HttpServlet {
 			} catch ( Throwable th ) {
 				LOGGER.error( "Error getting company name and logo", th );
 			} finally {
-				DbUtils.closeQuietly(connection);
+				DatabaseUtil.closeQuietly(connection);
 			}
 		}
 		return attachment;

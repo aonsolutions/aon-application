@@ -36,16 +36,18 @@ public class DefaultConfigurationFactory implements IConfigurationFactory {
     }
     
 	public Configuration getConfiguration( String sessionFactoryName ) {
-		String configurationResource = System.getProperty(HibernateUtil.HIBERNATE_CONFIGURATION_FILE_PROPERTY);
-		AnnotationConfiguration configuration = new AnnotationConfiguration();
-		completeConfiguration(configuration);
-		if (configurationResource != null) {
-			configuration.configure(configurationResource);
-		} else {
-			configuration.configure();
+		synchronized (SINGLETON) {
+			String configurationResource = System.getProperty(HibernateUtil.HIBERNATE_CONFIGURATION_FILE_PROPERTY);
+			AnnotationConfiguration configuration = new AnnotationConfiguration();
+			completeConfiguration(configuration);
+			if (configurationResource != null) {
+				configuration.configure(configurationResource);
+			} else {
+				configuration.configure();
+			}
+	        configuration.setListener("pre-insert", new DomainEntityListener());
+			return configuration;
 		}
-        configuration.setListener("pre-insert", new DomainEntityListener());
-		return configuration;
 	}
 
 }

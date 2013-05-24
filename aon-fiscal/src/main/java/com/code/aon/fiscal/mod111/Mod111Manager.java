@@ -8,32 +8,27 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Session;
-
+import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.enumeration.Administration;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.model.FiscalModelManager;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod111Manager extends FiscalModelManager {
-	
-	// TODO delegar en IDefaultAccount cuando lo suba
-	public static final String SALARY_ACCOUNT = "ACC_DEFAULT_SALARY_ACC";
-	public static final String SALARY_CHARGED_RETENTION_ACCOUNT = "ACC_SALARY_CHARGED_RET_ACC";
-
 	
 	private static String SELECT = "SELECT " 
 		+"i.type,it.percentage,i.rdocument,i.rname,"
@@ -60,6 +55,16 @@ public class Mod111Manager extends FiscalModelManager {
 			+" AND ae.entry_date <= ?"
 			+" ORDER BY ae.id";	
 	
+	private String domainName;
+	
+	public Mod111Manager(String domainName) {
+		this.domainName = domainName;
+	}
+	
+	public String getDomainName() {
+		return domainName;
+	}
+
 	@Override
 	public boolean accept(FiscalModelType type) {
 		return type == FiscalModelType.M111;
@@ -75,12 +80,9 @@ public class Mod111Manager extends FiscalModelManager {
 	
 	@Override
 	public Mod111 initializeFiscalModelDetails(IFiscalDeclaration declaration) throws AonException {
-		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(getDomainName());
 			Mod111 mod111 = (Mod111) declaration;
 			FiscalModel fiscalModel = mod111.getHeader();
 			mod111.initializeDetails();
@@ -95,16 +97,10 @@ public class Mod111Manager extends FiscalModelManager {
 			super.fillDeclaredData(mod111);
 			mod111.calculate();
 			return mod111;
+		} catch (AonConnectionException e) {
+			throw new AonException(e.getMessage(),e);
 		} finally {
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -165,13 +161,13 @@ public class Mod111Manager extends FiscalModelManager {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME),  SALARY_CHARGED_RETENTION_ACCOUNT );
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME),  IDefaultAccounts.SALARY_CHARGED_RETENTION_ACCOUNT );
 			List<ITransferObject> list = bean.getList(criteria);
 			if (list != null && list.size() > 0 ) {
 				ApplicationParameter ap = (ApplicationParameter) list.get(0);
 				int retentionAccount = Integer.parseInt(ap.getValue());
 				criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME),  SALARY_ACCOUNT );
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME),  IDefaultAccounts.SALARY_ACCOUNT );
 				list = bean.getList(criteria);
 				if (list != null && list.size() > 0 ) {
 					ap = (ApplicationParameter) list.get(0);

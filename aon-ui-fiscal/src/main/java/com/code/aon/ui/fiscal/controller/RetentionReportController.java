@@ -104,7 +104,7 @@ public class RetentionReportController implements ICollectionProvider, IFinanceM
 	}
 
 	public void onReset(ActionEvent event) {
-		setParams(new RetentionCollectionParameters());
+		setParams(new RetentionCollectionParameters(AonUtil.getDomainName()));
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
 		getParams().setDate(c.getTime());

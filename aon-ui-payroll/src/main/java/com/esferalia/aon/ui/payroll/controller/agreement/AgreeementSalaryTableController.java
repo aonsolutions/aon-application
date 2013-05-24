@@ -18,13 +18,12 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import org.hibernate.Session;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.IController;
@@ -131,14 +130,10 @@ public class AgreeementSalaryTableController extends ControllerAdapter implement
 		this.agreement = agreement;
 	}
 	
-	@SuppressWarnings("deprecation")
 	private Set<String> newVariables(Agreement agreement, Date startDate, Date endDate) throws SQLException {
-		String sessionName = HibernateUtil.getSessionFactoryName(Agreement.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 		
 			SQLAgreementPaymentsFactory factory = new SQLAgreementPaymentsFactory(conn, startDate,endDate); 
 			Collection<IContractPayment> payments = factory.create(agreement.getId());
@@ -156,16 +151,10 @@ public class AgreeementSalaryTableController extends ControllerAdapter implement
 				}
 			}
 			return userVariables;
+		} catch (AonConnectionException e) {
+			throw new SQLException(e.getMessage(),e);
 		} finally {
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 	

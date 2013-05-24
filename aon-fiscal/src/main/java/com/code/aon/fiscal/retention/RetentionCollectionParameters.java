@@ -17,15 +17,26 @@ public class RetentionCollectionParameters {
 	private WithholdingType withholdingType;
 	private Double percent;
 	private SecurityLevel securityLevel;
-
 	private Date date;
-
-	public RetentionCollectionParameters() {
-		setFromInvoiceDate(null);
-		setToInvoiceDate(null);
-		setDate(new Date());
-		setWithholdingType(null);
-		setToCustomer(false);
+	private String domainName;
+	
+	public RetentionCollectionParameters(String domainName) {
+		this.domainName = domainName;
+	}
+	
+//	public RetentionCollectionParameters() {
+//		setFromInvoiceDate(null);
+//		setToInvoiceDate(null);
+//		setDate(new Date());
+//		setWithholdingType(null);
+//		setToCustomer(false);
+//	}
+	
+	public String getDomainName() {
+		return domainName;
+	}
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
 	}
 	public boolean isToCustomer() {
 		return toCustomer;

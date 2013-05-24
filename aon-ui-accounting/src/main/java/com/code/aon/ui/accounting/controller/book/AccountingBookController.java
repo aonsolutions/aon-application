@@ -447,7 +447,7 @@ public class AccountingBookController implements ICollectionProvider{
 
 	private void addRequiredFiles(ZipOutputStream zout, List<IAccountingBookRunner> runners) throws IOException {
 		AnnualReportParameters params = new AnnualReportParameters();
-		params.setParams(new SummaryProviderParameters());
+		params.setParams(new SummaryProviderParameters(AonUtil.getDomainName()));
 		params.getParams().setPeriod(getPeriod());
 		AnnualReportContext ctx = new AnnualReportContext(params);
 		StringBuffer buf = new StringBuffer();

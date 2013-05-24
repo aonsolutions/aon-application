@@ -14,7 +14,6 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DataSourceUtil;
 
 public class CustomizeController extends CustomizeBean {
 
@@ -46,11 +45,11 @@ public class CustomizeController extends CustomizeBean {
 		initResources(resolver);
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		initApplicationVersion(ec.getResourceAsStream("META-INF/MANIFEST.MF"));
-		init(DataSourceUtil.getDBProperties(), AonUtil.getServerName());
+		init(AonUtil.getServerName());
 	}
 	
 	@Override
-	public void initResources(ResourceResolver resolver) {
+	protected void initResources(ResourceResolver resolver) {
 		super.initResources(resolver);
 		this.headerLogo = resolver.getResolve().get(HEADER_LOGO_DEFAULT);
 		this.toolbarLogo = resolver.getResolve().get(TOOLBAR_LOGO_DEFAULT);

@@ -11,8 +11,6 @@ import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +29,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
-import com.code.aon.common.util.ConnectionProvider;
 import com.code.aon.config.Application;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Domain;
@@ -43,9 +40,11 @@ import com.code.aon.dbutils.AonDomainDuplicate;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.AonSQLFile;
 import com.code.aon.dbutils.AonSQLScript;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.master.IConstants;
 import com.code.aon.master.VersionManager;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
@@ -55,7 +54,6 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DataSourceUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class NewDomainController {
@@ -224,7 +222,7 @@ public class NewDomainController {
 			if ( isLoadDefaultValuesEnabled() ) {
 				Integer newDomain = createDomain(domainFinalName, getDomainDescription());
 				if (! isEnableHeredity() ) {
-					insertDefaults(newDomain);	
+					insertDefaults(newDomain,domainFinalName);	
 				}
 				copyCustomizeId(newDomain);
 			} else {
@@ -251,17 +249,18 @@ public class NewDomainController {
 		}		
 	}
 	
-	private void insertDefaults( Integer domain ) throws AonSQLException, AonException, IOException {
+	private void insertDefaults( Integer domain, String domainName ) throws AonSQLException, AonException, IOException {
 		Connection connection = null;
 		try {			
 			URL script = VersionManager.getScript(IConstants.INSERT_DOMAIN_DEFAULTS_SCRIPT);
 			AonSQLFile file = new AonSQLFile(script.openStream(), CharEncoding.ISO_8859_1);
 			file.setFileName(IConstants.INSERT_DOMAIN_DEFAULTS_SCRIPT);
-			Properties properties = DataSourceUtil.getDBProperties();
-			connection = ConnectionProvider.getConnection(properties);
+			connection = DatabaseUtil.getConnection(domainName);
 			AonSQLScript sqlScript = new AonSQLScript(file, connection);
 			sqlScript.setDomain(domain);
 			sqlScript.execute();
+		} catch (AonConnectionException e) {
+			throw new AonSQLException(e.getMessage(),e);
 		} finally {
 			DbUtils.closeQuietly(connection);
 		}
@@ -291,12 +290,11 @@ public class NewDomainController {
 		return domain.getId();		
 	}
 	
-	private Integer duplicateDomain(Integer parent, String name, String description) throws AonSQLException, SQLException, AonException {
+	private Integer duplicateDomain(Integer parent, String name, String description) throws AonConnectionException, AonSQLException {
 		Integer newDomainId = null;
 		Connection connection = null;
 		try {			
-			Properties properties = DataSourceUtil.getDBProperties();
-			connection = ConnectionProvider.getConnection(properties);				
+			connection = DatabaseUtil.getConnection(name);
 			AonDomainDuplicate add = new AonDomainDuplicate(connection);
 			newDomainId = add.execute(getTemplateDomain().getId(), name, description);
 		} finally {

@@ -105,7 +105,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 
 	public SummaryProviderParameters getParameters() {
 		if (parameters == null) {
-			SummaryProviderParameters p = new SummaryProviderParameters();
+			SummaryProviderParameters p = new SummaryProviderParameters(AonUtil.getDomainName());
 			try {
 				p.setPeriod(AccountingPeriodUtil.getDefaultPeriod());
 			} catch (ManagerBeanException e) {
@@ -135,7 +135,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 	public void onStatement(ActionEvent event) {
 		TrialBalanceController c = (TrialBalanceController) AonUtil.getRegisteredBean(TRIAL_BALANCE_CONTROLLER_NAME);
 		c.onReset(event);
-		SummaryProviderParameters spp = new SummaryProviderParameters();
+		SummaryProviderParameters spp = new SummaryProviderParameters(AonUtil.getDomainName());
 		spp.setAccountExpression(getAccountStatement() + "*");
 		spp.setDate(getParameters().getDate());
 		spp.setFromDate(getParameters().getFromDate());

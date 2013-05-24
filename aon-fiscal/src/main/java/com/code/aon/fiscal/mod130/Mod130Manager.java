@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.Session;
 
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
@@ -18,9 +17,9 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.IFiscalConstants;
@@ -29,12 +28,14 @@ import com.code.aon.fiscal.enumeration.Mod130Key;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.model.FiscalModelManager;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.TaxRegime;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod130Manager extends FiscalModelManager {
 
+	
 	private static String SELECT_TAX_REGIME = "SELECT "
 		+" value FROM app_param "
 		+" WHERE " + DomainManager.getStaticSQLWhereClause("app_param.domain") 
@@ -118,6 +119,16 @@ public class Mod130Manager extends FiscalModelManager {
 			+" AND fmd.type = ? "
 			+" ORDER by fm.period";
 	
+	private String domainName;
+	
+	public Mod130Manager(String domainName) {
+		this.domainName = domainName;
+	}
+	
+	public String getDomainName() {
+		return domainName;
+	}
+	
 	@Override
 	public boolean accept(FiscalModelType type) {
 		return type == FiscalModelType.M130;
@@ -133,12 +144,9 @@ public class Mod130Manager extends FiscalModelManager {
 	
 	@Override
 	public Mod130 initializeFiscalModelDetails(IFiscalDeclaration declaration) throws AonException {
-		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(getDomainName());
 
 			Mod130 mod130 = (Mod130) declaration;
 			FiscalModel fiscalModel = mod130.getHeader();
@@ -151,7 +159,7 @@ public class Mod130Manager extends FiscalModelManager {
 	//		 refiere este apartado y que correspondan al período comprendido entre 
 	//		 el primer día del año y el último día del trimestre.
 			SummaryProvider sp = new SummaryProvider();
-			SummaryProviderParameters params = new SummaryProviderParameters();
+			SummaryProviderParameters params = new SummaryProviderParameters(getDomainName());
 			params.setAccountExpression( "7*" );
 			params.setAccountLevel(5);
 			params.setFromDate(dateFrom);
@@ -177,7 +185,7 @@ public class Mod130Manager extends FiscalModelManager {
 	//		 correspondientes al período comprendido entre el primer día del año y el 
 	//		 último día del trimestre, determinados conforme a las especialidades 
 	//		 establecidas en el artículo 30 del Reglamento del Impuesto.
-			params = new SummaryProviderParameters();
+			params = new SummaryProviderParameters(getDomainName());
 			params.setAccountExpression( "6*" );
 			params.setAccountLevel(5);
 			params.setFromDate(dateFrom);
@@ -326,16 +334,10 @@ public class Mod130Manager extends FiscalModelManager {
 			
 			mod130.calculate();
 			return mod130;
+		} catch (AonConnectionException e) {
+			throw new AonException(e.getMessage(),e);
 		} finally {
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 

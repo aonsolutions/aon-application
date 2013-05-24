@@ -1,27 +1,24 @@
 package com.code.aon.fiscal.mod347;
 
-
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.Province;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.fiscal.FiscalModel;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.fiscal.Mod347;
 import com.code.aon.fiscal.Mod347Detail;
 import com.code.aon.fiscal.enumeration.Mod347Type;
+import com.code.aon.pool.AonConnectionException;
 
 public class Mod347Manager {
 
@@ -37,17 +34,14 @@ public class Mod347Manager {
 	private static final String FOURTH_QUARTER_ALIAS = "fourthQuarter";
 
 	public Mod347 generateDetails(Mod347Parameters params) throws ManagerBeanException {
-		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
 		Connection conn = null;
-		Session session = null;
 		PreparedStatement ps = null; 
 		ResultSet rs = null;
 		PreparedStatement ps1 = null;
 		ResultSet rs1 = null;
 		try {
 			Mod347 mod347 = params.getMod347();
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection(); 
+			conn = DatabaseUtil.getConnection(params.getDomainName()); 
 			ps1 = conn.prepareStatement(
 					"SELECT geozone.code FROM raddress,geozone WHERE "
 					+DomainManager.getSQLWhereClause("raddress.domain")
@@ -112,40 +106,14 @@ public class Mod347Manager {
 			return mod347;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs1 != null) {
-				try {
-					rs1.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps1 != null) {
-				try {
-					ps1.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs1);
+			DatabaseUtil.closeQuietly(ps1);
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 
 	}

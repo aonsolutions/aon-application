@@ -7,19 +7,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.hibernate.Session;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.fiscal.FiscalModel;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.fiscal.Mod349;
 import com.code.aon.fiscal.Mod349Detail;
 import com.code.aon.fiscal.enumeration.Mod349Type;
+import com.code.aon.pool.AonConnectionException;
 
 public class Mod349Manager {
 
@@ -37,12 +35,9 @@ public class Mod349Manager {
 		PreparedStatement ps = null; 
 		ResultSet declaredRs = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
 			
 			Mod349 mod349 = params.getMod349();
 			declaredPs = conn.prepareStatement(getDeclaredSentence(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -84,40 +79,14 @@ public class Mod349Manager {
 			return mod349;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (declaredRs != null) {
-				try {
-					declaredRs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (declaredPs != null) {
-				try {
-					declaredPs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(declaredRs);
+			DatabaseUtil.closeQuietly(declaredPs);
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 

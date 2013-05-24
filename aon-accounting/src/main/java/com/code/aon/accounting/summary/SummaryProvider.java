@@ -13,22 +13,18 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
-import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
@@ -36,8 +32,6 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class SummaryProvider {
-
-	private final static Logger LOGGER = LoggerFactory.getLogger(SummaryProvider.class);
 
 	public Summary getUniqueSummary(SummaryProviderParameters params) throws ManagerBeanException {
 		SummaryCollection sc = getSummaryCollection(params, true);
@@ -50,39 +44,14 @@ public class SummaryProvider {
 		return null;
 	}
 	public SummaryCollection getSummaryCollection(SummaryProviderParameters params, boolean withPreviousBalance) throws ManagerBeanException {
-		String sessionName = HibernateUtil.getSessionFactoryName(Account.class.getName());
-		Session s = null;
 		Connection c = null;
-		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		try {
-			HibernateUtil.setCloseSession( false );
-			HibernateUtil.setBeginTransaction( false  );
-			HibernateUtil.startSession(sessionName);
-			HibernateUtil.beginTransaction(sessionName);
-			s = HibernateUtil.getSession(sessionName);
-			c = s.connection();
-			SummaryCollection sc = getSummaryCollection(c,params,withPreviousBalance); 
-			HibernateUtil.commitTransaction(sessionName);
-			return sc;
-		} catch (DAOException e) {
-			try {
-				HibernateUtil.rollbackTransaction(sessionName);
-			} catch (DAOException e1) {
-				String msg = "Unable to rollback transaction!";
-				LOGGER.error(msg, e);
-			}
+			c = DatabaseUtil.getConnection(params.getDomainName());
+			return getSummaryCollection(c,params,withPreviousBalance);
+		} catch (AonConnectionException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (c != null) {
-//				try {
-//					c.close();
-//				} catch (SQLException e) {
-//				}
-			}
-			HibernateUtil.closeSession(sessionName);
-			HibernateUtil.setCloseSession( mustCloseSession );
-			HibernateUtil.setBeginTransaction( mustBeginTransaction );
+			DatabaseUtil.closeQuietly(c);
 		}
 	}
 	

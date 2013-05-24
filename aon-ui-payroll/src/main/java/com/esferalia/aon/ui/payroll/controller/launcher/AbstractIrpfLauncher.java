@@ -20,20 +20,20 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-
-import org.hibernate.Session;
 
 import com.aeat.jaxb.TipoRetenedorError2011;
 import com.aeat.jaxb.TipoRetenidoError2011;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.customer.enumeration.CustomerStatus;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.esferalia.aon.payroll.Salary;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.irpf.GeozoneIrpfCalculator;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
@@ -50,12 +50,9 @@ public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHan
 	
 	{
 		Date date = Calendar.getInstance().getTime();
-		String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			try {
 				IrpfCalculator.registerCalculator(Administration.ALAVA, 
 					new GeozoneIrpfCalculator(conn, Administration.ALAVA, date));
@@ -84,16 +81,11 @@ public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHan
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		} catch (AonConnectionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		} finally {
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 	
@@ -312,11 +304,8 @@ public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHan
 	}
 
 	public void onExecute(ActionEvent event) {
-		String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			connection = session.connection();
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 		
 			buildCriteria();
 			
@@ -324,16 +313,10 @@ public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHan
 			TestThread thread =  
 				new TestThread();
 			thread.start();
+		} catch (AonConnectionException e) {
+			throw new AbortProcessingException(e.getMessage(),e);
 		} finally {
-			if (HibernateUtil.mustCloseSession()) {
-				if (connection != null) {
-					try {
-						connection.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(connection);
 		}
 	}
 	

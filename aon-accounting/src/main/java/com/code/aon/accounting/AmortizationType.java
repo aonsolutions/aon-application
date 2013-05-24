@@ -1,18 +1,12 @@
 package com.code.aon.accounting;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
@@ -24,17 +18,14 @@ import com.esferalia.aon.entity.master.AmortizationTypeDB;
 public class AmortizationType extends AmortizationTypeDB {
 
 	private static final long serialVersionUID = 1L;
-	private static final String DESCRIPTION = "description";
-	private static final Logger LOGGER = LoggerFactory.getLogger(AmortizationType.class.getName());
 	
 	private static final String SELECT = "SELECT" 
-		    +" acc.description " + DESCRIPTION 
-			+" FROM account acc"
-			+" INNER JOIN domain dom on acc.domain = dom.id" 
-			+"  AND (dom.id = ? or dom.parent = ?)"
-			+" WHERE acc.code = ?"
-			+" GROUP BY acc.code"
-			+" LIMIT 1";
+		    +" account.description " 
+			+" FROM account, domain"
+			+" WHERE account.code = ?"
+			+"  AND account.domain = domain.id" 
+			+"  AND (domain.id = ? or domain.parent = ?)"
+			+" GROUP BY account.code";
 
 	@Transient
     public int getYears() {
@@ -81,41 +72,12 @@ public class AmortizationType extends AmortizationTypeDB {
 	private String getAccountDescription(String account) {
 		String sessionFactoryName =HibernateUtil.getSessionFactoryName(AmortizationType.class.getName());
 		Session session = null;  
-		Connection c = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		try {
-			session = HibernateUtil.getSession(sessionFactoryName);
-			c = session.connection();
-			ps = c.prepareStatement(SELECT,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			ps.setInt(1, DomainManager.getCurrentDomain());
-			ps.setInt(2, DomainManager.getCurrentDomain());
-			ps.setString(3, account);
-			rs = ps.executeQuery();
-			if (rs.next()) {
-				return rs.getString(DESCRIPTION);
-			}
-			return null;
-		} catch (SQLException e ) {
-			LOGGER.error(e.getMessage(),e);
-			return null;
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				HibernateUtil.closeSession(sessionFactoryName);	
-			}
-		}
+		session = HibernateUtil.getSession(sessionFactoryName);
+		Query query = session.createSQLQuery(SELECT);
+		query.setString(0, account);
+		query.setInteger(1, DomainManager.getCurrentDomain());
+		query.setInteger(2, DomainManager.getCurrentDomain());
+		return (String) query.uniqueResult();
 	}
 	
 }

@@ -25,7 +25,7 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.hibernate.Criteria;
-import org.hibernate.StatelessSession;
+import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
@@ -94,10 +94,10 @@ public class RSSController {
 
 	private byte[] getRSS() throws IOException {
 		Document document = null;
-		StatelessSession session = null;
+		Session session = null;
+		String sfn = HibernateUtil.getSessionFactoryName(News.class.getName());
 		try {
-			String sfn = HibernateUtil.getSessionFactoryName(News.class.getName());
-			session = HibernateUtil.getSessionFactory(sfn).openStatelessSession();
+			session = HibernateUtil.getSession(sfn);
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 			Integer channelId = ( category != null ) ? category.getId() : null;
 			document = createDocument(session, ds.getDomainId(), channelId, ds.getDomainURL());			
@@ -105,7 +105,7 @@ public class RSSController {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
 			if ( session != null ) {
-				session.close();
+				HibernateUtil.closeSession(sfn);
 			}
 		}
 		if ( document != null ) {
@@ -149,7 +149,7 @@ public class RSSController {
 		return item;
 	}
 	
-	private static Document createDocument( StatelessSession session, Integer domainId, Integer channelId, String urlPreffix ) {
+	private static Document createDocument( Session session, Integer domainId, Integer channelId, String urlPreffix ) {
 		 Document document = DocumentHelper.createDocument();
 		 Element root = document.addElement( RSS_ELEMENT );
 		 root.addAttribute("version", "2.0");
@@ -191,7 +191,7 @@ public class RSSController {
 		return sw.toString().getBytes(format.getEncoding());		
 	}
 	
-	public static byte[] getRSS( StatelessSession session, Integer domainId, Integer channelId, String urlPreffix ) throws IOException {
+	public static byte[] getRSS( Session session, Integer domainId, Integer channelId, String urlPreffix ) throws IOException {
 		Document document = createDocument(session, domainId, channelId, urlPreffix);
 		return getData(document);		
 	}

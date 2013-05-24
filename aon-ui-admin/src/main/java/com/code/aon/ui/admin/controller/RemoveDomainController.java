@@ -3,24 +3,21 @@ package com.code.aon.ui.admin.controller;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Properties;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.dbutils.DbUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.common.util.ConnectionProvider;
 import com.code.aon.config.Domain;
 import com.code.aon.dbutils.AonDomainRemove;
 import com.code.aon.dbutils.AonSQLException;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.IController;
@@ -29,7 +26,6 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DataSourceUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class RemoveDomainController {
@@ -78,15 +74,14 @@ public class RemoveDomainController {
 		setDomainDisabled(false);
 	}
 	
-	private void removeDomain(Integer domain) throws AonSQLException, SQLException, AonException {
+	private void removeDomain( String domainName, Integer domain) throws AonConnectionException, AonSQLException {
 		Connection connection = null;
 		try {			
-			Properties properties = DataSourceUtil.getDBProperties();
-			connection = ConnectionProvider.getConnection(properties);				
+			connection = DatabaseUtil.getConnection(domainName);				
 			AonDomainRemove adr = new AonDomainRemove(connection);
 			adr.execute(domain);
 		} finally {
-			DbUtils.closeQuietly(connection);
+			DatabaseUtil.closeQuietly(connection);
 		}
 	}
 	
@@ -94,7 +89,7 @@ public class RemoveDomainController {
 		NewDomainController.validateUserPassword(getPassword());
 		
 		try {			
-			removeDomain(domain.getId());
+			removeDomain(domain.getName(),domain.getId());
 			onInit(event);
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 			ds.setModel(null);			

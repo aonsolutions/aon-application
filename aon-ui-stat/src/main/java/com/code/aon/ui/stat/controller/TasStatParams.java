@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.commercial.Target;
 import com.code.aon.tas.TasItem;
+import com.code.aon.ui.util.AonUtil;
 
 public class TasStatParams {
 
@@ -47,7 +48,7 @@ public class TasStatParams {
 
 
 	public com.code.aon.stat.tas.TasStatParams getStatParams() {
-		com.code.aon.stat.tas.TasStatParams p = new com.code.aon.stat.tas.TasStatParams();
+		com.code.aon.stat.tas.TasStatParams p = new com.code.aon.stat.tas.TasStatParams(AonUtil.getDomainName());
 		p.setFromDate(getFromDate());
 		p.setToDate(getToDate());
 		p.setTarget( getTarget() != null?getTarget().getId():null );

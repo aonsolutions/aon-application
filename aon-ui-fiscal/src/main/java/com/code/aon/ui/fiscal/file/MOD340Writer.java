@@ -11,15 +11,12 @@ import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.hibernate.Session;
-
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
-import com.code.aon.config.enumeration.InvoiceTransactionType;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.tax.model.MOD340.MOD340;
 import com.code.aon.file.tax.model.MOD340.MOD340Format;
@@ -27,8 +24,8 @@ import com.code.aon.file.tax.model.MOD340.data.Deponent;
 import com.code.aon.file.tax.model.MOD340.data.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.util.FinanceUtil;
-import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.mod340.Model340Parameters;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -71,13 +68,10 @@ public class MOD340Writer implements IFinanceConstants{
 		ResultSet taxRs = null;
 		PreparedStatement sumPs = null;
 		ResultSet sumRs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
-
+			conn = DatabaseUtil.getConnection( params.getDomain() );
+			
 			Deponent deponent = getDeponent();
 			StringWriter stmt = new StringWriter();
 			stmt.append(" SELECT i.id invoice_id");
@@ -181,18 +175,14 @@ public class MOD340Writer implements IFinanceConstants{
 			throw new Fd0Exception("ERROR", e.getMessage());
 		} catch (SQLException e) {
 			throw new Fd0Exception("ERROR", e.getMessage());
+		} catch (AonConnectionException e) {
+			throw new Fd0Exception("ERROR", e.getMessage());
 		} finally {
-			finalize(taxPs, taxRs);
-			finalize(invoicesPs, invoicesRs);
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(taxRs);
+			DatabaseUtil.closeQuietly(taxPs);
+			DatabaseUtil.closeQuietly(invoicesRs);
+			DatabaseUtil.closeQuietly(invoicesPs);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -250,7 +240,7 @@ public class MOD340Writer implements IFinanceConstants{
 	private Invoice fillInvoice(ResultSet rs) throws SQLException {
 		Invoice inv = new Invoice();
 		InvoiceType type = InvoiceType.values()[rs.getInt("type")];
-		InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt("transaction")];
+//		InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt("transaction")];
 		boolean investment = rs.getInt("investment") == 1;
 		if ( type == InvoiceType.SALES) {
 			inv.setType(MOD340.ISSUED);
@@ -258,7 +248,7 @@ public class MOD340Writer implements IFinanceConstants{
 			inv.setFirstInvoiceNumber("");
 			inv.setLastInvoiceNumber("");
 			inv.setRectifiedInvoiceNumber("");
-		} else if (investment) {
+		} else if (investment && params.isInvestmentBookEnabled()) {
 				inv.setType(MOD340.INVESTMENT);
 				inv.setYearProrate(0); 
 				inv.setYearRegularization(0);
@@ -315,21 +305,6 @@ public class MOD340Writer implements IFinanceConstants{
 		String documentNumber = FinanceUtil.getDocumentNumber(type, series, number);
 		inv.setDocumentNumber(documentNumber);
 		return inv;
-	}
-
-	private void finalize(PreparedStatement ps,ResultSet rs) {
-		if (rs != null) {
-			try {
-				rs.close();
-			} catch (SQLException e) {
-			}
-		}
-		if (ps != null) {
-			try {
-				ps.close();
-			} catch (SQLException e) {
-			}
-		}
 	}
 	
 }

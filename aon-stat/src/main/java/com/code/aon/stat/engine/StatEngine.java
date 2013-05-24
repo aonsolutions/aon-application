@@ -12,15 +12,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Session;
 
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.finance.Invoice;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 
@@ -48,12 +47,9 @@ public class StatEngine {
 			throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
 
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT YEAR(i.issue_date) YEAR,COUNT(DISTINCT i.id),");
@@ -107,28 +103,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -144,12 +124,10 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
+			
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT MONTH(i.issue_date) MONTH,COUNT(DISTINCT i.id),");
 			stmt.append(" SUM(id.taxable_base)");
@@ -207,28 +185,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -239,12 +201,9 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
 
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT i.issue_date DAY,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
@@ -306,28 +265,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -337,12 +280,10 @@ public class StatEngine {
 		List<Stat> stats = new LinkedList<Stat>();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT r.id,r.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
@@ -395,28 +336,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -425,12 +350,10 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append(" SELECT YEAR(i.issue_date) YEAR,c.id,c.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
@@ -488,28 +411,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -518,12 +425,10 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
+
 
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT p.id,p.name,COUNT(DISTINCT i.id),SUM(id.taxable_base),SUM(id.quantity)");
@@ -592,28 +497,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 
 	}
@@ -624,12 +513,10 @@ public class StatEngine {
 		List<Stat> stats = new LinkedList<Stat>();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT r.id,r.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
@@ -693,28 +580,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -724,12 +595,10 @@ public class StatEngine {
 		List<Stat> stats = new LinkedList<Stat>();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT r.id,r.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
 			stmt.append("FROM invoice_detail id  ");
@@ -793,49 +662,24 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
 	public Collection<Stat> getSummaryStats(StatParams params)
 			throws ManagerBeanException {
 		List<Stat> stats = new LinkedList<Stat>();
-
-		/*
-		 * for (int i = 0; i < 13; i++) { stats.add(i, new Stat());
-		 * stats.get(i).setKey(i);
-		 * stats.get(i).setName(Month.getMonthByValue(i).getName(locale)); }
-		 */
-
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT MONTH(i.issue_date) MONTH,COUNT(DISTINCT i.id),");
 			stmt.append(" SUM(id.taxable_base), YEAR(i.issue_date)");
@@ -895,28 +739,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -926,13 +754,10 @@ public class StatEngine {
 		List<Stat> stats = new LinkedList<Stat>();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT MONTH(i.issue_date) MONTH,COUNT(DISTINCT i.id),SUM(id.taxable_base),YEAR(i.issue_date) YEAR");
 			stmt.append(" FROM invoice_detail id  ");
@@ -995,28 +820,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -1024,12 +833,10 @@ public class StatEngine {
 			throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT r.id,r.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id ");
@@ -1086,28 +893,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -1117,13 +908,10 @@ public class StatEngine {
 		List<Stat> stats = new LinkedList<Stat>();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT p.id,p.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
@@ -1184,28 +972,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -1214,12 +986,10 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT p.id,p.name,COUNT(DISTINCT i.id),SUM(id.taxable_base),SUM(id.quantity)");
 			stmt.append(" FROM invoice_detail id ");
@@ -1278,28 +1048,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -1308,12 +1062,10 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT c.id,c.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
@@ -1372,28 +1124,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 
 	}
@@ -1403,12 +1139,10 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append(" SELECT c.id,c.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
 			stmt.append(" FROM offer_detail od  ");
@@ -1470,28 +1204,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -1500,12 +1218,10 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append(" SELECT r.id,r.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
 			stmt.append(" FROM offer_detail od  ");
@@ -1565,28 +1281,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -1595,12 +1295,9 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
 
 			StringBuffer stmt = new StringBuffer();
 			stmt.append(" SELECT g.id,g.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
@@ -1662,28 +1359,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
@@ -1692,12 +1373,10 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT p.id,p.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
 			stmt.append(" FROM offer_detail od ");
@@ -1765,28 +1444,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 
 	}
@@ -1796,12 +1459,10 @@ public class StatEngine {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(params.getDomainName());
+
 			StringBuffer stmt = new StringBuffer();
 			stmt.append(" SELECT r.id,r.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
 			stmt.append(" FROM  offer o");
@@ -1861,28 +1522,12 @@ public class StatEngine {
 			return stats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 	

@@ -20,7 +20,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Session;
 
 import com.code.aon.commercial.Question;
 import com.code.aon.commercial.Target;
@@ -32,11 +31,12 @@ import com.code.aon.commercial.enumeration.QuestionType;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.CriteriaUtilities;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.config.Scope;
 import com.code.aon.customer.Customer;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.geozone.GeoZone;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
@@ -178,13 +178,10 @@ public class TargetController extends RegistryController implements ICommercialC
 	}
 
 	public void onDetailReport(ActionEvent event){
-		String sessionName = HibernateUtil.getSessionFactoryName(Target.class.getName());
 		Connection conn = null;
-		Session session = null;
 		PreparedStatement ps = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			
 			String mappingPrefix = Target.class.getSimpleName();
 			Table table = Target.class.getAnnotation(Table.class);
@@ -337,22 +334,13 @@ public class TargetController extends RegistryController implements ICommercialC
 			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
+		} catch (AonConnectionException e) {
+			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
 		} finally {
-			if ( ps != null ) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 	

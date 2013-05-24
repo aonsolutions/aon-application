@@ -1,6 +1,5 @@
 package com.code.aon.ui.admin.controller;
 
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -13,7 +12,6 @@ import java.io.Writer;
 import java.sql.Connection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -33,14 +31,13 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.util.ConnectionProvider;
 import com.code.aon.config.Domain;
 import com.code.aon.dbutils.AonDomainDump;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DataSourceUtil;
 import com.code.aon.ui.util.DownloadUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -125,8 +122,8 @@ public class BackupController {
 			zipOut = new ZipOutputStream(fileOut);
 			zipOut.putNextEntry(new ZipEntry(name + ".sql"));
 
-			Properties properties = DataSourceUtil.getDBProperties();
-			connection = ConnectionProvider.getConnection(properties);
+			
+			connection  = DatabaseUtil.getConnection(AonUtil.getAuthPrincipal().getDomain());
 			Writer writer = new OutputStreamWriter(zipOut, CharEncoding.ISO_8859_1);
 			AonDomainDump dump = new AonDomainDump(connection);
 			dump.execute(getDomains(), writer);

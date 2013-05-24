@@ -65,7 +65,7 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 
 	public SummaryProviderParameters getParameters() {
 		if (parameters == null) {
-			SummaryProviderParameters p = new SummaryProviderParameters();
+			SummaryProviderParameters p = new SummaryProviderParameters(AonUtil.getDomainName());
 			p.setFromDate(null);
 			p.setToDate(null);
 			try {

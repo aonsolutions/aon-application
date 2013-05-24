@@ -15,15 +15,19 @@ import com.code.aon.fiscal.mod310.Mod310Manager;
 public class FiscalModelManagerFactory {
 
 	private List<IFiscalModelManager> managers;
+
+//	public FiscalModelManagerFactory() {
+//		
+//	}
 	
-	public FiscalModelManagerFactory() {
+	public FiscalModelManagerFactory(String domainName) {
 		managers = new LinkedList<IFiscalModelManager>();
-		managers.add(new Mod111Manager() );
-		managers.add(new Mod115Manager() );
-		managers.add(new Mod123Manager() );
-		managers.add(new Mod130Manager() );
-		managers.add(new Mod310Manager() );
-		managers.add(new Mod131Manager() );
+		managers.add(new Mod111Manager(domainName) );
+		managers.add(new Mod115Manager(domainName) );
+		managers.add(new Mod123Manager(domainName) );
+		managers.add(new Mod130Manager(domainName) );
+		managers.add(new Mod310Manager(domainName) );
+		managers.add(new Mod131Manager(domainName) );
 	}
 	
 	public List<IFiscalModelManager> getManagers() {

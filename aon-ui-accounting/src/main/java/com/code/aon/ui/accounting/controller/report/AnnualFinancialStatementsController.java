@@ -141,8 +141,8 @@ public class AnnualFinancialStatementsController {
 		check();
 		try {
 			BalanceManager bm = new BalanceManager();
-			SummaryProviderParameters parameters = new SummaryProviderParameters();
-			parameters = new SummaryProviderParameters();
+			SummaryProviderParameters parameters = new SummaryProviderParameters(AonUtil.getDomainName());
+			parameters = new SummaryProviderParameters(AonUtil.getDomainName());
 			parameters.setPeriod(period);
 			parameters.setFromDate(null);
 			parameters.setToDate(null);

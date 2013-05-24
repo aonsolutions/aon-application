@@ -70,7 +70,7 @@ public class BalanceSheetController implements ICollectionProvider {
 
 	public void onReset(ActionEvent event) {
 		onBack(event);
-		parameters = new SummaryProviderParameters();
+		parameters = new SummaryProviderParameters(AonUtil.getDomainName());
 		try {
 			parameters.setPeriod(AccountingPeriodUtil.getDefaultPeriod());
 		} catch (ManagerBeanException e) {

@@ -268,7 +268,7 @@ public class ReportsLauncher {
 
 	public SummaryProviderParameters getParams() {
 		if (params == null) {
-			params = new SummaryProviderParameters();
+			params = new SummaryProviderParameters(AonUtil.getDomainName());
 		}
 		return params;
 	}
@@ -334,8 +334,8 @@ public class ReportsLauncher {
 		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 		Period period = (Period) periodBean.get("2010");
 		ReportsLauncher rl = new ReportsLauncher();
-		SummaryProviderParameters parameters = new SummaryProviderParameters();
-		parameters = new SummaryProviderParameters();
+		SummaryProviderParameters parameters = new SummaryProviderParameters(AonUtil.getDomainName());
+		parameters = new SummaryProviderParameters(AonUtil.getDomainName());
 		parameters.setPeriod(period);
 		parameters.setFromDate(null);
 		parameters.setToDate(null);

@@ -8,7 +8,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.GregorianCalendar;
 
 import javax.faces.context.FacesContext;
@@ -18,17 +17,17 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.dbutils.MySQLDBDumper;
 import com.code.aon.dbutils.event.DBUtilsEvent;
 import com.code.aon.dbutils.event.DBUtilsListener;
 import com.code.aon.dbutils.runner.DBUtilsRunner;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
 
 public class DumpController implements DBUtilsListener {
@@ -68,6 +67,9 @@ public class DumpController implements DBUtilsListener {
 		} catch (IOException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
+		} catch (AonConnectionException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());
 		}
 	}
 
@@ -94,13 +96,10 @@ public class DumpController implements DBUtilsListener {
 		}
 	}
 
-	private void dump() throws IOException {
-		String sessionName = HibernateUtil.getSessionFactoryName();
+	private void dump() throws IOException, AonConnectionException {
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			GregorianCalendar gc = new GregorianCalendar();
 			String prefix = "dbdump_" + gc.get(GregorianCalendar.DATE) + "_" + (gc.get(GregorianCalendar.MONTH) + 1) + "_"
 					+ gc.get(GregorianCalendar.YEAR) + "_" + gc.get(GregorianCalendar.HOUR) + "_" + gc.get(GregorianCalendar.MINUTE) + "_";
@@ -121,15 +120,7 @@ public class DumpController implements DBUtilsListener {
 			getAonFile().setFileName(file.getName());
 			getAonFile().setData(baos.toByteArray());
 		} finally {
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 

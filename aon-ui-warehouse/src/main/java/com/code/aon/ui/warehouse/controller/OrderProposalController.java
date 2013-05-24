@@ -10,14 +10,13 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
-import org.hibernate.Session;
-
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.product.ProductCategory;
-import com.code.aon.warehouse.ItemWarehouse;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Warehouse;
 
 public class OrderProposalController implements ICollectionProvider{
@@ -59,15 +58,11 @@ public class OrderProposalController implements ICollectionProvider{
 
 	@Override
 	public Collection<?> getCollection(boolean forceRefresh) throws ManagerBeanException {
-		String sessionName = HibernateUtil.getSessionFactoryName(ItemWarehouse.class.getName());
 		Connection conn = null;
-		Session session = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-
         try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 	        String stmt = 
 	    		"SELECT "
 	    		+"  p.code,p.name,c.id,c.name,w.name,iw.warehouse,iw.stock_min,iw.stock_max,IFNULL(s.quantity,0)"
@@ -105,28 +100,12 @@ public class OrderProposalController implements ICollectionProvider{
 			return list;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 

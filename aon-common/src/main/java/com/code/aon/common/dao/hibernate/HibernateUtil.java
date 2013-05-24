@@ -1,6 +1,5 @@
 package com.code.aon.common.dao.hibernate;
 
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -163,7 +162,7 @@ public class HibernateUtil {
         return HibernateUtil.MUST_BEGIN_TRANSACTION.get().booleanValue();
     }
 
-    private static SessionFactory createSessionFactory( String sessionFactoryName ) {
+    private synchronized static SessionFactory createSessionFactory( String sessionFactoryName ) {
         SessionFactory factory = null;
         try {
             Configuration configuration = configurationFactory.getConfiguration(sessionFactoryName);
@@ -188,48 +187,6 @@ public class HibernateUtil {
 		HibernateUtil.configurationFactory = configurationFactory;
 	}
 
-//    public static boolean isIdentifier(ClassMetadata cmd, String associationPath) {
-//        String idName = cmd.getIdentifierPropertyName();
-//        int pos = StringUtils.indexOfAny( associationPath, HibernateRenderer.SEPARATORS );
-//        if (pos != -1) {
-//            String property = associationPath.substring(0, pos);
-//            if ( idName.equals(property) ) {
-//                return true;
-//            }
-//            Type type = cmd.getPropertyType( property );
-//            if ( type != null ) {
-//                ClassMetadata propertyCmd = null;
-//                if (type.isEntityType()) {
-//                    EntityType et = (EntityType) type;
-//                    propertyCmd = getSessionFactory().getClassMetadata( et.getAssociatedEntityName() );
-//                } else if (type.isComponentType()) {
-//                    ComponentType ct = (ComponentType) type;
-//                    propertyCmd = getSessionFactory().getClassMetadata( ct.getReturnedClass() );
-//                }
-//                return isIdentifier( propertyCmd, associationPath.substring(pos+1) );
-//            }
-//        } else {
-//            return associationPath.equals(idName);
-//        }
-//        return false;
-//    }
-//
-//    public static boolean isComponsiteIdentifier(ClassMetadata cmd, String property) {
-//        String idName = cmd.getIdentifierPropertyName();
-//        if ( idName.equals(property) ) {
-//        	Type type = cmd.getIdentifierType();
-//        	return type.isComponentType();
-//        }
-//        return false;
-//    }
-    @Deprecated
-	public static Connection getSQLConnection() {
-		return getSQLConnection( getSessionFactoryName() );
-	}
-
-	public static Connection getSQLConnection( String sessionFactoryName ) {
-		return HibernateUtil.getSession(sessionFactoryName).connection();
-	}
 	public static ISessionFactoryNameProvider getSessionFactoryNameProvider() {
 		return sessionFactoryNameProvider;
 	}
@@ -237,5 +194,4 @@ public class HibernateUtil {
 			ISessionFactoryNameProvider sessionFactoryNameProvider) {
 		HibernateUtil.sessionFactoryNameProvider = sessionFactoryNameProvider;
 	}
-
 } 

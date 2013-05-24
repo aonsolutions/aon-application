@@ -30,20 +30,19 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.hibernate.Session;
 
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.company.Enterprise;
 import com.code.aon.customer.enumeration.CustomerStatus;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.esferalia.aon.payroll.Agreement;
-import com.esferalia.aon.payroll.Salary;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContext;
@@ -178,28 +177,19 @@ public abstract class AbstractSalaryLauncher
 	}
 	
 	public void onExecute(ActionEvent event) {
-		String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			connection = session.connection();
-
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			
 			buildCriteria();
 
 			setPollEnabled(true);
 			TestThread thread =  
 				new TestThread();
 			thread.start();
+		} catch (AonConnectionException e) {
+			throw new AbortProcessingException(e.getMessage(),e);
 		} finally {
-			if (HibernateUtil.mustCloseSession()) {
-				if (connection != null) {
-					try {
-						connection.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(connection);
 		}
 	}
 	

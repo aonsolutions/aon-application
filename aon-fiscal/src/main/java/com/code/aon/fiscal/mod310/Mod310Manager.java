@@ -22,6 +22,16 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod310Manager extends FiscalModelManager {
 	
+	private String domainName;
+	
+	public Mod310Manager(String domainName) {
+		this.domainName = domainName;
+	}
+	
+	public String getDomainName() {
+		return domainName;
+	}
+
 	@Override
 	public boolean accept(FiscalModelType type) {
 		return type == FiscalModelType.M310;
@@ -41,7 +51,7 @@ public class Mod310Manager extends FiscalModelManager {
 		mod310.initializeDetails();
 		Date fromDate = fiscalModel.getPeriod().getStartDate(  fiscalModel.getYear() );
 		Date toDate = fiscalModel.getPeriod().getDueDate(  fiscalModel.getYear() );
-		VatTaxManager taxManager = new VatTaxManager();
+		VatTaxManager taxManager = new VatTaxManager(getDomainName());
 		List<VatTaxDetail> vatDetails = taxManager.getVatTax(fromDate, toDate );
 		double c02 = 0.0;
 		double c04 = 0.0;

@@ -237,7 +237,8 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 	}
 
 	private VatCollectionParameters getParameters() {
-		VatCollectionParameters vcp = new VatCollectionParameters();
+		String domain = AonUtil.getAuthPrincipal().getDomain();
+		VatCollectionParameters vcp = new VatCollectionParameters(domain);
 		vcp.setDate(getDate());
 		vcp.setFromDate(getFromDate());
 		vcp.setToDate(getToDate());

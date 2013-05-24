@@ -107,12 +107,18 @@
 	</build>
 	<dependencies>
 
-		<!-- EXTERNAL LIBRARIES -->
+		<!-- INTERNAL LIBRARIES -->
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.pool</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
@@ -334,6 +340,13 @@
 		<!-- EXTERNAL LIBRARIES -->
 
 		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>coyote</artifactId>
+			<version>6.0.13</version>
+			<scope>provided</scope>
+		</dependency>		
+
+		<dependency>
 			<groupId>org.xhtmlrenderer</groupId>
 			<artifactId>core-renderer</artifactId>
 			<version>R8-AON</version>
@@ -343,7 +356,7 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
-			<version>2.4</version>
+			<version>2.5</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -370,6 +383,10 @@
 				<exclusion>
 					<groupId>javax.servlet</groupId>
 					<artifactId>servlet-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -401,7 +418,7 @@
 			<groupId>com.mchange</groupId>
 			<artifactId>c3p0</artifactId>
 			<version>0.9.2</version>
-			<scope>runtime</scope>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>jaxen</groupId>
@@ -496,6 +513,10 @@
 					<groupId>xml-apis</groupId>
 					<artifactId>xmlParserAPIs</artifactId>
 				</exclusion>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -535,6 +556,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+<!-- 		
 		<dependency>
 			<groupId>ar.com.fdvs</groupId>
 			<artifactId>DynamicJasper</artifactId>
@@ -554,6 +576,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+ -->
 		<dependency>
 			<groupId>eu.medsea.mimeutil</groupId>
 			<artifactId>mime-util</artifactId>
@@ -799,26 +822,6 @@
 			<version>1.2</version>
 			<scope>runtime</scope>
 		</dependency>
-
-		<!-- TEST DEPENDENCIES -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.4</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-java</artifactId>
-			<version>2.32.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-firefox-driver</artifactId>
-			<version>2.32.0</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 	<profiles>
@@ -838,6 +841,18 @@
 					<groupId>com.code.aon</groupId>
 					<artifactId>aon.jaas</artifactId>
 					<version>${project.version}</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.pool</artifactId>
+					<version>${project.version}</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>com.mchange</groupId>
+					<artifactId>c3p0</artifactId>
+					<version>0.9.2</version>
 					<scope>compile</scope>
 				</dependency>
 			</dependencies>
@@ -897,8 +912,11 @@
 														<excludes>
 															<exclude>**/MANIFEST.MF</exclude>
 															<exclude>**/aon.jaas*.jar</exclude>
-															<exclude>**/commons-dbutils*.jar</exclude>
+															<exclude>**/aon.pool*.jar</exclude>
+															<exclude>**/c3p0*.jar</exclude>
+															<exclude>**/mchange-commons-java*.jar</exclude>
 															<exclude>**/commons-lang*.jar</exclude>
+															<exclude>**/commons-dbutils*.jar</exclude>
 														</excludes>
 													</source>
 												</sources>
@@ -933,8 +951,9 @@
 													</source>
 												</sources>
 											</mapping>
+											
 											<mapping>
-												<directory>/etc/tomcat6/aon.workspace/</directory>
+												<directory>/etc/aon-aio/</directory>
 												<configuration>noreplace</configuration>
 												<filemode>755</filemode>
 												<username>tomcat</username>
@@ -942,12 +961,14 @@
 												<sources>
 													<source>
 														<includes>
-															<include>deployed.xml</include>
+															<include>connection</include>
+															<include>default.pool-properties</include>
 														</includes>
 														<location>src/main/scripts/</location>
 													</source>
 												</sources>
 											</mapping>
+<!-- 											
 											<mapping>
 												<directory>/tmp/aon-aio-tomcat_${buildNumber}</directory>
 												<filemode>755</filemode>
@@ -963,6 +984,7 @@
 													</source>
 												</sources>
 											</mapping>
+ -->											
 											<mapping>
 												<directory>/usr/share/java/tomcat6/</directory>
 												<filemode>755</filemode>
@@ -971,8 +993,11 @@
 												<dependency>
 													<includes>
 														<include>com.code.aon:aon.jaas:${project.version}</include>
-														<include>commons-dbutils:commons-dbutils:1.5</include>
+														<include>com.code.aon:aon.pool:${project.version}</include>
+														<include>com.mchange:c3p0:0.9.2</include>
+														<include>com.mchange:mchange-commons-java:0.2.3.3</include>
 														<include>commons-lang:commons-lang:2.5</include>
+														<include>commons-dbutils:commons-dbutils:1.5</include>
 													</includes>
 												</dependency>
 												<sources>

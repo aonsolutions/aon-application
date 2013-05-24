@@ -18,13 +18,25 @@ public class VatTaxParameters {
 	private SecurityLevel securityLevel;
 	private InvoiceStatus invoiceStatus;
 
-
-	public VatTaxParameters() {
-		setFromDate(null);
-		setToDate(null);
+	private String domainName;
+	
+	public VatTaxParameters(String domainName) {
+//		this();
+		this.domainName = domainName;
 		setDate(new Date());
 	}
 
+//	public VatTaxParameters() {
+//		setDate(new Date());
+//	}
+
+	public String getDomainName() {
+		return domainName;
+	}
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
+	}
+	
 	public VatTax getVatTax() {
 		return vatTax;
 	}

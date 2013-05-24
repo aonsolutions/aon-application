@@ -3,17 +3,14 @@ package com.code.aon.ui.config.controller;
 import static com.code.aon.bridge.controller.ISecurityBridgeConstants.BUNDLE_NAME;
 import static com.code.aon.bridge.controller.ISecurityBridgeConstants.NEW_PASSWORD_ERROR;
 import static com.code.aon.bridge.controller.ISecurityBridgeConstants.PASSWORD_ERROR;
-import static com.code.aon.common.util.BeanServerUtil.AON_SECURITY_DOMAIN;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.util.BeanServerUtil;
 import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 
@@ -40,7 +37,7 @@ public abstract class BasicChangePasswordController {
 		return to;
 	}
 	
-	public void onInit(ActionEvent event) throws DeploymentException {
+	public void onInit(ActionEvent event) {
 		setShowPasswordChangedWindow(false);
 		setPassword(null);
 		setNewPassword(null);
@@ -61,7 +58,6 @@ public abstract class BasicChangePasswordController {
 			throw new AbortProcessingException( message );
 		}
 		updatePassword( newPassword );			
-		BeanServerUtil.flushAuthenticationCache(AON_SECURITY_DOMAIN);
 		setShowPasswordChangedWindow(true);
 	}
 

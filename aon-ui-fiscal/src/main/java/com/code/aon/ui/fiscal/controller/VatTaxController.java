@@ -70,7 +70,7 @@ public class VatTaxController extends BasicController {
 
 	public VatTaxManager getManager() {
 		if (provider == null) {
-			provider = new VatTaxManager();
+			provider = new VatTaxManager(AonUtil.getDomainName());
 		}
 		return provider;
 	}
@@ -148,7 +148,7 @@ public class VatTaxController extends BasicController {
 	public void initializeVatTax(boolean isNew) throws ManagerBeanException {
 		setAnyPreviousAdjust(false);
 		VatTax vatTax = (VatTax) getTo();
-		setParams(new VatTaxParameters()); 
+		setParams(new VatTaxParameters(AonUtil.getDomainName())); 
 		getParams().setVatTax( vatTax );
 		getParams().setYear( vatTax.getYear() );
 		getParams().setPeriod( vatTax.getPeriod() );

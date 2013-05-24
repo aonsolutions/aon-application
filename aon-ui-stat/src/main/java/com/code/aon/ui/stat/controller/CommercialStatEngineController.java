@@ -685,7 +685,7 @@ public class CommercialStatEngineController {
 	}
 
 	public void onReset(ActionEvent event) {
-		params = new StatParams();
+		params = new StatParams(AonUtil.getDomainName());
 		params.setLocale(FacesContext.getCurrentInstance().getViewRoot()
 				.getLocale());
 		OfferStatus[] defaultOfferStatus = { OfferStatus.APPROVED };

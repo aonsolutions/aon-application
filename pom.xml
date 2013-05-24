@@ -39,6 +39,7 @@
 		<module>aon-sql-payroll</module>
 		
 		<!-- FRAMEWORK -->
+		<module>aon.pool</module>
 		<module>aon-audit</module>
 		<module>aon-ui-audit</module>
 		<module>aon-jaas</module>
@@ -290,7 +291,7 @@
 				<updatePolicy>true</updatePolicy>
 			</snapshots>
 		</repository>
-
+<!-- 
 		<repository>
 			<id>dynamicJasper-public-repository</id>
 			<name>DynamicJasper public Repository</name>
@@ -304,6 +305,7 @@
 				<updatePolicy>never</updatePolicy>
 			</snapshots>
 		</repository>
+ -->
 	</repositories>
 
 	<pluginRepositories>

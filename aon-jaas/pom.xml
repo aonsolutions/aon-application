@@ -11,11 +11,17 @@
 	<name>AON JAAS</name>
 	<dependencies>
 		<dependency>
+		    <groupId>com.code.aon</groupId>
+		    <artifactId>aon.pool</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 		    <groupId>commons-dbutils</groupId>
 		    <artifactId>commons-dbutils</artifactId>
 		    <version>1.5</version>
 			<scope>compile</scope>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>

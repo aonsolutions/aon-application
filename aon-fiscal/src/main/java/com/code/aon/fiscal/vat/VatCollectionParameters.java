@@ -21,17 +21,23 @@ public class VatCollectionParameters {
 	private Double vatPercent;
 	private Double surchargePercent;
 	private SecurityLevel securityLevel;
+	private String domain;
 
 	/**
 	 * Fecha.
 	 */
 	private Date date;
 
-	public VatCollectionParameters() {
+	public VatCollectionParameters(String domain) {
+		this.domain = domain;
 		setFromDate(null);
 		setToDate(null);
 		setDate(new Date());
 		setVatType(null);
+	}
+
+	public String getDomain() {
+		return domain;
 	}
 
 	public VatType getVatType() {
@@ -132,4 +138,5 @@ public class VatCollectionParameters {
 	public void setSurchargePercent(Double surchargePercent) {
 		this.surchargePercent = surchargePercent;
 	}
+	
 }

@@ -3,19 +3,21 @@
  */
 package com.code.aon.ui.common.controller;
 
-import static com.code.aon.common.util.BeanServerUtil.SESSION_MANAGER;
 import static com.code.aon.ui.common.ICommonConstants.DEFAULT_BUNDLE_RESOURCE;
 
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.util.BeanServerUtil;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.ui.util.AonUtil;
 
@@ -24,6 +26,8 @@ import com.code.aon.ui.util.AonUtil;
  *
  */
 public class FailedLogin {
+	public static final String SESSION_MANAGER_REF = "jboss.admin:service=AonSessionManager";
+	public static final ObjectName SESSION_MANAGER = getObjectName(SESSION_MANAGER_REF);
 
     /** Obtains the SessionFilter Logger. */
 	private final static Logger LOGGER = LoggerFactory.getLogger(FailedLogin.class);
@@ -53,7 +57,7 @@ public class FailedLogin {
 		Object[] params = { "" };
 		String[] sig = { String.class.getName() }; 	
 		try {
-			MBeanServer server = BeanServerUtil.getMBeanServer();
+			MBeanServer server = getMBeanServer();
 			return (AuthenticationLoginException) server.invoke( SESSION_MANAGER, GET_LASTLOGIN_EXCEPTION, params, sig );
 		} catch (Throwable e) {
 			LOGGER.warn( e.getMessage(), e );
@@ -107,4 +111,23 @@ public class FailedLogin {
 		this.showError = showError;
 	}
 
+	private MBeanServer getMBeanServer() {
+		MBeanServer server = null;
+		List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
+		if (servers.size() > 0) {
+			server = (MBeanServer) servers.get(0);
+		}
+		return server;
+	}
+
+	private static ObjectName getObjectName( String ref ) {
+		try {
+			return new ObjectName( ref );
+		} catch (MalformedObjectNameException e) {
+			LOGGER.error( e.getMessage(), e );
+		}		
+		return null;
+	}
+
 }
+

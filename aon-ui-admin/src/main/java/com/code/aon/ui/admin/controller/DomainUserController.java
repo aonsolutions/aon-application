@@ -1,13 +1,11 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.code.aon.common.util.BeanServerUtil.AON_SECURITY_DOMAIN;
 import static com.code.aon.ui.admin.controller.IAdminConstants.ACTIVE_USERS;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_CONTROLLER_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.MAXIMUM_NUMBER_USERS;
 import static com.code.aon.ui.admin.controller.IAdminConstants.NEW_PASSWORD_ERROR;
 import static com.code.aon.ui.admin.controller.IAdminConstants.USER_DUPLICATED;
-import static com.code.aon.ui.config.controller.ConfigConstants.CHANGE_PASSWORD;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -24,13 +22,11 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AdminUtil;
-import com.code.aon.common.util.BeanServerUtil;
 import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
 import com.code.aon.config.User;
@@ -42,7 +38,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.UserApplicationInfo;
 import com.code.aon.ui.admin.util.IdCheckUtil;
 import com.code.aon.ui.audit.ApplicationOption;
-import com.code.aon.ui.config.controller.BasicChangePasswordController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -117,7 +112,6 @@ public class DomainUserController extends BasicController {
 	        user.setPassword( AdminUtil.encodeSHA(newPassword) );
 	        user.setPasswordExpiration( DateUtils.addDays(new Date(), 180) );
 	        getManagerBean().update(user);
-			flushPasswordCache();
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			AonUtil.addErrorMessage("Error cambiando la contraseña" );
@@ -129,7 +123,6 @@ public class DomainUserController extends BasicController {
 		try {
 			resetPassword( user );
 	        getManagerBean().update(user);
-			flushPasswordCache();
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			AonUtil.addErrorMessage("Error cambiando la contraseña" );
@@ -166,12 +159,6 @@ public class DomainUserController extends BasicController {
 		this.confirmPassword = confirmPassword;
 	}
 
-	private void flushPasswordCache() throws AonException {
-		BeanServerUtil.flushAuthenticationCache(AON_SECURITY_DOMAIN);
-		BasicChangePasswordController bcpc = (BasicChangePasswordController) AonUtil.getRegisteredBean(CHANGE_PASSWORD);
-		bcpc.setShowPasswordChangedWindow(true);
-	}
-	
 	public void registerScope( User user, String scopeName ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Scope.class);
 		Criteria scopeCriteria = new Criteria();

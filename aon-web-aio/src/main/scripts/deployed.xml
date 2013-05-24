@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='ISO-8859-1' ?>
-<applications>
-	<options>
-		<option name="hibernate.connection.url" value="jdbc:mysql://127.0.0.1:3306"></option>
-		<option name="hibernate.connection.driver_class" value="org.gjt.mm.mysql.Driver"></option>
-		<option name="hibernate.connection.username" value="admin"></option>
-	</options>
-</applications>

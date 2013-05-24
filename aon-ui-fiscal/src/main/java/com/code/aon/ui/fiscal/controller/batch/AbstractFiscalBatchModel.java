@@ -7,19 +7,17 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.dbutils.DbUtils;
-import org.hibernate.Session;
-
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.fiscal.FiscalBatch;
 import com.code.aon.fiscal.FiscalBatchDetail;
-import com.code.aon.fiscal.FiscalModel;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public abstract class AbstractFiscalBatchModel implements IFiscalBatchModel {
@@ -61,12 +59,9 @@ public abstract class AbstractFiscalBatchModel implements IFiscalBatchModel {
 	public List<Batchable> getPendingList(FiscalBatch fiscalBatch) throws AonException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(FiscalModel.class.getName());
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			ps = conn.prepareStatement(getSelect(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			ps.setInt(1, DomainManager.getCurrentDomain());
 			ps.setInt(2, DomainManager.getCurrentDomain());
@@ -91,18 +86,12 @@ public abstract class AbstractFiscalBatchModel implements IFiscalBatchModel {
 			return list;
 		} catch (SQLException e ) {
 			throw new AonException(e.getMessage(),e);
+		} catch (AonConnectionException e) {
+			throw new AonException(e.getMessage(),e);
 		} finally {
-			DbUtils.closeQuietly(ps);
-			DbUtils.closeQuietly(rs);
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 	

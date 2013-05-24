@@ -58,7 +58,7 @@ public class AnnualReportManager {
 	}
 	private static AnnualReportParameters getParams() throws ManagerBeanException {
 		AnnualReportParameters params = new AnnualReportParameters();
-		params.setParams(new SummaryProviderParameters());
+		params.setParams(new SummaryProviderParameters(""));
 		IManagerBean bean = BeanManager.getManagerBean(Period.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PERIOD_ID),"2010");

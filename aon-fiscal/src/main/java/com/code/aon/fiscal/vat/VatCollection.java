@@ -9,26 +9,22 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.hibernate.Session;
-
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
-import com.code.aon.finance.Invoice;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 import com.code.aon.fiscal.enumeration.VatReportType;
 import com.code.aon.fiscal.enumeration.VatType;
+import com.code.aon.pool.AonConnectionException;
 
 public class VatCollection {
 
 	public List<Vat> getVatList(VatCollectionParameters params) throws ManagerBeanException {
-		Session s = null;
 		Connection c = null; 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		try {
 			StringWriter stmt = new StringWriter();
 			stmt.append("SELECT i.type,YEAR(i.tax_date) YEAR,QUARTER(i.tax_date) QUARTER, ");
@@ -72,8 +68,7 @@ public class VatCollection {
 			stmt.append("         it.percentage,it.surcharge,i.transaction,i.investment");
 			stmt.append(" ORDER BY type DESC,year,quarter,month,i.transaction,i.investment,");
 			stmt.append("		 it.percentage,it.surcharge");
-			s = HibernateUtil.getSession(sessionName);
-			c = s.connection();
+			c = DatabaseUtil.getConnection( params.getDomain() );
 			ps = c.prepareStatement(stmt.toString(),
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
@@ -126,36 +121,20 @@ public class VatCollection {
 			return vats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (c != null) {
-				try {
-					c.close();
-				} catch (SQLException e) {
-				}
-			}
-			HibernateUtil.closeSession(sessionName);
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(c);
 		}
 
 	}
 
 	public List<Vat> getVatDetailList(VatCollectionParameters params, InvoiceReportOrder order) throws ManagerBeanException {
-		Session s = null;
 		Connection c = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		try {
 			// Mediante la operacion siguiente se determinada cual de los tipos de factura
 			// es de ventas, compras o inversión y se asocia al tipo de IVA correspondiente.
@@ -242,8 +221,7 @@ public class VatCollection {
 			} else if (order == InvoiceReportOrder.INVOICE_REGISTRY_NAME) {
 				stmt.append(" ORDER BY i.rname,i.series,i.number");
 			}
-			s = HibernateUtil.getSession(sessionName);
-			c = s.connection();
+			c = DatabaseUtil.getConnection(params.getDomain());
 			ps = c.prepareStatement(stmt.toString(),
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
@@ -305,26 +283,12 @@ public class VatCollection {
 			return vats;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (c != null) {
-				try {
-					c.close();
-				} catch (SQLException e) {
-				}
-			}
-			HibernateUtil.closeSession(sessionName);
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(c);
 		}
 
 	}

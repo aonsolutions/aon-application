@@ -1,7 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -20,7 +19,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.common.util.CommonUtil;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -29,17 +29,14 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.IrpfDataDescendients;
-import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.DeductHomeLoan;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
-import com.esferalia.aon.payroll.irpf.IrpfCalculator;
-import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class IrpfDataController extends LinesController {
@@ -164,9 +161,8 @@ public class IrpfDataController extends LinesController {
 			LOGGER.error(msg);
 		}*/
 	}
-	protected Connection getConnection(){
-		String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());
-		return  HibernateUtil.getSession(sessionFactory).connection();
+	protected Connection getConnection() throws AonConnectionException{
+		return  DatabaseUtil.getConnection(AonUtil.getDomainName());
 	}
 	
 	public Criteria getCtxCriteria() {

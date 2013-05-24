@@ -16,7 +16,9 @@ public class Model340Parameters {
 	private Date fromInvoiceDate;
 	private Date toInvoiceDate;
 	private SecurityLevel securityLevel;
+	private boolean investmentBookEnabled;
 	private boolean taxDateEnabled;
+	private String domain;
 
 	public Model340Parameters() {
 		setDate(new Date());
@@ -25,6 +27,13 @@ public class Model340Parameters {
 		setTaxDateEnabled(false);
 	}
 	
+	public String getDomain() {
+		return domain;
+	}
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
+
 	public Integer getYear() {
 		return year;
 	}
@@ -87,6 +96,12 @@ public class Model340Parameters {
 	public void setTaxDateEnabled(boolean taxDateEnabled) {
 		this.taxDateEnabled = taxDateEnabled;
 	}
+	public boolean isInvestmentBookEnabled() {
+		return investmentBookEnabled;
+	}
+	public void setInvestmentBookEnabled(boolean investmentBookEnabled) {
+		this.investmentBookEnabled = investmentBookEnabled;
+	}
 
 	public String getPeriodString() {
 		if (getPeriod() == Period.M01) return "01";
@@ -107,5 +122,6 @@ public class Model340Parameters {
 		else if (getPeriod() == Period.T4) return "4T";
 		return "";
 	}
+
 
 }

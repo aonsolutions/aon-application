@@ -1,10 +1,6 @@
 package com.code.aon.warehouse.stock;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
+import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.common.ManagerBeanException;
@@ -19,7 +15,7 @@ public class StockManager {
 	+ " INNER JOIN invoice_detail invDet ON incDet.id = invDet.source_id AND invDet.source = 4 "
 	+ " INNER JOIN invoice inv ON invDet.invoice = inv.id "
 	+ " WHERE  incDet.item = ? "
-	+ " ORDER BY inv.issue_date DESC, inv.id DESC ";
+	+ " ORDER BY inv.issue_date DESC, inv.id DESC LIMIT 1";
 
 	
 	public double getPrice(Stock stock, PriceType priceType ) throws ManagerBeanException{
@@ -36,48 +32,15 @@ public class StockManager {
 		if (stock == null) return 0.0;
 		if (stock.getItem() == null) return 0.0;
 		String sessionName = HibernateUtil.getSessionFactoryName(Stock.class.getName());
-		
-		Connection conn = null;
 		Session session = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
-			ps = conn.prepareStatement(incomeStmt,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			ps.setInt(1, stock.getItem().getId());
-			rs = ps.executeQuery();
-			double price = 0.0;
-			if (rs.next()) {
-				price = rs.getDouble(1);
-			}
-			return price;
-		} catch (SQLException e) {
-			throw new ManagerBeanException(e.getMessage(), e);
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
-		}
+		session = HibernateUtil.getSession(sessionName);
+		Query query = session.createQuery(incomeStmt);
+		query.setInteger(0, stock.getItem().getId());
+		double price = 0.0;
+		price = (Double) query.uniqueResult();
+		return price;
 	}
+	
 	public double getAveragePurchasePrice(Stock stock ){
 		// TODO Implementar
 		return 0.0;

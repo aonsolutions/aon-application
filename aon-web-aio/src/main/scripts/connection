@@ -1,0 +1,5 @@
+driverClass=org.gjt.mm.mysql.Driver
+jdbcUrl=jdbc:mysql://127.0.0.1:3306
+user=X----X
+password=X----X
+

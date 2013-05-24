@@ -59,6 +59,7 @@ public class Mod340Controller implements IFinanceMessages {
 			Period period = getParams().getPeriod();
 			getParams().setFromDate(period.getStartDate(getParams().getYear()));	
 			getParams().setToDate(period.getDueDate(getParams().getYear()));
+			getParams().setDomain(AonUtil.getAuthPrincipal().getDomain());
 			MOD340Writer mod340Writer = new MOD340Writer(getParams(), getFormat());
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			ExternalContext ec = ctx.getExternalContext();

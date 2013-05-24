@@ -24,7 +24,7 @@ import com.code.aon.jaas.auth.session.SessionInfo;
  *
  * @jmx:mbean name="Catalina:type=Security,name=AonSessionManager" extends="com.code.aon.jaas.vendor.tomcat.SecurityMBean"
  */
-public class TomcatSessionManager implements TomcatSessionManagerMBean {
+public class TomcatSessionManager {
 
 	/** TomcatSessionManager Logger instance. */
 	private final static Logger LOGGER = LoggerFactory.getLogger(TomcatSessionManager.class);
@@ -32,9 +32,6 @@ public class TomcatSessionManager implements TomcatSessionManagerMBean {
 	/** Last <code>LoginException</code> message. */
 	private AuthenticationLoginException lastLoginException;
 
-	/** Habilita el control de sesiones concurrentes por usuario. */
-	private boolean enableConcurrentSessions4User;
-	
 	private Map<AuthPrincipal, Set<String>> principals = 
 		Collections.synchronizedMap( new HashMap<AuthPrincipal, Set<String>>() );
 
@@ -46,7 +43,6 @@ public class TomcatSessionManager implements TomcatSessionManagerMBean {
      * 
 	 * @jmx:managed-operation
      */
-	@Override
 	public AuthenticationLoginException getLastLoginException(String str) {
 		return this.lastLoginException;
 	}
@@ -58,7 +54,6 @@ public class TomcatSessionManager implements TomcatSessionManagerMBean {
      * 
 	 * @jmx:managed-operation
 	 */
-	@Override
 	public void fillLastLoginException(AuthenticationLoginException lastLoginException) {
     	this.lastLoginException = lastLoginException;
 	}
@@ -68,23 +63,10 @@ public class TomcatSessionManager implements TomcatSessionManagerMBean {
      * 
 	 * @jmx:managed-operation
 	 */
-	@Override
 	public void fillLastLoginException(String lastLoginException) {
     	LOGGER.info("Setting last login exception STRING [{}]", lastLoginException );
 	}	
 	
-	/**
-	 * Enable concurrent sessions per user.
-	 * 
-	 * @param enable
-     * 
-	 * @jmx:managed-operation
-	 */
-	@Override
-	public void enableConcurrentSessions4User(Boolean enable) {
-		this.enableConcurrentSessions4User = enable;
-	}
-
 	/**
 	 * Get <code>SessionInfo</code> instance.
 	 *   
@@ -94,7 +76,6 @@ public class TomcatSessionManager implements TomcatSessionManagerMBean {
      * 
 	 * @jmx:managed-operation
 	 */
-	@Override
 	public SessionInfo getSessionInfo(String sessionId) {
 		return sessionIds.get(sessionId);
 	}
@@ -108,7 +89,6 @@ public class TomcatSessionManager implements TomcatSessionManagerMBean {
      * 
 	 * @jmx:managed-operation
 	 */
-	@Override
 	public void registerSession(SessionInfo sessionInfo) throws LoginException {
 		if ( getSessionInfo( sessionInfo.getSessionId() ) != null ) {
 			fillLastLoginException( new SessionAlreadyUsedLoginException( "aon_login_err_3", sessionInfo.getSessionId() ) );
@@ -128,7 +108,6 @@ public class TomcatSessionManager implements TomcatSessionManagerMBean {
      * 
 	 * @jmx:managed-operation
 	 */
-	@Override
 	public void registerSession(String sessionInfo) throws LoginException {
     	LOGGER.debug("Session Registration[{}]", sessionInfo );
 	}
@@ -141,12 +120,11 @@ public class TomcatSessionManager implements TomcatSessionManagerMBean {
      * 
 	 * @jmx:managed-operation
 	 */
-	@Override
 	public void removeSession(String sessionId) throws LoginException {
 		SessionInfo info = getSessionInfo( sessionId );
 		if (info != null) {
 			sessionIds.remove(sessionId);
-			Set sessionsUsedByPrincipal = (Set) principals.get( info.getPrincipal() );
+			Set<?> sessionsUsedByPrincipal = (Set<?>) principals.get( info.getPrincipal() );
 			if (sessionsUsedByPrincipal != null) {
 				sessionsUsedByPrincipal.remove(sessionId);
 				if (sessionsUsedByPrincipal.size() == 0) {

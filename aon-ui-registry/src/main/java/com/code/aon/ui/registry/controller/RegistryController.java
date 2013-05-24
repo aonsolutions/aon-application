@@ -39,7 +39,9 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Scope;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.geozone.GeoZone;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.IRegistry;
@@ -238,14 +240,10 @@ public class RegistryController extends BasicController {
 			throw new AbortProcessingException(msg, e);
 		}
 		
-		String sessionName = HibernateUtil.getSessionFactoryName(pojoClass.getName());
 		Connection conn = null;
-		Session session = null;
 		PreparedStatement ps = null;
-		
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			
 			FacesContext faces = FacesContext.getCurrentInstance();
 			String select = "SELECT"
@@ -285,22 +283,13 @@ public class RegistryController extends BasicController {
 			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
+		} catch (AonConnectionException e) {
+			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
 		} finally {
-			if ( ps != null ) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 	

@@ -5,23 +5,22 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.io.IOUtils;
-import org.hibernate.Session;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.AonSQLFile;
 import com.code.aon.dbutils.AonSQLScript;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
 
 public class SQLScriptController  {
@@ -65,12 +64,9 @@ public class SQLScriptController  {
 	}
 
 	public void onExecute(ActionEvent event) {
-		String sessionName = HibernateUtil.getSessionFactoryName();
 		Connection conn = null;
-		Session session = null;
 		try {
-			session = HibernateUtil.getSession(sessionName);
-			conn = session.connection();
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			ByteArrayInputStream input = new ByteArrayInputStream(getAonFile().getData());
 			AonSQLFile sqlFile = new AonSQLFile(input);
 			AonSQLScript script = new AonSQLScript(sqlFile, conn);
@@ -80,16 +76,12 @@ public class SQLScriptController  {
 			AonUtil.addErrorMessage("Se han producido errores en la importación.");
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
+		} catch (AonConnectionException e) {
+			AonUtil.addErrorMessage("Se han producido errores en la importación.");
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
 		} finally {
-			if (HibernateUtil.mustCloseSession()) {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-					}
-				}
-				HibernateUtil.closeSession(sessionName);
-			}
+			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 

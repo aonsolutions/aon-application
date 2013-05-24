@@ -808,8 +808,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	private String getSalaryReport() throws ReportException {
 		int enterpriseId = getEnterpriseID();
-		Connection connection = getConnection();
 		try {
+			Connection connection = getConnection();
 			return AonServletUtils.getSalaryReport(connection, enterpriseId);
 		} catch (SQLException e) {
 			throw new ReportException(e.getLocalizedMessage());

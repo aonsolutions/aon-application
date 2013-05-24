@@ -5,8 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.apache.commons.dbutils.DbUtils;
-
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.report.ReportException;
 
 public class ReportExporter {
@@ -41,7 +40,7 @@ public class ReportExporter {
 		} catch (SQLException e) {
 			throw new ReportException(e.getMessage(),e);
 		} finally {
-			DbUtils.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(rs);
 		}
 		
 	}

@@ -17,12 +17,10 @@ import static com.code.aon.ui.common.ICommonConstants.SUPPORT_TELEPHONE_NUMBER2;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
@@ -34,8 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.enumeration.AppParam;
-import com.code.aon.common.util.ConnectionProvider;
-import com.code.aon.ui.util.DataSourceUtil;
+import com.code.aon.dbutils.DatabaseUtil;
 
 public class CustomizeBean {
 
@@ -89,10 +86,14 @@ public class CustomizeBean {
 		this.fontStyle = getColorStyle(FONT_STYLE_DEFAULT);
 	}
 	
-	public void initResources( ResourceResolver resolver ) {
+	public void initResources( ) {
+		ResourceResolver resolver = new ResourceResolver();
+		initResources(resolver);
+	}	
+	protected void initResources(ResourceResolver resolver) {
 		this.loginLogo = resolver.getResolve().get(LOGIN_LOGO_DEFAULT);
 		this.favicon = resolver.getResolve().get(FAVICON_DEFAULT);
-	}	
+	}
 
 	public void initMessages( Locale locale ) {
 		bundle = ResourceBundle.getBundle(DEFAULT_BUNDLE_RESOURCE, locale);
@@ -119,25 +120,23 @@ public class CustomizeBean {
 		}
 	}	
 	
-	public void init( Properties dbProperties, String server ) {
+	public void init( String domain ) {
 		Connection connection = null;
 		try {
-			if ( dbProperties != null ) {
-				connection =  ConnectionProvider.getConnection(dbProperties);
-				if ( connection != null ) {
-					this.domainId = DataSourceUtil.getDomain(connection, server );
-					if (this.domainId != null) {
-						this.companyId = getCompanyId(connection);
-						if ( this.companyId != null ) {
-							loadValues(connection);	
-						}
+			connection =  DatabaseUtil.getConnection(domain);
+			if ( connection != null ) {
+				this.domainId = DatabaseUtil.getDomain(connection, domain );
+				if (this.domainId != null) {
+					this.companyId = getCompanyId(connection);
+					if ( this.companyId != null ) {
+						loadValues(connection);	
 					}
-				}				
-			}
+				}
+			}				
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error loading customization values", th );
 		} finally {
-			DbUtils.closeQuietly(connection);
+			DatabaseUtil.closeQuietly(connection);
 		}
 	}
 	
