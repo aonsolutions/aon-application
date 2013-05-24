@@ -6,6 +6,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
+import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
@@ -21,6 +22,8 @@ public class DeliverySearchListener extends RegistrySearchListener {
 	private DeliveryStatus[] deliveryStatuses;
 
     private Item item;
+    
+    private Project project;
 	
 	public String getPreffix() throws ManagerBeanException {
 		return REGISTRY_SEARCH_PREFFIX;
@@ -51,6 +54,14 @@ public class DeliverySearchListener extends RegistrySearchListener {
 		this.item = item;
 	}
 	
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
@@ -58,6 +69,7 @@ public class DeliverySearchListener extends RegistrySearchListener {
 		DeliveryStatus[] defaultDeliveryStatus = {DeliveryStatus.PENDING};
 		setDeliveryStatuses(defaultDeliveryStatus);
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
+		setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 	}
 	
 	@Override
@@ -72,6 +84,9 @@ public class DeliverySearchListener extends RegistrySearchListener {
 		}
 		if ((getItem() != null) && (getItem().getId() != null)) {
 			criteria.addEqualExpression("Delivery.lines.item.id", getItem().getId());
+		}
+		if ((getProject() != null) && (getProject().getId() != null)) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.DELIVERY_PROJECT_ID), getProject().getId());			
 		}						
 	}	
 }
