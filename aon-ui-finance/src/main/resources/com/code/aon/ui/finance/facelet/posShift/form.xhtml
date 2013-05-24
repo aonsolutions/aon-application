@@ -108,8 +108,8 @@
 										rendered="#{!readOnly}"
 										valueChangeListener="#{posShift.onInitialAmountChanged}">
 										<f:validateDoubleRange minimum="0.0" />
-										<a4j:support event="onchange" reRender="posShiftCountPanel" ignoreDupResponses="true" ajaxSingle="true" />
-										<a4j:support event="oninputchanged" reRender="posShiftCountPanel" ignoreDupResponses="true" ajaxSingle="true" />
+										<a4j:support event="onchange" reRender="totalPosShiftCountPanel" ignoreDupResponses="true" ajaxSingle="true" />
+										<a4j:support event="oninputchanged" reRender="totalPosShiftCountPanel" ignoreDupResponses="true" ajaxSingle="true" />
 									</aon:inputText>
 									<aon:commandButton id="posShift-calculator" immediate="true"
 										styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
@@ -155,7 +155,7 @@
 
 							<aon:outputLabel for="PosShift_remarks" value="#{bundle.aon_remark}" />
 							<aon:inputTextarea id="PosShift_remarks" 
-								value="#{posShift.to.remarks}" rows="3" cols="80" 
+								value="#{posShift.to.remarks}" rows="4" cols="80" 
 								disabled="#{readOnly}" />
 
 						</aon:panelGrid>
@@ -163,18 +163,18 @@
 
 					<aon:div>
 						<c:if test="#{!posShift.new}">
-							<aon:panel id="posShiftCountPanel">
+							<aon:panel id="totalPosShiftCountPanel">
 								<f:facet name="header">
 									<aon:outputLabel value="#{financeBundle.finance_total_count}" />
 								</f:facet>
 								<aon:panelGrid columns="3" styleClass="aon-width-all aon-margin-bottom"
 									columnClasses="aon-panelGrid-even aon-width-auto aon-noborder,
-										aon-panelGrid-even aon-width-160 aon-noborder,aon-width-200 aon-noborder">
+										aon-panelGrid-even aon-width-200 aon-noborder,aon-width-180 aon-noborder">
 									<aon:div>
 										<aon:outputLabel styleClass="aon-margin-right aon-italic"
 											value="#{financeBundle.finance_initial_amount}:" />
 										<aon:outputText styleClass="aon-bold"
-											value="#{posShift.to.initialAmount}" >
+											value="#{posShift.to.initialAmount}">
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 									</aon:div>
@@ -183,7 +183,7 @@
 										<aon:outputLabel styleClass="aon-margin-right aon-italic"
 											value="#{bundle.aon_total} #{financeBundle.finance_cash_payMethod}:" />
 										<aon:outputText styleClass="aon-bold"
-											value="#{posShift.to.totalCountCashAmount + posShift.to.initialAmount}" >
+											value="#{posShift.to.totalCountCashAmount + posShift.to.initialAmount}">
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 									</aon:div>
@@ -192,15 +192,27 @@
 										<aon:outputLabel styleClass="aon-margin-right aon-italic"
 											value="#{financeBundle.finance_pos_bank_income}:" />
 										<aon:outputText styleClass="aon-bold"
-											value="#{posShift.to.totalCountCashAmount}" >
+											value="#{posShift.to.totalCountCashAmount > 0 ? posShift.to.totalCountCashAmount : 0}">
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 									</aon:div>
 								</aon:panelGrid>
-								<ui:include src="/com/code/aon/ui/finance/facelet/posShift/posShiftCount_list.xhtml">
-									<ui:param name="controller" value="#{posShift}" />
-									<ui:param name="showInvoiceData" value="#{true}" />
+
+								<c:if test="#{posShift.totalShiftCountModel.rowCount > 0}">
+									<ui:include src="/com/code/aon/ui/finance/facelet/posShift/totalPosShiftCount.xhtml">
+										<ui:param name="controller" value="#{posShift}" />
+									</ui:include>
+								</c:if>
+							</aon:panel>
+
+							<aon:panel id="posShiftCountPanel">
+								<f:facet name="header">
+									<aon:outputLabel value="#{financeBundle.finance_pos_cash_count}" />
+								</f:facet>
+								<ui:include src="/com/code/aon/ui/finance/facelet/posShift/posShiftCount.xhtml">
+									<ui:param name="shiftController" value="#{posShift}" />
 									<ui:param name="readOnly" value="#{readOnly}" />
+									<ui:param name="countReRender" value="totalPosShiftCountPanel" />
 								</ui:include>
 							</aon:panel>
 						</c:if>
@@ -220,7 +232,7 @@
 
 		</aon:form>
 		
-		<ui:include src="/com/code/aon/ui/finance/facelet/posShift/calculator/calculatorModal.xhtml" >
+		<ui:include src="/com/code/aon/ui/finance/facelet/posShift/calculator/calculatorModal.xhtml">
 			<ui:param name="controller" value="#{posShift}" />
 			<ui:param name="cashCalculator" value="#{posShift.calculator}" />
 			<ui:param name="modalReRender" value="posShiftForm" />

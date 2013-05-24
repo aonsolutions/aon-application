@@ -85,7 +85,7 @@
 									<aon:outputLabel styleClass="aon-margin-right aon-italic"
 										value="#{financeBundle.finance_initial_amount}:" />
 									<aon:outputText styleClass="aon-bold"
-										value="#{posClosing.posShift.initialAmount}" >
+										value="#{posClosing.posShift.initialAmount}">
 										<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 									</aon:outputText>
 								</aon:div>
@@ -94,7 +94,7 @@
 									<aon:outputLabel styleClass="aon-margin-right aon-italic"
 										value="#{bundle.aon_total} #{financeBundle.finance_cash_payMethod}:" />
 									<aon:outputText styleClass="aon-bold"
-										value="#{posClosing.posShift.totalCountCashAmount + posClosing.posShift.initialAmount}" >
+										value="#{posClosing.posShift.totalCountCashAmount + posClosing.posShift.initialAmount}">
 										<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 									</aon:outputText>
 								</aon:div>
@@ -103,15 +103,15 @@
 									<aon:outputLabel styleClass="aon-margin-right aon-italic"
 										value="#{financeBundle.finance_pos_bank_income}:" />
 									<aon:outputText styleClass="aon-bold"
-										value="#{posClosing.posShift.totalCountCashAmount}" >
+										value="#{posClosing.posShift.totalCountCashAmount > 0 ? posClosing.posShift.totalCountCashAmount : 0}">
 										<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 									</aon:outputText>
 								</aon:div>
 							</aon:panelGrid>
-							<ui:include src="/com/code/aon/ui/finance/facelet/posShift/posShiftCount_list.xhtml">
-								<ui:param name="controller" value="#{posClosing}" />
-								<ui:param name="showInvoiceData" value="#{false}" />
-								<ui:param name="readOnly" value="#{false}" />
+							<ui:include src="/com/code/aon/ui/finance/facelet/posShift/posShiftCount.xhtml">
+								<ui:param name="shiftController" value="#{posClosing}" />
+								<ui:param name="readOnly" value="#{posClosing.posShift.endTime != null}" />
+								<ui:param name="countReRender" value="" />
 							</ui:include>
 						</aon:panel>
 					</aon:div>
@@ -121,7 +121,7 @@
 	
 		</aon:form>
 
-		<ui:include src="/com/code/aon/ui/finance/facelet/posShift/calculator/calculatorModal.xhtml" >
+		<ui:include src="/com/code/aon/ui/finance/facelet/posShift/calculator/calculatorModal.xhtml">
 			<ui:param name="controller" value="#{posClosing}" />								
 			<ui:param name="cashCalculator" value="#{posClosing.calculator}" />
 			<ui:param name="modalReRender" value="posClosingForm" />

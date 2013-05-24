@@ -23,7 +23,6 @@ import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Pos;
 import com.code.aon.finance.PosShift;
-import com.code.aon.finance.PosShiftCount;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -85,6 +84,11 @@ public class PosShiftController extends BasicController implements IFinanceConst
 
 	public void setFinanceModel(DataModel financeModel) {
 		this.financeModel = financeModel;
+	}
+
+	public void resetTotalShiftCount() {
+		((PosShift)getTo()).setTotalShiftCountMap(null);
+		setTotalShiftCountModel(null);
 	}
 
 	private List<PayMethodCount> getTotalShiftCountList(PosShift posShift) {
@@ -211,8 +215,7 @@ public class PosShiftController extends BasicController implements IFinanceConst
 
 	public void onInitialAmountChanged(ValueChangeEvent event) {
 		if (event.getNewValue() != null) {
-			((PosShift)getTo()).setTotalShiftCountMap(null);
-			setTotalShiftCountModel(null);
+			resetTotalShiftCount();
 		}
 	}
 
@@ -221,8 +224,7 @@ public class PosShiftController extends BasicController implements IFinanceConst
 	}
 
 	public void onAcceptCalculatorWindow(ActionEvent event) {
-		((PosShift)getTo()).setTotalShiftCountMap(null);
-		setTotalShiftCountModel(null);
+		resetTotalShiftCount();
 	}
 
 	public String getFinancePayMethod() throws ManagerBeanException {
@@ -232,10 +234,13 @@ public class PosShiftController extends BasicController implements IFinanceConst
 	}
 
 	public void onAcceptCount(ActionEvent event) {
-		((PosShiftCount)FormUtil.getController(POS_SHIFT_COUNT_CONTROLLER_NAME).getTo()).setPosShift((PosShift)getTo());
 		FormUtil.getController(POS_SHIFT_COUNT_CONTROLLER_NAME).onAccept(event);
-		((PosShift)getTo()).setTotalShiftCountMap(null);
-		setTotalShiftCountModel(null);
+		resetTotalShiftCount();
+	}
+
+	public void onRemoveCount(ActionEvent event) {
+		FormUtil.getController(POS_SHIFT_COUNT_CONTROLLER_NAME).onRemove(event);
+		resetTotalShiftCount();
 	}
 
 	public void onLoadReservation(ActionEvent event) throws ManagerBeanException {
@@ -255,8 +260,7 @@ public class PosShiftController extends BasicController implements IFinanceConst
 	}
 
 	public void onBackPosShift(ActionEvent event) throws ManagerBeanException {
-		((PosShift)getTo()).setTotalShiftCountMap(null);
-		setTotalShiftCountModel(null);
+		resetTotalShiftCount();
 		setFinanceModel(null);
 	}
 

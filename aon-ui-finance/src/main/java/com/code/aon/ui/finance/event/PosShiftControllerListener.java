@@ -26,7 +26,7 @@ public class PosShiftControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		PosShiftController controller = (PosShiftController)event.getController();
-		controller.setTotalShiftCountModel(null);
+		controller.resetTotalShiftCount();
 		controller.setFinanceModel(null);
 	}
 

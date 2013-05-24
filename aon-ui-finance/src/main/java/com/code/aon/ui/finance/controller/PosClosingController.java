@@ -1,14 +1,9 @@
 package com.code.aon.ui.finance.controller;
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ITransferObject;
@@ -16,7 +11,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
 import com.code.aon.finance.Pos;
 import com.code.aon.finance.PosShift;
-import com.code.aon.finance.PosShiftCount;
 import com.code.aon.finance.enumeration.Shift;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.FormUtil;
@@ -26,7 +20,6 @@ public class PosClosingController implements IFinanceConstants {
 
 	private PosShift posShift;
 	private CashCalculator calculator;
-	private DataModel totalShiftCountModel;
 
 	public PosShift getPosShift() {
 		return posShift;
@@ -47,40 +40,21 @@ public class PosClosingController implements IFinanceConstants {
 		this.calculator = calculator;
 	}
 
-	public DataModel getTotalShiftCountModel() {
-		if (totalShiftCountModel == null) {
-			totalShiftCountModel = new ListDataModel(getTotalShiftCountList(getPosShift()));
-		}
-		return totalShiftCountModel;
-	}
-
-	public void setTotalShiftCountModel(DataModel totalShiftCountModel) {
-		this.totalShiftCountModel = totalShiftCountModel;
-	}
-
-	private List<PayMethodCount> getTotalShiftCountList(PosShift posShift) {
-		List<PayMethodCount> totalShiftCountList = new LinkedList<PayMethodCount>();
-		for (PayMethod payMethod : posShift.getTotalShiftCountMap().keySet()) {
-			double[] totals = posShift.getTotalShiftCountMap().get(payMethod);
-			if (totals[0] != 0) {
-				PayMethodCount payMethodCount = new PayMethodCount();
-				payMethodCount.setPayMethod(payMethod);
-				payMethodCount.setCountAmount(totals[0]);
-				totalShiftCountList.add(payMethodCount);
-			}
-		}
-		Collections.sort(totalShiftCountList);
-		return totalShiftCountList;
-	}
-
     public void onLoad(ActionEvent event) {
     	setPosShift(PosUtils.getUserPosShift());
-		if (getPosShift() == null || getPosShift().getId() == null) {
+    	if (getPosShift() == null || getPosShift().getId() == null) {
 			String msg = "No hay ninguna Caja abierta por el Usuario.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
+		} else {
+			try {
+		        ((PosShiftController)FormUtil.getController(POS_SHIFT_CONTROLLER_NAME)).load(event, getPosShift().getId());
+			} catch (ManagerBeanException ex) {
+				String msg = "Error en el proceso de Cierre de Caja.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
 		}
-		setTotalShiftCountModel(null);
     }   
 
     public ITransferObject getTo() {
@@ -93,14 +67,14 @@ public class PosClosingController implements IFinanceConstants {
 
 	public void onAcceptCalculatorWindow(ActionEvent event) {
 		getPosShift().setTotalShiftCountMap(null);
-		setTotalShiftCountModel(null);
 	}
 
 	public void onAcceptCount(ActionEvent event) {
-		((PosShiftCount)FormUtil.getController(POS_SHIFT_COUNT_CONTROLLER_NAME).getTo()).setPosShift(getPosShift());
 		FormUtil.getController(POS_SHIFT_COUNT_CONTROLLER_NAME).onAccept(event);
-		getPosShift().setTotalShiftCountMap(null);
-		setTotalShiftCountModel(null);
+	}
+
+	public void onRemoveCount(ActionEvent event) {
+		FormUtil.getController(POS_SHIFT_COUNT_CONTROLLER_NAME).onRemove(event);
 	}
 
 	public void onAccept(ActionEvent event) {
@@ -110,7 +84,6 @@ public class PosClosingController implements IFinanceConstants {
 
 		try {
 			setPosShift((PosShift)BeanManager.getManagerBean(PosShift.class).insertOrUpdate(getPosShift()));
-            ((PosShiftController)FormUtil.getController(POS_SHIFT_CONTROLLER_NAME)).load(event, getPosShift().getId());
 		} catch (ManagerBeanException ex) {
 			String msg = "Error en el proceso de Cierre de Caja.";
 			AonUtil.addErrorMessage(msg);
