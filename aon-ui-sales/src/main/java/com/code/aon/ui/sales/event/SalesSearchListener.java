@@ -6,6 +6,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
+import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.sales.enumeration.SalesStatus;
@@ -21,6 +22,8 @@ public class SalesSearchListener extends RegistrySearchListener {
 	private SalesStatus[] salesStatuses;
 	
     private Item item;
+
+	private Project project;
 	
 	public String getPreffix() throws ManagerBeanException {
 		return REGISTRY_SEARCH_PREFFIX;
@@ -50,6 +53,14 @@ public class SalesSearchListener extends RegistrySearchListener {
 		this.item = item;
 	}
 	
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
+	
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
@@ -57,6 +68,7 @@ public class SalesSearchListener extends RegistrySearchListener {
 		SalesStatus[] defaultSalesStatus = {SalesStatus.PENDING};
 		setSalesStatuses(defaultSalesStatus);
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
+		setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 	}
 	
 	@Override
@@ -72,5 +84,8 @@ public class SalesSearchListener extends RegistrySearchListener {
 		if ((getItem() != null) && (getItem().getId() != null)) {
 			criteria.addEqualExpression("Sales.lines.item.id", getItem().getId());
 		}				
+		if ((getProject() != null) && (getProject().getId() != null)) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.SALES_PROJECT_ID), getProject().getId());			
+		}
 	}	
 }

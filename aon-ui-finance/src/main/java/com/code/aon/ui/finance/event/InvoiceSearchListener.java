@@ -17,6 +17,7 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
+import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
@@ -32,6 +33,7 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	private Registry registry;
     private Item item;
 	private Bank bank;
+	private Project project;
 	private FinanceStatus[] financeStatuses;
 	private PayMethod[] payMethods;
 	
@@ -73,6 +75,14 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 
 	public void setBank(Bank bank) {
 		this.bank = bank;
+	}
+	
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
 	}
 	
 	public FinanceStatus[] getFinanceStatuses() {
@@ -150,6 +160,7 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		setRegistry((Registry)BeanManager.getManagerBean(Registry.class).createNewTo());
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
 		setBank((Bank)BeanManager.getManagerBean(Bank.class).createNewTo());
+		setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 		setFinanceStatuses(new FinanceStatus[0]);
 		setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
 	}
@@ -174,6 +185,9 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		if ((getBank() != null) && (!StringUtils.isEmpty(getBank().getCode()))) {
 			criteria.addEqualExpression("Invoice.finances.bank.code", getBank().getCode());			
 		}		
+		if ((getProject() != null) && (getProject().getId() != null)) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_PROJECT_ID), getProject().getId());			
+		}
 		if (!ArrayUtils.isEmpty(getFinanceStatuses())) {
 			String status = getController().resolveAlias("Invoice.finances.financeStatus");
 			addEnumToCriteria(criteria, status, getFinanceStatuses());

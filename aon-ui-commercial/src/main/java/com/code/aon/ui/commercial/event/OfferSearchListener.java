@@ -7,6 +7,7 @@ import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.seller.Seller;
@@ -25,6 +26,8 @@ public class OfferSearchListener extends ControllerSearchListener {
 	private Seller seller;
 	
 	private OfferStatus[] offerStatuses;
+	
+	private Project project;
 
 	public OfferType getOfferType() {
 		return offerType;
@@ -69,6 +72,14 @@ public class OfferSearchListener extends ControllerSearchListener {
 	public boolean isDealership() {
 		return OfferType.DEALERSHIP == offerType;
 	}
+	
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
 
 	@Override
 	protected void init() throws ManagerBeanException {
@@ -78,6 +89,7 @@ public class OfferSearchListener extends ControllerSearchListener {
 		setSupplier((Supplier)BeanManager.getManagerBean(Supplier.class).createNewTo());
 		OfferStatus[] defaultOfferStatus = {OfferStatus.PENDING};
 		setOfferStatuses(defaultOfferStatus);
+		setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 	}
 	
 	@Override
@@ -97,6 +109,9 @@ public class OfferSearchListener extends ControllerSearchListener {
 		if (!ArrayUtils.isEmpty(getOfferStatuses())) {
 			String status = getController().resolveAlias(IEntityAlias.OFFER_STATUS);
 			addEnumToCriteria(criteria, status, getOfferStatuses());
+		}
+		if ((getProject() != null) && (getProject().getId() != null)) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.OFFER_PROJECT_ID), getProject().getId());			
 		}
 	}	
 

@@ -26,6 +26,10 @@
 			</ui:include>	
 		</c:if>
 	</c:if>
+	
+	<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{offerSearch.project}" />
+	</ui:include>
 
 	<aon:outputLabel value="#{bundle.aon_date}" />
 	<aon:div>

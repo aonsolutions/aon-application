@@ -12,6 +12,10 @@
 		<ui:param name="lookupTo" value="#{searchController.customer}" />
 		<ui:param name="skipNewButton" value="#{true}" />
 	</ui:include>
+	
+	<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{searchController.project}" />
+	</ui:include>
 
 	<aon:outputLabel value="#{bundle.aon_date}" />
 	<aon:div>

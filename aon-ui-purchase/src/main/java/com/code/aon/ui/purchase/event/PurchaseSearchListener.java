@@ -6,6 +6,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.product.Item;
+import com.code.aon.project.Project;
 import com.code.aon.purchase.enumeration.PurchaseDocumentType;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
@@ -30,6 +31,8 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 	private PurchaseDocumentType[] purchaseDocumentTypes;
 	
 	private Item item;
+
+	private Project project;
 
 	private Boolean[] emailCommunication;
 	
@@ -78,6 +81,14 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 		this.item = item;
 	}
 	
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
+	
 	public Boolean[] getEmailCommunication() {
 		return emailCommunication;
 	}
@@ -95,6 +106,7 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 		PurchaseDocumentType[] defaultCosumentTypes = {PurchaseDocumentType.NORMAL};
 		setPurchaseDocumentTypes(defaultCosumentTypes);
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
+		setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 		setEmailCommunication(null);
 	}
 	
@@ -120,7 +132,10 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 		}
 		if ((getItem() != null) && (getItem().getId() != null)) {
 			criteria.addEqualExpression("Purchase.lines.item.id", getItem().getId());
-		}				
+		}
+		if ((getProject() != null) && (getProject().getId() != null)) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PURCHASE_PROJECT_ID), getProject().getId());			
+		}
 		if (!ArrayUtils.isEmpty(getEmailCommunication())) {
 			String type = getController().resolveAlias(IEntityAlias.PURCHASE_EMAIL_COMMUNICATION);
 			addEnumToCriteria(criteria, type, getEmailCommunication());
