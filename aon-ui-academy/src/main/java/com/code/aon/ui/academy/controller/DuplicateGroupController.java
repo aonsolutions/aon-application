@@ -15,8 +15,10 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.academy.AcademicYear;
 import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseAcademicSkill;
+import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.CourseInstructor;
 import com.code.aon.academy.CourseSchedule;
+import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.academy.enumeration.CourseStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -33,6 +35,8 @@ public class DuplicateGroupController extends GroupSelectionController {
 	private AcademicYear academicYear;
 	
 	private String dateIncrement;
+	
+	private Boolean alumns;
 	
 	private Boolean instructors;
 	
@@ -54,6 +58,14 @@ public class DuplicateGroupController extends GroupSelectionController {
 
 	public void setDateIncrement(String dateIncrement) {
 		this.dateIncrement = dateIncrement;
+	}
+
+	public Boolean getAlumns() {
+		return alumns;
+	}
+
+	public void setAlumns(Boolean alumns) {
+		this.alumns = alumns;
 	}
 
 	public Boolean getInstructors() {
@@ -94,6 +106,7 @@ public class DuplicateGroupController extends GroupSelectionController {
 	
 	private void initializeParams() {
 		dateIncrement = "12";
+		alumns = false;
 		instructors = false;
 		schedules = false;
 		skills = false;
@@ -127,6 +140,9 @@ public class DuplicateGroupController extends GroupSelectionController {
 					newCourse = (Course)courseBean.insert(newCourse);
 					courseIds.add(newCourse.getId());
 
+					if (alumns) {
+						createCourseAlumns(course.getId(), newCourse);
+					}
 					if (instructors) {
 						createCourseInstructors(course.getId(), newCourse);
 					}
@@ -143,6 +159,25 @@ public class DuplicateGroupController extends GroupSelectionController {
 			AonUtil.addErrorMessage("Unable to assign the academic skill to selected courses");
 			LOGGER.error("Unable to assign the academic skill to selected courses", e);
 			throw new AbortProcessingException(e);
+		}
+	}
+
+	private void createCourseAlumns(Integer courseId, Course newCourse) {
+		try {
+			IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(courseAlumnBean.getFieldName(IEntityAlias.COURSE_ALUMN_COURSE_ID), courseId);
+			criteria.addEqualExpression(courseAlumnBean.getFieldName(IEntityAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
+			for( ITransferObject to : courseAlumnBean.getList(criteria) ) {
+				CourseAlumn courseAlumn = (CourseAlumn) to;
+				CourseAlumn newCourseAlumn = new CourseAlumn();
+				newCourseAlumn.setCourse(newCourse);
+				newCourseAlumn.setCustomer(courseAlumn.getCustomer());
+				newCourseAlumn.setStatus(courseAlumn.getStatus());
+				courseAlumnBean.insert(newCourseAlumn);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error creating course alumns for course with id = " + newCourse.getId(), e);
 		}
 	}
 

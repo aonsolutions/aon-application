@@ -53,9 +53,14 @@
 						<f:selectItem itemLabel="2 #{bundle.aon_years}" itemValue="24" />
 					</aon:selectOneMenu>	
 
-					<aon:outputLabel for="Instructors"
-						value="#{academyBundle.academy_course_transfer_data}" />
+					<aon:outputLabel value="#{academyBundle.academy_course_transfer_data}" />
 					<aon:div>
+						<aon:selectBooleanCheckbox id="Alumns"
+							value="#{duplicateGroup.alumns}" />
+						<aon:outputLabel for="Alumns"
+							value="#{academyBundle.academy_alumns}"/>
+						<f:verbatim>&#160;</f:verbatim>
+						<f:verbatim>&#160;</f:verbatim>
 						<aon:selectBooleanCheckbox id="Instructors"
 							value="#{duplicateGroup.instructors}" />
 						<aon:outputLabel for="Instructors"
