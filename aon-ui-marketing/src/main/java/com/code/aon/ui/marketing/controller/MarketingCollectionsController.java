@@ -12,6 +12,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.enumeration.ActionMediaType;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
+import com.code.aon.marketing.enumeration.NewsType;
 import com.code.aon.marketing.enumeration.NewsletterLayout;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Category;
@@ -26,6 +27,8 @@ public class MarketingCollectionsController {
 	private List<SelectItem> actionTargetStatuses;
 	
 	private List<SelectItem> newsletterLayouts;
+	
+	private List<SelectItem> newsTypes;
 	
 	/**
 	 * Gets the action media types.
@@ -71,7 +74,7 @@ public class MarketingCollectionsController {
 	}	
 
 	public List<SelectItem> getChannels() throws ManagerBeanException {
-		List<SelectItem> users = new LinkedList<SelectItem>();
+		List<SelectItem> channels = new LinkedList<SelectItem>();
 		IManagerBean categoryBean = BeanManager.getManagerBean(Category.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(categoryBean.getFieldName(IEntityAlias.CATEGORY_TYPE), CategoryType.ARTICLE);
@@ -80,9 +83,9 @@ public class MarketingCollectionsController {
 		while(iter.hasNext()){
 			Category category = (Category) iter.next();
 			SelectItem item = new SelectItem(category, category.getName());
-			users.add(item);
+			channels.add(item);
 		}
-		return users;
+		return channels;
 	}
 	
 	public Category getCategory() {
@@ -109,5 +112,23 @@ public class MarketingCollectionsController {
 		}
 		return newsletterLayouts;
 	}	
-	
+
+	/**
+	 * Gets the news types.
+	 * 
+	 * @return the news types
+	 */
+	public List<SelectItem> getNewsTypes() {
+		if ( newsTypes == null ) {
+			Locale locale = AonUtil.getCurrentLocale();
+			newsTypes = new LinkedList<SelectItem>();
+			for (NewsType type : NewsType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				newsTypes.add(item);
+			}
+		}
+		return newsTypes;
+	}	
+
 }

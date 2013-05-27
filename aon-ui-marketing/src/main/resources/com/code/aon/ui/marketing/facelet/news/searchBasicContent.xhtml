@@ -15,6 +15,15 @@
 	<aon:inputText id="News_title" size="80"
 		valueChangeListener="#{controller.addExpression}" />
 		
+	<aon:outputLabel for="News_type"
+		value="#{bundle.aon_type}" />
+	<aon:selectOneMenu id="News_type"
+		converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addEqualExpression}">
+		<f:selectItem itemLabel="-" value="#{null}"/>
+		<f:selectItems value="#{marketingCollections.newsTypes}" />
+	</aon:selectOneMenu>		
+			
 	<aon:outputLabel for="News_category_id"
 		value="#{registryBundle.registry_category}" />
 	<aon:selectOneMenu id="News_category_id"

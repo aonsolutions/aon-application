@@ -143,6 +143,12 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="htmlTemplate" 
+											action="htmlTemplate_list"
+											actionListener="#{htmlTemplate.onEditSearch}"
+											value="#{marketingBundle.marketing_html_template_module}" />
+									</aon:div>															
+									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="marketingTemplate"
 											action="marketingTemplate_list"
 											actionListener="#{marketingTemplate.onEditSearch}" 

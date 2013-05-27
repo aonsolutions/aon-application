@@ -59,35 +59,44 @@
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 								
-					<aon:outputLabel for="Template_appendSignature"
-						value="#{marketingBundle.marketing_template_append_signature}" />
-					<aon:selectBooleanCheckbox id="Template_appendSignature" required="true"
-						value="#{marketingTemplate.to.appendSignature}" />
-								
 					<aon:outputLabel for="Template_active"
 						value="#{bundle.aon_active}" />
 					<aon:selectBooleanCheckbox id="Template_active" required="true"
 						value="#{marketingTemplate.to.active}" />
-
-					<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{marketingTemplate.to.registryAttachment}" />
-					</ui:include>
-				
-					<aon:outputLabel for="Template_data"
-						value="#{marketingBundle.marketing_template}" />
-					<aon:inputRichText id="Template_data" required="true"
-						value="#{marketingTemplate.to.data}"
-						height="500" width="700"
-						configuration="tinyMCE" >	
-						<f:param name="theme_advanced_buttons2_add" value="|,code"/>
-					</aon:inputRichText>
 						
+					<aon:outputLabel for="Template_width"
+						value="#{marketingBundle.marketing_newsletter_width}" />
+					<aon:inputText id="Template_width" 
+						value="#{marketingTemplate.to.width}" size="16" maxlength="16" />																		
+						
+					<aon:outputLabel for="Template_backgroundColor"
+						value="#{marketingBundle.marketing_newsletter_backgroundColor}" />
+					<rich:colorPicker id="Template_backgroundColor"
+						value="#{marketingTemplate.to.backgroundColor}" colorMode="hex" />
+
+					<aon:outputLabel for="Template_titleColor"
+						value="#{marketingBundle.marketing_newsletter_titleColor}" />
+					<rich:colorPicker id="Template_titleColor"
+						value="#{marketingTemplate.to.titleColor}" colorMode="hex" />				
+						
+					<ui:include src="/com/code/aon/ui/marketing/facelet/htmlTemplate/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{marketingTemplate.to.headerTemplate}" />
+						<ui:param name="lookupLabel" value="#{marketingBundle.marketing_newsletter_headerTemplate}" />
+						<ui:param name="lookupSuffix" value="-header" />
+					</ui:include>					
+
+					<ui:include src="/com/code/aon/ui/marketing/facelet/htmlTemplate/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{marketingTemplate.to.footerTemplate}" />
+						<ui:param name="lookupLabel" value="#{marketingBundle.marketing_newsletter_footerTemplate}" />
+						<ui:param name="lookupSuffix" value="-footer" />
+					</ui:include>					
+												
 				</aon:panelGrid>
 				
 			</aon:div>
 		</aon:form>	
 
-		<aon:lookupButtonPopup lookup="#{documentLookup}" />
+		<aon:lookupButtonPopup lookup="#{htmlTemplateLookup}" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 
 	</ui:define>

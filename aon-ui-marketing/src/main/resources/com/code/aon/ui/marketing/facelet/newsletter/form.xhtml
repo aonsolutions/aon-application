@@ -75,34 +75,11 @@
 						value="#{bundle.aon_active}" />
 					<aon:selectBooleanCheckbox id="Newsletter_active" 
 						value="#{newsletter.to.active}" />
-						
-					<aon:outputLabel for="Newsletter_width"
-						value="#{marketingBundle.marketing_newsletter_width}" />
-					<aon:inputText id="Newsletter_width" 
-						value="#{newsletter.to.width}" size="16" maxlength="16" />																		
 					
-					<aon:outputLabel for="Newsletter_backgroundColor"
-						value="#{marketingBundle.marketing_newsletter_backgroundColor}" />
-					<rich:colorPicker id="Newsletter_backgroundColor"
-						value="#{newsletter.to.backgroundColor}" colorMode="hex" />
-
-					<aon:outputLabel for="Newsletter_titleColor"
-						value="#{marketingBundle.marketing_newsletter_titleColor}" />
-					<rich:colorPicker id="Newsletter_titleColor"
-						value="#{newsletter.to.titleColor}" colorMode="hex" />				
-						
 					<ui:include src="/com/code/aon/ui/marketing/facelet/marketingTemplate/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{newsletter.to.headerTemplate}" />
-						<ui:param name="lookupLabel" value="#{marketingBundle.marketing_newsletter_headerTemplate}" />
-						<ui:param name="lookupSuffix" value="-header" />
+						<ui:param name="lookupTo" value="#{newsletter.to.template}" />
 					</ui:include>					
-
-					<ui:include src="/com/code/aon/ui/marketing/facelet/marketingTemplate/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{newsletter.to.footerTemplate}" />
-						<ui:param name="lookupLabel" value="#{marketingBundle.marketing_newsletter_footerTemplate}" />
-						<ui:param name="lookupSuffix" value="-footer" />
-					</ui:include>					
-						
+					
 				</aon:panelGrid>
 
 				<aon:div styleClass="aon-form-group" rendered="#{!newsletter.new}">

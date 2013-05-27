@@ -145,6 +145,10 @@ public class MessageController implements IWebMailConstants, BundleConstants {
     
     private boolean saveSent;
     
+    private Integer template;
+    
+    private boolean showTemplates;
+    
 	/**
 	 * @return the message
 	 */
@@ -595,6 +599,8 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		parentMessage = null;
 		messageContent = null;
 		loadContacts = true;
+		template = null;
+		showTemplates = true;
 		setErrorMessage(null);
 	}
 
@@ -1210,6 +1216,22 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 			return false;
 		}
 		return true;
+	}
+
+	public Integer getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(Integer template) {
+		this.template = template;
+	}
+
+	public boolean isShowTemplates() {
+		return showTemplates;
+	}
+
+	public void setShowTemplates(boolean showTemplates) {
+		this.showTemplates = showTemplates;
 	}
 	
 }

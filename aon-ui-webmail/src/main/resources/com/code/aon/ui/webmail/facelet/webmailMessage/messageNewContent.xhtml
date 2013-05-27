@@ -63,7 +63,7 @@
 
 					<aon:div rendered="#{mailConfig.mailAccountCount &gt; 1}">
 						<aon:outputLabel for="NewMail_From#{messageSuffix}" 
-							value="#{webmailBundle.webmail_from}: " />
+							value="#{webmailBundle.webmail_from}" />
 					</aon:div>							
 					<aon:selectOneMenu id="NewMail_From#{messageSuffix}"
 						reRender="messageContent#{messageSuffix},NewMail_optionsGrid#{messageSuffix}"
@@ -72,6 +72,19 @@
 						valueChangeListener="#{webmailMessage.onMailAccountChanged}"
 						value="#{webmailMessage.senderMailAccount}">
 						<f:selectItems value="#{mailConfig.mailAccounts}" />
+					</aon:selectOneMenu>
+
+					<aon:div rendered="#{webmailMessage.showTemplates and (marketingTemplate.templateCount &gt; 0)}">
+						<aon:outputLabel for="NewMail_Template#{messageSuffix}" 
+							value="#{marketingBundle.marketing_mail_template}" />
+					</aon:div>							
+					<aon:selectOneMenu id="NewMail_Template#{messageSuffix}"
+						reRender="messageContent#{messageSuffix}"
+						rendered="#{webmailMessage.showTemplates and (marketingTemplate.templateCount &gt; 0)}"
+						valueChangeListener="#{marketingTemplate.onTemplateChanged}"
+						value="#{webmailMessage.template}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{marketingTemplate.templates}" />
 					</aon:selectOneMenu>
 					
 					<c:if test="#{!skipRecipients}" >
@@ -134,7 +147,7 @@
 					
 					<aon:div>
 						<aon:outputLabel for="NewMail_Subject#{messageSuffix}" 
-						value="#{webmailBundle.webmail_subject}: " />
+						value="#{webmailBundle.webmail_subject}" />
 					</aon:div>										
 					<aon:inputText id="NewMail_Subject#{messageSuffix}"
 						size="#{inputTextSize}"
@@ -142,7 +155,7 @@
 
 					<c:if test="#{!skipAttachments}" >
 						<aon:outputLabel for="attach_file#{messageSuffix}" 
-							value="#{webmailBundle.webmail_attach_file}: " />
+							value="#{webmailBundle.webmail_attach_file}" />
 						<aon:div>
 							<aon:fileUpload id="attach_file#{messageSuffix}"
 								fileUploadListener="#{webmailMessage.fileUploaded}"

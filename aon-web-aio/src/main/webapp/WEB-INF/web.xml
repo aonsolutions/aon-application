@@ -43,7 +43,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>RSSServlet</servlet-name>
-		<url-pattern>/rss.xml</url-pattern>
+		<url-pattern>/aonFeed/*</url-pattern>
 	</servlet-mapping>
 
 	<!-- GWT RPC Servlets -->

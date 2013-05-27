@@ -31,7 +31,6 @@ import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.webmail.bean.AonServer;
 
 public class EmailCommunicationController implements IMarketingConstants {
 	
@@ -159,7 +158,6 @@ public class EmailCommunicationController implements IMarketingConstants {
     		CommunicationCenterController ccc = getCommunicationController();
     		MessageController messageController = (MessageController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
     		updateMessageContent(messageController);
-    		AonServer server = new AonServer(messageController.getSenderMailAccount());
     		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
     		Criteria criteria = ccc.getPendingTargetsCriteria(bean);
     		criteria.addOrder("ActionTarget.target.registry.name", false);

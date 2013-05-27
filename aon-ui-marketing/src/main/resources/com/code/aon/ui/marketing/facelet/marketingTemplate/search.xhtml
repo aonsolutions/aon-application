@@ -33,11 +33,6 @@
 						value="#{webmailBundle.webmail_subject}" />
 					<aon:inputText id="Template_subject" size="60"
 						valueChangeListener="#{controller.addExpression}" />
-
-					<aon:outputLabel for="Template_data"
-						value="#{marketingBundle.marketing_template}" />
-					<aon:inputText id="Template_data" size="60"
-						valueChangeListener="#{controller.addExpression}" />
 		
 					<aon:outputText value="#{marketingBundle.marketing_creationDate}" />
 					<aon:div>
@@ -57,15 +52,6 @@
 							popupDateFormat="#{bundle.aon_date_pattern}">
 						</aon:selectInputDate>
 					</aon:div>
-									
-					<aon:outputLabel for="Template_appendSignature"
-						value="#{marketingBundle.marketing_template_append_signature}" />
-					<aon:selectOneMenu id="Template_appendSignature"
-						valueChangeListener="#{controller.addExpression}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="#{true}"/>
-						<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="#{false}"/>
-					</aon:selectOneMenu>
 									
 					<aon:outputLabel for="Template_active"				
 						value="#{bundle.aon_status}"/>

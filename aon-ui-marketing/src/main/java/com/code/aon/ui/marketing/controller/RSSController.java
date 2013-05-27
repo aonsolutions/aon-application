@@ -5,6 +5,7 @@ import static com.code.aon.ui.config.controller.ConfigConstants.PUBLISH_PARAMETE
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.BUNDLE_NAME;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.RSS_PUBLISH_ERROR;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.RSS_PUBLISH_OK;
+import static com.code.aon.ui.marketing.servlet.RSSServlet.SERVLET_PATH;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -82,7 +83,7 @@ public class RSSController {
 		String url = null;
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		try {
-			url = ds.getDomainURL() + "/" + RSS_FILE;
+			url = ds.getDomainURL() + SERVLET_PATH + RSS_FILE;
 			if ( (category != null) && (category.getId() != null) ) {
 				url += "?" + CHANNEL_PARAMETER + "=" + category.getId();
 			}
@@ -137,10 +138,10 @@ public class RSSController {
 		return channel;
 	}
 
-	private static Element createItem( Element channel, News news ) {
+	private static Element createItem( Element channel, News news, String urlPreffix ) {
 		Element item = channel.addElement(ITEM_ELEMENT);
 		item.addElement(TITLE_ELEMENT).addText( news.getTitle() );
-		item.addElement(LINK_ELEMENT).addText( news.getUrl() );
+		item.addElement(LINK_ELEMENT).addText( NewsController.getDownloadURL(news, urlPreffix) );
 		item.addElement(DESCRIPTION_ELEMENT).addText( news.getDescription() );
 		if ( news.getInitDate() != null ) {
 			String date = RFC822DATEFORMAT.format(news.getInitDate());
@@ -177,7 +178,7 @@ public class RSSController {
 				 channel = createChannel(root, news.getCategory(), urlPreffix);
 				 channels.put(news.getCategory().getId(), channel);
 			 }
-			 createItem(channel, news);
+			 createItem(channel, news, urlPreffix);
 		 }		 
 		 return document;
 	}

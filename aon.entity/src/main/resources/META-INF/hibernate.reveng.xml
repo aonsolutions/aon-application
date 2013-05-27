@@ -925,21 +925,21 @@
 	<table name="mk_campaign" class="com.esferalia.aon.entity.master.MarketingCampaign" />
 	
 	<table name="mk_template" class="com.esferalia.aon.entity.master.Template">
-		<column name="data" type="text"/>
+		<foreign-key constraint-name="FK_MK_TEMPLATE_HEADER_TEMPLATE">
+			<many-to-one property="headerTemplate" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_MK_TEMPLATE_FOOTER_TEMPLATE">
+			<many-to-one property="footerTemplate" />
+		</foreign-key>
 	</table>
 	
 	<table name="news">
 		<column name="content" type="text"/>
+        <column name="type" type="com.code.aon.marketing.enumeration.NewsType"/>
 	</table>	
 
 	<table name="newsletter">
 		<column name="layout" type="com.code.aon.marketing.enumeration.NewsletterLayout"/>
-		<foreign-key constraint-name="FK_NEWSLETTER_HEADER_TEMPLATE">
-			<many-to-one property="headerTemplate" />
-		</foreign-key>
-		<foreign-key constraint-name="FK_NEWSLETTER_FOOTER_TEMPLATE">
-			<many-to-one property="footerTemplate" />
-		</foreign-key>
 	</table>	
 	
 	<table name="note">
