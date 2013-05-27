@@ -302,10 +302,6 @@ public class DomainController extends BasicController {
 			if ( infoweb != null ) {
 				this.aioInfo.getApplicationModules().remove(infoweb);
 			}
-			DomainModuleInfo pos = this.aioInfo.getModuleInfo(Module.POS);
-			if ( pos != null ) {
-				this.aioInfo.getApplicationModules().remove(pos);
-			}
 		}
 	}
 
