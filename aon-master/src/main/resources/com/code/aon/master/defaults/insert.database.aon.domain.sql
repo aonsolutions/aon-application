@@ -1781,8 +1781,8 @@ INSERT INTO `system_payment` (`domain`,`type`,`payment_concept`,`description`,`d
   (@Domain,NULL,(SELECT id FROM payment_concept WHERE code = 'INDEM' and domain = @Domain),NULL,1,NULL,NULL,NULL,'1970-01-01',NULL,NULL,2);
 
 INSERT INTO `tax` (`domain`,`name`,`tax_type`,`percentage`,`surcharge`,`start_date`,`vat_deduction_type`,`withholding_type`) VALUES 
-  (@Domain,'GENERAL',1,21.000,4.000,'2012-09-01',0,0),
-  (@Domain,'REDUCIDO',1,10.000,1.000,'2012-09-01',0,0),
+  (@Domain,'GENERAL',1,21.000,5.200,'2012-09-01',0,0),
+  (@Domain,'REDUCIDO',1,10.000,1.400,'2012-09-01',0,0),
   (@Domain,'SUPERREDUCIDO',1,4.000,0.500,'2000-01-01',0,0),
   (@Domain,'SIN IVA',1,0.000,0.000,'2000-01-01',0,0),
   (@Domain,'IRPF',2,15.000,0.000,'2000-01-01',0,0);

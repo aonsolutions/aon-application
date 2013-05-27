@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.17.0
+# Version: 7.17.1
 # Created by: girazu
-# Creation Date: 21/05/2013 19:45
+# Creation Date: 27/05/2013 13:25
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -5146,18 +5146,22 @@ CREATE TABLE `mk_template` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   `name` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Plantilla',
-  `data` mediumtext COLLATE latin1_spanish_ci NOT NULL COMMENT 'Contenido de la Plantilla',
   `active` tinyint(1) NOT NULL COMMENT 'Indica si la Plantilla esta activa o no',
   `creationDate` datetime NOT NULL COMMENT 'Fecha de la creacion en el sistema de la Plantilla',
   `subject` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Asunto de la Plantilla',
-  `append_signature` tinyint(1) NOT NULL COMMENT 'Indica si la Plantilla incluye la firma o no',
-  `rattach` int(4) DEFAULT NULL COMMENT 'Identificador del Archivo Adjunto',
+  `width` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Ancho de la Plantilla',
+  `title_color` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Color del titulo de la Plantilla',
+  `background_color` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Color de fondo de la Plantilla',
+  `header_template` int(4) DEFAULT NULL COMMENT 'Identificador de la Plantilla de Cabecera',
+  `footer_template` int(4) DEFAULT NULL COMMENT 'Identificador de la Plantilla de Pie de Pagina',
   PRIMARY KEY (`id`),
   KEY `IDX_MK_TEMPLATE_DOMAIN` (`domain`),
   KEY `IDX_MK_TEMPLATE_SCOPE` (`scope`),
-  KEY `IDX_MK_TEMPLATE_RATTACH` (`rattach`),
-  CONSTRAINT `FK_MK_TEMPLATE_RATTACH` FOREIGN KEY (`rattach`) REFERENCES `rattach` (`id`),
+  KEY `IDX_MK_TEMPLATE_HEADER_TEMPLATE` (`header_template`),
+  KEY `IDX_MK_TEMPLATE_FOOTER_TEMPLATE` (`footer_template`),
   CONSTRAINT `FK_MK_TEMPLATE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_MK_TEMPLATE_HEADER_TEMPLATE` FOREIGN KEY (`header_template`) REFERENCES `rattach` (`id`),
+  CONSTRAINT `FK_MK_TEMPLATE_FOOTER_TEMPLATE` FOREIGN KEY (`footer_template`) REFERENCES `rattach` (`id`),
   CONSTRAINT `FK_MK_TEMPLATE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Plantilla de Marketing';
 
@@ -5171,23 +5175,17 @@ CREATE TABLE `newsletter` (
   `name` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del Boletin',
   `date` datetime NOT NULL COMMENT 'Fecha del Boletin',
   `layout` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Disposicion del Boletin',
-  `background_color` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Color de fondo del Boletin',
-  `title_color` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Color del titulo del Boletin',
-  `header_template` int(4) DEFAULT NULL COMMENT 'Identificador de la Plantilla de Cabecera',
-  `footer_template` int(4) DEFAULT NULL COMMENT 'Identificador de la Plantilla de Pie de Pagina',
   `active` tinyint(1) DEFAULT '1' COMMENT 'Indica si el Boletin esta activo o no',
-  `width` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Ancho del Boletin',
   `subject` varchar(128) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Asunto del Boletin',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   `highlightFirst` tinyint(1) DEFAULT '0' COMMENT 'Indica si el Boletin destaca la primera noticia o no',
+  `template` int(4) DEFAULT NULL COMMENT 'Identificador de la Plantilla de Marketing',
   PRIMARY KEY (`id`),
   KEY `IDX_NEWSLETTER_DOMAIN` (`domain`),
-  KEY `IDX_NEWSLETTER_HEADER_TEMPLATE` (`header_template`),
-  KEY `IDX_NEWSLETTER_FOOTER_TEMPLATE` (`footer_template`),
   KEY `IDX_NEWSLETTER_SCOPE` (`scope`),
+  KEY `IDX_NEWSLETTER_MK_TEMPLATE` (`template`),
   CONSTRAINT `FK_NEWSLETTER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_NEWSLETTER_HEADER_TEMPLATE` FOREIGN KEY (`header_template`) REFERENCES `mk_template` (`id`),
-  CONSTRAINT `FK_NEWSLETTER_FOOTER_TEMPLATE` FOREIGN KEY (`footer_template`) REFERENCES `mk_template` (`id`),
+  CONSTRAINT `FK_NEWSLETTER_MK_TEMPLATE` FOREIGN KEY (`template`) REFERENCES `mk_template` (`id`),
   CONSTRAINT `FK_NEWSLETTER_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Boletin';
 
@@ -5302,16 +5300,20 @@ CREATE TABLE `news` (
   `rss` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si la Noticia se va a publicar en rss o no',
   `init_date` datetime DEFAULT NULL COMMENT 'Fecha Noticia',
   `end_date` datetime DEFAULT NULL COMMENT 'Fecha fin Noticia',
-  `category` int(4) NOT NULL COMMENT 'Categoria de la Noticia',
+  `category` int(4) DEFAULT NULL COMMENT 'Categoria de la Noticia',
   `rattach` int(4) DEFAULT NULL COMMENT 'Identificador del Archivo Adjunto',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
+  `type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de Contenido',
+  `template` int(4) DEFAULT NULL COMMENT 'Identificador de la Plantilla de Marketing',
   PRIMARY KEY (`id`),
   KEY `IDX_NEWS_DOMAIN` (`domain`),
   KEY `IDX_NEWS_CATEGORY` (`category`),
   KEY `IDX_NEWS_RATTACH` (`rattach`),
   KEY `IDX_NEWS_SCOPE` (`scope`),
+  KEY `IDX_NEWS_MK_TEMPLATE` (`template`),
   CONSTRAINT `FK_NEWS_CATEGORY` FOREIGN KEY (`category`) REFERENCES `category` (`id`),
   CONSTRAINT `FK_NEWS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_NEWS_MK_TEMPLATE` FOREIGN KEY (`template`) REFERENCES `mk_template` (`id`),
   CONSTRAINT `FK_NEWS_RATTACH` FOREIGN KEY (`rattach`) REFERENCES `rattach` (`id`),
   CONSTRAINT `FK_NEWS_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Noticias';
@@ -7106,7 +7108,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.17.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.17.1');
 
 COMMIT;
 
