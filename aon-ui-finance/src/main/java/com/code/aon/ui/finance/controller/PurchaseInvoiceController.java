@@ -46,6 +46,9 @@ public class PurchaseInvoiceController extends InvoiceController {
 	private RegistryValidationManager vm;
 	private IncomeTransferManager incomeTransferManager;
 	private boolean showIncomeTransferWindow;
+	private boolean showDetailsDiscountWindow;
+	
+	private String discountExpr;
 
 	public PurchaseInvoiceController() {
 		setInvoiceAddressControllerName(PURCHASE_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -104,6 +107,22 @@ public class PurchaseInvoiceController extends InvoiceController {
 		this.showIncomeTransferWindow = value;
 	}
 	
+	public String getDiscountExpr() {
+		return discountExpr;
+	}
+
+	public void setDiscountExpr(String discountExpr) {
+		this.discountExpr = discountExpr;
+	}
+
+	public boolean isShowDetailsDiscountWindow() {
+		return showDetailsDiscountWindow;
+	}
+
+	public void setShowDetailsDiscountWindow(boolean showDetailsDiscountWindow) {
+		this.showDetailsDiscountWindow = showDetailsDiscountWindow;
+	}
+
 	public void onIncomeTransferShow(ActionEvent event) throws ManagerBeanException {
 		List<ITransferObject> invoicedIncomeList = new LinkedList<ITransferObject>();
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
@@ -183,6 +202,20 @@ public class PurchaseInvoiceController extends InvoiceController {
 			}
 		}
 		iterator = null;
+	}
+
+	public void applyDetailsDiscount(ActionEvent event) throws ManagerBeanException {
+		PurchaseInvoiceDetailController controller = (PurchaseInvoiceDetailController) AonUtil.getRegisteredBean(IFinanceConstants.PURCHASE_INVOICE_DETAIL_CONTROLLER_NAME);
+		IManagerBean bean = BeanManager.getManagerBean(InvoiceDetail.class);
+		List<ITransferObject> list = bean.getList(controller.getCriteria());
+		for(ITransferObject to: list){
+			InvoiceDetail det = (InvoiceDetail) to;
+			det.getDiscountExpression().setDiscountExpr(getDiscountExpr());
+			det.setTaxableBase(controller.getPriceStrategy().getBasePrice(det));
+			bean.update(det);
+		}
+		controller.initializeModel();
+		setDiscountExpr(null);
 	}
 	
 	@Override

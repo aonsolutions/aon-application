@@ -52,6 +52,14 @@
 									value="#{true}" />
 							</aon:menuItem>
 						</c:if>
+						<aon:menuItem id="detailsDiscount"
+							value="#{financeBundle.finance_purchase_invoice_details_discount}"
+							rendered="#{!purchaseInvoice.readOnly and purchaseInvoiceDetail.editable}"
+							iconClass="aon-icon-sincronize"
+							reRender="showDetailsDiscountWindow">
+							<f:setPropertyActionListener target="#{purchaseInvoice.showDetailsDiscountWindow}"
+								value="#{true}" />
+						</aon:menuItem>
 						<aon:menuItem id="finances"
 							value="#{bundle.aon_key_finance_description}"
 							title="#{bundle.aon_key_finance_accelerator}"
@@ -486,6 +494,9 @@
 			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAmortization.xhtml">
+			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/purchaseInvoice/modalDetailsDiscount.xhtml">
 			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
 		</ui:include>
 	</ui:define>
