@@ -1,6 +1,6 @@
 acquireIncrement=1
-maxPoolSize=5
-minPoolSize=1
+maxPoolSize=50
+minPoolSize=10
 maxIdleTime=600
 maxStatements=10
 idleConnectionTestPeriod=20
@@ -8,4 +8,4 @@ preferredTestQuery=select 1;
 debugUnreturnedConnectionStackTraces=true
 unreturnedConnectionTimeout=1000
 maxAdministrativeTaskTime=3600
-numHelperThreads=1
+numHelperThreads=6

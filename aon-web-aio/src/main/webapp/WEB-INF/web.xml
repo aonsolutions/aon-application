@@ -6,6 +6,16 @@
 						http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
 
+	<!-- -Test Servlet -->
+	<servlet>
+		<servlet-name>TestServlet</servlet-name>
+		<servlet-class>com.code.aon.aio.servlet.TestServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TestServlet</servlet-name>
+		<url-pattern>/testServlet</url-pattern>
+	</servlet-mapping>
+
 	<!-- Resource Servlet -->
 	<servlet>
 		<servlet-name>NewDomain</servlet-name>
