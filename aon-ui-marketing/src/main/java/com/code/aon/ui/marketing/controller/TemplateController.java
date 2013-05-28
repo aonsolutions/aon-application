@@ -32,6 +32,7 @@ public class TemplateController extends BasicController {
 		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 		controller.onNewMessage(event);
 		controller.setShowNewMessageWindow(true);
+		controller.setShowTemplates(false);
 		initController(controller, (Template) getTo());
 	}
 

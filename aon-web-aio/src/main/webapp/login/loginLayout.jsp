@@ -87,7 +87,8 @@ try {
 
 				<td class=" aon-width-auto">			
 					<div class="aon-login-box-internal">
-						<form id="login" method="post" action="j_security_check">
+						<form id="login" method="post" action="j_security_check"
+							onsubmit="document.getElementById('login_btn').disabled = 'disabled';">
 							<div class="aon-login-title">
 								<img class="aon-graphicImage"
 									src="<%=customize.getLoginLogo()%>" />

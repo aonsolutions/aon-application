@@ -9,6 +9,7 @@ import org.hibernate.connection.ConnectionProvider;
 
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
 
@@ -27,6 +28,13 @@ public class HibernateConnectionProvider implements ConnectionProvider {
 			String domain = null;
 			if (principal != null ) {
 				domain = principal.getDomain();
+			}
+			if ( domain == null ) { 
+				// Necesario para el RSSServlet
+				String path = HttpServletRequestValve.getHttpServletRequest().getServletPath();
+				if ( "/aonFeed".equals(path) ) {
+					domain = AonUtil.getServerName();	
+				}
 			}
 			if (domain != null ) {
 				return DatabaseUtil.getConnection( domain );	

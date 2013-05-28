@@ -216,6 +216,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 			}
 		}
 		this.onEditSearch(null);
+		this.domainURL = null;
 		System.gc();
 	}
 

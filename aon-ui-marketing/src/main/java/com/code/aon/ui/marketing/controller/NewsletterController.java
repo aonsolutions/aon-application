@@ -77,6 +77,7 @@ public class NewsletterController extends BasicController {
 
 	public static void initController( MessageController controller, Newsletter newsletter ) {
 		controller.setAppendSignature(false);
+		controller.setShowTemplates(false);
 		StringBuffer sb = new StringBuffer();
 		addNews( newsletter, sb );
 		String body = TemplateController.getMessageBody( newsletter.getTemplate(), sb.toString());
