@@ -963,28 +963,12 @@
 														<includes>
 															<include>connection</include>
 															<include>default.pool-properties</include>
+															<include>pro-aonsolutions-net.pool-properties</include>
 														</includes>
 														<location>src/main/scripts/</location>
 													</source>
 												</sources>
 											</mapping>
-<!-- 											
-											<mapping>
-												<directory>/tmp/aon-aio-tomcat_${buildNumber}</directory>
-												<filemode>755</filemode>
-												<username>tomcat</username>
-												<groupname>tomcat</groupname>
-												<sources>
-													<source>
-														<includes>
-															<include>server.xsl</include>
-															<include>context.xsl</include>
-														</includes>
-														<location>src/main/scripts/</location>
-													</source>
-												</sources>
-											</mapping>
- -->											
 											<mapping>
 												<directory>/usr/share/java/tomcat6/</directory>
 												<filemode>755</filemode>
