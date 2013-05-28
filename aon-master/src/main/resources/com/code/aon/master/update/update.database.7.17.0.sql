@@ -19,7 +19,7 @@ ALTER TABLE `newsletter` ADD `template` int(4) DEFAULT NULL COMMENT 'Identificad
 ALTER TABLE `newsletter` ADD KEY `IDX_NEWSLETTER_MK_TEMPLATE` (`template`);
 ALTER TABLE `newsletter` ADD CONSTRAINT `FK_NEWSLETTER_MK_TEMPLATE` FOREIGN KEY (`template`) REFERENCES `mk_template` (`id`);
 
-ALTER TABLE `news` MODIFY `category` int(4) DEFAULT NULL COMMENT 'Categoria del Contenido';
+ALTER TABLE `news` MODIFY `category` int(4) DEFAULT NULL COMMENT 'Categoria de la Noticia';
 ALTER TABLE `news` ADD `type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de Contenido';
 ALTER TABLE `news` ADD `template` int(4) DEFAULT NULL COMMENT 'Identificador de la Plantilla de Marketing';
 ALTER TABLE `news` ADD KEY `IDX_NEWS_MK_TEMPLATE` (`template`);
@@ -30,7 +30,7 @@ SELECT domain,1,scope,name,IFNULL(subject,name),data,active,creationDate,rattach
 
 UPDATE `mk_action` SET `template` = NULL;
 
-TRUNCATE TABLE `mk_template`;
+DELETE FROM `mk_template`;
 
 ALTER TABLE `mk_template` DROP `append_signature`;
 ALTER TABLE `mk_template` DROP `data`;
