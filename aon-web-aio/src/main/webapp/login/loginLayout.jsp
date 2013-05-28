@@ -204,37 +204,31 @@ try {
 <%
 	} catch (com.code.aon.pool.AonConnectionException e){
 %>
-<body id="aon-body">
-<table style="padding: 5px;margin-left: auto;margin-right: auto;margin-top: 200px;border: SteelBlue 1px solid;background-color:#e2f1f5;width: 50%;">
-	<tbody>
-		<tr>
-			<td colspan="2" style="text-align:center;">
-				<div style="font-size:1.2em; color: white; background-color: black; padding-top: 5px; padding-bottom: 5px; font-weight: bold;">
-					<span>ERROR</span>
-				</div>
-			</td>
-		</tr>
-		<tr>
-			<td>&#160;</td>
-		</tr>
-		<tr>
-			<td>
-				<img src="images/h_logo.jpg"/>
-			</td>
-			<td style="width: 100%;">
-				<div style="width: 100%;text-align: center;margin-top: 20px;">
-					<div style="margin: 5px; color:SteelBlue; font-size: 1.4em;font-weight:bold;">
-						<span class="aon-outputText">
-							<%=e.getMessage()%>
-						</span>
-					</div>
-				</div>
-			</td>
-		</tr>
-	</tbody>
-</table>
+<head>
+<style type="text/css">
+	body {color:#222; font-size:12px;font-family: sans-serif; background:#fff url('images/errorLoginBack.png') left top repeat-x;}
+	h1 {font-size:150%;font-family:'Trebuchet MS', Verdana, sans-serif; color:#000}
+	#page {font-size:122%;width:720px; margin:144px auto 0 auto;text-align:left;line-height:1.2;}
+	#message {padding-right:400px;min-height:360px;background:transparent url('images/errorLogin.png') right top no-repeat;}
+	.boton{font-size:12px;font-family:Verdana,Helvetica;font-weight:bold;color:white;background:#638cb5;border:0px;width:80px;height:26px;}
+</style>
+<meta http-equiv="Content-Type" content="application/xhtml; charset=utf-8" />
+<link rel="shortcut icon" href="http://www.aonsolutions.es/favicon.ico" type="image/x-icon" />
+<title>Error en acceso</title>
+</head>
+<body>
+<div id="page">
+	<div id="message">
+		<h1>Error</h1>
+		<p><%=e.getMessage()%></p>
+		<p>&#160;</p>
+		<form name="form1" action="javascript:history.back(1)" method="post">
+		    <input type="submit" value="Volver" class="boton">
+		</form>
+	</div>
+</div>
 </body>
-
+</html>
 <%		
 	}
 %>
