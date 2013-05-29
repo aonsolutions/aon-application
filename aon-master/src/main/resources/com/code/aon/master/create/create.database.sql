@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.17.1
+# Version: 7.17.2
 # Created by: girazu
-# Creation Date: 27/05/2013 13:25
+# Creation Date: 29/05/2013 13:20
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -5293,7 +5293,7 @@ CREATE TABLE `news` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL DEFAULT '1' COMMENT 'Identificador del Dominio',
   `title` varchar(128) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Titulo de la Noticia',
-  `description` varchar(1024) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Noticia',
+  `description` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion de la Noticia',
   `content` text COLLATE latin1_spanish_ci NOT NULL COMMENT 'Contenido de la Noticia',
   `url` varchar(256) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Url de la Noticia',
   `active` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Indica si la Noticia esta activa o no',
@@ -7108,7 +7108,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.17.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.17.2');
 
 COMMIT;
 
