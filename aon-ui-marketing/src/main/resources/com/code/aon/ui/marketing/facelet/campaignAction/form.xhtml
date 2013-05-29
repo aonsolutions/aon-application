@@ -49,6 +49,7 @@
 							value="#{marketingBundle.marketing_action_media_type}" />
 						<aon:selectOneMenu id="Action_mediaType"
 							reRender="actionGrid,campaignActionTargetDataDiv" required="true"
+							process="Action_description,Action_startDate,Action_endDate,Template_id"
 							value="#{campaignAction.to.mediaType}">
 							<f:selectItem itemLabel="-" value="#{null}" />
 							<f:selectItems value="#{marketingCampaign.actionMediaTypes}" />
