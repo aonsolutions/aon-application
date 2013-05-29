@@ -44,6 +44,7 @@
 					<aon:outputLabel for="News_type"
 						value="#{bundle.aon_type}" />
 					<aon:selectOneMenu id="News_type" required="true"
+						process="News_title,News_scope_id,News_initDate,News_active,News_content,Template_id"
 						value="#{news.to.type}" reRender="newsForm">
 						<f:selectItems value="#{marketingCollections.newsTypes}" />
 					</aon:selectOneMenu>		
