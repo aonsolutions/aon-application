@@ -453,6 +453,11 @@
 		<hibernate names="description,discountExpression,id,income.id,item.id,line,price,project.id,purchaseDetail.id,quantity,warehouse.id,item.product.type,purchaseDetail.purchase.id"/>
 	</bean>
 
+	<bean class="com.code.aon.warehouse.Inventory">
+		<alias names="description,domain,id,inventoryDate,warehouse_id,warehouse_workPlace_scope_id"/>
+		<hibernate names="description,domain,id,inventoryDate,warehouse.id,warehouse.workPlace.scope.id"/>
+	</bean>
+
 	<bean class="com.code.aon.warehouse.InventoryDetail">
 		<alias names="id,inventory_id,item_id,actualQuantity,realQuantity,cost,item_product_name,item_product_category_id,item_product_category_name"/>
 		<hibernate names="id,inventory.id,item.id,actualQuantity,realQuantity,cost,item.product.name,item.product.category.id,item.product.category.name"/>
@@ -461,5 +466,16 @@
 	<bean class="com.code.aon.warehouse.ItemWarehouse">
 		<alias names="id,item_id,warehouse_id,stockMin,stockMax,location,item_product_name,item_product_category_id,item_product_category_name"/>
 		<hibernate names="id,item.id,warehouse.id,stockMin,stockMax,location,item.product.name,item.product.category_id,item.product.category.name"/>
-	</bean>	
+	</bean>
+	
+	<bean class="com.code.aon.warehouse.Stock">
+		<alias names="domain,id,item_id,quantity,warehouse_id,warehouse_workPlace_scope_id"/>
+		<hibernate names="domain,id,item.id,quantity,warehouse.id,warehouse.workPlace.scope.id"/>
+	</bean>
+	
+	<bean class="com.code.aon.warehouse.Warehouse">
+		<alias names="domain,id,name,workPlace_active,workPlace_id,workPlace_scope_id"/>
+		<hibernate names="domain,id,name,workPlace.active,workPlace.id,workPlace.scope.id"/>
+	</bean>		
+	
 </dao>
