@@ -454,6 +454,11 @@
 						<artifactId>wagon-ssh</artifactId>
 						<version>2.4</version>
 					</dependency>
+					<dependency>
+						<groupId>com.jcraft</groupId>
+						<artifactId>jsch</artifactId>
+						<version>0.1.50</version>
+					</dependency>					
 				</dependencies>
 			</plugin>
 			<!-- Para añadir la carpeta de los fuentes generados como source folder. -->
