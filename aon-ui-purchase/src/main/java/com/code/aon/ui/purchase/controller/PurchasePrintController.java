@@ -76,6 +76,8 @@ public class PurchasePrintController extends PurchaseController {
 					break;
 				}
 			}
+			logger.info( AonUtil.getMessage(BUNDLE_KEY, IPurchaseMessages.PURCHASE_SEND_EMAIL_SENDED_COUNT) + (list.size()-logger.getErrors().size()) );
+			logger.info( AonUtil.getMessage(BUNDLE_KEY, IPurchaseMessages.PURCHASE_SEND_EMAIL_ERROR_COUNT) + logger.getErrors().size() );
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
 			AonUtil.addErrorMessage(th.getMessage());

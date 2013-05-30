@@ -1,5 +1,6 @@
 package com.code.aon.ui.purchase;
 
+
 public interface IPurchaseMessages {
 
 	/** ResourceBundle name. */
@@ -15,6 +16,8 @@ public interface IPurchaseMessages {
 	String PURCHASE_SEND_EMAIL_ERROR = "purchase_send_email_error";
 	String PURCHASE_SEND_EMAIL_FNINISH = "purchase_send_email_finish";
 	String PURCHASE_SEND_EMAIL_NUMBER = "purchase_send_email_number";
+	String PURCHASE_SEND_EMAIL_SENDED_COUNT = "purchase_send_email_sendedCount"; 
+	String PURCHASE_SEND_EMAIL_ERROR_COUNT = "purchase_send_email_errorCount";
 	
 }
 

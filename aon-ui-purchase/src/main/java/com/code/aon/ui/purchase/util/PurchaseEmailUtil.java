@@ -135,8 +135,8 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseMess
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
 			String text = AonUtil.getMessage(BUNDLE_KEY, PURCHASE_SEND_EMAIL_ERROR);
-			String message = MessageFormat.format(text, purchase.getSeries(), purchase.getNumber() );
-			logger.error( message );
+			String message = MessageFormat.format(text, purchase.getReferenceCode() );
+			logger.error( message + "<br />" + th.getMessage() + "<br />" + th.getCause() );
 		} finally {
 			if ( file != null ) {
 				FileUtils.deleteQuietly(file.getFile());	

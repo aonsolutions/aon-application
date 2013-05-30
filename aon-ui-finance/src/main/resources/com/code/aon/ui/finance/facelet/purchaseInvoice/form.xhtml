@@ -54,7 +54,7 @@
 						</c:if>
 						<aon:menuItem id="detailsDiscount"
 							value="#{financeBundle.finance_purchase_invoice_details_discount}"
-							rendered="#{!purchaseInvoice.readOnly and purchaseInvoiceDetail.editable}"
+							rendered="#{!purchaseInvoice.readOnly}"
 							iconClass="aon-icon-sincronize"
 							reRender="showDetailsDiscountWindow">
 							<f:setPropertyActionListener target="#{purchaseInvoice.showDetailsDiscountWindow}"

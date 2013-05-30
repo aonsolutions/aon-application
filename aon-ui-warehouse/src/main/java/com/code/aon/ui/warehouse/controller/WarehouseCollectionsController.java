@@ -14,6 +14,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
@@ -39,6 +40,8 @@ public class WarehouseCollectionsController {
 		warehouses = new LinkedList<SelectItem>();
 		IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
 		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ACTIVE), true);
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_SCOPE_ID));
 		criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
 		List<ITransferObject> c = warehouseBean.getList(criteria);
 		Iterator<ITransferObject> iter = c.iterator();

@@ -14,6 +14,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.Warehouse;
@@ -173,6 +174,8 @@ public class StockReport implements ICollectionProvider{
 			Criteria criteria = new Criteria();
 			if (getWarehouse() != null && getWarehouse().getId() != null) {
 				criteria.addEqualExpression( bean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID), getWarehouse().getId() );
+			} else {
+				UserUtils.getInstance().addScopeFilterToCriteria(criteria, bean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_WORK_PLACE_SCOPE_ID));
 			}
 			if (getItem() != null && getItem().getId() != null) {
 				criteria.addEqualExpression( bean.getFieldName(IEntityAlias.STOCK_ITEM_ID), getItem().getId() );
