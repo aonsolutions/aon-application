@@ -298,7 +298,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		}
 	}
 	
-	private void finishMessage() {
+	public void finishMessage() {
     	setShowNewMessageWindow(false);
 		content = null;
 		if ( newMsgFileList != null ) {
@@ -441,15 +441,25 @@ public class MessageController implements IWebMailConstants, BundleConstants {
     public void onSend(ActionEvent event) {
     	AonServer server = new AonServer(this.senderMailAccount);
     	try {
+    		send(server);
+		} catch (Throwable th) {
+			AonUtil.addErrorMessage(th.getMessage());
+			throw new AbortProcessingException(th);
+		} finally {
+	    	finishMessage();
+		}
+    }
+    
+    public void send(AonServer server) throws WebmailException {
+    	try {
 	    	sentMessage = compoundMessage(server);
     		server.sendMessage(sentMessage);
 		} catch (Throwable th) {
-			AonUtil.addErrorMessage(th.getMessage());
 			if ( sentMessage != null ) {
 	    		storeMessage(server, sentMessage, true);
 				refreshDraftFolder();	    		
 			}
-			throw new AbortProcessingException(th);
+			throw new WebmailException(th);
 		}
     	try {	
    			storeMessage(server, sentMessage, false);
@@ -459,12 +469,9 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 	    	}
 	    	deleteDraftMessage( server );
 		} catch (Throwable th) {
-			AonUtil.addErrorMessage(th.getMessage());
-			throw new AbortProcessingException(th);
-		} finally {
-	    	finishMessage();
+			throw new WebmailException(th);
 		}
-    }
+    }    
 
     public void onCancelSend(ActionEvent event) {
     	finishMessage();

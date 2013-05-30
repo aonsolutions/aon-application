@@ -31,6 +31,7 @@ import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.bean.AonServer;
 
 public class EmailCommunicationController implements IMarketingConstants {
 	
@@ -57,13 +58,13 @@ public class EmailCommunicationController implements IMarketingConstants {
 		return Collections.emptyList();
 	}
 	
-	private boolean sendEmail( ActionEvent event, MessageController messageController, List<String> emails ) {
+	private boolean sendEmail( AonServer server, MessageController messageController, List<String> emails ) {
 		boolean result = true;
 		String recipients = StringUtils.join(emails, ",");
 		try {
 	    	LOGGER.debug( "Sending email to: {}", recipients );			
 			messageController.setRecipientsBcc(recipients);
-			messageController.onSend(event);
+			messageController.send(server);
 		} catch ( Throwable th ) {
 			LOGGER.error("Error sending email to " + recipients, th );
 			result = false;
@@ -88,7 +89,7 @@ public class EmailCommunicationController implements IMarketingConstants {
 		}
 	}
 	
-	private boolean sendEmail( ActionEvent event, List<ActionTarget> list ) throws ManagerBeanException {
+	private boolean sendEmail( AonServer server, List<ActionTarget> list ) throws ManagerBeanException {
 		LogPanelController logger = LogPanelController.getInstance();
 		MessageController messageController = (MessageController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 		List<String> emails = new LinkedList<String>();
@@ -105,7 +106,7 @@ public class EmailCommunicationController implements IMarketingConstants {
 		}
 		ActionTargetStatus status = ActionTargetStatus.INCORRECT;
 		if (! emails.isEmpty() ) {
-			if ( sendEmail(event, messageController, emails) ) {
+			if ( sendEmail(server, messageController, emails) ) {
 				status = ActionTargetStatus.SENT;
 			}			
 		}
@@ -154,10 +155,11 @@ public class EmailCommunicationController implements IMarketingConstants {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void send(ActionEvent event) {
     	LogPanelController logger = LogPanelController.getInstance();
+		MessageController messageController = (MessageController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
     	try {
     		CommunicationCenterController ccc = getCommunicationController();
-    		MessageController messageController = (MessageController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
     		updateMessageContent(messageController);
+    		AonServer server = new AonServer(messageController.getSenderMailAccount());
     		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
     		Criteria criteria = ccc.getPendingTargetsCriteria(bean);
     		criteria.addOrder("ActionTarget.target.registry.name", false);
@@ -167,7 +169,7 @@ public class EmailCommunicationController implements IMarketingConstants {
     		do {
     			list = (List) bean.getList(criteria, offset, count);
     			if (! list.isEmpty() ) {
-    				logResult( list, offset, sendEmail(event, list) );
+    				logResult( list, offset, sendEmail(server, list) );
     				count = Math.min(offset, count);
     				offset -= count;
     			}
@@ -177,6 +179,7 @@ public class EmailCommunicationController implements IMarketingConstants {
 			logger.error( e.getMessage() );
 			throw new AbortProcessingException(e.getMessage(), e);
 		} finally {
+			messageController.finishMessage();
 			logger.info( AonUtil.getMessage(IWebMailConstants.BUNDLE_NAME, SEND_EMAIL_FINISH) );			
 		}
 		getCommunicationController().onInit(event);
