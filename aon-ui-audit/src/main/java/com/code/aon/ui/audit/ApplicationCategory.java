@@ -131,7 +131,7 @@ public class ApplicationCategory implements Comparable<ApplicationCategory>, Ser
 	
 	@Override
 	public int compareTo(ApplicationCategory o) {
-		return name.compareTo( o.getName() );
+		return getName().compareTo( o.getName() );
 	}
 
 	@Override

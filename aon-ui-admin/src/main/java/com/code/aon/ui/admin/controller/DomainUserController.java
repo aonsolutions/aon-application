@@ -6,6 +6,8 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_CONTROLLER
 import static com.code.aon.ui.admin.controller.IAdminConstants.MAXIMUM_NUMBER_USERS;
 import static com.code.aon.ui.admin.controller.IAdminConstants.NEW_PASSWORD_ERROR;
 import static com.code.aon.ui.admin.controller.IAdminConstants.USER_DUPLICATED;
+import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
+import static com.esferalia.aon.entity.IEntityAlias.APPLICATION_USER_PROFILE_APPLICATION_USER_ID;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -17,11 +19,13 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.admin.ApplicationUserProfile;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -38,6 +42,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.UserApplicationInfo;
 import com.code.aon.ui.admin.util.IdCheckUtil;
 import com.code.aon.ui.audit.ApplicationOption;
+import com.code.aon.ui.audit.controller.ActionDeniedController;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -279,11 +285,20 @@ public class DomainUserController extends BasicController {
 	}	
 	
 	public void onSaveApplications( ActionEvent event ) throws ManagerBeanException {
+		boolean changed = false;
 		for( UserApplicationInfo uai : this.applicationInfos ) {
 			if ( uai.isChecked() ) {
-				uai.register();
+				changed |= uai.register();
 			} else {
-				uai.unregister();
+				changed |= uai.unregister();
+			}
+		}
+		if ( changed ) {
+			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+			adc.initEdit( getDomainUser() );
+			User user = UserUtils.getInstance().getLoggedUser();
+			if ( ObjectUtils.equals(user, getDomainUser()) ) {
+				adc.initCurrentUser();
 			}
 		}
 	}	
@@ -300,6 +315,26 @@ public class DomainUserController extends BasicController {
 	
 	public List<SelectItem> getActionList() {
         return actionList;
+	}	
+
+	public String getProfileList() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			User user = (User) getModel().getRowData();
+			Integer appId = AonUtil.getAuthPrincipal().getApplicationId();
+			Integer applicationUser = AdminUtil.getApplicationUser(user.getDomain(), user.getId(), appId);
+			if ( applicationUser != null ) {
+				IManagerBean bean = BeanManager.getManagerBean(ApplicationUserProfile.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(APPLICATION_USER_PROFILE_APPLICATION_USER_ID), applicationUser);
+				List<ITransferObject> list = bean.getList(criteria);
+				List<String> profiles = new LinkedList<String>();
+				for( ITransferObject to : list ) {
+					profiles.add( ((ApplicationUserProfile)to).getProfile().getName() );
+				}
+				return StringUtils.join(profiles, ", ");
+			}
+		}
+		return null;
 	}	
 	
 }

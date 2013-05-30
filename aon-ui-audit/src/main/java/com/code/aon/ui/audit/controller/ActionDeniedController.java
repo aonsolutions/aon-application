@@ -92,17 +92,30 @@ public class ActionDeniedController {
 	private Map<String,ApplicationOption> enabledManagedBeans;
 	
 	public ActionDeniedController() {
-		User user = UserUtils.getInstance().getLoggedUser();
+		this.listener = new UserLoookupListener();	
+		this.moduleEnabled = new ModuleEnabledMap();
+		init();
+	}
+	
+	public void init() {
+		User user = UserUtils.getInstance().getLoggedUser();		
 		initDeniedModules(user);
 		this.deniedActionsMap = new HashMap<String, ApplicationOption>();
-		for( ApplicationOption option : getOptions(getDeniedActions(user)) ) {
+		for( ApplicationOption option : getOptions(getDeniedActions(user), this.deniedModulesMap) ) {
 			this.deniedActionsMap.put(option.getAction(), option);
-		}
-		this.listener = new UserLoookupListener();	
+		}		
 		initEnabledManagedBeans();
-		this.moduleEnabled = new ModuleEnabledMap();
 	}
-
+	
+	public void initCurrentUser() {
+		boolean sysAdmin = AonUtil.getRoleManager().isSysAdmin();
+		AonUtil.getRoleManager().init();
+		if ( sysAdmin ) {
+			AonUtil.getRoleManager().setSysAdmin();	
+		}
+		init();
+	}
+	
 	private AuditController getAuditController() {
 		return (AuditController) AonUtil.getRegisteredBean(AUDIT_CONTROLLER_NAME);
 	}
@@ -144,6 +157,7 @@ public class ActionDeniedController {
 	}
 	
 	public void accept( ActionEvent event ) {
+		boolean changed = false;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ActionDenied.class);
 			Map<String,ApplicationOption> map = new HashMap<String, ApplicationOption>();
@@ -156,6 +170,7 @@ public class ActionDeniedController {
 					map.remove(action);
 				} else {
 					bean.remove( actionDenied );
+					changed = true;
 				}
 			}
 			for( ApplicationOption option : map.values() ) {
@@ -164,12 +179,19 @@ public class ActionDeniedController {
 				actionDenied.setAction(action);
 				actionDenied.setUser(user);
 				bean.insert(actionDenied);
+				changed = true;
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error updating favorite action list", e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}		
+		if ( changed ) {
+			User currentUser = UserUtils.getInstance().getLoggedUser();
+			if ( ObjectUtils.equals(user, currentUser) ) {
+				initCurrentUser();
+			}
+		}
 	}
 	
 	private Map<String,ActionDenied> getUserDeniedActions( User user ) {
@@ -252,46 +274,54 @@ public class ActionDeniedController {
 		return enabledModules;		
 	}
 	
-	private Map<String,Module> getEnabledModules( User user ) {
-		Map<String,Module> enabledModules = new HashMap<String, Module>();
+	public Set<Module> getEnabledModules( User user, boolean addConsultancyWithFiscal ) {
+		Set<Module> enabledModules = new HashSet<Module>();
 		try {
+			boolean skipParentModules = true;
 			Integer domainId = DomainManager.getCurrentDomain();
+			Integer applicationId = getAuditController().getApplication().getId();
 			Integer parentDomainId = AdminUtil.getParentDomain(domainId);
 			boolean consultancyParent = false;
 			if ( parentDomainId != null ) {
 				consultancyParent = (DomainSwitcher.getDomainType(parentDomainId) == DomainType.CONSULTANCY);
 			}
-			boolean domainParentUser = ObjectUtils.equals( user.getDomain(), parentDomainId);
-			Set<Module> moduleSet = getEnabledModuleList(consultancyParent && (!domainParentUser));
-			if ( consultancyParent ) {
-				Integer applicationId = getAuditController().getApplication().getId();
-				if ( domainParentUser ) {
-					if ( AuditManager.hasModule(parentDomainId, applicationId, Module.FISCAL) ) {
-						moduleSet.add(Module.ACCOUNTING);
-						moduleSet.add(Module.MANAGEMENT);
-						moduleSet.add(Module.TREASURY);
+			if ( user != null ) {
+				if ( consultancyParent ) {
+					boolean domainParentUser = ObjectUtils.equals(user.getDomain(), parentDomainId);
+					if ( domainParentUser &&
+						AuditManager.hasModule(parentDomainId, applicationId, Module.FISCAL) ) {
+							enabledModules.add(Module.ACCOUNTING);
+							enabledModules.add(Module.MANAGEMENT);
+							enabledModules.add(Module.TREASURY);
 					}
-				}
-				if ( moduleSet.contains(Module.DOCUMENT_PORTAL) ) {
-					moduleSet.remove(Module.DOCUMENT_PORTAL);
-					moduleSet.add(Module.DOCUMENT);
+					skipParentModules = consultancyParent && (!domainParentUser);
 				}
 			}
-			for( Module module : moduleSet ) {
-				enabledModules.put( module.getName(), module );
-			}			
+			if ( addConsultancyWithFiscal ) {
+				if ( (DomainSwitcher.getDomainType(domainId) == DomainType.CONSULTANCY) && 
+						AuditManager.hasModule(domainId, applicationId, Module.FISCAL) ) {
+					enabledModules.add(Module.ACCOUNTING);
+					enabledModules.add(Module.MANAGEMENT);
+					enabledModules.add(Module.TREASURY);
+				}
+			}
+			enabledModules.addAll( getEnabledModuleList(skipParentModules) );
+			if ( consultancyParent && enabledModules.contains(Module.DOCUMENT_PORTAL) ) {
+				enabledModules.remove(Module.DOCUMENT_PORTAL);
+				enabledModules.add(Module.DOCUMENT);
+			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading enabled modules for " + user, e);
 		}			
 		return enabledModules;		
 	}
 	
-	private boolean isDeniedOption( ApplicationOption option ) {
-		return this.deniedModulesMap.containsValue(option.getGroup().getCategory());
+	private boolean isDeniedOption( Map<String,ApplicationCategory> deniedModules, ApplicationOption option ) {
+		return deniedModules.containsValue(option.getGroup().getCategory());
 	}
 	
 	public boolean isDenied( ApplicationOption option ) {
-		if ( isDeniedOption(option) ) {
+		if ( isDeniedOption(this.deniedModulesMap, option) ) {
 			return true;
 		}
 		return deniedActionsMap.containsKey(option.getAction());
@@ -301,15 +331,15 @@ public class ActionDeniedController {
 		return this.deniedActionsMap.values();
 	}
 	
-	private List<ApplicationOption> getOptions( Map<String,? extends IAction> deniedActions ) {
+	private List<ApplicationOption> getOptions( Map<String,? extends IAction> deniedActions, Map<String,ApplicationCategory> deniedModules ) {
 		List<ApplicationOption> list = new ArrayList<ApplicationOption>();
 		if (! deniedActions.isEmpty() ) {
 			Map<String,ApplicationOption> options = getOptionController().getOptionMap();
 			for( Map.Entry<String,? extends IAction> entry : deniedActions.entrySet() ) {
 				String action = entry.getKey();
 				ApplicationOption option = options.get(action);
-				if ( (option != null) && (!isDeniedOption(option)) ) {
-					list.add(option);
+				if ( (option != null) && !isDeniedOption(deniedModules, option) ) {
+					list.add(option);	
 				} else {
 					AuditManager.removeAction(entry.getValue().getAction().getId());
 				}
@@ -328,17 +358,19 @@ public class ActionDeniedController {
 		if ( event.getNewValue() == null ) {
 			reset();
 		} else {
-			init( (User) event.getNewValue() );
+			initEdit( (User) event.getNewValue() );
 		}
 	}
 	
-	public void init( User user ) {
+	public void initEdit( User user ) {
 		setUser(user);
-		this.deniedActions = getUserDeniedActions( getUser() );
-		List<ApplicationOption> profileDeniedOptions = getOptions( getProfileDeniedActions(user) );
-		this.selected = getOptions( this.deniedActions );
+		this.deniedActions = getUserDeniedActions(user);
+		Map<String, ApplicationCategory> deniedModules = getDeniedModules(user, true);
+		List<ApplicationOption> profileDeniedOptions = getOptions( getProfileDeniedActions(user), deniedModules );
+		this.selected = getOptions( this.deniedActions, deniedModules );
 		this.selected.removeAll(profileDeniedOptions);
-		this.options = new ArrayList<ApplicationOption>( getOptions(true) );
+		List<ApplicationCategory> categories = getCategories(deniedModules);
+		this.options = new ArrayList<ApplicationOption>( getOptions(categories, true) );
 		this.options.removeAll(profileDeniedOptions);
 		this.options.removeAll(this.selected);		
 	}
@@ -404,7 +436,8 @@ public class ActionDeniedController {
 	}
 	
 	private List<Integer> getProfiles( User user ) {
-		Integer applicationUser = AdminUtil.getApplicationUser(AonUtil.getAuthPrincipal());
+		Integer appId = getAuditController().getApplication().getId();
+		Integer applicationUser = AdminUtil.getApplicationUser(user.getDomain(), user.getId(), appId);
 		if ( applicationUser != null ) {
 			List<Integer> profiles = AdminUtil.getProfiles(applicationUser);
 			if ( (profiles != null) && (!profiles.isEmpty()) ) {
@@ -414,17 +447,15 @@ public class ActionDeniedController {
 		return null;
 	}
 	
-	private Map<String,Module> getDeniedModules( User user ) {
-		Map<String,Module> deniedModules = new HashMap<String, Module>();
+	private Set<Module> getProfileDeniedModules( User user ) {
+		Set<Module> deniedModules = new HashSet<Module>();
 		try {			
 			List<Integer> profiles = getProfiles(user);
 			if ( profiles != null ) {
 				for( Integer profile : profiles ) {
 					List<Module> list = getProfileDeniedModules(profile);
 					if ( list != null ) {
-						for( Module module : list ) {
-							deniedModules.put(module.getName(), module);	
-						}
+						deniedModules.addAll(list);
 					}
 				}
 			}			
@@ -433,26 +464,40 @@ public class ActionDeniedController {
 		}		
 		return deniedModules;
 	}
+
+	private boolean contains( Set<Module> modules, String name ) {
+		for( Module module : modules ) {
+			if ( module.getName().equals(name) ) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
-	private void initDeniedModules( User user ) {
-		this.deniedModulesMap = new HashMap<String, ApplicationCategory>();
+	public Map<String, ApplicationCategory> getDeniedModules( User user, boolean addConsultancyWithFiscal ) {
+		Map<String, ApplicationCategory> map = new HashMap<String, ApplicationCategory>();
 		if ( AonUtil.isBeanValue(ACTION_DENIED_CONTROLLER_NAME, MODULES_ENABLED) ) {
-			Map<String,Module> enabledModules = getEnabledModules(user);
-			Map<String,Module> deniedModules = getDeniedModules(user);
+			Set<Module> enabledModules = getEnabledModules(user, addConsultancyWithFiscal);
+			Set<Module> deniedModules = getProfileDeniedModules(user);
 			for( ApplicationCategory category : getOptionController().getCategories() ) {
 				if (! ArrayUtils.contains(SKIP_CATEGORIES, category.getAlias()) ) {
 					boolean denied = true;
-					if (! deniedModules.containsKey(category.getAlias()) ) {
-						denied = ! enabledModules.containsKey(category.getAlias());
+					if (! contains(deniedModules, category.getAlias()) ) {
+						denied = ! contains(enabledModules, category.getAlias());
 					}
 					if ( denied ) {
-						this.deniedModulesMap.put(category.getAlias(), category);	
+						map.put(category.getAlias(), category);	
 					}					
 				}
 			}
-			if (! isDeniedModule(Module.DOCUMENT.getName()) ) {
-				AonUtil.getRoleManager().setUserInRole(IAonRole.DOCUMENT, true);
-			}
+		}
+		return map;
+	}
+	
+	private void initDeniedModules( User user ) {
+		this.deniedModulesMap = getDeniedModules(user, false);
+		if (! isDeniedModule(Module.DOCUMENT.getName()) ) {
+			AonUtil.getRoleManager().setUserInRole(IAonRole.DOCUMENT, true);
 		}
 	}
 	
@@ -465,10 +510,35 @@ public class ActionDeniedController {
 		}
 		return list;
 	}
+
+	public List<ApplicationCategory> getCategories( Map<String,ApplicationCategory> deniedModules ) {
+		List<ApplicationCategory> list = new ArrayList<ApplicationCategory>();
+		for( ApplicationCategory category : getOptionController().getCategories() ) {
+			if (! deniedModules.containsValue(category) ) {
+				list.add(category);
+			}
+		}
+		return list;
+	}
+
+	public List<ApplicationCategory> getCategories( Set<Module> enabledModules ) {
+		List<ApplicationCategory> list = new ArrayList<ApplicationCategory>();
+		for( ApplicationCategory category : getOptionController().getCategories() ) {
+			Module module = Module.get(category.getAlias());
+			if ( enabledModules.contains(module) ) {
+				list.add(category);
+			}
+		}
+		return list;
+	}
 	
 	public List<ApplicationOption> getOptions( boolean allOptions ) {
+		return getOptions(getCategories(), allOptions);
+	}
+
+	public List<ApplicationOption> getOptions( List<ApplicationCategory> categories, boolean allOptions ) {
 		List<ApplicationOption> list = new ArrayList<ApplicationOption>();
-		for( ApplicationCategory category : getCategories() ) {
+		for( ApplicationCategory category : categories ) {
 			if ( allOptions || category.isRendered() ) {
 				for( OptionGroup group : category.getGroups() ) {
 					if ( allOptions || group.isRendered() ) {

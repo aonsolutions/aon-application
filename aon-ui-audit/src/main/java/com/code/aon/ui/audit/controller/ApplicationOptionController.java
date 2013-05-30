@@ -2,6 +2,7 @@ package com.code.aon.ui.audit.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +63,7 @@ public class ApplicationOptionController {
 		this.groupMap = new HashMap<String, OptionGroup>();
 		this.categories = new ArrayList<ApplicationCategory>();
 		new MenuParser().parse(this);
+		Collections.sort( this.categories );
 	}
 
 	private VelocityHelper getVelocityHelper() {

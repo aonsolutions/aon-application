@@ -66,7 +66,8 @@ public class UserApplicationInfo {
 		this.profileInfos = profileInfos;
 	}
 
-	public void register() throws ManagerBeanException {
+	public boolean register() throws ManagerBeanException {
+		boolean changed = false;
 		ApplicationUser au = getApplicationUser();
 		if ( au == null ) {
 			IManagerBean bean = BeanManager.getManagerBean(ApplicationUser.class);
@@ -76,6 +77,7 @@ public class UserApplicationInfo {
 			au.setUser(user);
 			bean.insert(au);
 			setApplicationUser(au);
+			changed = true;
 		}
 		IManagerBean aupBean = BeanManager.getManagerBean(ApplicationUserProfile.class);
 		for( UserProfileInfo upi : getProfileInfos() ) {
@@ -87,17 +89,21 @@ public class UserApplicationInfo {
 					aup.setProfile(upi.getProfile());
 					aupBean.insert(aup);
 					upi.setUserProfile(aup);
+					changed = true;
 				}
 			} else {
 				if ( aup != null ) {
 					aupBean.remove(aup);
 					upi.setUserProfile(null);
+					changed = true;
 				}
 			}
 		}
+		return changed;
 	}
 
-	public void unregister() throws ManagerBeanException {
+	public boolean unregister() throws ManagerBeanException {
+		boolean changed = false;
 		if ( getApplicationUser() != null ) {
 			IManagerBean aupBean = BeanManager.getManagerBean(ApplicationUserProfile.class);
 			for( UserProfileInfo upi : getProfileInfos() ) {
@@ -106,8 +112,10 @@ public class UserApplicationInfo {
 				}
 			}
 			IManagerBean auBean = BeanManager.getManagerBean(ApplicationUser.class);
-			auBean.remove(getApplicationUser());			
+			auBean.remove(getApplicationUser());
+			changed = true;
 		}
+		return changed;
 	}
 	
 	private static ApplicationUser getApplicationUser( DomainApplication da, User user ) throws ManagerBeanException {

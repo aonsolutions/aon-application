@@ -30,7 +30,7 @@ public class AdminUtil {
 		return (Integer) query.uniqueResult();
 	}
 		
-	private static Integer getApplicationUser( Integer domain, Integer user, Integer application ) {
+	private static Integer getApplicationUserEx( Integer domain, Integer user, Integer application ) {
 		Integer domainApplication = getDomainApplication(domain, application);
 		if ( domainApplication != null ) {
 			Query query = getQuery("SELECT id FROM ApplicationUser au WHERE au.active = true and au.domainApplication = ? and au.user = ?");
@@ -39,13 +39,17 @@ public class AdminUtil {
 		}
 		return null;
 	}
-	
-	public static Integer getApplicationUser( AuthPrincipal principal ) {
-		Integer applicationUser = getApplicationUser(DomainManager.getCurrentDomain(), principal.getUserId(), principal.getApplicationId());
+
+	public static Integer getApplicationUser( Integer userDomain, Integer user, Integer application ) {
+		Integer applicationUser = getApplicationUserEx(DomainManager.getCurrentDomain(), user, application);
 		if (applicationUser == null ) {
-			applicationUser = getApplicationUser(principal.getUserDomainId(), principal.getUserId(), principal.getApplicationId());
+			applicationUser = getApplicationUserEx(userDomain, user, application);
 		}
 		return applicationUser;
+	}
+	
+	public static Integer getApplicationUser( AuthPrincipal principal ) {
+		return getApplicationUser(principal.getUserDomainId(), principal.getUserId(), principal.getApplicationId());
 	}
 	
 	@SuppressWarnings("unchecked")

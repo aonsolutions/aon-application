@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.faces.event.AbortProcessingException;
 
@@ -18,11 +19,13 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.admin.Profile;
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ProfileActionDenied;
+import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
@@ -139,12 +142,13 @@ public class ProfileActionDeniedController {
 		}		
 	}
 	
-	public void init( Profile profile ) {
+	public void init( Profile profile, Set<Module> enabledModules ) {
 		setProfile(profile);
 		this.deniedActions = getDeniedActions( getProfile() );
 		List<ApplicationOption> deniedList = getOptions( this.deniedActions );
 		ActionDeniedController actionDeniedController =  (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
-		this.options = new ArrayList<ApplicationOption>( actionDeniedController.getOptions(true) );
+		List<ApplicationCategory> categories = actionDeniedController.getCategories(enabledModules);
+		this.options = new ArrayList<ApplicationOption>( actionDeniedController.getOptions(categories, true) );
 		this.selected = new LinkedList<ApplicationOption>();
 		for( ApplicationOption option : this.options ) {
 			if ( deniedList.contains(option) ) {

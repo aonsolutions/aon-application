@@ -117,24 +117,26 @@ public class ApplicationProfileController extends LinesController {
 		return null;
 	}	
 	
-	private void initDeniedModules() throws ManagerBeanException {
+	private void initDeniedModules( Set<Module> enabledModules ) throws ManagerBeanException {
 		this.deniedModules = new LinkedList<SelectTransferObject<Module,ProfileModuleDenied>>();
 		Profile profile = (Profile) getTo();
 		Locale locale = AonUtil.getCurrentLocale();
 		for( Module module : Module.values() ) {
-			if ( module != Module.DOCUMENT_PORTAL ) {
-				SelectTransferObject<Module,ProfileModuleDenied> item = new SelectTransferObject<Module, ProfileModuleDenied>(module);
-				item.setTo( getProfileModuleDenied(profile, module) );
-				item.setLabel( module.getName(locale) );
-				this.deniedModules.add(item);				
+			SelectTransferObject<Module,ProfileModuleDenied> item = new SelectTransferObject<Module, ProfileModuleDenied>(module);
+			item.setTo( getProfileModuleDenied(profile, module) );
+			item.setLabel( module.getName(locale) );
+			if ( enabledModules.contains(module) ) {
+				this.deniedModules.add(item);								
+			} else {
+				item.unregister();
 			}
 		}
 		Collections.sort( this.deniedModules, SelectTransferObject.getComparator() );
 	}
 	
-	public void initProfileInfos() throws ManagerBeanException {
+	public void initProfileInfos( Set<Module> enabledModules ) throws ManagerBeanException {
 		initRoles();
-		initDeniedModules();
+		initDeniedModules(enabledModules);
 	}
 
 	private void saveRoles() throws ManagerBeanException {

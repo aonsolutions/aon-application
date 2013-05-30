@@ -152,7 +152,7 @@ public class DomainUserControllerListener extends ControllerAdapter {
 
 	private void updateDeniedOptions( DomainUserController duc, User user ) {
 		ActionDeniedController denied = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
-		denied.init(user);
+		denied.initEdit(user);
 		duc.updateActionList(denied.getOptions());
 	}	
 

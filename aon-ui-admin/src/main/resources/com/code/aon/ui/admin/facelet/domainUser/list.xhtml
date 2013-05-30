@@ -50,6 +50,13 @@
 							<aon:outputText value="#{to.name}"/>
 						</aon:column>
 
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{adminBundle.admin_profiles}" />
+							</f:facet>
+							<aon:outputText value="#{controller.profileList}"/>
+						</aon:column>
+
 						<aon:column styleClass="aon-width-50 aon-editDataTable-textColumn"
 							alias="User.active" >
 							<f:facet name="header">

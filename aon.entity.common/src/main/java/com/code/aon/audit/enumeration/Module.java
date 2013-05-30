@@ -98,5 +98,20 @@ public enum Module implements IResourceable {
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
 	
-	
+
+    /**
+     * Return the Module.
+     * 
+     * @param name Module name.
+     * @return The Module.
+     */
+	public static Module get(String name) {
+    	for( Module module : Module.values() ) {
+    		if ( module.getName().equals(name) ) {
+    			return module;
+    		}
+    	}
+    	return null;
+	}
+    
 }

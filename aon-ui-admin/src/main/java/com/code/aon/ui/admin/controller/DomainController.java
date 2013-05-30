@@ -18,6 +18,7 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_NAME_DUPLI
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_PARENT;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_TYPE;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_URL;
+import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.AUDIT_LEVEL;
 import static com.code.aon.ui.common.ICommonConstants.ACTIVE;
 import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
@@ -79,6 +80,7 @@ import com.code.aon.ui.admin.DomainInfo;
 import com.code.aon.ui.admin.DomainModuleInfo;
 import com.code.aon.ui.admin.DomainModuleInfoManagement;
 import com.code.aon.ui.audit.AuditManager;
+import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -672,7 +674,9 @@ public class DomainController extends BasicController {
 			Address to = new InternetAddress("administracion@aonSolutions.es", "Administración");
 			Address[] recipients = new Address[] {to};
 			String subject = AonUtil.getMessage(BUNDLE_NAME, DOMAIN_MANAGEMENT);
-			getEmailSender().sendMessage(recipients, subject, getEmailContent(di), MimeType.MIME_HTML, diffFile );	
+			getEmailSender().sendMessage(recipients, subject, getEmailContent(di), MimeType.MIME_HTML, diffFile );
+			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+			adc.init();
 		}
 		this.currentDomainInfo = di;
 	}
