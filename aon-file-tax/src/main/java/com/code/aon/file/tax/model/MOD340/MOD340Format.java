@@ -2,41 +2,41 @@ package com.code.aon.file.tax.model.MOD340;
 
 public enum MOD340Format {
 
-	ALAVA_2009(2009
-			,"Alava - 2009"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_IssuedInvoice.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_ReceivedInvoice.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_InvestmentInvoice.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_IntracommunitaryInvoice.xml"),
-	BIZKAIA_2009(2009
-			,"Bizkaia - 2009"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_IssuedInvoice.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_ReceivedInvoice.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_InvestmentInvoice.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_IntracommunitaryInvoice.xml"),
-	GIPUZKOA_2009(2009
-			,"Gipuzkoa - 2009"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_IssuedInvoice.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_ReceivedInvoice.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_InvestmentInvoice.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_IntracommunitaryInvoice.xml"),
-	NAVARRA_2009(2009
-			,"Navarra - 2009"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_IssuedInvoice.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_ReceivedInvoice.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_InvestmentInvoice.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_IntracommunitaryInvoice.xml"),
 	AEAT_2009(2009
-			,"AEAT - 2009"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_IssuedInvoice.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_ReceivedInvoice.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_InvestmentInvoice.xml"
-			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ALAVA_IntracommunitaryInvoice.xml");
+			,"Territorio Común (desde 2009)"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_IssuedInvoice.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ReceivedInvoice.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_InvestmentInvoice.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_IntracommunitaryInvoice.xml"),
+	ALAVA_2009(2009
+			,"Alava - (desde 2009)"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_IssuedInvoice.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ReceivedInvoice.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_InvestmentInvoice.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_IntracommunitaryInvoice.xml"),
+	BIZKAIA_2009(2009
+			,"Bizkaia - (desde 2009)"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_IssuedInvoice.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ReceivedInvoice.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_InvestmentInvoice.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_IntracommunitaryInvoice.xml"),
+	GIPUZKOA_2009(2009
+			,"Gipuzkoa - (desde 2009)"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_IssuedInvoice.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ReceivedInvoice.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_InvestmentInvoice.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_IntracommunitaryInvoice.xml"),
+	NAVARRA_2009(2009
+			,"Navarra - (desde 2009)"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_IssuedInvoice.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_ReceivedInvoice.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_InvestmentInvoice.xml"
+			,"/com/code/aon/file/tax/model/MOD340/xml/2009_IntracommunitaryInvoice.xml");
 
 	private Integer year;
 	private String description;

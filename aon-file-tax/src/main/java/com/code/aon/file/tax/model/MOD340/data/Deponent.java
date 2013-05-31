@@ -14,10 +14,13 @@ public class Deponent {
 	private String complementary;
 	private String replacement;
 	private String previousNumber;
+	private String vatDeclarationNumber;
+	
 	private double totalRegister;
 	private double totalTaxableBase;
 	private double totalQuota;
 	private double totalInvoice;
+	
 	public Integer getYear() {
 		return year;
 	}
@@ -107,6 +110,12 @@ public class Deponent {
 	}
 	public void setTotalInvoice(double totalInvoice) {
 		this.totalInvoice = totalInvoice;
+	}
+	public String getVatDeclarationNumber() {
+		return vatDeclarationNumber;
+	}
+	public void setVatDeclarationNumber(String vatDeclarationNumber) {
+		this.vatDeclarationNumber = vatDeclarationNumber;
 	}
 
 	

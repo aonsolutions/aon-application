@@ -18,7 +18,11 @@ public class Model340Parameters {
 	private SecurityLevel securityLevel;
 	private boolean investmentBookEnabled;
 	private boolean taxDateEnabled;
+	private boolean replacement;
+	private String previousNumber;
+	private String vatDeclarationNumber;
 	private String domain;
+	
 
 	public Model340Parameters() {
 		setDate(new Date());
@@ -101,6 +105,27 @@ public class Model340Parameters {
 	}
 	public void setInvestmentBookEnabled(boolean investmentBookEnabled) {
 		this.investmentBookEnabled = investmentBookEnabled;
+	}
+
+	public String getVatDeclarationNumber() {
+		return vatDeclarationNumber;
+	}
+	public void setVatDeclarationNumber(String vatDeclarationNumber) {
+		this.vatDeclarationNumber = vatDeclarationNumber;
+	}
+
+	public boolean isReplacement() {
+		return replacement;
+	}
+	public void setReplacement(boolean replacement) {
+		this.replacement = replacement;
+	}
+
+	public String getPreviousNumber() {
+		return previousNumber;
+	}
+	public void setPreviousNumber(String previousNumber) {
+		this.previousNumber = previousNumber;
 	}
 
 	public String getPeriodString() {

@@ -159,11 +159,6 @@ public class MOD340Writer implements IFinanceConstants{
 				}
 				taxRs.close();
 			}
-			System.out.println(" Total Registros ..: " + deponent.getTotalRegister() );
-			System.out.println(" Total Base Imp. ..: " + deponent.getTotalTaxableBase() );
-			System.out.println(" Total Cuota ......: " + deponent.getTotalQuota() );
-			System.out.println(" Total ............: " + deponent.getTotalInvoice() );
-			
 			MOD340 mod340 = new MOD340(this.format,writer,deponent,invoices);
 			mod340.create();
 			
@@ -206,8 +201,9 @@ public class MOD340Writer implements IFinanceConstants{
 			deponent.setRelName(getCompany().getName());
 			deponent.setNumber("340" + deponent.getYear() + deponent.getPeriod() + "0000"); 
 			deponent.setComplementary(null);
-			deponent.setReplacement(null);
-			deponent.setPreviousNumber(null);
+			deponent.setReplacement(params.isReplacement()?"S":null);
+			deponent.setPreviousNumber(params.isReplacement()?params.getPreviousNumber():"0000000000000");
+			deponent.setVatDeclarationNumber(params.getVatDeclarationNumber() );
 			deponent.setTotalRegister( 0 ); 
 			deponent.setTotalTaxableBase(0);
 			deponent.setTotalQuota(0);
@@ -283,12 +279,12 @@ public class MOD340Writer implements IFinanceConstants{
 		Country c = Country.valueOf(inv.getCountry());
 		if (c == Country.ES) {
 			inv.setCountryKey("1");
-			inv.setCountryCode("ES");
+			inv.setCountryCode("");
 			inv.setDocument(document);
 		} else {
 			if (c.isEuropeanUnionMember()) {
 				inv.setCountryKey("2");
-				inv.setCountryCode(c == Country.GR ?"EL" : c.getValue());
+				inv.setCountryCode(c == Country.GR ? "EL" : c.getValue());
 				inv.setCountryNif(document);
 			} else {
 				// No se si esto está bien.

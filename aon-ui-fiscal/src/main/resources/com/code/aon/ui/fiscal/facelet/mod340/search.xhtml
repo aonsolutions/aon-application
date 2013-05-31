@@ -48,6 +48,22 @@
 						value="#{mod340.params.period}">
 						<f:selectItems value="#{fiscalCollections.periods}" />
 					</aon:selectOneMenu>
+					
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="mod340_replacement"
+							value="#{mod340.params.replacement}"/>
+						<aon:outputLabel for="mod340_replacement" styleClass="aon-italic"
+							value="#{fiscalBundle.fiscal_replacement}" />
+						<aon:outputLabel for="Vat_prevNumber" styleClass="aon-italic aon-margin-left"
+							value="#{fiscalBundle.fiscal_mod340_prev_number}" />
+						<aon:inputText id="Vat_prevNumber" value="#{mod340.params.previousNumber}" maxlength="13"/>
+					</aon:div>
+
+					<aon:outputLabel for="Vat_declaration"
+						value="#{fiscalBundle.fiscal_mod340_vat_declaration}" />
+					<aon:inputText id="Vat_declaration" value="#{mod340.params.vatDeclarationNumber}" 
+						maxlength="16"/>
 
 					<aon:outputLabel for="Model_340_format" value="#{bundle.aon_output_format}" />
 					<aon:selectOneMenu id="Model_340_format" style="margin-left: 5px;"

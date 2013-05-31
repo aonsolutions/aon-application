@@ -18,5 +18,7 @@
  <field name="total_base_imp" value="bean" bean="DEPONENT" property="totalTaxableBase" format="Numeric" pattern="S9(15)V99" />
  <field name="total_cuota" value="bean" bean="DEPONENT" property="totalQuota" format="Numeric" pattern="S9(15)V99" />
  <field name="total_invoice" value="bean" bean="DEPONENT" property="totalInvoice" format="Numeric" pattern="S9(15)V99" />
- <field name="free1" value=" " format="Alphabetic" pattern="X(300)" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(199)" />
+ <field name="numero_iva" value="bean" bean="DEPONENT" property="vatDeclarationNumber" format="AlphaNumeric" pattern="X(16)" />
+ <field name="free2" value=" " format="Alphabetic" pattern="X(85)" />
 </register>
