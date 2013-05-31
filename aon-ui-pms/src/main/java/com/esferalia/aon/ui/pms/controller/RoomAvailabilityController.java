@@ -12,6 +12,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.code.aon.asset.Asset;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -46,8 +47,8 @@ public class RoomAvailabilityController extends BasicController implements IPmsC
 		if (availableRoomList == null) {
 			availableRoomList = new LinkedList<Room>();
 			for (Object obj : obtainAvailableRoomList()) {
-				Room room = (Room)BeanManager.getManagerBean(Room.class).get((Integer)obj);
-				availableRoomList.add(room);
+				Object[] objs = (Object[])obj;
+				availableRoomList.add(obtainRoom((Integer)objs[0], (String)objs[1]));
 			}
 		}
 		return availableRoomList;
@@ -60,7 +61,17 @@ public class RoomAvailabilityController extends BasicController implements IPmsC
 	public int getAvailableRoomCount() throws ManagerBeanException {
 		return getAvailableRoomList().size();
 	}
-	
+
+	private Room obtainRoom(Integer id, String name) {
+		Asset asset = new Asset();
+		asset.setId(id);
+		asset.setName(name);
+
+		Room room = new Room();
+		room.setAsset(asset);
+		return room;
+	}
+
 	public void onInitializeRoomList(ProjectReservationRoom reservationRoom, Date startDate, Date endDate) throws ManagerBeanException {
 		startDate = (startDate == null) ? reservationRoom.getProjectReservation().getStartDate() : startDate;
 		endDate = (endDate == null) ? reservationRoom.getProjectReservation().getEndDate() : endDate;
@@ -127,7 +138,7 @@ public class RoomAvailabilityController extends BasicController implements IPmsC
 		}
 
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-		String sqlSelect = "SELECT Room.asset " +
+		String sqlSelect = "SELECT Room.asset, Asset.name " +
 							"FROM room as Room " +
 							"LEFT JOIN asset as Asset on Asset.id = Room.asset " +
 							"LEFT JOIN asset_feature as AssetFeature on AssetFeature.asset = Room.asset " +
