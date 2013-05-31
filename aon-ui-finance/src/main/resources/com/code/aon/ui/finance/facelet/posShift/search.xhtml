@@ -62,18 +62,16 @@
 							styleClass="aon-italic aon-margin-left aon-margin-right" 
 							value="#{bundle.aon_date_from}" />
 						<aon:selectInputDate id="PosShift_startTime-From"
-							value="#{posShiftSearch.startTimeFrom}" size="20" inputSize="16" 
-							renderAsPopup="true" enableManualInput="true" resetTimeOnDateSelect="true"
-							timeZone="#{timeZoneController.timeZone}" defaultTime="00:00:00"
-							popupDateFormat="#{bundle.aon_timestamp2_pattern}" />
+							value="#{posShiftSearch.startTimeFrom}" 
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
 						<aon:outputLabel for="PosShift_startTime-To"
 							styleClass="aon-italic aon-margin-left aon-margin-right" 
 							value="#{bundle.aon_date_to}" />
 						<aon:selectInputDate id="PosShift_startTime-To"
-							value="#{posShiftSearch.startTimeTo}" size="20" inputSize="16" 
-							renderAsPopup="true" enableManualInput="true" resetTimeOnDateSelect="true"
-							timeZone="#{timeZoneController.timeZone}" defaultTime="23:59:59"
-							popupDateFormat="#{bundle.aon_timestamp2_pattern}" />
+							value="#{posShiftSearch.startTimeTo}" 
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
 					
 					<aon:outputLabel value="#{financeBundle.finance_pos_closing}" />
@@ -82,18 +80,16 @@
 							styleClass="aon-italic aon-margin-left aon-margin-right"
 							value="#{bundle.aon_date_from}" />
 						<aon:selectInputDate id="PosShift_endTime-From"
-							value="#{posShiftSearch.endTimeFrom}" size="20" inputSize="16" 
-							renderAsPopup="true" enableManualInput="true" resetTimeOnDateSelect="true"
-							timeZone="#{timeZoneController.timeZone}" defaultTime="00:00:00"
-							popupDateFormat="#{bundle.aon_timestamp2_pattern}" />
+							value="#{posShiftSearch.endTimeFrom}" 
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
 						<aon:outputLabel for="PosShift_endTime-To"
 							styleClass="aon-italic aon-margin-left aon-margin-right" 
 							value="#{bundle.aon_date_to}" />
 						<aon:selectInputDate id="PosShift_endTime-To"
-							value="#{posShiftSearch.endTimeTo}" size="20" inputSize="16" 
-							renderAsPopup="true" enableManualInput="true" resetTimeOnDateSelect="true"
-							timeZone="#{timeZoneController.timeZone}" defaultTime="23:59:59"
-							popupDateFormat="#{bundle.aon_timestamp2_pattern}" />
+							value="#{posShiftSearch.endTimeTo}" 
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
 
 				</ui:define>

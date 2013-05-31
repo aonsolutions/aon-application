@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.time.DateUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -134,14 +136,16 @@ public class PosShiftSearchListener extends ControllerSearchListener {
 		if (getStartTimeFrom() != null) {
 			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_START_TIME), getStartTimeFrom());
 		}
-		if (getStartTimeTo()!=null) {
-			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_START_TIME), getStartTimeTo());
+		if (getStartTimeTo() != null) {
+			int millisFullDay = (int)(DateUtils.MILLIS_PER_DAY - DateUtils.MILLIS_PER_SECOND);
+			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_START_TIME), DateUtils.addMilliseconds(getStartTimeTo(), millisFullDay));
 		}
-		if (getEndTimeFrom()!=null) {
+		if (getEndTimeFrom() != null) {
 			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_END_TIME), getEndTimeFrom());
 		}
-		if (getEndTimeTo()!=null) {
-			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_END_TIME), getEndTimeTo());
+		if (getEndTimeTo() != null) {
+			int millisFullDay = (int)(DateUtils.MILLIS_PER_DAY - DateUtils.MILLIS_PER_SECOND);
+			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_END_TIME), DateUtils.addMilliseconds(getEndTimeTo(), millisFullDay));
 		}
 	}
 
