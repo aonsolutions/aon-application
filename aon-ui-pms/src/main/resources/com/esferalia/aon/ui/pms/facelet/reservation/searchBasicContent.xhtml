@@ -40,13 +40,13 @@
 		<aon:outputLabel for="ProjectReservation_creationDate-From"
 			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
 		<aon:selectInputDate id="ProjectReservation_creationDate-From"
-			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			value="#{searchController.creationDateFrom}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 		<aon:outputLabel for="ProjectReservation_creationDate-To"
 			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
 		<aon:selectInputDate id="ProjectReservation_creationDate-To"
-			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			value="#{searchController.creationDateTo}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>

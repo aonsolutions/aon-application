@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
@@ -21,6 +22,8 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 public class ProjectReservationSearchListener extends ControllerSearchListener {
 
 	private Hotel hotel;
+	private Date creationDateFrom;
+	private Date creationDateTo;
 	private Date insideDate;
 	private Customer agency;
 	private Seller seller;
@@ -35,6 +38,22 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
+	}
+
+	public Date getCreationDateFrom() {
+		return creationDateFrom;
+	}
+
+	public void setCreationDateFrom(Date creationDateFrom) {
+		this.creationDateFrom = creationDateFrom;
+	}
+
+	public Date getCreationDateTo() {
+		return creationDateTo;
+	}
+
+	public void setCreationDateTo(Date creationDateTo) {
+		this.creationDateTo = creationDateTo;
 	}
 
 	public Date getInsideDate() {
@@ -96,6 +115,8 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
+		setCreationDateFrom(null);
+		setCreationDateTo(null);
 		setInsideDate(null);
 		setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 		setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
@@ -109,6 +130,13 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if (getHotel() != null && getHotel().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_ID), getHotel().getId());			
+		}
+		if (getCreationDateFrom() != null) {
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_CREATION_DATE), getCreationDateFrom());
+		}
+		if (getCreationDateTo() != null) {
+			int millisFullDay = (int)(DateUtils.MILLIS_PER_DAY - DateUtils.MILLIS_PER_SECOND);
+			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_CREATION_DATE), DateUtils.addMilliseconds(getCreationDateTo(), millisFullDay));
 		}
 		if (getInsideDate() != null) {
 			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), getInsideDate());			
