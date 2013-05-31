@@ -100,8 +100,10 @@ public class InventoryController extends BasicController {
 			
 	        Query q = session.createQuery(
 	                "select item " +
-	                "from Item as item, Product prod, ProductCategory cat " +
+	                "from Item as item, Product prod, ProductCategory cat, Stock stock " +
 	                "where " + DomainManager.getSQLWhereClause("item.domain") +
+	                "and stock.warehouse=" + warehouse.getId() +
+	                "and stock.item=item.id " +
 	                "and item.product=prod.id " +
 	                "and prod.category=cat.id " +
 	                "and prod.inventoriable=true " +
