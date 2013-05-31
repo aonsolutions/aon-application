@@ -124,20 +124,19 @@ public class ReservationManager implements IReservationConstants {
 		ProjectReservation reservation = obtainReservation(reservationType);
 		if (reservation != null) {
 			if (reservation.getStatus() == ReservationStatus.ACTIVE || reservation.getStatus() == ReservationStatus.BLOCKED) {
-				if (modificationAvailable(reservation)) {
-					removeReservationService(reservation);
-					removeReservationRoom(reservation);
-					removeReservationGuest(reservation);
-	
-					createReservation(reservationType, posType, reservation);
-					return reservation;
-				} else {
-					throw new ReservationException("Reservation in use, can not be modified", reservation.getCrsCode(), 255);
+				if (isReservationRoomAssigned(reservation)) {
+					removeReservationRoomDetail(reservation, true);
 				}
+				removeReservationService(reservation);
+				removeReservationRoom(reservation);
+				removeReservationGuest(reservation);
+
+				createReservation(reservationType, posType, reservation);
+				return reservation;
 			} else if (reservation.getStatus() == ReservationStatus.CANCELLED) {
 				throw new ReservationException("Reservation already cancelled, can not be modified", reservation.getCrsCode(), 95);
 			} else {
-				throw new ReservationException("Reservation in use, can not be modified", reservation.getCrsCode(), 255);
+				throw new ReservationException("Reservation already invoiced, can not be modified", reservation.getCrsCode(), 255);
 			}
 		} else {
 			return addReservation(reservationType, posType);
@@ -152,13 +151,13 @@ public class ReservationManager implements IReservationConstants {
 
 		if (reservation != null) {
 			if (reservation.getStatus() == ReservationStatus.ACTIVE || reservation.getStatus() == ReservationStatus.BLOCKED) {
-				removeReservationRoomDetail(reservation);
+				removeReservationRoomDetail(reservation, false);
 				cancelReservation(reservation);
 				return reservation;
 			} else if (reservation.getStatus() == ReservationStatus.CANCELLED) {
 				return reservation;
 			} else {
-				throw new ReservationException("Reservation in use, can not be cancelled", reservation.getCrsCode(), 255);
+				throw new ReservationException("Reservation already invoiced, can not be cancelled", reservation.getCrsCode(), 255);
 			}
 		} else {
 			String reservationCrsCode = findReservationId(reservationType.getResGlobalInfo(), SIRIUS); 
@@ -236,9 +235,11 @@ public class ReservationManager implements IReservationConstants {
 
 			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 			if (reservation.getId() == null) {
+				reservation.setCreationUser(CRS);
 				reservation.setCreationDate(new Date());
 				reservation = (ProjectReservation)reservationBean.insert(reservation);
 			} else {
+				reservation.setModificationUser(CRS);
 				reservation.setModificationDate(new Date());
 				reservation = (ProjectReservation)reservationBean.update(reservation);
 			}
@@ -489,12 +490,12 @@ public class ReservationManager implements IReservationConstants {
 		return null;
 	}
 
-	private boolean modificationAvailable(ProjectReservation reservation) throws ManagerBeanException {
+	private boolean isReservationRoomAssigned(ProjectReservation reservation) throws ManagerBeanException {
 		IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
 		Criteria criteria = new Criteria();
 		String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID);
 		criteria.addEqualExpression(alias, reservation.getId());
-		return (reservationRoomDetailBean.getCount(criteria) == 0);
+		return (reservationRoomDetailBean.getCount(criteria) > 0);
 	}
 
 	private void removeReservationService(ProjectReservation reservation) throws ManagerBeanException {
@@ -550,13 +551,13 @@ public class ReservationManager implements IReservationConstants {
 		}
 	}
 
-	private void removeReservationRoomDetail(ProjectReservation reservation) throws ManagerBeanException {
+	private void removeReservationRoomDetail(ProjectReservation reservation, boolean removeService) throws ManagerBeanException {
 		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
 		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
 			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
-			getReservationUtils().removeProjectReservationRoomDetails(reservationRoom, true, null);
+			getReservationUtils().removeProjectReservationRoomDetails(reservationRoom, removeService, null);
 		}
 	}
 

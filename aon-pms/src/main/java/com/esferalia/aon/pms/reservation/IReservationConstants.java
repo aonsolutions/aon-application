@@ -60,6 +60,7 @@ public interface IReservationConstants {
 	String TR = "TR";
 	String YES = "YES";
 	String NO = "NO";
+	String CRS = "crs";
 	String CUST_PROFILE = "CustProfile";
 	String AVAILABILITY_QUERY_REQUEST = "AvailabilityQueryRequest";
 	String RESERVATION_BOOKING_REQUEST = "ReservationBookingRequest";

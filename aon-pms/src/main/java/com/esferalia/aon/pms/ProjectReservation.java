@@ -23,6 +23,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.Tax;
@@ -40,7 +41,7 @@ import com.esferalia.aon.pms.reservation.ReservationUtils;
 @Entity
 @Table(name="project_reservation")
 @PrimaryKeyJoinColumn(name="project")
-public class ProjectReservation extends ProjectReservationDB implements ICalculableContainer, IProject {
+public class ProjectReservation extends ProjectReservationDB implements ICalculableContainer, IProject, IAuditable {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectReservation.class.getName());
