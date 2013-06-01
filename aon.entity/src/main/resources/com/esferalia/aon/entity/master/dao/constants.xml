@@ -476,6 +476,11 @@
 	<bean class="com.code.aon.warehouse.Warehouse">
 		<alias names="domain,id,name,workPlace_active,workPlace_id,workPlace_scope_id"/>
 		<hibernate names="domain,id,name,workPlace.active,workPlace.id,workPlace.scope.id"/>
-	</bean>		
+	</bean>
+	
+	<bean class="com.code.aon.warehouse.WarehouseTransfer">
+		<alias names="comments,domain,id,issueTime,number,series,sourceWarehouse,sourceWarehouse_id,sourceWarehouse_workPlace_scope_id,targetWarehouse,targetWarehouse_id,targetWarehouse_workPlace_scope_id"/>
+		<hibernate names="comments,domain,id,issueTime,number,series,sourceWarehouse,sourceWarehouse.id,sourceWarehouse.workPlace.scope.id,targetWarehouse,targetWarehouse.id,targetWarehouse.workPlace.scope.id"/>
+	</bean>
 	
 </dao>
