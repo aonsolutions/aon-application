@@ -46,15 +46,32 @@
 					</aon:selectOneMenu>
 
 					<aon:outputText value="" />
-					<aon:div styleClass="aon-search-commandButton-left">
-						<aon:div styleClass="aon-search-commandButton-right">
-							<aon:htmlCommandLink id="SearchButton" 
-								value="#{bundle.aon_search}"
-								action="#{report.onExecute}"
-								target="_blank"
-								accesskey="#{bundle.aon_key_search}">
-								<f:param name="reportKey" value="#{stockReport.reportKey}" />
-							</aon:htmlCommandLink>
+					<aon:div>
+						<aon:div styleClass="aon-search-commandButton-left" style="display: inline-block;">
+							<aon:div styleClass="aon-search-commandButton-right">
+								<aon:htmlCommandLink id="SearchButton-pdf" 
+									value="#{bundle.aon_listing}"
+									action="#{report.onExecute}"
+									target="_blank"
+									accesskey="#{bundle.aon_key_search}"
+									styleClass="aon-icon-commandButton aon-icon-pdf">
+									<f:param name="reportKey" value="#{stockReport.reportKey}" />
+									<f:param name="outputFormat" value="PDF" />
+								</aon:htmlCommandLink>
+							</aon:div>
+						</aon:div>
+						<aon:div styleClass="aon-search-commandButton-left" style="display: inline-block;margin-left:0.7em;">
+							<aon:div styleClass="aon-search-commandButton-right">
+								<aon:htmlCommandLink id="SearchButton-excel" 
+									value="#{bundle.aon_listing}"
+									action="#{report.onExecute}"
+									target="_blank"
+									accesskey="#{bundle.aon_key_search}"
+									styleClass="aon-icon-commandButton aon-icon-excel">
+									<f:param name="reportKey" value="#{stockReport.reportKey}" />
+									<f:param name="outputFormat" value="MS Excel" />
+								</aon:htmlCommandLink>
+							</aon:div>
 						</aon:div>
 					</aon:div>
 

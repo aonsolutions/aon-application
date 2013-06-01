@@ -40,16 +40,14 @@
 
 					<aon:outputLabel for="WarehouseTransfer_sourceWarehouse_id" value="#{warehouseBundle.warehouse_stock_source}" />
 					<aon:selectOneMenu id="WarehouseTransfer_sourceWarehouse_id"
-						value="#{warehouseCollections.warehouse}"
-						valueChangeListener="#{controller.addIdEqualExpression}">
+						value="#{warehouseTransferSearch.sourceWarehouse}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{warehouseCollections.warehouses}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="WarehouseTransfer_targetWarehouse_id" value="#{warehouseBundle.warehouse_stock_target}" />
 					<aon:selectOneMenu id="WarehouseTransfer_targetWarehouse_id"
-						value="#{warehouseCollections.warehouse}"
-						valueChangeListener="#{controller.addIdEqualExpression}">
+						value="#{warehouseTransferSearch.targetWarehouse}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{warehouseCollections.warehouses}" />
 					</aon:selectOneMenu>
