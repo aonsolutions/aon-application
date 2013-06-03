@@ -23,10 +23,28 @@ public class AonDomainDuplicate implements Constants {
 	private Connection connection;
 	private Integer sourceDomain;
 	private Integer newDomain;
+	private String description;
+	private String owner;
 	
 	public AonDomainDuplicate(Connection connection) throws AonSQLException {
 		this.connection = connection;
 		this.tables = new TableUtil().resolveTables(connection);
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
 	private void executeStatement( String statement ) {
@@ -41,7 +59,7 @@ public class AonDomainDuplicate implements Constants {
 		}
 	}
 
-	public Integer execute(Integer sourceDomain, String domainName, String domainDescription) throws AonSQLException {
+	public Integer execute(Integer sourceDomain, String domainName) throws AonSQLException {
 		try {
 			this.newDomain = null;
 			this.sourceDomain = sourceDomain;
@@ -51,7 +69,7 @@ public class AonDomainDuplicate implements Constants {
             executeStatement(SET_FOREIGN_KEY_CHECKS_0);
             LOGGER.debug("Claves refereciales deshabilitadas");
             
-            mergeDomain(domainName, domainDescription);
+            mergeDomain(domainName);
 
             List<TableInfo> tables = new ArrayList<TableInfo>(this.tables.values());
             tables.remove(this.tables.get(DOMAIN_TABLE_NAME));
@@ -117,14 +135,15 @@ public class AonDomainDuplicate implements Constants {
 		}					
 	}
 	
-	private void updateNewDomain( String domainName, String domainDescription ) throws AonSQLException {
+	private void updateNewDomain( String domainName ) throws AonSQLException {
 		PreparedStatement ps = null;
 		try {
-	        String stmt = "UPDATE domain SET name = ?, description=? where id = ?";
+	        String stmt = "UPDATE domain SET name = ?, description=?, owner=? where id = ?";
 	        ps = connection.prepareStatement(stmt);
 	        ps.setString(1, domainName);
-	        ps.setString(2, domainDescription);
-	        ps.setInt(3, newDomain);
+	        ps.setString(2, getDescription());
+	        ps.setString(3, getOwner());
+	        ps.setInt(4, newDomain);
 	        ps.execute();
 		} catch (SQLException e) {
 			throw new AonSQLException("Error actualizando la información del nuevo dominio", e);
@@ -133,11 +152,11 @@ public class AonDomainDuplicate implements Constants {
 		}					
 	}
 
-	private void mergeDomain( String domainName, String domainDescription ) throws AonSQLException {
+	private void mergeDomain( String domainName) throws AonSQLException {
 		TableInfo tableInfo = tables.get(DOMAIN_TABLE_NAME); 
 		merge( tableInfo );
 		this.newDomain = tableInfo.getNewKey(sourceDomain);
-		updateNewDomain( domainName, domainDescription );
+		updateNewDomain( domainName );
 	}
 	
 	private void merge(TableInfo t) throws AonSQLException {
@@ -342,7 +361,8 @@ public class AonDomainDuplicate implements Constants {
 		try {
 			connection = DriverManager.getConnection(url, user, password);
 			AonDomainDuplicate dup = new AonDomainDuplicate(connection);
-			dup.execute(sourceDomain, domainName, domainDescription);
+			dup.setDescription(domainDescription);
+			dup.execute(sourceDomain, domainName);
 		} catch (Throwable e) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {

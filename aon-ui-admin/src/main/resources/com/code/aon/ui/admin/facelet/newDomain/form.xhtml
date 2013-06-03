@@ -63,9 +63,19 @@
 					</aon:div>
 					<aon:inputText id="NewDomain_description" required="true" size="40" maxlength="64" 
 						value="#{adminNewDomain.domainDescription}" />
+
+					<aon:div>
+						<aon:outputLabel for="NewDomain_owner" value="#{adminBundle.admin_new_domain_owner}" />
+						<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
+							<aon:outputText value="#{adminBundle.admin_new_domain_owner_help}"/>
+						</aon:div>
+					</aon:div>
+					<aon:inputText id="NewDomain_owner" size="80" maxlength="256" 
+						value="#{adminNewDomain.owner}" validator="#{adminDomain.ownerCheck}" />
  
 					<aon:div>
-						<aon:outputLabel for="Domain_enableHeredity" value="#{adminBundle.admin_new_domain_defaults}" />
+						<aon:outputLabel styleClass="aon-outputLabel aon-input-required"
+							value="#{adminBundle.admin_new_domain_defaults}" />
 						<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
 							<aon:outputText value="#{adminBundle.admin_new_domain_defaults_help}"/>
 						</aon:div>

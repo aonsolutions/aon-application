@@ -100,6 +100,12 @@
 						<aon:selectBooleanCheckbox id="Domain_disableDomainManagement"
 							value="#{adminDomain.to.disableDomainManagement}" />								
 
+						<aon:outputLabel for="Domain_owner"
+							value="#{adminBundle.admin_new_domain_owner}" />
+						<aon:inputText id="Domain_owner" size="90" maxlength="256"
+							validator="#{adminDomain.ownerCheck}"
+							value="#{adminDomain.to.owner}" />
+
 						<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{adminDomain.to.parent}" />
 							<ui:param name="lookupLabel" value="#{adminBundle.admin_domain_parent}" />

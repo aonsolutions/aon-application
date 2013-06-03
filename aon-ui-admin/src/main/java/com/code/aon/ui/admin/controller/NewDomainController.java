@@ -70,6 +70,7 @@ public class NewDomainController {
 	private boolean enableHeredity;
 	private boolean domainManagement;
 	private DomainType type;
+	private String owner;
 	
 	private IControllerListener templateDomainFilter;
 	
@@ -147,7 +148,15 @@ public class NewDomainController {
 	public void setParentDomain(Domain parentDomain) {
 		this.parentDomain = parentDomain;
 	}
+	
+	public String getOwner() {
+		return owner;
+	}
 
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+	
 	public void onInit( ActionEvent event) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
@@ -162,6 +171,7 @@ public class NewDomainController {
 		setDomainName(null);
 		setDomainDescription(null);
 		setPassword(null);
+		setOwner(null);
 		setLoadDefaultValuesEnabled(true);
 		setDomainManagement(false);
 		setEnableHeredity(parentDomain != null);
@@ -226,7 +236,7 @@ public class NewDomainController {
 				}
 				copyCustomizeId(newDomain);
 			} else {
-				duplicateDomain(getTemplateDomain().getId(), domainFinalName, getDomainDescription());
+				duplicateDomain(getTemplateDomain().getId(), domainFinalName);
 			}
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 			ds.setModel(null);			
@@ -273,7 +283,7 @@ public class NewDomainController {
 		domain.setDomainManagement( isDomainManagement() );
 		domain.setType( getType() );
 		domain.setParent( getParentDomain() );
-		domain.setOwner( principal.getShortName() );
+		domain.setOwner( getOwner() );
 		domain.setName(name);
 		domain.setDescription(description);
 		domain.setEnableHeredity( isEnableHeredity() );
@@ -290,13 +300,15 @@ public class NewDomainController {
 		return domain.getId();		
 	}
 	
-	private Integer duplicateDomain(Integer parent, String name, String description) throws AonConnectionException, AonSQLException {
+	private Integer duplicateDomain(Integer parent, String name) throws AonConnectionException, AonSQLException {
 		Integer newDomainId = null;
 		Connection connection = null;
 		try {			
-			connection = DatabaseUtil.getConnection(name);
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			AonDomainDuplicate add = new AonDomainDuplicate(connection);
-			newDomainId = add.execute(getTemplateDomain().getId(), name, description);
+			add.setDescription(getDomainDescription());
+			add.setOwner(getOwner());
+			newDomainId = add.execute(getTemplateDomain().getId(), name);
 		} finally {
 			DbUtils.closeQuietly(connection);
 		}
