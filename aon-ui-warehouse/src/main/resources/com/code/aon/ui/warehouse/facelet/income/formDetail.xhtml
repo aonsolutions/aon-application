@@ -15,7 +15,7 @@
 		<ui:param name="rows" value="0" />
 		<ui:param name="showNote" value="false" />
 		<ui:param name="showDataScroller" value="false" />
-		<ui:param name="skipResetButton" value="#{!income.pending}" />
+		<ui:param name="skipResetButton" value="#{!income.pending or !aonRole.productOperator}" />
 		<ui:param name="skipLineEdition" value="#{true}" />
 		<ui:param name="rowSelectorReRender" value="menuExt" />
 		<ui:param name="resetButtonReRender" value="menuExt" />
@@ -30,7 +30,7 @@
 			<aon:commandLink id="#{dataTableId}-selectButton"
 				styleClass="aon-table-row-link" value="&#160;"
 				immediate="true" ajaxSingle="true" requestDelay="100"
-				rendered="#{income.pending}"
+				rendered="#{income.pending and to.purchaseDetail == null}"
 				actionListener="#{incomeDetail.onSelect}"
 				onkeyup="#{dataTableId}KeyUp(this)"
 				onfocus="#{dataTableId}SelectRow(this)"
