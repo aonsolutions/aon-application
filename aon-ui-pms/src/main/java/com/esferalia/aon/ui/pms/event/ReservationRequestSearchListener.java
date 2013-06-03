@@ -75,7 +75,7 @@ public class ReservationRequestSearchListener extends ControllerSearchListener {
 		if (getCompany() != null && getCompany().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.RESERVATION_REQUEST_COMPANY_ID), getCompany().getId());			
 		}
-		if (!AonUtil.getRoleManager().isSaleOperator()) {
+		if (!AonUtil.getRoleManager().isCommercialOperator()) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.RESERVATION_REQUEST_BOOKING_HOLDER), BookingHolder.GUEST);			
 		}
 	}

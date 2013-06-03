@@ -31,12 +31,12 @@
 	<aon:outputLabel for="ReservationRequest_startDate" value="#{pmsBundle.pms_checkIn}" />
 	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto">
 		<aon:outputText	value="#{reservationRequest.to.startDate}" styleClass="aon-bold"
-			rendered="#{!aonRole.saleOperator or !reservationRequest.to.active}">
+			rendered="#{!aonRole.commercialOperator or !reservationRequest.to.active}">
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>
 		<aon:selectInputDate id="ReservationRequest_startDate" value="#{reservationRequest.to.startDate}" 
-			required="true" rendered="#{aonRole.saleOperator and reservationRequest.to.active}"
+			required="true" rendered="#{aonRole.commercialOperator and reservationRequest.to.active}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}">
 			<a4j:support ajaxSingle="true" event="oninputchange"
@@ -124,9 +124,9 @@
 
 	<aon:outputLabel for="ReservationRequest_remarks" value="#{bundle.aon_remark}" />
 	<aon:outputText	value="#{reservationRequest.to.remarks}" styleClass="aon-bold"
-		rendered="#{!aonRole.saleOperator and reservationRequest.to.agencyHolder}" />
+		rendered="#{!aonRole.commercialOperator and reservationRequest.to.agencyHolder}" />
 	<aon:inputText id="ReservationRequest_remarks" value="#{reservationRequest.to.remarks}"
 		size="64" maxlength="166"
-		rendered="#{aonRole.saleOperator or !reservationRequest.to.agencyHolder}" ajaxSingle="true" />
+		rendered="#{aonRole.commercialOperator or !reservationRequest.to.agencyHolder}" ajaxSingle="true" />
 
  </ui:composition>

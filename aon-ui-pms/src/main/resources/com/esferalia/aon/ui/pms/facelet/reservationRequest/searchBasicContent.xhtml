@@ -79,7 +79,7 @@
 		valueChangeListener="#{controller.addExpression}"
 		size="64" />
 
-	<c:if test="#{aonRole.saleOperator}">
+	<c:if test="#{aonRole.commercialOperator}">
 		<aon:outputLabel for="ReservationRequest_agency" 
 			value="#{pmsBundle.pms_agency}" />
 		<aon:selectOneMenu id="ReservationRequest_agency" 
