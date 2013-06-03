@@ -27,7 +27,7 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="corporateDocuments" 
-										action="corporateIdentityAttach_list"
+										action="#{corporateIdentityAttach.initialAction}"
 										actionListener="#{corporateIdentityAttach.onEditSearch}"
 										value="#{bundle.aon_documents}">
 										<f:setPropertyActionListener value="#{false}"

@@ -74,8 +74,8 @@ public class DownloadUtil implements ICommonConstants {
 
 	private static String getFileName( String fileName, MimeType type ) {
 		String extension = FilenameUtils.getExtension(fileName); 
-		if ( StringUtils.isEmpty(extension) && (type != null) ) {
-			return fileName + "." + type.getExtension();
+		if ( (type != null) && !StringUtils.equals(extension, type.getExtension()) ) {
+			return fileName + "." + type.getExtension();			
 		}
 		return fileName;
 	}
