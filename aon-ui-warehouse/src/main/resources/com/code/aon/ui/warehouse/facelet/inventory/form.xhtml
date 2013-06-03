@@ -107,14 +107,16 @@
 						<ui:define name="columns">
 							<aon:methodParam name="saveActionListener" value="#{inventoryDetail.onAcceptNext}" type="actionListener" />					
 						
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+							<aon:column alias="InventoryDetail.item.product.code"
+								styleClass="aon-editDataTable-textColumn aon-width-150">
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.aon_id}" />
 								</f:facet>
 								<aon:outputText value="#{to.item.product.code}" />
 							</aon:column>
 			
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<aon:column alias="InventoryDetail.item.product.name"
+								styleClass="aon-editDataTable-textColumn aon-width-auto">
 								<f:facet name="header">
 									<aon:outputText value="#{productBundle.product_item}" />
 								</f:facet>
@@ -123,7 +125,8 @@
 								</aon:div>
 							</aon:column>
 							
-							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+							<aon:column alias="InventoryDetail.realQuantity"
+								styleClass="aon-editDataTable-numberColumn aon-width-100">
 								<f:facet name="header">
 									<aon:outputText value="#{warehouseBundle.warehouse_inventory}" />
 								</f:facet>
@@ -136,7 +139,8 @@
 								</aon:div>
 							</aon:column>
 		
-							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+							<aon:column alias="InventoryDetail.cost"
+								styleClass="aon-editDataTable-numberColumn aon-width-100">
 								<f:facet name="header">
 									<aon:outputText value="#{warehouseBundle.warehouse_inventoryDetail_cost}"	/>
 								</f:facet>
