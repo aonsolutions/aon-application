@@ -178,7 +178,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-12" x="220" y="0" width="270" height="10"/>
-				<box leftPadding="10" rightPadding="5">
+				<box leftPadding="0" rightPadding="0">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#999999"/>
@@ -187,7 +187,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{item}.getProduct().getCode() + " + " + $F{item}.getFullName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA["("+$F{item}.getProduct().getCode() + ") " + $F{item}.getFullName()]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
