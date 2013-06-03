@@ -38,12 +38,20 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 
 	@Override
 	public List<Document> getEnterpriseDocuments() {
+		Connection connection = null;
 		try {
 			Integer registryID = getEnterpriseID();
-			Connection connection = getConnection();
+			connection = getConnection();
 			return getRegistryDocuments(registryID, connection);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnore) {
+				}
+			}
 		}
 	}
 	
@@ -211,13 +219,13 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 	private abstract static class Document2HtmlConverter implements IDocument2HtmlConverter{
 		@Override
 		public void transform(Document doc, OutputStream os, int zoom) throws Exception {
-			Connection connection = getConnection();
+			Connection conn = null;
 
 			ResultSet rs = null;
 			PreparedStatement stmt = null;
 			try {
-
-				stmt = connection.prepareStatement(
+				conn = getConnection();
+				stmt = conn.prepareStatement(
 						"SELECT " + RattachColumns.DATA
 						+ " FROM " + SQLConstants.RATTACH + " WHERE "
 						+ RattachColumns.ID + "= ? ");
@@ -247,6 +255,13 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 				if (stmt != null) {
 					try {
 						stmt.close();
+					} catch (SQLException e) {
+						throw new IllegalArgumentException(e);
+					}
+				}
+				if (conn != null) {
+					try {
+						conn.close();
 					} catch (SQLException e) {
 						throw new IllegalArgumentException(e);
 					}

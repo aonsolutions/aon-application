@@ -138,29 +138,37 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	};
 
 	public Enterprise getEnterprise() throws IllegalArgumentException {
+		Connection conn = null;
 		try {
 			initFacesContext();
 			Integer registryID = getEnterpriseID();
-			Connection connection = getConnection();
-			return getEnterprise(registryID, connection);
+			conn = getConnection();
+			return getEnterprise(registryID, conn);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		} finally {
+			if (conn != null){
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 			releaseFacesContext();
 		}
 	}
 
 	public Enterprise [] getEnterprises() throws IllegalArgumentException {
+		Connection conn = null;
 		try {
 			initFacesContext();
 			int registryIDs[] = getEnterpriseIDs();
-			Connection connection = getConnection();
+			conn = getConnection();
 			Enterprise enterprises[] = new Enterprise[registryIDs.length];
 			for (int i = 0 ; i < registryIDs.length ; i++) {
-				enterprises[i] = getEnterprise(registryIDs[i], connection);
+				enterprises[i] = getEnterprise(registryIDs[i], conn);
 			}
 			return enterprises;
 			
@@ -170,27 +178,40 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		} finally {
+			if (conn != null){
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 			releaseFacesContext();
 		}
 	}
 
 	public List<Salary> getSalaries(Employee employee)
 			throws IllegalArgumentException {
+		Connection conn = null;
 		try {
 			initFacesContext();
-			Connection connection = getConnection();
+			conn = getConnection();
 			if (employee != null) {
-				return getSalaries(connection, employee.getId());
+				return getSalaries(conn, employee.getId());
 			} else {
 				Integer personId = getPersonID();
 				Integer enterpriseId = getEnterpriseID();
 				Date maxChargeDate = Calendar.getInstance().getTime();
-				return getSalaries(connection, enterpriseId, personId,
+				return getSalaries(conn, enterpriseId, personId,
 						maxChargeDate);
 			}
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
+			if (conn != null){
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 			releaseFacesContext();
 		}
 	}
@@ -198,42 +219,63 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	public List<Employee> getEmployees(int workplaceId, Date fromDate,
 			String pattern, int offset, int limit)
 			throws IllegalArgumentException {
+		Connection conn = null;
 		try {
 			initFacesContext();
-			Connection connection = getConnection();
-			return getEmployees(connection, workplaceId, fromDate, pattern,
+			conn = getConnection();
+			return getEmployees(conn, workplaceId, fromDate, pattern,
 					offset, limit);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} catch (com.code.aon.ql.util.ExpressionException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
+			if (conn != null){
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 			releaseFacesContext();
 		}
 	}
 
 	public List<Cost> getWorkplaceCosts(int workplaceId)
 			throws IllegalArgumentException {
+		Connection conn  = null;
 		try {
 			initFacesContext();
-			Connection connection = getConnection();
-			return getWorkplaceCosts(connection, workplaceId);
+			conn = getConnection();
+			return getWorkplaceCosts(conn, workplaceId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
+			if (conn != null){
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 			releaseFacesContext();
 		}
 	}
 
 	public List<Cost> getEnterpriseCosts(int enterpriseId)
 			throws IllegalArgumentException {
+		Connection conn = null;
 		try {
 			initFacesContext();
-			Connection connection = getConnection();
-			return getEnterpriseCosts(connection, enterpriseId);
+			conn = getConnection();
+			return getEnterpriseCosts(conn, enterpriseId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
+			if (conn != null){
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 			releaseFacesContext();
 		}
 	}
@@ -489,7 +531,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			calculate(agreementDraft);
 			return agreementDraft;
-		} finally {
+		} catch ( SQLException e ) {
+			throw new IllegalArgumentException(e);
+		}
+		finally {
 			releaseFacesContext();
 		}
 
@@ -497,19 +542,25 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	public void saveSalaryDraft(SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
-		Connection connection = null;
+		Connection conn = null;
 		try {
 			initFacesContext();
-			connection = getConnection();
-			disableAutoCommit(connection);
-			SQLSalaryDraft.save(connection, salaryDraft, getDomainID(),
+			conn = getConnection();
+			disableAutoCommit(conn);
+			SQLSalaryDraft.save(conn, salaryDraft, getDomainID(),
 					getParentDomainID());
-			commit(connection);
+			commit(conn);
 		} catch (SQLException e) {
-			rollback(connection);
+			rollback(conn);
 			throw new IllegalArgumentException(e);
 		} finally {
-			enableAutoCommit(connection);
+			enableAutoCommit(conn);
+			if (conn != null){
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 			releaseFacesContext();
 		}
 
@@ -517,15 +568,21 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	public SalaryDraft saveSalary(SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
-		Connection connection = null;
+		Connection conn = null;
 		try {
 			initFacesContext();
-			connection = getConnection();
-			calculateAndSave(connection, salaryDraft);
+			conn = getConnection();
+			calculateAndSave(conn, salaryDraft);
 			return salaryDraft;
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
+			if (conn != null){
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 			releaseFacesContext();
 		}
 
@@ -724,11 +781,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	public List<Payment> getAvailablePayments(int employeeId)
 			throws IllegalArgumentException {
-
+		Connection conn = null;
 		try {
 			initFacesContext();
 
-			Connection conn = getConnection();
+			conn = getConnection();
 
 			int domainId = getDomainID();
 
@@ -753,51 +810,79 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
+			if (conn != null){
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 			releaseFacesContext();
 		}
 	}
 	
 	public void saveEvents(Events events, Date startDate, Date endDate ){
+		Connection conn = null;
 		try {
 			initFacesContext();
 			int domainId = getDomainID();
-			Connection conn = getConnection();
+			conn = getConnection();
 			SQLEvents.completeEvents(conn, events, startDate, endDate);
 			SQLEvents.saveEvents(conn, events, startDate, endDate, domainId);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
+			if (conn != null){
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 			releaseFacesContext();
 		}
 	}
 
 	public Events getEvents(Integer workplaceId, Date startDate, Date endDate, int offset,
 			int limit, String names []){
+		Connection conn = null;
 		try {
 			initFacesContext();
-			Connection conn = getConnection();
+			conn = getConnection();
 			return SQLEvents.getEvents(conn, workplaceId, startDate, endDate, offset, limit);
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
+			if (conn != null){
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 			releaseFacesContext();
 		}
 		
 	}
 	
-	public Period getAvailPeriod(Integer workplaceId, String name) {
+	public Period getAvailPeriod(Integer workplaceId, String name) 
+	throws IllegalArgumentException{
+		Connection conn  = null;
 		try {
 			initFacesContext();
-			Connection conn = getConnection();
-			return SQLEvents.getAvailPeriods(conn, workplaceId,name);
+			conn = getConnection();
+			return SQLEvents.getAvailPeriod(conn, workplaceId,name);
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
+			if (conn != null){
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 			releaseFacesContext();
 		}
 	}
@@ -808,11 +893,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	private String getSalaryReport() throws ReportException {
 		int enterpriseId = getEnterpriseID();
+		Connection conn = null;
 		try {
-			Connection connection = getConnection();
-			return AonServletUtils.getSalaryReport(connection, enterpriseId);
+			conn = getConnection();
+			return AonServletUtils.getSalaryReport(conn, enterpriseId);
 		} catch (SQLException e) {
 			throw new ReportException(e.getLocalizedMessage());
+		} finally {
+			if (conn != null){
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 		}
 	}
 
@@ -1413,9 +1506,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	private static void calculate(AgreementDraft draft)
-			throws IllegalArgumentException {
+			throws SQLException {
+		Connection connection = null;
 		try {
-			Connection connection = getConnection();
+			connection = getConnection();
 
 			Set<Payment> dbPayments = SQLAgreementDraft.getPayments(connection,
 					draft.getId(), draft.getStartDate(), draft.getEndDate());
@@ -1481,8 +1575,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			draft.setSalaryTable(salaryTable);
 			draft.setCategoriesMap(categories);
 
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null )
+				connection.close();
 		}
 	}
 
@@ -1563,6 +1658,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	private static ContextDescriptor getDraftContext(SalaryDraft draft) {
+		Connection conn = null;
 		try {
 			ISalaryCalculatorContext calculatorCtx = getSalaryCalculatorContext(draft);
 			ExpressionContext expressionContext = calculatorCtx
@@ -1572,9 +1668,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Date end = calculatorCtx.getEndDate();
 
 			ContextDescriptor contextDescriptor = new ContextDescriptor();
-
+			
+			conn = getConnection();
 			Map<String, String> descriptions = getSystemDescriptions(
-					getConnection(), start, end);
+					conn, start, end);
 
 			Set<String> varNames = expressionContext.variablesSet();
 
@@ -1628,6 +1725,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null){
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 		}
 	}
 
@@ -1712,8 +1816,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	private static IContractSalaryCalculatorContext getSalaryCalculatorContext(
 			SalaryPreview preview) throws ExpressionException, SQLException {
-
-		Connection connection = getConnection();
+		Connection conn = null;
+		try {
+		conn = getConnection();
 
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
@@ -1724,9 +1829,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		Date issueDate = preview.getIssueDate();
 
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
-				connection, startDate, endDate, issueDate, criteria);
+				conn, startDate, endDate, issueDate, criteria);
 		ctx.next();
 		return ctx;
+		} finally {
+			if (conn != null)
+				conn.close();
+		}
 	}
 
 	private static void groups(ResultSet rs, GroupHandler... handlers)

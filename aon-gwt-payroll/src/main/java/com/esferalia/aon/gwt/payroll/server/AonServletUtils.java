@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.faces.FactoryFinder;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIComponentBase;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
@@ -203,7 +205,15 @@ public class AonServletUtils {
 
 	protected static String getSalaryReport(Integer enterpriseID)
 			throws SQLException {
-		return getSalaryReport(getConnection(), enterpriseID);
+		Connection conn = null;
+		try {
+			conn = getConnection();
+			return getSalaryReport(conn, enterpriseID);
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
 	}
 
 	protected static String getSalaryReport(Connection connection,
@@ -276,13 +286,14 @@ public class AonServletUtils {
 
 	protected static AonServletUtils.RAttach getRAttach(Integer id)
 			throws SQLException, IOException {
-		Connection connection = getConnection();
+		Connection conn = null;
 
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-
-			stmt = connection.prepareStatement("SELECT *" + " FROM "
+			conn = getConnection();
+			
+			stmt = conn.prepareStatement("SELECT *" + " FROM "
 					+ SQLConstants.RATTACH + " WHERE " + RattachColumns.ID
 					+ "= ? ");
 			stmt.setInt(1, id);
@@ -309,6 +320,9 @@ public class AonServletUtils {
 			if (stmt != null) {
 				stmt.close();
 			}
+			if (conn != null) {
+				conn.close();
+			}
 		}
 	}
 
@@ -329,7 +343,12 @@ public class AonServletUtils {
 
 		Contract contract = (Contract) list.get(0);
 		return contract;
+		
+		
 
+	}
+	
+	public static void main(String[] args) {
 	}
 
 

@@ -226,6 +226,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 		SalaryBuilderListener listener = new SalaryBuilderListener(
 				resp.getWriter());
+		Connection connection = null;
 		try {
 
 			boolean save = getSave(req);
@@ -254,7 +255,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			ServletContext ctx = getServletContext();
 			AonServletUtils.initFacesContext(ctx, req, resp);
 
-			Connection connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection();
 
 			SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorContext = new SQLContractSalaryCalculatorContext(
 					connection, startDate, endDate, issueDate, criteria);
@@ -311,6 +312,14 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 					+ INTEGER_FORMAT.format(salaries)
 					+ " </span>. Tiempo transcurrido: <span class='aon-input-required' >"
 					+ SECONDS_FORMAT.format(elapsedTime) + " segundos</span>.");
+			if ( connection != null ){
+				try {
+					connection.close();
+				} catch ( SQLException logOrIgnore ){
+					
+				}
+			}
+				
 		}
 
 	}
