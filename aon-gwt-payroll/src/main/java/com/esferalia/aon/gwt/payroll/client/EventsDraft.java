@@ -9,10 +9,9 @@ import java.util.Set;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.CopyCallback;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.GetCallback;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.SaveCallback;
-import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
-import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Events.Event;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
@@ -590,6 +589,11 @@ public class EventsDraft extends ResizeComposite {
 			@Override
 			public void onSuccess(Period result) {
 
+				if (result == null) {
+					copyDateRangeListBox.addItem("-", "");
+					return;
+				}
+
 				Date first = result.getStart();
 				Date last = result.getEnd();
 				Date date = result.getStart();
@@ -637,7 +641,6 @@ public class EventsDraft extends ResizeComposite {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
 			}
 		});
 

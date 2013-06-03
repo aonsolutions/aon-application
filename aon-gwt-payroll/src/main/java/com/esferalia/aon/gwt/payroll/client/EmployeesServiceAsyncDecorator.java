@@ -229,7 +229,8 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 
 	@Override
 	public void getAvailPeriod(Integer workplaceId, String name,
-			AsyncCallback<Period> callback) throws IllegalArgumentException {
+			AsyncCallback<Period> callback) throws IllegalArgumentException
+			{
 		AON.start();
 		employeesServiceAsync.getAvailPeriod(workplaceId, name,
 				new AsyncCallbackWrapper<Period>(callback));

@@ -252,8 +252,8 @@ public class SQLEvents {
 		}
 	}
 
-	public static Period getAvailPeriods(Connection conn, Integer workplaceId,
-			String name) throws SQLException {
+	public static Period getAvailPeriod(Connection conn, Integer workplaceId,
+			String name) throws SQLException{
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
@@ -281,6 +281,9 @@ public class SQLEvents {
 
 			Date startDate = rs.getDate(1);
 			Date endDate = rs.getDate(2);
+			
+			if ( startDate == null )
+				return null;
 
 			return new Period(startDate, endDate.equals(MAX_DATE) ? null
 					: endDate);

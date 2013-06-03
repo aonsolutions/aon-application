@@ -40,4 +40,7 @@ public class Workplace implements Serializable, HasId<Integer> {
 		this.agreement = agreement;
 	}
 	
+	
+	
+	
 }

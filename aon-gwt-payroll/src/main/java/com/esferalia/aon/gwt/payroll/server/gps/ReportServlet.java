@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Formattable;
 import java.util.Formatter;
 import java.util.List;
@@ -24,6 +25,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.esferalia.aon.gwt.payroll.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
@@ -60,6 +62,7 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		printSessionNames(req.getSession());
 		OutputStreamWriter out = null;
 		try {
 			AonServletUtils.initFacesContext(getServletContext(), req, resp);
@@ -90,9 +93,11 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		PrintWriter printOut = null;
-		Connection connection = AonServletUtils.getConnection();
+		Connection conn  = null;
+		
 
 		try {
+			conn = AonServletUtils.getConnection();
 
 			String sql = "SELECT" + " " 
 					+ SQLConstants.WORKPLACE + "." + WorkplaceColumns.ID + ", "
@@ -127,7 +132,7 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 			
 			System.out.println(sql);
 			
-			stmt = connection.prepareStatement(sql);
+			stmt = conn.prepareStatement(sql);
 
 			stmt.setString(1, "FTE");
 			stmt.setDate(2, new java.sql.Date(endDate.getTime()));
@@ -207,6 +212,8 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 				stmt.close();
 			if (rs != null)
 				rs.close();
+			if (conn != null)
+				conn.close();
 		}
 	}
 
@@ -269,6 +276,17 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
+	}
+	
+	private static void printSessionNames (HttpSession session){
+		Enumeration<String> attrs = session.getAttributeNames();
+		
+		while ( attrs.hasMoreElements() ) {
+			String name = attrs.nextElement();
+			Object attr =  session.getAttribute(name);
+			System.out.printf(" %s = %s\r\n", name, attr != null ? attr.getClass().getName(): "NULL");
+		}
+		
 	}
 
 }
