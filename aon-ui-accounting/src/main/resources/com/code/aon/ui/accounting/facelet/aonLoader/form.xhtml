@@ -24,7 +24,7 @@
 						value="#{accountingBundle.aon_loader_load}"
 						actionListener="#{aonLoader.onShowPanel}"
 						rendered="#{aonLoader.aonFile.size > 0}"
-						reRender="showNewMessageWindow"
+						reRender="showLoadMessageWindow"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"/>
 
 					<aon:htmlCommandLink  id="help" target="_new" 
@@ -96,7 +96,7 @@
 			</aon:div>
 		</aon:form>
 		
-		<aon:panelGroup id="showNewMessageWindow">
+		<aon:panelGroup id="showLoadMessageWindow">
 			<c:if test="#{aonLoader.progressionPanelVisible}">
 				<aon:valueParam name="windowHeight" default="50" />
 				<rich:modalPanel id="showNewMessageModalPanel" domElementAttachment="parent"
@@ -114,7 +114,7 @@
 							<aon:commandButton type="button" styleClass="aon-popupWindow-close"
 								actionListener="#{aonLoader.onStart}"
 								immediate="true">
-								<rich:componentControl for="showNewMessageWindow" operation="hide"
+								<rich:componentControl for="showLoadMessageWindow" operation="hide"
 									event="onclick" />
 							</aon:commandButton>
 						</aon:form>
@@ -131,7 +131,7 @@
 						</aon:commandButton>
 					</aon:form>
 				</rich:modalPanel>
-				<ui:param name="closeButtonReRender" value="showNewMessageWindow" />
+				<ui:param name="closeButtonReRender" value="showLoadMessageWindow" />
 				<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
 					<ui:param name="logPanelTitle" value="#{accountingBundle.aon_loader_module}" />
 				</ui:include>		
