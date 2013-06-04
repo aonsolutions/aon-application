@@ -474,8 +474,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.warehouse.Warehouse">
-		<alias names="domain,id,name,workPlace_active,workPlace_id,workPlace_scope_id"/>
-		<hibernate names="domain,id,name,workPlace.active,workPlace.id,workPlace.scope.id"/>
+		<alias names="domain,id,name,workPlace,workPlace_active,workPlace_id,workPlace_scope_id"/>
+		<hibernate names="domain,id,name,workPlace,workPlace.active,workPlace&lt;id,workPlace.scope.id"/>
 	</bean>
 	
 	<bean class="com.code.aon.warehouse.WarehouseTransfer">
