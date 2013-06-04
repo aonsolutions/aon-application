@@ -676,7 +676,7 @@ public class DomainController extends BasicController {
 		DomainInfo di = getDomainInfo(); 
 		AonFile diffFile = getDiffFile(this.currentDomainInfo, di);
 		if ( diffFile != null ) {
-			Address to = new InternetAddress("administracion@aonSolutions.es", "Administraci\F3n");
+			Address to = new InternetAddress("administracion@aonSolutions.es", "Administracion");
 			Address[] recipients = new Address[] {to};
 			String subject = AonUtil.getMessage(BUNDLE_NAME, DOMAIN_MANAGEMENT);
 			getEmailSender().sendMessage(recipients, subject, getEmailContent(di), MimeType.MIME_HTML, diffFile );	
