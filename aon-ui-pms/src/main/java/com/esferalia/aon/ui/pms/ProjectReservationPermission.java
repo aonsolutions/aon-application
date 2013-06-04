@@ -118,7 +118,7 @@ public class ProjectReservationPermission {
 	}
 
 	public boolean isNewReservationAllowed() {
-		return isRoleConfig() || isRoleFinance();
+		return isRoleCommercial();
 	}
 
 	public boolean isShowMoreMenuAllowed() {
@@ -155,7 +155,7 @@ public class ProjectReservationPermission {
 
 	public boolean isCancelAllowed() throws ManagerBeanException {
 		Date now = new Date();
-		boolean roleAllowed = (isRoleAdmin()) || ((isRoleConfig() || isRoleCommercial()) && isBeforeCheckIn(now)) || (isRoleFinance() && isAfterCheckOut(now));
+		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleFinance() && isAfterCheckOut(now));
 		return roleAllowed && (reservation.isActive() || reservation.isBlocked()) && (reservation.isNoCheck() || reservation.isNoShow());
 	}
 
@@ -166,13 +166,13 @@ public class ProjectReservationPermission {
 
 	public boolean isBlockAllowed() {
 		Date now = new Date();
-		boolean roleAllowed = (isRoleAdmin()) || ((isRoleConfig() || isRoleCommercial()) && isBeforeCheckIn(now)) || (isRoleFinance() && isAfterCheckOut(now));
+		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
 		return roleAllowed && reservation.isActive() && reservation.isNoCheck();
 	}
 
 	public boolean isUnBlockAllowed() {
 		Date now = new Date();
-		boolean roleAllowed = (isRoleAdmin()) || ((isRoleConfig() || isRoleCommercial()) && isBeforeCheckIn(now)) || (isRoleFinance() && isAfterCheckOut(now));
+		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
 		return roleAllowed && reservation.isBlocked() && !reservation.isNoShow();
 	}
 
@@ -202,19 +202,20 @@ public class ProjectReservationPermission {
 	}
 
 	public boolean isReservationCodeEditable() throws ManagerBeanException {
-		boolean roleAllowed = isRoleAdmin();
+		Date now = new Date();
+		boolean roleAllowed = isRoleAdmin() || (isRoleCommercial() && !isAfterCheckOut(now));
 		return roleAllowed && reservation.isActive();
 	}
 
 	public boolean isReservationDatesEditable() throws ManagerBeanException {
 		Date now = new Date();
-		boolean roleAllowed = (isRoleCommercial() && isBeforeCheckIn(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
+		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
 		return roleAllowed && reservation.isActive() && !reservation.isInUse();
 	}
 
 	public boolean isBookingHolderEditable() throws ManagerBeanException {
 		Date now = new Date();
-		boolean roleAllowed = (isRoleCommercial() && isBeforeCheckIn(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
+		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
 		return roleAllowed && reservation.isActive();
 	}
 
@@ -228,13 +229,13 @@ public class ProjectReservationPermission {
 
 	public boolean isAgencyEditable() throws ManagerBeanException {
 		Date now = new Date();
-		boolean roleAllowed = (isRoleCommercial() && isBeforeCheckIn(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
+		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
 		return roleAllowed && reservation.isActive() && isAgencyVisible();
 	}
 
 	public boolean isCompanyEditable() throws ManagerBeanException {
 		Date now = new Date();
-		boolean roleAllowed = (isRoleCommercial() && isBeforeCheckIn(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
+		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
 		return roleAllowed && reservation.isActive() && isCompanyVisible();
 	}
 
@@ -279,7 +280,7 @@ public class ProjectReservationPermission {
 
 	public boolean isNewReservationRoomAllowed() {
 		Date now = new Date();
-		boolean roleAllowed = (isRoleCommercial() && isBeforeCheckIn(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
+		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
 		return roleAllowed && reservation.isActive();
 	}
 
@@ -299,7 +300,7 @@ public class ProjectReservationPermission {
 
 	public boolean isRemoveReservationRoomAllowed() throws ManagerBeanException {
 		Date now = new Date();
-		boolean roleAllowed = (isRoleCommercial() && isBeforeCheckIn(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
+		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
 		return roleAllowed && reservation.isActive() && reservationRoom.getRoomNumber() == null;
 	}
 
@@ -309,7 +310,7 @@ public class ProjectReservationPermission {
 
 	public boolean isReservationRoomTariffEditable() throws ManagerBeanException {
 		Date now = new Date();
-		boolean roleAllowed = (isRoleCommercial() && isBeforeCheckIn(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
+		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
 		return roleAllowed && reservation.isActive();
 	}
 
@@ -328,7 +329,7 @@ public class ProjectReservationPermission {
 
 	public boolean isNewReservationServiceAllowed() {
 		Date now = new Date();
-		boolean roleAllowed = (isRoleCommercial() && isBeforeCheckIn(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
+		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
 		return roleAllowed && reservation.isActive();
 	}
 
@@ -338,19 +339,19 @@ public class ProjectReservationPermission {
 
 	public boolean isAcceptReservationServiceAllowed() {
 		Date now = new Date();
-		boolean roleAllowed = (isRoleCommercial() && isBeforeCheckIn(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
+		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
 		return roleAllowed;
 	}
 
 	public boolean isRemoveReservationServiceAllowed() {
 		Date now = new Date();
-		boolean roleAllowed = (isRoleCommercial() && isBeforeCheckIn(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
+		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
 		return roleAllowed && !reservationService.isExtra();
 	}
 
 	public boolean isReservationServicesEditable() throws ManagerBeanException {
 		Date now = new Date();
-		boolean roleAllowed = (isRoleCommercial() && isBeforeCheckIn(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
+		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
 		return roleAllowed && !reservationService.isExtra();
 	}
 
