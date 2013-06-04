@@ -88,5 +88,16 @@ public class AdminUtil {
 		query.setInteger(0, domainId);
 		return (Integer) query.uniqueResult();
 	}
+
+	public static Integer getAdminDomain() {
+		Query query = getQuery("SELECT id FROM Domain d WHERE d.type = 5");
+		return (Integer) query.uniqueResult();
+	}
+
+	public static Integer getCompanyId( Integer domainId ) {
+		Query query = getQuery("SELECT id FROM Company c WHERE c.domain = ?");
+		query.setInteger(0, domainId);
+		return (Integer) query.uniqueResult();
+	}
 	
 }

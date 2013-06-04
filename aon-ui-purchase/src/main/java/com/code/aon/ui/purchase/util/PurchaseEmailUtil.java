@@ -123,7 +123,7 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseMess
 				file = getReport(purchase, REPORT_KEY);
 				
 				AonMessage aonMessage = getEmailSender().createMessage(recipients, _subject);
-				getEmailSender().addMessageContent(aonMessage, _content, MimeType.MIME_HTML, null, file);
+				getEmailSender().addMessageContent(aonMessage, _content, MimeType.MIME_HTML, file);
 				aonMessage.setRecipientsCc(recipientsCc);
 				aonMessage.setRecipientsBcc(recipientsBcc);
 				getEmailSender().sendMessage(aonMessage);

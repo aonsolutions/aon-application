@@ -36,9 +36,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -76,11 +78,14 @@ import com.code.aon.config.Application;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Domain;
 import com.code.aon.config.DomainApplication;
+import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.admin.DomainApplicationInfo;
 import com.code.aon.ui.admin.DomainInfo;
 import com.code.aon.ui.admin.DomainModuleInfo;
@@ -91,6 +96,7 @@ import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -102,6 +108,7 @@ import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.WebmailException;
+import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.db.MailAccount;
 import com.code.aon.webmail.enumeration.ConnectionSecurity;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -677,12 +684,18 @@ public class DomainController extends BasicController {
 		DomainInfo di = getDomainInfo(); 
 		AonFile diffFile = getDiffFile(this.currentDomainInfo, di);
 		if ( diffFile != null ) {
-			Address to = new InternetAddress("administracion@aonSolutions.es", "Administración");
-			Address[] recipients = new Address[] {to};
-			String subject = AonUtil.getMessage(BUNDLE_NAME, DOMAIN_MANAGEMENT);
-			getEmailSender().sendMessage(recipients, subject, getEmailContent(di), MimeType.MIME_HTML, diffFile );
+			Address[] emails = getNotificationEmails();
+			if (! ArrayUtils.isEmpty(emails) ) {
+				LOGGER.info( "Notication emails: {}", ArrayUtils.toString(emails) );
+				EmailSender sender = getEmailSender();
+				String subject = AonUtil.getMessage(BUNDLE_NAME, DOMAIN_MANAGEMENT);
+				AonMessage message = sender.createMessage(subject);
+				message.setRecipientsBcc(emails);
+				sender.addMessageContent(message, getEmailContent(di), MimeType.MIME_HTML, diffFile);
+				sender.sendMessage(message);
+			}
 			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
-			adc.init();
+			adc.init();				
 		}
 		this.currentDomainInfo = di;
 	}
@@ -730,7 +743,6 @@ public class DomainController extends BasicController {
 	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
 		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
-
 	
 	public void ownerCheck(FacesContext context, UIComponent component, Object value) {
 		String emails = (String) value;
@@ -749,5 +761,99 @@ public class DomainController extends BasicController {
 			throw new ValidatorException(new FacesMessage(SEVERITY_ERROR, message, null));
 		}
 	}			
+	
+	private InternetAddress getEmail( String email, String displayName ) {
+		InternetAddress address = null;
+		if ( EmailValidator.getInstance().isValid(email) ) {
+			try {
+				if (! StringUtils.isEmpty(displayName) ) {
+					address = new InternetAddress(email, displayName);	
+				} else {
+					address = new InternetAddress(email);
+				}
+			} catch (Throwable e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+		} else {
+			LOGGER.error( "Invalid email: {}", email );
+		}
+		return address;
+	}
+	
+	private  List<InternetAddress> getOwnerEmails( Integer domainId ) throws ManagerBeanException {
+		List<InternetAddress> list = new LinkedList<InternetAddress>();
+		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+		Domain domain = (Domain) bean.get(domainId);
+		if (! StringUtils.isEmpty(domain.getOwner()) ) {
+			try {
+				InternetAddress[] addresses = InternetAddress.parse(domain.getOwner(), true);
+				if (! ArrayUtils.isEmpty(addresses) ) {
+					for( InternetAddress address : addresses ) {
+						if ( EmailValidator.getInstance().isValid(address.toString()) ) {
+							list.add(address);
+						} else {
+							LOGGER.error( "Invalid email: {}", address );
+						}
+					}
+				}
+			} catch (AddressException e) {
+				LOGGER.error( e.getMessage(), e );
+			}					
+		}
+		return list;
+	}
+
+	private List<InternetAddress> getUserEmails() throws ManagerBeanException {
+		List<InternetAddress> list = new LinkedList<InternetAddress>();
+		User user = UserUtils.getInstance().getLoggedUser();
+		IManagerBean bean = BeanManager.getManagerBean(MailAccount.class);
+		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(true);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.MAIL_ACCOUNT_USER_ID), user.getId());
+		for( ITransferObject to : bean.getList(criteria) ) {
+			MailAccount ma = (MailAccount) to;
+			InternetAddress email = getEmail(ma.getEmail(), ma.getDisplayName());
+			if ( email != null ) {
+				list.add( email );
+			}
+		}
+		return list;
+	}
+
+	private List<InternetAddress> getCompanyEmail( Integer domainId ) throws ManagerBeanException {
+		List<InternetAddress> list = new LinkedList<InternetAddress>();
+		Integer companyId = AdminUtil.getCompanyId(domainId);
+		if ( companyId != null ) {
+			IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
+			Criteria criteria = new Criteria();
+			criteria.setSkipDomainFilter(true);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), companyId);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), MediaType.EMAIL);
+			for( ITransferObject to : bean.getList(criteria) ) {
+				String value = ((RegistryMedia) to).getValue();
+				InternetAddress email = getEmail(value, null);
+				if ( email != null ) {
+					list.add( email );
+				}
+			}			
+		}
+		return list;
+	}
+	
+	private Address[] getNotificationEmails() {
+		Set<Address> emails = new HashSet<Address>();
+		try {
+			Integer adminId = AdminUtil.getAdminDomain();
+			if ( adminId != null ) {
+				emails.addAll(getCompanyEmail(adminId));
+				emails.addAll(getOwnerEmails(adminId));
+			}
+			emails.addAll(getOwnerEmails(DomainManager.getCurrentDomain()));
+			emails.addAll(getUserEmails());
+		} catch (Throwable e) {
+			LOGGER.error( e.getMessage(), e );
+		}
+		return emails.toArray(new Address[emails.size()]);
+	}
 	
 }

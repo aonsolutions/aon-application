@@ -25,6 +25,8 @@ public class EmailSender {
 	
 	private Address from;
 	
+	private SecurityInfo securityInfo;
+	
 	public EmailSender( Address from, IMailAccount mailAccount ) {
 		setFrom( from );
 		setMailAccount( mailAccount );
@@ -47,29 +49,38 @@ public class EmailSender {
 		this.from = from;
 	}
 	
+	public SecurityInfo getSecurityInfo() {
+		return securityInfo;
+	}
+
+	public void setSecurityInfo(SecurityInfo securityInfo) {
+		this.securityInfo = securityInfo;
+	}
+
 	public AonMessage sendMessage( Address[] to, String subject, String content ) throws WebmailException {
 		return sendMessage(to, subject, content, null);
 	}
 	
 	public AonMessage sendMessage( Address[] to, String subject, String content, MimeType mimeType, AonFile ... attachemnts  ) throws WebmailException {
-		return sendMessage(to, subject, content, mimeType, null, attachemnts);
-	}
-
-	public AonMessage sendMessage( Address[] to, String subject, String content, MimeType mimeType, SecurityInfo si, AonFile ... attachemnts  ) throws WebmailException {
 		AonMessage aonMessage = createMessage(to, subject);
-		addMessageContent(aonMessage, content, mimeType, si, attachemnts);
+		addMessageContent(aonMessage, content, mimeType, attachemnts);
 		sendMessage(aonMessage);
 		return aonMessage;
 	}
 
-	public AonMessage createMessage( Address[] to, String subject  ) throws WebmailException {
+	public AonMessage createMessage( String subject  ) throws WebmailException {
 		AonMessage aonMessage = server.createAonMessage(from);
-		aonMessage.setRecipientsTo( to );
 		aonMessage.setSubject(subject);
 		return aonMessage;
 	}	
 	
-	public void addMessageContent( AonMessage aonMessage, String content, MimeType mimeType, SecurityInfo si, AonFile ... attachemnts  ) throws WebmailException {
+	public AonMessage createMessage( Address[] to, String subject  ) throws WebmailException {
+		AonMessage aonMessage = createMessage(subject);
+		aonMessage.setRecipientsTo( to );
+		return aonMessage;
+	}	
+	
+	public void addMessageContent( AonMessage aonMessage, String content, MimeType mimeType, AonFile ... attachemnts  ) throws WebmailException {
        	String type = (mimeType != null) ? mimeType.getName() : MimeType.MIME_TXT.getName();
        	MimeBodyPart mainPart = new MimeBodyPart();
        	try {
@@ -81,8 +92,8 @@ public class EmailSender {
 					BodyPart bodyPart = WebmailUtil.getBodyPart(file);
 					multipart.addBodyPart(bodyPart);
 				}
-		       	if ( si != null ) {
-		       		multipart = EmailSecurity.sign( multipart, si );
+		       	if ( securityInfo != null ) {
+		       		multipart = EmailSecurity.sign( multipart, securityInfo );
 		       	}				
 			}
 			aonMessage.setContent(multipart);
