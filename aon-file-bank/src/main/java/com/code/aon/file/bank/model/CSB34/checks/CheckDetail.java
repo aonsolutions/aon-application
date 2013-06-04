@@ -21,14 +21,14 @@ public class CheckDetail extends Check{
 				exceptions.add(new Fd0Exception(getMessage("ERROR_DETAIL_3"), detail.toString()));
 				status = false;
 			}
-			if (detail.getReceiver().getAddress() == null || detail.getReceiver().getAddress().trim().equals("")) {
+			/*if (detail.getReceiver().getAddress() == null || detail.getReceiver().getAddress().trim().equals("")) {
 				exceptions.add(new Fd0Exception(getMessage("ERROR_DETAIL_4"), detail.toString()));
 				status = false;
 			}
 			if (detail.getReceiver().getCity() == null || detail.getReceiver().getCity().trim().equals("")) {
 				exceptions.add(new Fd0Exception(getMessage("ERROR_DETAIL_5"), detail.toString()));
 				status = false;
-			}
+			}*/
 		}
 		if (detail.getAccount() == null) {
 			exceptions.add(new Fd0Exception(getMessage("ERROR_DETAIL_6"), detail.toString()));
