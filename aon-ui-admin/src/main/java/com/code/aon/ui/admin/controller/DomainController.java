@@ -18,6 +18,9 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_NAME_DUPLI
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_PARENT;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_TYPE;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_URL;
+import static com.code.aon.ui.admin.controller.IAdminConstants.WRONG_EMAIL;
+import static com.code.aon.ui.admin.controller.IAdminConstants.WRONG_EMAILS;
+import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.AUDIT_LEVEL;
 import static com.code.aon.ui.common.ICommonConstants.ACTIVE;
 import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
@@ -27,6 +30,7 @@ import static com.code.aon.ui.common.ICommonConstants.NO;
 import static com.code.aon.ui.common.ICommonConstants.YES;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_EMAIL_BODY_HEADER;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,13 +47,16 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.mail.Address;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.validator.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -669,7 +676,7 @@ public class DomainController extends BasicController {
 		DomainInfo di = getDomainInfo(); 
 		AonFile diffFile = getDiffFile(this.currentDomainInfo, di);
 		if ( diffFile != null ) {
-			Address to = new InternetAddress("administracion@aonSolutions.es", "Administración");
+			Address to = new InternetAddress("administracion@aonSolutions.es", "Administraci\F3n");
 			Address[] recipients = new Address[] {to};
 			String subject = AonUtil.getMessage(BUNDLE_NAME, DOMAIN_MANAGEMENT);
 			getEmailSender().sendMessage(recipients, subject, getEmailContent(di), MimeType.MIME_HTML, diffFile );	
@@ -720,5 +727,24 @@ public class DomainController extends BasicController {
 	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
 		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
+
+	
+	public void ownerCheck(FacesContext context, UIComponent component, Object value) {
+		String emails = (String) value;
+		try {
+			InternetAddress[] addresses = InternetAddress.parse(emails, true);
+			if (! ArrayUtils.isEmpty(addresses) ) {
+				for( InternetAddress address : addresses ) {
+					if (! EmailValidator.getInstance().isValid(address.toString()) ) {
+						String message = AonUtil.getMessage(BUNDLE_NAME, WRONG_EMAIL, address.toString());
+						throw new ValidatorException(new FacesMessage(SEVERITY_ERROR, message, null));
+					}
+				}
+			}
+		} catch (AddressException e) {
+			String message = AonUtil.getMessage(BUNDLE_NAME, WRONG_EMAILS);
+			throw new ValidatorException(new FacesMessage(SEVERITY_ERROR, message, null));
+		}
+	}			
 	
 }

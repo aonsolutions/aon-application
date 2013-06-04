@@ -60,6 +60,8 @@ public interface IAdminConstants {
 	String DOMAIN_MAX_TOTAL_DOCUMENT_SIZE = "admin_domain_maxTotalDocumentSize";
 	String DOMAIN_DOMAIN_MANAGEMENT = "admin_domain_domainManagement";
 	String DOMAIN_MODULES = "admin_modules";
+	String WRONG_EMAIL = "admin_wrong_email";
+	String WRONG_EMAILS = "admin_wrong_emails";
 	
 	String DOMAIN_EMAIL_BODY_1 = "admin_domain_email_body_1";
 	String DOMAIN_EMAIL_BODY_2 = "admin_domain_email_body_2";

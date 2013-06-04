@@ -50,14 +50,14 @@
 								</f:facet>
 								<aon:outputText value="#{to.workPlace.description}"
 									rendered="#{formList}" />
-								<aon:selectOneMenu id="Warehouse_workPlace" required="true"
+								<aon:selectOneMenu id="Warehouse_workPlace"
 									value="#{controller.to.workPlace}"
 									rendered="#{formEdit}">
 									<f:selectItem itemLabel="-" value="#{null}" />
 									<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 								</aon:selectOneMenu>
 								<f:facet name="footer">
-									<aon:selectOneMenu id="Warehouse_workPlace-New" required="true" 
+									<aon:selectOneMenu id="Warehouse_workPlace-New" 
 										value="#{controller.to.workPlace}"
 										rendered="#{formNew}">
 										<f:selectItem itemLabel="-" value="#{null}" />

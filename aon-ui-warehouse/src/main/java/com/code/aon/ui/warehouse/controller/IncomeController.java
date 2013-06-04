@@ -31,6 +31,8 @@ import com.code.aon.purchase.bridge.IncomeManager;
 import com.code.aon.purchase.bridge.PurchaseTransferManager;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.supplier.Supplier;
@@ -343,7 +345,9 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		if(workPlace!=null){
 			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
+			Expression exp1 = ExpressionUtilities.getNullExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
+			Expression exp2 = ExpressionUtilities.getEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
+			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
 			criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
 			List<ITransferObject> c = warehouseBean.getList(criteria);
 			Iterator<ITransferObject> iter = c.iterator();

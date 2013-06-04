@@ -9,6 +9,7 @@ import java.util.Locale;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
@@ -341,18 +342,15 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		if (customerFee.getPeriod().getValue() == 0) {
 			return 1;
 		} 
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(params.getYear(), params.getMonth().getValue(), 1, 0, 0, 0);
+		Date fromDate = DateUtils.truncate(new Date(), Calendar.YEAR);
+		fromDate = DateUtils.setYears(fromDate, params.getYear());
+		fromDate = DateUtils.setMonths(fromDate, params.getMonth().getValue());
+		Date toDate = DateUtils.addDays(DateUtils.addMonths(fromDate, customerFee.getPeriod().getValue()), -1);
 
-		Date fromInv = calendar.getTime();
-		calendar.add(Calendar.MONTH, customerFee.getPeriod().getValue());
-		calendar.add(Calendar.DATE, -1);
-		Date toInv = calendar.getTime();
+		Date iniFee = (customerFee.getInitialDate().before(fromDate)) ? fromDate : customerFee.getInitialDate();
+		Date endFee = (customerFee.getFinalDate() == null || customerFee.getFinalDate().after(toDate)) ? toDate : customerFee.getFinalDate();
 
-		Date iniFee = (customerFee.getInitialDate().before(fromInv)) ? fromInv : customerFee.getInitialDate();
-		Date endFee = (customerFee.getFinalDate() == null || customerFee.getFinalDate().after(toInv)) ? toInv : customerFee.getFinalDate();
-
-		return (double)daysBetween(iniFee, endFee) / (double)daysBetween(fromInv, toInv);
+		return (double)daysBetween(iniFee, endFee) / (double)daysBetween(fromDate, toDate);
 	}
 
 	private long daysBetween(Date from, Date to) {

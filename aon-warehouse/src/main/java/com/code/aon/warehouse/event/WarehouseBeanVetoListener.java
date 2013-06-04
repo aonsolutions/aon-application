@@ -39,6 +39,20 @@ public class WarehouseBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			} catch(ManagerBeanException e) {
 				throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 			}
+		} else {
+			try {
+				IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
+				Criteria criteria = new Criteria();
+				if (warehouse.getId() != null) {
+					criteria.addNotEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_ID), warehouse.getId());
+				}
+				criteria.addNullExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
+				if (warehouseBean.getCount(criteria) > 0) {
+					throw new ManagerBeanVetoListenerException("Ya existe un almacén común.");
+				}
+			} catch(ManagerBeanException e) {
+				throw new ManagerBeanVetoListenerException(e.getMessage(), e);
+			}
 		}
 	}
 

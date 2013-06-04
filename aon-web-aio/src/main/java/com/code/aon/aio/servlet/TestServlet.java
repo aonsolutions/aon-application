@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.pool.AonConnectionException;
-import com.code.aon.ui.company.controller.CompanyDisplay;
 
 public class TestServlet extends HttpServlet {
 	
