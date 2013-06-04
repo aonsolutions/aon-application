@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.dbutils.DatabaseUtil;
-import com.code.aon.ui.company.controller.CompanyDisplay;
 
 public class TestServlet extends HttpServlet {
 	

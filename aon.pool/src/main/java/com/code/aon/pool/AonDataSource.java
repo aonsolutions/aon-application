@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
@@ -21,17 +22,20 @@ public class AonDataSource {
 	private static final String POOL_PROPERTIES =  ".pool-properties";
 	private static final String DEFAULT_POOL_PROPERTIES = CONFIGURATION_PATH + "default" + POOL_PROPERTIES;
 
-	private static final Object MONITOR = new Object();
+	private static final Object INSTANCE_MONITOR = new Object();
+	private static final Object INIT_POOL_MONITOR = new Object();
+	private static final Object GET_CONNECTION_MONITOR = new Object();
+	
 	private static AonDataSource DS;
 
-	private Map<String, String> domainsMap = new Hashtable<String, String>();
-	private Map<String, DataSource> poolsMap = new Hashtable<String, DataSource>();
+	private Map<String, String> domainsMap = Collections.synchronizedMap( new Hashtable<String, String>());
+	private Map<String, DataSource> poolsMap = Collections.synchronizedMap( new Hashtable<String, DataSource>());
 	
 	private AonDataSource() {
 	}
 
 	public static AonDataSource getInstance() throws AonConnectionException {
-		synchronized (MONITOR) {
+		synchronized (INSTANCE_MONITOR) {
 			if (DS == null) {
 				DS = new AonDataSource();
 			}
@@ -40,15 +44,13 @@ public class AonDataSource {
 	}
 	
 	private void initPool(String schema) throws AonConnectionException {
-		synchronized (MONITOR) {
-			try {
-				Properties props = getProperties(schema);
-				DataSource unpooledDS = createDatasource(schema);
-				DataSource pool = DataSources.pooledDataSource(unpooledDS, props);
-				poolsMap.put(schema, pool);
-			} catch (SQLException e) {
-				throw new AonConnectionException(e.getMessage(),e);
-			}
+		try {
+			Properties props = getProperties(schema);
+			DataSource unpooledDS = createDatasource(schema);
+			DataSource pool = DataSources.pooledDataSource(unpooledDS, props);
+			poolsMap.put(schema, pool);
+		} catch (SQLException e) {
+			throw new AonConnectionException(e.getMessage(),e);
 		}
 	}
 
@@ -107,7 +109,8 @@ public class AonDataSource {
 			if ( !poolsMap.containsKey(database) ) {
 					initPool(database);
 			}
-			return poolsMap.get(database).getConnection();
+			DataSource ds = poolsMap.get(database);
+			return ds.getConnection();
 		} catch (SQLException e) {
 			throw new AonConnectionException(e.getMessage(),e);
 		}
