@@ -139,5 +139,12 @@ public class IncomeDetailController extends LinesController implements IWarehous
 		BasicController purchaseController = (BasicController)AonUtil.getRegisteredBean(PURCHASE_CONTROLLER_NAME);
 		purchaseController.onLoad(event, incomeDetail.getPurchaseDetail().getPurchase().getId(), INCOME_FORM_NAME, null);
 	}
+	
+	public void onRemoveModelRow(ActionEvent event) throws ManagerBeanException{
+		if(this.getModel().isRowAvailable()){
+			this.onSelect(event);
+			this.onRemove(event);
+		}
+	}
 
 }
