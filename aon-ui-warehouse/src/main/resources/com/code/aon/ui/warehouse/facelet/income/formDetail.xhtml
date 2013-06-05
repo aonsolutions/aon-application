@@ -30,7 +30,7 @@
 			<aon:commandLink id="#{dataTableId}-selectButton"
 				styleClass="aon-table-row-link" value="&#160;"
 				immediate="true" ajaxSingle="true" requestDelay="100"
-				rendered="#{income.pending and aonRole.purchaseOperator}"
+				rendered="#{income.pending and aonRole.productOperator}"
 				actionListener="#{incomeDetail.onSelect}"
 				onkeyup="#{dataTableId}KeyUp(this)"
 				onfocus="#{dataTableId}SelectRow(this)"
@@ -244,19 +244,17 @@
 				</aon:commandButton>
 			</aon:column>
 		</ui:define>
-		
 		<ui:define name="endFormListContent">
 			<aon:confirmButton
 				id="transferedDetail-remove" title="#{bundle.aon_remove} (#{bundle.aon_key_remove_line_accelerator})"
-				immediate="true" rendered="#{income.pending and !aonRole.purchaseOperator and to.purchaseDetail!=null}"
-				reRender="#{dataTableId}"
+				immediate="true" rendered="#{income.pending and !aonRole.productOperator and to.purchaseDetail != null}"
+				reRender="#{dataTableId}Div"
 				confirmTitle="#{bundle.aon_confirm_title}"
 				confirmMessage="#{bundle.aon_remove_confirm}"
 				confirmActionListener="#{controller.onRemoveModelRow}"
 				styleClass="aon-editDataTable-button aon-icon-delete"
 				accesskey="#{bundle.aon_key_remove_line}" />
 		</ui:define>
-		
 	</ui:decorate>
 
 </ui:composition>
