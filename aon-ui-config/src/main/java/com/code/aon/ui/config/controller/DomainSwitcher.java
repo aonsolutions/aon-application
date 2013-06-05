@@ -223,8 +223,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	private void assignDomainName(Integer domainId) {
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
 		String q = "SELECT d.description FROM domain d"
-				+ " WHERE d.id = " + domainId
-				+ " AND d.active = 1";
+				+ " WHERE d.id = " + domainId;
 		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
 		String name = (String) query
 				.addScalar("description", Hibernate.STRING)

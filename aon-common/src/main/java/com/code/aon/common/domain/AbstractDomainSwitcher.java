@@ -104,8 +104,7 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 		domainManagementAvailable = false;
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(DOMAIN_CLASS_NAME);
 		String q = "SELECT d.parent,d.domainManagement,d.disableDomainManagement,d.enableHeredity,d.type FROM domain d"
-				+ " WHERE d.id = " + domainId
-				+ " AND d.active = 1";
+				+ " WHERE d.id = " + domainId;
 		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
 		Object[] arr = (Object[]) query
 				.addScalar("parent", Hibernate.INTEGER)

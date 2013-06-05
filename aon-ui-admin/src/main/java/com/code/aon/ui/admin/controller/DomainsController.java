@@ -10,6 +10,9 @@ import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_CONFIG_SECU
 import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_ENTERPRISE_SECURITY;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
@@ -39,29 +42,33 @@ public class DomainsController extends BasicController {
 	
 	private String filter;
 	private String modelFilter;
-	
+	private boolean allDomains;
+
 	public void onChangeFilter( ActionEvent event ) {
 		if ( (!StringUtils.equals(modelFilter, filter)) ) {
-			try {
-				OrderByList orderByList = getCriteria().getOrderByList();
-				clearCriteria();
-				Criteria criteria = getCriteria();
-				String descriptionAlias = getFieldName(IEntityAlias.DOMAIN_DESCRIPTION);
-				if (! StringUtils.isEmpty(filter) ) {
-					String nameAlias = getFieldName(IEntityAlias.DOMAIN_NAME);
-					String text = "%" + this.filter + "%";
-					Expression e1 = ExpressionUtilities.getLikeExpression(nameAlias, text);
-					Expression e2 = ExpressionUtilities.getLikeExpression(descriptionAlias, text);
-					criteria.addExpression( ExpressionUtilities.getOrExpression(e1, e2) );			
-				}
-				criteria.setOrderByList(orderByList);
-				setCriteria(criteria);
-				initializeModel();
-				this.modelFilter = this.filter;
-			} catch (ManagerBeanException e) {
-				LOGGER.error( e.getMessage(), e );
-			}
+			updateModel();
+			this.modelFilter = this.filter;
 		}
+	}
+	
+	private void updateModel() {
+		try {
+			OrderByList orderByList = getCriteria().getOrderByList();
+			clearCriteria();
+			Criteria criteria = getCriteria();
+			String descriptionAlias = getFieldName(IEntityAlias.DOMAIN_DESCRIPTION);
+			if (! StringUtils.isEmpty(filter) ) {
+				String nameAlias = getFieldName(IEntityAlias.DOMAIN_NAME);
+				String text = "%" + this.filter + "%";
+				Expression e1 = ExpressionUtilities.getLikeExpression(nameAlias, text);
+				Expression e2 = ExpressionUtilities.getLikeExpression(descriptionAlias, text);
+				criteria.addExpression( ExpressionUtilities.getOrExpression(e1, e2) );			
+			}
+			criteria.setOrderByList(orderByList);
+			initializeModel();
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}		
 	}
 	
 	public String getFilter() {
@@ -77,7 +84,11 @@ public class DomainsController extends BasicController {
 		Domain domain = (Domain) getSelectedTO();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		ds.select(domain.getId(), domain.getDescription());
-		ds.setParentDomain(domain.getId());
+		if ( (domain.getParent() != null) && (domain.getParent().getId() != null) ) {
+			ds.setParentDomain(domain.getParent().getId());
+		} else {
+			ds.setParentDomain(domain.getId());
+		}
 		ds.setDomainManagementAvailable(true);
 		setConfigurationMenu();
 	}
@@ -135,12 +146,37 @@ public class DomainsController extends BasicController {
 
 	public void onParentDomain(ActionEvent event) throws ManagerBeanException {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		if ( ds.getModel().isRowAvailable() ) {
-			ds.select(ds.getParentDomain(), null);
-			if ( isAdminDomain() ) {
-				setConfigurationMenu();
-			}
+		ds.select(ds.getParentDomain(), null);
+		if ( isAdminDomain() ) {
+			setConfigurationMenu();
 		}
+	}
+
+	public boolean isAllDomains() {
+		return allDomains;
+	}
+
+	public void setAllDomains(boolean allDomains) {
+		this.allDomains = allDomains;
+	}
+	
+	public void onChangeAllDomains( ActionEvent event ) {
+		changeInitExpressions(allDomains);
+		updateModel();
+	}
+	
+	private void changeInitExpressions( boolean allDomains ) {
+		List<Expression> expressions = new LinkedList<Expression>();
+		try {
+			String type = getFieldName(IEntityAlias.DOMAIN_TYPE);
+			expressions.add(ExpressionUtilities.getNotEqualExpression(type, DomainType.ADMIN));
+			if (! allDomains ) {
+				expressions.add(ExpressionUtilities.getNullExpression("Domain.parent"));
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}
+		setInitExpressions(expressions);
 	}
 	
 }

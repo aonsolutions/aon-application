@@ -39,6 +39,21 @@
 							ignoreDupResponses="true"
 							limitToList="true"/>
 					</aon:inputText>
+					<aon:outputLabel for="Domains_allDomains"
+						styleClass="aon-italic aon-bold aon-margin-left aon-margin-right" 
+						value="#{adminBundle.admin_domain_all_domains}" />
+					<aon:selectBooleanCheckbox id="Domains_allDomains"
+						value="#{domains.allDomains}" >
+						<a4j:support 
+							event="onclick"
+							reRender="domainSwitcherTableContainer"
+							eventsQueue="domainSwitcherFilterKeyUp"
+							actionListener="#{domains.onChangeAllDomains}"
+							requestDelay="500"
+							ajaxSingle="true"
+							ignoreDupResponses="true"
+							limitToList="true"/>						
+					</aon:selectBooleanCheckbox>													
 				</aon:div>
 			
 				<aon:div id="domainSwitcherTableContainer" styleClass="aon-width-all">
@@ -47,13 +62,22 @@
 						<ui:param name="controller" value="#{domains}" />
 						<ui:param name="skipFocusFirst" value="true" />
 						<ui:define name="columns">
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto"
+							<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap"
 								alias="Domain.description" >
 								<f:facet name="header">
 									<aon:outputText value="#{adminBundle.admin_domain_displayName}" />
 								</f:facet>							
 								<aon:outputText value="#{to.description}" />
 							</aon:column>
+							<c:if test="#{domains.allDomains}">
+								<aon:column styleClass="aon-editDataTable-textColumn"
+									alias="Domain.parent&lt;description" >
+									<f:facet name="header">
+										<aon:outputText value="#{adminBundle.admin_domain_parent}" />
+									</f:facet>							
+									<aon:outputText value="#{to.parent.description}" />
+								</aon:column>
+							</c:if>
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
 								alias="Domain.type" >
 								<f:facet name="header">
@@ -90,13 +114,13 @@
 								    </aon:outputLink>
 								</aon:div>
 							</aon:column>
-							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-40">
 								<f:facet name="header">
-									<aon:outputText value="#{adminBundle.admin_domain_childs}" />
+									<aon:outputText value="#{adminBundle.admin_domain_childs_short}" />
 								</f:facet>							
 								<aon:outputText value="#{domains.currentDomainChildNumber}" />
 							</aon:column>
-							<aon:column styleClass="aon-editDataTable-buttonsColumn aon-vertical-align-top">
+							<aon:column styleClass="aon-width-30 aon-vertical-align-top">
 								<f:facet name="header">
 									<aon:outputText value="&#160;" />
 								</f:facet>

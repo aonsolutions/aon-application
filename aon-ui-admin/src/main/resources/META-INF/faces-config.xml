@@ -82,8 +82,8 @@
 					<value>null</value>
 				</map-entry>
 				<map-entry>
-					<key>Domain_id</key>
-					<value>! #{domainSwitcher.domainId}</value>
+					<key>Domain_type</key>
+					<value>! #{adminCollections.domainTypes[5].value}</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>							
