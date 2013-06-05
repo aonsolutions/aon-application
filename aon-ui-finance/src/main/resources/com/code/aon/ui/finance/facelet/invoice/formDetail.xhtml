@@ -269,27 +269,29 @@
 							<f:facet name="header">
 								<aon:outputLabel value="INFO" />
 							</f:facet>
-							<aon:commandLink id="invoiceDetailSourceLink" immediate="true"
-								styleClass="aon-button-goto" style="padding-right: 20px;"
-								value="&#160;" title="#{bundle.aon_go}" 
-								rendered="#{!controller.editable}" 
-								actionListener="#{controller.onLoadSource}"
-								action="#{controller.getSourceViewer}"
-								reRender="aonContent">
-								<rich:toolTip value="#{controller.lineSourceInfo}" />
-							</aon:commandLink>
-							<aon:commandButton id="invoiceDetailProject" value="&#160;"
-								styleClass="#{(to.project != null and to.project.id == invoiceController.to.project.id) ? 
-												('aon-icon-commandButton aon-icon-project-ok') : ('aon-icon-commandButton aon-icon-project-warn')}"
-								rendered="#{to.project != null and to.project.id != null}"
-								actionListener="#{controller.onInvoiceDetailProjectShow}" 
-								reRender="showProjectWindow">
-								<rich:toolTip value="#{projectLabel} #{to.project.name}" />
-								<f:setPropertyActionListener target="#{invoiceController.showProjectWindow}"
-									value="#{invoiceController.projectCount > 0}" />								
-								<f:setPropertyActionListener target="#{invoiceController.showDetailProjectWindow}"
-									value="#{invoiceController.projectCount > 0}" />								
-							</aon:commandButton>
+							<aon:div styleClass="aon-nowrap">
+								<aon:commandLink id="invoiceDetailSourceLink" immediate="true"
+									styleClass="aon-button-goto" style="padding-right: 20px;"
+									value="&#160;" title="#{bundle.aon_go}" 
+									rendered="#{!controller.editable}" 
+									actionListener="#{controller.onLoadSource}"
+									action="#{controller.getSourceViewer}"
+									reRender="aonContent">
+									<rich:toolTip value="#{controller.lineSourceInfo}" />
+								</aon:commandLink>
+								<aon:commandButton id="invoiceDetailProject" value="&#160;"
+									styleClass="#{(to.project != null and to.project.id == invoiceController.to.project.id) ? 
+													('aon-icon-commandButton aon-icon-project-ok') : ('aon-icon-commandButton aon-icon-project-warn')}"
+									rendered="#{to.project != null and to.project.id != null}"
+									actionListener="#{controller.onInvoiceDetailProjectShow}" 
+									reRender="showProjectWindow">
+									<rich:toolTip value="#{projectLabel} #{to.project.name}" />
+									<f:setPropertyActionListener target="#{invoiceController.showProjectWindow}"
+										value="#{invoiceController.projectCount > 0}" />								
+									<f:setPropertyActionListener target="#{invoiceController.showDetailProjectWindow}"
+										value="#{invoiceController.projectCount > 0}" />								
+								</aon:commandButton>
+							</aon:div>
  						</aon:column>
 
 					</ui:define>
