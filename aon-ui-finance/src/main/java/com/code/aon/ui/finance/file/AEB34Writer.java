@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -46,7 +48,7 @@ public class AEB34Writer implements IFinanceConstants {
 	@SuppressWarnings("unchecked")
 	public FileOutput createAEB34(Company company, FinanceBatch fBatch, Collection fbatchDetailCollection) throws ManagerBeanException {
 		Orderer orderer = new Orderer();
-		orderer.setCode(company.getDocument());
+		orderer.setCode(StringUtils.leftPad(company.getDocument(), 10));
 		orderer.setName(company.getName());
 		orderer.setAddress(company.getDefaultAddress().getFullAddress());
 		orderer.setCity(company.getDefaultAddress().getCity());

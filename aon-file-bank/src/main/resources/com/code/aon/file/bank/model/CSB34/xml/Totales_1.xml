@@ -4,7 +4,7 @@
 <register name="Totales_1">
 
  <field name="inicial" value="0856" format="AlphaNumeric" pattern="X(4)" />
- <field name="nif" value="bean" bean="MASTER_PERSON" property="code" format="Nif" pattern="X(10)" />
+ <field name="nif" value="bean" bean="MASTER_PERSON" property="code" format="AlphaNumeric" pattern="X(10)" />
  <field name="free1" value=" " format="Alphabetic" pattern="X(12)" />
  <field name="free2" value=" " format="Alphabetic" pattern="X(3)" />
  <field name="suma" value="bean" bean="MASTER" property="amount" format="Numeric" pattern="9(10)V99" />

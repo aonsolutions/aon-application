@@ -140,7 +140,7 @@ public class CSB34 extends AbstractFileFiller{
 						if (createLine("Beneficiario_4", properties) != null)			
 							++numreg;
 					}
-					if (StringUtils.isNotEmpty(detail.getReceiver().getZipAndCity())) {
+					if (StringUtils.isNotEmpty(detail.getReceiver().getZip()) && StringUtils.isNotEmpty(detail.getReceiver().getCity())) {
 						if (createLine("Beneficiario_5", properties) != null)
 							++numreg;
 					}
