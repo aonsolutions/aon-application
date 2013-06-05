@@ -650,6 +650,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			getAccountWriter().unrecordAndUpdateInvoice(invoice);
 
 			HibernateUtil.commitTransaction(sessionName);
+			getManagerBean().initializePOJO(invoice);
 
 			// En el caso de que se haya accedido al mantenimiento de facturas desde el mantenimiento de apuntes,
 			// hay que tener en cuenta que al descontabilizar la factura, se está borrando el apunte del que 
