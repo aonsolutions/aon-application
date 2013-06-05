@@ -39,6 +39,8 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.report.ReportException;
@@ -408,7 +410,9 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		if(workPlace!=null){
 			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
+			Expression exp1 = ExpressionUtilities.getNullExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
+			Expression exp2 = ExpressionUtilities.getEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
+			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
 			criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
 			List<ITransferObject> c = warehouseBean.getList(criteria);
 			Iterator<ITransferObject> iter = c.iterator();
