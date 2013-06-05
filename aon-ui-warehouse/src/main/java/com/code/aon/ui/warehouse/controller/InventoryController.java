@@ -1,7 +1,6 @@
 package com.code.aon.ui.warehouse.controller;
 
 import java.util.Iterator;
-import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -99,31 +98,21 @@ public class InventoryController extends BasicController {
 			inventory = (Inventory) inventoryBean.insert(inventory);
 			
 	        Query q = session.createQuery(
-	                "select item " +
-	                "from Item as item, Product prod, ProductCategory cat, Stock stock " +
-	                "where " + DomainManager.getSQLWhereClause("item.domain") +
-	                "and stock.warehouse=" + warehouse.getId() +
-	                "and stock.item=item.id " +
-	                "and item.product=prod.id " +
-	                "and prod.category=cat.id " +
-	                "and prod.inventoriable=true " +
-	                " order by prod.category,item.detail");
+	                " select item, sum(stock.quantity), item.id " +
+	                " from Item as item, Stock as stock " +
+	                " where stock.item=item.id " +
+	                " and stock.warehouse=" + warehouse.getId() +
+	                " and " + DomainManager.getSQLWhereClause("stock.domain") +
+	                " group by item.id " +
+	                " order by item.detail");
 			Iterator<?> iter = q.list().iterator();
 			while (iter.hasNext()){
 				InventoryDetail inventoryDetail = new InventoryDetail();
 				inventoryDetail.setInventory(inventory);
-				Item item = (Item) iter.next();
+				Object[] o = (Object[]) iter.next();
+				Item item = (Item) o[0];
+				Double total = (Double) o[1];
 				inventoryDetail.setItem(item);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_ITEM_ID) ,item.getId());
-				criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID) ,warehouse.getId());
-				List<?> stockList = stockBean.getList(criteria);
-				Iterator<?> stockListIter = stockList.iterator();
-				int total = 0;
-				while (stockListIter.hasNext()){
-					Stock stock = (Stock) stockListIter.next();
-					total += stock.getQuantity().intValue();
-				}
 				inventoryDetail.setRealQuantity(total);
 				inventoryDetail.setActualQuantity(total);
 				inventoryDetail.setCost(item.getPurchasePrice());
