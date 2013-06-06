@@ -3,6 +3,7 @@ package com.code.aon.ui.finance.util.print;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ui.registry.report.Number2Text;
 
 public class FinancePrintUtil {
@@ -22,7 +23,7 @@ public class FinancePrintUtil {
     	try{
 			String res;
 			Number2Text numero;
-			String num = amount.toString();
+			String num = String.valueOf(CommonUtil.round(amount, 2));
 			String decimalChar = ".";
 			if (num.lastIndexOf(",") != -1) decimalChar = ",";
 			if (num.lastIndexOf(decimalChar) != -1){
