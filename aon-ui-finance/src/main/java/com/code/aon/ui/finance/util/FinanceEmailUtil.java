@@ -107,7 +107,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 	}
 
 	public AonFile getInvoiceXml( Invoice invoice ) throws IOException {
-		File file = File.createTempFile( "facturae", ".xsig" );
+		File file = File.createTempFile( "facturae", FacturaeWriter.FACTURAE_EXTENSION );
 		FacturaeWriter fw = new FacturaeWriter( getCompany() );
 		String filePath = file.getAbsolutePath();
 		String fileName = FilenameUtils.getFullPath(filePath) + FilenameUtils.getBaseName(filePath);

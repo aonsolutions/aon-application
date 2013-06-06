@@ -6,7 +6,6 @@ import java.util.Locale;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +17,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.facturae.enumeration.PaymentMeans;
@@ -25,7 +25,6 @@ import com.code.aon.facturae.enumeration.TaxTypeCode;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.geozone.GeoTree;
 import com.code.aon.geozone.GeoZone;
@@ -42,6 +41,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 import es.mityc.facturae.utils.MarshallerUtil;
 import es.mityc.facturae31.AccountType;
 import es.mityc.facturae31.AddressType;
+import es.mityc.facturae31.AdministrativeCentreType;
+import es.mityc.facturae31.AdministrativeCentresType;
 import es.mityc.facturae31.AmountType;
 import es.mityc.facturae31.BatchType;
 import es.mityc.facturae31.BusinessType;
@@ -50,6 +51,7 @@ import es.mityc.facturae31.CountryType;
 import es.mityc.facturae31.CurrencyCodeType;
 import es.mityc.facturae31.DiscountType;
 import es.mityc.facturae31.DiscountsAndRebatesType;
+import es.mityc.facturae31.ExtensionsType;
 import es.mityc.facturae31.Facturae;
 import es.mityc.facturae31.FileHeaderType;
 import es.mityc.facturae31.IndividualType;
@@ -63,6 +65,7 @@ import es.mityc.facturae31.InvoiceIssuerTypeType;
 import es.mityc.facturae31.InvoiceLineType;
 import es.mityc.facturae31.InvoiceTotalsType;
 import es.mityc.facturae31.InvoiceType;
+import es.mityc.facturae31.InvoiceType.TaxesOutputs;
 import es.mityc.facturae31.InvoicesType;
 import es.mityc.facturae31.ItemsType;
 import es.mityc.facturae31.LanguageCodeType;
@@ -77,13 +80,14 @@ import es.mityc.facturae31.TaxIdentificationType;
 import es.mityc.facturae31.TaxOutputType;
 import es.mityc.facturae31.TaxType;
 import es.mityc.facturae31.TaxesType;
-import es.mityc.facturae31.InvoiceType.TaxesOutputs;
 
 public class FacturaeWriter {
 	
 	private static final String RETENTION_TAX_TYPE_CODE = "04";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FacturaeWriter.class.getName());
+	
+	public static final String FACTURAE_EXTENSION = ".xsig";
 	
 	private Company company;
 	
@@ -94,6 +98,8 @@ public class FacturaeWriter {
 	private AmountType totalPrice;
 	
 	private List<TaxBreakDown> taxBreakDowns;
+	
+	private PmsUtil pmsUtil;
 	
 	public FacturaeWriter(Company company) {
 		this.company = company;
@@ -129,21 +135,9 @@ public class FacturaeWriter {
 		return result;
 	}
 	
-	private String getAddress( RegistryAddress registryAddress ) {
-		StringBuffer value = new StringBuffer();
-		value.append( registryAddress.getAddress() );
-		if (! StringUtils.isEmpty(registryAddress.getAddress2()) ) {
-			value.append(" ").append( registryAddress.getAddress2() );
-		}
-		if (! StringUtils.isEmpty(registryAddress.getAddress3()) ) {
-			value.append(" ").append( registryAddress.getAddress3() );
-		}
-		return value.toString();
-	}
-	
 	private AddressType getAddress( RegistryAddress registryAddress, CountryType country ) {
 		AddressType address = new AddressType();
-		address.setAddress( getAddress(registryAddress) );
+		address.setAddress( registryAddress.getFullAddress() );
 		address.setPostCode( Util.toPostCodeType(registryAddress.getZip()) );
 		address.setTown( registryAddress.getCity() );
 		address.setProvince( registryAddress.getGeozone().getName() );
@@ -153,7 +147,7 @@ public class FacturaeWriter {
 	
 	private OverseasAddressType getOverseasAddress( RegistryAddress registryAddress, CountryType country ) {
 		OverseasAddressType overseasAddress = new OverseasAddressType();
-		overseasAddress.setAddress( getAddress(registryAddress) );
+		overseasAddress.setAddress( registryAddress.getFullAddress() );
 		overseasAddress.setPostCodeAndTown( registryAddress.getZip() + " " + registryAddress.getCity() );
 		overseasAddress.setProvince( registryAddress.getGeozone().getName() );
 		overseasAddress.setCountryCode( country );
@@ -330,9 +324,38 @@ public class FacturaeWriter {
 		}
 		return party;
 	}
+	
+	private WorkPlace getWorkPlace() {
+		for( InvoiceDetail id : invoice.getLines() ) {
+			if ( (id.getWorkPlace() != null) && (id.getWorkPlace().getId() != null) ) {
+				return id.getWorkPlace();
+			}
+		}
+		return null;
+	}
+	
+	private AdministrativeCentreType getAdministrativeCentre( WorkPlace workPlace ) throws ManagerBeanException {
+		AdministrativeCentreType centre = new AdministrativeCentreType();
+		centre.setCentreCode( String.valueOf(workPlace.getId()) );
+		RegistryAddress address = workPlace.getAddress();
+		CountryType country = getCountry(address.getGeozone());
+		if ( CountryType.ESP.equals(country) ) {
+			centre.setAddressInSpain( getAddress(address, country) );	
+		} else {
+			centre.setOverseasAddress( getOverseasAddress(address, country) );
+		}		
+		return centre;
+	}
 
 	private BusinessType getCompanyParty() throws ManagerBeanException {
-		return getBusinessType(company, company.getName(), company.getDocument(), company.getDefaultAddress());
+		BusinessType party = getBusinessType(company, company.getName(), company.getDocument(), company.getDefaultAddress());
+		WorkPlace workPlace = getWorkPlace();
+		if ( workPlace != null ) {
+			AdministrativeCentresType centres = new AdministrativeCentresType();
+			centres.getAdministrativeCentre().add( getAdministrativeCentre(workPlace) );
+			party.setAdministrativeCentres(centres);
+		}
+		return party;
 	}
 	
 	private BusinessType getInvoiceRegistryParty() throws ManagerBeanException {
@@ -485,7 +508,6 @@ public class FacturaeWriter {
 		return tax;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void addLinesTaxes( InvoiceType invoiceType, InvoiceLineType invoiceLine, InvoiceDetail line ) {
 		InvoiceLineType.TaxesOutputs taxesOutputs = new InvoiceLineType.TaxesOutputs();
 		TaxesType taxesWithHeld = new TaxesType();
@@ -535,6 +557,10 @@ public class FacturaeWriter {
 			invoiceLine.setDiscountsAndRebates( getDiscountsAndRebates(line, totalCost) );
 		}
 		addLinesTaxes( invoiceType, invoiceLine, line );
+		if ( this.pmsUtil.isAddExtensions() ) {
+			ExtensionsType extension = new ExtensionsType();
+			invoiceLine.setExtensions(extension);			
+		}
 		return invoiceLine;
 	}
 	
@@ -609,6 +635,7 @@ public class FacturaeWriter {
 		this.priceStrategy = new InvoicePriceStrategy();
 		this.totalPrice = Util.getAmount(priceStrategy.getTotalPrice(invoice, invoice));
 		this.taxBreakDowns = priceStrategy.getTaxBreakDowns(invoice, invoice);
+		this.pmsUtil = new PmsUtil(invoice);
 	}
 	
 	public void serialize( Invoice invoice, String fileName ) {
@@ -622,6 +649,9 @@ public class FacturaeWriter {
 			init( invoice );
 			Facturae facturae = getFacturae();  	
 	    	MarshallerUtil.marshal( facturae, fileName );		
+	    	if ( pmsUtil.isAddExtensions() ) {
+	    		pmsUtil.transform(fileName + FACTURAE_EXTENSION);
+	    	}
 		} catch (Throwable t ){
 		    try {
 				HibernateUtil.rollbackTransaction(sessionFactoryName);
@@ -636,45 +666,6 @@ public class FacturaeWriter {
 				HibernateUtil.setCloseSession(initSessionState);
 			}
 		}
-	}
-	
-	public static Invoice getAonInvoice( Integer ... id ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
-		int offset = 0;
-		Criteria criteria = new Criteria();
-		String status = bean.getFieldName(IEntityAlias.INVOICE_STATUS);
-		criteria.addEqualExpression( status, InvoiceStatus.SCORED);
-		String type = bean.getFieldName(IEntityAlias.INVOICE_TYPE);
-		criteria.addEqualExpression( type, com.code.aon.finance.enumeration.InvoiceType.SALES);
-		if ( id.length > 0 ) {
-			String idField = bean.getFieldName(IEntityAlias.INVOICE_ID);
-			criteria.addEqualExpression( idField, id[0] );			
-		} else {
-			int count = bean.getCount(criteria);
-			offset = RandomUtils.nextInt(count);
-		}
-		List<ITransferObject> list = bean.getList(criteria, offset, 1);
-		if (! list.isEmpty() ) {
-			return (Invoice) list.get(0);
-		}
-		return null;
-	}
-
-	public static List<ITransferObject> getAonInvoices() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
-		Criteria criteria = new Criteria();
-		String type = bean.getFieldName(IEntityAlias.INVOICE_TYPE);
-		criteria.addEqualExpression( type, com.code.aon.finance.enumeration.InvoiceType.SALES);
-		return bean.getList(criteria);
-	}
-	
-	public static Company getCompany() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Company.class);
-		List<ITransferObject> list = bean.getList(null, 0, 1);
-		if (! list.isEmpty() ) {
-			return (Company) list.get(0);
-		}
-		return null;
 	}
     
 }

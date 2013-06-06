@@ -36,6 +36,10 @@
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" >
 						<f:param name="reportKey" value="receipt" />
 					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="facturae"
+						value="#{financeBundle.finance_facturae}" target="_blank"
+						actionListener="#{invoicePrint.downloadInvoiceZip}"
+						styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
 				</ui:define>				
 				
 			</ui:decorate>

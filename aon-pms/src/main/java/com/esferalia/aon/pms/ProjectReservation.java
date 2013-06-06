@@ -201,6 +201,30 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 
 	@Transient
+	public int getAdultCount() throws ManagerBeanException {
+		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), getId());
+		int count = 0;
+		for (ITransferObject to : reservationRoomBean.getList(criteria)) {
+			count += ((ProjectReservationRoom)to).getAdults();
+		}
+		return count;
+	}
+
+	@Transient
+	public int getChildCount() throws ManagerBeanException {
+		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), getId());
+		int count = 0;
+		for (ITransferObject to : reservationRoomBean.getList(criteria)) {
+			count += ((ProjectReservationRoom)to).getChildren();
+		}
+		return count;
+	}
+
+	@Transient
 	public int getRoomCount() throws ManagerBeanException {
 		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
 		Criteria criteria = new Criteria();
