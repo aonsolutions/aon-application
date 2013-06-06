@@ -54,12 +54,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.messaging</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
 			<version>${project.version}</version>
 		</dependency>		

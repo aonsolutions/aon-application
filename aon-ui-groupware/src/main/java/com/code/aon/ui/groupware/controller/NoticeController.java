@@ -1,6 +1,5 @@
 package com.code.aon.ui.groupware.controller;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -9,7 +8,6 @@ import java.util.List;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
@@ -28,8 +26,6 @@ import com.code.aon.config.WorkGroup;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.groupware.Notice;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.RegistryMedia;
-import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.webmail.db.MailAccount;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -44,11 +40,6 @@ public class NoticeController extends BasicController {
 	private List<SelectItem> users;
 	private boolean sendMail = false;
 	private String mailList = "";
-	private boolean sendSMS = false;
-	private boolean modify = false;
-	private List<String> recipients = new ArrayList<String>();
-	private String recipient;
-	private int selected = -1;
 
 	public Integer getSelectOneValue() {
 		return SELECT_ONE_VALUE;
@@ -77,7 +68,6 @@ public class NoticeController extends BasicController {
 
 	public void workGroupChange(ValueChangeEvent event) {
 		mailList = null;
-		resetSMS();
 		Integer workGroupId = (Integer) event.getNewValue();
 		if (!SELECT_ONE_VALUE.equals(workGroupId)) {
 			((Notice) getTo()).setRecipient(null);
@@ -87,7 +77,6 @@ public class NoticeController extends BasicController {
 
 	public void recipientChange(ValueChangeEvent event) {
 		mailList = null;
-		resetSMS();
 	}
 
 	public void resetUsers() {
@@ -211,20 +200,6 @@ public class NoticeController extends BasicController {
 		}
 	}
 
-	private void chargeSMS() {
-		resetSMS();
-		try {
-			for (User user : getSelectedUsers()) {
-				String userSMS = getUserSMS(user);
-				if (! StringUtils.isEmpty(userSMS) ) {
-					this.recipients.add(userSMS);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error("Error retrieving cellulars", e);
-		}
-	}
-
 	private String getUserMail( User user ) {
 		try {
 			IManagerBean  bean = BeanManager.getManagerBean(MailAccount.class);
@@ -241,25 +216,6 @@ public class NoticeController extends BasicController {
 		}
 		return null;
 	}
-
-	private String getUserSMS(User user) {
-		try {
-			if ( user.getRegistry() != null ) {
-				IManagerBean  bean = BeanManager.getManagerBean(RegistryMedia.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), user.getRegistry());
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), MediaType.CELLULAR);
-				List<ITransferObject> list = bean.getList(criteria);
-				if (! list.isEmpty() ) {
-					RegistryMedia registryMedia = (RegistryMedia) list.get(0);
-					return registryMedia.getValue();
-				}				
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
-		}
-		return null;
-	}
 	
 	public boolean isSendMail() {
 		return sendMail;
@@ -268,16 +224,6 @@ public class NoticeController extends BasicController {
 	public void setSendMail(boolean sendMail) {
 		mailList = null;
 		this.sendMail = sendMail;
-	}
-
-	public boolean isSendSMS() {
-		return sendSMS;
-	}
-
-	public void setSendSMS(boolean sendSMS) {
-		if (!sendSMS)
-			resetSMS();
-		this.sendSMS = sendSMS;
 	}
 
 	public String getMailList() {
@@ -290,49 +236,6 @@ public class NoticeController extends BasicController {
 
 	public void setMailList(String mailList) {
 		this.mailList = mailList;
-	}
-
-	public void add2List(ActionEvent event) {
-		if (this.recipient != null && !this.recipient.equals("")) {
-			this.recipients.add(this.recipient);
-			this.recipient = null;
-		}
-	}
-
-	public void removeFromList(ActionEvent event) {
-		modify = true;
-		this.recipients.remove(this.selected);
-	}
-
-	public String getRecipient() {
-		return recipient;
-	}
-
-	public void setRecipient(String recipient) {
-		this.recipient = recipient;
-	}
-
-	public List<String> getRecipients() {
-		if (sendSMS && this.recipients.size() <= 0 && !modify)
-			chargeSMS();
-		else if (!sendSMS)
-			resetSMS();
-		return this.recipients;
-	}
-
-	public void setRecipients(List<String> recipients) {
-		this.recipients = recipients;
-	}
-
-	public void setSelected(int selected) {
-		this.selected = selected;
-	}
-
-	public void resetSMS() {
-		recipients = new ArrayList<String>();
-		recipient = null;
-		selected = -1;
-		modify = false;
 	}
 
 	public void workGroupCheck(FacesContext context, UIComponent component, Object value) {

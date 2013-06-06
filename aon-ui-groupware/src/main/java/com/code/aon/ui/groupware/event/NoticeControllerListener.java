@@ -2,7 +2,6 @@ package com.code.aon.ui.groupware.event;
 
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,7 +11,6 @@ import java.util.List;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.xml.soap.SOAPException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +26,6 @@ import com.code.aon.groupware.Notice;
 import com.code.aon.groupware.enumeration.AlarmSource;
 import com.code.aon.groupware.enumeration.AlarmStatus;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.messaging.sms.Message;
-import com.code.aon.messaging.sms.Sender;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -63,9 +59,6 @@ public class NoticeControllerListener extends ControllerAdapter {
 		if (noticeController.isSendMail() && noticeController.getMailList() != null) {
 			sendNoticeMail(notice, noticeController.getMailList());
 		}
-		if (noticeController.isSendSMS() && noticeController.getRecipients().size() > 0) {
-			sendNoticeSMS(notice, noticeController.getRecipients());
-		}
 	}
 
 	@Override
@@ -78,9 +71,7 @@ public class NoticeControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		NoticeController noticeController = (NoticeController)event.getController();
 		noticeController.setMailList(null);
-		noticeController.resetSMS();
 		noticeController.setSendMail(false);
-		noticeController.setSendSMS(false);
 		Notice notice = (Notice) noticeController.getTo();
 		noticeController.loadWorkGroups();
 		noticeController.loadUsers( notice.getWorkGroup().getId() );
@@ -92,9 +83,7 @@ public class NoticeControllerListener extends ControllerAdapter {
 		notice.setDate(new Date());
 		notice.getWorkGroup().setId(NoticeController.SELECT_ONE_VALUE);
 		noticeController.setMailList(null);
-		noticeController.resetSMS();
 		noticeController.setSendMail(false);
-		noticeController.setSendSMS(false);
 		noticeController.loadWorkGroups();
 		noticeController.resetUsers();
 	}
@@ -193,31 +182,4 @@ public class NoticeControllerListener extends ControllerAdapter {
 		}
 	}
 
-	private void sendNoticeSMS(Notice notice, List<String> recipients) {
-		Message message = new Message();
-		message.init();
-		AuthPrincipal user = AonUtil.getAuthPrincipal();
-		String domain = user.getDomain();
-		message.getInfo().setOrganization( domain );
-		message.getInfo().setOriginator( domain );
-		String content = notice.getSource() + " " + notice.getCompany() + " " + notice.getPhone() + " " + notice.getSubject();
-		content = content.trim();
-		message.getInfo().setMessage(content);
-		for (int i=0;i<recipients.size();i++) {
-			String recipient = recipients.get(i);
-			if (recipient.indexOf("-") >= 0) {
-				recipient = recipient.substring(recipient.lastIndexOf("-"));
-			}
-			message.add(recipient);
-		}
-		try {
-			Sender sender = new Sender();
-			sender.init(domain);
-			sender.send(message);
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
-		} catch (SOAPException e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-	}
 }
