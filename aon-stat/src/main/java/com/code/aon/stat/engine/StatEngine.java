@@ -1531,4 +1531,72 @@ public class StatEngine {
 		}
 	}
 	
+	
+	public List<Stat> getSalesByCountry(Connection c, Date fromDate, Date toDate) throws ManagerBeanException {
+		String select = "SELECT "
+			+" r.nationality "
+			+",SUM( i.taxable_base ) "
+			+" FROM invoice i "
+			+" INNER JOIN registry r ON r.id = i.registry "
+			+" WHERE " + DomainManager.getSQLWhereClause("i.domain")
+			+" AND i.issue_date >= ?"
+			+" AND i.issue_date <= ?"
+			+" AND i.type=1 "
+			+" GROUP BY r.nationality";
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			ps.setDate(1, new java.sql.Date(fromDate.getTime()));
+			ps.setDate(2, new java.sql.Date(toDate.getTime()));
+			rs = ps.executeQuery();
+			List<Stat> stats = new LinkedList<Stat>();
+			while (rs.next()) {
+				Stat stat = new Stat();
+				stat.setName(rs.getString(1));
+				stat.setAmount(CommonUtil.round(rs.getDouble(2)));
+				stats.add(stat);	
+			}
+			return stats;
+		} catch (SQLException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+		}
+	}
+	
+	public List<Stat> getSalesByProvince(Connection c, Date fromDate, Date toDate) throws ManagerBeanException {
+		String select = "SELECT "
+			+" g.name,SUM( i.taxable_base ) "
+			+" FROM invoice i "
+			+" LEFT OUTER JOIN raddress ra ON ra.registry = i.registry and ra.type = 0"
+			+" LEFT OUTER JOIN geozone   g ON g.id = ra.geozone "
+			+" WHERE " + DomainManager.getSQLWhereClause("i.domain")
+			+" AND i.issue_date >= ?"
+			+" AND i.issue_date <= ?"
+			+" AND i.type=1 "
+			+" GROUP BY g.name";
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			ps.setDate(1, new java.sql.Date(fromDate.getTime()));
+			ps.setDate(2, new java.sql.Date(toDate.getTime()));
+			rs = ps.executeQuery();
+			List<Stat> stats = new LinkedList<Stat>();
+			while (rs.next()) {
+				Stat stat = new Stat();
+				stat.setName(rs.getString(1));
+				stat.setAmount(CommonUtil.round(rs.getDouble(2)));
+				stats.add(stat);	
+			}
+			return stats;
+		} catch (SQLException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+		}
+	}
 }

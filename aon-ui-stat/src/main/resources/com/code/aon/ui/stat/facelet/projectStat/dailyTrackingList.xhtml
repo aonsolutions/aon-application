@@ -6,13 +6,10 @@
 	xmlns:c="http://java.sun.com/jstl/core"
     xmlns:rich="http://richfaces.org/rich">
 
-	<aon:dataTable id="dailyTrackingDataList" value="#{projectStat.dailyTrackingModel}"
-		rows="20" var="to"
-		columnClasses="aon-editDataTable-dateColumn,aon-editDataTable-textColumn, 
-						aon-editDataTable-textColumn,aon-editDataTable-textColumn,
-						aon-editDataTable-numberColumn">
+	<aon:dataTable id="dailyTrackingDataList" value="#{projectStat.dailyTrackingPage.list}" 
+		rows="#{projectStat.dailyTrackingPage.pageSize}" var="to">
 
-		<aon:column styleClass="aon-editDataTable-text" alias="DailyTracking.trackingDate">
+		<aon:column  styleClass="aon-editDataTable-dateColumn aon-width-80">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_date}" />
 			</f:facet>
@@ -22,7 +19,7 @@
 			</aon:outputText>
 		</aon:column>
 
-		<aon:column styleClass="aon-editDataTable-iconColumn" alias="DailyTracking.comments">
+		<aon:column styleClass="aon-editDataTable-iconColumn">
 			<f:facet name="header">
 				<aon:outputText value="C" />
 			</f:facet>
@@ -38,30 +35,29 @@
 			</aon:div>
 		</aon:column>
 
-		<aon:column styleClass="aon-editDataTable-text" alias="DailyTracking.taskHolder.registry.name"
-			rendered="#{dailyTracking.monitor}">
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
 			<f:facet name="header">
 				<aon:outputText value="#{groupwareBundle.groupware_user}" />
 			</f:facet>
-			<aon:outputText value="#{to.taskHolder.registry.fullName}" />
+			<aon:outputText value="#{to.taskHolderName}" />
 		</aon:column>
 
-		<aon:column styleClass="aon-editDataTable-text" alias="DailyTracking.jobType.description">
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 			<f:facet name="header">
 				<aon:outputText
 					value="#{groupwareBundle.groupware_job_type}" />
 			</f:facet>
-			<aon:outputText value="#{to.jobType.description}" />
+			<aon:outputText value="#{to.jobDescription}" />
 		</aon:column>
 
-		<aon:column styleClass="aon-editDataTable-text" alias="DailyTracking.registry.name">
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 			<f:facet name="header">
 				<aon:outputText value="#{projectBundle.project_assigned}" />
 			</f:facet>
-			<aon:outputText value="#{to.registry.fullName}" />
+			<aon:outputText value="#{to.registryName}" />
 		</aon:column>
 
-		<aon:column styleClass="aon-editDataTable-number" alias="DailyTracking.trackingDuration">
+		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 			<f:facet name="header">
 				<aon:outputText
 					value="#{groupwareBundle.groupware_duration}" />
@@ -71,7 +67,7 @@
 			</aon:outputText>
 		</aon:column>
 
-		<aon:column styleClass="aon-editDataTable-number" alias="DailyTracking.trackingDuration">
+		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 			<f:facet name="header">
 				<aon:outputText value="#{groupwareBundle.groupware_cost}" />
 			</f:facet>
@@ -80,7 +76,7 @@
 			</aon:outputText>
 		</aon:column>
 
-		<aon:column styleClass="aon-editDataTable-number" alias="DailyTracking.trackingDuration">
+		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_total}" />
 			</f:facet>
@@ -89,5 +85,32 @@
 			</aon:outputText>
 		</aon:column>
 	</aon:dataTable>
-	<aon:dataScroller2 for="dailyTrackingDataList" showNote="true" />
+
+	<h:panelGrid columns="3" styleClass="aon-width-all" 
+		columnClasses="aon-width-100,aon-width-auto,aon-width-100">
+		<aon:div>
+			<aon:commandLink value="#{bundle.aon_previous}"
+				styleClass="aon-icon-previous"
+				style="padding-left: 20px;" 
+				rendered="#{projectStat.dailyTrackingPage.previousAvailable}"
+				actionListener="#{projectStat.onPreviousDailyTrackingList}" 
+				/>
+			<aon:outputText value="&#160;"/>
+		</aon:div>
+			
+		<aon:outputText value="&#160;"/>
+		
+		<aon:div>
+			<aon:commandLink value="#{bundle.aon_next}"
+				styleClass="aon-icon-next aon-padding-left" 
+				style="padding-left: 20px;" 
+				rendered="#{projectStat.dailyTrackingPage.nextAvailable}"
+				actionListener="#{projectStat.onNextDailyTrackingList}" 
+				/>
+			<aon:outputText value="&#160;"/>
+		</aon:div>
+				
+	</h:panelGrid>
+
+	
 </ui:composition>

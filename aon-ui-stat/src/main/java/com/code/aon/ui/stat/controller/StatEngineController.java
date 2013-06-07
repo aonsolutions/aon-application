@@ -1,5 +1,7 @@
 package com.code.aon.ui.stat.controller;
 
+import java.io.IOException;
+import java.sql.Connection;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -13,15 +15,22 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.stat.Stat;
@@ -1271,4 +1280,127 @@ public class StatEngineController {
 		controller.select(event, ((Invoice) this.getInvoicesModel().getRowData()).getId());
 	}
 	
+	public void  onSalesByCountry(ActionEvent event)  {
+		Connection c = null;
+		try {
+			c = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			List<Stat> stats = getStatEngine().getSalesByCountry(c, getParams().getFromDate(), getParams().getToDate());
+			String beforePage = "<html>"
+				+	"<head>"
+				+		"<script type='text/javascript' src='https://www.google.com/jsapi'></script>"
+				+		"<script type='text/javascript'>"
+				+			"google.load('visualization', '1', {'packages': ['geochart']});"
+				+			"google.setOnLoadCallback(drawRegionsMap);"
+				+			"function drawRegionsMap() {"
+				+				"var data = google.visualization.arrayToDataTable(["
+				+				"['Pais', 'Ventas']";
+			String page = "";
+			for (Stat stat : stats) {
+				page += ",['"+stat.getName()+"',"+stat.getAmount()+"]";
+			}
+			String afterPage = "]);"
+				+				"var options = {};"
+				+				"var chart = new google.visualization.GeoChart(document.getElementById('chart_div'));"
+				+				"chart.draw(data, options);"
+				+			"};"
+				+		"</script>"
+				+	"</head>"
+				+	"<body>"
+				+			"<div id='chart_div' style='width: 900px; height: 500px;'></div>"
+				+	"</body>"
+				+"</html>";
+			
+	        FacesContext context = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+			if ( response instanceof HttpServletResponseWrapper) {
+				response = (HttpServletResponse) ((HttpServletResponseWrapper) response).getResponse();
+			}
+			response.setContentType( MimeType.MIME_HTML.getName() );
+			response.getWriter().print(beforePage);
+			response.getWriter().print(page);
+			response.getWriter().print(afterPage);
+			response.flushBuffer();
+	        context.responseComplete();    			
+		} catch (ManagerBeanException e) {
+			String msg = "Error al obtener los datos. " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (AonConnectionException e) {
+			String msg = "Error al obtener los datos. " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (IOException e) {
+			String msg = "Error al obtener los datos. " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} finally {
+			DatabaseUtil.closeQuietly(c);
+		}
+	}
+
+	public void  onSalesByProvince(ActionEvent event)  {
+		Connection c = null;
+		try {
+			c = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			List<Stat> stats = getStatEngine().getSalesByProvince(c, getParams().getFromDate(), getParams().getToDate());
+			String beforePage = "<html>"
+				+	"<head>"
+				+		"<script type='text/javascript' src='https://www.google.com/jsapi'></script>"
+				+		"<script type='text/javascript'>"
+				+			"google.load('visualization', '1', {'packages': ['geochart']});"
+				+			"google.setOnLoadCallback(drawRegionsMap);"
+				+			"function drawRegionsMap() {"
+				+				"var data = google.visualization.arrayToDataTable(["
+				+				"['Pais', 'Ventas']";
+			String page = "";
+			for (Stat stat : stats) {
+				if (StringUtils.isNotEmpty(stat.getName())) {
+					page += ",['"+stat.getName()+"',"+stat.getAmount()+"]";	
+				}
+			}
+			String afterPage = "]);"
+				+				"var options = {" 
+				+				"region: 'ES',"
+				+				"displayMode: 'markers',"
+				+				"resolution: 'provinces',"
+				+				"colorAxis: {colors: ['red', 'green']}"
+				+				"};"
+				+				"var chart = new google.visualization.GeoChart(document.getElementById('chart_div'));"
+				+				"chart.draw(data, options);"
+				+			"};"
+				+		"</script>"
+				+	"</head>"
+				+	"<body>"
+				+			"<div id='chart_div' style='width: 900px; height: 500px;'></div>"
+				+	"</body>"
+				+"</html>";
+			
+	        FacesContext context = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+			if ( response instanceof HttpServletResponseWrapper) {
+				response = (HttpServletResponse) ((HttpServletResponseWrapper) response).getResponse();
+			}
+			response.setContentType( MimeType.MIME_HTML.getName() );
+			response.getWriter().print(beforePage);
+			response.getWriter().print(page);
+			response.getWriter().print(afterPage);
+			response.flushBuffer();
+	        context.responseComplete();    			
+		} catch (ManagerBeanException e) {
+			String msg = "Error al obtener los datos. " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (AonConnectionException e) {
+			String msg = "Error al obtener los datos. " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (IOException e) {
+			String msg = "Error al obtener los datos. " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} finally {
+			DatabaseUtil.closeQuietly(c);
+		}
+	}
+
 }

@@ -5,24 +5,26 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
-
-	<h:panelGrid columns="2"
-		columnClasses="aon-width-400
-						 		,aon-width-400 aon-vertical-align-top
-						 		,aon-width-auto aon-vertical-align-top">
+	
+	<h:panelGrid id="economicDataContainer" columns="2" styleClass="aon-width-all"
+		columnClasses="aon-width-half aon-vertical-align-top
+				 	  ,aon-width-half aon-vertical-align-top">
 
 		<aon:div styleClass="aon-width-all aon-text-center">
+			<div id="pie_chart_div" style="width: 100%; height: 200px;">
+			</div>
+<!-- 			
 			<a4j:mediaOutput element="img" cacheable="false" session="false"
 				createContent="#{projectStat.paintPieChart}" mimeType="image/jpeg">
-				<!-- Se agrega este param para que no cachee el resultado -->
 				<f:param name="value" value="#{projectStat.lastModified}" />
 			</a4j:mediaOutput>
+-->
 		</aon:div>
 
 		<aon:div styleClass="aon-width-all">
-			<aon:panelGrid columns="2" styleClass="aon-width-400"
-				columnClasses="aon-panelGrid-odd aon-width-200 aon-text-right
-												,aon-panelGrid-even aon-width-auto aon-text-right">
+			<aon:panelGrid columns="2" styleClass="aon-width-all"
+				columnClasses="aon-panelGrid-odd aon-width-half aon-text-right
+							  ,aon-panelGrid-even aon-width-half aon-text-right">
 	
 				<aon:outputText value="#{statBundle.stat_offer_amount}" />
 				<aon:outputText value="#{projectStat.totalOffered}">
@@ -50,9 +52,9 @@
 				</aon:outputText>
 			</aon:panelGrid>			
 	
-			<aon:panelGrid columns="2" styleClass="aon-width-400 aon-margin-top"
-				columnClasses="aon-panelGrid-odd aon-width-200 aon-text-right
-												,aon-panelGrid-even aon-width-auto aon-text-right">
+			<aon:panelGrid columns="2" styleClass="aon-width-all aon-margin-top"
+				columnClasses="aon-panelGrid-odd aon-width-half aon-text-right
+							  ,aon-panelGrid-even aon-width-half aon-text-right">
 				<f:facet name="header">
 					<aon:outputText value="Desglose de Costos" />	
 				</f:facet>
@@ -62,15 +64,15 @@
 				</aon:outputText>
 	
 				<aon:outputText value="#{statBundle.stat_labour_amount}" />
-				<aon:outputText value="#{projectStat.totalLabour}">
+				<aon:outputText value="#{projectStat.totalDailyTracking}">
 					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
 			</aon:panelGrid>
 		</aon:div>
 
 		<aon:panelGrid columns="2" styleClass="aon-width-all"
-			columnClasses="aon-panelGrid-odd aon-width-auto aon-text-right
-						  ,aon-panelGrid-even aon-width-100 aon-text-right">
+			columnClasses="aon-panelGrid-odd aon-width-half aon-text-right
+						  ,aon-panelGrid-even aon-width-half aon-text-right">
 
 			<aon:outputText value="% Diferencia s/Presupuesto" />
 			<aon:panelGroup>
@@ -104,7 +106,7 @@
 
 			<aon:outputText value="% Mano de obra s/ Ingresos" />
 			<aon:panelGroup>
-				<aon:outputText value="#{projectStat.totalLabour * 100 / projectStat.totalSales}">
+				<aon:outputText value="#{projectStat.totalDailyTracking * 100 / projectStat.totalSales}">
 					<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 				</aon:outputText>
 				<aon:outputText value="&#160;%" />
@@ -128,11 +130,59 @@
 		</aon:panelGrid>
 		
 		<aon:div styleClass="aon-width-all aon-text-center">
+			<div id="bar_chart_div" style="width: 100%; height: 200px;"></div>
+<!-- 			
 			<a4j:mediaOutput element="img" cacheable="false" session="false"
 				createContent="#{projectStat.paintBarChart}" mimeType="image/jpeg">
-				<!-- Se agrega este param para que no cachee el resultado -->
 				<f:param name="value" value="#{projectStat.lastModified}" />
 			</a4j:mediaOutput>
+ -->
 		</aon:div>
 	</h:panelGrid>
+
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript">
+		google.load("visualization", "1", {callback : drawCharts ,packages:["corechart"]});
+		function drawCharts(){
+			var whatever = Array.prototype.reduce;
+			try {
+				Array.prototype.reduce = undefined;
+				var data = google.visualization.arrayToDataTable([
+					['', ''],
+					['#{statBundle.stat_income_amount}'		 , #{projectStat.totalSales}],
+					['#{statBundle.stat_invoice_cost_amount}', #{projectStat.totalInvoiceCosts}],
+					['#{statBundle.stat_labour_amount}'      , #{projectStat.totalDailyTracking}]
+				]);
+				var options = {
+					colors:['#669966','#980000','#6699FF' ]
+				};
+				var chart = new google.visualization.PieChart(document.getElementById('pie_chart_div'));
+				chart.draw(data, options);
+				
+				
+				data = google.visualization.arrayToDataTable([
+				  ['TITLE',
+				   	'#{statBundle.stat_offer_amount}',
+				   	'#{statBundle.stat_income_amount}',
+				   	'#{statBundle.stat_invoice_cost_amount}',
+				   	'#{statBundle.stat_labour_amount}',
+				   	'#{statBundle.stat_result}'],
+				  ['',    
+				  	#{projectStat.totalOffered},
+				  	#{projectStat.totalSales},
+				  	#{projectStat.totalInvoiceCosts},
+				  	#{projectStat.totalDailyTracking},
+				  	#{projectStat.totalResult}]  
+				]);
+				options = {
+					legend: {position: 'bottom'},
+					colors:['#99FF33','#669966','#980000','#6699FF', '#{projectStat.totalResult lt 0?'red':'green'}']
+				};
+				 chart = new google.visualization.BarChart(document.getElementById('bar_chart_div'));
+				chart.draw(data, options);
+			} finally {
+				Array.prototype.reduce = whatever;			
+			}
+		}
+   </script>
 </ui:composition>

@@ -8,9 +8,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
-	
 	<ui:define name="content">
-
 		<aon:form id="projectForm">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
@@ -47,21 +45,30 @@
 				</aon:panelGrid>
 
 				<c:if test="#{!project.new}">
-					<aon:panelTabSet id="projectTabSet">
+					<aon:panelTabSet id="projectTabSet" selectedTab="#{project.selectedTab}">
 						<aon:panelTab id="project_activities" label="#{projectBundle.project_activities}">
-							<ui:include src="/com/code/aon/ui/project/facelet/project/projectActivity.xhtml" />
+							<c:if test="#{project.selectedTab == 'project_activities' or project.selectedTab == null}">
+								<ui:include src="/com/code/aon/ui/project/facelet/project/projectActivity.xhtml" />
+							</c:if>
 						</aon:panelTab>
-						<aon:panelTab id="project_charts" label="#{statBundle.stat_economic_summary}"
+						<aon:panelTab id="#{project.graphTabId}" label="#{statBundle.stat_economic_summary}"
 							actionListener="#{project.onGraphicTab}">
-							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/economicSummary.xhtml" />
+							<c:if test="#{project.selectedTab == project.graphTabId}">
+								<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/economicSummary.xhtml" />
+								<aon:outputText value="#{statBundle.stat_project_comment}" styleClass="aon-italic"/>
+							</c:if>
 						</aon:panelTab>
-						<aon:panelTab id="project_gantt" label="Gantt" actionListener="#{project.onGraphicTab}">
-							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/gantt.xhtml" />
+						<aon:panelTab id="#{project.ganttTabId}" label="Gantt" actionListener="#{project.onGraphicTab}">
+							<c:if test="#{project.selectedTab == project.ganttTabId}">
+								<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/gantt.xhtml" />
+							</c:if>
 						</aon:panelTab>
 						<aon:panelTab id="documents" label="#{bundle.aon_documents}">
-							<ui:include	src="/com/code/aon/ui/project/facelet/projectAttachment/tab_grid.xhtml" >
-								<ui:param name="controller" value="#{projectAttach}" />
-							</ui:include>
+							<c:if test="#{project.selectedTab == 'documents'}">
+								<ui:include	src="/com/code/aon/ui/project/facelet/projectAttachment/tab_grid.xhtml" >
+									<ui:param name="controller" value="#{projectAttach}" />
+								</ui:include>
+							</c:if>
 						</aon:panelTab>						
 					</aon:panelTabSet>
 				</c:if>

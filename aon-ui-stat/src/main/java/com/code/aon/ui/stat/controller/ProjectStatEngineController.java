@@ -3,70 +3,127 @@ package com.code.aon.ui.stat.controller;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
+import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PiePlot3D;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.StackedBarRenderer3D;
-import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.gantt.Task;
 import org.jfree.data.gantt.TaskSeries;
 import org.jfree.data.gantt.TaskSeriesCollection;
-import org.jfree.data.general.DefaultPieDataset;
 
-import com.code.aon.commercial.Offer;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.finance.Invoice;
-import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
-import com.code.aon.groupware.DailyTracking;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.groupware.enumeration.TaskStatus;
-import com.code.aon.product.strategy.IPriceStrategy;
-import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.stat.DailyTracking;
+import com.code.aon.stat.Invoice;
+import com.code.aon.stat.Offer;
+import com.code.aon.stat.PagedList;
+import com.code.aon.stat.engine.ProjectStatEngine;
+import com.code.aon.stat.engine.ProjectStatParams;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProjectStatEngineController {
+	private static String TOTAL_ERROR_MSG = "No se pudieron calcular los totales";
+
+	private static String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
+	private static String PURCHASE_INVOICE_CONTROLLER_NAME = "purchaseInvoice";
+	private static String EXPENSE_INVOICE_CONTROLLER_NAME = "expenseInvoice";
+	private static String UNDEDUCTIBLE_INVOICE_CONTROLLER_NAME = "undeductibleInvoice";
+	private static String SALE_INVOICE_FORM_NAME = "saleInvoice_form";
+	private static String PURCHASE_INVOICE_FORM_NAME = "purchaseInvoice_form";
+	private static String EXPENSE_INVOICE_FORM_NAME = "expenseInvoice_form";
+	private static String UNDEDUCTIBLE_INVOICE_FORM_NAME = "undeductibleInvoice_form";
+	private static String OFFER_CONTROLLER_NAME = "offer";;
 
 	private String backAction;
+	private String selectedTab;
 
 	private Project project;
-	private IPriceStrategy invoicePriceStrategy;
-	private IPriceStrategy priceStrategy;
-	private DataModel approvedOfferModel;
-	private DataModel saleInvoiceModel;
-	private DataModel costInvoiceModel;
-	private DataModel dailyTrackingModel;
-	private List<Offer> approvedOfferList;
-	private List<Invoice> saleInvoiceList;
-	private List<Invoice> costInvoiceList;
-	private List<DailyTracking> dailyTrackingList;
+	private Date fromDate;
+	private Date toDate;
+
+	private PagedList<Offer> approvedOfferPage;
+	private PagedList<Invoice> saleInvoicePage;
+	private PagedList<Invoice> costInvoicePage;
+	private PagedList<DailyTracking> dailyTrackingPage;
+	
 	private double totalOffered;
 	private double totalSales;
 	private double totalCosts;
 	private double totalInvoiceCosts;
-	private double totalLabour;
+	private double totalDailyTracking;
+
+
+	private String invoiceViewer;
+	private ProjectStatEngine engine;
+	
+	public ProjectStatEngine getEngine() {
+		if (engine == null) {
+			engine = new ProjectStatEngine();
+		}
+		return engine;
+	}
+	
+	
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
+
+	public Date getFromDate() {
+		if (fromDate == null) {
+			setFromDate(CommonUtil.getYearFirstDay(2000));
+		}
+		return fromDate;
+	}
+
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		if (toDate == null) {
+			setToDate(CommonUtil.getYearLastDay(2020));
+		}
+		return toDate;
+	}
+
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
+
+	public String getInvoiceViewer() {
+		return invoiceViewer;
+	}
+
+	public void setInvoiceViewer(String invoiceViewer) {
+		this.invoiceViewer = invoiceViewer;
+	}
 
 	public String getBackAction() {
 		return backAction;
@@ -81,267 +138,131 @@ public class ProjectStatEngineController {
 	}
 
 	public void setProject(Project project) {
+		int currentProject = this.project==null?-1:this.project.getId()==null?-1:this.project.getId();
+		int assignableProject = project==null?-1:project.getId()==null?-1:project.getId();
 		this.project = project;
-	}
-
-	public IPriceStrategy getInvoicePriceStrategy() {
-		if (invoicePriceStrategy == null) {
-			invoicePriceStrategy = new InvoicePriceStrategy();
+		if (currentProject != assignableProject) {
+			initializeTotals();
 		}
-		return invoicePriceStrategy;
 	}
-
-	public IPriceStrategy getPriceStrategy() {
-		if (priceStrategy == null) {
-			priceStrategy = PriceStrategyFactory.getPriceStrategy();
-		}
-		return priceStrategy;
-	}
-
-	public DataModel getApprovedOfferModel() {
-		if (approvedOfferModel == null) {
-			approvedOfferModel = new ListDataModel(getApprovedOfferList());
-		}
-		return approvedOfferModel;
-	}
-
-	public void setApprovedOfferModel(DataModel approvedOfferModel) {
-		this.approvedOfferModel = approvedOfferModel;
-	}
-
-	public DataModel getSaleInvoiceModel() {
-		if (saleInvoiceModel == null) {
-			saleInvoiceModel = new ListDataModel(getSaleInvoiceList());
-		}
-		return saleInvoiceModel;
-	}
-
-	public void setSaleInvoiceModel(DataModel saleInvoiceModel) {
-		this.saleInvoiceModel = saleInvoiceModel;
-	}
-
-	public DataModel getCostInvoiceModel() {
-		if (costInvoiceModel == null) {
-			costInvoiceModel = new ListDataModel(getCostInvoiceList());
-		}
-		return costInvoiceModel;
-	}
-
-	public void setCostInvoiceModel(DataModel costInvoiceModel) {
-		this.costInvoiceModel = costInvoiceModel;
-	}
-
-	public DataModel getDailyTrackingModel() {
-		if (dailyTrackingModel == null) {
-			dailyTrackingModel = new ListDataModel(getDailyTrackingList());
-		}
-		return dailyTrackingModel;
-	}
-
-	public void setDailyTrackingModel(DataModel dailyTrackingModel) {
-		this.dailyTrackingModel = dailyTrackingModel;
-	}
-
-	public List<Offer> getApprovedOfferList() {
+	
+	private void initializeTotals() {
+		Connection c = null;
 		try {
-			if (approvedOfferList == null) {
-				approvedOfferList = getApprovedOffers();
-			}
-			return approvedOfferList;
+			c = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			this.totalOffered = getEngine().getTotalOffered(c, getParams());
+			this.totalInvoiceCosts = getEngine().getTotalInvoiceCosts(c, getParams());
+			this.totalSales = getEngine().getTotalSales(c, getParams());
+			this.totalDailyTracking = getEngine().getTotalDailyTracking(c, getParams());
+		} catch (AonConnectionException e) {
+			AonUtil.addErrorMessage(TOTAL_ERROR_MSG);
+			throw new AbortProcessingException(TOTAL_ERROR_MSG,e);
 		} catch (ManagerBeanException e) {
-			String msg = "Unable to load data.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
+			AonUtil.addErrorMessage(TOTAL_ERROR_MSG);
+			throw new AbortProcessingException(TOTAL_ERROR_MSG,e);
+		} finally {
+			DatabaseUtil.closeQuietly(c);
 		}
-	}
-
-	public void setApprovedOfferList(List<Offer> approvedOfferList) {
-		this.approvedOfferList = approvedOfferList;
-	}
-
-	public List<Invoice> getSaleInvoiceList() {
-		try {
-			if (saleInvoiceList == null) {
-				saleInvoiceList = getSaleInvoices();
-			}
-			return saleInvoiceList;
-		} catch (ManagerBeanException e) {
-			String msg = "Unable to load data.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		}
-	}
-
-	public void setSaleInvoiceList(List<Invoice> saleInvoiceList) {
-		this.saleInvoiceList = saleInvoiceList;
-	}
-
-	public List<Invoice> getCostInvoiceList() {
-		try {
-			if (costInvoiceList == null) {
-				costInvoiceList = getCostInvoices();
-			}
-			return costInvoiceList;
-		} catch (ManagerBeanException e) {
-			String msg = "Unable to load data.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		}
-	}
-
-	public void setCostInvoiceList(List<Invoice> costInvoiceList) {
-		this.costInvoiceList = costInvoiceList;
-	}
-
-	public List<DailyTracking> getDailyTrackingList() {
-		try {
-			if (dailyTrackingList == null) {
-				dailyTrackingList = getDailyTrackings();
-			}
-			return dailyTrackingList;
-		} catch (ManagerBeanException e) {
-			String msg = "Unable to load data.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		}
-	}
-
-	public void setDailyTrackingList(List<DailyTracking> dailyTrackingList) {
-		this.dailyTrackingList = dailyTrackingList;
 	}
 
 	public double getTotalOffered() {
-		if (totalOffered == 0) {
-			for (Offer offer : getApprovedOfferList()) {
-				totalOffered += CommonUtil.round(getPriceStrategy()
-						.getTotalPrice(offer, offer.getTarget()));
-			}
-		}
 		return CommonUtil.round(totalOffered);
 	}
 
-	public void setTotalOffered(double totalOffered) {
-		this.totalOffered = totalOffered;
-	}
-
 	public double getTotalSales() {
-		if (totalSales == 0) {
-			for (Invoice invoice : getSaleInvoiceList()) {
-				totalSales = CommonUtil.round(totalSales + invoice.getTotal());
-			}
-		}
-		return CommonUtil.round(totalSales);
-	}
-
-	public void setTotalSales(double totalSales) {
-		this.totalSales = totalSales;
+		return CommonUtil.round(this.totalSales);
 	}
 
 	public double getTotalCosts() {
-		if (totalCosts == 0) {
-			totalCosts = CommonUtil.round(totalCosts + getTotalInvoiceCosts());
-			totalCosts = CommonUtil.round(totalCosts + getTotalLabour());
-		}
+		totalCosts = CommonUtil.round(getTotalInvoiceCosts() + getTotalDailyTracking());
 		return CommonUtil.round(totalCosts);
 	}
 
-	public void setTotalCosts(double totalCosts) {
-		this.totalCosts = totalCosts;
-	}
-
 	public double getTotalInvoiceCosts() {
-		if (totalInvoiceCosts == 0) {
-			for (Invoice invoice : getCostInvoiceList()) {
-				totalInvoiceCosts = CommonUtil.round(totalInvoiceCosts + invoice.getTotal());
-			}
-		}
-		return totalInvoiceCosts;
+		return CommonUtil.round(totalInvoiceCosts);
 	}
 
-	public void setTotalInvoiceCosts(double totalInvoiceCosts) {
-		this.totalInvoiceCosts = totalInvoiceCosts;
-	}
-
-	public double getTotalLabour() {
-		if (totalLabour == 0) {
-			for (DailyTracking dt : getDailyTrackingList()) {
-				totalLabour = CommonUtil.round(totalLabour + dt.getAmount());
-			}
-		}
-		return totalLabour;
-	}
-
-	public void setTotalLabour(double totalLabour) {
-		this.totalLabour = totalLabour;
+	public double getTotalDailyTracking() {
+		return CommonUtil.round(totalDailyTracking);
 	}
 
 	public double getTotalResult() {
 		return CommonUtil.round(getTotalSales() - getTotalCosts());
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<Offer> getApprovedOffers() throws ManagerBeanException {
-		String select = "select Offer from Offer as Offer where "+DomainManager.getSQLWhereClause("Offer.domain")+" AND Offer.status in (1, 4) AND Offer.project.id = "
-				+ project.getId() + " order by Offer.issueDate desc";
-		Session session = HibernateUtil.getSession(HibernateUtil
-				.getSessionFactoryName());
-		Query query = session.createQuery(select);
-		return query.list();
+	public void onRefresh(ActionEvent event) {
+		initializeTotals();
+		initializeProjectData();
+	}
+	
+	public void onNextSaleInvoiceList(ActionEvent event) {
+		this.saleInvoicePage.setList(null); 
+	}
+	public void onPreviousSaleInvoiceList(ActionEvent event) {
+		try {
+			getSaleInvoicePage().preparePreviousPage();
+			this.saleInvoicePage.setList(null);
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo recuperar la lista de facturas";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<Invoice> getSaleInvoices() throws ManagerBeanException {
-		String select = "select Invoice from Invoice as Invoice where "+DomainManager.getSQLWhereClause("Invoice.domain")+" AND Invoice.type = 1 AND Invoice.project.id = "
-				+ project.getId() + " order by Invoice.issueDate desc";
-		Session session = HibernateUtil.getSession(HibernateUtil
-				.getSessionFactoryName());
-		Query query = session.createQuery(select);
-		return query.list();
+	public void onNextCostInvoiceList(ActionEvent event) {
+		this.costInvoicePage.setList(null); 
 	}
-
-	@SuppressWarnings("unchecked")
-	public List<Invoice> getCostInvoices() throws ManagerBeanException {
-		String select = "select Invoice from Invoice as Invoice where "+DomainManager.getSQLWhereClause("Invoice.domain")+" AND Invoice.type <> 1 AND Invoice.project.id = "
-				+ project.getId() + " order by Invoice.issueDate desc";
-		Session session = HibernateUtil.getSession(HibernateUtil
-				.getSessionFactoryName());
-		Query query = session.createQuery(select);
-		return query.list();
+	public void onPreviousCostInvoiceList(ActionEvent event) {
+		try {
+			getCostInvoicePage().preparePreviousPage();
+			this.costInvoicePage.setList(null);
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo recuperar la lista de facturas";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
-
-	@SuppressWarnings("unchecked")
-	public List<DailyTracking> getDailyTrackings() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(DailyTracking.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				bean.getFieldName(IEntityAlias.DAILY_TRACKING_PROJECT_ID),
-				project.getId());
-		List<?> list = bean.getList(criteria);
-		return (List<DailyTracking>) list;
+	
+	public void onNextDailyTrackingList(ActionEvent event) {
+		this.dailyTrackingPage.setList(null); 
+	}
+	public void onPreviousDailyTrackingList(ActionEvent event) {
+		try {
+			getDailyTrackingPage().preparePreviousPage();
+			this.dailyTrackingPage.setList(null);
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo recuperar la lista de mano de obra";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+	}
+		
+	public void onNextApprovedOfferList(ActionEvent event) {
+		this.approvedOfferPage.setList(null); 
+	}
+	public void onPreviousApprovedOfferList(ActionEvent event) {
+		try {
+			getApprovedOfferPage().preparePreviousPage();
+			this.approvedOfferPage.setList(null);
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo recuperar la lista de presupuestos";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 
 	public void initializeProjectData() {
-		setApprovedOfferModel(null);
-		setSaleInvoiceModel(null);
-		setCostInvoiceModel(null);
-		setApprovedOfferList(null);
-		setSaleInvoiceList(null);
-		setCostInvoiceList(null);
-		setDailyTrackingModel(null);
-		setDailyTrackingList(null);
-		setTotalOffered(0);
-		setTotalSales(0);
-		setTotalCosts(0);
-		setTotalLabour(0);
-		setTotalInvoiceCosts(0);
-	}
-
-	public double getApprovedOfferTotal() throws ManagerBeanException {
-		Offer offer = (Offer) getApprovedOfferModel().getRowData();
-		return getPriceStrategy().getTotalPrice(offer, offer.getTarget());
+		this.saleInvoicePage = null;
+		this.costInvoicePage = null;
+		this.approvedOfferPage = null;
+		this.dailyTrackingPage = null;
 	}
 
 	public String backAction() {
+		setFromDate(null);
+		setToDate(null);
+		initializeTotals();
+		initializeProjectData();
 		if (StringUtils.isNotBlank(getBackAction())) {
 			return getBackAction();
 		}
@@ -350,66 +271,6 @@ public class ProjectStatEngineController {
 
 	public Date getLastModified() {
 		return new Date();
-	}
-
-	public void paintPieChart(OutputStream out, Object data) throws IOException {
-		DefaultPieDataset chartDataset = new DefaultPieDataset();
-		String incomeAlias = AonUtil.getMessage("statBundle","stat_income_amount");
-		String invoiceCostAlias = AonUtil.getMessage("statBundle", "stat_invoice_cost_amount");
-		String labourAlias = AonUtil.getMessage("statBundle","stat_labour_amount");
-		chartDataset.setValue(incomeAlias, getTotalSales());
-		chartDataset.setValue(invoiceCostAlias, getTotalInvoiceCosts());
-		chartDataset.setValue(labourAlias, getTotalLabour());
-		JFreeChart chart = ChartFactory.createPieChart3D(null, chartDataset,
-				true, true, false);
-		PiePlot3D plot = (PiePlot3D) chart.getPlot();
-		plot.setSectionPaint(incomeAlias, new Color(176, 224, 230));
-		plot.setSectionPaint(invoiceCostAlias, new Color(000, 149, 182));
-		plot.setSectionPaint(labourAlias, new Color(021,  96, 189));
-		plot.setBackgroundPaint(Color.WHITE);
-		plot.setDarkerSides(true);
-		plot.setLabelBackgroundPaint(new Color(240, 255, 255));
-		plot.setNoDataMessage(AonUtil.getMessage("bundle","aon_search_no_results"));
-		plot.setOutlinePaint(null);
-		plot.setCircular(false);
-		int width = 350;
-		int height = 200;
-		float quality = 1;
-		ChartUtilities.writeChartAsJPEG(out, quality, chart, width, height);
-	}
-
-	public void paintBarChart(OutputStream out, Object data) throws IOException {
-		String offeredAlias = AonUtil.getMessage("statBundle","stat_offer_amount");
-		String incomeAlias = AonUtil.getMessage("statBundle","stat_income_amount");
-		String invoiceCostAlias = AonUtil.getMessage("statBundle", "stat_invoice_cost_amount");
-		String labourAlias = AonUtil.getMessage("statBundle","stat_labour_amount");
-		String costAlias = AonUtil.getMessage("statBundle","stat_cost_amount");
-		String resultAlias = AonUtil.getMessage("statBundle","stat_result");
-		
-		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		dataset.addValue(getTotalOffered(), offeredAlias, offeredAlias);
-		dataset.addValue(getTotalSales(), incomeAlias, incomeAlias);
-		dataset.addValue(getTotalInvoiceCosts(), invoiceCostAlias, costAlias);
-		dataset.addValue(getTotalLabour(), labourAlias, costAlias);
-		dataset.addValue(getTotalResult(),resultAlias, resultAlias);
-		
-		JFreeChart chart = ChartFactory.createStackedBarChart3D(null,null,null,
-				dataset,PlotOrientation.HORIZONTAL,true,true,false);
-
-		CategoryPlot plot = (CategoryPlot) chart.getPlot();
-		StackedBarRenderer3D renderer = (StackedBarRenderer3D) plot.getRenderer();
-		renderer.setSeriesPaint(0, new Color(123, 104, 138));
-		renderer.setSeriesPaint(1, new Color(176, 224, 230));
-		renderer.setSeriesPaint(2, new Color(000, 149, 182));
-		renderer.setSeriesPaint(3, new Color(021,  96, 189));
-		renderer.setSeriesPaint(4, getTotalResult()>=0?Color.BLUE:Color.RED);
-		plot.setNoDataMessage(AonUtil.getMessage("bundle","aon_search_no_results"));
-		plot.setRangeGridlinePaint(new Color(150,150,150));
-		plot.setBackgroundPaint(Color.WHITE);
-		int width = 350;
-		int height = 200;
-		float quality = 1;
-		ChartUtilities.writeChartAsJPEG(out, quality, chart, width, height);
 	}
 
 	public void paintGanttChart(OutputStream out, Object data)
@@ -424,8 +285,7 @@ public class ProjectStatEngineController {
 				taskBean.getFieldName(IEntityAlias.TASK_PROJECT_ID),
 				getProject().getId());
 		criteria.addGreaterThanOrEqualExpression(
-				taskBean.getFieldName(IEntityAlias.TASK_START_DATE),
-				fromDate);
+				taskBean.getFieldName(IEntityAlias.TASK_START_DATE), fromDate);
 		List<ITransferObject> list = taskBean.getList(criteria);
 		TaskSeries s1 = new TaskSeries(TaskStatus.PENDING.getName(locale));
 		TaskSeries s2 = new TaskSeries(TaskStatus.FINISHED.getName(locale));
@@ -449,15 +309,170 @@ public class ProjectStatEngineController {
 		collection.add(s1);
 		collection.add(s2);
 		collection.add(s3);
-		JFreeChart chart = ChartFactory.createGanttChart(null, null, null, collection, true, false, false);
+		JFreeChart chart = ChartFactory.createGanttChart(null, null, null,
+				collection, true, false, false);
 		CategoryPlot plot = (CategoryPlot) chart.getPlot();
-		plot.setRangeGridlinePaint(new Color(150,150,150));
+		plot.setRangeGridlinePaint(new Color(150, 150, 150));
 		plot.setBackgroundPaint(Color.WHITE);
-		plot.setNoDataMessage(AonUtil.getMessage("bundle","aon_search_no_results"));
+		plot.setNoDataMessage(AonUtil.getMessage("bundle",
+				"aon_search_no_results"));
 		int width = 1024;
 		int height = i * 15;
 		height = height < 125 ? 125 : height;
 		float quality = 1;
 		ChartUtilities.writeChartAsJPEG(out, quality, chart, width, height);
 	}
+
+	public void onInvoice(ActionEvent event) {
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		Map<String, String> params = ec.getRequestParameterMap();
+		String invoiceId = params.get("invoiceId");
+		String  invoiceType = params.get("invoiceType");
+		System.out.println( invoiceId );
+		if (StringUtils.isEmpty(invoiceId)) {
+			String msg = "No se ha podido determinar la factura a la que navegar";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		if (StringUtils.isEmpty(invoiceType)) {
+			String msg = "No se ha podido determinar el tipo de la factura a la que navegar";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		Integer id = null;
+		Integer type = null;
+		try {
+			id = Integer.parseInt(invoiceId);
+			type = Integer.parseInt(invoiceType);
+		} catch (NumberFormatException e) {
+			String msg = "No se ha podido determinar la factura a la que navegar";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
+		String invoiceControllerName = "";
+		if (type == InvoiceType.SALES.ordinal()) {
+			invoiceControllerName = SALE_INVOICE_CONTROLLER_NAME;
+			setInvoiceViewer(SALE_INVOICE_FORM_NAME);
+		} else if (type  == InvoiceType.PURCHASE.ordinal()) {
+			invoiceControllerName = PURCHASE_INVOICE_CONTROLLER_NAME;
+			setInvoiceViewer(PURCHASE_INVOICE_FORM_NAME);
+		} else if (type  == InvoiceType.EXPENSES.ordinal()) {
+			invoiceControllerName = EXPENSE_INVOICE_CONTROLLER_NAME;
+			setInvoiceViewer(EXPENSE_INVOICE_FORM_NAME);
+		} else if (type  == InvoiceType.UNDEDUCTIBLE.ordinal()) {
+			invoiceControllerName = UNDEDUCTIBLE_INVOICE_CONTROLLER_NAME;
+			setInvoiceViewer(UNDEDUCTIBLE_INVOICE_FORM_NAME);
+		}
+
+		BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(invoiceControllerName);
+		try {
+			invoiceController.onLoad(event, id , "project_stats", "projectStat.onRefresh");
+		} catch (ManagerBeanException e) {
+			String msg = "No se ha podido determinar la factura a la que navegar";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+	public String invoiceAction() {
+		return getInvoiceViewer();
+	}
+
+	public void onOffer(ActionEvent event) throws ManagerBeanException {
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		Map<String, String> params = ec.getRequestParameterMap();
+		String offerId = params.get("offerId");
+		Integer id = null;
+		try {
+			id = Integer.parseInt(offerId);
+		} catch (NumberFormatException e) {
+			String msg = "No se ha podido determinar el presupuesto al que navegar";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		BasicController offerController = (BasicController)AonUtil.getRegisteredBean(OFFER_CONTROLLER_NAME);
+		offerController.onLoad(event, id, "project_stats", "projectStat.onRefresh");
+	}
+	
+
+	public PagedList<Invoice> getSaleInvoicePage() throws ManagerBeanException {
+		if (saleInvoicePage == null) {
+			saleInvoicePage = new PagedList<Invoice>();
+		}
+		if (saleInvoicePage.getList() == null) {
+			Connection c = null;
+			try {
+				c = DatabaseUtil.getConnection(AonUtil.getDomainName());
+				getEngine().fillSaleInvoicePage(c,saleInvoicePage, getParams());
+			} catch (AonConnectionException e) {
+				throw new ManagerBeanException(e.getMessage(),e);
+			} finally {
+				DatabaseUtil.closeQuietly(c);
+			}
+		}
+		return saleInvoicePage;
+	}
+	
+	public PagedList<Invoice> getCostInvoicePage() throws ManagerBeanException {
+		if (costInvoicePage == null) {
+			costInvoicePage = new PagedList<Invoice>();
+		}
+		if (costInvoicePage.getList() == null) {
+			Connection c = null;
+			try {
+				c = DatabaseUtil.getConnection(AonUtil.getDomainName());
+				getEngine().fillCostInvoicePage(c,costInvoicePage, getParams());
+			} catch (AonConnectionException e) {
+				throw new ManagerBeanException(e.getMessage(),e);
+			} finally {
+				DatabaseUtil.closeQuietly(c);
+			}
+		}
+		return costInvoicePage;
+	}
+
+	public PagedList<Offer> getApprovedOfferPage() throws ManagerBeanException {
+		if (approvedOfferPage == null) {
+			approvedOfferPage = new PagedList<Offer>();
+		}
+		if (approvedOfferPage.getList() == null) {
+			Connection c = null;
+			try {
+				c = DatabaseUtil.getConnection(AonUtil.getDomainName());
+				getEngine().fillApprovedOfferPage(c,approvedOfferPage, getParams());
+			} catch (AonConnectionException e) {
+				throw new ManagerBeanException(e.getMessage(),e);
+			} finally {
+				DatabaseUtil.closeQuietly(c);
+			}
+		}
+		return approvedOfferPage;
+	}
+	
+	public PagedList<DailyTracking> getDailyTrackingPage() throws ManagerBeanException {
+		if (dailyTrackingPage  == null) {
+			dailyTrackingPage = new PagedList<DailyTracking>();
+		}
+		if (dailyTrackingPage.getList() == null) {
+			Connection c = null;
+			try {
+				c = DatabaseUtil.getConnection(AonUtil.getDomainName());
+				getEngine().fillDailyTrackingPage(c, dailyTrackingPage, getParams());
+			} catch (AonConnectionException e) {
+				throw new ManagerBeanException(e.getMessage(),e);
+			} finally {
+				DatabaseUtil.closeQuietly(c);
+			}
+		}
+		return dailyTrackingPage;
+	}
+	
+	private ProjectStatParams getParams() {
+		ProjectStatParams params = new ProjectStatParams();
+		params.setProjectId(project.getId());
+		params.setFromDate(getFromDate());
+		params.setToDate(getToDate());
+		return params;
+	}
+	
 }

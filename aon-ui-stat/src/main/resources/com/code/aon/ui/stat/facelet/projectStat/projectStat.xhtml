@@ -40,24 +40,57 @@
 					<aon:outputText value="#{projectStat.project.projectType.description}" />
 				</aon:panelGrid>
 
-				<aon:panelTabSet id="projectHistoryTabSet">
+	
+				<aon:div styleClass="aon-panelGrid-search" id="economicDataFilterPanel">
+					<aon:div styleClass="aon-margin-top">
+						<aon:outputLabel for="Stat_fromDate" styleClass="aon-form-date-label" 
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="Stat_fromDate" styleClass="aon-margin-left"
+							value="#{projectStat.fromDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+						<aon:outputLabel for="Stat_toDate" styleClass="aon-form-date-label aon-margin-left" 
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="Stat_toDate" styleClass="aon-margin-left"
+							value="#{projectStat.toDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+						<aon:commandButton value="#{bundle.aon_filter}" 
+							actionListener="#{projectStat.onRefresh}" 
+							/>
+					</aon:div>
+				</aon:div>
+
+				<aon:panelTabSet id="projectHistoryTabSet" selectedTab="#{projectStat.selectedTab}">
 					<aon:panelTab id="chartTab" label="#{statBundle.stat_economic_summary}">
-						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/economicSummary.xhtml" />
-					</aon:panelTab>
-					<aon:panelTab id="ganttTab" label="Gantt">
-						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/gantt.xhtml" />
+						<c:if test="#{projectStat.selectedTab == 'chartTab' or projectStat.selectedTab == null}">
+							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/economicSummary.xhtml" />
+						</c:if>
 					</aon:panelTab>
 					<aon:panelTab id="approvedOffersTab" label="#{statBundle.stat_offer_amount}">
-						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/approvedOfferList.xhtml" />
+						<c:if test="#{projectStat.selectedTab == 'approvedOffersTab'}">
+							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/approvedOfferList.xhtml" />
+						</c:if>
 					</aon:panelTab>
 					<aon:panelTab id="saleInvoiceTab" label="#{statBundle.stat_income_amount}">
-						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/saleInvoiceList.xhtml" />
+						<c:if test="#{projectStat.selectedTab == 'saleInvoiceTab'}">
+							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/saleInvoiceList.xhtml" />
+						</c:if>
 					</aon:panelTab>
 					<aon:panelTab id="costInvoiceTab" label="#{statBundle.stat_invoice_cost_amount}">
-						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/costInvoiceList.xhtml" />
+						<c:if test="#{projectStat.selectedTab == 'costInvoiceTab'}">
+							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/costInvoiceList.xhtml" />
+						</c:if>
 					</aon:panelTab>
-					<aon:panelTab id="manodeobraTab" label="#{statBundle.stat_labour_amount}">
-						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/labourList.xhtml" />
+					<aon:panelTab id="dailyTrackingTab" label="#{statBundle.stat_labour_amount}">
+						<c:if test="#{projectStat.selectedTab == 'dailyTrackingTab'}">
+							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/dailyTrackingList.xhtml" />
+						</c:if>
+					</aon:panelTab>
+					<aon:panelTab id="ganttTab" label="Gantt">
+						<c:if test="#{projectStat.selectedTab == 'ganttTab'}">
+							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/gantt.xhtml" />
+						</c:if>
 					</aon:panelTab>
 				</aon:panelTabSet>
 
