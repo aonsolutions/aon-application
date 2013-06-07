@@ -43,4 +43,15 @@
 		</params>
 	</report>
 	
+	<!--  *********  Listado de productos de catalogo ********* -->
+	<report id="itemCatalogueReport" description="Catalogue items List">
+		<template path="/com/code/aon/ui/product/report/itemCatalogueReport.jasper"/>
+		<collection provider="#{itemCatalogueReport}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.product.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
+	
 </report-config>

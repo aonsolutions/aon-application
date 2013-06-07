@@ -151,6 +151,12 @@
 											actionListener="#{income.onEditSearch}"
 											value="#{warehouseBundle.warehouse_income_module}" />
 									</aon:div>
+	 								<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="itemCatalogueReport-hotel" 
+											action="itemCatalogueReport_search-hotel"
+											actionListener="#{itemCatalogueReport.onEditSearch}"
+											value="#{productBundle.product_itemCatalogueReport_module}" />
+									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
