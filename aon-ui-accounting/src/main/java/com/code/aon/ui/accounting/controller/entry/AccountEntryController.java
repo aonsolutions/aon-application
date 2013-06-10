@@ -1,10 +1,15 @@
 package com.code.aon.ui.accounting.controller.entry;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +24,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Invoice;
@@ -28,13 +34,21 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.report.OutputFormat;
+import com.code.aon.report.ReportException;
 import com.code.aon.ui.accounting.IAccountingConstants;
+import com.code.aon.ui.accounting.controller.book.AccountingBook;
+import com.code.aon.ui.accounting.controller.book.AccountingBookController;
+import com.code.aon.ui.accounting.controller.book.AonReportType;
+import com.code.aon.ui.accounting.controller.report.JournalReportController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.util.DownloadUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountEntryController extends BasicController {
@@ -484,4 +498,49 @@ public class AccountEntryController extends BasicController {
     		throw new AbortProcessingException(msg,e);
     	}
 	}
+	public void onExcelJournal(ActionEvent event) {
+		ReportManager manager = (ReportManager) AonUtil.getRegisteredBean(IAccountingConstants.REPORT_CONTROLLER);
+		manager.setOutputFormat(OutputFormat.XLS);
+		onJournal(event,manager,MimeType.MIME_MS_EXCEL,"journalBookXls");
+	}
+	public void onPDFJournal(ActionEvent event) {
+		ReportManager manager = (ReportManager) AonUtil.getRegisteredBean(IAccountingConstants.REPORT_CONTROLLER);
+		manager.setOutputFormat(OutputFormat.PDF);
+		onJournal(event,manager,MimeType.MIME_PDF,AonReportType.JOURNAL.getReportKey());
+	}
+	
+	private void onJournal(ActionEvent event, ReportManager manager , MimeType mimeType, String reportKey) {
+		OutputStream out = null;
+		HttpServletResponse response = null;
+    	try {
+    		AccountEntry entry = (AccountEntry) getTo();
+			JournalReportController t = (JournalReportController) AonUtil.getRegisteredBean(IAccountingConstants.JOURNAL_REPORT_CONTROLLER);
+			t.onEditSearch(event);
+			t.setCoverVisible(false);
+			t.setCounterVisible(false);
+			t.setPeriod(entry.getAccountPeriod());
+			t.setOrder(2);
+			t.getCriteria().addEqualExpression(t.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID),entry.getId());
+			t.onSearch(event);
+			response = DownloadUtil.getResponse();
+			out = DownloadUtil.initDownload(response, reportKey, mimeType);
+			String outcome = manager.execute(out, reportKey);
+    	} catch (ManagerBeanException e) {
+    		String msg = "Imposible listar el apunte. " +e.getMessage(); 
+    		AonUtil.addErrorMessage( msg );
+    		throw new AbortProcessingException(msg,e);
+    	} catch (ReportException e) {
+    		String msg = "Imposible listar el apunte. " +e.getMessage(); 
+    		AonUtil.addErrorMessage( msg );
+    		throw new AbortProcessingException(msg,e);
+		} catch (IOException e) {
+    		String msg = "Imposible listar el apunte. " +e.getMessage(); 
+    		AonUtil.addErrorMessage( msg );
+    		throw new AbortProcessingException(msg,e);
+		} finally {
+			DownloadUtil.finishDownload(response, out);
+		}
+		
+	}
+	
 }

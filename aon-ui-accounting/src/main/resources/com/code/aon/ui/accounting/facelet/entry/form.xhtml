@@ -114,8 +114,26 @@
 							styleClass="aon-finding-toolbar-item aon-icon-copy"
 							immediate="true" />
 						
+						<aon:htmlCommandLink id="journalBookXls-excel-report"
+							value="&#160;" target="_blank" 
+							actionListener="#{accountEntry.onExcelJournal}"
+							title="#{bundle.aon_listing} MS Excel"
+							styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
+							rendered="#{!accountEntry.new}"
+							accesskey="#{bundle.aon_key_print}">
+						</aon:htmlCommandLink>
+						<aon:htmlCommandLink id="journalBook-report"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+							value="#{bundle.aon_listing}" 
+							rendered="#{!accountEntry.new}"
+							actionListener="#{accountEntry.onPDFJournal}">
+						</aon:htmlCommandLink>
+						
+						
 						<aon:spin id="accountEntrySpin"
-							controller="#{accountEntry}" action="accountEntry_form" rendered="#{!accountEntry.new}" />
+							controller="#{accountEntry}" action="accountEntry_form" 
+							rendered="#{!accountEntry.new}" 
+							style="float:right;margin-right:0;" />
 						
 					</ui:define>
 				</ui:decorate>
