@@ -34,7 +34,6 @@ public class LoadedInvoice implements ILoadedPojo{
 	private Double totalFactura;
 	
 	private boolean fromLoadedInvoiceAccount = false;
-	private boolean fromLoadedInvoiceAccountWithProduct = false;
 	
 	@Override
 	public String getIdentifier() {
@@ -188,14 +187,6 @@ public class LoadedInvoice implements ILoadedPojo{
 	}
 	public void setFromLoadedInvoiceAccount(boolean fromLoadedInvoiceAccount) {
 		this.fromLoadedInvoiceAccount = fromLoadedInvoiceAccount;
-	}
-
-	public boolean isFromLoadedInvoiceAccountWithProduct() {
-		return fromLoadedInvoiceAccountWithProduct;
-	}
-	public void setFromLoadedInvoiceAccountWithProduct(
-			boolean fromLoadedInvoiceAccountWithProduct) {
-		this.fromLoadedInvoiceAccountWithProduct = fromLoadedInvoiceAccountWithProduct;
 	}
 
 	public LoadedCustomer getLoadedCustomer() {

@@ -523,7 +523,7 @@ public class LoadedAccountInvoice implements ILoadedPojo{
 		invoice.setTotalCuotaIRPF(getCuotaIRPF());
 		invoice.setTotalFactura(getTotalFactura());
 		invoice.setFromLoadedInvoiceAccount(true);
-		invoice.setFromLoadedInvoiceAccountWithProduct(StringUtils.isNotBlank(getArticulo()));
+//		invoice.setFromLoadedInvoiceAccountWithProduct(StringUtils.isNotBlank(getArticulo()));
 		return invoice;
 	}
 

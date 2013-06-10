@@ -6,19 +6,25 @@ import java.util.Map;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
+import com.code.aon.accounting.AccountEntry;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.loader.Column;
 import com.code.aon.ui.loader.ILoaderEngine;
 import com.code.aon.ui.loader.ILoaderFactory;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.pojo.ILoadedPojo;
+import com.code.aon.ui.loader.pojo.LoadedAccountEntry;
+import com.code.aon.ui.loader.pojo.LoadedAccountEntryDetail;
 import com.code.aon.ui.loader.pojo.LoadedAccountInvoice;
+import com.code.aon.ui.loader.pojo.LoadedInvoice;
 import com.code.aon.ui.loader.pojo.LoadedInvoiceDetail;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -132,8 +138,9 @@ public class AccountInvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 
 	private Integer insertInvoice(LoaderParams params,ILoadedPojo loadedPojo) throws AonException {
 		LoadedAccountInvoice loaded = (LoadedAccountInvoice) loadedPojo;
-
-		Integer invoiceId = engine.insertAonEntity(params, loaded.getLoadedInvoice());
+		LoadedInvoice loadedInvoice = loaded.getLoadedInvoice();
+		Integer invoiceId = engine.insertAonEntity(params, loadedInvoice );
+		insertInvoiceAccountEntry(params,invoiceId, loadedInvoice);
 		for (LoadedInvoiceDetail detail : loaded.getLoadedInvoiceDetails()) {
 			engine.insertAonEntity(params, detail);	
 		}
@@ -166,4 +173,36 @@ public class AccountInvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			throw new AonException("No se ha definido un ejercicio contable");
 		}
 	}
+	
+	private void insertInvoiceAccountEntry(LoaderParams params,Integer invoiceId, LoadedInvoice loaded) throws AonException {
+		IManagerBean accountEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Invoice invoice = (Invoice) invoiceBean.get(invoiceId);
+		if (invoice == null) {
+			throw new AonException("La factura no se ha grabado corectamente");
+		}
+
+		LoadedAccountEntry loadedAccountEntry = loaded.getLoadedAccountEntry();
+		Integer entryId =  engine.insertAonEntity(params, loadedAccountEntry);
+		AccountEntry entry = (AccountEntry) engine.get(ASI, entryId); 
+		
+		AccountEntryInvoice aei = new AccountEntryInvoice();
+		aei.setAccountEntry(entry);
+		aei.setInvoice(invoice);
+		accountEntryInvoiceBean.insert(aei);
+		
+		String prefix = (invoice.getType() == InvoiceType.SALES) ? "N/Fra" : "S/Fra";
+		if (invoice.getTotal() < 0) {
+			prefix += " " + "ABONO";
+		}
+		prefix += ": ";
+		String concept = StringUtils.abbreviate(prefix + invoice.getReferenceCode(), 32); 
+		
+		LoadedAccountEntryDetail loadedAccountEntryDetail = loaded.getLoadedAccountEntryDetail();
+		loadedAccountEntryDetail.setDocumento(invoice.getDocumentNumber());
+		loadedAccountEntryDetail.setEntry( entry );
+		loadedAccountEntryDetail.setConcepto( concept );
+		engine.ensureAonEntity(params, loadedAccountEntryDetail);
+	}
+	
 }

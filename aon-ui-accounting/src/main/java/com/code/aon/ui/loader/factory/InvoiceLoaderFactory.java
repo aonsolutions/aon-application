@@ -8,9 +8,7 @@ import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
-import com.code.aon.accounting.AccountEntry;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -33,8 +31,6 @@ import com.code.aon.ui.loader.ILoaderEngine;
 import com.code.aon.ui.loader.ILoaderFactory;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.pojo.ILoadedPojo;
-import com.code.aon.ui.loader.pojo.LoadedAccountEntry;
-import com.code.aon.ui.loader.pojo.LoadedAccountEntryDetail;
 import com.code.aon.ui.loader.pojo.LoadedCreditor;
 import com.code.aon.ui.loader.pojo.LoadedCustomer;
 import com.code.aon.ui.loader.pojo.LoadedInvoice;
@@ -150,8 +146,6 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		invoice.setVatQuota(loaded.getTotalCuotaIVA());
 		invoice.setRetentionQuota(loaded.getTotalCuotaIRPF()==null?0.0:loaded.getTotalCuotaIRPF());
 		invoice.setTotal(loaded.getTotalFactura());
-		invoice.setUpdateEnabled(false);
-		invoice = (Invoice) bean.insert(invoice);
 		if (loaded.isFromLoadedInvoiceAccount() && StringUtils.isBlank(loaded.getCuenta())) {
 			Account account = null;
 			if (invoice.getType() == InvoiceType.SALES) {
@@ -164,14 +158,10 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 				account = getAccountBridgeUtil().obtainCreditorAccount(invoice.getRegistry());
 			}
 			loaded.setCuenta(account.getCode());
-		}
-		if (!loaded.isFromLoadedInvoiceAccountWithProduct()) {
 			invoice.setStatus(InvoiceStatus.SCORED);
 		}
+		invoice.setUpdateEnabled(false);
 		invoice = (Invoice) bean.insert(invoice);
-		if (invoice.getStatus() == InvoiceStatus.SCORED) {
-			insertInvoiceAccountEntry(params,invoice, loaded);
-		} 
 		return invoice.getId();
 	}
 
@@ -199,32 +189,6 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			return series;
 		}
 		return null;
-	}
-
-	private void insertInvoiceAccountEntry(LoaderParams params,Invoice invoice,LoadedInvoice loaded) throws AonException {
-		IManagerBean invoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
-
-		LoadedAccountEntry loadedAccountEntry = loaded.getLoadedAccountEntry();
-		Integer entryId =  engine.insertAonEntity(params, loadedAccountEntry);
-		AccountEntry entry = (AccountEntry) engine.get(ASI, entryId); 
-		
-		AccountEntryInvoice aei = new AccountEntryInvoice();
-		aei.setAccountEntry(entry);
-		aei.setInvoice(invoice);
-		invoiceBean.insert(aei);
-		
-		String prefix = (invoice.getType() == InvoiceType.SALES) ? "N/Fra" : "S/Fra";
-		if (invoice.getTotal() < 0) {
-			prefix += " " + "ABONO";
-		}
-		prefix += ": ";
-		String concept = StringUtils.abbreviate(prefix + invoice.getReferenceCode(), 32); 
-		
-		LoadedAccountEntryDetail loadedAccountEntryDetail = loaded.getLoadedAccountEntryDetail();
-		loadedAccountEntryDetail.setDocumento(invoice.getDocumentNumber());
-		loadedAccountEntryDetail.setEntry( entry );
-		loadedAccountEntryDetail.setConcepto( concept );
-		engine.ensureAonEntity(params, loadedAccountEntryDetail);
 	}
 
 	private Registry obtainRegistry(LoaderParams params,InvoiceType type, LoadedInvoice loaded) throws AonException {
