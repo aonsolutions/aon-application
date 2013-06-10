@@ -143,7 +143,7 @@ public class SupplierLoaderFactory extends RegistryLoaderFactory implements ILoa
 			insertRegistryMedia(supplier.getRegistry(),MediaType.FAX,loaded.getFax());
 		}
 		if (StringUtils.isNotBlank(loaded.getEmail())) {
-			insertRegistryMedia(supplier.getRegistry(),MediaType.EMAIL,loaded.getEmail());
+			insertRegistryMedia(supplier.getRegistry(),MediaType.EMAIL, loaded.getEmail(),true,false,false);
 		}
 		if (StringUtils.isNotBlank(loaded.getWeb())) {
 			insertRegistryMedia(supplier.getRegistry(),MediaType.WEB,loaded.getWeb());

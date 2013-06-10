@@ -145,7 +145,7 @@ public class CreditorLoaderFactory extends RegistryLoaderFactory implements ILoa
 			insertRegistryMedia(creditor.getRegistry(),MediaType.FAX,loaded.getFax());
 		}
 		if (StringUtils.isNotBlank(loaded.getEmail())) {
-			insertRegistryMedia(creditor.getRegistry(),MediaType.EMAIL,loaded.getEmail());
+			insertRegistryMedia(creditor.getRegistry(),MediaType.EMAIL, loaded.getEmail(),true,false,false);
 		}
 		if (StringUtils.isNotBlank(loaded.getWeb())) {
 			insertRegistryMedia(creditor.getRegistry(),MediaType.WEB,loaded.getWeb());
