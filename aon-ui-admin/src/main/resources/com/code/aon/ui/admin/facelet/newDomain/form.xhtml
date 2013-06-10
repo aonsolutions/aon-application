@@ -48,7 +48,7 @@
 					</aon:div>
 					<aon:div>
 						<aon:inputText id="NewDomain_name" required="true"
-							size="40" maxlength="64" 
+							size="40" maxlength="#{adminNewDomain.maxDomainNameLength}" 
 							value="#{adminNewDomain.domainName}" />
 						<aon:outputText value="#{adminNewDomain.domainSuffix}"
 							rendered="#{adminNewDomain.domainSuffix != null}" 

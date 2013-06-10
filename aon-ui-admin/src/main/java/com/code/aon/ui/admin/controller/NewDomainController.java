@@ -11,8 +11,6 @@ import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -209,11 +207,9 @@ public class NewDomainController {
 	
 	public void onSave( ActionEvent event) {
 		String domainFinalName = getDomainName() + StringUtils.defaultString(getDomainSuffix()); 
-		Pattern p = Pattern.compile("[A-Z\\d][A-Z\\d.-]{1,61}[A-Z\\d]$",Pattern.CASE_INSENSITIVE);
-		Matcher m = p.matcher(domainFinalName);
-		if ( (!m.matches()) || (domainFinalName.length() > 64) ) {
+		if (! DomainController.isValidDomainName(domainFinalName) ) {
 			String message = AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, DOMAIN_INVALID_NAME);
-			throw new AbortProcessingException(message);
+			throw new AbortProcessingException(message);			
 		}
 		
 		try {
@@ -341,6 +337,10 @@ public class NewDomainController {
 			};
 		}
 		return this.templateDomainFilter;
+	}
+	
+	public int getMaxDomainNameLength() {
+		return DomainController.DEFAULT_MAX_TOTAL_DOCUMENT_SIZE - StringUtils.length(getDomainSuffix());
 	}
 	
 }

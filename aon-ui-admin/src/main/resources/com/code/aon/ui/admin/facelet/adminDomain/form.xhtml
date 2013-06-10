@@ -63,7 +63,7 @@
 					<c:if test="#{aonRole.sysAdmin}">
 						<aon:inputText id="Domain_name" required="true"
 							validator="#{adminDomain.domainNameCheck}"
-							size="64" maxlength="64" value="#{adminDomain.to.name}" />		
+							size="64" maxlength="#{adminDomain.maxDomainNameLength}" value="#{adminDomain.to.name}" />		
 						<c:if test="#{!domainSwitcher.childDomain}" >							
 							<aon:outputLabel for="Domain_subDomainSuffix"
 								value="#{adminBundle.admin_domain_subDomainSuffix}" />

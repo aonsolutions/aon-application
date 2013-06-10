@@ -10,6 +10,7 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_4;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_5;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_FOOTER;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_MANAGEMENT;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_MAX_DEFINED_USERS;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_MAX_TOTAL_DOCUMENT_SIZE;
@@ -41,6 +42,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -118,6 +121,12 @@ public class DomainController extends BasicController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainController.class);
 	
 	public final static int DEFAULT_MAX_TOTAL_DOCUMENT_SIZE = 100;	
+	
+	private final static Pattern URL_LABEL_PATTERN = Pattern.compile("[a-z\\d][a-z\\d-]{0,62}");
+	
+	private final static Pattern URL_TLD_PATTERN = Pattern.compile("[a-z]{2,6}");
+	
+	public final static int MAX_DOMAIN_NAME_LENGTH = 253;
 	
 	private DomainApplicationInfo aioInfo;
 	
@@ -455,6 +464,10 @@ public class DomainController extends BasicController {
 	public void domainNameCheck(FacesContext context, UIComponent component, Object value) throws ManagerBeanException {
 		String name = (String) value;
 		if (! StringUtils.equals(name, getDomain().getName()) ) {
+			if (! isValidDomainName(name) ) {
+				String message = AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_NAME);
+				throw new ValidatorException(new FacesMessage(message));				
+			}
 			Criteria criteria = new Criteria();
 			criteria.setSkipDomainFilter(true);
 			criteria.addEqualExpression(getFieldName(IEntityAlias.DOMAIN_NAME), name);
@@ -464,6 +477,29 @@ public class DomainController extends BasicController {
 			}			
 		}
 	}	
+	
+	public static boolean isValidDomainName( String name ) {
+		if (! StringUtils.isEmpty(name) ) {
+			if ( name.length() <= MAX_DOMAIN_NAME_LENGTH ) {
+				String[] labels = StringUtils.split(name, ".");
+				if ( ArrayUtils.getLength(labels) <= 3 ) {
+					for( int i = 0; i < labels.length; i++ ) {
+						String label = labels[i];
+						if ( StringUtils.endsWith(label, "-") ) {
+							return false;
+						}
+						Pattern p = (i+1==labels.length) ? URL_TLD_PATTERN : URL_LABEL_PATTERN;
+						Matcher m = p.matcher(label);
+						if (! m.matches() ) {
+							return false;
+						}
+					}	
+					return true;
+				}				
+			}
+		}
+		return false;
+	}
 	
 	public Domain getOEMDomain() {
 		return OEMDomain;
@@ -854,6 +890,10 @@ public class DomainController extends BasicController {
 			LOGGER.error( e.getMessage(), e );
 		}
 		return emails.toArray(new Address[emails.size()]);
+	}
+
+	public int getMaxDomainNameLength() {
+		return DEFAULT_MAX_TOTAL_DOCUMENT_SIZE;
 	}
 	
 }
