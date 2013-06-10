@@ -1,9 +1,12 @@
 package com.code.aon.ui.loader;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
@@ -23,21 +26,26 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.velocity.TemplateHelper;
-import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.ui.loader.pojo.ILoadedPojo;
+import com.lowagie.text.DocumentException;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
 
 public class Loader implements ILoaderEngine {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class.getName());
-	private static final String VM_PATH_DEFAULT = "com/code/aon/ui/loader/";
-	private static final String VM_HELP_TEMPLATE = "help.html.vm";
-	private static final String VM_FACTORIES_KEY = "factories";
-	private static final String VM_BUNDLE_KEY = "bundle";
+	private static final String HELP_TEMPLATE_PACKAGE = "/com/code/aon/ui/loader";
+	private static final String HELP_TEMPLATE = "help.html.ftl";
+	private static final String FACTORIES_KEY = "factories";
+	private static final String BUNDLE_KEY = "bundle";
 	private static final String VM_HELP_BUNDLE = "com.code.aon.ui.loader.help";
 	
 	private static final String SEMICOLON = ";";
@@ -49,7 +57,6 @@ public class Loader implements ILoaderEngine {
 	private LoaderParams params;
 	private LoaderFactoryManager factoryManager;
 	private Map<String, Map<String, Integer>> ids;
-	private VelocityHelper velocityHelper;
 	
 	private String encoding = "ISO-8859-1";
 	private String sep = "|";
@@ -132,7 +139,11 @@ public class Loader implements ILoaderEngine {
 			if (params.getCategory() == null && getColumns().containsKey( ILoaderFactory.FRA ) ) {
 				raiseException(0, "Si se desea cargar facturas, hay que definir la categoría");
 			}
-			if (params.getAccountPeriod() == null && ( getColumns().containsKey( ILoaderFactory.ASI ) || getColumns().containsKey( ILoaderFactory.FRA ) )) {
+			if (params.getAccountPeriod() == null && ( 
+					   getColumns().containsKey( ILoaderFactory.ASI ) 
+					|| getColumns().containsKey( ILoaderFactory.APU )
+					|| getColumns().containsKey( ILoaderFactory.FRA_CTB )
+					)) {
 				raiseException(0, "Si se desea cargar asientos contables o facturas , hay que definir el ejercicio contable");
 			}
 			
@@ -239,7 +250,7 @@ public class Loader implements ILoaderEngine {
 							raiseException(i, "La entidad " + entity+" no está soportada.");
 						}
 						try {
-							getFactoryManager().validate( params );
+							getFactoryManager().getFactory(entity).validate( params );
 						} catch (AonException e) {
 							raiseException(i, e.getMessage());
 						}
@@ -499,25 +510,41 @@ public class Loader implements ILoaderEngine {
 		}
 	}
 	
+	private void processTemplate(Writer output) throws AonException, IOException, TemplateException, ClassNotFoundException  {
+		Map<String,Object> context = new HashMap<String,Object>();
+		ResourceBundle bundle = ResourceBundle.getBundle(VM_HELP_BUNDLE);
+		context.put( BUNDLE_KEY, bundle );
+		context.put( FACTORIES_KEY, getFactoryManager().getFactories() );
 
-	private VelocityHelper getVelocityHelper() {
-		if ( this.velocityHelper == null ) {
-			this.velocityHelper = new VelocityHelper();
-			try {
-				this.velocityHelper.init( VM_PATH_DEFAULT );
-			} catch (Exception e) {
-				LOGGER.error( "Velocity engine could not be initialized", e );
-			}
-		}
-		return this.velocityHelper;
+		Configuration cfg = new Configuration();
+		freemarker.log.Logger.selectLoggerLibrary(freemarker.log.Logger.LIBRARY_NONE);
+		cfg.setClassForTemplateLoading(Loader.class, HELP_TEMPLATE_PACKAGE);
+		cfg.setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
+		Template t = cfg.getTemplate(HELP_TEMPLATE,"ISO-8859-1");
+		t.process(context, output);
+		output.flush();
 	}
 	
-	private void processTemplate(Writer output) throws IOException, AonException {
-		TemplateHelper th = getVelocityHelper().getTemplateHelper();
-		ResourceBundle bundle = ResourceBundle.getBundle(VM_HELP_BUNDLE);
-		th.putInContext( VM_BUNDLE_KEY, bundle );
-		th.putInContext( VM_FACTORIES_KEY, getFactoryManager().getFactories() );
-		th.processTemplate(VM_HELP_TEMPLATE, output);
+	
+	public static void main(String[] args) throws IOException, AonException, DocumentException, TemplateException, ClassNotFoundException {
+		Loader loader = new Loader(null);
+		File file = new File("/tmp/loaderHelp.html");
+		FileOutputStream out = new FileOutputStream(file);
+		OutputStreamWriter writer = new OutputStreamWriter(out, "ISO-8859-1");
+		loader.processTemplate(writer);
+		writer.flush();
+		writer.close();
+		
+		File pdfFile = new File("/tmp/loader.pdf");
+		FileOutputStream pdfOut = new FileOutputStream(pdfFile);
+		ITextRenderer renderer = new ITextRenderer();
+		renderer.setDocument( file );
+		renderer.layout();
+		renderer.createPDF( pdfOut );
+		pdfOut.flush();
+		pdfOut.close();
+		
+		
 	}
 
 }

@@ -28,13 +28,13 @@ public class LoaderFactoryManager {
 		factories.add( new CreditorLoaderFactory(engine));
 		factories.add( new SupplierLoaderFactory(engine));
 		factories.add( new TargetLoaderFactory(engine));
+		factories.add( new ItemLoaderFactory(engine));
 		factories.add( new InvoiceLoaderFactory(engine));
-		factories.add( new AccountInvoiceLoaderFactory(engine));
 		factories.add( new InvoiceDetailLoaderFactory(engine));
 		factories.add( new FinanceLoaderFactory(engine));
-		factories.add( new AccountEntryLoaderFactory(engine));
+		factories.add( new AccountInvoiceLoaderFactory(engine));
 		factories.add( new AccountEntryDetailLoaderFactory(engine));
-		factories.add( new ItemLoaderFactory(engine));
+		factories.add( new AccountEntryLoaderFactory(engine));
 	}
 	
 	public List<ILoaderFactory<ILoadedPojo>> getFactories() {

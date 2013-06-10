@@ -44,6 +44,9 @@ public class Column {
 	public int[] getEnumValues() {
 		return enumValues;
 	}
+	public boolean hasEnumValues() {
+		return enumValues != null && enumValues.length > 0;
+	}
 
 	public boolean hasValidation( ) {
 		return (isRequired() || (getType() == 0 && getEnumValues() != null && enumValues.length > 0));
