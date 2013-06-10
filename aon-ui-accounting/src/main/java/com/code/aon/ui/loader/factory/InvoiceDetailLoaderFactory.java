@@ -50,7 +50,7 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	private static final Column[] SUPPORTED_COLUMNS = {
 		 new Column(DET,"factura"			,0,6	,true	,null)
 		,new Column(DET,"linea"				,0,6	,true	,null)
-		,new Column(DET,"articulo"			,2,15	,false	,null)
+		,new Column(DET,"articulo"			,2,15	,true	,null)
 		,new Column(DET,"concepto"			,2,64	,true	,null)
 		,new Column(DET,"cantidad"			,1,16	,true	,null)
 		,new Column(DET,"precio"			,1,16	,true	,null)
@@ -139,7 +139,7 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		
 		Invoice invoice = (Invoice) engine.getAonEntity(ILoaderFactory.FRA, loaded.getFactura().toString());
 		if (invoice  == null) {
-			throw new AonException("La factura con identiicador " + loaded.getFactura() + " no existe.");
+			throw new AonException("La factura con identificador " + loaded.getFactura() + " no existe.");
 		}
 		detail.setInvoice(invoice);
 		detail.setLine(loaded.getLinea());

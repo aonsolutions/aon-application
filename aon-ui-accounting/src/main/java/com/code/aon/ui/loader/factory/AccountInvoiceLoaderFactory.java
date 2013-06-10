@@ -69,7 +69,7 @@ public class AccountInvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		,new Column(FRA_CTB,"cuotaIRPF"			,1,17	,false	,null)
 		,new Column(FRA_CTB,"tipoIrpf"			,0,1	,false	,new int[] {0,1,2,3,4})
 		,new Column(FRA_CTB,"totalFactura"		,1,17	,false	,null)
-		,new Column(FRA_CTB,"articulo"			,2,15	,false	,null)
+//		,new Column(FRA_CTB,"articulo"			,2,15	,false	,null)
 		,new Column(FRA_CTB,"concepto"			,2,64	,false	,null)
 		,new Column(FRA_CTB,"cuentaExplotacion"	,2,9	,true	,null)
 		,new Column(FRA_CTB,"cuentaIva"			,2,9	,false	,null)
@@ -140,15 +140,19 @@ public class AccountInvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		LoadedAccountInvoice loaded = (LoadedAccountInvoice) loadedPojo;
 		LoadedInvoice loadedInvoice = loaded.getLoadedInvoice();
 		Integer invoiceId = engine.insertAonEntity(params, loadedInvoice );
-		insertInvoiceAccountEntry(params,invoiceId, loadedInvoice);
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Invoice invoice = (Invoice) invoiceBean.get(invoiceId);
+		if (invoice == null) {
+			throw new AonException("La factura no se ha grabado corectamente");
+		}
+		insertInvoiceAccountEntry(params,invoice, loadedInvoice);
 		for (LoadedInvoiceDetail detail : loaded.getLoadedInvoiceDetails()) {
 			engine.insertAonEntity(params, detail);	
 		}
 		engine.insertAonEntity(params, loaded.getLoadedFinance());
-		if (StringUtils.isNotBlank( loaded.getArticulo())) {
-			Invoice invoice = (Invoice) get(params, loaded); 
+//		if (StringUtils.isNotBlank( loaded.getArticulo())) {
 			getAccountEntryInvoiceWriter().recordInvoice(invoice);		
-		}
+//		}
 		return invoiceId; 
 	}
 	
@@ -174,14 +178,8 @@ public class AccountInvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		}
 	}
 	
-	private void insertInvoiceAccountEntry(LoaderParams params,Integer invoiceId, LoadedInvoice loaded) throws AonException {
+	private void insertInvoiceAccountEntry(LoaderParams params,Invoice invoice, LoadedInvoice loaded) throws AonException {
 		IManagerBean accountEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
-		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-		Invoice invoice = (Invoice) invoiceBean.get(invoiceId);
-		if (invoice == null) {
-			throw new AonException("La factura no se ha grabado corectamente");
-		}
-
 		LoadedAccountEntry loadedAccountEntry = loaded.getLoadedAccountEntry();
 		Integer entryId =  engine.insertAonEntity(params, loadedAccountEntry);
 		AccountEntry entry = (AccountEntry) engine.get(ASI, entryId); 

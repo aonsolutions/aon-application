@@ -27,7 +27,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	
 	private static final Column[] SUPPORTED_COLUMNS = {
-			 new Column(CLI,"id"							,0,6	,true	,null)
+			 new Column(CLI,"id"							,0,6	,false	,null)
 			,new Column(CLI,"razonSocial"					,2,64	,true	,null)
 			,new Column(CLI,"alias"							,2,32	,false	,null)
 			,new Column(CLI,"tipoDocumento"					,0,1	,true	,new int[] {0,1,2,3,4,5})

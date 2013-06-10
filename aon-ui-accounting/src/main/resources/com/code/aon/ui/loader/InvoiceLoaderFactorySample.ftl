@@ -1,4 +1,4 @@
-<b>Ejemplo de carga de un fichero de facturas, líneas de facturas y venciminetos.</b>
+<b>Ejemplo de carga de un fichero de facturas, líneas de facturas y vencimientos.</b>
 <p/>
 Se define la entidad FRA (facturas), DET (líneas de facturas) y VTO (vencimientos), utilizando el separador y la codificación por defecto, 
 <pre>

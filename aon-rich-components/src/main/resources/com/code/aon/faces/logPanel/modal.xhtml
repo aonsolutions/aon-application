@@ -8,10 +8,11 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<aon:methodParam name="closeButtonAction" default="" />
+	<aon:valueParam name="pollInterval" default="10000" />
 
     <a4j:region>
         <h:form>
-            <a4j:poll id="logPanel_poll" interval="10000" enabled="#{logPanel.activePoll}"
+            <a4j:poll id="logPanel_poll" interval="#{pollInterval}" enabled="#{logPanel.activePoll}"
             	status="aonStatus" actionListener="#{logPanel.onDoNothig}"
             	reRender="logPanel_poll,logPanel_content"/>
         </h:form>

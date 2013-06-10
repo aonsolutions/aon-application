@@ -18,7 +18,7 @@ import com.code.aon.registry.enumeration.DocumentType;
  * @author ecastellano
  *
  */
-public class LoadedAccountInvoice implements ILoadedPojo{
+public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 
 	private Integer id;
 	private String serie;
@@ -58,7 +58,7 @@ public class LoadedAccountInvoice implements ILoadedPojo{
 	private Integer tipoIrpf;
 	private Double cuotaIRPF;
 	private Double totalFactura;
-	private String articulo;
+//	private String articulo;
 	private String concepto;
 	private String cuentaExplotacion;
 	private String cuentaIva;
@@ -348,12 +348,12 @@ public class LoadedAccountInvoice implements ILoadedPojo{
 		this.concepto = concepto;
 	}
 
-	public String getArticulo() {
-		return articulo;
-	}
-	public void setArticulo(String articulo) {
-		this.articulo = articulo;
-	}
+//	public String getArticulo() {
+//		return articulo;
+//	}
+//	public void setArticulo(String articulo) {
+//		this.articulo = articulo;
+//	}
 
 	public String getCuentaExplotacion() {
 		return cuentaExplotacion;
@@ -532,7 +532,7 @@ public class LoadedAccountInvoice implements ILoadedPojo{
 		LoadedInvoiceDetail detail = new LoadedInvoiceDetail();
 		detail.setFactura(getId());
 		detail.setLinea(1);
-		detail.setArticulo(getArticulo());
+//		detail.setArticulo(getArticulo());
 		detail.setConcepto(getConcepto());
 		detail.setCantidad(1.0);
 		detail.setPrecio(getBaseImponible1());
@@ -554,7 +554,7 @@ public class LoadedAccountInvoice implements ILoadedPojo{
 			detail = new LoadedInvoiceDetail();
 			detail.setFactura(getId());
 			detail.setLinea(2);
-			detail.setArticulo(getArticulo());
+//			detail.setArticulo(getArticulo());
 			detail.setConcepto(getConcepto());
 			detail.setCantidad(1.0);
 			detail.setPrecio(getBaseImponible2());
@@ -573,7 +573,7 @@ public class LoadedAccountInvoice implements ILoadedPojo{
 			detail = new LoadedInvoiceDetail();
 			detail.setFactura(getId());
 			detail.setLinea(3);
-			detail.setArticulo(getArticulo());
+//			detail.setArticulo(getArticulo());
 			detail.setConcepto(getConcepto());
 			detail.setCantidad(1.0);
 			detail.setPrecio(getBaseImponible3());

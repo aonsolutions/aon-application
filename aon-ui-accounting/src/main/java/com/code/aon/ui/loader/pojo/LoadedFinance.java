@@ -5,7 +5,7 @@ import java.util.Date;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.registry.enumeration.DocumentType;
 
-public class LoadedFinance implements ILoadedPojo{
+public class LoadedFinance implements ILoadedPojo, ILoadedDocumentHolder{
 
 	public Integer id;
 	public Integer factura;

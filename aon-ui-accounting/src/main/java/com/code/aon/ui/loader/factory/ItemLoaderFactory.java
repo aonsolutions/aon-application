@@ -142,7 +142,9 @@ public class ItemLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			}
 			product.setPurchaseAccount(account);
 		}
-
+		if (StringUtils.isBlank( loaded.getCategoria())) {
+			product.setCategory(params.getCategory());
+		}
 		item.setProduct(product);
 		item = (Item) bean.insert(item);
 		return item.getId();

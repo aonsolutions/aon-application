@@ -23,7 +23,7 @@ h4 {page-break-before: always;}
 .example div {padding: 15px 0px 15px 15px;}
 </style>
 </head>
-<body>
+<body> 
 <div style="text-align:right;"><span style="font-size: 0.8em;">${.now}</span></div>
 <h1>Carga de datos desde fichero.</h1>
 
@@ -102,18 +102,19 @@ EJEMPLO 3: El separador es <code>#</code>. El contenido del fichero se leerá uti
 
 <h3 style="page-break-before: always;"><a id="line2">Líneas de definición de datos</a></h3>
 Mediante las líneas de definición de datos, se informa al programa de carga de qué entidades se van a cargar y para cada entidad, qué columnas.
-Deben estar presentes antes de las líneas de datos. 
+<b>Deben estar presentes ANTES de las líneas de datos.</b> 
 <p>El formato de estas líneas es :</p>
 <div class="example">
 <div>
-Si se utiliza el separador por defecto:
+EJEMPLO 1. Si se utiliza el separador por defecto:
 <pre>1;Código_entidad|nombreColumna1|nombreColumna2|nombreColumna3...<br/>[.......]</pre>
-Si se utiliza el separador personalizado <code>#</code> :
+EJEMPLO 2. Si se utiliza el separador personalizado <code>#</code> :
 <pre>0;Separador=#<br/>1;Código_entidad#nombreColumna1#nombreColumna2#nombreColumna3 ...<br/>[.......]</pre>
 </div>
 </div>
   
-Actualmente, existen ${factories?size} entidades soportadas. Consulte cada una de ellas para ver las columnas que contienen, junto con las caracteríasticas de los mismas. 
+A continuación se detallan las entidades soportadas. 
+Consulte cada una de ellas para ver las columnas que contienen, junto con las caracteríasticas de las mismas. 
 
 <table>
 <thead>
@@ -122,10 +123,12 @@ Actualmente, existen ${factories?size} entidades soportadas. Consulte cada una d
 </thead>
 <tbody>
 <#list factories as factory>
+<#if factory.getKey() != "ASI">
 <tr>
 	<td style="text-align: center;"><a href="#${factory.getClass().getSimpleName()}"><code>${factory.getKey()}</code></a></td>
 	<td>${bundle.getString( factory.getClass().getSimpleName())}</td>
 </tr>	
+</#if>
 </#list>
 </tbody>
 </table>
@@ -146,7 +149,7 @@ A continuación se detalla las columnas y sus características de cada una de las 
 <ul>
 <li>El nombre de la columna es el que se debe utilizar en la línea de definición de datos.</li>
 <li>Si el dato es obligatorio, deberá aparecer en la definición.</li>
-<li>La longitud de la columna, se refiere a la longitud máxima que el dato puede tener en las líneas de datos.</li>
+<li>La longitud de la columna, se refiere a la longitud máxima que el dato puede tener en las líneas de datos. Es decir, puede tener una longitud menor, a no ser que en la descripción de la columna se indique lo contrario.</li>
 <li>Si se indican valores posibles para la columna, el dato no podrá contener un valor no listado.</li>
 </ul>
   
@@ -154,19 +157,26 @@ A continuación se detalla las columnas y sus características de cada una de las 
 
 
 <#list factories as factory>
+<#if factory.getKey() != "ASI">
 <#assign prefix = factory.getClass().getSimpleName()>
 <h4>
 		<a id="${prefix}">
 			${bundle.getString( prefix )} ( ${factory.getKey()} )
 		</a>
 </h4>
+
+<#if factory.getKey() == "FRA">
+La carga de la entidad FRA, no tiene sentido si en el mismo fichero de carga no se indican las líneas de facturas (entidad DET).
+En caso de no indicarse la entidad DET, únicamente se grabarían cabeceras de facturas.
+</#if>
+
 <table cellspacing="0" cellpadding="2">
 	<thead>
 		<tr>
 			<th style="width: 20%;">Columna</th>
 			<th style="width: 5%;">Oblig.</th>
 			<th style="width: 10%;">Tipo</th>
-			<th style="width: 5%;">Long.</th>
+			<th style="width: 5%;">Long.Max.</th>
 			<th style="width: 60%;">Descripción</th>
 	    </tr>
     </thead>
@@ -176,9 +186,10 @@ A continuación se detalla las columnas y sus características de cada una de las 
     	<td><code>${column.getName()}</code></td>
     	<td style="text-align: center;">
     		<#if column.isRequired()>
-    			X
+    			<b>SI</b>
+    		<#else>
+    			<span style="font-size: 0.8em;">NO</span>
     		</#if>
-    		&#160;
     	</td>
     	<td>
     		<#if column.getType() == 0>
@@ -219,6 +230,7 @@ A continuación se detalla las columnas y sus características de cada una de las 
     </#list>
     </tbody>
 </table>
+</#if>
 </#list>
 
 <h3 style="page-break-before: always;"><a id="line3">Líneas de datos</a></h3>

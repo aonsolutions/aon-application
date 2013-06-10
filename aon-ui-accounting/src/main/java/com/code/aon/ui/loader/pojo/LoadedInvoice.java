@@ -10,7 +10,7 @@ import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.registry.enumeration.DocumentType;
 
-public class LoadedInvoice implements ILoadedPojo{
+public class LoadedInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 
 	private Integer id;
 	private String serie;

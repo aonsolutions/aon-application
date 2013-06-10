@@ -19,6 +19,7 @@ public class LoaderParams {
 	private ProductCategory category;
 	private Period accountPeriod;
 	private Long bytesRead;
+	private boolean documentValidable;
 	
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static final SimpleDateFormat TIME_FORMATTER = new SimpleDateFormat("hh:mm:ss");
@@ -85,5 +86,10 @@ public class LoaderParams {
 	public void addBytes(int length) {
 		setBytesRead( getBytesRead() + bytesRead);
 	}
-	
+	public boolean isDocumentValidable() {
+		return documentValidable;
+	}
+	public void setDocumentValidable(boolean documentValidable) {
+		this.documentValidable = documentValidable;
+	}
 }

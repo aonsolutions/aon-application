@@ -6,7 +6,7 @@ import com.code.aon.common.enumeration.Country;
 import com.code.aon.registry.enumeration.DocumentType;
 
 
-public class LoadedRegistry  implements ILoadedPojo{
+public class LoadedRegistry  implements ILoadedPojo, ILoadedDocumentHolder{
 
 	public Integer id;
 	public String razonSocial;

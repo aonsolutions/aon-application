@@ -27,7 +27,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class CreditorLoaderFactory extends RegistryLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	
 	private static final Column[] SUPPORTED_COLUMNS = {
-			 new Column(ACR,"id"							,0,6	,true	,null)
+			 new Column(ACR,"id"							,0,6	,false	,null)
 			,new Column(ACR,"razonSocial"					,2,64	,true	,null)
 			,new Column(ACR,"alias"							,2,32	,false	,null)
 			,new Column(ACR,"tipoDocumento"					,0,1	,true	,new int[] {0,1,2,3,4,5})
@@ -35,7 +35,7 @@ public class CreditorLoaderFactory extends RegistryLoaderFactory implements ILoa
 			,new Column(ACR,"documento"						,2,16	,true	,null)
 			,new Column(ACR,"nacionalidad"					,2,2	,true	,null)
 			,new Column(ACR,"cuenta"						,2,9	,false	,null)
-			,new Column(ACR,"transaccion"					,0,1	,false	,new int[] {0,1,2,3})
+			,new Column(ACR,"transaccion"					,0,1	,false	,new int[] {0,1,2,3,4})
 			,new Column(ACR,"retencion"						,0,1	,false	,new int[] {0,1})
 			,new Column(ACR,"tipoVia"						,2,2	,false	,null)
 			,new Column(ACR,"direccion"						,2,128	,false	,null)

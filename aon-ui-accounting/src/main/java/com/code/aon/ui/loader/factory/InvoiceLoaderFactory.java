@@ -214,7 +214,11 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		LoadedInvoice loaded = (LoadedInvoice) loadedPojo;
 		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_SERIES), loaded.getSerie());
+		if (StringUtils.isEmpty( loaded.getSerie() )) {
+			criteria.addNullExpression(bean.getFieldName(IEntityAlias.INVOICE_SERIES));
+		} else {
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_SERIES), loaded.getSerie());	
+		}
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_NUMBER), loaded.getNumero());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), loaded.getFechaFactura());
 		List<ITransferObject> list = bean.getList(criteria); 

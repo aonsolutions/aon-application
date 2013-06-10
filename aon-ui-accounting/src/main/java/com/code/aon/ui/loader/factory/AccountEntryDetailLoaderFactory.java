@@ -26,7 +26,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class AccountEntryDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	
 	private static final Column[] SUPPORTED_COLUMNS = {
-		 new Column(APU,"id"						,0,6	,true	,null)
+		 new Column(APU,"id"						,0,6	,false	,null)
 		,new Column(APU,"asiento"					,0,6	,true	,null)
 		,new Column(APU,"fechaAsiento"				,3,10	,true	,null)
 		,new Column(APU,"cuenta"					,2,9	,true	,null)

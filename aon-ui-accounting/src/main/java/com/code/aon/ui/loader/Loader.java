@@ -30,7 +30,11 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.faces.controller.LogPanelController;
+import com.code.aon.registry.RegistryDocument;
+import com.code.aon.registry.enumeration.DocumentType;
+import com.code.aon.ui.loader.pojo.ILoadedDocumentHolder;
 import com.code.aon.ui.loader.pojo.ILoadedPojo;
 import com.lowagie.text.DocumentException;
 
@@ -133,10 +137,14 @@ public class Loader implements ILoaderEngine {
 			}
 			log("Meta: Metadata loaded!");
 			
-			if (params.getWorkPlace() == null && getColumns().containsKey( ILoaderFactory.FRA ) ) {
+			if (params.getWorkPlace() == null && 
+					( getColumns().containsKey( ILoaderFactory.FRA )  
+				   || getColumns().containsKey( ILoaderFactory.FRA_CTB ))) {
 				raiseException(0, "Si se desea cargar facturas, hay que definir el centro de trabajo");
 			}
-			if (params.getCategory() == null && getColumns().containsKey( ILoaderFactory.FRA ) ) {
+			if (params.getCategory() == null && 
+					( getColumns().containsKey( ILoaderFactory.FRA )  
+				   || getColumns().containsKey( ILoaderFactory.FRA_CTB ))) {
 				raiseException(0, "Si se desea cargar facturas, hay que definir la categoría");
 			}
 			if (params.getAccountPeriod() == null && ( 
@@ -224,7 +232,21 @@ public class Loader implements ILoaderEngine {
 				}
 			}
 			if (!added) {
-				raiseException(line, "La columna " + column + " no está soportada.");
+				raiseException(line, "La columna '" + column + "' no está soportada.");
+			}
+		}
+		for (Column c : factory.getSupportedColumns()){
+			if (c.isRequired()) {
+				boolean found = false;
+				for (Column fc : inputColumns){
+					if (fc.getName().equals(c.getName())) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					raiseException(line, "La columna '" + c.getName() + "' es obligatoria en carga de la entidad '" +  factory.getKey()+"'");	
+				}
 			}
 		}
 		getColumns().put(entity, inputColumns.toArray(new Column[inputColumns.size()]));
@@ -266,6 +288,18 @@ public class Loader implements ILoaderEngine {
 									if ( msg != null) {
 										log("VALIDACIÓN: Línea " + i +": " + msg);
 									}
+									if (params.isDocumentValidable() && loaded instanceof ILoadedDocumentHolder) {
+										ILoadedDocumentHolder documentHolder = (ILoadedDocumentHolder) loaded; 
+										if (!validateDocument( documentHolder )) {
+											raiseException(i, "El documento " + documentHolder.getDocumento() 
+															+ " del tipo " + 
+															documentHolder.getTipoDocumento() 
+															+ " del pais " 
+															+ documentHolder.getPaisDocumento()
+															+ " no es válido."
+													);				
+										}
+									}
 								}
 							} catch (IllegalAccessException e) {
 								raiseException(i, e.getMessage());
@@ -288,6 +322,18 @@ public class Loader implements ILoaderEngine {
 		}
 	}
 	
+	private boolean validateDocument(ILoadedDocumentHolder loaded) {
+		try {
+			RegistryDocument registryDocument = new RegistryDocument();
+			registryDocument.setDocument(loaded.getDocumento());
+			registryDocument.setType(DocumentType.values()[loaded.getTipoDocumento()]);
+			registryDocument.setCountry(Country.valueOf( loaded.getPaisDocumento() ));
+			return registryDocument.isValid();
+		} catch (Throwable t) {
+			return false;
+		}
+	}
+
 	public void load(InputStream input,Session session) throws AonException {
 		int i = 0;
 		getParams().setBytesRead(0L);
