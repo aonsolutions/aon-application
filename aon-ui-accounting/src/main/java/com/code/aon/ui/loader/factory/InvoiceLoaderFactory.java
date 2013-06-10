@@ -58,7 +58,7 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		,new Column(FRA,"fechaIva"		,3,10	,false	,null)
 		,new Column(FRA,"tipo"			,0,1	,true	,new int[] {0,1,2,3})
 		,new Column(FRA,"inversion"		,0,1	,false	,new int[] {0,1})
-		,new Column(FRA,"transaccion"	,0,1	,false	,new int[] {0,1,2,3})
+		,new Column(FRA,"transaccion"	,0,1	,false	,new int[] {0,1,2,3,4})
 		,new Column(FRA,"comentario"	,2,256	,false	,null)
 		,new Column(FRA,"baseImponible"	,1,17	,true	,null)
 		,new Column(FRA,"totalCuotaIVA"	,1,17	,true	,null)
@@ -126,7 +126,7 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		InvoiceType type = InvoiceType.values()[loaded.getTipo()];
 		if (type == InvoiceType.SALES ) {
 			Series series = ensureInvoiceSeries(params,loaded.getSerie() ); 
-			invoice.setSeries( series.getCode() );
+			invoice.setSeries( series==null?null:series.getCode() );
 			invoice.setNumber( loaded.getNumero() );
 		} else {
 			invoice.setReferenceCode(StringUtils.abbreviate(loaded.getReferencia(),16));

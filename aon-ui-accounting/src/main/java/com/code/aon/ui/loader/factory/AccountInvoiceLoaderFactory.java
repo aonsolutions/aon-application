@@ -39,7 +39,7 @@ public class AccountInvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		,new Column(FRA_CTB,"fechaIva"			,3,10	,false	,null)
 		,new Column(FRA_CTB,"tipo"				,0,1	,true	,new int[] {0,1,2,3})
 		,new Column(FRA_CTB,"inversion"			,0,1	,false	,new int[] {0,1})
-		,new Column(FRA_CTB,"transaccion"		,0,1	,false	,new int[] {0,1,2,3})
+		,new Column(FRA_CTB,"transaccion"		,0,1	,false	,new int[] {0,1,2,3,4})
 		,new Column(FRA_CTB,"comentario"		,2,256	,false	,null)
 		,new Column(FRA_CTB,"baseImponible1"	,1,17	,false	,null)
 		,new Column(FRA_CTB,"iva1"				,1,17	,false	,null)

@@ -36,7 +36,7 @@ public class ItemLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		,new Column(ITEM,"precioCompra"			,1,16,false	,null)
 		,new Column(ITEM,"beneficioSobreCompra"	,1,16,false	,null)
 		,new Column(ITEM,"porcRetencion"		,1,16,false	,null)
-		,new Column(ITEM,"porcIva"				,1,16,false	,null)
+		,new Column(ITEM,"porcIva"				,1,16,true	,null)
 		,new Column(ITEM,"inventariable"		,0,1 ,false	,new int[] {0,1})
 		,new Column(ITEM,"categoria"			,2,32,false	,null)
 		,new Column(ITEM,"marca"				,2,32,false	,null)
