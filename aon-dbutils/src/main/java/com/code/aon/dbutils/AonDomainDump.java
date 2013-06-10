@@ -42,12 +42,21 @@ public class AonDomainDump implements Constants {
 	private Integer[] domains;
 	private BufferedWriter writer;
 	private String lastId;
+	private IDumpListener listener;
 	
 	public AonDomainDump(Connection connection) throws AonSQLException {
 		this.connection = connection;
 		this.tables = new TableUtil().resolveTables(connection);
 	}
 	
+	public IDumpListener getListener() {
+		return listener;
+	}
+
+	public void setListener(IDumpListener listener) {
+		this.listener = listener;
+	}
+
 	private void writeLine( String statement ) throws IOException {
 		writer.write(statement);
 		writer.newLine();
@@ -59,9 +68,13 @@ public class AonDomainDump implements Constants {
 			String name = TableUtil.getDomainName(connection, domainId);
 			writeLine("# Domain: " +  name + " (" + domainId + ")" );
 		}
-		writeLine("# Version: " + TableUtil.getVersion(connection) );
+		String version = TableUtil.getVersion(connection);
+		writeLine("# Version: " + version );
 		writeLine("# Creation Date: " + new Date() );
 		writeLine("");
+		if ( this.listener != null ) {
+			this.listener.initDump(connection.getCatalog(), version, tables.size());
+		}
 	}
 
 	private void updateForceHeredity( boolean reset ) {
@@ -97,6 +110,10 @@ public class AonDomainDump implements Constants {
 				throw (AonSQLException) e;
 			}
 			throw new AonSQLException(e.getMessage() , e);
+		} finally {
+			if ( this.listener != null ) {
+				this.listener.finishDump();
+			}
 		}
 	}
 	
@@ -151,7 +168,11 @@ public class AonDomainDump implements Constants {
 	private void dump(TableInfo t) throws AonSQLException, IOException {
 		PreparedStatement select = null;
 		ResultSet rs = null;
+		int rows = 0;
 		try {
+			if ( this.listener != null ) {
+				this.listener.startDumpTable(t.getName());
+			}						
 			writeLine("");
 			String sentence = t.getSelectStatement(t.getDomains(connection, domains));
 			select = connection.prepareStatement(sentence,t.getColumnNames());
@@ -163,9 +184,8 @@ public class AonDomainDump implements Constants {
 				writeLine( t.getInsertStatementBegin(t.getPkColumn().isFkColummn()) );
 				boolean firstInsert = true;
 				boolean moreRows = false;
-				int i = 0;
 				do {
-					i++;
+					rows++;
 					moreRows = dump(rs,t,firstInsert);
 					if ( firstInsert ) {
 						writeLine( t.getSetVariableStatement(this.lastId) );
@@ -174,9 +194,11 @@ public class AonDomainDump implements Constants {
 							firstInsert = false;							
 						}
 					}
-					
+					if ( this.listener != null ) {
+						this.listener.dumpTable(t.getName(), rows);
+					}											
 				} while (moreRows);				
-				LOGGER.info( "Table {}, TOTAL {} rows inserted",t.getName(), i);
+				LOGGER.info( "Table {}, TOTAL {} rows inserted",t.getName(), rows);
 				writeLine( t.getUpdateAutoIncrementStatement() );
 			} else {
 				writeLine("# Table " + t.getName() + " is empty");
@@ -187,6 +209,9 @@ public class AonDomainDump implements Constants {
 		} finally {
 			DbUtils.closeQuietly(rs);
 			DbUtils.closeQuietly(select);
+			if ( this.listener != null ) {
+				this.listener.endDumpTable(t.getName(), rows);
+			}			
 		}			
 	}
 

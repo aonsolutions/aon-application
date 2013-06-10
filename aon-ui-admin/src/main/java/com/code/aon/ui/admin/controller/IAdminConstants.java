@@ -70,6 +70,8 @@ public interface IAdminConstants {
 	String DOMAIN_EMAIL_BODY_5 = "admin_domain_email_body_5";
 	String DOMAIN_EMAIL_BODY_FOOTER = "admin_domain_email_body_footer";
 	
+	String BACKUP_START = "admin_backup_start";
+	
 	String SYSTEM = "admin_system";
 		
 }
