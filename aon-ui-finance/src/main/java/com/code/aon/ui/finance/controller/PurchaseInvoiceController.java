@@ -269,7 +269,7 @@ public class PurchaseInvoiceController extends InvoiceController {
 			if( existSameInvoice() ){
 				setShowReferenceCodeConfirmWindow(true);
 			} else {
-				super.onAccept(event);
+				super.accept(event);
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Se ha producido un error al verificar la existencia de la factura.";
