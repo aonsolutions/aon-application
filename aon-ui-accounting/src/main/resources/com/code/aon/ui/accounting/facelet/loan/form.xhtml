@@ -121,6 +121,14 @@
 						value="#{loan.to.status}">
 						<f:selectItems value="#{accountingCollections.loanStatuses}" />
 					</aon:selectOneRadio>
+					
+					<aon:outputLabel for="Account_id" value="#{accountBundle.account_account}" />
+					
+					<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{loan.to.account}" />
+						<ui:param name="idRequired" value="true" />				
+					</ui:include>
+					
 				</aon:panelGrid>
 									
 				<aon:panelGrid columns="2" style="margin-top: 10px; width: 100%;" 
@@ -145,5 +153,6 @@
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{accountLookup}" />
 	</ui:define>
 </ui:composition>

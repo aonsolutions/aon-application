@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:decorate
@@ -75,6 +76,34 @@
 							size="5" maxlength="3" />
 					</f:facet>
 				</aon:column>
+				
+				<c:if test="#{aonRole.accountingOperator}">	
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+						<f:facet name="header">
+							<aon:outputLabel for="Account_id-rbank" value="#{accountBundle.account_account}" />
+						</f:facet>
+						<aon:div style="width: 90%;" rendered="#{formList}" ajaxRendered="true">
+							<aon:outputText value="#{to.account.code}" />
+							<rich:toolTip value="#{to.account.description}"
+								hideEvent="onmouseout" showDelay="200">
+							</rich:toolTip>
+						</aon:div>
+						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{controller.to.account}" />
+							<ui:param name="lookupSuffix" value="-rbank" />
+							<ui:param name="lookupRendered" value="#{formEdit}" />
+							<ui:param name="skipSuggestText" value="#{true}" />
+						</ui:include>
+						<f:facet name="footer">
+							<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{controller.to.account}" />
+							<ui:param name="lookupSuffix" value="-rbank-New" />
+							<ui:param name="lookupRendered" value="#{formNew}" />
+							<ui:param name="skipSuggestText" value="#{true}" />
+							</ui:include>
+						</f:facet>
+					</aon:column>
+				</c:if>
 			</c:if>
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">

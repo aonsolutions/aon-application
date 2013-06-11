@@ -289,14 +289,7 @@
 										action="account_list"
 										value="#{accountBundle.account_module}" />
 								</aon:div>
-<!-- 
-En CUARENTENA HASTA QUE SE CORRIJAN LOS CAMBIOS DE ACCOUNT-BRIDGE
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountManager"
-										action="accountManager_list"
-										value="#{accountBridgeBundle.account_relationships_module}" />
-								</aon:div>
- -->
+
 								<c:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="autConcept"

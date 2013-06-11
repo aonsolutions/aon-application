@@ -107,7 +107,6 @@
 		<module>aon-ui-calendar</module>
 		<module>aon-ui-payroll</module>
 		<module>aon-ui-account</module>
-		<module>aon-ui-account-bridge</module>
 		<module>aon-ui-accounting</module>
 		<module>aon-ui-commercial</module>
 		<module>aon-ui-finance</module>

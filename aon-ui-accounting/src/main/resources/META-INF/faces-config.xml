@@ -24,6 +24,13 @@
 
 	<!-- **************** ACCOUNTING PERIOD ************************** -->
 	<managed-bean>
+		<managed-bean-name>accountControllerCascadeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.accounting.event.AccountControllerCascadeListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- **************** ACCOUNTING PERIOD ************************** -->
+	<managed-bean>
 		<managed-bean-name>accPeriod</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
