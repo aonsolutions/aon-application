@@ -61,33 +61,6 @@
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
 
-										<c:if test="#{!service and aonRole.admin}">
-											<aon:outputLabel for="ProjectReservation_rectificationSeries"
-												value="#{bundle.aon_series}" />
-											<aon:selectOneMenu id="ProjectReservation_rectificationSeries"
-												value="#{controller.reservationInvoiceTo.series}"
-												valueChangeListener="#{controller.onInvoiceSeriesChanged}" 
-												reRender="ProjectReservation_rectificationNumber">
-												<f:selectItems value="#{controller.hotelRectificationSeries}" />
-											</aon:selectOneMenu>
-
-											<aon:outputLabel for="ProjectReservation_rectificationNumber"
-												value="#{bundle.aon_number}" />
-											<aon:inputText id="ProjectReservation_rectificationNumber"
-												value="#{controller.reservationInvoiceTo.number}"
-												required="true" size="7" />
-
-											<aon:outputLabel for="ProjectReservation_rectificationDate"
-												value="#{bundle.aon_date}" />
-											<aon:selectInputDate id="ProjectReservation_rectificationDate" 
-												value="#{controller.reservationInvoiceTo.issueDate}" required="true"
-												timeZone="#{timeZoneController.timeZone}"
-												popupDateFormat="#{bundle.aon_date_pattern}"
-												jointPoint="bottom-right"
-												direction="top-right"
-												verticalOffset="-60" />
-										</c:if>
-
 										<aon:outputLabel for="ProjectReservation_rectificationCause"
 											value="#{financeBundle.finance_cause}" />
 										<aon:inputTextarea id="ProjectReservation_rectificationCause" cols="70" rows="4"

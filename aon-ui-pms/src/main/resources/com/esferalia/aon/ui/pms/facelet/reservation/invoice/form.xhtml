@@ -7,23 +7,6 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<c:if test="#{!service and aonRole.admin}">
-		<aon:outputLabel for="ProjectReservation_invoiceSeries"
-			value="#{bundle.aon_series}" />
-		<aon:selectOneMenu id="ProjectReservation_invoiceSeries"
-			value="#{controller.reservationInvoiceTo.series}"
-			valueChangeListener="#{controller.onInvoiceSeriesChanged}" 
-			reRender="ProjectReservation_invoiceNumber">
-			<f:selectItems value="#{controller.hotelInvoiceSeries}" />
-		</aon:selectOneMenu>
-
-		<aon:outputLabel for="ProjectReservation_invoiceNumber"
-			value="#{bundle.aon_number}" />
-		<aon:inputText id="ProjectReservation_invoiceNumber"
-			value="#{controller.reservationInvoiceTo.number}"
-			required="true" size="7" />
-	</c:if>
-
 	<c:if test="#{service}">
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/lookup.xhtml">
 			<ui:param name="lookupTo" value="#{controller.projectReservation}" />

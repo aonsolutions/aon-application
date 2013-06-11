@@ -174,8 +174,6 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	}
 
 	private void fillHotelData() throws ManagerBeanException {
-		getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
-		getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 		getReservationInvoiceTo().getRegistry().setId(getReservationInvoiceTo().getHotel().getCustomer().getRegistry().getId());
 		getReservationInvoiceTo().setRoom(null);
 		getReservationInvoiceTo().setGuest(null);
@@ -416,6 +414,8 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 				if (getReservationInvoiceTo().getRoom() != null) {
 					reservation = getReservationInvoiceTo().getRoom().getProjectReservationRoom().getProjectReservation();
 				}
+				getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
+				getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 				getReservationInvoiceTo().setComments(obtainInvoiceComments(getReservationInvoiceTo().getServices()));
 				getReservationInvoiceTo().setDirectCustomer(true);
 				getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
@@ -517,8 +517,6 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 			setInvoiceToRectificate((Invoice)getModel().getRowData());
 			setReservationInvoiceTo(new ReservationInvoiceTo(true));
 			getReservationInvoiceTo().setHotel(obtainRectificationHotel());
-			getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
-			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 			getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
@@ -541,6 +539,9 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 
 	public void onRectify(ActionEvent event) {
 		try {
+			getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
+			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+
 			ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 			Invoice rectifier = reservationInvoicing.rectify(getInvoiceToRectificate(), getReservationInvoiceTo());
 

@@ -550,9 +550,6 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	private void fillInvoiceData(ProjectReservation reservation) throws ManagerBeanException {
-		getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
-		getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
-
 		getReservationInvoiceTo().setDirectCustomer(reservation.getProject().getRegistry().getId() == reservation.getHotelReservation().getCustomer().getRegistry().getId());
 		getReservationInvoiceTo().setRegistry(reservation.getProject().getRegistry());
 		if (getReservationInvoiceTo().isDirectCustomer()) {
@@ -616,6 +613,12 @@ public class ProjectReservationController extends BasicController implements IPm
 		return seriesList;
 	}
 
+	private int obtainSeriesMaxNumber(String seriesId) throws ManagerBeanException {
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
+		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
+	}
+
 	private Scope obtainRectifiedInvoiceScope() throws ManagerBeanException {
 		for (ITransferObject ito : getInvoiceToRectificate().getDetailList()) {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
@@ -628,19 +631,6 @@ public class ProjectReservationController extends BasicController implements IPm
 			return invoiceDetail.getWorkPlace().getScope();
 		}
 		return getInvoiceToRectificate().getScope();
-	}
-
-	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
-			getReservationInvoiceTo().setSeries((String)event.getNewValue());
-			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
-		}
-	}
-
-	private int obtainSeriesMaxNumber(String seriesId) throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
-		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
 	}
 
 	public List<SelectItem> getGuests() throws ManagerBeanException {
@@ -714,6 +704,9 @@ public class ProjectReservationController extends BasicController implements IPm
 		setInvoiceModel(null);
 		try {
 			if (validateInvoice()) {
+				getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
+				getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+
 				ProjectReservation reservation = (ProjectReservation)this.getTo();
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 				reservationInvoicing.invoice(getReservationInvoiceTo(), reservation);
@@ -785,29 +778,25 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		try {
-			Invoice invoice = (Invoice)getInvoiceModel().getRowData();
-			if ((reservation.isGuestHolder() || invoice.isService()) && !PosUtils.isUserPosShiftOpened()) {
-				setShowRectificationWindow(false);
-				String msg = "No se puede Abonar. El Usuario no ha abierto la Caja.";
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg);
-			}
-			setInvoiceToRectificate(invoice);
-			setReservationInvoiceTo(new ReservationInvoiceTo(false));
-			getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
-			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
-			getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
-		} catch (ManagerBeanException ex) {
-			AonUtil.addErrorMessage(ex.getMessage());
-			throw new AbortProcessingException(ex.getMessage(), ex);
+		Invoice invoice = (Invoice)getInvoiceModel().getRowData();
+		if ((reservation.isGuestHolder() || invoice.isService()) && !PosUtils.isUserPosShiftOpened()) {
+			setShowRectificationWindow(false);
+			String msg = "No se puede Abonar. El Usuario no ha abierto la Caja.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
+		setInvoiceToRectificate(invoice);
+		setReservationInvoiceTo(new ReservationInvoiceTo(false));
+		getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
 	}
 
 	public void onRectify(ActionEvent event) {
 		setInvoiceModel(null);
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		try {
+			getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
+			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+
 			ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 			reservationInvoicing.rectify(getInvoiceToRectificate(), getReservationInvoiceTo());
 
