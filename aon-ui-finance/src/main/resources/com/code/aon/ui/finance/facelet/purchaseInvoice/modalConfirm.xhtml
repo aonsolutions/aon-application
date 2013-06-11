@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showReferenceCodeConfirmWindow">
+		<c:if test="#{invoiceController.showReferenceCodeConfirmWindow}">
+			<rich:modalPanel id="referenceCodeConfirmModalPanel" minHeight="170" height="170" minWidth="500" width="500"
+				rendered="#{invoiceController.showReferenceCodeConfirmWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.aon_confirm_title}" />
+					</aon:div>
+				</f:facet>
+				<aon:form id="confirmForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;" >
+									
+									<aon:div style="margin-bottom:30px;">
+										<aon:outputText styleClass="aon-bold"
+											value="#{financeBundle.finance_purchase_duplicate_invoice_warning}" />
+									</aon:div>
+
+									<aon:panelGrid columns="2" style="width: 100%;" styleClass="aon-panelGrid-formatting"
+										columnClasses="aon-panelGrid-even aon-text-right aon-noborder,aon-panelGrid-even aon-text-left aon-noborder">
+										<aon:commandButton id="confirm-accept"
+											styleClass="aon-commandButton"
+											value="#{bundle.aon_confirm}"
+											actionListener="#{invoiceController.forceAccept}" >
+											<rich:componentControl for="referenceCodeConfirmModalPanel"
+												event="onclick" operation="hide"/>																					
+											<f:setPropertyActionListener
+												target="#{invoiceController.showReferenceCodeConfirmWindow}"
+												value="#{false}" />
+										</aon:commandButton>
+
+										<aon:commandButton id="confirm-back"
+											styleClass="aon-commandButton"
+											value="#{bundle.aon_cancel}" 
+											reRender="showReferenceCodeConfirmWindow" immediate="true">
+											<f:setPropertyActionListener
+												target="#{invoiceController.showReferenceCodeConfirmWindow}"
+												value="#{false}" />
+										</aon:commandButton>
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

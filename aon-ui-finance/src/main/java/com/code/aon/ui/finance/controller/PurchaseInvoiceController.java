@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceSource;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.finance.invoicing.ProgressionInvoicingFeedBack;
 import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
@@ -47,6 +49,7 @@ public class PurchaseInvoiceController extends InvoiceController {
 	private IncomeTransferManager incomeTransferManager;
 	private boolean showIncomeTransferWindow;
 	private boolean showDetailsDiscountWindow;
+	private boolean showReferenceCodeConfirmWindow;
 	
 	private String discountExpr;
 
@@ -121,6 +124,15 @@ public class PurchaseInvoiceController extends InvoiceController {
 
 	public void setShowDetailsDiscountWindow(boolean showDetailsDiscountWindow) {
 		this.showDetailsDiscountWindow = showDetailsDiscountWindow;
+	}
+	
+	public boolean isShowReferenceCodeConfirmWindow() {
+		return showReferenceCodeConfirmWindow;
+	}
+	
+	public void setShowReferenceCodeConfirmWindow(
+			boolean showReferenceCodeConfirmWindow) {
+		this.showReferenceCodeConfirmWindow = showReferenceCodeConfirmWindow;
 	}
 
 	public void onIncomeTransferShow(ActionEvent event) throws ManagerBeanException {
@@ -251,5 +263,32 @@ public class PurchaseInvoiceController extends InvoiceController {
 		return (SignerController) AonUtil.getRegisteredBean(PURCHASE_INVOICE_SIGNER_CONTROLLER_NAME);
 	}
 	
+	@Override
+	public void accept(ActionEvent event) {
+		try {
+			if( existSameInvoice() ){
+				setShowReferenceCodeConfirmWindow(true);
+			} else {
+				super.onAccept(event);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Se ha producido un error al verificar la existencia de la factura.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e); 
+		}
+	}
+	
+	public void forceAccept(ActionEvent arg0) {
+		super.accept(arg0);
+	}
+
+	private boolean existSameInvoice() throws ManagerBeanException {
+		Invoice invoice = (Invoice) this.getTo();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(this.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.PURCHASE);
+		criteria.addEqualExpression(this.getFieldName(IEntityAlias.INVOICE_REFERENCE_CODE), invoice.getReferenceCode());
+		criteria.addEqualExpression(this.getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), invoice.getRegistry().getId());
+		return this.getManagerBean().getCount(criteria)>0;
+	}
 	
 }

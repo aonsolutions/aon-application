@@ -169,7 +169,7 @@
 						value="#{companyBundle.company_workplace}" />
 					<aon:selectOneMenu id="Delivery_workPlace" 
 						value="#{delivery.to.workPlace}"
-						disabled="#{deliveryDetail.model.rowCount>0}"
+						disabled="#{deliveryDetail.model.rowCount>0 and delivery.warehouse.workPlace.id!=null}"
 						valueChangeListener="#{delivery.onWorkPlaceChanged}" 
 						reRender="Delivery_warehouse,Delivery_scope">
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />

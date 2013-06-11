@@ -160,7 +160,7 @@
 						value="#{companyBundle.company_workplace}" />
 					<aon:selectOneMenu id="Income_workPlace" 
 						value="#{income.to.workPlace}"
-						disabled="#{incomeDetail.model.rowCount>0}"
+						disabled="#{incomeDetail.model.rowCount>0 and income.warehouse.workPlace.id!=null}"
 						valueChangeListener="#{income.onWorkPlaceChanged}" 
 						reRender="Income_warehouse, Income_scope">
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />

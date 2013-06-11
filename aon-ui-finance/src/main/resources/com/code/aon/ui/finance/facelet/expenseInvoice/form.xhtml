@@ -37,7 +37,7 @@
 							title="#{bundle.aon_key_finance_accelerator}"
 							actionListener="#{expenseInvoice.generateFinances}"
 							rendered="#{expenseInvoice.toInvoiceTotalPrice != 0 and (!expenseInvoice.recorded or expenseInvoiceFinance.model.rowCount == 0)}"
-							styleClass="aon-icon-tree"
+							iconClass="aon-icon-tree"
 							accesskey="#{bundle.aon_key_finance}">
 							<f:setPropertyActionListener target="#{expenseInvoice.backActionListener}"
 								value="#{null}" />
@@ -49,7 +49,7 @@
 								value="#{financeBundle.finance_record}"
 								actionListener="#{expenseInvoice.onRecordInvoice}"
 								rendered="#{!expenseInvoice.recorded and expenseInvoiceDetail.model.rowCount > 0}"
-								styleClass="aon-icon-task-assume"
+								iconClass="aon-icon-task-assume"
 								reRender="expenseInvoiceForm" 
 								onclick="Richfaces.showModalPanel('waitProccess')" 
 					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
@@ -57,7 +57,7 @@
 								value="#{financeBundle.finance_unrecord}"
 								actionListener="#{expenseInvoice.onUnrecordInvoice}"
 								rendered="#{expenseInvoice.recorded and !expenseInvoice.accountSource}"
-								styleClass="aon-icon-task-liberate"
+								iconClass="aon-icon-task-liberate"
 								reRender="expenseInvoiceForm"
 								onclick="Richfaces.showModalPanel('waitProccess')" 
 					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />

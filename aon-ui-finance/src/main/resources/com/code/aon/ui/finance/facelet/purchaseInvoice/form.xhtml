@@ -20,7 +20,7 @@
 					<ui:param name="skipFocusFirst" value="#{!purchaseInvoice.new}" />
 					<ui:param name="skipSaveButton" value="#{purchaseInvoice.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{!purchaseInvoice.removable or !purchaseInvoiceFinance.allPending}" />
-					<ui:param name="saveButtonReRender" value="purchaseInvoiceForm" />
+					<ui:param name="saveButtonReRender" value="purchaseInvoiceForm, showReferenceCodeConfirmWindow" />
 					<ui:param name="showMoreMenu" value="#{!purchaseInvoice.new and purchaseInvoiceDetail.to == null}" />
 					<ui:define name="beforeSpinToolbarContent">
 						<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
@@ -497,6 +497,9 @@
 			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/purchaseInvoice/modalDetailsDiscount.xhtml">
+			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/purchaseInvoice/modalConfirm.xhtml">
 			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
 		</ui:include>
 	</ui:define>
