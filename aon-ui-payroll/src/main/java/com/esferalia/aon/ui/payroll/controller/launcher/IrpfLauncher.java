@@ -90,19 +90,6 @@ public class IrpfLauncher extends AbstractIrpfLauncher {
 		
 	}
 	
-	@Override
-	public void onError(TipoRetenedorError2011 retenedorError2011,
-			TipoRetenidoError2011 retenidoError2011) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void onSalida(TipoRetenedorSalida2011 retenedorSalida2011,
-			TipoRetenidoSalida2011 retenidoSalida2011) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	
 
 }

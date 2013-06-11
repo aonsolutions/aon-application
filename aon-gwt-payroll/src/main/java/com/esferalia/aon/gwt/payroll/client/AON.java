@@ -69,6 +69,7 @@ public class AON {
 	public static final String AON_ICON_CMD_BUTTON= "aon-icon-commandButton";
 	public static final String AON_ICON_TIME= "aon-icon-time";
 	public static final String AON_ICON_EXCEL= "aon-icon-excel";
+	public static final String AON_ICON_CLEAN = "aon-lookupButton-clear";
 	 
 	
 	public static final NumberFormat CURRENCY_FORMAT = NumberFormat

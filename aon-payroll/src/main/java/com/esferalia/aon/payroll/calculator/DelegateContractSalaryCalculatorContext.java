@@ -9,13 +9,13 @@ import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 
-public class DelegateContractSalaryCalculatorContext implements
+public class DelegateContractSalaryCalculatorContext<T extends IContractSalaryCalculatorContext> implements
 		IContractSalaryCalculatorContext {
 	
-	private IContractSalaryCalculatorContext ctx;
+	protected T ctx;
 	
 	
-	public DelegateContractSalaryCalculatorContext(IContractSalaryCalculatorContext ctx ) {
+	public DelegateContractSalaryCalculatorContext(T ctx ) {
 		this.ctx = ctx;
 	}
 

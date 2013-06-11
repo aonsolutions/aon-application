@@ -26,7 +26,6 @@ import javax.faces.event.ActionEvent;
 import com.aeat.jaxb.TipoRetenedorError2011;
 import com.aeat.jaxb.TipoRetenidoError2011;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.config.enumeration.Administration;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
@@ -35,52 +34,19 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.irpf.GeozoneIrpfCalculator;
-import com.esferalia.aon.payroll.irpf.IrpfCalculator;
-import com.esferalia.aon.payroll.irpf.sql.DefaultEntrada2011Handler;
-import com.esferalia.aon.payroll.irpf.sql.SQLAEAT2011Factory;
-import com.esferalia.aon.payroll.irpf.sql.SQLAEAT2011Factory.Entrada2011Handler;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.CustomerColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
-public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHandler{
+public abstract class AbstractIrpfLauncher {
 	
 	{
 		Date date = Calendar.getInstance().getTime();
 		Connection conn = null;
 		try {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			try {
-				IrpfCalculator.registerCalculator(Administration.ALAVA, 
-					new GeozoneIrpfCalculator(conn, Administration.ALAVA, date));
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				IrpfCalculator.registerCalculator(Administration.GIPUZKOA, 
-					new GeozoneIrpfCalculator(conn, Administration.GIPUZKOA, date));
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				IrpfCalculator.registerCalculator(Administration.BIZKAIA, 
-					new GeozoneIrpfCalculator(conn, Administration.BIZKAIA, date));
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				IrpfCalculator.registerCalculator(Administration.NAVARRA, 
-					new GeozoneIrpfCalculator(conn, Administration.NAVARRA, date));
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		} catch (AonConnectionException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -206,8 +172,6 @@ public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHan
 
 	private IrpfLauncherParams params;
 	
-	
-	private SQLAEAT2011Factory sqlaeat2011Factory; 
 	
 	private Connection connection;
 	private Criteria criteria;
@@ -350,12 +314,6 @@ public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHan
 
 	protected void calculate ( IrpfLauncherParams params) 
 	throws SalaryException, ExpressionException, SQLException {
-		this.sqlaeat2011Factory = 
-			getSQLAEAT2011Factory();
-		
-		Entrada2011Handler entrada2011Handler = 
-			new DefaultEntrada2011Handler(this);
-		sqlaeat2011Factory.forEachTipoRetenidoEntrada2011( entrada2011Handler );		
 
 	}
 	
@@ -369,17 +327,6 @@ public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHan
 	}
 	
 	
-	protected  SQLAEAT2011Factory getSQLAEAT2011Factory() throws SQLException {
-		Date date = params.getDate();
-		Connection connection = getConnection();
-		
-		Criteria criteria = getCriteria();
-		
-		SQLAEAT2011Factory sqlaeat2011Factory = 
-			new SQLAEAT2011Factory(connection, date, criteria);
-		
-		return sqlaeat2011Factory;
-	}
 	
 	protected Criteria getCriteria() {
 		return criteria;

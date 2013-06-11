@@ -587,6 +587,31 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	}
 
+	class VariableCleanHandler implements ClickHandler {
+
+		private Variable variable;
+
+		public VariableCleanHandler(Variable variable) {
+			this.variable = variable;
+		}
+
+		@Override
+		public void onClick(ClickEvent event) {
+			StringVariable var = new StringVariable();
+			var.setImplicit(false);
+			var.setScope(Scope.SALARY); // DRAFT
+			var.setName(variable.getName());
+			var.setEndDate(variable.getEndDate());
+			var.setStartDate(variable.getStartDate());
+			var.setExpression("SELF.parent('"+variable.getName()+ "')");
+
+			salaryDraftObject.addDraftVariable(var);
+
+			salaryDraftObject.calculate(SalaryDraft.this);
+		}
+
+	}
+
 	class VariableRemoveHandler implements ClickHandler {
 
 		private Variable variable;
@@ -1760,6 +1785,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				valuePanel.add(itemButton);
 				itemButton.setValue(show, true);
 			}
+			
+			valuePanel.add(getCleanButton(variable));
 
 			htmlPanel.add(valuePanel);
 
@@ -1928,6 +1955,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 
 		return label;
+	}
+
+	private Button getCleanButton(Variable variable) {
+		Button cleanButton = new Button();
+		cleanButton.setStyleName(AON.AON_ICON_CLEAN);
+		cleanButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		cleanButton.addClickHandler(new VariableCleanHandler(variable));
+		return cleanButton;
 	}
 
 	private Button getDeleteButton(Variable variable) {

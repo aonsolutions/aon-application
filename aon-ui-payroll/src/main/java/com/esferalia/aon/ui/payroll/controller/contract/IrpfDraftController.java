@@ -15,12 +15,9 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 
-import com.aeat.jaxb.TipoRetenedorError2011;
-import com.aeat.jaxb.TipoRetenedorSalida2011;
 import com.aeat.jaxb.TipoRetenidoEntrada2011.Reducciones;
 import com.aeat.jaxb.TipoRetenidoEntrada2011.Regularizacion;
 import com.aeat.jaxb.TipoRetenidoEntrada2011.Regularizacion.MinoracionPrestamosVivienda;
-import com.aeat.jaxb.TipoRetenidoError2011;
 import com.aeat.jaxb.TipoRetenidoSalida2011;
 import com.aeat.jaxb.TipoRetenidoSalida2011.Ascendientes;
 import com.aeat.jaxb.TipoRetenidoSalida2011.Ascendientes.Mayores75;
@@ -56,12 +53,6 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.IrpfResult;
 import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
-import com.esferalia.aon.payroll.irpf.GeozoneIrpfCalculator;
-import com.esferalia.aon.payroll.irpf.IrpfCalculator;
-import com.esferalia.aon.payroll.irpf.IrpfCalculator.CallbackHandler;
-import com.esferalia.aon.payroll.irpf.sql.DefaultEntrada2011Handler;
-import com.esferalia.aon.payroll.irpf.sql.SQLAEAT2011Factory;
-import com.esferalia.aon.payroll.irpf.sql.SQLAEAT2011Factory.Entrada2011Handler;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.salary.SalaryException;
@@ -781,32 +772,6 @@ public class IrpfDraftController extends BasicController implements IIrpfControl
 				contract.getId());
 		
 		Connection connection =  null;
-		try {
-			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			SQLAEAT2011Factory factory =  
-				new SQLAEAT2011Factory(connection, date, criteria);
-			
-			Entrada2011Handler entrada2011Handler = 
-				new DefaultEntrada2011Handler(new CallbackHandler() {
-					
-					@Override
-					public void onSalida(TipoRetenedorSalida2011 retenedorSalida2011,
-							TipoRetenidoSalida2011 retenidoSalida2011) {
-						IrpfDraftController.this.retenidoSalida2011 = retenidoSalida2011;
-					}
-					
-					@Override
-					public void onError(TipoRetenedorError2011 retenedorError2011,
-							TipoRetenidoError2011 retenidoError2011) {
-					}
-				});
-			
-			factory.forEachTipoRetenidoEntrada2011(entrada2011Handler);
-		} catch (AonConnectionException e) {
-			throw new SQLException(e.getMessage(),e);
-		} finally {
-			DatabaseUtil.closeQuietly(connection);
-		}
 
 	}
 	
@@ -854,34 +819,6 @@ public class IrpfDraftController extends BasicController implements IIrpfControl
 		try {
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			Date date = Calendar.getInstance().getTime();
-			try {
-				IrpfCalculator.registerCalculator(Administration.ALAVA, 
-					new GeozoneIrpfCalculator(connection, Administration.ALAVA, date));
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				IrpfCalculator.registerCalculator(Administration.GIPUZKOA, 
-					new GeozoneIrpfCalculator(connection, Administration.GIPUZKOA, date));
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				IrpfCalculator.registerCalculator(Administration.BIZKAIA, 
-					new GeozoneIrpfCalculator(connection, Administration.BIZKAIA, date));
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				IrpfCalculator.registerCalculator(Administration.NAVARRA, 
-					new GeozoneIrpfCalculator(connection, Administration.NAVARRA, date));
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		} catch (AonConnectionException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

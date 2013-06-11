@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -349,11 +350,6 @@ public class ExpressionContext {
 	}
 	
 	
-	public static void main(String[] args) {
-		Set<String> vars = getVariableSet("DIAS_AÑO * 100");
-		for (String var : vars) {
-			System.out.println(var);
-		}
-	}
+	
 
 }
