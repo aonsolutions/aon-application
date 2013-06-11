@@ -482,6 +482,27 @@
 		</managed-property>		
 	</managed-bean>
 	
+	<!-- ************* PAYMETHOD TYPE ***************** -->
+	<managed-bean>
+		<managed-bean-name>paymethodTypeDetail</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.PayMethodTypeDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>paymethodTypeDetail</value>
+		</managed-property>		
+	</managed-bean>
+
 	<!-- ************* BANK ***************** -->
 	<managed-bean>
 		<managed-bean-name>bank</managed-bean-name>
@@ -860,6 +881,13 @@
 			<from-outcome>publishParameter</from-outcome>
 			<to-view-id>/com/code/aon/ui/config/facelet/publishParameter/form.xhtml</to-view-id>
 		</navigation-case>
+	</navigation-rule>	
+	<!-- ========== Asignacion de cuentas a tipos de formas de pago ========== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>paymethodTypeDetail</from-outcome>
+    		<to-view-id>/com/code/aon/ui/config/facelet/paymethodTypeDetail/grid.xhtml</to-view-id>
+	    </navigation-case>
 	</navigation-rule>	
 	
 </faces-config>

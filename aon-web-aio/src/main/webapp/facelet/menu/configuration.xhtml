@@ -267,7 +267,14 @@
 										<aon:commandLink id="payMethod-configuration"
 											action="payMethod-configuration"
 											value="#{configBundle.config_paymethod_module}" />
-									</aon:div>								
+									</aon:div>
+									<c:if test="#{aonRole.accountingOperator}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="paymethodTypeDetail-configuration"
+												action="paymethodTypeDetail-configuration"
+												value="#{configBundle.config_paymethodTypeDetail_module}" />
+										</aon:div>
+									</c:if>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="bank-configuration"
 											action="bank-configuration"

@@ -46,6 +46,7 @@ public class ConfigCollectionsController {
 	private List<SelectItem> administrations;
 	private List<SelectItem> toolbars;
 	private List<SelectItem> tagTypes;
+	private List<SelectItem> payMethodTypeForDetails;
 
 	public List<SelectItem> getTaxTypes() {
 		if (taxTypes == null) {
@@ -456,5 +457,18 @@ public class ConfigCollectionsController {
 		}
 		return tagTypes;
 	}
-	
+
+	public List<SelectItem> getPayMethodTypeForDetails() {
+		if ( payMethodTypeForDetails == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			payMethodTypeForDetails = new LinkedList<SelectItem>();
+			String name = PayMethodType.CASH_BASIS.getName(locale);
+			SelectItem item = new SelectItem(PayMethodType.CASH_BASIS, name);
+			payMethodTypeForDetails.add(item);
+			name = PayMethodType.OTHER.getName(locale);
+			item = new SelectItem(PayMethodType.OTHER, name);
+			payMethodTypeForDetails.add(item);
+		}
+		return payMethodTypeForDetails;
+	}
 }
