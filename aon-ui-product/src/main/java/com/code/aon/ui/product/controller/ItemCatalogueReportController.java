@@ -1,5 +1,6 @@
 package com.code.aon.ui.product.controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -23,9 +24,11 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.WorkplaceDepartment;
 import com.code.aon.product.CatalogueItem;
+import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -37,7 +40,7 @@ public class ItemCatalogueReportController implements ICollectionProvider {
 	
 	private WorkPlace workPlace;
 	
-	private WorkplaceDepartment department;
+	private Department department;
 	
 	private List<ItemCalalogueReport> list;
 	
@@ -71,11 +74,11 @@ public class ItemCatalogueReportController implements ICollectionProvider {
 		setDepartment(null);
 	}
 
-	public WorkplaceDepartment getDepartment() {
+	public Department getDepartment() {
 		return department;
 	}
 
-	public void setDepartment(WorkplaceDepartment department) {
+	public void setDepartment(Department department) {
 		this.department = department;
 	}
 	
@@ -95,10 +98,14 @@ public class ItemCatalogueReportController implements ICollectionProvider {
 		}
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_ACTIVE), true);
 		criteria.addOrder(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_DEPARTMENT_NAME));
+		List<Department> includedList = new ArrayList<Department>();
 		for (ITransferObject ito : bean.getList(criteria)) {
 			WorkplaceDepartment wd = (WorkplaceDepartment)ito;
-			SelectItem item = new SelectItem(wd, wd.getDepartment().getName());
-			list.add(item);
+			if( !includedList.contains(wd.getDepartment()) ){
+				includedList.add(wd.getDepartment());
+				SelectItem item = new SelectItem(wd.getDepartment(), wd.getDepartment().getName());
+				list.add(item);
+			}
 		}
 		return list;
 	}
@@ -130,14 +137,16 @@ public class ItemCatalogueReportController implements ICollectionProvider {
                 " select ci, wd" +
                 " from CatalogueItem as ci, WorkplaceDepartment as wd" +
 				" where ci.catalogue=wd.catalogue" +
+				" and ci.item.status=" + ProductStatus.ACTIVE.ordinal() +
 				getWorkPlaceClause() + 
 				getDepartmentClause() + 
                 " and " + DomainManager.getSQLWhereClause("ci.domain") +
-                " group by wd.workPlace, wd.department, ci.item" +
                 " order by wd.workPlace, wd.department, ci.item.product.code");
-//		setList(query.list());
 		setList(new LinkedList<ItemCatalogueReportController.ItemCalalogueReport>());
 		Iterator<?> iter = query.list().iterator();
+		Date queryDate = new Date();
+		System.out.println("********* QUERY: "+ queryDate);
+		System.out.println("********* Tiempo transcurrido: "+ (queryDate.getTime() - startDate.getTime()) + " milisegundos");
 		while (iter.hasNext()){
 			Object[] o = (Object[]) iter.next();
 			ItemCalalogueReport item = new ItemCalalogueReport();
@@ -148,7 +157,8 @@ public class ItemCatalogueReportController implements ICollectionProvider {
 		HibernateUtil.setCloseSession(true);
 		Date endDate = new Date();
 		System.out.println("********* FIN: "+ endDate);
-		System.out.println("********* Tiempo transcurrido: "+ (endDate.getTime() - startDate.getTime()) + " milisegundos");
+		System.out.println("********* Tiempo transcurrido: "+ (endDate.getTime() - queryDate.getTime()) + " milisegundos");
+		System.out.println("********* Tiempo TOTAL: "+ (endDate.getTime() - startDate.getTime()) + " milisegundos");
 	}
 	
 	private String getWorkPlaceClause() throws ManagerBeanException{
@@ -165,7 +175,7 @@ public class ItemCatalogueReportController implements ICollectionProvider {
 	private String getDepartmentClause() {
 		String clause = "";
 		if( getDepartment()!=null && getDepartment().getId()!=null ){
-			clause = " and wd.department=" + getDepartment().getDepartment().getId();
+			clause = " and wd.department=" + getDepartment().getId();
 		}
 		return clause;
 	}
