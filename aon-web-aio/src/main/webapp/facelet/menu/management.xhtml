@@ -143,6 +143,12 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="aon_fee_assignment" 
+											action="feeAssignment_search"
+											actionListener="#{feeAssignment.onEditSearch}"
+											value="#{financeBundle.finance_fee_assignment_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="aon_invoicing"
 											action="feeInvoicing"
 											actionListener="#{feeInvoicing.onInitialize}"
