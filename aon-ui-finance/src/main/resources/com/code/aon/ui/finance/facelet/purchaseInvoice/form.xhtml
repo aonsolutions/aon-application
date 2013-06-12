@@ -20,7 +20,7 @@
 					<ui:param name="skipFocusFirst" value="#{!purchaseInvoice.new}" />
 					<ui:param name="skipSaveButton" value="#{purchaseInvoice.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{!purchaseInvoice.removable or !purchaseInvoiceFinance.allPending}" />
-					<ui:param name="saveButtonReRender" value="purchaseInvoiceForm, showReferenceCodeConfirmWindow" />
+					<ui:param name="saveButtonReRender" value="purchaseInvoiceForm" />
 					<ui:param name="showMoreMenu" value="#{!purchaseInvoice.new and purchaseInvoiceDetail.to == null}" />
 					<ui:define name="beforeSpinToolbarContent">
 						<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
@@ -52,13 +52,15 @@
 									value="#{true}" />
 							</aon:menuItem>
 						</c:if>
-						<aon:menuItem id="detailsDiscount"
-							value="#{financeBundle.finance_purchase_invoice_details_discount}"
+						<aon:menuItem id="discounts"
+							value="#{financeBundle.finance_invoice_apply_discounts}"
 							rendered="#{!purchaseInvoice.readOnly}"
-							iconClass="aon-icon-sincronize"
-							reRender="showDetailsDiscountWindow">
-							<f:setPropertyActionListener target="#{purchaseInvoice.showDetailsDiscountWindow}"
+							iconClass="aon-icon-percentage"
+							reRender="showDiscountsWindow">
+							<f:setPropertyActionListener target="#{purchaseInvoice.showDiscountsWindow}"
 								value="#{true}" />
+							<f:setPropertyActionListener target="#{purchaseInvoice.discountExpression}"
+								value="#{null}" />
 						</aon:menuItem>
 						<aon:menuItem id="finances"
 							value="#{bundle.aon_key_finance_description}"
@@ -166,18 +168,18 @@
 						value="#{financeBundle.finance_invoice_number}" />
 					<aon:div>
 						<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
-							<aon:div id="invoiceReferenceCodeDiv">
+							<aon:div id="InvoiceReferenceCodeDiv">
 								<aon:inputText id="Invoice_referenceCode" 
-									value="#{purchaseInvoice.to.referenceCode}"
-									required="true"
+									value="#{purchaseInvoice.to.referenceCode}"	required="true"
+									size="25" maxlength="32"
 									rendered="#{!purchaseInvoice.readOnly and purchaseInvoiceFinance.allPending}" 
-									size="25" maxlength="32" />
+									valueChangeListener="#{purchaseInvoice.onReferenceCodeChanged}"
+									reRender="InvoiceReferenceCodeDiv" ajaxSingle="true" />
 								<aon:outputText styleClass="aon-bold"
 									value="#{purchaseInvoice.to.referenceCode}"
 									rendered="#{purchaseInvoice.readOnly or !purchaseInvoiceFinance.allPending}" />
 							</aon:div>
 							<aon:div>
-							
 								<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formInvestment.xhtml">
 									<ui:param name="invoiceController" value="#{purchaseInvoice}" />
 								</ui:include>
@@ -496,11 +498,9 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAmortization.xhtml">
 			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
 		</ui:include>
-		<ui:include src="/com/code/aon/ui/finance/facelet/purchaseInvoice/modalDetailsDiscount.xhtml">
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalDiscounts.xhtml">
 			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
-		</ui:include>
-		<ui:include src="/com/code/aon/ui/finance/facelet/purchaseInvoice/modalConfirm.xhtml">
-			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
+			<ui:param name="modalReRender" value="purchaseInvoiceForm" />
 		</ui:include>
 	</ui:define>
 </ui:composition>

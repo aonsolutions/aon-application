@@ -8,63 +8,63 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panelGroup id="showDetailsDiscountWindow">
-		<c:if test="#{invoiceController.showDetailsDiscountWindow}">
-			<rich:modalPanel id="detailsDiscountModalPanel"
+	<aon:panelGroup id="showDiscountsWindow">
+		<c:if test="#{invoiceController.showDiscountsWindow}">
+			<rich:modalPanel id="discountsModalPanel"
 				minWidth="350" minHeight="200" zindex="90"
-				showWhenRendered="#{invoiceController.showDetailsDiscountWindow}" >
+				showWhenRendered="#{invoiceController.showDiscountsWindow}" >
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{financeBundle.finance_purchase_invoice_details_discount}" />
+						<aon:outputText value="#{financeBundle.finance_invoice_apply_discounts}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
 					<aon:form>
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
-							reRender="showDetailsDiscountWindow" immediate="true">
+							reRender="showDiscountsWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{invoiceController.showDetailsDiscountWindow}"
+								target="#{invoiceController.showDiscountsWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
-				<aon:form id="detailsDiscountForm">
+				<aon:form id="discountsForm">
 					<aon:div styleClass="aon-popupWindow-content">
 						<aon:div style="width:100%">
 							<aon:div styleClass="aon-popupWindow-content-internal">
 								<aon:div style="width:99%">
 									<aon:div styleClass="aon-toolbar">
-										<aon:commandButton id="detailsDiscount-accept"
+										<aon:commandButton id="discounts-accept"
 											value="#{bundle.aon_accept}"
-											actionListener="#{invoiceController.applyDetailsDiscount}"
-											styleClass="aon-finding-toolbar-item aon-icon-accept">
-											<rich:componentControl for="detailsDiscountModalPanel"
+											styleClass="aon-finding-toolbar-item aon-icon-accept"
+											actionListener="#{invoiceController.applyDiscounts}"
+											reRender="#{modalReRender}">
+											<rich:componentControl for="discountsModalPanel"
 												event="onclick" operation="hide"/>																					
 											<f:setPropertyActionListener
-												target="#{invoiceController.showDetailsDiscountWindow}"
+												target="#{invoiceController.showDiscountsWindow}"
 												value="#{false}" />
 										</aon:commandButton>
-										<aon:commandButton id="detailsDiscount-cancel"
+										<aon:commandButton id="discounts-cancel" immediate="true"
 											value="#{bundle.aon_cancel}"
-											reRender="showDetailsDiscountWindow"
-											immediate="true"
-											styleClass="aon-finding-toolbar-item aon-icon-cancel">
+											styleClass="aon-finding-toolbar-item aon-icon-cancel"
+											reRender="showDiscountsWindow">
 											<f:setPropertyActionListener
-												target="#{invoiceController.showDetailsDiscountWindow}"
+												target="#{invoiceController.showDiscountsWindow}"
 												value="#{false}" />
 										</aon:commandButton>
 									</aon:div>
-									
+
 									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 										<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
-										
-											<aon:outputLabel for="InvoiceDetails_discount" value="#{bundle.aon_discount}" />
-											<aon:inputText id="InvoiceDetails_discount"
-												value="#{invoiceController.discountExpr}" 
+
+											<aon:outputLabel for="Invoice_discountExpression" value="#{bundle.aon_discount}" />
+											<aon:inputText id="Invoice_discountExpression"
+												value="#{invoiceController.discountExpression}" 
 												required="true" size="5" />
-														
+
 										</aon:panelGrid>
 									</aon:div>
 								</aon:div>

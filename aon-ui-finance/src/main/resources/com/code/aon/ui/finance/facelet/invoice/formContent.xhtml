@@ -11,7 +11,7 @@
 		value="#{financeBundle.finance_invoice_number}" />
 	<aon:div>
 		<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
-			<aon:div id="invoiceReferenceCodeDiv">
+			<aon:div id="InvoiceReferenceCodeDiv">
 				<c:if test="#{invoiceController.to.sales}">
 					<aon:selectOneMenu id="Invoice_series"
 						value="#{invoiceController.to.series}" 
@@ -43,7 +43,8 @@
 						value="#{invoiceController.to.referenceCode}" 
 						required="true" size="25" maxlength="32"
 						rendered="#{!invoiceController.readOnly and financeController.allPending}" 
-						ajaxSingle="true" />
+						valueChangeListener="#{invoiceController.onReferenceCodeChanged}"
+						reRender="InvoiceReferenceCodeDiv" ajaxSingle="true" />
 				</c:if>
 				<aon:outputText styleClass="aon-bold"
 					value="#{invoiceController.to.referenceCode}"

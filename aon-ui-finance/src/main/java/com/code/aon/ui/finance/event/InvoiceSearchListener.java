@@ -31,9 +31,9 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	private String defaultType;
 	private String defaultStatus;
 	private Registry registry;
+	private Project project;
     private Item item;
 	private Bank bank;
-	private Project project;
 	private FinanceStatus[] financeStatuses;
 	private PayMethod[] payMethods;
 	
@@ -60,7 +60,15 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	public void setRegistry(Registry registry) {
 		this.registry = registry;
 	}
-	
+
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
+
 	public Item getItem() {
 		return item;
 	}
@@ -75,14 +83,6 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 
 	public void setBank(Bank bank) {
 		this.bank = bank;
-	}
-	
-	public Project getProject() {
-		return project;
-	}
-
-	public void setProject(Project project) {
-		this.project = project;
 	}
 	
 	public FinanceStatus[] getFinanceStatuses() {
@@ -158,9 +158,9 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	protected void init() throws ManagerBeanException {
 		super.init();
 		setRegistry((Registry)BeanManager.getManagerBean(Registry.class).createNewTo());
+		setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
 		setBank((Bank)BeanManager.getManagerBean(Bank.class).createNewTo());
-		setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 		setFinanceStatuses(new FinanceStatus[0]);
 		setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
 	}
@@ -179,15 +179,15 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		if ((getRegistry() != null) && (getRegistry().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), getRegistry().getId());
 		}		
+		if ((getProject() != null) && (getProject().getId() != null)) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_PROJECT_ID), getProject().getId());			
+		}
 		if ((getItem() != null) && (getItem().getId() != null)) {
 			criteria.addEqualExpression("Invoice.lines.item.id", getItem().getId());
 		}		
 		if ((getBank() != null) && (!StringUtils.isEmpty(getBank().getCode()))) {
 			criteria.addEqualExpression("Invoice.finances.bank.code", getBank().getCode());			
 		}		
-		if ((getProject() != null) && (getProject().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_PROJECT_ID), getProject().getId());			
-		}
 		if (!ArrayUtils.isEmpty(getFinanceStatuses())) {
 			String status = getController().resolveAlias("Invoice.finances.financeStatus");
 			addEnumToCriteria(criteria, status, getFinanceStatuses());

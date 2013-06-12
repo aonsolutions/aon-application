@@ -19,6 +19,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,6 +104,8 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private int rectificationNumber;
 	private Date rectificationDate;
 	private String rectificationCause;
+	private boolean showDiscountsWindow;
+	private String discountExpression;
 	private double totalInvoiceAmount;
 	private FinanceEmailUtil emailController;
 	
@@ -487,6 +490,22 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return SALE_INVOICE_FORM_NAME;
 	}
 
+	public boolean isShowDiscountsWindow() {
+		return showDiscountsWindow;
+	}
+
+	public void setShowDiscountsWindow(boolean showDiscountsWindow) {
+		this.showDiscountsWindow = showDiscountsWindow;
+	}
+
+	public String getDiscountExpression() {
+		return discountExpression;
+	}
+
+	public void setDiscountExpression(String discountExpression) {
+		this.discountExpression = discountExpression;
+	}
+
 	public double getTotalInvoiceAmount() {
 		return totalInvoiceAmount;
 	}
@@ -495,6 +514,13 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		this.totalInvoiceAmount = totalInvoiceAmount;
 	}
 	
+	public void onReferenceCodeChanged(ValueChangeEvent event) {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			getInvoice().setReferenceCode((String)event.getNewValue());
+			validateInvoice();
+		}
+	}
+
 	public void onDateChanged(ActionEvent event) {
 		getInvoice().setTaxDate(getInvoice().getIssueDate());
 	}
@@ -503,6 +529,29 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		Invoice invoice = getInvoice();
 		if (invoice != null) {
 			return ObjectUtils.equals(invoice.getIssueDate(), invoice.getTaxDate());
+		}
+		return true;
+	}
+
+	protected boolean validateInvoice() {
+		Invoice invoice = getInvoice();
+		if (invoice.getRegistry() != null && invoice.getRegistry().getId() != null && StringUtils.isNotEmpty(invoice.getReferenceCode())) {
+			try {
+				Criteria criteria = new Criteria();
+				if (invoice.getId() != null) {
+					criteria.addNotEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
+				}
+				criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), invoice.getRegistry().getId());
+				criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_REFERENCE_CODE), invoice.getReferenceCode());
+				criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_TYPE), invoice.getType());
+				if (getManagerBean().getCount(criteria) > 0) {
+					String msg = (getInvoice().isPurchase()) ? FINANCE_DUPLICATE_PURCHASE_INVOICE_WARNING : FINANCE_DUPLICATE_EXPENSE_INVOICE_WARNING;
+					msg = AonUtil.getMessage(BUNDLE_NAME, msg); 
+					AonUtil.addWarningMessage(msg + " [" + getInvoice().getReferenceCode() + "]");
+					return false;
+				}
+			} catch (ManagerBeanException ex) {
+			}
 		}
 		return true;
 	}
@@ -562,6 +611,21 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.ACCOUNT);
 		return (invoiceDetailBean.getCount(criteria) > 0);
+	}
+
+	public void applyDiscounts(ActionEvent event) throws ManagerBeanException {
+		IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
+		List<ITransferObject> detailList = getInvoice().getDetailList();
+		for (ITransferObject ito : detailList) {
+			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
+			invoiceDetail.getDiscountExpression().setDiscountExpr(getDiscountExpression());
+			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
+			invoiceDetail.setSkipServiceProcess(true);
+			invoiceDetail.setUpdateEnabled(detailList.lastIndexOf(invoiceDetail) == detailList.size()-1);
+			invoiceDetailController.getManagerBean().update(invoiceDetail);
+		}
+		refresh(null);
+		invoiceDetailController.onSearch(null);
 	}
 
 	public void generateFinances(ActionEvent event) throws ManagerBeanException{

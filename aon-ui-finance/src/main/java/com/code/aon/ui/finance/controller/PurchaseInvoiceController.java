@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.slf4j.Logger;
@@ -19,7 +18,6 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceSource;
-import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.finance.invoicing.ProgressionInvoicingFeedBack;
 import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
@@ -48,10 +46,6 @@ public class PurchaseInvoiceController extends InvoiceController {
 	private RegistryValidationManager vm;
 	private IncomeTransferManager incomeTransferManager;
 	private boolean showIncomeTransferWindow;
-	private boolean showDetailsDiscountWindow;
-	private boolean showReferenceCodeConfirmWindow;
-	
-	private String discountExpr;
 
 	public PurchaseInvoiceController() {
 		setInvoiceAddressControllerName(PURCHASE_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -65,20 +59,21 @@ public class PurchaseInvoiceController extends InvoiceController {
 		}
 		return vm;
 	}
-	
+
 	public void supplierData(LookupChangeEvent event) throws ManagerBeanException {
+		Invoice invoice = getInvoice();
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Supplier supplier = (Supplier)event.getNewValue();
-			isBlocked(supplier); // Saca el mensaje de bloqueo.
-			getInvoice().setRegistryName(supplier.getRegistry().getFullName());
-			getInvoice().setRegistryDocument(supplier.getRegistry().getDocument());
-			getInvoice().setRegistryDocumentType(supplier.getRegistry().getDocumentType());
-			getInvoice().setRegistryDocumentCountry(supplier.getRegistry().getDocumentCountry());
-			getInvoice().setRegistry(supplier.getRegistry());
+			isBlocked(supplier);
+			invoice.setRegistryName(supplier.getRegistry().getFullName());
+			invoice.setRegistryDocument(supplier.getRegistry().getDocument());
+			invoice.setRegistryDocumentType(supplier.getRegistry().getDocumentType());
+			invoice.setRegistryDocumentCountry(supplier.getRegistry().getDocumentCountry());
+			invoice.setRegistry(supplier.getRegistry());
 			loadAddresses(supplier.getId());
 			loadProjects(supplier.getId());
+			validateInvoice();
 		} else {
-			Invoice invoice = getInvoice();
 			invoice.setRegistryAddress(null);
 			invoice.setProject(null);
 
@@ -108,31 +103,6 @@ public class PurchaseInvoiceController extends InvoiceController {
 
 	public void setShowIncomeTransferWindow(boolean value) {
 		this.showIncomeTransferWindow = value;
-	}
-	
-	public String getDiscountExpr() {
-		return discountExpr;
-	}
-
-	public void setDiscountExpr(String discountExpr) {
-		this.discountExpr = discountExpr;
-	}
-
-	public boolean isShowDetailsDiscountWindow() {
-		return showDetailsDiscountWindow;
-	}
-
-	public void setShowDetailsDiscountWindow(boolean showDetailsDiscountWindow) {
-		this.showDetailsDiscountWindow = showDetailsDiscountWindow;
-	}
-	
-	public boolean isShowReferenceCodeConfirmWindow() {
-		return showReferenceCodeConfirmWindow;
-	}
-	
-	public void setShowReferenceCodeConfirmWindow(
-			boolean showReferenceCodeConfirmWindow) {
-		this.showReferenceCodeConfirmWindow = showReferenceCodeConfirmWindow;
 	}
 
 	public void onIncomeTransferShow(ActionEvent event) throws ManagerBeanException {
@@ -216,20 +186,6 @@ public class PurchaseInvoiceController extends InvoiceController {
 		iterator = null;
 	}
 
-	public void applyDetailsDiscount(ActionEvent event) throws ManagerBeanException {
-		PurchaseInvoiceDetailController controller = (PurchaseInvoiceDetailController) AonUtil.getRegisteredBean(IFinanceConstants.PURCHASE_INVOICE_DETAIL_CONTROLLER_NAME);
-		IManagerBean bean = BeanManager.getManagerBean(InvoiceDetail.class);
-		List<ITransferObject> list = bean.getList(controller.getCriteria());
-		for(ITransferObject to: list){
-			InvoiceDetail det = (InvoiceDetail) to;
-			det.getDiscountExpression().setDiscountExpr(getDiscountExpr());
-			det.setTaxableBase(controller.getPriceStrategy().getBasePrice(det));
-			bean.update(det);
-		}
-		controller.initializeModel();
-		setDiscountExpr(null);
-	}
-	
 	@Override
 	public IAttachment generateReportAttachment( ITransferObject to ) {
 		IManagerBean bean = getAttachmentBean();
@@ -262,33 +218,5 @@ public class PurchaseInvoiceController extends InvoiceController {
 	public SignerController getSignerController() {
 		return (SignerController) AonUtil.getRegisteredBean(PURCHASE_INVOICE_SIGNER_CONTROLLER_NAME);
 	}
-	
-	@Override
-	public void accept(ActionEvent event) {
-		try {
-			if( existSameInvoice() ){
-				setShowReferenceCodeConfirmWindow(true);
-			} else {
-				super.accept(event);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Se ha producido un error al verificar la existencia de la factura.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e); 
-		}
-	}
-	
-	public void forceAccept(ActionEvent arg0) {
-		super.accept(arg0);
-	}
 
-	private boolean existSameInvoice() throws ManagerBeanException {
-		Invoice invoice = (Invoice) this.getTo();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(this.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.PURCHASE);
-		criteria.addEqualExpression(this.getFieldName(IEntityAlias.INVOICE_REFERENCE_CODE), invoice.getReferenceCode());
-		criteria.addEqualExpression(this.getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), invoice.getRegistry().getId());
-		return this.getManagerBean().getCount(criteria)>0;
-	}
-	
 }

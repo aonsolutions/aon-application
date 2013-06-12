@@ -93,6 +93,7 @@ public class ExpenseInvoiceController extends InvoiceController {
 			financeController.setRegistryBank((rPayMethod==null) ? null : rPayMethod.getRegistryBank());
 			financeController.setShowBankManualInput(false);
 		}
+		validateInvoice();
 	}
 
 	private boolean isBlocked(Creditor creditor) {

@@ -28,7 +28,7 @@
 							title="#{bundle.aon_key_finance_accelerator}"
 							actionListener="#{undeductibleInvoice.generateFinances}"
 							rendered="#{undeductibleInvoice.toInvoiceTotalPrice != 0 and (!undeductibleInvoice.recorded or undeductibleInvoiceFinance.model.rowCount == 0)}"
-							styleClass="aon-icon-tree"
+							iconClass="aon-icon-tree"
 							accesskey="#{bundle.aon_key_finance}">
 							<f:setPropertyActionListener target="#{undeductibleInvoice.backActionListener}"
 								value="#{null}" />
@@ -40,7 +40,7 @@
 								value="#{financeBundle.finance_record}"
 								actionListener="#{undeductibleInvoice.onRecordInvoice}"
 								rendered="#{!undeductibleInvoice.recorded and undeductibleInvoiceDetail.model.rowCount > 0}"
-								styleClass="aon-icon-task-assume"
+								iconClass="aon-icon-task-assume"
 								reRender="undeductibleInvoiceForm" 
 								onclick="Richfaces.showModalPanel('waitProccess')" 
 					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
@@ -48,7 +48,7 @@
 								value="#{financeBundle.finance_unrecord}"
 								actionListener="#{undeductibleInvoice.onUnrecordInvoice}"
 								rendered="#{undeductibleInvoice.recorded and !undeductibleInvoice.accountSource}"
-								styleClass="aon-icon-task-liberate"
+								iconClass="aon-icon-task-liberate"
 								reRender="undeductibleInvoiceForm"
 								onclick="Richfaces.showModalPanel('waitProccess')" 
 					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
@@ -129,12 +129,13 @@
 						value="#{financeBundle.finance_invoice_number}" />
 					<aon:div>
 						<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
-							<aon:div id="invoiceReferenceCodeDiv">
+							<aon:div id="InvoiceReferenceCodeDiv">
 								<aon:inputText id="Invoice_referenceCode" 
-									value="#{undeductibleInvoice.to.referenceCode}"
-									required="true"
+									value="#{undeductibleInvoice.to.referenceCode}" required="true"
+									size="25" maxlength="32"
 									rendered="#{!undeductibleInvoice.readOnly and undeductibleInvoiceFinance.allPending}" 
-									size="25" maxlength="32" />
+									valueChangeListener="#{undeductibleInvoice.onReferenceCodeChanged}"
+									reRender="InvoiceReferenceCodeDiv" ajaxSingle="true" />
 								<aon:outputText styleClass="aon-bold"
 									value="#{undeductibleInvoice.to.referenceCode}"
 									rendered="#{undeductibleInvoice.readOnly or !undeductibleInvoiceFinance.allPending}" />

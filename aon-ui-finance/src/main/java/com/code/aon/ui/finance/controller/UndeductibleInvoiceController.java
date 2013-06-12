@@ -50,6 +50,7 @@ public class UndeductibleInvoiceController extends InvoiceController {
 			getInvoice().setRegistry(creditor.getRegistry());
 			loadAddresses(creditor.getId());
 			loadProjects(creditor.getId());
+			validateInvoice();
 		} else {
 			Invoice invoice = getInvoice();
 			invoice.setRegistryAddress(null);
