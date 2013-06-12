@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.17.2
+# Version: 7.18.0
 # Created by: girazu
-# Creation Date: 29/05/2013 13:20
+# Creation Date: 12/06/2013 18:10
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -18,7 +18,7 @@ USE `aon_master`;
 
 CREATE TABLE `domain` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
-  `name` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del Dominio',
+  `name` varchar(253) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del Dominio',
   `description` varchar(128) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Dominio',
   `parent` int(4) DEFAULT NULL COMMENT 'Identificador del Dominio padre',
   `type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de Dominio',
@@ -30,11 +30,12 @@ CREATE TABLE `domain` (
   `maxTotalDocumentSize` int(4) DEFAULT NULL COMMENT 'Almacenamiento Documental Contratado',
   `maxDefinedUsers` int(4) DEFAULT NULL COMMENT 'Numero Maximo de Usuarios',
   `active` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Indica si el Dominio esta activo o no',
-  `owner` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Creador del Dominio',
+  `owner` varchar(256) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Emails del creador del Dominio',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
   `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
+  `expirationDate` date DEFAULT NULL COMMENT 'Fecha de Expiracion del Dominio',
   PRIMARY KEY (`id`),
   KEY `IDX_DOMAIN_PARENT` (`parent`),
   CONSTRAINT `FK_DOMAIN_PARENT` FOREIGN KEY (`parent`) REFERENCES `domain` (`id`)
@@ -5121,23 +5122,6 @@ CREATE TABLE `message_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Log de Mensajes';
 
 #
-# Structure for the `mk_campaign` table : 
-#
-
-CREATE TABLE `mk_campaign` (
-  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `active` tinyint(1) NOT NULL COMMENT 'Indica si la Campaña esta activa o no',
-  `description` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Campaña',
-  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
-  PRIMARY KEY (`id`),
-  KEY `IDX_MK_CAMPAIGN_DOMAIN` (`domain`),
-  KEY `IDX_MK_CAMPAIGN_SCOPE` (`scope`),
-  CONSTRAINT `FK_MK_CAMPAIGN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_MK_CAMPAIGN_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Campañas de Marketing';
-
-#
 # Structure for the `mk_template` table : 
 #
 
@@ -5164,6 +5148,56 @@ CREATE TABLE `mk_template` (
   CONSTRAINT `FK_MK_TEMPLATE_FOOTER_TEMPLATE` FOREIGN KEY (`footer_template`) REFERENCES `rattach` (`id`),
   CONSTRAINT `FK_MK_TEMPLATE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Plantilla de Marketing';
+
+#
+# Structure for the `news` table : 
+#
+
+CREATE TABLE `news` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL DEFAULT '1' COMMENT 'Identificador del Dominio',
+  `title` varchar(128) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Titulo de la Noticia',
+  `description` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion de la Noticia',
+  `content` text COLLATE latin1_spanish_ci NOT NULL COMMENT 'Contenido de la Noticia',
+  `url` varchar(256) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Url de la Noticia',
+  `active` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Indica si la Noticia esta activa o no',
+  `rss` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si la Noticia se va a publicar en rss o no',
+  `init_date` datetime DEFAULT NULL COMMENT 'Fecha Noticia',
+  `end_date` datetime DEFAULT NULL COMMENT 'Fecha fin Noticia',
+  `category` int(4) DEFAULT NULL COMMENT 'Categoria de la Noticia',
+  `rattach` int(4) DEFAULT NULL COMMENT 'Identificador del Archivo Adjunto',
+  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
+  `type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de Contenido',
+  `template` int(4) DEFAULT NULL COMMENT 'Identificador de la Plantilla de Marketing',
+  PRIMARY KEY (`id`),
+  KEY `IDX_NEWS_DOMAIN` (`domain`),
+  KEY `IDX_NEWS_CATEGORY` (`category`),
+  KEY `IDX_NEWS_RATTACH` (`rattach`),
+  KEY `IDX_NEWS_SCOPE` (`scope`),
+  KEY `IDX_NEWS_MK_TEMPLATE` (`template`),
+  CONSTRAINT `FK_NEWS_CATEGORY` FOREIGN KEY (`category`) REFERENCES `category` (`id`),
+  CONSTRAINT `FK_NEWS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_NEWS_MK_TEMPLATE` FOREIGN KEY (`template`) REFERENCES `mk_template` (`id`),
+  CONSTRAINT `FK_NEWS_RATTACH` FOREIGN KEY (`rattach`) REFERENCES `rattach` (`id`),
+  CONSTRAINT `FK_NEWS_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Noticias';
+
+#
+# Structure for the `mk_campaign` table : 
+#
+
+CREATE TABLE `mk_campaign` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `active` tinyint(1) NOT NULL COMMENT 'Indica si la Campaña esta activa o no',
+  `description` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Campaña',
+  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
+  PRIMARY KEY (`id`),
+  KEY `IDX_MK_CAMPAIGN_DOMAIN` (`domain`),
+  KEY `IDX_MK_CAMPAIGN_SCOPE` (`scope`),
+  CONSTRAINT `FK_MK_CAMPAIGN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_MK_CAMPAIGN_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Campañas de Marketing';
 
 #
 # Structure for the `newsletter` table : 
@@ -5201,18 +5235,18 @@ CREATE TABLE `mk_action` (
   `start_date` datetime NOT NULL COMMENT 'Fecha de inicio',
   `end_date` datetime DEFAULT NULL COMMENT 'Fecha de finalizacion',
   `survey` int(4) DEFAULT NULL COMMENT 'Identificador del Cuestionario',
-  `template` int(4) DEFAULT NULL COMMENT 'Identificador de la Plantilla',
   `newsletter` int(4) DEFAULT NULL COMMENT 'Identificador del Boletin',
   `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion de la Accion',
+  `news` int(4) DEFAULT NULL COMMENT 'Identificador de la Noticia',
   PRIMARY KEY (`id`),
-  KEY `IDX_MK_ACTION_MK_TEMPLATE` (`template`),
   KEY `IDX_MK_ACTION_MK_CAMPAIGN` (`campaign`),
   KEY `IDX_MK_ACTION_SURVEY` (`survey`),
   KEY `IDX_MK_ACTION_DOMAIN` (`domain`),
   KEY `IDX_MK_ACTION_NEWSLETTER` (`newsletter`),
+  KEY `IDX_MK_ACTION_NEWS` (`news`),
   CONSTRAINT `FK_MK_ACTION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_MK_ACTION_MK_CAMPAIGN` FOREIGN KEY (`campaign`) REFERENCES `mk_campaign` (`id`),
-  CONSTRAINT `FK_MK_ACTION_MK_TEMPLATE` FOREIGN KEY (`template`) REFERENCES `mk_template` (`id`),
+  CONSTRAINT `FK_MK_ACTION_NEWS` FOREIGN KEY (`news`) REFERENCES `news` (`id`),
   CONSTRAINT `FK_MK_ACTION_NEWSLETTER` FOREIGN KEY (`newsletter`) REFERENCES `newsletter` (`id`),
   CONSTRAINT `FK_MK_ACTION_SURVEY` FOREIGN KEY (`survey`) REFERENCES `survey` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acciones de Marketing';
@@ -5284,39 +5318,6 @@ CREATE TABLE `model` (
   CONSTRAINT `FK_MODEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_MODEL_MAKE` FOREIGN KEY (`make`) REFERENCES `make` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Modelos';
-
-#
-# Structure for the `news` table : 
-#
-
-CREATE TABLE `news` (
-  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL DEFAULT '1' COMMENT 'Identificador del Dominio',
-  `title` varchar(128) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Titulo de la Noticia',
-  `description` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion de la Noticia',
-  `content` text COLLATE latin1_spanish_ci NOT NULL COMMENT 'Contenido de la Noticia',
-  `url` varchar(256) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Url de la Noticia',
-  `active` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Indica si la Noticia esta activa o no',
-  `rss` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si la Noticia se va a publicar en rss o no',
-  `init_date` datetime DEFAULT NULL COMMENT 'Fecha Noticia',
-  `end_date` datetime DEFAULT NULL COMMENT 'Fecha fin Noticia',
-  `category` int(4) DEFAULT NULL COMMENT 'Categoria de la Noticia',
-  `rattach` int(4) DEFAULT NULL COMMENT 'Identificador del Archivo Adjunto',
-  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
-  `type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de Contenido',
-  `template` int(4) DEFAULT NULL COMMENT 'Identificador de la Plantilla de Marketing',
-  PRIMARY KEY (`id`),
-  KEY `IDX_NEWS_DOMAIN` (`domain`),
-  KEY `IDX_NEWS_CATEGORY` (`category`),
-  KEY `IDX_NEWS_RATTACH` (`rattach`),
-  KEY `IDX_NEWS_SCOPE` (`scope`),
-  KEY `IDX_NEWS_MK_TEMPLATE` (`template`),
-  CONSTRAINT `FK_NEWS_CATEGORY` FOREIGN KEY (`category`) REFERENCES `category` (`id`),
-  CONSTRAINT `FK_NEWS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_NEWS_MK_TEMPLATE` FOREIGN KEY (`template`) REFERENCES `mk_template` (`id`),
-  CONSTRAINT `FK_NEWS_RATTACH` FOREIGN KEY (`rattach`) REFERENCES `rattach` (`id`),
-  CONSTRAINT `FK_NEWS_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Noticias';
 
 #
 # Structure for the `newsletter_detail` table : 
@@ -7108,7 +7109,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.17.2');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.18.0');
 
 COMMIT;
 
