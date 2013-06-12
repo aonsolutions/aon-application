@@ -81,7 +81,10 @@ public class DomainsController extends BasicController {
 
 	@Override
 	public void onSelect(ActionEvent event) {
-		Domain domain = (Domain) getSelectedTO();
+		selectDomain( (Domain) getSelectedTO() );
+	}
+	
+	public void selectDomain( Domain domain ) {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		ds.select(domain.getId(), domain.getDescription());
 		if ( (domain.getParent() != null) && (domain.getParent().getId() != null) ) {
@@ -90,7 +93,7 @@ public class DomainsController extends BasicController {
 			ds.setParentDomain(domain.getId());
 		}
 		ds.setDomainManagementAvailable(true);
-		setConfigurationMenu();
+		setConfigurationMenu();		
 	}
 	
 	private void setConfigurationMenu() {

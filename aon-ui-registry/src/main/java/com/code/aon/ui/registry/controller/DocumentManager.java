@@ -82,12 +82,16 @@ public class DocumentManager {
 	}
 	
 	private Long getUsedSpace() {
+		return getUsedSpace( DomainManager.getCurrentDomain() );
+	}
+
+	private static Long getUsedSpace( Integer domain ) {
 		Long usedSpace = 0L;
 		try {
 	    	String name = HibernateUtil.getSessionFactoryName();
 	        Session session = HibernateUtil.getSession(name);
 	        Query query = session.createQuery("select sum(length(data)) from RegistryAttachment ra WHERE ra.domain = ?");
-	        query.setInteger(0, DomainManager.getCurrentDomain());
+	        query.setInteger(0, domain );
 	        usedSpace = (Long) query.uniqueResult();
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error calculating free space", th);
@@ -120,7 +124,11 @@ public class DocumentManager {
 	}
 	
 	public int getUsedSpaceInMB() {
-		int value = (int) (getUsedSpace() / MB_SIZE);
+		return getUsedSpaceInMB(DomainManager.getCurrentDomain());
+	}
+
+	public static int getUsedSpaceInMB( Integer domain) {
+		int value = (int) (getUsedSpace(domain) / MB_SIZE);
 		return value;
 	}
 	

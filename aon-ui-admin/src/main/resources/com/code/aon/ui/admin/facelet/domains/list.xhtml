@@ -12,7 +12,14 @@
 		<!--  aon-region-body -->
 		<aon:div styleClass="aon-scroll-area">			
 			<aon:div styleClass="aon-portlet-title">
-				<aon:div styleClass="aon-portlet-title-buttons">
+				<aon:div styleClass="aon-portlet-title-buttons" style="width:40px;border-left:0;">
+					<aon:commandLink id="serachDomainDesktop" 
+						title="#{adminBundle.admin_domain_list}"
+						value="&#160;" styleClass="aon-icon-portlet aon-icon-category aon-margin-right" 
+						actionListener="#{domainPrint.onEditSearch}"
+						action="domainPrint_search">
+						<aon:actionListener method="#{domainPrint.onSearch}" />
+					</aon:commandLink> 
 					<aon:commandLink id="newDomainDesktop" 
 						title="#{adminBundle.admin_new_domain}"
 						value="&#160;" styleClass="aon-icon-portlet aon-icon-new" 

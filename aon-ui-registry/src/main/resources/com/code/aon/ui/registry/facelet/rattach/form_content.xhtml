@@ -8,10 +8,12 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 	
+	<aon:valueParam name="descriptionInputSize" default="40"/>
+	
 	<aon:outputLabel for="#{controller.beanName}_description" value="#{bundle.aon_description}" />
 	<aon:div id="#{controller.beanName}_descriptionDiv">
 		<aon:inputText id="#{controller.beanName}_description" required="true"
-			value="#{controller.to.description}" maxlength="64" size="40" />
+			value="#{controller.to.description}" maxlength="64" size="#{descriptionInputSize}" />
 		<aon:div styleClass="aon-margin-top" rendered="#{controller.to.data != null}" >
 			<aon:outputText styleClass="aon-italic" 
 				value="#{controller.to.mimeType}" />			
