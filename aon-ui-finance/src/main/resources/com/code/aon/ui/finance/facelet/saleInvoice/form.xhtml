@@ -169,7 +169,7 @@
 						value="#{financeBundle.finance_invoice_number}" />
 					<aon:div>
 						<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
-							<aon:div id="invoiceReferenceCodeDiv">
+							<aon:div id="InvoiceReferenceCodeDiv">
 								<aon:selectOneMenu id="Invoice_series"
 									value="#{saleInvoice.to.series}" 
 									rendered="#{saleInvoice.seriesValid and !saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}"

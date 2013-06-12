@@ -40,9 +40,9 @@
 											value="#{bundle.aon_accept}"
 											styleClass="aon-finding-toolbar-item aon-icon-accept"
 											actionListener="#{invoiceController.applyDiscounts}"
-											reRender="#{modalReRender}">
-											<rich:componentControl for="discountsModalPanel"
-												event="onclick" operation="hide"/>																					
+											reRender="showDiscountsWindow,#{modalReRender}"
+											onclick="Richfaces.showModalPanel('waitProccess')" 
+								     		oncomplete="Richfaces.hideModalPanel('waitProccess')">
 											<f:setPropertyActionListener
 												target="#{invoiceController.showDiscountsWindow}"
 												value="#{false}" />
