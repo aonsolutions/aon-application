@@ -20,7 +20,9 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
     	try {
-        	invoiceDetail.setSkipServiceProcess(isHotelInvoice(invoiceDetail));
+    		if (!invoiceDetail.isSkipServiceProcess()) {
+    			invoiceDetail.setSkipServiceProcess(isHotelInvoice(invoiceDetail));
+    		}
     	} catch (ManagerBeanException ex) {
     		throw new ManagerBeanVetoListenerException(ex.getMessage(), ex);
     	}
@@ -30,7 +32,9 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
     	try {
-        	invoiceDetail.setSkipServiceProcess(isHotelInvoice(invoiceDetail));
+    		if (!invoiceDetail.isSkipServiceProcess()) {
+    			invoiceDetail.setSkipServiceProcess(isHotelInvoice(invoiceDetail));
+    		}
     	} catch (ManagerBeanException ex) {
     		throw new ManagerBeanVetoListenerException(ex.getMessage(), ex);
     	}
