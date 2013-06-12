@@ -14,11 +14,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.stat.controller.RegistryStatEngineController;
 import com.code.aon.ui.util.AonUtil;
 
-public class CustomerController extends RegistryController implements ICustomerConstants {
+public class CustomerController extends CustomerListController implements ICustomerConstants {
 
 	private static final String BASE_NAME = "com.code.aon.ui.registry.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_customer_report";
