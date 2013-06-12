@@ -71,8 +71,11 @@
 							renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 						</aon:selectInputDate>
 	
-						<ui:include src="/com/code/aon/ui/marketing/facelet/marketingTemplate/lookup.xhtml" >
-							<ui:param name="lookupTo" value="#{campaignAction.to.template}" />
+						<ui:include src="/com/code/aon/ui/marketing/facelet/news/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{campaignAction.to.news}" />
+							<ui:param name="lookupLabel" value="#{marketingBundle.marketing_message}" />
+							<ui:param name="searchButtonTitle" value="#{marketingBundle.marketing_message_selection}" />
+							<ui:param name="lookupControllerListener" value="#{marketingCampaign.newsFilter}" />							
 							<ui:param name="lookupRendered" value="#{(campaignAction.to.mediaType  == 'PHONE') or (campaignAction.to.mediaType  == 'EMAIL')}" />
 						</ui:include>					
 	
@@ -167,7 +170,7 @@
 			<aon:lookupButtonPopup lookup="#{surveyLookup}" />
 		</c:if>
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
-		<aon:lookupButtonPopup lookup="#{marketingTemplateLookup}" />
+		<aon:lookupButtonPopup lookup="#{newsLookup}" />
 		<aon:lookupButtonPopup lookup="#{userLookup}" />
 		<aon:lookupButtonPopup lookup="#{newsletterLookup}" />
 	</ui:define>

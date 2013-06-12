@@ -46,7 +46,7 @@ public class NewsController extends BasicController {
 		initController(controller, (News) getTo());
 	}
 
-	private void initController(MessageController controller, News news) {
+	public static void initController(MessageController controller, News news) {
 		if (news.getType() == NewsType.MESSAGE) {
 			TemplateController.initController(controller, news.getTemplate(), news.getContent());
 			IAttachment attach = news.getRegistryAttachment();

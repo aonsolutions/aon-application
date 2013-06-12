@@ -28,7 +28,11 @@ public interface IMarketingConstants {
 	
 	String MARKETING_TEMPLATE_CONTROLLER_NAME = "marketingTemplate";
 	
+	String NEWSLETTER_CONTROLLER_NAME = "newsletter";
+	
 	String NEWSLETTER_DETAIL_CONTROLLER_NAME = "newsletterDetail";
+	
+	String NEWS_CONTROLLER_NAME = "news";
 
 	// ************************************************************
 	// MESSAGE

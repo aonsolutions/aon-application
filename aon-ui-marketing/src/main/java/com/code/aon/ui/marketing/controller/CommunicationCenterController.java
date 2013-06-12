@@ -45,13 +45,13 @@ import com.code.aon.groupware.Alarm;
 import com.code.aon.groupware.enumeration.AlarmSource;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.MarketingAction;
+import com.code.aon.marketing.News;
 import com.code.aon.marketing.Newsletter;
 import com.code.aon.marketing.Survey;
 import com.code.aon.marketing.SurveyQuestion;
 import com.code.aon.marketing.SurveyResponse;
 import com.code.aon.marketing.SurveyResponseDetail;
 import com.code.aon.marketing.SurveyWorkflow;
-import com.code.aon.marketing.Template;
 import com.code.aon.marketing.enumeration.ActionMediaType;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.ql.Criteria;
@@ -93,7 +93,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 	
 	private Survey survey;
 	
-	private Template template;
+	private News news;
 	
 	private Newsletter newsletter;
 	
@@ -133,7 +133,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 	
 	private boolean surveySelected;
 	
-	private boolean templateSelected;
+	private boolean newsSelected;
 	
 	private boolean newsletterSelected;
 	
@@ -197,18 +197,18 @@ public class CommunicationCenterController implements IMarketingConstants {
 		this.surveySelected = (this.survey.getId() != null);
 	}
 	
-	public Template getTemplate() {
-		return template;
+	public News getNews() {
+		return news;
 	}
 
-	public void setTemplate(Template template) throws ManagerBeanException {
-		if ( template != null ) {
-			this.template = template;
+	public void setNews(News news) throws ManagerBeanException {
+		if ( news != null ) {
+			this.news = news;
 		} else {
-			IManagerBean templateBean = BeanManager.getManagerBean(Template.class);
-			this.template = (Template) templateBean.createNewTo();
+			IManagerBean newsBean = BeanManager.getManagerBean(News.class);
+			this.news = (News) newsBean.createNewTo();
 		}
-		this.templateSelected = (this.template.getId() != null);
+		this.newsSelected = (this.news.getId() != null);
 	}
 
 	public Newsletter getNewsletter() {
@@ -259,8 +259,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 		return surveySelected;
 	}
 	
-	public boolean isTemplateSelected() {
-		return templateSelected;
+	public boolean isNewsSelected() {
+		return newsSelected;
 	}
 	
 	public boolean isNewsletterSelected() {
@@ -335,7 +335,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 			setAction(null);
 			setTarget(null);
 			setSurvey(null);
-			setTemplate(null);
+			setNews(null);
 			setNewsletter(null);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
@@ -421,9 +421,9 @@ public class CommunicationCenterController implements IMarketingConstants {
 			setSurvey(null);
 		}
 		if ( (type == ActionMediaType.PHONE) || (type == ActionMediaType.EMAIL) ) {		
-			setTemplate( action.getTemplate() );
+			setNews( action.getNews() );
 		} else {
-			setTemplate( null );
+			setNews( null );
 		}
 		if ( action.getMediaType() == ActionMediaType.NEWSLETTER ) {
 			setNewsletter( action.getNewsletter() );
@@ -797,8 +797,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 		controller.setShowTemplates(false);
 		controller.setAppendSignature(false);
 		controller.setSaveSent(false);
-		if ( isTemplateSelected() ) {
-			TemplateController.initController(controller, getTemplate());
+		if ( isNewsSelected() ) {
+			NewsController.initController(controller, getNews());
 		} else if ( isNewsletterSelected() ) {
 			NewsletterController.initController(controller, getNewsletter());
 		}
@@ -808,8 +808,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 		controller.onNewMessage(event);
 		controller.setShowNewMessageWindow(true);
-		if ( isTemplateSelected() ) {
-			TemplateController.initController(controller, getTemplate());	
+		if ( isNewsSelected() ) {
+			NewsController.initController(controller, getNews());	
 		}
 		if ( isTargetSelected() ) {
 			String[] emails = CompanyEmailUtil.getCommercialEmails(getTarget().getRegistry());
@@ -870,11 +870,16 @@ public class CommunicationCenterController implements IMarketingConstants {
 		setSurvey( (Survey) controller.getTo() );
 	}
 
-	public void onTemplateBackActionListener( ActionEvent event ) throws ManagerBeanException {
-		IController controller = FormUtil.getController(MARKETING_TEMPLATE_CONTROLLER_NAME);
-		setTemplate( (Template) controller.getTo() );
+	public void onNewsBackActionListener( ActionEvent event ) throws ManagerBeanException {
+		IController controller = FormUtil.getController(NEWS_CONTROLLER_NAME);
+		setNews( (News) controller.getTo() );
 	}
 
+	public void onNewsletterBackActionListener( ActionEvent event ) throws ManagerBeanException {
+		IController controller = FormUtil.getController(NEWSLETTER_CONTROLLER_NAME);
+		setNewsletter( (Newsletter) controller.getTo() );
+	}
+	
 	public int getNumberOfTargetsInEmail() {
 		return numberOfTargetsInEmail;
 	}
