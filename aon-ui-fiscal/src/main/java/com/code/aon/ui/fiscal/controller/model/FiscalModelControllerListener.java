@@ -72,10 +72,11 @@ public class FiscalModelControllerListener extends ControllerAdapter {
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		try {
 			FiscalModelController c = getController(event);	
-			c.initializeDetails();
-			c.setFileOutput(null);
-			FiscalModel fiscalModel = (FiscalModel) c.getTo(); 
+			FiscalModel fiscalModel = (FiscalModel) c.getTo();
 			c.getFiscalModelManager().initializeFiscalModel(fiscalModel);
+			c.setSelectedTab(c.getLiquidationTabName());
+			c.setFileOutput(null);
+			c.initializeDetails();
 		} catch (AonException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}

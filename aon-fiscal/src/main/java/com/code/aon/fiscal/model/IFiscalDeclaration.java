@@ -18,6 +18,7 @@ public interface IFiscalDeclaration {
 	void setHeader(FiscalModel fiscalModel);
 	
 	Map<? extends IFiscalModelKey, FiscalModelDetail> getMap();
+	void clearMap();
 	Collection<FiscalModelDetail> getDetails();
 	List<? extends IFiscalModelKey> getKeys();
 	IFiscalModelKey getKey(String value);

@@ -31,6 +31,7 @@ public class Mod115 implements IFiscalDeclaration {
 	}
 
 	public void initializeDetails() {
+		clearMap();
 		Administration admin = fiscalModel.getAdministration();
 		for (Mod115Key key : Mod115Key.values()) {
 			if (key.accept(admin)) {
@@ -38,6 +39,10 @@ public class Mod115 implements IFiscalDeclaration {
 			}
 		}
 	}
+    @Override
+    public void clearMap() {
+    	map = null;
+    }
 
 	public Map<Mod115Key, FiscalModelDetail> getMap() {
 		if (map == null) {

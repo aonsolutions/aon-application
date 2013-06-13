@@ -49,6 +49,7 @@ public class Mod131 implements IFiscalDeclaration {
 	
 
 	public void initializeDetails() throws ManagerBeanException {
+		clearMap();
 		Administration admin = fiscalModel.getAdministration();
 		boolean added = false;
 		for (Mod131Key key : Mod131Key.values()) {
@@ -125,7 +126,12 @@ public class Mod131 implements IFiscalDeclaration {
 
 	}
 
-	public Map<Mod131Key, FiscalModelDetail> getMap() {
+    @Override
+    public void clearMap() {
+    	map = null;
+    }
+
+    public Map<Mod131Key, FiscalModelDetail> getMap() {
 		if (map == null) {
 			map = new TreeMap<Mod131Key, FiscalModelDetail>();	
 		}

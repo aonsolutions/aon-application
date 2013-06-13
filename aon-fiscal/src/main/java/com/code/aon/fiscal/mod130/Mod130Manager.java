@@ -138,7 +138,6 @@ public class Mod130Manager extends FiscalModelManager {
 	public Mod130 initializeFiscalModel(FiscalModel fiscalModel) throws AonException {
 		Mod130 mod130 = new Mod130();
 		mod130.setFiscalModel(fiscalModel);
-		mod130.initializeDetails();
 		return mod130;
 	}
 	

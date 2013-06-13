@@ -74,7 +74,6 @@ public class Mod111Manager extends FiscalModelManager {
 	public Mod111 initializeFiscalModel(FiscalModel fiscalModel) throws AonException {
 		Mod111 mod111 = new Mod111();
 		mod111.setFiscalModel(fiscalModel);
-		mod111.initializeDetails();
 		return mod111;
 	}
 	
