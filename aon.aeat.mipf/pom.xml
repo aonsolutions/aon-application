@@ -70,6 +70,7 @@
 					<copyright>2009, esferalia Networks S.A</copyright>
 					<requires>
 						<require>java-1.7.0-openjdk</require>
+						<require>xorg-x11-server-Xvfb</require>
 					</requires>
 
 					<mappings>
@@ -90,9 +91,10 @@
 							<username>tomcat</username>
 							<groupname>tomcat</groupname>
 							<sources>
-								<source>
-									<location>src/main/resources/logFile</location>
-								</source>
+								<softlinkSource>
+									<location>/usr/share/java/aon.mipf/log/mipf.log</location>
+									<destination>mipf.log</destination>
+								</softlinkSource>
 							</sources>
 						</mapping>
 					</mappings>
