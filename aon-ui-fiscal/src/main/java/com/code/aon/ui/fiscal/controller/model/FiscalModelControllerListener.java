@@ -74,7 +74,6 @@ public class FiscalModelControllerListener extends ControllerAdapter {
 			FiscalModelController c = getController(event);	
 			FiscalModel fiscalModel = (FiscalModel) c.getTo();
 			c.getFiscalModelManager().initializeFiscalModel(fiscalModel);
-			c.setSelectedTab(c.getLiquidationTabName());
 			c.setFileOutput(null);
 			c.initializeDetails();
 		} catch (AonException e) {
