@@ -82,6 +82,7 @@ public class CustomerFeeToGroupController extends GroupSelectionController {
 			CourseAlumn courseAlumn = (CourseAlumn) to;
 			if ( courseAlumn.getStatus() == CourseAlumnStatus.ACTIVE ) {
 				fee.setCustomer(courseAlumn.getCustomer());
+				fee.setInvoicingGroup(courseAlumn.getCustomer().getInvoicingGroup());
 				customerFeeBean.insert(fee);				
 			}
 		}
