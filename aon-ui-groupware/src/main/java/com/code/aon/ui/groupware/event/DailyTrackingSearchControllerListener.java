@@ -1,5 +1,8 @@
 package com.code.aon.ui.groupware.event;
 
+import static com.code.aon.ui.groupware.controller.DailyTrackingController.COMPANY_TYPE;
+import static com.code.aon.ui.groupware.controller.DailyTrackingController.CUSTOMER_TYPE;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,6 +12,8 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.Company;
+import com.code.aon.customer.Customer;
 import com.code.aon.groupware.JobType;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.project.ActivityType;
@@ -30,6 +35,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class DailyTrackingSearchControllerListener extends ControllerSearchListener {
 
 	private Registry registry;
+	private Customer customer;
+	private int registryType;
 	private TaskHolder taskHolder;
 	private Project project;
 	private ActivityType activityType;
@@ -82,6 +89,22 @@ public class DailyTrackingSearchControllerListener extends ControllerSearchListe
 		this.project = project;
 	}
 	
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public int getRegistryType() {
+		return registryType;
+	}
+
+	public void setRegistryType(int registryType) {
+		this.registryType = registryType;
+	}
+
 	private void loadProjects(Integer registryId) throws ManagerBeanException {
 		ProjectCollectionsController pcc = (ProjectCollectionsController) 
 		AonUtil.getRegisteredBean( IProjectConstants.PROJECT_COLLECTIONS_CONTROLLER_NAME );
@@ -99,8 +122,12 @@ public class DailyTrackingSearchControllerListener extends ControllerSearchListe
 	}
 
 	public void onRegistryChanged(LookupChangeEvent event) {
+		Registry registry = (Registry) event.getNewValue();
+		registryChanged(registry);
+	}
+
+	private void registryChanged( Registry registry ) {
 		try {
-			Registry registry = (Registry) event.getNewValue();
 			if (registry == null || registry.getId() == null) {
 				setProject(null);
 				loadProjects(null);
@@ -156,10 +183,13 @@ public class DailyTrackingSearchControllerListener extends ControllerSearchListe
 	protected void init() throws ManagerBeanException {
 		super.init();
 		setRegistry((Registry)BeanManager.getManagerBean(Registry.class).createNewTo());
+		setCustomer((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 		setTaskHolder(null);
 		setProject(null);
 		setActivityType(null);
 		setJobType(null);
+		setRegistry(null);
+		setRegistryType(CUSTOMER_TYPE);
 		loadProjects(null);
 		loadActivityTypes(null);
 	}
@@ -198,6 +228,28 @@ public class DailyTrackingSearchControllerListener extends ControllerSearchListe
 		if ((getJobType() != null) && (getJobType().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.DAILY_TRACKING_JOB_TYPE_ID), getJobType().getId());
 		}		
+	}
+
+	public void onCustomerChanged(LookupChangeEvent event) {
+		Customer customer = (Customer) event.getNewValue();
+		Registry registry = (customer!=null)?customer.getRegistry():null; 
+		registryChanged( registry );
+		setRegistry( registry );
+	}
+	
+	public void onRegistryTypeChanged( ActionEvent event ) throws ManagerBeanException {
+		switch ( getRegistryType() ) {
+			case CUSTOMER_TYPE:
+				setCustomer((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
+				setRegistry(getCustomer().getRegistry());
+				break;
+			case COMPANY_TYPE:
+				DailyTrackingController controller = (DailyTrackingController) FormUtil.getController(IGroupWareConstants.DAILY_TRACKING_CONTROLLER_NAME);
+				Company company = controller.getCompany();
+				registryChanged( company );
+				setRegistry(company);
+				break;
+		}
 	}
 	
 }

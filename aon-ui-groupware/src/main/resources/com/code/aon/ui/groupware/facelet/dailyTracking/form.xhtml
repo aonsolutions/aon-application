@@ -61,24 +61,47 @@
 					<aon:outputLabel for="DailyTracking_project" value="#{projectBundle.project_project}"/>
 					<aon:panelGrid columns="2"
 						columnClasses="aon-panelGrid-even aon-italic aon-width-100,aon-panelGrid-even aon-width-auto">
-					
-					
+															
 						<aon:outputLabel for="Registry_id" value="#{projectBundle.project_assigned}"/>
-						<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
-							<ui:param name="lookupTo" value="#{dailyTracking.to.registry}" />
-							<ui:param name="skipLabel" value="#{true}" />
-							<ui:param name="lookupReRender" value="DailyTracking_project, DailyTracking_activityType" />
-							<aon:methodParam name="lookupChangeListener"
-								value="#{dailyTracking.onRegistryChanged}" type="lookupChangeListener" />
-						</ui:include>
-						
+						<aon:div id="registrySelectDiv">
+							<aon:div styleClass="aon-margin-right" layout="inline">
+								<aon:selectOneMenu value="#{dailyTracking.registryType}">
+									<f:selectItem itemValue="#{0}" itemLabel="#{customerBundle.customer_module}"/>
+									<f:selectItem itemValue="#{1}" itemLabel="#{companyBundle.company_menu_group}"/>
+									<f:selectItem itemValue="#{2}" itemLabel="#{bundle.aon_general}"/>
+									<a4j:support event="onchange"
+										actionListener="#{dailyTracking.onRegistryTypeChanged}"
+										reRender="registrySelectDiv" ajaxSingle="true" />
+								</aon:selectOneMenu>
+							</aon:div>
+							<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
+								<ui:param name="lookupTo" value="#{dailyTracking.to.registry}" />
+								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="skipInputText" value="#{true}" />
+								<ui:param name="lookupRendered" value="#{(dailyTracking.registryType == 1) or (dailyTracking.registryType == 2)}" />
+								<ui:param name="lookupDisabled" value="#{dailyTracking.registryType == 1}" />
+								<ui:param name="lookupReRender" value="registrySelectDiv,DailyTracking_project, DailyTracking_activityType" />
+								<aon:methodParam name="lookupChangeListener"
+									value="#{dailyTracking.onRegistryChanged}" type="lookupChangeListener" />
+							</ui:include>
+							<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+								<ui:param name="lookupTo" value="#{dailyTracking.customer}" />
+								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="skipInputText" value="#{true}" />
+								<ui:param name="lookupRendered" value="#{dailyTracking.registryType == 0}" />
+								<ui:param name="lookupReRender" value="DailyTracking_project, DailyTracking_activityType" />
+								<aon:methodParam name="lookupChangeListener"
+									value="#{dailyTracking.onCustomerChanged}" type="lookupChangeListener" />
+							</ui:include>							
+						</aon:div>
+									
 						<aon:outputLabel for="DailyTracking_project" value="#{bundle.aon_name}"/>
 						<aon:selectOneMenu id="DailyTracking_project" value="#{dailyTracking.to.project}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
 							<f:selectItems value="#{dailyTracking.projects}" />
 							<a4j:support event="onchange"
 								actionListener="#{dailyTracking.onChangeProject}"
-								reRender="lookupRegistry, DailyTracking_project, DailyTracking_activityType"
+								reRender="registrySelectDiv, DailyTracking_project, DailyTracking_activityType"
 								ajaxSingle="true" />
 						</aon:selectOneMenu>
 						
@@ -118,5 +141,6 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{registryLookup}" />
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
  	</ui:define>
 </ui:composition>

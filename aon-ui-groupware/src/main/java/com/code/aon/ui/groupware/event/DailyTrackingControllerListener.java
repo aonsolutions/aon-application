@@ -1,12 +1,13 @@
 package com.code.aon.ui.groupware.event;
 
-import java.util.Date;
+import static com.code.aon.ui.groupware.controller.DailyTrackingController.CUSTOMER_TYPE;
 
-import javax.faces.event.AbortProcessingException;
+import java.util.Date;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.customer.Customer;
 import com.code.aon.groupware.DailyTracking;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -32,6 +33,8 @@ public class DailyTrackingControllerListener extends ControllerAdapter {
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		try {
 			DailyTrackingController trackingController = (DailyTrackingController)event.getController();
+			trackingController.setRegistryType(CUSTOMER_TYPE);
+			trackingController.setCustomer((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 			DailyTracking dt = (DailyTracking) trackingController.getTo(); 
 			dt.setTrackingDate(new Date());
 			dt.setTrackingDuration(new Double(1));
@@ -81,19 +84,11 @@ public class DailyTrackingControllerListener extends ControllerAdapter {
 		}
     }
     
-    /*	
 	@Override
     public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
         DailyTrackingController controller = (DailyTrackingController)event.getController();
         DailyTracking tracking = (DailyTracking)controller.getTo();
-
-        if (tracking.getCustomer().getId() != null) {
-            controller.loadDossiers(tracking.getCustomer().getRegistry().getId());
-            controller.loadActivities(tracking.getDossier().getId());
-        } else {
-            initialize(event);
-        }
+   		controller.updateRegistrySelection(tracking.getRegistry());
     }
     
-*/   
 }
