@@ -789,6 +789,10 @@
 			<value>News_initDate desc,News_title</value>
 		</managed-property>									
 		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>News_title</value>
+		</managed-property>									
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/marketing/facelet/news/listBasic.xhtml</value>
 		</managed-property>

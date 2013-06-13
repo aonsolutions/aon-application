@@ -18,6 +18,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.marketing.Newsletter;
 import com.code.aon.marketing.NewsletterDetail;
+import com.code.aon.marketing.enumeration.NewsType;
 import com.code.aon.marketing.enumeration.NewsletterLayout;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
@@ -38,6 +39,8 @@ public class NewsletterController extends BasicController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(NewsletterController.class.getName());
 
 	private IControllerListener imageFilter;
+	
+	private IControllerListener newsFilter;
 	
 	private List<MimeType> getImageMimeTypes() {
 		List<MimeType> list = new LinkedList<MimeType>();
@@ -115,6 +118,25 @@ public class NewsletterController extends BasicController {
 		} catch ( ManagerBeanException e ) {
 			LOGGER.error( e.getMessage(), e);
 		}
+	}
+
+	public IControllerListener getNewsFilter() {
+		if ( this.newsFilter == null ) {
+			this.newsFilter = new ControllerAdapter() {
+				@Override
+				public void beforeModelInitialized(ControllerEvent event)
+						throws ControllerListenerException {
+					IController controller = event.getController();
+					try {					
+						Criteria criteria = controller.getCriteria();
+						criteria.addEqualExpression(controller.getFieldName(IEntityAlias.NEWS_TYPE), NewsType.NEWS);
+					} catch (ManagerBeanException e) {
+						LOGGER.error("Error filtering news", e);
+					}
+				}
+			};
+		}
+		return this.newsFilter;
 	}
 	
 }

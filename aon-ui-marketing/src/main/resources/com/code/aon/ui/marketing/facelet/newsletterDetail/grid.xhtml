@@ -20,6 +20,7 @@
 					<ui:param name="idRequired" value="#{true}" />
 					<ui:param name="skipLabel" value="#{true}" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
+					<ui:param name="lookupControllerListener" value="#{newsletter.newsFilter}" />
 				</ui:include>
 				<f:facet name="footer" >
 					<ui:include src="/com/code/aon/ui/marketing/facelet/news/lookup.xhtml" >
@@ -28,6 +29,7 @@
 						<ui:param name="skipLabel" value="#{true}" />
 						<ui:param name="lookupRendered" value="#{formNew}" />
 						<ui:param name="lookupSuffix" value="-New" />
+						<ui:param name="lookupControllerListener" value="#{newsletter.newsFilter}" />
 					</ui:include>
 				</f:facet>	
 			</aon:column>
