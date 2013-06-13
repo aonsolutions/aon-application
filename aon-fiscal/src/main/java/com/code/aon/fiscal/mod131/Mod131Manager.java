@@ -124,20 +124,29 @@ public class Mod131Manager extends FiscalModelManager {
 			Date dateFrom = getInitialDate(fiscalModel);	
 			Date dateTo = getDueDate(fiscalModel);
 			
+	//		Cumplimentarán este apartado los contribuyentes que desarrollen actividades económicas 
+	//		en estimación objetiva distintas de las agrícolas, ganaderas y forestales, respecto de 
+	//		las cuales no resulte posible determinar ninguno de los datos-base a efectos del pago 
+	//		fraccionado y, por tanto, el importe del mismo no pueda calcularse con arreglo al 
+	//		procedimiento a que se refiere el apartado I anterior
 	//		Casilla 03. Consigne en esta casilla el volumen de ventas o ingresos de las actividades 
 	//		a que se refiere este apartado correspondientes al trimestre por el que se realiza el pago
 	//		fraccionado, incluidas las subvenciones corrientes y excluidas las subvenciones de capital
 	//		y las indemnizaciones.
-	
-			SummaryProvider sp = new SummaryProvider();
-			SummaryProviderParameters params = new SummaryProviderParameters(getDomainName());
-			params.setAccountExpression( "70*|71*|72*|73*|75*|76*|77*|78*|79*" );
-			params.setAccountLevel(5);
-			params.setFromDate(dateFrom);
-			params.setToDate(dateTo);
-			SummaryCollection sc = sp.getSummaryCollection(conn,params,false);
-			double c03 = sc.getCreditBalance();
-			mod131.ensureDetail(Mod131Key.C03).addAccumulatedAmount(c03);
+			
+			double c02 = mod131.getDetail( Mod131Key.AC02).getAmount();
+			double c03 = 0;
+			if (c02 == 0) {
+				SummaryProvider sp = new SummaryProvider();
+				SummaryProviderParameters params = new SummaryProviderParameters(getDomainName());
+				params.setAccountExpression( "70*|71*|72*|73*|75*|76*|77*|78*|79*" );
+				params.setAccountLevel(5);
+				params.setFromDate(dateFrom);
+				params.setToDate(dateTo);
+				SummaryCollection sc = sp.getSummaryCollection(conn,params,false);
+				c03 = sc.getCreditBalance();
+				mod131.ensureDetail(Mod131Key.C03).addAccumulatedAmount(c03);
+			}
 			
 	//		Casilla 08. En su caso, se consignará en esta casilla la suma de las retenciones e ingresos 
 	//		a cuenta que, habiendo sido practicados sobre las contraprestaciones procedentes de las 
@@ -176,10 +185,11 @@ public class Mod131Manager extends FiscalModelManager {
 	//		  producto de multiplicar por 0,1 la diferencia entre la suma de las magnitudes indicadas 
 	//		  y 8.000 euros anuales).
 	
+			double sumC01 = mod131.getDetail( Mod131Key.AC01).getAmount();
 			double previousC03 = getC09_03(conn,SELECT_09_03,fiscalModel,Mod131Key.C03);
 			double previousC08 = getC09_08(conn,SELECT_09_08,fiscalModel,Mod131Key.C08);
 			double c09 = 0;
-			if ( CommonUtil.round(previousC03 + previousC08) <= 12000 ) {
+			if ( CommonUtil.round(sumC01 + previousC03 + previousC08) <= 12000 ) {
 				if ( CommonUtil.round(previousC03 + previousC08) <= 8000 ) {
 					c09 = CommonUtil.round( 400.0 / 4 );		
 				} else {
