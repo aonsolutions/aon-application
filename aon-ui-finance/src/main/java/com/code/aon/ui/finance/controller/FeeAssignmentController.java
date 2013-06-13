@@ -109,9 +109,7 @@ public class FeeAssignmentController extends CustomerListController {
 		for (Customer customer : getCheckedCustomers()) {
 			getFee().setCustomer(customer);
 			getFee().setLine(calculateFeeLine(customer));
-			if (isAssignToInvoicingGroup()) {
-				getFee().setInvoicingGroup(customer.getInvoicingGroup());
-			}
+			getFee().setInvoicingGroup((isAssignToInvoicingGroup()) ? customer.getInvoicingGroup() : null);
 			customerFeeBean.restoreNullSubPOJOs(getFee());				
 			customerFeeBean.insert(getFee());				
 		}
