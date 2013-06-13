@@ -58,13 +58,14 @@ public class TemplateController extends BasicController {
 
 	public static void addHeader( Template template, StringBuffer sb ) {
 		boolean nullTemplate = (template == null) || (template.getId() == null);
-		sb.append("<table style=\"width:100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0");
+		sb.append("<div style=\"text-align: center;");
 		if (! (nullTemplate || StringUtils.isEmpty(template.getBackgroundColor())) ) {
-			sb.append("\" bgcolor=\"");
-			sb.append(template.getBackgroundColor());
-			
+			sb.append("background-color:");
+			sb.append(template.getBackgroundColor());	
 		}
-		sb.append("\"><tbody><tr><td align=\"center\">");		
+		sb.append("\">");
+		sb.append("<table style=\"margin: 0 auto;\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">");
+		sb.append("<tbody><tr><td align=\"center\">");		
 		if (! nullTemplate ) {
 			RegistryAttachment ht = template.getHeaderTemplate();
 			if ( (ht != null) && (ht.getId() != null) ) {
@@ -84,7 +85,7 @@ public class TemplateController extends BasicController {
 				}		
 			}
 		}
-		sb.append("</td></tr></tbody></table>");		
+		sb.append("</td></tr></tbody></table></div>");		
 	}
 	
 	private Criteria getTemplateCriteria() throws ManagerBeanException {
