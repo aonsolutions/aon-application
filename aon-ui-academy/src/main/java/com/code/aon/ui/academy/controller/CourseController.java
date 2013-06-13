@@ -1,8 +1,6 @@
 package com.code.aon.ui.academy.controller;
 
-import com.code.aon.ui.form.BasicController;
-
-public class CourseController extends BasicController {
+public class CourseController extends CourseListController {
 
 	private String selectedTab;
 	

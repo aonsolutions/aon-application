@@ -7,7 +7,7 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="feeToGroupForm">
+		<aon:form id="feeToGroupSearch">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{academyBundle.academy_fee_to_group}" />
 				<ui:param name="controller" value="#{feeToGroup}" />
@@ -20,7 +20,7 @@
 				<ui:param name="skipAfterSearch" value="#{true}" />
 				<ui:define name="searchContent">
 					<ui:include src="/com/code/aon/ui/academy/facelet/course/searchContent.xhtml" >
-						<ui:param name="hideStatus" value="#{true}"/>
+						<ui:param name="searchController" value="#{courseSearch}"/>
 					</ui:include>
 				</ui:define>
 			</ui:decorate>

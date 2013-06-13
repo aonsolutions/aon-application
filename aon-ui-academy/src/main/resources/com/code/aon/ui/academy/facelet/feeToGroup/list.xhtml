@@ -8,30 +8,30 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form>
+		<aon:form id="feeToGroupList">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{academyBundle.academy_fee_to_group}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_listing}" />
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="accept"
-						value="#{bundle.aon_accept}"
-						rendered="#{!(empty feeToGroup.checkList)}"
-						action="course_list" actionListener="#{feeToGroup.onAssign}"
+					<aon:commandButton id="feeToGroup-accept"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						accesskey="#{bundle.aon_key_accept}" >
-					</aon:commandButton>				
-					<aon:commandButton id="search"
-						value="#{bundle.aon_search}"
-						action="feeToGroup_search" actionListener="#{feeToGroup.onEditSearch}"
+						value="#{bundle.aon_accept}"
+						rendered="#{feeToGroup.checkedCount > 0}"
+						actionListener="#{feeToGroup.onAssignFee}"
+						accesskey="#{bundle.aon_key_accept}"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandButton id="feeToGroup-search" immediate="true"
 						styleClass="aon-finding-toolbar-item aon-icon-search"
+						value="#{bundle.aon_search}"
+						actionListener="#{feeToGroup.onEditSearch}" action="feeToGroup_search" 
 						accesskey="#{bundle.aon_key_search}" />
 				</ui:define>
 			</ui:decorate>			
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
-			
-				<aon:panelGrid columns="2" >
+				<aon:panelGrid columns="2" styleClass="aon-margin-bottom">
 
 					<aon:outputLabel for="Item_id" value="#{productBundle.product_item}" />
 					<aon:div styleClass="aon-nowrap">
@@ -40,106 +40,128 @@
 							<ui:param name="idRequired" value="#{true}" />
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="skipSuggestText" value="#{feeToGroup.fee.item != null and feeToGroup.fee.item.id != null}" />
-							<ui:param name="lookupInputSuggestSize" value="50" />
+							<ui:param name="lookupInputSuggestSize" value="55" />
 							<ui:param name="lookupInputOnFocus" value="CustomerFee_description" />
-							<ui:param name="lookupReRender" value="customerFeeItemEdit,CustomerFee_price,CustomerFee_discount" />
+							<ui:param name="lookupReRender" value="customerFeeItemDescription,CustomerFee_price,CustomerFee_discount" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{feeToGroup.onItemChanged}" type="lookupChangeListener" />
 						</ui:include>
-						<aon:panelGroup id="customerFeeItemEdit" styleClass="aon-nowrap aon-vertical-align-top" >
+						<aon:panelGroup id="customerFeeItemDescription" styleClass="aon-nowrap aon-vertical-align-top" >
 							<aon:inputTextarea id="CustomerFee_description"
+								style="#{!feeToGroup.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}"
 								value="#{feeToGroup.fee.description}"
-								rendered="#{feeToGroup.fee.item != null and feeToGroup.fee.item.id != null}"
-								cols="50" rows="#{!feeToGroup.longDescription?1:5}"
-								style="#{(!feeToGroup.longDescription)?'overflow-y:hidden;':'overflow-y:auto;'}">
+								cols="60" rows="#{!feeToGroup.longDescription?1:5}"
+								rendered="#{feeToGroup.fee.item != null and feeToGroup.fee.item.id != null}">
 								<f:validateLength maximum="1024" />
 							</aon:inputTextarea>
-							<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
-								actionListener="#{feeToGroup.onShortDescription}" reRender="CustomerFee_description"
-								rendered="#{feeToGroup.longDescription and feeToGroup.fee.item.product.code != null}" />
-							<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
-								actionListener="#{feeToGroup.onLongDescription}" reRender="CustomerFee_description"
-								rendered="#{!feeToGroup.longDescription and feeToGroup.fee.item.product.code != null}" />
+							<aon:commandLink id="CustomerFee_description_short" immediate="true"
+								value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
+								styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
+								rendered="#{feeToGroup.longDescription and feeToGroup.fee.item.product.code != null}"
+								actionListener="#{feeToGroup.onShortDescription}" 
+								reRender="customerFeeItemDescription" ajaxSingle="true" />
+							<aon:commandLink id="InvoiceDetail_description_long" immediate="true"
+								value="&#160;" title="#{bundle.aon_edit}"
+								styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
+								rendered="#{!feeToGroup.longDescription and feeToGroup.fee.item.product.code != null}"
+								actionListener="#{feeToGroup.onLongDescription}"
+								reRender="customerFeeItemDescription" ajaxSingle="true" />
 						</aon:panelGroup>
 					</aon:div>
-	
-					<aon:outputLabel for="CustomerFee_quantity"
-						value="#{bundle.aon_quantity_abrv}" />
-					<aon:inputText id="CustomerFee_quantity" 
-						value="#{feeToGroup.fee.quantity}" 
-						required="true" size="10" >
-					</aon:inputText>
 
-					<aon:outputLabel for="CustomerFee_price"
-						value="#{bundle.aon_price}" />
-					<aon:inputText id="CustomerFee_price" 
-						value="#{feeToGroup.fee.price}" 
-						required="true" size="10" >
-					</aon:inputText>
+					<aon:outputLabel for="CustomerFee_quantity" value="#{bundle.aon_quantity}" />
+					<aon:panelGrid columns="5" columnClasses="aon-width-150,aon-width-60,aon-width-100,aon-width-40,aon-width-auto">
+						<aon:inputText id="CustomerFee_quantity" 
+							value="#{feeToGroup.fee.quantity}" 
+							required="true" size="2" />
 
-					<aon:outputLabel for="CustomerFee_discount"
-						value="#{financeBundle.finance_fee_discount}" />
-					<aon:inputText id="CustomerFee_discount" 
-						size="10" value="#{feeToGroup.fee.discountExpression.discountExpr}" />
+						<aon:outputLabel for="CustomerFee_price" value="#{bundle.aon_price}"
+							styleClass="aon-margin-right" />
 
-					<aon:outputLabel for="CustomerFee_initialDate"
-						value="#{bundle.aon_date_from}" />
-					<aon:selectInputDate id="CustomerFee_initialDate"
-						value="#{feeToGroup.fee.initialDate}" 
-						required="true" timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" />
+						<aon:inputText id="CustomerFee_price"
+							value="#{feeToGroup.fee.price}" 
+							required="true" size="4" />
 
-					<aon:outputLabel for="CustomerFee_finalDate"
-						value="#{bundle.aon_date_to}" />
-					<aon:selectInputDate id="CustomerFee_finalDate"
-						value="#{feeToGroup.fee.finalDate}" 
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" />
-						
-					<aon:outputLabel for="CustomerFee_billingDate"
-						value="#{financeBundle.finance_fee_billing_date_abrv}" />
-					<aon:div styleClass="aon-nowrap">
-						<aon:selectOneMenu id="CustomerFee_billingDate"
-							value="#{feeToGroup.fee.billingDateMonth}">
-							<f:selectItems value="#{commonCollections.months}" />
+						<aon:outputLabel for="CustomerFee_discount" value="#{financeBundle.finance_fee_discount}"
+							styleClass="aon-margin-right" />
+
+						<aon:inputText id="CustomerFee_discount"
+							value="#{feeToGroup.fee.discountExpression.discountExpr}"  
+							required="true" size="2" />
+					</aon:panelGrid>
+
+					<aon:outputLabel for="CustomerFee_initialDate" value="#{bundle.aon_date_from}" />
+					<aon:panelGrid columns="3" columnClasses="aon-width-150,aon-width-60,aon-width-auto">
+						<aon:selectInputDate id="CustomerFee_initialDate"
+							value="#{feeToGroup.fee.initialDate}" required="true"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+
+						<aon:outputLabel for="CustomerFee_finalDate" value="#{bundle.aon_date_to}"
+							styleClass="aon-margin-right aon-bold" />
+
+						<aon:selectInputDate id="CustomerFee_finalDate"
+							value="#{feeToGroup.fee.finalDate}" 
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+					</aon:panelGrid>
+
+					<aon:outputLabel for="CustomerFee_billingDateYear" value="#{financeBundle.finance_fee_billing_date_abrv}" />
+					<aon:panelGrid columns="3" columnClasses="aon-width-150,aon-width-60,aon-width-auto">
+						<aon:div styleClass="aon-nowrap">
+							<aon:selectOneMenu value="#{feeToGroup.fee.billingDateMonth}">
+								<f:selectItems value="#{commonCollections.months}" />
+							</aon:selectOneMenu>
+							<aon:inputText id="CustomerFee_billingDateYear" 
+								value="#{feeToGroup.fee.billingDateYear}"
+								required="true" size="3" maxlength="4" />
+						</aon:div>
+
+						<aon:outputLabel for="CustomerFee_period" value="#{bundle.aon_period}"
+							styleClass="aon-margin-right aon-bold" />
+
+						<aon:selectOneMenu id="CustomerFee_period"
+							value="#{feeToGroup.fee.period}" >
+							<f:selectItems value="#{financeCollections.billingPeriods}" />
 						</aon:selectOneMenu>
-						<aon:outputLabel for="BillingDate_Year"
-							value="#{bundle.aon_year}:" />
-						<aon:inputText id="BillingDate_Year" 
-							value="#{feeToGroup.fee.billingDateYear}"
-							required="true" size="5" />
-					</aon:div>
-					
-					<aon:outputLabel for="CustomerFee_period"
-						value="#{bundle.aon_period}" />
-					<aon:selectOneMenu id="CustomerFee_period" 
-						value="#{feeToGroup.fee.period}">
-						<f:selectItems value="#{financeCollections.billingPeriods}" />
-					</aon:selectOneMenu>	
+					</aon:panelGrid>
 
-					<c:if test="#{aonRole.confidentiality}">
-						<aon:outputText value="#{bundle.aon_confidential}" />
-						<aon:selectBooleanCheckbox id="CustomerFee_securityLevel"
-							value="#{feeToGroup.fee.confidential}" />
-					</c:if>
+					<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{feeToGroup.fee.seller}" />
+					</ui:include>
+
+					<aon:outputLabel for="FeeToGroup_assignToInvoicingGroup" value="Asignar al Grupo de Facturacion" />
+					<aon:panelGrid columns="3" columnClasses="aon-width-150,aon-width-60,aon-width-auto">
+						<aon:selectBooleanCheckbox id="FeeToGroup_assignToInvoicingGroup"
+							value="#{feeToGroup.assignToInvoicingGroup}" />
+
+						<c:if test="#{aonRole.confidentiality}">
+							<aon:outputLabel for="CustomerFee_securityLevel" value="#{bundle.aon_confidential}"
+								styleClass="aon-margin-right aon-bold" />
+							<aon:selectBooleanCheckbox id="CustomerFee_securityLevel"
+								value="#{feeToGroup.fee.confidential}" />
+						</c:if>
+					</aon:panelGrid>
 
 				</aon:panelGrid>
 								
 				<aon:div styleClass="aon-toolbar aon-margin-top"
-					rendered="#{feeToGroup.model.rowCount > 0}">
-					<aon:commandButton title="#{bundle.aon_check_all}"
+					rendered="#{feeAssignment.model.rowCount > 0}">
+					<aon:commandButton id="feeToGroup-checkAll"
 						styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 						value="#{bundle.aon_check_all}"
-						ajaxSingle="true" reRender="courseDataDiv,aonToolbar"
-						actionListener="#{feeToGroup.checkAll}"/>	
-					<aon:commandButton title="#{bundle.aon_uncheck_all}"
+						title="#{bundle.aon_check_all}"
+						actionListener="#{feeToGroup.checkAll}"
+						reRender="CourseListDiv,aonToolbar" ajaxSingle="true" />	
+					<aon:commandButton id="feeToGroup-checkNone"
 						styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 						value="#{bundle.aon_uncheck_all}"
-						ajaxSingle="true" reRender="courseDataDiv,aonToolbar"
-						actionListener="#{feeToGroup.checkNone}" />				
+						title="#{bundle.aon_uncheck_all}"
+						actionListener="#{feeToGroup.checkNone}"
+						reRender="CourseListDiv,aonToolbar" ajaxSingle="true" />	
 				</aon:div>
-					
-				<aon:div id="courseDataDiv">					
+
+				<aon:div id="CourseListDiv">					
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 						<ui:param name="controller" value="#{feeToGroup}" />
 						<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
@@ -155,8 +177,7 @@
 									ajaxSingle="true" reRender="aonToolbar" />
 							</aon:column>
 	
-							<ui:include
-								src="/com/code/aon/ui/academy/facelet/course/listContent.xhtml" />
+							<ui:include	src="/com/code/aon/ui/academy/facelet/course/listContent.xhtml" />
 
 						</ui:define>
 					</ui:decorate>
@@ -165,5 +186,7 @@
 
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 </ui:composition>

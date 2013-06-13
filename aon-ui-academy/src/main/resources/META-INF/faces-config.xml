@@ -1127,6 +1127,13 @@
 			<property-name>defaultOrder</property-name>
 			<value>Course_code,Course_startDate desc</value>
 		</managed-property>								
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{courseSearch}</value>
+			</list-entries>
+		</managed-property>										
 	</managed-bean>	
 
 	<!-- ************* ALUMN RECLASSIFICATION ***************** -->
