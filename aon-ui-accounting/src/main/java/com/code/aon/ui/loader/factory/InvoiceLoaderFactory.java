@@ -146,18 +146,20 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		invoice.setVatQuota(loaded.getTotalCuotaIVA());
 		invoice.setRetentionQuota(loaded.getTotalCuotaIRPF()==null?0.0:loaded.getTotalCuotaIRPF());
 		invoice.setTotal(loaded.getTotalFactura());
-		if (loaded.isFromLoadedInvoiceAccount() && StringUtils.isBlank(loaded.getCuenta())) {
-			Account account = null;
-			if (invoice.getType() == InvoiceType.SALES) {
-				account = getAccountBridgeUtil().obtainCustomerAccount(invoice.getRegistry());
-			} else if (invoice.getType() == InvoiceType.PURCHASE) {
-				account = getAccountBridgeUtil().obtainSupplierAccount(invoice.getRegistry());
-			} else if (invoice.getType() == InvoiceType.EXPENSES) {
-				account = getAccountBridgeUtil().obtainCreditorAccount(invoice.getRegistry());
-			} else if (invoice.getType() == InvoiceType.UNDEDUCTIBLE) {
-				account = getAccountBridgeUtil().obtainCreditorAccount(invoice.getRegistry());
+		if (loaded.isFromLoadedInvoiceAccount()) {
+			if (StringUtils.isBlank(loaded.getCuenta())) {
+				Account account = null;
+				if (invoice.getType() == InvoiceType.SALES) {
+					account = getAccountBridgeUtil().obtainCustomerAccount(invoice.getRegistry());
+				} else if (invoice.getType() == InvoiceType.PURCHASE) {
+					account = getAccountBridgeUtil().obtainSupplierAccount(invoice.getRegistry());
+				} else if (invoice.getType() == InvoiceType.EXPENSES) {
+					account = getAccountBridgeUtil().obtainCreditorAccount(invoice.getRegistry());
+				} else if (invoice.getType() == InvoiceType.UNDEDUCTIBLE) {
+					account = getAccountBridgeUtil().obtainCreditorAccount(invoice.getRegistry());
+				}
+				loaded.setCuenta(account.getCode());
 			}
-			loaded.setCuenta(account.getCode());
 			invoice.setStatus(InvoiceStatus.SCORED);
 		}
 		invoice.setUpdateEnabled(false);

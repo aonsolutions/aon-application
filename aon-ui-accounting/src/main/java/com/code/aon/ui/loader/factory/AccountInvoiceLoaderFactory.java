@@ -143,7 +143,7 @@ public class AccountInvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Invoice invoice = (Invoice) invoiceBean.get(invoiceId);
 		if (invoice == null) {
-			throw new AonException("La factura no se ha grabado corectamente");
+			throw new AonException("La factura no se ha grabado correctamente");
 		}
 		insertInvoiceAccountEntry(params,invoice, loadedInvoice);
 		for (LoadedInvoiceDetail detail : loaded.getLoadedInvoiceDetails()) {
@@ -151,7 +151,7 @@ public class AccountInvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		}
 		engine.insertAonEntity(params, loaded.getLoadedFinance());
 //		if (StringUtils.isNotBlank( loaded.getArticulo())) {
-			getAccountEntryInvoiceWriter().recordInvoice(invoice);		
+//			getAccountEntryInvoiceWriter().recordInvoice(invoice);		
 //		}
 		return invoiceId; 
 	}
