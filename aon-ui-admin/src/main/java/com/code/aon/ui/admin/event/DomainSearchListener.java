@@ -2,9 +2,11 @@ package com.code.aon.ui.admin.event;
 
 import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_ACTIVE;
 import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_CREATION_DATE;
+import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_DESCRIPTION;
 import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_DOMAIN_MANAGEMENT;
 import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_ENABLE_HEREDITY;
 import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_MODIFICATION_DATE;
+import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_NAME;
 import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_PARENT_ID;
 import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_TYPE;
 
@@ -15,6 +17,7 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,12 +27,15 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.admin.controller.DomainPrintController;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
 
 public class DomainSearchListener extends ControllerSearchListenerEx {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainSearchListener.class);
 	
+	private String name;
+	private String description;
 	private Domain parent;
 	private List<DomainType> types;
 	private Boolean active;
@@ -55,6 +61,22 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 		this.showList = ! Boolean.parseBoolean(showOpened);
 	}	
 	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public List<DomainType> getTypes() {
 		if (types == null) {
 			types = new LinkedList<DomainType>();
@@ -124,6 +146,8 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 	}
 	
 	public void reset() {
+		setName(null);
+		setDescription(null);
 		setActive(null);
 		setEnableHeredity(null);
 		setDomainManagement(null);
@@ -146,6 +170,13 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 
 	@Override
 	public void completeCriteria( Criteria criteria ) throws ManagerBeanException {
+		DomainPrintController dpc = (DomainPrintController) getController();
+		if (! StringUtils.isEmpty(getName()) ) {
+			dpc.addExpression(criteria, DOMAIN_NAME, getName());
+		}
+		if (! StringUtils.isEmpty(getDescription()) ) {
+			dpc.addExpression(criteria, DOMAIN_DESCRIPTION, getDescription());
+		}
 		if ( getActive() != null ) {
 			criteria.addEqualExpression( getFieldName(DOMAIN_ACTIVE), getActive());
 		}

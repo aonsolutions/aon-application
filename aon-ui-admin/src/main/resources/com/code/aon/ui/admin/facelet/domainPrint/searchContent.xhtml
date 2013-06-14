@@ -15,10 +15,21 @@
 
 			<aon:panelGrid columns="2">		
 
+				<aon:outputLabel for="Domain_description"
+					value="#{adminBundle.admin_domain_displayName}" />
+				<aon:inputText id="Domain_description" size="80"
+					value="#{domainSearch.description}" />
+
+				<aon:outputLabel for="Domain_name"
+					value="#{adminBundle.admin_domain_url}" />
+				<aon:inputText id="Domain_name" size="80"
+					value="#{domainSearch.name}" />
+
 				<aon:outputLabel value="#{adminBundle.admin_domain_parent}" for="Domain_id"/>
 				<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
 					<ui:param name="lookupTo" value="#{domainSearch.parent}" />
 					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="lookupSuffix" value="-Parent" />
 					<ui:param name="lookupControllerListener" value="#{domainPrint.domainFilter}" />
 				</ui:include>
 				
