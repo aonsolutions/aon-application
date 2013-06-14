@@ -945,7 +945,11 @@
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Newsletter_date desc,Newsletter_name</value>
-		</managed-property>									
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Newsletter_name</value>
+		</managed-property>		
 		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/marketing/facelet/newsletter/listBasic.xhtml</value>
