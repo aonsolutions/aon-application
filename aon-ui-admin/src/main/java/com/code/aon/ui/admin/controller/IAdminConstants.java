@@ -44,6 +44,11 @@ public interface IAdminConstants {
 	String USER_DUPLICATED = "admin_user_duplicated_login";
 	String DOMAIN_NAME_DUPLICATED = "admin_domain_duplicated_name";
 	String DOMAIN_INVALID_NAME = "admin_domain_invalid_name";
+	String DOMAIN_INVALID_NAME_LARGE = "admin_domain_invalid_name_large";
+	String DOMAIN_INVALID_NAME_LEVEL = "admin_domain_invalid_name_level";
+	String DOMAIN_INVALID_LABEL_DASH = "admin_domain_invalid_label_dash";
+	String DOMAIN_INVALID_LABEL_LENGTH = "admin_domain_invalid_label_length";
+	String DOMAIN_INVALID_LABEL_FORMAT = "admin_domain_invalid_label_format";
 	String DOMAIN_MANAGEMENT = "admin_domain_management";
 	
 	String MAIL_ACCOUNT_ENTERPRISE_TITLE = "admin_mailAccount_enterprise"; 
@@ -55,6 +60,7 @@ public interface IAdminConstants {
 	String DOMAIN_DISPLAY_NAME = "admin_domain_displayName";
 	String DOMAIN_TYPE = "admin_domain_type";
 	String DOMAIN_URL = "admin_domain_url";
+	String SUBDOMAIN_SUFFIX = "admin_domain_subDomainSuffix";
 	String DOMAIN_PARENT = "admin_domain_parent";
 	String DOMAIN_MAX_DEFINED_USERS = "admin_domain_maxDefinedUsers";
 	String DOMAIN_MAX_TOTAL_DOCUMENT_SIZE = "admin_domain_maxTotalDocumentSize";

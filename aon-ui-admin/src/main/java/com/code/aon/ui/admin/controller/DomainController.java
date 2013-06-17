@@ -10,7 +10,12 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_4;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_5;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_FOOTER;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_LABEL_DASH;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_LABEL_FORMAT;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_LABEL_LENGTH;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_NAME_LARGE;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_NAME_LEVEL;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_MANAGEMENT;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_MAX_DEFINED_USERS;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_MAX_TOTAL_DOCUMENT_SIZE;
@@ -67,6 +72,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.enumeration.Module;
+import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -125,6 +131,8 @@ public class DomainController extends BasicController {
 	private final static Pattern URL_LABEL_PATTERN = Pattern.compile("[a-z\\d][a-z\\d-]{0,62}");
 	
 	private final static Pattern URL_TLD_PATTERN = Pattern.compile("[a-z]{2,6}");
+	
+	public final static int MAX_DOMAIN_LABEL_LENGTH = 63;
 	
 	public final static int MAX_DOMAIN_NAME_LENGTH = 253;
 	
@@ -464,10 +472,14 @@ public class DomainController extends BasicController {
 	public void domainNameCheck(FacesContext context, UIComponent component, Object value) throws ManagerBeanException {
 		String name = (String) value;
 		if (! StringUtils.equals(name, getDomain().getName()) ) {
-			if (! isValidDomainName(name) ) {
-				String message = AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_NAME);
-				throw new ValidatorException(new FacesMessage(message));				
-			}
+			try {
+				DomainController.checkDomainName(name, 3);
+			} catch (AonException e) {
+				String message = AonUtil.getMessage(BUNDLE_NAME, IAdminConstants.SUBDOMAIN_SUFFIX);
+				FacesMessage fm = new FacesMessage(message + ": " + e.getMessage());
+				fm.setSeverity(SEVERITY_ERROR);
+				throw new ValidatorException(fm);		
+			}		
 			Criteria criteria = new Criteria();
 			criteria.setSkipDomainFilter(true);
 			criteria.addEqualExpression(getFieldName(IEntityAlias.DOMAIN_NAME), name);
@@ -478,27 +490,48 @@ public class DomainController extends BasicController {
 		}
 	}	
 	
-	public static boolean isValidDomainName( String name ) {
+	public void subDomainSuffixCheck(FacesContext context, UIComponent component, Object value) {
+		String name = (String) value;
+		if (! StringUtils.equals(name, getDomain().getName()) ) {
+			try {
+				DomainController.checkDomainName(name, 3);
+			} catch (AonException e) {
+				String message = AonUtil.getMessage(BUNDLE_NAME, IAdminConstants.SUBDOMAIN_SUFFIX);
+				FacesMessage fm = new FacesMessage(message + ": " + e.getMessage());
+				fm.setSeverity(SEVERITY_ERROR);
+				throw new ValidatorException(fm);		
+			}		
+		}		
+	}
+	
+	public static void checkDomainName( String name, int maxLevel ) throws AonException {
 		if (! StringUtils.isEmpty(name) ) {
 			if ( name.length() <= MAX_DOMAIN_NAME_LENGTH ) {
 				String[] labels = StringUtils.split(name, ".");
-				if ( ArrayUtils.getLength(labels) <= 3 ) {
+				if ( ArrayUtils.getLength(labels) <= maxLevel ) {
 					for( int i = 0; i < labels.length; i++ ) {
 						String label = labels[i];
-						if ( StringUtils.endsWith(label, "-") ) {
-							return false;
+						if ( StringUtils.length(label) > MAX_DOMAIN_LABEL_LENGTH ) {
+							throw new AonException( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_LABEL_LENGTH, label) );
+						}
+						if ( StringUtils.startsWith(label, "-") || StringUtils.endsWith(label, "-") ) {
+							throw new AonException( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_LABEL_DASH, label) );
 						}
 						Pattern p = (i+1==labels.length) ? URL_TLD_PATTERN : URL_LABEL_PATTERN;
 						Matcher m = p.matcher(label);
 						if (! m.matches() ) {
-							return false;
+							throw new AonException( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_LABEL_FORMAT, label) );
 						}
 					}	
-					return true;
-				}				
+				} else {
+					throw new AonException( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_NAME_LEVEL, maxLevel) );
+				}
+			} else {
+				throw new AonException( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_NAME_LARGE) );
 			}
+		} else {
+			throw new AonException( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_NAME, name) );	
 		}
-		return false;
 	}
 	
 	public Domain getOEMDomain() {
@@ -893,7 +926,7 @@ public class DomainController extends BasicController {
 	}
 
 	public int getMaxDomainNameLength() {
-		return DEFAULT_MAX_TOTAL_DOCUMENT_SIZE;
+		return MAX_DOMAIN_NAME_LENGTH;
 	}
 	
 }

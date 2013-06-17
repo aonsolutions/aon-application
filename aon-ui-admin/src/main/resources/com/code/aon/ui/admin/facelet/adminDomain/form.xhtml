@@ -68,7 +68,8 @@
 							<aon:outputLabel for="Domain_subDomainSuffix"
 								value="#{adminBundle.admin_domain_subDomainSuffix}" />
 							<aon:inputText id="Domain_subDomainSuffix"
-								size="64" maxlength="64" value="#{adminDomain.to.subDomainSuffix}" />
+								validator="#{adminDomain.subDomainSuffixCheck}"
+								size="64" maxlength="#{adminDomain.maxDomainNameLength-2}" value="#{adminDomain.to.subDomainSuffix}" />
 						</c:if>
 					</c:if>					   				
 

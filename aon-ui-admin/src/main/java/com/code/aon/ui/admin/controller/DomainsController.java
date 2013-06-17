@@ -118,7 +118,7 @@ public class DomainsController extends BasicController {
 	public void onNewDomain( ActionEvent event) throws ManagerBeanException {
 		NewDomainController ndc = (NewDomainController) AonUtil.getRegisteredBean(NEW_DOMAIN_CONTROLLER_NAME);
 		Domain domain = (Domain) getManagerBean().get(DomainManager.getCurrentDomain());
-		ndc.reset( null, domain );
+		ndc.reset( domain, null );
 		setModel(null);
 	}
 	
