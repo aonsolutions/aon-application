@@ -3,7 +3,6 @@ package com.code.aon.ui.admin.controller;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_HERITABLE_ID;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_ID;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_NAME_DUPLICATED;
 import static com.code.aon.ui.admin.controller.IAdminConstants.INVALID_PASSWORD;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
@@ -165,7 +164,7 @@ public class NewDomainController {
 		}	
 	}
 	
-	public void reset( Domain parentDomain, Domain suffixDomain ) throws ManagerBeanException {
+	public void reset( Domain suffixDomain, Domain parentDomain ) throws ManagerBeanException {
 		setDomainName(null);
 		setDomainDescription(null);
 		setPassword(null);
@@ -177,16 +176,28 @@ public class NewDomainController {
 		setParentDomain(parentDomain);
 		setTemplateDomain((Domain)BeanManager.getManagerBean(Domain.class).createNewTo());
 		if ( suffixDomain != null ) {
-			if (StringUtils.isNotBlank( suffixDomain.getSubDomainSuffix() )) {
-				setDomainSuffix( suffixDomain.getSubDomainSuffix() );	
-			} else {
-				setDomainSuffix( StringUtils.substringAfter(suffixDomain.getName(), "." ));
-			}
-			if (!StringUtils.startsWith(getDomainSuffix(), ".")) {
-				setDomainSuffix( "." + getDomainSuffix());
-			}				
-		}		
+			calculateDomainSuffix(suffixDomain);
+		}
 	}	
+	
+	private void calculateDomainSuffix( Domain domain ) {
+		String value = null;
+		if (StringUtils.isNotBlank( domain.getSubDomainSuffix() )) {
+			value = domain.getSubDomainSuffix();
+			if ( StringUtils.startsWith(value, ".") ) {
+				value = StringUtils.substringAfter(value, ".");
+			}
+		} else {
+			value = StringUtils.substringAfter(domain.getName(), "." );
+		}
+		int level = StringUtils.countMatches(value, ".");
+		if ( level >= 2 ) {
+			value = "-" + value;
+		} else {
+			value = "." + value;
+		}
+		setDomainSuffix(value);
+	}
 	
 	private boolean existsDomainName( String name ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
@@ -207,11 +218,12 @@ public class NewDomainController {
 	
 	public void onSave( ActionEvent event) {
 		String domainFinalName = getDomainName() + StringUtils.defaultString(getDomainSuffix()); 
-		if (! DomainController.isValidDomainName(domainFinalName) ) {
-			String message = AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, DOMAIN_INVALID_NAME);
-			throw new AbortProcessingException(message);			
-		}
-		
+		try {
+			DomainController.checkDomainName(domainFinalName, 3);
+		} catch (AonException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());			
+		}		
 		try {
 			if ( existsDomainName(domainFinalName) ) {
 				String message = AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, DOMAIN_NAME_DUPLICATED, domainFinalName);
