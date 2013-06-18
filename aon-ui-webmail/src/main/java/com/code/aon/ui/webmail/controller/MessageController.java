@@ -1181,6 +1181,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 	}
 
 	public void onSendEmail(ActionEvent event) {
+		setShowNewMessageWindow(false);
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
 		if (mailConfig.getMailAccountCount() > 0) {
 			initNewMessage();
@@ -1189,11 +1190,22 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 			if ( email != null ) {
 				setRecipientsTo(email.toString());	
 			}
+			setShowNewMessageWindow(true);
 		} else {
 			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
 		}
 	}
 
+	public void onPrepareEmailWindow(ActionEvent event) {
+		setShowNewMessageWindow(false);
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		if (mailConfig.getMailAccountCount() > 0) {
+			setShowNewMessageWindow(true);
+		} else {
+			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
+		}
+	}
+	
 	public boolean isShowAppendSignature() {
 		if (getSenderMailAccount() != null) {
 			ISignature signature = getSenderMailAccount().getISignature();

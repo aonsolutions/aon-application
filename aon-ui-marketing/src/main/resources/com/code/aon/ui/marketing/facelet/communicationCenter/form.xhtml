@@ -59,12 +59,10 @@
 						</c:if>
 						<c:if test="#{(communicationCenter.action.mediaType  == 'EMAIL') or (communicationCenter.action.mediaType  == 'NEWSLETTER')}" >
 							<aon:commandButton id="email"
-								action="communicationCenter_email"
-								actionListener="#{webmailMessage.onNewMessage}"
+								action="#{communicationCenter.newEmailAction}"
+								actionListener="#{communicationCenter.onNewEmail}"
 								value="#{webmailBundle.webmail_newmail}"
-								styleClass="aon-finding-toolbar-item aon-icon-newMail">
-								<aon:actionListener method="#{communicationCenter.onNewEmail}" />
-							</aon:commandButton>								
+								styleClass="aon-finding-toolbar-item aon-icon-newMail" />
 						</c:if>
 					</c:if>						
 				</ui:define>

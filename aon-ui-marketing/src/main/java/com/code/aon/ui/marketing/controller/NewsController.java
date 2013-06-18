@@ -37,13 +37,14 @@ public class NewsController extends BasicController {
 	
 	public static final String NEWS_REGEX = NEWS_PREFFIX + "(\\d+)\\." + MimeType.MIME_HTML.getExtension();
 	
-	public void onSendEmail(ActionEvent event) throws ManagerBeanException {
-		MessageController controller = (MessageController) AonUtil
-				.getRegisteredBean(BEAN_MESSAGE);
-		controller.onNewMessage(event);
-		controller.setShowNewMessageWindow(true);
-		controller.setShowTemplates(false);
-		initController(controller, (News) getTo());
+	public void onSendEmail(ActionEvent event) {
+		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+		controller.onPrepareEmailWindow(event);
+		if ( controller.isShowNewMessageWindow() ) {			
+			controller.onNewMessage(event);
+			controller.setShowTemplates(false);
+			initController(controller, (News) getTo());
+		}
 	}
 
 	public static void initController(MessageController controller, News news) {

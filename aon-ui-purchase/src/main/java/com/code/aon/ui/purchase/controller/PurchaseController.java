@@ -1,11 +1,9 @@
 package com.code.aon.ui.purchase.controller;
 
 
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -19,7 +17,6 @@ import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -47,7 +44,6 @@ import com.code.aon.purchase.util.IEmailable;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
-import com.code.aon.report.ReportException;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
@@ -58,8 +54,6 @@ import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.supplier.util.SupplierValidationManager;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.IWebMailConstants;
-import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
@@ -513,18 +507,21 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		return emailUtil;
 	}
 
-	public void onShowEmailMessage( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
-		PurchaseReportManager purchaseReportManager = (PurchaseReportManager) AonUtil.getRegisteredBean(PURCHASE_REPORT_CONTROLLER_NAME);
-		purchaseReportManager.setValued(true);
-		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
-		if (mailConfig.getMailAccountCount() > 0) {
-			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
-			messageController.initNewMessage();
-			fireBeforeEmailSend(event, getTo());
-			emailUtil.initMessageController(messageController, (Purchase) getTo(), getMoreRecipients());
-			messageController.setShowNewMessageWindow(true);
-		} else {
-			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
+	public void onShowEmailMessage( ActionEvent event ) {
+		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+		controller.onPrepareEmailWindow(event);
+		if ( controller.isShowNewMessageWindow() ) {
+			try {
+				controller.onNewMessage(event);
+				PurchaseReportManager purchaseReportManager = (PurchaseReportManager) AonUtil.getRegisteredBean(PURCHASE_REPORT_CONTROLLER_NAME);
+				purchaseReportManager.setValued(true);
+				fireBeforeEmailSend(event, getTo());
+				emailUtil.initMessageController(controller, (Purchase) getTo(), getMoreRecipients());
+			} catch ( Throwable e ) {
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e.getMessage(), e);				
+			}			
 		}
 	}	
 	

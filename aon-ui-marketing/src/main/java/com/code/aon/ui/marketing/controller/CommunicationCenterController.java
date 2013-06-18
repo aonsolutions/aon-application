@@ -147,6 +147,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 	
 	private IControllerListener projectCommercialListener;
 	
+	private String newEmailAction;
+	
 	public CommunicationCenterController() {
 		this.date = new Date();
 		this.questionValues = new LinkedList<SelectItem>();
@@ -793,27 +795,46 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 
 	public void onNewEmail( ActionEvent event ) {
+		this.newEmailAction = NAVIGATION_COMMUNICATION_CENTER;
 		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
-		controller.setShowTemplates(false);
-		controller.setAppendSignature(false);
-		controller.setSaveSent(false);
-		if ( isNewsSelected() ) {
-			NewsController.initController(controller, getNews());
-		} else if ( isNewsletterSelected() ) {
-			NewsletterController.initController(controller, getNewsletter());
+		controller.onPrepareEmailWindow(event);
+		if ( controller.isShowNewMessageWindow() ) {
+			controller.onNewMessage(event);	
+			controller.setShowTemplates(false);
+			controller.setAppendSignature(false);
+			controller.setSaveSent(false);
+			if ( isNewsSelected() ) {
+				NewsController.initController(controller, getNews());
+			} else if ( isNewsletterSelected() ) {
+				NewsletterController.initController(controller, getNewsletter());
+			}
+			controller.setShowNewMessageWindow(false);
+			this.newEmailAction = NAVIGATION_COMMUNICATION_CENTER_EMAIL;
 		}
 	}
 
-	public void onInitEmail( ActionEvent event ) throws ManagerBeanException {
+	public String newEmailAction() {
+		return newEmailAction; 
+	}
+	
+	public void onInitEmail( ActionEvent event ) {
 		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
-		controller.onNewMessage(event);
-		controller.setShowNewMessageWindow(true);
-		if ( isNewsSelected() ) {
-			NewsController.initController(controller, getNews());	
-		}
-		if ( isTargetSelected() ) {
-			String[] emails = CompanyEmailUtil.getCommercialEmails(getTarget().getRegistry());
-			CompanyEmailUtil.initMessageController(controller, emails);
+		controller.onPrepareEmailWindow(event);
+		if ( controller.isShowNewMessageWindow() ) {
+			try {		
+				controller.onNewMessage(event);
+				if ( isNewsSelected() ) {
+					NewsController.initController(controller, getNews());	
+				}
+				if ( isTargetSelected() ) {
+					String[] emails = CompanyEmailUtil.getCommercialEmails(getTarget().getRegistry());
+					CompanyEmailUtil.initMessageController(controller, emails);
+				}
+			} catch (Throwable th) {
+				LOGGER.error(th.getMessage(), th);
+				AonUtil.addErrorMessage(th.getMessage());
+				throw new AbortProcessingException(th.getMessage(), th);
+			}		
 		}
 	}
 	

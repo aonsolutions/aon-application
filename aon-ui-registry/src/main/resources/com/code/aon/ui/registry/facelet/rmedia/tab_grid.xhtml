@@ -138,7 +138,6 @@
 						actionListener="#{webmailMessage.onSendEmail}" value="&#160;"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
 						rendered="#{to.mediaType == 'EMAIL'}" >
-						<f:setPropertyActionListener target="#{webmailMessage.showNewMessageWindow}" value="#{true}" />
 						<f:param name="email" value="#{to.value}" />
 					</aon:commandLink>
 				</aon:div>

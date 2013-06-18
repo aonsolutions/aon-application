@@ -39,7 +39,6 @@
 							title="#{webmailBundle.webmail_send_email}" 
 							ajaxSingle="true" reRender="showNewMessageWindow"
 							value="&#160;" actionListener="#{webmailMessage.onSendEmail}" >
-							<f:setPropertyActionListener target="#{webmailMessage.showNewMessageWindow}" value="#{true}" />
 						</aon:commandLink>								
 						<ui:insert name="beforeRightMenuContent"/>					
 		                <aon:methodParam name="homeActionListener" default="" />					

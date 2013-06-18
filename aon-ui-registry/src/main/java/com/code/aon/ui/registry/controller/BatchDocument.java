@@ -1,7 +1,7 @@
 package com.code.aon.ui.registry.controller;
 
 import static com.code.aon.ui.registry.controller.IRegistryConstants.CORPORATE_IDENTITY_ATTACHMENT_CONTROLLER_NAME;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -31,8 +31,6 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.IWebMailConstants;
-import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
 
 public class BatchDocument {
@@ -98,22 +96,19 @@ public class BatchDocument {
 	}	
 
 	public void onSendInvoiceByEmail(ActionEvent event) {
-		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
-		if (mailConfig.getMailAccountCount() > 0) {
-			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
-			messageController.initNewMessage();
-			messageController.setShowNewMessageWindow(true);
-			if (! this.documents.isEmpty() ) {
-				try {
-					messageController.addAttachment( getDocumentsZip() );
-				} catch (IOException e) {
-					LOGGER.error(">>>> onSendInvoiceByEmail exception: ", e);
-					AonUtil.addErrorMessage(e.getMessage());
-					throw new AbortProcessingException(e.getMessage(), e);
-				}				
-			}
-		} else {
-			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
+		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+		controller.onPrepareEmailWindow(event);
+		if ( controller.isShowNewMessageWindow() ) {			
+			try {
+				controller.onNewMessage(event);
+				if (! this.documents.isEmpty() ) {
+					controller.addAttachment( getDocumentsZip() );
+				}
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e.getMessage(), e);
+			}				
 		}
 	}
 	

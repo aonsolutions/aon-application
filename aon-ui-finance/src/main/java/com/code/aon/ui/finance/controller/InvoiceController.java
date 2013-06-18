@@ -2,10 +2,8 @@ package com.code.aon.ui.finance.controller;
 
 import static com.code.aon.finance.enumeration.InvoiceAttachmentType.INVOICE;
 import static com.code.aon.finance.enumeration.InvoiceAttachmentType.RECEIPT;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -68,10 +66,7 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.sign.controller.ISignatureController;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.IWebMailConstants;
-import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.webmail.SecurityInfo;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceController extends BasicController implements ISignatureController, IFinanceConstants, IFinanceMessages {
@@ -893,25 +888,22 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return attach;		
 	}
 	
-	public void onSendInvoiceByEmail(ActionEvent event) throws ManagerBeanException, IOException {
-		sendInvoiceByEmail(null, true);
-	}
-
-	private void sendInvoiceByEmail(SecurityInfo securyInfo, boolean facturae) throws ManagerBeanException, IOException {
-		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
-		if (mailConfig.getMailAccountCount() > 0) {
-			Invoice invoice = getInvoice();
-			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
-			messageController.initNewMessage();
-			IAttachment attach = getInvoiceData(invoice);
-			emailController.initMessageController(messageController, invoice, attach, facturae);
-			messageController.setShowNewMessageWindow(true);
-			messageController.setSecurityInfo(securyInfo);
-		} else {
-			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
+	public void onSendInvoiceByEmail(ActionEvent event) {
+		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+		controller.onPrepareEmailWindow(event);
+		if ( controller.isShowNewMessageWindow() ) {
+			try {
+				controller.onNewMessage(event);
+				Invoice invoice = getInvoice();
+				IAttachment attach = getInvoiceData(invoice);
+				emailController.initMessageController(controller, invoice, attach, true);
+			} catch (Throwable th) {
+				LOGGER.error(th.getMessage(), th);
+				AonUtil.addErrorMessage(th.getMessage());
+				throw new AbortProcessingException(th.getMessage(), th);
+			}						
 		}
 	}
-
 	
 	public List<SelectItem> getInvoiceAttachmentTypes() {
 		List<SelectItem> invoiceAttachmentTypes = new LinkedList<SelectItem>();
