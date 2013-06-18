@@ -9,11 +9,15 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.Warehouse;
@@ -40,8 +44,10 @@ public class WarehouseCollectionsController {
 		warehouses = new LinkedList<SelectItem>();
 		IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ACTIVE), true);
-		UserUtils.getInstance().addScopeFilterToCriteria(criteria, warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_SCOPE_ID));
+		Expression nullWorkPlaceExp = ExpressionUtilities.getNullExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
+		String ljAlias = StringUtils.replace(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_SCOPE_ID), ".scope", "<scope");
+		Expression nullScopeExp = UserUtils.getInstance().getNullableScopeExpression(ljAlias);
+		criteria.addExpression(ExpressionUtilities.getOrExpression(nullWorkPlaceExp, nullScopeExp));
 		criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
 		List<ITransferObject> c = warehouseBean.getList(criteria);
 		Iterator<ITransferObject> iter = c.iterator();
@@ -52,7 +58,7 @@ public class WarehouseCollectionsController {
 		}
 		return warehouses;
 	}
-
+	
 	public List<SelectItem> getDeliveryStatuses() {
 		if ( deliveryStatuses == null ) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
