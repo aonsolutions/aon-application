@@ -8,7 +8,13 @@ public interface IMailConstants {
 	
 	String DEFAULT_PROPERTIES = PROPERTIES_PATH + "default.mail.properties";
 	
-	File WEBMAIL_PROPERTIES = new File( "/home/COMMON-RESOURCES/aon-webmail/mail.properties" );	
+	File WEBMAIL_PROPERTIES = new File( "/home/COMMON-RESOURCES/aon-webmail/mail.properties" );
+	
+	int DEFAULT_IMAP_PORT = 143;
+	
+	int DEFAULT_POP3_PORT = 110;
+	
+	int DEFAULT_SMTP_PORT = 25;	
 	
 	String IMAP = "imap";
 	

@@ -1,8 +1,5 @@
 package com.code.aon.ui.webmail.controller;
 
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.INVALID_NAME;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -20,7 +17,6 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.converter.MappedTransferObjectConverter;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.util.AonUtil;
 
 public abstract class MailDBController extends BasicController {
 
@@ -85,14 +81,6 @@ public abstract class MailDBController extends BasicController {
 		idCheck( value.toString() );
 	}	
 	
-	private boolean isValidName( String name ) {
-		return name.matches("\\p{Alpha}[\\w\\.\\-]*");
-	}
-	
-	private String getInvalidMessage( String name ) {
-		return AonUtil.getMessage(BUNDLE_NAME, INVALID_NAME, name);
-	}
-	
 	private boolean exists( String name ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		completeCriteria( criteria );
@@ -114,9 +102,6 @@ public abstract class MailDBController extends BasicController {
 	}		
 	
 	private void idCheck( String id ) {
-		if (! isValidName(id) ) {
-			throw new ValidatorException(new FacesMessage(getInvalidMessage(id)));
-		}
 		try {
 			if ( isDuplicated(id) ) {
 				throw new ValidatorException(new FacesMessage(getDuplicatedMessage(id)));			

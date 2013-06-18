@@ -1,5 +1,6 @@
 package com.code.aon.webmail.db;
 
+import static com.code.aon.webmail.bean.IMailConstants.DEFAULT_SMTP_PORT;
 import static com.code.aon.webmail.bean.IMailConstants.IMAP;
 
 import javax.persistence.Entity;
@@ -20,11 +21,9 @@ public class MailAccount extends MailAccountDB implements IMailAccount {
 	private static final long serialVersionUID = 1L;
 	
 	public MailAccount() {
-	    setProtocol(IMAP);
-	    setIncomingPort(143);
 	    setIncomingSecurity(ConnectionSecurity.NONE);
 	    setOutgoingVerification(true);
-	    setOutgoingPort(25);
+	    setOutgoingPort(DEFAULT_SMTP_PORT);
 	    setOutgoingSecurity(ConnectionSecurity.NONE);
 	}
 

@@ -168,7 +168,9 @@ public class AonServer implements IMailConstants {
     
     private static Properties calculateProperties( IMailAccount account ) {
         Properties values = new Properties();
-        setIncomingProperties(account, values);
+        if ( account.getProtocol() != null ) {
+            setIncomingProperties(account, values);	
+        }
         setOutcomingProperties(account, values);
         Properties override = PropertiesUtil.getProperties(WEBMAIL_PROPERTIES, DEFAULT_PROPERTIES);
         values.putAll(override);

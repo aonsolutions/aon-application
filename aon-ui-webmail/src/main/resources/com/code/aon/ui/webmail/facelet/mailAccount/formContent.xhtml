@@ -13,7 +13,7 @@
 		<ui:param name="skipRemoveButton" value="#{controller.new or (!mailConfig.mailAccountRemovable)}" />
 	</ui:include>			
 			
-	<aon:div styleClass="aon-scroll-area">
+	<aon:div id="MailAccountDiv" styleClass="aon-scroll-area">
 		<aon:div styleClass="aon-margin-bottom">
 			<aon:div styleClass="aon-form-group-title">
 				<aon:div styleClass="aon-form-group-title-internal">
@@ -59,45 +59,50 @@
 				<aon:outputLabel for="MailAccount_protocol"
 					value="#{webmailBundle.webmail_mailAccount_protocol}" />
 				<aon:selectOneMenu id="MailAccount_protocol"
+					actionListener="#{controller.onProtocolChanged}"
+					reRender="MailAccountDiv" ajaxSingle="false"
 					value="#{controller.to.protocol}">
+					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItem itemLabel="IMAP" itemValue="imap" />
 					<f:selectItem itemLabel="POP3" itemValue="pop3" />
 				</aon:selectOneMenu>
 			</aon:panelGrid>
 		</aon:div>
-		<aon:div styleClass="aon-margin-top aon-margin-bottom">
-			<aon:div styleClass="aon-form-group-title">
-				<aon:div styleClass="aon-form-group-title-internal">
-					<aon:outputText value="#{webmailBundle.webmail_mailAccount_incoming_host}"/>
+		<c:if test="#{controller.to.protocol != null}" >
+			<aon:div styleClass="aon-margin-top aon-margin-bottom">
+				<aon:div styleClass="aon-form-group-title">
+					<aon:div styleClass="aon-form-group-title-internal">
+						<aon:outputText value="#{webmailBundle.webmail_mailAccount_incoming_host}"/>
+					</aon:div>
 				</aon:div>
-			</aon:div>
-			<aon:panelGrid columns="2" style="aon-width-500"
-				columnClasses="aon-width-150 aon-panelGrid-odd,aon-panelGrid-even">
-
-				<aon:outputLabel for="MailAccount_incomingHost"
-					value="#{webmailBundle.webmail_mailAccount_incomingHost}" />
-				<aon:inputText id="MailAccount_incomingHost"
-					size="60" maxlength="256"
-					disabled="#{!mailConfig.mailAccountEditable}"
-					value="#{controller.to.incomingHost}" />
-
-				<aon:outputLabel for="MailAccount_incomingPort"
-					value="#{webmailBundle.webmail_mailAccount_incomingPort}" />
-				<aon:inputText id="MailAccount_incomingPort"
-					size="10" maxlength="10"
-					disabled="#{!mailConfig.mailAccountEditable}"
-					value="#{controller.to.incomingPort}" />
-
-				<aon:outputLabel for="MailAccount_incomingSecurity"
-					value="#{webmailBundle.webmail_mailAccount_connectionSecurity}" />
-				<aon:selectOneMenu id="MailAccount_incomingSecurity"
-					disabled="#{!mailConfig.mailAccountEditable}" 
-					value="#{controller.to.incomingSecurity}">
-					<f:selectItems value="#{mailConfig.connectionSecurities}" />
-				</aon:selectOneMenu>						
-					
-			</aon:panelGrid>
-	   </aon:div>
+				<aon:panelGrid columns="2" style="aon-width-500"
+					columnClasses="aon-width-150 aon-panelGrid-odd,aon-panelGrid-even">
+	
+					<aon:outputLabel for="MailAccount_incomingHost"
+						value="#{webmailBundle.webmail_mailAccount_incomingHost}" />
+					<aon:inputText id="MailAccount_incomingHost"
+						size="60" maxlength="256"
+						disabled="#{!mailConfig.mailAccountEditable}"
+						value="#{controller.to.incomingHost}" />
+	
+					<aon:outputLabel for="MailAccount_incomingPort"
+						value="#{webmailBundle.webmail_mailAccount_incomingPort}" />
+					<aon:inputText id="MailAccount_incomingPort"
+						size="10" maxlength="10"
+						disabled="#{!mailConfig.mailAccountEditable}"
+						value="#{controller.to.incomingPort}" />
+	
+					<aon:outputLabel for="MailAccount_incomingSecurity"
+						value="#{webmailBundle.webmail_mailAccount_connectionSecurity}" />
+					<aon:selectOneMenu id="MailAccount_incomingSecurity"
+						disabled="#{!mailConfig.mailAccountEditable}" 
+						value="#{controller.to.incomingSecurity}">
+						<f:selectItems value="#{mailConfig.connectionSecurities}" />
+					</aon:selectOneMenu>						
+						
+				</aon:panelGrid>
+		   </aon:div>
+		</c:if>
 	   <aon:div styleClass="aon-margin-top aon-margin-bottom">
 			<aon:div styleClass="aon-form-group-title">
 				<aon:div styleClass="aon-form-group-title-internal">
@@ -230,13 +235,14 @@
 	
 				</aon:panelGrid>
 			</aon:div>
+			
+			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/moveMessages.xhtml">
+				<aon:methodParam name="moveMessagesActionListener" value="#{mailConfig.selectFolder}" type="nodeSelectListener" />
+				<ui:param name="folderPanelTitle" value="#{webmailBundle.webmail_folder_selection}" />
+				<ui:param name="folderModel" value="#{mailConfig.treeNode}" />
+			</ui:include>
+			
 		</c:if>
 	</aon:div>
 	
-	<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/moveMessages.xhtml">
-		<aon:methodParam name="moveMessagesActionListener" value="#{mailConfig.selectFolder}" type="nodeSelectListener" />
-		<ui:param name="folderPanelTitle" value="#{webmailBundle.webmail_folder_selection}" />
-		<ui:param name="folderModel" value="#{mailConfig.treeNode}" />
-	</ui:include>
-
 </ui:composition>
