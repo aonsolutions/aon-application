@@ -71,13 +71,33 @@
 						
 					<aon:outputLabel for="Template_backgroundColor"
 						value="#{marketingBundle.marketing_newsletter_backgroundColor}" />
-					<rich:colorPicker id="Template_backgroundColor"
-						value="#{marketingTemplate.to.backgroundColor}" colorMode="hex" />
+					<aon:div>
+						<rich:colorPicker id="Template_backgroundColor"
+							value="#{marketingTemplate.to.backgroundColor}" colorMode="hex" />
+						<aon:div layout="inline" styleClass="aon-margin-left">
+							<aon:commandButton id="backgroundColorClear"
+								value="&#160;" title="#{bundle.aon_clear}"
+								actionListener="#{marketingTemplate.onClearBackgroundColor}"
+								styleClass="aon-icon-commandButton aon-icon-delete"
+								reRender="Template_backgroundColor">
+							</aon:commandButton>
+						</aon:div>
+					</aon:div>
 
 					<aon:outputLabel for="Template_titleColor"
 						value="#{marketingBundle.marketing_newsletter_titleColor}" />
-					<rich:colorPicker id="Template_titleColor"
-						value="#{marketingTemplate.to.titleColor}" colorMode="hex" />				
+					<aon:div>						
+						<rich:colorPicker id="Template_titleColor"
+							value="#{marketingTemplate.to.titleColor}" colorMode="hex" />				
+						<aon:div layout="inline" styleClass="aon-margin-left">
+							<aon:commandButton id="titleColorClear"
+								value="&#160;" title="#{bundle.aon_clear}"
+								actionListener="#{marketingTemplate.onClearTitleColor}"
+								styleClass="aon-icon-commandButton aon-icon-delete"
+								reRender="Template_titleColor">
+							</aon:commandButton>
+						</aon:div>
+					</aon:div>
 						
 					<ui:include src="/com/code/aon/ui/marketing/facelet/htmlTemplate/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{marketingTemplate.to.headerTemplate}" />

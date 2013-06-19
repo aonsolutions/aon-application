@@ -121,5 +121,15 @@ public class TemplateController extends BasicController {
 		}
 		return templates;
 	}
+
+	public void onClearBackgroundColor( ActionEvent event ) {
+		Template template = (Template) getTo();
+		template.setBackgroundColor(null);
+	}
+
+	public void onClearTitleColor( ActionEvent event ) {
+		Template template = (Template) getTo();
+		template.setTitleColor(null);
+	}
 	
 }
