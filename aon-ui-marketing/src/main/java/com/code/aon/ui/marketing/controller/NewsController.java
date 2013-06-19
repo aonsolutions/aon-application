@@ -57,6 +57,7 @@ public class NewsController extends BasicController {
 					controller.addAttachment(aonFile);
 				}
 			}
+			controller.setSubject(news.getTitle());
 		} else if (news.getType() == NewsType.NEWS) {
 			HtmlGenerator hg = new HtmlGenerator();
 			hg.addNews(news, news.getTemplate(), FULL_WIDTH_IMAGE);
