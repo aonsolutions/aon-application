@@ -8,13 +8,15 @@
 	<field name="document"  value="bean"  bean="Declaration"    property="document"           format="Nif"           pattern="X(9)"  />
 	<field name="nameStart" value="bean"  bean="Declaration"    property="surnameStart"       format="AlphaNumeric"  pattern="X(4)"  />
 	<field name="name"      value="bean"  bean="Declaration"    property="name"               format="AlphaNumeric"  pattern="X(30)" />
-	<field name="onlyName"  value="bean"  bean="Declaration"    property="onlyName"           format="AlphaNumeric"  pattern="X(15)" />
-	<field name="strType"   value="bean"  bean="Declaration"    property="streetType"         format="Alphabetic"    pattern="X(2)"  />	
-	<field name="address"   value="bean"  bean="Declaration"    property="address"            format="AlphaNumeric"  pattern="X(17)" />	
-	<field name="addNumber" value="bean"  bean="Declaration"    property="addressNumber"      format="Numeric"       pattern="9(4)"  />	
-	<field name="free1"     value=" "                                                         format="Alphabetic"    pattern="X(6)"  />
-	<field name="telephone" value="bean"  bean="Declaration"    property="telephone"          format="AlphaNumeric"  pattern="X(9)"  />	
-	<field name="city"      value="bean"  bean="Declaration"    property="city"               format="AlphaNumeric"  pattern="X(20)" />	
+	<field name="onlyName"  value="bean"  bean="Declaration"    property="surname"            format="AlphaNumeric"  pattern="X(15)" />
+	<field name="strInit"   value="bean"  bean="Declaration"    property="streetInitial"      format="AlphaNumeric"  pattern="X(2)"  />	
+	<field name="strName"   value="bean"  bean="Declaration"    property="streetName"         format="AlphaNumeric"  pattern="X(17)" />	
+	<field name="strNumber" value="bean"  bean="Declaration"    property="streetNumber"       format="AlphaNumeric"  pattern="X(4)"  />
+	<field name="strStair"  value="bean"  bean="Declaration"    property="streetStair"        format="AlphaNumeric"  pattern="X(2)"  />
+	<field name="strFloor"  value="bean"  bean="Declaration"    property="streetFloor"        format="AlphaNumeric"  pattern="X(2)"  />
+	<field name="strDoor"   value="bean"  bean="Declaration"    property="streetDoor"         format="AlphaNumeric"  pattern="X(2)"  />
+	<field name="telephone" value="bean"  bean="Declaration"    property="phone"              format="AlphaNumeric"  pattern="X(9)"  />	
+	<field name="city"      value="bean"  bean="Declaration"    property="town"               format="AlphaNumeric"  pattern="X(20)" />	
 	<field name="province"  value="bean"  bean="Declaration"    property="province"           format="AlphaNumeric"  pattern="X(15)" />	
 	<field name="zip"       value="bean"  bean="Declaration"    property="zip"                format="Numeric"       pattern="9(5)"  />	
 	<field name="year"      value="bean"  bean="Declaration"    property="year"               format="Numeric"       pattern="9(4)" />

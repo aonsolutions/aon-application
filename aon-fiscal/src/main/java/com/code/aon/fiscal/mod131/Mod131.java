@@ -266,4 +266,13 @@ public class Mod131 implements IFiscalDeclaration {
 	public boolean isToDeduct() {
 		return (isToDeductDeclarationAvailable()  && getResult() < 0);
 	}
+	@Override
+	public boolean isCompensateDeclarationAvailable() {
+		return false;
+	}
+
+	@Override
+	public boolean isCompensate() {
+		return false;
+	}
 }

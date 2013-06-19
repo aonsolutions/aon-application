@@ -11,8 +11,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -22,20 +20,17 @@ import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.file.tax.model.MOD123.Declaration;
 import com.code.aon.file.tax.model.MOD123.MOD123;
 import com.code.aon.file.tax.model.MOD123.MOD123Format;
-import com.code.aon.file.tax.model.MOD123.data.Declaration;
 import com.code.aon.finance.Finance;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.Mod123Key;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
-import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -79,7 +74,6 @@ public class MOD123Writer implements IFinanceConstants{
 		SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
 		Declaration declaration = new  Declaration();
 		Company company = getCompany(fiscalModel.getDomain());
-		declaration.setDocument(company.getDocument());
 		declaration.setPerson(company.getRegistry().getType() == RegistryType.NATURAL 
 				|| company.getDocumentType() != DocumentType.CIF);
 		declaration.setStartPeriod(0);
@@ -99,42 +93,28 @@ public class MOD123Writer implements IFinanceConstants{
 		declaration.setStartPeriod(Integer.parseInt( startDate));
 		String endDate = formatter.format(fiscalModel.getPeriod().getDueDate(year));
 		declaration.setEndPeriod(Integer.parseInt( endDate));
-		declaration.setName(company.getName());
-		RegistryMedia  phone = company.getPhone();
-		declaration.setTelephone(null);
-		if (phone != null){
-			declaration.setTelephone(phone.getValue() );
-		}
-		RegistryAddress address = company.getDefaultAddress();
-		declaration.setStreetType(address.getStreetType().getValue());
-		declaration.setAddress( address.getAddress() );
-		if (StringUtils.isNotEmpty( address.getNumber() )) {
-			try {
-				declaration.setAddressNumber( Integer.parseInt(address.getNumber())); 
-			} catch (NumberFormatException e) {
-				// Nothing
-			}
-		}
-		declaration.setEntity(address.getCity());
-		declaration.setCity(address.getCity());
-		declaration.setProvince(address.getGeozone()==null?"":address.getGeozone().getName());
-		String zip = address.getZip();
-		declaration.setZip(0);
-		if (zip != null){
-			try {
-				declaration.setZip(Integer.parseInt( zip ));
-			} catch (NumberFormatException e) {
-				// Nothing
-			}
-		}
 		
-		FiscalParametersController fpc = (FiscalParametersController) AonUtil.getRegisteredBean( FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
-		declaration.setContactPerson( fpc.getContactPerson() );
-		declaration.setContactPhone(fpc.getContactPhone() );
+		declaration.setDocument(fiscalModel.getDocument());
+		declaration.setName(fiscalModel.getName());
+		declaration.setSurname(fiscalModel.getSurname());
+		declaration.setPhone( fiscalModel.getPhone() );
+		declaration.setStreetInitial(fiscalModel.getStreetInitial());
+		declaration.setStreetName( fiscalModel.getStreetName() );
+		declaration.setStreetNumber(fiscalModel.getStreetNumber());
+		declaration.setStreetStair(fiscalModel.getStreetStair());
+		declaration.setStreetFloor(fiscalModel.getStreetFloor());
+		declaration.setStreetDoor(fiscalModel.getStreetDoor());
+		declaration.setTown(fiscalModel.getTown());
+		declaration.setProvince(fiscalModel.getProvince());
+		declaration.setZip(fiscalModel.getZip());
 		
+		declaration.setContactPerson( fiscalModel.getContactPerson() );
+		declaration.setContactPhone(fiscalModel.getContactPhone() );
+		declaration.setContactCellular( fiscalModel.getContactCellular() );
+		declaration.setContactMail( fiscalModel.getContactEmail() );
+
 		if (fiscalModel.getAdministration() == Administration.COMMON_TERRITORY) {
-			String administrationCode = fpc.getAdministrationCode();
-			declaration.setAdministrationCode(administrationCode);
+			declaration.setAdministrationCode(fiscalModel.getAdmonAeat());
 		}
 		
 		IManagerBean bean = BeanManager.getManagerBean(FiscalModelDetail.class);
@@ -149,11 +129,11 @@ public class MOD123Writer implements IFinanceConstants{
 		}
 		
 		double d = declaration.getBoxes().get(Mod123Key.C13.getValue()); 
-		declaration.setDeclarationType("I");
 		declaration.setPayment("0");
 		if (d <= 0) {
 			declaration.setDeclarationType("N");
 		} else {
+			declaration.setDeclarationType("I");
 			declaration.setCcc1("");
 			declaration.setCcc2("");
 			declaration.setCcc3("");
@@ -165,19 +145,17 @@ public class MOD123Writer implements IFinanceConstants{
 						if (finance.getBankAccount() == null) {
 							throw new ManagerBeanException("Si la forma de pago no es efectivo, el banco no puede estar vacio.");
 						}
-						declaration.setPayment("2");
+						declaration.setPayment("3");
 						declaration.setCcc1(finance.getBankAccount().getEntity());
 						declaration.setCcc2(finance.getBankAccount().getOffice());
 						declaration.setCcc3(finance.getBankAccount().getControl());
 						declaration.setCcc4(finance.getBankAccount().getAccount());
+						declaration.setDeclarationType("U");
 					} else {
 						declaration.setPayment("1");
 					}
 				}
 			}
-			if (StringUtils.isNotBlank(declaration.getCcc1())) {
-				declaration.setDeclarationType("U");
-			} 
 		}
 		return declaration;
 	}

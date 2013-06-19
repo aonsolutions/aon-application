@@ -3,9 +3,8 @@ package com.code.aon.file.tax.model.MOD347;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.code.aon.file.format.core.DiskRegisterLoader;

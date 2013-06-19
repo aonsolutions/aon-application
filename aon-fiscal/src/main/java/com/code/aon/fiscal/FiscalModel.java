@@ -4,7 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.fiscal.enumeration.FiscalModelStatus;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
@@ -12,7 +14,7 @@ import com.esferalia.aon.entity.master.FiscalModelDB;
 
 @Entity
 @Table(name="fs_model")
-public class FiscalModel extends FiscalModelDB {
+public class FiscalModel extends FiscalModelDB implements IAuditable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -74,5 +76,8 @@ public class FiscalModel extends FiscalModelDB {
 		this.receiverCount = receiverCount;
 	}
 	
-	
+	@Transient
+	public boolean isFromCommonTerritory() {
+		return (getAdministration() == Administration.COMMON_TERRITORY);
+	}
 }

@@ -7,6 +7,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
 import com.esferalia.aon.entity.master.VatTaxDeclarationDB;
 
@@ -68,4 +69,9 @@ public class VatTaxDeclaration extends VatTaxDeclarationDB {
 		return null;
 	}
 
+	@Transient
+	public boolean isFromCommonTerritory() {
+		return (getAdministration() == Administration.COMMON_TERRITORY);
+	}
+	
 }

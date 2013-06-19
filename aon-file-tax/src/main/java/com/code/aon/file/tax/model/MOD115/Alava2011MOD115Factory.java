@@ -14,7 +14,6 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
-import com.code.aon.file.tax.model.MOD115.data.Declaration;
 import com.code.aon.fiscal.enumeration.Mod115Key;
 
 
@@ -130,24 +129,24 @@ public class Alava2011MOD115Factory implements IMOD115Factory {
 		Element decl = dec.addElement(DECLARANTE);
 		decl.addElement(DATO).addAttribute(NOMBRE,NIF).addAttribute(VALOR, declaration.getDocument());
 		decl.addElement(DATO).addAttribute(NOMBRE,RSOCIAL).addAttribute(VALOR, declaration.getName());
-		decl.addElement(DATO).addAttribute(NOMBRE,CALLE).addAttribute(VALOR, declaration.getAddress());
-		decl.addElement(DATO).addAttribute(NOMBRE,NUM).addAttribute(VALOR, declaration.getAddressNumber().toString());
-		decl.addElement(DATO).addAttribute(NOMBRE,LETRA).addAttribute(VALOR, EMPTY);
-		decl.addElement(DATO).addAttribute(NOMBRE,ESC).addAttribute(VALOR, EMPTY);
-		decl.addElement(DATO).addAttribute(NOMBRE,PISO).addAttribute(VALOR, EMPTY);
+		decl.addElement(DATO).addAttribute(NOMBRE,CALLE).addAttribute(VALOR, declaration.getStreetName());
+		decl.addElement(DATO).addAttribute(NOMBRE,NUM).addAttribute(VALOR, declaration.getStreetNumber());
+		decl.addElement(DATO).addAttribute(NOMBRE,LETRA).addAttribute(VALOR, declaration.getStreetDoor());
+		decl.addElement(DATO).addAttribute(NOMBRE,ESC).addAttribute(VALOR, declaration.getStreetStair());
+		decl.addElement(DATO).addAttribute(NOMBRE,PISO).addAttribute(VALOR, declaration.getStreetFloor());
 		decl.addElement(DATO).addAttribute(NOMBRE,MANO).addAttribute(VALOR, EMPTY);
-		decl.addElement(DATO).addAttribute(NOMBRE,CPROVINCIA).addAttribute(VALOR, declaration.getProvinceID());
-		decl.addElement(DATO).addAttribute(NOMBRE,MUNICIPIO).addAttribute(VALOR, declaration.getEntity());
-		decl.addElement(DATO).addAttribute(NOMBRE,ENTIDAD).addAttribute(VALOR, declaration.getEntity());
-		decl.addElement(DATO).addAttribute(NOMBRE,CPOSTAL).addAttribute(VALOR, declaration.getZip().toString());
-		decl.addElement(DATO).addAttribute(NOMBRE,TELEFONO1).addAttribute(VALOR, declaration.getTelephone()!=null?declaration.getTelephone().toString():EMPTY);
+		decl.addElement(DATO).addAttribute(NOMBRE,CPROVINCIA).addAttribute(VALOR, EMPTY);
+		decl.addElement(DATO).addAttribute(NOMBRE,MUNICIPIO).addAttribute(VALOR, declaration.getTown());
+		decl.addElement(DATO).addAttribute(NOMBRE,ENTIDAD).addAttribute(VALOR, declaration.getTown());
+		decl.addElement(DATO).addAttribute(NOMBRE,CPOSTAL).addAttribute(VALOR, declaration.getZip());
+		decl.addElement(DATO).addAttribute(NOMBRE,TELEFONO1).addAttribute(VALOR, declaration.getPhone());
 		decl.addElement(DATO).addAttribute(NOMBRE,TELEFONO2).addAttribute(VALOR, EMPTY);
-		decl.addElement(DATO).addAttribute(NOMBRE,FAX).addAttribute(VALOR, declaration.getFax());
-		decl.addElement(DATO).addAttribute(NOMBRE,EMAIL).addAttribute(VALOR, declaration.getEmail() );
+		decl.addElement(DATO).addAttribute(NOMBRE,FAX).addAttribute(VALOR, EMPTY);
+		decl.addElement(DATO).addAttribute(NOMBRE,EMAIL).addAttribute(VALOR, EMPTY);
 		decl.addElement(DATO).addAttribute(NOMBRE,NIFCONTACTO).addAttribute(VALOR, declaration.getDocument());
-		decl.addElement(DATO).addAttribute(NOMBRE,NOMBRECONTACTO).addAttribute(VALOR, declaration.getName());
-		decl.addElement(DATO).addAttribute(NOMBRE,TELECONTACTO).addAttribute(VALOR, declaration.getTelephone());
-		decl.addElement(DATO).addAttribute(NOMBRE,EMAILCONTACTO).addAttribute(VALOR, declaration.getEmail() );
+		decl.addElement(DATO).addAttribute(NOMBRE,NOMBRECONTACTO).addAttribute(VALOR, declaration.getContactPerson());
+		decl.addElement(DATO).addAttribute(NOMBRE,TELECONTACTO).addAttribute(VALOR, declaration.getContactPhone());
+		decl.addElement(DATO).addAttribute(NOMBRE,EMAILCONTACTO).addAttribute(VALOR, declaration.getContactMail() );
 		decl.addElement(DATO).addAttribute(NOMBRE,NUMIBAN).addAttribute(VALOR, EMPTY);
 		decl.addElement(DATO).addAttribute(NOMBRE,NUMBIC).addAttribute(VALOR, EMPTY);
 		decl.addElement(DATO).addAttribute(NOMBRE,CCEXT).addAttribute(VALOR, EMPTY);

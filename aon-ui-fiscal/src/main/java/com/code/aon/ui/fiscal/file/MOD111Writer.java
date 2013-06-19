@@ -22,20 +22,17 @@ import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.file.tax.model.MOD111.Declaration;
 import com.code.aon.file.tax.model.MOD111.MOD111;
 import com.code.aon.file.tax.model.MOD111.MOD111Format;
-import com.code.aon.file.tax.model.MOD111.data.Declaration;
 import com.code.aon.finance.Finance;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.Mod111Key;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
-import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -79,7 +76,6 @@ public class MOD111Writer implements IFinanceConstants{
 		SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
 		Declaration declaration = new  Declaration();
 		Company company = getCompany(fiscalModel.getDomain());
-		declaration.setDocument(company.getDocument());
 		declaration.setPerson(company.getRegistry().getType() == RegistryType.NATURAL 
 				|| company.getDocumentType() != DocumentType.CIF);
 		declaration.setStartPeriod(0);
@@ -99,34 +95,19 @@ public class MOD111Writer implements IFinanceConstants{
 		declaration.setStartPeriod(Integer.parseInt( startDate));
 		String endDate = formatter.format(fiscalModel.getPeriod().getDueDate(year));
 		declaration.setEndPeriod(Integer.parseInt( endDate));
-		declaration.setName(company.getName());
-		RegistryMedia  phone = company.getPhone();
-		declaration.setTelephone(null);
-		if (phone != null){
-			declaration.setTelephone(phone.getValue() );
-		}
-		RegistryAddress address = company.getDefaultAddress();
-		declaration.setStreetType(address.getStreetType().getValue());
-		declaration.setAddress( address.getAddress() );
-		if (StringUtils.isNotEmpty( address.getNumber() )) {
-			try {
-				declaration.setAddressNumber( Integer.parseInt(address.getNumber())); 
-			} catch (NumberFormatException e) {
-				// Nothing
-			}
-		}
-		declaration.setEntity(address.getCity());
-		declaration.setCity(address.getCity());
-		declaration.setProvince(address.getGeozone()==null?"":address.getGeozone().getName());
-		String zip = address.getZip();
-		declaration.setZip(0);
-		if (zip != null){
-			try {
-				declaration.setZip(Integer.parseInt( zip ));
-			} catch (NumberFormatException e) {
-				// Nothing
-			}
-		}
+		declaration.setDocument(fiscalModel.getDocument());
+		declaration.setName(fiscalModel.getName());
+		declaration.setSurname(fiscalModel.getSurname());
+		declaration.setPhone( fiscalModel.getPhone() );
+		declaration.setStreetInitial(fiscalModel.getStreetInitial());
+		declaration.setStreetName( fiscalModel.getStreetName() );
+		declaration.setStreetNumber(fiscalModel.getStreetNumber());
+		declaration.setStreetStair(fiscalModel.getStreetStair());
+		declaration.setStreetFloor(fiscalModel.getStreetFloor());
+		declaration.setStreetDoor(fiscalModel.getStreetDoor());
+		declaration.setTown(fiscalModel.getTown());
+		declaration.setProvince(fiscalModel.getProvince());
+		declaration.setZip(fiscalModel.getZip());
 		
 		declaration.setPayInCash("X");
 		declaration.setPayInAccount(" ");
@@ -151,15 +132,13 @@ public class MOD111Writer implements IFinanceConstants{
 			}
 		}
 		
-		FiscalParametersController fpc = (FiscalParametersController) AonUtil.getRegisteredBean( FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
-		declaration.setContactPerson( fpc.getContactPerson() );
-		declaration.setContactPhone(fpc.getContactPhone() );
-		declaration.setContactCellular( fpc.getContactCellular() );
-		declaration.setContactMail( fpc.getContactMail() );
+		declaration.setContactPerson( fiscalModel.getContactPerson() );
+		declaration.setContactPhone(fiscalModel.getContactPhone() );
+		declaration.setContactCellular( fiscalModel.getContactCellular() );
+		declaration.setContactMail( fiscalModel.getContactEmail() );
 		
 		if (fiscalModel.getAdministration() == Administration.COMMON_TERRITORY) {
-			String administrationCode = fpc.getAdministrationCode();
-			declaration.setAdministrationCode(administrationCode);
+			declaration.setAdministrationCode(fiscalModel.getAdmonAeat());
 		}
 		
 		IManagerBean bean = BeanManager.getManagerBean(FiscalModelDetail.class);
@@ -191,6 +170,7 @@ public class MOD111Writer implements IFinanceConstants{
 				declaration.setDeclarationType("U");
 			} 
 		}
+		declaration.setResult(d);
 		return declaration;
 	}
 

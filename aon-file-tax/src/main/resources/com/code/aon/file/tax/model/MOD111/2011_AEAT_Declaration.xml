@@ -5,7 +5,7 @@
 	<field name="free0"     value=" "                                                         format="Alphabetic"    pattern="X"     />
 	<field name="type"      value="bean"  bean="Declaration"    property="declarationType"    format="AlphaNumeric"  pattern="X(1)"  />
 	<field name="document"  value="bean"  bean="Declaration"    property="document"           format="Nif"           pattern="X(9)"  />
-	<field name="name"      value="bean"  bean="Declaration"    property="name"               format="AlphaNumeric"  pattern="X(45)" />
+	<field name="name"      value="bean"  bean="Declaration"    property="fullName"               format="AlphaNumeric"  pattern="X(45)" />
 	<field name="year"      value="bean"  bean="Declaration"    property="year"               format="Numeric"       pattern="9(4)" />
 	<field name="period"    value="bean"  bean="Declaration"    property="period"             format="AlphaNumeric"  pattern="X(2)" />
 	<field name="c01"       value="bean"  bean="Declaration"    property="boxes(111-CT-01)"   format="DefNumeric"    pattern="9(8)" />

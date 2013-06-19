@@ -1,4 +1,4 @@
-package com.code.aon.file.tax.model.MOD115.data;
+package com.code.aon.file.tax.model.MOD115;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,19 +28,24 @@ public class Declaration {
 	private Integer endPeriod;
 	private Double result;
 	private String name;
-	private String streetType;
-	private String address;
-	private Integer addressNumber;
-	private String entity;
-	private String city;
+	private String surname;
+	private String phone;
+	
+	private String streetInitial;
+	private String streetName;
+	private String streetNumber;
+	private String streetStair;
+	private String streetFloor;
+	private String streetDoor;
+	private String town;
 	private String province;
-	private String provinceID;
-	private Integer zip;
-	private String telephone;
-	private String fax;
-	private String email;
+	private String zip;
+
 	private String contactPerson;
 	private String contactPhone;
+	private String contactCellular;
+	private String contactMail;
+
 	private String payInCash;
 	private String payInAccount;
 	private String ccc1;
@@ -151,84 +156,83 @@ public class Declaration {
 	}
 
 	public String getName() {
-		if ( isPerson() ) {
-			return StringUtils.substringAfter(name, " ");
-		}
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getStreetType() {
-		return streetType;
+	public String getSurname() {
+		return surname;
 	}
-	public void setStreetType(String streetType) {
-		this.streetType = streetType;
+	public void setSurname(String surname) {
+		this.surname = surname;
 	}
-	public String getAddress() {
-		return address;
+	public String getSurnameStart() {
+		return StringUtils.substring(getSurname(), 0, 4);
 	}
-	public void setAddress(String address) {
-		this.address = address;
+	public String getFullName() {
+		return getSurname() + (StringUtils.isEmpty(getSurname())?"":' ') + getName();
 	}
-
-	public Integer getAddressNumber() {
-		return addressNumber;
+	public String getPhone() {
+		return phone;
 	}
-	public void setAddressNumber(Integer addressNumber) {
-		this.addressNumber = addressNumber;
-	}
-
-	public String getEntity() {
-		return entity;
-	}
-	public void setEntity(String entity) {
-		this.entity = entity;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
-	public String getCity() {
-		return city;
+	public String getStreetInitial() {
+		return streetInitial;
 	}
-	public void setCity(String city) {
-		this.city = city;
+	public void setStreetInitial(String streetInitial) {
+		this.streetInitial = streetInitial;
 	}
-
+	public String getStreetName() {
+		return streetName;
+	}
+	public void setStreetName(String streetName) {
+		this.streetName = streetName;
+	}
+	public String getStreetNumber() {
+		return streetNumber;
+	}
+	public void setStreetNumber(String  streetNumber) {
+		this.streetNumber = streetNumber;
+	}
+	public String getStreetStair() {
+		return streetStair;
+	}
+	public void setStreetStair(String streetStair) {
+		this.streetStair = streetStair;
+	}
+	public String getStreetFloor() {
+		return streetFloor;
+	}
+	public void setStreetFloor(String streetFloor) {
+		this.streetFloor = streetFloor;
+	}
+	public String getStreetDoor() {
+		return streetDoor;
+	}
+	public void setStreetDoor(String streetDoor) {
+		this.streetDoor = streetDoor;
+	}
+	public String getTown() {
+		return town;
+	}
+	public void setTown(String town) {
+		this.town = town;
+	}
 	public String getProvince() {
 		return province;
 	}
 	public void setProvince(String province) {
 		this.province = province;
 	}
-	public String getProvinceID() {
-		return provinceID;
-	}
-	public void setProvinceID(String provinceID) {
-		this.provinceID = provinceID;
-	}
-	public Integer getZip() {
+	public String getZip() {
 		return zip;
 	}
-	public void setZip(Integer zip) {
+	public void setZip(String zip) {
 		this.zip = zip;
-	}
-
-	public String getTelephone() {
-		return telephone;
-	}
-	public void setTelephone(String telephone) {
-		this.telephone = telephone;
-	}
-	public String getFax() {
-		return fax;
-	}
-	public void setFax(String fax) {
-		this.fax = fax;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
 	}
 	public String getContactPerson() {
 		return contactPerson;
@@ -242,6 +246,19 @@ public class Declaration {
 	public void setContactPhone(String contactPhone) {
 		this.contactPhone = contactPhone;
 	}
+	public String getContactCellular() {
+		return contactCellular;
+	}
+	public void setContactCellular(String contactCellular) {
+		this.contactCellular = contactCellular;
+	}
+	public String getContactMail() {
+		return contactMail;
+	}
+	public void setContactMail(String contactMail) {
+		this.contactMail = contactMail;
+	}
+
 	public String getPayInCash() {
 		return payInCash;
 	}
@@ -284,13 +301,6 @@ public class Declaration {
 	public void setBoxes(Map<String, Double> boxes) {
 		this.boxes = boxes;
 	}
-	public String getSurnameStart() {
-		return StringUtils.substring(getName(), 0, 4);
-	}
-	public String getOnlyName() {
-		return StringUtils.substringBefore(getName(), " ");
-	}
-	
 	public String getDeclarationType() {
 		return declarationType;
 	}

@@ -62,6 +62,11 @@ public class Aeat2010MOD303Factory implements IMOD303Factory {
 							declaration.getOutputVat().put(ensureKey, new Breakdown());
 						}
 					}
+					for (String ensureKey : ensuredKeys) {
+						if (!declaration.getOutputVatInvPasive().containsKey(ensureKey)) {;
+							declaration.getOutputVatInvPasive().put(ensureKey, new Breakdown());
+						}
+					}
 					ensuredKeys = new String[]{"5.2","1.4","0.5"};
 					for (String ensureKey : ensuredKeys) {
 						if (!declaration.getSurcharge().containsKey(ensureKey)) {;

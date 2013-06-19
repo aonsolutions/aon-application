@@ -15,7 +15,6 @@ import java.util.Map;
 import com.code.aon.file.format.core.DiskRegisterLoader;
 import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
-import com.code.aon.file.tax.model.MOD115.data.Declaration;
 
 public class Aeat2011MOD115Factory implements IMOD115Factory {
 
@@ -37,7 +36,7 @@ public class Aeat2011MOD115Factory implements IMOD115Factory {
 	
 	private class Aeat2011MOD115 extends AbstractFileFiller {
 		private static final String DECLARATION = "Declaration";
-		private static final String DECLARATION_METADATA = "/com/code/aon/file/tax/model/MOD115/xml/2011_AEAT_Declaration.xml";
+		private static final String DECLARATION_METADATA = "/com/code/aon/file/tax/model/MOD115/2011_AEAT_Declaration.xml";
 		
 		
 		private List<Declaration> declarations;

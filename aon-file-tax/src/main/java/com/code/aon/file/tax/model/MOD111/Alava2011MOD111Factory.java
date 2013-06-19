@@ -8,13 +8,13 @@ import java.text.DecimalFormatSymbols;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
-import com.code.aon.file.tax.model.MOD111.data.Declaration;
 import com.code.aon.fiscal.enumeration.Mod111Key;
 
 
@@ -23,7 +23,8 @@ public class Alava2011MOD111Factory implements IMOD111Factory {
 	private static final String ROOT = "AFADFA";
 	private static final String DECLARACION = "DECLARACION";
 	
-	private static final String MODEL = "115";
+	private static final String MODEL_110 = "110";
+	private static final String MODEL_111 = "111";
 	private static final String EMPTY = "";
 	private static final String TRUE = "true";
 
@@ -113,7 +114,7 @@ public class Alava2011MOD111Factory implements IMOD111Factory {
 
 	private void addDatosDec(Element dec, Declaration declaration) {
 		Element datos = dec.addElement(DATOSDEC);
-		datos.addElement(DATO).addAttribute(NOMBRE,MODELO_ATT).addAttribute(VALOR, MODEL);
+		datos.addElement(DATO).addAttribute(NOMBRE,MODELO_ATT).addAttribute(VALOR, declaration.getPeriod().contains("T")?MODEL_110:MODEL_111);
 		datos.addElement(DATO).addAttribute(NOMBRE,EJERCICIO).addAttribute(VALOR, declaration.getYear().toString());
 		datos.addElement(DATO).addAttribute(NOMBRE,RESULTADO).addAttribute(VALOR, formatNumber( declaration.getResult() ));
 		datos.addElement(DATO).addAttribute(NOMBRE,CCC1).addAttribute(VALOR, declaration.getCcc1());
@@ -129,25 +130,25 @@ public class Alava2011MOD111Factory implements IMOD111Factory {
 	private void addDeclarante(Element dec, Declaration declaration) {
 		Element decl = dec.addElement(DECLARANTE);
 		decl.addElement(DATO).addAttribute(NOMBRE,NIF).addAttribute(VALOR, declaration.getDocument());
-		decl.addElement(DATO).addAttribute(NOMBRE,RSOCIAL).addAttribute(VALOR, declaration.getName());
-		decl.addElement(DATO).addAttribute(NOMBRE,CALLE).addAttribute(VALOR, declaration.getAddress());
-		decl.addElement(DATO).addAttribute(NOMBRE,NUM).addAttribute(VALOR, declaration.getAddressNumber().toString());
-		decl.addElement(DATO).addAttribute(NOMBRE,LETRA).addAttribute(VALOR, EMPTY);
-		decl.addElement(DATO).addAttribute(NOMBRE,ESC).addAttribute(VALOR, EMPTY);
-		decl.addElement(DATO).addAttribute(NOMBRE,PISO).addAttribute(VALOR, EMPTY);
+		decl.addElement(DATO).addAttribute(NOMBRE,RSOCIAL).addAttribute(VALOR, StringUtils.join(new String[] {declaration.getName(),declaration.getSurname()},' '));
+		decl.addElement(DATO).addAttribute(NOMBRE,CALLE).addAttribute(VALOR, declaration.getStreetName());
+		decl.addElement(DATO).addAttribute(NOMBRE,NUM).addAttribute(VALOR, declaration.getStreetNumber());
+		decl.addElement(DATO).addAttribute(NOMBRE,LETRA).addAttribute(VALOR, declaration.getStreetDoor());
+		decl.addElement(DATO).addAttribute(NOMBRE,ESC).addAttribute(VALOR, declaration.getStreetStair());
+		decl.addElement(DATO).addAttribute(NOMBRE,PISO).addAttribute(VALOR, declaration.getStreetFloor());
 		decl.addElement(DATO).addAttribute(NOMBRE,MANO).addAttribute(VALOR, EMPTY);
-		decl.addElement(DATO).addAttribute(NOMBRE,CPROVINCIA).addAttribute(VALOR, declaration.getProvinceID());
-		decl.addElement(DATO).addAttribute(NOMBRE,MUNICIPIO).addAttribute(VALOR, declaration.getEntity());
-		decl.addElement(DATO).addAttribute(NOMBRE,ENTIDAD).addAttribute(VALOR, declaration.getEntity());
-		decl.addElement(DATO).addAttribute(NOMBRE,CPOSTAL).addAttribute(VALOR, declaration.getZip().toString());
-		decl.addElement(DATO).addAttribute(NOMBRE,TELEFONO1).addAttribute(VALOR, declaration.getTelephone()!=null?declaration.getTelephone().toString():EMPTY);
+		decl.addElement(DATO).addAttribute(NOMBRE,CPROVINCIA).addAttribute(VALOR, EMPTY);
+		decl.addElement(DATO).addAttribute(NOMBRE,MUNICIPIO).addAttribute(VALOR, declaration.getTown());
+		decl.addElement(DATO).addAttribute(NOMBRE,ENTIDAD).addAttribute(VALOR, declaration.getTown());
+		decl.addElement(DATO).addAttribute(NOMBRE,CPOSTAL).addAttribute(VALOR, declaration.getZip());
+		decl.addElement(DATO).addAttribute(NOMBRE,TELEFONO1).addAttribute(VALOR, declaration.getPhone());
 		decl.addElement(DATO).addAttribute(NOMBRE,TELEFONO2).addAttribute(VALOR, EMPTY);
-		decl.addElement(DATO).addAttribute(NOMBRE,FAX).addAttribute(VALOR, declaration.getFax());
-		decl.addElement(DATO).addAttribute(NOMBRE,EMAIL).addAttribute(VALOR, declaration.getEmail() );
+		decl.addElement(DATO).addAttribute(NOMBRE,FAX).addAttribute(VALOR, EMPTY);
+		decl.addElement(DATO).addAttribute(NOMBRE,EMAIL).addAttribute(VALOR, EMPTY);
 		decl.addElement(DATO).addAttribute(NOMBRE,NIFCONTACTO).addAttribute(VALOR, declaration.getDocument());
-		decl.addElement(DATO).addAttribute(NOMBRE,NOMBRECONTACTO).addAttribute(VALOR, declaration.getName());
-		decl.addElement(DATO).addAttribute(NOMBRE,TELECONTACTO).addAttribute(VALOR, declaration.getTelephone());
-		decl.addElement(DATO).addAttribute(NOMBRE,EMAILCONTACTO).addAttribute(VALOR, declaration.getEmail() );
+		decl.addElement(DATO).addAttribute(NOMBRE,NOMBRECONTACTO).addAttribute(VALOR, declaration.getContactPerson());
+		decl.addElement(DATO).addAttribute(NOMBRE,TELECONTACTO).addAttribute(VALOR, declaration.getContactPhone());
+		decl.addElement(DATO).addAttribute(NOMBRE,EMAILCONTACTO).addAttribute(VALOR, declaration.getContactMail() );
 		decl.addElement(DATO).addAttribute(NOMBRE,NUMIBAN).addAttribute(VALOR, EMPTY);
 		decl.addElement(DATO).addAttribute(NOMBRE,NUMBIC).addAttribute(VALOR, EMPTY);
 		decl.addElement(DATO).addAttribute(NOMBRE,CCEXT).addAttribute(VALOR, EMPTY);
@@ -161,44 +162,52 @@ public class Alava2011MOD111Factory implements IMOD111Factory {
 		if ( declaration.isReplacement() || declaration.isComplementary()) {
 			mod.addElement(CLAVE).addAttribute(NUMERO,"901").addAttribute(VALOR, TRUE );
 		}
-		addClave(mod, 1,declaration.getBoxes().get(Mod111Key.AR_C01.getValue()));	
-		addClave(mod, 2,declaration.getBoxes().get(Mod111Key.AR_C02.getValue()));	
-		addClave(mod, 3,declaration.getBoxes().get(Mod111Key.AR_C03.getValue()));	
-		addClave(mod, 4,declaration.getBoxes().get(Mod111Key.AR_C04.getValue()));	
-		addClave(mod, 5,declaration.getBoxes().get(Mod111Key.AR_C05.getValue()));	
-		addClave(mod, 6,declaration.getBoxes().get(Mod111Key.AR_C06.getValue()));	
-		addClave(mod, 7,declaration.getBoxes().get(Mod111Key.AR_C07.getValue()));	
-		addClave(mod, 8,declaration.getBoxes().get(Mod111Key.AR_C08.getValue()));	
-		addClave(mod, 9,declaration.getBoxes().get(Mod111Key.AR_C09.getValue()));	
-		addClave(mod,10,declaration.getBoxes().get(Mod111Key.AR_C10.getValue()));	
-		addClave(mod,11,declaration.getBoxes().get(Mod111Key.AR_C11.getValue()));	
-		addClave(mod,12,declaration.getBoxes().get(Mod111Key.AR_C12.getValue()));	
-		addClave(mod,13,declaration.getBoxes().get(Mod111Key.AR_C13.getValue()));	
-		addClave(mod,14,declaration.getBoxes().get(Mod111Key.AR_C14.getValue()));	
-		addClave(mod,15,declaration.getBoxes().get(Mod111Key.AR_C15.getValue()));	
-		addClave(mod,16,declaration.getBoxes().get(Mod111Key.AR_C16.getValue()));	
-		addClave(mod,17,declaration.getBoxes().get(Mod111Key.AR_C17.getValue()));	
-		addClave(mod,18,declaration.getBoxes().get(Mod111Key.AR_C18.getValue()));	
-		addClave(mod,19,declaration.getBoxes().get(Mod111Key.AR_C19.getValue()));	
-		addClave(mod,20,declaration.getBoxes().get(Mod111Key.AR_C20.getValue()));	
-		addClave(mod,21,declaration.getBoxes().get(Mod111Key.AR_C21.getValue()));	
-		addClave(mod,22,declaration.getBoxes().get(Mod111Key.AR_C22.getValue()));	
-		addClave(mod,23,declaration.getBoxes().get(Mod111Key.AR_C23.getValue()));	
-		addClave(mod,24,declaration.getBoxes().get(Mod111Key.AR_C24.getValue()));	
-		addClave(mod,25,declaration.getBoxes().get(Mod111Key.AR_C25.getValue()));	
-		addClave(mod,26,declaration.getBoxes().get(Mod111Key.AR_C26.getValue()));	
-		addClave(mod,27,declaration.getBoxes().get(Mod111Key.AR_C27.getValue()));	
-		addClave(mod,28,declaration.getBoxes().get(Mod111Key.AR_C28.getValue()));	
-		addClave(mod,29,declaration.getBoxes().get(Mod111Key.AR_C29.getValue()));
-		addClave(mod,30,declaration.getBoxes().get(Mod111Key.AR_C30.getValue()));	
-		addClave(mod,31,declaration.getBoxes().get(Mod111Key.AR_C31.getValue()));	
+		addClave(mod, 50,declaration.getBoxes().get(Mod111Key.AR_C01.getValue()),true);	
+		addClave(mod, 60,declaration.getBoxes().get(Mod111Key.AR_C02.getValue()));	
+		addClave(mod, 70,declaration.getBoxes().get(Mod111Key.AR_C03.getValue()));	
+		addClave(mod, 51,declaration.getBoxes().get(Mod111Key.AR_C04.getValue()),true);	
+		addClave(mod, 61,declaration.getBoxes().get(Mod111Key.AR_C05.getValue()));	
+		addClave(mod, 71,declaration.getBoxes().get(Mod111Key.AR_C06.getValue()));	
+		addClave(mod, 52,declaration.getBoxes().get(Mod111Key.AR_C07.getValue()),true);	
+		addClave(mod, 62,declaration.getBoxes().get(Mod111Key.AR_C08.getValue()));	
+		addClave(mod, 72,declaration.getBoxes().get(Mod111Key.AR_C09.getValue()));	
+		addClave(mod, 53,declaration.getBoxes().get(Mod111Key.AR_C10.getValue()),true);	
+		addClave(mod, 63,declaration.getBoxes().get(Mod111Key.AR_C11.getValue()));	
+		addClave(mod, 73,declaration.getBoxes().get(Mod111Key.AR_C12.getValue()));	
+		addClave(mod, 54,declaration.getBoxes().get(Mod111Key.AR_C13.getValue()),true);	
+		addClave(mod, 64,declaration.getBoxes().get(Mod111Key.AR_C14.getValue()));	
+		addClave(mod, 74,declaration.getBoxes().get(Mod111Key.AR_C15.getValue()));	
+		addClave(mod, 58,declaration.getBoxes().get(Mod111Key.AR_C16.getValue()),true);	
+		addClave(mod, 68,declaration.getBoxes().get(Mod111Key.AR_C17.getValue()));	
+		addClave(mod, 78,declaration.getBoxes().get(Mod111Key.AR_C18.getValue()));	
+		addClave(mod, 55,declaration.getBoxes().get(Mod111Key.AR_C19.getValue()),true);	
+		addClave(mod, 65,declaration.getBoxes().get(Mod111Key.AR_C20.getValue()));	
+		addClave(mod, 75,declaration.getBoxes().get(Mod111Key.AR_C21.getValue()));	
+		addClave(mod, 56,declaration.getBoxes().get(Mod111Key.AR_C22.getValue()),true);	
+		addClave(mod, 66,declaration.getBoxes().get(Mod111Key.AR_C23.getValue()));	
+		addClave(mod, 76,declaration.getBoxes().get(Mod111Key.AR_C24.getValue()));	
+		addClave(mod, 57,declaration.getBoxes().get(Mod111Key.AR_C25.getValue()),true);	
+		addClave(mod, 67,declaration.getBoxes().get(Mod111Key.AR_C26.getValue()));	
+		addClave(mod, 77,declaration.getBoxes().get(Mod111Key.AR_C27.getValue()));	
+		addClave(mod, 82,declaration.getBoxes().get(Mod111Key.AR_C28.getValue()));	
+		addClave(mod, 84,declaration.getBoxes().get(Mod111Key.AR_C29.getValue()));
+		addClave(mod, 85,declaration.getBoxes().get(Mod111Key.AR_C30.getValue()));	
+		addClave(mod, 87,declaration.getBoxes().get(Mod111Key.AR_C31.getValue()));	
 		
+	}
+	private void addClave(Element mod, int clave, double value, boolean integer) {
+		if (value != 0.0) {
+			if (integer) {
+				mod.addElement(CLAVE).addAttribute(NUMERO,Integer.toString(clave)).addAttribute(VALOR, Integer.toString( (int) value) );				
+			} else {
+				mod.addElement(CLAVE).addAttribute(NUMERO,Integer.toString(clave)).addAttribute(VALOR, formatNumber(value) );	
+			}
+				
+		}
 	}
 
 	private void addClave(Element mod, int clave, double value) {
-		if (value != 0.0) {
-			mod.addElement(CLAVE).addAttribute(NUMERO,Integer.toString(clave)).addAttribute(VALOR, formatNumber(value) );	
-		}
+		addClave(mod, clave, value,false);
 	}
 
 }

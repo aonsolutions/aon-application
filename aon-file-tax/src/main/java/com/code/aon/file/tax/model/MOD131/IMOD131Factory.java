@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface IMOD131Factory {
 
-	List<Exception> createDocument(List<com.code.aon.file.tax.model.MOD131.data.Declaration> declarations, Writer out);
+	List<Exception> createDocument(List<com.code.aon.file.tax.model.MOD131.Declaration> declarations, Writer out);
 
 
 }

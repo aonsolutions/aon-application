@@ -215,4 +215,14 @@ public class Mod310 implements IFiscalDeclaration {
 	public boolean isToDeduct() {
 		return false;
 	}
+	
+	@Override
+	public boolean isCompensateDeclarationAvailable() {
+		return true;
+	}
+	@Override
+	public boolean isCompensate() {
+		return (getResult() < 0);
+	}
+	
 }

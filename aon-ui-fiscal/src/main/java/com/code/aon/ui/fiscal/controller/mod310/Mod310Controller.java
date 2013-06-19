@@ -47,6 +47,9 @@ public class Mod310Controller extends FiscalModelController {
 		    		AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_DISK_ERROR);
 		        }
 		    }
+		    if (isAeatValidable()) {
+		    	validateAeatFile();	
+		    }
 		} catch (IllegalArgumentException e) {
 			AonUtil.addErrorMessage(e.getMessage()); 
 			throw new AbortProcessingException(e.getMessage(),e);
@@ -56,11 +59,6 @@ public class Mod310Controller extends FiscalModelController {
 		}
 	}
 
-	public String getFileName() {
-		FiscalModel fm = (FiscalModel) getTo();
-		return "MOD310" + fm.getYear() + fm.getPeriod();
-	}
-	
 	@Override
 	public MimeType getMimeType() {
 		FiscalModel fm = (FiscalModel) getTo();

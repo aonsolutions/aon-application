@@ -1,15 +1,11 @@
 package com.code.aon.ui.fiscal.controller.model;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -18,15 +14,16 @@ import javax.faces.model.SelectItem;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.file.format.output.FileOutput;
@@ -36,6 +33,7 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.fiscal.FiscalActivity;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
+import com.code.aon.fiscal.IFiscalConstants;
 import com.code.aon.fiscal.enumeration.FiscalModelStatus;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.model.FiscalModelManagerFactory;
@@ -43,10 +41,14 @@ import com.code.aon.fiscal.model.IFiscalDeclaration;
 import com.code.aon.fiscal.model.IFiscalModelManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
+import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.enumeration.DocumentType;
+import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
-import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.finance.controller.FinanceController;
 import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -54,12 +56,35 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public abstract class FiscalModelController extends BasicController {
 
+	private final static String DATA_TAB = "headerData";
+	private final static String LIQUIDATION_TAB = "liquidationTab";
+	
+	
 	private IFiscalDeclaration declaration;
 	private IFiscalModelManager manager;
 	private FileOutput fileOutput;
-
+	private String selectedTab;
+	private boolean showAuditInfoWindow;
 	private boolean finalizePanelVisible;
+	
 	private RegistryBank registryBank;
+	private Mipf mipf;
+	
+	public String getDataTabName() {
+		return DATA_TAB;  
+	}
+	public String getLiquidationTabName () {
+		return LIQUIDATION_TAB;  
+	}
+
+	private Company getCompany() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Company.class);
+		List<ITransferObject> list = bean.getList(null);
+		if (list != null && list.size() > 0 ){
+			return (Company) list.get(0);
+		}
+		throw new ManagerBeanException("No se encuentran los 'Datos de la empresa'. ");
+	}
 
 	public IFiscalModelManager getFiscalModelManager() throws AonException {
 		if (manager == null) {
@@ -75,6 +100,14 @@ public abstract class FiscalModelController extends BasicController {
 				.getRegisteredBean(FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
 		Creditor creditor = fpc.getAdmonCreditor();
 		return (creditor == null ? null : creditor.getRegistry());
+	}
+	
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
 	}
 
 	public FileOutput getFileOutput() {
@@ -92,7 +125,14 @@ public abstract class FiscalModelController extends BasicController {
 	public void setFinalizePanelVisible(boolean finalizePanelVisible) {
 		this.finalizePanelVisible = finalizePanelVisible;
 	}
-
+	
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
 	public RegistryBank getRegistryBank() {
 		return registryBank;
 	}
@@ -116,9 +156,99 @@ public abstract class FiscalModelController extends BasicController {
 		String defYear = fiscalParams.getDefaultYear();
 		to.setYear(defYear == null ? null : Integer.parseInt(defYear));
 		Administration admon = fiscalParams.getDefaultAdministration();
-		to.setAdministration(admon == null ? null : admon);
+		if (admon != null) {
+			to.setAdministration(admon);
+			if (admon == Administration.COMMON_TERRITORY) {
+				to.setAdmonAeat(fiscalParams.getAdministrationCode());
+			}
+		}
+		
 		to.setModel(getModelType());
 		setDeclaration((getFiscalModelManager().initializeFiscalModel(to)));
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(getFieldName(IEntityAlias.FISCAL_MODEL_MODEL), getModelType());
+		criteria.addOrder(getFieldName(IEntityAlias.FISCAL_MODEL_YEAR), false);
+		criteria.addOrder(getFieldName(IEntityAlias.FISCAL_MODEL_PERIOD), false);
+		List<ITransferObject> list = getManagerBean().getList(criteria);
+		if (list != null && list.size() > 0) {
+			FiscalModel fs = (FiscalModel) list.get(0);
+			to.setDocument(fs.getDocument());
+			to.setName(fs.getName());
+			to.setSurname(fs.getSurname());
+			
+			to.setStreetInitial(fs.getStreetInitial());
+			to.setStreetName( fs.getStreetName() );
+			to.setStreetNumber( fs.getStreetNumber() ); 
+			to.setTown( fs.getTown());
+			to.setProvince(fs.getProvince());
+			to.setZip( fs.getZip() );
+			
+			to.setPhone(fs.getPhone() );
+			
+			to.setContactPerson( fs.getContactPerson() );
+			to.setContactPhone(fs.getContactPhone() );
+			to.setContactCellular( fs.getContactCellular() );
+			to.setContactEmail( fs.getContactEmail() );
+			
+		}
+		
+		Company company = getCompany();
+		if (StringUtils.isEmpty(to.getDocument())) {
+			to.setDocument(company.getDocument());	
+		}
+		
+		if (StringUtils.isEmpty(to.getName())) {
+			String name = company.getName();
+			if (company.getRegistry().getType() == RegistryType.NATURAL 
+				|| company.getDocumentType() != DocumentType.CIF) {
+				if (StringUtils.contains(name, ',')) {
+					to.setName(StringUtils.trim(StringUtils.substringAfter(name, ",")));
+					to.setSurname(StringUtils.trim(StringUtils.substringBefore(name, ",")));
+				} else {
+					to.setName(StringUtils.trim(StringUtils.substringBefore(name, " ")));
+					to.setSurname(StringUtils.trim(StringUtils.substringAfter(name, " ")));
+				}
+			} else {
+				to.setName(name);	
+				to.setSurname(null);
+			}
+		}
+		
+		if (StringUtils.isEmpty(to.getStreetName())) {
+			RegistryAddress address = company.getDefaultAddress();
+			if (address != null) {
+				to.setStreetInitial(address.getStreetType().getValue());
+				to.setStreetName( address.getAddress() );
+				to.setStreetNumber( address.getNumber() ); 
+				to.setTown( address.getCity());
+				to.setProvince(address.getGeozone()==null?"":address.getGeozone().getName());
+				to.setZip("00000");
+				if (address.getZip() != null){
+					to.setZip(address.getZip());
+				}
+			}
+		}
+		
+		if (StringUtils.isEmpty(to.getPhone())) {
+			RegistryMedia  phone = company.getPhone();
+			if (phone != null){
+				to.setPhone(phone.getValue() );
+			}
+		}
+		
+		if (StringUtils.isEmpty(to.getContactPerson())) {
+			to.setContactPerson( fiscalParams.getContactPerson() );
+		}		
+		if (StringUtils.isEmpty(to.getContactPhone())) {
+			to.setContactPhone(fiscalParams.getContactPhone() );
+		}		
+		if (StringUtils.isEmpty(to.getContactCellular())) {
+			to.setContactCellular( fiscalParams.getContactCellular() );
+		}		
+		if (StringUtils.isEmpty(to.getContactEmail())) {
+			to.setContactEmail( fiscalParams.getContactMail() );
+		}		
 	}
 
 	public void initializeDetails() throws AonException {
@@ -190,6 +320,10 @@ public abstract class FiscalModelController extends BasicController {
 		}
 		if (getDeclaration().isDeclarationNegativeAvailable()
 				&& getDeclaration().isNegative()) {
+			return false;
+		}
+		if (getDeclaration().isCompensateDeclarationAvailable()
+				&& getDeclaration().isCompensate()) {
 			return false;
 		}
 		if (getDeclaration().getResult() == 0) {
@@ -306,7 +440,7 @@ public abstract class FiscalModelController extends BasicController {
 			FacesContext faces = FacesContext.getCurrentInstance();
 			HttpServletResponse response = (HttpServletResponse) faces
 					.getExternalContext().getResponse();
-			String fileName = getFileName();
+			String fileName = getAutomaticFileName();
 			MimeType mimeType = getMimeType();
 			response.setCharacterEncoding("ISO-8859-1");
 			response.setHeader("Content-disposition", "attachment; filename=\""
@@ -328,6 +462,27 @@ public abstract class FiscalModelController extends BasicController {
 		}
 	}
 
+	private String getAutomaticFileName() {
+		FiscalModel fm = (FiscalModel) getTo();
+		
+		String s = fm.getName() + fm.getSurname();
+	    StringBuilder sb = new StringBuilder();
+	    if(!Character.isJavaIdentifierStart(s.charAt(0))) {
+	        sb.append("_");
+	    }
+	    for (char c : s.toCharArray()) {
+	        if(Character.isJavaIdentifierPart(c)) {
+	            sb.append(c);
+	        }
+	    }		
+		
+		return fm.getModel() 
+				+ "_" + fm.getYear() 
+				+ "_" + fm.getPeriod()
+				+ "_" + sb.toString();
+	}
+	
+	
 	protected void checkFiscalActivity(FiscalModelType type) {
 		try {
 			int year = Calendar.getInstance().get(Calendar.YEAR);
@@ -349,15 +504,36 @@ public abstract class FiscalModelController extends BasicController {
 
 	public abstract boolean isDifEnabled();
 
-	public abstract String getFileName();
+//	public abstract String getFileName();
 
 	public abstract MimeType getMimeType();
 
 	public abstract void onCreateDisk(ActionEvent event);
 
-	private static String AEAT_PRINT_MODULE_SCRIPT_FOLDER = "/usr/share/java/aon.mipf";
-	private static String AEAT_PRINT_MODULE_SCRIPT_PATH = AEAT_PRINT_MODULE_SCRIPT_FOLDER + "/mipf13pdf.sh";
+	public void onLoadFinance(ActionEvent event) throws ManagerBeanException {
+		Finance finance = ( (FiscalModel) getTo()).getFinance();
+		if (finance.getId() != null) {
+			String backAction = getBeanName() + "_form";
+			FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(IFiscalConstants.FINANCE_CONTROLLER_NAME);
+			financeController.setPayment(true);
+			financeController.onLoad(event, finance.getId(), backAction, null);
+		}
+	}
 	
+	private Mipf getMipf() {
+		if (this.mipf == null) {
+			this.mipf = new Mipf();
+		}
+		return mipf;
+	}
+	
+	public boolean isAeatValidable() {
+		FiscalModel to = (FiscalModel) getTo();
+		return ( !isNew() 
+			&& to.isFinished() 
+			&& isScriptPresent());
+	}
+
 	public boolean isAeatReportEnabled() {
 		FiscalModel to = (FiscalModel) getTo();
 		return ( !isNew() 
@@ -370,174 +546,44 @@ public abstract class FiscalModelController extends BasicController {
 		return ( isAeatReportEnabled() 
 			&& (to.isCashBasis() 
 				|| getDeclaration().isNegative()
-				|| getDeclaration().isToDeduct())
+				|| getDeclaration().isToDeduct()
+				|| getDeclaration().isCompensate())
 			);
 	}
+
 	public boolean isAeatDraftReportEnabled() {
 		FiscalModel to = (FiscalModel) getTo();
 		return ( isAeatReportEnabled() 
 				&& !to.isCashBasis() 
 				&& !getDeclaration().isNegative()
-				&& !getDeclaration().isToDeduct());
+				&& !getDeclaration().isToDeduct()
+				&& !getDeclaration().isCompensate());
 	}
 	
 	public boolean isScriptPresent() {
-		File file = new File(AEAT_PRINT_MODULE_SCRIPT_PATH);
-		return file.canRead(); 
+		return getMipf().isScriptPresent();
+	}
+
+	public String getAeatWebPage() {
+		FiscalModel fs = (FiscalModel) getTo();
+		if (fs.isFromCommonTerritory()) {
+			return  getMipf().getAeatWebPage(fs.getModel());		
+		}
+		return null; 
 	}
 
 	public String aeatReport() {
-		/*
-		 * mipf13pdf.sh 
-		 * 	/E:nombrearchivodatos 			indica el fichero que contiene los datos de entrada que se 
-		 * 									van a imprimir, de ser correctos. Es OBLIGATORIO y admite 
-		 * 									ruta completa. 
-		 * [/R:nombrearchivoerrores] 		indica el nombre del fichero que contiene la relación de 
-		 * 									errores, si los hubiera. Es OPCIONAL y admite ruta completa. 
-		 * 									Si no se especifica o no se puede abrir, el programa utiliza 
-		 * 									el archivo ERRORES.TXT que es creado en el directorio de 
-		 * 									ejecución del programa.
-		 * [/P:nombreFicheroPDF] 			indica el nombre del fichero de salida PDF, que contiene la 
-		 * 									declaración en caso que el fichero de entrada no contenga
-		 * 									errores Es OPCIONAL y admite ruta completa. 
-		 * [/V:{S|N}] 						Parámetro OPCIONAL para indicar que el módulo se comporte exclusivamente 
-		 * 									como un módulo de VALIDACIÓN. Si se indica /V:S el programa NO IMPRIMIRÁ,
-		 * 									simplemente verificará el contenido del fichero. 
-		 * [/C:{S|N}] 						Parámetro OPCIONAL para indicar la generación o no de una copia 
-		 * 									adicional (ejemplar para el declarante) de la declaración a 
-		 * 									imprimir. Se imprime una copia más cuando se indica 
-		 * /C:S [/F:nombrearchivoflag]		indica el nombre del fichero que se utiliza como flag de ejecución
-		 * 									del programa. Se crea en el momento en que empieza la ejecución y
-		 * 									desaparece cuando ésta finaliza. Es OPCIONAL y admite ruta completa.
-		 * 									Si no se especifica o no se puede abrir, el programa utiliza el
-		 * 									archivo FLAG.TXT que es creado en el directorio de ejecución del
-		 * 									programa.
-		 * 
-		 * EJEMPLO: 
-		 * 		mipf13pdf.sh /E:/tmp/310.TXT /R:/tmp/errores310.txt /P:/tmp/pruebaMIPF.pdf /C:S
-		 */
-		
-		
-		File errorFile = null;
-		File pdfFile = null;
-		File draftFile = null;
-		Process process = null;
-		File tempDataFile = null;
-		FileInputStream fisError = null;
-		FileInputStream fisPDF = null;
-		try {
-			errorFile = File.createTempFile("fs_", ".err");
-			pdfFile = File.createTempFile("fs_", ".pdf");
-			String pdfPath = pdfFile.getAbsolutePath();	
-			String draftPath = StringUtils.substringBefore(pdfPath, ".pdf") + "Borrador.pdf"; 
-			System.out.println( pdfPath );
-			System.out.println( draftPath );
-			
-			tempDataFile = saveDiskFile();
-			String[] options = { AEAT_PRINT_MODULE_SCRIPT_PATH
-					, "/E:" + tempDataFile.getAbsolutePath()
-					, "/R:" + errorFile.getAbsolutePath()
-					, "/P:" + pdfPath 
-					, "/C:S"};
-			process = Runtime.getRuntime().exec(options,null,new File(AEAT_PRINT_MODULE_SCRIPT_FOLDER));
-			int timeout = 30000;
-			Worker worker = new Worker(process);
-			worker.start();
-			try {
-				worker.join(timeout);
-				if (worker.exit == null) {
-					throw new TimeoutException();
-				}
-			} catch (InterruptedException ex) {
-				worker.interrupt();
-				Thread.currentThread().interrupt();
-			} finally {
-				process.destroy();
-			}
-			
-			
-			FacesContext context = FacesContext.getCurrentInstance();
-			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-			boolean isDraft = false;
-			if (!pdfFile.exists()) {
-				pdfFile = new File(draftPath);
-				isDraft = true;
-			}
-			if (pdfFile.exists()) {
-				fisPDF = new FileInputStream( pdfFile );
-				response.setContentType( MimeType.MIME_PDF.getName() );
-				FiscalModel fiscalModel = (FiscalModel) getTo();
-				CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-				String name = fiscalModel.getModel() 
-						+ "_" + fiscalModel.getPeriod() 
-						+ "_" + fiscalModel.getYear() 
-						+ (isDraft?"_Borrador":"")
-						+ "_" + companyController.getCompanyLabel();
-				response.setHeader("Content-Disposition", "attachment; filename=\"" + name + ".pdf" + "\"");
-				response.setHeader("Content-Length", String.valueOf(pdfFile.length()));
-				IOUtils.copy(fisPDF, response.getOutputStream());
-				fisPDF.close();
-				context.responseComplete();
-			} else {
-				StringBuffer buf = new StringBuffer();
-				if (errorFile.exists()) {
-					fisError = new FileInputStream(errorFile);
-					List<?> list = IOUtils.readLines(fisError,"UTF-8");
-					fisError.close();
-					for (Object o : list) {
-						buf.append(o.toString());
-					}
-				}
-				AonUtil.addErrorMessage("Se han producido errores al generar el fichero. (" + buf.toString() + ")");	
-			}
-		} catch (TimeoutException e) {
-			String msg = "Tiempo de espera agotado.";
-			AonUtil.addErrorMessage(msg);
-		} catch (IOException e) {
-			String msg = "No se pudo realizar la impresión del módulo." + e.getMessage();
-			AonUtil.addErrorMessage(msg);
-		} finally {
-			FileUtils.deleteQuietly(errorFile);
-			FileUtils.deleteQuietly(pdfFile);
-			FileUtils.deleteQuietly(draftFile);
-			FileUtils.deleteQuietly(tempDataFile);
-			IOUtils.closeQuietly(fisError);
-			IOUtils.closeQuietly(fisPDF);
+		FiscalModel fiscalModel = (FiscalModel) getTo();
+		if (fileOutput == null) {
+			onCreateDisk(null);
 		}
+		getMipf().aeatReport(fiscalModel, fileOutput);
 		return null;
 	}
 
-	private File saveDiskFile() throws IOException {
-		OutputStream outputData = null;
-		try {
-			if (fileOutput == null) {
-				onCreateDisk(null);
-			}
-			File tempDataFile = File.createTempFile("fs_", ".txt");
-			outputData = new FileOutputStream(tempDataFile);
-			IOUtils.write(fileOutput.getContent(), outputData);
-			outputData.flush();
-			outputData.close();
-			return tempDataFile;
-		} finally {
-			IOUtils.closeQuietly(outputData);
-		}
+	protected String validateAeatFile() {
+		getMipf().validateAeatFile(fileOutput);
+		return null;
 	}
 	
-	private class Worker extends Thread {
-		private final Process process;
-		private Integer exit;
-
-		private Worker(Process process) {
-			this.process = process;
-		}
-
-		public void run() {
-			try {
-				exit = process.waitFor();
-			} catch (InterruptedException ignore) {
-				return;
-			}
-		}
-	}
 }
