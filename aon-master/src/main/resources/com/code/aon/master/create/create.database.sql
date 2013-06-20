@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.19.0
+# Version: 7.20.0
 # Created by: girazu
-# Creation Date: 19/06/2013 17:30
+# Creation Date: 20/06/2013 16:15
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2451,6 +2451,7 @@ CREATE TABLE `supplier` (
   `transaction` tinyint(2) DEFAULT '0' COMMENT 'Tipo de transacciones del Proveedor',
   `status` tinyint(2) DEFAULT NULL COMMENT 'Estado del Proveedor',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
+  `purchase_valuated` tinyint(1) DEFAULT '1' COMMENT 'Indica si el Pedido se imprime valorado segun el Proveedor',
   `account` int(4) DEFAULT NULL COMMENT 'Identificador de la Cuenta Contable',
   PRIMARY KEY (`registry`),
   KEY `IDX_SUPPLIER_SCOPE` (`scope`),
@@ -3405,6 +3406,7 @@ CREATE TABLE `sales` (
   `customer` int(4) NOT NULL DEFAULT '0' COMMENT 'Identificador del Cliente',
   `series` char(5) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Serie del Pedido',
   `number` int(4) NOT NULL DEFAULT '0' COMMENT 'Numero del Pedido',
+  `purchase_reference` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo de referencia del Pedido de Compra',
   `shipping_address` int(4) DEFAULT NULL COMMENT 'Identificador de la Direccion de envio del Pedido',
   `seller` int(4) DEFAULT NULL COMMENT 'Identificador del Agente Comercial',
   `discount_expr` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descuentos del Pedido',
@@ -4280,8 +4282,7 @@ CREATE TABLE `income` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del Albaran de Compra',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `project` int(4) DEFAULT NULL COMMENT 'Identificador del Proyecto',
-  `series` char(5) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Serie del Albaran',
-  `number` int(4) NOT NULL DEFAULT '0' COMMENT 'Numero del Albaran',
+  `reference_code` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Codigo de referencia del Albaran',
   `supplier` int(4) NOT NULL DEFAULT '0' COMMENT 'Identificador del Proveedor',
   `address` int(4) DEFAULT NULL COMMENT 'Identificador de la Direccion del Proveedor',
   `issue_time` date DEFAULT NULL COMMENT 'Fecha de emision del Albaran',
@@ -4299,7 +4300,7 @@ CREATE TABLE `income` (
   `bank` int(4) DEFAULT NULL COMMENT 'Identificador de la Entidad Bancaria',
   `bank_account` varchar(30) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `IDX_UNQ_INCOME_DOMAIN_SUPPLIER_SERIES_NUMBER` (`domain`,`supplier`,`series`,`number`),
+  UNIQUE KEY `IDX_UNQ_INCOME_DOMAIN_SUPPLIER_REFERENCE_CODE` (`domain`,`supplier`,`reference_code`),
   KEY `IDX_INCOME_WORKPLACE` (`workplace`),
   KEY `IDX_INCOME_SCOPE` (`scope`),
   KEY `IDX_INCOME_BANK` (`bank`),
@@ -4402,6 +4403,15 @@ CREATE TABLE `purchase` (
   `bank` int(4) DEFAULT NULL COMMENT 'Identificador de la Entidad Bancaria',
   `bank_account` varchar(30) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
   `email_communication` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si se ha comunicado a traves de email',
+  `carrier` int(4) DEFAULT NULL COMMENT 'Identificador de la Agencia de Transporte',
+  `shipping_alternative_address` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Primera parte de la Direccion de entrega',
+  `shipping_alternative_address2` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Segunda parte de la Direccion de entrega',
+  `shipping_alternative_zip` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo Postal de entrega',
+  `shipping_alternative_city` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Localidad de entrega',
+  `shipping_alternative_phone` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telefono de contacto de la entrega',
+  `shipping_alternative_recipient` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Destinatario de la entrega',
+  `shipping_contact` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre del contacto para la entrega',
+  `shipping_period` tinyint(2) DEFAULT '0' COMMENT 'Tipo de periodo de entrega',
   PRIMARY KEY (`id`),
   UNIQUE KEY `IDX_UNQ_PURCHASE_DOMAIN_SUPPLIER_SERIES_NUMBER` (`domain`,`supplier`,`series`,`number`),
   KEY `IDX_PURCHASE_SCOPE` (`scope`),
@@ -4412,7 +4422,9 @@ CREATE TABLE `purchase` (
   KEY `IDX_PURCHASE_WORKPLACE` (`workplace`),
   KEY `IDX_PURCHASE_DOMAIN` (`domain`),
   KEY `IDX_PURCHASE_RADDRESS` (`address`),
+  KEY `IDX_PURCHASE_CARRIER` (`carrier`),
   CONSTRAINT `FK_PURCHASE_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
+  CONSTRAINT `FK_PURCHASE_CARRIER` FOREIGN KEY (`carrier`) REFERENCES `carrier` (`registry`),
   CONSTRAINT `FK_PURCHASE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PURCHASE_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
   CONSTRAINT `FK_PURCHASE_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
@@ -7131,7 +7143,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.19.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.20.0');
 
 COMMIT;
 
