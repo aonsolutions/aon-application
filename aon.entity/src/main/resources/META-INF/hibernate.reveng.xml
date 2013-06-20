@@ -1208,6 +1208,7 @@
 		<column name="bank_account" type="com.code.aon.config.BankAccount"/>
 		<column name="comments" type="text"/>
 		<column name="remarks" type="text"/>
+		<column name="shipping_period" type="com.esferalia.aon.carrier.enumeration.ShipmentPeriod" />
 		<foreign-key foreign-table="raddress">
 			<column-ref local-column="address" foreign-column="id" />
 			<many-to-one property="registryAddress" />
