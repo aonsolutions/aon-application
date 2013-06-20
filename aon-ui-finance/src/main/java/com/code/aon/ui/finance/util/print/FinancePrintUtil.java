@@ -29,10 +29,12 @@ public class FinancePrintUtil {
 			if (num.lastIndexOf(decimalChar) != -1){
 				String str1 = num.substring(0,num.lastIndexOf(decimalChar));
 				String str2 = num.substring(num.lastIndexOf(decimalChar)+1);
-		        int num_ = Integer.parseInt(str1);
+				// si la parte decimal no consta de unidades de centesima, se incluye con valor cero 
+				str2 = str2.length()==1?str2.concat("0"):str2;
+		        int ent_ = Integer.parseInt(str1);
 		        int dec_ = Integer.parseInt(str2);
 		        numero = new Number2Text();
-		        res = numero.convertirLetras(num_) + " euros";
+		        res = numero.convertirLetras(ent_) + " euros";
 		        res += " con ";
 		        res += numero.convertirLetras(dec_) + " céntimos";
 			} else {
