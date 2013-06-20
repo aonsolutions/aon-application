@@ -60,18 +60,12 @@
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
 
-										<aon:outputLabel for="Purchase_incomeSeries"
-											value="#{bundle.aon_series}" />
-										<aon:inputText id="Purchase_incomeSeries"
-											value="#{purchase.incomeSeries}"
-											size="5" />
-
-										<aon:outputLabel for="Purchase_incomeNumber"
+										<aon:outputLabel for="Purchase_referenceCode"
 											value="#{bundle.aon_number}" />
-										<aon:inputText id="Purchase_incomeNumber"
-											value="#{purchase.incomeNumber}"
-											required="true" size="7" />
-
+										<aon:inputText id="Purchase_referenceCode"  
+											value="#{purchase.incomeReferenceCode}" 
+											required="true" size="20" />
+								
 										<aon:outputLabel for="Purchase_incomeDate"
 											value="#{bundle.aon_date}" />
 										<aon:selectInputDate id="Purchase_incomeDate" 
