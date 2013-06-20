@@ -72,7 +72,7 @@ public class DownloadUtil implements ICommonConstants {
 		return response;
 	}
 
-	private static String getFileName( String fileName, MimeType type ) {
+	public static String getFileName( String fileName, MimeType type ) {
 		String extension = FilenameUtils.getExtension(fileName); 
 		if ( (type != null) && !StringUtils.equals(extension, type.getExtension()) ) {
 			return fileName + "." + type.getExtension();			
@@ -80,11 +80,19 @@ public class DownloadUtil implements ICommonConstants {
 		return fileName;
 	}
 	
-	private static MimeType resolveMimeType( String fileName, MimeType type) {
+	public static MimeType resolveMimeType( String fileName, MimeType type) {
 		if ( type == null ) {
 			if (! StringUtils.isEmpty(fileName) ) {
 				return MimeResolver.getMimeTypeByExtension(fileName);
 			}
+		}
+		return type;
+	}		
+
+	public static MimeType resolveMimeType( IAttachment attachment ) {
+		MimeType type = resolveMimeType(attachment.getDescription(), attachment.getMimeType());
+		if ( type == null ) {
+			type =  MimeResolver.getMimeType(attachment.getData());
 		}
 		return type;
 	}		

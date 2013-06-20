@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ArrayDataModel;
@@ -23,7 +24,9 @@ import javax.faces.model.ListDataModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
@@ -31,6 +34,7 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.util.DownloadUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 
 public class BatchDocument {
@@ -79,7 +83,8 @@ public class BatchDocument {
 		OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(file) );
 		ZipOutputStream zipOut = new ZipOutputStream(fileOut);
 		for (IAttachment ra : documents) {
-            zipOut.putNextEntry(new ZipEntry(ra.getDescription()));
+			String name = DownloadUtil.getFileName(ra.getDescription(), ra.getMimeType());
+            zipOut.putNextEntry(new ZipEntry(name));
             zipOut.write(ra.getData());
         	zipOut.closeEntry();
         }
@@ -213,5 +218,13 @@ public class BatchDocument {
 		this.checkList.clear();
 		this.checkList.addAll(list);
 	}	
+
+    public void downloadAttachment( ActionEvent event ) throws NumberFormatException, ManagerBeanException {
+        FacesContext context = FacesContext.getCurrentInstance();
+        String id = context.getExternalContext().getRequestParameterMap().get("index");
+        IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+        IAttachment attachment = (IAttachment) bean.get(Integer.valueOf(id));
+        DownloadUtil.downloadAttachment( attachment );    	
+    }
 	
 }

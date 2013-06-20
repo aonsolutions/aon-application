@@ -15,7 +15,6 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -25,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.BasicAttachment;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.util.MimeResolver;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.ui.company.controller.CompanyDisplay;
 import com.code.aon.ui.util.DownloadUtil;
@@ -49,24 +47,12 @@ public class CompanyDocumentServlet extends HttpServlet {
 		}
 	}
 	
-	private MimeType getMimeType( IAttachment attachment ) {
-		MimeType mt = MimeResolver.getMimeTypeByExtension(attachment.getDescription());
-		if ( mt == null ) {
-			mt =  MimeResolver.getMimeType(attachment.getData());
-		}
-		return mt;		
-	}
-
 	private String getName( IAttachment attachment, MimeType type ) {
 		String name = attachment.getDescription();
 		if ( StringUtils.isEmpty(name) ) {
 			name = "image-" + attachment.getId();
 		}
-		String extension = FilenameUtils.getExtension(name);
-		if ( StringUtils.isEmpty(extension) && (type != null) ) {
-			name += "." + type.getExtension();
-		}
-		return name;		
+		return DownloadUtil.getFileName(name, type);
 	}
 	
 	private Integer getCompanyId( Connection connection, Integer domainId ) {
@@ -151,7 +137,7 @@ public class CompanyDocumentServlet extends HttpServlet {
 		try {
 			IAttachment attachment = getAttachment(req);
 			if ( attachment != null ) {
-				MimeType type = getMimeType(attachment);
+				MimeType type = DownloadUtil.resolveMimeType(attachment);
 				String name = getName(attachment, type);
 				out = DownloadUtil.initDownload(res, name, type, attachment.getSize());
 				DownloadUtil.setCacheable(res);
