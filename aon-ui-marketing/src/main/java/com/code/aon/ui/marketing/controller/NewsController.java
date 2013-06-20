@@ -48,8 +48,15 @@ public class NewsController extends BasicController {
 	}
 
 	public static void initController(MessageController controller, News news) {
+		boolean hasTemplate = (news.getTemplate() != null) && (news.getTemplate().getId() != null);
+		HtmlGenerator hg = new HtmlGenerator();
 		if (news.getType() == NewsType.MESSAGE) {
-			TemplateController.initController(controller, news.getTemplate(), news.getContent());
+			if ( hasTemplate ) {
+				hg.addNews(news);
+				TemplateController.initController(controller, news.getTemplate(), hg.getString());
+			} else {
+				controller.updateMessageBody(news.getContent());
+			}
 			IAttachment attach = news.getRegistryAttachment();
 			if ((attach != null) && (attach.getId() != null)) {
 				AonFile aonFile = getAonFile(attach);
@@ -59,9 +66,12 @@ public class NewsController extends BasicController {
 			}
 			controller.setSubject(news.getTitle());
 		} else if (news.getType() == NewsType.NEWS) {
-			HtmlGenerator hg = new HtmlGenerator();
-			hg.addNews(news, news.getTemplate(), FULL_WIDTH_IMAGE);
-			TemplateController.initController(controller, news.getTemplate(), hg.getString());
+			hg.addNews(news);
+			if ( hasTemplate ) {
+				TemplateController.initController(controller, news.getTemplate(), hg.getString());	
+			} else {
+				controller.updateMessageBody(hg.getString());
+			}
 		}
 	}
 
@@ -107,7 +117,7 @@ public class NewsController extends BasicController {
 		writer.println("</head>");
 		writer.println("<body>");
 		HtmlGenerator hg = new HtmlGenerator(urlPreffix);
-		hg.addNews(news, news.getTemplate(), FULL_WIDTH_IMAGE);
+		hg.addNews(news.getTemplate(), news, FULL_WIDTH_IMAGE, false);
 		String content = TemplateController.getMessageBody(news.getTemplate(), hg.getString());
 		writer.println(content);
 		writer.println("</body>");

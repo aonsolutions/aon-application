@@ -106,7 +106,7 @@ public class NewsletterController extends BasicController {
 			HtmlGenerator hg = new HtmlGenerator(sb);
 			for( ITransferObject to : bean.getList(criteria) ) {
 				NewsletterDetail nd = (NewsletterDetail) to;
-				hg.addNews(nd.getNews(), newsletter.getTemplate(), layout);
+				hg.addNews(newsletter.getTemplate(), nd.getNews(), layout, true);
 				if ( alternate ) {
 					if ( layout == NewsletterLayout.LEFT_ALIGNED_IMAGE) {
 						layout = NewsletterLayout.RIGHT_ALIGNED_IMAGE;

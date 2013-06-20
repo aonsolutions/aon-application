@@ -1,5 +1,6 @@
 package com.code.aon.ui.marketing.controller;
 
+import static com.code.aon.marketing.enumeration.NewsletterLayout.FULL_WIDTH_IMAGE;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.News;
 import com.code.aon.marketing.Template;
+import com.code.aon.marketing.enumeration.NewsType;
 import com.code.aon.marketing.enumeration.NewsletterLayout;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.config.controller.DomainSwitcher;
@@ -70,7 +72,6 @@ public class HtmlGenerator {
 	}
 	
 	private void addFullWidthImage( News news, Template template ) {
-		sb.append("<tr><td>");
 		addTitle(news, template);
 		sb.append("</td></tr>");
 		String url = getImageURL(news.getRegistryAttachment());
@@ -81,11 +82,9 @@ public class HtmlGenerator {
 		}
 		sb.append("<tr><td>");
 		addContent(news);
-		sb.append("</td></tr>");
 	}
 
 	private void addLeftAlignedImage( News news, Template template ) {
-		sb.append("<tr><td>");
 		addTitle(news, template);
 		String url = getImageURL(news.getRegistryAttachment());
 		if ( url != null ) {
@@ -97,11 +96,9 @@ public class HtmlGenerator {
 			sb.append("</tbody></table>");
 		}
 		addContent(news);
-		sb.append("</td></tr>");
 	}
 
 	private void addRightAlignedImage( News news, Template template ) {
-		sb.append("<tr><td>");
 		addTitle(news, template);
 		String url = getImageURL(news.getRegistryAttachment());
 		if ( url != null ) {
@@ -113,16 +110,11 @@ public class HtmlGenerator {
 			sb.append("</tbody></table>");
 		}
 		addContent(news);
-		sb.append("</td></tr>");
 	}
 	
-	public void addNews( News news, Template template, NewsletterLayout layout ) {
-		sb.append("<table cellspacing=\"0\" cellpadding=\"0\" border=\"0");
-		if ( (template != null) && ! StringUtils.isEmpty(template.getWidth()) ) {
-			sb.append("\" style=\"width: ");
-			sb.append(template.getWidth());			
-		}
-		sb.append("\"><tbody>");		
+	public void addNews( Template template, News news, NewsletterLayout layout, boolean addBottomPadding ) {
+		StringBuffer currentContent = this.sb;
+		this.sb = new StringBuffer();
 		switch ( layout ) {
 			case FULL_WIDTH_IMAGE:
 				addFullWidthImage(news, template);
@@ -134,10 +126,35 @@ public class HtmlGenerator {
 				addRightAlignedImage(news, template);
 				break;
 		}
-		sb.append("<tr><td height=\"10\"></td></tr>");
-		sb.append("</tbody></table>");
+		String content = this.sb.toString();
+		this.sb = currentContent;
+		addContent(template, content, addBottomPadding);
 	}
 
+	public void addNews( News news ) {
+		if (news.getType() == NewsType.MESSAGE) {
+			addContent(news.getTemplate(), news.getContent(), false);
+		} else {
+			addNews(news.getTemplate(), news, FULL_WIDTH_IMAGE, false);
+		}
+	}
+	
+	private void addContent( Template template, String content, boolean addBottomPadding ) {
+		sb.append("<table cellspacing=\"0\" cellpadding=\"0\" border=\"0");
+		if ( (template != null) && ! StringUtils.isEmpty(template.getWidth()) ) {
+			sb.append("\" style=\"width: ");
+			sb.append(template.getWidth());			
+		}
+		sb.append("\"><tbody>");
+		sb.append("<tr><td>");		
+		sb.append( content );
+		sb.append("</td></tr>");		
+		if ( addBottomPadding ) {
+			sb.append("<tr><td height=\"10\"></td></tr>");	
+		}
+		sb.append("</tbody></table>");
+	}
+	
 	public static String getURLPreffix() {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		try {
