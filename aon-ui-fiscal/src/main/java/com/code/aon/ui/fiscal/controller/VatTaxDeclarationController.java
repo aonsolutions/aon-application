@@ -33,6 +33,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.finance.IFinanceMessages;
+import com.code.aon.ui.fiscal.controller.model.Mipf;
 import com.code.aon.ui.fiscal.file.MOD303Writer;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
@@ -40,7 +41,16 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class VatTaxDeclarationController extends LinesController {
 	public static final String BEAN_NAME = "vatTaxDeclaration";
+
 	private FileOutput fileOutput;
+	private Mipf mipf;
+
+	private Mipf getMipf() {
+		if (this.mipf == null) {
+			this.mipf = new Mipf();
+		}
+		return mipf;
+	}
 
 	public FileOutput getFileOutput() {
 		return fileOutput;
@@ -218,6 +228,19 @@ public class VatTaxDeclarationController extends LinesController {
     			AonUtil.addErrorMessage(++i + ") " + ex.getLocalizedMessage());
     		}
         }
+	    if (isAeatValidable()) {
+	    	validateAeatFile();	
+	    }
+	}
+	
+	public boolean isAeatValidable() {
+		VatTaxDeclaration to = (VatTaxDeclaration) getTo();
+		return ( !isNew() 
+			&& isScriptPresent());
+	}
+	private String validateAeatFile() {
+		getMipf().validateAeatFile(fileOutput);
+		return null;
 	}
 	
 	private MOD303Format getFormat(VatTaxDeclaration vatTaxDeclaration) {
@@ -275,4 +298,9 @@ public class VatTaxDeclarationController extends LinesController {
 			throw new ManagerBeanException(e);
 		}
 	}
+	
+	public boolean isScriptPresent() {
+		return getMipf().isScriptPresent();
+	}
+	
 }

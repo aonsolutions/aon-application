@@ -67,44 +67,56 @@
 					</aon:htmlCommandLink>
 				</c:if>
 				
+				<aon:commandButton id="audit-info"
+					value="#{bundle.aon_audit}"
+					styleClass="aon-finding-toolbar-item aon-icon-audit"
+					rendered="#{!controller.new}"
+					reRender="showAuditInfoWindow">
+					<f:setPropertyActionListener target="#{controller.showAuditInfoWindow}"
+						value="#{true}" />							
+				</aon:commandButton>		
 			</ui:define>
 		</ui:decorate>
 
 		<aon:div styleClass="aon-scroll-area">
 
-			<aon:panelGrid id="panel1" columns="9" dir="true" width="100%"
-				columnClasses="aon-panelGrid-odd aon-width-80
-							  ,aon-panelGrid-even aon-width-80
-							  ,aon-panelGrid-odd aon-width-80
-							  ,aon-panelGrid-even aon-width-80
+			<ui:insert name="extraHeader" />
+			
+			<aon:panelGrid id="panelMain" columns="7" dir="true" width="100%"
+				columnClasses="aon-panelGrid-odd aon-width-100
+							  ,aon-panelGrid-even aon-width-180
 							  ,aon-panelGrid-odd aon-width-80
 							  ,aon-panelGrid-even aon-width-auto
 							  ,aon-panelGrid-odd aon-width-80
-							  ,aon-panelGrid-even aon-width-100
+							  ,aon-panelGrid-even aon-width-80
 							  ,aon-panelGrid-even aon-width-100">
 
-				<aon:outputLabel for="controller_year" value="#{bundle.aon_year}" />
-				<aon:inputText id="controller_year" size="5" value="#{controller.declaration.header.year}"
-					required="true" disabled="#{!controller.new}"/>
-
-				<aon:outputLabel for="controller_period"
-					value="#{fiscalBundle.fiscal_period}" />
-				<aon:selectOneMenu id="controller_period" value="#{controller.declaration.header.period}"
-					required="true" disabled="#{!controller.new}">
-					<c:if test="#{quarterPeriods}">
-						<f:selectItems value="#{fiscalCollections.quarterPeriods}" />
-					</c:if>
-					<c:if test="#{!quarterPeriods}">
-						<f:selectItems value="#{fiscalCollections.periods}" />	
-					</c:if>
-				</aon:selectOneMenu>
+				<aon:outputLabel for="controller_year" value="#{bundle.aon_year} / #{fiscalBundle.fiscal_period}" />
+				<aon:div>
+					<aon:inputText id="controller_year" size="5" value="#{controller.declaration.header.year}"
+						required="true" disabled="#{!controller.new}"/>
+					<aon:selectOneMenu id="controller_period" value="#{controller.declaration.header.period}"
+						style="margin-left: 3px;"
+						required="true" disabled="#{!controller.new}">
+						<c:if test="#{quarterPeriods}">
+							<f:selectItems value="#{fiscalCollections.quarterPeriods}" />
+						</c:if>
+						<c:if test="#{!quarterPeriods}">
+							<f:selectItems value="#{fiscalCollections.periods}" />	
+						</c:if>
+					</aon:selectOneMenu>
+				</aon:div>
 
 				<aon:outputLabel for="controller_administration"
 					value="#{fiscalBundle.fiscal_administration}" />
-				<aon:selectOneMenu id="controller_administration" value="#{controller.declaration.header.administration}"
-					required="true" disabled="#{!controller.new}">
-					<f:selectItems value="#{configCollections.administrations}" />
-				</aon:selectOneMenu>
+				<aon:div id="administrationContainer">
+					<aon:selectOneMenu id="controller_administration" value="#{controller.declaration.header.administration}"
+						reRender="panelIdentification" ajaxSingle="true"
+						required="true" disabled="#{!controller.new}">
+						<f:selectItems value="#{configCollections.administrations}" />
+					</aon:selectOneMenu>
+				</aon:div>
+				
 
 				<aon:outputText value="#{bundle.aon_status}" />
 				<aon:div
@@ -119,7 +131,8 @@
 				<c:if test="#{aonRole.confidentiality}">
 					<aon:div>
 						<aon:selectBooleanCheckbox id="controller_securityLevel"
-							value="#{controller.declaration.header.confidential}" rendered="#{!controller.declaration.header.readOnly}"/>
+							value="#{controller.declaration.header.confidential}" 
+							rendered="#{!controller.declaration.header.readOnly}"/>
 						<aon:outputLabel for="controller_securityLevel" styleClass="aon-italic"
 							value="#{bundle.aon_confidential}" rendered="#{!controller.declaration.header.readOnly}"/>
 						<aon:outputText styleClass="aon-icon aon-icon-confidential"
@@ -131,47 +144,84 @@
 			
 			<c:if test="#{!controller.new and controller.declaration.header.finished}">
 				
-				<aon:panelGrid id="payPanel" columns="2" style="width: 100%;" styleClass="aon-margin-top"
-					columnClasses="aon-panelGrid-odd aon-width-80
-								,aon-panelGrid-even aon-width-auto">
+				<aon:panelGrid id="panelFinance" columns="3" style="width: 100%;" styleClass="aon-margin-top"
+					columnClasses="aon-panelGrid-odd aon-width-70
+								,aon-panelGrid-even aon-width-auto
+								,aon-panelGrid-even aon-width-300">
 				
 					<aon:outputText value="#{fiscalBundle.fiscal_deposit}"
-						rendered="#{!controller.declaration.toDeduct and !controller.declaration.negative}" />
+						rendered="#{!controller.declaration.toDeduct and !controller.declaration.negative and !controller.declaration.compensate}" />
 					<aon:outputText value="#{fiscalBundle.fiscal_deduct}" 
 						rendered="#{controller.declaration.toDeduct}" />
 					<aon:outputText value="#{fiscalBundle.fiscal_negative}" 
 						rendered="#{controller.declaration.negative}" />
+					<aon:outputText value="#{fiscalBundle.fiscal_compensate}" 
+						rendered="#{controller.declaration.compensate}" />
 					
 					<aon:div>
-						<aon:outputText styleClass="aon-bold aon-margin-left"
-							value="#{controller.declaration.result}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>									
-
-						<aon:outputText styleClass="aon-margin-left"
-							value="#{controller.to.finance.payMethod.name}">
-						</aon:outputText>
-															
-						<aon:outputText styleClass="aon-margin-left"
-							value="#{controller.to.finance.bank.name}">
-						</aon:outputText>
-
-						<aon:outputText styleClass="aon-margin-left"
-							value="#{controller.to.finance.bankAccount}">
-						</aon:outputText>
-					</aon:div>		
+						<aon:commandLink
+							rendered="#{controller.to.finance.id != null}"
+							styleClass="aon-dataTable-link"
+							action="finance_form"
+							actionListener="#{controller.onLoadFinance}">
+							<aon:outputText styleClass="aon-bold aon-margin-left"
+								value="#{controller.declaration.result}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>									
+	
+							<aon:outputText styleClass="aon-margin-left"
+								value="#{controller.to.finance.payMethod.name}">
+							</aon:outputText>
+																
+							<aon:outputText styleClass="aon-margin-left"
+								value="#{controller.to.finance.bank.name}">
+							</aon:outputText>
+	
+							<aon:outputText styleClass="aon-margin-left"
+								value="#{controller.to.finance.bankAccount}">
+							</aon:outputText>
+						</aon:commandLink>
+						<aon:div rendered="#{controller.to.finance.id == null}">
+							<aon:outputText styleClass="aon-bold aon-margin-left"
+								value="#{controller.declaration.result}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>									
+	
+							<aon:outputText styleClass="aon-margin-left"
+								value="#{controller.to.finance.payMethod.name}">
+							</aon:outputText>
+																
+							<aon:outputText styleClass="aon-margin-left"
+								value="#{controller.to.finance.bank.name}">
+							</aon:outputText>
+	
+							<aon:outputText styleClass="aon-margin-left"
+								value="#{controller.to.finance.bankAccount}">
+							</aon:outputText>
+						</aon:div>
+					</aon:div>
+					
+					<aon:div>
+						<h:outputLink target="_blank"
+							value="#{controller.aeatWebPage}"
+							style="border-width: 0px 0px 0px 0px;"
+							rendered="#{!controller.new and controller.to.finished and controller.aeatWebPage != null}"
+							styleClass="aon-finding-toolbar-item aon-icon-aeat">
+							<aon:outputText value="#{fiscalBundle.fiscal_electronic_presentation}"/>
+						</h:outputLink>
+					</aon:div>
 				</aon:panelGrid>
 
 			</c:if>
 			
-			<aon:panelGrid id="panel2" columns="4" style="width: 100%;" styleClass="aon-margin-top"
-				columnClasses="aon-panelGrid-odd aon-width-80
-							,aon-panelGrid-even aon-width-500
+			<aon:panelGrid id="panelComments" columns="4" style="width: 100%;" styleClass="aon-margin-top"
+				columnClasses="aon-panelGrid-odd aon-width-70
+							,aon-panelGrid-even aon-width-auto
 							,aon-panelGrid-even aon-width-100
-							,aon-panelGrid-even aon-width-auto">
+							,aon-panelGrid-even aon-width-300">
 				
 				<aon:outputLabel for="controller_comments" value="#{bundle.aon_comment}" />
-				<aon:inputTextarea id="controller_comments" cols="80" rows="2" value="#{controller.declaration.header.comments}"/>
+				<aon:inputTextarea id="controller_comments" cols="80" rows="1" value="#{controller.declaration.header.comments}"/>
 
 				<aon:div>
 					<aon:div>
@@ -191,39 +241,51 @@
 				</aon:div>
 				
 				<aon:div>
-					<aon:commandButton id="gen-disk"
-						value="#{financeBundle.finance_create_disk}"
-						actionListener="#{controller.onCreateDisk}"
-						rendered="#{!controller.new and controller.declaration.header.finished}"
-						styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
-						style="border-width: 0px 0px 0px 0px;" reRender="panel2"
-						accesskey="#{bundle.aon_key_cancel}" />
-					<aon:htmlCommandLink target="_blank"
-						title="#{controller.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
-						value="#{controller.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
-						style="border-width: 0px 0px 0px 0px;"
-						actionListener="#{controller.downloadDisk}"
-						rendered="#{!controller.new and controller.fileOutput!=null}"
-						styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
+					<aon:div>
+						<aon:commandButton id="gen-disk"
+							value="#{financeBundle.finance_create_disk}"
+							actionListener="#{controller.onCreateDisk}"
+							rendered="#{!controller.new and controller.declaration.header.finished}"
+							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+							style="border-width: 0px 0px 0px 0px;" reRender="panelComments"
+							accesskey="#{bundle.aon_key_cancel}" />
+						<aon:htmlCommandLink target="_blank"
+							title="#{controller.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
+							value="#{controller.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
+							style="border-width: 0px 0px 0px 0px;"
+							actionListener="#{controller.downloadDisk}"
+							rendered="#{!controller.new and controller.fileOutput!=null}"
+							styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
+					</aon:div>
 				</aon:div>
 			</aon:panelGrid>
 			
-			<ui:insert name="extraHeader" />
-			
-			<c:if test="#{!skipDetail}">
-				<ui:include src="/com/code/aon/ui/fiscal/facelet/model/detail.xhtml">
-					<ui:param name="controller" value="#{controller}" />
-				</ui:include>
-			</c:if>
-			<c:if test="#{skipDetail}">
-				<ui:insert name="customDetail" />
-			</c:if>
+			<aon:panelTabSet selectedTab="#{controller.selectedTab}" immediate="true">
+				<aon:panelTab id="#{controller.dataTabName}" label="#{fiscalBundle.fiscal_identification_data}">
+					<ui:include src="/com/code/aon/ui/fiscal/facelet/model/header.xhtml" />
+				</aon:panelTab>
+				
+				<c:if test="#{!controller.new}">
+					<aon:panelTab id="#{controller.liquidationTabName}" label="#{fiscalBundle.fiscal_liquidation}">
+						<c:if test="#{!skipDetail}">
+							<ui:include src="/com/code/aon/ui/fiscal/facelet/model/detail.xhtml">
+								<ui:param name="controller" value="#{controller}" />
+							</ui:include>
+						</c:if>
+						<c:if test="#{skipDetail}">
+							<ui:insert name="customDetail" />
+						</c:if>
+					</aon:panelTab>
+				</c:if>
+			</aon:panelTabSet>
 		</aon:div>
-		
 	</aon:form>
 	
 	<ui:include src="/com/code/aon/ui/fiscal/facelet/model/finalizePanel.xhtml">
 		<ui:param name="controller" value="#{controller}" />
 	</ui:include>	
+	<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+		<ui:param name="auditableController" value="#{controller}" />
+	</ui:include>
 	<aon:lookupButtonPopup lookup="#{creditorLookup}" />
 </ui:composition>

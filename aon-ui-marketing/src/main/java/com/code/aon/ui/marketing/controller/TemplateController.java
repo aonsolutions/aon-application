@@ -28,12 +28,14 @@ import com.esferalia.aon.entity.IEntityAlias;
  */
 public class TemplateController extends BasicController {
 	
-	public void onSendEmail( ActionEvent event ) throws ManagerBeanException {
+	public void onSendEmail( ActionEvent event ) {
 		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
-		controller.onNewMessage(event);
-		controller.setShowNewMessageWindow(true);
-		controller.setShowTemplates(false);
-		initController(controller, (Template) getTo());
+		controller.onPrepareEmailWindow(event);
+		if ( controller.isShowNewMessageWindow() ) {	
+			controller.onNewMessage(event);
+			controller.setShowTemplates(false);
+			initController(controller, (Template) getTo());
+		}
 	}
 
 	public static void initController( MessageController controller, Template template ) {
@@ -118,6 +120,16 @@ public class TemplateController extends BasicController {
 			templates.add(item);
 		}
 		return templates;
+	}
+
+	public void onClearBackgroundColor( ActionEvent event ) {
+		Template template = (Template) getTo();
+		template.setBackgroundColor(null);
+	}
+
+	public void onClearTitleColor( ActionEvent event ) {
+		Template template = (Template) getTo();
+		template.setTitleColor(null);
 	}
 	
 }

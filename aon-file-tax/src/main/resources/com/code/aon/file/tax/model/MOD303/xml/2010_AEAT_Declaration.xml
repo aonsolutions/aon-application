@@ -11,17 +11,17 @@
 	<field name="year" value="bean" bean="Declaration" property="year" format="Numeric" pattern="9(4)" />
 	<field name="period" value="bean" bean="Declaration" property="period" format="AlphaNumeric" pattern="X(2)" />
 
-	<field name="baseOutputVat4" value="bean" bean="Declaration" property="outputVat(4.0).taxableBase" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="percentOutputVat4" value="bean" bean="Declaration" property="outputVat(4.0).percent" format="DefNumeric" pattern="9(3)V99" />
-	<field name="quotaOutputVat4" value="bean" bean="Declaration" property="outputVat(4.0).quota" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="baseOutputVat4" value="bean" bean="Declaration" property="outputVatInvPasive(4.0).taxableBase" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="percentOutputVat4" value="bean" bean="Declaration" property="outputVatInvPasive(4.0).percent" format="DefNumeric" pattern="9(3)V99" />
+	<field name="quotaOutputVat4" value="bean" bean="Declaration" property="outputVatInvPasive(4.0).quota" format="DefNumeric" pattern="S9(14)V99" />
 
-	<field name="baseOutputVat10" value="bean" bean="Declaration" property="outputVat(10.0).taxableBase" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="percentOutputVat10" value="bean" bean="Declaration" property="outputVat(10.0).percent" format="DefNumeric" pattern="9(3)V99" />
-	<field name="quotaOutputVat10" value="bean" bean="Declaration" property="outputVat(10.0).quota" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="baseOutputVat10" value="bean" bean="Declaration" property="outputVatInvPasive(10.0).taxableBase" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="percentOutputVat10" value="bean" bean="Declaration" property="outputVatInvPasive(10.0).percent" format="DefNumeric" pattern="9(3)V99" />
+	<field name="quotaOutputVat10" value="bean" bean="Declaration" property="outputVatInvPasive(10.0).quota" format="DefNumeric" pattern="S9(14)V99" />
 
-	<field name="baseOutputVat21" value="bean" bean="Declaration" property="outputVat(21.0).taxableBase" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="percentOutputVat21" value="bean" bean="Declaration" property="outputVat(21.0).percent" format="DefNumeric" pattern="9(3)V99" />
-	<field name="quotaOutputVat121" value="bean" bean="Declaration" property="outputVat(21.0).quota" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="baseOutputVat21" value="bean" bean="Declaration" property="outputVatInvPasive(21.0).taxableBase" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="percentOutputVat21" value="bean" bean="Declaration" property="outputVatInvPasive(21.0).percent" format="DefNumeric" pattern="9(3)V99" />
+	<field name="quotaOutputVat121" value="bean" bean="Declaration" property="outputVatInvPasive(21.0).quota" format="DefNumeric" pattern="S9(14)V99" />
 
 	<field name="baseSurcharge05" value="bean" bean="Declaration" property="surcharge(0.5).taxableBase" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="percentSurcharge05" value="bean" bean="Declaration" property="surcharge(0.5).percent" format="DefNumeric" pattern="9(3)V99" />

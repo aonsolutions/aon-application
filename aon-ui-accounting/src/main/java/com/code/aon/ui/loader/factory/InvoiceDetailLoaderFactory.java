@@ -153,7 +153,7 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			sb.append(params.getDateFormatter().format(invoice.getIssueDate()));
 			detail.setDescription(sb.toString());
 		} else {
-			Item item = obtainItem( params, loaded );
+			Item item = obtainItem( params, loaded, invoice );
 			detail.setItem(item);
 			detail.setDescription(StringUtils.join(new String[]{item.getProduct().getName(),item.getDescription()}," "));
 			detail.setSource(InvoiceSource.DIRECT_INVOICE);
@@ -332,7 +332,7 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		return (AccountEntryDetail) aedBean.update(aed);				
 	}
 
-	private Item obtainItem(LoaderParams params,LoadedInvoiceDetail loaded) throws ManagerBeanException {
+	private Item obtainItem(LoaderParams params,LoadedInvoiceDetail loaded, Invoice invoice) throws ManagerBeanException {
 		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CODE), loaded.getArticulo());
@@ -349,6 +349,14 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			product.setCategory( params.getCategory() );
 			product.setStatus(ProductStatus.ACTIVE);
 			product.setType(ProductType.COMMERCIAL_PRODUCT);
+			if ( StringUtils.isNotEmpty( loaded.getCuenta() ) ) {
+				Account account = getLoaderUtils().ensureAccount(loaded.getCuenta(), loaded.getConcepto());
+				if (invoice.isSales()) {
+					product.setSalesAccount(account);	
+				} else {
+					product.setPurchaseAccount(account);
+				}
+			}
 			item = new Item();
 			item.setProduct(product);
 			item.setPrice( loaded.getPrecio() );

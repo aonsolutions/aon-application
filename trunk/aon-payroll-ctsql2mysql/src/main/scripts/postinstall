@@ -1,4 +1,0 @@
-SERVICE=ctsql2mysqld
-
-chkconfig --add $SERVICE
-chkconfig $SERVICE on

@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.code.aon.file.format.model.Fd0Exception;
-import com.code.aon.file.tax.model.MOD310.data.Declaration;
 
 public class MOD310 {
 	

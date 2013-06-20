@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<endpoints xmlns="http://java.sun.com/xml/ns/jax-ws/ri/runtime" version="2.0">
-	<endpoint name="ReservationService" 
-		implementation="com.esferalia.aon.pms.reservation.service.AonPmsSoap" 
-		url-pattern="/ReservationService"
-		wsdl="WEB-INF/wsdl/AonPmsSoapService.wsdl" />
-</endpoints>

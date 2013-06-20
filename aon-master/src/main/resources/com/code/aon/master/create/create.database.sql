@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.18.0
+# Version: 7.19.0
 # Created by: girazu
-# Creation Date: 12/06/2013 18:10
+# Creation Date: 19/06/2013 17:30
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -3914,11 +3914,33 @@ CREATE TABLE `fs_model` (
   `replaced_number` int(4) DEFAULT '0' COMMENT 'Numero de Declaracion complementada o sustituida',
   `comments` text COLLATE latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
   `finance` int(4) DEFAULT NULL COMMENT 'Identificador de Vencimiento',
+  `document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF',
+  `surname` varchar(30) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Apellidos',
+  `name` varchar(45) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre',
+  `street_initial` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Sigla via',
+  `street_name` varchar(17) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre de la via publica',
+  `street_number` varchar(4) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de la via publica',
+  `street_stair` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Escalera',
+  `street_floor` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Piso',
+  `street_door` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Puerta',
+  `phone` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telefono',
+  `town` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Municipio',
+  `province` varchar(15) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Provincia',
+  `zip` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo Postal',
+  `admon_aeat` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo de Administracion AEAT',
+  `contact_person` varchar(100) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Persona de Contacto',
+  `contact_phone` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telf. Fijo',
+  `contact_cellular` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telf. Movil',
+  `contact_email` varchar(100) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Email',
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL_FINANCE` (`finance`),
-  CONSTRAINT `FK_FS_MODEL_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`),
-  CONSTRAINT `FK_FS_MODEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_FS_MODEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_FS_MODEL_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaraciones Fiscales';
 
 #
@@ -5122,6 +5144,23 @@ CREATE TABLE `message_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Log de Mensajes';
 
 #
+# Structure for the `mk_campaign` table : 
+#
+
+CREATE TABLE `mk_campaign` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `active` tinyint(1) NOT NULL COMMENT 'Indica si la Campaña esta activa o no',
+  `description` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Campaña',
+  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
+  PRIMARY KEY (`id`),
+  KEY `IDX_MK_CAMPAIGN_DOMAIN` (`domain`),
+  KEY `IDX_MK_CAMPAIGN_SCOPE` (`scope`),
+  CONSTRAINT `FK_MK_CAMPAIGN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_MK_CAMPAIGN_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Campañas de Marketing';
+
+#
 # Structure for the `mk_template` table : 
 #
 
@@ -5181,23 +5220,6 @@ CREATE TABLE `news` (
   CONSTRAINT `FK_NEWS_RATTACH` FOREIGN KEY (`rattach`) REFERENCES `rattach` (`id`),
   CONSTRAINT `FK_NEWS_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Noticias';
-
-#
-# Structure for the `mk_campaign` table : 
-#
-
-CREATE TABLE `mk_campaign` (
-  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `active` tinyint(1) NOT NULL COMMENT 'Indica si la Campaña esta activa o no',
-  `description` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Campaña',
-  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
-  PRIMARY KEY (`id`),
-  KEY `IDX_MK_CAMPAIGN_DOMAIN` (`domain`),
-  KEY `IDX_MK_CAMPAIGN_SCOPE` (`scope`),
-  CONSTRAINT `FK_MK_CAMPAIGN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_MK_CAMPAIGN_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Campañas de Marketing';
 
 #
 # Structure for the `newsletter` table : 
@@ -7109,7 +7131,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.18.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.19.0');
 
 COMMIT;
 

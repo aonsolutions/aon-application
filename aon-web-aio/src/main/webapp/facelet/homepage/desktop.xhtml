@@ -189,7 +189,6 @@
 										ajaxSingle="true" reRender="showNewMessageWindow"
 										value="#{parentDomain.email}"
 										actionListener="#{webmailMessage.onSendEmail}" >
-										<f:setPropertyActionListener target="#{webmailMessage.showNewMessageWindow}" value="#{true}" />
 										<f:param name="email" value="#{parentDomain.email}" />
 									</aon:commandLink>
 								</h:panelGrid>
@@ -268,7 +267,6 @@
 									value="#{customize.supportEmail}"
 									style="color:#888888; text-decoration:none;"
 									actionListener="#{webmailMessage.onSendEmail}" >
-									<f:setPropertyActionListener target="#{webmailMessage.showNewMessageWindow}" value="#{true}" />
 									<f:param name="email" value="#{customize.supportEmail}" />
 								</aon:commandLink>							    
 							</aon:div>

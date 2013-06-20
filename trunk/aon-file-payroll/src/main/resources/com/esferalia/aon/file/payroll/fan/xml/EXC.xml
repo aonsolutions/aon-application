@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<register name="EXC">
-	<field name="cabecera" value="EXC" format="AlphaNumeric" pattern="X(3)" />
-	<field name="tipo" value="bean" bean="EXC" property="tipoExplotacion" format="AlphaNumeric" pattern="X(1)" />
-	<field name="denominacion" value="bean" bean="EXC" property="denominacionExplotacion" format="AlphaNumeric" pattern="X(40)" />
-	<field name="free1" value=" " format="AlphaNumeric" pattern="X(26)" />
-</register>

@@ -24,7 +24,9 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.IMailAccount;
+import com.code.aon.webmail.bean.IMailConstants;
 import com.code.aon.webmail.db.MailAccount;
+import com.code.aon.webmail.enumeration.ConnectionSecurity;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class MailAccountDBController extends MailDBController implements IMailAccountController {
@@ -88,6 +90,27 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 	@Override
 	protected String getNameAlias() throws ManagerBeanException {
 		return getFieldName( IEntityAlias.MAIL_ACCOUNT_NAME );
+	}
+
+	public void onProtocolChanged( ActionEvent event ) {
+		MailAccount mailAccount = (MailAccount) getTo();
+		if ( mailAccount.getProtocol() == null ) {
+			mailAccount.setIncomingHost(null);
+			mailAccount.setIncomingPort(0);
+			mailAccount.setIncomingSecurity(ConnectionSecurity.NONE);
+		} else if ( mailAccount.getIncomingPort() == 0 ) {
+			if ( mailAccount.isIMAP() ) {
+				mailAccount.setIncomingPort(IMailConstants.DEFAULT_IMAP_PORT);
+			} else {
+				mailAccount.setIncomingPort(IMailConstants.DEFAULT_POP3_PORT);
+			}
+		}
+		if (! mailAccount.isIMAP() ) {
+			mailAccount.setDraftFolder(null);
+			mailAccount.setSentFolder(null);
+			mailAccount.setTrashFolder(null);
+			mailAccount.setSpamFolder(null);
+		}
 	}
 	
 }

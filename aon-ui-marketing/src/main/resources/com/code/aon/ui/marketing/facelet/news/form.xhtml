@@ -37,7 +37,7 @@
 						rendered="#{!news.new}" size="15" disabled="true" />
 
 					<aon:outputLabel for="News_title"
-						value="#{marketingBundle.marketing_news_title}" />
+						value="#{(news.to.type  == 'NEWS')?marketingBundle.marketing_news_title:webmailBundle.webmail_subject}" />
 					<aon:inputText id="News_title" required="true"
 						value="#{news.to.title}" size="60" maxlength="128" />
 						

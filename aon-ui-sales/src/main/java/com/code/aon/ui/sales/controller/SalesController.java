@@ -1,8 +1,7 @@
 package com.code.aon.ui.sales.controller;
 
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -14,7 +13,8 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.xml.sax.SAXException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -40,7 +40,6 @@ import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
-import com.code.aon.report.ReportException;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.bridge.DeliveryManager;
@@ -54,8 +53,6 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.sales.util.SalesEmailUtil;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.IWebMailConstants;
-import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
@@ -63,6 +60,8 @@ import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class SalesController extends BasicController implements ISalesConstants {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(SalesController.class);
 
 	private List<SelectItem> addresses;
 	private List<SelectItem> projects;
@@ -556,15 +555,18 @@ public class SalesController extends BasicController implements ISalesConstants 
 		}
 	}
 
-	public void onSendByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
-		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
-		if (mailConfig.getMailAccountCount() > 0) {
-			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
-			messageController.initNewMessage();
-			emailUtil.initMessageController(messageController, (Sales) getTo());
-			messageController.setShowNewMessageWindow(true);
-		} else {
-			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
+	public void onSendByEmail( ActionEvent event ) {
+		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+		controller.onPrepareEmailWindow(event);
+		if ( controller.isShowNewMessageWindow() ) {			
+			try {
+				controller.onNewMessage(event);
+				emailUtil.initMessageController(controller, (Sales) getTo());	
+			} catch ( Throwable e ) {
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e.getMessage(), e);				
+			}
 		}
 	}	
 

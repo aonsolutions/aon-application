@@ -71,11 +71,13 @@ public class NewsletterController extends BasicController {
 		return this.imageFilter;
 	}
 	
-	public void onSendEmail( ActionEvent event ) throws ManagerBeanException {
+	public void onSendEmail( ActionEvent event ) {
 		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
-		controller.onNewMessage(event);
-		controller.setShowNewMessageWindow(true);
-		initController(controller, (Newsletter) getTo());
+		controller.onPrepareEmailWindow(event);
+		if ( controller.isShowNewMessageWindow() ) {
+			controller.onNewMessage(event);
+			initController(controller, (Newsletter) getTo());			
+		}
 	}
 
 	public static void initController( MessageController controller, Newsletter newsletter ) {

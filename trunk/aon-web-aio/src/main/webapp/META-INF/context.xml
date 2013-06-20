@@ -1,7 +1,0 @@
-<Context>
-	<Valve className="com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve"/> 
-	<Realm appName="aon.security" className="org.apache.catalina.realm.JAASRealm" 
-		roleClassNames="com.code.aon.jaas.auth.SimpleGroup" 
-		useContextClassLoader="false" 
-		userClassNames="com.code.aon.jaas.auth.AuthPrincipal"/>
-</Context>

@@ -174,6 +174,7 @@ public class MOD303Writer {
 		Breakdown bd = new Breakdown(percent,taxableBase,quota,deductiblequota);
 		if (key == VatTaxKey.A1 ) {
 			declaration.getOutputVat().put(mapKey, bd);
+			declaration.getOutputVatInvPasive().put(mapKey, bd);
 		} else if (key == VatTaxKey.A2 ) {
 			declaration.getSurcharge().put(mapKey, bd);
 		} else if (key == VatTaxKey.A3 ) {
@@ -184,6 +185,9 @@ public class MOD303Writer {
 			declaration.getInvPasive().put(mapKey, bd);
 			declaration.setBaseInvPasive( CommonUtil.round(declaration.getBaseInvPasive() +taxableBase,2) );
 			declaration.setQuotaInvPasive( CommonUtil.round(declaration.getQuotaInvPasive() +quota,2) );
+			declaration.getOutputVatInvPasive().put(mapKey, bd);
+			double d = declaration.getNonTaxableTotal();
+			declaration.setNonTaxableTotal( d + taxableBase );
 		} else if (key == VatTaxKey.A5) {
 			declaration.setBaseModifications( taxableBase );
 			declaration.setQuotaModifications( quota );

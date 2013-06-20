@@ -41,18 +41,16 @@ public class Mod123Controller extends FiscalModelController {
 		    		AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_DISK_ERROR);
 		        }
 		    }
-		} catch (IllegalArgumentException e) {
+		    if (isAeatValidable()) {
+		    	validateAeatFile();	
+		    }
+	} catch (IllegalArgumentException e) {
 			AonUtil.addErrorMessage(e.getMessage()); 
 			throw new AbortProcessingException(e.getMessage(),e);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage()); 
 			throw new AbortProcessingException(e.getMessage(),e);
 		}
-	}
-
-	public String getFileName() {
-		FiscalModel fm = (FiscalModel) getTo();
-		return "MOD123" + fm.getYear() + fm.getPeriod();
 	}
 	
 	@Override

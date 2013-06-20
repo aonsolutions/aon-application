@@ -1,7 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
 import java.io.BufferedInputStream;
@@ -39,8 +38,6 @@ import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
-import com.code.aon.ui.webmail.controller.IWebMailConstants;
-import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.IMailAccount;
 
@@ -63,27 +60,24 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 	}
 	
 	public void onInitSendEmail( ActionEvent event ) {
-		try {		
-			MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
-			if (mailConfig.getMailAccountCount() > 0) {
-				MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
-				messageController.initNewMessage();
-				messageController.setAppendSignature(false);
-				messageController.setSaveSent(false);
-				InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
-				FinanceEmailUtil emailUtil = controller.getEmailController();
-				messageController.setSubject( emailUtil.getEmailSubject() );
+		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+		controller.onPrepareEmailWindow(event);
+		if ( controller.isShowNewMessageWindow() ) {			
+			controller.setAppendSignature(false);
+			controller.setSaveSent(false);
+			try {		
+				controller.onNewMessage(event);
+				InvoiceController invoiceController = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+				FinanceEmailUtil emailUtil = invoiceController.getEmailController();
+				controller.setSubject( emailUtil.getEmailSubject() );
 				String body = emailUtil.getEmailBody();
-				messageController.updateMessageBody( emailUtil.getEmailContent(body) );
-				messageController.setShowNewMessageWindow(true);
-			} else {
-				AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
+				controller.updateMessageBody( emailUtil.getEmailContent(body) );
+			} catch (Throwable th) {
+				LOGGER.error(th.getMessage(), th);
+				AonUtil.addErrorMessage(th.getMessage());
+				throw new AbortProcessingException(th.getMessage(), th);
 			}
-		} catch (Throwable th) {
-			LOGGER.error(th.getMessage(), th);
-			AonUtil.addErrorMessage(th.getMessage());
-			throw new AbortProcessingException(th.getMessage(), th);
-		}
+		}		
 	}	
 	
 	public void onSendInvoicesByEmail( ActionEvent event ) {

@@ -9,6 +9,7 @@ public interface IMarketingConstants {
 	// ************************************************************
 	String NAVIGATION_COMMUNICATION_CENTER_RESPONSE = "communicationCenter_response"; 
 	String NAVIGATION_COMMUNICATION_CENTER = "communicationCenter"; 
+	String NAVIGATION_COMMUNICATION_CENTER_EMAIL = "communicationCenter_email";
 
 	// ************************************************************
 	// BEAN
