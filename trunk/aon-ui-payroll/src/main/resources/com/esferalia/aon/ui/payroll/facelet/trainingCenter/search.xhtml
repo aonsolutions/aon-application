@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="trainingCenterSearch">
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_trainingCenter_module}" />
+				<ui:param name="controller" value="#{trainingCenter}" />
+			</ui:include>
+			
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="controller" value="#{trainingCenter}" />
+				<ui:define name="searchContent">
+				
+					<aon:outputText value="" />
+					<aon:div style="width:550px;">
+					
+						<aon:panelCollapsible expanded="true" label="#{payrollBundle.payroll_trainingCenter}">
+							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+							
+								<aon:outputLabel for="trainingCenter_code"
+									value="#{bundle.aon_id}" />
+								<aon:inputText id="trainingCenter_code" size="16" maxlength="16"
+									valueChangeListener="#{trainingCenter.addExpression}" />
+									
+								<aon:outputLabel for="trainingCenter_registry_name"
+									styleClass="aon-outputLabel aon-nowrap"
+									value="#{bundle.aon_company_name}" />
+								<aon:inputText id="trainingCenter_registry_name" size="40"
+									valueChangeListener="#{trainingCenter.addExpression}" />
+							
+								<aon:outputLabel for="trainingCenter_registry_alias"
+									styleClass="aon-outputLabel aon-nowrap"
+									value="#{bundle.aon_company_alias}" />
+								<aon:inputText id="trainingCenter_registry_alias" size="40"
+									valueChangeListener="#{trainingCenter.addExpression}" />
+								
+							</aon:panelGrid>
+						</aon:panelCollapsible>					
+									
+						<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_address_module}" >
+							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+								<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml">
+									<ui:param name="controller" value="#{trainingCenter}" />
+									<ui:param name="searchController" value="#{trainingCenterSearchListener}" />
+								</ui:include>
+							</aon:panelGrid>
+						</aon:panelCollapsible>
+				
+						<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_media_module}" >
+							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+								<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/searchContent.xhtml">
+									<ui:param name="controller" value="#{trainingCenter}" />
+									<ui:param name="searchController" value="#{trainingCenterSearchListener}" />
+								</ui:include>
+							</aon:panelGrid>
+						</aon:panelCollapsible>
+					</aon:div>
+						
+				</ui:define>
+			</ui:decorate>
+			
+		</aon:form>
+	</ui:define>
+</ui:composition>

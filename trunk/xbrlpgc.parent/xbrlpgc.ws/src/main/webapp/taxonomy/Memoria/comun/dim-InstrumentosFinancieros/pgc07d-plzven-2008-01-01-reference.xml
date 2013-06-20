@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01 ../../../auxiliares/pgc-07-ref-2008-01-01.xsd" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xbrli="http://www.xbrl.org/2003/instance">
+  <link:referenceLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoDimension" xlink:label="InstrumentosFinancierosPlazoVencimientoDimension"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InstrumentosFinancierosPlazoVencimientoDimension" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InstrumentosFinancierosPlazoVencimientoDimension">
+      <pgc-07-ref:Modelo>C-BS</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>dim</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InstrumentosFinancierosPlazoVencimientoDimension" xlink:to="reference_InstrumentosFinancierosPlazoVencimientoDimension"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoDomain" xlink:label="InstrumentosFinancierosPlazoVencimientoDomain"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InstrumentosFinancierosPlazoVencimientoDomain" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InstrumentosFinancierosPlazoVencimientoDomain">
+      <pgc-07-ref:Modelo>C-BS</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>dim</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InstrumentosFinancierosPlazoVencimientoDomain" xlink:to="reference_InstrumentosFinancierosPlazoVencimientoDomain"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoPrimerPlazo" xlink:label="InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InstrumentosFinancierosPlazoVencimientoPrimerPlazo" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InstrumentosFinancierosPlazoVencimientoPrimerPlazo">
+      <pgc-07-ref:Modelo>C-BS</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>dim</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InstrumentosFinancierosPlazoVencimientoPrimerPlazo" xlink:to="reference_InstrumentosFinancierosPlazoVencimientoPrimerPlazo"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoSegundoPlazo" xlink:label="InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InstrumentosFinancierosPlazoVencimientoSegundoPlazo" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InstrumentosFinancierosPlazoVencimientoSegundoPlazo">
+      <pgc-07-ref:Modelo>C-BS</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>dim</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InstrumentosFinancierosPlazoVencimientoSegundoPlazo" xlink:to="reference_InstrumentosFinancierosPlazoVencimientoSegundoPlazo"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoTercerPlazo" xlink:label="InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InstrumentosFinancierosPlazoVencimientoTercerPlazo" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InstrumentosFinancierosPlazoVencimientoTercerPlazo">
+      <pgc-07-ref:Modelo>C-BS</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>dim</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InstrumentosFinancierosPlazoVencimientoTercerPlazo" xlink:to="reference_InstrumentosFinancierosPlazoVencimientoTercerPlazo"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoCuartoPlazo" xlink:label="InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InstrumentosFinancierosPlazoVencimientoCuartoPlazo" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InstrumentosFinancierosPlazoVencimientoCuartoPlazo">
+      <pgc-07-ref:Modelo>C-BS</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>dim</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InstrumentosFinancierosPlazoVencimientoCuartoPlazo" xlink:to="reference_InstrumentosFinancierosPlazoVencimientoCuartoPlazo"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoQuintoPlazo" xlink:label="InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InstrumentosFinancierosPlazoVencimientoQuintoPlazo" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InstrumentosFinancierosPlazoVencimientoQuintoPlazo">
+      <pgc-07-ref:Modelo>C-BS</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>dim</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InstrumentosFinancierosPlazoVencimientoQuintoPlazo" xlink:to="reference_InstrumentosFinancierosPlazoVencimientoQuintoPlazo"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoUltimoPlazo" xlink:label="InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InstrumentosFinancierosPlazoVencimientoUltimoPlazo" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InstrumentosFinancierosPlazoVencimientoUltimoPlazo">
+      <pgc-07-ref:Modelo>C-BS</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>dim</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InstrumentosFinancierosPlazoVencimientoUltimoPlazo" xlink:to="reference_InstrumentosFinancierosPlazoVencimientoUltimoPlazo"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07d-plzven-2008-01-01.xsd#pgc07d-plzven_InstrumentosFinancierosPlazoVencimientoTotalPlazo" xlink:label="InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InstrumentosFinancierosPlazoVencimientoTotalPlazo" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InstrumentosFinancierosPlazoVencimientoTotalPlazo">
+      <pgc-07-ref:Modelo>C-BS</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>dim</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InstrumentosFinancierosPlazoVencimientoTotalPlazo" xlink:to="reference_InstrumentosFinancierosPlazoVencimientoTotalPlazo"/>
+  </link:referenceLink>
+</link:linkbase>

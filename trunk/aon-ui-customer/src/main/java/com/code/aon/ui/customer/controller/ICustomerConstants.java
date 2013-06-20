@@ -1,0 +1,37 @@
+package com.code.aon.ui.customer.controller;
+
+public interface ICustomerConstants {
+	
+	String BUNDLE_NAME = "customerBundle";
+
+	// ************************************************************
+	// BEAN
+	// ************************************************************
+	
+	String CUSTOMER_CONTROLLER_NAME = "customer";
+	String CUSTOMER_OBSERVATION_CONTROLLER_NAME = "customerObservation";
+	String CUSTOMER_SEARCH_LISTENER_NAME = "customerSearch";
+	
+	String INVOICING_GROUP_CONTROLLER_NAME = "invoicingGroup";
+	String INVOICING_GROUP_DETAIL_CONTROLLER_NAME = "invoicingGroupDetail";
+	String INVOICING_GROUP_FEE_CONTROLLER_NAME = "invoicingGroupFee";
+
+	// ************************************************************
+	// NAVIGATION
+	// ************************************************************
+
+	String CUSTOMER_FORM_NAME = "customer_form";
+	String CUSTOMER_FEE_TAB = "fee";
+	String INVOICING_GROUP_FORM_NAME = "invoicingGroup_form";
+
+	// ************************************************************
+	// CONFIGURATION
+	// ************************************************************
+
+	String SHOW_ABSENCE = "showAbsence";	
+	String SHOW_LOAN = "showLoan";
+	String SHOW_COURSE = "showCourse";
+	
+	String SHOW_PERSON = "showPerson";
+
+}

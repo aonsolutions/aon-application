@@ -1,0 +1,137 @@
+package com.code.aon.fiscal.event;
+
+import java.util.List;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.event.ManagerBeanEvent;
+import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
+import com.code.aon.common.event.ManagerBeanVetoListenerException;
+import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.enumeration.Administration;
+import com.code.aon.fiscal.FiscalModel;
+import com.code.aon.fiscal.IFiscalConstants;
+import com.code.aon.fiscal.enumeration.FiscalModelStatus;
+import com.code.aon.fiscal.enumeration.FiscalModelType;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
+
+public class FiscalModelBeanVetoListener extends ManagerBeanVetoListenerAdapter {
+
+	@Override
+	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+		FiscalModel fiscalModel = (FiscalModel) evt.getTo();
+		checkFiscalModel(fiscalModel);
+		if (fiscalModel.getModel() == FiscalModelType.M111) {
+			if (fiscalModel.isReadRetentionFromAccount()) {
+				saveReceiversParam(fiscalModel);	
+			}
+		}
+	}
+
+	private void saveReceiversParam(FiscalModel fiscalModel) throws ManagerBeanVetoListenerException{
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), IFiscalConstants.FS_MOD111_RECEIVER_COUNT);
+			List<ITransferObject> list = bean.getList(criteria);
+			ApplicationParameter appParam = null;
+			if (list != null && list.size() > 0 ) {
+				appParam = (ApplicationParameter) list.get(0);
+			} else {
+				appParam = new ApplicationParameter(); 
+				appParam.setName(IFiscalConstants.FS_MOD111_RECEIVER_COUNT);
+			}
+			appParam.setValue(Integer.toString(fiscalModel.getReceiverCount() ));
+			bean.insertOrUpdate(appParam);
+		} catch (ManagerBeanException e) {
+			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+		FiscalModel fiscalModel = (FiscalModel) evt.getTo();
+		checkFiscalModel(fiscalModel);
+	}
+
+	private void checkFiscalModel(FiscalModel fiscalModel) throws ManagerBeanVetoListenerException {
+		
+		// El modelo 130 sólo está disponible para Territorio Común
+		if ( fiscalModel.getModel() == FiscalModelType.M130 && fiscalModel.getAdministration() != Administration.COMMON_TERRITORY) {
+			throw new ManagerBeanVetoListenerException("No existe soporte para la declaración del modelo 130 en esta administración.");
+		}
+
+		// El modelo 111, 115 y 123 no están soportados para Navarra.
+		if ( (fiscalModel.getModel() == FiscalModelType.M111
+			|| fiscalModel.getModel() == FiscalModelType.M115
+			|| fiscalModel.getModel() == FiscalModelType.M123)
+			&& fiscalModel.getAdministration() == Administration.NAVARRA) {
+			throw new ManagerBeanVetoListenerException("No existe soporte para las declaraciones de Navarra.");
+		}
+		
+		if (fiscalModel.isComplementary() && fiscalModel.isReplacement()) {
+			throw new ManagerBeanVetoListenerException("La declaración no puede ser Complementaria y Sustitutiva.");
+		}
+
+		if (!fiscalModel.isComplementary() && !fiscalModel.isReplacement()) {
+			checkNormalFiscalModel(fiscalModel);
+		} else {
+			checkPeriodFiscalModel(fiscalModel);
+		}
+	}
+
+	private void checkNormalFiscalModel(FiscalModel fiscalModel) throws ManagerBeanVetoListenerException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(FiscalModel.class);
+			Criteria c = new Criteria();
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_YEAR), fiscalModel.getYear());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_PERIOD), fiscalModel.getPeriod());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_ADMINISTRATION), fiscalModel.getAdministration());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_MODEL), fiscalModel.getModel());
+			if (fiscalModel.getId() != null) {
+				c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_ID), fiscalModel.getId()));
+			}
+			int size = bean.getCount(c);
+			if (size > 0) {
+				throw new ManagerBeanVetoListenerException("Ya existe una declaración para este año, periodo y administración.");
+			}
+
+		} catch (ManagerBeanException e) {
+			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
+		}
+	}
+
+	private void checkPeriodFiscalModel(FiscalModel fiscalModel) throws ManagerBeanVetoListenerException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(FiscalModel.class);
+			Criteria c = new Criteria();
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_YEAR), fiscalModel.getYear());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_PERIOD), fiscalModel.getPeriod());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_ADMINISTRATION), fiscalModel.getAdministration());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_MODEL), fiscalModel.getModel());
+			if (fiscalModel.getId() != null) {
+				c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_ID), fiscalModel.getId()));
+			}
+			List<ITransferObject> list = bean.getList(c);
+			if (list == null || list.size() == 0) {
+				throw new ManagerBeanVetoListenerException("No existe una declaración para este periodo y administración a la que complementar o sustituir.");
+			}
+			for (ITransferObject to : list) {
+				FiscalModel r = (FiscalModel) to;	
+				if (r.getStatus() != FiscalModelStatus.FINISHED) {
+					throw new ManagerBeanVetoListenerException("La declaración de este periodo a la que complementar o sustituir, no está FINALIZADA.");
+				}
+				if ((fiscalModel.isComplementary() && r.isReplacement()) || (fiscalModel.isReplacement() && r.isComplementary())) {
+					throw new ManagerBeanVetoListenerException("No se permite la existencia de declaraciones complementarias y sustitutivas en un mismo periodo.");	
+				}
+			}
+		} catch (ManagerBeanException e) {
+			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
+		}
+	}
+
+}

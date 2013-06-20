@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Implementation-Title: PGC Web Services
+Implementation-Version: 1.0.0-SNAPSHOT
+buildRevision: 
+Implementation-Vendor-Id: es.inteco.xbrl
+Build-Jdk: 1.7.0_09-icedtea
+Built-By: ecastellano
+Specification-Title: PGC Web Services
+Created-By: Apache Maven 3.0.4
+buildDate: 20130312-1809
+Specification-Version: 1.0.0-SNAPSHOT
+buildNumber: 
+dbVersion: 
+

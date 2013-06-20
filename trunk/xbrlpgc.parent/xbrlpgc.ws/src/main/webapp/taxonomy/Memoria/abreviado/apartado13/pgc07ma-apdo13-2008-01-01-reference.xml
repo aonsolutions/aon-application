@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01 ../../../auxiliares/pgc-07-ref-2008-01-01.xsd" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xbrli="http://www.xbrl.org/2003/instance">
+  <link:referenceLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <link:loc xlink:type="locator" xlink:href="pgc07ma-apdo13-2008-01-01.xsd#pgc07ma-apdo13_OtraInformacionNumeroMedioPersonasEmpleadasCategoriasProfesionalesHypercube" xlink:label="OtraInformacionNumeroMedioPersonasEmpleadasCategoriasProfesionalesHypercube"/>
+    <link:reference xlink:type="resource" xlink:label="reference_OtraInformacionNumeroMedioPersonasEmpleadasCategoriasProfesionalesHypercube" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_OtraInformacionNumeroMedioPersonasEmpleadasCategoriasProfesionalesHypercube">
+      <pgc-07-ref:Modelo>P</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>13</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OtraInformacionNumeroMedioPersonasEmpleadasCategoriasProfesionalesHypercube" xlink:to="reference_OtraInformacionNumeroMedioPersonasEmpleadasCategoriasProfesionalesHypercube"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07ma-apdo13-2008-01-01.xsd#pgc07ma-apdo13_OtraInformacionNumeroMedioPersonasEmpleadasCategoriasProfesionalesPresentacion" xlink:label="OtraInformacionNumeroMedioPersonasEmpleadasCategoriasProfesionalesPresentacion"/>
+    <link:reference xlink:type="resource" xlink:label="reference_OtraInformacionNumeroMedioPersonasEmpleadasCategoriasProfesionalesPresentacion" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_OtraInformacionNumeroMedioPersonasEmpleadasCategoriasProfesionalesPresentacion">
+      <pgc-07-ref:Modelo>P</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>13</pgc-07-ref:Grupo>
+      <pgc-07-ref:Categoria>1</pgc-07-ref:Categoria>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="OtraInformacionNumeroMedioPersonasEmpleadasCategoriasProfesionalesPresentacion" xlink:to="reference_OtraInformacionNumeroMedioPersonasEmpleadasCategoriasProfesionalesPresentacion"/>
+  </link:referenceLink>
+</link:linkbase>

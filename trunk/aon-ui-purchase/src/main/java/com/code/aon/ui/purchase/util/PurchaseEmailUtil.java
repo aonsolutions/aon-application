@@ -1,0 +1,150 @@
+package com.code.aon.ui.purchase.util;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.mail.Address;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.validator.EmailValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
+import com.code.aon.faces.controller.LogPanelController;
+import com.code.aon.purchase.Purchase;
+import com.code.aon.report.ReportException;
+import com.code.aon.ui.company.util.CompanyEmailUtil;
+import com.code.aon.ui.purchase.IPurchaseMessages;
+import com.code.aon.ui.purchase.controller.IPurchaseConstants;
+import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.bean.AonMessage;
+
+public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseMessages, IPurchaseConstants {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseEmailUtil.class.getName());
+
+	private static final String REPORT_KEY = "purchaseForm";
+
+	public void initMessageController( MessageController messageController ) throws ManagerBeanException, IOException, ReportException {
+		initMessageController(messageController, null);
+	}
+
+	public void initMessageController( MessageController messageController, Purchase purchase, List<String> moreRecipients ) throws ManagerBeanException, IOException, ReportException {
+		String[] emails = getEmails( purchase, moreRecipients );
+		initMessageController(messageController, emails);
+		messageController.updateMessageBody( getEmailContent(getEmailBody(purchase), AonUtil.getMessage(BUNDLE_KEY, PURCHASE_EMAIL_BODY_HEADER)) );
+		messageController.setSubject( getEmailSubject(purchase) );
+		messageController.addAttachment( getReport(purchase, REPORT_KEY) );
+	}
+	
+	private Address[] getEmailAddresses( String[] emails, String name ) throws UnsupportedEncodingException, AddressException {
+		Address[] addresses = new Address[emails.length];
+		for( int i = 0; i < emails.length; i++ ) {
+			if ( i == 0 ) {
+				addresses[i] = new InternetAddress( emails[i], name );
+			} else {
+				addresses[i] = new InternetAddress( emails[i] );	
+			}
+		}
+		return addresses;
+	}		
+	private String[] getEmails( Purchase purchase, List<String> moreRecipients ) throws ManagerBeanException {
+		List<String> emails = new LinkedList<String>();
+		String[] emailArray = getAdministrativeEmails(purchase.getSupplier().getRegistry());
+		if (! ArrayUtils.isEmpty(emailArray) ) {
+			for( String email : emailArray ) {
+				if ( EmailValidator.getInstance().isValid(email) ) {
+					emails.add(email);
+				}
+			}
+		}
+		for( String email: moreRecipients ) {
+			if ( EmailValidator.getInstance().isValid(email) ) {
+				emails.add(email);
+			}
+		}
+		return emails.toArray(new String[emails.size()]);
+	}
+	
+	public String getEmailSubject( Purchase purchase ) {
+		String message = AonUtil.getMessage(BUNDLE_KEY, PURCHASE_EMAIL_SUBJECT);
+		return MessageFormat.format(message, purchase.getReferenceCode() );
+	}
+	
+	public String getEmailBody( Purchase purchase ) throws UnsupportedEncodingException {
+		String bodyMessage = AonUtil.getMessage(BUNDLE_KEY, PURCHASE_EMAIL_BODY); 
+		return MessageFormat.format(bodyMessage, purchase.getReferenceCode(), purchase.getIssueDate() );
+	}
+	
+	private String formatEmailSubject( Purchase purchase, String message ) {
+		return MessageFormat.format(message, purchase.getReferenceCode() );
+	}
+	
+	private String formatEmailBody(  Purchase purchase, String message )  {
+		return MessageFormat.format(message, purchase.getReferenceCode(), purchase.getIssueDate());
+	}
+	
+	public String getEmailSubject() {
+		return AonUtil.getMessage(BUNDLE_KEY, PURCHASE_EMAIL_SUBJECT);
+	}
+	
+	public String getEmailBody()  {
+		return AonUtil.getMessage(BUNDLE_KEY, PURCHASE_EMAIL_BODY); 
+	}
+	
+	public void sendPurchase( Purchase purchase, String subject, String content ) {
+		sendPurchase( purchase, null, null, null, subject, content );
+	}
+	
+	public void sendPurchase( Purchase purchase, List<String> moreRecipients, String recipientsCc, String recipientsBcc, String subject, String content ) {
+		LogPanelController logger = LogPanelController.getInstance();
+		AonFile file = null;
+		AonFile xml = null;
+		try {
+			String[] emails = getEmails(purchase, moreRecipients);
+			if ( ArrayUtils.isEmpty(emails) ) {
+				String text = AonUtil.getMessage(BUNDLE_KEY, PURCHASE_WITHOUT_EMAIL);
+				String message = MessageFormat.format(text, purchase.getReferenceCode(), purchase.getSupplier().getRegistry().getFullName() );				
+				logger.error( message );				
+			} else {
+				Address[] recipients = getEmailAddresses(emails, purchase.getSupplier().getRegistry().getFullName() );
+				String _subject = formatEmailSubject(purchase, subject);
+				String _content = formatEmailBody(purchase, content );
+				file = getReport(purchase, REPORT_KEY);
+				
+				AonMessage aonMessage = getEmailSender().createMessage(recipients, _subject);
+				getEmailSender().addMessageContent(aonMessage, _content, MimeType.MIME_HTML, file);
+				aonMessage.setRecipientsCc(recipientsCc);
+				aonMessage.setRecipientsBcc(recipientsBcc);
+				getEmailSender().sendMessage(aonMessage);
+				
+				String text = AonUtil.getMessage(BUNDLE_KEY, PURCHASE_SEND_EMAIL);
+				String message = MessageFormat.format(text, purchase.getReferenceCode(), purchase.getSupplier().getRegistry().getFullName(), ArrayUtils.toString(emails) );
+				logger.info( message );
+			}
+		} catch (Throwable th) {
+			LOGGER.error(th.getMessage(), th);
+			String text = AonUtil.getMessage(BUNDLE_KEY, PURCHASE_SEND_EMAIL_ERROR);
+			String message = MessageFormat.format(text, purchase.getReferenceCode() );
+			logger.error( message + "<br />" + th.getMessage() + "<br />" + th.getCause() );
+		} finally {
+			if ( file != null ) {
+				FileUtils.deleteQuietly(file.getFile());	
+			}
+			if ( xml != null ) {
+				FileUtils.deleteQuietly(xml.getFile());	
+			}
+		}
+	}
+	
+}

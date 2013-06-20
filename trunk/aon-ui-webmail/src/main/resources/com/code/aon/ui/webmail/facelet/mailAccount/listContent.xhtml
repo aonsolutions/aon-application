@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:include src="/com/code/aon/ui/webmail/facelet/util/listInnerToolbar.xhtml" >
+		<ui:param name="toolbarTitle" value="#{mailConfig.mailAccountTitle}" />
+		<ui:param name="skipSearchButton" value="#{true}" />
+	</ui:include>
+
+	<!--  aon-region-body -->
+	<aon:div styleClass="aon-scroll-area">
+		<c:if test="#{innerToolbar}" >
+			<aon:methodParam name="rowSelectorAction" default="" />
+		</c:if>	
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+			<ui:define name="columns">
+
+				<aon:column alias="MailAccount.name"
+					styleClass="aon-editDataTable-textColumn aon-width-80">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_name}" />
+					</f:facet>
+					<aon:outputText value="#{to.name}" />
+				</aon:column>
+
+				<aon:column alias="MailAccount.displayName"
+					styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_displayName}" />
+					</f:facet>
+					<aon:outputText value="#{to.displayName}" />
+				</aon:column>
+				
+				<aon:column alias="MailAccount.email"
+					styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_email}" />
+					</f:facet>
+					<aon:outputText value="#{to.email}" />
+				</aon:column>
+
+				<aon:column alias="MailAccount.signature.name"
+					styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{webmailBundle.webmail_signature_signature}" />
+					</f:facet>
+					<aon:outputText value="#{to.signature.name}" />
+				</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText
+							value="#{webmailBundle.webmail_mailAccount_type}" />
+					</f:facet>
+					<aon:outputText
+						value="#{webmailBundle.webmail_mailAccount_user_account}"
+						rendered="#{mailConfig.currentMailAccountEditable}">
+					</aon:outputText>
+					<aon:outputText
+						value="#{webmailBundle.webmail_mailAccount_system_account}"
+						rendered="#{!mailConfig.currentMailAccountEditable}" />
+				</aon:column>
+
+				<c:if test="#{!mailConfig.skipDefaultAccountColumn}">	
+					<aon:column styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{webmailBundle.webmail_mailAccount_default_account}" />
+						</f:facet>
+						<aon:div onmouseover="disableRowSelector();"
+							onmouseup="disableRowSelector();"
+							onmouseout="enableRowSelector();" >
+							<aon:commandLink
+								rendered="#{!to.defaultAccount}" 
+								actionListener="#{mailConfig.onSetDefault}" >
+								<aon:outputText value="&#160;"
+									styleClass="aon-icon aon-icon-check" />							
+							</aon:commandLink>
+							<aon:outputText value="&#160;" rendered="#{to.defaultAccount}"
+								styleClass="aon-icon aon-icon-checked" />					
+						</aon:div>
+					</aon:column>
+				</c:if>
+						
+				<c:if test="#{mailConfig.connectable}">
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:div onmouseover="disableRowSelector();"
+							onmouseup="disableRowSelector();"
+							onmouseout="enableRowSelector();" >
+							<aon:outputText
+								value="#{webmailBundle.webmail_signature_active}"
+								rendered="#{mailConfig.activeMailAccount}" />
+							<aon:commandButton id="mailAccountChange"
+								rendered="#{!mailConfig.activeMailAccount}"
+								title="#{webmailBundle.webmail_mailAccountChange}"
+								actionListener="#{mailConfig.onChangeServer}"
+								value="#{webmailBundle.webmail_mailAccountChange}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								styleClass="aon-icon-commandButton aon-icon-predetermine">
+							</aon:commandButton>
+						</aon:div>
+					</aon:column>
+				</c:if>
+			</ui:define>
+				
+		</ui:decorate>
+
+	</aon:div>
+	
+	<c:if test="#{aonConfiguration.bean.webmail.connect}">
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+	</c:if>
+
+</ui:composition>

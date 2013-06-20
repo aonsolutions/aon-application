@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mn-apartado14b" mainSchemaPrefix="pgc-07-mn" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01">
+    <conceptMap
+        outputID="ProvisionesContingenciasInformacionProvisionesEstadoMovimientosProvisionesSaldoInicioEjercicio"
+        inputID="93430"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-prv:ProvisionesDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-prv:ProvisionesObligacionesPrestacionesLargoPlazoPersonal"/>
+        <Member id="3" qname="pgc07mn-d-prv:ProvisionesActualizacionesMedioambientales"/>
+        <Member id="4" qname="pgc07mn-d-prv:Provisionesreestructuracion"/>
+        <Member id="5" qname="pgc07mn-d-prv:ProvisionesOtras"/>
+        <Member id="6" qname="pgc07mn-d-prv:ProvisionesCortoPlazo"/>
+        <Member id="7" qname="pgc07mn-d-prv:ProvisionesTotal"/>
+        <Member id="8" qname="pgc07mn-d-prv:ProvisionesPagosBasadosInstrumentosPatrimonio"/>
+    </conceptMap>
+    <conceptMap
+        outputID="ProvisionesContingenciasInformacionProvisionesEstadoMovimientosProvisionesDotacionesTraspasosRecibidosEjercicio"
+        inputID="93431"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-prv:ProvisionesDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-prv:ProvisionesObligacionesPrestacionesLargoPlazoPersonal"/>
+        <Member id="3" qname="pgc07mn-d-prv:ProvisionesActualizacionesMedioambientales"/>
+        <Member id="4" qname="pgc07mn-d-prv:Provisionesreestructuracion"/>
+        <Member id="5" qname="pgc07mn-d-prv:ProvisionesOtras"/>
+        <Member id="6" qname="pgc07mn-d-prv:ProvisionesCortoPlazo"/>
+        <Member id="7" qname="pgc07mn-d-prv:ProvisionesTotal"/>
+        <Member id="8" qname="pgc07mn-d-prv:ProvisionesPagosBasadosInstrumentosPatrimonio"/>
+    </conceptMap>
+    <conceptMap
+        outputID="ProvisionesContingenciasInformacionProvisionesEstadoMovimientosProvisionesAplicacionesEjercicio"
+        inputID="93432"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-prv:ProvisionesDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-prv:ProvisionesObligacionesPrestacionesLargoPlazoPersonal"/>
+        <Member id="3" qname="pgc07mn-d-prv:ProvisionesActualizacionesMedioambientales"/>
+        <Member id="4" qname="pgc07mn-d-prv:Provisionesreestructuracion"/>
+        <Member id="5" qname="pgc07mn-d-prv:ProvisionesOtras"/>
+        <Member id="6" qname="pgc07mn-d-prv:ProvisionesCortoPlazo"/>
+        <Member id="7" qname="pgc07mn-d-prv:ProvisionesTotal"/>
+        <Member id="8" qname="pgc07mn-d-prv:ProvisionesPagosBasadosInstrumentosPatrimonio"/>
+    </conceptMap>
+    <conceptMap
+        outputID="ProvisionesContingenciasInformacionProvisionesEstadoMovimientosProvisionesOtrosAjustesRealizadosCuales"
+        inputID="93433"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-prv:ProvisionesDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-prv:ProvisionesObligacionesPrestacionesLargoPlazoPersonal"/>
+        <Member id="3" qname="pgc07mn-d-prv:ProvisionesActualizacionesMedioambientales"/>
+        <Member id="4" qname="pgc07mn-d-prv:Provisionesreestructuracion"/>
+        <Member id="5" qname="pgc07mn-d-prv:ProvisionesOtras"/>
+        <Member id="6" qname="pgc07mn-d-prv:ProvisionesCortoPlazo"/>
+        <Member id="7" qname="pgc07mn-d-prv:ProvisionesTotal"/>
+        <Member id="8" qname="pgc07mn-d-prv:ProvisionesPagosBasadosInstrumentosPatrimonio"/>
+    </conceptMap>
+    <conceptMap
+        outputID="ProvisionesContingenciasInformacionProvisionesEstadoMovimientosProvisionesTraspasosCuentasPasivoCorriente"
+        inputID="93437"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-prv:ProvisionesDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-prv:ProvisionesObligacionesPrestacionesLargoPlazoPersonal"/>
+        <Member id="3" qname="pgc07mn-d-prv:ProvisionesActualizacionesMedioambientales"/>
+        <Member id="4" qname="pgc07mn-d-prv:Provisionesreestructuracion"/>
+        <Member id="5" qname="pgc07mn-d-prv:ProvisionesOtras"/>
+        <Member id="6" qname="pgc07mn-d-prv:ProvisionesCortoPlazo"/>
+        <Member id="7" qname="pgc07mn-d-prv:ProvisionesTotal"/>
+        <Member id="8" qname="pgc07mn-d-prv:ProvisionesPagosBasadosInstrumentosPatrimonio"/>
+    </conceptMap>
+    <conceptMap
+        outputID="ProvisionesContingenciasInformacionProvisionesEstadoMovimientosProvisionesSaldoFinalEjercicio"
+        inputID="93438"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-prv:ProvisionesDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-prv:ProvisionesObligacionesPrestacionesLargoPlazoPersonal"/>
+        <Member id="3" qname="pgc07mn-d-prv:ProvisionesActualizacionesMedioambientales"/>
+        <Member id="4" qname="pgc07mn-d-prv:Provisionesreestructuracion"/>
+        <Member id="5" qname="pgc07mn-d-prv:ProvisionesOtras"/>
+        <Member id="6" qname="pgc07mn-d-prv:ProvisionesCortoPlazo"/>
+        <Member id="7" qname="pgc07mn-d-prv:ProvisionesTotal"/>
+        <Member id="8" qname="pgc07mn-d-prv:ProvisionesPagosBasadosInstrumentosPatrimonio"/>
+    </conceptMap>
+    <conceptMap
+        outputID="ProvisionesContingenciasInformacionProvisionesEstadoMovimientosProvisionesOtrosAjustesRealizadosCualesCombinacionesNegocios"
+        inputID="93434"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-prv:ProvisionesDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-prv:ProvisionesObligacionesPrestacionesLargoPlazoPersonal"/>
+        <Member id="3" qname="pgc07mn-d-prv:ProvisionesActualizacionesMedioambientales"/>
+        <Member id="4" qname="pgc07mn-d-prv:Provisionesreestructuracion"/>
+        <Member id="5" qname="pgc07mn-d-prv:ProvisionesOtras"/>
+        <Member id="6" qname="pgc07mn-d-prv:ProvisionesCortoPlazo"/>
+        <Member id="7" qname="pgc07mn-d-prv:ProvisionesTotal"/>
+        <Member id="8" qname="pgc07mn-d-prv:ProvisionesPagosBasadosInstrumentosPatrimonio"/>
+    </conceptMap>
+    <conceptMap
+        outputID="ProvisionesContingenciasInformacionProvisionesEstadoMovimientosProvisionesOtrosAjustesRealizadosCualesVariacionesCambiosValoracion"
+        inputID="93435"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-prv:ProvisionesDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-prv:ProvisionesObligacionesPrestacionesLargoPlazoPersonal"/>
+        <Member id="3" qname="pgc07mn-d-prv:ProvisionesActualizacionesMedioambientales"/>
+        <Member id="4" qname="pgc07mn-d-prv:Provisionesreestructuracion"/>
+        <Member id="5" qname="pgc07mn-d-prv:ProvisionesOtras"/>
+        <Member id="6" qname="pgc07mn-d-prv:ProvisionesCortoPlazo"/>
+        <Member id="7" qname="pgc07mn-d-prv:ProvisionesTotal"/>
+        <Member id="8" qname="pgc07mn-d-prv:ProvisionesPagosBasadosInstrumentosPatrimonio"/>
+    </conceptMap>
+    <conceptMap
+        outputID="ProvisionesContingenciasInformacionProvisionesEstadoMovimientosProvisionesOtrosAjustesRealizadosCualesExcesos"
+        inputID="93436"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-prv:ProvisionesDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-prv:ProvisionesObligacionesPrestacionesLargoPlazoPersonal"/>
+        <Member id="3" qname="pgc07mn-d-prv:ProvisionesActualizacionesMedioambientales"/>
+        <Member id="4" qname="pgc07mn-d-prv:Provisionesreestructuracion"/>
+        <Member id="5" qname="pgc07mn-d-prv:ProvisionesOtras"/>
+        <Member id="6" qname="pgc07mn-d-prv:ProvisionesCortoPlazo"/>
+        <Member id="7" qname="pgc07mn-d-prv:ProvisionesTotal"/>
+        <Member id="8" qname="pgc07mn-d-prv:ProvisionesPagosBasadosInstrumentosPatrimonio"/>
+    </conceptMap>
+    <conceptMap
+        outputID="ProvisionesContingenciasInformacionProvisionesEstadoMovimientosProvisionesDerechosReembolsoRelacionadosProvisionImporteTotalDerechosReembolsoRelacionadosProvision"
+        inputID="93439"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-prv:ProvisionesDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-prv:ProvisionesObligacionesPrestacionesLargoPlazoPersonal"/>
+        <Member id="3" qname="pgc07mn-d-prv:ProvisionesActualizacionesMedioambientales"/>
+        <Member id="4" qname="pgc07mn-d-prv:Provisionesreestructuracion"/>
+        <Member id="5" qname="pgc07mn-d-prv:ProvisionesOtras"/>
+        <Member id="6" qname="pgc07mn-d-prv:ProvisionesCortoPlazo"/>
+        <Member id="7" qname="pgc07mn-d-prv:ProvisionesTotal"/>
+        <Member id="8" qname="pgc07mn-d-prv:ProvisionesPagosBasadosInstrumentosPatrimonio"/>
+    </conceptMap>
+    <conceptMap
+        outputID="ProvisionesContingenciasInformacionProvisionesEstadoMovimientosProvisionesDerechosReembolsoRelacionadosProvisionCualesSonDerechosReembolsoReconocidosActivoBalanceRelacionadosProvission"
+        inputID="93440"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-prv:ProvisionesDesgloseDimension">
+        <Member id="2" qname="pgc07mn-d-prv:ProvisionesObligacionesPrestacionesLargoPlazoPersonal"/>
+        <Member id="3" qname="pgc07mn-d-prv:ProvisionesActualizacionesMedioambientales"/>
+        <Member id="4" qname="pgc07mn-d-prv:Provisionesreestructuracion"/>
+        <Member id="5" qname="pgc07mn-d-prv:ProvisionesOtras"/>
+        <Member id="6" qname="pgc07mn-d-prv:ProvisionesCortoPlazo"/>
+        <Member id="7" qname="pgc07mn-d-prv:ProvisionesTotal"/>
+        <Member id="8" qname="pgc07mn-d-prv:ProvisionesPagosBasadosInstrumentosPatrimonio"/>
+    </conceptMap>
+</Statement>

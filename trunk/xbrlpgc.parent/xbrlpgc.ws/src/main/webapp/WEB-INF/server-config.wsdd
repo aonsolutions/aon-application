@@ -1,0 +1,119 @@
+<ns1:deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns1="http://xml.apache.org/axis/wsdd/">
+ <ns1:globalConfiguration>
+  <ns1:parameter name="sendMultiRefs" value="true"/>
+  <ns1:parameter name="disablePrettyXML" value="true"/>
+  <ns1:parameter name="adminPassword" value="admin"/>
+  <ns1:parameter name="attachments.Directory" value="/tmp"/>
+  <ns1:parameter name="dotNetSoapEncFix" value="true"/>
+  <ns1:parameter name="enableNamespacePrefixOptimization" value="false"/>
+  <ns1:parameter name="sendXMLDeclaration" value="true"/>
+  <ns1:parameter name="attachments.implementation" value="org.apache.axis.attachments.AttachmentsImpl"/>
+  <ns1:parameter name="sendXsiTypes" value="true"/>
+  <ns1:requestFlow>
+   <ns1:handler type="java:org.apache.axis.handlers.JWSHandler">
+    <ns1:parameter name="scope" value="session"/>
+   </ns1:handler>
+   <ns1:handler type="java:org.apache.axis.handlers.JWSHandler">
+    <ns1:parameter name="scope" value="request"/>
+    <ns1:parameter name="extension" value=".jwr"/>
+   </ns1:handler>
+  </ns1:requestFlow>
+ </ns1:globalConfiguration>
+ <ns1:handler name="URLMapper" type="java:org.apache.axis.handlers.http.URLMapper"/>
+ <ns1:handler name="LocalResponder" type="java:org.apache.axis.transport.local.LocalResponder"/>
+ <ns1:handler name="Authenticate" type="java:org.apache.axis.handlers.SimpleAuthenticationHandler"/>
+ <ns1:service name="XSDWSValidator" provider="java:RPC" style="wrapped" use="literal">
+  <ns2:operation name="validate" qname="ns1:validate" returnQName="ns1:validateReturn" returnType="ns1:ValidateResult" soapAction="" xmlns:ns1="http://www.inteco.es/xbrl/pgc07/validator" xmlns:ns2="http://xml.apache.org/axis/wsdd/">
+   <ns2:parameter qname="ns1:inputDocument" type="xsd:base64Binary" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+  </ns2:operation>
+  <ns1:parameter name="allowedMethods" value="validate"/>
+  <ns1:parameter name="wsdlPortType" value="XSDWSValidator"/>
+  <ns1:parameter name="typeMappingVersion" value="1.2"/>
+  <ns1:parameter name="schemaQualified" value="http://www.inteco.es/xbrl/pgc07/validator"/>
+  <ns1:parameter name="wsdlServicePort" value="XSDWSValidator"/>
+  <ns1:parameter name="className" value="es.inteco.xbrl.pgc.validator.XSDWSValidator"/>
+  <ns1:parameter name="wsdlTargetNamespace" value="http://www.inteco.es/xbrl/pgc07/validator"/>
+  <ns1:parameter name="wsdlServiceElement" value="XSDWSValidatorService"/>
+  <ns1:typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" qname="ns2:ValidateResult" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:es.inteco.xbrl.pgc.validator.ValidateResult" xmlns:ns2="http://www.inteco.es/xbrl/pgc07/validator"/>
+
+ </ns1:service>
+ <ns1:service name="PGCWSViewer" provider="java:RPC" style="wrapped" use="literal">
+  <ns1:operation name="view" qname="ns4:view" returnQName="ns4:viewReturn" returnType="ns4:ViewerResult" soapAction="" xmlns:ns4="http://viewer.pgc.xbrl.inteco.es">
+   <ns1:parameter qname="ns4:inputDocument" type="xsd:base64Binary" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+   <ns1:parameter qname="ns4:module" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+  </ns1:operation>
+  <ns1:operation name="viewXML" qname="ns5:viewXML" returnQName="ns5:viewXMLReturn" returnType="ns5:ViewerResult" soapAction="" xmlns:ns5="http://viewer.pgc.xbrl.inteco.es">
+   <ns1:parameter qname="ns5:inputDocument" type="xsd:base64Binary" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+   <ns1:parameter qname="ns5:module" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+  </ns1:operation>
+  <ns1:parameter name="allowedMethods" value="viewXML view"/>
+  <ns1:parameter name="typeMappingVersion" value="1.2"/>
+  <ns1:parameter name="wsdlPortType" value="PGCWSViewer"/>
+  <ns1:parameter name="className" value="es.inteco.xbrl.pgc.viewer.PGCWSViewer"/>
+  <ns1:parameter name="wsdlServicePort" value="PGCWSViewer"/>
+  <ns1:parameter name="schemaQualified" value="http://viewer.pgc.xbrl.inteco.es"/>
+  <ns1:parameter name="wsdlTargetNamespace" value="http://viewer.pgc.xbrl.inteco.es"/>
+  <ns1:parameter name="wsdlServiceElement" value="PGCWSViewerService"/>
+  <ns1:typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" qname="ns6:ViewerResult" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:es.inteco.xbrl.pgc.viewer.ViewerResult" xmlns:ns6="http://viewer.pgc.xbrl.inteco.es"/>
+ </ns1:service>
+ <ns1:service name="XBRLWSValidator" provider="java:RPC" style="wrapped" use="literal">
+  <ns1:operation name="validate" qname="ns7:validate" returnQName="ns7:validateReturn" returnType="ns7:ValidateResult" soapAction="" xmlns:ns7="http://www.inteco.es/xbrl/pgc07/validator">
+   <ns1:parameter qname="ns7:inputDocument" type="xsd:base64Binary" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+  </ns1:operation>
+  <ns1:parameter name="allowedMethods" value="validate"/>
+  <ns1:parameter name="typeMappingVersion" value="1.2"/>
+  <ns1:parameter name="wsdlPortType" value="XBRLWSValidator"/>
+  <ns1:parameter name="className" value="es.inteco.xbrl.pgc.validator.XBRLWSValidator"/>
+  <ns1:parameter name="wsdlServicePort" value="XBRLWSValidator"/>
+  <ns1:parameter name="schemaQualified" value="http://www.inteco.es/xbrl/pgc07/validator"/>
+  <ns1:parameter name="wsdlTargetNamespace" value="http://www.inteco.es/xbrl/pgc07/validator"/>
+  <ns1:parameter name="wsdlServiceElement" value="XBRLWSValidatorService"/>
+  <ns1:typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" qname="ns8:ValidateResult" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:es.inteco.xbrl.pgc.validator.ValidateResult" xmlns:ns8="http://www.inteco.es/xbrl/pgc07/validator"/>
+ </ns1:service>
+ <ns1:service name="AdminService" provider="java:MSG">
+  <ns1:parameter name="allowedMethods" value="AdminService"/>
+  <ns1:parameter name="enableRemoteAdmin" value="false"/>
+  <ns1:parameter name="className" value="org.apache.axis.utils.Admin"/>
+  <ns1:namespace>http://xml.apache.org/axis/wsdd/</ns1:namespace>
+ </ns1:service>
+ <ns1:service name="Version" provider="java:RPC">
+  <ns1:parameter name="allowedMethods" value="getVersion"/>
+  <ns1:parameter name="className" value="org.apache.axis.Version"/>
+ </ns1:service>
+ <ns1:service name="PGCWSTransformator" provider="java:RPC" style="wrapped" use="literal">
+  <ns1:operation name="transformToXml" qname="ns10:transformToXml" returnQName="ns10:transformToXmlReturn" returnType="ns10:TransformResult" soapAction="" xmlns:ns10="http://www.inteco.es/xbrl/pgc07/transform">
+   <ns1:parameter qname="ns10:inputDocument" type="xsd:base64Binary" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+   <ns1:parameter qname="ns10:validate" type="xsd:boolean" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+  </ns1:operation>
+  <ns1:operation name="transformToXbrl" qname="ns11:transformToXbrl" returnQName="ns11:transformToXbrlReturn" returnType="ns11:TransformResult" soapAction="" xmlns:ns11="http://www.inteco.es/xbrl/pgc07/transform">
+   <ns1:parameter qname="ns11:inputDocument" type="xsd:base64Binary" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+   <ns1:parameter qname="ns11:validate" type="xsd:boolean" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+  </ns1:operation>
+  <ns1:parameter name="allowedMethods" value="transformToXml transformToXbrl"/>
+  <ns1:parameter name="typeMappingVersion" value="1.2"/>
+  <ns1:parameter name="wsdlPortType" value="PGCWSTransformator"/>
+  <ns1:parameter name="className" value="es.inteco.xbrl.pgc.transform.PGCWSTransformator"/>
+  <ns1:parameter name="wsdlServicePort" value="PGCWSTransformator"/>
+  <ns1:parameter name="schemaQualified" value="http://www.inteco.es/xbrl/pgc07/transform"/>
+  <ns1:parameter name="wsdlTargetNamespace" value="http://www.inteco.es/xbrl/pgc07/transform"/>
+  <ns1:parameter name="wsdlServiceElement" value="PGCWSTransformatorService"/>
+  <ns1:typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" qname="ns12:TransformResult" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:es.inteco.xbrl.pgc.transform.TransformResult" xmlns:ns12="http://www.inteco.es/xbrl/pgc07/transform"/>
+ </ns1:service>
+ <ns1:transport name="http">
+  <ns1:requestFlow>
+   <ns1:handler type="URLMapper"/>
+   <ns1:handler type="java:org.apache.axis.handlers.http.HTTPAuthHandler"/>
+  </ns1:requestFlow>
+  <ns1:parameter name="qs:list" value="org.apache.axis.transport.http.QSListHandler"/>
+  <ns1:parameter name="qs:wsdl" value="org.apache.axis.transport.http.QSWSDLHandler"/>
+  <ns1:parameter name="qs.list" value="org.apache.axis.transport.http.QSListHandler"/>
+  <ns1:parameter name="qs.method" value="org.apache.axis.transport.http.QSMethodHandler"/>
+  <ns1:parameter name="qs:method" value="org.apache.axis.transport.http.QSMethodHandler"/>
+  <ns1:parameter name="qs.wsdl" value="org.apache.axis.transport.http.QSWSDLHandler"/>
+ </ns1:transport>
+ <ns1:transport name="local">
+  <ns1:responseFlow>
+   <ns1:handler type="LocalResponder"/>
+  </ns1:responseFlow>
+ </ns1:transport>
+</ns1:deployment>

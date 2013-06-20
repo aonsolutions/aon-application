@@ -1,0 +1,81 @@
+package com.esferalia.aon.gwt.payroll.shared;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+
+public abstract class Variable implements HasStartAndEndDate, Serializable{
+
+	String name;
+	Date startDate;
+	Date endDate;
+	boolean implicit;
+	Scope scope;
+	String expression;
+
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+	
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+	
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public boolean isImpicit() {
+		return implicit;
+	}
+	
+	public void setImplicit(boolean implicit) {
+		this.implicit = implicit;
+	}
+
+	public Scope getScope() {
+		return scope;
+	}
+	
+	public void setScope(Scope scope) {
+		this.scope = scope;
+	}
+
+	public String getExpression() {
+		return expression;
+	}
+	
+	public void setExpression(String expression) {
+		this.expression = expression;
+	}
+
+	public abstract Object getValue();
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Variable))
+			return false;
+		Variable var = (Variable) obj;
+		return ((name == var.name) || ((name != null) && name
+				.equals(var.name)));
+	}
+	
+
+}

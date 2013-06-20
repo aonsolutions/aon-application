@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="exportForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{dbManagerBundle.db_manager_import_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="import"
+						disabled="#{empty dbManager.files}"
+						value="#{dbManagerBundle.db_manager_import}"
+						actionListener="#{dbManager.onImport}"
+						styleClass="aon-finding-toolbar-item aon-icon-file-upload"
+						accesskey="#{bundle.aon_key_save}"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+		     			oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
+				</ui:define>				
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">		
+
+				<aon:panelGrid columns="2">
+					<aon:outputLabel for="data_file" value="#{bundle.aon_fileupload_element}" />
+					<aon:div id="filesDiv" styleClass="aon-width-300">
+						<aon:fileUpload id="data_file"
+							addControlLabel="#{bundle.aon_fileUpload_add}" 
+							stopControlLabel="#{bundle.aon_fileUpload_stop}" 
+							stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+							uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+							fileUploadListener="#{dbManager.fileUploaded}"
+							maxFilesQuantity="10" immediateUpload="true"
+							autoclear="true" listHeight="0px">
+							<f:facet name="label">
+								<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+							</f:facet>								
+							<a4j:support event="onuploadcomplete" reRender="filesDiv,import" />
+						</aon:fileUpload>					
+						<c:forEach items="#{dbManager.files}" var="file" varStatus="status">
+							<aon:div>
+								<aon:outputText value="#{file.fileName}" styleClass="aon-bold" />
+								<aon:commandLink
+									reRender="filesDiv,import" style="font-size:0.9em;margin-left:20px;"
+									value="#{bundle.aon_remove}"
+									styleClass="aon-icon-commandButton aon-icon-delete"
+									actionListener="#{dbManager.fileDeleted}">
+									<f:param name="index" value="#{status.index}" />
+								</aon:commandLink>
+							</aon:div>
+						</c:forEach>											
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+		
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

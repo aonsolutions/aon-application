@@ -1,0 +1,15 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:include src="/com/code/aon/ui/resources/facelet/shared/lookupAudit.xhtml" >
+		<ui:param name="lookupBean" value="#{holidayLookup}" />
+		<ui:param name="controller" value="#{holiday}" />
+		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.description}" />
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.description}"/>
+		<ui:param name="lookupLabel" value="#{calendarBundle.aon_calendar_holiday}" />
+	</ui:include>
+	
+</ui:composition>

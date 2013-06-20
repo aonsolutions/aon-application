@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:outputText 
+		value="#{companyBundle.company_enterprise}:" />
+	<aon:outputText 
+		value="#{calendar.enterpriseName}" />
+	
+	<aon:outputText rendered="#{calendar.workPlaceSource or calendar.contractSource}"
+		value="#{companyBundle.company_workplace}:" />
+	<aon:outputText rendered="#{calendar.workPlaceSource or calendar.contractSource}"
+		value="#{calendar.workPlaceName}" />
+	
+	<aon:outputText rendered="#{calendar.contractSource}"
+		value="#{payrollBundle.payroll_contract}:" />
+	<aon:outputText rendered="#{calendar.contractSource}"
+		value="#{calendar.contractName}" />
+		
+</ui:composition>

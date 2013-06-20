@@ -1,0 +1,22 @@
+<!DOCTYPE catalog
+  PUBLIC "-//OASIS//DTD Entity Resolution XML Catalog V1.0//EN"
+         "http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd">
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog"  prefer="public">
+	<group>
+		 <rewriteSystem systemIdStartString="http://www.inteco.es/xbrl/pgc07/interfazES" rewritePrefix="schemas"/>
+ 		 <system systemId="http://www.icac.meh.es/taxonomia/pgc-2010-01-01/pgc07-mixto.xsd"  uri="pgc07-mixto.xsd"/>
+ 		 <system systemId="http://www.icac.meh.es/taxonomia/pgc-2010-01-01/pgc07-normal.xsd"  uri="pgc07-normal.xsd"/>
+ 		 <system systemId="http://www.icac.meh.es/taxonomia/pgc-2010-01-01/pgc07-pymes.xsd"  uri="pgc07-pymes.xsd"/>
+ 		 <system systemId="http://www.icac.meh.es/taxonomia/pgc-2010-01-01/pgc07-abreviado.xsd"  uri="pgc07-abreviado.xsd"/>
+ 		 <system systemId="http://www.icac.meh.es/taxonomia/pgc-2010-01-01/pgc07-normal-memoria.xsd"  uri="pgc07-normal-memoria.xsd"/>
+ 		 <system systemId="http://www.icac.meh.es/taxonomia/pgc-2010-01-01/pgc07-pymes-memoria.xsd"  uri="pgc07-pymes-memoria.xsd"/>
+ 		 <system systemId="http://www.icac.meh.es/taxonomia/pgc-2010-01-01/pgc07-abreviado-memoria.xsd"  uri="pgc07-abreviado-memoria.xsd"/>
+	
+		 <!-- (nuevos) multiventana -->
+		 <system systemId="http://www.icac.meh.es/taxonomia/pgc-2010-01-01/pgc07-normal-completo.xsd"  uri="pgc07-normal-completo.xsd"/>
+ 		 <system systemId="http://www.icac.meh.es/taxonomia/pgc-2010-01-01/pgc07-pymes-completo.xsd"  uri="pgc07-pymes-completo.xsd"/>
+ 		 <system systemId="http://www.icac.meh.es/taxonomia/pgc-2010-01-01/pgc07-abreviado-completo.xsd"  uri="pgc07-abreviado-completo.xsd"/>
+ 		 <system systemId="http://www.icac.meh.es/taxonomia/pgc-2010-01-01/pgc07-mixto-completo.xsd"  uri="pgc07-mixto-completo.xsd"/>
+	
+	</group>
+</catalog>

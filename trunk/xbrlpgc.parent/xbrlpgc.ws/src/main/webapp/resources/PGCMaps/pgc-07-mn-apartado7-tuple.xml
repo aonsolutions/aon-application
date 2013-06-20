@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statement xmlns="http://www.inteco.es/xbrl/pgc07/mapa"
+           xmlns:pgc07m-roles="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/roles/2009-01-01"
+           xmlns:link="http://www.xbrl.org/2003/linkbase"
+           xmlns:xlink="http://www.w3.org/1999/xlink"
+           xmlns:xbrli="http://www.xbrl.org/2003/instance"
+           xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+           xmlns:pgc07mc-bs="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+           xmlns:pgc07mc-na="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/normalAbreviado/2009-01-01"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:xl="http://www.xbrl.org/2003/XLink"
+           xmlns:pgc07mn-apdo7="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado7/InmovilizadoIntangible/2009-01-01"
+           xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01"
+           xmlns:pgc07mn-d-it="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/EstadoMovimientos/InmovilizadoIntangible/Dimension/2009-01-01"
+           xmlns:xbrldt="http://xbrl.org/2005/xbrldt"
+           xmlns:pgc07mn="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+           xmlns:pgc-07-roles="http://www.icac.meh.es/es/fr/gaap/pgc07/roles/2009-01-01"
+           xmlns:pgc-07-types="http://www.icac.meh.es/es/fr/gaap/pgc07/types/2009-01-01"
+           mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01"
+           mainSchemaPrefix="pgc-07-v-mn"
+           name="pgc-07-mn-apartado7">
+   <conceptMap inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               outputID="InmovilizadoIntangiblePresentacion"
+               parent=""
+               order=""
+               abstract="true"/>
+   <conceptMap order="1.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangiblePresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralPresentacion"/>
+   <conceptMap order="1.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"/>
+   <conceptMap order="1.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAfectosGarantiasReversionRestriccionesTitularidadPresentacion"/>
+   <conceptMap order="1.0" inputID="9070303" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAfectosGarantiasReversionRestriccionesTitularidadPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAfectosGarantiasReversionRestriccionesTitularidadInmovilizadosIntangiblesAfectosGarantias"/>
+   <conceptMap order="2.0" inputID="907304" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAfectosGarantiasReversionRestriccionesTitularidadPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAfectosGarantiasReversionRestriccionesTitularidadImporteInmovilizadosIntangiblesAfectosGarantias"/>
+   <conceptMap order="3.0" inputID="9070305" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAfectosGarantiasReversionRestriccionesTitularidadPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAfectosGarantiasReversionRestriccionesTitularidadInmovilizadosIntangiblesSujetosReversion"/>
+   <conceptMap order="4.0" inputID="907306" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAfectosGarantiasReversionRestriccionesTitularidadPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAfectosGarantiasReversionRestriccionesTitularidadImporteInmovilizadosIntangiblesSujetosReversion"/>
+   <conceptMap order="5.0" inputID="9070307" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAfectosGarantiasReversionRestriccionesTitularidadPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAfectosGarantiasReversionRestriccionesTitularidadBienesSujetosRestriccionesTitularidad"/>
+   <conceptMap order="6.0" inputID="907308" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAfectosGarantiasReversionRestriccionesTitularidadPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAfectosGarantiasReversionRestriccionesTitularidadImporteInmovilizadosIntangiblesSujetosRestriccionesTitularidad"/>
+   <conceptMap order="2.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionCambiosEstimacionesAfectanInmovilizadoIntangiblePresentacion"/>
+   <conceptMap order="1.0" inputID="9070311" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCambiosEstimacionesAfectanInmovilizadoIntangiblePresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionCambiosEstimacionesAfectanInmovilizadoIntangibleCambiosEstimacionesValorResidualInmovilizadosIntangibles"/>
+   <conceptMap order="2.0" inputID="9070312" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCambiosEstimacionesAfectanInmovilizadoIntangiblePresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionCambiosEstimacionesAfectanInmovilizadoIntangibleCambiosEstimacionesVidasUtilesInmovilizadosIntangibles"/>
+   <conceptMap order="3.0" inputID="9070313" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCambiosEstimacionesAfectanInmovilizadoIntangiblePresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionCambiosEstimacionesAfectanInmovilizadoIntangibleCambiosMetodosAmortizacionInmovilizadosIntangibles"/>
+   <conceptMap order="3.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAdquiridosEmpresasGrupoAsociadasPresentacion"/>
+   <conceptMap order="1.0" inputID="9070315" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAdquiridosEmpresasGrupoAsociadasPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAdquiridosEmpresasGrupoAsociadasCaracteristicasInmovilizadosIntangiblesAdquiridosEmpresasGrupoAsociadas"/>
+   <conceptMap order="2.0" inputID="907051" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAdquiridosEmpresasGrupoAsociadasPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAdquiridosEmpresasGrupoAsociadasValorContableInmovilizadosIntangiblesAdquiridosEmpresasGrupo"/>
+   <conceptMap order="3.0" inputID="907061" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAdquiridosEmpresasGrupoAsociadasPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAdquiridosEmpresasGrupoAsociadasValorContableInmovilizadosIntangiblesEmpresasAsociadas"/>
+   <conceptMap order="4.0" inputID="907052" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAdquiridosEmpresasGrupoAsociadasPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAdquiridosEmpresasGrupoAsociadasAmortizacionAcumuladaInmovilizadosIntangiblesAdquiridosEmpresasGrupo"/>
+   <conceptMap order="5.0" inputID="907062" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAdquiridosEmpresasGrupoAsociadasPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAdquiridosEmpresasGrupoAsociadasAmortizacionAcumuladaInmovilizadosIntangiblesAdquiridosEmpresasAsociadas"/>
+   <conceptMap order="6.0" inputID="907053" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAdquiridosEmpresasGrupoAsociadasPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAdquiridosEmpresasGrupoAsociadasCorreccionValorDeterioroAcumuladaInmovilizadosIntangiblesAdquiridosEmpresasGrupo"/>
+   <conceptMap order="7.0" inputID="907063" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAdquiridosEmpresasGrupoAsociadasPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesAdquiridosEmpresasGrupoAsociadasCorreccionValorDeterioroAcumuladaInmovilizadosIntangiblesAdquiridosEmpresasAsociadas"/>
+   <conceptMap order="8.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionGastosFinancierosCapitalizadosEjercicioInmovilizadosIntangiblesPresentacion"/>
+   <conceptMap order="1.0" inputID="907330" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionGastosFinancierosCapitalizadosEjercicioInmovilizadosIntangiblesPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionGastosFinancierosCapitalizadosEjercicioInmovilizadosIntangiblesImporteGastosFnancierosCapitalizadosEjercicioInmoviliadosIntangibles"/>
+   <conceptMap order="2.0" inputID="9070331" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionGastosFinancierosCapitalizadosEjercicioInmovilizadosIntangiblesPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionGastosFinancierosCapitalizadosEjercicioInmovilizadosIntangiblesCriteriosSeguidosDeterminarImporteGastosFinancierosCapitalizadosEjercicioInmovilizadoIntangibles"/>
+   <conceptMap order="9.0" inputID="9070330" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativas"/>
+   <conceptMap order="1.0" inputID="9070333" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativas"
+               outputID="9070330:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativasNaturalezaInmovilizadoIntangibleAfectado"/>
+   <conceptMap order="2.0" inputID="9070334" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativas"
+               outputID="9070330:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativasImporteCorreccionReconocidaReverstidaEjercicio"/>
+   <conceptMap order="3.0" inputID="9070335" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativas"
+               outputID="9070330:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativasSucesosCircunstanciasHanLlevadoReconocimientoReversion"/>
+   <conceptMap order="4.0" inputID="9070336" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativas"
+               outputID="9070330:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativasCriterioEmpleadosDeterminarValorRazonableMenosCostesVentas"/>
+   <conceptMap order="5.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativas"
+               outputID="9070330:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativasInversionesInmobiliariasCriteriosEmpleadosDeterminarValorUsoPresentacion"/>
+   <conceptMap order="1.0" inputID="9070338" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativasInversionesInmobiliariasCriteriosEmpleadosDeterminarValorUsoPresentacion"
+               outputID="9070330:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativasInversionesInmobiliariasCriteriosEmpleadosDeterminarValorUsoTipoActualizacionUtilizadosEstimacionesActuales"/>
+   <conceptMap order="2.0" inputID="9070340" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativasInversionesInmobiliariasCriteriosEmpleadosDeterminarValorUsoPresentacion"
+               outputID="9070330:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativasInversionesInmobiliariasCriteriosEmpleadosDeterminarValorUsoTipoActualizacionUtilizadosEstimacionesAnteriores"/>
+   <conceptMap order="3.0" inputID="9070341" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativasInversionesInmobiliariasCriteriosEmpleadosDeterminarValorUsoPresentacion"
+               outputID="9070330:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativasInversionesInmobiliariasCriteriosEmpleadosDeterminarValorUsoHipotesisClaveHanBasadoProyeccionesFlujoEfectivo"/>
+   <conceptMap order="4.0" inputID="9070342" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativasInversionesInmobiliariasCriteriosEmpleadosDeterminarValorUsoPresentacion"
+               outputID="9070330:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativasInversionesInmobiliariasCriteriosEmpleadosDeterminarValorUsoFormaDeterminarValoresFlujosEfectivo"/>
+   <conceptMap order="5.0" inputID="9070343" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativasInversionesInmobiliariasCriteriosEmpleadosDeterminarValorUsoPresentacion"
+               outputID="9070330:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativasInversionesInmobiliariasCriteriosEmpleadosDeterminarValorUsoPeriodoAbarcaProyeccionFlujosEfectivo"/>
+   <conceptMap order="6.0" inputID="9070344" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativasInversionesInmobiliariasCriteriosEmpleadosDeterminarValorUsoPresentacion"
+               outputID="9070330:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesValorativasSignificativasInversionesInmobiliariasCriteriosEmpleadosDeterminarValorUsoTasaCrecimientoFlujosEfectivoPartirQuintoAnyo"/>
+   <conceptMap order="10.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesReversionesDeterioroAgregadasPresentacion"/>
+   <conceptMap order="1.0" inputID="9070346" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesReversionesDeterioroAgregadasPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesReversionesDeterioroAgregadasPrincipalesClasesInmovilizadosAfectadosPerdidasReversionesAgregadasInmovilizadosIntangibles"/>
+   <conceptMap order="2.0" inputID="9070347" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesReversionesDeterioroAgregadasPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionesReversionesDeterioroAgregadasPrincipalesSucesosCircunstanciasHanLlevadoReconocimientoReversionCorreccionesAgregadasInmovilizadosIntangibles"/>
+   <conceptMap order="11.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivo"/>
+   <conceptMap order="1.0" inputID="9070350" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivo"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoDescripcionUnidadGeneradoraEfectivoIncluyeInmovilizadoIntangibleDeteriorado"/>
+   <conceptMap order="2.0" inputID="9070351" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivo"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoCambiosFormaIdentificarRespectoEjerciciosAnteriores"/>
+   <conceptMap order="3.0" inputID="9070352" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivo"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoImportePerdidaDeterioroUnidadGeneradoraEfectivoIncluyeInmovilizadoIntangible"/>
+   <conceptMap order="4.0" inputID="9070353" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivo"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoSucesosCircunstanciasReconocimientoCorreccion"/>
+   <conceptMap order="5.0" inputID="9070354" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivo"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoDeterioradosEjercicioCriteriosEmpleadosValorRazonableMenosCostesVenta"/>
+   <conceptMap order="6.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivo"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoCriteriosValorUso"/>
+   <conceptMap order="1.0" inputID="9070356" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoCriteriosValorUso"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoCriteriosValorUsoTipoActualizacionUtilizadosEstimacionesActuales"/>
+   <conceptMap order="2.0" inputID="9070357" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoCriteriosValorUso"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoCriteriosValorUsoTipoActualizacionUtilizadosEstimacionesAnteriores"/>
+   <conceptMap order="3.0" inputID="9070358" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoCriteriosValorUso"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoCriteriosValorUsoHipotesisClaveHanBasadoProyeccionesFlujoEfectivo"/>
+   <conceptMap order="4.0" inputID="9070360" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoCriteriosValorUso"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoCriteriosValorUsoFormaDeterminarValoresFlujosEfectivo"/>
+   <conceptMap order="5.0" inputID="9070361" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoCriteriosValorUso"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoCriteriosValorUsoPeriodoAbarcaProyeccionFlujosEfectivo"/>
+   <conceptMap order="6.0" inputID="9070362" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoCriteriosValorUso"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionPerdidasDeterioroIncluidosUnidadGeneradoraEfectivoCriteriosValorUsoTasaCrecimientoFlujosEfectivoPartirQuintoAnyo"/>
+   <conceptMap order="12.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadoFinancieroNoAfectoDirectamenteExplotacionPresentacion"/>
+   <conceptMap order="1.0" inputID="9070364" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadoFinancieroNoAfectoDirectamenteExplotacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadoFinancieroNoAfectoDirectamenteExplotacionCaracteristicasInmovilizadoIntangibleNoAfectoDirectamenteExplotacion"/>
+   <conceptMap order="2.0" inputID="907081" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadoFinancieroNoAfectoDirectamenteExplotacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadoFinancieroNoAfectoDirectamenteExplotacionValorContableInmovilizadoIntangibleNoAfectoDirectamenteExplotacion"/>
+   <conceptMap order="3.0" inputID="907082" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadoFinancieroNoAfectoDirectamenteExplotacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadoFinancieroNoAfectoDirectamenteExplotacionAmortizacionAcumulada"/>
+   <conceptMap order="4.0" inputID="907083" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadoFinancieroNoAfectoDirectamenteExplotacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadoFinancieroNoAfectoDirectamenteExplotacionCorreccionesValorativasDeterioroAcumuladas"/>
+   <conceptMap order="13.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesTotalmenteAmortizadosUsoPresentacion"/>
+   <conceptMap order="1.0" inputID="9070370" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesTotalmenteAmortizadosUsoPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesTotalmenteAmortizadosUsoCaracteristicasInmovilizadosIntangiblesTotalmenteAmortizadosUso"/>
+   <conceptMap order="2.0" inputID="907371" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesTotalmenteAmortizadosUsoPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesTotalmenteAmortizadosUsoImporteNetoInmovilizadoIntangibleTotalmenteAmortizadoUso"/>
+   <conceptMap order="14.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionSubvencionesDonacionesLegadosInmovilizadoIntangiblesPresentacion"/>
+   <conceptMap order="1.0" inputID="9070373" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionSubvencionesDonacionesLegadosInmovilizadoIntangiblesPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionSubvencionesDonacionesLegadosInmovilizadoIntangiblesDescripcionInmovilizadosIntangiblesObjetoSubvencionDonacionLegado"/>
+   <conceptMap order="2.0" inputID="907374" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionSubvencionesDonacionesLegadosInmovilizadoIntangiblesPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionSubvencionesDonacionesLegadosInmovilizadoIntangiblesImporteInmovilizadosIntangiblesObjetoSubvencionDonacionLegado"/>
+   <conceptMap order="15.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionCompromisosFirmesCompraVentaInmovilizadosIntangibles"/>
+   <conceptMap order="1.0" inputID="9070376" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCompromisosFirmesCompraVentaInmovilizadosIntangibles"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionCompromisosFirmesCompraVentaInmovilizadosIntangiblesCompromisosFirmesCompraInmovilizadosIntangibles"/>
+   <conceptMap order="2.0" inputID="9070377" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCompromisosFirmesCompraVentaInmovilizadosIntangibles"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionCompromisosFirmesCompraVentaInmovilizadosIntangiblesFuentesPrevisiblesFinanciacionCompromisosFirmesCompraInmovilizadosIntangibles"/>
+   <conceptMap order="3.0" inputID="9070378" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCompromisosFirmesCompraVentaInmovilizadosIntangibles"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionCompromisosFirmesCompraVentaInmovilizadosIntangiblesCompromisosFirmesVentaInmovilizadosIntangibles"/>
+   <conceptMap order="16.0" inputID="907380" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionResultadoEjercicioDerivadoEnajenacionDisposicionOtrosMediosInmovilizadosIntangibles"/>
+   <conceptMap order="17.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionGastosInvestigacionDesarrolloEjercicioPresentacion"/>
+   <conceptMap order="1.0" inputID="907382" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionGastosInvestigacionDesarrolloEjercicioPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionGastosInvestigacionDesarrolloEjercicioImporteAgregadoDesembolsosInvestigacionDesarrolloHayanReconocidoGastosDuranteEjercicio"/>
+   <conceptMap order="2.0" inputID="9070383" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionGastosInvestigacionDesarrolloEjercicioPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionGastosInvestigacionDesarrolloEjercicioJustificacionCircunstanciasSoportanCapitalizacionGastosInvestigacionDesarrollo"/>
+   <conceptMap order="18.0" inputID="9070384" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesVidaUtilIndefinidaDistintosFondoComercio"/>
+   <conceptMap order="1.0" inputID="9070385" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesVidaUtilIndefinidaDistintosFondoComercio"
+               outputID="9070384:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesVidaUtilIndefinidaDistintosFondoComercioImporteInmovilizadosIntangiblesDistintosFondoComercioVidaUtilIndefinida"/>
+   <conceptMap order="2.0" inputID="9070386" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesVidaUtilIndefinidaDistintosFondoComercio"
+               outputID="9070384:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesVidaUtilIndefinidaDistintosFondoComercioNaturalezaInmovilizadosIntangiblesVidaUtilIndefinida"/>
+   <conceptMap order="3.0" inputID="9070387" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesVidaUtilIndefinidaDistintosFondoComercio"
+               outputID="9070384:InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesVidaUtilIndefinidaDistintosFondoComercioRazonesApoyaEstimacionVidaUtilIndefinidaInmovilizadosIntangibles"/>
+   <conceptMap order="20.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionOtrasCircunstanciasCaracterSustantivosAfectanInmovilizadoIntangiblePresentacion"/>
+   <conceptMap order="1.0" inputID="9070391" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionOtrasCircunstanciasCaracterSustantivosAfectanInmovilizadoIntangiblePresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionOtrasCircunstanciasCaracterSustantivosAfectanInmovilizadoIntangibleInmovilizadosIntangiblesArrendados"/>
+   <conceptMap order="2.0" inputID="9070392" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionOtrasCircunstanciasCaracterSustantivosAfectanInmovilizadoIntangiblePresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionOtrasCircunstanciasCaracterSustantivosAfectanInmovilizadoIntangibleSegurosInmovilizadosIntangibles"/>
+   <conceptMap order="3.0" inputID="9070393" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionOtrasCircunstanciasCaracterSustantivosAfectanInmovilizadoIntangiblePresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionOtrasCircunstanciasCaracterSustantivosAfectanInmovilizadoIntangibleLitigiosInmovilizadosIntangibles"/>
+   <conceptMap order="4.0" inputID="9070394" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionOtrasCircunstanciasCaracterSustantivosAfectanInmovilizadoIntangiblePresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionOtrasCircunstanciasCaracterSustantivosAfectanInmovilizadoIntangibleEmbargosSituacionesAnalogasInmovilizadosIntangibles"/>
+   <conceptMap order="19.0" inputID="907388" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionInmovilizadosIntangiblesVidaUtilIndefinidaDistintosFondoComercioImporteInmovilizadosIntangiblesDistintosFondoComercioVidaUtilIndefinidaTotal"/>
+   <conceptMap order="5.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionCaracteristicasInmovilizadosIntangiblesCuyosDerechosPuedenEjercitarseEstanRelacionadosInversionesSituadasFueraTerritorioEspanyolPresentacion"/>
+   <conceptMap order="1.0" inputID="9070324" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCaracteristicasInmovilizadosIntangiblesCuyosDerechosPuedenEjercitarseEstanRelacionadosInversionesSituadasFueraTerritorioEspanyolPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionCaracteristicasInmovilizadosIntangiblesCuyosDerechosPuedenEjercitarseEstanRelacionadosInversionesSituadasFueraTerritorioEspanyol"/>
+   <conceptMap order="2.0" inputID="907071" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCaracteristicasInmovilizadosIntangiblesCuyosDerechosPuedenEjercitarseEstanRelacionadosInversionesSituadasFueraTerritorioEspanyolPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionValorContableInmovilizadosIntangiblesCuyosDerechosPuedenEjercitarseEstanRelacionadosInversionesSituadasFueraTerritorioNacional"/>
+   <conceptMap order="3.0" inputID="907072" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCaracteristicasInmovilizadosIntangiblesCuyosDerechosPuedenEjercitarseEstanRelacionadosInversionesSituadasFueraTerritorioEspanyolPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionAmortizacionAcumuladaInmovilizadosIntangiblesCuyosDerechosPuedenEjercitarseEstanRelacionadosInversionesSituadasFueraTerritorioNacional"/>
+   <conceptMap order="4.0" inputID="907073" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleInformacionGeneralOtraInformacionCaracteristicasInmovilizadosIntangiblesCuyosDerechosPuedenEjercitarseEstanRelacionadosInversionesSituadasFueraTerritorioEspanyolPresentacion"
+               outputID="InmovilizadoIntangibleInformacionGeneralOtraInformacionCorreccionValorDeterioroAcumuladaInmovilizadosIntangiblesCuyosDerechosPuedenEjercitarseEstanRelacionadosInversionesInmobiliariosSituadasFueraTerritorioNacional"/>
+   <conceptMap order="2.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangiblePresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioPresentacion"/>
+   <conceptMap order="1.0" inputID="9070396" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioFondoComercioCorrespondienteCombinacionesNegociosEjercicio"/>
+   <conceptMap order="1.0" inputID="9070397" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioFondoComercioCorrespondienteCombinacionesNegociosEjercicio"
+               outputID="9070396:InmovilizadoIntangibleFondoComercioFondoComercioCorrespondienteCombinacionesNegociosEjercicioDescripcionCombinacionNegocios"/>
+   <conceptMap order="2.0" inputID="9070398" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioFondoComercioCorrespondienteCombinacionesNegociosEjercicio"
+               outputID="9070396:InmovilizadoIntangibleFondoComercioFondoComercioCorrespondienteCombinacionesNegociosEjercicioFondoComercioCorrespondienteCombinacionNegocios"/>
+   <conceptMap order="2.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioPresentacion"/>
+   <conceptMap order="1.0" inputID="907401" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioSaldoInicialFondoComercioImporteBruto"/>
+   <conceptMap order="2.0" inputID="907402" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioFondoComercioAdicionalReconocidoPeriodo"/>
+   <conceptMap order="3.0" inputID="907403" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioFondoComercioIncluidoGrupoElementosMantenidosVenta"/>
+   <conceptMap order="4.0" inputID="907404" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioBajaFondoComercioNoIncluidoGrupoEnajenableElementosMantenidosVenta"/>
+   <conceptMap order="6.0" inputID="907406" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioOtrosMovimientosSaldoFondoComercioDuranteEjercicio"/>
+   <conceptMap order="7.0" inputID="907407" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioSaldoFinalFondoComercioImporteBruto"/>
+   <conceptMap order="8.0" inputID="907408" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioCorreccionesValorDeterioroFondoComercioSaldoInicial"/>
+   <conceptMap order="9.0" inputID="907410" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioCorreccionesValorativasDeterioroFondoComercioReconocidasPeriodo"/>
+   <conceptMap order="10.0" inputID="907411" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioBajasTraspasosCorreccionesValorativasFondoComercioPeriodo"/>
+   <conceptMap order="11.0" inputID="907412" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioCuadroMovimientosFondoComercioCorreccionesValorativasDeterioroFondoComercioSaldoFinal"/>
+   <conceptMap order="3.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioJustificacionFondoComercioRegistradoPresentacion"/>
+   <conceptMap order="1.0" inputID="9070414" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioJustificacionFondoComercioRegistradoPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioJustificacionFondoComercioRegistradoDescripcionFactoresHayanContribuidoRegistroFondoComercio"/>
+   <conceptMap order="2.0" inputID="9070415" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioJustificacionFondoComercioRegistradoPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioJustificacionFondoComercioRegistradoImporteFondoComercioAtribuidoCadaUnidadGeneradoraEfectivo"/>
+   <conceptMap order="3.0" inputID="9070416" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioJustificacionFondoComercioRegistradoPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioJustificacionFondoComercioRegistradoImporteOtrosInmovilizadosIntangiblesVidaUtilIndefinidaAtribuidosCadaUnidadGeneradoraEfectivo"/>
+   <conceptMap order="3.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangiblePresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaPresentacion"/>
+   <conceptMap order="1.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaDescripcionUnidadGeneradoraEfectivoPresentacion"/>
+   <conceptMap order="1.0" inputID="9070420" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaDescripcionUnidadGeneradoraEfectivoPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaDescripcionUnidadGeneradoraEfectivoDescripcionUnidadGeneradoraEfectivoIncluyeFondoComercioOtrosInmovilizados"/>
+   <conceptMap order="2.0" inputID="9070421" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaDescripcionUnidadGeneradoraEfectivoPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaDescripcionUnidadGeneradoraEfectivoCambiosFormaIdentificarUnidadGeneradoraEfectivoIncluyeFondoComercioOtrosInmovilizadosRespectoEjerciciosAnteriores"/>
+   <conceptMap order="2.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaImporteOtrasCircunstanciasDeteriorosFondoComercioPresentacion"/>
+   <conceptMap order="1.0" inputID="9070423" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaImporteOtrasCircunstanciasDeteriorosFondoComercioPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaImporteOtrasCircunstanciasDeteriorosFondoComercioImportePerdidaUnidadGeneradoraEfectivoIncluyeOtrosInmovilizados"/>
+   <conceptMap order="2.0" inputID="9070424" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaImporteOtrasCircunstanciasDeteriorosFondoComercioPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaImporteOtrasCircunstanciasDeteriorosFondoComercioSucesosReconocimientoCorreccionValorativaUnidadGeneradoraEfectivoIncluyeOtrosInmovilizados"/>
+   <conceptMap order="3.0" inputID="9070425" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaFondoComercioDeterioradoEjercicioUnidadGeneradoraEfectivoIncluyeOtrosInmovilizadosCriteriosEmpleadosDeterminarValoraRazonableMenosCostesVenta"/>
+   <conceptMap order="4.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaPresentacion"
+               outputID="InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaFondoComercioDeterioradoEjercicioUnidadGeneradoraEfectivoIncluyeOtrosInmovilizadosCriteriosValorUso"/>
+   <conceptMap order="1.0" inputID="9070427" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaFondoComercioDeterioradoEjercicioUnidadGeneradoraEfectivoIncluyeOtrosInmovilizadosCriteriosValorUso"
+               outputID="InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaFondoComercioDeterioradoEjercicioUnidadGeneradoraEfectivoIncluyeOtrosInmovilizadosCriteriosValorUsoDeteriorado"/>
+   <conceptMap order="2.0" inputID="9070428" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaFondoComercioDeterioradoEjercicioUnidadGeneradoraEfectivoIncluyeOtrosInmovilizadosCriteriosValorUso"
+               outputID="InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaFondoComercioDeterioradoEjercicioUnidadGeneradoraEfectivoIncluyeOtrosInmovilizadosCriteriosValorUsoDeterioradoTipoActualizacionUtilizadosEstimacionesActuales"/>
+   <conceptMap order="3.0" inputID="9070430" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaFondoComercioDeterioradoEjercicioUnidadGeneradoraEfectivoIncluyeOtrosInmovilizadosCriteriosValorUso"
+               outputID="InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaFondoComercioDeterioradoEjercicioUnidadGeneradoraEfectivoIncluyeOtrosInmovilizadosCriteriosValorUsoDeterioradoTipoActualizacionUtilizadosEstimacionesAnteriores"/>
+   <conceptMap order="4.0" inputID="9070431" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaFondoComercioDeterioradoEjercicioUnidadGeneradoraEfectivoIncluyeOtrosInmovilizadosCriteriosValorUso"
+               outputID="InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaFondoComercioDeterioradoEjercicioUnidadGeneradoraEfectivoIncluyeOtrosInmovilizadosCriteriosValorUsoDeterioradoHipotesisClaveHanBasadoProyeccionesFlujoEfectivo"/>
+   <conceptMap order="5.0" inputID="9070432" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaFondoComercioDeterioradoEjercicioUnidadGeneradoraEfectivoIncluyeOtrosInmovilizadosCriteriosValorUso"
+               outputID="InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaFondoComercioDeterioradoEjercicioUnidadGeneradoraEfectivoIncluyeOtrosInmovilizadosCriteriosValorUsoDeterioradoFormaDeterminarValoresFlujosEfectivo"/>
+   <conceptMap order="6.0" inputID="9070433" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaFondoComercioDeterioradoEjercicioUnidadGeneradoraEfectivoIncluyeOtrosInmovilizadosCriteriosValorUso"
+               outputID="InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaFondoComercioDeterioradoEjercicioUnidadGeneradoraEfectivoIncluyeOtrosInmovilizadosCriteriosValorUsoDeterioradoPeriodoAbarcaProyeccionFlujosEfectivos"/>
+   <conceptMap order="7.0" inputID="9070434" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaFondoComercioDeterioradoEjercicioUnidadGeneradoraEfectivoIncluyeOtrosInmovilizadosCriteriosValorUso"
+               outputID="InmovilizadoIntangibleFondoComercioPerdidasDeterioroCuantiaSignificativaFondoComercioDeterioradoEjercicioUnidadGeneradoraEfectivoIncluyeOtrosInmovilizadosCriteriosValorUsoDeterioradoTasaCrecimientoFlujosEfectivoPartirQuintoAnyo"/>
+   <conceptMap order="4.0" inputID="9070435" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangiblePresentacion"
+               outputID="InmovilizadoIntangiblePerdidasDeterioroAgregadasFondoComercioSucesosCircunstanciasHanLlevadoReconocimientoTalesCorrecciones"/>
+   <conceptMap order="5.0" inputID="9070436" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn:InmovilizadoIntangiblePresentacion"
+               outputID="InmovilizadoIntangibleHipotesisUtilizadasDeterminacionImporteRecuperableActivosUnidadesGeneradorasEfectivo"/>
+</statement>

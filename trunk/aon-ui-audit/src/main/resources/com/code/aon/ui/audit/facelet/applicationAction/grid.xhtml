@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div>
+
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+			<ui:param name="controller" value="#{applicationAction}" />
+			<ui:param name="columnClasses" value="aon-editDataTable-textColumn" />
+			
+			<ui:define name="columns">
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_name}" />
+					</f:facet>
+					<aon:outputText value="#{to.name}"
+						rendered="#{formList}" />
+					<aon:inputText value="#{applicationAction.to.name}"
+						rendered="#{formEdit}"
+						required="true" size="40" maxlength="64" />					
+					<f:facet name="footer">
+						<aon:inputText value="#{applicationAction.to.name}"
+							rendered="#{formNew}"
+							required="true" size="40" maxlength="64" />					
+					</f:facet>
+				</aon:column>
+
+			</ui:define>
+		</ui:decorate>
+		
+	</aon:div>
+</ui:composition>

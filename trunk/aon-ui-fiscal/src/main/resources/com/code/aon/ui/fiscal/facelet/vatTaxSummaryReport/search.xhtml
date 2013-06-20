@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="vatTaxForm" styleClass="aon-form">
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_vat_tax_summary_report_module}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipBackButton" value="true" />
+			</ui:include>
+			
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="controller" value="#{vatTaxSummaryReport}" />
+
+				<ui:define name="searchContent">
+					<ui:param name="skipSearchButton" value="true" />
+					
+					<aon:outputLabel for="VatTax_year" value="#{bundle.aon_year}" />
+					<aon:inputText id="VatTax_year" size="5" required="true"
+						value="#{vatTaxSummaryReport.year}" />
+						
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="VatTax_accumulatedColumnVisible"
+							value="#{vatTaxSummaryReport.accumulatedColumnVisible}" />
+						<aon:outputLabel for="VatTax_accumulatedColumnVisible"
+							value="#{fiscalBundle.fiscal_vatTax_show_accumulated}" />
+					</aon:div>
+
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="VatTax_declaredColumnVisible"
+							value="#{vatTaxSummaryReport.declaredColumnVisible}" />
+						<aon:outputLabel for="VatTax_declaredColumnVisible"
+							value="#{fiscalBundle.fiscal_vatTax_show_declared}" />
+					</aon:div>
+						
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="VatTax_resultColumnVisible"
+							value="#{vatTaxSummaryReport.resultColumnVisible}" />
+						<aon:outputLabel for="VatTax_resultColumnVisible"
+							value="#{fiscalBundle.fiscal_vatTax_show_result}" />
+					</aon:div>
+
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="VatTax_adjustColumnVisible"
+							value="#{vatTaxSummaryReport.adjustColumnVisible}" />
+						<aon:outputLabel for="VatTax_adjustColumnVisible"
+							value="#{fiscalBundle.fiscal_vatTax_show_adjusts}" />
+					</aon:div>
+
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="VatTax_toDeclareColumnVisible"
+							value="#{vatTaxSummaryReport.toDeclareColumnVisible}" />
+						<aon:outputLabel for="VatTax_toDeclareColumnVisible"
+							value="#{fiscalBundle.fiscal_vatTax_show_to_declare}" />
+					</aon:div>
+
+					<aon:outputLabel for="VatTax_status"
+						value="#{bundle.aon_status}" />
+					<aon:selectOneRadio id="VatTax_status"
+						value="#{vatTaxSummaryReport.status}"
+						converter="aon.EnumConverter">
+						<f:selectItem value="#{null}" itemLabel="#{bundle.aon_all}" />
+						<f:selectItems value="#{fiscalCollections.vatTaxStatuses}" />
+					</aon:selectOneRadio>
+
+					<c:if test="#{aonRole.confidentiality}">
+						<aon:outputLabel for="VatTax_securityLevel"
+							value="#{bundle.aon_security_level}" />
+						<aon:selectOneRadio id="VatTax_securityLevel"
+							value="#{vatTaxSummaryReport.securityLevel}">
+							<f:selectItem  value="#{null}" itemLabel="#{bundle.aon_all}"/>
+							<f:selectItems value="#{commonCollections.securityLevels}" />
+						</aon:selectOneRadio>
+					</c:if>
+
+					<aon:outputText value="" />
+					<aon:outputText value="" />
+					
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:htmlCommandLink id="vatBook-excel-report"
+							value="#{bundle.aon_search}" target="_blank" 
+							action="#{vatTaxSummaryReport.onSummaryReport}"
+							styleClass="aon-search-lookup-button"
+							style="border: 1px solid black; background-color: #eeeeee;"
+							>
+						</aon:htmlCommandLink>
+					</aon:div>	
+
+					
+				</ui:define>
+				
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>

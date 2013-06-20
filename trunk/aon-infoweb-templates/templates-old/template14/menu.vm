@@ -1,0 +1,10 @@
+	<div class="menu">
+		
+		#foreach($item in $menu)
+			<a href="$!item.getLink()">$!item.getLabel()</a>
+		#end
+		
+	</div>
+
+
+

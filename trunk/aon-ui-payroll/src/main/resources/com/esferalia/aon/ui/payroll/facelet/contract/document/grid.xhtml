@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+			
+	<aon:div id="contractDocumentContent">
+	
+		<aon:div styleClass="aon-toolbar" >
+			<aon:commandButton title="#{bundle.aon_check_all}"
+				styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+				value="#{bundle.aon_check_all}"
+				actionListener="#{contractAttach.checkAll}" reRender="contractDocumentContent"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+			<aon:commandButton title="#{bundle.aon_uncheck_all}"
+				styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+				value="#{bundle.aon_uncheck_all}"
+				actionListener="#{contractAttach.checkNone}" reRender="contractDocumentContent"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+	     	
+			<aon:div style="display:inline;" 
+				rendered="#{contractAttach.checkedCount>0}">
+	     		<aon:commandButton value="&#160;" id="email" title="Enviar por email"
+	     			actionListener="#{contractAttach.onSendSelectedByEmail}"
+					styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
+					style="width: 14px;" reRender="showNewMessageWindow">
+				</aon:commandButton>
+		     	<aon:htmlCommandLink id="download" target="_blank"
+	     			actionListener="#{contractAttach.onDownloadSelected}" 
+					styleClass="aon-finding-toolbar-item aon-icon-mail-save"
+					style="line-height:16px;margin-right:0;"
+					title="#{bundle.aon_fileupload_download}">
+					<f:param name="index" value="#{to.id}" />
+					<aon:outputText value="#{bundle.aon_documents}" />
+				</aon:htmlCommandLink>			
+			</aon:div>
+		</aon:div>
+	
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/document/gridContent.xhtml" >
+			<ui:param name="checkReRender" value="contractDocumentContent" />
+		</ui:include>
+	
+	</aon:div>
+		
+</ui:composition>

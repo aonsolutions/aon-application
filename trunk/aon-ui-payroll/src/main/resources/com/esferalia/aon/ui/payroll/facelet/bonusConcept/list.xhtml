@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="bonusConceptList">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_bonusConcept_module}" />
+				<ui:param name="controller" value="#{bonusConcept}" />
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{bonusConcept}" />
+					
+					<ui:define name="columns">
+					
+						<aon:column alias="BonusConcept.id"
+							styleClass="aon-editDataTable-textColumn aon-width-50">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_id}" />
+							</f:facet>
+							<aon:outputText value="#{to.id}" />
+						</aon:column>
+						
+						<aon:column alias="BonusConcept.type"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_type}" />
+							</f:facet>
+							<aon:outputText value="#{to.type}" />
+						</aon:column>
+	
+						<aon:column alias="BonusConcept.description"
+							styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" />
+						</aon:column>
+	
+						<aon:column alias="BonusConcept.expression"
+							styleClass="aon-editDataTable-textColumn aon-width-300">
+							<f:facet name="header">
+								<aon:outputText value="#{payrollBundle.payroll_salary_expression}" />
+							</f:facet>
+							<aon:outputText value="#{to.expression}" >
+								<aon:abbreviateConverter maxWidth="40" />
+							</aon:outputText>
+						</aon:column>
+						
+					</ui:define>
+				</ui:decorate>
+
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

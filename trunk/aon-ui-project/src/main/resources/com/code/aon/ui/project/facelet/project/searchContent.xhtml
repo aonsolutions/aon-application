@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<c:if test="#{lookup != null}">
+		<ui:param name="controller" value="#{lookup}"/>
+	</c:if>
+
+	<aon:outputLabel for="Project_name"
+		value="#{bundle.aon_name}" />
+	<aon:inputText id="Project_name" size="60"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="Project_alias"
+		value="#{bundle.aon_alias}" />
+	<aon:inputText id="Project_alias" size="20"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel value="#{bundle.aon_date}"/>
+	<aon:div>
+		<aon:outputLabel for="Project_date-From" 
+			styleClass="aon-form-date-label aon-margin-left aon-margin-right"
+			value="#{bundle.aon_date_from}"/>
+		<aon:selectInputDate id="Project_date-From" 
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}" 
+			renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}" />
+
+		<aon:outputLabel for="Project_date-To"
+			styleClass="aon-form-date-label aon-margin-left aon-margin-right"
+		 	value="#{bundle.aon_date_to}"/>
+		<aon:selectInputDate id="Project_date-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}" 
+			renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}" />
+	</aon:div>
+
+	<aon:outputLabel for="Registry_id" value="#{projectBundle.project_assigned}"/>
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
+		<ui:param name="lookupTo" value="#{projectSearchListener.registry}" />
+		<ui:param name="skipLabel" value="#{true}" />
+	</ui:include>
+
+	<aon:outputLabel for="Project_projectType"
+		value="#{projectBundle.project_project_type}" />
+	<aon:selectOneMenu id="Project_projectType"
+		value="#{projectSearchListener.projectType}">
+		<f:selectItem itemLabel="-" value="#{null}"/>
+		<f:selectItems value="#{projectCollections.projectTypes}"/>
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="Project_id" value="#{bundle.aon_id}" />
+	<aon:inputText id="Project_id" size="5"
+		valueChangeListener="#{controller.addExpression}" />		
+
+	<aon:outputLabel for="Project_active" value="#{bundle.aon_active}"/>
+	<aon:selectOneMenu id="Project_active"
+		valueChangeListener="#{controller.addExpression}">
+		<f:selectItem itemLabel="-" value="#{null}"/>
+		<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="#{true}"/>
+		<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="#{false}"/>
+	</aon:selectOneMenu>
+	
+	<c:if test="#{!aonConfiguration.bean.project.skipProjectFlags}">
+		<aon:outputLabel for="Project_commercial" value="#{projectBundle.project_commercial}"/>
+		<aon:selectOneMenu id="Project_commercial"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="-" value="#{null}"/>
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}"/>
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}"/>
+		</aon:selectOneMenu>
+	
+		<aon:outputLabel for="Project_tas" value="#{projectBundle.project_tas}"/>
+		<aon:selectOneMenu id="Project_tas"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="-" value="#{null}"/>
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}"/>
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}"/>
+		</aon:selectOneMenu>
+	
+		<aon:outputLabel for="Project_dossier" value="#{projectBundle.project_dossier}"/>
+		<aon:selectOneMenu id="Project_dossier"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="-" value="#{null}"/>
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}"/>
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}"/>
+		</aon:selectOneMenu>
+	</c:if>
+
+</ui:composition>

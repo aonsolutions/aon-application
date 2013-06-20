@@ -1,0 +1,893 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.config.i18n.messages</base-name>
+			<var>configBundle</var>
+		</resource-bundle>
+		<resource-bundle>
+			<base-name>com.code.aon.bridge.i18n.messages</base-name>
+			<var>securityBundle</var>
+		</resource-bundle>
+	</application>
+
+	<!--  *************** COLLECTIONS ***************** -->
+	<managed-bean>
+		<managed-bean-name>configCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.ConfigCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!--  *************** DOMAIN SWITCHER ***************** -->
+	<managed-bean>
+		<managed-bean-name>domainSwitcher</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.DomainSwitcher
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<value>#{domainSwitcherListeners}</value>
+		</managed-property>		
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>domainSwitcherListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!--  *************** PARENT DOMAIN ***************** -->
+	<managed-bean>
+		<managed-bean-name>parentDomain</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.ParentDomainController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************* USER UTILS ***************** -->
+	<managed-bean>
+		<managed-bean-name>userUtils</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.util.UserUtils
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************* CHANGE PASSWORD ***************** -->
+	<managed-bean>
+		<managed-bean-name>changePassword</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.ChangeDBPasswordController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ***************** PUBLISH PARAMETER ******************** -->
+	<managed-bean>
+		<managed-bean-name>publishParameter</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.controller.PublishParameterController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
+	<!-- ************ USER ************** -->
+	<managed-bean>
+		<managed-bean-name>user</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.controller.UserController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.User</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>user</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>User_name</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+<!-- 
+				<value>#{userSecurityActivationListener}</value>
+ -->
+				<value>#{userScopeListener}</value>
+				<value>#{userWorkGroupListener}</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>optionalListenerClasses</property-name>
+			<value>#{userOptionalListeners}</value>
+		</managed-property>		
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>userOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+		
+	<managed-bean>
+		<managed-bean-name>userSecurityActivationListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.event.UserSecurityActivationListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>userScopeListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>userScope</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>UserScope_user_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>userWorkGroupListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>userWorkGroup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>UserWorkGroup_user_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************* USERSCOPE ***************** -->
+	<managed-bean>
+		<managed-bean-name>userScope</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.UserScope</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>userScope</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>user</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>user.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>UserScope_scope_description</value>
+		</managed-property>		
+	</managed-bean>
+
+	<!-- ************* USERWORKGROUP ***************** -->
+	<managed-bean>
+		<managed-bean-name>userWorkGroup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.controller.UserWorkGroupController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.UserWorkGroup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>userWorkGroup</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>user</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>user.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>UserWorkGroup_workGroup_description</value>
+		</managed-property>		
+	</managed-bean>
+
+	<!-- ************ WORK GROUP ************** -->
+	<managed-bean>
+		<managed-bean-name>workGroup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.WorkGroup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>workGroup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>WorkGroup_description</value>
+		</managed-property>		
+	</managed-bean>
+
+
+	<!-- ************ APPLCIATION PARAMETER ************** -->
+	<managed-bean>
+		<managed-bean-name>applicationParameter</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.ApplicationParameter</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>applicationParameter</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ApplicationParameter_name</value>
+		</managed-property>		
+	</managed-bean>
+	
+	<!-- ************ SCOPE ************** -->
+	<managed-bean>
+		<managed-bean-name>scope</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.Scope</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>scope</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Scope_description</value>
+		</managed-property>		
+	</managed-bean>
+	
+	<!-- ************* SERIES ***************** -->
+	<managed-bean>
+		<managed-bean-name>series</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.Series</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>series</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Series_code</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{seriesListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>seriesListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.SeriesListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!--  **** TAX ****	-->
+	<managed-bean>
+		<managed-bean-name>tax</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController 
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.Tax</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>tax</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Tax_type,Tax_vatDeductionType,Tax_withholdingType,Tax_percentage desc,Tax_name</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{taxControllerListener}</value>
+				<value>#{taxDetailListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>taxDetailListener</managed-bean-name>
+		<managed-bean-class> com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>taxDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>TaxDetail_tax_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	
+	<!-- ********* TAX VALIDATOR LISTENER ************** -->
+	<managed-bean>
+		<managed-bean-name>taxControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.TaxControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!--  **** TAX DETAIL ****	-->
+	<managed-bean>
+		<managed-bean-name>taxDetail</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController 
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.TaxDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>tax</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>tax.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{taxDetailControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>taxDetailControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.TaxDetailControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************* PAYMETHOD ***************** -->
+	<managed-bean>
+		<managed-bean-name>payMethod</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.PayMethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>payMethod</value>
+		</managed-property>		
+	</managed-bean>
+	
+	<!-- ************* PAYMETHOD TYPE ***************** -->
+	<managed-bean>
+		<managed-bean-name>paymethodTypeDetail</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.PayMethodTypeDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>paymethodTypeDetail</value>
+		</managed-property>		
+	</managed-bean>
+
+	<!-- ************* BANK ***************** -->
+	<managed-bean>
+		<managed-bean-name>bank</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.Bank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>bank</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ BANK LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>bankLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>bankLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.config.Bank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Bank_name</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/lookup/bank/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/lookup/bank/search.xhtml</value>
+		</managed-property>				
+	</managed-bean>
+
+	<!-- ************ USER LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>userLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>userLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.config.User</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>User_login</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>User_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>User_active</key>
+                    <value>#{true}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>						
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/lookup/user/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+
+	<!-- ********* BANK ACCOUNT VALIDATOR LISTENER ************** -->
+	<managed-bean>
+		<managed-bean-name>bankAccountValidatorListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.BankAccountValidationListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>nullableBankAccountValidatorListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.BankAccountValidationListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>nullable</property-name>
+			<value>true</value>
+		</managed-property>				
+	</managed-bean>
+
+	<!-- ************ CNAE ************** -->
+	<managed-bean>
+		<managed-bean-name>cnae</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.controller.FiltrableBasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.CNAE</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cnae</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>CNAE_title</value>
+		</managed-property>
+	</managed-bean>	
+
+	<!-- ************ CNAE2009 ************** -->
+	<managed-bean>
+		<managed-bean-name>cnae2009</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.controller.FiltrableBasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.CNAE2009</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cnae2009</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>CNAE2009_title</value>
+		</managed-property>
+	</managed-bean>	
+
+	<!-- ************ CNAE2009Rate ************** -->
+	<managed-bean>
+		<managed-bean-name>cnae2009Rate</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.CNAE2009Rate</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cnae2009Rate</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!-- ************ CNAE LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>cnaeLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cnaeLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.config.CNAE</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CNAE_title</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>CNAE_title</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/lookup/cnae/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/lookup/cnae/search.xhtml</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ CNAE2009 LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>cnae2009Lookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cnae2009Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.config.CNAE2009</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CNAE2009_title</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>CNAE2009_title</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/lookup/cnae/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/lookup/cnae/search.xhtml</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ DOMAIN LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>domainLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>domainLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.config.Domain</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Domain_name</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Domain_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/domain/listContent.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/domain/searchContent.xhtml</value>
+		</managed-property>		
+	</managed-bean>
+	
+  <!-- *************************************** -->
+  <!-- ************ NAVIGATION *************** -->
+  <!-- *************************************** -->
+  
+	<navigation-rule>
+		<navigation-case>
+			<description>SERIES NAVIGATION</description>
+			<from-outcome>series</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/series/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<description>TAX LIST NAVIGATION</description>
+			<from-outcome>tax_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/tax/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<description>TAX FORM NAVIGATION</description>
+			<from-outcome>tax_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/tax/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<description>PAY METHOD NAVIGATION</description>
+			<from-outcome>payMethod</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/payMethod/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<description>BANK NAVIGATION</description>
+			<from-outcome>bank</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/bank/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<description>BANK NAVIGATION SEARCH</description>
+			<from-outcome>bank_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/bank/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== CNAE ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>cnae_grid</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/cnae/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>cnae_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/cnae/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== CNAE2009 ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>cnae2009_grid</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/cnae2009/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>cnae2009_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/cnae2009/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== CNAE2009Rate ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>cnae2009Rate_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/cnae2009Rate/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== WORKGROUP ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>workgroup_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/workgroup/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== WORKGROUP ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>applicationParameter_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/applicationParameter/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== SCOPE ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>scope_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/scope/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== CHANGE PASSWORD ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>changePassword_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/changePassword/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== DOMAIN SWITCHER ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>domain_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/domain/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== PUBLISH PARAMETER ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>publishParameter</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/publishParameter/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+	<!-- ========== Asignacion de cuentas a tipos de formas de pago ========== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>paymethodTypeDetail</from-outcome>
+    		<to-view-id>/com/code/aon/ui/config/facelet/paymethodTypeDetail/grid.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>	
+	
+</faces-config>

@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statement xmlns="http://www.inteco.es/xbrl/pgc07/mapa"
+           xmlns:pgc07m-roles="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/roles/2009-01-01"
+           xmlns:link="http://www.xbrl.org/2003/linkbase"
+           xmlns:xlink="http://www.w3.org/1999/xlink"
+           xmlns:xbrli="http://www.xbrl.org/2003/instance"
+           xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+           xmlns:pgc07mc-bs="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+           xmlns:pgc07mc-na="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/normalAbreviado/2009-01-01"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:xl="http://www.xbrl.org/2003/XLink"
+           xmlns:pgc07mn-apdo9w="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+           xmlns:dgi-eco-bas="http://www.xbrl.org.es/es/2008/dgi/gp/eco-bas/2011-01-30"
+           xmlns:dgi-lc-es="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+           xmlns:dgi-rel="http://www.xbrl.org.es/es/2008/dgi/gp/rel/2011-01-30"
+           xmlns:dgi-est-gen="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30"
+           xmlns:dgi-gen-ex="http://www.xbrl.org.es/es/2008/dgi/gp/gen-ex/2011-01-30"
+           xmlns:pgc07mn="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+           xmlns:xbrldt="http://xbrl.org/2005/xbrldt"
+           xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01"
+           xmlns:pgc-07-types="http://www.icac.meh.es/es/fr/gaap/pgc07/types/2009-01-01"
+           mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01"
+           mainSchemaPrefix="pgc-07-v-mn"
+           name="pgc-07-mn-apartado9w">
+   <conceptMap inputID="" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               outputID="InstrumentosFinancierosOtraInformacionMemoriaCorreccionesValorativasDeterioroParticipacionPresentacion"
+               parent=""
+               order=""
+               abstract="true"/>
+   <conceptMap order="1.0" inputID="99300" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaCorreccionesValorativasDeterioroParticipacionPresentacion"
+               outputID="InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroEmpresasGrupoTupla"/>
+   <conceptMap order="1.0" inputID="99398" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroEmpresasGrupoTupla"
+               outputID="99300:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"/>
+   <conceptMap order="1.0" inputID="99398" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoSubTotalCorreccionesTupla"
+               outputID="99317:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"/>
+   <conceptMap order="1.0" inputID="99398" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaMultigrupoTupla"
+               outputID="99318:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"/>
+   <conceptMap order="1.0" inputID="99398" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasMultiGrupoSubTotalCorreccionesTupla"
+               outputID="99336:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"/>
+   <conceptMap order="1.0" inputID="99398" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaAsociadasTupla"
+               outputID="99337:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"/>
+   <conceptMap order="1.0" inputID="99398" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasAsociadasSubTotalCorreccionesTupla"
+               outputID="99352:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"/>
+   <conceptMap order="1.0" inputID="99398" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasTotalCorreccionesTupla"
+               outputID="99353:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"/>
+   <conceptMap order="1.0" inputID="07" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99300:99398:Xcode_IDC.NIF"/>
+   <conceptMap order="1.0" inputID="07" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99317:99398:Xcode_IDC.NIF"/>
+   <conceptMap order="1.0" inputID="07" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99318:99398:Xcode_IDC.NIF"/>
+   <conceptMap order="1.0" inputID="07" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99336:99398:Xcode_IDC.NIF"/>
+   <conceptMap order="1.0" inputID="07" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99337:99398:Xcode_IDC.NIF"/>
+   <conceptMap order="1.0" inputID="07" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99352:99398:Xcode_IDC.NIF"/>
+   <conceptMap order="1.0" inputID="07" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99353:99398:Xcode_IDC.NIF"/>
+   <conceptMap order="2.0" inputID="08" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99300:99398:Xcode_IDC.CIF"/>
+   <conceptMap order="2.0" inputID="08" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99317:99398:Xcode_IDC.CIF"/>
+   <conceptMap order="2.0" inputID="08" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99318:99398:Xcode_IDC.CIF"/>
+   <conceptMap order="2.0" inputID="08" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99336:99398:Xcode_IDC.CIF"/>
+   <conceptMap order="2.0" inputID="08" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99337:99398:Xcode_IDC.CIF"/>
+   <conceptMap order="2.0" inputID="08" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99352:99398:Xcode_IDC.CIF"/>
+   <conceptMap order="2.0" inputID="08" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99353:99398:Xcode_IDC.CIF"/>
+   <conceptMap order="3.0" inputID="09" nsPrefix="dgi-est-gen"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99300:99398:IdentifierValue"/>
+   <conceptMap order="3.0" inputID="09" nsPrefix="dgi-est-gen"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99317:99398:IdentifierValue"/>
+   <conceptMap order="3.0" inputID="09" nsPrefix="dgi-est-gen"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99318:99398:IdentifierValue"/>
+   <conceptMap order="3.0" inputID="09" nsPrefix="dgi-est-gen"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99336:99398:IdentifierValue"/>
+   <conceptMap order="3.0" inputID="09" nsPrefix="dgi-est-gen"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99337:99398:IdentifierValue"/>
+   <conceptMap order="3.0" inputID="09" nsPrefix="dgi-est-gen"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99352:99398:IdentifierValue"/>
+   <conceptMap order="3.0" inputID="09" nsPrefix="dgi-est-gen"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99353:99398:IdentifierValue"/>
+   <conceptMap order="4.0" inputID="10" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99300:99398:Xcode_NMT.DS"/>
+   <conceptMap order="4.0" inputID="10" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99317:99398:Xcode_NMT.DS"/>
+   <conceptMap order="4.0" inputID="10" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99318:99398:Xcode_NMT.DS"/>
+   <conceptMap order="4.0" inputID="10" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99336:99398:Xcode_NMT.DS"/>
+   <conceptMap order="4.0" inputID="10" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99337:99398:Xcode_NMT.DS"/>
+   <conceptMap order="4.0" inputID="10" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99352:99398:Xcode_NMT.DS"/>
+   <conceptMap order="4.0" inputID="10" nsPrefix="dgi-lc-es"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99353:99398:Xcode_NMT.DS"/>
+   <conceptMap order="5.0" inputID="11" nsPrefix="dgi-est-gen"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99300:99398:LegalNameValue"/>
+   <conceptMap order="5.0" inputID="11" nsPrefix="dgi-est-gen"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99317:99398:LegalNameValue"/>
+   <conceptMap order="5.0" inputID="11" nsPrefix="dgi-est-gen"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99318:99398:LegalNameValue"/>
+   <conceptMap order="5.0" inputID="11" nsPrefix="dgi-est-gen"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99336:99398:LegalNameValue"/>
+   <conceptMap order="5.0" inputID="11" nsPrefix="dgi-est-gen"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99337:99398:LegalNameValue"/>
+   <conceptMap order="5.0" inputID="11" nsPrefix="dgi-est-gen"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99352:99398:LegalNameValue"/>
+   <conceptMap order="5.0" inputID="11" nsPrefix="dgi-est-gen"
+               ns="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaTupla"
+               outputID="99353:99398:LegalNameValue"/>
+   <conceptMap order="2.0" inputID="99399" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroEmpresasGrupoTupla"
+               outputID="99300:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"/>
+   <conceptMap order="2.0" inputID="99399" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoSubTotalCorreccionesTupla"
+               outputID="99317:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"/>
+   <conceptMap order="2.0" inputID="99399" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaMultigrupoTupla"
+               outputID="99318:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"/>
+   <conceptMap order="2.0" inputID="99399" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasMultiGrupoSubTotalCorreccionesTupla"
+               outputID="99336:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"/>
+   <conceptMap order="2.0" inputID="99399" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaAsociadasTupla"
+               outputID="99337:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"/>
+   <conceptMap order="2.0" inputID="99399" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasAsociadasSubTotalCorreccionesTupla"
+               outputID="99352:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"/>
+   <conceptMap order="2.0" inputID="99399" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasTotalCorreccionesTupla"
+               outputID="99353:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"/>
+   <conceptMap order="1.0" inputID="69" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99300:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroPerdidaDeterioroInicioEjercicio"/>
+   <conceptMap order="1.0" inputID="69" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99317:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroPerdidaDeterioroInicioEjercicio"/>
+   <conceptMap order="1.0" inputID="69" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99318:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroPerdidaDeterioroInicioEjercicio"/>
+   <conceptMap order="1.0" inputID="69" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99336:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroPerdidaDeterioroInicioEjercicio"/>
+   <conceptMap order="1.0" inputID="69" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99337:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroPerdidaDeterioroInicioEjercicio"/>
+   <conceptMap order="1.0" inputID="69" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99352:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroPerdidaDeterioroInicioEjercicio"/>
+   <conceptMap order="1.0" inputID="69" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99353:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroPerdidaDeterioroInicioEjercicio"/>
+   <conceptMap order="2.0" inputID="2" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99300:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroVariacionDeterioroPyG"/>
+   <conceptMap order="2.0" inputID="2" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99317:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroVariacionDeterioroPyG"/>
+   <conceptMap order="2.0" inputID="2" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99318:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroVariacionDeterioroPyG"/>
+   <conceptMap order="2.0" inputID="2" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99336:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroVariacionDeterioroPyG"/>
+   <conceptMap order="2.0" inputID="2" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99337:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroVariacionDeterioroPyG"/>
+   <conceptMap order="2.0" inputID="2" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99352:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroVariacionDeterioroPyG"/>
+   <conceptMap order="2.0" inputID="2" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99353:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroVariacionDeterioroPyG"/>
+   <conceptMap order="3.0" inputID="3" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99300:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroVariacionContraPatrimonioNeto"/>
+   <conceptMap order="3.0" inputID="3" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99317:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroVariacionContraPatrimonioNeto"/>
+   <conceptMap order="3.0" inputID="3" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99318:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroVariacionContraPatrimonioNeto"/>
+   <conceptMap order="3.0" inputID="3" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99336:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroVariacionContraPatrimonioNeto"/>
+   <conceptMap order="3.0" inputID="3" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99337:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroVariacionContraPatrimonioNeto"/>
+   <conceptMap order="3.0" inputID="3" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99352:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroVariacionContraPatrimonioNeto"/>
+   <conceptMap order="3.0" inputID="3" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99353:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroVariacionContraPatrimonioNeto"/>
+   <conceptMap order="4.0" inputID="4" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99300:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroBajaActivo"/>
+   <conceptMap order="4.0" inputID="4" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99317:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroBajaActivo"/>
+   <conceptMap order="4.0" inputID="4" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99318:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroBajaActivo"/>
+   <conceptMap order="4.0" inputID="4" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99336:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroBajaActivo"/>
+   <conceptMap order="4.0" inputID="4" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99337:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroBajaActivo"/>
+   <conceptMap order="4.0" inputID="4" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99352:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroBajaActivo"/>
+   <conceptMap order="4.0" inputID="4" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99353:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroBajaActivo"/>
+   <conceptMap order="5.0" inputID="5" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99300:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroOtrasVariaciones"/>
+   <conceptMap order="5.0" inputID="5" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99317:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroOtrasVariaciones"/>
+   <conceptMap order="5.0" inputID="5" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99318:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroOtrasVariaciones"/>
+   <conceptMap order="5.0" inputID="5" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99336:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroOtrasVariaciones"/>
+   <conceptMap order="5.0" inputID="5" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99337:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroOtrasVariaciones"/>
+   <conceptMap order="5.0" inputID="5" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99352:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroOtrasVariaciones"/>
+   <conceptMap order="5.0" inputID="5" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99353:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroOtrasVariaciones"/>
+   <conceptMap order="6.0" inputID="6" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99300:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroPerdidaDeterioroFinalEjercicio"/>
+   <conceptMap order="6.0" inputID="6" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99317:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroPerdidaDeterioroFinalEjercicio"/>
+   <conceptMap order="6.0" inputID="6" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99318:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroPerdidaDeterioroFinalEjercicio"/>
+   <conceptMap order="6.0" inputID="6" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99336:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroPerdidaDeterioroFinalEjercicio"/>
+   <conceptMap order="6.0" inputID="6" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99337:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroPerdidaDeterioroFinalEjercicio"/>
+   <conceptMap order="6.0" inputID="6" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99352:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroPerdidaDeterioroFinalEjercicio"/>
+   <conceptMap order="6.0" inputID="6" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaInformacionDeterioroTupla"
+               outputID="99353:99399:InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoEmpresasMultigrupoEmpresasAsociadasCorreccionesValorativasDeterioroPerdidaDeterioroFinalEjercicio"/>
+   <conceptMap order="2.0" inputID="99317" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaCorreccionesValorativasDeterioroParticipacionPresentacion"
+               outputID="InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasGrupoSubTotalCorreccionesTupla"/>
+   <conceptMap order="3.0" inputID="99318" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaCorreccionesValorativasDeterioroParticipacionPresentacion"
+               outputID="InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaMultigrupoTupla"/>
+   <conceptMap order="4.0" inputID="99336" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaCorreccionesValorativasDeterioroParticipacionPresentacion"
+               outputID="InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasMultiGrupoSubTotalCorreccionesTupla"/>
+   <conceptMap order="5.0" inputID="99337" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaCorreccionesValorativasDeterioroParticipacionPresentacion"
+               outputID="InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresaAsociadasTupla"/>
+   <conceptMap order="6.0" inputID="99352" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaCorreccionesValorativasDeterioroParticipacionPresentacion"
+               outputID="InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasAsociadasSubTotalCorreccionesTupla"/>
+   <conceptMap order="7.0" inputID="99353" nsPrefix="pgc07mn-apdo9w"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.2.3c.h/InstrumentosFinancieros/CorreccionesValorativasDeterioroParticipaciones/2009-01-01"
+               parent="pgc07mn-apdo9w:InstrumentosFinancierosOtraInformacionMemoriaCorreccionesValorativasDeterioroParticipacionPresentacion"
+               outputID="InstrumentosFinancierosOtraInformacionMemoriaInformacionEmpresasTotalCorreccionesTupla"/>
+</statement>

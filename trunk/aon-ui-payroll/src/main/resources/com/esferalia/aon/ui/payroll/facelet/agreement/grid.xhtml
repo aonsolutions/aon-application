@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		
+		<aon:form id="agreementGrid">
+			
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_agreement_module}" />
+				<ui:param name="controller" value="#{agreement}" />
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+					<ui:param name="controller" value="#{agreement}" />
+					
+					<ui:param name="rowSelectorReRender" value="agreementGrid" />
+					<ui:param name="saveButtonReRender" value="agreementGrid" />
+					<ui:param name="cancelButtonReRender" value="agreementGrid" />
+					<ui:param name="removeButtonReRender" value="agreementGrid" />
+					<ui:param name="resetButtonReRender" value="agreementGrid" />
+					<ui:param name="newSaveButtonReRender" value="agreementGrid" />
+					<ui:param name="newCancelButtonReRender" value="agreementGrid" />
+
+					<ui:define name="columns">
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputLabel for="Agreement_description"
+									value="#{bundle.aon_description}" />		
+							</f:facet>
+							<aon:outputText value="#{to.description}"
+								rendered="#{formList}" />
+							<aon:inputText id="Agreement_description" required="true"
+								rendered="#{formEdit}" size="32"
+								value="#{controller.to.description}" maxlength="32" />
+							<f:facet name="footer">
+								<aon:inputText id="Agreement_description-New" required="true"
+									rendered="#{formNew}" size="32"
+									value="#{controller.to.description}" maxlength="32" />
+							</f:facet>
+						</aon:column>
+					</ui:define>
+
+				</ui:decorate>
+			</aon:div>
+			
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+ 

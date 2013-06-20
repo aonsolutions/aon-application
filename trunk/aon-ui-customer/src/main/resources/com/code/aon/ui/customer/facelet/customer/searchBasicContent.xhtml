@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<c:if test="#{lookup != null}">
+		<ui:param name="controller" value="#{lookup}"/>
+		<ui:param name="searchController" value="#{customerSearch}" />
+	</c:if>
+
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml">
+		<ui:param name="includeRegistryScope" value="#{true}"/>
+	</ui:include>
+		
+	<c:if test="#{company.EInvoice}">
+		<aon:outputLabel for="Customer_EInvoice"
+			value="#{customerBundle.customer_eInvoice}" />
+		<aon:selectOneMenu id="Customer_EInvoice"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="-"	itemValue="#{null}" />
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+		</aon:selectOneMenu>								
+	</c:if>
+	
+	<c:if test="#{aonConfiguration.bean.customer.showTariff}">
+		<aon:outputLabel for="Customer_tariff_id"
+			value="#{productBundle.product_tariff}" />
+		<aon:selectOneMenu id="Customer_tariff_id"
+			value="#{configCollections.tariff}"
+			valueChangeListener="#{controller.addIdEqualExpression}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{configCollections.tariffs}" />
+		</aon:selectOneMenu>
+	</c:if>	
+	
+	<aon:outputText value="#{bundle.aon_status}"/>
+	<aon:selectManyCheckbox value="#{customerSearch.customerStatuses}">
+		<f:selectItems value="#{customerCollections.customerStatuses}"/>
+	</aon:selectManyCheckbox>							
+
+</ui:composition>

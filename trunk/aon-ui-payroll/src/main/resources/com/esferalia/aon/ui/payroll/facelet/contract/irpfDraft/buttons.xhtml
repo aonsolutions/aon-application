@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:htmlCommandLink id="_currentIrpfResult-report"
+		styleClass="aon-finding-toolbar-item aon-finding-toolbar-item-no-border aon-icon-pdf" target="_blank"
+		value="#{payrollBundle.payroll_irpf}"
+		action="#{report.onExecute}">
+		<!--  f:param name="reportKey" value="#{irpfResult.irpfResultTemplate}" /-->
+		<f:param name="outputFormat" value="PDF" />
+	</aon:htmlCommandLink>					
+
+	<aon:outputText value="Comparar con " styleClass="aon-finding-toolbar-item aon-finding-toolbar-item-no-border " />
+	<aon:outputText styleClass="" value="&#160;"/>
+	<aon:selectOneMenu value="#{irpf.otherIndex}">
+		<f:selectItem itemLabel="-" itemValue="-1" />
+		<f:selectItems value="#{irpf.others}" />
+		<a4j:support event="onchange" reRender="irpfDraftContent, #{irpf.beanName}Toolbar" ajaxSingle="true"/>
+	</aon:selectOneMenu>
+
+
+
+</ui:composition>

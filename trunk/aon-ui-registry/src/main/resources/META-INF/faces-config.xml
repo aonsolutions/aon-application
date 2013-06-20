@@ -1,0 +1,672 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.registry.i18n.messages</base-name>
+			<var>registryBundle</var>
+		</resource-bundle>
+	</application>
+	
+	<!-- ************ COLLECTION **************** -->
+	<managed-bean>
+		<managed-bean-name>registryCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.RegistryCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ CATEGORY ************** -->
+	<managed-bean>
+		<managed-bean-name>category</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.Category</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>category</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Category_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Category_type</key>
+					<value>#{registryCollections.categoryTypes[0]}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>												
+	</managed-bean>
+
+	<!-- ************ REGISTRY ATTACHMENT TAG ************** -->
+	<managed-bean>
+		<managed-bean-name>registryAttachmentTag</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.TagController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.Tag</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>registryAttachmentTag</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Tag_name</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>type</property-name>
+			<value>#{configCollections.tagTypes[0].value}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Tag_type</key>
+					<value>#{configCollections.tagTypes[0].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>						
+	</managed-bean>
+	
+	<!-- ************ RELATIONSHIP ************** -->
+	<managed-bean>
+		<managed-bean-name>relationship</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.Relationship</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>relationship</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ SEGMENT ************** -->
+	<managed-bean>
+		<managed-bean-name>segment</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.Segment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>segment</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!--  **** PERSON **** -->
+	<managed-bean>
+		<managed-bean-name>person</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.PersonController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>person</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.person.Person</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{personSearch}</value>
+				<value>#{personForm}</value>
+				<value>#{personPayMethodForm}</value>
+				<value>#{personControllerListener}</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>optionalListenerClasses</property-name>
+			<value>#{personOptionalListeners}</value>
+		</managed-property>		
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>personControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.event.PersonControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>personOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>personSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistrySearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>personForm</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.PersonFormListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>personPayMethodForm</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.PersonPayMethodFormListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
+	<!-- ************ RPAYMETHOD LISTENER ************** -->
+	<managed-bean>
+		<managed-bean-name>rPayMethodControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryPayMethodControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ DOCUMENT MANAGER ************** -->
+	<managed-bean>
+		<managed-bean-name>documentManager</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.DocumentManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- **** CORPORATE IDENTITY **** -->
+	<managed-bean>
+		<managed-bean-name>corporateIdentity</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.CorporateIdentity</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- **** CORPORATE IDENTITY DOCUMENTS **** --> 
+	<managed-bean>
+		<managed-bean-name>corporateIdentityAttach</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.CorporateIdentityController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>corporateIdentityAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>type</property-name>
+			<value>#{registryCollections.registryAttachmentTypes[3].value}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>company</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{corporateIdentityAttachControllerListener}</value> 
+				<value>#{registryAttachScopeListener}</value>
+				<value>#{corporateIdentitySearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>corporateIdentityAttachControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.event.CorporateIdentityControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>registryAttachScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>RegistryAttachment_scope_id</value>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>corporateIdentitySearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.CorporateIdentitySearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>corporateIdentityChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>corporateIdentityAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryAttachment_registry_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ BATCH DOCUMENT ************** -->
+	<managed-bean>
+		<managed-bean-name>batchDocument</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.BatchDocument</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>batchDocument</value>
+		</managed-property>		
+	</managed-bean>	
+
+	<!-- **** DOCUMENT GLOBAL SEARCH **** --> 
+	<managed-bean>
+		<managed-bean-name>documentGlobal</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.DocumentGlobalController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>documentGlobal</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{documentGlobalSearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>documentGlobalSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.DocumentGlobalSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ========================================================== -->
+	<!-- ======================= LOOKUPS ========================== -->
+	<!-- ========================================================== -->
+	
+	<!-- ************ REGISTRY LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>registryLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>registryLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.registry.Registry</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Registry_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Registry_name,Registry_document</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/lookup/registry/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/lookup/registry/search.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>newPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/lookup/registry/form.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{registryFormListener}</value>
+			</list-entries>
+		</managed-property>				
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>registryFormListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryFormListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<!-- ************ PERSON LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>personLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>personLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.person.Person</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Person_firstSurname,Person_secondSurname,Person_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Person_registry_name,Person_registry_document</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/person/listBasic.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/person/searchBasicContent.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>newPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/person/formNewContent.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{personSearch}</value>
+				<value>#{personForm}</value>
+				<value>#{personPayMethodForm}</value>
+				<value>#{personControllerListener}</value>
+			</list-entries>
+		</managed-property>				
+	</managed-bean>
+
+	<!-- ************ DOCUMENT LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>documentLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>documentLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.registry.RegistryAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>RegistryAttachment_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryAttachment_registryAttachmentType</key>
+					<value>#{registryCollections.registryAttachmentTypes[3].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/corporateIdentity/listBasic.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/corporateIdentity/searchBasicContent.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{registryAttachScopeListener}</value>
+				<value>#{corporateIdentitySearch}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>
+
+	<!-- ************ IMAGE LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>imageLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>imageLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.registry.RegistryAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAttachment_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryAttachment_registryAttachmentType</key>
+					<value>#{registryCollections.registryAttachmentTypes[1].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/corporateIdentity/listBasic.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/corporateIdentity/searchBasicContent.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{registryAttachScopeListener}</value>
+				<value>#{corporateIdentitySearch}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>
+
+	<!-- ======================= NAVIGATION ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>relationship_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/relationship/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>segment_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/segment/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+		
+	<!-- =================== Person ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>person_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/person/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>person_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/person/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>person_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/person/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+		
+	<!-- =================== Street Type ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>streetType_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/streetType/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+	<!-- =================== Category ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>category_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/category/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+	<!-- =================== Registry Attachment Tag ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>registryAttachmentTag_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/registryAttachmentTag/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+	<!-- =================== Corporate Identity Navigation Rules ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>corporateIdentityAttach_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporateIdentityAttach_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporateIdentityAttach_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporateIdentity_fax</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/fax.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporateIdentity_letter</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/letter.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporateIdentity_label</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/label.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporateIdentity_receipt</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/receipt.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== Batch Document ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>batchDocument_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/batchDocument/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>batchDocument_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/batchDocument/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>batchDocument_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/batchDocument/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+	<!-- =================== Document Global Search ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>documentGlobal_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/documentGlobal/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>documentGlobal_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/documentGlobal/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+		
+</faces-config>

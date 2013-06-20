@@ -1,0 +1,19 @@
+<table width="800" border="0" align="center">
+	<tr>
+		<td width="190">
+			<div align="center">
+				#if ($logo)
+					<a href="index.html" title="Inicio">	
+						<img src="images/$!logo" border="0px">
+					</a>
+				#end
+			</div>
+		</td>
+		
+		<td valign="bottom">
+			<div class="slogan">
+				<strong>$!slogan</strong>
+			</div>
+		</td>
+	</tr>
+</table>

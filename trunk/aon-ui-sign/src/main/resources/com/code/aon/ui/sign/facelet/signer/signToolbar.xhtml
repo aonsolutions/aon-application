@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:methodParam name="signActionListener" default="#{signController.onSign}" type="actionListener" />
+	<aon:methodParam name="cancelSignActionListener" default="#{signController.onCancelSign}" type="actionListener" />
+
+	<c:if test="#{company.EInvoice and aonRole.ESignature}">
+		<c:if test="#{!skipSignButton and !certificate.sessionCertificateStored}">
+			<aon:commandButton id="sign"
+				value="#{signBundle.sign_sign}"
+				actionListener="#{certificate.onShowSignWindow}"
+				styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
+				reRender="showSignWindow" >
+				<f:setPropertyActionListener
+					target="#{certificate.signerController}" value="#{signController}" />				
+			</aon:commandButton>
+		</c:if>
+		<c:if test="#{!skipSignButton and certificate.sessionCertificateStored}">
+			<aon:commandButton id="sign"
+				value="#{signBundle.sign_sign}"
+				actionListener="#{signActionListener}"
+				styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
+				reRender="#{signButtonReRender}"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />									
+		</c:if>
+		<c:if test="#{!skipCancelSignButton}">
+			<aon:commandButton id="cancel_sign"
+				value="#{signBundle.sign_cancel_sign}"
+				actionListener="#{cancelSignActionListener}"
+				styleClass="aon-finding-toolbar-item aon-icon-cancel-sign aon-finding-toolbar-item-no-border"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+	     </c:if>
+	</c:if>
+
+</ui:composition>

@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="roomBookingSearch">
+			
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_roomBooking_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_search}" />
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:div styleClass="aon-panelGrid-search">
+					<aon:div styleClass="aon-panelGrid-search-info">
+						<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
+					</aon:div>	
+						<aon:panelGrid columns="2"  style="width:100%;"
+							columnClasses="aon-panelGrid-odd aon-width-50, 
+							aon-panelGrid-even aon-width-auto">
+					
+							<aon:outputLabel for="RoomBooking_hotel_id"
+								value="#{pmsBundle.pms_hotel}" />
+							<aon:selectOneMenu id="RoomBooking_hotel_id"
+								value="#{roomBooking.hotel}" >
+								<f:selectItem itemLabel="#{bundle.aon_check_all}" itemValue="null" />
+								<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+								<a4j:support event="onchange" reRender="Room_item_id" ignoreDupResponses="true" />
+								<a4j:support event="oninputchanged" reRender="Room_item_id" ignoreDupResponses="true" />	
+							</aon:selectOneMenu>
+							
+							<aon:outputLabel for="Room_item_id"
+								value="#{pmsBundle.pms_room_type}" />
+							<aon:selectOneMenu id="Room_item_id"
+								value="#{roomBooking.item}" >
+								<f:selectItem itemLabel=" - " itemValue="#{null}" />
+								<f:selectItems value="#{roomBooking.hotelRoomItems}" />
+							</aon:selectOneMenu>
+							
+							<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+								<ui:param name="lookupTo" value="#{roomBooking.agency}" />
+								<ui:param name="lookupLabel" value="#{pmsBundle.pms_agency}" />
+								<ui:param name="skipNewButton" value="#{true}" />
+							</ui:include>
+						
+							<aon:outputLabel for="RoomBooking_startDate"
+								value="#{bundle.aon_date_from}" />
+							<aon:selectInputDate id="RoomBooking_startDate"
+								required="true"	
+								value="#{roomBooking.fromDate}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
+								
+							<aon:outputLabel for="RoomBooking_endDate"
+								value="#{bundle.aon_date_to}" />
+							<aon:selectInputDate id="RoomBooking_endDate"
+								required="true"	
+								value="#{roomBooking.toDate}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
+								
+							<aon:outputText value="&#160;" />
+							<aon:commandButton id="search" ignoreDupResponses="true"
+								value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
+								action="roomBooking_list"
+								actionListener="#{roomBooking.onSearch}"
+								accesskey="#{bundle.aon_key_search}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+								
+						</aon:panelGrid>
+					
+				</aon:div>
+			</aon:div>
+			
+		</aon:form>
+		
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		
+	</ui:define>
+</ui:composition>

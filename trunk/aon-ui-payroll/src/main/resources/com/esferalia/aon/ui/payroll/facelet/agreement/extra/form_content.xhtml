@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" >
+	
+	<aon:outputLabel for="AgreementExtra_startDate_month" value="#{bundle.aon_start_date}" />
+	<aon:div>
+		<aon:selectOneMenu id="AgreementExtra_startDate_month" value="#{to.startDateMonth}">
+			<f:selectItems value="#{commonCollections.months}"  />
+		</aon:selectOneMenu>
+		<aon:outputText styleClass="aon-italic aon-margin-left" value="#{payrollBundle.payroll_previuos_year}" />
+		<aon:selectBooleanCheckbox value="#{to.startDatePrevious}" />
+	</aon:div>
+	
+	<aon:outputLabel for="AgreementExtra_endDate_month" value="#{bundle.aon_end_date}" />
+	<aon:div>
+		<aon:selectOneMenu id="AgreementExtra_endDate_month" value="#{to.endDateMonth}">
+			<f:selectItems value="#{commonCollections.months}"  />
+		</aon:selectOneMenu>
+		<aon:outputText styleClass="aon-italic aon-margin-left" value="#{payrollBundle.payroll_previuos_year}" />
+		<aon:selectBooleanCheckbox value="#{to.endDatePrevious}" />
+	</aon:div>
+	
+	<aon:outputLabel for="AgreementExtra_issueDate_month" value="#{payrollBundle.payroll_salary_issue_date}" />
+	<aon:div>
+		<aon:selectOneMenu id="AgreementExtra_issueDate_day" value="#{to.issueDateDay}">
+			<f:selectItems value="#{agreementPayment.monthDays}"  />
+		</aon:selectOneMenu>
+		<aon:outputText styleClass="aon-italic aon-margin-left aon-margin-right" value="#{payrollBundle.payroll_of}" />
+		<aon:selectOneMenu id="AgreementExtra_issueDate_month" value="#{agreementPayment.issueMonth}">
+			<f:selectItems value="#{commonCollections.months}"  />
+			<a4j:support event="onchange" reRender="AgreementExtra_issueDate_day" />
+		</aon:selectOneMenu>
+	</aon:div>
+			
+</ui:composition>

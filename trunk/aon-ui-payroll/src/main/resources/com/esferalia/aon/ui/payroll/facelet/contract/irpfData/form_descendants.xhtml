@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+					
+	<aon:div styleClass="aon-scroll-area">
+		<c:if test="#{!irpfData.new}" >
+				
+			<aon:panelCollapsible expanded="#{irpfDataDescendients.model!=null and irpfDataDescendients.model.rowCount > 0}" 
+				label="#{payrollBundle.payroll_irpfData_descendients}">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+					<ui:param name="controller" value="#{irpfDataDescendients}" />
+					<ui:param name="saveButtonReRender" value="irpfDataForm" />
+					<ui:param name="removeButtonReRender" value="irpfDataForm" />
+					<ui:define name="columns">
+						<ui:include 
+							src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/descendients/gridContent.xhtml" />
+					</ui:define>
+				</ui:decorate>
+			</aon:panelCollapsible>
+								
+			<aon:panelCollapsible expanded="#{irpfDataAscendants.model.rowCount &gt; 0}" 
+				label="#{payrollBundle.payroll_irpfData_ascendants}">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+					<ui:param name="controller" value="#{irpfDataAscendants}" />
+					<ui:param name="saveButtonReRender" value="irpfDataForm" />
+					<ui:param name="removeButtonReRender" value="irpfDataForm" />
+					<ui:define name="columns">
+						<ui:include 
+							src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/ascendants/gridContent.xhtml" />
+					</ui:define>
+				</ui:decorate>
+			</aon:panelCollapsible>
+				
+		</c:if>
+	</aon:div>
+
+
+</ui:composition>

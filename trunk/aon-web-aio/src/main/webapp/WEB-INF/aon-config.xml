@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.esferalia.com/common" >
+
+	<config:config version="1.1" xmlns:config="http://www.esferalia.com/config" >
+		<config:series
+			showOfferData="true"
+			showSalesData="true"
+			showDeliveryData="true"
+			showInvoiceData="true"
+			showPosData="true"
+			showTasData="false"
+		/>
+	</config:config>	
+
+	<commercial:config version="1.4" xmlns:commercial="http://www.esferalia.com/commercial">
+		<commercial:offer
+			showInvoicing="true"
+			showSalesOrder="true"
+			showSeller="true"
+			showTasData="false"
+		/>
+		<commercial:target
+			showTaxInfoData="true"
+			showEcommerceTab="false"
+			showProfile="true"
+			showSearchOnlyCustomers="true"
+			showProject="true"
+			showProduct="true"
+			showSeller="true"
+			showAddInfo="true"
+			showSupplier="true"
+			showTariff="true"
+			showFinanceData="true"
+			showNote="true"
+		/>
+	</commercial:config>
+
+	<company:config version="1.5" xmlns:company="http://www.esferalia.com/company">
+		<company:company 
+			showRegistryBank="true" 
+			showCompanyOtherData="true"
+			showPanelTabSet="true" 
+			showEInvoice="true"
+			showDigitalCertificate="true"
+			showDirStaff="true"
+			showSaleInvoiceReportParams="true"
+		/>
+		<company:enterprise 
+			showFinanceData="false" 
+			showAddInfo="true"
+			showDirStaff="false"
+			standalone="false"
+			showEnterpriseParams="true"
+			showPayrollData="true"
+			showPersonInSearch="false"
+			showProject="true"
+		/>				
+	</company:config>
+
+	<customer:config version="1.1" xmlns:customer="http://www.esferalia.com/customer">
+		<customer:customer
+			showOfferData="true"
+			showSalesData="true"
+			showDeliveryData="true" 
+			showFinanceData="true" 
+			showProjectData="true"
+			showFinanceFeeData="true" 
+			showTaxInfoData="true"
+			showAccount="true"
+			showTariff="true" 
+			showSegment="true"
+			showNote="true"
+			showRelationship="true"
+			showRecordData="true"
+			showAddInfo="true"
+			showDirStaff="true"
+			showHistory="true"
+			showAbsence="false"
+			showLoan="false"
+			showCourse="false"			
+			showPerson="false"
+		/>
+	</customer:config>
+
+	<finance:config version="1.1" xmlns:finance="http://www.esferalia.com/finance">
+		<finance:creditor
+			showFinanceData="true" 
+			showTaxInfoData="true"
+			showAccount="true"
+			showSegment="true"
+			showAddInfo="true"
+		/>
+		<finance:invoice
+			showWarehouseData="true" 
+			showTasData="false" 
+			showSendEmail="true"
+		/>
+	</finance:config>
+
+	<payroll:config version="1.1" xmlns:payroll="http://www.esferalia.com/payroll">
+		<payroll:payroll
+			showPaymentEditionTab="true"
+			showDeductionEditionTab="true"
+		/>
+		<payroll:salary
+			showEnterpriseColumn="true"
+			showPersonColumn="true"
+			showIssueDateColumn="true"
+		/>
+		<payroll:salaryDraft
+			showEnterpriseInSearch="true"
+		/>
+		<payroll:paymentUpdate
+			showEnterpriseInSearch="true"
+		/>
+		<payroll:irpfDraft
+			showEnterpriseInSearch="true"
+		/>
+	</payroll:config>
+
+	<fiscal:config version="1.0" xmlns:fiscal="http://www.esferalia.com/fiscal">
+		<fiscal:fiscal
+			model347Enabled="true" 
+			enterpriseEnabled="false"
+		/>
+	</fiscal:config>
+
+	<groupware:config version="1.0" xmlns:groupware="http://www.esferalia.com/groupware">
+		<groupware:alarm
+			showPending="true"
+			showList="true"
+			showNew="true"
+			showGoToCallCenter="true"
+			showGoToCommercialMarketing="true"
+		/>
+	</groupware:config>
+
+	<marketing:config version="1.3" xmlns:marketing="http://www.esferalia.com/marketing">
+		<marketing:marketingCampaign
+			showSurvey="true"
+			showPhoneActionMediaType="true"
+		/>
+	</marketing:config>
+
+	<product:config version="1.3" xmlns:product="http://www.esferalia.com/product">
+		<product:catalogue
+			showEcommerceData="false"
+		/>
+ 		<product:product
+			showBarcode="true"
+			showType="true"
+			showBrand="true"
+			showSalesPrice="false"
+			showStock="true"
+			showTariff="true"
+			showCatalogues="true"
+			showComposition="true"
+			showAlternatives="true"
+			showSuppliers="true"
+			showAccount="true"
+			showAddInfo="true"
+			showAttachment="true"
+			showEcommerceData="false"
+			showHistory="true"
+		/>
+ 		<product:productCategory
+ 			showCategoryGroup="false"
+ 		/>
+	</product:config>
+
+	<purchase:config version="1.0" xmlns:purchase="http://www.esferalia.com/purchase">
+		<purchase:purchase
+			showTasData="false"
+		/>
+	</purchase:config>
+
+	<registry:config version="1.0" xmlns:registry="http://www.esferalia.com/registry">
+		<registry:rmedia 
+			showSendEmail="true" 
+		/>
+	</registry:config>
+
+	<sales:config version="1.0" xmlns:sales="http://www.esferalia.com/sales">
+		<sales:sales
+			showTasData="false"
+		/>
+	</sales:config>
+
+	<supplier:config version="1.0" xmlns:supplier="http://www.esferalia.com/supplier">
+		<supplier:supplier
+			showFinanceData="true" 
+			showTaxInfoData="true"
+			showAccount="true"
+			showSegment="true"
+			showAddInfo="true"
+		/>
+	</supplier:config>
+
+	<warehouse:config version="1.0" xmlns:warehouse="http://www.esferalia.com/warehouse">
+		<warehouse:delivery
+			showTasData="false"
+		/>
+		<warehouse:income
+			showTasData="false"
+		/>
+	</warehouse:config>
+
+	<webmail:config version="1.3" xmlns:webmail="http://www.esferalia.com/webmail" >
+		<webmail:webmail
+			connect="false"
+			showDomainMailAccounts="true"
+			connectDomainMailAccounts="false"			
+		/>
+	</webmail:config>	
+
+	<audit:config version="1.0" xmlns:audit="http://www.esferalia.com/audit">
+		<audit:actionDenied
+			modulesEnabled="true" 
+			profileDeniedActionsEnabled="true"
+		/>
+	</audit:config>
+		
+</config>

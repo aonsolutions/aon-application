@@ -1,0 +1,48 @@
+<faces-config version="1.2" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.dbutils.i18n.messages</base-name>
+			<var>dbutilsBundle</var>
+		</resource-bundle>
+	</application>
+
+	<!-- **************** DUMPER ************************** -->
+	<managed-bean>
+		<managed-bean-name>dbDumper</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.dbutils.controller.DumpController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<!-- **************** DUMPER ************************** -->
+	<managed-bean>
+		<managed-bean-name>dbUptodate</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.dbutils.controller.DatabaseUptodate</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<!-- ********** SQL SCRIPT CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>sqlScript</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.dbutils.controller.SQLScriptController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ****************************************** -->
+	<!-- ******** NAVIGATION RULES **************** -->
+	<!-- ****************************************** -->
+	<!-- ****************** DUMPER **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>dbDumper_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/dbutils/facelet/dbdumper/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- **************** SQL SCRIPT ************************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>sqlScript_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/dbutils/facelet/script/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+</faces-config>

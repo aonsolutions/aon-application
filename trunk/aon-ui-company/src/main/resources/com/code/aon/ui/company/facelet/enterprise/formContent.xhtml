@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+			
+	<aon:div>
+		<aon:div styleClass="aon-group">
+			<aon:div styleClass="aon-group-title">
+				<aon:outputText value="#{companyBundle.company_data_module}"/>
+			</aon:div>
+			<aon:div styleClass="aon-group-body"> 
+				<aon:div styleClass="aon-group-body-internal">
+					<aon:panelGrid columns="2" style="width:100%">
+						<ui:include
+							src="/com/code/aon/ui/company/facelet/company/formNewContent.xhtml" >
+							<ui:param name="controller" value="#{company}" />									
+						</ui:include>		
+						
+						<aon:outputLabel for="Enterprise_scope_id"
+							value="#{bundle.aon_scope}" />
+						<aon:selectOneMenu id="Enterprise_scope_id"
+							value="#{enterprise.to.scope}">
+							<f:selectItems value="#{configCollections.currentUserScopes}" />
+						</aon:selectOneMenu>					
+					</aon:panelGrid>
+				</aon:div>
+			</aon:div>
+		</aon:div>
+	</aon:div>
+
+	<aon:div>
+		<aon:div styleClass="aon-group">
+			<aon:div styleClass="aon-group-title">
+				<aon:outputText value="#{companyBundle.company_logo_and_signature}"/>
+			</aon:div>
+			<aon:div styleClass="aon-group-body"> 
+				<aon:div styleClass="aon-group-body-internal">
+					<aon:panelGrid columns="4" style="width:100%">
+						<aon:outputLabel for="attach_file"
+							value="#{companyBundle.company_logo}" />
+						<a4j:region>
+							<h:panelGrid id="attachGrid" columns="2">
+								<a4j:mediaOutput element="img" cacheable="false"
+									style="width: 100px;" value="#{company.logoFile.key}"
+									rendered="#{company.logoFile.size > 0}"
+									createContent="#{company.createCurrentLogoContent}">
+								</a4j:mediaOutput>
+								<aon:fileUpload id="attach_file" listWidth="100"
+									fileUploadListener="#{company.logoFileUploaded}" >
+									<f:facet name="label">
+										<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+									</f:facet>
+									<a4j:support event="onuploadcomplete" reRender="attachGrid" />
+								</aon:fileUpload>
+							</h:panelGrid>
+						</a4j:region>
+						<aon:outputLabel for="signatureAttach_file"
+							value="#{companyBundle.company_signature}" />
+						<a4j:region>
+							<h:panelGrid id="signatureAttachGrid" columns="2">
+								<a4j:mediaOutput element="img" cacheable="false"
+									style="width: 100px;" value="#{company.signatureFile.key}"
+									rendered="#{company.signatureFile.size > 0}"
+									createContent="#{company.createCurrentSignatureContent}">
+								</a4j:mediaOutput>
+								<aon:fileUpload id="signatureAttach_file" listWidth="100"
+									fileUploadListener="#{company.signatureFileUploaded}" >
+									<f:facet name="label">
+										<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+									</f:facet>
+									<a4j:support event="onuploadcomplete" reRender="signatureAttachGrid" />
+								</aon:fileUpload>
+							</h:panelGrid>
+						</a4j:region>
+					</aon:panelGrid>
+				</aon:div>
+			</aon:div>
+		</aon:div>
+		
+		<aon:div styleClass="aon-group">
+			<aon:div styleClass="aon-group-title">
+				<aon:outputText value="#{companyBundle.company_other_data}"/>
+			</aon:div>
+			<aon:div styleClass="aon-group-body"> 	
+				<aon:div styleClass="aon-group-body-internal">
+					<aon:panelGrid  columns="2" style="width:100%">	
+						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formOtherContent.xhtml" />
+						
+						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formParamsContent.xhtml" />
+					</aon:panelGrid>
+				</aon:div>
+			</aon:div>
+		</aon:div>
+	</aon:div>
+	
+</ui:composition>
+

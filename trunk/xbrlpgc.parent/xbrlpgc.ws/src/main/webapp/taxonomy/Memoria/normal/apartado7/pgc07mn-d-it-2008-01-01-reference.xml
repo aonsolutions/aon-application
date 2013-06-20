@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01 ../../../auxiliares/pgc-07-ref-2008-01-01.xsd" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xbrli="http://www.xbrl.org/2003/instance">
+  <link:referenceLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-it-2008-01-01.xsd#pgc07mn-d-it_InmovilizadoIntangibleDesgloseDomain" xlink:label="InmovilizadoIntangibleDesgloseDomain"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InmovilizadoIntangibleDesgloseDomain" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InmovilizadoIntangibleDesgloseDomain">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>7</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InmovilizadoIntangibleDesgloseDomain" xlink:to="reference_InmovilizadoIntangibleDesgloseDomain"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-it-2008-01-01.xsd#pgc07mn-d-it_InmovilizadoIntangibleDesglosePresentacion" xlink:label="InmovilizadoIntangibleDesglosePresentacion"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InmovilizadoIntangibleDesglosePresentacion" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InmovilizadoIntangibleDesglosePresentacion">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>7</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InmovilizadoIntangibleDesglosePresentacion" xlink:to="reference_InmovilizadoIntangibleDesglosePresentacion"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-it-2008-01-01.xsd#pgc07mn-d-it_InmovilizadoIntangibleDesgloseDimension" xlink:label="InmovilizadoIntangibleDesgloseDimension"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InmovilizadoIntangibleDesgloseDimension" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InmovilizadoIntangibleDesgloseDimension">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>7</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InmovilizadoIntangibleDesgloseDimension" xlink:to="reference_InmovilizadoIntangibleDesgloseDimension"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-it-2008-01-01.xsd#pgc07mn-d-it_InmovilizadoIntangibleDesarrollo" xlink:label="InmovilizadoIntangibleDesarrollo"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InmovilizadoIntangibleDesarrollo" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InmovilizadoIntangibleDesarrollo">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>7</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InmovilizadoIntangibleDesarrollo" xlink:to="reference_InmovilizadoIntangibleDesarrollo"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-it-2008-01-01.xsd#pgc07mn-d-it_InmovilizadoIntangibleConcesiones" xlink:label="InmovilizadoIntangibleConcesiones"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InmovilizadoIntangibleConcesiones" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InmovilizadoIntangibleConcesiones">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>7</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InmovilizadoIntangibleConcesiones" xlink:to="reference_InmovilizadoIntangibleConcesiones"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-it-2008-01-01.xsd#pgc07mn-d-it_InmovilizadoIntangiblePatentesLicenciasMarcasSimilares" xlink:label="InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InmovilizadoIntangiblePatentesLicenciasMarcasSimilares" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InmovilizadoIntangiblePatentesLicenciasMarcasSimilares">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>7</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InmovilizadoIntangiblePatentesLicenciasMarcasSimilares" xlink:to="reference_InmovilizadoIntangiblePatentesLicenciasMarcasSimilares"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-it-2008-01-01.xsd#pgc07mn-d-it_InmovilizadoIntangibleAplicacionesInformaticas" xlink:label="InmovilizadoIntangibleAplicacionesInformaticas"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InmovilizadoIntangibleAplicacionesInformaticas" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InmovilizadoIntangibleAplicacionesInformaticas">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>7</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InmovilizadoIntangibleAplicacionesInformaticas" xlink:to="reference_InmovilizadoIntangibleAplicacionesInformaticas"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-it-2008-01-01.xsd#pgc07mn-d-it_InmovilizadoIntangibleInvestigacion" xlink:label="InmovilizadoIntangibleInvestigacion"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InmovilizadoIntangibleInvestigacion" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InmovilizadoIntangibleInvestigacion">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>7</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InmovilizadoIntangibleInvestigacion" xlink:to="reference_InmovilizadoIntangibleInvestigacion"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-it-2008-01-01.xsd#pgc07mn-d-it_InmovilizadoIntangibleOtro" xlink:label="InmovilizadoIntangibleOtro"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InmovilizadoIntangibleOtro" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InmovilizadoIntangibleOtro">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>7</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InmovilizadoIntangibleOtro" xlink:to="reference_InmovilizadoIntangibleOtro"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-d-it-2008-01-01.xsd#pgc07mn-d-it_InmovilizadoIntangibleInvestigacionDesarrollo" xlink:label="InmovilizadoIntangibleInvestigacionDesarrollo"/>
+    <link:reference xlink:type="resource" xlink:label="reference_InmovilizadoIntangibleInvestigacionDesarrollo" xlink:role="http://www.xbrl.org/2003/role/reference" id="reference_InmovilizadoIntangibleInvestigacionDesarrollo">
+      <pgc-07-ref:Modelo>N</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>M</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>7</pgc-07-ref:Grupo>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="InmovilizadoIntangibleInvestigacionDesarrollo" xlink:to="reference_InmovilizadoIntangibleInvestigacionDesarrollo"/>
+  </link:referenceLink>
+</link:linkbase>

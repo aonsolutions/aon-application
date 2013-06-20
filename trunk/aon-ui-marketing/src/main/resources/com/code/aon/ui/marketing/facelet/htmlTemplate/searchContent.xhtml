@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<c:if test="#{lookup != null}">
+		<ui:param name="controller" value="#{lookup}"/>
+	</c:if>
+					
+	<aon:outputLabel for="RegistryAttachment_description"
+		value="#{bundle.aon_name}" />
+	<aon:inputText id="RegistryAttachment_description" size="80"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="RegistryAttachment_scope_id"
+		value="#{bundle.aon_scope}" />
+	<aon:selectOneMenu id="RegistryAttachment_scope_id"
+		value="#{configCollections.scope}"
+		valueChangeListener="#{controller.addIdEqualExpression}" >
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{configCollections.currentUserScopes}" />
+	</aon:selectOneMenu>						
+	
+	<aon:outputLabel for="RegistryAttachment_attachDate-From"
+		value="#{bundle.aon_date}" />
+	<aon:div>
+		<aon:outputLabel for="RegistryAttachment_attachDate-From" styleClass="aon-form-date-label aon-padding-right"
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="RegistryAttachment_attachDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+		<aon:outputLabel for="RegistryAttachment_attachDate-To" styleClass="aon-form-date-label aon-padding-right"
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="RegistryAttachment_attachDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+
+</ui:composition>

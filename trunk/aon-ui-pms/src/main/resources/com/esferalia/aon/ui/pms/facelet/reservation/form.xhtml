@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="reservationForm">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservation_module}" />
+				<ui:param name="controller" value="#{reservation}" />
+				<ui:param name="skipResetButton" value="#{!reservation.reservationPermission.newReservationAllowed}" />
+				<ui:param name="skipRemoveButton" value="#{true}" />
+				<ui:param name="showMoreMenu" value="#{!reservation.new and reservation.reservationPermission.showMoreMenuAllowed}" />
+				<ui:define name="moreMenuContent">
+					<aon:menuItem id="reservation-CheckIn"
+						value="#{pmsBundle.pms_check_in}" immediate="#{true}" 
+						rendered="#{reservation.reservationPermission.checkInAllowed}"
+						iconClass="aon-icon-check-in"
+						actionListener="#{reservation.onCheckIn}" />
+					<aon:menuItem id="reservation-CheckOut"
+						value="#{pmsBundle.pms_check_out}" immediate="#{true}" 
+						rendered="#{reservation.reservationPermission.checkOutAllowed}"
+						iconClass="aon-icon-check-out"
+						actionListener="#{reservation.onCheckOut}" />
+					<aon:menuItem id="reservation-EarlyCheckOut"
+						value="#{pmsBundle.pms_early_check_out}" immediate="#{true}" 
+						rendered="#{reservation.reservationPermission.earlyCheckOutAllowed}"
+						iconClass="aon-icon-check-out"
+						actionListener="#{reservation.onEarlyCheckOutShow}"
+						reRender="showEarlyCheckOutWindow">
+						<f:setPropertyActionListener target="#{earlyCheckOut.showEarlyCheckOutWindow}"
+							value="#{true}" />
+					</aon:menuItem>
+					<aon:menuItem id="reservation-Invoice"
+						value="#{pmsBundle.pms_to_invoice}"	immediate="#{true}" 
+						rendered="#{reservation.reservationPermission.invoiceAllowed}"
+						iconClass="aon-icon-favorite"
+						actionListener="#{reservation.onInvoiceShow}">
+						<f:setPropertyActionListener target="#{reservation.showInvoiceWindow}"
+							value="#{true}" />
+					</aon:menuItem>
+					<aon:menuItem id="reservation-NoShow"
+						value="#{pmsBundle.pms_no_show}" immediate="#{true}" 
+						rendered="#{reservation.reservationPermission.noShowAllowed}"
+						iconClass="aon-icon-no-show"
+						reRender="showConfirmWindow">
+						<f:setPropertyActionListener target="#{reservation.showConfirmWindow}"
+							value="#{true}" />
+						<f:setPropertyActionListener target="#{reservation.confirmNoShow}"
+							value="#{true}" />
+					</aon:menuItem>
+					<aon:menuItem id="reservation-Cancel"
+						value="#{pmsBundle.pms_to_cancel_reservation}" immediate="#{true}" 
+						rendered="#{reservation.reservationPermission.cancelAllowed}"
+						iconClass="aon-icon-removed"
+						reRender="showConfirmWindow">
+						<f:setPropertyActionListener target="#{reservation.showConfirmWindow}"
+							value="#{true}" />
+						<f:setPropertyActionListener target="#{reservation.confirmNoShow}"
+							value="#{false}" />
+					</aon:menuItem>
+					<aon:menuItem id="reservation-divert"
+						value="#{pmsBundle.pms_divert_reservation}" immediate="true" 
+						rendered="#{reservation.reservationPermission.divertAllowed}"
+						iconClass="aon-icon-transfer"
+						actionListener="#{reservation.onDivertModalShow}"
+						reRender="showDivertWindow">
+						<f:setPropertyActionListener target="#{divert.showDivertWindow}"
+							value="#{true}" />
+					</aon:menuItem>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<c:if test="#{reservation.new}">
+					<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/formNewContent.xhtml" />
+				</c:if>
+
+				<c:if test="#{!reservation.new}">
+					<aon:panelGrid columns="4" styleClass="aon-width-all"
+						columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-400,
+										aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto">
+						<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/formContent.xhtml" />
+					</aon:panelGrid>
+
+					<aon:panelTabSet id="reservationTab" selectedTab="#{reservation.selectedTab}">
+						<aon:panelTab id="room" label="#{pmsBundle.pms_rooms}">
+							<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/room/tab_grid.xhtml">
+								<ui:param name="controller" value="#{reservationRoom}" />
+							</ui:include>
+						</aon:panelTab>
+
+						<aon:panelTab id="service" label="#{pmsBundle.pms_services}">
+							<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/service/tab_grid.xhtml">
+								<ui:param name="controller" value="#{reservationService}" />
+							</ui:include>
+						</aon:panelTab>
+
+						<aon:panelTab id="guest" label="#{pmsBundle.pms_guests}">
+							<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/guest/tab_grid.xhtml">
+								<ui:param name="controller" value="#{reservationGuest}" />
+							</ui:include>
+						</aon:panelTab>
+
+						<aon:panelTab id="documents" label="#{bundle.aon_documents}">
+							<ui:include	src="/com/code/aon/ui/project/facelet/projectAttachment/tab_grid.xhtml" >
+								<ui:param name="controller" value="#{reservationAttach}" />
+							</ui:include>
+						</aon:panelTab>
+
+						<c:if test="#{reservation.invoiceModel.rowCount > 0}">
+							<aon:panelTab id="invoice" label="#{financeBundle.finance_invoice_module}">
+								<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/tab_grid.xhtml" />
+							</aon:panelTab>
+						</c:if>
+					</aon:panelTabSet>
+				</c:if>
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/room/modalRoomDetail.xhtml">
+			<ui:param name="controller" value="#{reservationRoom}" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/service/modalServiceDetail.xhtml">
+			<ui:param name="controller" value="#{reservationService}" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/modalConfirm.xhtml">
+			<ui:param name="controller" value="#{reservation}" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/modalInvoice.xhtml">
+			<ui:param name="controller" value="#{reservation}" />
+			<ui:param name="service" value="#{false}" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/modalRectification.xhtml">
+			<ui:param name="controller" value="#{reservation}" />
+			<ui:param name="service" value="#{false}" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/earlyCheckOut/modalEarlyCheckOut.xhtml">
+			<ui:param name="controller" value="#{earlyCheckOut}" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/divert/modalDivert.xhtml">
+			<ui:param name="controller" value="#{divert}" />
+			<ui:param name="modalReRender" value="reservationForm" />
+			<ui:param name="skipReservation" value="true" />
+			<ui:param name="skipRequestHotel" value="true" />
+			<ui:param name="skipStatus" value="true" />
+		</ui:include>
+	</ui:define>
+</ui:composition>

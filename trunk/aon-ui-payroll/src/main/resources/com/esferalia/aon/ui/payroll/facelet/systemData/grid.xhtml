@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="systemDataGrid">
+			
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_systemData_module}" />
+				<ui:param name="controller" value="#{systemData}" />
+			</ui:include>			
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area" id="#{systemData.beanName}VarContainer">
+			
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid_filter.xhtml" >
+					<ui:param name="controller" value="#{systemData}" />
+				</ui:include>
+
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+					<ui:param name="controller" value="#{systemData}" />
+					
+					<ui:define name="columns">	
+					
+						<aon:column alias="systemData.name" styleClass="aon-editDataTable-textColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputLabel for="systemData_name"
+									value="#{bundle.aon_name}" />
+							</f:facet>
+							<aon:outputText rendered="#{formList}" 
+								value="#{to.name}" />
+							<aon:inputText id="systemData_name" rendered="#{formEdit}" required="true" 
+								size="16" maxlength="16" value="#{controller.to.name}" />
+							<f:facet name="footer">
+								<aon:inputText id="systemData_name-New" rendered="#{formNew}" required="true" 
+									size="16" maxlength="16" value="#{controller.to.name}" />
+							</f:facet>		
+						</aon:column>
+
+						<aon:column alias="systemData.startDate" styleClass="aon-editDataTable-dateColumn aon-width-100 aon-nowrap">
+							<f:facet name="header">
+								<aon:outputLabel for="systemData_startDate" value="#{bundle.aon_start_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.startDate}" rendered="#{formList}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>		
+							<aon:selectInputDate id="systemData_startDate" rendered="#{formEdit}"
+								value="#{controller.to.startDate}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
+							<f:facet name="footer">
+								<aon:selectInputDate id="systemData_startDate-New" rendered="#{formNew}"
+									value="#{controller.to.startDate}"
+									timeZone="#{timeZoneController.timeZone}"
+									popupDateFormat="#{bundle.aon_date_pattern}"/>
+							</f:facet>
+						</aon:column>
+					
+						<aon:column alias="systemData.endDate" styleClass="aon-editDataTable-dateColumn aon-width-100 aon-nowrap">
+							<f:facet name="header">
+								<aon:outputLabel for="systemData_endDate" value="#{bundle.aon_end_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.endDate}" rendered="#{formList}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>		
+							<aon:selectInputDate id="systemData_endDate" rendered="#{formEdit}"
+								value="#{controller.to.endDate}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
+							<f:facet name="footer">
+								<aon:selectInputDate id="systemData_endDate-New" rendered="#{formNew}"
+									value="#{controller.to.endDate}"
+									timeZone="#{timeZoneController.timeZone}"
+									popupDateFormat="#{bundle.aon_date_pattern}"/>
+							</f:facet>	
+						</aon:column>
+
+						<aon:column alias="systemData.readOnly" styleClass="aon-width-80"
+							style="padding-bottom: 6px;">
+							<f:facet name="header">
+								<aon:outputLabel for="systemData_readOnly" value="#{payrollBundle.payroll_constant}" />
+							</f:facet>
+							<aon:outputText value="&#160;" 
+								styleClass="#{(to.readOnly)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+								style="padding-bottom: 5px;"
+								rendered="#{formList}"/>
+							<aon:selectBooleanCheckbox id="systemData_readOnly" rendered="#{formEdit}" 
+								value="#{controller.to.readOnly}"/>
+							<f:facet name="footer">
+								<aon:selectBooleanCheckbox id="systemData_readOnly-New"
+									rendered="#{formNew}" value="#{controller.to.readOnly}" />
+							</f:facet>
+						</aon:column>
+						
+						<aon:column alias="systemData.expression" styleClass="aon-editDataTable-textColumn aon-width-250">
+							<f:facet name="header">
+								<aon:outputLabel for="systemData_expression"
+									value="#{bundle.aon_value}" />
+							</f:facet>
+							<aon:outputText rendered="#{formList}" value="#{to.expression}" title="#{to.expression}" >
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								<aon:abbreviateConverter maxWidth="35" />
+							</aon:outputText>		
+							<aon:inputTextarea id="systemData_expression" rendered="#{formEdit}"
+								cols="60" rows="10" maxlength="128" 
+								value="#{controller.to.expression}" required="true" >
+								<f:validateLength maximum="128" />
+							</aon:inputTextarea>
+							<f:facet name="footer">
+								<aon:inputText id="systemData_expression-New" rendered="#{formNew}" 
+									cols="60" rows="10" maxlength="128" 
+									value="#{controller.to.expression}" required="true" >
+									<f:validateLength maximum="128" />
+								</aon:inputText>
+							</f:facet>
+						</aon:column>
+
+						<aon:column alias="systemData.comments" styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputLabel for="systemData_comments" value="#{bundle.aon_comment}" />
+							</f:facet>
+							<aon:outputText rendered="#{formList}" value="#{to.comments}" >
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>		
+							<aon:inputText id="systemData_comments" rendered="#{formEdit}" size="30"
+									maxlength="128" value="#{controller.to.comments}"  />
+							<f:facet name="footer">
+								<aon:inputText id="systemData_comments-New" rendered="#{formNew}" size="30"
+										maxlength="128" value="#{controller.to.comments}"/>
+							</f:facet>
+						</aon:column>
+						
+					</ui:define>
+					
+				</ui:decorate>
+				
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+
+</ui:composition>

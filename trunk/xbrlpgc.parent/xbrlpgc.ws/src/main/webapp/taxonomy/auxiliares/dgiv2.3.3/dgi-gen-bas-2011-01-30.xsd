@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:dgi-gen-bas="http://www.xbrl.org.es/es/2008/dgi/gp/gen-bas/2011-01-30" xmlns:dgi-types="http://www.xbrl.org.es/es/2008/dgi/gp/types/2011-01-30" xmlns:xbrll="http://www.xbrl.org/2003/linkbase" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:dgi-est-gen="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:xlink="http://www.w3.org/1999/xlink" targetNamespace="http://www.xbrl.org.es/es/2008/dgi/gp/gen-bas/2011-01-30" elementFormDefault="qualified">
+	<annotation>
+		<appinfo>
+			<xbrll:linkbaseRef xlink:type="simple" xlink:href="dgi-gen-bas-2011-01-30-presentation.xml" xlink:role="http://www.xbrl.org/2003/role/presentationLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+			<xbrll:linkbaseRef xlink:type="simple" xlink:href="dgi-gen-bas-2011-01-30-label-es.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+			<xbrll:linkbaseRef xlink:type="simple" xlink:href="dgi-gen-bas-2011-01-30-label-en.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+			<xbrll:linkbaseRef xlink:type="simple" xlink:href="dgi-gen-bas-2011-01-30-reference.xml" xlink:role="http://www.xbrl.org/2003/role/referenceLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+			<xbrll:roleType roleURI="http://www.xbrl.org.es/es/2008/dgi/gp/gen-bas/2011-01-30/role/GeneralBasico" id="role_GeneralBasico">
+				<xbrll:definition>Datos Generales, Información Básica</xbrll:definition>
+				<xbrll:usedOn>xbrll:presentationLink</xbrll:usedOn>
+			</xbrll:roleType>
+		</appinfo>
+	</annotation>
+	<import namespace="http://www.xbrl.org/2003/instance" schemaLocation="http://www.xbrl.org/2003/xbrl-instance-2003-12-31.xsd"/>
+	<import namespace="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30" schemaLocation="dgi-est-gen-2011-01-30.xsd"/>
+	<import namespace="http://www.xbrl.org.es/es/2008/dgi/gp/types/2011-01-30" schemaLocation="dgi-types-2011-01-30.xsd"/>
+	<element name="GeneralEntityInformation" type="xbrli:stringItemType" abstract="true" substitutionGroup="xbrli:item" nillable="true" id="dgi-gen-bas_GeneralEntityInformation" xbrli:periodType="duration"/>
+	<element name="EntityAddressPresentation" type="xbrli:stringItemType" abstract="true" substitutionGroup="xbrli:item" nillable="true" id="dgi-gen-bas_EntityAddressPresentation" xbrli:periodType="duration"/>
+	<element name="ContactPersonPresentation" type="xbrli:stringItemType" abstract="true" substitutionGroup="xbrli:item" nillable="true" id="dgi-gen-bas_ContactPersonPresentation" xbrli:periodType="duration"/>
+	<element name="OtherContactInformation" substitutionGroup="xbrli:tuple" nillable="true" id="dgi-gen-bas_OtherContactInformation">
+		<complexType>
+			<sequence>
+				<element ref="dgi-gen-bas:OtherContactType" minOccurs="0"/>
+				<element ref="dgi-est-gen:CommunicationWays" minOccurs="0" maxOccurs="unbounded"/>
+				<element ref="dgi-gen-bas:WebsiteInformation" minOccurs="0" maxOccurs="unbounded"/>
+			</sequence>
+			<attribute name="id" type="ID"/>
+		</complexType>
+	</element>
+	<element name="OthersFormatContact" type="xbrli:stringItemType" substitutionGroup="xbrli:item" nillable="true" id="dgi-gen-bas_OthersFormatContact" xbrli:periodType="duration"/>
+	<element name="OtherContactType" substitutionGroup="xbrli:tuple" nillable="true" id="dgi-gen-bas_OtherContactType">
+		<complexType>
+			<choice>
+				<element ref="dgi-types:OtherContactTypeHead" minOccurs="0"/>
+				<element ref="dgi-gen-bas:OthersFormatContact" minOccurs="0"/>
+			</choice>
+			<attribute name="id" type="ID" use="optional"/>
+		</complexType>
+	</element>
+	<element name="WebsiteInformation" substitutionGroup="xbrli:tuple" nillable="true" id="dgi-gen-bas_WebsiteInformation">
+		<complexType>
+			<sequence>
+				<element ref="dgi-gen-bas:WebsiteType" minOccurs="0"/>
+				<element ref="dgi-gen-bas:WebsiteDescription" minOccurs="0"/>
+				<element ref="dgi-gen-bas:WebsiteAddress" minOccurs="0" maxOccurs="unbounded"/>
+			</sequence>
+			<attribute name="id" type="ID"/>
+		</complexType>
+	</element>
+	<element name="WebsiteType" substitutionGroup="xbrli:tuple" nillable="true" id="dgi-gen-bas_WebsiteType">
+		<complexType>
+			<choice>
+				<element ref="dgi-types:WebsiteTypeHead" minOccurs="0"/>
+				<element ref="dgi-gen-bas:OthersWebsiteType" minOccurs="0"/>
+			</choice>
+			<attribute name="id" type="ID" use="optional"/>
+		</complexType>
+	</element>
+	<element name="OthersWebsiteType" type="xbrli:stringItemType" substitutionGroup="xbrli:item" nillable="true" id="dgi-gen-bas_OthersWebsiteType" xbrli:periodType="duration"/>
+	<element name="WebsiteDescription" type="xbrli:stringItemType" substitutionGroup="xbrli:item" nillable="true" id="dgi-gen-bas_WebsiteDescription" xbrli:periodType="duration"/>
+	<element name="WebsiteAddress" substitutionGroup="xbrli:tuple" nillable="true" id="dgi-gen-bas_WebsiteAddress">
+		<complexType>
+			<sequence>
+				<element ref="dgi-gen-bas:WebsiteURL"/>
+			</sequence>
+			<attribute name="id" type="ID"/>
+		</complexType>
+	</element>
+	<element name="WebsiteURL" type="xbrli:stringItemType" substitutionGroup="xbrli:item" nillable="true" id="dgi-gen-bas_WebsiteURL" xbrli:periodType="duration"/>
+</schema>

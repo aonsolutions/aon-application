@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/EstadoMovimientos/InmovilizadoIntangible/Dimension/2009-01-01" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pgc07mn-d-it="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/EstadoMovimientos/InmovilizadoIntangible/Dimension/2009-01-01" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:pgc-07-roles="http://www.icac.meh.es/es/fr/gaap/pgc07/roles/2009-01-01" xmlns:xbrldt="http://xbrl.org/2005/xbrldt" xmlns:xl="http://www.xbrl.org/2003/XLink" xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <xsd:annotation>
+    <xsd:appinfo>
+      <link:linkbaseRef xlink:type="simple" xlink:href="pgc07mn-d-it-2008-01-01-definition.xml" xlink:role="http://www.xbrl.org/2003/role/definitionLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+      <link:linkbaseRef xlink:type="simple" xlink:href="pgc07mn-d-it-2008-01-01-label-es.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+      <link:linkbaseRef xlink:type="simple" xlink:href="pgc07mn-d-it-2008-01-01-label-es-code.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+      <link:linkbaseRef xlink:type="simple" xlink:href="pgc07mn-d-it-2008-01-01-reference.xml" xlink:role="http://www.xbrl.org/2003/role/referenceLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+    </xsd:appinfo>
+  </xsd:annotation>
+  <xsd:import namespace="http://www.xbrl.org/2003/instance" schemaLocation="http://www.xbrl.org/2003/xbrl-instance-2003-12-31.xsd"/>
+  <xsd:import namespace="http://xbrl.org/2005/xbrldt" schemaLocation="http://www.xbrl.org/2005/xbrldt-2005.xsd"/>
+  <xsd:import namespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/roles/2009-01-01" schemaLocation="../../comun/pgc07m-roles-2008-01-01.xsd"/>
+  <xsd:element name="InmovilizadoIntangibleDesgloseDomain" id="pgc07mn-d-it_InmovilizadoIntangibleDesgloseDomain" type="xbrli:stringItemType" substitutionGroup="xbrli:item" abstract="true" nillable="true" xbrli:periodType="instant"/>
+  <xsd:element name="InmovilizadoIntangibleDesglosePresentacion" id="pgc07mn-d-it_InmovilizadoIntangibleDesglosePresentacion" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item" abstract="true" nillable="true" xbrli:balance="credit" xbrli:periodType="instant"/>
+  <xsd:element name="InmovilizadoIntangibleDesgloseDimension" id="pgc07mn-d-it_InmovilizadoIntangibleDesgloseDimension" type="xbrli:stringItemType" substitutionGroup="xbrldt:dimensionItem" abstract="true" nillable="true" xbrli:periodType="instant"/>
+  <xsd:element name="InmovilizadoIntangibleDesarrollo" id="pgc07mn-d-it_InmovilizadoIntangibleDesarrollo" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:balance="credit" xbrli:periodType="instant"/>
+  <xsd:element name="InmovilizadoIntangibleConcesiones" id="pgc07mn-d-it_InmovilizadoIntangibleConcesiones" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:balance="credit" xbrli:periodType="instant"/>
+  <xsd:element name="InmovilizadoIntangiblePatentesLicenciasMarcasSimilares" id="pgc07mn-d-it_InmovilizadoIntangiblePatentesLicenciasMarcasSimilares" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:balance="credit" xbrli:periodType="instant"/>
+  <xsd:element name="InmovilizadoIntangibleAplicacionesInformaticas" id="pgc07mn-d-it_InmovilizadoIntangibleAplicacionesInformaticas" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:balance="credit" xbrli:periodType="instant"/>
+  <xsd:element name="InmovilizadoIntangibleInvestigacion" id="pgc07mn-d-it_InmovilizadoIntangibleInvestigacion" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:balance="credit" xbrli:periodType="instant"/>
+  <xsd:element name="InmovilizadoIntangibleOtro" id="pgc07mn-d-it_InmovilizadoIntangibleOtro" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:balance="credit" xbrli:periodType="instant"/>
+  <xsd:element name="InmovilizadoIntangibleInvestigacionDesarrollo" id="pgc07mn-d-it_InmovilizadoIntangibleInvestigacionDesarrollo" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:balance="credit" xbrli:periodType="instant"/>
+</xsd:schema>

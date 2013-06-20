@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+	<aon:div styleClass="aon-login">
+		<h:panelGrid styleClass="aon-width-all aon-height-all"
+			columnClasses="#{companyDisplay.show?'aon-width-300,':''} aon-width-auto" columns="2">
+			<c:if test="#{companyDisplay.show}">
+				<ui:include src="/com/code/aon/ui/company/facelet/companyDisplay/info.xhtml" />
+			</c:if>
+			<aon:div styleClass="aon-login-box-internal">
+				<form id="login" method="post" action="j_security_check">
+					<aon:div styleClass="aon-login-title">
+						<aon:graphicImage value="#{customize.loginLogo}" />								
+						<aon:outputText style="#{customize.fontStyle}"
+							value=" / #{customize.applicationTitle}"/>
+					</aon:div>
+					<rich:jQuery name="hideErrorDiv" selector=".aon-errors"
+						timing="onJScall" query="hide()" />		
+					
+					<aon:div styleClass="aon-login-box">
+						<aon:outputText value="#{securityBundle.aon_login_label}" styleClass="aon-login-help"/>
+						<ui:insert name="error"/>
+						
+						<aon:panelGrid styleClass="aon-width-all" columns="2" columnClasses="aon-login-box-left,aon-login-box-right">
+					
+							<aon:outputLabel for="j_username" value="#{securityBundle.aon_login_user}:" styleClass="aon-login-label" />
+							<aon:inputText id="j_username" styleClass="aon-login-input"
+								size="20" maxlength="64" />
+						
+							<aon:outputLabel for="j_password" value="#{securityBundle.aon_login_passwd}:"  styleClass="aon-login-label"/>
+							<aon:inputSecret id="j_password" styleClass="aon-login-input"
+								size="20" maxlength="16" />
+							
+							<aon:outputText value="&#160;" />
+							<input id="login_btn" name="login_btn" type="submit" value="#{securityBundle.aon_login_validate}" 
+									onclick="hideErrorDiv();" class="aon-login-button"/>
+										
+						</aon:panelGrid>
+						<rich:jQuery timing="onload" selector="#j_username" query="focus()" />						
+						
+						<aon:div styleClass="aon-login-info">
+							<aon:div styleClass="aon-login-info-title">
+								<aon:outputText value="#{bundle.aon_support_title}:" />
+							</aon:div>
+
+							<aon:div styleClass="aon-bold">
+								<aon:outputText value="#{customize.supportTelephone}" />
+							</aon:div>
+							<aon:div>
+								<h:outputLink value="mailto:#{customize.supportEmail}" target="_blank" >
+									<aon:outputText style="#{customize.fontStyle}"
+										value="#{customize.supportEmail}" />
+								</h:outputLink>
+							</aon:div>
+						</aon:div>							
+
+						<c:if test="#{!facesContext.externalContext.initParameterMap['com.code.aon.skipTradeMark']}" >
+							<aon:div styleClass="aon-login-info2">		
+								<ui:include src="/com/code/aon/ui/resources/facelet/shared/trademark.xhtml" />		
+								<aon:div rendered="#{customize.applicationVersion != null}" >						
+									<aon:outputFormat value="#{bundle.aon_about_version}" >
+										<f:param value="#{customize.applicationVersion}" />
+									</aon:outputFormat>
+								</aon:div>
+							</aon:div>
+						</c:if>	
+						
+					</aon:div>
+				</form>
+			</aon:div>
+		</h:panelGrid>
+	</aon:div>	
+
+</ui:composition>

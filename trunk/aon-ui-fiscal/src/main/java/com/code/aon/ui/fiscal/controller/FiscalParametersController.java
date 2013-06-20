@@ -1,0 +1,288 @@
+package com.code.aon.ui.fiscal.controller;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.Company;
+import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.enumeration.Administration;
+import com.code.aon.finance.Creditor;
+import com.code.aon.fiscal.IFiscalConstants;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.enumeration.RegistryType;
+import com.code.aon.registry.enumeration.TaxRegime;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
+
+
+public class FiscalParametersController implements IFiscalConstants{
+	
+	public static final String FISCAL_PARAMS_BEAN_NAME = "fiscalParams";
+	
+	private Map<String, ApplicationParameter> parameters;
+	private IManagerBean managerBean;
+	private Company company;
+	
+	public Company getCompany() {
+		if (company == null) {
+			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+			setCompany( companyController.obtainCompany() );
+		}
+		return company;
+	}
+	public void setCompany(Company company) {
+		this.company = company;
+	}
+	public Map<String, ApplicationParameter> getParameters() {
+		try {
+			if (parameters == null) {
+				loadParameters();
+				loadDefaultParameters();
+			}
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+		return parameters;
+	}
+	public IManagerBean getManagerBean() throws ManagerBeanException {
+		if (managerBean == null) {
+			managerBean = BeanManager.getManagerBean(ApplicationParameter.class);	
+		}
+		return managerBean;
+	}
+	
+	private void loadParameters() throws ManagerBeanException {
+		parameters = new TreeMap<String, ApplicationParameter>();
+		List<ITransferObject> list = getManagerBean().getList(getCriteria());
+		for (ITransferObject to: list) {
+			ApplicationParameter appParam = (ApplicationParameter) to;
+			parameters.put(appParam.getName(), appParam);
+		}
+	}
+
+	private void loadDefaultParameters() throws ManagerBeanException {
+		String[] keys = {FS_DEFAULT_ADMINISTRATION
+						,FS_DEFAULT_YEAR
+						,FS_ADMINISTRATION_CODE
+						,FS_TAX_REFUND_REGISTRY
+						,FS_TAX_REGIME
+						,FS_ADMON_CREDITOR
+						,FS_PERM_ADDRESS_CHANGES
+						,FS_CONCTACT_PERSON
+						,FS_CONCTACT_PHONE
+						,FS_CONCTACT_CELLULAR
+						,FS_CONCTACT_MAIL};
+		
+		for (String key : keys) {
+			if (!parameters.containsKey(key)) {
+				ApplicationParameter p = new ApplicationParameter();
+				p.setName(key);
+				p.setValue(null);
+				p.setSystemParameter(true);
+				getManagerBean().insert(p);
+				parameters.put(key, p);
+			}
+		}
+	}
+
+	private Criteria getCriteria() throws ManagerBeanException {
+		try {
+			Criteria criteria = new Criteria();
+			String nameAlias = getManagerBean().getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME);
+			criteria.addExpression(nameAlias, "FS_*");
+			return criteria;
+		} catch (ExpressionException e) {
+			throw new ManagerBeanException(e.getMessage(),e);
+		} 
+	}
+	public String getDefaultYear() {
+		return getParameters().get(FS_DEFAULT_YEAR).getValue(); 
+	}
+	public void setDefaultYear(String defaultYear) {
+		getParameters().get(FS_DEFAULT_YEAR).setValue(defaultYear);
+	}
+	
+	public String getAdministrationCode() {
+		return getParameters().get(FS_ADMINISTRATION_CODE).getValue(); 
+	}
+	public void setAdministrationCode(String defaultYear) {
+		getParameters().get(FS_ADMINISTRATION_CODE).setValue(defaultYear);
+	}
+
+	public boolean isTaxRefundRegistry() {
+		String value = getParameters().get(FS_TAX_REFUND_REGISTRY).getValue();
+		return (value!=null && "1".equals(value)); 
+	}
+	public void setTaxRefundRegistry(boolean taxRefundRegistry) {
+		getParameters().get(FS_TAX_REFUND_REGISTRY).setValue(taxRefundRegistry?"1":"0");
+	}
+	
+	public boolean isPermanentAddressChanges() {
+		String value = getParameters().get(FS_PERM_ADDRESS_CHANGES).getValue();
+		return (value!=null && "1".equals(value)); 
+	}
+	public void setPermanentAddressChanges(boolean permanentAddressChanges) {
+		getParameters().get(FS_PERM_ADDRESS_CHANGES).setValue(permanentAddressChanges?"1":"0");
+	}
+
+	public TaxRegime getTaxRegime() {
+		String value = getParameters().get(FS_TAX_REGIME).getValue();
+		TaxRegime taxRegime = null;
+		try {
+			int v = Integer.parseInt(value);
+			taxRegime = TaxRegime.values()[v];
+		} catch (NumberFormatException e) {
+			
+		}
+		return taxRegime==null?TaxRegime.BUSINESS_SOCIETY:taxRegime; 
+	}
+	public void setTaxRegime(TaxRegime taxRegime) {
+		getParameters().get(FS_TAX_REGIME).setValue(taxRegime==null?null:Integer.toString(taxRegime.ordinal()));
+	}
+	
+	public Creditor getAdmonCreditor() {
+		String value = getParameters().get(FS_ADMON_CREDITOR).getValue();
+		Creditor creditor = null;
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Creditor.class);
+			creditor = (Creditor) bean.createNewTo();
+			if (StringUtils.isNotBlank(value)) {
+				int id = Integer.parseInt(value);
+				creditor = (Creditor) bean.get(id);
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (ManagerBeanException e) {
+			creditor = new Creditor();
+		}
+		return creditor;
+	}
+	public void setAdmonCreditor(Creditor creditor) {
+		Integer id = (creditor==null?null:creditor.getId()); 
+		getParameters().get(FS_ADMON_CREDITOR).setValue(id==null?null:Integer.toString( id ));
+	}
+
+	public Administration getDefaultAdministration() {
+		String value = getParameters().get(FS_DEFAULT_ADMINISTRATION).getValue();
+		Administration adm = null;
+		try {
+			int v = Integer.parseInt(value);
+			adm = Administration.values()[v];
+		} catch (NumberFormatException e) {
+			
+		}
+		return adm; 
+	}
+	public void setDefaultAdministration(Administration defaultAdministration) {
+		getParameters().get(FS_DEFAULT_ADMINISTRATION).setValue(defaultAdministration ==null?null:Integer.toString(defaultAdministration.ordinal()));
+	}
+
+	public String getContactPerson() {
+		String contact = getParameters().get(FS_CONCTACT_PERSON).getValue();
+		if (StringUtils.isBlank(contact)) {
+			if (getCompany().getType() == RegistryType.NATURAL) {
+				contact = getCompany().getName(); 
+			}
+		}
+		return  contact;
+	}
+	public void setContactPerson(String contactPerson) {
+		getParameters().get(FS_CONCTACT_PERSON).setValue(contactPerson);
+	}
+
+	public String getContactPhone() {
+		String contact = getParameters().get(FS_CONCTACT_PHONE).getValue();
+		if (StringUtils.isBlank(contact)) {
+			RegistryMedia media = null;
+			try {
+				media = getCompany().getPhone();
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+			}
+			contact = media==null?null:media.getValue(); 
+		}
+		return contact; 
+	}
+	public void setContactPhone(String contactPhone) {
+		getParameters().get(FS_CONCTACT_PHONE).setValue(contactPhone);
+	}
+
+	public String getContactCellular() {
+		String contact = getParameters().get(FS_CONCTACT_CELLULAR).getValue();
+		if (StringUtils.isBlank(contact)) {
+			RegistryMedia media = null;
+			try {
+				media = getCompany().getCellular();
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+			}
+			contact = media==null?null:media.getValue(); 
+		}
+		return contact;  
+	}
+	public void setContactCellular(String contactCellular) {
+		getParameters().get(FS_CONCTACT_CELLULAR).setValue(contactCellular);
+	}
+
+	public String getContactMail() {
+		String contact = getParameters().get(FS_CONCTACT_MAIL).getValue();
+		if (StringUtils.isBlank(contact)) {
+			RegistryMedia media = null;
+			try {
+				media = getCompany().getEmail();
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+			}
+			contact = media==null?null:media.getValue(); 
+		}
+		return contact;  
+	}
+	public void setContactMail(String contactMail) {
+		getParameters().get(FS_CONCTACT_MAIL).setValue(contactMail);
+	}
+
+	public boolean isCommonTerritoryDefaultAdministration() {
+		return (getDefaultAdministration() == Administration.COMMON_TERRITORY);
+	}
+	
+	public void onLoad(ActionEvent event) {
+		try {
+			loadParameters();
+			loadDefaultParameters();
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible cargar los parámetros";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+	}
+	
+	public void onAccept(ActionEvent event) {
+		try {
+			Collection<ApplicationParameter>params = parameters.values();
+			for(ApplicationParameter param : params){
+				getManagerBean().update(param);
+			}
+			loadParameters();
+		} catch (ManagerBeanException e) {
+			String msg = "Los parámetros no se guardaron correctamente. " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+	}
+
+}

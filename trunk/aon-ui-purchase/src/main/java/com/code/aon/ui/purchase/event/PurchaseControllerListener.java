@@ -1,0 +1,84 @@
+package com.code.aon.ui.purchase.event;
+
+import javax.faces.model.SelectItem;
+
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.WorkPlace;
+import com.code.aon.purchase.Purchase;
+import com.code.aon.purchase.enumeration.PurchaseDocumentType;
+import com.code.aon.purchase.enumeration.PurchaseStatus;
+import com.code.aon.ui.company.controller.CompanyCollectionsController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
+import com.code.aon.ui.form.event.ControllerAdapter;
+import com.code.aon.ui.form.event.ControllerEvent;
+import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.purchase.controller.IPurchaseConstants;
+import com.code.aon.ui.purchase.controller.PurchaseController;
+import com.code.aon.ui.util.AonUtil;
+
+public class PurchaseControllerListener extends ControllerAdapter implements IPurchaseConstants {
+
+	@Override
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+		PurchaseController controller = (PurchaseController)event.getController();
+		try {
+			((Purchase)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
+			((Purchase)controller.getTo()).setStatus(PurchaseStatus.PENDING);
+			WorkPlace workPlace = (WorkPlace)((SelectItem)companyColls.getCurrentUserWorkPlaces().get(0)).getValue();
+			((Purchase)controller.getTo()).setWorkPlace(workPlace);
+			((Purchase)controller.getTo()).setScope(workPlace.getScope());
+			((Purchase)controller.getTo()).setDocumentType(PurchaseDocumentType.NORMAL);
+			controller.setAddresses(null);
+			controller.setDefaultPayMethod(null);
+			controller.resetPurchasePayMethod();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage());
+		}
+	}
+
+	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		PurchaseController controller = (PurchaseController)event.getController();
+		try {
+			controller.loadAddresses(((Purchase)controller.getTo()).getSupplier().getRegistry().getId());
+			controller.loadDefaultPayMethod(((Purchase)controller.getTo()).getSupplier().getRegistry().getId(), true);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage());
+		}
+	}
+
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		IController purchaseDetailController = FormUtil.getController(PURCHASE_DETAIL_CONTROLLER_NAME);
+		purchaseDetailController.onReset(null);
+	}
+	
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		PurchaseController purchaseController = (PurchaseController)this.getController();
+		Purchase purchase = (Purchase)purchaseController.getTo();
+		if (purchase.getProject() != null && purchase.getProject().getId() != null) {
+			IController purchaseDetailController = FormUtil.getController(PURCHASE_DETAIL_CONTROLLER_NAME);
+			purchaseDetailController.onSearch(null);
+		}
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		PurchaseController purchaseController = (PurchaseController)this.getController();
+		Purchase purchase = (Purchase)purchaseController.getTo();
+		if (purchase.getProject() == null || purchase.getProject().getId() == null) {
+			try {
+				purchaseController.removePurchaseDetailProject();
+			} catch (ManagerBeanException e) {
+				throw new ControllerListenerException(e.getMessage());
+			}
+		}
+	}
+	
+}

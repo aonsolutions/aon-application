@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01 ../../../auxiliares/pgc-07-ref-2008-01-01.xsd" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xbrli="http://www.xbrl.org/2003/instance">
+  <link:referenceLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <link:loc xlink:type="locator" xlink:href="pgc07p-etcpn-2008-01-01.xsd#pgc07p-etcpn_EstadoTotalCambiosPatrimonioNetoPresentacion" xlink:label="EstadoTotalCambiosPatrimonioNetoPresentacion" xlink:title="EstadoTotalCambiosPatrimonioNetoPresentacion"/>
+    <link:reference xlink:type="resource" xlink:label="reference_EstadoTotalCambiosPatrimonioNetoPresentacion" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:title="reference_EstadoTotalCambiosPatrimonioNetoPresentacion" id="reference_EstadoTotalCambiosPatrimonioNetoPresentacion">
+      <pgc-07-ref:Modelo>P</pgc-07-ref:Modelo>
+      <pgc-07-ref:Estado>ECPN</pgc-07-ref:Estado>
+      <pgc-07-ref:Grupo>B</pgc-07-ref:Grupo>
+      <pgc-07-ref:Account>PGC2008</pgc-07-ref:Account>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="EstadoTotalCambiosPatrimonioNetoPresentacion" xlink:to="reference_EstadoTotalCambiosPatrimonioNetoPresentacion" xlink:title="reference: EstadoTotalCambiosPatrimonioNetoPresentacion to reference_EstadoTotalCambiosPatrimonioNetoPresentacion"/>
+    <link:loc xlink:type="locator" xlink:href="pgc07p-etcpn-2008-01-01.xsd#pgc07p-etcpn_EstadoTotalCambiosPatrimonioNetoHypercube" xlink:label="EstadoTotalCambiosPatrimonioNetoHypercube" xlink:title="EstadoTotalCambiosPatrimonioNetoHypercube"/>
+    <link:reference xlink:type="resource" xlink:label="reference_EstadoTotalCambiosPatrimonioNetoHypercube" xlink:role="http://www.xbrl.org/2003/role/commentaryRef" xlink:title="reference_EstadoTotalCambiosPatrimonioNetoHypercube" id="reference_EstadoTotalCambiosPatrimonioNetoHypercube">
+      <pgc-07-ref:Account>PGC2008</pgc-07-ref:Account>
+    </link:reference>
+    <link:referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="EstadoTotalCambiosPatrimonioNetoHypercube" xlink:to="reference_EstadoTotalCambiosPatrimonioNetoHypercube" xlink:title="reference: EstadoTotalCambiosPatrimonioNetoHypercube to reference_EstadoTotalCambiosPatrimonioNetoHypercube"/>
+  </link:referenceLink>
+</link:linkbase>

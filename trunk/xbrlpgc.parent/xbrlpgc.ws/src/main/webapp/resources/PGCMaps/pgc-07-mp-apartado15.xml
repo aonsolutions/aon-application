@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mp-apartado15" mainSchemaPrefix="pgc-07-mp" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/2009-01-01">
+    <conceptMap
+        outputID="AplazamientosPagoPagosRealizadosPendientesImporte"
+        inputID="1"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/AplazamientosPagoPagosRealizadosPendientes/Dimension/2009-01-01"
+        nsPrefix="pgc07d-aplaz" domain="pgc07d-aplaz:AplazamientosPagoPagosRealizadosPendientesDimension">
+        <Member id="94704" qname="pgc07mc-bs:AplazamientosPagoAplazamientosFechaCierreSobrepasanPlazoMaximoLegal"/>
+        <Member id="94701" qname="pgc07mc-bs:AplazamientosPagoRestoExcedido"/>
+        <Member id="94702" qname="pgc07mc-bs:AplazamientosPagoTotal"/>
+        <Member id="94700" qname="pgc07mc-bs:AplazamientosPagoDentroPlazoMaximoLegal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="AplazamientosPagoPagosRealizadosPendientesPorcentaje"
+        inputID="2"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/AplazamientosPagoPagosRealizadosPendientes/Dimension/2009-01-01"
+        nsPrefix="pgc07d-aplaz" domain="pgc07d-aplaz:AplazamientosPagoPagosRealizadosPendientesDimension">
+        <Member id="94704" qname="pgc07mc-bs:AplazamientosPagoAplazamientosFechaCierreSobrepasanPlazoMaximoLegal"/>
+        <Member id="94701" qname="pgc07mc-bs:AplazamientosPagoRestoExcedido"/>
+        <Member id="94702" qname="pgc07mc-bs:AplazamientosPagoTotal"/>
+        <Member id="94700" qname="pgc07mc-bs:AplazamientosPagoDentroPlazoMaximoLegal"/>
+    </conceptMap>
+</Statement>

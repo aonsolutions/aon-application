@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"	
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:panelTabSet id="enterpriseTabSet" selectedTab="#{salaryLauncher.params.enterpriseFilter.selectedTab}">
+	
+		<c:if test="#{salaryLauncher.params.enterpriseFilter.includedModel.rowCount > 0}" >
+			<aon:panelTab id="includedTab" label="Empresas seleccionadas">
+				<aon:div id="includedListContent" >
+					<aon:div id="includedToolBarDiv" styleClass="aon-toolbar">
+						<aon:commandButton title="#{bundle.aon_check_all}"
+							styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+							value="#{bundle.aon_check_all}"
+							actionListener="#{salaryLauncher.params.enterpriseFilter.includedCheckAll}" reRender="includedListContent"
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+						<aon:commandButton title="#{bundle.aon_uncheck_all}"
+							styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+							value="#{bundle.aon_uncheck_all}"
+							actionListener="#{salaryLauncher.params.enterpriseFilter.includedCheckNone}" reRender="includedListContent"
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+						<aon:div id="removeButton" style="display:inline;" >
+							<aon:commandButton title="#{payrollBundle.payroll_discard}"
+								styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
+								value="#{payrollBundle.payroll_discard}"
+								rendered="#{salaryLauncher.params.enterpriseFilter.includedCheckedCount > 0}"
+								actionListener="#{salaryLauncher.params.enterpriseFilter.onRemoveIncluded}" reRender="enterpriseTabSet"
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+						</aon:div>
+					</aon:div>
+					
+					<aon:dataTable id="includedListData" value="#{salaryLauncher.params.enterpriseFilter.includedModel}"
+						var="to" rows="20" rendered="#{salaryLauncher.params.enterpriseFilter.includedModel.rowCount > 0}" >	
+						
+						<aon:rowSelector id="noBatched-select" toggleOnClick="#{false}"/>
+					
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText id="includedCheckedCount" value="#{salaryLauncher.params.enterpriseFilter.includedCheckedCount}" />
+							</f:facet>
+							<aon:selectBooleanCheckbox id="Included_Row_checked"
+								value="#{salaryLauncher.params.enterpriseFilter.includedRowChecked}"
+								valueChangeListener="#{salaryLauncher.params.enterpriseFilter.includedRowSelected}"  >
+								<a4j:support event="onclick" 
+									ajaxSingle="true"
+									ignoreDumpResponses="true"
+									limitToList="true"
+									eventsQueue="availableFinances"
+									reRender="includedCheckedCount, removeButton" />
+							</aon:selectBooleanCheckbox>
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_company_document}" />
+							</f:facet>
+							<aon:outputText value="#{to.registry.document}" />
+						</aon:column>
+					
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_company_name}" />
+							</f:facet>
+							<aon:div styleClass="aon-nowrap">
+								<aon:outputText value="#{to.registry.fullName}"/>
+							</aon:div>
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_company_alias}" />
+							</f:facet>
+							<aon:outputText value="#{to.registry.alias}" />
+						</aon:column>
+			
+					</aon:dataTable>
+					
+					<aon:dataScroller2 for="includedListData" showNote="true" />
+				</aon:div>
+				
+			</aon:panelTab>
+		</c:if>
+	
+		<aon:panelTab id="availableTab" label="Empresas disponibles">
+		
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryLauncher/enterpriseFilter/formList.xhtml" >
+				<ui:param name="controller" value="#{salaryLauncher.params.enterpriseFilter}" />
+				<ui:param name="controllerList" value="#{enterpriseList}" />
+			</ui:include>
+			
+		</aon:panelTab>
+  
+	</aon:panelTabSet>
+				
+</ui:composition>

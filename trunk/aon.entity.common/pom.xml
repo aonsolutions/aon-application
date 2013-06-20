@@ -1,0 +1,33 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+	    <artifactId>aon.parent</artifactId>
+	    <groupId>com.code.aon</groupId>
+	    <version>7.19</version>
+	    <relativePath>..</relativePath>
+	</parent>
+    <groupId>com.esferalia.aon</groupId>
+	<artifactId>aon.entity.common</artifactId>
+	<name>AON ENTITY COMMON</name>
+	<description>AON ENTITY COMMON</description>
+	<dependencies>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.common</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-tools</artifactId>
+			<version>3.2.4.GA</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+    <profiles>
+      	<profile>
+            <id>perform-stats</id>
+        </profile>
+    </profiles>
+</project>

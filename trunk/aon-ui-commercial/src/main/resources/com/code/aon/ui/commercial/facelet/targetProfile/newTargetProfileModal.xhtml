@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+	<ui:decorate template="/com/code/aon/ui/registry/facelet/registry/newDetailModal.xhtml">
+		<ui:param name="detailId" value="TargetProfile" />
+		<ui:param name="minWidth" value="700" />
+		<ui:param name="minHeight" value="350" />
+		<ui:param name="modalTitle" value="#{commercialBundle.commercial_target_profile}" />
+		<ui:param name="showNewDetailWindow" value="#{controller.showNewTargetProfileWindow}" />
+		<ui:param name="detailController" value="#{targetProfileController}" />
+	
+		<ui:define name="content">
+			<ui:include src="/com/code/aon/ui/commercial/facelet/targetProfile/form_content.xhtml" >
+				<ui:param name="controller" value="#{targetProfileController}" />
+				<ui:param name="questionReRender" value="newTargetProfileModalPanel" />
+			</ui:include>
+		</ui:define>
+		
+	</ui:decorate>
+	
+</ui:composition>

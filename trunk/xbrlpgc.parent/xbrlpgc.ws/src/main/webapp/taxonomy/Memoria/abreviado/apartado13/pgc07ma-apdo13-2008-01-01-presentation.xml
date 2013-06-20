@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <link:roleRef roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/Apartado13/2008-01-01/role/OtraInformacion" xlink:type="simple" xlink:href="../../comun/pgc07m-roles-2008-01-01.xsd#OtraInformacionAbreviado"/>
+  <link:presentationLink xlink:type="extended" xlink:role="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/Apartado13/2008-01-01/role/OtraInformacion">
+    <link:loc xlink:type="locator" xlink:href="../../comun/pgc07mc-bs-2008-01-01.xsd#pgc07mc-bs_OtraInformacionPresentacion" xlink:label="OtraInformacionPresentacion"/>
+    <link:loc xlink:type="locator" xlink:href="../../comun/pgc07mc-bs-2008-01-01.xsd#pgc07mc-bs_OtraInformacionPersonasEmpleadasEjercicioFinalCategoriasPresentacion" xlink:label="OtraInformacionPersonasEmpleadasEjercicioFinalCategoriasPresentacion"/>
+    <link:presentationArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" xlink:from="OtraInformacionPresentacion" xlink:to="OtraInformacionPersonasEmpleadasEjercicioFinalCategoriasPresentacion" order="1.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-eco-bas-2011-01-30.xsd#dgi-eco-bas_EmployeesNumberEndAccountingPeriodTotal" xlink:label="EmployeesNumberEndAccountingPeriodTotal"/>
+    <link:presentationArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" xlink:from="OtraInformacionPersonasEmpleadasEjercicioFinalCategoriasPresentacion" xlink:to="EmployeesNumberEndAccountingPeriodTotal" order="2.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-eco-bas-2011-01-30.xsd#dgi-eco-bas_EmployeeCategoryTotal" xlink:label="EmployeeCategoryTotal"/>
+    <link:presentationArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" xlink:from="OtraInformacionPersonasEmpleadasEjercicioFinalCategoriasPresentacion" xlink:to="EmployeeCategoryTotal" use="optional" order="1.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-eco-bas-2011-01-30.xsd#dgi-eco-bas_MaleEmployeesNumberEndAccountingPeriodTotal" xlink:label="MaleEmployeesNumberEndAccountingPeriodTotal"/>
+    <link:presentationArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" xlink:from="OtraInformacionPersonasEmpleadasEjercicioFinalCategoriasPresentacion" xlink:to="MaleEmployeesNumberEndAccountingPeriodTotal" order="3.0"/>
+    <link:loc xlink:type="locator" xlink:href="http://www.xbrl.es/gp/2011-01-30/dgi/dgi-eco-bas-2011-01-30.xsd#dgi-eco-bas_FemaleEmployeesNumberEndAccountingPeriodTotal" xlink:label="FemaleEmployeesNumberEndAccountingPeriodTotal"/>
+    <link:presentationArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" xlink:from="OtraInformacionPersonasEmpleadasEjercicioFinalCategoriasPresentacion" xlink:to="FemaleEmployeesNumberEndAccountingPeriodTotal" order="4.0"/>
+  </link:presentationLink>
+</link:linkbase>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<link:linkbase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xbrli="http://www.xbrl.org/2003/instance">
+  <link:labelLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <link:loc xlink:type="locator" xlink:href="pgc07mn-apdo17-2008-01-01.xsd#pgc07mn-apdo17_TransaccionesPagosHypercube" xlink:label="TransaccionesPagosHypercube" xlink:title="TransaccionesPagosHypercube"/>
+    <link:label xlink:type="resource" xlink:label="label_TransaccionesPagosHypercube" xlink:role="http://www.xbrl.org/2003/role/label" xlink:title="label_TransaccionesPagosHypercube" xml:lang="es" id="label_TransaccionesPagosHypercube">Transacciones Pagos Hypercube</link:label>
+    <link:labelArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-label" xlink:from="TransaccionesPagosHypercube" xlink:to="label_TransaccionesPagosHypercube" xlink:title="label: TransaccionesPagosHypercube to label_TransaccionesPagosHypercube"/>
+    <link:label xlink:type="resource" xlink:label="label_TransaccionesPagosHypercube_2" xlink:role="http://www.xbrl.org/2003/role/verboseLabel" xml:lang="es" id="label_TransaccionesPagosHypercube_2">TransaccionesPagosHypercube</link:label>
+    <link:labelArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-label" xlink:from="TransaccionesPagosHypercube" xlink:to="label_TransaccionesPagosHypercube_2"/>
+  </link:labelLink>
+</link:linkbase>

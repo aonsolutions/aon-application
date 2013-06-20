@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:outputLabel for="Registry_id"
+		value="#{registryBundle.registry_relationed}" />
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
+		<ui:param name="lookupTo" value="#{controller.to.relatedRegistry}" />
+		<ui:param name="idRequired" value="#{true}" />
+		<ui:param name="skipLabel" value="#{true}" />
+	</ui:include>
+	
+	<aon:outputLabel for="Relationship_id" value="#{bundle.aon_type}" />
+	<aon:selectOneMenu id="Relationship_id" 
+		value="#{controller.to.relationship.id}"
+		required="#{true}"
+		styleClass="aon-form-selectOneMenu-field"
+		valueChangeListener="#{controller.onRelationshipChanged}" >
+		<f:selectItems value="#{registryCollections.relationships}" />
+	</aon:selectOneMenu>
+	
+	<aon:outputLabel for="comments"  
+		value="#{registryBundle.registry_observation}" />
+	<aon:inputText id="comments"
+		styleClass="aon-form-input-text" size="64"
+		value="#{controller.to.comments}" />
+	
+</ui:composition>

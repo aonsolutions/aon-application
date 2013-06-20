@@ -1,0 +1,397 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+			<aon:div id="aonToolbar">
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+					<ui:param name="toolbarID" value="aonToolbarMain" />
+					<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_entry_module}" />
+					<ui:param name="toolbarDescription"
+						value="#{accountEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+	
+					<ui:define name="additionalToolbarContent">
+						<aon:commandButton id="reset" 
+							value="#{bundle.aon_reset}"
+							accesskey="#{bundle.aon_key_new}"
+							title="#{bundle.aon_key_new} (ALT+#{bundle.aon_key_new})"
+							action="accountEntry_form"
+							actionListener="#{accountEntry.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							rendered="#{!accountEntry.new}"
+							focus="AccountEntry_accountPeriod" />
+
+						<aon:commandButton id="save-add" value="#{bundle.aon_save}"
+							title="#{bundle.aon_save} (ALT+#{bundle.aon_key_save})"
+							accesskey="#{bundle.aon_key_save}"
+							actionListener="#{accountEntry.accept}"
+							rendered="#{accountEntry.new and accountEntry.manual and (accountEntry.model.rowCount > 0 or accountEntry.new)}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							focus="Account_Id">
+							<aon:actionListener method="#{accountEntryDetail.onReset}" />
+						</aon:commandButton>
+
+						<aon:commandButton id="save-update" value="#{bundle.aon_save}"
+							title="#{bundle.aon_save} (ALT+#{bundle.aon_key_save})"
+							accesskey="#{bundle.aon_key_save}"
+							actionListener="#{accountEntry.accept}"
+							rendered="#{!accountEntry.new and accountEntry.updatable and accountEntry.manual}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept">
+						</aon:commandButton>
+
+						<aon:commandButton id="remove" value="#{bundle.aon_remove}"
+							title="#{bundle.aon_remove} (ALT+#{bundle.aon_key_remove})"
+							accesskey="#{bundle.aon_key_remove}" 
+							actionListener="#{accountEntry.onRemove}"
+							action="#{accountEntry.searchAction}"
+							rendered="#{accountEntry.removable}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							immediate="true"
+							onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
+
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							title="#{bundle.aon_search} (ALT+#{bundle.aon_key_search})"
+							accesskey="#{bundle.aon_key_search}" action="accountEntry_search"
+							actionListener="#{accountEntry.onEditSearch}"
+							rendered="#{!accountEntry.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							immediate="true" />
+
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							title="#{bundle.aon_cancel} (ALT+#{bundle.aon_key_cancel})"
+							accesskey="#{bundle.aon_key_cancel}" rendered="#{accountEntry.new}"
+							actionListener="#{accountEntry.onCancel}" action="accountEntry_search"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true" />
+
+						<aon:commandButton id="update" value="#{bundle.aon_update}"
+							accesskey="Q" title="#{bundle.aon_update} Alt+Q"
+							action="#{accountEntry.onNavigate}"
+							actionListener="#{accountEntry.onSelectEntry}"
+							rendered="#{!accountEntry.new and accountEntry.updatableViaWizard}"
+							styleClass="aon-finding-toolbar-item aon-icon-refresh"
+							immediate="true" />
+
+						<aon:commandButton id="viewInvoice" 
+							value="#{financeBundle.finance_invoice}"
+							accesskey="I" title="#{financeBundle.finance_invoice} Alt+I"
+							action="#{accountEntry.onLoadInvoice}"
+							rendered="#{!accountEntry.new and accountEntry.aonInvoice}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true" />
+
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							accesskey="K" title="#{bundle.aon_back} Alt+K"
+							action="#{accountEntry.backAction}"
+							rendered="#{accountEntry.backActionEnabled}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true" />
+
+						<c:if test="#{aonRole.confidentiality}">
+							<aon:commandButton id="updateSecurityLevel" 
+								value="#{bundle.aon_update} #{bundle.aon_security}"
+								title="#{bundle.aon_update} #{bundle.aon_security}"
+								rendered="#{!accountEntry.new and !accountEntry.manual and !accountEntry.updatableViaWizard}"
+								actionListener="#{accountEntry.onChangeSecurityLevel}" 
+								styleClass="aon-finding-toolbar-item #{accountEntry.to.confidential?'aon-icon-unlock':'aon-icon-lock'}"
+								immediate="true"
+								onclick="if (!confirm('#{accountingBundle.accounting_change_security}')) return false;" />
+						</c:if>
+						<aon:commandButton id="duplicate" value="#{accountingBundle.accounting_duplicate}"
+							title="#{accountingBundle.accounting_duplicate}"
+							actionListener="#{accountEntry.showDuplicateEntryPanel}"
+							rendered="#{!accountEntry.new and accountEntry.manual}"
+							reRender="duplicateEntryContainer"
+							styleClass="aon-finding-toolbar-item aon-icon-copy"
+							immediate="true" />
+						
+						<aon:htmlCommandLink id="journalBookXls-excel-report"
+							value="&#160;" target="_blank" 
+							actionListener="#{accountEntry.onExcelJournal}"
+							title="#{bundle.aon_listing} MS Excel"
+							styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
+							rendered="#{!accountEntry.new}"
+							accesskey="#{bundle.aon_key_print}">
+						</aon:htmlCommandLink>
+						<aon:htmlCommandLink id="journalBook-report"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+							value="#{bundle.aon_listing}" 
+							rendered="#{!accountEntry.new}"
+							actionListener="#{accountEntry.onPDFJournal}">
+						</aon:htmlCommandLink>
+						
+						
+						<aon:spin id="accountEntrySpin"
+							controller="#{accountEntry}" action="accountEntry_form" 
+							rendered="#{!accountEntry.new}" 
+							style="float:right;margin-right:0;" />
+						
+					</ui:define>
+				</ui:decorate>
+		
+				<c:if test="#{!accountEntry.new}">
+					<ui:include
+							src="/com/code/aon/ui/accounting/facelet/entry/entriesToolbar.xhtml" />
+				</c:if>
+
+			</aon:div>
+
+			<aon:div id="entryContainer" styleClass="aon-scroll-area" >
+				<aon:div
+					rendered="#{accountEntry.model.rowCount > 0 or accountEntry.new}">
+					<aon:panelGrid columns="11" style="width: 99%;margin-bottom: 1em;"
+						columnClasses="
+						 aon-panelGrid-odd aon-width-50
+						,aon-panelGrid-even aon-width-80
+						,aon-panelGrid-odd aon-width-70
+						,aon-panelGrid-even aon-width-80
+						,aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-80
+						,aon-panelGrid-even aon-width-150
+						,aon-panelGrid-odd aon-width-50
+						,aon-panelGrid-even aon-width-150
+						,aon-panelGrid-even aon-width-auto
+						,aon-panelGrid-even aon-width-50">
+
+						<aon:outputText value="#{bundle.aon_id}: " />
+						<aon:div>
+							<aon:div rendered="#{!accountEntry.new}">
+								<aon:outputText value="#{accountEntry.to.id}" />
+							</aon:div>
+						</aon:div>
+
+						<aon:outputText value="#{accountingBundle.accounting_period}: " />
+						<aon:div>
+							<aon:selectOneMenu id="AccountEntry_accountPeriod"
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{accountEntry.to.accountPeriod}"
+								rendered="#{accountEntry.new or (!accountEntry.new and accountEntry.manual and accountEntry.periodActive)}">
+								<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
+							</aon:selectOneMenu>
+							<aon:outputText value="#{accountEntry.to.accountPeriod.name}"
+								rendered="#{!accountEntry.new and (!accountEntry.manual or !accountEntry.periodActive)}" />
+						</aon:div>
+
+						<aon:outputText value="#{accountingBundle.accounting_journal}: " />
+						<aon:div>
+							<aon:outputText value="#{accountEntry.to.journal}" rendered="#{!accountEntry.new}" />
+						</aon:div>
+						
+						
+						<aon:div>
+							<c:if test="#{aonRole.confidentiality}">
+								<aon:selectBooleanCheckbox id="AccountEntry_securityLevel"
+									value="#{accountEntry.to.confidential}"
+									rendered="#{accountEntry.manual}" />
+								<aon:outputText styleClass="aon-italic aon-margin-right"
+									value="#{bundle.aon_confidential}"
+									rendered="#{accountEntry.manual}"/>
+								<aon:outputText styleClass="aon-margin-left aon-icon aon-icon-confidential" 
+									value="#{bundle.aon_confidential}" 
+									title="#{bundle.aon_confidential}"
+									rendered="#{!accountEntry.manual and accountEntry.to.confidential}">
+								</aon:outputText>
+								
+							</c:if>
+						</aon:div>
+
+						<aon:outputText value="#{bundle.aon_date}: " />
+						<aon:div>
+							<aon:selectInputDate required="true"
+								id="AccountEntry_entryDate" value="#{accountEntry.to.entryDate}"
+								rendered="#{accountEntry.new or (!accountEntry.new and accountEntry.manual and accountEntry.periodActive)}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
+							<aon:outputText value="#{accountEntry.to.entryDate}"
+								rendered="#{!accountEntry.new and (!accountEntry.manual or !accountEntry.periodActive)}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:div>
+
+						<aon:div>
+							<aon:outputText value="#{accountEntry.to.type}" />
+						</aon:div>
+
+						<aon:div id="commentIconContainer" style="text-align:center;cursor:pointer;">
+							<a4j:support
+								event="onclick"
+								reRender="commentContainer,commentIconContainer"
+								rendered="#{!accountEntry.commentPanelVisible}"
+								actionListener="#{accountEntry.showCommentPanel}">
+							</a4j:support>
+							
+							<aon:outputText value="&#160;" styleClass="aon-icon-comment"
+								rendered="#{empty accountEntry.to.comments}" 
+								style="padding-left:20px"/>
+
+							<aon:div rendered="#{!empty accountEntry.to.comments}">
+								<aon:outputText value="&#160;" styleClass="aon-icon-comment-red"
+									style="padding-left:20px"/>
+								<rich:toolTip>
+									<aon:outputText value="#{accountEntry.to.comments}"/>
+								</rich:toolTip>
+							</aon:div>
+							
+						</aon:div>
+						
+					</aon:panelGrid>
+
+					<ui:include
+						src="/com/code/aon/ui/accounting/facelet/entry/linesForm.xhtml" />
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<aon:div id="commentContainer">
+			<c:if test="#{accountEntry.commentPanelVisible}">
+				<rich:modalPanel id="commentModalPanel" minHeight="240"
+					minWidth="520" rendered="#{accountEntry.commentPanelVisible}"
+					showWhenRendered="true" zindex="90">
+					<f:facet name="header">
+						<aon:div styleClass="aon-popupWindow-title">
+							<aon:outputText value="#{bundle.aon_comment}" />
+						</aon:div>
+					</f:facet>
+					<f:facet name="controls">
+						<aon:form>
+							<aon:commandButton type="button"
+								styleClass="aon-popupWindow-close"
+								reRender="commentContainer,commentIconContainer"
+								immediate="true">
+								<aon:actionHotKey key="esc" />
+								<f:setPropertyActionListener
+									target="#{accountEntry.commentPanelVisible}" value="#{false}" />
+							</aon:commandButton>
+						</aon:form>
+					</f:facet>
+					<aon:form id="commentForm">
+						<aon:div styleClass="aon-popupWindow-content">
+							<aon:div style="width:100%">
+								<aon:div styleClass="aon-popupWindow-content-internal">
+									<aon:div style="width:99%">
+										<aon:div styleClass="aon-toolbar">
+											<aon:commandButton id="commentAccept"
+												value="#{bundle.aon_accept}"
+												reRender="commentContainer,commentIconContainer"
+												actionListener="#{accountEntry.accept}"
+												styleClass="aon-finding-toolbar-item aon-icon-accept">
+												<f:setPropertyActionListener
+													target="#{accountEntry.commentPanelVisible}"
+													value="#{false}" />
+											</aon:commandButton>
+										</aon:div>
+										<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+											<aon:panelGrid id="menuGrid" columns="2" dir="true"
+												style="width: 80%;">
+												<aon:outputLabel for="AccountEntry_comment"
+													value="#{bundle.aon_comment}" />
+												<aon:inputTextarea id="AccountEntry_comment" 
+													cols="40" rows="6"
+													value="#{accountEntry.to.comments}" />
+											</aon:panelGrid>
+										</aon:div>
+									</aon:div>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:form>
+				</rich:modalPanel>
+			</c:if>
+		</aon:div>
+		
+		
+		<aon:div id="duplicateEntryContainer">
+			<c:if test="#{accountEntry.duplicateEntryPanelVisible}">
+				<rich:modalPanel id="duplicateEntryModalPanel" minHeight="350"
+					minWidth="520" rendered="#{accountEntry.duplicateEntryPanelVisible}"
+					showWhenRendered="true" zindex="90">
+					<f:facet name="header">
+						<aon:div styleClass="aon-popupWindow-title">
+							<aon:outputText value="#{accountingBundle.accounting_duplicate}" />
+						</aon:div>
+					</f:facet>
+					<f:facet name="controls">
+						<aon:form>
+							<aon:commandButton type="button"
+								styleClass="aon-popupWindow-close"
+								reRender="duplicateEntryContainer,duplicateEntryIconContainer"
+								immediate="true">
+								<aon:actionHotKey key="esc" />
+								<f:setPropertyActionListener
+									target="#{accountEntry.duplicateEntryPanelVisible}" value="#{false}" />
+							</aon:commandButton>
+						</aon:form>
+					</f:facet>
+					<aon:form id="duplicateEntryForm">
+						<aon:div styleClass="aon-popupWindow-content">
+							<aon:div style="width:100%">
+								<aon:div styleClass="aon-popupWindow-content-internal">
+									<aon:div style="width:99%">
+										<aon:div styleClass="aon-toolbar">
+											<aon:commandButton id="duplicateEntryAccept"
+												value="#{accountingBundle.accounting_duplicate}"
+												actionListener="#{accountEntry.onDuplicate}"
+												onclick="if (!confirm('#{accountingBundle.accounting_duplicate_confirm}')) return false;"
+												styleClass="aon-finding-toolbar-item aon-icon-accept">
+												<f:setPropertyActionListener
+													target="#{accountEntry.duplicateEntryPanelVisible}"
+													value="#{false}" />
+											</aon:commandButton>
+										</aon:div>
+										<aon:div styleClass="aon-scroll-area aon-margin-top">
+											<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
+											
+												<aon:outputLabel for="AccountEntry_period" value="#{accountingBundle.accounting_period}" />
+												<aon:selectOneMenu id="AccountEntry_period" required="true"
+													styleClass="aon-form-selectOneMenu-field"
+													value="#{accountEntry.duplicatePeriod}">
+													<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
+												</aon:selectOneMenu>
+
+												<aon:outputLabel for="AccountEntry_date"
+													value="#{bundle.aon_date}" />
+												<aon:selectInputDate required="true"
+													id="AccountEntry_date" value="#{accountEntry.duplicateDate}"
+													timeZone="#{timeZoneController.timeZone}"
+													popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+												<aon:outputLabel for="AccountEntry_concept"
+													value="#{bundle.aon_concept}" />
+												<aon:inputText required="true" size="40" maxlength="32" 
+													id="AccountEntry_concept" value="#{accountEntry.duplicateConcept}"/>
+													
+												<aon:outputText value="&#160;"/>
+												<aon:div>
+													<aon:selectBooleanCheckbox id="AccountEntry_invert"
+														value="#{accountEntry.duplicateInvertible}"/>
+													<aon:outputLabel for="AccountEntry_invert"
+														value="#{accountingBundle.accounting_duplicate_invert_debit}" />
+												</aon:div>
+											</aon:panelGrid>
+										</aon:div>
+									</aon:div>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:form>
+				</rich:modalPanel>
+			</c:if>
+
+		</aon:div>
+		
+		<aon:lookupButtonPopup lookup="#{accountLookup}" />
+		 		
+		<c:if test="#{accountEntry.new}">
+			<rich:jQuery timing="onload" selector="#AccountEntry_accountPeriod" query="focus()"/>
+		</c:if>
+	</ui:define>
+</ui:composition>

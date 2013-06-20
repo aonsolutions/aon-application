@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="communicationCenterSurveyForm"> 
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_communication_center_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
+				<ui:define name="toolbarContent">
+					<c:if test="#{(communicationCenter.actionSelected) and (communicationCenter.pendingTargets &gt; 0)}" >
+						<c:if test="#{aonConfiguration.bean.marketingCampaign.showPhoneActionMediaType}" >
+							<c:if test="#{communicationCenter.action.mediaType  == 'PHONE'}" >
+								<aon:commandButton id="accept" value="#{marketingBundle.marketing_survey}"
+									action="communicationCenter_response" actionListener="#{communicationCenter.onStartSurveyResponse}"
+									rendered="#{communicationCenter.surveySelected and communicationCenter.targetSelected}"
+									styleClass="aon-finding-toolbar-item aon-icon-accept"
+									accesskey="#{bundle.aon_key_accept}" />				
+								<aon:commandButton id="save" value="#{bundle.aon_save}"
+									action="communicationCenter" actionListener="#{communicationCenter.onUpdateActionTarget}"
+									styleClass="aon-finding-toolbar-item aon-icon-save"
+									accesskey="#{bundle.aon_key_save}" />
+								<aon:commandButton id="next" value="#{marketingBundle.marketing_next}"
+									action="communicationCenter" actionListener="#{communicationCenter.onNextActionTarget}"
+									styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+									accesskey="#{bundle.aon_key_cancel}"/>
+								<c:if test="#{aonConfiguration.bean.alarm.showNew}">									
+									<aon:commandButton id="alarm"
+										value="#{groupwareBundle.groupware_alarm_new}"
+										reRender="newAlarmWindow" immediate="true"
+										actionListener="#{communicationCenter.onNewAlarm}"
+										styleClass="aon-finding-toolbar-item aon-icon-alarms" />
+								</c:if>
+								<aon:commandButton id="newCommercialTracking"
+									value="#{commercialBundle.commercial_tracking_new_action}"
+									reRender="showNewTrackingWindow"
+									actionListener="#{communicationCenter.onNewCommercialTracking}"
+									styleClass="aon-finding-toolbar-item aon-icon-new" />
+							</c:if>
+						</c:if>					
+						<c:if test="#{communicationCenter.action.mediaType  == 'MAIL'}" >							
+							<aon:commandButton id="email"
+								action="communicationCenter_mail"
+								actionListener="#{communicationCenter.onGenerateTargetMailing}"
+								value="#{marketingBundle.marketing_mailing}"
+								styleClass="aon-finding-toolbar-item aon-icon-webmail2">
+							</aon:commandButton>								
+						</c:if>
+						<c:if test="#{(communicationCenter.action.mediaType  == 'EMAIL') or (communicationCenter.action.mediaType  == 'NEWSLETTER')}" >
+							<aon:commandButton id="email"
+								action="#{communicationCenter.newEmailAction}"
+								actionListener="#{communicationCenter.onNewEmail}"
+								value="#{webmailBundle.webmail_newmail}"
+								styleClass="aon-finding-toolbar-item aon-icon-newMail" />
+						</c:if>
+					</c:if>						
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" width="100%"
+					columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even">
+
+					<aon:outputLabel for="CommunicationCenter_date"
+						value="#{bundle.aon_date}" />
+					<aon:selectInputDate id="CommunicationCenter_date" 
+						value="#{communicationCenter.date}" required="true"
+						timeZone="#{timeZoneController.timeZone}"
+						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+
+					<ui:include src="/com/code/aon/ui/marketing/facelet/campaignAction/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{communicationCenter.action}" />
+						<ui:param name="lookupReRender" value="aonContent" />
+						<ui:param name="goToBackActionListener"
+							value="communicationCenter.onMarketingActionBackActionListener" />
+						<aon:methodParam name="lookupChangeListener"
+							value="#{communicationCenter.onActionLookupChange}" type="lookupChangeListener" />
+					</ui:include>	
+					
+					<c:if test="#{communicationCenter.actionSelected}" >
+						<c:if test="#{communicationCenter.newsSelected}" >
+							<ui:include src="/com/code/aon/ui/marketing/facelet/news/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{communicationCenter.news}" />
+								<ui:param name="lookupDisabled" value="#{true}" />
+								<ui:param name="searchButtonTitle" value="#{marketingBundle.marketing_message_selection}" />
+								<ui:param name="lookupControllerListener" value="#{marketingCampaign.newsFilter}" />
+								<ui:param name="goToBackAction" value="communicationCenter" />															
+								<ui:param name="goToBackActionListener"
+									value="communicationCenter.onNewsBackActionListener" />
+							</ui:include>								
+						</c:if>					
+
+						<c:if test="#{communicationCenter.newsletterSelected}" >
+							<ui:include src="/com/code/aon/ui/marketing/facelet/newsletter/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{communicationCenter.newsletter}" />
+								<ui:param name="lookupDisabled" value="#{true}" />
+								<ui:param name="goToBackAction" value="communicationCenter" />
+								<ui:param name="goToBackActionListener"
+									value="communicationCenter.onNewsletterBackActionListener" />
+							</ui:include>								
+						</c:if>					
+					
+						<c:if test="#{communicationCenter.surveySelected and aonConfiguration.bean.marketingCampaign.showSurvey}" >
+							<ui:include src="/com/code/aon/ui/marketing/facelet/survey/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{communicationCenter.survey}" />
+								<ui:param name="lookupDisabled" value="#{true}" />
+								<ui:param name="goToBackAction" value="communicationCenter" />
+								<ui:param name="goToBackActionListener"
+									value="communicationCenter.onSurveyBackActionListener" />
+							</ui:include>					
+						</c:if>
+	
+						<c:if test="#{communicationCenter.targetSelected}" >
+							<aon:outputLabel for="Target_id"
+								value="#{target.bundle.commercial_target}" />
+							<aon:div id="CommunicationCenter_target">
+								<ui:decorate template="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
+									<ui:param name="lookupTo" value="#{communicationCenter.target}" />
+									<ui:param name="lookupSuffix" value="_CommunicationCenter" />
+									<ui:param name="skipLabel" value="#{true}" />
+									<ui:param name="lookupDisabled" value="#{true}" />
+									<ui:param name="goToBackAction" value="communicationCenter" />
+									<ui:param name="goToBackActionListener"
+										value="communicationCenter.onTargetBackActionListener" />									
+									<ui:define name="afterLookupContent2">
+										<aon:commandLink title="#{webmailBundle.webmail_send_email}" 
+											ajaxSingle="true" reRender="showNewMessageWindow-Target"
+											actionListener="#{communicationCenter.onInitEmail}" value="&#160;"
+											styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border" />							
+									</ui:define>
+								</ui:decorate>															
+								<aon:div id="CommunicationCenter_target_detail" layout="inline">
+									<h:panelGrid columns="2"
+										styleClass="aon-margin-top aon-margin-bottom"
+										columnClasses="aon-vertical-align-top, aon-vertical-align-top">		
+									
+										<aon:panelGrid columns="2"
+											columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">						
+											<ui:include src="targetSummary.xhtml" />
+										</aon:panelGrid>
+									
+										<aon:panelGrid rendered="#{communicationCenter.actionTarget != null}" columns="2" >					
+											<ui:include src="actionTargetStatus.xhtml" />	
+										</aon:panelGrid>
+											
+									</h:panelGrid>
+								</aon:div>
+							</aon:div>
+						</c:if>												
+						<c:if test="#{((communicationCenter.action.mediaType  == 'EMAIL') or (communicationCenter.action.mediaType  == 'NEWSLETTER')) 
+							and (communicationCenter.pendingTargets &gt; 0)}" >
+							<aon:outputLabel for="CommunicationCenter_numberOfTargetsInEmail"
+								value="#{marketingBundle.marketing_target_bulk_email}" />
+							<aon:div>
+								<aon:inputText id="CommunicationCenter_numberOfTargetsInEmail"
+									value="#{communicationCenter.numberOfTargetsInEmail}" size="10" >
+									<f:validateLongRange minimum="1" maximum="#{communicationCenter.pendingTargets}" />
+								</aon:inputText>
+								<aon:outputText styleClass="aon-margin-left aon-italic"
+									value="#{marketingBundle.marketing_action_pending_targets}: #{communicationCenter.pendingTargets}" />
+							</aon:div>
+						</c:if>					
+					</c:if>
+
+				</aon:panelGrid>
+
+						
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+		<aon:lookupButtonPopup lookup="#{campaignActionLookup}" />
+		<aon:lookupButtonPopup lookup="#{targetLookup}" />
+		<aon:lookupButtonPopup lookup="#{newsLookup}" />
+		<c:if test="#{aonConfiguration.bean.marketingCampaign.showSurvey}" >
+			<aon:lookupButtonPopup lookup="#{surveyLookup}" />
+		</c:if>
+		<c:if test="#{aonConfiguration.bean.alarm.showNew}">
+			<ui:include src="/com/code/aon/ui/groupware/facelet/alarm/newAlarm.xhtml" />
+		</c:if>
+		<c:if test="#{communicationCenter.targetSelected}">
+			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" >
+				<ui:param name="messageSuffix" value="-Target" />
+				<aon:methodParam name="sendActionListener" value="#{communicationCenter.onSendEmail}" type="actionListener" />
+			</ui:include>
+		</c:if>
+		<ui:include	src="/com/code/aon/ui/commercial/facelet/projectCommercialTracking/newTrackingModal.xhtml" >
+			<aon:methodParam name="pctSaveActionListener" value="#{commercialTracking.onAccept}" type="actionListener" />
+			<aon:methodParam name="pctSaveAction" value="communicationCenter" />		
+			<ui:param name="lookupProjectCommercialListener" value="#{communicationCenter.projectCommercialListener}" />
+		</ui:include>
+		<aon:lookupButtonPopup lookup="#{projectCommercialLookup}" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

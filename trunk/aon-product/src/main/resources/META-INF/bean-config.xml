@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bean-config 
+	PUBLIC "-//CODE-AON//DTD Bean Config//EN" 
+	"http://co-de.com/aon/bean-config.dtd">
+
+<bean-config>
+
+	<bean description="">
+		<pojo>com.code.aon.product.Item</pojo>
+		<listeners>
+	        <listener>com.code.aon.product.event.ItemBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.product.event.ItemBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="">
+		<pojo>com.code.aon.product.ItemAlternative</pojo>
+		<listeners>
+	        <listener>com.code.aon.product.event.ItemAlternativeBeanListener</listener>
+		</listeners>
+	</bean>
+	
+	<bean description="">
+		<pojo>com.code.aon.product.ItemComposition</pojo>
+		<listeners>
+	        <listener>com.code.aon.product.event.ItemCompositionBeanListener</listener>
+		</listeners>
+	</bean>
+
+	<bean description="">
+		<pojo>com.code.aon.product.ItemSupplier</pojo>
+		<listeners>
+	        <listener>com.code.aon.product.event.ItemSupplierBeanListener</listener>
+		</listeners>
+	</bean>
+
+	<bean description="">
+		<pojo>com.code.aon.product.Product</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.product.event.ProductBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+</bean-config>

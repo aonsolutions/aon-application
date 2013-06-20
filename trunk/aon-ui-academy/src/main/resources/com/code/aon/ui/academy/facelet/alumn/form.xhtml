@@ -1,0 +1,16 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<aon:set var="#{customer.showAlumnData}" value="#{true}" />
+	
+	<ui:include src="/com/code/aon/ui/customer/facelet/customer/formEx.xhtml" >
+		<aon:methodParam name="saveAction" value="alumn_form" />			
+		<aon:methodParam name="cancelAction" value="alumn_list" />
+		<aon:methodParam name="removeAction" value="alumn_list" />			
+		<aon:methodParam name="searchAction" value="alumn_search" />
+		<aon:methodParam name="resetAction" value="alumn_form" />			
+	</ui:include>
+	
+</ui:composition>

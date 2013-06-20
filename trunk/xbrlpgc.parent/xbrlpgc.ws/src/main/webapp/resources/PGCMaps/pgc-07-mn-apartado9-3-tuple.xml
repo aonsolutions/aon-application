@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statement xmlns="http://www.inteco.es/xbrl/pgc07/mapa"
+           xmlns:pgc07m-roles="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/roles/2009-01-01"
+           xmlns:link="http://www.xbrl.org/2003/linkbase"
+           xmlns:xlink="http://www.w3.org/1999/xlink"
+           xmlns:xbrli="http://www.xbrl.org/2003/instance"
+           xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+           xmlns:pgc07mc-bs="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2009-01-01"
+           xmlns:pgc07mc-na="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/normalAbreviado/2009-01-01"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:xl="http://www.xbrl.org/2003/XLink"
+           xmlns:pgc07mn-apdo9-3="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.3/InstrumentosFinancieros/InformacionNaturalezaNivelRiesgo/2009-01-01"
+           xmlns:dgi-eco-bas="http://www.xbrl.org.es/es/2008/dgi/gp/eco-bas/2011-01-30"
+           xmlns:dgi-lc-es="http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2011-01-30"
+           xmlns:dgi-rel="http://www.xbrl.org.es/es/2008/dgi/gp/rel/2011-01-30"
+           xmlns:dgi-est-gen="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30"
+           xmlns:dgi-gen-ex="http://www.xbrl.org.es/es/2008/dgi/gp/gen-ex/2011-01-30"
+           xmlns:pgc07mn="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+           xmlns:xbrldt="http://xbrl.org/2005/xbrldt"
+           xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01"
+           xmlns:pgc-07-types="http://www.icac.meh.es/es/fr/gaap/pgc07/types/2009-01-01"
+           mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01"
+           mainSchemaPrefix="pgc-07-v-mn"
+           name="pgc-07-mn-apartado9-3">
+   <conceptMap inputID="" nsPrefix="pgc07mn-apdo9-3"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.3/InstrumentosFinancieros/InformacionNaturalezaNivelRiesgo/2009-01-01"
+               outputID="InstrumentosFinancierosNaturalezaNivelRiesgoPresentacion"
+               parent=""
+               order=""
+               abstract="true"/>
+   <conceptMap order="1.0" inputID="9090600" nsPrefix="pgc07mn-apdo9-3"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado9.3/InstrumentosFinancieros/InformacionNaturalezaNivelRiesgo/2009-01-01"
+               parent="pgc07mn-apdo9-3:InstrumentosFinancierosNaturalezaNivelRiesgoPresentacion"
+               outputID="InstrumentosFinancierosNaturalezaNivelRiesgoTupla"/>
+   <conceptMap order="1.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn-apdo9-3:InstrumentosFinancierosNaturalezaNivelRiesgoTupla"
+               outputID="9090600:InstrumentosFinancierosNaturalezaNivelRiesgoInformacionCualitativaPresentacion"/>
+   <conceptMap order="2.0" inputID="9090636" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9-3:InstrumentosFinancierosNaturalezaNivelRiesgoTupla"
+               outputID="9090600:InstrumentosFinancierosNaturalezaNivelRiesgoInformacionCualitativaTipoRiesgo"/>
+   <conceptMap order="3.0" inputID="9090632" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9-3:InstrumentosFinancierosNaturalezaNivelRiesgoTupla"
+               outputID="9090600:InstrumentosFinancierosNaturalezaNivelRiesgoInformacionCualitativaExposicionRiesgo"/>
+   <conceptMap order="4.0" inputID="9090631" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9-3:InstrumentosFinancierosNaturalezaNivelRiesgoTupla"
+               outputID="9090600:InstrumentosFinancierosNaturalezaNivelRiesgoInformacionCualitativaCausaRiesgo"/>
+   <conceptMap order="5.0" inputID="9090634" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9-3:InstrumentosFinancierosNaturalezaNivelRiesgoTupla"
+               outputID="9090600:InstrumentosFinancierosNaturalezaNivelRiesgoInformacionCualitativaObjetivosPoliticasProcedimientosGestionRiesgo"/>
+   <conceptMap order="6.0" inputID="9090633" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9-3:InstrumentosFinancierosNaturalezaNivelRiesgoTupla"
+               outputID="9090600:InstrumentosFinancierosNaturalezaNivelRiesgoInformacionCualitativaMetodosMedicionRiesgo"/>
+   <conceptMap order="7.0" inputID="9090630" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9-3:InstrumentosFinancierosNaturalezaNivelRiesgoTupla"
+               outputID="9090600:InstrumentosFinancierosNaturalezaNivelRiesgoInformacionCualitativaCambiosSignificativosRiesgoGestionEntreEjercicios"/>
+   <conceptMap order="8.0" inputID="" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               abstract="true"
+               parent="pgc07mn-apdo9-3:InstrumentosFinancierosNaturalezaNivelRiesgoTupla"
+               outputID="9090600:InstrumentosFinancierosNaturalezaNivelRiesgoInformacionCuantitativaPresentacion"/>
+   <conceptMap order="9.0" inputID="9090641" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9-3:InstrumentosFinancierosNaturalezaNivelRiesgoTupla"
+               outputID="9090600:InstrumentosFinancierosNaturalezaNivelRiesgoInformacionCuantitativaDescripcionTipoRiesgo"/>
+   <conceptMap order="10.0" inputID="9090642" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9-3:InstrumentosFinancierosNaturalezaNivelRiesgoTupla"
+               outputID="9090600:InstrumentosFinancierosNaturalezaNivelRiesgoInformacionCuantitativaExposicionRiesgoBasadaInformacionInterna"/>
+   <conceptMap order="11.0" inputID="9090638" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9-3:InstrumentosFinancierosNaturalezaNivelRiesgoTupla"
+               outputID="9090600:InstrumentosFinancierosNaturalezaNivelRiesgoInformacionCuantitativaConcentracionRiesgo"/>
+   <conceptMap order="12.0" inputID="9090640" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9-3:InstrumentosFinancierosNaturalezaNivelRiesgoTupla"
+               outputID="9090600:InstrumentosFinancierosNaturalezaNivelRiesgoInformacionCuantitativaDescripcionFormaDeterminacionConcentracionRiesgo"/>
+   <conceptMap order="13.0" inputID="9090637" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9-3:InstrumentosFinancierosNaturalezaNivelRiesgoTupla"
+               outputID="9090600:InstrumentosFinancierosNaturalezaNivelRiesgoInformacionCuantitativaCaracteristicasComunesConcentracion"/>
+   <conceptMap order="14.0" inputID="9090643" nsPrefix="pgc07mn"
+               ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+               parent="pgc07mn-apdo9-3:InstrumentosFinancierosNaturalezaNivelRiesgoTupla"
+               outputID="9090600:InstrumentosFinancierosNaturalezaNivelRiesgoInformacionCuantitativaImporteExposicionesRiesgoAsociado"/>
+</statement>

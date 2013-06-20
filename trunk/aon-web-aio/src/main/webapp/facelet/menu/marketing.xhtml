@@ -1,0 +1,178 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="marketingMenu">
+
+			<aon:div styleClass="aon-scroll-area">
+			
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+
+					<aon:panelGroup>
+						<c:if test="#{aonRole.commercialOperator}">
+							<aon:panelGrid id="group_marketing_masters"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-general">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_master_tables}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="target-marketing" 
+											action="target_search-marketing" 
+											actionListener="#{target.onEditSearch}"
+											value="#{commercialBundle.commercial_target_module}" />
+									</aon:div>
+								</aon:div>							
+							</aon:panelGrid>
+						</c:if>
+						
+						<aon:panelGrid id="group_marketing_news"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-report aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{marketingBundle.marketing_news_module}" />
+							</f:facet>							
+							<aon:div styleClass="aon-direct-access-list">	
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="channel" 
+										action="channel_list"
+										actionListener="#{channel.onSearch}" 
+										value="#{marketingBundle.marketing_channel_module}"/>	
+								</aon:div>							
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="news"
+										action="news_list"
+										actionListener="#{news.onSearch}"
+										value="#{marketingBundle.marketing_news_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="newsletter"
+										action="newsletter_list"
+										actionListener="#{newsletter.onSearch}"
+										value="#{marketingBundle.marketing_newsletter_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="publishParameter-marketing" 
+										action="publishParameter-marketing" 
+										actionListener="#{publishParameter.onInit}"
+										value="#{configBundle.config_publish_parameters_module}" >
+										<f:setPropertyActionListener target="#{publishParameter.showOnlyFTP}" value="#{true}" />
+									</aon:commandLink>
+								</aon:div>								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="rss" action="rss_form"
+										actionListener="#{rss.onInit}"
+										value="#{marketingBundle.marketing_news_rss}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+						
+					
+						<aon:panelGrid id="group_marketing_marketing"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-marketing aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_module_marketing}" />
+							</f:facet>							
+							<aon:div styleClass="aon-direct-access-list">	
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="marketingCampaign"
+										action="marketingCampaign_list"
+										actionListener="#{marketingCampaign.onSearch}"
+										value="#{marketingBundle.marketing_campaign_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="communicationCenter"
+										action="communicationCenter"
+										actionListener="#{communicationCenter.onInit}"
+										value="#{commercialBundle.commercial_communication_center_module}" />										
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
+					
+					<aon:panelGroup>
+						<c:if test="#{aonRole.config}">
+							<aon:panelGrid id="group_marketing_general"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-reservation">
+								<f:facet name="header">
+									<aon:outputText value="#{marketingBundle.marketing_survey_module}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="question"
+											action="question_list"
+											actionListener="#{question.onEditSearch}"
+											value="#{commercialBundle.commercial_question_module}" >
+											<aon:actionListener method="#{question.onSearch}" />
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="surveyResponse"
+											action="surveyResponse_list"
+											actionListener="#{surveyResponse.onSearch}"
+											value="#{marketingBundle.marketing_survey_response_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="survey"
+											action="survey_list"
+											actionListener="#{survey.onEditSearch}" 
+											value="#{marketingBundle.marketing_survey_module}" >
+											<aon:actionListener method="#{survey.onSearch}" />
+										</aon:commandLink>
+									</aon:div>								
+								</aon:div>
+							</aon:panelGrid>
+
+							<aon:panelGrid id="group_marketing_templates"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-mail">
+								<f:facet name="header">
+									<aon:outputText value="#{marketingBundle.marketing_template_module}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="htmlTemplate" 
+											action="htmlTemplate_list"
+											actionListener="#{htmlTemplate.onEditSearch}"
+											value="#{marketingBundle.marketing_html_template_module}" />
+									</aon:div>															
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="marketingTemplate"
+											action="marketingTemplate_list"
+											actionListener="#{marketingTemplate.onEditSearch}" 
+											value="#{marketingBundle.marketing_template_module}" >
+											<aon:actionListener method="#{marketingTemplate.onSearch}" />
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">																										
+										<aon:commandLink id="images-marketing" 
+											action="companyImages-marketing" 
+											actionListener="#{companyWebInfo.onInit}"
+											value="#{companyBundle.company_images_module}">
+											<aon:actionListener method="#{companyImages.onEditSearch}" />
+											<aon:actionListener method="#{companyImages.onSearch}" />
+										</aon:commandLink>
+									</aon:div>
+								</aon:div>							
+							</aon:panelGrid>
+						</c:if>
+
+					</aon:panelGroup>													
+					
+				</h:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

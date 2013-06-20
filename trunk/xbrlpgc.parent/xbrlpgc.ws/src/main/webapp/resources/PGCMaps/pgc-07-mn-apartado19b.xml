@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mn-apartado19b" mainSchemaPrefix="pgc-07-mn" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01">
+    <conceptMap
+        outputID="CombinacionesNegocioDescripcionCombinacionesNegociosEfectuadasDuranteEjercicioImportesReconocidosImportes"
+        inputID="01"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado19/CombinacionesNegocios/2009-01-01"
+        nsPrefix="pgc07mn-apdo19" domain="pgc07mn-apdo19:CombinacionesNegocioDescripcionCombinacionesNegociosEfectuadasDuranteEjercicioImportesReconocidosDimension">
+        <Member id="93956" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudasEntidadesCreditoCortoPlazo"/>
+        <Member id="93957" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesOtrasDeudasCortoPlazo"/>
+        <Member id="93954" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesPasivosVinculadosActivosNoCorrientesMantenidosVenta"/>
+        <Member id="93955" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesProvisionesCortoPlazo"/>
+        <Member id="93958" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudasCortoPlazo"/>
+        <Member id="93960" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudasEmpresasGrupoAsociadasCortoPlazo"/>
+        <Member id="93961" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesAcreedoresComercialesOtrasCuentaPagar"/>
+        <Member id="93962" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesPeriodificacionesCortoPlazo"/>
+        <Member id="93963" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudaCaracteristicasEspecialesCortoPlazo"/>
+        <Member id="93944" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudasEntidadesCreditoLargoPlazo"/>
+        <Member id="93945" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesOtrasDeudasLargoPlazo"/>
+        <Member id="93943" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesProvisionesLargoPlazo"/>
+        <Member id="93946" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudasLargoPlazo"/>
+        <Member id="93947" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudasEmpresasGrupoAsociadasLargoPlazo"/>
+        <Member id="93948" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesPasivosImpuestoDiferido"/>
+        <Member id="93950" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesPeriodificacionesLargoPlazo"/>
+        <Member id="93951" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesAcreedoresComercialesNoCorrientes"/>
+        <Member id="93952" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudaCaracteristicasEspecialesLargoPlazo"/>
+        <Member id="93953" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesPasivoNoCorriente"/>
+        <Member id="93964" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesPasivoCorriente"/>
+        <Member id="93965" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesTotalPasivo"/>
+        <Member id="93932" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesActivoNoCorrientesMantenidosVenta"/>
+        <Member id="93933" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesExistencias"/>
+        <Member id="93934" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudoresComercialesOtrasCuentasCobrar"/>
+        <Member id="93935" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesInversionesEmpresasGrupoAsociadasCortoPlazo"/>
+        <Member id="93936" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesInversionesFinancierasCortoPlazo"/>
+        <Member id="93937" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesPeriodificaciones"/>
+        <Member id="93938" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesEfectivoOtrosActivosLiquidosEquivalentes"/>
+        <Member id="93923" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesInmovilizadoIntangible"/>
+        <Member id="93924" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesInmovilizadoMaterial"/>
+        <Member id="93925" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesInversionesInmobiliarias"/>
+        <Member id="93926" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesInversionesEmpresasGrupoAsociadas"/>
+        <Member id="93927" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesInversionesFinancierasLargoPlazo"/>
+        <Member id="93928" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesActivosImpuestoDiferido"/>
+        <Member id="93930" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudoresComerialesNoCorrientes"/>
+        <Member id="93931" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesActivoNoCorriente"/>
+        <Member id="93940" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesActivoCorriente"/>
+        <Member id="93941" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesTotalActivo"/>
+    </conceptMap>
+    <conceptMap
+        outputID="CombinacionesNegocioDescripcionCombinacionesNegociosEfectuadasDuranteEjercicioImportesReconocidosValorRazonableNoUtilizado"
+        inputID="02"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/apartado19/CombinacionesNegocios/2009-01-01"
+        nsPrefix="pgc07mn-apdo19" domain="pgc07mn-apdo19:CombinacionesNegocioDescripcionCombinacionesNegociosEfectuadasDuranteEjercicioImportesReconocidosDimension">
+        <Member id="93956" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudasEntidadesCreditoCortoPlazo"/>
+        <Member id="93957" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesOtrasDeudasCortoPlazo"/>
+        <Member id="93954" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesPasivosVinculadosActivosNoCorrientesMantenidosVenta"/>
+        <Member id="93955" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesProvisionesCortoPlazo"/>
+        <Member id="93958" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudasCortoPlazo"/>
+        <Member id="93960" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudasEmpresasGrupoAsociadasCortoPlazo"/>
+        <Member id="93961" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesAcreedoresComercialesOtrasCuentaPagar"/>
+        <Member id="93962" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesPeriodificacionesCortoPlazo"/>
+        <Member id="93963" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudaCaracteristicasEspecialesCortoPlazo"/>
+        <Member id="93944" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudasEntidadesCreditoLargoPlazo"/>
+        <Member id="93945" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesOtrasDeudasLargoPlazo"/>
+        <Member id="93943" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesProvisionesLargoPlazo"/>
+        <Member id="93946" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudasLargoPlazo"/>
+        <Member id="93947" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudasEmpresasGrupoAsociadasLargoPlazo"/>
+        <Member id="93948" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesPasivosImpuestoDiferido"/>
+        <Member id="93950" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesPeriodificacionesLargoPlazo"/>
+        <Member id="93951" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesAcreedoresComercialesNoCorrientes"/>
+        <Member id="93952" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudaCaracteristicasEspecialesLargoPlazo"/>
+        <Member id="93953" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesPasivoNoCorriente"/>
+        <Member id="93964" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesPasivoCorriente"/>
+        <Member id="93965" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesTotalPasivo"/>
+        <Member id="93932" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesActivoNoCorrientesMantenidosVenta"/>
+        <Member id="93933" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesExistencias"/>
+        <Member id="93934" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudoresComercialesOtrasCuentasCobrar"/>
+        <Member id="93935" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesInversionesEmpresasGrupoAsociadasCortoPlazo"/>
+        <Member id="93936" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesInversionesFinancierasCortoPlazo"/>
+        <Member id="93937" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesPeriodificaciones"/>
+        <Member id="93938" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesEfectivoOtrosActivosLiquidosEquivalentes"/>
+        <Member id="93923" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesInmovilizadoIntangible"/>
+        <Member id="93924" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesInmovilizadoMaterial"/>
+        <Member id="93925" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesInversionesInmobiliarias"/>
+        <Member id="93926" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesInversionesEmpresasGrupoAsociadas"/>
+        <Member id="93927" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesInversionesFinancierasLargoPlazo"/>
+        <Member id="93928" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesActivosImpuestoDiferido"/>
+        <Member id="93930" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesDeudoresComerialesNoCorrientes"/>
+        <Member id="93931" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesActivoNoCorriente"/>
+        <Member id="93940" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesActivoCorriente"/>
+        <Member id="93941" qname="pgc07mn:CombinacionesNegocioDescripcionCombinacionesNegociosImportesReconocidosFechaAdquisicionClaseActivosPasivosCombinacionNegociosFormulacionCuentasAnualesTotalActivo"/>
+    </conceptMap>
+</Statement>

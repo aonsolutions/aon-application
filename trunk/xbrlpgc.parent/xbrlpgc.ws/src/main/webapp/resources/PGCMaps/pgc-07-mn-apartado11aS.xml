@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mn-apartado11aS" mainSchemaPrefix="pgc-07-mn" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01">
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoNoCorrientePresentacion"
+        inputID="93110"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoCorrientePresentacion"
+        inputID="93111"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoEfectivoOtrosActivosLiquidosEquivalentes"
+        inputID="93143"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazo"
+        inputID="93114"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoNoCorrienteInversionesFinancierasLargoPlazo"
+        inputID="93115"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoNoCorrienteDeudoresComerciales"
+        inputID="93130"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazoInstrumentosPatrimonio"
+        inputID="93120"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazoCreditosEmpresas"
+        inputID="93121"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazoValoresRepresentativosDeuda"
+        inputID="93122"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazoDerviados"
+        inputID="93123"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazoOtrosActivosFinancieros"
+        inputID="93124"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoNoCorrienteInversionesFinancierasLargoPlazoInstrumentosPatrimonio"
+        inputID="93125"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoNoCorrienteInversionesFinancierasLargoPlazoCreditosEmpresas"
+        inputID="93126"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoNoCorrienteInversionesFinancierasLargoPlazoValoresRepresentativosDeuda"
+        inputID="93127"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoNoCorrienteInversionesFinancierasLargoPlazoDerivados"
+        inputID="93128"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoNoCorrienteInversionesFinancierasLargoPlazoOtrosActivosFinancieros"
+        inputID="93129"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoCorrienteActivosNoCorrientesMantenidosVenta"
+        inputID="93131"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoCorrienteDeudoresComercialesOtrasCuentasCobrar"
+        inputID="93132"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazo"
+        inputID="93116"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoCorrienteInversionesFinancierasCortoPlazo"
+        inputID="93117"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazoInstrumentosPatrimonio"
+        inputID="93133"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazoCreditosEmpresas"
+        inputID="93134"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazoValoresRepresentativosDeuda"
+        inputID="93135"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazoDerivados"
+        inputID="93136"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazoOtrosActivosFinancieros"
+        inputID="93137"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoCorrienteInversionesFinancierasCortoPlazoInstrumentosPatrimonio"
+        inputID="93138"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoCorrienteInversionesFinancierasCortoPlazoCreditosEmpresas"
+        inputID="93139"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoCorrienteInversionesFinancierasCortoPlazoValoresRepresentativosDeuda"
+        inputID="93140"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoCorrienteInversionesFinancierasCortoPlazoDerivados"
+        inputID="93141"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGActivoCorrienteInversionesFinancierasCortoPlazoOtrosActivosFinancieros"
+        inputID="93142"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoNoCorrientePresentacion"
+        inputID="93112"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoCorrientePresentacion"
+        inputID="93113"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoNoCorrienteDeudasLargoPlazo"
+        inputID="93118"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoNoCorrienteDeudasEmpresasGrupoEmpresasAsociadasLargoPlazo"
+        inputID="93149"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoNoCorrienteAcreedoresComercialesNoCorriente"
+        inputID="93150"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoNoCorrienteDeudasLargoPlazoObligacionesOtrosValoresNegociables"
+        inputID="93144"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoNoCorrienteDeudasLargoPlazoDeudasEntidadesCredito"
+        inputID="93145"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoNoCorrienteDeudasLargoPlazoAcreedoresArrendamientoFinanciero"
+        inputID="93146"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoNoCorrienteDeudasLargoPlazoDerivados"
+        inputID="93147"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoNoCorrienteDeudasLargoPlazoOtrosPasivosFinancieros"
+        inputID="93148"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoCorrientePasivosVinculadosActivosNoCorrientesMantenidosVenta"
+        inputID="93151"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoCorrienteDeudasCortoPlazo"
+        inputID="93119"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoCorrienteDeudasEmpresasGrupoEmpresasAsociadasCortoPlazo"
+        inputID="93157"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoCorrienteAcreedoresComercialesOtrasCuentasPagar"
+        inputID="93158"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoCorrienteDeudasCortoPlazoObligacionesOtrosValoresNegociables"
+        inputID="93152"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoCorrienteDeudasCortoPlazoDeudasEntidadesCredito"
+        inputID="93153"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoCorrienteDeudasCortoPlazoAcreedoresArrendamientoFinanciero"
+        inputID="93154"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoCorrienteDeudasCortoPlazoDerivados"
+        inputID="93155"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+    <conceptMap
+        outputID="MonedaExtranjeraPartidasBalancePyGPasivoCorrienteDeudasCortoPlazoOtrosPasivosFinancieros"
+        inputID="93156"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-d-monex:MonedaExtranjeraDesgloseDimension">
+        <Member id="4" qname="pgc07mn-d-monex:MonedaExtranjeraSecundaria"/>
+    </conceptMap>
+</Statement>

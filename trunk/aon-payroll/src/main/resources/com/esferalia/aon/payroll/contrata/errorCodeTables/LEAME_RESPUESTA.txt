@@ -1,0 +1,148 @@
+TABLA DE CODIGOS DE RESPUESTA INEM PARA LA COMUNICACION DE LA CONTRATACION A TRAVES DE INTERNET.  VERSION 5.0.
+
+FECHA ULTIMA ACTUALIZACION :  07/02/2013
+
+
+Descripción de la tabla.
+--------------------------------
+
+El fichero TERRORES.txt contiene los códigos y literales de respuesta que puede generar la aplicación CONTRATRAT@ para cada fichero XML recibido.
+Se han incluido, ademas de los códigos de error, un código por entidad (contrato, prorroga, copia basica...) que informa si la entidad ha sido dada de alta sin error(xxx6001) y otro que indica si ha sido dada de alta con error(xxx6002).
+El objetivo de estos códigos es facilitar  el desarrollo a las empresas que procesen automáticamente el fichero de respuesta.
+
+
+
+ TABLA      	DESCRIPCION					
+---------------------------------------------------------
+ TERRORES	CODIGOS DE RESPUESTA A LOS ENVIOS XML	
+
+
+
+07-02-2013:
+------------
+Se añaden los códigos CCT0317, CCT0318 y CCT0319
+
+15-01-2013:
+------------
+Se añaden los códigos CCT0316, CCT4114 y CPR4046
+
+04-12-2012:
+------------
+Se añade el código CCT0315
+
+26-07-2012:
+------------
+Se añaden los códigos CCT0311, CCT0312, CCT0313, CCT0314 y CCT4113
+
+14-06-2012:
+------------
+Se añaden los códigos CCT0309 y CCT0310
+
+22-03-2012:
+------------
+Se añaden los códigos desde el CCT0298 al CCT0308, y el CCT4109, CCT4110 y CCT4111
+Se modifican los códigos CCT0191, CCT0266, CCT0267, CCT0268, CCT0269, CCT0270 y CCT0271
+
+29-02-2012:
+------------
+Se añaden los códigos CCT5057, CCT0294, CCT0295, CCT0296, CCT0297
+Se modifica el código CCT4090	 
+
+10-01-2012:
+------------
+Se añaden los códigos desde el CCT0291 al CCT0293
+
+20-10-2011:
+------------
+Se añaden los códigos desde el CCT0287 al CCT0290
+
+29-09-2011:
+------------
+Se añaden los códigos CCT1045, CCT6012 y desde el CCT0278 al CCT0286
+
+20-05-2011:
+------------
+Se añaden los códigos CCT4106, CCT4107 CCT4108 CCT6011
+
+
+04-03-2011:
+------------
+Se añaden los códigos CCT0266 al CCT0277, CCT1004 CCT1044 CCT5055 CTR4037
+
+
+11-01-2011:
+------------
+Se añaden los códigos CCT0265 CCT4100 CCT4101
+Se modifican los códigos CCT4090 CCT4093
+
+
+02-11-2010:
+------------
+Se añaden los códigos CCT0262 CCT0263 CCT0264
+
+
+20-07-2010:
+------------
+Se añaden los códigos CCT0253-->CCT0261 CCT4099 CCT5052 CCT5053 CCT6008 CCT6009 CCT6010 CTR0020 NPF0155
+Se modifican los códigos CCT0122 CCT0136 CTR0002 CTR0016
+
+
+01-06-2010:
+------------
+Se añaden los códigos CCT0247 CCT0248 CCT0249 CCT0250 CCT0251 CCT0252
+
+
+11-11-2009:
+------------
+Se añaden los códigos CHC6003 CHC4005 CHC4006
+Se modifican los códigos CPR4044 CPR4045 CTR4041 CTR4042 CLL4005 CLL4006
+
+
+23-09-2009:
+------------
+Se añaden los códigos CCT4096 CCT4097 CLL4005 CLL4006 CLL6002 
+
+
+24-06-2009:
+------------
+Se añaden los códigos CCT5051 CTR4037 CTR4038 CTR4039 CTR4040 CTR4041 CTR4042 CTR6002 CTR6003
+
+
+28-04-2009:
+------------
+Se añaden los códigos CCT0243 CCT0244 CCT0245 CCT0246 CCT5050 
+
+
+13-03-2009:
+------------
+Se añaden los códigos CCT4091 CCT4092 CCT4093 CCT4094 CCT4095 
+
+
+05-09-2008:
+------------
+Se añaden los códigos CCT0239 CPR4041 CPR4042 CPR4043 CPR6003 CPR6004 
+
+
+17-06-2008:
+------------
+Se añade el código CGE0113
+
+
+21-04-2008:
+------------
+Se añaden los códigos CCT0237 CCT0238 
+
+
+18-03-2008:
+------------
+Se añaden los códigos CCT0232 CCT0233 CCT0234 CCT0235 CCT0236 
+
+
+12-01-2008:
+------------
+Se modifica el literal del código CCT4067 
+
+
+09-07-2007:
+------------
+Se añade el código CCT5048 

@@ -1,0 +1,31 @@
+<!--	<div id="navcontainer">
+		<ul>
+		#foreach($item in $menu)
+			<li><a href="$!item.getLink()">$!item.getLabel()</a></li>
+		#end
+		</ul>
+	</div>
+	-->
+
+<div>
+   #set($linea=0)
+   #set($carslinea=0)
+	#foreach($item in $menu)
+	   #if($linea==0)
+	      #set($linea=1)
+	      <ul id="navcontainer">
+	   #end
+	   #if($carslinea+$item.getLabel().length()>60)
+	      #set($carslinea=0)
+	      </ul>
+	      <ul id="navcontainer">
+	   #end
+	   <li><a href="$!item.getLink()">$!item.getLabel()</a></li>
+	   #set($carslinea=$carslinea+$item.getLabel().length())
+	   <!-- $carslinea -->
+	#end
+     #if ($carslinea>0)
+	</ul>
+     #end
+</div>
+

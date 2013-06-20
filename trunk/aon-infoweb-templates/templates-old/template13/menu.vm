@@ -1,0 +1,13 @@
+<div class="menu">
+	<table class="menu">
+		<tr>
+			<td>
+				<ul>
+				#foreach($item in $menu)
+					<li><a href="$!item.getLink()">$!item.getLabel()</a></li>
+				#end
+				</ul>
+			</td>
+		</tr>	
+	</table>
+</div>

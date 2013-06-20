@@ -1,0 +1,6 @@
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="http://localhost/wsdl/SWComunicacionDatos.wsdl"
+            uri="wsdl/SWComunicacionDatos.wsdl"/>
+    <system systemId="http://localhost/wsdl/SWConsultaDatos.wsdl"
+            uri="wsdl/SWConsultaDatos.wsdl"/>
+</catalog>

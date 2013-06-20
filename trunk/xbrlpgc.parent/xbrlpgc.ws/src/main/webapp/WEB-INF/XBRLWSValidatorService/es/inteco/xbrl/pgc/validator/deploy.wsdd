@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- Use this file to deploy some handlers/chains and services      --><!-- Two ways to do this:                                           --><!--   java org.apache.axis.client.AdminClient deploy.wsdd          --><!--      after the axis server is running                          --><!-- or                                                             --><!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   --><!--      from the same directory that the Axis engine runs         --><deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from XBRLWSValidatorService WSDL service -->
+
+  <service name="XBRLWSValidator" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://www.inteco.es/xbrl/pgc07/validator"/>
+      <parameter name="wsdlServiceElement" value="XBRLWSValidatorService"/>
+      <parameter name="schemaQualified" value="http://www.inteco.es/xbrl/pgc07/validator"/>
+      <parameter name="wsdlServicePort" value="XBRLWSValidator"/>
+      <parameter name="className" value="es.inteco.xbrl.pgc.validator.XBRLWSValidator"/>
+      <parameter name="wsdlPortType" value="XBRLWSValidator"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation xmlns:operNS="http://www.inteco.es/xbrl/pgc07/validator" xmlns:retNS="http://www.inteco.es/xbrl/pgc07/validator" xmlns:rtns="http://www.inteco.es/xbrl/pgc07/validator" name="validate" qname="operNS:validate" returnQName="retNS:validateReturn" returnType="rtns:ValidateResult" soapAction="">
+        <parameter xmlns:pns="http://www.inteco.es/xbrl/pgc07/validator" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:inputDocument" type="tns:base64Binary"/>
+      </operation>
+      <parameter name="allowedMethods" value="validate"/>
+
+      <typeMapping xmlns:ns="http://www.inteco.es/xbrl/pgc07/validator" qname="ns:ValidateResult" type="java:es.inteco.xbrl.pgc.validator.ValidateResult" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle=""/>
+  </service>
+</deployment>

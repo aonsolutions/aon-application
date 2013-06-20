@@ -1,0 +1,73 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'>
+
+	<!-- GIFs needed for ie6 work arounds. Can't use <ui:image>, it makes PNGs -->
+	<ui:data field='employeesgroupIe6Data' src='employeesgroup_ie6.gif' />
+
+	<ui:style>
+	
+	.stackHeader {
+	  padding: .7em .5em .7em .6em;
+	  
+	}
+
+	 @if user.agent ie6 {
+	   @url employeesgroupIe6 employeesgroupIe6Data;
+
+	   .employeesIcon {
+	     background-image: employeesgroupIe6;
+	     width: 31px;
+	     height: 22px;
+	     float: left;
+	   }
+
+	 } @else {
+	
+
+	@sprite .employeesIcon {
+	     gwt-image: 'employeesgroup';
+	     float: left;
+	   }
+
+
+	 }
+	 
+	</ui:style>
+
+	<ui:image field='employeesgroup' src='employeesgroup.png' />
+	<ui:image field='gradient' src='gradient_bg_dark.png'
+		repeatStyle='Horizontal' />
+
+
+	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
+		<g:west size='275'>
+
+			<g:StackLayoutPanel unit='EM'>
+
+				<g:stack ui:field="employeesStack" >
+					<g:header size='3'>									
+						<div class='{style.stackHeader}'>
+							<div class='{style.employeesIcon}' />
+							EMPLEADOS
+						</div>
+					</g:header>
+					<aon:Employees ui:field='employees' extended="true" formers="false"/>
+				</g:stack>
+
+			</g:StackLayoutPanel>
+
+
+		</g:west>
+		<g:center>
+			<aon:DetailPanel ui:field='employeeDetail' />
+		</g:center>
+
+		<g:south size="0">
+			<aon:MinimizePanel ui:field="footPanel" >
+				<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel"/>
+			</aon:MinimizePanel>
+		</g:south>
+
+	</g:SplitLayoutPanel>
+
+</ui:UiBinder>

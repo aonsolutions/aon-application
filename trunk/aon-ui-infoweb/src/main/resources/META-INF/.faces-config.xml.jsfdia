@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS model-entity="JSFProcess">
+ <PROCESS-ITEM NAME="rules:" SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::0" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="companyWebInfo::#com#code#aon#ui#infoweb#facelet#companyWebInfo#form.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/infoweb/facelet/companyWebInfo/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#infoweb#facelet#companyWebInfo#form.xhtml"
+    TITLE="companyWebInfo" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="webPage::#com#code#aon#ui#infoweb#facelet#webPage#form.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/infoweb/facelet/webPage/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#infoweb#facelet#webPage#form.xhtml"
+    TITLE="webPage" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="webPageStyle::#com#code#aon#ui#infoweb#facelet#webPageStyle#form.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/infoweb/facelet/webPageStyle/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#infoweb#facelet#webPageStyle#form.xhtml"
+    TITLE="webPageStyle" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="generator::#com#code#aon#ui#infoweb#facelet#generator#form.xhtml"
+    NAME="output3"
+    PATH="/com/code/aon/ui/infoweb/facelet/generator/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#infoweb#facelet#generator#form.xhtml"
+    TITLE="generator" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#infoweb#facelet#generator#form.xhtml"
+  PATH="/com/code/aon/ui/infoweb/facelet/generator/form.xhtml"
+  SHAPE="288,465,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#infoweb#facelet#companyWebInfo#form.xhtml"
+  PATH="/com/code/aon/ui/infoweb/facelet/companyWebInfo/form.xhtml"
+  SHAPE="288,33,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#infoweb#facelet#webPageStyle#form.xhtml"
+  PATH="/com/code/aon/ui/infoweb/facelet/webPageStyle/form.xhtml"
+  SHAPE="288,353,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#infoweb#facelet#webPage#form.xhtml"
+  PATH="/com/code/aon/ui/infoweb/facelet/webPage/form.xhtml"
+  SHAPE="288,241,0,0" model-entity="JSFProcessGroup"/>
+</PROCESS>

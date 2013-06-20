@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa" name="pgc-07-mn-apartado9a" mainSchemaPrefix="pgc-07-mn" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01">
+  <conceptMap outputID="InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosInversionesMantenidasVencimiento" inputID="90909" ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01" nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+    <Member id="02" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoInstrumentosPatrimonio" />
+    <Member id="04" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoCreditosDerivadosOtros" />
+    <Member id="05" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoTotal" />
+    <Member id="03" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoValoresRepresentativosDeuda" />
+  </conceptMap>
+  <conceptMap outputID="InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosPrestamosPartidasCobrar" inputID="90910" ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01" nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+    <Member id="02" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoInstrumentosPatrimonio" />
+    <Member id="04" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoCreditosDerivadosOtros" />
+    <Member id="05" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoTotal" />
+    <Member id="03" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoValoresRepresentativosDeuda" />
+  </conceptMap>
+  <conceptMap outputID="InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosDerviadosCobertura" inputID="90913" ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01" nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+    <Member id="02" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoInstrumentosPatrimonio" />
+    <Member id="04" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoCreditosDerivadosOtros" />
+    <Member id="05" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoTotal" />
+    <Member id="03" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoValoresRepresentativosDeuda" />
+  </conceptMap>
+  <conceptMap outputID="InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosTotal" inputID="90914" ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01" nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+    <Member id="02" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoInstrumentosPatrimonio" />
+    <Member id="04" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoCreditosDerivadosOtros" />
+    <Member id="05" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoTotal" />
+    <Member id="03" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoValoresRepresentativosDeuda" />
+  </conceptMap>
+  <conceptMap outputID="InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosActivosValorRazonableCambiosPyGMantenidosNegociacion" inputID="90907" ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01" nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+    <Member id="02" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoInstrumentosPatrimonio" />
+    <Member id="04" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoCreditosDerivadosOtros" />
+    <Member id="05" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoTotal" />
+    <Member id="03" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoValoresRepresentativosDeuda" />
+  </conceptMap>
+  <conceptMap outputID="InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosOtrosActivosValorRazonableCambiosPyG" inputID="90908" ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01" nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+    <Member id="02" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoInstrumentosPatrimonio" />
+    <Member id="04" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoCreditosDerivadosOtros" />
+    <Member id="05" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoTotal" />
+    <Member id="03" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoValoresRepresentativosDeuda" />
+  </conceptMap>
+  <conceptMap outputID="InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosDisponiblesVentaValorRazonable" inputID="90911" ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01" nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+    <Member id="02" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoInstrumentosPatrimonio" />
+    <Member id="04" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoCreditosDerivadosOtros" />
+    <Member id="05" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoTotal" />
+    <Member id="03" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoValoresRepresentativosDeuda" />
+  </conceptMap>
+  <conceptMap outputID="InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosDisponiblesVentaCoste" inputID="90912" ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01" nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+    <Member id="02" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoInstrumentosPatrimonio" />
+    <Member id="04" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoCreditosDerivadosOtros" />
+    <Member id="05" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoTotal" />
+    <Member id="03" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesActivoValoresRepresentativosDeuda" />
+  </conceptMap>
+</Statement>
+

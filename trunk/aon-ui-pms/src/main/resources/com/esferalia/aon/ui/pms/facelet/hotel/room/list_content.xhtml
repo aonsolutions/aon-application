@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+ 
+	<aon:column styleClass="aon-editDataTable-iconColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{controller.checkedCount}" />
+		</f:facet>
+		<aon:selectBooleanCheckbox id="RoomCheck"
+			value="#{controller.rowChecked}"
+			valueChangeListener="#{controller.rowSelected}"
+			reRender="aonContent" />	
+	</aon:column>
+
+	<aon:column alias="Room.asset.name">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_number}" />
+		</f:facet>
+		<aon:outputText value="#{to.asset.name}" />
+	</aon:column>
+
+	<aon:column alias="Room.hotel.workPlace.description">
+		<f:facet name="header">
+			<aon:outputText value="#{pmsBundle.pms_hotel}" />
+		</f:facet>
+		<aon:outputText value="#{to.hotel.workPlace.description}" />
+	</aon:column>
+
+	<aon:column alias="Room.item.product.code">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_type}" />
+		</f:facet>
+		<aon:div>
+			<aon:outputText value="#{to.item.product.code}" />
+			<aon:outputText value=" - " />
+			<aon:outputText value="#{to.item.product.name}" />
+		</aon:div>
+	</aon:column>
+	
+</ui:composition>

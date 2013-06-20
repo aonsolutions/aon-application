@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mn-apartado9m1" mainSchemaPrefix="pgc-07-mn" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01">
+    <conceptMap
+        outputID="InstrumentosFinancierosInformacionRelacionadaCuentaPyGPatrimonioNetoIngresosActivosFinancierosPerdidasGananciasNetas"
+        inputID="1"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-apdo9:InstrumentosFinancierosCategoriasDimension">
+        <Member id="90950" qname="pgc07mn:InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosDisponiblesVentaValorRazonable"/>
+        <Member id="90951" qname="pgc07mn:InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosDisponiblesVentaCoste"/>
+        <Member id="90946" qname="pgc07mn:InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosActivosValorRazonableCambiosPyGMantenidosNegociacion"/>
+        <Member id="90947" qname="pgc07mn:InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosOtrosActivosValorRazonableCambiosPyG"/>
+        <Member id="90953" qname="pgc07mn:InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosTotal"/>
+        <Member id="90952" qname="pgc07mn:InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosDerviadosCobertura"/>
+        <Member id="90949" qname="pgc07mn:InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosPrestamosPartidasCobrar"/>
+        <Member id="90948" qname="pgc07mn:InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosInversionesMantenidasVencimiento"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosInformacionRelacionadaCuentaPyGPatrimonioNetoIngresosActivosFinancierosIngresosFinancierosCalculadosMetodoInteresEfectivo"
+        inputID="2"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07mn-apdo9:InstrumentosFinancierosCategoriasDimension">
+        <Member id="90950" qname="pgc07mn:InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosDisponiblesVentaValorRazonable"/>
+        <Member id="90951" qname="pgc07mn:InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosDisponiblesVentaCoste"/>
+        <Member id="90946" qname="pgc07mn:InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosActivosValorRazonableCambiosPyGMantenidosNegociacion"/>
+        <Member id="90947" qname="pgc07mn:InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosOtrosActivosValorRazonableCambiosPyG"/>
+        <Member id="90953" qname="pgc07mn:InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosTotal"/>
+        <Member id="90952" qname="pgc07mn:InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosDerviadosCobertura"/>
+        <Member id="90949" qname="pgc07mn:InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosPrestamosPartidasCobrar"/>
+        <Member id="90948" qname="pgc07mn:InstrumentosFinancierosSituacionFinancieraResultadosEmpresaInformacionRelacionadaBalanceCategoriasActivosFinancierosInversionesMantenidasVencimiento"/>
+    </conceptMap>
+</Statement>

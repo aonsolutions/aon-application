@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Taxonomy based on XBRL standard Version 2.1.
+Created by UBmatrix Taxonomy Designer 3.0.1.2314 (2007-08-01 02:49).  
+Contact www.ubmatrix.com
+Copyright (c) 2002-2011 UBmatrix inc., All Rights Reserved
+Produced on 2011-02-15 12:20:01
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dgi-rel="http://www.xbrl.org.es/es/2008/dgi/gp/rel/2011-01-30" xmlns:dgi-est-gen="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30" xmlns:dgi-types="http://www.xbrl.org.es/es/2008/dgi/gp/types/2011-01-30" xmlns:xhtml="http://www.w3.org/1999/xhtml" targetNamespace="http://www.xbrl.org.es/es/2008/dgi/gp/rel/2011-01-30" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <annotation>
+    <appinfo>
+      <link:roleType roleURI="http://www.xbrl.org.es/es/2008/dgi/gp/rel/2011-01-30/role/EstructuraRelacionesTercerosOrganosCorporativos" id="role_EstructuraRelacionesTercerosOrganosCorporativos">
+        <link:definition>Datos de la Estructura de Propiedad , Relaciones con Terceros y Órganos Corporativos.</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+      <link:linkbaseRef xlink:type="simple" xlink:href="dgi-rel-2011-01-30-presentation.xml" xlink:role="http://www.xbrl.org/2003/role/presentationLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:title="Presentation Links, all" />
+      <link:linkbaseRef xlink:type="simple" xlink:href="dgi-rel-2011-01-30-label-es.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:title="Label Links, all" />
+      <link:linkbaseRef xlink:type="simple" xlink:href="dgi-rel-2011-01-30-label-en.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:title="Label Links, all" />
+      <link:linkbaseRef xlink:type="simple" xlink:href="dgi-rel-2011-01-30-reference.xml" xlink:role="http://www.xbrl.org/2003/role/referenceLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:title="Reference Links, all" />
+    </appinfo>
+  </annotation>
+  <import namespace="http://www.xbrl.org/2003/instance" schemaLocation="http://www.xbrl.org/2003/xbrl-instance-2003-12-31.xsd" />
+  <import namespace="http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2011-01-30" schemaLocation="dgi-est-gen-2011-01-30.xsd" />
+  <import namespace="http://www.xbrl.org.es/es/2008/dgi/gp/types/2011-01-30" schemaLocation="dgi-types-2011-01-30.xsd" />
+  <element id="dgi-rel_AdquisitionVoteRate" name="AdquisitionVoteRate" type="xbrli:pureItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_BankIdentifierCode" name="BankIdentifierCode" type="xbrli:stringItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_BankIdentifierName" name="BankIdentifierName" type="xbrli:stringItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_BusinessCombinations" name="BusinessCombinations" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <complexContent>
+        <restriction base="anyType">
+          <sequence>
+            <element ref="dgi-rel:BusinessCombinationsType" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-est-gen:EntityInformation" minOccurs="0" maxOccurs="unbounded" />
+            <element ref="dgi-rel:TransactionDate" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:AdquisitionVoteRate" minOccurs="0" maxOccurs="1" />
+          </sequence>
+          <attribute name="id" type="ID" />
+        </restriction>
+      </complexContent>
+    </complexType>
+  </element>
+  <element id="dgi-rel_BusinessCombinationsType" name="BusinessCombinationsType" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <complexContent>
+        <restriction base="anyType">
+          <choice>
+            <element ref="dgi-types:EntityOriginHead" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:OthersBusinessCombinations" minOccurs="0" maxOccurs="1" />
+          </choice>
+          <attribute name="id" type="ID" />
+        </restriction>
+      </complexContent>
+    </complexType>
+  </element>
+  <element id="dgi-rel_ConsolidatedFinancialStatementsInformation" name="ConsolidatedFinancialStatementsInformation" type="xbrli:booleanItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_ConsolidatedgroupDirectNominalParticipationRate" name="ConsolidatedgroupDirectNominalParticipationRate" type="xbrli:sharesItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_ConsolidatedgroupIndirectNominalParticipationRate" name="ConsolidatedgroupIndirectNominalParticipationRate" type="xbrli:sharesItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_ConsolidatedGroupType" name="ConsolidatedGroupType" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <complexContent>
+        <restriction base="anyType">
+          <choice>
+            <element ref="dgi-types:ConsolidatedGroupHead" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:OthersConsolidatedGroup" minOccurs="0" maxOccurs="1" />
+          </choice>
+          <attribute name="id" type="ID" />
+        </restriction>
+      </complexContent>
+    </complexType>
+  </element>
+  <element id="dgi-rel_ConsolidatedMethod" name="ConsolidatedMethod" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <complexContent>
+        <restriction base="anyType">
+          <choice>
+            <element ref="dgi-types:ConsolidatedMethodCodeHead" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:OthersConsolidatedMethod" minOccurs="0" maxOccurs="1" />
+          </choice>
+          <attribute name="id" type="ID" />
+        </restriction>
+      </complexContent>
+    </complexType>
+  </element>
+  <element id="dgi-rel_CorporateOrgans" name="CorporateOrgans" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <complexContent>
+        <restriction base="anyType">
+          <sequence>
+            <element ref="dgi-rel:OrgansType" minOccurs="1" maxOccurs="1" />
+            <element ref="dgi-rel:NaturalJuridical" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-est-gen:EntityInformation" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-est-gen:ContactPerson" minOccurs="0" maxOccurs="unbounded" />
+            <element ref="dgi-rel:RegisterOfficeIdentificationData" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:DateOfAppointment" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:LengthOrEndingDate" minOccurs="0" maxOccurs="1" />
+          </sequence>
+          <attribute name="id" type="ID" />
+        </restriction>
+      </complexContent>
+    </complexType>
+  </element>
+  <element id="dgi-rel_DateOfAppointment" name="DateOfAppointment" type="xbrli:dateItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_DirectBoardVotingPower" name="DirectBoardVotingPower" type="xbrli:pureItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_DirectParticipationRate" name="DirectParticipationRate" type="xbrli:pureItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_EnterpriseGroupInformation" name="EnterpriseGroupInformation" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <complexContent>
+        <restriction base="anyType">
+          <sequence>
+            <element ref="dgi-rel:EnterpriseGroupTotalNumber" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:RelationshipType" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:MostImportantEnterprises" minOccurs="0" maxOccurs="unbounded" />
+          </sequence>
+          <attribute name="id" type="ID" />
+        </restriction>
+      </complexContent>
+    </complexType>
+  </element>
+  <element id="dgi-rel_EnterpriseGroupTotalNumber" name="EnterpriseGroupTotalNumber" type="xbrli:nonNegativeIntegerItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_EstimatedNetTurnoverEGI" name="EstimatedNetTurnoverEGI" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_EstimatedShareholdingRate" name="EstimatedShareholdingRate" type="xbrli:pureItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_FinancialEntityRelated" name="FinancialEntityRelated" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <complexContent>
+        <restriction base="anyType">
+          <sequence>
+            <element ref="dgi-rel:BankIdentifierCode" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:BankIdentifierName" minOccurs="1" maxOccurs="1" />
+            <element ref="dgi-est-gen:Address" minOccurs="0" maxOccurs="1" />
+          </sequence>
+          <attribute name="id" type="ID" />
+        </restriction>
+      </complexContent>
+    </complexType>
+  </element>
+  <element id="dgi-rel_IdentificationConsolidatedGroup" name="IdentificationConsolidatedGroup" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <complexContent>
+        <restriction base="anyType">
+          <sequence>
+            <element ref="dgi-est-gen:Identifier" minOccurs="1" maxOccurs="1" />
+            <element ref="dgi-est-gen:EntityName" minOccurs="1" maxOccurs="1" />
+            <element ref="dgi-est-gen:Country" minOccurs="1" maxOccurs="1" />
+            <element ref="dgi-rel:ConsolidatedGroupType" minOccurs="1" maxOccurs="1" />
+            <element ref="dgi-rel:ConsolidatedgroupDirectNominalParticipationRate" minOccurs="1" maxOccurs="1" />
+            <element ref="dgi-rel:ConsolidatedgroupIndirectNominalParticipationRate" minOccurs="1" maxOccurs="1" />
+          </sequence>
+          <attribute name="id" type="ID" />
+        </restriction>
+      </complexContent>
+    </complexType>
+  </element>
+  <element id="dgi-rel_IndirectBoardVotingPower" name="IndirectBoardVotingPower" type="xbrli:pureItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_IndirectParticipationRate" name="IndirectParticipationRate" type="xbrli:pureItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_JuridicalStatusInstitutionalSector" name="JuridicalStatusInstitutionalSector" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <complexContent>
+        <restriction base="anyType">
+          <sequence>
+            <element ref="dgi-rel:ShareholdingRateEstateOwned" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:ShareholdingRatePrivateCompany" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:ShareholdingRatePrivateCompanyFinancialInstitutions" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:ShareholdingRatePrivateCompanyOtherCorporationsResidents" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:ShareholdingRatePrivateCompanyOtherShareholdersResidents" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:ShareholdingRateCompanyOtherShareholdersNonResidentsTotal" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:ShareholdingRateCompanyOtherShareholdersNonResidentsEU" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:ShareholdingRateCompanyOtherShareholdersNonResidentsRestWorld" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:ShareholdingRateTotal" minOccurs="0" maxOccurs="1" />
+          </sequence>
+          <attribute name="id" type="ID" />
+        </restriction>
+      </complexContent>
+    </complexType>
+  </element>
+  <element id="dgi-rel_LengthOrEndingDate" name="LengthOrEndingDate" type="xbrli:stringItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_MostImportantEnterprises" name="MostImportantEnterprises" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <complexContent>
+        <restriction base="anyType">
+          <sequence>
+            <element ref="dgi-est-gen:EntityInformation" minOccurs="1" maxOccurs="1" />
+            <element ref="dgi-est-gen:Country" minOccurs="0" maxOccurs="unbounded" />
+            <element ref="dgi-rel:DirectParticipationRate" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:IndirectParticipationRate" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:DirectBoardVotingPower" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:IndirectBoardVotingPower" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:NetTurnoverEGI" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:EstimatedNetTurnoverEGI" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:ConsolidatedFinancialStatementsInformation" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:ConsolidatedMethod" minOccurs="0" maxOccurs="1" />
+          </sequence>
+          <attribute name="id" type="ID" />
+        </restriction>
+      </complexContent>
+    </complexType>
+  </element>
+  <element id="dgi-rel_NaturalJuridical" name="NaturalJuridical" type="xbrli:booleanItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_NetTurnoverEGI" name="NetTurnoverEGI" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_OrgansType" name="OrgansType" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <complexContent>
+        <restriction base="anyType">
+          <choice>
+            <element ref="dgi-types:OrgansTypeCodeHead" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:OthersOrgansType" minOccurs="0" maxOccurs="1" />
+          </choice>
+          <attribute name="id" type="ID" />
+        </restriction>
+      </complexContent>
+    </complexType>
+  </element>
+  <element id="dgi-rel_OthersBusinessCombinations" name="OthersBusinessCombinations" type="xbrli:stringItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_OthersConsolidatedGroup" name="OthersConsolidatedGroup" type="xbrli:stringItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_OthersConsolidatedMethod" name="OthersConsolidatedMethod" type="xbrli:stringItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_OthersOrgansType" name="OthersOrgansType" type="xbrli:stringItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_OthersParentEntity" name="OthersParentEntity" type="xbrli:stringItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_OthersShareholder" name="OthersShareholder" type="xbrli:stringItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_OwnershipStructure" name="OwnershipStructure" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <complexContent>
+        <restriction base="anyType">
+          <sequence>
+            <element ref="dgi-rel:ParentEntity" minOccurs="1" maxOccurs="1" />
+            <element ref="dgi-rel:JuridicalStatusInstitutionalSector" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:ShareholdersSignificantStakeList" minOccurs="0" maxOccurs="unbounded" />
+          </sequence>
+          <attribute name="id" type="ID" />
+        </restriction>
+      </complexContent>
+    </complexType>
+  </element>
+  <element id="dgi-rel_ParentEntity" name="ParentEntity" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <complexContent>
+        <restriction base="anyType">
+          <sequence>
+            <element ref="dgi-rel:ParentEntityType" minOccurs="1" maxOccurs="1" />
+            <element ref="dgi-est-gen:EntityInformation" minOccurs="1" maxOccurs="1" />
+            <element ref="dgi-est-gen:Country" minOccurs="0" maxOccurs="1" />
+          </sequence>
+          <attribute name="id" type="ID" />
+        </restriction>
+      </complexContent>
+    </complexType>
+  </element>
+  <element id="dgi-rel_ParentEntityType" name="ParentEntityType" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <complexContent>
+        <restriction base="anyType">
+          <choice>
+            <element ref="dgi-types:ParentEntityHead" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:OthersParentEntity" minOccurs="0" maxOccurs="1" />
+          </choice>
+          <attribute name="id" type="ID" />
+        </restriction>
+      </complexContent>
+    </complexType>
+  </element>
+  <element id="dgi-rel_RegisterOfficeIdentificationData" name="RegisterOfficeIdentificationData" type="xbrli:stringItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_RelationshipType" name="RelationshipType" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <complexContent>
+        <restriction base="anyType">
+          <choice>
+            <element ref="dgi-types:RelationshipTypeCodeHead" minOccurs="1" maxOccurs="1" />
+          </choice>
+          <attribute name="id" type="ID" />
+        </restriction>
+      </complexContent>
+    </complexType>
+  </element>
+  <element id="dgi-rel_ShareholdersParticipationRate" name="ShareholdersParticipationRate" type="xbrli:pureItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_ShareholdersSignificantStakeList" name="ShareholdersSignificantStakeList" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <complexContent>
+        <restriction base="anyType">
+          <sequence>
+            <element ref="dgi-rel:ShareholderType" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-est-gen:EntityInformation" minOccurs="1" maxOccurs="1" />
+            <element ref="dgi-est-gen:Country" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:ShareholdersParticipationRate" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:EstimatedShareholdingRate" minOccurs="0" maxOccurs="1" />
+          </sequence>
+          <attribute name="id" type="ID" />
+        </restriction>
+      </complexContent>
+    </complexType>
+  </element>
+  <element id="dgi-rel_ShareholderType" name="ShareholderType" substitutionGroup="xbrli:tuple" nillable="true">
+    <complexType>
+      <complexContent>
+        <restriction base="anyType">
+          <choice>
+            <element ref="dgi-types:ShareholderHead" minOccurs="0" maxOccurs="1" />
+            <element ref="dgi-rel:OthersShareholder" minOccurs="0" maxOccurs="1" />
+          </choice>
+          <attribute name="id" type="ID" />
+        </restriction>
+      </complexContent>
+    </complexType>
+  </element>
+  <element id="dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsEU" name="ShareholdingRateCompanyOtherShareholdersNonResidentsEU" type="xbrli:sharesItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsRestWorld" name="ShareholdingRateCompanyOtherShareholdersNonResidentsRestWorld" type="xbrli:sharesItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsTotal" name="ShareholdingRateCompanyOtherShareholdersNonResidentsTotal" type="xbrli:sharesItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_ShareholdingRateEstateOwned" name="ShareholdingRateEstateOwned" type="xbrli:sharesItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_ShareholdingRatePrivateCompany" name="ShareholdingRatePrivateCompany" type="xbrli:sharesItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_ShareholdingRatePrivateCompanyFinancialInstitutions" name="ShareholdingRatePrivateCompanyFinancialInstitutions" type="xbrli:sharesItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_ShareholdingRatePrivateCompanyOtherCorporationsResidents" name="ShareholdingRatePrivateCompanyOtherCorporationsResidents" type="xbrli:sharesItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_ShareholdingRatePrivateCompanyOtherShareholdersResidents" name="ShareholdingRatePrivateCompanyOtherShareholdersResidents" type="xbrli:sharesItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_ShareholdingRateTotal" name="ShareholdingRateTotal" type="xbrli:sharesItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+  <element id="dgi-rel_TransactionDate" name="TransactionDate" type="xbrli:dateItemType" substitutionGroup="xbrli:item" xbrli:periodType="duration" nillable="true" />
+</schema>

@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="posClosingForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_posClosing_module}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="posClosing-closePos" 
+						styleClass="aon-finding-toolbar-item #{(posClosing.posShift.endTime != null) ? ('aon-icon-accept') : ('aon-icon-safeBox')}"
+						value="#{(posClosing.posShift.endTime != null) ? (bundle.aon_save) : (financeBundle.finance_pos_to_close)}"
+						actionListener="#{posClosing.onAccept}" />
+					<aon:htmlCommandLink id="posShift_report"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						value="#{financeBundle.finance_count}"
+						rendered="#{posClosing.posShift.endTime != null}"
+						action="#{report.onExecute}">
+						<f:param name="reportKey" value="posShift" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" styleClass="aon-width-all"
+					columnClasses="aon-panelGrid-even aon-width-half aon-vertical-align-top aon-noborder,aon-width-half aon-vertical-align-top aon-noborder">
+
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputLabel value="#{financeBundle.finance_pos_shift_data}" />
+						</f:facet>
+						<aon:panelGrid columns="2" styleClass="aon-width-all">
+
+							<aon:outputLabel value="#{companyBundle.company_workplace}" />
+							<aon:outputText styleClass="aon-bold"
+								value="#{posClosing.posShift.pos.workPlace.description}" />
+
+							<aon:outputLabel value="#{financeBundle.finance_pos}" />
+							<aon:outputText styleClass="aon-bold"
+								value="#{posClosing.posShift.pos.name}" />
+
+							<aon:outputLabel value="#{financeBundle.finance_pos_shift}" />
+							<aon:outputText styleClass="aon-bold"
+								value="#{posClosing.posShift.shift}" />
+
+							<aon:outputLabel value="#{financeBundle.finance_pos_opening}" />
+							<aon:outputText styleClass="aon-bold"
+								value="#{posClosing.posShift.startTime}">
+								<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+
+							<aon:outputLabel value="#{financeBundle.finance_pos_closing}" />
+							<aon:outputText styleClass="aon-bold"
+								value="#{posClosing.posShift.endTime}">
+								<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+
+							<aon:outputLabel for="PosShift_remarks" value="#{bundle.aon_remark}" />
+							<aon:inputTextarea id="PosShift_remarks" 
+								value="#{posClosing.posShift.remarks}" rows="4" cols="80" />
+
+						</aon:panelGrid>
+					</aon:panel>
+
+					<aon:div>
+						<aon:panel id="posShiftCountPanel">
+							<f:facet name="header">
+								<aon:outputLabel value="#{financeBundle.finance_total_count}" />
+							</f:facet>
+							<aon:panelGrid columns="3" styleClass="aon-width-all aon-margin-bottom"
+								columnClasses="aon-panelGrid-even aon-width-auto aon-noborder,
+									aon-panelGrid-even aon-width-160 aon-noborder,aon-width-200 aon-noborder">
+								<aon:div>
+									<aon:outputLabel styleClass="aon-margin-right aon-italic"
+										value="#{financeBundle.finance_initial_amount}:" />
+									<aon:outputText styleClass="aon-bold"
+										value="#{posClosing.posShift.initialAmount}">
+										<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+									</aon:outputText>
+								</aon:div>
+
+								<aon:div>
+									<aon:outputLabel styleClass="aon-margin-right aon-italic"
+										value="#{bundle.aon_total} #{financeBundle.finance_cash_payMethod}:" />
+									<aon:outputText styleClass="aon-bold"
+										value="#{posClosing.posShift.totalCountCashAmount + posClosing.posShift.initialAmount}">
+										<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+									</aon:outputText>
+								</aon:div>
+
+								<aon:div>
+									<aon:outputLabel styleClass="aon-margin-right aon-italic"
+										value="#{financeBundle.finance_pos_bank_income}:" />
+									<aon:outputText styleClass="aon-bold"
+										value="#{posClosing.posShift.totalCountCashAmount > 0 ? posClosing.posShift.totalCountCashAmount : 0}">
+										<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+									</aon:outputText>
+								</aon:div>
+							</aon:panelGrid>
+							<ui:include src="/com/code/aon/ui/finance/facelet/posShift/posShiftCount.xhtml">
+								<ui:param name="shiftController" value="#{posClosing}" />
+								<ui:param name="readOnly" value="#{posClosing.posShift.endTime != null}" />
+								<ui:param name="countReRender" value="" />
+							</ui:include>
+						</aon:panel>
+					</aon:div>
+
+				</aon:panelGrid>
+			</aon:div>
+	
+		</aon:form>
+
+		<ui:include src="/com/code/aon/ui/finance/facelet/posShift/calculator/calculatorModal.xhtml">
+			<ui:param name="controller" value="#{posClosing}" />								
+			<ui:param name="cashCalculator" value="#{posClosing.calculator}" />
+			<ui:param name="modalReRender" value="posClosingForm" />
+			<ui:param name="calculatorReport" value="posClosingCashCount" />
+		</ui:include>
+
+	</ui:define>
+</ui:composition>

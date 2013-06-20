@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statement xmlns="http://www.inteco.es/xbrl/pgc07/mapa">
+   <conceptMap order="" parent="" outputID="pgc-07-c-bs:BalanceSituacionPresentacion"
+               inputID=""
+               label=""/>
+   <conceptMap order="1.0" parent="pgc-07-c-bs:BalanceSituacionPresentacion"
+               outputID="pgc-07-c-bs:ActivoPresentacion"
+               inputID=""
+               label="ACTIVO"/>
+   <conceptMap order="1.0" parent="pgc-07-c-bs:ActivoPresentacion"
+               outputID="pgc-07-c-bs:ActivoNoCorriente"
+               inputID="11000"
+               label="A) ACTIVO NO CORRIENTE"/>
+   <conceptMap order="1.0" parent="pgc-07-c-bs:ActivoNoCorriente"
+               outputID="pgc-07-c-bs:ActivoNoCorrienteInmovilizadoIntangible"
+               inputID="11100"
+               label="I. Inmovilizado intangible"/>
+   <conceptMap order="2.0" parent="pgc-07-c-bs:ActivoNoCorriente"
+               outputID="pgc-07-c-bs:ActivoNoCorrienteInmovilizadoMaterial"
+               inputID="11200"
+               label="II. Inmovilizado material"/>
+   <conceptMap order="3.0" parent="pgc-07-c-bs:ActivoNoCorriente"
+               outputID="pgc-07-c-bs:ActivoNoCorrienteInversionesInmobiliarias"
+               inputID="11300"
+               label="III. Inversiones inmobiliarias"/>
+   <conceptMap order="4.0" parent="pgc-07-c-bs:ActivoNoCorriente"
+               outputID="pgc-07-c-bs:ActivoNoCorrienteInversionesEmpresasGrupoEmpresasAsociadasLargoPlazo"
+               inputID="11400"
+               label="IV. Inversiones en empresas del grupo y asociadas a largo plazo"/>
+   <conceptMap order="5.0" parent="pgc-07-c-bs:ActivoNoCorriente"
+               outputID="pgc-07-c-bs:ActivoNoCorrienteInversionesFinancierasLargoPlazo"
+               inputID="11500"
+               label="V. Inversiones financieras a largo plazo"/>
+   <conceptMap order="6.0" parent="pgc-07-c-bs:ActivoNoCorriente"
+               outputID="pgc-07-c-bs:ActivoNoCorrienteActivosImpuestoDiferido"
+               inputID="11600"
+               label="VI. Activos por impuesto diferido"/>
+   <conceptMap order="7.0" parent="pgc-07-c-bs:ActivoNoCorriente"
+               outputID="pgc-07-c-bs:ActivoNoCorrienteDeudasComercialesNoCorriente"
+               inputID="11700"
+               label="VII. Deudores comerciales no&#xA;      corrientes"/>
+   <conceptMap order="2.0" parent="pgc-07-c-bs:ActivoPresentacion"
+               outputID="pgc-07-c-bs:ActivoCorriente"
+               inputID="12000"
+               label="B) ACTIVO CORRIENTE"/>
+   <conceptMap order="1.0" parent="pgc-07-c-bs:ActivoCorriente"
+               outputID="pgc-07-c-na:ActivoCorrienteActivosNoCorrientesMantenidosParaVenta"
+               inputID="12100"
+               label="I. Activos no corrientes mantenidos para la venta"/>
+   <conceptMap order="2.0" parent="pgc-07-c-bs:ActivoCorriente"
+               outputID="pgc-07-c-bs:ActivoCorrienteExistencias"
+               inputID="12200"
+               label="II. Existencias"/>
+   <conceptMap order="3.0" parent="pgc-07-c-bs:ActivoCorriente"
+               outputID="pgc-07-c-bs:ActivoCorrienteDeudoresComercialesOtrasCuentasCobrar"
+               inputID="12300"
+               label="III. Deudores comerciales y&#xA;      otras cuentas a cobrar"/>
+   <conceptMap order="1.0"
+               parent="pgc-07-c-bs:ActivoCorrienteDeudoresComercialesOtrasCuentasCobrar"
+               outputID="pgc-07-c-bs:ActivoCorrienteDeudoresComercialesOtrasCuentasCobrarClientesVentasPrestacionesServicios"
+               inputID="12380"
+               label="1. Clientes por ventas y prestaciones de servicios"/>
+   <conceptMap order="1.0"
+               parent="pgc-07-c-bs:ActivoCorrienteDeudoresComercialesOtrasCuentasCobrarClientesVentasPrestacionesServicios"
+               outputID="pgc-07-c-bs:ActivoCorrienteDeudoresComercialesOtrasCuentasCobrarClientesVentasPrestacionesServiciosLargoPlazo"
+               inputID="12381"
+               label="a) Clientes por ventas y prestaciones de servicios a largo plazo"/>
+   <conceptMap order="2.0"
+               parent="pgc-07-c-bs:ActivoCorrienteDeudoresComercialesOtrasCuentasCobrarClientesVentasPrestacionesServicios"
+               outputID="pgc-07-c-bs:ActivoCorrienteDeudoresComercialesOtrasCuentasCobrarClientesVentasPrestacionesServiciosCortoPlazo"
+               inputID="12382"
+               label="b) Clientes por ventas y prestaciones de servicios a corto plazo"/>
+   <conceptMap order="8.0"
+               parent="pgc-07-c-bs:ActivoCorrienteDeudoresComercialesOtrasCuentasCobrar"
+               outputID="pgc-07-c-bs:ActivoCorrienteDeudoresComercialesOtrasCuentasCobrarAccionistasDesembolsosExigidos"
+               inputID="12370"
+               label="2. Accionistas (socios) por desembolsos exigidos"/>
+   <conceptMap order="9.0"
+               parent="pgc-07-c-bs:ActivoCorrienteDeudoresComercialesOtrasCuentasCobrar"
+               outputID="pgc-07-c-ap:ActivoCorrienteDeudoresComercialesOtrasCuentasCobrarOtrosDeudores"
+               inputID="12390"
+               label="3. Otros deudores"/>
+   <conceptMap order="4.0" parent="pgc-07-c-bs:ActivoCorriente"
+               outputID="pgc-07-c-bs:ActivoCorrienteInversionesEmpresasGrupoEmpresasAsociadasCortoPlazo"
+               inputID="12400"
+               label="IV. Inversiones en empresas del grupo y asociadas a corto plazo "/>
+   <conceptMap order="5.0" parent="pgc-07-c-bs:ActivoCorriente"
+               outputID="pgc-07-c-bs:ActivoCorrienteInversionesFinancierasCortoPlazo"
+               inputID="12500"
+               label="V. Inversiones financieras a corto&#xA;      plazo "/>
+   <conceptMap order="6.0" parent="pgc-07-c-bs:ActivoCorriente"
+               outputID="pgc-07-c-bs:ActivoCorrientePeriodificacionesCortoPlazo"
+               inputID="12600"
+               label="VI. Periodificaciones"/>
+   <conceptMap order="7.0" parent="pgc-07-c-bs:ActivoCorriente"
+               outputID="pgc-07-c-bs:ActivoCorrienteEfectivoOtrosActivosLiquidosEquivalentes"
+               inputID="12700"
+               label="VII. Efectivo y otros&#xA;      activos líquidos equivalentes "/>
+   <conceptMap order="3.0" parent="pgc-07-c-bs:ActivoPresentacion"
+               outputID="pgc-07-c-bs:TotalActivo"
+               inputID="10000"
+               label="TOTAL ACTIVO (A + B)"/>
+   <conceptMap order="2.0" parent="pgc-07-c-bs:BalanceSituacionPresentacion"
+               outputID="pgc-07-c-bs:PatrimonioNetoPasivoPresentacion"
+               inputID=""
+               label="PATRIMONIO NETO Y PASIVO"/>
+   <conceptMap order="1.0" parent="pgc-07-c-bs:PatrimonioNetoPasivoPresentacion"
+               outputID="pgc-07-c-bs:PatrimonioNeto"
+               inputID="20000"
+               label="A) PATRIMONIO NETO"/>
+   <conceptMap order="1.0" parent="pgc-07-c-bs:PatrimonioNeto"
+               outputID="pgc-07-c-bs:PatrimonioNetoFondosPropios"
+               inputID="21000"
+               label="A-1) Fondos propios"/>
+   <conceptMap order="1.0" parent="pgc-07-c-bs:PatrimonioNetoFondosPropios"
+               outputID="pgc-07-c-bs:PatrimonioNetoFondosPropiosCapital"
+               inputID="21100"
+               label="I. Capital"/>
+   <conceptMap order="1.0" parent="pgc-07-c-bs:PatrimonioNetoFondosPropiosCapital"
+               outputID="pgc-07-c-bs:PatrimonioNetoFondosPropiosCapitalEscriturado"
+               inputID="21110"
+               label="1. Capital escriturado"/>
+   <conceptMap order="2.0" parent="pgc-07-c-bs:PatrimonioNetoFondosPropiosCapital"
+               outputID="pgc-07-c-bs:PatrimonioNetoFondosPropiosCapitalNoExigido"
+               inputID="21120"
+               label="2. (Capital no exigido)"/>
+   <conceptMap order="2.0" parent="pgc-07-c-bs:PatrimonioNetoFondosPropios"
+               outputID="pgc-07-c-bs:PatrimonioNetoFondosPropiosPrimaEmision"
+               inputID="21200"
+               label="II. Prima de emisión"/>
+   <conceptMap order="3.0" parent="pgc-07-c-bs:PatrimonioNetoFondosPropios"
+               outputID="pgc-07-c-bs:PatrimonioNetoFondosPropiosReservas"
+               inputID="21300"
+               label="III. Reservas"/>
+   <conceptMap order="4.0" parent="pgc-07-c-bs:PatrimonioNetoFondosPropios"
+               outputID="pgc-07-c-bs:PatrimonioNetoFondosPropiosAccionesParticipacionesPatrimonioPropias"
+               inputID="21400"
+               label="IV. (Acciones y participaciones en patrimonio propias)"/>
+   <conceptMap order="5.0" parent="pgc-07-c-bs:PatrimonioNetoFondosPropios"
+               outputID="pgc-07-c-bs:PatrimonioNetoFondosPropiosResultadosEjerciciosAnteriores"
+               inputID="21500"
+               label="V. Resultados de ejercicios anteriores"/>
+   <conceptMap order="6.0" parent="pgc-07-c-bs:PatrimonioNetoFondosPropios"
+               outputID="pgc-07-c-bs:PatrimonioNetoFondosPropiosOtrasAportacionesSocios"
+               inputID="21600"
+               label="VI. Otras aportaciones de socios"/>
+   <conceptMap order="7.0" parent="pgc-07-c-bs:PatrimonioNetoFondosPropios"
+               outputID="pgc-07-c-bs:PatrimonioNetoFondosPropiosResultadoEjercicio"
+               inputID="21700"
+               label="VII. Resultado del ejercicio"/>
+   <conceptMap order="8.0" parent="pgc-07-c-bs:PatrimonioNetoFondosPropios"
+               outputID="pgc-07-c-bs:PatrimonioNetoFondosPropiosDividendoCuenta"
+               inputID="21800"
+               label="VIII. (Dividendo a cuenta)"/>
+   <conceptMap order="9.0" parent="pgc-07-c-bs:PatrimonioNetoFondosPropios"
+               outputID="pgc-07-c-na:PatrimonioNetoFondosPropiosOtrosInstrumentosPatrimonioNeto"
+               inputID="21900"
+               label="IX. Otros instrumentos de patrimonio neto "/>
+   <conceptMap order="2.0" parent="pgc-07-c-bs:PatrimonioNeto"
+               outputID="pgc-07-c-bs:PatrimonioNetoAjustesCambioValor"
+               inputID="22000"
+               label="A-2) Ajustes por cambios de valor "/>
+   <conceptMap order="3.0" parent="pgc-07-c-bs:PatrimonioNeto"
+               outputID="pgc-07-c-bs:PatrimonioNetoSubvencionesDonacionesLegadosRecibidos"
+               inputID="23000"
+               label="A-3) Subvenciones, donaciones&#xA;      y legados recibidos "/>
+   <conceptMap order="2.0" parent="pgc-07-c-bs:PatrimonioNetoPasivoPresentacion"
+               outputID="pgc-07-c-bs:PasivoNoCorriente"
+               inputID="31000"
+               label="B) PASIVO NO CORRIENTE"/>
+   <conceptMap order="1.0" parent="pgc-07-c-bs:PasivoNoCorriente"
+               outputID="pgc-07-c-bs:PasivoNoCorrienteProvisionesLargoPlazo"
+               inputID="31100"
+               label="I. Provisiones a largo plazo"/>
+   <conceptMap order="2.0" parent="pgc-07-c-bs:PasivoNoCorriente"
+               outputID="pgc-07-c-bs:PasivoNoCorrienteDeudasLargoPlazo"
+               inputID="31200"
+               label="II. Deudas a largo plazo"/>
+   <conceptMap order="2.0" parent="pgc-07-c-bs:PasivoNoCorrienteDeudasLargoPlazo"
+               outputID="pgc-07-c-bs:PasivoNoCorrienteDeudasLargoPlazoDeudasEntidadesCredito"
+               inputID="31220"
+               label="1. Deudas con entidades de crédito"/>
+   <conceptMap order="3.0" parent="pgc-07-c-bs:PasivoNoCorrienteDeudasLargoPlazo"
+               outputID="pgc-07-c-bs:PasivoNoCorrienteDeudasLargoPlazoAcreedoresArrendamientoFinanciero"
+               inputID="31230"
+               label="2. Acreedores por arrendamiento financiero"/>
+   <conceptMap order="4.0" parent="pgc-07-c-bs:PasivoNoCorrienteDeudasLargoPlazo"
+               outputID="pgc-07-c-ap:PasivoNoCorrienteDeudasLargoPlazoOtrasDeudas"
+               inputID="31290"
+               label="3. Otras deudas a largo plazo"/>
+   <conceptMap order="3.0" parent="pgc-07-c-bs:PasivoNoCorriente"
+               outputID="pgc-07-c-bs:PasivoNoCorrienteDeudasEmpresasGrupoEmpresasAsociadasLargoPlazo"
+               inputID="31300"
+               label="III. Deudas con empresas del grupo y asociadas a largo plazo"/>
+   <conceptMap order="4.0" parent="pgc-07-c-bs:PasivoNoCorriente"
+               outputID="pgc-07-c-bs:PasivoNoCorrientePasivosImpuestoDiferido"
+               inputID="31400"
+               label="IV. Pasivos por impuesto diferido"/>
+   <conceptMap order="5.0" parent="pgc-07-c-bs:PasivoNoCorriente"
+               outputID="pgc-07-c-bs:PasivoNoCorrientePeriodificacionesLargoPlazo"
+               inputID="31500"
+               label="V. Periodificaciones a largo plazo"/>
+   <conceptMap order="6.0" parent="pgc-07-c-bs:PasivoNoCorriente"
+               outputID="pgc-07-c-bs:PasivoNoCorrienteAcreedoresComercialesNoCorrientes"
+               inputID="31600"
+               label="VI. Acreedores comerciales no corrientes"/>
+   <conceptMap order="7.0" parent="pgc-07-c-bs:PasivoNoCorriente"
+               outputID="pgc-07-c-bs:PasivoNoCorrienteDeudaCaracteristicasEspecialesLargoPlazo"
+               inputID="31700"
+               label="VII. Deuda con características especiales a largo plazo"/>
+   <conceptMap order="3.0" parent="pgc-07-c-bs:PatrimonioNetoPasivoPresentacion"
+               outputID="pgc-07-c-bs:PasivoCorriente"
+               inputID="32000"
+               label="C) PASIVO CORRIENTE"/>
+   <conceptMap order="1.0" parent="pgc-07-c-bs:PasivoCorriente"
+               outputID="pgc-07-c-na:PasivoCorrientePasivosVinculadosActivosNoCorrientesMantenidosVenta"
+               inputID="32100"
+               label="I. Pasivos vinculados con activos no corrientes mantenidos para la venta "/>
+   <conceptMap order="2.0" parent="pgc-07-c-bs:PasivoCorriente"
+               outputID="pgc-07-c-bs:PasivoCorrienteProvisionesCortoPlazo"
+               inputID="32200"
+               label="II. Provisiones a corto plazo"/>
+   <conceptMap order="3.0" parent="pgc-07-c-bs:PasivoCorriente"
+               outputID="pgc-07-c-bs:PasivoCorrienteDeudasCortoPlazo"
+               inputID="32300"
+               label="III. Deudas a corto plazo"/>
+   <conceptMap order="2.0" parent="pgc-07-c-bs:PasivoCorrienteDeudasCortoPlazo"
+               outputID="pgc-07-c-bs:PasivoCorrienteDeudasCortoPlazoDeudasEntidadesCredito"
+               inputID="32320"
+               label="1. Deudas con entidades de crédito "/>
+   <conceptMap order="3.0" parent="pgc-07-c-bs:PasivoCorrienteDeudasCortoPlazo"
+               outputID="pgc-07-c-bs:PasivoCorrienteDeudasCortoPlazoAcreedoresArrendamientoFinanciero"
+               inputID="32330"
+               label="2. Acreedores por arrendamiento financiero "/>
+   <conceptMap order="4.0" parent="pgc-07-c-bs:PasivoCorrienteDeudasCortoPlazo"
+               outputID="pgc-07-c-ap:PasivoCorrienteDeudasCortoPlazoOtrasDeudas"
+               inputID="32390"
+               label="3. Otras deudas a corto plazo "/>
+   <conceptMap order="4.0" parent="pgc-07-c-bs:PasivoCorriente"
+               outputID="pgc-07-c-bs:PasivoCorrienteDeudasEmpresasGrupoEmpresasAsociadas"
+               inputID="32400"
+               label="IV. Deudas con empresas del&#xA;      grupo y asociadas a corto plazo"/>
+   <conceptMap order="5.0" parent="pgc-07-c-bs:PasivoCorriente"
+               outputID="pgc-07-c-bs:PasivoCorrienteAcreedoresComercialesOtrasCuentasPagar"
+               inputID="32500"
+               label="V. Acreedores comerciales y&#xA;      otras cuentas a pagar"/>
+   <conceptMap order="1.0"
+               parent="pgc-07-c-bs:PasivoCorrienteAcreedoresComercialesOtrasCuentasPagar"
+               outputID="pgc-07-c-bs:PasivoCorrienteAcreedoresComercialesOtrasCuentasPagarProveedores"
+               inputID="32580"
+               label="1. Proveedores "/>
+   <conceptMap order="1.0"
+               parent="pgc-07-c-bs:PasivoCorrienteAcreedoresComercialesOtrasCuentasPagarProveedores"
+               outputID="pgc-07-c-bs:PasivoCorrienteAcreedoresComercialesOtrasCuentasPagarProveedoresLargoPlazo"
+               inputID="32581"
+               label="a) Proveedores a largo plazo"/>
+   <conceptMap order="2.0"
+               parent="pgc-07-c-bs:PasivoCorrienteAcreedoresComercialesOtrasCuentasPagarProveedores"
+               outputID="pgc-07-c-bs:PasivoCorrienteAcreedoresComercialesOtrasCuentasPagarProveedoresCortoPlazo"
+               inputID="32582"
+               label="b) Proveedores a corto plazo"/>
+   <conceptMap order="2.0"
+               parent="pgc-07-c-bs:PasivoCorrienteAcreedoresComercialesOtrasCuentasPagar"
+               outputID="pgc-07-c-ap:PasivoCorrienteAcreedoresComercialesOtrasCuentasPagarOtrosAcreedores"
+               inputID="32590"
+               label="2. Otros acreedores"/>
+   <conceptMap order="6.0" parent="pgc-07-c-bs:PasivoCorriente"
+               outputID="pgc-07-c-bs:PasivoCorrientePeriodificacionesCortoPlazo"
+               inputID="32600"
+               label="VI. Periodificaciones a corto plazo "/>
+   <conceptMap order="7.0" parent="pgc-07-c-bs:PasivoCorriente"
+               outputID="pgc-07-c-bs:PasivoCorrienteDeudasCaracteristicasEspecialesCortoPlazo"
+               inputID="32700"
+               label="VII. Deuda con&#xA;      caracteristicas especiales a corto plazo"/>
+   <conceptMap order="4.0" parent="pgc-07-c-bs:PatrimonioNetoPasivoPresentacion"
+               outputID="pgc-07-c-bs:PatrimonioNetoPasivoTotal"
+               inputID="30000"
+               label="TOTAL PATRIMONIO NETO Y PASIVO (A + B + C)"/>
+   <conceptMap order="3.0" parent="pgc-07-c-bs:BalanceSituacionPresentacion"
+               outputID="pgc-07-c-bs:BalanceSituacionVariable"
+               inputID="00000"
+               label="Balance Situación Variable de Cuadre"/>
+</statement>

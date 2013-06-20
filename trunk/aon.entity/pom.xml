@@ -1,0 +1,279 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>aon.parent</artifactId>
+		<groupId>com.code.aon</groupId>
+		<version>7.19</version>
+		<relativePath>..</relativePath>
+	</parent>
+	<groupId>com.esferalia.aon</groupId>
+	<artifactId>aon.entity</artifactId>
+	<name>AON ENTITY</name>
+	<description>AON ENTITY</description>
+	<build>
+		<plugins>
+			<!-- Se ignoran las entidades mock generadas para la compilacion -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<includes>
+						<include>META-INF/**</include>
+						<include>com/esferalia/aon/entity/**</include>
+						<include>com/code/aon/registry/I**</include>
+						<include>com/code/aon/project/I**</include>
+						<include>com/code/aon/asset/I**</include>
+					</includes>
+										
+					<archive>
+						<manifest>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			
+			<!-- Para poder acceder a las variables del build. -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
+				</configuration>
+			</plugin>
+			
+			<!-- Para añadir la carpeta de los fuentes generados como source folder. -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>
+									${project.build.directory}/generated-sources/entity
+								</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>com.esferalia.aon</groupId>
+				<artifactId>aon-maven-plugin</artifactId>
+				<version>${project.version}</version>
+				<executions>
+					<!-- Para crear la base de datos utilizada por hibernate-tools. -->
+					<execution>
+						<id>create-db</id>
+						<goals>
+							<goal>create-db</goal>
+						</goals>
+						<configuration>
+							<dbName>aon_reveng_${buildNumber}</dbName>
+						</configuration>
+					</execution>
+					<!-- Para generar el fichero de configuracion de hibernate, puesto que la base de datos es variable. -->
+					<execution>
+						<id>create-hibernate-configuration-file</id>
+						<goals>
+							<goal>create-hibernate-configuration-file</goal>
+						</goals>
+						<configuration>
+							<destDir>${basedir}/target/generated-sources/reveng/hibernate_reveng.properties</destDir>
+							<properties>
+								<param>hibernate.dialect=org.hibernate.dialect.MySQLInnoDBDialect</param>
+								<param>hibernate.connection.url=jdbc:mysql://127.0.0.1:3306/aon_reveng_${buildNumber}?autoReconnect=true</param>
+								<param>hibernate.connection.driver_class=org.gjt.mm.mysql.Driver</param>
+								<param>hibernate.connection.username=dbuser</param>
+								<param>hibernate.connection.password=serubd2000</param>
+								<param>hibernate.default_catalog=aon_reveng_${buildNumber}</param>
+							</properties>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			
+			<!-- Para levantar los entities mediate el proceso de reven de hibernate tools -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>hibernate3-maven-plugin</artifactId>
+				<version>3.0</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+                    <hibernatetool destdir="target/generated-sources/entity">
+                        <jdbcconfiguration propertyfile="target/generated-sources/reveng/hibernate_reveng.properties" packagename="com.esferalia.aon.entity.master" revengfile="src/main/resources/META-INF/hibernate.reveng.xml" reversestrategy="com.esferalia.aon.entity.hibernate.tools.AonReverseEngineeringStrategy" detectmanytomany="false" />
+
+                        <hbmtemplate exporterclass="com.esferalia.aon.entity.hibernate.tools.AonExporter" templatepath="src/main/resources/com/esferalia/aon/entity/hibernate/tools" template="pojo/Pojo.ftl" filepattern="{package-name}/{class-name}.java">
+                        	
+    						<property key="jdk5" value="true" />
+							<property key="ejb3" value="true" />
+							<property key="drop" value="true" />
+							<property key="format" value="true" />
+							
+                        </hbmtemplate>
+                    </hibernatetool> 
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.esferalia.aon</groupId>
+						<artifactId>aon.entity.common</artifactId>
+						<version>${project.version}</version>
+						<scope>compile</scope>
+					</dependency>
+					<dependency>
+						<groupId>commons-collections</groupId>
+						<artifactId>commons-collections</artifactId>
+						<version>3.2</version>
+						<scope>runtime</scope>
+					</dependency>
+					<dependency>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>5.0.8</version>
+						<scope>runtime</scope>
+					</dependency>
+					<dependency>
+						<groupId>cglib</groupId>
+						<artifactId>cglib</artifactId>
+						<version>2.1_3</version>
+						<scope>runtime</scope>
+					</dependency>
+				</dependencies>
+			</plugin>
+			
+			<!-- Para que compile, se generan las entidades en su paquetaje correcto,
+				 estas clases no se incluyen en el JAR, puesto que estan en los respectivos
+				 proyectos.			 -->
+			<plugin>
+				<groupId>com.esferalia.aon</groupId>
+				<artifactId>aon.mock.entity.maven.plugin</artifactId>
+				<version>${project.version}</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-mock-entities</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<outputDir>${project.build.directory}/generated-sources/entity</outputDir>
+					<generateHibernateCfg>false</generateHibernateCfg>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.mojo
+										</groupId>
+										<artifactId>
+											hibernate3-maven-plugin
+										</artifactId>
+										<versionRange>
+											[2.2,)
+										</versionRange>
+										<goals>
+											<goal>hbmtemplate</goal>
+											<goal>run</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											com.esferalia.aon
+										</groupId>
+										<artifactId>
+											aon.mock.entity.maven.plugin
+										</artifactId>
+										<versionRange>
+											[7.0-SNAPSHOT,)
+										</versionRange>
+										<goals>
+											<goal>
+												generate-mock-entities
+											</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.entity.common</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon-master</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+    <profiles>
+      	<profile>
+            <id>perform-stats</id>
+        </profile>
+    </profiles>
+</project>

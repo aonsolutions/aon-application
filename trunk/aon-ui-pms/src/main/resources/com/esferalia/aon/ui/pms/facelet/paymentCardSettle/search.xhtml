@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="paymentCardSettleSearch">
+			
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_paymentCardSettle_module}" />
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:div styleClass="aon-panelGrid-search">
+					<aon:div styleClass="aon-panelGrid-search-info">
+						<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
+					</aon:div>
+					
+					<aon:panelGrid columns="2" >
+							
+						<aon:outputText value="" />
+						<aon:div style="width:700px;">
+						
+							<aon:panelCollapsible expanded="true" label="#{financeBundle.finance_finance}" id="financeSearchPanel">
+								<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even" >
+
+									<aon:outputLabel rendered="#{paymentCardSettle.agenciesSize > 0}" value="&#160;" />
+									<aon:div id="agenciesDiv" rendered="#{paymentCardSettle.agenciesSize > 0}">
+										<a4j:repeat value="#{paymentCardSettle.agencies}" rowKeyVar="index" var="agency" >
+											<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+												<aon:outputText value="#{agency.registry.name}" />
+												<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="financeSearchPanel"
+													actionListener="#{paymentCardSettle.onRemoveAgency}">
+													<f:param name="agencyIndex" value="#{index}" />
+												</aon:commandButton>
+											</aon:div>						
+										</a4j:repeat>
+									</aon:div>
+									
+									<ui:decorate template="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+										<ui:param name="lookupTo" value="#{paymentCardSettle.agency}" />
+										<ui:param name="lookupLabel" value="#{pmsBundle.pms_agency}" />
+										<ui:param name="idRequired" value="#{paymentCardSettle.agenciesSize == 0}" />
+										<ui:param name="skipNewButton" value="#{true}" />
+										<ui:define name="afterLookupContent2">
+											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="financeSearchPanel"
+												actionListener="#{paymentCardSettle.onAddAgency}"
+												rendered="#{(paymentCardSettle.agency.id != null)}" />					
+										</ui:define>
+									</ui:decorate>
+									
+									<aon:outputLabel for="Finance_hotel" 
+										value="#{pmsBundle.pms_hotel}" />
+									<aon:selectOneMenu id="Finance_hotel" 
+										value="#{paymentCardSettle.hotel}" >
+										<f:selectItem itemLabel=" - " itemValue="#{null}" />
+										<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+									</aon:selectOneMenu>
+									
+									<aon:outputLabel value="#{bundle.aon_date}" />
+									<aon:div>
+										<aon:outputLabel for="Finance_invoice_issueDate_from"
+											styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+										<aon:selectInputDate id="Finance_invoice_issueDate_from"
+											value="#{paymentCardSettle.startDate}" 
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}"/>
+										<aon:outputLabel for="Finance_invoice_issueDate_to"
+											styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+										<aon:selectInputDate id="Finance_invoice_issueDate_to"
+											value="#{paymentCardSettle.endDate}" 
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}"/>
+									</aon:div>
+									
+									<aon:outputLabel for="Finance_payMethod_id"
+										value="#{configBundle.config_pay_method}" />
+									<aon:div id="payMethodDiv">
+										<a4j:repeat value="#{paymentCardSettle.payMethods}" rowKeyVar="index" var="payMth">
+											<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+												<aon:selectOneMenu id="Finance_payMethod_id"
+													value="#{paymentCardSettle.payMethods[index]}">
+													<f:selectItem itemLabel="-" itemValue="#{paymentCardSettle.emptyPayMethod}" />
+													<f:selectItems value="#{configCollections.payMethods}" />
+												 	<a4j:support event="onchange" reRender="payMethodDiv" />
+												</aon:selectOneMenu>
+												<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="payMethodDiv"
+													actionListener="#{paymentCardSettle.onRemovePayMethod}"
+													rendered="#{payMth.id != null}">
+													<f:param name="payMethodIndex" value="#{index}" />
+												</aon:commandButton>
+												<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="payMethodDiv"
+													actionListener="#{paymentCardSettle.onAddPayMethod}"
+													rendered="#{(payMth.id != null) and (index == (paymentCardSettle.payMethodsSize-1))}" />					
+											</aon:div>						
+										</a4j:repeat>
+									</aon:div>
+							
+								</aon:panelGrid>
+							</aon:panelCollapsible>
+							
+							<aon:panelCollapsible expanded="true" label="#{pmsBundle.pms_reservation}">
+								<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+									
+									<aon:outputLabel for="ProjectReservation_project_id" 
+										value="#{pmsBundle.pms_reservation_id}" />
+									<aon:inputText id="ProjectReservation_project_id"
+										value="#{paymentCardSettle.reservationId}"
+										size="20" />
+								
+									<aon:outputLabel for="ProjectReservation_code" 
+										value="#{pmsBundle.pms_reservation_code}" />
+									<aon:inputText id="ProjectReservation_code"
+										value="#{paymentCardSettle.reservationCode}"
+										size="20" />
+										
+									<aon:outputLabel value="#{pmsBundle.pms_guest}" />
+									<aon:div>
+										<aon:outputLabel for="ProjectReservation_guestName"
+											styleClass="aon-italic aon-margin-right" value="#{bundle.aon_name}" />
+										<aon:inputText id="ProjectReservation_guestName"
+											value="#{paymentCardSettle.guestName}"
+											size="14" />
+										<aon:outputLabel for="ProjectReservation_guestSurname"
+											styleClass="aon-italic aon-margin-left aon-margin-right" value="#{bundle.aon_surname}" />
+										<aon:inputText id="ProjectReservation_guestSurname"
+											value="#{paymentCardSettle.guestSurname}"
+											size="20" />
+									</aon:div>
+									
+								</aon:panelGrid>
+							</aon:panelCollapsible>			
+					
+						</aon:div>
+						
+						
+						
+						<aon:outputText value="&#160;" />
+						<aon:commandButton id="search" ignoreDupResponses="true"
+							value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
+							action="paymentCardSettle_list"
+							actionListener="#{paymentCardSettle.onSearch}"
+							accesskey="#{bundle.aon_key_search}" >
+								<aon:actionHotKey key="return" />
+						</aon:commandButton>
+							
+					</aon:panelGrid>
+					
+				</aon:div>
+			</aon:div>
+				
+		</aon:form>
+		
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		
+	</ui:define>
+</ui:composition>

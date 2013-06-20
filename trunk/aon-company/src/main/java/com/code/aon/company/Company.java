@@ -1,0 +1,127 @@
+/*
+ * Created on 23-may-2005
+ *
+ */
+package com.code.aon.company;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.domain.IDomain;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
+import com.code.aon.registry.ITaxInfo;
+import com.code.aon.registry.Registry;
+
+@Entity
+@Table(name="company")
+@PrimaryKeyJoinColumn(name="registry")
+public class Company extends Registry implements ITaxInfo, IDomain {
+
+	private static final long serialVersionUID = -4187068086094343444L;
+
+    private int domain;
+	private boolean active;    
+    private boolean surcharge;
+    private boolean withholding;
+    private boolean eInvoice;
+    
+	@Column(name="domain", nullable=false)
+	public int getDomain() {
+		return this.domain;
+	}
+	public void setDomain(int domain) {
+		this.domain = domain;
+	}
+
+    @Column(nullable=true)
+	public boolean isActive() {
+		return active;
+	}
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	@Column(nullable=true)
+	public boolean isSurcharge() {
+		return surcharge;
+	}
+	public void setSurcharge(boolean surcharge) {
+		this.surcharge = surcharge;
+	}
+	
+	@Column(nullable=true)
+	public boolean isWithholding() {
+		return withholding;
+	}
+	public void setWithholding(boolean withholding) {
+		this.withholding = withholding;
+	}
+	
+	@Column(name="e_invoice", nullable=true)
+	public boolean isEInvoice() {
+		return eInvoice;
+	}
+	public void setEInvoice(boolean invoice) {
+		eInvoice = invoice;
+	}
+
+	@Transient
+	public InvoiceTransactionType getTransaction() {
+		return InvoiceTransactionType.NATIONAL;
+	}
+	
+	@Transient
+	public boolean isVatFree() {
+		return false;
+	}
+
+	@Transient
+	public boolean isRetentionFree() {
+		return false;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Company o = (Company) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.appendSuper(super.equals(obj))
+				.append(this.active, o.active)
+				.append(this.domain, o.domain)
+				.append(this.eInvoice, o.eInvoice)
+				.append(this.surcharge, o.surcharge)
+				.append(this.withholding, o.withholding)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.appendSuper(super.hashCode())
+			.append(active)
+			.append(domain)
+			.append(eInvoice)
+			.append(surcharge)
+			.append(withholding)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
+	
+}

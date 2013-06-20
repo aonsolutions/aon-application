@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="domainForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{adminBundle.admin_domain_management}" />
+				<ui:param name="controller" value="#{adminDomain}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+				<ui:param name="skipRemoveButton" value="#{true}" />
+				<ui:param name="skipBackButton" value="#{true}" />
+				<ui:param name="skipSearchButton" value="#{true}" />
+				<ui:param name="skipSaveButton" value="#{!(adminMain.termsOfServiceAccepted or aonRole.sysAdmin)}" />
+				<ui:define name="beforeSpinToolbarContent">				
+					<aon:commandButton id="audit-info"
+						value="#{bundle.aon_audit}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-audit"
+						reRender="showAuditInfoWindow">
+						<f:setPropertyActionListener target="#{adminDomain.showAuditInfoWindow}"
+							value="#{true}" />							
+					</aon:commandButton>	
+				</ui:define>				
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid columns="2">
+				
+					<aon:outputLabel for="Domain_description"
+						value="#{adminBundle.admin_domain_displayName}" />
+					<aon:inputText id="Domain_description" required="true"
+							size="90" maxlength="128" value="#{adminDomain.to.description}" />
+							
+					<aon:outputLabel for="Domain_type"
+						value="#{adminBundle.admin_domain_type}" />
+					<c:if test="#{(!aonRole.sysAdmin) or (domainSwitcher.type == 'ADMIN')}">
+						<aon:inputText id="Domain_type" size="60" disabled="true"
+							value="#{adminDomain.to.type}" />
+					</c:if>
+					<c:if test="#{aonRole.sysAdmin and (domainSwitcher.type != 'ADMIN')}">						
+						<aon:selectOneMenu id="Domain_type" 
+							value="#{adminDomain.to.type}">
+							<f:selectItems value="#{adminCollections.newDomainTypes}" />
+						</aon:selectOneMenu>		
+					</c:if>						
+
+					<aon:outputLabel for="Domain_name"
+						value="#{adminBundle.admin_domain_url}" />
+					<c:if test="#{!aonRole.sysAdmin}">
+						<aon:outputLink id="Domain_name" target="_blank" value="http://#{adminDomain.to.name}" >
+							<aon:outputText value="http://#{adminDomain.to.name}" />
+					    </aon:outputLink>
+					</c:if>
+					<c:if test="#{aonRole.sysAdmin}">
+						<aon:inputText id="Domain_name" required="true"
+							validator="#{adminDomain.domainNameCheck}"
+							size="64" maxlength="#{adminDomain.maxDomainNameLength}" value="#{adminDomain.to.name}" />		
+						<c:if test="#{!domainSwitcher.childDomain}" >							
+							<aon:outputLabel for="Domain_subDomainSuffix"
+								value="#{adminBundle.admin_domain_subDomainSuffix}" />
+							<aon:inputText id="Domain_subDomainSuffix"
+								validator="#{adminDomain.subDomainSuffixCheck}"
+								size="64" maxlength="#{adminDomain.maxDomainNameLength-2}" value="#{adminDomain.to.subDomainSuffix}" />
+						</c:if>
+					</c:if>					   				
+
+					<c:if test="#{adminDomain.domainApplication != null}" >
+						<aon:outputLabel for="DomainApplication_auditLevel"
+							value="#{auditBundle.audit_audit_level}" />
+						<aon:selectOneMenu id="DomainApplication_auditLevel" 
+							value="#{adminDomain.domainApplication.auditLevel}">
+							<f:selectItems value="#{auditCollections.auditLevels}" />
+						</aon:selectOneMenu>
+					</c:if>	
+
+					<c:if test="#{domainSwitcher.childDomain}" >
+						<aon:outputLabel for="Domain_enableHeredity"
+							value="#{adminBundle.admin_domain_enableHeredity}" />
+						<aon:selectBooleanCheckbox id="Domain_enableHeredity"
+							disabled="true"
+							value="#{adminDomain.to.enableHeredity}" />
+					</c:if>								
+
+					<c:if test="#{aonRole.sysAdmin}" >
+						<aon:outputLabel for="Domain_active"
+							value="#{bundle.aon_active}" />
+						<aon:selectBooleanCheckbox id="Domain_active"
+							value="#{adminDomain.to.active}" />								
+
+						<aon:outputLabel for="Domain_disableDomainManagement"
+							value="#{adminBundle.admin_domain_disableDomainManagement}" />
+						<aon:selectBooleanCheckbox id="Domain_disableDomainManagement"
+							value="#{adminDomain.to.disableDomainManagement}" />								
+
+						<aon:outputLabel for="Domain_owner"
+							value="#{adminBundle.admin_new_domain_owner}" />
+						<aon:inputText id="Domain_owner" size="90" maxlength="256"
+							validator="#{adminDomain.ownerCheck}"
+							value="#{adminDomain.to.owner}" />
+
+						<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{adminDomain.to.parent}" />
+							<ui:param name="lookupLabel" value="#{adminBundle.admin_domain_parent}" />
+							<ui:param name="lookupSuffix" value="-Parent" />
+							<ui:param name="lookupControllerListener" value="#{adminDomain.parentDomainFilter}" />
+						</ui:include>					
+
+						<aon:outputLabel for="Domain_oem"
+							value="#{bundle.aon_oem}" />
+						<aon:selectBooleanCheckbox id="Domain_oem"
+							value="#{adminDomain.OEM}" />
+
+						<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{adminDomain.OEMDomain}" />
+							<ui:param name="lookupLabel" value="#{bundle.aon_oem_template}" />							
+							<ui:param name="lookupSuffix" value="-OEM" />
+							<ui:param name="lookupControllerListener" value="#{adminDomain.OEMDomainFilter}" />
+						</ui:include>
+								
+						<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{adminDomain.heritableOEMDomain}" />
+							<ui:param name="lookupLabel" value="#{bundle.aon_heritable_oem_template}" />							
+							<ui:param name="lookupSuffix" value="-HeritableOEM" />
+							<ui:param name="lookupControllerListener" value="#{adminDomain.OEMDomainFilter}" />
+						</ui:include>
+					</c:if>
+					
+				</aon:panelGrid>
+								
+				<aon:div styleClass="aon-form-group-title aon-margin-top">
+					<aon:div styleClass="aon-form-group-title-internal">
+						<aon:outputText value="#{adminBundle.admin_capabilities}"/>
+					</aon:div>
+				</aon:div>
+				<aon:panelGrid columns="2" >
+					<aon:outputLabel for="Domain_maxDefinedUsers"
+						value="#{adminBundle.admin_domain_maxDefinedUsers}" />
+					<aon:div>
+						<aon:inputText id="Domain_maxDefinedUsers" required="true"
+							size="10" value="#{adminDomain.to.maxDefinedUsers}" >
+							<f:validateLongRange minimum="#{domainUser.minimumUserNumber}" />
+						</aon:inputText>
+						<aon:outputFormat styleClass="aon-margin-left" value="#{adminBundle.admin_active_users}">
+							<f:param value="#{domainUser.numberOfActiveUsers}" />
+						</aon:outputFormat>
+						<aon:goToButton controller="#{domainUser}"
+							actionListener="#{domainUser.onSearch}"	
+							action="domainUser_list" rendered="true" />						
+					</aon:div>
+				
+					<c:if test="#{!domainSwitcher.childDomain}" >
+						<aon:outputLabel for="Domain_domainManagement"
+							value="#{adminBundle.admin_domain_domainManagement}" />
+						<aon:selectBooleanCheckbox id="Domain_domainManagement"
+							disabled="#{!aonRole.sysAdmin}"
+							value="#{adminDomain.to.domainManagement}" />
+					</c:if>
+
+					<aon:outputLabel for="Domain_maxDocumentSize"
+						value="#{adminBundle.admin_domain_maxDocumentSize}" />
+					<rich:inputNumberSlider id="Domain_maxDocumentSize"
+						value="#{adminDomain.to.maxDocumentSize}"
+						minValue="1" maxValue="16" width="300" />
+									
+					<aon:outputLabel for="Domain_maxTotalDocumentSize"
+						value="#{adminBundle.admin_domain_maxTotalDocumentSize}" />
+					<h:panelGrid columns="2">
+						<rich:inputNumberSlider id="Domain_maxTotalDocumentSize"
+							label="#{adminBundle.admin_domain_maxTotalDocumentSize}"
+							disabled="#{!adminDomain.documental.checked}"
+							value="#{adminDomain.to.maxTotalDocumentSize}"
+							minValue="100" maxValue="1500" step="100" width="300" >
+							<f:validateLongRange minimum="#{documentManager.usedSpaceInMB}" />
+						</rich:inputNumberSlider>
+						<aon:outputText styleClass="aon-margin-left"
+							value="#{documentManager.usedSpaceMessage}" />
+					</h:panelGrid>
+
+				</aon:panelGrid>								
+
+				<c:if test="#{adminDomain.showApplications}" >
+					<aon:div styleClass="aon-form-group-title aon-margin-top">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputText value="#{adminBundle.admin_modules}"/>
+						</aon:div>
+					</aon:div>
+					<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/applications.xhtml" />
+					
+					<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/termsOfService.xhtml" >
+						<ui:param name="controller" value="#{adminDomain}" />
+						<ui:param name="termsOfServiceURL" value="#{adminMain.properties.updateDomainURL}" />
+					</ui:include>
+				</c:if>
+								
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{domainLookup}" />
+		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+			<ui:param name="auditableController" value="#{adminDomain}" />
+		</ui:include>		
+	</ui:define>
+</ui:composition>

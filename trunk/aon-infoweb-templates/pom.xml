@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>com.code.aon</groupId>
+    <artifactId>aon.parent</artifactId>
+    <version>7.19</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>aon-infoweb-templates</artifactId>
+  <packaging>pom</packaging>
+  <description>Plantillas (Velocity) del InfoWeb.</description>
+  <name>AON INFOWEB TEMPLATES</name>
+
+  <properties>
+    <maven.build.timestamp.format>dd/MM/yyyy</maven.build.timestamp.format>
+  </properties>
+
+  <scm>
+    <developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.18.x/aon.web.parent</developerConnection>
+    <connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.18.x/aon.web.parent</connection>
+    <url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.18.x/aon.web.parent</url>
+  </scm>
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>1.2</version>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <doCheck>false</doCheck>
+          <doUpdate>false</doUpdate>
+        </configuration>
+      </plugin>
+
+
+    </plugins>
+  </build>
+
+  <dependencies>
+  </dependencies>
+
+  <profiles>
+    <profile>
+      <id>rpm-release</id>
+     <activation>
+        <property>
+          <name>rpm.release</name>
+          <value>true</value>
+        </property>
+      </activation>
+
+  <build>
+    <plugins>
+
+			<!-- Para construir el RPM -->
+                       <plugin>
+
+                                <groupId>org.codehaus.mojo</groupId>
+                                <artifactId>rpm-maven-plugin</artifactId>
+                                <version>2.0.1</version>
+                                <extensions>true</extensions>
+
+				<executions>
+					<execution>
+						<goals>
+							<goal>attached-rpm</goal>
+						</goals>
+					</execution>
+
+				</executions>
+
+                                <configuration>
+	                            <group>Applications/Aon</group>
+	                            <release>${buildNumber}</release>
+				    <copyright>2009, esferalia Networks S.A</copyright>
+					<requires>
+					</requires>
+                                        <mappings>
+                                                <mapping>
+							<filemode>755</filemode>
+                                                        <username>tomcat</username>
+                                                        <groupname>tomcat</groupname>
+                                                        <directory>/home/COMMON-RESOURCES/aon-web-info/templates</directory>
+							<sources>
+								<source>
+									<location>templates</location>
+								</source>
+							</sources>
+                                                </mapping>
+					</mappings>
+                                </configuration>
+
+
+                        </plugin>
+
+    </plugins>
+  </build>
+
+
+
+    </profile>
+      	<profile>
+            <id>perform-stats</id>
+        </profile>
+ </profiles>
+</project>
+ 

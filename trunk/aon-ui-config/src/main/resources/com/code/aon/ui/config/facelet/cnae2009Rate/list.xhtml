@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="cnae2009RateList">
+
+			<aon:div ajaxRendered="true" layout="none">
+				<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+					<ui:param name="toolbarTitle" value="#{configBundle.config_cnae2009Rate_module}" />
+					<ui:param name="controller" value="#{cnae2009Rate}" />
+					<ui:param name="skipResetButton" value="true" />
+					<ui:param name="skipSearchButton" value="true" />
+				</ui:include>			
+
+				<!--  aon-region-body -->
+				<aon:div styleClass="aon-scroll-area">
+
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+						<ui:param name="controller" value="#{cnae2009Rate}" />
+						<ui:param name="skipSelectButton" value="true" />
+						<ui:define name="columns">
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+								<f:facet name="header">
+									<aon:outputLabel
+										value="#{bundle.aon_id}" />
+								</f:facet>
+								<aon:outputText value="#{to.id}"  />
+							</aon:column>
+	
+							<aon:column styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputLabel
+										value="#{bundle.aon_description}" />
+								</f:facet>
+								<aon:outputText value="#{to.cnae2009.title}" />
+							</aon:column>
+							
+  							<aon:column styleClass="aon-editDataTable-dateColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_start_date}" />
+								</f:facet>
+								<aon:outputText value="#{to.startDate}" >
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>		
+							</aon:column>
+						
+							<aon:column styleClass="aon-editDataTable-dateColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_end_date}" />
+								</f:facet>
+								<aon:outputText value="#{to.endDate}" >
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>		
+							</aon:column>
+							
+  							<aon:column styleClass="aon-editDataTable-numberColumn">
+								<f:facet name="header">
+									<aon:outputLabel
+										value="#{configBundle.config_cnae2009Rate_itAmount}" />
+								</f:facet>
+								<aon:outputText value="#{to.itAmount}">
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>
+							</aon:column>
+  
+  							<aon:column styleClass="aon-editDataTable-numberColumn">
+								<f:facet name="header">
+									<aon:outputLabel
+										value="#{configBundle.config_cnae2009Rate_imsAmount}" />
+								</f:facet>
+								<aon:outputText value="#{to.imsAmount}">
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>
+							</aon:column>
+
+						</ui:define>
+					</ui:decorate>
+
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>

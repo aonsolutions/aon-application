@@ -1,0 +1,70 @@
+package com.esferalia.aon.payroll.calculator.sql;
+
+import java.sql.ResultSet;
+import java.util.Date;
+
+import com.esferalia.aon.payroll.calculator.IContractBonus;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.BonusConceptColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractBonusColumns;
+import com.esferalia.aon.salary.expression.ExpressionScope;
+
+public class SQLContractBonus extends SQLCollection<IContractBonus> implements IContractBonus{
+	
+	
+	public SQLContractBonus() {
+	}
+	
+	
+	protected SQLContractBonus(ResultSet resultSet) {
+		super(resultSet);
+	}
+
+	@Override
+	public IContractBonus next() {
+		return this;
+	}
+
+	@Override
+	public String getName() {
+		return null;
+	}
+
+	@Override
+	public ExpressionScope getScope() {
+		return ExpressionScope.CONTRACT;
+	}
+
+	@Override
+	public boolean isReadOnly() {
+		return false;
+	}
+
+	@Override
+	public Date getStartDate() {
+		return getDate(ContractBonusColumns.START_DATE);
+	}
+
+	@Override
+	public Date getEndDate() {
+		return getDate(ContractBonusColumns.END_DATE);
+	}
+
+	@Override
+	public String getDescription() {
+		return getString(ContractBonusColumns.DESCRIPTION, BonusConceptColumns.DESCRIPTION );
+	}
+
+	@Override
+	public String getExpression() {
+		return getString(ContractBonusColumns.EXPRESSION, BonusConceptColumns.EXPRESSION );
+	}
+	
+	private String getString(String deductionLabel, String conceptColumn ) {
+		return super.getString(deductionLabel, SQLConstants.BONUS_CONCEPT +"."+ conceptColumn );
+	}
+	
+
+	
+	
+}

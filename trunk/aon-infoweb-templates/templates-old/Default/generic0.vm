@@ -1,0 +1,8 @@
+
+<!--<h1 >$generic.getTitle()</h1>-->
+<div id="content">
+<div align="right"><h1>$pagename</h1></div>
+<p></p>
+	$!text
+</div>
+

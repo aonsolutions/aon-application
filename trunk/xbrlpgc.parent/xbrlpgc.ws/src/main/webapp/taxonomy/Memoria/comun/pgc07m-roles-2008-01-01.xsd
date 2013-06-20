@@ -1,0 +1,1673 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:pgc07m-roles="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/roles/2009-01-01" targetNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/roles/2009-01-01" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<annotation>
+		<appinfo>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/Memoria/ModeloNormal/2008-01-01/role/Memoria" id="MemoriaModeloNormal">
+				<link:definition>Contenido Memoria Normal</link:definition>
+				<link:usedOn>link:presentationLink</link:usedOn>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/Memoria/ModeloAbreviado/2008-01-01/role/Memoria" id="MemoriaModeloAbreviado">
+				<link:definition>Contenido Memoria Abreviada</link:definition>
+				<link:usedOn>link:presentationLink</link:usedOn>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/Memoria/ModeloPymes/2008-01-01/role/Memoria" id="MemoriaModeloPymes">
+				<link:definition>Contenido Memoria de PYMES</link:definition>
+				<link:usedOn>link:presentationLink</link:usedOn>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/role/CodeLabel" id="CodeLabel">
+				<link:definition>Etiquetas de códigos para los cuadros normalizados</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/role/CodeLabelEjercicioAnterior" id="CodeLabelEjercicioAnterior">
+				<link:definition>Etiquetas de códigos del ejercicio anterior para los elementos de los cuadros normalizados</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/activos/financieros/largo/plazo/normal/role/CodeLabel" id="ActivosFinancierosLargoPlazoNormalCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro mn9a de la memoria normal</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/activos/financieros/corto/plazo/normal/role/CodeLabel" id="ActivosFinancierosCortoPlazoNormalCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro mn9b de la memoria normal</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+ 			</link:roleType>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/pasivos/financieros/largo/plazo/normal/role/CodeLabel" id="PasivosFinancierosLargoPlazoNormalCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro mn9c de la memoria normal</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/pasivos/financieros/corto/plazo/normal/role/CodeLabel" id="PasivosFinancierosCortoPlazoNormalCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro mn9d de la memoria normal</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+ 			</link:roleType>
+
+
+
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/categorias/activos/financieros/largo/plazo/abreviado/role/CodeLabel" id="CategoriasActivosFinancierosLargoPlazoAbreviadoCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro ma6a de la memoria abreviada</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/categorias/activos/financieros/corto/plazo/abreviado/role/CodeLabel" id="CategoriasActivosFinancierosCortoPlazoAbreviadoCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro ma6b de la memoria abreviada</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+ 			</link:roleType>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/clases/activos/financieros/correcciones/deterioro/valor/riesgo/credito/role/CodeLabel" id="ClasesActivosFinancierosCorreccionesCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro ma6d y mp6d de la memoria abreviada y de pymes</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/correcciones/deterioro/valor/participaciones/role/CodeLabel" id="CorreccionesDeterioroValorParticipacionesCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro ma6f de la memoria abreviada y mp6e de la memoria de pymes</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/categorias/activos/financieros/largo/plazo/pymes/role/CodeLabel" id="CategoriasActivosFinancierosLargoPlazoPymesCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro mp6a de la memoria pymes</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/categorias/activos/financieros/corto/plazo/pymes/role/CodeLabel" id="CategoriasActivosFinancierosCortoPlazoPymesCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro mp6a de la memoria pymes</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/categorias/pasivos/financieros/largo/plazo/abreviado/role/CodeLabel" id="CategoriasPasivosFinancierosLargoPlazoAbreviadaCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro ma7a de la memoria abreviada</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/categorias/pasivos/financieros/corto/plazo/abreviado/role/CodeLabel" id="CategoriasPasivosFinancierosCortoPlazoAbreviadaCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro ma7b de la memoria abreviada</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/categorias/pasivos/financieros/largo/plazo/pymes/role/CodeLabel" id="CategoriasPasivosFinancierosLargoPlazoPymesCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro mp6a de la memoria pymes</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/categorias/pasivos/financieros/corto/plazo/pymes/role/CodeLabel" id="CategoriasPasivosFinancierosCortoPlazoPymesCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro mp6a de la memoria pymes</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+
+
+ 			<!--
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviada/2008-01-01/role/CodeLabel" id="CodeLabelMemoriaAbreviada">
+				<link:definition>Etiquetas de códigos de la Memoria Abreviada para los cuadros normalizados</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/2008-01-01/role/CodeLabel" id="CodeLabelMemoriaPymes">
+				<link:definition>Etiquetas de códigos de la Memoria Pymes para los cuadros normalizados</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+			</link:roleType>
+-->
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainInmovilizadoIntangible" id="seccionInmovilizadoIntangibleNormal">
+				<link:definition>Clasificación que define la sección del hipercubo del modelo normal de la memoria para el detalle del apartado 7 del Inmovilizado Intangible</link:definition>
+				<link:usedOn>link:definitionLink</link:usedOn>
+			</link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeInmovilizadoIntangible" id="HypercubeInmovilizadoIntangibleNormal">
+				<link:definition>Clasificación que define la sección del hipercubo del modelo normal de la memoria para el Inmovilizado Intangible</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/primaryInmovilizadoIntangible" id="seccionPrimaryDomainInmovilizadoIntangibleNormal">
+				<link:definition>Clasificación que define la sección del dominio de conceptos primarios del modelo normal de la memoria para el apartado 7 del Inmovilizado Intangible</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InmovilizadoIntangible/2008-01-01/role/seccionMovimientosSaldosBrutos" id="seccionMovimientosSaldosBrutosInmovilizadoIntangibleNormal">
+				<link:definition>Clasificación que define la sección de movimientos de saldos brutos del modelo normal de la memoria para el apartado 7 del Inmovilizado Intangible</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InmovilizadoIntangible/2008-01-01/role/seccionMovimientosAmortizacionesAcumuladas" id="seccionMovimientosAmortizacionesAcumuladasInmovilizadoIntangibleNormal">
+				<link:definition>Clasificación que define la sección de movimientos de amortizaciones acumuladas del modelo normal de la memoria para el apartado 7 del Inmovilizado Intangible</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InmovilizadoIntangible/2008-01-01/role/seccionMovimientosCorreccionesValorativasDeterioro" id="seccionMovimientosCorreccionesValorativasInmovilizadoIntangibleNormal">
+				<link:definition>Clasificación que define la sección de movimientos de correcciones valorativas del modelo normal de la memoria para el apartado 7 del Inmovilizado Intangible</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InmovilizadoIntangible/2008-01-01/role/seccionMovimientos" id="seccionMovimientosInmovilizadoIntangibleNormal">
+				<link:definition>Clasificación que define la sección de movimientos del modelo normal de la memoria para el apartado 7 del Inmovilizado Intangible</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado0/2008-01-01/role/IdentificacionGeneral" id="IdentificacionGeneralNormal">
+        <link:definition>Memoria Normal, Apartado 0, Identificación General</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/Apartado0/2008-01-01/role/IdentificacionGeneral" id="IdentificacionGeneralAbreviada">
+        <link:definition>Memoria Abreviada, Apartado 0, Identificación General</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/Apartado0/2008-01-01/role/IdentificacionGeneral" id="IdentificacionGeneralPymes">
+        <link:definition>Memoria de Pymes, Apartado 0, Identificación General</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/BasesPresentacionCuentasAnuales" id="basesPresentacionCuentasAnuales">
+		<link:definition>Clasificación que define los conceptos primarios del modelo normal para las bases de presentación de las cuentas anuales</link:definition>
+		<link:usedOn>link:presentationLink</link:usedOn>
+		<link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/domainCategoriasInstrumentosFinancieros" id="domainCategoriasInstrumentosFinancieros">
+			<link:definition>Clasificación que define la sección de categorías de instrumentos financieros en el apartado 9 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+  	  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/domainClasesInstrumentosFinancieros" id="seccionClasesInstrumentosFinancierosNormal">
+				<link:definition>Clasificación que define la sección de clases de instrumentos financieros en el apartado 9 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+  	  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/domainClasesMonedaExtranjera" id="domainClasesMonedaExtranjera">
+				<link:definition>Clasificación que define el dominio de clases de instrumentos financieros para el apartado 11.1 d) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainMonedaExtranjeraTotal" id="domainMonedaExtranjeraTotal">
+        <link:definition>Clasificación que define el dominio de moneda extranjera Total 11.1 a) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainMonedaExtranjeraPrincipal" id="domainMonedaExtranjeraPrincipal">
+        <link:definition>Clasificación que define el dominio de moneda extranjera Principal 11.1 a) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainMonedaExtranjeraSecundaria" id="domainMonedaExtranjeraSecundaria">
+        <link:definition>Clasificación que define el dominio de moneda extranjera Secundaria 11.1 a) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainMonedaExtranjeraResto" id="domainMonedaExtranjeraResto">
+        <link:definition>Clasificación que define el dominio de resto de moneda extranjera 11.1 a) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/MonedaExtranjera/2008-01-01/role/seccionMonedaExtranjeraComprasVentasServiciosTotal" id="seccionMonedaExtranjeraComprasVentasServiciosTotal">
+        <link:definition>Clasificación que define el dominio de moneda extranjera Total 11.1 b) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/MonedaExtranjera/2008-01-01/role/seccionMonedaExtranjeraComprasVentasServiciosPrincipal" id="seccionMonedaExtranjeraComprasVentasServiciosPrincipal">
+        <link:definition>Clasificación que define el dominio de moneda extranjera Principal 11.1 b) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/MonedaExtranjera/2008-01-01/role/seccionMonedaExtranjeraComprasVentasServiciosSecundaria" id="seccionMonedaExtranjeraComprasVentasServiciosSecundaria">
+        <link:definition>Clasificación que define el dominio de moneda extranjera Secundaria 11.1 b) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/MonedaExtranjera/2008-01-01/role/seccionMonedaExtranjeraComprasVentasServiciosResto" id="seccionMonedaExtranjeraComprasVentasServiciosResto">
+        <link:definition>Clasificación que define el dominio de resto de moneda extranjera 11.1 b) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeMonedaExtranjeraCompraVentaTotal" id="HypercubeMonedaExtranjeraComprasVentasTotal">
+        <link:definition>Clasificación que define el hypercubo de total de moneda extranjera 11.1 b) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeMonedaExtranjeraCompraVentaPrincipal" id="HypercubeMonedaExtranjeraComprasVentasPrincipal">
+        <link:definition>Clasificación que define el hypercubo de principal  de moneda extranjera 11.1 b) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeMonedaExtranjeraCompraVentaSecundaria" id="HypercubeMonedaExtranjeraComprasVentasSecundaria">
+        <link:definition>Clasificación que define el hypercubo de secundaria de moneda extranjera 11.1 b) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeMonedaExtranjeraCompraVentaResto" id="HypercubeMonedaExtranjeraComprasVentasResto">
+        <link:definition>Clasificación que define el hypercubo de resto de moneda extranjera 11.1 b) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/MonedaExtranjera/2008-01-01/role/seccionActivosPasivosMonedaExtranjeraTotal" id="seccionActivosPasivosMonedaExtranjeraTotal">
+        <link:definition>Clasificación que define el dominio de resto de moneda extranjera 11.1 a) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/MonedaExtranjera/2008-01-01/role/seccionActivosPasivosMonedaExtranjeraPrincipal" id="seccionActivosPasivosMonedaExtranjeraPrincipal">
+        <link:definition>Clasificación que define el dominio de resto de moneda extranjera 11.1 a) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/MonedaExtranjera/2008-01-01/role/seccionActivosPasivosMonedaExtranjeraSecundaria" id="seccionActivosPasivosMonedaExtranjeraSecundaria">
+        <link:definition>Clasificación que define el dominio de resto de moneda extranjera 11.1 a) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/MonedaExtranjera/2008-01-01/role/seccionActivosPasivosMonedaExtranjeraResto" id="seccionActivosPasivosMonedaExtranjeraResto">
+        <link:definition>Clasificación que define el dominio de resto de moneda extranjera 11.1 a) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeActivosPasivosMonedaExtranjeraTotal" id="HypercubeActivosPasivosMonedaExtranjeraTotal">
+        <link:definition>Clasificación que define el dominio de resto de moneda extranjera 11.1 a) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeActivosPasivosMonedaExtranjeraPrincipal" id="HypercubeActivosPasivosMonedaExtranjeraPrincipal">
+        <link:definition>Clasificación que define el dominio de resto de moneda extranjera 11.1 a) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeActivosPasivosMonedaExtranjeraSecundaria" id="HypercubeActivosPasivosMonedaExtranjeraSecundaria">
+        <link:definition>Clasificación que define el dominio de resto de moneda extranjera 11.1 a) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeActivosPasivosMonedaExtranjeraResto" id="HypercubeActivosPasivosMonedaExtranjeraResto">
+        <link:definition>Clasificación que define el dominio de resto de moneda extranjera 11.1 a) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+
+
+  	  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainClasesActivosFinancierosLargo" id="domainClasesActivosFinancierosLargoPlazo">
+				<link:definition>Clasificación que define el dominio de clases de instrumentos financieros de activos a largo plazo </link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  	  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainClasesActivosFinancierosCorto" id="domainClasesActivosFinancierosCortoPlazo">
+				<link:definition>Clasificación que define el dominio de clases de instrumentos financieros de activos a corto plazo </link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  	  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainClasesPasivosFinancierosLargo" id="domainClasesPasivosFinancierosLargoPlazo">
+				<link:definition>Clasificación que define el dominio de clases de instrumentos financieros de pasivos a largo plazo </link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  	  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainClasesPasivosFinancierosCorto" id="domainClasesPasivosFinancierosCortoPlazo">
+				<link:definition>Clasificación que define el dominio de clases de instrumentos financieros de pasivos a corto plazo </link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+  	  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/domainClasesActivosFinancierosLargo" id="domainClasesActivosFinancierosLargoPlazoNormal">
+				<link:definition>Clasificación que define la sección de clases de instrumentos financieros en el apartado 9 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  	  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/domainClasesActivosFinancierosCorto" id="domainClasesActivosFinancierosCortoPlazoNormal">
+				<link:definition>Clasificación que define la sección de clases de instrumentos financieros en el apartado 9 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  	  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/domainClasesPasivosFinancierosLargo" id="domainClasesPasivosFinancierosLargoPlazoNormal">
+				<link:definition>Clasificación que define la sección de clases de instrumentos financieros en el apartado 9 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  	  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/domainClasesPasivosFinancierosCorto" id="domainClasesPasivosFinancierosCortoPlazoNormal">
+				<link:definition>Clasificación que define la sección de clases de instrumentos financieros en el apartado 9 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/seccionActivosFinancierosLargoPlazo" id="seccionActivosFinancierosLargoPlazoNormal">
+				<link:definition>Clasificación que define la sección de Activos financieros a largo plazo en el apartado 9 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/seccionActivosFinancierosCortoPlazo" id="seccionActivosFinancierosCortoPlazoNormal">
+				<link:definition>Clasificación que define la sección de Activos financieros a corto plazo en el apartado 9 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/seccionPasivosFinancierosLargoPlazo" id="seccionPasivosFinancierosLargoPlazoNormal">
+				<link:definition>Clasificación que define la sección de Pasivos financieros a largo plazo en el apartado 9 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/seccionPasivosFinancierosCortoPlazo" id="seccionPasivosFinancierosCortoPlazoNormal">
+				<link:definition>Clasificación que define la sección de Pasivos financieros a corto plazo en el apartado 9 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/HypercubeActivosFinancierosLargoPlazo" id="HypercubeActivosFinancierosLargoPlazoNormal">
+				<link:definition>Clasificación que define la sección del hipercubo de Activos financieros a largo plazo en el apartado 9 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/HypercubeActivosFinancierosCortoPlazo" id="HypercubeActivosFinancierosCortoPlazoNormal">
+				<link:definition>Clasificación que define la sección del hipercubo de Activos financieros a corto plazo en el apartado 9 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/HypercubePasivosFinancierosLargoPlazo" id="HypercubePasivosFinancierosLargoPlazoNormal">
+				<link:definition>Clasificación que define la sección del hipercubo de Pasivos financieros a largo plazo en el apartado 9 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/HypercubePasivosFinancierosCortoPlazo" id="HypercubePasivosFinancierosCortoPlazoNormal">
+				<link:definition>Clasificación que define la sección del hipercubo de Pasivos financieros a corto plazo en el apartado 9 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/InstrumentosFinancieros/2008-01-01/role/seccionActivosFinancierosLargoPlazo" id="seccionActivosFinancierosLargoPlazoAbreviado">
+				<link:definition>Clasificación que define la sección de Activos financieros a largo plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/InstrumentosFinancieros/2008-01-01/role/seccionActivosFinancierosCortoPlazo" id="seccionActivosFinancierosCortoPlazoAbreviado">
+				<link:definition>Clasificación que define la sección de Activos financieros a corto plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/InstrumentosFinancieros/2008-01-01/role/seccionPasivosFinancierosLargoPlazo" id="seccionPasivosFinancierosLargoPlazoAbreviado">
+				<link:definition>Clasificación que define la sección de Pasivos financieros a largo plazo en el apartado 7 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/InstrumentosFinancieros/2008-01-01/role/seccionPasivosFinancierosCortoPlazo" id="seccionPasivosFinancierosCortoPlazoAbreviado">
+				<link:definition>Clasificación que define la sección de Pasivos financieros a corto plazo en el apartado 7 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/InstrumentosFinancieros/2008-01-01/role/domainActivosFinancierosLargoPlazo" id="domainActivosFinancierosLargoPlazo">
+				<link:definition>Clasificación que define el dominio de activos financieros a largo plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/InstrumentosFinancieros/2008-01-01/role/HypercubeActivosFinancierosLargoPlazo" id="HypercubeActivosFinancierosLargoPlazoAbreviado">
+				<link:definition>Clasificación que define la sección del hipercubo de Activos financieros a largo plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/InstrumentosFinancieros/2008-01-01/role/HypercubeActivosFinancierosCortoPlazo" id="HypercubeActivosFinancierosCortoPlazoAbreviado">
+				<link:definition>Clasificación que define la sección del hipercubo de Activos financieros a corto plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/InstrumentosFinancieros/2008-01-01/role/HypercubePasivosFinancierosLargoPlazo" id="HypercubePasivosFinancierosLargoPlazoAbreviado">
+				<link:definition>Clasificación que define la sección del hipercubo de Pasivos financieros a largo plazo en el apartado 7 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/InstrumentosFinancieros/2008-01-01/role/HypercubePasivosFinancierosCortoPlazo" id="HypercubePasivosFinancierosCortoPlazoAbreviado">
+				<link:definition>Clasificación que define la sección del hipercubo de Pasivos financieros a corto plazo en el apartado 7 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainExcluidosClasesActivosFinancierosLargo" id="domainExcluidosClasesActivosFinancierosLargoPlazo">
+				<link:definition>Clasificación que define el dominio de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainExcluidosClasesActivosFinancierosCorto" id="domainExcluidosClasesActivosFinancierosCortoPlazo">
+				<link:definition>Clasificación que define el dominio de elementos excluídos en el cuadro de clases de activos financieros a corto plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InstrumentosFinancieros/2008-01-01/role/domainExcluidosClasesActivosFinancierosLargoCosteAmortizado" id="domainExcluidosClasesActivosFinancierosLargoCosteAmortizado">
+				<link:definition>Clasificación que define el dominio de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InstrumentosFinancieros/2008-01-01/role/domainExcluidosClasesActivosFinancierosLargoCoste" id="domainExcluidosClasesActivosFinancierosLargoCoste">
+				<link:definition>Clasificación que define el dominio de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InstrumentosFinancieros/2008-01-01/role/domainExcluidosClasesActivosFinancierosCortoCosteAmortizado" id="domainExcluidosClasesActivosFinancierosCortoCosteAmortizado">
+				<link:definition>Clasificación que define el dominio de elementos excluídos en el cuadro de clases de activos financieros a corto plazo en el apartado 6 de la memoria del modelo pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InstrumentosFinancieros/2008-01-01/role/domainExcluidosClasesActivosFinancierosCortoCoste" id="domainExcluidosClasesActivosFinancierosCortoCoste">
+				<link:definition>Clasificación que define el dominio de elementos excluídos en el cuadro de clases de activos financieros a corto plazo en el apartado 6 de la memoria del modelo pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InstrumentosFinancieros/2008-01-01/role/HypercubeExcluidosActivosCosteAmortizadoLargoInstrumentosPatrimonio" id="HypercubeExcluidosActivosCosteAmortizadoLargoInstrumentosPatrimonioPymes">
+				<link:definition>Clasificación que define el hipercubo de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InstrumentosFinancieros/2008-01-01/role/HypercubeExcluidosActivosCosteAmortizadoCortoInstrumentosPatrimonio" id="HypercubeExcluidosActivosCosteAmortizadoCortoInstrumentosPatrimonioPymes">
+				<link:definition>Clasificación que define el hipercubo de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InstrumentosFinancieros/2008-01-01/role/HypercubeExcluidosActivosCosteLargoDeudaOtros" id="HypercubeExcluidosActivosCosteLargoDeudaOtrosPymes">
+				<link:definition>Clasificación que define el hipercubo de elementos excluídos en el cuadro de clases de activos financieros a corto  plazo en el apartado 6 de la memoria del modelo pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InstrumentosFinancieros/2008-01-01/role/HypercubeExcluidosActivosCosteCortoDeudaOtros" id="HypercubeExcluidosActivosCosteCortoDeudaOtrosPymes">
+				<link:definition>Clasificación que define el hipercubo de elementos excluídos en el cuadro de clases de activos financieros a corto plazo en el apartado 6 de la memoria del modelo pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainExcluidosClasesActivosFinancierosLargoInversiones" id="domainExcluidosClasesActivosFinancierosLargoInversiones">
+				<link:definition>Clasificación que define el dominio de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainExcluidosClasesActivosFinancierosLargoPrestamosDerivados" id="domainExcluidosClasesActivosFinancierosLargoPrestamosDerivados">
+				<link:definition>Clasificación que define el dominio de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainExcluidosClasesActivosFinancierosLargoActivoVenta" id="domainExcluidosClasesActivosFinancierosLargoActivoVenta">
+				<link:definition>Clasificación que define el dominio de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainExcluidosClasesActivosFinancierosCortoInversiones" id="domainExcluidosClasesActivosFinancierosCortoInversiones">
+				<link:definition>Clasificación que define el dominio de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainExcluidosClasesActivosFinancierosCortoPrestamosDerivados" id="domainExcluidosClasesActivosFinancierosCortoPrestamosDerivados">
+				<link:definition>Clasificación que define el dominio de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainExcluidosClasesActivosFinancierosCortoActivoVenta" id="domainExcluidosClasesActivosFinancierosCortoActivoVenta">
+				<link:definition>Clasificación que define el dominio de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/HypercubeExcluidosActivosFinancierosLargoPlazoInversiones" id="HypercubeExcluidosActivosFinancierosLargoPlazoInversiones">
+				<link:definition>Clasificación que define el hipercubo de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/HypercubeExcluidosActivosFinancierosLargoPlazoPrestamosDerivados" id="HypercubeExcluidosActivosFinancierosLargoPlazoPrestamosDerivados">
+				<link:definition>Clasificación que define el hipercubo de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/HypercubeExcluidosActivosFinancierosLargoPlazoActivoVenta" id="HypercubeExcluidosActivosFinancierosLargoPlazoActivoVenta">
+				<link:definition>Clasificación que define el hipercubo de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/HypercubeExcluidosActivosFinancierosCortoPlazoInversiones" id="HypercubeExcluidosActivosFinancierosCortoPlazoInversiones">
+				<link:definition>Clasificación que define el hipercubo de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/HypercubeExcluidosActivosFinancierosCortoPlazoPrestamosDerivados" id="HypercubeExcluidosActivosFinancierosCortoPlazoPrestamosDerivados">
+				<link:definition>Clasificación que define el hipercubo de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/HypercubeExcluidosActivosFinancierosCortoPlazoActivoVenta" id="HypercubeExcluidosActivosFinancierosCortoPlazoActivoVenta">
+				<link:definition>Clasificación que define el hipercubo de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/InstrumentosFinancieros/2008-01-01/role/HypercubeExcluidosActivosFinancierosLargoPlazo" id="HypercubeExcluidosClasesActivosFinancierosLargoPlazoAbreviado">
+				<link:definition>Clasificación que define el hipercubo de elementos excluídos en el cuadro de clases de activos financieros a largo plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/InstrumentosFinancieros/2008-01-01/role/HypercubeExcluidosActivosFinancierosCortoPlazo" id="HypercubeExcluidosClasesActivosFinancierosCortoPlazoAbreviado">
+				<link:definition>Clasificación que define el hipercubo de elementos excluídos en el cuadro de clases de activos financieros a corto plazo en el apartado 6 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InstrumentosFinancieros/2008-01-01/role/seccionActivosFinancierosLargoPlazo" id="seccionActivosFinancierosLargoPlazoPymes">
+				<link:definition>Clasificación que define la sección de activos financieros a largo plazo en el apartado 6 de la memoria del modelo de pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InstrumentosFinancieros/2008-01-01/role/seccionActivosFinancierosCortoPlazo" id="seccionActivosFinancierosCortoPlazoPymes">
+				<link:definition>Clasificación que define la sección de activos financieros a corto plazo en el apartado 6 de la memoria del modelo de pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InstrumentosFinancieros/2008-01-01/role/HypercubeActivosFinancierosLargoPlazo" id="HypercubeActivosFinancierosLargoPlazoPymes">
+				<link:definition>Clasificación que define la sección del hipercubo de activos financieros a largo plazo en el apartado 6 de la memoria del modelo de pymes</link:definition>
+				<link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InstrumentosFinancieros/2008-01-01/role/HypercubeActivosFinancierosCortoPlazo" id="HypercubeActivosFinancierosCortoPlazoPymes">
+				<link:definition>Clasificación que define la sección del hipercubo de activos financieros a corto plazo en el apartado 6 de la memoria del modelo de pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InstrumentosFinancieros/2008-01-01/role/seccionPasivosFinancierosCortoPlazo" id="seccionPasivosFinancierosCortoPlazoPymes">
+				<link:definition>Clasificación que define la sección  de pasivos financieros a corto plazo en el apartado 7 de la memoria del modelo de pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InstrumentosFinancieros/2008-01-01/role/seccionPasivosFinancierosLargoPlazo" id="seccionPasivosFinancierosLargoPlazoPymes">
+				<link:definition>Clasificación que define la sección de pasivos financieros a largo plazo en el apartado 7 de la memoria del modelo de pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InstrumentosFinancieros/2008-01-01/role/HypercubePasivosFinancierosCortoPlazo" id="HypercubePasivosFinancierosCortoPlazoPymes">
+				<link:definition>Clasificación que define el hipercubo de pasivos financieros a corto plazo en el apartado 7 de la memoria del modelo de pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InstrumentosFinancieros/2008-01-01/role/HypercubePasivosFinancierosLargoPlazo" id="HypercubePasivosFinancierosLargoPlazoPymes">
+				<link:definition>Clasificación que define el hipercubo de pasivos financieros a largo plazo en el apartado 7 de la memoria del modelo de pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/2008-01-01/role/BasesPresentacionCuentasAnuales" id="BasesPresentacionCuentasAnualesAbreviado">
+      			<link:definition>Clasificación que define Las Bases de Presentación de las Cuentas Anuales, apartado 2 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/SubvencionesDonacionesLegados" id="SubvencionesDonacionesLegados">
+      			<link:definition>Clasificación que define Las Subvenciones, Donaciones y Legados en el apartado 18 de la memoria del modelo normal</link:definition>
+        		<link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/2008-01-01/role/SubvencionesDonacionesLegados" id="SubvencionesDonacionesLegadosComun">
+      			<link:definition>Clasificación que define Las Subvenciones, Donaciones y Legados en el apartado 11 de la memoria del modelo Abreviado y de pymes </link:definition>
+		       <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/2008-01-01/role/ResumenSubvencionesDonacionesLegados" id="ResumenSubvencionesDonacionesLegadosComun">
+      			<link:definition>Clasificación que define el resumen de Las Subvenciones, Donaciones y Legados en el apartado 11 de la memoria del modelo Abreviado y de pymes</link:definition>
+		       <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+      
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/Apartado4/2008-01-01/role/NormasRegistroValoracion" id="NormasRegistroValoracion">
+        <link:definition>Memoria, Apartado 4: "Normas de registro de valoracion"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado9r/2008-01-01/role/InstrumentosFinancierosInformacionEmpresas" id="InstrumentosFinancierosInformacionEmpresas">
+        <link:definition>Memoria Normal, Apartados 9r, 9s, 9t, 9u y 9v: "Informacion de Empresas"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado9w/2008-01-01/role/InstrumentosFinancierosCorreccionesValorativasDeterioro" id="InstrumentosFinancierosCorreccionesValorativasDeterioro">
+        <link:definition>Memoria Normal, Apartado 9w: "Correcciones valorativas registradas en participaciones de Empresas"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado9x/2008-01-01/role/ResultadoEnajenacionesOtroInversionesEmpresas" id="ResultadoEnajenacionesOtroInversionesEmpresas">
+        <link:definition>Memoria Normal, Apartado 9x: "Resultado por enajenación o disposición por otro medio de inversiones en Empresas del grupo, multigrupo y asociadas"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado9y/2008-01-01/role/LineasDescuentoPolizasCredito" id="LineasDescuentoPolizasCreditoNormal">
+        <link:definition>Memoria Normal, Apartado 9y: "Líneas de descuento y pólizas de crédito al cierre del ejercicio"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado9.3/2008-01-01/role/InstrumentosFinancierosNaturalezaRiesgo" id="InstrumentosFinancierosNaturalezaRiesgo">
+        <link:definition>Memoria Normal, Apartado 9.3: "Instrumentos Financieros, Naturaleza y Riesgo"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado9.4/2008-01-01/role/InstrumentosFinancierosFondosPropios" id="InstrumentosFinancierosFondosPropios">
+        <link:definition>Memoria Normal, Apartado 9.4: "Instrumentos Financieros, Fondos Propios"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/Apartado8/2008-01-01/role/InstrumentosFinancierosFondosPropios" id="InstrumentosFinancierosFondosPropiosAbreviado">
+        <link:definition>Memoria Abreviada, Apartado 8: "Fondos Propios"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/Apartado8/2008-01-01/role/InstrumentosFinancierosFondosPropios" id="InstrumentosFinancierosFondosPropiosPymes">
+        <link:definition>Memoria Pymes, Apartado 8: "Fondos Propios"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado6/2008-01-01/role/InversionesInmobiliarias" id="InversionesInmobiliariasNormal">
+        <link:definition>Memoria Normal, Apartado 6: "Inversiones Inmobiliarias"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainInversionesInmobiliarias" id="domainInversionesInmobiliarias">
+		 <link:definition>Clasificación que define la sección del hipercubo de Inversiones Inmobiliarias en el apartado 6 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeInversionesInmobiliarias" id="HypercubeInversionesInmobiliarias">
+		 <link:definition>Clasificación que define la sección del hipercubo de Inversiones Inmobiliarias en el apartado 6 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InversionesInmobiliarias/2008-01-01/role/seccionMovimientos" id="seccionMovimientos">
+		 <link:definition>Clasificación que define la sección de movimientos de Inversiones Inmobiliarias en el apartado 6 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InversionesInmobiliarias/2008-01-01/role/seccionMovimientosSaldosBrutos" id="seccionMovimientosSaldosBrutos">
+		 <link:definition>Clasificación que define la sección de movimientos de saldos brutos de Inversiones Inmobiliarias en el apartado 6 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InversionesInmobiliarias/2008-01-01/role/seccionMovimientosAmortizacionesAcumuladas" id="seccionMovimientosAmortizacionesAcumuladas">
+		 <link:definition>Clasificación que define la sección de movimientos de amortizaciones acumuladas de Inversiones Inmobiliarias en el apartado 6 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InversionesInmobiliarias/2008-01-01/role/seccionMovimientosCorreccionesValorativasDeterioro" id="seccionCorreccionesValorativasDeterioro">
+		 <link:definition>Clasificación que define la sección de movimienots de correccionez valorativas por deterioro de Inversiones Inmobiliarias en el apartado 6 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado10/2008-01-01/role/Existencias" id="Existencias">
+		 <link:definition>Clasificación de Existencias en el apartado 10 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado13/2008-01-01/role/IngresosYGastos" id="IngresosGastosNormal">
+		 <link:definition>Clasificación de Ingresos y Gastos en el apartado 13 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado15/2008-01-01/role/InformacionMedioAmbiente" id="InformacionMedioAmbienteNormal">
+		 <link:definition>Clasificación de Información de Medio Ambiente en el apartado 15 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+		  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado26/2008-01-01/role/InformacionDerechosEmisionGasesEfectoInvernadero" id="InformacionDerechosEmisionGasesEfectoInvernadero">
+		    <link:definition>Clasificación de Información sobre derechos de emisión de gases de efecto invernadero en el apartado 26 de la memoria del modelo normal</link:definition>
+		    <link:usedOn>link:presentationLink</link:usedOn>
+		  </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/Apartado14/2008-01-01/role/InformacionMedioAmbiente" id="InformacionMedioAmbienteAbreviado">
+		 <link:definition>Clasificación de Información de Medio Ambiente en el apartado 14 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/Apartado14/2008-01-01/role/ResumenInformacionMedioAmbiente" id="ResumenInformacionMedioAmbienteAbreviado">
+		 <link:definition>Resumen de la Información de Medio Ambiente en el apartado 14 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/Apartado14/2008-01-01/role/InformacionMedioAmbiente" id="InformacionMedioAmbientePymes">
+		 <link:definition>Clasificación de Información de Medio Ambiente en el apartado 14 de la memoria del modelo de pymes</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/Apartado14/2008-01-01/role/ResumenInformacionMedioAmbiente" id="ResumenInformacionMedioAmbientePymes">
+		 <link:definition>Resumen de Información de Medio Ambiente en el apartado 14 de la memoria del modelo de pymes</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainMonedaExtranjera" id="domainMonedaExtranjera">
+		 <link:definition>Clasificación que define la sección de dominio de Moneda Extranjera en el apartado 11 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeMonedaExtranjeraActivosPasivos" id="HypercubeMonedaExtranjeraActivosPasivos">
+		 <link:definition>Clasificación que define la sección de Hypercubo de Activos y Pasivos de Moneda Extranjera en el apartado 11 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/MonedaExtranjera/2008-01-01/role/seccionMonedaExtranjeraActivosPasivos" id="seccionMonedaExtranjeraActivosPasivos">
+		 <link:definition>Clasificación que define la sección de Activos y Pasivos de Moneda Extranjera en el apartado 11 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/MonedaExtranjera/2008-01-01/role/seccionMonedaExtranjeraComprasVentasServicios" id="seccionMonedaExtranjeraComprasVentasServicios">
+		 <link:definition>Clasificación que define la sección de compras, ventas, servicios recibidos y prestados en Moneda Extranjera en el apartado 11 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeMonedaExtranjeraCompraVenta" id="HypercubeMonedaExtranjeraComprasVentas">
+		 <link:definition>Clasificación que define la sección de Hypercubo de Compras/Ventas de Moneda Extranjera en el apartado 11 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/MonedaExtranjera/2008-01-01/role/seccionDiferenciasCambioClasesInstrumentosFinancieros" id="seccionDiferenciasCambioClasesInstrumentosFinancieros">
+		 <link:definition>Clasificación que define la sección de diferencias de cambio imputadas a pérdidas y ganancias, por clases de instrumentos financieros del apartado 11 d) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeDiferenciasCambioClasesInstrumentosFinancieros" id="HypercubeDiferenciasCambioClasesInstrumentosFinancieros">
+		 <link:definition>Clasificación que define la sección de hypercubo sobre diferencias de cambio imputadas a pérdidas y ganancias, por clases de instrumentos financieros del apartado 11 d) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado11-1-1/2008-01-01/role/MonedaExtranjeraActivosPasivos" id="MonedaExtranjeraActivosPasivos">
+		 <link:definition>Clasificación que define el activos y pasivos en moneda extranjera del apartado 11 a) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado11-1-1b/2008-01-01/role/MonedaExtranjeraComprasVentas" id="MonedaExtranjeraComprasVentas">
+		 <link:definition>Clasificación que define las compras y ventas en moneda extranjera del apartado 11 b) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado11-1-2/2008-01-01/role/MonedaExtranjeraDiferenciasCambioPyG" id="MonedaExtranjeraDiferenciasCambioPyG">
+		 <link:definition>Clasificación que define el estado de movimientos de las diferencias de conversión por participaciones clasificadas como un componente separado del patrimonio neto del apartado 11 d) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado11-2/2008-01-01/role/MonedaExtranjeraEstadoMovimientosDiferenciasConversion" id="MonedaExtranjeraEstadoMovimientosDiferenciasConversion">
+		 <link:definition>Clasificación que define el estado de movimientos de las diferencias de conversión por participaciones clasificadas como un componente separado del patrimonio neto del apartado 11 c) de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado11-3/2008-01-01/role/CambioMonedaFuncional" id="CambioMonedaFuncional">
+		 <link:definition>Clasificación que define el cambio de moneda funcional del apartado 11.3 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado11-4/2008-01-01/role/UsoVariasMonedasFuncionales" id="UsoVariasMonedasFuncionales">
+		 <link:definition>Clasificación que define la utilización de más de una moneda funcional del apartado 11.4 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado11-5/2008-01-01/role/NegociosExtranjeroMonedaFuncional" id="NegociosExtranjeroMonedaFuncional">
+		 <link:definition>Clasificación que define la información sobre negocios en el extranjero con diferente moneda funcional que la empresa del apartado 11.5 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado3/2008-01-01/role/AplicacionResultados" id="Apartado3AplicacionResultados">
+        <link:definition>Memoria Normal, Apartado 3: "Aplicación de Resultados"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/Apartado3/2008-01-01/role/AplicacionResultados" id="Apartado3AplicacionResultadosPymes">
+        <link:definition>Memoria Pymes, Apartado 3: "Aplicación de Resultados"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+       <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado5/2008-01-01/role/InmovilizadoMaterial" id="Apartado5InmovilizadoMaterial">
+        <link:definition>Memoria Normal, Apartado 5: "Inmovilizado material"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InmovilizadoMaterial/2008-01-01/role/seccionMovimientosSaldosBrutos" id="seccionMovimientosSaldosBrutosInmovilizadoMaterial">
+		 <link:definition>Clasificación que define la sección de movimientos sobre saldos brutos del Inmovilizado Materail del apartado 5 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InmovilizadoMaterial/2008-01-01/role/seccionMovimientosAmortizacionesAcumuladas" id="seccionMovimientosAmortizacionesAcumuladasInmovilizadoMaterial">
+		 <link:definition>Clasificación que define la sección de movimientos por amortizaciones acumuladas del Inmovilizado Material del apartado 5 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InmovilizadoMaterial/2008-01-01/role/seccionMovimientosCorreccionesValorativasDeterioro" id="seccionMovimientosCorreccionesValorativasDeterioroInmovilizadoMaterial">
+		 <link:definition>Clasificación que define la sección de movimientos de correcciones valorativas por deterioro del Inmovilizado Material del apartado 5 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InmovilizadoMaterial/2008-01-01/role/seccionMovimientos" id="seccionMovimientosInmovilizadoMaterial">
+		 <link:definition>Clasificación que define la sección de movimientos del Inmovilizado Material del apartado 5 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainInmovilizadoMaterial" id="domainInmovilizadoMaterial">
+		 <link:definition>Clasificación que define el dominio del Inmovilizado Material del apartado 5 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeInmovilizadoMaterial" id="HypercubeInmovilizadoMaterial">
+		 <link:definition>Clasificación que define la sección de hypercubo del Inmovilizado Material del apartado 5 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado7/2008-01-01/role/InmovilizadoIntangible" id="InmovilizadoIntangibleNormal">
+        <link:definition>Memoria Normal, Apartado 7, Inmovilizado Intangible</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/2008-01-01/role/BasesPresentacionCuentasAnuales" id="BasesPresentacionCuentasAnualesPymes">
+      			<link:definition>Clasificación que define Las Bases de Presentación de las Cuentas Anuales, apartado 2 de la memoria del modelo pymes</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado22/2008-01-01/role/HechosPosterioresCierre" id="HechosPosterioresCierreNormal">
+        <link:definition>Memoria Normal, Apartado 22: "Hechos Posteriores al Cierre"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado21/2008-01-01/role/ActivosNoCorrientesMantenidosVentaOperacionesInterrumpidas" id="ActivosNoCorrientesMantenidosVentaOperacionesInterrumpidasNormal">
+        <link:definition>Memoria Normal, Apartado 21: "Activos No Corrientes Mantenidos para la Venta en Operaciones Interrumpidas"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado20/2008-01-01/role/NegociosConjuntos" id="NegociosConjuntosNormal">
+        <link:definition>Memoria Normal, Apartado 20: "Negocios Conjuntos"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado16/2008-01-01/role/RetribucionesLargoPlazoPersonal" id="RetribucionesLargoPlazoPersonalNormal">
+        <link:definition>Memoria Normal, Apartado 16: "Retribuciones Largo Plazo Personal"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado8/2008-01-01/role/Arrendamientos" id="ArrendamientosNormal">
+        <link:definition>Memoria Normal, Apartado 8: "Arrendamientos"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeDenominacionOperacionesInterrumpidas" id="HypercubeDenominacionOperacionesInterrumpidas">
+		 <link:definition>Clasificación que define la sección de hypercubo de las denominaciones de operaciones interrumpidas en el apartado 21.1 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/seccionDenominacionOperacionesInterrumpidas" id="seccionDenominacionOperacionesInterrumpidas">
+		 <link:definition>Clasificación que define la sección de las denominaciones de operaciones interrumpidas en el apartado 21.1 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+  </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainIngresosGastosFlujosEfectivoOperacionesInterrumpidas" id="domainIngresosGastosFlujosEfectivoOperacionesInterrumpidas">
+		 <link:definition>Clasificación que define el dominio de ingresos, gastos y flujos de efectivo de las operaciones interrumpidas en el apartado 21.1 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+   </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/Apartado10/2008-01-01/role/IngresosGastos" id="IngresosGastosAbreviado">
+        <link:definition>Memoria Abreviada, Apartado 10: "Ingresos y Gastos"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/Apartado5/2008-01-01/role/InmovilizadoInversionesInmobiliarias" id="InmovilizadoInversionesInmobiliariasPymes">
+        		<link:definition>Memoria Pymes, Apartado 5: "Inmovilizado Material, Intangible e Inversiones Inmobiliarias"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/Apartado5/2008-01-01/role/InmovilizadoInversionesInmobiliarias" id="InmovilizadoInversionesInmobiliariasAbreviado">
+        		<link:definition>Memoria Abreviada, Apartado 5: "Inmovilizado Material, Intangible e Inversiones Inmobiliarias"</link:definition>
+				<link:usedOn>link:presentationLink</link:usedOn>
+			</link:roleType>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/Apartado5/2008-01-01/role/ResumenInmovilizadoMaterialIntangibleInversionesInmobiliariasAbreviado" id="ResumenInmovilizadoMaterialIntangibleInversionesInmobiliariasAbreviado">
+        		<link:definition>Memoria Abreviada, Apartado 5c: "Resumen Inmovilizado Material, Intangible e Inversiones Inmobiliarias"</link:definition>
+				<link:usedOn>link:presentationLink</link:usedOn>
+			</link:roleType>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/Apartado5/2008-01-01/role/ResumenInmovilizadoMaterialIntangibleInversionesInmobiliarias" id="ResumenInmovilizadoMaterialIntangibleInversionesInmobiliarias">
+        		<link:definition>Memoria Pymes, Apartado 5c: "Resumen Inmovilizado Material, Intangible e Inversiones Inmobiliarias"</link:definition>
+				<link:usedOn>link:presentationLink</link:usedOn>
+			</link:roleType>
+
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/InmovilizadoIntangible/2008-01-01/role/seccionMovimientos" id="seccionMovimientosAbreviado">
+				 <link:definition>Clasificación que define la sección de Movimientos en el apartado 5 de la memoria del modelo abreviado</link:definition>
+				<link:usedOn>link:definitionLink</link:usedOn>
+			</link:roleType>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/InmovilizadoInversiones/2008-01-01/role/seccionMovimientosSaldosBrutos" id="seccionMovimientosSaldosBrutosAbreviado">
+				 <link:definition>Clasificación que define la sección de Movimientos de Saldos Brutos en el apartado 5 de la memoria del modelo abreviado</link:definition>
+				<link:usedOn>link:definitionLink</link:usedOn>
+			</link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/InmovilizadoInversiones/2008-01-01/role/seccionMovimientosAmortizacionesAcumuladas" id="seccionMovimientosAmortizacionesAcumuladasAbreviado">
+				 <link:definition>Clasificación que define la sección de Movimientos de Amortizaciones acumuladas en el apartado 5 de la memoria del modelo abreviado</link:definition>
+				<link:usedOn>link:definitionLink</link:usedOn>
+			</link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/InmovilizadoInversiones/2008-01-01/role/seccionMovimientosCorreccionesValorativasDeterioro" id="seccionMovimientosCorreccionesValorativasDeterioroAbreviado">
+				 <link:definition>Clasificación que define la sección de Movimientos de correcciones valorativas por deterioro en el apartado 5 de la memoria del modelo abreviado</link:definition>
+				<link:usedOn>link:definitionLink</link:usedOn>
+			</link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/2008-01-01/role/HypercubeInmovilizadoInversiones" id="HypercubeInmovilizadoInversionesAbreviado">
+				 <link:definition>Clasificación que define el hypercubo de inversiones inmobiliarias del apartado 5 de la memoria del modelo abreviado</link:definition>
+				<link:usedOn>link:definitionLink</link:usedOn>
+			</link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviadoPymes/2008-01-01/role/domainInmovilizadoInversiones" id="domainInmovilizadoInversionesAbreviadoPymes">
+				 <link:definition>Clasificación que define el dominio de inmovilizado e inversiones inmobiliarias del apartado 5 de la memoria del modelo abreviado y pymes </link:definition>
+				<link:usedOn>link:definitionLink</link:usedOn>
+			</link:roleType>
+
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviadoPymes/InmovilizadoIntangible/2008-01-01/role/seccionMovimientos" id="seccionMovimientosAbreviadoPymes">
+				 <link:definition>Clasificación que define la sección de Movimientos en el apartado 5 de la memoria del modelo abreviado y de pymes</link:definition>
+				<link:usedOn>link:definitionLink</link:usedOn>
+			</link:roleType>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviadoPymes/InmovilizadoInversiones/2008-01-01/role/seccionMovimientosSaldosBrutos" id="seccionMovimientosSaldosBrutosAbreviadoPymes">
+				 <link:definition>Clasificación que define la sección de Movimientos de Saldos Brutos en el apartado 5 de la memoria del modelo abreviado y de pymes</link:definition>
+				<link:usedOn>link:definitionLink</link:usedOn>
+			</link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviadoPymes/InmovilizadoInversiones/2008-01-01/role/seccionMovimientosAmortizacionesAcumuladas" id="seccionMovimientosAmortizacionesAcumuladasAbreviadoPymes">
+				 <link:definition>Clasificación que define la sección de Movimientos de Amortizaciones acumuladas en el apartado 5 de la memoria del modelo abreviado y de pymes</link:definition>
+				<link:usedOn>link:definitionLink</link:usedOn>
+			</link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviadoPymes/InmovilizadoInversiones/2008-01-01/role/seccionMovimientosCorreccionesValorativasDeterioro" id="seccionMovimientosCorreccionesValorativasDeterioroAbreviadoPymes">
+				 <link:definition>Clasificación que define la sección de Movimientos de correcciones valorativas por deterioro en el apartado 5 de la memoria del modelo abreviado y de pymes</link:definition>
+				<link:usedOn>link:definitionLink</link:usedOn>
+			</link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviadoPymes/2008-01-01/role/HypercubeInmovilizadoInversiones" id="HypercubeInmovilizadoInversionesAbreviadoPymes">
+				 <link:definition>Clasificación que define el hypercubo de inversiones inmobiliarias del apartado 5 de la memoria del modelo abreviado y de pymes</link:definition>
+				<link:usedOn>link:definitionLink</link:usedOn>
+			</link:roleType>
+
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/Apartado10/2008-01-01/role/IngresosGastos" id="IngresosGastosPymes">
+        		<link:definition>Memoria Pymes, Apartado 10: Ingresos y Gastos"</link:definition>
+		        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado12/2008-01-01/role/SituacionFiscal" id="SituacionFiscalNormal">
+    		<link:definition>Memoria Normal, Apartado 12: Situación Fiscal"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/SituacionFiscal/2008-01-01/role/seccionConciliacionImporteNetoGastos" id="seccionConciliacionImporteNetoGastosNormal">
+		 <link:definition>Clasificación que define la seccion de conciliacion de importe neto Gastos del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/SituacionFiscal/2008-01-01/role/seccionDesgloseGastoIngreso" id="seccionDesgloseGastoIngresoNormal">
+		 <link:definition>Clasificación que define la seccion de desglose de gasto ingreso del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/SituacionFiscal/2008-01-01/role/seccionImpuestosBeneficios" id="seccionImpuestosBeneficiosNormal">
+		 <link:definition>Clasificación que define la seccion de impuestos beneficios del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeConciliacionImporteNetoGastos" id="HypercubeConciliacionImporteNetoGastosNormal">
+		 <link:definition>Clasificación que define el hipercubo de conciliación de importe neto gastos del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeDesgloseGastoIngreso" id="HypercubeDesgloseGastoIngresoNormal">
+		 <link:definition>Clasificación que define el hipercubo de desglose de gastos Ingresos del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainConciliacionImporteNetoGastos" id="domainConciliacionImporteNetoGastosNormal">
+		 <link:definition>Clasificación que define el dominio de conciliación de importe neto gastos del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainDesgloseGastoIngreso" id="domainDesgloseGastoIngresoNormal">
+		 <link:definition>Clasificación que define el dominio de desgloses de gastos e ingresos del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/SituacionFiscal/2008-01-01/role/domainExcluidosIngresosGastosPyG" id="domainExcluidosIngresosGastosPyGNormal">
+		 <link:definition>Clasificación que define el dominio de exclusión de conciliación de importe neto en pérdidas y ganancias del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/SituacionFiscal/2008-01-01/role/HypercubeExcluidosIngresosGastosPyG" id="HypercubeExcluidosIngresosGastosPyGNormal">
+		 <link:definition>Clasificación que define el hypercubo de exclusión de conciliación de importe neto en pérdidas y ganancias del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/SituacionFiscal/2008-01-01/role/domainExcluidosIngresosGastosPatrimonioNeto" id="domainExcluidosIngresosGastosPatrimonioNetoNormal">
+		 <link:definition>Clasificación que define el hypercubo de exclusión de conciliación de importe neto en patrimonio neto del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/SituacionFiscal/2008-01-01/role/HypercubeExcluidosIngresosGastosPatrimonioNeto" id="HypercubeExcluidosIngresosGastosPatrimonioNetoNormal">
+		 <link:definition>Clasificación que define el hypercubo de exclusión de conciliación de importe neto en patrimonio neto del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/SituacionFiscal/IngresosGastosPyG/role/CodeLabel" id="SituacionFiscalIngresosGastosPyGCodeLabel">
+		 <link:definition>Etiquetas de códigos para el cuadro M12a de la memoria normal sección Pérdidas y Ganancias</link:definition>
+        <link:usedOn>link:labelLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/SituacionFiscal/IngresosGastosPatrimonioNeto/role/CodeLabel" id="SituacionFiscalIngresosGastosPatrimonioNetoCodeLabel">
+		 <link:definition>Etiquetas de códigos para el cuadro M12a de la memoria normal sección Patrimonio Neto</link:definition>
+        <link:usedOn>link:labelLink</link:usedOn>
+      </link:roleType>
+
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado17/2008-01-01/role/TransaccionesPagosBasadosInstrumentosPatrimonio" id="TransaccionesPagosBasadosInstrumentosPatrimonioNormal">
+    		<link:definition>Memoria Normal, Apartado 17: Transacciones Pagos Basados en Instrumentos de patrimonio"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeTransaccionesPagos" id="HypercubeTransaccionesPagosNormal">
+		 <link:definition>Clasificación que define el hipercubo de transacciones de pagos del apartado 17 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InmovilizadoIntangible/2008-01-01/role/seccionAccionesLigadasInstrumentosPatrimonio" id="seccionAccionesLigadasInstrumentosPatrimonioNormal">
+		 <link:definition>Clasificación que define la sección de acciones ligadas a instrumentos de patrimonio del apartado 17 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainTrasaccionesPagos" id="domainTrasaccionesPagosNormal">
+		 <link:definition>Clasificación que define el dominio de Transacciones Pagos del apartado 17 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+<!--
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainPartesVinculadas" id="domainPartesVinculadasNormal">
+		 <link:definition>Clasificación que define el dominio de Partes Vinculadas del apartado 23 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+-->
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainPartesVinculadasAdministracionAltaDireccion" id="domainPartesVinculadasAdministracionAltaDireccionNormal">
+		 <link:definition>Clasificación que define el dominio de los miembros del órgano de administración y personal de alta dirección de Partes Vinculadas del apartado 23 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/OperacionesPartesVinculadas/2008-01-01/role/seccionIngresosGastos" id="seccionIngresosGastosNormal">
+		 <link:definition>Clasificación que define la sección de Ingresos, Gastos y saldos pendientes con Partes Vinculadas del apartado 23 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/OperacionesPartesVinculadas/2008-01-01/role/HypercubeIngresosGastos" id="HypercubeIngresosGastosNormal">
+		 <link:definition>Clasificación que define el hipercubo de Ingresos, Gastos y saldos pendientes con Partes Vinculadas del apartado 23 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/OperacionesPartesVinculadas/2008-01-01/role/seccionRemuneracionesMiembrosPersonal" id="seccionRemuneracionesMiembrosPersonalNormal">
+		 <link:definition>Clasificación que define la sección de remuneraciones a los miembros del órgano de administración y al personal de alta dirección del apartado 23 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/OperacionesPartesVinculadas/2008-01-01/role/HypercubeRemuneracionesMiembrosPersonal" id="HypercubeRemuneracionesMiembrosPersonalNormal">
+		 <link:definition>Clasificación que define el hipercubo de remuneraciones a los miembros del órgano de administración y al personal de alta dirección del apartado 23 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/OperacionesPartesVinculadas/2008-01-01/role/seccionSaldosPendientes" id="seccionSaldosPendientesNormal">
+		 <link:definition>Clasificación que define la sección de saldos pendientes con partes vinculadas del apartado 23 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+    
+    
+    
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado24/2008-01-01/role/OtraInformacion" id="OtraInformacionNormal">
+    		<link:definition>Memoria Normal, Apartado 24: Otra Información"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+		  
+		  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/numero/medio/personas/empleadas/categorias/normal/role/CodeLabel" id="NumeroMedioPersonasEmpleadasCategorias">
+		    <link:definition>Etiquetas de códigos para el cuadro mn24a de la memoria normal</link:definition>
+		    <link:usedOn>link:labelLink</link:usedOn>
+		  </link:roleType>	
+		  
+		  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/distribucion/personal/sociedad/categorias/sexos/normal/role/CodeLabel" id="DistribucionPersonalSociedadCategoriasSexos">
+		    <link:definition>Etiquetas de códigos para el cuadro mn24b de la memoria normal</link:definition>
+		    <link:usedOn>link:labelLink</link:usedOn>
+		  </link:roleType>	
+		  
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/2008-01-01/role/domainMediaCategoriasProfesionales"  id="domainMediaCategoriasProfesionalesComun">
+		 <link:definition>Clasificación que define el dominio de la media de empleados de categorías profesionales del apartado 24 de la memoria del modelo normal, y apartados 13 de modelos abreviado y pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/2008-01-01/role/domainCierreEjercicioCategoriasProfesionales"  id="domainCierreEjercicioCategoriasProfesionalesComun">
+		 <link:definition>Clasificación que define el dominio categorías profesionales de empleados al cierre del ejercicio del apartado 24 de la memoria del modelo normal, y apartados 13 de modelos abreviado y pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/OtraInformacion/2008-01-01/role/seccionEmpleadosMediaPeriodoCategoriaProfesional"  id="seccionEmpleadosMediaPeriodoCategoriaProfesionalNormal">
+		 <link:definition>Clasificación que define la sección de media de empleados por categorías profesionales del apartado 24 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/OtraInformacion/2008-01-01/role/HypercubeEmpleadosMediaPeriodoCategoriaProfesional"  id="HypercubeEmpleadosMediaPeriodoCategoriaProfesionalNormal">
+		 <link:definition>Clasificación que define el hypercubo de la media de empleados por categorías profesionales del apartado 24 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+   
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/OtraInformacion/2008-01-01/role/seccionEmpleadosSexoCategoriaProfesional"  id="seccionEmpleadosSexoCategoriaProfesionalNormal">
+		 <link:definition>Clasificación que define la sección de la distribución de empleados por categorías profesionales y sexo del apartado 24 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/OtraInformacion/2008-01-01/role/HypercubeEmpleadosSexoCategoriaProfesional"  id="HypercubeEmpleadosSexoCategoriaProfesionalNormal">
+		 <link:definition>Clasificación que define el hypercubo de la distribución de empleados por categorías profesionales y sexo del apartado 24 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/2008-01-01/role/HypercubeSituacionFiscal" id="HypercubeSituacionFiscalAbreviada">
+		 <link:definition>Clasificación que define el hypercubo de la situación fiscal del apartado 9 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/SituacionFiscal/2008-01-01/role/seccionDiferenciasTemporarias" id="seccionDiferenciasTemporariasAbreviada">
+		 <link:definition>Clasificación que define la sección de la situación fiscal con diferencias temporarias del apartado 9 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/Apartado9/2008-01-01/role/SituacionFiscal" id="SituacionFiscalAbreviada">
+    	 <link:definition>Memoria Abreviada, Apartado 9: Situación Fiscal"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviadoPymes/2008-01-01/role/domainSituacionFiscal" id="domainSituacionFiscalAbreviadoPymes">
+		 <link:definition>Clasificación que define el dominio de la situación fiscal del apartado 9 de la memoria del modelo abreviado y pymes</link:definition>
+				<link:usedOn>link:definitionLink</link:usedOn>
+			</link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/2008-01-01/role/HypercubeSituacionFiscal" id="HypercubeSituacionFiscalPymes">
+		 <link:definition>Clasificación que define el hypercubo de la situación fiscal del apartado 9 de la memoria del modelo pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/SituacionFiscal/2008-01-01/role/seccionDiferenciasTemporarias" id="seccionDiferenciasTemporariasPymes">
+		 <link:definition>Clasificación que define la sección de la situación fiscal con diferencias temporarias del apartado 9 de la memoria del modelo pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/Apartado9/2008-01-01/role/SituacionFiscal" id="SituacionFiscalPymes">
+    	 <link:definition>Memoria Pymes, Apartado 9: Situación Fiscal"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainProvisionesContingencias" id="domainProvisionesContingenciasNromal">
+		 <link:definition>Clasificación que define el dominio de provisiones y contingencias del apartado 14 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainProvisiones" id="domainProvisionesNormal">
+		 <link:definition>Clasificación que define el dominio de provisiones del apartado 14 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado14/2008-01-01/role/ProvisionesContingencias" id="ProvisionesContingenciasNormal">
+    	 <link:definition>Memoria Pymes, Apartado 14: Provisiones y Contingencias"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeProvisionesContingencias" id="HypercubeProvisionesContingenciasNormal">
+		 <link:definition>Clasificación que define el hypercube de provisiones y contingencias del apartado 14 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeProvisiones" id="HypercubeProvisionesNormal">
+		 <link:definition>Clasificación que define el hypercubo de provisiones del apartado 14 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Provisiones/2008-01-01/role/seccionMovimientos" id="seccionMovimientosProvisionesNormal">
+		 <link:definition>Clasificación que define la sección de movimientos de provisiones del apartado 14 de la memoria del modelo normal</link:definition>
+		 <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeProvisionesDerechosReembolso" id="HypercubeProvisionesDerechosReembolsoNormal">
+		 <link:definition>Clasificación que define el hypercubo de provisiones de derechos de reembolso del apartado 14 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Provisiones/2008-01-01/role/seccionProvisionesDerechosReembolso" id="seccionProvisionesDerechosReembolsoNormal">
+		 <link:definition>Clasificación que define la sección de provisiones de derechos de reembolso del apartado 14 de la memoria del modelo normal</link:definition>
+		 <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainSituacionFiscalIngresosGastos" id="domainSituacionFiscalIngresosGastosNormal">
+		 <link:definition>Clasificación que define el dominio de ingresos y gastos de la situación fiscal del apartado 12de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainSituacionFiscalCuentaPerdidasGanancias" id="domainSituacionFiscalCuentaPerdidasGananciasNormal">
+		 <link:definition>Clasificación que define el dominio de pérdidas y ganancias de la situación fiscal del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainSituacionFiscalDesgloseGastoIngreso" id="domainSituacionFiscalDesgloseGastoIngresoNormal">
+		 <link:definition>Clasificación que define el dominio de desglose de gasto e ingreso de la situación fiscal del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeConciliacionImporteNeto" id="HypercubeConciliacionImporteNetoNormal">
+		 <link:definition>Clasificación que define el Hypercubo de Conciliación del Importe neto de la situación fiscal del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/SituacionFiscal/2008-01-01/role/seccionConciliacionImporteNetoIngresosGastos" id="seccionConciliacionImporteNetoIngresosGastosNormal">
+		 <link:definition>Clasificación que define la sección de ingresos y gastos de Conciliación del Importe neto de la situación fiscal del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeConciliacionImporteNetoCuentaPerdidasGanancias" id="HypercubeConciliacionImporteNetoCuentaPerdidasGananciasNormal">
+		 <link:definition>Clasificación que define el hypercubo de la cuenta de péridas y ganancias con conciliación del importe neto de la situación fiscal del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeConciliacionImporteNetoIngresosGastos" id="HypercubeConciliacionImporteNetoIngresosGastosNormal">
+		 <link:definition>Clasificación que define el hypercubo de los ingresos y gastos de conciliación del importe neto  de la situación fiscal del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/SituacionFiscal/2008-01-01/role/seccionConciliacionImporteNetoCuentaPerdidasGanancias" id="seccionConciliacionImporteNetoCuentaPerdidasGananciasNormal">
+		 <link:definition>Clasificación que define la sección de la cuenta de pérdidas y ganancias para la conciliación del importe neto de la situación fiscal del apartado 12 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado19-1/2008-01-01/role/CombinacionesNegocios" id="CombinacionesNegociosNormal">
+    	 <link:definition>Memoria Normal, Apartado 19-1: Combinaciones de Negocios"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado19/2008-01-01/role/CombinacionesNegociosImportes" id="CombinacionesNegociosImportesNormal">
+    	 <link:definition>Memoria Normal, Apartado 19: Combinaciones de Negocios Importes"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado19/2008-01-01/role/CombinacionesNegociosImportesReconocidos" id="CombinacionesNegociosImportesReconocidosNormal">
+		 <link:definition>Clasificación que define los importes reconocidos en la combinación de negocios del apartado 19 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/CombinacionesNegocios/2008-01-01/role/HypercubeCombinacionesNegociosImportesReconocidos" id="HypercubeCombinacionesNegociosImportesReconocidosNormal">
+		 <link:definition>Clasificación que define el hypercubo de los importes reconocidos en la combinación de negocios del apartado 19 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/CombinacionesNegocios/2008-01-01/role/seccionCombinacionesNegociosImportesReconocidos" id="seccionCombinacionesNegociosImportesReconocidosNormal">
+		 <link:definition>Clasificación que define la sección de los importes reconocidos en la combinación de negocios del apartado 19 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/CombinacionesNegocios/2008-01-01/role/domainImportesReconocidos" id="domainImportesReconocidosNormal">
+		 <link:definition>Clasificación que define el dominio de los importes reconocidos en la combinación de negocios del apartado 19 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/CombinacionesNegocios/2008-01-01/role/domainExcluidosValorRazonableNoUtilizado" id="domainExcluidosValorRazonableNoUtilizadoNormal">
+		 <link:definition>Clasificación que define el hypercubo de exclusión de importes reconocidos en la fecha de adquisición para cada clase de activos y pasivos del apartado 19.2 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+
+  </link:roleType>
+ <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/CombinacionesNegocios/2008-01-01/role/HypercubeExcluidosValorRazonableNoUtilizado" id="HypercubeExcluidosValorRazonableNoUtilizadoNormal">
+		 <link:definition>Clasificación que define el hypercubo de exclusión de  importes reconocidos en la fecha de adquisición para cada clase de activos y pasivos del apartado 19.2 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainMercadosGeograficos" id="domainMercadosGeograficosNormal">
+        <link:definition>Clasificación que define el dominio de las Categorías de Actividades del apartado 25 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/domainCategoriaActividades" id="domainCategoriaActividadesNormal">
+		 <link:definition>Clasificación que define el dominio de las Categorías de Actividades del apartado 25 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InformacionSegmentada/2008-01-01/role/seccionCifraNetaMercadosGeograficos" id="seccionCifraNetaMercadosGeograficosNormal">
+		 <link:definition>Clasificación que define la sección de la cifra de negocios por Mercados Geográficos del apartado 25 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InformacionSegmentada/2008-01-01/role/seccionCifraNetaCategoriaActividades" id="seccionCifraNetaCategoriaActividadesNormal">
+		 <link:definition>Clasificación que define la sección de la cifra de negocios por Categorías de Actividades del apartado 25 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InformacionSegmentada/2008-01-01/role/HypercubeCifraNetaMercadosGeograficos" id="HypercubeCifraNetaMercadosGeograficosNormal">
+		 <link:definition>Clasificación que define el hypercubo  de la cifra de negocios por Mercados Geográficos del apartado 25 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InformacionSegmentada/2008-01-01/role/HypercubeCifraNetaCategoriaActividades" id="HypercubeCifraNetaCategoriaActividadesNormal">
+		 <link:definition>Clasificación que define el hypercubo de la cifra de negocios por Categorías de Actividades del apartado 25 de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+        <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/2008-01-01/role/domainPartesVinculadas" id="domainPartesVinculadasComun">
+		 <link:definition>Clasificación que define el dominio de Partes Vinculadas de la memoria apartado 23 normal y apartado 12 abreviado y pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/OperacionesPartesVinculadas/2008-01-01/role/seccionIngresosGastos" id="seccionIngresosGastosAbreviado">
+		 <link:definition>Clasificación que define la sección de Ingresos, Gastos y saldos pendientes con Partes Vinculadas del apartado 12 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/OperacionesPartesVinculadas/2008-01-01/role/HypercubeIngresosGastos" id="HypercubeIngresosGastosAbreviado">
+		 <link:definition>Clasificación que define el hipercubo de Ingresos, Gastos y saldos pendientes con Partes Vinculadas del apartado 12 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/OperacionesPartesVinculadas/2008-01-01/role/seccionSaldosPendientes" id="seccionSaldosPendientesAbreviado">
+		 <link:definition>Clasificación que define la sección de saldos pendientes con partes vinculadas del apartado 12 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/OperacionesPartesVinculadas/2008-01-01/role/seccionIngresosGastos" id="seccionIngresosGastosPymes">
+		 <link:definition>Clasificación que define la sección de Ingresos, Gastos y saldos pendientes con Partes Vinculadas del apartado 12 de la memoria del modelo de pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/OperacionesPartesVinculadas/2008-01-01/role/HypercubeIngresosGastos" id="HypercubeIngresosGastosPymes">
+		 <link:definition>Clasificación que define el hipercubo de Ingresos, Gastos y saldos pendientes con Partes Vinculadas del apartado 12 de la memoria del modelo de pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/OperacionesPartesVinculadas/2008-01-01/role/seccionSaldosPendientes" id="seccionSaldosPendientesPymes">
+		 <link:definition>Clasificación que define la sección de saldos pendientes con partes vinculadas del apartado 12 de la memoria del modelo de pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/2008-01-01/role/ResumenOperacionesPartesVinculadas" id="ResumenOperacionesPartesVinculadasComun">
+		 <link:definition>Memoria Abreviada y Pymes, Apartado 12, Operaciones con Partes vinculadas, sección de Importes recibidos por el personal de alta dirección y miembros de los órganos de administración</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/Apartado3/2008-01-01/role/AplicacionResultados" id="AplicacionResultadosAbreviado">
+        <link:definition>Memoria Abreviada, Apartado 3: "Aplicación de Resultados"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+
+        <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/Apartado13/2008-01-01/role/OtraInformacion" id="OtraInformacionAbreviado">
+    		<link:definition>Memoria Abreviado, Apartado 13: Otra Información"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+        <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/Apartado13/2008-01-01/role/OtraInformacion" id="OtraInformacionPymes">
+    		<link:definition>Memoria Pymes, Apartado 13: Otra Información"</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+
+        <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/OtraInformacion/2008-01-01/role/seccionEmpleadosMediaPeriodoCategoriaProfesional" id="seccionEmpleadosMediaPeriodoCategoriaProfesionalPymes">
+		 <link:definition>Clasificación que define el sección de la media de empleados de categorías profesionales del apartado 13 de la memoria del modelo pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+        <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/OtraInformacion/2008-01-01/role/HypercubeEmpleadosMediaPeriodoCategoriaProfesional" id="HypercubeEmpleadosMediaPeriodoCategoriaProfesionalPymes">
+		 <link:definition>Clasificación que define el hipercubode la media de empleados de categorías profesionales del apartado 13 de la memoria del modelo pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+        <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/OtraInformacion/2008-01-01/role/seccionEmpleadosMediaPeriodoCategoriaProfesional" id="seccionEmpleadosMediaPeriodoCategoriaProfesionalAbreviado">
+		 <link:definition>Clasificación que define el sección de la media de empleados de categorías profesionales del apartado 13 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+        <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/abreviado/OtraInformacion/2008-01-01/role/HypercubeEmpleadosMediaPeriodoCategoriaProfesional" id="HypercubeEmpleadosMediaPeriodoCategoriaProfesionalAbreviado">
+		 <link:definition>Clasificación que define el hipercubode la media de empleados de categorías profesionales del apartado 13 de la memoria del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+        <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/Apartado7/2008-01-01/role/PasivosFinancieros" id="PasivosFinancierosAbreviado">
+				<link:definition>Memoria Abreviada, Apartado 7, Pasivos Financieros</link:definition>
+				<link:usedOn>link:calculationLink</link:usedOn>
+			</link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainReclasificacionActivosFinancieros" id="domainReclasificacionActivosFinancieros">
+			<link:definition>Clasificación que define el domonio de reclasificación de activos financieros, común al apartado 9 de la memoria del modelo normal y a los apartados 6 del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/seccionReclasificacionActivosFinancieros" id="seccionReclasificacionActivosFinancieros">
+			<link:definition>Clasificación que define la sección de reclasificación de activos financieros, común al apartado 9 de la memoria del modelo normal y a los apartados 6 del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/HypercubeReclasificacionActivosFinancieros" id="HypercubeReclasificacionActivosFinancieros">
+			<link:definition>Clasificación que define el hipercubo  de reclasificación de activos financieros, común al apartado 9 de la memoria del modelo normal y a los apartados 6 del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainExclusionInversionesReclasificacionActivos" id="domainExclusionInversionesReclasificacionActivos">
+			<link:definition>Clasificación que define el dominio de elementos excluídos en la reclasificación de activos financieros, común al apartado 9 de la memoria del modelo normal y a los apartados 6 del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainExclusionInversionesActivosVentaReclasificacionActivos" id="domainExclusionInversionesActivosVentaReclasificacionActivos">
+			<link:definition>Clasificación que define el dominio de elementos excluídos en la reclasificación de activos financieros, común al apartado 9 de la memoria del modelo normal y a los apartados 6 del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainExclusionActivosVentaReclasificacionActivos" id="domainExclusionActivosVentaReclasificacionActivos">
+			<link:definition>Clasificación que define el dominio de elementos excluídos en la reclasificación de activos financieros, común al apartado 9 de la memoria del modelo normal y a los apartados 6 del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/HypercubeReclasificacionActivosFinancierosExcluidoInversiones" id="HypercubeReclasificacionActivosFinancierosExcluidoInversiones">
+			<link:definition>Clasificación que define el hipercubo de elementos excluídos en la reclasificación de activos financieros, común al apartado 9 de la memoria del modelo normal y a los apartados 6 del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/HypercubeReclasificacionActivosFinancierosExcluidoActivos" id="HypercubeReclasificacionActivosFinancierosExcluidoActivos">
+			<link:definition>Clasificación que define el hipercubo de elementos excluídos en la reclasificación de activos financieros, común al apartado 9 de la memoria del modelo normal y a los apartados 6 del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/HypercubeReclasificacionActivosFinancierosExcluidoActivosVenta" id="HypercubeReclasificacionActivosFinancierosExcluidoActivosVenta">
+			<link:definition>Clasificación que define el hipercubo de elementos excluídos en la reclasificación de activos financieros, común al apartado 9 de la memoria del modelo normal y a los apartados 6 del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainClasesActivosFinancieros" id="domainClasesActivosFinancieros">
+			<link:definition>Clasificación que define el dominio de activos financieros a largo y corto plazo, común al apartado 9 de la memoria del modelo normal y a los apartados 6 del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/seccionCorreccionesDeterioroValorRiesgoCredito" id="seccionCorreccionesDeterioroValorRiesgoCredito">
+			<link:definition>Clasificación que define la sección de correcciones por deterioro del valor originadas por el riesgo de crédito en activos financieros a largo y corto plazo, común al apartado 9 de la memoria del modelo normal y a los apartados 6 del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/HypercubeCorreccionesDeterioroValorRiesgoCredito" id="HypercubeCorreccionesDeterioroValorRiesgoCredito">
+			<link:definition>Clasificación que define el hipercubo de correcciones por deterioro del valor originadas por el riesgo de crédito en activos financieros a largo y corto plazo, común al apartado 9 de la memoria del modelo normal y a los apartados 6 del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainCategoriasActivosFinancierosValorRazonable" id="domainCategoriasActivosFinancierosValorRazonable">
+			<link:definition>Clasificación que define el dominio de categorías de activos financieros valorados a valor razonable, común al apartado 9 de la memoria del modelo normal y a los apartados 6 del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/seccionValoracionVariacionInversionesFinancierasValorRazonable" id="seccionValoracionVariacionInversionesFinancierasValorRazonable">
+			<link:definition>Clasificación que define la sección de valoración de inversiones financieras valorados a valor razonable, común al apartado 9 de la memoria del modelo normal y a los apartados 6 del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/HypercubeValoracionVariacionInversionesFinancierasValorRazonable" id="HypercubeValoracionVariacionInversionesFinancierasValorRazonable">
+			<link:definition>Clasificación que define el hipercubo de valoración de inversiones financieras valorados a valor razonable por categorías de activos financieros valorados a valor razonable, común al apartado 9 de la memoria del modelo normal y a los apartados 6 del modelo abreviado</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/InstrumentosFinancieros/2008-01-01/role/domainCorreccionesValorativasParticipacionesEmpresa" id="domainCorreccionesValorativasParticipacionesEmpresa">
+			<link:definition>Clasificación que define el dominio de participaciones de la empresa, común al apartado a los apartados 6 del modelo abreviado y de pymes </link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/InstrumentosFinancieros/2008-01-01/role/seccionCorreccionesDeterioroValorParticipaciones" id="seccionCorreccionesDeterioroValorParticipaciones">
+			<link:definition>Clasificación que define la sección de correcciones valorativas por deterioro en las distintas participaciones de la empresa, común al apartado a los apartados 6 del modelo abreviado y de pymes </link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/InstrumentosFinancieros/2008-01-01/role/HypercubeCorreccionesDeterioroValorParticipaciones" id="HypercubeCorreccionesDeterioroValorParticipaciones">
+			<link:definition>Clasificación que define el hipercubo de correcciones valorativas por deterioro en las distintas participaciones de la empresa en activos financieros valorados a valor razonable, común al apartado a los apartados 6 del modelo abreviado y de pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainPlazosVencimiento" id="domainPlazosVencimiento">
+			<link:definition>Clasificación que define el dominio de plazos de vencimiento de deudas de instrumentos financieros, común al apartado 9 normal y a los apartados 7c del modelo abreviado y de pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/seccionVencimientoDeudas" id="seccionVencimientoDeudas">
+			<link:definition>Clasificación que define la sección de plazos de vencimiento de deudas de instrumentos financieros, común al apartado 9 normal y a los apartados 7c del modelo abreviado y de pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/HypercubeVencimientoDeudas" id="HypercubeVencimientoDeudas">
+			<link:definition>Clasificación que define el hypercubo de plazos de vencimiento de deudas de instrumentos financieros, común al apartado 9 normal y a los apartados 7c del modelo abreviado y de pymes</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/seccionVencimientoDeudasActivos" id="seccionVencimientoDeudasActivosNormal">
+			<link:definition>Clasificación que define la sección de plazos de vencimiento de deudas de instrumentos financieros activos, al apartado 9 normal </link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/HypercubeVencimientoDeudasActivos" id="HypercubeVencimientoDeudasActivosNormal">
+			<link:definition>Clasificación que define el hypercubo de plazos de vencimiento de deudas de instrumentos financieros activos, al apartado 9 normal </link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/seccionVencimientoDeudasPasivos" id="seccionVencimientoDeudasPasivosNormal">
+			<link:definition>Clasificación que define la sección de plazos de vencimiento de deudas de instrumentos financieros pasivos, al apartado 9 normal </link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/HypercubeVencimientoDeudasPasivos" id="HypercubeVencimientoDeudasPasivosNormal">
+			<link:definition>Clasificación que define el hypercubo de plazos de vencimiento de deudas de instrumentos financieros pasivos, al apartado 9 normal </link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/deudasPlazoVencimiento" id="deudasPlazoVencimiento">
+			<link:definition>Clasificación que define la relación total de deudas de instrumentos financieros para un plazo de vencimiento determinado, común al apartado 9 normal y a los apartados 7c del modelo abreviado y de pymes</link:definition>
+        <link:usedOn>link:calculationLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/LineasDescuentoPolizasCredito" id="LineasDescuentoPolizasCredito">
+			<link:definition>Clasificación que define la relación de Líneas de descuento y Pólizas de Crédito , común al apartado 9 normal y a los apartados 7d del modelo abreviado y de pymes</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+    <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado5/2008-01-01/role/ResumenInmovilizadoMaterial" id="ResumenInmovilizadoMaterial">
+      			<link:definition>Clasificación que define el resumen de Inmovilizado Material en el apartado 5 de la memoria del modelo normal</link:definition>
+		       <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+    <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado6/2008-01-01/role/ResumenInversionesInmobiliarias" id="ResumenInversionesInmobiliariasNormal">
+      			<link:definition>Clasificación que define el resumen de Inversiones Inmobiliarias en el apartado 6 de la memoria del modelo normal</link:definition>
+		       <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+    <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado7/2008-01-01/role/ResumenInmovilizadoIntangible" id="ResumenInmovilizadoIntangibleNormal">
+      			<link:definition>Clasificación que define el resumen de Inmovilizado Intangible en el apartado 7 de la memoria del modelo normal</link:definition>
+		       <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+    <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado8/2008-01-01/role/ResumenArrendamientos" id="ResumenArrendamientosNormal">
+      			<link:definition>Clasificación que define el resumen de Arrendamientos en el apartado 8 de la memoria del modelo normal</link:definition>
+		       <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado10/2008-01-01/role/ResumenExistencias" id="ResumenExistenciasNormal">
+      			<link:definition>Clasificación que define el resumen de Existencias  en el apartado 10 de la memoria del modelo normal</link:definition>
+		       <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado13/2008-01-01/role/ResumenIngresosGastos" id="ResumenIngresosGastosNormal">
+      			<link:definition>Clasificación que define el resumen de Ingresos y Gastos en el apartado 13 de la memoria del modelo normal</link:definition>
+		       <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado15/2008-01-01/role/ResumenInformacionMedioAmbiente" id="ResumenInformacionMedioAmbienteNormal">
+      			<link:definition>Clasificación que define el resumen de Información de MedioAmbiente en el apartado 15 de la memoria del modelo normal</link:definition>
+		       <link:usedOn>link:presentationLink</link:usedOn>
+  </link:roleType>
+		  
+		                          
+		  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado26/2008-01-01/role/ResumenInformacionDerechosEmisionGasesEfectoInvernadero" id="ResumenInformacionDerechosEmisionGasesEfectoInvernadero">
+		    <link:definition>Clasificación que define el resumen de Información dsobre derechos de emisión de gases de efecto invernadero en el apartado 26 de la memoria del modelo normal</link:definition>
+		    <link:usedOn>link:presentationLink</link:usedOn>
+		  </link:roleType>		  
+		  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado16/2008-01-01/role/ResumenRetribucionesLargoPlazoPersonal" id="ResumenRetribucionesLargoPlazoPersonalNormal">
+      			<link:definition>Clasificación que define el resumen de las retribuciones a largo plazo al personal en el apartado 16 de la memoria del modelo normal</link:definition>
+		       <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/ResumenSubvencionesDonacionesLegados" id="ResumenSubvencionesDonacionesLegadosNormal">
+      			<link:definition>Clasificación que define el resumen de las subvenciones, donaciones y Legados en el apartado 18 de la memoria del modelo normal</link:definition>
+		       <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado21/2008-01-01/role/ResumenActivosNoCorrientesMantenidosVentaOperacionesInterrumpidas" id="ResumenActivosNoCorrientesMantenidosVentaOperacionesInterrumpidasNormal">
+      			<link:definition>Clasificación que define el resumen de las operaciones interrumpidas en el apartado 21 de la memoria del modelo normal</link:definition>
+		       <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/seccionTransferenciaActivosFinancieros" id="seccionTransferenciaActivosFinancierosNormal">
+      			<link:definition>Clasificación que define la sección de las transferencias de activos financieros  en el apartado 9 de la memoria del modelo normal</link:definition>
+		       <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/HypercubeTransferenciaActivosFinancieros" id="HypercubeTransferenciaActivosFinancierosNormal">
+      			<link:definition>Clasificación que define el hypercubo de las transferencias de activos financieros  en el apartado 9 de la memoria del modelo normal</link:definition>
+		       <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/domainClasesActivosFinancieros" id="domainClasesActivosFinancierosNormal">
+			<link:definition>Clasificación que define el dominio de activos financieros, al apartado 9 de la memoria del modelo normal </link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/clase/activos/financieros/transferencia/role/CodeLabel" id="ClasesActivosFinancierosTransferenciaCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro mn9i de la memoria normal</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+ 			</link:roleType>
+
+
+<!--
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/seccionActivosFinancierosCedidosGarantia" id="seccionActivosFinancierosCedidosGarantiaNormal">
+			<link:definition>Clasificación que define el dominio de activos financieros cedidos en garantía, del apartado 9 de la memoria del modelo normal </link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/HypercubeActivosFinancierosCedidosGarantia" id="HypercubeActivosFinancierosCedidosGarantiaNormal">
+			<link:definition>Clasificación que define el hipercubo de activos financieros cedidos en garantía, del apartado 9 de la memoria del modelo normal </link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/clase/activos/financieros/cedidos/garantia/role/CodeLabel" id="ClasesActivosFinancierosCedidosGarantiaCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro mn9j de la memoria normal</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+ 			</link:roleType>
+-->
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/clase/activos/financieros/correcciones/deterioro/role/CodeLabel" id="ClasesActivosFinancierosCorreccionesDeterioroCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro mn9l de la memoria normal</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+ 			</link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/clase/activos/financieros/cambios/pyg/role/CodeLabel" id="ClasesActivosFinancierosCambiosPyGCodeLabel">
+				<link:definition>Etiquetas de códigos de clases para el cuadro mn9m1 de la memoria normal</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+ 			</link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/categoria/activos/financieros/cambios/pyg/role/CodeLabel" id="CategoriaActivosFinancierosCambiosPyGCodeLabel">
+				<link:definition>Etiquetas de códigos de categorías para el cuadro mn9m1 de la memoria normal</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+ 			</link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/categoria/pasivos/financieros/cambios/pyg/role/CodeLabel" id="CategoriaPasivosFinancierosCambiosPyGCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro mn9m2 de la memoria normal</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+ 			</link:roleType>
+
+		  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/clase/activos/financieros/valor/razonable/valor/libros/role/CodeLabel" id="ClasesActivosFinancierosValorRazonableValorLibrosCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro mn9q1 de la memoria normal</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+ 			</link:roleType>
+		  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/clase/pasivos/financieros/valor/razonable/valor/libros/role/CodeLabel" id="ClasesPasivosFinancierosValorRazonableValorLibrosCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro mn9q2 de la memoria normal</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+ 			</link:roleType>
+
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado9/2008-01-01/role/InstrumentosFinancieros" id="InstrumentosFinancierosNormal">
+      			<link:definition>Clasificación que define el cuadro de Instrumentos Financieros del apartado 9e de la memoria del modelo normal</link:definition>
+		       <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado9/2008-01-01/role/ResumenInstrumentosFinancieros" id="ResumenInstrumentosFinancierosNormal">
+      			<link:definition>Clasificación que define el resumen de Instrumentos Financieros del apartado 9e de la memoria del modelo normal</link:definition>
+		       <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainCategoriasActivos" id="domainCategoriasActivosNormal">
+			<link:definition>Clasificación que define el dominio de categorías de activos financieros, del apartado 9m de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/seccionActivosRelacionadosPyG" id="seccionActivosRelacionadosPyGNormal">
+			<link:definition>Clasificación que define la sección de información de activos financieros en la cuenta de pérdidas y ganancias, del apartado 9m de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/HypercubeActivosRelacionadosPyG" id="HypercubeActivosRelacionadosPyGNormal">
+			<link:definition>Clasificación que define el hipercubo de información de activos financieros en la cuenta de pérdidas y ganancias, del apartado 9m de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/domainExclusionCategoriaActivosVenta" id="domainExclusionCategoriaActivosVenta">
+			<link:definition>Clasificación que define el dominio de exclusión de activos mantenidos para la venta en información de activos financieros en la cuenta de pérdidas y ganancias, del apartado 9m de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/HypercubeActivosRelacionadosPyGExcluidoVenta" id="HypercubeActivosRelacionadosPyGExcluidoVenta">
+			<link:definition>Clasificación que define el hipercubo de de exclusión de activos mantenidos para la venta en activos financieros en la cuenta de pérdidas y ganancias, del apartado 9m de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/seccionActivosRelacionadosPyGCorrecciones" id="seccionActivosRelacionadosPyGCorreccionesNormal">
+			<link:definition>Clasificación que define la sección de información de correcciones de activos financieros en la cuenta de pérdidas y ganancias, del apartado 9m de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/HypercubeActivosRelacionadosPyGCorrecciones" id="HypercubeActivosRelacionadosPyGCorreccionesNormal">
+			<link:definition>Clasificación que define el hipercubo de información de correcciones de activos financieros en la cuenta de pérdidas y ganancias, del apartado 9m de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainCategoriasPasivos" id="domainCategoriasPasivosNormal">
+			<link:definition>Clasificación que define el dominio de categorías de pasivos financieros, del apartado 9m de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/seccionPasivosRelacionadosPyG" id="seccionPasivosRelacionadosPyGNormal">
+			<link:definition>Clasificación que define la sección de información de pasivos financieros en la cuenta de pérdidas y ganancias, del apartado 9m de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/HypercubePasivosRelacionadosPyG" id="HypercubePasivosRelacionadosPyGNormal">
+			<link:definition>Clasificación que define el hipercubo de información de pasivos financieros en la cuenta de pérdidas y ganancias, del apartado 9m de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/domainExclusionCategoriaPasivosVenta" id="domainExclusionCategoriaPasivosVenta">
+			<link:definition>Clasificación que define el dominio de exclusión de pasivos a valor razonable en información de pasivos financieros en la cuenta de pérdidas y ganancias, del apartado 9m de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/HypercubePasivosRelacionadosPyGExcluidoVenta" id="HypercubePasivosRelacionadosPyGExcluidoVenta">
+			<link:definition>Clasificación que define el hipercubo de de exclusión de pasivos a valor razonable en la cuenta de pérdidas y ganancias, del apartado 9m de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/domainClasesActivosPasivosFinancieros" id="domainClasesActivosPasivosFinancieros">
+			<link:definition>Clasificación que define el dominio de instrumentos de cobertura para activos y pasivos del apartado 9n de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/seccionValorRazonableInstrumentosCobertura" id="seccionValorRazonableInstrumentosCoberturaNormal">
+			<link:definition>Clasificación que define la sección de información de valor razonable de instrumentos de cobertura para activos y pasivos del apartado 9n de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/HypercubeValorRazonableInstrumentosCobertura" id="HypercubeValorRazonableInstrumentosCoberturaNormal">
+			<link:definition>Clasificación que define el hipercubo de información de valor razonable de instrumentos de cobertura para activos y pasivos del apartado 9n de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/seccionValorRazonableValorLibrosActivos" id="seccionValorRazonableValorLibrosActivosNormal">
+			<link:definition>Clasificación que define la sección de comparación de valor razonable y valor en libros de activos financieros del apartado 9q de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/HypercubeValorRazonableValorLibrosActivos" id="HypercubeValorRazonableValorLibrosActivosNormal">
+			<link:definition>Clasificación que define el hipercubo de comparación de valor razonable y valor en libros de activos financieros del apartado 9q de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/InstrumentosFinancieros/2008-01-01/role/domainClasesPasivosFinancieros" id="domainClasesPasivosFinancieros">
+			<link:definition>Clasificación que define el dominio de clases de pasivos financieros, del apartado 9q de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/seccionValorRazonableValorLibrosPasivos" id="seccionValorRazonableValorLibrosPasivosNormal">
+			<link:definition>Clasificación que define la sección de comparación de valor razonable y valor en libros de pasivos financieros del apartado 9q de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InstrumentosFinancieros/2008-01-01/role/HypercubeValorRazonableValorLibrosPasivos" id="HypercubeValorRazonableValorLibrosPasivosNormal">
+			<link:definition>Clasificación que define el hipercubo de comparación de valor razonable y valor en libros de pasivos financieros del apartado 9q de la memoria del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2008-01-01/role/HypercubeNegociosConjuntos" id="HypercubeNegociosConjuntosNormal">
+				<link:definition>Contenido Memoria Normal, apartado 20 Negocios Conjuntos</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/Apartado7/2008-01-01/role/ResumenInmovilizadoIntangible2" id="ResumenInmovilizadoIntangible2Normal">
+      			<link:definition>Clasificación que define el resumen de Inmovilizado Intangible en el apartado 7 de la memoria del modelo normal 2</link:definition>
+		       <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InformacionSegmentada/2008-01-01/role/seccionCifraNetaCategoriaActividades2" id="seccionCifraNetaCategoriaActividadesNormal2">
+		 <link:definition>Clasificación que define la sección de la cifra de negocios por Categorías de Actividades del apartado 25 de la memoria del modelo normal 2</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/InformacionSegmentada/2008-01-01/role/seccionCifraNetaMercadosGeograficos2" id="seccionCifraNetaMercadosGeograficosNormal2">
+		 <link:definition>Clasificación que define la sección de la cifra de negocios por Mercados Geográficos del apartado 25 de la memoria del modelo normal 2</link:definition>
+       <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+
+			<link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/2008-01-01/informacion/empresas/relacionadas/normal/role/CodeLabel" id="InformacionEmpresasRelacionadasNormalCodeLabel">
+				<link:definition>Etiquetas de códigos para el cuadro mn9rstuv de la memoria normal</link:definition>
+				<link:usedOn>link:labelLink</link:usedOn>
+ 			</link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/AplazamientosPagoPagosRealizadosPendientes/2008-01-01/role/domainAplazamientosPagoPagosRealizadosPendientes" id="domainAplazamientosPagoPagosRealizadosPendientes">
+		<link:definition>Clasificación que define el dominio de pagos realizados y pendientes de pago en la fecha de cierre del balance, común al apartado 15 de la memoria del modelo abreviado, apartado 15 del modelo pymes y apartado 27 del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/AplazamientosPagoPagosRealizadosPendientes/2008-01-01/role/domainExclusionTotalPorcentaje" id="domainExclusionTotalPorcentaje">
+		<link:definition>Clasificación que define el dominio de elementos excluídos en los pagos realizados y pendientes de pago en la fecha de cierre del balance, común al apartado 15 de la memoria del modelo abreviado, apartado 15 del modelo pymes y apartado 27 del modelo normal</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+	  </link:roleType>
+	
+	  <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/AplazamientosPagoPagosRealizadosPendientes/2008-01-01/role/HypercubeAplazamientosPagoPagosRealizadosPendientes" id="HypercubeAplazamientosPagoPagosRealizadosPendientes">
+		<link:definition>Clasificación que define el dominio de pagos realizados y pendientes de pago en la fecha de cierre del balance, común al apartado 15 de la memoria del modelo abreviado, apartado 15 del modelo pymes y apartado 27 del modelo normal</link:definition>
+		<link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/AplazamientosPagoPagosRealizadosPendientes/2008-01-01/role/HypercubeExclusionTotalPorcentaje" id="HypercubeExclusionTotalPorcentaje">
+		<link:definition>Clasificación que define el dominio de elementos excluídos en los pagos realizados y pendientes de pago en la fecha de cierre del balance, común al apartado 15 de la memoria del modelo abreviado, apartado 15 del modelo pymes y apartado 27 del modelo normal</link:definition>
+		<link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType roleURI="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/AplazamientosPagoPagosRealizadosPendientes/2008-01-01/role/seccionAplazamientosPagoPagosRealizadosPendientes" id="seccionAplazamientosPagoPagosRealizadosPendientes">
+		<link:definition>Clasificación que define el dominio de pagos realizados y pendientes de pago en la fecha de cierre del balance, común al apartado 15 de la memoria del modelo abreviado, apartado 15 del modelo pymes y apartado 27 del modelo normal</link:definition>
+		<link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+	  
+	  
+		</appinfo>
+	</annotation>
+</schema>

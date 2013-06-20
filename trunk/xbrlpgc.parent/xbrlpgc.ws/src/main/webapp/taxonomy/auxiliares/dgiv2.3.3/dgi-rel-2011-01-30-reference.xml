@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Taxonomy Reference Links linkbase based on XBRL standard Version 2.1.
+Created by UBmatrix Taxonomy Designer 3.0.1.2314 (2007-08-01 02:49).  
+Contact www.ubmatrix.com
+Copyright (c) 2002-2011 UBmatrix inc., All Rights Reserved
+Produced on 2011-02-15 12:20:01
+-->
+<linkbase xmlns="http://www.xbrl.org/2003/linkbase" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dgi-rel="http://www.xbrl.org.es/es/2008/dgi/gp/rel/2011-01-30" xmlns:ref="http://www.xbrl.org/2004/ref" xsi:schemaLocation=" http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd http://www.xbrl.org.es/es/2008/dgi/gp/rel/2011-01-30 dgi-rel-2011-01-30.xsd http://www.xbrl.org/2004/ref http://www.xbrl.org/2004/ref-2004-08-10.xsd">
+  <referenceLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_AdquisitionVoteRate" xlink:label="dgi-rel_AdquisitionVoteRate" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_AdquisitionVoteRate" xlink:to="dgi-rel_AdquisitionVoteRate_ref" />
+    <reference id="ref_AdquisitionVoteRate" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_AdquisitionVoteRate_ref" xlink:title="ref_AdquisitionVoteRate">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_BankIdentifierCode" xlink:label="dgi-rel_BankIdentifierCode" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_BankIdentifierCode" xlink:to="dgi-rel_BankIdentifierCode_ref" />
+    <reference id="ref_BankIdentifierCode" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_BankIdentifierCode_ref" xlink:title="ref_BankIdentifierCode">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_BankIdentifierName" xlink:label="dgi-rel_BankIdentifierName" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_BankIdentifierName" xlink:to="dgi-rel_BankIdentifierName_ref" />
+    <reference id="ref_BankIdentifierName" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_BankIdentifierName_ref" xlink:title="ref_BankIdentifierName">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_BusinessCombinations" xlink:label="dgi-rel_BusinessCombinations" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_BusinessCombinations" xlink:to="dgi-rel_BusinessCombinations_ref" />
+    <reference id="ref_BusinessCombinations" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_BusinessCombinations_ref" xlink:title="ref_BusinessCombinations">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_BusinessCombinationsType" xlink:label="dgi-rel_BusinessCombinationsType" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_BusinessCombinationsType" xlink:to="dgi-rel_BusinessCombinationsType_ref" />
+    <reference id="ref_BusinessCombinationsType" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_BusinessCombinationsType_ref" xlink:title="ref_BusinessCombinationsType">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ConsolidatedFinancialStatementsInformation" xlink:label="dgi-rel_ConsolidatedFinancialStatementsInformation" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ConsolidatedFinancialStatementsInformation" xlink:to="dgi-rel_ConsolidatedFinancialStatementsInformation_ref" />
+    <reference id="ref_ConsolidatedFinancialStatementsInformation" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ConsolidatedFinancialStatementsInformation_ref" xlink:title="ref_ConsolidatedFinancialStatementsInformation">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ConsolidatedgroupDirectNominalParticipationRate" xlink:label="dgi-rel_ConsolidatedgroupDirectNominalParticipationRate" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ConsolidatedgroupDirectNominalParticipationRate" xlink:to="dgi-rel_ConsolidatedgroupDirectNominalParticipationRate_ref" />
+    <reference id="reference_ConsolidatedgroupDirectNominalParticipationRate" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ConsolidatedgroupDirectNominalParticipationRate_ref" xlink:title="reference_ConsolidatedgroupDirectNominalParticipationRate">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ConsolidatedgroupIndirectNominalParticipationRate" xlink:label="dgi-rel_ConsolidatedgroupIndirectNominalParticipationRate" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ConsolidatedgroupIndirectNominalParticipationRate" xlink:to="dgi-rel_ConsolidatedgroupIndirectNominalParticipationRate_ref" />
+    <reference id="reference_ConsolidatedgroupIndirectNominalParticipationRate" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ConsolidatedgroupIndirectNominalParticipationRate_ref" xlink:title="reference_ConsolidatedgroupIndirectNominalParticipationRate">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ConsolidatedGroupType" xlink:label="dgi-rel_ConsolidatedGroupType" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ConsolidatedGroupType" xlink:to="dgi-rel_ConsolidatedGroupType_ref" />
+    <reference id="reference_ConsolidatedGroupType" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ConsolidatedGroupType_ref" xlink:title="reference_ConsolidatedGroupType">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ConsolidatedMethod" xlink:label="dgi-rel_ConsolidatedMethod" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ConsolidatedMethod" xlink:to="dgi-rel_ConsolidatedMethod_ref" />
+    <reference id="ref_ConsolidatedMethod" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ConsolidatedMethod_ref" xlink:title="ref_ConsolidatedMethod">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_CorporateOrgans" xlink:label="dgi-rel_CorporateOrgans" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_CorporateOrgans" xlink:to="dgi-rel_CorporateOrgans_ref" />
+    <reference id="ref_CorporateOrgans" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_CorporateOrgans_ref" xlink:title="ref_CorporateOrgans">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_DateOfAppointment" xlink:label="dgi-rel_DateOfAppointment" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_DateOfAppointment" xlink:to="dgi-rel_DateOfAppointment_ref" />
+    <reference id="ref_DateOfAppointment" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_DateOfAppointment_ref" xlink:title="ref_DateOfAppointment">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_DirectBoardVotingPower" xlink:label="dgi-rel_DirectBoardVotingPower" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_DirectBoardVotingPower" xlink:to="dgi-rel_DirectBoardVotingPower_ref" />
+    <reference id="ref_BoardVotingPower" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_DirectBoardVotingPower_ref" xlink:title="ref_BoardVotingPower">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_DirectParticipationRate" xlink:label="dgi-rel_DirectParticipationRate" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_DirectParticipationRate" xlink:to="dgi-rel_DirectParticipationRate_ref" />
+    <reference id="ref_ParticipationRate" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_DirectParticipationRate_ref" xlink:title="ref_ParticipationRate">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_EnterpriseGroupInformation" xlink:label="dgi-rel_EnterpriseGroupInformation" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_EnterpriseGroupInformation" xlink:to="dgi-rel_EnterpriseGroupInformation_ref" />
+    <reference id="ref_EnterpriseGroupInformation" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_EnterpriseGroupInformation_ref" xlink:title="ref_EnterpriseGroupInformation">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_EnterpriseGroupTotalNumber" xlink:label="dgi-rel_EnterpriseGroupTotalNumber" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_EnterpriseGroupTotalNumber" xlink:to="dgi-rel_EnterpriseGroupTotalNumber_ref" />
+    <reference id="ref_EnterpriseGroupTotalNumber" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_EnterpriseGroupTotalNumber_ref" xlink:title="ref_EnterpriseGroupTotalNumber">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_EstimatedNetTurnoverEGI" xlink:label="dgi-rel_EstimatedNetTurnoverEGI" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_EstimatedNetTurnoverEGI" xlink:to="dgi-rel_EstimatedNetTurnoverEGI_ref" />
+    <reference id="ref_EstimatedNetTurnoverEGI" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_EstimatedNetTurnoverEGI_ref" xlink:title="ref_EstimatedNetTurnoverEGI">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_EstimatedShareholdingRate" xlink:label="dgi-rel_EstimatedShareholdingRate" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_EstimatedShareholdingRate" xlink:to="dgi-rel_EstimatedShareholdingRate_ref" />
+    <reference id="ref_EstimatedShareholdingRate" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_EstimatedShareholdingRate_ref" xlink:title="ref_EstimatedShareholdingRate">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_FinancialEntityRelated" xlink:label="dgi-rel_FinancialEntityRelated" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_FinancialEntityRelated" xlink:to="dgi-rel_FinancialEntityRelated_ref" />
+    <reference id="ref_FinancialEntityRelated" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_FinancialEntityRelated_ref" xlink:title="ref_FinancialEntityRelated">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_IdentificationConsolidatedGroup" xlink:label="dgi-rel_IdentificationConsolidatedGroup" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_IdentificationConsolidatedGroup" xlink:to="dgi-rel_IdentificationConsolidatedGroup_ref" />
+    <reference id="reference_IdentificationConsolidatedGroup" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_IdentificationConsolidatedGroup_ref" xlink:title="reference_IdentificationConsolidatedGroup">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_IndirectBoardVotingPower" xlink:label="dgi-rel_IndirectBoardVotingPower" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_IndirectBoardVotingPower" xlink:to="dgi-rel_IndirectBoardVotingPower_ref" />
+    <reference id="reference_IndirectBoardVotingPower" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_IndirectBoardVotingPower_ref" xlink:title="reference_IndirectBoardVotingPower">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_IndirectParticipationRate" xlink:label="dgi-rel_IndirectParticipationRate" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_IndirectParticipationRate" xlink:to="dgi-rel_IndirectParticipationRate_ref" />
+    <reference id="reference_IndirectParticipationRate" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_IndirectParticipationRate_ref" xlink:title="reference_IndirectParticipationRate">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_JuridicalStatusInstitutionalSector" xlink:label="dgi-rel_JuridicalStatusInstitutionalSector" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_JuridicalStatusInstitutionalSector" xlink:to="dgi-rel_JuridicalStatusInstitutionalSector_ref" />
+    <reference id="ref_JuridicalStatusInstitutionalSector" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_JuridicalStatusInstitutionalSector_ref" xlink:title="ref_JuridicalStatusInstitutionalSector">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_LengthOrEndingDate" xlink:label="dgi-rel_LengthOrEndingDate" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_LengthOrEndingDate" xlink:to="dgi-rel_LengthOrEndingDate_ref" />
+    <reference id="ref_LengthOrEndingDate" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_LengthOrEndingDate_ref" xlink:title="ref_LengthOrEndingDate">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_MostImportantEnterprises" xlink:label="dgi-rel_MostImportantEnterprises" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_MostImportantEnterprises" xlink:to="dgi-rel_MostImportantEnterprises_ref" />
+    <reference id="ref_MostImportantEnterprises" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_MostImportantEnterprises_ref" xlink:title="ref_MostImportantEnterprises">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_NaturalJuridical" xlink:label="dgi-rel_NaturalJuridical" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_NaturalJuridical" xlink:to="dgi-rel_NaturalJuridical_ref" />
+    <reference id="ref_NaturalJuridical" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_NaturalJuridical_ref" xlink:title="ref_NaturalJuridical">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_NetTurnoverEGI" xlink:label="dgi-rel_NetTurnoverEGI" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_NetTurnoverEGI" xlink:to="dgi-rel_NetTurnoverEGI_ref" />
+    <reference id="ref_NetTurnoverEGI" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_NetTurnoverEGI_ref" xlink:title="ref_NetTurnoverEGI">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_OrgansType" xlink:label="dgi-rel_OrgansType" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_OrgansType" xlink:to="dgi-rel_OrgansType_ref" />
+    <reference id="ref_OrgansType" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_OrgansType_ref" xlink:title="ref_OrgansType">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_OthersBusinessCombinations" xlink:label="dgi-rel_OthersBusinessCombinations" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_OthersBusinessCombinations" xlink:to="dgi-rel_OthersBusinessCombinations_ref" />
+    <reference id="ref_OthersBusinessCombinations" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_OthersBusinessCombinations_ref" xlink:title="ref_OthersBusinessCombinations">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_OthersConsolidatedGroup" xlink:label="dgi-rel_OthersConsolidatedGroup" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_OthersConsolidatedGroup" xlink:to="dgi-rel_OthersConsolidatedGroup_ref" />
+    <reference id="reference_OthersMultigroup" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_OthersConsolidatedGroup_ref" xlink:title="reference_OthersMultigroup">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_OthersConsolidatedMethod" xlink:label="dgi-rel_OthersConsolidatedMethod" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_OthersConsolidatedMethod" xlink:to="dgi-rel_OthersConsolidatedMethod_ref" />
+    <reference id="ref_OthersConsolidatedMethod" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_OthersConsolidatedMethod_ref" xlink:title="ref_OthersConsolidatedMethod">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_OthersOrgansType" xlink:label="dgi-rel_OthersOrgansType" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_OthersOrgansType" xlink:to="dgi-rel_OthersOrgansType_ref" />
+    <reference id="ref_OthersOrgansType" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_OthersOrgansType_ref" xlink:title="ref_OthersOrgansType">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_OthersParentEntity" xlink:label="dgi-rel_OthersParentEntity" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_OthersParentEntity" xlink:to="dgi-rel_OthersParentEntity_ref" />
+    <reference id="ref_OthersParentEntity" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_OthersParentEntity_ref" xlink:title="ref_OthersParentEntity">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_OthersShareholder" xlink:label="dgi-rel_OthersShareholder" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_OthersShareholder" xlink:to="dgi-rel_OthersShareholder_ref" />
+    <reference id="ref_OthersShareholder" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_OthersShareholder_ref" xlink:title="ref_OthersShareholder">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_OwnershipStructure" xlink:label="dgi-rel_OwnershipStructure" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_OwnershipStructure" xlink:to="dgi-rel_OwnershipStructure_ref" />
+    <reference id="ref_OwnershipStructure" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_OwnershipStructure_ref" xlink:title="ref_OwnershipStructure">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ParentEntity" xlink:label="dgi-rel_ParentEntity" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ParentEntity" xlink:to="dgi-rel_ParentEntity_ref" />
+    <reference id="ref_ParentEntity" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ParentEntity_ref" xlink:title="ref_ParentEntity">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ParentEntityType" xlink:label="dgi-rel_ParentEntityType" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ParentEntityType" xlink:to="dgi-rel_ParentEntityType_ref" />
+    <reference id="ref_ParentEntityType" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ParentEntityType_ref" xlink:title="ref_ParentEntityType">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_RegisterOfficeIdentificationData" xlink:label="dgi-rel_RegisterOfficeIdentificationData" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_RegisterOfficeIdentificationData" xlink:to="dgi-rel_RegisterOfficeIdentificationData_ref" />
+    <reference id="ref_RegisterOfficeIdentificationData" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_RegisterOfficeIdentificationData_ref" xlink:title="ref_RegisterOfficeIdentificationData">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_RelationshipType" xlink:label="dgi-rel_RelationshipType" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_RelationshipType" xlink:to="dgi-rel_RelationshipType_ref" />
+    <reference id="reference_RelationshipType" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_RelationshipType_ref" xlink:title="reference_RelationshipType">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ShareholdersParticipationRate" xlink:label="dgi-rel_ShareholdersParticipationRate" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ShareholdersParticipationRate" xlink:to="dgi-rel_ShareholdersParticipationRate_ref" />
+    <reference id="ref_ShareholdersParticipationRate" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ShareholdersParticipationRate_ref" xlink:title="ref_ShareholdersParticipationRate">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ShareholdersSignificantStakeList" xlink:label="dgi-rel_ShareholdersSignificantStakeList" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ShareholdersSignificantStakeList" xlink:to="dgi-rel_ShareholdersSignificantStakeList_ref" />
+    <reference id="ref_ShareholdersSignificantStakeList" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ShareholdersSignificantStakeList_ref" xlink:title="ref_ShareholdersSignificantStakeList">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ShareholderType" xlink:label="dgi-rel_ShareholderType" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ShareholderType" xlink:to="dgi-rel_ShareholderType_ref" />
+    <reference id="ref_ShareholderType" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ShareholderType_ref" xlink:title="ref_ShareholderType">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsEU" xlink:label="dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsEU" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsEU" xlink:to="dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsEU_ref" />
+    <reference id="ref_ShareholdingRateCompanyOtherShareholdersNonResidentsEU" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsEU_ref" xlink:title="ref_ShareholdingRateCompanyOtherShareholdersNonResidentsEU">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsRestWorld" xlink:label="dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsRestWorld" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsRestWorld" xlink:to="dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsRestWorld_ref" />
+    <reference id="ref_ShareholdingRateCompanyOtherShareholdersNonResidentsRestWorld" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsRestWorld_ref" xlink:title="ref_ShareholdingRateCompanyOtherShareholdersNonResidentsRestWorld">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsTotal" xlink:label="dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsTotal" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsTotal" xlink:to="dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsTotal_ref" />
+    <reference id="ref_ShareholdingRateCompanyOtherShareholdersNonResidentsTotal" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ShareholdingRateCompanyOtherShareholdersNonResidentsTotal_ref" xlink:title="ref_ShareholdingRateCompanyOtherShareholdersNonResidentsTotal">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ShareholdingRateEstateOwned" xlink:label="dgi-rel_ShareholdingRateEstateOwned" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ShareholdingRateEstateOwned" xlink:to="dgi-rel_ShareholdingRateEstateOwned_ref" />
+    <reference id="ref_ShareholdingRateEstateOwned" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ShareholdingRateEstateOwned_ref" xlink:title="ref_ShareholdingRateEstateOwned">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ShareholdingRatePrivateCompanyFinancialInstitutions" xlink:label="dgi-rel_ShareholdingRatePrivateCompanyFinancialInstitutions" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ShareholdingRatePrivateCompanyFinancialInstitutions" xlink:to="dgi-rel_ShareholdingRatePrivateCompanyFinancialInstitutions_ref" />
+    <reference id="ref_ShareholdingRatePrivateCompanyFinancialInstitutions" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ShareholdingRatePrivateCompanyFinancialInstitutions_ref" xlink:title="ref_ShareholdingRatePrivateCompanyFinancialInstitutions">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ShareholdingRatePrivateCompanyOtherCorporationsResidents" xlink:label="dgi-rel_ShareholdingRatePrivateCompanyOtherCorporationsResidents" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ShareholdingRatePrivateCompanyOtherCorporationsResidents" xlink:to="dgi-rel_ShareholdingRatePrivateCompanyOtherCorporationsResidents_ref" />
+    <reference id="ref_ShareholdingRatePrivateCompanyOtherCorporationsResidents" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ShareholdingRatePrivateCompanyOtherCorporationsResidents_ref" xlink:title="ref_ShareholdingRatePrivateCompanyOtherCorporationsResidents">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ShareholdingRatePrivateCompanyOtherShareholdersResidents" xlink:label="dgi-rel_ShareholdingRatePrivateCompanyOtherShareholdersResidents" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ShareholdingRatePrivateCompanyOtherShareholdersResidents" xlink:to="dgi-rel_ShareholdingRatePrivateCompanyOtherShareholdersResidents_ref" />
+    <reference id="ref_ShareholdingRatePrivateCompanyOtherShareholdersResidents" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ShareholdingRatePrivateCompanyOtherShareholdersResidents_ref" xlink:title="ref_ShareholdingRatePrivateCompanyOtherShareholdersResidents">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ShareholdingRatePrivateCompany" xlink:label="dgi-rel_ShareholdingRatePrivateCompany" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ShareholdingRatePrivateCompany" xlink:to="dgi-rel_ShareholdingRatePrivateCompany_ref" />
+    <reference id="ref_ShareholdingRatePrivateCompany" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ShareholdingRatePrivateCompany_ref" xlink:title="ref_ShareholdingRatePrivateCompany">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_ShareholdingRateTotal" xlink:label="dgi-rel_ShareholdingRateTotal" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_ShareholdingRateTotal" xlink:to="dgi-rel_ShareholdingRateTotal_ref" />
+    <reference id="ref_ShareholdingRateTotal" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_ShareholdingRateTotal_ref" xlink:title="ref_ShareholdingRateTotal">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+    <loc xlink:type="locator" xlink:href="dgi-rel-2011-01-30.xsd#dgi-rel_TransactionDate" xlink:label="dgi-rel_TransactionDate" />
+    <referenceArc xlink:type="arc" xlink:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" xlink:from="dgi-rel_TransactionDate" xlink:to="dgi-rel_TransactionDate_ref" />
+    <reference id="ref_TransactionDate" xlink:type="resource" xlink:role="http://www.xbrl.org/2003/role/reference" xlink:label="dgi-rel_TransactionDate_ref" xlink:title="ref_TransactionDate">
+      <ref:Name>XBRL DGI</ref:Name>
+    </reference>
+  </referenceLink>
+</linkbase>

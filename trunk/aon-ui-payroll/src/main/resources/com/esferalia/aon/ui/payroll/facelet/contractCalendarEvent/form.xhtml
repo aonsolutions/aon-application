@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="contractTypeForm">
+		
+			<aon:div id="menuExt"> 
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+					<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contractCalendarEvent_module}" />
+					<ui:param name="controller" value="#{contractCalendarEvent}" />
+					<ui:param name="skipRemoveButton" value="true" />
+					<ui:param name="skipResetButton" value="true" />
+					<ui:param name="skipSearchButton" value="true" />
+					<ui:param name="skipSaveButton" value="true" />
+					<ui:param name="skipSpin" value="false" />
+					<ui:param name="skipFocusFirst" value="true" />
+				</ui:decorate>
+			</aon:div>	
+
+			<aon:div ajaxRendered="true" layout="none">
+
+				<aon:div styleClass="aon-scroll-area">
+					<aon:panelGrid columns="4" dir="true" width="100%">
+						
+						<aon:outputText value="#{bundle.aon_name}" />
+						<aon:outputText value="#{contract.to.person.registry.fullName}" />
+						
+						<aon:outputText value="#{companyBundle.company_enterprise}" />
+						<aon:outputText value="#{contract.to.workPlace.enterprise.registry.fullName}" />
+						
+						<aon:outputText value="#{payrollBundle.payroll_contract_period}"/>
+						<aon:outputText rendered="#{contract.to.id==null}" value="&#160;" />
+						<aon:div rendered="#{contract.to.id!=null}">
+							<aon:outputLabel styleClass="aon-italic aon-margin-right aon-margin-left"
+								value="#{bundle.aon_start_date}:" />
+							<aon:outputText value="#{contract.to.startDate}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							<aon:outputLabel styleClass="aon-italic aon-margin-right aon-margin-left"
+								rendered="#{contract.to.endDate!=null}"
+								value="#{bundle.aon_end_date}:" />
+							<aon:outputText value="#{contract.to.endDate}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:div>
+						
+						<aon:outputText value="#{companyBundle.company_workplace}" />
+						<aon:outputText value="#{contract.to.workPlace.description}" />
+						
+						<aon:outputLabel value="#{bundle.aon_document}" />
+						<aon:outputText rendered="#{contract.to.id==null}" value="&#160;" />
+						<aon:div rendered="#{contract.to.id!=null}">
+							<aon:outputText value="#{contract.to.person.registry.documentType}" />
+							<aon:outputText value="#{contract.to.person.registry.document}" style="margin-left: 3px;"/>
+							<aon:outputText value="#{bundle.aon_document_country}" styleClass="aon-italic aon-margin-left"/>
+							<aon:outputText value="#{contract.to.person.registry.documentCountry}" styleClass="aon-margin-left"/>
+						</aon:div>
+						
+						<aon:outputText value="#{companyBundle.company_activity}" />
+						<aon:div>
+							<aon:outputText value="#{contract.to.activity.description}" />
+							<aon:outputText value=" - " rendered="#{contract.to.id!=null}" />
+							<aon:outputText value="(" rendered="#{contract.to.id!=null}" />
+							<aon:outputText value="#{contract.to.activity.cnae2009.code}" />
+							<aon:outputText value=") " rendered="#{contract.to.id!=null}" />
+							<aon:outputText value="#{contract.to.activity.cnae2009.title}" />
+						</aon:div>
+								
+						<aon:outputText value="#{payrollBundle.payroll_salary_ss_number}" />
+						<aon:outputText value="#{contract.to.person.socialSecurityNumber}" />
+						
+						<aon:outputText value="#{companyBundle.company_enterprise_ccc}" />
+						<aon:outputText value="#{contract.to.enterpriseCCC.ccc}" />
+						
+					</aon:panelGrid>
+				</aon:div>
+
+				<aon:div styleClass="aon-scroll-area">
+
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+						<ui:param name="controller" value="#{contractCalendarEvent}" />
+						<ui:define name="columns">
+						
+							<aon:column styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputLabel for="ContractData_name"
+										value="#{bundle.aon_name}" />
+								</f:facet>
+								<aon:outputText value="#{to.name}" rendered="#{formList}" />
+								<aon:selectOneMenu id="ContractData_name" required="true" 
+									value="#{controller.to.name}" rendered="#{formEdit}">
+										<f:selectItem itemLabel=" - " itemValue="#{null}"  />
+									<f:selectItems value="#{controller.calendarEvents}"  />
+								</aon:selectOneMenu>
+								<f:facet name="footer">
+									<aon:selectOneMenu id="ContractData_name-New" required="true" 
+										value="#{controller.to.name}" rendered="#{formNew}">
+										<f:selectItem itemLabel=" - " itemValue="#{null}"  />
+										<f:selectItems value="#{controller.calendarEvents}"  />
+									</aon:selectOneMenu>
+								</f:facet>
+							</aon:column>
+						
+							<aon:column styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputLabel for="ContractData_expression"
+										value="#{payrollBundle.payroll_salary_expression}" />
+								</f:facet>
+								<aon:outputText value="#{to.expression}" rendered="#{formList}" />
+								<aon:inputText id="ContractData_expression" required="true"
+									rendered="#{formEdit}" size="20"
+									value="#{controller.to.expression}" maxlength="64" >
+									<f:validateLength maximum="64"/>
+								</aon:inputText>
+								<f:facet name="footer">
+									<aon:inputText id="ContractData_expression-New" required="true"
+										rendered="#{formNew}" size="20"
+										value="#{controller.to.expression}" maxlength="64" >
+										<f:validateLength maximum="64"/>
+									</aon:inputText>
+								</f:facet>
+							</aon:column>
+							
+							<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120 aon-nowrap">
+								<f:facet name="header">
+									<aon:outputLabel for="ContractData_startDate" value="#{bundle.aon_start_date}" />
+								</f:facet>
+								<aon:outputText value="#{to.startDate}" rendered="#{formList}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>		
+								<aon:selectInputDate id="ContractData_startDate" rendered="#{formEdit}"
+									value="#{controller.to.startDate}" required="true"
+									timeZone="#{timeZoneController.timeZone}"
+									popupDateFormat="#{bundle.aon_date_pattern}"/>
+								<f:facet name="footer">
+									<aon:selectInputDate id="ContractData_startDate-New" rendered="#{formNew}"
+										value="#{controller.to.startDate}" required="true"
+										timeZone="#{timeZoneController.timeZone}"
+										popupDateFormat="#{bundle.aon_date_pattern}"/>
+								</f:facet>
+							</aon:column>
+						
+							<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120 aon-nowrap">
+								<f:facet name="header">
+									<aon:outputLabel for="ContractData_endDate" value="#{bundle.aon_end_date}" />
+								</f:facet>
+								<aon:outputText value="#{to.endDate}" rendered="#{formList}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>		
+								<aon:selectInputDate id="ContractData_endDate" rendered="#{formEdit}"
+									value="#{controller.to.endDate}"
+									timeZone="#{timeZoneController.timeZone}"
+									popupDateFormat="#{bundle.aon_date_pattern}"/>
+								<f:facet name="footer">
+									<aon:selectInputDate id="ContractData_endDate-New" rendered="#{formNew}"
+										value="#{controller.to.endDate}"
+										timeZone="#{timeZoneController.timeZone}"
+										popupDateFormat="#{bundle.aon_date_pattern}"/>
+								</f:facet>	
+							</aon:column>
+										
+						</ui:define>
+					</ui:decorate>
+
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>

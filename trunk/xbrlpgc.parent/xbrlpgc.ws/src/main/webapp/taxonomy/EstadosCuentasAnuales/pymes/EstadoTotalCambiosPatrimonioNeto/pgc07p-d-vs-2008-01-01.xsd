@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/pymes/EstadoTotalCambiosPatrimonioNeto/VariacionSaldo/Dimension/2009-01-01" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pgc07p-d-vs="http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/pymes/EstadoTotalCambiosPatrimonioNeto/VariacionSaldo/Dimension/2009-01-01" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:pgc-07-roles="http://www.icac.meh.es/es/fr/gaap/pgc07/roles/2009-01-01" xmlns:pgc07cbs-dvs="http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/comunbase/EstadoTotalCambiosPatrimonioNeto/VariacionSaldo/Dimension/2009-01-01" xmlns:xbrldt="http://xbrl.org/2005/xbrldt" xmlns:xl="http://www.xbrl.org/2003/XLink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pgc-07-ref="http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2009-01-01" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <xsd:annotation>
+    <xsd:appinfo>
+      <link:linkbaseRef xlink:type="simple" xlink:href="pgc07p-d-vs-2008-01-01-presentation.xml" xlink:role="http://www.xbrl.org/2003/role/presentationLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+      <link:linkbaseRef xlink:type="simple" xlink:href="pgc07p-d-vs-2008-01-01-definition.xml" xlink:role="http://www.xbrl.org/2003/role/definitionLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+      <link:linkbaseRef xlink:type="simple" xlink:href="pgc07p-d-vs-2008-01-01-label-es.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+      <link:linkbaseRef xlink:type="simple" xlink:href="pgc07p-d-vs-2008-01-01-label-es-code.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+      <link:linkbaseRef xlink:type="simple" xlink:href="../../comun/EstadoTotalCambiosPatrimonioNeto/pgc07cap-d-vs-2008-01-01-label-es-code.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+      <link:linkbaseRef xlink:type="simple" xlink:href="pgc07p-d-vs-2008-01-01-reference.xml" xlink:role="http://www.xbrl.org/2003/role/referenceLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+    </xsd:appinfo>
+  </xsd:annotation>
+  <xsd:import namespace="http://www.xbrl.org/2003/instance" schemaLocation="http://www.xbrl.org/2003/xbrl-instance-2003-12-31.xsd"/>
+  <xsd:import namespace="http://xbrl.org/2005/xbrldt" schemaLocation="http://www.xbrl.org/2005/xbrldt-2005.xsd"/>
+  <xsd:import namespace="http://www.icac.meh.es/es/fr/gaap/pgc07/roles/2009-01-01" schemaLocation="../../comun/pgc-07-roles-2008-01-01.xsd"/>
+  <xsd:import namespace="http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/comunbase/EstadoTotalCambiosPatrimonioNeto/VariacionSaldo/Dimension/2009-01-01" schemaLocation="../../comun/EstadoTotalCambiosPatrimonioNeto/pgc07cbs-dvs-2008-01-01.xsd"/>
+  <xsd:element name="VariacionSaldoSaldoAjustadoInicioEjercicioResultadoPyG" id="pgc07p-d-vs_VariacionSaldoSaldoAjustadoInicioEjercicioResultadoPyG" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+  <xsd:element name="VariacionSaldoSaldoAjustadoInicioEjercicioIngresosGastosReconocidosIngresosFiscalesDistribuirVariosEjercicios" id="pgc07p-d-vs_VariacionSaldoSaldoAjustadoInicioEjercicioIngresosGastosReconocidosIngresosFiscalesDistribuirVariosEjercicios" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:balance="credit" xbrli:periodType="duration"/>
+  <xsd:element name="VariacionSaldoSaldoAjustadoInicioEjercicioIngresosGastosReconocidosOtrosIngresosGastos" id="pgc07p-d-vs_VariacionSaldoSaldoAjustadoInicioEjercicioIngresosGastosReconocidosOtrosIngresosGastos" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item" nillable="true" xbrli:periodType="duration"/>
+</xsd:schema>

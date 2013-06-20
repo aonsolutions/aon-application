@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+ 
+	<aon:div id="finalizeContainer">
+		<c:if test="#{controller.finalizePanelVisible}">
+			<rich:modalPanel id="finalizePanel" minHeight="400"
+				minWidth="700"
+				showWhenRendered="#{controller.finalizePanelVisible}" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{fiscalBundle.fiscal_finish}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form id="finalizePanelCloseForm">
+						<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+							actionListener="#{controller.onHideFinalizePanel}"
+							reRender="finalizeContainer" immediate="true">
+							<aon:actionHotKey key="esc" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:form id="finalizeForm">
+					<aon:div styleClass="aon-popupWindow-content-internal">
+						<aon:div style="width:99%">
+							<aon:div styleClass="aon-toolbar">
+								<aon:commandButton id="finishFiscalModel"
+									value="#{fiscalBundle.fiscal_finish}"
+									actionListener="#{controller.onFinish}"
+									styleClass="aon-finding-toolbar-item aon-icon-lock"/>
+							</aon:div>
+						</aon:div>
+						<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+							<aon:panelGrid id="finalizeGrid" columns="2" style="width: 100%;"
+									columnClasses="aon-panelGrid-odd aon-width-140
+												,aon-panelGrid-even aon-width-auto">
+												
+								<aon:outputLabel for="Creditor_id" value="#{financeBundle.finance_creditor}"/>
+								<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
+									<ui:param name="lookupTo" value="#{controller.to.finance.registry}" />
+									<ui:param name="lookupForRegistry" value="#{true}" />
+									<ui:param name="skipLabel" value="#{true}" />
+									<ui:param name="idRequired" value="#{true}" />						
+								</ui:include>
+								
+								<aon:outputText value="#{bundle.aon_amount}" />
+								<aon:outputText id="Finance_total" styleClass="aon-bold"
+									value="#{controller.declaration.result}" size="15">
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>									
+													
+								<aon:outputLabel for="Finance_payMethod_id"
+									value="#{configBundle.config_pay_method}" />
+								<aon:selectOneMenu id="Finance_payMethod_id" required="true"
+									reRender="finalizeGrid" ajaxSingle="true"
+									value="#{controller.to.finance.payMethod}">
+									<f:selectItem itemLabel="-" value="#{null}" />
+									<f:selectItems value="#{fiscalCollections.modelPayMethods}" />
+								</aon:selectOneMenu>
+								
+								<aon:outputLabel for="Bank_idFinance"
+									rendered="#{controller.bankAccountVisible}"
+									value="#{configBundle.config_bank}" />
+								<aon:selectOneMenu id="Bank_idFinance"
+									rendered="#{controller.bankAccountVisible}"
+									value="#{controller.registryBank}">
+									<f:selectItem itemLabel="-" value="#{null}" />
+									<f:selectItems value="#{controller.activeBanks}" />
+								</aon:selectOneMenu>
+								
+							</aon:panelGrid>
+						</aon:div>
+					</aon:div>
+					</aon:form>
+				</aon:div>
+			</rich:modalPanel>
+		</c:if>
+	</aon:div>
+</ui:composition>

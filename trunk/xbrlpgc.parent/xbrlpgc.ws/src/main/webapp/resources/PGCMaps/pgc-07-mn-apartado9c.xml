@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Statement xmlns="http://www.inteco.es/pgc07/mapa"
+    name="pgc-07-mn-apartado9c" mainSchemaPrefix="pgc-07-mn" mainSchemaNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloNormal/2009-01-01">
+    <conceptMap
+        outputID="InstrumentosFinancierosPasivosFinancierosDebitosPartidasPagar"
+        inputID="90932"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoDeudasEntidadesCredito"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoObligacionesOtrosValoresNegociables"/>
+        <Member id="4" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoDerivadosOtros"/>
+        <Member id="5" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosPasivosFinancierosDerivadosCobertura"
+        inputID="90935"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoDeudasEntidadesCredito"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoObligacionesOtrosValoresNegociables"/>
+        <Member id="4" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoDerivadosOtros"/>
+        <Member id="5" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosPasivosFinancierosTotal"
+        inputID="90936"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoDeudasEntidadesCredito"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoObligacionesOtrosValoresNegociables"/>
+        <Member id="4" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoDerivadosOtros"/>
+        <Member id="5" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosPasivosFinancierosPasivosValorRazonableCambiosPerdidasGananciasMantenidosNegociar"
+        inputID="90933"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoDeudasEntidadesCredito"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoObligacionesOtrosValoresNegociables"/>
+        <Member id="4" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoDerivadosOtros"/>
+        <Member id="5" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoTotal"/>
+    </conceptMap>
+    <conceptMap
+        outputID="InstrumentosFinancierosPasivosFinancierosPasivosValorRazonableCambiosPerdidasGananciasOtros"
+        inputID="90934"
+        ns="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/normal/2009-01-01"
+        nsPrefix="pgc07mn" domain="pgc07d-clase:InstrumentosFinancierosClasesDimension">
+        <Member id="2" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoDeudasEntidadesCredito"/>
+        <Member id="3" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoObligacionesOtrosValoresNegociables"/>
+        <Member id="4" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoDerivadosOtros"/>
+        <Member id="5" qname="pgc07d-clase:InstrumentosFinancierosLargoPlazoClasesPasivoTotal"/>
+    </conceptMap>
+</Statement>
