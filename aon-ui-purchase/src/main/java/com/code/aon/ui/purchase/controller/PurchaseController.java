@@ -72,8 +72,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	private boolean showProjectWindow;
 	private boolean showDetailProjectWindow;
 	private boolean showIncomeWindow;
-	private String incomeSeries;
-	private int incomeNumber;
+	private String incomeReferenceCode;
 	private Date incomeDate;
 	private Warehouse incomeWarehouse;
 	private boolean showInvoiceWindow;
@@ -176,20 +175,12 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		this.showIncomeWindow = value;
 	}
 	
-	public String getIncomeSeries() {
-		return incomeSeries;
+	public String getIncomeReferenceCode() {
+		return incomeReferenceCode;
 	}
 
-	public void setIncomeSeries(String incomeSeries) {
-		this.incomeSeries = incomeSeries;
-	}
-
-	public int getIncomeNumber() {
-		return incomeNumber;
-	}
-
-	public void setIncomeNumber(int incomeNumber) {
-		this.incomeNumber = incomeNumber;
+	public void setIncomeReferenceCode(String incomeReferenceCode) {
+		this.incomeReferenceCode = incomeReferenceCode;
 	}
 
 	public Date getIncomeDate() {
@@ -457,8 +448,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 
 	public void onIncomeShow(ActionEvent event) throws ManagerBeanException {
 		Purchase to = (Purchase)this.getTo();
-		setIncomeSeries(null);
-		setIncomeNumber(0);
+		setIncomeReferenceCode(null);
 		setIncomeDate(new Date());
 		setIncomeWarehouse(obtainDeliveryWarehouse(to.getWorkPlace()));
 	}
@@ -479,7 +469,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	public void onIncome(ActionEvent event) throws ManagerBeanException {
 		Purchase to = (Purchase)this.getTo();
 		IncomeManager incomeManager = new IncomeManager();
-		Income income = incomeManager.purchaseIncome(to, getIncomeSeries(), getIncomeNumber(), getIncomeDate(), getIncomeWarehouse());
+		Income income = incomeManager.purchaseIncome(to, getIncomeReferenceCode(), getIncomeDate(), getIncomeWarehouse());
 
 		IController incomeController = FormUtil.getController(INCOME_CONTROLLER_NAME);
 		incomeController.onEditSearch(event);

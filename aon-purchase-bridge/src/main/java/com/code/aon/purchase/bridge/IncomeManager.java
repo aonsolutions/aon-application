@@ -22,9 +22,9 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class IncomeManager {
 
-	public Income purchaseIncome(Purchase purchase, String series, int number, Date issueDate, Warehouse warehouse)	throws ManagerBeanException {
+	public Income purchaseIncome(Purchase purchase, String referenceCode, Date issueDate, Warehouse warehouse)	throws ManagerBeanException {
 		updatePurchaseStatus(purchase);
-		Income income = createIncome(purchase, series, number, issueDate);
+		Income income = createIncome(purchase, referenceCode, issueDate);
 		createIncomeDetails(income, purchase, warehouse);
 		return income;
 	}
@@ -36,11 +36,10 @@ public class IncomeManager {
 		purchaseBean.update(purchase);
 	}
 
-	private Income createIncome(Purchase purchase, String series, int number, Date issueDate) throws ManagerBeanException {
+	private Income createIncome(Purchase purchase, String referenceCode, Date issueDate) throws ManagerBeanException {
 		Income income = new Income();
 		income.setProject(purchase.getProject());
-		income.setSeries(series);
-		income.setNumber(number);
+		income.setReferenceCode(referenceCode);
 		income.setSupplier(purchase.getSupplier());
 		income.setRegistryAddress(purchase.getRegistryAddress());
 		income.setIssueTime(issueDate);
