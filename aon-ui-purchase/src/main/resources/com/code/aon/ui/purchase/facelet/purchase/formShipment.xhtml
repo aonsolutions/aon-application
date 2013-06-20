@@ -8,14 +8,14 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<aon:div id="salesShipmentDiv" >
+	<aon:div id="purchaseShipmentDiv" >
 		<aon:panelGrid columns="2" style="width:600px;">
 				
 			<c:if test="#{carrierCollections.carriersCount>0}">
-				<aon:outputLabel for="Sales_carrier"
+				<aon:outputLabel for="Purchase_carrier"
 					value="#{carrierBundle.carrier_carrier}" />
-				<aon:selectOneMenu id="Sales_carrier" 
-					value="#{sales.to.carrier}">
+				<aon:selectOneMenu id="Purchase_carrier" 
+					value="#{purchase.to.carrier}">
 					<f:selectItem itemLabel=" - " itemValue="#{null}" />
 					<f:selectItems value="#{carrierCollections.carriers}" />
 				</aon:selectOneMenu>
@@ -24,16 +24,16 @@
 				<aon:outputText value="&#160;" />
 			</c:if>
 				
-			<aon:outputLabel for="Sales_shippingContact"
+			<aon:outputLabel for="Purchase_shippingContact"
 				value="#{carrierBundle.carrier_shipment_to}" />
-			<aon:inputText id="Sales_shippingContact"  
+			<aon:inputText id="Purchase_shippingContact"  
 				size="64" maxlength="128"
-				value="#{sales.to.shippingContact}" />
+				value="#{purchase.to.shippingContact}" />
 			
-			<aon:outputLabel for="Sales_shippingPeriod"
+			<aon:outputLabel for="Purchase_shippingPeriod"
 				value="#{carrierBundle.carrier_shipment_schedule}" />
-			<aon:selectOneMenu id="Sales_shippingPeriod" 
-				value="#{sales.to.shippingPeriod}">
+			<aon:selectOneMenu id="Purchase_shippingPeriod" 
+				value="#{purchase.to.shippingPeriod}">
 				<f:selectItem itemLabel=" - " itemValue="#{null}" />
 				<f:selectItems value="#{carrierCollections.shipmentPeriods}" />
 			</aon:selectOneMenu>
@@ -46,7 +46,7 @@
 			<f:facet name="header">
 				<aon:div style="display:inline;">
 					<aon:selectBooleanCheckbox id="shippingAlternativeAddressSelect" 
-						value="#{sales.shippingAlternativeAddress}" >
+						value="#{purchase.shippingAlternativeAddress}" >
 						<a4j:support event="onclick" 
 							ajaxSingle="true"
 							ignoreDumpResponses="true"
@@ -58,36 +58,36 @@
 				</aon:div>
 			</f:facet>
 		
-			<aon:panelGrid columns="2" rendered="#{sales.shippingAlternativeAddress}"  
+			<aon:panelGrid columns="2" rendered="#{purchase.shippingAlternativeAddress}"  
 				styleClass="aon-width-all">
 					
-				<aon:outputLabel for="Sales_shippingAlternativeRecipient" 
+				<aon:outputLabel for="Purchase_shippingAlternativeRecipient" 
 					value="#{carrierBundle.carrier_shipment_recipient}" />
-				<aon:inputText id="Sales_shippingAlternativeRecipient" 
-					value="#{sales.to.shippingAlternativeRecipient}" size="64" maxlength="64"/>
+				<aon:inputText id="Purchase_shippingAlternativeRecipient" 
+					value="#{purchase.to.shippingAlternativeRecipient}" size="64" maxlength="64"/>
 		
-				<aon:outputLabel for="Sales_shippingAlternativeAddress" value="#{registryBundle.registry_address}" />
-				<aon:inputText id="Sales_shippingAlternativeAddress" maxlength="128" size="80"
-					value="#{sales.to.shippingAlternativeAddress}" />
+				<aon:outputLabel for="Purchase_shippingAlternativeAddress" value="#{registryBundle.registry_address}" />
+				<aon:inputText id="Purchase_shippingAlternativeAddress" maxlength="128" size="80"
+					value="#{purchase.to.shippingAlternativeAddress}" />
 				
-				<aon:outputLabel for="Sales_shippingAlternativeAddress2" value="#{registryBundle.registry_address_detail}" />
-				<aon:inputText id="Sales_shippingAlternativeAddress2" maxlength="128" size="80"
-					value="#{sales.to.shippingAlternativeAddress2}" />
+				<aon:outputLabel for="Purchase_shippingAlternativeAddress2" value="#{registryBundle.registry_address_detail}" />
+				<aon:inputText id="Purchase_shippingAlternativeAddress2" maxlength="128" size="80"
+					value="#{purchase.to.shippingAlternativeAddress2}" />
 				
-				<aon:outputLabel for="Sales_shippingAlternativeZip" 
+				<aon:outputLabel for="Purchase_shippingAlternativeZip" 
 					value="#{registryBundle.registry_zip}" />
-				<aon:inputText id="Sales_shippingAlternativeZip" 
-					value="#{sales.to.shippingAlternativeZip}" size="16" maxlength="16"/>
+				<aon:inputText id="Purchase_shippingAlternativeZip" 
+					value="#{purchase.to.shippingAlternativeZip}" size="16" maxlength="16"/>
 					
-				<aon:outputLabel for="Sales_shippingAlternativeCity" 
+				<aon:outputLabel for="Purchase_shippingAlternativeCity" 
 					value="#{registryBundle.registry_city}" />
-				<aon:inputText id="Sales_shippingAlternativeCity" 
-					value="#{sales.to.shippingAlternativeCity}" size="64" maxlength="64"/>
+				<aon:inputText id="Purchase_shippingAlternativeCity" 
+					value="#{purchase.to.shippingAlternativeCity}" size="64" maxlength="64"/>
 					
-				<aon:outputLabel for="Sales_shippingAlternativePhone" 
+				<aon:outputLabel for="Purchase_shippingAlternativePhone" 
 					value="#{registryBundle.registry_phone}" />
-				<aon:inputText id="Sales_shippingAlternativePhone"
-					value="#{sales.to.shippingAlternativePhone}" />
+				<aon:inputText id="Purchase_shippingAlternativePhone"
+					value="#{purchase.to.shippingAlternativePhone}" />
 			
 			</aon:panelGrid>
 			

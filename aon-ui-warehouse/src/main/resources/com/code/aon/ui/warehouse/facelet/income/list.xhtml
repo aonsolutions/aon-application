@@ -58,10 +58,10 @@
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{income}" />
 					<ui:define name="columns">
-						<aon:column alias="Income.series,Income.number"
+						<aon:column alias="Income.referenceCode"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+								<h:outputText value="#{bundle.aon_number}" />
 							</f:facet>
 							<aon:outputText value="#{to.referenceCode}" />
 						</aon:column>

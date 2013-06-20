@@ -372,22 +372,25 @@
 						</aon:panelGrid>
 					</aon:panel>
 				</aon:div>
-
-				<aon:div styleClass="aon-padding-top">
-					<aon:panel rendered="#{!purchase.new}">
-						<f:facet name="header">
-							<aon:outputText value="#{purchaseBundle.purchase_detail}" />
-						</f:facet>
-						<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formDetail.xhtml">
-							<c:if test="#{!aonConfiguration.bean.purchase.showTasData}">
-								<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
-							</c:if>
-							<c:if test="#{aonConfiguration.bean.purchase.showTasData}">
-								<ui:param name="projectLabel" value="#{tasBundle.tas_projectTas}" />
-							</c:if>
-						</ui:include>
-					</aon:panel>
-				</aon:div>
+				
+				<c:if test="#{!purchase.new}">
+					<aon:panelTabSet>
+						<aon:panelTab label="#{purchaseBundle.purchase_detail}">
+							<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formDetail.xhtml">
+								<c:if test="#{!aonConfiguration.bean.purchase.showTasData}">
+									<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
+								</c:if>
+								<c:if test="#{aonConfiguration.bean.purchase.showTasData}">
+									<ui:param name="projectLabel" value="#{tasBundle.tas_projectTas}" />
+								</c:if>
+							</ui:include>
+						</aon:panelTab>
+						<aon:panelTab label="#{carrierBundle.carrier_shipment}">
+							<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formShipment.xhtml" />
+						</aon:panelTab>
+					</aon:panelTabSet>
+				</c:if>
+				
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{supplierLookup}" />

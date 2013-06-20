@@ -147,11 +147,18 @@
 
 					<aon:outputLabel for="Sales_issueDate" 
 						value="#{bundle.aon_date}" />
-					<aon:selectInputDate id="Sales_issueDate"
-						value="#{sales.to.issueDate}" 
-						required="true" disabled="#{!sales.pending}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
+ 					<aon:div>
+						<aon:selectInputDate id="Sales_issueDate"
+							value="#{sales.to.issueDate}" 
+							required="true" disabled="#{!sales.pending}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+						<aon:outputLabel for="Sales_purchaseReference" 
+							styleClass="aon-margin-left aon-italic"
+							value="#{salesBundle.sales_purchase_reference}: " />
+						<aon:inputText id="Sales_purchaseReference"
+							value="#{sales.to.purchaseReference}" size="15" />
+ 					</aon:div>
 
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{sales.to.customer}" />
@@ -378,12 +385,10 @@
 							label="#{salesBundle.sales_detail}">
 							<ui:include src="/com/code/aon/ui/sales/facelet/sales/formDetail.xhtml" />
 						</aon:panelTab>
-						<c:if test="#{actionDenied.moduleEnabled['warehouse']}">
-							<aon:panelTab id="salesShipment" 
-								label="#{carrierBundle.carrier_shipment}">
-								<ui:include src="/com/code/aon/ui/sales/facelet/sales/formShipment.xhtml" />
-							</aon:panelTab>
-						</c:if>
+						<aon:panelTab id="salesShipment" 
+							label="#{carrierBundle.carrier_shipment}">
+							<ui:include src="/com/code/aon/ui/sales/facelet/sales/formShipment.xhtml" />
+						</aon:panelTab>
 					</aon:panelTabSet>
 				</c:if>
 				

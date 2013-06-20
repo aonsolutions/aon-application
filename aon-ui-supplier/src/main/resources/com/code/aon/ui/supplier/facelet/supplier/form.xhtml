@@ -49,7 +49,15 @@
 					<aon:panelGrid id="infoDataTable" styleClass="aon-margin-top"
 						columns="2" style="width: 100%;"
 						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-auto">
-	
+						
+						<aon:outputText value="#{supplierBundle.supplier_purchases}" />
+						<aon:div>
+							<aon:selectBooleanCheckbox id="Supplier_purchaseValuated" styleClass="aon-margin-left"
+								value="#{supplier.to.purchaseValuated}" />
+							<aon:outputLabel for="Supplier_purchaseValuated" styleClass="aon-italic"
+								value="#{supplierBundle.supplier_printValuated}" />
+						</aon:div>
+				
 						<c:if test="#{!supplier.new and aonRole.accountingOperator and aonConfiguration.bean.supplier.showAccount}">				
 							<aon:outputLabel for="Account_id" value="#{accountBundle.account_accounting}" />
 							<aon:panelGrid id="accountContainer" columns="2" columnClasses="none,none">

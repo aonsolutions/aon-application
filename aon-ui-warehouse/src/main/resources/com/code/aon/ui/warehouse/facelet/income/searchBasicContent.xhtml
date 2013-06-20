@@ -6,7 +6,11 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
+	<aon:outputLabel for="Income_referenceCode"
+		value="#{bundle.aon_number}" />
+	<aon:inputText id="Income_referenceCode"
+		valueChangeListener="#{controller.addExpression}"
+		size="25" maxlength="25" />
 
 	<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
 		<ui:param name="lookupTo" value="#{searchController.supplier}" />

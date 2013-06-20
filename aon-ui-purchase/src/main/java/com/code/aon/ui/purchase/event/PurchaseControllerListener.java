@@ -2,6 +2,7 @@ package com.code.aon.ui.purchase.event;
 
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
@@ -18,6 +19,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.purchase.controller.IPurchaseConstants;
 import com.code.aon.ui.purchase.controller.PurchaseController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.carrier.Carrier;
 
 public class PurchaseControllerListener extends ControllerAdapter implements IPurchaseConstants {
 
@@ -46,9 +48,13 @@ public class PurchaseControllerListener extends ControllerAdapter implements IPu
 		try {
 			controller.loadAddresses(((Purchase)controller.getTo()).getSupplier().getRegistry().getId());
 			controller.loadDefaultPayMethod(((Purchase)controller.getTo()).getSupplier().getRegistry().getId(), true);
+			if(((Purchase)controller.getTo()).getCarrier()==null){
+				((Purchase)controller.getTo()).setCarrier((Carrier) BeanManager.getManagerBean(Carrier.class).createNewTo());
+			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
+		controller.setShippingAlternativeAddress(controller.isShippingAlternativeAddressDefined());
 	}
 
 	@Override
@@ -79,6 +85,19 @@ public class PurchaseControllerListener extends ControllerAdapter implements IPu
 				throw new ControllerListenerException(e.getMessage());
 			}
 		}
+		if(!purchaseController.isShippingAlternativeAddress()){
+			emptyShippingAlternativeAddress((Purchase)purchaseController.getTo());
+		}
+		purchaseController.setShippingAlternativeAddress(purchaseController.isShippingAlternativeAddressDefined());
+	}
+	
+	private void emptyShippingAlternativeAddress(Purchase purchase) {
+		purchase.setShippingAlternativeAddress(null);
+		purchase.setShippingAlternativeAddress2(null);
+		purchase.setShippingAlternativeZip(null);
+		purchase.setShippingAlternativeCity(null);
+		purchase.setShippingAlternativePhone(null);
+		purchase.setShippingAlternativeRecipient(null);
 	}
 	
 }

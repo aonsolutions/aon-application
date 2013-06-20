@@ -25,6 +25,7 @@ import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.purchase.IPurchaseMessages;
 import com.code.aon.ui.purchase.controller.IPurchaseConstants;
+import com.code.aon.ui.purchase.controller.PurchaseReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.bean.AonMessage;
@@ -44,6 +45,8 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseMess
 		initMessageController(messageController, emails);
 		messageController.updateMessageBody( getEmailContent(getEmailBody(purchase), AonUtil.getMessage(BUNDLE_KEY, PURCHASE_EMAIL_BODY_HEADER)) );
 		messageController.setSubject( getEmailSubject(purchase) );
+		PurchaseReportManager purchaseReportManager = (PurchaseReportManager) AonUtil.getRegisteredBean(PURCHASE_REPORT_CONTROLLER_NAME);
+		purchaseReportManager.setValued(purchase.getSupplier().isPurchaseValuated());
 		messageController.addAttachment( getReport(purchase, REPORT_KEY) );
 	}
 	
@@ -120,6 +123,8 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseMess
 				Address[] recipients = getEmailAddresses(emails, purchase.getSupplier().getRegistry().getFullName() );
 				String _subject = formatEmailSubject(purchase, subject);
 				String _content = formatEmailBody(purchase, content );
+				PurchaseReportManager puerchaseReport = (PurchaseReportManager) AonUtil.getRegisteredBean(IPurchaseConstants.PURCHASE_REPORT_CONTROLLER_NAME);
+				puerchaseReport.setValued(purchase.getSupplier().isPurchaseValuated());
 				file = getReport(purchase, REPORT_KEY);
 				
 				AonMessage aonMessage = getEmailSender().createMessage(recipients, _subject);

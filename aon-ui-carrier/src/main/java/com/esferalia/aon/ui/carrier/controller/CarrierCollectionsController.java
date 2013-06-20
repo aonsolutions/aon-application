@@ -10,14 +10,12 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.domain.DomainManager;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.carrier.enumeration.ShipmentPeriod;
 import com.esferalia.aon.carrier.enumeration.ShipmentStatus;
-import com.esferalia.aon.entity.IEntityAlias;
 
 public class CarrierCollectionsController {
 	
@@ -50,18 +48,10 @@ public class CarrierCollectionsController {
 		return shipmentStatuses;
 	}
 	
-	public List<SelectItem> getCarriers() throws ManagerBeanException {
+	public List<SelectItem> getCarriers() {
 		List<SelectItem> carriers = new LinkedList<SelectItem>();
-		IManagerBean bean = BeanManager.getManagerBean(Carrier.class);
-		Criteria criteria = null;
-		if(DomainManager.isDomainManagementAvailable()){
-			criteria = new Criteria();
-			criteria.setSkipDomainFilter(true);
-			Integer[] ids = new Integer[]{DomainManager.getDomainProvider().getCurrentDomain(), DomainManager.getDomainProvider().getParentDomain()};
-			criteria.addInExpression(bean.getFieldName(IEntityAlias.CARRIER_DOMAIN), ids);
-		}
 		try {
-			Iterator<?> iter = bean.getList(criteria).iterator();
+			Iterator<?> iter = getCarriersList().iterator();
 			while(iter.hasNext()){
 				Carrier carrier = (Carrier)iter.next();
 				String name = carrier.getRegistry().getFullName();
@@ -74,6 +64,22 @@ public class CarrierCollectionsController {
 			AonUtil.addErrorMessage(e.toString());
 		}
 		return carriers;
+	}
+	
+	public Integer getCarriersCount() {
+		try {
+			return getCarriersList().size();
+		} catch (ManagerBeanException e) {
+			String msg = "No se han podido obtener las agencias de transporte";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.toString());
+		}
+		return 0;
+	}
+	
+	public List<ITransferObject> getCarriersList() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Carrier.class);
+		return bean.getList(null);
 	}
 
 }

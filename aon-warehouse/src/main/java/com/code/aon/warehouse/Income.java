@@ -15,13 +15,12 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IPayMethod;
@@ -33,8 +32,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.IncomeDB;
 
 @Entity
-@Table(name="income", uniqueConstraints = @UniqueConstraint(columnNames={"supplier", "series", "number"}))
-public class Income extends IncomeDB implements IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod {
+@Table(name="income", uniqueConstraints = @UniqueConstraint(columnNames={"supplier", "reference_code"}))
+public class Income extends IncomeDB implements ICalculableContainer, IBankAccountContainer, IPayMethod {
 	
 	private static final long serialVersionUID = 1L;
     private static final String DELIM = " ";
@@ -65,15 +64,6 @@ public class Income extends IncomeDB implements IHeaderObject, ICalculableContai
 	public void setLines(Set<IncomeDetail> lines) {
 		this.lines = lines;
 	}
-	
-    @Transient
-    public String getReferenceCode() {
-    	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
-		if (!StringUtils.isEmpty(getSeries())) {
-			referenceCode = getSeries() + "/" + referenceCode;
-		}
-    	return referenceCode;
-    }
 
     @Transient
     public int[] getPaymentDaysArray() {
@@ -96,8 +86,7 @@ public class Income extends IncomeDB implements IHeaderObject, ICalculableContai
 	}
 
 	@Transient
-	@SuppressWarnings("unchecked")
-	public List getDetailList() {
+	public List<ITransferObject> getDetailList() {
 		try {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 			Criteria criteria = new Criteria();
@@ -110,8 +99,7 @@ public class Income extends IncomeDB implements IHeaderObject, ICalculableContai
 	}
 	
 	@Transient
-	@SuppressWarnings("unchecked")
-	public List getOrderedDetailList() {
+	public List<ITransferObject> getOrderedDetailList() {
 		try {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 			Criteria criteria = new Criteria();

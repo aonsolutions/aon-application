@@ -425,7 +425,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Income_issueTime desc,Income_series desc,Income_number desc</value>
+			<value>Income_issueTime desc,Income_referenceCode desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>

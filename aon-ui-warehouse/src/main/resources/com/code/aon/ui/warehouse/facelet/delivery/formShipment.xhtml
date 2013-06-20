@@ -11,16 +11,18 @@
 	<aon:div id="deliveryShipmentDiv" >
 		<aon:panelGrid columns="4" style="width:600px;">
 				
-			<aon:outputLabel for="Delivery_carrier"
-				value="#{carrierBundle.carrier_carrier}" />
-			<aon:selectOneMenu id="Delivery_carrier" 
-				value="#{delivery.to.carrier}">
-				<f:selectItem itemLabel=" - " itemValue="#{null}" />
-				<f:selectItems value="#{carrierCollections.carriers}" />
-			</aon:selectOneMenu>
-				
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="&#160;" />
+			<c:if test="#{carrierCollections.carriersCount>0}">
+				<aon:outputLabel for="Delivery_carrier"
+					value="#{carrierBundle.carrier_carrier}" />
+				<aon:selectOneMenu id="Delivery_carrier" 
+					value="#{delivery.to.carrier}">
+					<f:selectItem itemLabel=" - " itemValue="#{null}" />
+					<f:selectItems value="#{carrierCollections.carriers}" />
+				</aon:selectOneMenu>
+					
+				<aon:outputText value="&#160;" />
+				<aon:outputText value="&#160;" />
+			</c:if>
 				
 			<aon:outputLabel for="Delivery_numberPlate"
 				value="#{warehouseBundle.warehouse_delivery_shipment_numberPlate}" />

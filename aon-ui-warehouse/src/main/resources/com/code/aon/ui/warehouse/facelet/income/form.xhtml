@@ -63,17 +63,14 @@
 						aon-panelGrid-odd aon-width-100,
 						aon-panelGrid-even aon-width-auto">
 
-					<aon:outputLabel for="Income_series"
-						value="#{bundle.aon_series}/#{bundle.aon_number}" />
+					<aon:outputLabel for="Income_referenceCode"
+						value="#{bundle.aon_number}" />
 					<aon:div>
 						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
 							<aon:div>
-								<aon:inputText id="Income_series" 
-									value="#{income.to.series}" rendered="#{income.pending}"
-									size="4" />
-								<aon:inputText id="Income_number" styleClass="aon-margin-left" 
-									value="#{income.to.number}" rendered="#{income.pending}"
-									required="true" size="7" />
+								<aon:inputText id="Income_referenceCode"  
+									value="#{income.to.referenceCode}" rendered="#{income.pending}"
+									required="true" size="20" />
 								<aon:outputText styleClass="aon-bold aon-margin-right"
 									value="#{income.to.referenceCode}"
 									rendered="#{!income.pending}" />

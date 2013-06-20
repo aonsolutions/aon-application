@@ -15,6 +15,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,11 +80,19 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	private String invoiceRefCode;
 	private Date invoiceDate;
 	private PurchaseEmailUtil emailUtil;
+	private boolean shippingAlternativeAddress;
 	
 	private List<String> moreRecipients;
 	
 	private List<IEmailControllerListener> emailControllerListenerClasses;
 
+	public boolean isShippingAlternativeAddress() {
+		return shippingAlternativeAddress;
+	}
+
+	public void setShippingAlternativeAddress(boolean shippingAlternativeAddress) {
+		this.shippingAlternativeAddress = shippingAlternativeAddress;
+	}
 	
 	public List<IEmailControllerListener> getEmailControllerListenerClasses() {
 		return emailControllerListenerClasses;
@@ -560,6 +569,21 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(PURCHASE_INVOICE_CONTROLLER_NAME);
 			invoiceController.onLoad(event, invoice.getId(), PURCHASE_FORM_NAME, PURCHASE_CONTROLLER_NAME + ".refresh");
 		}
+	}
+	
+	public boolean isShippingAlternativeAddressDefined() {
+		Purchase purchase = (Purchase) this.getTo();
+		if(purchase!=null){
+			if( StringUtils.isNotBlank(purchase.getShippingAlternativeAddress())
+				|| StringUtils.isNotBlank(purchase.getShippingAlternativeAddress2())
+				|| StringUtils.isNotBlank(purchase.getShippingAlternativeZip())
+				|| StringUtils.isNotBlank(purchase.getShippingAlternativeCity())
+				|| StringUtils.isNotBlank(purchase.getShippingAlternativePhone())
+				|| StringUtils.isNotBlank(purchase.getShippingAlternativeRecipient()) ){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 

@@ -133,8 +133,7 @@ public class PurchaseInvoiceController extends InvoiceController {
 			criteria.addEqualExpression(incomeBean.getFieldName(IEntityAlias.INCOME_STATUS), IncomeStatus.PENDING);
 			criteria.addEqualExpression(incomeBean.getFieldName(IEntityAlias.INCOME_SECURITY_LEVEL), getInvoice().getSecurityLevel());
 			criteria.addOrder(incomeBean.getFieldName(IEntityAlias.INCOME_ISSUE_TIME));
-			criteria.addOrder(incomeBean.getFieldName(IEntityAlias.INCOME_SERIES));
-			criteria.addOrder(incomeBean.getFieldName(IEntityAlias.INCOME_NUMBER));
+			criteria.addOrder(incomeBean.getFieldName(IEntityAlias.INCOME_REFERENCE_CODE));
 			incomeList.addAll(incomeBean.getList(criteria));
 		}
 		getIncomeTransferManager().setIncomeList(incomeList);

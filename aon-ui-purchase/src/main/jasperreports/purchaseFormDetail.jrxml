@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchaseDetail" pageWidth="535" pageHeight="842" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -146,7 +146,7 @@
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
 				<reportElement key="textField-13" x="466" y="0" width="56" height="12">
-					<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0)&&$P{printValue})]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0) && $P{printValue})]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -191,7 +191,8 @@
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-44" positionType="Float" x="522" y="0" width="13" height="12">
-					<printWhenExpression><![CDATA[$P{printValue}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0) && $P{printValue})
+]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
