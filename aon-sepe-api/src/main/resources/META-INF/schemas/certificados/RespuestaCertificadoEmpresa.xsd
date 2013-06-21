@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<xsd:include schemaLocation="certificadoEmpresa.xsd"/>
+	<xsd:include schemaLocation="CertificadoEmpresa.xsd"/>
 	<xsd:element name="Respuesta_Certificado_empresa">
 		<xsd:annotation>
 			<xsd:documentation xml:lang="es">XML Schema - Respuesta al proceso de Comunicaciones de Certificados de Cese.</xsd:documentation>
