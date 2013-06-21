@@ -9,8 +9,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -94,7 +92,7 @@ public class PmsUtil {
 	}
 	
 	private void fillExtension( Element element ) {
-		element.addElement(ID_ESTABLECIMIENTO_ELEMENT).addText(reservation.getHotel().getCode());
+		element.addElement(ID_ESTABLECIMIENTO_ELEMENT).addText(reservation.getHotelReservation().getCode());
 		element.addElement(RESERVA_ELEMENT).addText(String.valueOf(reservation.getId()));
 		element.addElement(BONO_ELEMENT).addText(reservation.getCode());
 		String start = DATE_FORMAT.format(reservation.getStartDate());
