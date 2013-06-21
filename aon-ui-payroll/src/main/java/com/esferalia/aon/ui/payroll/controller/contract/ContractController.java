@@ -67,15 +67,12 @@ import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
-import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
-import com.esferalia.aon.ui.payroll.controller.IVariablesHandler;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.controller.TrainingCenterController;
-import com.esferalia.aon.ui.payroll.controller.salary.SettleController;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
-public class ContractController extends BasicController implements IVariablesHandler {
+public class ContractController extends BasicController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractController.class.getName());
 	
@@ -85,7 +82,6 @@ public class ContractController extends BasicController implements IVariablesHan
 	private List<SelectItem> activities;
 	private Agreement agreement;
 	
-	private ContractVariableHandler variableHandler;
 	private ContractParams params;
 
 	private boolean showNewContractModal;
@@ -99,15 +95,6 @@ public class ContractController extends BasicController implements IVariablesHan
 	}
 	public void setParams(ContractParams params) {
 		this.params = params;
-	}
-	public ContractVariableHandler getHandler() {
-		if(variableHandler==null){
-			variableHandler = new ContractVariableHandler(this);
-		}
-		return variableHandler;
-	}
-	public void setHandler(ContractVariableHandler handler) {
-		this.variableHandler = handler;
 	}
 	
 	public boolean isSkipPayrollData() {
@@ -490,7 +477,6 @@ public class ContractController extends BasicController implements IVariablesHan
 	private String selectedTab;
 	
 	
-	
 	public String getSelectedTab() {
 		return selectedTab;
 	}
@@ -728,85 +714,6 @@ public class ContractController extends BasicController implements IVariablesHan
 //	 * 			TREE METHODS		
 //	 * ************************************
 	
-	public void onShowVariables( ActionEvent event ) {
-		try {
-			Contract to = (Contract) getTo();
-			IController c = FormUtil.getController(IPayrollConstants.CONTRACT_DATA_CONTROLLER);
-			c.onEditSearch(event);
-			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), to.getId());
-			c.onSearch(event);
-			this.initializeVariables(event);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible mostrar las variables del contrato (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}						
-	}
-	
-	public void onShowPayments( ActionEvent event ) {
-		ContractPaymentController c = (ContractPaymentController) FormUtil.getController(IPayrollConstants.CONTRACT_PAYMENT_CONTROLLER);
-		c.reset(false);
-		c.initialize();
-	}
-	
-	public void onShowDeductions( ActionEvent event ) {
-		try {
-			Contract to = (Contract) getTo();
-			ContractDeductionController c = (ContractDeductionController) FormUtil.getController(IPayrollConstants.CONTRACT_DEDUCTION_CONTROLLER);
-			c.reset(false);
-			c.onEditSearch(event);
-			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_CONTRACT_ID), to.getId());
-			c.onSearch(event);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible mostrar las deducciones del contrato (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}						
-	}
-	public void onShowEmbargos( ActionEvent event ) {
-		try {
-			Contract to = (Contract) getTo();
-			ContractEmbargoController c = (ContractEmbargoController) FormUtil.getController(IPayrollConstants.CONTRACT_EMBARGO_CONTROLLER);
-			c.onEditSearch(event);
-			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_EMBARGO_CONTRACT_ID), to.getId());
-			c.onSearch(event);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible mostrar los embargos del contrato (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}						
-	}
-	public void onShowBonus( ActionEvent event ) {
-		try {
-			Contract to = (Contract) getTo();
-			ContractBonusController c = (ContractBonusController) FormUtil.getController(IPayrollConstants.CONTRACT_BONUS_CONTROLLER);
-			c.onEditSearch(event);
-			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_BONUS_CONTRACT_ID), to.getId());
-			c.onSearch(event);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible mostrar las bonificaciones del contrato (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}						
-	}
-	public void onShowDocuments( ActionEvent event ) {
-		
-	}
-	 
-	public void onEdit( ActionEvent event ) {
-		try {
-			EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_TREE_CONTROLLER_NAME);
-			select( event, tree.getContract() );
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onEdit exception: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}						
-	}    
 	
 	public void onLoadCalendar( ActionEvent event ) {
 		// TODO implementar la busqueda del calendario. si la entidad no tiene calendario, 
@@ -820,54 +727,6 @@ public class ContractController extends BasicController implements IVariablesHan
 		controller.onInitialize(event);
 	}	
 	
-	public void onShowIrpfData( ActionEvent event ) {
-		Contract c = (Contract) getTo();
-		try {
-			IrpfDataController controller = (IrpfDataController) AonUtil.getRegisteredBean(IPayrollConstants.IRPF_DATA_CONTROLLER_NAME);
-			controller.onEditSearch(event);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(controller.getManagerBean().getFieldName(IEntityAlias.IRPF_DATA_CONTRACT_ID),c.getId());
-			controller.clearCriteria();
-			controller.setCriteria(criteria);
-			controller.onSearch(event);
-			if(controller.getRowCount()<=0){
-				controller.onReset(event);
-			} else {
-				controller.getModel().setRowIndex(0);
-				controller.onSelect(event);
-			}
-			controller.onCalculateIrpf(event);
-			controller.setBackAction(IPayrollConstants.CONTRACT_FORM_TREE);
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onIrpfCalculate exception: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
-	}
-	
-	public void onShowSettle( ActionEvent event ) {
-		if(getTo()==null){
-			String msg = "Error al obtener los datos de contrato.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-		SettleController controller = (SettleController) AonUtil.getRegisteredBean(IPayrollConstants.SETTLE_CONTROLLER_NAME);
-		controller.onSelectContract(event);
-	}
-	
-	public void onShowContractLeave( ActionEvent event ) {
-		Contract c = (Contract) getTo();
-		if(c==null){
-			String msg = "Error al obtener los datos de contrato.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-		ContractLeaveController controller = (ContractLeaveController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_LEAVE_CONTROLLER_NAME);
-		controller.setContract(c);
-		controller.onReset(event);
-		controller.initialize();
-		controller.createLeaveReportSuggest();
-	}
 	
 	public void onEditPerson( ActionEvent event ) {
 		try {
@@ -890,39 +749,7 @@ public class ContractController extends BasicController implements IVariablesHan
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
-	
-//	public void onShowContrataData(ActionEvent event){
-//		ContractContrataController controller = (ContractContrataController) AonUtil.getRegisteredBean("contractContrata");
-//		controller.initialize((Contract) this.getTo());
-//		controller.onContractaDataShow(event);
-//	}
-	
 
-	
-	
-
-	
-//	 * ************************************
-//	 * 			VARIABLES (contractData)		
-//	 * ************************************	
-	@Override
-	public List<?> expressionContext(Object suggest) {
-		return getHandler().expressionContext(suggest);
-	}
-	@Override
-	public IManagerBean getVariableManagerBean() throws ManagerBeanException {
-		return getHandler().getVariableManagerBean();
-	}
-	@Override
-	public void initializeVariables(ActionEvent event) {
-		getHandler().initializeVariables(event);
-	}
-	@Override
-	public void resetVariable() {
-		getHandler().resetVariable();
-	}
-	
-	
 
 
 	public class ContractParams {

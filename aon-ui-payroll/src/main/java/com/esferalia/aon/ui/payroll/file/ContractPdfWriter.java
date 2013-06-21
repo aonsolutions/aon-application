@@ -18,8 +18,6 @@ import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
-import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
-import com.esferalia.aon.ui.payroll.controller.contract.ContractContrataController;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 
@@ -84,6 +82,11 @@ public class ContractPdfWriter {
 	public void loadNewPdf(String document, Contract contract, ContrataParams contrataParams) throws IOException, UnsupportedContractDocumentException {
 		ContractPdfFactory factory = new ContractPdfFactory();
 		pdfDocument = factory.createContractDocument(document);
+		if(pdfDocument == null) {
+			String msg = "Documento incorrecto. No se ha podido hallar la factoria correspondiente a este tipo de documento";
+			AonUtil.addErrorMessage(msg);
+			throw new UnsupportedContractDocumentException(msg);
+		}
 		PayrollUtils utils = new PayrollUtils();
 		String tc2 = utils.getContractDataMap(contract).get(ContextVariable.TC2.getName());
 		pdfDocument.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
@@ -92,12 +95,17 @@ public class ContractPdfWriter {
 		pdfDocument.loadPdfFields(ContractCode.getContractCodeByValue(tc2), contract, contrataParams);
 	}
 
-	public void loadExistingPdf(ContractAttachment contractPdfDraft, Contract contract) {
+	public void loadExistingPdf(ContractAttachment contractPdfDraft, Contract contract) throws UnsupportedContractDocumentException {
 		loadExistingPdf(contract.getModel().toString(), contractPdfDraft);
 	}
-	public void loadExistingPdf(String document, ContractAttachment contractPdfDraft) {
+	public void loadExistingPdf(String document, ContractAttachment contractPdfDraft) throws UnsupportedContractDocumentException {
 		ContractPdfFactory factory = new ContractPdfFactory();
 		pdfDocument = factory.createContractDocument(document);
+		if(pdfDocument == null) {
+			String msg = "Documento incorrecto. No se ha podido hallar la factoria correspondiente a este tipo de documento";
+			AonUtil.addErrorMessage(msg);
+			throw new UnsupportedContractDocumentException(msg);
+		}
 		pdfDocument.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		pdfDocument.loadPdfFields(contractPdfDraft);
 	}

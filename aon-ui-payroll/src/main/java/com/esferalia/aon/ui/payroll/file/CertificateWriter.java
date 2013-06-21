@@ -125,8 +125,11 @@ public class CertificateWriter {
 			output.setErrors(certificate.getExceptions());
 			output.setFile(file);
 			if (output.getErrors().size() > 0) {
-				AonUtil.addErrorMessage("Fichero generado con errores.");
 				// No se lanza excepción, que vaya a la última página.
+				AonUtil.addErrorMessage("Fichero generado con errores.");
+				for(Integer error: certificate.getErrors()){
+					AonUtil.addErrorMessage(certificate.getErrorMessage(error));
+				}
 			} else {
 				validateXmlPattern(file);
 			}

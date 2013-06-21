@@ -62,27 +62,6 @@ public class PdfUtils {
 		}
 	}
 	
-	
-//	public static void createPdfWallpaper(URL url, int pageNumber, int width, int height){
-//		PDDocument document = null;
-//		BufferedImage image = null;
-//		try {
-//			document = PDDocument.load(url);
-//			PDPage page = (PDPage) document.getPrintable(pageNumber-1);
-////			Double resolution = width/8.1;
-//			Double resolution = height/11.66;
-////			image = page.convertToImage();
-//			image = page.convertToImage(BufferedImage.TYPE_INT_RGB, resolution.intValue() );
-////			image = page.convertToImage(BufferedImage.TYPE_BYTE_GRAY, resolution.intValue() );
-//			document.close();
-//		} catch (IOException e) {
-//			String msg = "Se ha producido un error al obtener la pagina del contrato.";
-//			LOGGER.error(msg);
-//			AonUtil.addErrorMessage(msg);
-//		} 
-//		pdfWallpaperImage = image;
-//	}
-	
 	private static ByteBuffer getAsByteArray(URL url) throws IOException {
         ByteArrayOutputStream tmpOut = new ByteArrayOutputStream();
         InputStream in = url.openStream();

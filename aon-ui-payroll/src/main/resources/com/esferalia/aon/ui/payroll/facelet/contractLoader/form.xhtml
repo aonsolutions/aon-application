@@ -25,7 +25,7 @@
 						actionListener="#{contractLoader.onShowPanel}"
 						rendered="#{contractLoader.aonFile.size > 0}"
 						disabled="#{contractLoader.loader == null}"
-						reRender="showNewMessageWindow"
+						reRender="showNewMessageWindow-Loader"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"/>
 				</ui:define>
 			</ui:decorate>
@@ -64,7 +64,7 @@
 			</aon:div>
 		</aon:form>
 		
-		<aon:panelGroup id="showNewMessageWindow">
+		<aon:panelGroup id="showNewMessageWindow-Loader">
 			<c:if test="#{contractLoader.progressionPanelVisible}">
 				<aon:valueParam name="windowHeight" default="50" />
 				<rich:modalPanel id="showNewMessageModalPanel" domElementAttachment="parent"
@@ -82,7 +82,7 @@
 							<aon:commandButton type="button" styleClass="aon-popupWindow-close"
 								actionListener="#{contractLoader.onStart}"
 								immediate="true">
-								<rich:componentControl for="showNewMessageWindow" operation="hide"
+								<rich:componentControl for="showNewMessageWindow-Loader" operation="hide"
 									event="onclick" />
 							</aon:commandButton>
 						</aon:form>
@@ -99,7 +99,7 @@
 						</aon:commandButton>
 					</aon:form>
 				</rich:modalPanel>
-				<ui:param name="closeButtonReRender" value="showNewMessageWindow" />
+				<ui:param name="closeButtonReRender" value="showNewMessageWindow-Loader" />
 				<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
 					<ui:param name="logPanelTitle" value="#{payrollBundle.payroll_contractLoader_module}" />
 				</ui:include>		

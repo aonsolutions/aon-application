@@ -1,0 +1,2 @@
+"1";"Parcial regular"
+"2";"Parcial irregular"

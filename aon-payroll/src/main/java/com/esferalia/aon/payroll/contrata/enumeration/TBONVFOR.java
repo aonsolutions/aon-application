@@ -6,7 +6,7 @@ import java.util.Date;
 
 /** 
  * Enumeration for represent Contrata (S.E.P.E.) TBONVFOR table codes.
- * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter.
  *  ------------------------------------------------------------------------
  *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
  *  TBONVFOR	NIVEL FORMATIVO							29-02-2012					

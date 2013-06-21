@@ -160,7 +160,7 @@ public class Certificate {
 						/*
 						 * NODOS
 						 */
-						if (!(t.getDistribucionJornada() == null && (t.getDatosCotizacion() == null || t.getDatosCotizacion().size() == 0))) {
+						if ( t.getDistribucionJornada() != null && t.getDatosCotizacion() != null && t.getDatosCotizacion().size() != 0 ) {
 							if (t.getDistribucionJornada() != null){
 								for (Periodo p : t.getDistribucionJornada()
 										.getListaPeriodos()) {

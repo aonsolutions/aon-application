@@ -6,7 +6,7 @@ import java.util.Date;
 
 /** 
  * Enumeration for represent Contrata (S.E.P.E.) TRXLEYDF table codes.
- * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter.
  *  ------------------------------------------------------------------------
  *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
  * *TRXLEYDF	LEY DE DEDUCCION FISCAL						26-07-2012

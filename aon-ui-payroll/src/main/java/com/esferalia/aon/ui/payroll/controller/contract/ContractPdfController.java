@@ -29,6 +29,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
 import com.esferalia.aon.file.payroll.contract.pdf.basicCopy.BasicCopy;
+import com.esferalia.aon.file.payroll.contract.pdf.extension.Extension;
 import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
@@ -183,6 +184,9 @@ public class ContractPdfController {
 	public ContractAttachmentType getAnnexIIPdfType(){
 		return ContractAttachmentType.TRAINING_ANNEX_II;
 	}
+	public ContractAttachmentType getExtensionPdfType(){
+		return ContractAttachmentType.CONTRACT_EXTENSION_DRAFT;
+	}
 	public ContrataParams getContrataParams() {
 		return contrataParams;
 	}
@@ -195,21 +199,12 @@ public class ContractPdfController {
 	}
 	
 	private ContractAttachment obtainContractPdfDraft() {
-		ContractAttachmentType attachType = null;
-		if(getDocumentType()==ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT){
-			attachType = ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT;
-		} else if(getDocumentType()==ContractAttachmentType.BASIC_COPY_DRAFT){
-			attachType = ContractAttachmentType.BASIC_COPY_DRAFT;
-		} else if(getDocumentType()==ContractAttachmentType.TRAINING_ANNEX_II){
-			attachType = ContractAttachmentType.TRAINING_ANNEX_II;
-		}
-		
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), getContract().getId());
-			if(attachType!=null){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), attachType);
+			if(getDocumentType()!=null){
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), getDocumentType());
 			} else {
 				criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE));
 			}
@@ -233,6 +228,8 @@ public class ContractPdfController {
 			builder.append(BasicCopy.BASIC_COPY_NAME);
 		} else if(getDocumentType()==ContractAttachmentType.TRAINING_ANNEX_II){
 			builder.append(ModelPE230.MODEL_NAME);
+		} else if(getDocumentType()==ContractAttachmentType.CONTRACT_EXTENSION_DRAFT){
+			builder.append(Extension.EXTENSION_NAME);
 		}
 		builder.append(IMAGE_URL_PREFIX2);
 		builder.append(getDocumentWidth());
@@ -325,13 +322,22 @@ public class ContractPdfController {
 			} else {
 				getContractPdfWriter().loadExistingPdf(ModelPE230.MODEL_NAME, getContractPdfDraft());
 			}
+		} else if(getDocumentType()==ContractAttachmentType.CONTRACT_EXTENSION_DRAFT){
+			if(forceRefresh || getContractPdfDraft()==null || getContractPdfDraft().getId()==null){
+				getContractPdfWriter().loadNewPdf(Extension.EXTENSION_NAME, getContract(), getContrataParams());
+				completeNewPdfFields(ContractAttachmentType.CONTRACT_EXTENSION_DRAFT);
+			} else {
+				getContractPdfWriter().loadExistingPdf(Extension.EXTENSION_NAME, getContractPdfDraft());
+			}
 		}
 	}
 	
 	private void completeNewPdfFields(ContractAttachmentType attachType) {
 		ContractController controller = (ContractController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
 		if(attachType==ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT){
-			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("jornhoraefec").setValue(controller.getParams().getWorkSchedule());
+			if(controller.getParams().getContractCode()==ContractCode.C421){
+				getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("jornhoraefec").setValue(controller.getParams().getWorkSchedule());
+			}
 		} else if(attachType==ContractAttachmentType.TRAINING_ANNEX_II) {
 			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("horario").setValue(controller.getParams().getTrainingSchedule());
 		}
@@ -345,6 +351,8 @@ public class ContractPdfController {
 			fileName = BasicCopy.BASIC_COPY_NAME+".pdf"; 
 		} else if(getDocumentType()==ContractAttachmentType.TRAINING_ANNEX_II){
 			fileName = ModelPE230.MODEL_NAME+".pdf"; 
+		} else if(getDocumentType()==ContractAttachmentType.CONTRACT_EXTENSION_DRAFT){
+			fileName = Extension.EXTENSION_NAME+".pdf"; 
 		}
 		URL url = getContractPdfWriter().getContractDocumentUrl(fileName);
 		PdfUtils.createPdfWallpaper(url, getDocumentPage(), getDocumentWidth().intValue(), getDocumentHeight().intValue());
@@ -376,27 +384,16 @@ public class ContractPdfController {
 	}
 	
 	public void saveDocument() {
-		ContractAttachmentType attachType = null;
-		String attachName = null;
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		if(getDocumentType()==ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT){
-			attachType = ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT;
-		} else if(getDocumentType()==ContractAttachmentType.BASIC_COPY_DRAFT){
-			attachType = ContractAttachmentType.BASIC_COPY_DRAFT;
-		} else if(getDocumentType()==ContractAttachmentType.TRAINING_ANNEX_II){
-			attachType = ContractAttachmentType.TRAINING_ANNEX_II;
-		}
-		attachName = attachType.getName(locale);
-		
 		try {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			ContractAttachment attach = getContractPdfDraft();
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 			attach.setContract(getContract());
 			attach.setData(getContractPdfWriter().buildPdf());
 			attach.setAttachDate(new Date());
-			attach.setAttachmentType(attachType);
+			attach.setAttachmentType(getDocumentType());
 			attach.setMimeType(MimeType.MIME_PDF);
-			attach.setDescription(attachName);
+			attach.setDescription(getDocumentType().getName(locale));
 			bean.insertOrUpdate(attach);
 			ContractAttachController attachController = (ContractAttachController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_ATTACH_CONTROLLER);
 			attachController.initializeModel();

@@ -1,59 +1,41 @@
-"0111";"RÉGIMEN GENERAL"
-"0112";"ARTISTAS (R.G.)"
-"0113";"JUGADORES PROFESIONALES DE FÚTBOL"
-"0114";"PROFESIONALES TAURINOS"
-"0115";"FERROVIARIOS"
-"0121";"REPRESENTANTES COMERCIALES"
-"0131";"SISTEMA ESPECIAL RESINA"
-"0132";"SISTEMA ESPECIAL INDUSTRIAS DE CONSERVAS VEGETALES"
-"0133";"SISTEMA ESPECIAL FRUTAS Y HORTALIZAS"
-"0134";"SISTEMA ESPECIAL EMPAQUETADO Y MANIPULADO DE TOMATE FRESCO"
-"0135";"SISTEMA ESPECIAL HOSTELERÍA"
-"0136";"SISTEMA ESPECIAL EXHIBICIÓN CINEMATOGRÁFICA, SALAS DE BAILE, DISCOTECAS Y SALAS DE FIESTAS"
-"0137";"SISTEMA ESPECIAL ESTUDIOS DE MERCADO Y OPINIÓN PÚBLICA"
-"0138";"REG.GRAL. (SIST.ESP. EMPLEADOS HOGAR)"
-"0140";"RÉGIMEN GENERAL ( CONVENIO ESPECIAL )"
-"0150";"REG.GRAL.CCC.RESP.SOLID.,SUBS.,MORTIS C"
-"0151";"C.C. CONVENCIONALES DEL R.E.T.A."
-"0152";"C.C. CONVENCIONALES DEL R.E.T.A. (ESC. DE LIBROS)"
-"0160";"C.C. CONVENCIONALES DEL R.E.A. C/A"
-"0161";"REG.GRAL.(SIST.ESP.AGRARIO.INACTIV)"
-"0163";"REG.GRAL.(SIST.ESP.AGRARIO CCC)"
-"0170";"C.C. CONVENCIONALES DEL R.E.A. C/P"
-"0180";"C.C. CONVENCIONALES DEL R.E.E.H."
-"0521";"TRABAJADORES AUTÓNOMOS"
-"0522";"ESCRITORES DE LIBROS (RÉGIMEN ESPECIAL DE TRABAJADORES AUTÓNOMOS)"
-"0531";"REGIMEN ESP. AUTONOMOS CESE ACTIVIDAD"
-"0540";"REG.ESP.AUTONOMOS(CONVENIO ESPECIAL)"
-"0611";"TRABAJADOR POR CUENTA AJENA"
-"0613";"RÉGIMEN ESPECIAL AGRARIO"
-"0640";"REG.ESP.AGRARIO CUENTA AJ.(CONVENIO ESP)"
-"0650";"REA C/A.CCC.RESP.SOLID.,SUBS.,MORTIS C"
-"0721";"TRABAJADOR CUENTA PROPIA (R.E.A.)"
-"0740";"REG.ESP.AGRARIO CUENTA PR.(CONVENIO ESP)"
-"0800";"RÉGIMEN ESPECIAL DE TRABAJADORES DEL MAR"
-"0811";"TRABAJADOR POR CUENTA AJENA GRUPO 1 (RE. MAR)"
-"0812";"TRABAJADOR POR CUENTA AJENA GRUPO 2ª (RE. MAR)"
-"0813";"TRABAJADOR POR CUENTA AJENA GRUPO 2B(RE. MAR)"
-"0814";"TRABAJADOR POR CUENTA AJENA GRUPO 3 (RE. MAR)"
-"0821";"TRABAJADOR POR CUENTA PROPIA GRUPO 1 ASIM. C.AJENA (R.E.M.)"
-"0822";"TRABAJADOR POR CUENTA PROPIA GRUPO 2.A ASIMI. C.AJENA (R.E.M)"
-"0823";"TRABAJADOR POR CUENTA PROPIA GRUPO 2.B ASIM. C. AJENA (R.E.M)"
-"0825";"TRABAJADOR POR CUENTA PROPIA GRUPO 3 C. INDIVIDUAL (R.E.M)"
-"0831";"REGIMEN ESP.MAR.AUTONOMOS CESE ACTIVIDAD"
-"0840";"REG.ESPECIAL DEL MAR (CONVENIO ESPECIAL)"
-"0850";"R.E.MAR.C/A.RESP.SOLID.,SUBS.,MORTIS C"
-"0899";"RÉGIMEN ESPECIAL MAR DESEMPLEO"
-"0911";"MINERÍA DEL CARBÓN"
-"0940";"REG.ESP.MINERIA CARBON (CONVENIO ESP.)"
-"0950";"R.E.CARSEPEON.RESP.SOLIDAR.,SUSEPES.,MORTIS C"
-"1211";"RÉGIMEN ESPECIAL HOGAR (FIJOS)"
-"1221";"RÉGIMEN ESPECIAL HOGAR (DISCONTINUOS)"
-"1240";"REG.ESP.EMPLEADOS HOGAR (CONVENIO ESP.)"
-"1250";"R.E.H.FIJOS RESP.SOLIDAR.,SUBS,MORTIS C"
-"1911";"SEGURO ESCOLAR"
-"2300";"RECURSOS DIVERSOS"
-"2311";"RESPONS. DE RECURSOS DISTINTOS DE CUOTAS"
-"3011";"CONCIERTO ASISTENCIA SANITARIA"
-"3040";"ASISTENCIA SANITARIA(CONVENIO ESPECIAL)"
-"4008";"CONVENIOS ESPECIALES DE R.E.M."
+0111		RÉGIMEN GENERAL                                                                                                                                                                                 
+0112		ARTISTAS (R.G.)                                                                                                                                                                                 
+0113		JUGADORES PROFESIONALES DE FÚTBOL                                                                                                                                                               
+0114		PROFESIONALES TAURINOS                                                                                                                                                                          
+0115		FERROVIARIOS                                                                                                                                                                                    
+0121		REPRESENTANTES COMERCIALES                                                                                                                                                                      
+0131		SISTEMA ESPECIAL RESINA                                                                                                                                                                         
+0132		SISTEMA ESPECIAL INDUSTRIAS DE CONSERVAS VEGETALES                                                                                                                                              
+0133		SISTEMA ESPECIAL FRUTAS Y HORTALIZAS                                                                                                                                                            
+0134		SISTEMA ESPECIAL EMPAQUETADO Y MANIPULADO DE TOMATE FRESCO                                                                                                                                      
+0135		SISTEMA ESPECIAL HOSTELERÍA                                                                                                                                                                     
+0136		SISTEMA ESPECIAL EXHIBICIÓN CINEMATOGRÁFICA, SALAS DE BAILE, DISCOTECAS Y SALAS DE FIESTAS                                                                                                      
+0137		SISTEMA ESPECIAL ESTUDIOS DE MERCADO Y OPINIÓN PÚBLICA                                                                                                                                          
+0140		RÉGIMEN GENERAL ( CONVENIO ESPECIAL )                                                                                                                                                           
+0151		C.C. CONVENCIONALES DEL R.E.T.A.                                                                                                                                                                
+0152		C.C. CONVENCIONALES DEL R.E.T.A. (ESC. DE LIBROS)                                                                                                                                               
+0160		C.C. CONVENCIONALES DEL R.E.A. C/A                                                                                                                                                              
+0170		C.C. CONVENCIONALES DEL R.E.A. C/P                                                                                                                                                              
+0180		C.C. CONVENCIONALES DEL R.E.E.H.                                                                                                                                                                
+0521		TRABAJADORES AUTÓNOMOS                                                                                                                                                                          
+0522		ESCRITORES DE LIBROS (RÉGIMEN ESPECIAL DE TRABAJADORES AUTÓNOMOS)                                                                                                                               
+0611		TRABAJADOR POR CUENTA AJENA                                                                                                                                                                     
+0613		RÉGIMEN ESPECIAL AGRARIO                                                                                                                                                                        
+0721		TRABAJADOR CUENTA PROPIA (R.E.A.)                                                                                                                                                               
+0800		RÉGIMEN ESPECIAL DE TRABAJADORES DEL MAR                                                                                                                                                        
+0811		TRABAJADOR POR CUENTA AJENA GRUPO 1 (RE. MAR)                                                                                                                                                   
+0812		TRABAJADOR POR CUENTA AJENA GRUPO 2ª (RE. MAR)                                                                                                                                                  
+0813		TRABAJADOR POR CUENTA AJENA GRUPO 2B(RE. MAR)                                                                                                                                                   
+0814		TRABAJADOR POR CUENTA AJENA GRUPO 3 (RE. MAR)                                                                                                                                                   
+0821		TRABAJADOR POR CUENTA PROPIA GRUPO 1 ASIM. C.AJENA (R.E.M.)                                                                                                                                     
+0822		TRABAJADOR POR CUENTA PROPIA GRUPO 2.A ASIMI. C.AJENA (R.E.M)                                                                                                                                   
+0823		TRABAJADOR POR CUENTA PROPIA GRUPO 2.B ASIM. C. AJENA (R.E.M)                                                                                                                                   
+0825		TRABAJADOR POR CUENTA PROPIA GRUPO 3 C. INDIVIDUAL (R.E.M)                                                                                                                                      
+0899		RÉGIMEN ESPECIAL MAR DESEMPLEO                                                                                                                                                                  
+0911		MINERÍA DEL CARBÓN                                                                                                                                                                              
+1211		RÉGIMEN ESPECIAL HOGAR (FIJOS)                                                                                                                                                                  
+1221		RÉGIMEN ESPECIAL HOGAR (DISCONTINUOS)                                                                                                                                                           
+1911		SEGURO ESCOLAR                                                                                                                                                                                  
+3011		CONCIERTO ASISTENCIA SANITARIA                                                                                                                                                                  
+4008		CONVENIOS ESPECIALES DE R.E.M.                                                                                                                                                                  
+	

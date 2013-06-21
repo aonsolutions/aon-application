@@ -1,0 +1,13 @@
+01		FIJO                                                                                                                                                                                            
+02		EVENTUAL                                                                                                                                                                                        
+03		F.DISC. SIN INTERRUPCION ACTIVIDAD O SIN                                                                                                                                                        
+04		FIJO DISCONTINUO CON INTERRUPCION ACTIVI                                                                                                                                                        
+05		EMIGRANTE POR MENOS DE 6 MESES                                                                                                                                                                  
+06		TRABAJADOR A TIEMPO PARCIAL                                                                                                                                                                     
+07		SOCIO DE COOPERATIVA DE TRABAJO ASOCIADO                                                                                                                                                        
+08		CONTRATADO ADMINISTRATIVO                                                                                                                                                                       
+09		FUNCIONARIO DE EMPLEO                                                                                                                                                                           
+10		ALTO CARGO DE LA A.G                                                                                                                                                                            
+11		CARGO REPRESENTATIVO SINDICAL                                                                                                                                                                   
+12		MIEMBRO DE CORPORACIONES LOCALES                                                                                                                                                                
+	                                                                                                                                                                                                  

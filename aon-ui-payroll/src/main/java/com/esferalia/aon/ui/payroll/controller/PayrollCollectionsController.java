@@ -566,8 +566,7 @@ public class PayrollCollectionsController {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		List<SelectItemGroup> list = new LinkedList<SelectItemGroup>();
 		for( ContractType type : ContractType.values() ) {
-			if(type.getModel()==ContractModel.PE226
-//					type.getModel()==ContractModel.PE151
+//			if(type.getModel()==ContractModel.PE151
 //					|| type.getModel()==ContractModel.PE170
 //					|| type.getModel()==ContractModel.PE176
 //					|| type.getModel()==ContractModel.PE177
@@ -575,7 +574,8 @@ public class PayrollCollectionsController {
 //					|| type.getModel()==ContractModel.PE183
 //					|| type.getModel()==ContractModel.PE187
 //					|| type.getModel()==ContractModel.PE226
-					){
+//					){
+			if(type.getModel()==ContractModel.PE226){
 				List<SelectItem> subList = new ArrayList<SelectItem>();
 				for( ContractModelCode o : ContractModelCode.values() ) {
 					if ( o.getModel() == type.getModel() ) {

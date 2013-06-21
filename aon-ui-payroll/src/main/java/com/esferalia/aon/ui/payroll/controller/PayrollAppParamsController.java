@@ -23,6 +23,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.TrainingCenter;
+import com.esferalia.aon.ui.payroll.sepe.SEPEConnectionProvider;
 
 public class PayrollAppParamsController{
 	
@@ -372,9 +373,8 @@ public class PayrollAppParamsController{
 		return null;
 	}
 	
-	public void validateLogin(ActionEvent event){
-		// TODO implementar
-		setValidContrataLogin(true);
+	public void validateContrataLogin(ActionEvent event){
+		setValidContrataLogin( SEPEConnectionProvider.validateLogin(true, "<?xml>", getContrataUser(), getContrataUser(), getContrataPassword()) );
 	}
 	
 }

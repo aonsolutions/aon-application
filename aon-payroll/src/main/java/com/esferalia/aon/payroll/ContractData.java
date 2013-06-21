@@ -10,7 +10,7 @@ import com.esferalia.aon.salary.expression.IExpression;
 
 @Entity
 @Table(name="contract_data")
-public class ContractData extends ContractDataDB implements IExpression, IVariableData {
+public class ContractData extends ContractDataDB implements IExpression {
 	
 	private static final long serialVersionUID = 1L;
 

@@ -19,7 +19,7 @@ import com.esferalia.aon.salary.expression.IExpression;
 @Entity
 @Table(name="agreement_level_data")
 @Heritable
-public class AgreementLevelData extends AgreementLevelDataDB implements IExpression, IVariableData  {
+public class AgreementLevelData extends AgreementLevelDataDB implements IExpression {
 
 	private static final long serialVersionUID = 1L;
 	

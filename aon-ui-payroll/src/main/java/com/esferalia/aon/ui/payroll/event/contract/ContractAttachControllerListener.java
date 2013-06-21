@@ -8,6 +8,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
+import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractAttachController;
 
@@ -19,11 +20,13 @@ public class ContractAttachControllerListener extends AttachmentControllerListen
 		try {
 			ContractAttachController controller = (ContractAttachController) event.getController();
 			controller.clearChecks();
+			Criteria criteria = controller.getCriteria();
+			IManagerBean attachBean = controller.getManagerBean();
 			if ( controller.getType() != null ) {
-				IManagerBean attachBean = controller.getManagerBean();
-				Criteria criteria = controller.getCriteria();
 				criteria.addEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), controller.getType());
 			}
+			criteria.addNotEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA_RESPONSE);
+			criteria.addNotEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA_STATUS);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException("Error before model Initialized",e);
 		}

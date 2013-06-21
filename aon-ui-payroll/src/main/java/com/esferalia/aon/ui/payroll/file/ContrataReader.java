@@ -10,12 +10,17 @@ import java.util.Map;
 import javax.faces.event.AbortProcessingException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationEventLocator;
 
 import org.apache.commons.lang.StringUtils;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLFilterImpl;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -110,7 +115,7 @@ public class ContrataReader {
 	private ContrataParams params;
 	
 	private boolean isContratoFile = false;
-	private boolean isTransfonacionFile = false;
+	private boolean isTransformacionFile = false;
 	private boolean isProrrogaFile = false;
 
 	private CONTRATOS contratos;
@@ -139,40 +144,30 @@ public class ContrataReader {
 
 	public ContrataParams readFile(InputStream input) throws ManagerBeanException, IOException{
 		
-		processContractCode(input);
+		processContractDocumentType(input);
 		
-		if( !isContratoFile && !isTransfonacionFile ) {
-			String msg = "Código no válido, no se reconoce el contrato.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-	
 		try {
 			input.reset();
 			setContratos(null);
 			setTransformaciones(null);
+			this.params = new ContrataParams();
 			if( isContratoFile ){
 				JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_CONTRATOS_MODEL_PATH);
 				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 				unmarshaller.setEventHandler(new ContractValidationEventHandler());
 				contratos = (CONTRATOS) unmarshaller.unmarshal(input);
-			} else if( isTransfonacionFile ) {
-				JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_TRANSFORMACIONES_MODEL_PATH);
-				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-				unmarshaller.setEventHandler(new ContractValidationEventHandler());
-				transformaciones = (TRANSFORMACIONES) unmarshaller.unmarshal(input);
-			} 
-			
-			this.params = new ContrataParams();
-			
-			if( isContratoFile ){
 				IContratoType contratoType = (IContratoType) contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
 				completeContratosParams(contratoType, params);
-			} else if( isTransfonacionFile ) {
+			} else if( isTransformacionFile ) {
+				JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_TRANSFORMACIONES_MODEL_PATH);
+				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+				unmarshaller.setProperty(Marshaller.JAXB_ENCODING, FileUtils.CONTRATA_XML_FILE_ENCODING);
+				unmarshaller.setEventHandler(new ContractValidationEventHandler());
+				transformaciones = (TRANSFORMACIONES) unmarshaller.unmarshal(input);
 				ITransformacionType transformacionType = (ITransformacionType) transformaciones.getTRANSFORMACION109AndTRANSFORMACION139AndTRANSFORMACION189().get(0);
 				completeTransformacionesParams(transformacionType, params);
 			} 
-
+			
 			return params;
 		} catch (JAXBException e) {
 			String msg = "Error al obtener los datos del documento xml de contrata";
@@ -184,9 +179,9 @@ public class ContrataReader {
 		}
 	}
 	
-	private void processContractCode(InputStream input) {
+	private void processContractDocumentType(InputStream input) {
 		isContratoFile = false;
-		isTransfonacionFile = false;
+		isTransformacionFile = false;
 		isProrrogaFile = false;
 	
 		try {
@@ -201,8 +196,12 @@ public class ContrataReader {
 				if(line.equals(contratoFile)){
 					isContratoFile = true;
 				} else if(line.equals(transformacionFile)){
-					isTransfonacionFile = true;
-				} 
+					isTransformacionFile = true;
+				} else {
+					String msg = "Código no válido, no se reconoce el tipo de documento.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
 			}
 			reader.close();
 			inputReader.close();
@@ -1118,6 +1117,18 @@ public class ContrataReader {
 	}
 	
 
+	public class XMLNamespaceFilter extends XMLFilterImpl {
+	    public XMLNamespaceFilter(XMLReader arg0) {
+	       super(arg0);
+	    }
+	    @Override
+	    public void startElement(String uri, String localName,
+	                             String qName, Attributes attributes)
+	                             throws SAXException {
+//	       super.startElement(<required namespace>, localName, qName, attributes);
+	       super.startElement("", localName, qName, attributes);
+	    }
+	}
 	
 	public class ContractValidationEventHandler implements ValidationEventHandler {
 		public boolean handleEvent(ValidationEvent ve) {

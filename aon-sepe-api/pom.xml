@@ -28,33 +28,18 @@
 			<version>2.4</version>
 			<scope>compile</scope>
 		</dependency>
-		<!-- JAXB -->
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<version>2.2.5-2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jvnet.jaxb2_commons</groupId>
-			<artifactId>jaxb2-basics-runtime</artifactId>
-			<version>0.6.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jvnet.jaxb2_commons</groupId>
-			<artifactId>jaxb2-basics-testing</artifactId>
-			<version>0.6.4</version>
-			<scope>test</scope>
-		</dependency>
+		
 	</dependencies>
 	<build>
 		<plugins>
+			<!-- Para añadir la carpeta de los fuentes generados como source folder. -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<version>1.7</version>
 				<executions>
 					<execution>
-						<id>add-source</id>
+						<id>add-source-contratos</id>
 						<phase>process-sources</phase>
 						<goals>
 							<goal>add-source</goal>
@@ -62,31 +47,76 @@
 						<configuration>
 							<sources>
 								<source>
-									${project.build.directory}/generated-sources
+									${project.build.directory}/generated-sources/contratos
+								</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-source-transformaciones</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>
+									${project.build.directory}/generated-sources/transformaciones
+								</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-source-prorrogas</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>
+									${project.build.directory}/generated-sources/prorrogas
+								</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-source-anexoFormacion</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>
+									${project.build.directory}/generated-sources/anexoFormacion
 								</source>
 							</sources>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+			
+			<!-- ***************************************************** -->
+			<!-- SEPE UPDATE ***, ESFERALIA UPDATE 22/05/2013 -->
+			<!-- ***************************************************** -->
 			<plugin>
 				<groupId>org.jvnet.jax-ws-commons</groupId>
 		        <artifactId>jaxws-maven-plugin</artifactId>
 		        <version>2.2</version>
 		        <executions>
+				<!-- Contrat@ wsdl files -->
 		          <execution>
 		            <id>SWComunicacionDatos</id>
 		            <goals>
 		              <goal>wsimport</goal>
 		            </goals>
 					<configuration>
-						<wsdlDirectory>src/main/resources/META-INF/wsdl</wsdlDirectory>
+						<wsdlDirectory>src/main/resources/META-INF/wsdl/contrata</wsdlDirectory>
 						<wsdlFiles>
 	       					<wsdlFile>SWComunicacionDatos.wsdl</wsdlFile>
 						</wsdlFiles>
-						
 						<wsdlLocation>http://localhost/wsdl/SWComunicacionDatos.wsdl</wsdlLocation>
-						
 						<sourceDestDir>${project.build.directory}/generated-sources</sourceDestDir>
 						<packageName>com.esferalia.aon.sepe.api.SWComunicacionDatos</packageName>
 						<staleFile>${project.build.directory}/generated-sources/staleFlag/jaxws/.staleFlag</staleFile>
@@ -98,7 +128,7 @@
 		              <goal>wsimport</goal>
 		            </goals>
 					<configuration>
-						<wsdlDirectory>src/main/resources/META-INF/wsdl</wsdlDirectory>
+						<wsdlDirectory>src/main/resources/META-INF/wsdl/contrata</wsdlDirectory>
 						<wsdlFiles>
 	       					<wsdlFile>SWConsultaDatos.wsdl</wsdlFile>
 						</wsdlFiles>
@@ -108,11 +138,60 @@
 						<staleFile>${project.build.directory}/generated-sources/staleFlag/jaxws/.staleFlag</staleFile>
 					</configuration>
 		          </execution>
+				<!-- Certificados@ wsdl files -->
+		          <execution>
+		            <id>ServicioWebConsulta</id>
+		            <goals>
+		              <goal>wsimport</goal>
+		            </goals>
+					<configuration>
+						<wsdlDirectory>src/main/resources/META-INF/wsdl/certificados</wsdlDirectory>
+						<wsdlFiles>
+	       					<wsdlFile>ServicioWebConsulta.wsdl</wsdlFile>
+						</wsdlFiles>
+						<wsdlLocation>http://localhost/wsdl/ServicioWebConsulta.wsdl</wsdlLocation>
+						<sourceDestDir>${project.build.directory}/generated-sources</sourceDestDir>
+						<packageName>com.esferalia.aon.sepe.api.ServicioWebConsulta</packageName>
+						<staleFile>${project.build.directory}/generated-sources/staleFlag/jaxws/.staleFlag</staleFile>
+					</configuration>
+		          </execution>
+		          <execution>
+		            <id>ServicioWebEntrada</id>
+		            <goals>
+		              <goal>wsimport</goal>
+		            </goals>
+					<configuration>
+						<wsdlDirectory>src/main/resources/META-INF/wsdl/certificados</wsdlDirectory>
+						<wsdlFiles>
+	       					<wsdlFile>ServicioWebEntrada.wsdl</wsdlFile>
+						</wsdlFiles>
+						<wsdlLocation>http://localhost/wsdl/ServicioWebEntrada.wsdl</wsdlLocation>
+						<sourceDestDir>${project.build.directory}/generated-sources</sourceDestDir>
+						<packageName>com.esferalia.aon.sepe.api.ServicioWebEntrada</packageName>
+						<staleFile>${project.build.directory}/generated-sources/staleFlag/jaxws/.staleFlag</staleFile>
+					</configuration>
+		          </execution>
 				</executions>
+				<dependencies>
+				<!-- JAXB -->
+					<dependency>
+						<groupId>com.sun.xml.bind</groupId>
+						<artifactId>jaxb-impl</artifactId>
+						<version>2.2.5-2</version>
+						<scope>compile</scope>
+					</dependency>
+					<dependency>
+						<groupId>org.jvnet.jaxb2_commons</groupId>
+						<artifactId>jaxb2-basics-runtime</artifactId>
+						<version>0.6.4</version>
+						<scope>compile</scope>
+					</dependency>
+				</dependencies>
 			</plugin>
-			<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-			<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-			<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+			
+			<!-- ***************************************************** -->
+			<!-- SEPE UPDATE 17/04/2013, ESFERALIA UPDATE 22/05/2013 -->
+			<!-- ***************************************************** -->
 			<plugin>
 				<groupId>org.jvnet.jaxb2.maven2</groupId>
 				<artifactId>maven-jaxb2-plugin</artifactId>
@@ -129,7 +208,7 @@
 						<configuration>
 							<generateDirectory>${project.build.directory}/generated-sources/contratos</generateDirectory>
 							<generatePackage>com.esferalia.aon.sepe.api.contrata.contratos</generatePackage>
-							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas</schemaDirectory>
+							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas/contrata</schemaDirectory>
 							<schemaIncludes>
 					<!--  
 								<include>EsquemaContratos50.xsd</include>
@@ -142,7 +221,6 @@
 	                        </bindingIncludes>
 -->
 							<forceRegenerate>false</forceRegenerate>
-							
 							<!-- whether old output should be removed, this field should generally be set to "true" -->  
 							<removeOldOutput>true</removeOldOutput>  
 							<!-- generate lots of output -->  
@@ -169,13 +247,10 @@
 						<configuration>
 							<generateDirectory>${project.build.directory}/generated-sources/transformaciones</generateDirectory>
 							<generatePackage>com.esferalia.aon.sepe.api.contrata.transformaciones</generatePackage>
-							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas</schemaDirectory>
+							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas/contrata</schemaDirectory>
 							<schemaIncludes>
-								<include>EsquemaTransformaciones50.xsd</include>
+								<include>EsquemaRespuestaTransformaciones50.xsd</include>
 							</schemaIncludes>
-							<bindingIncludes>
-	                            <include>EsquemaTransformaciones50_binding.xjb</include>
-	                        </bindingIncludes>
 							<forceRegenerate>false</forceRegenerate>
 							<removeOldOutput>true</removeOldOutput>
 							<verbose>true</verbose>
@@ -193,17 +268,17 @@
 							</plugins>
 						</configuration>
 					</execution>
-<!--  
 					<execution>
 						<id>generate-prorrogas</id>
 						<goals>
 							<goal>generate</goal>
 						</goals>
 						<configuration>
-							<generateDirectory>${project.build.directory}/generated-sources/</generateDirectory>
-							<schemaDirectory>${project.basedir}/src/main/schemas</schemaDirectory>
+							<generateDirectory>${project.build.directory}/generated-sources/prorrogas</generateDirectory>
+							<generatePackage>com.esferalia.aon.sepe.api.contrata.prorrogas</generatePackage>
+							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas/contrata</schemaDirectory>
 							<schemaIncludes>
-								<include>EsquemaProrrogas50.xsd</include>
+								<include>EsquemaRespuestaProrrogas50.xsd</include>
 							</schemaIncludes>
 							<forceRegenerate>false</forceRegenerate>
 							<removeOldOutput>true</removeOldOutput>
@@ -222,7 +297,35 @@
 							</plugins>
 						</configuration>
 					</execution>
--->					
+					<execution>
+						<id>generate-anexoFormacion</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/anexoFormacion</generateDirectory>
+							<generatePackage>com.esferalia.aon.sepe.api.contrata.anexoFormacion</generatePackage>
+							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas/contrata</schemaDirectory>
+							<schemaIncludes>
+								<include>EsquemaAnexoFormacion50.xsd</include>
+							</schemaIncludes>
+							<forceRegenerate>false</forceRegenerate>
+							<removeOldOutput>true</removeOldOutput>
+							<verbose>true</verbose>
+							<extension>true</extension>
+							<args>
+								<param>-npa</param>
+								<arg>-Xinheritance</arg>
+							</args>
+	                        <plugins>
+								<plugin>
+									<groupId>org.jvnet.jaxb2_commons</groupId>
+									<artifactId>jaxb2-basics</artifactId>
+									<version>0.6.4</version>
+								</plugin>
+							</plugins>
+						</configuration>
+					</execution>
 					
 					<!-- ================================= -->
 					<!-- Esquemas de ficheros de respuesta -->
@@ -257,6 +360,36 @@
 						</configuration>
 					</execution>
 -->
+					
+					<execution>
+						<id>generate-certificadoEmpresa</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/certificadoEmpresa</generateDirectory>
+							<generatePackage>com.esferalia.aon.sepe.api.certificados.certificadoEmpresa</generatePackage>
+							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas/certificados</schemaDirectory>
+							<schemaIncludes>
+								<include>RespuestaCertificadoEmpresa.xsd</include>
+							</schemaIncludes>
+							<forceRegenerate>false</forceRegenerate>
+							<removeOldOutput>true</removeOldOutput>
+							<verbose>true</verbose>
+							<extension>true</extension>
+							<args>
+								<param>-npa</param>
+								<arg>-Xinheritance</arg>
+							</args>
+	                        <plugins>
+								<plugin>
+									<groupId>org.jvnet.jaxb2_commons</groupId>
+									<artifactId>jaxb2-basics</artifactId>
+									<version>0.6.4</version>
+								</plugin>
+							</plugins>
+						</configuration>
+					</execution>
 				</executions>  
 			</plugin>
 			<plugin>

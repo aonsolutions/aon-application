@@ -6,7 +6,7 @@ import java.util.Date;
 
 /** 
  * Enumeration for represent Contrata (S.E.P.E.) TAICLAOC2011 table codes.
- * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter.
  *  ------------------------------------------------------------------------
  *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
  *  TAICLAOC2011   OCUPACIÓN ( A partir de 2011 )					29-02-2012 

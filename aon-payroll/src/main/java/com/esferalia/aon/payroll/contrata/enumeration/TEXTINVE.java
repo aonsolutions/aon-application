@@ -6,7 +6,7 @@ import java.util.Date;
 
 /** 
  * Enumeration for represent Contrata (S.E.P.E.) TEXTINVE table codes.
- * Generation main class: com.esferalia.aon.payroll.contrata.ContrataCodeTablesWriter.
+ * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter.
  *  ------------------------------------------------------------------------
  *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
  * *TEXTINVE	TIPO DE TRABAJADOR INVESTIGACIÓN				

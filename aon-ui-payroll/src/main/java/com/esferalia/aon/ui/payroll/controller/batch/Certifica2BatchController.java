@@ -96,10 +96,12 @@ public class Certifica2BatchController extends BasicController {
         checkAllSuspensionCauses(listController.getRemesableContracts(), listController.getCheckHandler().getCheckedList());
 		Iterator<Object> iterator = listController.getCheckHandler().getCheckedList().iterator();
 		
-		
+		PayrollUtils utils = new PayrollUtils(); 
 		
 		for(Certifica2ListController.RemesableContract remesable: listController.getRemesableContracts().values()){
-			Map<String, String> contractData = getContractDataMap(remesable.getContract());
+//			Map<String, String> contractData = getContractDataMap(remesable.getContract());
+			Map<String, String> contractData = utils.getContractDataMap(remesable.getContract());
+			
 			Certifica2BatchDetail certifica2BatchDetail = new Certifica2BatchDetail();
 			certifica2BatchDetail.setContract(remesable.getContract());
 			certifica2BatchDetail.setCcc(remesable.getContract().getEnterpriseCCC().getCcc());
@@ -155,32 +157,32 @@ public class Certifica2BatchController extends BasicController {
 	}
 
 
-	protected Map<String, String> getContractDataMap(Contract contract) {
-		Map<String, String> map = new HashMap<String, String>();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
-			
-			PayrollUtils utils = new PayrollUtils();
-			if(DomainManager.isDomainManagementAvailable()){
-				getCriteria().setSkipDomainFilter( true );
-				getCriteria().addInExpression(getFieldName(IEntityAlias.CONTRACT_DOMAIN), utils.getCurrentChildDomainIds());
-			}
-			
-			for(ITransferObject to: bean.getList(criteria)){
-				ContractData data = (ContractData) to;
-				if(data.getExpression()!=null){
-					map.put(data.getName(), data.getExpression().replace('"', ' ').trim());
-				}
-			}
-		} catch (ManagerBeanException e) {
-			// NADA, que siga generando el fichero
-			AonUtil.addErrorMessage("Imposible obtener los datos de contrato");
-		}
-		return map;
-	}
+//	protected Map<String, String> getContractDataMap(Contract contract) {
+//		Map<String, String> map = new HashMap<String, String>();
+//		try {
+//			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+//			Criteria criteria = new Criteria();
+//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+//			criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
+//			
+//			PayrollUtils utils = new PayrollUtils();
+//			if(DomainManager.isDomainManagementAvailable()){
+//				getCriteria().setSkipDomainFilter( true );
+//				getCriteria().addInExpression(getFieldName(IEntityAlias.CONTRACT_DOMAIN), utils.getCurrentChildDomainIds());
+//			}
+//			
+//			for(ITransferObject to: bean.getList(criteria)){
+//				ContractData data = (ContractData) to;
+//				if(data.getExpression()!=null){
+//					map.put(data.getName(), data.getExpression().replace('"', ' ').trim());
+//				}
+//			}
+//		} catch (ManagerBeanException e) {
+//			// NADA, que siga generando el fichero
+//			AonUtil.addErrorMessage("Imposible obtener los datos de contrato");
+//		}
+//		return map;
+//	}
 	
 	protected Integer differenceBetweenDates(Date from, Date to) {
 		Integer diffDays = new Integer(0);

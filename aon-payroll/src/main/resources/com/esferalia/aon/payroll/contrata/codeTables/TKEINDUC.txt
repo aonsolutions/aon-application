@@ -1,0 +1,3 @@
+"D";"Duración del contrato en dias"
+"M";"Duración del contrato en meses"
+"A";"Duración del contrato en años"

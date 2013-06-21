@@ -139,24 +139,19 @@
 									<aon:inputSecret id="contrata_passwd" redisplay="#{true}" style="width: 100%;"
 										value="#{payrollAppParams.contrataPassword}" />
 	
-									<c:if test="#{false and not empty payrollAppParams.contrataUser and not empty payrollAppParams.contrataPassword}" >
-										<aon:outputLabel for="contrata_login_confirm" value="&#160;" />
-										<aon:outputText id="contrata_login_confirm"
-											styleClass="aon-finding-toolbar-item aon-noborder aon-icon-sincronize"
-											value="Validar el acceso al entorno de S.E.P.E." >
-											<a4j:support event="onclick"
-												actionListener="#{payrollAppParams.validateLogin}" 
-												ajaxSingle="true"
-												ignoreDumpResponses="true"
-												limitToList="true"
-												eventsQueue="loginConfirmation"
-												reRender="login-confirm-result" />
-										</aon:outputText>
-									</c:if>
 								</aon:panelGrid>
 						
-								<aon:div id="login-confirm-result" styleClass="aon-margin-left">
-									<c:if test="#{payrollAppParams.contrataLoginChecked}" >
+								<aon:div id="login-confirm-result" style="width: 300px; text-align: center;">
+									<c:if test="#{not empty payrollAppParams.contrataUser and not empty payrollAppParams.contrataPassword}" >
+										<aon:outputLabel for="contrata_login_confirm" value="&#160;" />
+										<aon:commandButton id="contrata_login_confirm"
+											value="Validar el acceso al entorno de S.E.P.E."
+											reRender="login-confirm-result"
+											actionListener="#{payrollAppParams.validateContrataLogin}"
+											styleClass="aon-commandButton aon-icon-sincronize aon-margin-bottom" />
+									</c:if>
+									<aon:div styleClass="aon-margin-top"
+										rendered="#{payrollAppParams.contrataLoginChecked}">
 										<aon:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;"
 											rendered="#{payrollAppParams.validContrataLogin}"
 											styleClass="aon-icon-predetermine" />
@@ -172,7 +167,7 @@
 											rendered="#{!payrollAppParams.validContrataLogin}"
 											style="color:red;"
 											styleClass="aon-bold" />
-									</c:if>
+									</aon:div>
 								</aon:div>
 									
 							</aon:panelGrid>	

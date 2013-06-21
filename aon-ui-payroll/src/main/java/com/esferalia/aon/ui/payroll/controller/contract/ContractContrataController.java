@@ -3,7 +3,6 @@ package com.esferalia.aon.ui.payroll.controller.contract;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -16,13 +15,8 @@ import java.util.TreeSet;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.bind.ValidationEventLocator;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,19 +30,23 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.util.DownloadUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
+import com.esferalia.aon.payroll.contrata.enumeration.TERRORES;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.sepe.api.contrata.contratos.FICHEROCONTRATOS;
+import com.esferalia.aon.sepe.api.contrata.contratos.RESPUESTACONTRATOTYPE;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.file.ContrataReader;
+import com.esferalia.aon.ui.payroll.file.ContrataResponseReader;
 import com.esferalia.aon.ui.payroll.file.ContrataWriter;
-import com.esferalia.aon.ui.payroll.sepe.ContrataManager;
+import com.esferalia.aon.ui.payroll.sepe.SEPEConnectionProvider;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 
@@ -64,9 +62,16 @@ public class ContractContrataController {
 	private String backAction;
 	private Map<String, String> contractDataMap;
 	private boolean showContrataLoginWindow;
+	private boolean showCommunicationLogWindow;
 	private boolean enabledContrataEdition;
+	private String communicationLogContent;
 	
-	
+	public String getCommunicationLogContent() {
+		return communicationLogContent;
+	}
+	public void setCommunicationLogContent(String communicationLogContent) {
+		this.communicationLogContent = communicationLogContent;
+	}
 	public Contract getContract() {
 		return contract;
 	}
@@ -84,6 +89,12 @@ public class ContractContrataController {
 	}
 	public void setShowContrataLoginWindow(boolean showContrataLoginWindow) {
 		this.showContrataLoginWindow = showContrataLoginWindow;
+	}
+	public boolean isShowCommunicationLogWindow() {
+		return showCommunicationLogWindow;
+	}
+	public void setShowCommunicationLogWindow(boolean showCommunicationLogWindow) {
+		this.showCommunicationLogWindow = showCommunicationLogWindow;
 	}
 	public String backAction() {
 		return backAction;
@@ -179,6 +190,7 @@ public class ContractContrataController {
 		setDocument(null);
 		setUser(null);
 		setPasswd(null);
+		setContrataPasswdVisible(false);
 		setHandler(null);
 	}
 	
@@ -190,7 +202,7 @@ public class ContractContrataController {
 		getParams().setContract(contract);
 		getHandler().setContractCode(ContractCode.getContractCodeByValue(getContractDataMap().get(ContextVariable.TC2.getName())));
 
-		contrataAttach = obtainContrataAttach();
+		contrataAttach = obtainContrataFileAttach();
 	}
 	
 	public void onContrataDataShow(ActionEvent event) {
@@ -234,7 +246,13 @@ public class ContractContrataController {
 		}
 
 		try {
+			
+//			ContractAttachment attach = obtainContrataStatusAttach();
+//			processXmlFile( attach );			
+//			obtainContrataStatus();
+			
 			processXmlFile( getContrataAttach() );
+			
 		} catch (ManagerBeanException e) {
 			String msg = "No se han podido obtener los datos de Contrat@ previamente guardados.";
 			LOGGER.error(msg, e);
@@ -269,39 +287,36 @@ public class ContractContrataController {
 		}
 	}
 	
-	private ContractAttachment obtainContrataAttach(){
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), getParams().getContract().getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA_FILE);
-			List<ITransferObject> list = bean.getList(criteria);
-			if(!list.isEmpty()){
-				return (ContractAttachment) list.get(0);
-			}
-		} catch (ManagerBeanException e) {
-			// NOTHING TO DO
-		}
-		return null;
+	public void onDownloadContrataXml(ActionEvent event) throws ManagerBeanException{
+		ContractAttachment attach = obtainContrataFileAttach();
+		InputStream in = new ByteArrayInputStream(attach.getData());
+		long size = ArrayUtils.getLength(attach.getData());
+		DownloadUtil.downloadAttachment("contrato-"+getParams().getContract().getPerson().getRegistry().getDocument(), MimeType.MIME_PDF, in, size);
+	}
+	
+	private ContractAttachment obtainContrataFileAttach(){
+		return obtainContrataAttach(ContractAttachmentType.SPEE_CONTRATA_FILE);
 	}
 	
 	private ContractAttachment obtainContrataResponseAttach(){
-		return obtainContrataStatusAttach(ContractAttachmentType.SPEE_CONTRATA_RESPONSE);
+		return obtainContrataAttach(ContractAttachmentType.SPEE_CONTRATA_RESPONSE);
 	}
 
 	private ContractAttachment obtainContrataStatusAttach(){
-		return obtainContrataStatusAttach(ContractAttachmentType.SPEE_CONTRATA_STATUS);
+		return obtainContrataAttach(ContractAttachmentType.SPEE_CONTRATA_STATUS);
 	}
 	
-	private ContractAttachment obtainContrataStatusAttach(ContractAttachmentType type){
+	private ContractAttachment obtainContrataAttach(ContractAttachmentType type){
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), getParams().getContract().getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), type);
-			List<ITransferObject> list = bean.getList(criteria);
-			if(!list.isEmpty()){
-				return (ContractAttachment) list.get(0);
+			if(getParams()!=null && getParams().getContract()!=null && getParams().getContract().getId()!=null){
+				IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), getParams().getContract().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), type);
+				List<ITransferObject> list = bean.getList(criteria);
+				if(!list.isEmpty()){
+					return (ContractAttachment) list.get(0);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			// NOTHING TO DO
@@ -381,7 +396,7 @@ public class ContractContrataController {
 	}
 	
 	public void onContrataDataQuery(ActionEvent event){
-		setDocument(obtainContrataQueryId());
+		setDocument(obtainContrataCommunicationNumber());
 		if( StringUtils.isBlank(getDocument()) ){
 			String msg = "No se puede obtener el número del envío de la comunicación.";
 			AonUtil.addErrorMessage(msg);
@@ -412,10 +427,10 @@ public class ContractContrataController {
 	}
 
 	public void onShowDataQuery(ActionEvent event){
-		setXmlResult( obtainContrataStatus() );
+		setXmlResult( obtainCommunicationStatus() );
 	}
 	
-	private String obtainContrataQueryId() {
+	private String obtainContrataCommunicationNumber() {
 		ContractAttachment attach = obtainContrataResponseAttach();
 		if(attach!=null && attach.getId()!=null){
 			String result = new String(attach.getData()); 
@@ -429,26 +444,94 @@ public class ContractContrataController {
 		}
 		return null;
 	}
-
-	private String obtainContrataStatus() {
-		FICHEROCONTRATOS contratos;
-		try {
-			contratos = readFile(obtainContrataStatusAttach());
-			
-			System.out.println(contratos.getESTADOFICHERO());
-			System.out.println(contratos.getNUMEROPROCESADOS());
-			System.out.println(contratos.getVersion());
-			
-			contratos.getCONTRATOSPROCESADOS().getENVIO100AndENVIO130AndENVIO150();
-			
-		} catch (ManagerBeanException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+	
+	private String obtainCommunicationStatus() {
+		String status = "";
+		ContractAttachment attach = obtainContrataStatusAttach();
+		if(attach!=null && attach.getId()!=null){
+			try {
+				ContrataResponseReader reader = new ContrataResponseReader();
+				reader.readFile(new ByteArrayInputStream(attach.getData()));
+				FICHEROCONTRATOS contratos = reader.getFicheroContratos();
+				status += "ESTADO FICHERO:    " + contratos.getESTADOFICHERO();
+				status += "<br /> ";
+				
+				contratos.getCONTRATOSPROCESADOS().getENVIO100AndENVIO130AndENVIO150();
+				RESPUESTACONTRATOTYPE respuestaContratos = reader.getRepuestaContrato(contratos.getCONTRATOSPROCESADOS().getENVIO100AndENVIO130AndENVIO150().get(0));
+				status += "FECHA ALTA:         " + respuestaContratos.getFECHAALTA();
+				status += "<br /> ";
+				status += "FECHA COMUNICACION: " + respuestaContratos.getFECHACOMUNICACION();
+				status += "<br /> ";
+				status += "ID CONTRATO:        " + respuestaContratos.getIDCONTRATO();
+				status += "<br /> ";
+				status += "LEY BONIF:          " + respuestaContratos.getLEYBONIF();
+				status += "<br /> ";
+				status += "LEY DEDUCCION:      " + respuestaContratos.getLEYDEDUCCION();
+				status += "<br /> ";
+				status += "LEY FOMENTO:        " + respuestaContratos.getLEYFOMENTO();
+				status += "<br /> ";
+				status += "LEY REDUCCION:      " + respuestaContratos.getLEYREDUCCION();
+				status += "<br /> ";
+				status += "OBLIG B:            " + respuestaContratos.getOBLIGCB();
+				status += "<br /> ";
+				status += "RESULTADO:          " + respuestaContratos.getRESULTADO();
+				status += "<br /> ";
+				status += "USUARIO:            " + respuestaContratos.getUSUARIO();
+				status += "<br /> ";
+				
+//			System.out.println("ESTADO FICHERO:    " + contratos.getESTADOFICHERO());
+//			System.out.println("NUMERO PROCESADOS: " + contratos.getNUMEROPROCESADOS());
+//			System.out.println("VERSION:           " + contratos.getVersion());
+//			System.out.println("FECHA ALTA:         " + respuestaContratos.getFECHAALTA());
+//			System.out.println("FECHA COMUNICACION: " + respuestaContratos.getFECHACOMUNICACION());
+//			System.out.println("ID CONTRATO:        " + respuestaContratos.getIDCONTRATO());
+//			System.out.println("LEY BONIF:          " + respuestaContratos.getLEYBONIF());
+//			System.out.println("LEY DEDUCCION:      " + respuestaContratos.getLEYDEDUCCION());
+//			System.out.println("LEY FOMENTO:        " + respuestaContratos.getLEYFOMENTO());
+//			System.out.println("LEY REDUCCION:      " + respuestaContratos.getLEYREDUCCION());
+//			System.out.println("OBLIG B:            " + respuestaContratos.getOBLIGCB());
+//			System.out.println("RESULTADO:          " + respuestaContratos.getRESULTADO());
+//			System.out.println("USUARIO:            " + respuestaContratos.getUSUARIO());
+				
+				List<String> errores = respuestaContratos.getERRORES().getERROR();
+				if(!errores.isEmpty()){
+					status += "ERRORES";
+					status += "<br /> ";
+					for(String error: respuestaContratos.getERRORES().getERROR()){
+						status += "ERROR: " + error + " - " + TERRORES.getEnumByValue(error).getDescription();
+						status += "<br /> ";
+//					System.out.println("ERROR: " + error + " - " + TERRORES.getEnumByValue(error).getDescription());
+					}
+				}
+			} catch (ManagerBeanException e) {
+				String msg = "No se ha podido obtener los datos del estado de las comunicaciones.";
+				LOGGER.error(msg, e);
+				AonUtil.addErrorMessage(msg);
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(msg, e);
+			} catch (IOException e) {
+				String msg = "No se ha podido obtener los datos del estado de las comunicaciones.";
+				LOGGER.error(msg, e);
+				AonUtil.addErrorMessage(msg);
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(msg, e);
+			}
 		}
-		return null;
+		return status;
+	}
+
+	public void onContrataLogShow(ActionEvent event){
+		communicationLogContent = "<div>";
+		String communicationNumber = obtainContrataCommunicationNumber();
+		if(StringUtils.isNotEmpty(communicationNumber)){
+			communicationLogContent += "NUM ENVIO:         " + communicationNumber;
+			communicationLogContent += "<br /> ";
+		}
+		String status = obtainCommunicationStatus();
+		if(StringUtils.isNotEmpty(status)){
+			communicationLogContent += status ;
+		}
+		communicationLogContent += "</div>";
 	}
 	
 	private void searchContrataLogin() {
@@ -467,7 +550,11 @@ public class ContractContrataController {
 		try {
 			appParams.loadParameters();
 		} catch (ManagerBeanException e) {
-			// no se cargan los datos del entorno
+			String msg = "No se ha podido verificar el entorno de trabajo. Se activa el entorno de pruebas (TEST).";
+			LOGGER.error(msg, e);
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
+			setContrataTestEnv(true);
 		}
 		setContrataTestEnv(appParams.getContrataTestEnviroment());
 	}
@@ -495,6 +582,7 @@ public class ContractContrataController {
 	private String passwd;
 	private boolean contrataLoginRemember;
 	private boolean contrataTestEnv;
+	private boolean contrataPasswdVisible;
 	
 	public String getDocument() {
 		return document;
@@ -504,6 +592,12 @@ public class ContractContrataController {
 	}
 	public void setContrataLoginRemember(boolean contrataLoginRemember) {
 		this.contrataLoginRemember = contrataLoginRemember;
+	}
+	public boolean isContrataPasswdVisible() {
+		return contrataPasswdVisible;
+	}
+	public void setContrataPasswdVisible(boolean contrataPasswdVisible) {
+		this.contrataPasswdVisible = contrataPasswdVisible;
 	}
 	public void setDocument(String document) {
 		this.document = document;
@@ -534,7 +628,7 @@ public class ContractContrataController {
 	}
 	
 	private void sendContrataFile(){
-		xmlResult = ContrataManager.processDataComunication(isContrataTestEnv(), getContrataAttach().getData(), getUser(), getUser(), getPasswd());
+		xmlResult = SEPEConnectionProvider.processContrataComunication(isContrataTestEnv(), getContrataAttach().getData(), getUser(), getUser(), getPasswd());
 //		ContrataManager.processDataComunication(getContrataAttach().getData(), getUser(), getUser(), getPasswd());
 		System.out.println("RESPUESTA RESULTANTE DE LA COMUNICACION CON EL S.E.P.E. :  " );
 		System.out.println(xmlResult);
@@ -542,7 +636,7 @@ public class ContractContrataController {
 
 	private void contrataDataQuery(){
 		
-		xmlResult = ContrataManager.processDataQuery(isContrataTestEnv(), getDocument(), getUser(), getUser(), getPasswd());
+		xmlResult = SEPEConnectionProvider.processContrataQuery(isContrataTestEnv(), getDocument(), getUser(), getUser(), getPasswd());
 		
 //		setXmlResult(result);
 		
@@ -553,7 +647,7 @@ public class ContractContrataController {
 	
 	
 	private ContractAttachment saveCommunicationResultFile(ContractAttachmentType type){
-		ContractAttachment contrataResultAttach = obtainContrataStatusAttach(type);
+		ContractAttachment contrataResultAttach = obtainContrataAttach(type);
 		if(contrataResultAttach==null){
 			contrataResultAttach = new ContractAttachment();
 			contrataResultAttach.setContract(getParams().getContract());
@@ -605,49 +699,6 @@ public class ContractContrataController {
 	    }
 	}
 	
-	private FICHEROCONTRATOS readFile(ContractAttachment attach) throws ManagerBeanException, IOException{
-		
-		final String CONTRATA_CONTRATOS_MODEL_PATH = "com.esferalia.aon.file.payroll.contract.generated.contratos";
-		
-		byte[] f = attach.getData();
-		if(f!=null && f.length>0){
-			File file = File.createTempFile("aon-temp", ".XML");
-			FileOutputStream fos = new FileOutputStream(file);
-			fos.write(f);
-			fos.close();
-			try {
-			
-				FICHEROCONTRATOS contratos = null;
-				JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_CONTRATOS_MODEL_PATH);
-				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-				unmarshaller.setEventHandler(new ContractValidationEventHandler());
-				contratos = (FICHEROCONTRATOS) unmarshaller.unmarshal(file);
-				
-				return contratos;
-
-			} catch (JAXBException e) {
-				String msg = "Error al obtener los datos de Contrat@";
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg, e);
-			}
-		}
-		return null;
-	}
 	
-	public class ContractValidationEventHandler implements ValidationEventHandler {
-		public boolean handleEvent(ValidationEvent ve) {
-			if (ve.getSeverity() == ValidationEvent.FATAL_ERROR || ve.getSeverity() == ValidationEvent.ERROR) {
-				ValidationEventLocator locator = ve.getLocator();
-				// Print message from valdation event
-				System.out.println("Invalid booking document: " + locator.getURL());
-				System.out.println("Error: " + ve.getMessage());
-				// Output line and column number
-				System.out.println("Error at column "
-						+ locator.getColumnNumber() + ", line "
-						+ locator.getLineNumber());
-			}
-			return true;
-		}
-	}
 	
 }

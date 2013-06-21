@@ -1,6 +1,10 @@
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
     <system systemId="http://localhost/wsdl/SWComunicacionDatos.wsdl"
-            uri="wsdl/SWComunicacionDatos.wsdl"/>
+            uri="wsdl/contrata/SWComunicacionDatos.wsdl"/>
     <system systemId="http://localhost/wsdl/SWConsultaDatos.wsdl"
-            uri="wsdl/SWConsultaDatos.wsdl"/>
+            uri="wsdl/contrata/SWConsultaDatos.wsdl"/>
+    <system systemId="http://localhost/wsdl/ServicioWebConsulta.wsdl"
+            uri="wsdl/certificados/ServicioWebConsulta.wsdl"/>
+    <system systemId="http://localhost/wsdl/ServicioWebEntrada.wsdl"
+            uri="wsdl/certificados/ServicioWebEntrada.wsdl"/>
 </catalog>

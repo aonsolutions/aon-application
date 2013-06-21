@@ -12,28 +12,26 @@
 		<ui:param name="controller" value="#{contract}" />
 		<ui:param name="skipRemoveButton" value="#{contract.to.status!='PENDING'}" />
 		<ui:param name="showMoreMenu" value="#{!contract.new}" />
+		
 		<ui:define name="beforeSpinToolbarContent">
-			<!--  
-			<aon:htmlCommandLink id="directDebit-report"
-				styleClass="aon-finding-toolbar-item aon-icon-pdf" 
-				value="#{payrollBundle.payroll_trainingCenter_directDebit}" ajaxSingle="true"
-				rendered="#{contract.trainingContract and contract.trainingCourseDefined}"
-				action="#{contract.onTrainingCenterDirectDebitReport}" target="_blank" >
-				<f:param name="reportKey" value="trainingDirectDebit" />
-				<f:param name="outputFormat" value="PDF" />
-			</aon:htmlCommandLink>
-			-->
 			
-			<aon:commandButton id="document-issue" 
-				value="#{payrollBundle.payroll_contract_generate_document}"
-				rendered="#{!contract.new and contract.to.pending}"
-				reRender="contract-panelTab"
-				actionListener="#{contract.onGenerateDocument}"
-				styleClass="aon-finding-toolbar-item aon-icon-new-page"
-				onclick="Richfaces.showModalPanel('waitProccess')" 
- 				oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-
 		</ui:define>
+		
+		<ui:define name="additionalToolbarContent">
+			<aon:div style="float:right;margin-right:0;">
+				<aon:outputText value="VISTA" 
+					styleClass="aon-finding-toolbar-item"/>
+				<aon:commandButton id="viewMode-form" 
+					value="&#160;" title="Modo formulario"
+					disabled="true"
+					styleClass="aon-finding-toolbar-item aon-finding-toolbar-item-no-border aon-icon-category"/>
+				<aon:commandButton id="viewMode-graph" 
+					value="&#160;" title="Modo grafico"
+					disabled="true"
+					styleClass="aon-finding-toolbar-item aon-finding-toolbar-item-no-border aon-icon-page"/>
+			</aon:div>
+		</ui:define>
+		
 		<ui:define name="moreMenuContent">
 			<c:if test="#{!contract.skipPayrollData}" >
 				<aon:menuItem 
@@ -78,6 +76,23 @@
 						target="#{irpfData.backAction}" value="contract_form" />
 				</aon:menuItem>
 			</c:if>
+			
+			<aon:menuItem id="document-issue" 
+				value="#{payrollBundle.payroll_contract_generate_document}"
+				rendered="#{!contract.new and contract.to.pending}"
+				reRender="contract-panelTab"
+				actionListener="#{contract.onGenerateDocument}"
+				iconClass="aon-icon-new-page"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+ 				oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+
+			<!--  
+			<aon:menuItem id="document-extension" 
+				value="Prorroga"
+				disabled="true"
+				iconClass="aon-icon-attach-file" />
+			-->
+			
 			<rich:menuGroup 
 				value="Editar documentos"
 				iconClass="aon-menuGroup-styleClass">
@@ -131,9 +146,63 @@
 						target="#{contractPdf.backAction}" value="contract_form" />
 					<aon:actionListener method="#{contractPdf.onContractDocumentShow}" />
 				</aon:menuItem>                
+				<!--  
+				<aon:menuItem id="extensionDraft-edition"
+					action="contractPdfEdition_form" ajaxSingle="true"
+					rendered="#{true}" 
+					value="Prorroga"
+					iconClass="aon-icon-page" >
+					<f:setPropertyActionListener
+						target="#{contractPdf.documentType}" value="#{contractPdf.extensionPdfType}" />
+					<f:setPropertyActionListener
+						target="#{contractPdf.backAction}" value="contract_form" />
+					<aon:actionListener method="#{contractPdf.onContractDocumentShow}" />
+				</aon:menuItem>                
+				-->
+			</rich:menuGroup>
+
+			<rich:menuGroup value="Contrat@" iconClass="aon-icon-contrata">
+				<aon:menuItem id="contrata-sepe-comunication2"
+					value="Comunicar datos de contrato"
+					disabled="#{!contractContrata.communicationAvailable or contractContrata.communicationResponseReceived}"
+					reRender="showContrataLoginWindow,contrataResponseContainer,contrataData,contractForm"
+					actionListener="#{contractContrata.onSendContrataFile}"
+					onclick="Richfaces.showModalPanel('waitProccess')" 
+	 				oncomplete="Richfaces.hideModalPanel('waitProccess')"
+					iconClass="aon-icon-sincronize" />
+				<aon:menuItem id="contrata-sepe-dataQuery2"
+					value="Consultar estado del contrato"
+					disabled="#{!contractContrata.communicationResponseReceived}"
+					reRender="showContrataLoginWindow,contrataResponseContainer,contrataData,contractForm"
+					actionListener="#{contractContrata.onContrataDataQuery}"
+					onclick="Richfaces.showModalPanel('waitProccess')" 
+	 				oncomplete="Richfaces.hideModalPanel('waitProccess')"
+					iconClass="aon-icon-sincronize" />
+				<aon:menuItem id="contrata-sepe-showLog"
+					value="Historial de comunicaciones"
+					disabled="#{!contractContrata.communicationResponseReceived}"
+					reRender="showCommunicationLogWindow"
+					actionListener="#{contractContrata.onContrataLogShow}"
+					iconClass="aon-icon-info" >
+					<f:setPropertyActionListener
+						target="#{contractContrata.showCommunicationLogWindow}" value="#{true}" />
+				</aon:menuItem>
+				
+				<!--  
+				<aon:menuItem id="contrata-contractXml-download" 
+					value="XML contrato"
+					iconClass="aon-icon-mail-save" >
+					<aon:htmlCommandLink id="contractXmldownload" target="_blank"
+						actionListener="#{contractContrata.onDownloadContrataXml}"
+		     			style="line-height:16px;margin-right:0;">
+					</aon:htmlCommandLink>	
+				</aon:menuItem>
+				-->
+				
 			</rich:menuGroup>
 
 		</ui:define>
+
 	</ui:decorate>
 	
 </ui:composition>

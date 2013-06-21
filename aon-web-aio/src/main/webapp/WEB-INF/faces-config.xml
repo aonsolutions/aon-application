@@ -291,7 +291,6 @@
 			<!--  aon.ui.project -->
 			<value>#{enterpriseProjectChildListener}</value>
 			<!--  aon.ui.company -->
-			<value>#{enterpriseTreeControllerListener}</value>
 			<value>#{enterpriseActivityChildListener}</value>
 			<value>#{payrollWorkPlaceChildListener}</value>
 			<value>#{enterpriseParamsControllerListener}</value>

@@ -12,7 +12,7 @@ import com.esferalia.aon.salary.expression.IExpression;
 @Entity
 @Table(name="system_data")
 @Heritable
-public class SystemData extends SystemDataDB implements IExpression, IVariableData {
+public class SystemData extends SystemDataDB implements IExpression {
 	
 	private static final long serialVersionUID = 1L;
 

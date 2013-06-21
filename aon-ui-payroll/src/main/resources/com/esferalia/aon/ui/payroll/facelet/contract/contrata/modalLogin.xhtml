@@ -89,9 +89,31 @@
 										
 										<aon:outputLabel for="contrata-passwd" 
 											value="#{payrollBundle.payroll_contract_contrata_passwd}" />
-										<aon:inputSecret id="contrata-passwd" 
-											required="#{true}" style="width: 100%;"
-											value="#{contractContrata.passwd}" />	
+										<aon:div id="contrata-passwd-div">
+											<aon:inputSecret id="contrata-passwd" 
+												required="#{true}" style="width: 100%;"
+												rendered="#{!contractContrata.contrataPasswdVisible}"
+												value="#{contractContrata.passwd}" />	
+											<aon:inputText id="contrata-passwd-visible" 
+												required="#{true}" style="width: 100%;"
+												rendered="#{contractContrata.contrataPasswdVisible}"
+												value="#{contractContrata.passwd}" />
+											<!--  
+											<aon:div style="padding-top: 5px;">
+												<aon:selectBooleanCheckbox id="show-contrata-passwd" 
+													value="#{contractContrata.contrataPasswdVisible}" >
+													<a4j:support event="onclick"
+														ignoreDumpResponses="true"
+														limitToList="true"
+														eventsQueue="loginConfirmation"	
+														reRender="contrata-passwd-div" />
+												</aon:selectBooleanCheckbox>
+												<aon:outputLabel for="show-contrata-passwd"
+													styleClass="aon-italic" 
+													value="Mostrar contraseña" />
+											</aon:div>
+											-->
+										</aon:div>
 
 									</aon:panelGrid>
 

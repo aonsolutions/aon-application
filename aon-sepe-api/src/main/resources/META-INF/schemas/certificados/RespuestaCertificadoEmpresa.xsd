@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:include schemaLocation="certificadoEmpresa.xsd"/>
+	<xsd:element name="Respuesta_Certificado_empresa">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">XML Schema - Respuesta al proceso de Comunicaciones de Certificados de Cese.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Certificado_empresa">
+					<xsd:complexType>
+						<xsd:complexContent>
+							<xsd:extension base="CERTIFICADO_EMPRESA_TYPE"/>
+						</xsd:complexContent>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="Resultado">
+					<xsd:complexType>
+						<xsd:complexContent>
+							<xsd:extension base="RESPUESTA_CERTIFICADO_EMPRESA_TYPE"/>
+						</xsd:complexContent>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="Huella_Digital"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="RESPUESTA_CERTIFICADO_EMPRESA_TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Elementos generados por el INEM que son devueltos como respuesta al envío de Comunicaciones de Certificados de Empresa mediante ficheros XML.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Cuenta_cotizacion" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="CCC"/>
+						<xsd:element name="Errores_General" type="ERRORTYPE" minOccurs="0"/>
+						<xsd:element name="Datos_Trabajador" minOccurs="0" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="DNI_NIE" type="xsd:string"/>
+									<xsd:element name="Error" maxOccurs="unbounded"/>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="Descripcion_Resultado">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="es">Resultado del procesamiento de la Comunicación de Certificados de Empresa.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:enumeration value="PROCESADO"/>
+									<xsd:enumeration value="PROCESADO PARCIALMENTE"/>
+									<xsd:enumeration value="RECHAZADO"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="Num_Trabajadores_Total">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="es">Número de trabajadores recibidos en la comunicación.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:int">
+									<xsd:totalDigits value="4"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="Num_Trabajadores_Procesados">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="es">Número de trabajadores procesados correctamente</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:int">
+									<xsd:totalDigits value="4"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ERRORTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Errores en la Comunicaciones de Certificados de Empresa generados como resultado del procesamiento del fichero XML.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Error" type="xsd:string" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código de error detectado en los datos de representante o de empresa</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

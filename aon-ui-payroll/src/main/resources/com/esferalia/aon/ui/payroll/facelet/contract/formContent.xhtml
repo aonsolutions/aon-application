@@ -181,6 +181,16 @@
 				value="#{contract.to.categoryDescription}" />
 		</c:if>
 		
+		<c:if test="#{!contract.params.trainingContract}" >
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.params.cno}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+				<ui:param name="lookupDisabled" value="#{false}" />
+				<ui:param name="lookupReRender" value="Contract_categoryDescription, trainingCenter, trainingCourse" />
+				<aon:methodParam name="lookupChangeListener" value="#{contract.onChangeCno}" type="lookupChangeListener" />
+			</ui:include>
+		</c:if>
+		
 		<c:if test="#{contract.params.trainingContract}" >
 				<aon:outputLabel for="contract_subsidized" value="#{payrollBundle.payroll_contract_subsidized}" />
 				<aon:selectBooleanCheckbox id="contract_subsidized" value="#{contract.params.subsidized}" />

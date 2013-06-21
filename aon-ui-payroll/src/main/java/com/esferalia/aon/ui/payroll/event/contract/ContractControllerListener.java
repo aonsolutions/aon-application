@@ -17,6 +17,8 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -28,6 +30,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE226;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.TrainingCenter;
@@ -77,6 +80,7 @@ public class ContractControllerListener extends ControllerAdapter{
 	public void beforeBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
 		removeChildData(event);
+		removeContrataAttach(event);
 	}
 	
 	@Override
@@ -89,7 +93,6 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setActivities(null);
 		controller.setEnterpriseCCCs(null);
 		controller.setParams(null);
-//		controller.onShowVariables(null);
 		try {
 			loadContractData();
 		} catch (ManagerBeanException e) {
@@ -501,6 +504,28 @@ public class ContractControllerListener extends ControllerAdapter{
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible eliminar los datos de contrato. (" +e.getMessage() + ")";
+			LOGGER.error(msg);
+			throw new ControllerListenerException(msg,e);
+		}
+	}
+	
+	private void removeContrataAttach(ControllerEvent event) throws ControllerListenerException {
+		ContractController controller = (ContractController) event.getController();
+		Contract contract = (Contract) controller.getTo();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contract.getId());
+			Expression exp1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA_RESPONSE);
+			Expression exp2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA_STATUS);
+			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+			for(ITransferObject to: bean.getList(criteria)){
+				ContractAttachment attach = (ContractAttachment) to;
+				bean.remove(attach);
+				
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible eliminar los datos obtenidos del SEPE del contrato. (" +e.getMessage() + ")";
 			LOGGER.error(msg);
 			throw new ControllerListenerException(msg,e);
 		}

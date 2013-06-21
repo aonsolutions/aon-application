@@ -502,12 +502,6 @@ public class ContractContrataHandler {
 		return getContractCode()==ContractCode.C450 || getContractCode()==ContractCode.C550;
 	}
 	
-	
-	
-	public void buildDataStructure(){
-		
-	}	
-	
 	private boolean isPartialTimeContract(ContractCode contractCode) {
 		return getContractCode()==ContractCode.C200 || getContractCode()==ContractCode.C230
 				|| getContractCode()==ContractCode.C250 || getContractCode()==ContractCode.C300

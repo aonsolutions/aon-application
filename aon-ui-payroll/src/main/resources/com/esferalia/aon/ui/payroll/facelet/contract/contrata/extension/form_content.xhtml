@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	
+	<aon:div style="width:850px;">
+		
+		<aon:panel styleClass="aon-width-all">
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_contract_other_data}" />
+			</f:facet>
+			<aon:panelGrid columns="2" id="otherDataPanel"
+				styleClass="aon-width-all"
+				columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even aon-width-auto">
+				
+				
+				<aon:outputLabel for="fechaInicio" value="#{bundle.aon_start_date}" />
+				<aon:selectInputDate id="fechaInicio" 
+					value="#{contract.to.startDate}" required="true" 
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+					<a4j:support event="oninputchange" reRender="seniorityDateContainer" ajaxSingle="true"/>
+					<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true"/>
+				</aon:selectInputDate>
+				
+				<aon:outputLabel for="fechaFin" value="#{bundle.aon_end_date}" />
+				<aon:selectInputDate id="fechaFin" 
+					value="#{contract.to.endDate}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+				</aon:selectInputDate>
+
+				<aon:outputLabel for="indicadorConvCol" 
+					rendered="#{contractContrata.handler.showCertificadoProfesionalidad}"
+					value="#{payrollBundle.payroll_contract_certificado_profesionalidad}" />
+				<aon:selectBooleanCheckbox id="indicadorConvCol" 
+					required="#{contractContrata.handler.certificadoProfesionalidadRequired}"  
+					rendered="#{contractContrata.handler.showCertificadoProfesionalidad}"
+					value="#{contractContrata.params.indCertifProfesionalidad}" />
+
+				<aon:outputLabel for="indicadorDiscontinuidad" 
+					rendered="#{contractContrata.handler.showCertificadoProfesionalidad}"
+					value="#{payrollBundle.payroll_contract_certificado_profesionalidad}" />
+				<aon:selectBooleanCheckbox id="indicadorDiscontinuidad" 
+					required="#{contractContrata.handler.certificadoProfesionalidadRequired}"  
+					rendered="#{contractContrata.handler.showCertificadoProfesionalidad}"
+					value="#{contractContrata.params.indCertifProfesionalidad}" />
+
+				<aon:outputLabel for="indEmpresaAappUniversidad" 
+					rendered="#{contractContrata.handler.showCertificadoProfesionalidad}"
+					value="#{payrollBundle.payroll_contract_certificado_profesionalidad}" />
+				<aon:selectBooleanCheckbox id="indEmpresaAappUniversidad" 
+					required="#{contractContrata.handler.certificadoProfesionalidadRequired}"  
+					rendered="#{contractContrata.handler.showCertificadoProfesionalidad}"
+					value="#{contractContrata.params.indCertifProfesionalidad}" />
+
+				<aon:outputLabel for="indPeriodoAutorizaDuracion" 
+					rendered="#{contractContrata.handler.showCertificadoProfesionalidad}"
+					value="#{payrollBundle.payroll_contract_certificado_profesionalidad}" />
+				<aon:selectBooleanCheckbox id="indPeriodoAutorizaDuracion" 
+					required="#{contractContrata.handler.certificadoProfesionalidadRequired}"  
+					rendered="#{contractContrata.handler.showCertificadoProfesionalidad}"
+					value="#{contractContrata.params.indCertifProfesionalidad}" />
+	
+				<aon:outputLabel for="formationDuration" 
+					rendered="#{contractContrata.handler.showHorasMinutosFormacion}"
+					value="#{payrollBundle.payroll_contract_formation_hours}" />
+				<aon:div id="formationDuration"
+					rendered="#{contractContrata.handler.showHorasMinutosFormacion}" >
+					<aon:outputLabel for="horasFormacion" styleClass="aon-italic aon-margin-right"
+						value="#{payrollBundle.payroll_hours}:" />
+					<aon:inputText id="horasFormacion" size="4" maxlength="4"
+						disabled="#{contractContrata.params.indicFormacionTeorica=='S'}" 
+						value="#{contractContrata.params.horasFormacion}">
+						<a4j:support event="onblur" reRender="formationWorkingDaysPercent, otherDataPanel2" />
+					</aon:inputText>
+					<aon:outputLabel for="minutosFormacion" styleClass="aon-italic aon-margin-left aon-margin-right"
+						value="#{payrollBundle.payroll_minutes}:" />
+					<aon:inputText id="minutosFormacion" size="2" maxlength="2"
+						disabled="#{contractContrata.params.indicFormacionTeorica=='S'}" 
+						value="#{contractContrata.params.minutosFormacion}">
+						<a4j:support event="onblur" reRender="formationWorkingDaysPercent, otherDataPanel2" />
+					</aon:inputText>
+				</aon:div>
+	
+				<aon:outputLabel for="indDuracInferior" 
+					rendered="#{contractContrata.handler.showCertificadoProfesionalidad}"
+					value="#{payrollBundle.payroll_contract_certificado_profesionalidad}" />
+				<aon:selectBooleanCheckbox id="indDuracInferior" 
+					required="#{contractContrata.handler.certificadoProfesionalidadRequired}"  
+					rendered="#{contractContrata.handler.showCertificadoProfesionalidad}"
+					value="#{contractContrata.params.indCertifProfesionalidad}" />
+	
+				<aon:outputLabel for="enterpriseFreeUse" 
+					value="#{payrollBundle.payroll_contract_enterpriseFreeUse}" />
+				<aon:inputText id="enterpriseFreeUse"
+					value="#{contractContrata.params.usoLibreEmpresa}" maxlength="30" size="55" >
+					<f:validateLength maximum="30" />
+				</aon:inputText>
+
+			</aon:panelGrid>
+
+		</aon:panel>
+
+	</aon:div>
+				
+</ui:composition>
