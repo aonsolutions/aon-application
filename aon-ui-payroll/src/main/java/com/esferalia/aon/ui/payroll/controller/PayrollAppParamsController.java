@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.payroll.controller;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +17,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -23,6 +25,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.TrainingCenter;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.ui.payroll.sepe.SEPEConnectionProvider;
 
 public class PayrollAppParamsController{
@@ -37,6 +40,8 @@ public class PayrollAppParamsController{
 
 	public final static String DEFAULT_CONTRACT_CODE = "PAY_default_contractCode_PAY";
 	public final static String DEFAULT_TRAINING_CENTER = "PAY_default_trainingCenter_PAY";
+
+	public final static String AVAILABLE_NEW_CONTRACT_CODES = "PAY_available_contract_codes_PAY";
 	
 	private PaymentConcept settleVacationConcept;
 	private PaymentConcept settleNoticeDayConcept;
@@ -50,12 +55,55 @@ public class PayrollAppParamsController{
 	
 	private TrainingCenter defaultTrainingCenter;
 	
+	private List<ContractCode> availableNewContracts;
+	
 	private Map<String, ApplicationParameter> parameters;
 
 	private Map<String, String> defaultParameters;
 	
 	private boolean skipPayrollData;
 	
+
+	public List<ContractCode> getAvailableNewContracts() {
+		if(availableNewContracts==null){
+			initAvailableNewContracts();
+		}
+		return availableNewContracts;
+	}
+	private void initAvailableNewContracts() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), AVAILABLE_NEW_CONTRACT_CODES);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_DOMAIN), DomainManager.getCurrentDomain());
+			List<ITransferObject> list = bean.getList(criteria);
+			criteria = null;
+			Integer parentDomain = DomainManager.getDomainProvider().getParentDomain();
+			if(list.isEmpty() && parentDomain!=null ){
+				criteria = new Criteria();
+				criteria.setSkipDomainFilter(true);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), AVAILABLE_NEW_CONTRACT_CODES);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_DOMAIN), parentDomain);
+				list = bean.getList(criteria);
+			}
+			
+			availableNewContracts = new LinkedList<ContractCode>();
+			if(!list.isEmpty()){
+				ApplicationParameter appParam = (ApplicationParameter) list.get(0);
+				String[] codes = appParam.getValue().split(";");
+				for(String code: codes){
+					availableNewContracts.add(ContractCode.getContractCodeByValue(code));
+				}
+			}
+			
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+	}
+
+	public void setAvailableNewContracts(List<ContractCode> availableNewContracts) {
+		this.availableNewContracts = availableNewContracts;
+	}
 
 	public boolean isSkipPayrollData() {
 		return skipPayrollData;

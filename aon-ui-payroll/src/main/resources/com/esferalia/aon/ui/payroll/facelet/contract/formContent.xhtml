@@ -166,20 +166,6 @@
 			</aon:div>
 -->			
 	
-		<c:if test="#{!contract.skipPayrollData}" >
-			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
-				<ui:param name="lookupTo" value="#{contract.params.cno}" />
-				<ui:param name="skipNewButton" value="#{true}" />
-				<ui:param name="lookupDisabled" value="#{false}" />
-				<ui:param name="lookupReRender" value="Contract_categoryDescription, trainingCenter, trainingCourse" />
-				<aon:methodParam name="lookupChangeListener" value="#{contract.onChangeCno}" type="lookupChangeListener" />
-			</ui:include>
-		
-			<aon:outputLabel for="Contract_categoryDescription"  
-				value="#{payrollBundle.payroll_contract_category}" />
-			<aon:inputText id="Contract_categoryDescription" maxlength="64" size="56"
-				value="#{contract.to.categoryDescription}" />
-		</c:if>
 		
 		<c:if test="#{!contract.params.trainingContract}" >
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
@@ -189,6 +175,13 @@
 				<ui:param name="lookupReRender" value="Contract_categoryDescription, trainingCenter, trainingCourse" />
 				<aon:methodParam name="lookupChangeListener" value="#{contract.onChangeCno}" type="lookupChangeListener" />
 			</ui:include>
+			
+			<c:if test="#{!contract.skipPayrollData}" >
+				<aon:outputLabel for="Contract_categoryDescription"  
+					value="#{payrollBundle.payroll_contract_category}" />
+				<aon:inputText id="Contract_categoryDescription" maxlength="64" size="56"
+					value="#{contract.to.categoryDescription}" />
+			</c:if>
 		</c:if>
 		
 		<c:if test="#{contract.params.trainingContract}" >

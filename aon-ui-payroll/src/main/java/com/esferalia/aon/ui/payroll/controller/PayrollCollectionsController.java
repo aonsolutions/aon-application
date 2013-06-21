@@ -565,28 +565,41 @@ public class PayrollCollectionsController {
 	public List<?> getTc2List() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		List<SelectItemGroup> list = new LinkedList<SelectItemGroup>();
+		
+		PayrollAppParamsController appParams = (PayrollAppParamsController) AonUtil.getRegisteredBean(IPayrollConstants.PAYROLL_APP_PARAMS_CONTROLLER_NAME);
+		List<ContractCode> availableCodes = appParams.getAvailableNewContracts();
+		
 		for( ContractType type : ContractType.values() ) {
-//			if(type.getModel()==ContractModel.PE151
-//					|| type.getModel()==ContractModel.PE170
-//					|| type.getModel()==ContractModel.PE176
-//					|| type.getModel()==ContractModel.PE177
-//					|| type.getModel()==ContractModel.PE179
-//					|| type.getModel()==ContractModel.PE183
-//					|| type.getModel()==ContractModel.PE187
-//					|| type.getModel()==ContractModel.PE226
-//					){
-			if(type.getModel()==ContractModel.PE226){
+			if(type.getModel()==ContractModel.PE151
+					|| type.getModel()==ContractModel.PE170
+					|| type.getModel()==ContractModel.PE176
+					|| type.getModel()==ContractModel.PE177
+					|| type.getModel()==ContractModel.PE179
+					|| type.getModel()==ContractModel.PE183
+					|| type.getModel()==ContractModel.PE187
+					|| type.getModel()==ContractModel.PE226
+					){
 				List<SelectItem> subList = new ArrayList<SelectItem>();
 				for( ContractModelCode o : ContractModelCode.values() ) {
 					if ( o.getModel() == type.getModel() ) {
-						String name = getAbbreviatedSelectItemLabel(o.getCode().getValue()+" - "+o.getCode().getName(locale), NAME_LENGHT_80);
-						SelectItem item = new SelectItem(o, name);
-						subList.add(item);
+						if ( availableCodes!=null && !availableCodes.isEmpty()) {
+							if ( availableCodes.contains(o.getCode())) {
+								String name = getAbbreviatedSelectItemLabel(o.getCode().getValue()+" - "+o.getCode().getName(locale), NAME_LENGHT_80);
+								SelectItem item = new SelectItem(o, name);
+								subList.add(item);
+							}
+						} else {
+							String name = getAbbreviatedSelectItemLabel(o.getCode().getValue()+" - "+o.getCode().getName(locale), NAME_LENGHT_80);
+							SelectItem item = new SelectItem(o, name);
+							subList.add(item);
+						}
 					}
 				}
-				SelectItemGroup group = new SelectItemGroup(getAbbreviatedSelectItemLabel(type.getName(locale), NAME_LENGHT_100), type.getName(locale), false, subList.toArray(new SelectItem[0]));
-				group.setValue(type);
-				list.add(group);
+				if(!subList.isEmpty()){
+					SelectItemGroup group = new SelectItemGroup(getAbbreviatedSelectItemLabel(type.getName(locale), NAME_LENGHT_100), type.getName(locale), false, subList.toArray(new SelectItem[0]));
+					group.setValue(type);
+					list.add(group);
+				}
 			}
 		}
 		return list;
