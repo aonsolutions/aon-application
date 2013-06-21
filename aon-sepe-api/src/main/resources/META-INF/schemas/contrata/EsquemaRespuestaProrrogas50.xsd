@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- XML Schema SPEE ver.5.000 01/06/2007-->
+<!-- ============================================= -->
+<!-- Updated by Esferalia Networks v1.0 22/05/2013 -->
+<!-- Schema location redefinition -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--  
+	<xsd:include schemaLocation="http://www.sepe.es/schemas/EsquemaProrrogas50.xsd"/>
+-->
+	<xsd:include schemaLocation="EsquemaProrrogas50.xsd"/>
+	<xsd:element name="FICHERO_PRORROGAS">
+		<xsd:annotation>
+			<xsd:documentation>XML Schema - Respuesta al proceso de comunicación de Prórrogas al SPEE.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="ESTADO_FICHERO">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="es">Estado que refleja si se ha procesado la totalidad de los registros enviados  o no. Los posibles valores que puede tomar este elemento son los que aparecen más abajo enumerados.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:enumeration value="PROCESADO TOTALMENTE"/>
+							<xsd:enumeration value="PROCESADO PARCIALMENTE"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="NUMERO_PROCESADOS">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="es">Número de registros procesados.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:pattern value="\d{4}"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="PRORROGASPROCESADAS">
+					<xsd:complexType>
+						<xsd:sequence maxOccurs="1000">
+							<xsd:element name="ENVIO" type="ENVIOTYPE" minOccurs="0"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="version" type="xsd:string" fixed="5.000"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="ENVIOTYPE">
+		<xsd:sequence>
+			<xsd:element name="PRORROGA_TIPO" type="PRORROGATIPOTYPE"/>
+			<xsd:element name="RESPUESTAPRORROGA" type="RESPUESTAPRORROGATYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RESPUESTAPRORROGATYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Elementos generados por el SPEE que son devueltos como respuesta al envío de la comunicación de una prórroga mediante ficheros XML.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="RESULTADO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Resultado del procesamiento de cada uno de las prórrogas enviadas. Los posibles valores que puede tomar este elemento son los que aparecen más abajo enumerados.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="ACEPTADO"/>
+						<xsd:enumeration value="ACEPTADO CON ERRORES"/>
+						<xsd:enumeration value="RECHAZADO"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="NUMEROPRORROGA">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Número secuencial asignado consecutivamente según son comunicadas las sucesivas prórrogas.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="FECHACOMUNICACION" type="FECHATYPE" nillable="true">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Fecha de comunicación de la prórroga.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="USUARIO" type="USUARIOTYPE">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Usuario que envía el fichero.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="FECHAALTA" type="FECHATYPE" nillable="true">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Fecha de mecanización de la prórroga.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ERRORES" type="ERRORTYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ERRORTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Errores generados como resultado del proceso de envío de la comunicación de la prórroga mediante ficheros XML.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="ERROR" maxOccurs="10">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código de error de la prórroga. Sus posibles valores se encuentran codificados en la tabla TERRORES.txt de la Ayuda XML - Ultima versión - Tablas de códigos de respuesta.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:length value="7"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="USUARIOTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Usuario que envía el fichero.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

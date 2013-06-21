@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://webservice.certificados.prestaciones.spee.es" xmlns:impl="http://webservice.certificados.prestaciones.spee.es" xmlns:intf="http://webservice.certificados.prestaciones.spee.es" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+ <wsdl:types>
+  <schema elementFormDefault="qualified" targetNamespace="http://webservice.certificados.prestaciones.spee.es" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <element name="ejecuta">
+    <complexType>
+     <sequence>
+      <element name="sUsuarioConectado" nillable="true" type="xsd:string"/>
+      <element name="sUsuarioPrincipal" nillable="true" type="xsd:string"/>
+      <element name="sPassword" nillable="true" type="xsd:string"/>
+      <element name="sIdComunicacion" nillable="true" type="xsd:string"/>
+      <element name="sIdioma" nillable="true" type="xsd:string"/>
+      <element name="sComunidad" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="ejecutaResponse">
+    <complexType>
+     <sequence>
+      <element name="ejecutaReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="ejecutaResponse">
+
+      <wsdl:part element="intf:ejecutaResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="ejecutaRequest">
+
+      <wsdl:part element="intf:ejecuta" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="ServicioWebConsulta">
+
+      <wsdl:operation name="ejecuta">
+
+         <wsdl:input message="intf:ejecutaRequest" name="ejecutaRequest"/>
+
+         <wsdl:output message="intf:ejecutaResponse" name="ejecutaResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="ServicioWebConsultaSoapBinding" type="intf:ServicioWebConsulta">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="ejecuta">
+
+         <wsdlsoap:operation soapAction="ejecuta"/>
+
+         <wsdl:input name="ejecutaRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="ejecutaResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="ServicioWebConsultaService">
+
+      <wsdl:port binding="intf:ServicioWebConsultaSoapBinding" name="ServicioWebConsulta">
+
+         <!-- entorno REAL - produccion -->
+         <!--  
+         <wsdlsoap:address location="https://sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta"/>
+         -->
+         
+         <!-- entorno TEST - pruebas -->
+         <wsdlsoap:address location="https://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

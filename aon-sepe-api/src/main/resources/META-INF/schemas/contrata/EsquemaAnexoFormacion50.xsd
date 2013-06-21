@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- XML Schema SEPE ver.5.000 05/02/2013-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:annotation>
+		<xsd:documentation xml:lang="es">XML Schema - Comunicación de Anexo de Formación al SEPE.</xsd:documentation>
+	</xsd:annotation>
+	<xsd:element name="ANEXOFORMACION">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="1000">
+				<xsd:element name="ANEXOFORMACION_TIPO" type="ANEXOFORMACIONTIPOTYPE"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- ******************************************************************************************************************** -->
+	<xsd:complexType name="ANEXOFORMACIONTIPOTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos del anexo de formación.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DATOS_IDENTIFICACION" type="DATOS_IDENTIFICACIONTYPE"/>
+			<xsd:element name="DATOS_ANEXO" type="DATOS_ANEXOTYPE"/>
+			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- ******************************************************************************************************************** -->
+	<xsd:complexType name="DATOS_IDENTIFICACIONTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos de identificación del contrato del que se comunica su anexo.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="CLAVE_CONTRATO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Identificador del contrato. Se compone de : E+ Provincia(2)+Año(4)+Número secuencial(7).</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="E\d{13}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_ANEXOTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos a comunicar en el anexo.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="CIF_NIF_CENTRO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">CIF/ NIF/NIE del centro de formación.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[0-9a-zA-Z]\d{7}[0-9a-zA-Z]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="NOMBRE_CENTRO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Nombre del centro de formación.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="50"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="DOMICILIO_CENTRO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Domicilio del centro de formación.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="55"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="MUNICIPIO_CENTRO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Municipio del centro de formación.  Sus posibles valores se encuentran codificados en la tabla TDPMUNIC.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{5}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="CODPOSTAL_CENTRO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código postal del centro de formación.  Sus posibles valores se encuentran codificados en la tabla TAPCOPOS.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{5}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="IND_MODALIDAD_FORMACION">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de modalidad de formación. Sus posibles valores se encuentran codificados en la tabla TRCMODFO.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:length value="1"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="ACTIVIDAD_FORMATIVA">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Actividad formativa. Sus posibles valores se encuentran codificados en la tabla TRDACTFO.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:length value="1"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="CENTRO_DISPONIBLE_ACREDITADO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Centro disponible. Indica si existe centro disponible (S)  ó no (N). </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[SN\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="TIPO_CENTRO" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Tipo de centro. Obligatorio cuando exista centro disponible (S) y la actividad formativa sea C ó P , ó bien cuando la actividad formativa sea A. Incompatible con el dato NUMERO_CENTRO. Sus posibles valores se encuentran codificados en la tabla TSATPCEN.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:length value="1"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="FORM_COMPLEMENTARIA" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Formación complementaria. Indica si se recibió (S)  ó no se recibió (N) formación complementaria. Obligatorio cuando exista centro disponible (S) y la actividad formativa sea C ó P , ó bien cuando la actividad formativa sea A. Incompatible con el dato NUMERO_CENTRO.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[SN\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="NUMERO_CENTRO" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Número de centro. Se compone de provincia (2) y número (8). Obligatorio cuando exista centro disponible (S) y la actividad formativa sea O , ó bien cuando no exista centro disponible (N) y la actividad formativa no sea A. Incompatible con el dato TIPO_CENTRO y el dato FORM_COMPLEMENTARIA.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{10}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_USOLIBRE_EMPRESATYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos para uso de la empresa. No se efectúa ninguna validación ni modificación sobre estos datos.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="USOLIBRE_EMPRESA">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="30"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

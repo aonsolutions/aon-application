@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- XML Schema SPEE ver.5.000 12/04/2012-->
+<!-- ============================================= -->
+<!-- Updated by Esferalia Networks v1.0 22/05/2013 -->
+<!-- Schema location redefinition -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
+	jaxb:version="2.1"
+	jaxb:extensionBindingPrefixes="inheritance">
+<!--  
+	<xsd:include schemaLocation="http://www.sepe.es/schemas/EsquemaTransformaciones50.xsd"/>
+-->
+	<xsd:include schemaLocation="EsquemaTransformaciones50.xsd"/>
+	<xsd:element name="FICHERO_TRANSFORMACIONES">
+		<xsd:annotation>
+			<xsd:documentation>XML Schema - Respuesta al proceso de comunicación de Transformaciones al SPEE</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="ESTADO_FICHERO">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="es">Estado que refleja si se ha procesado la totalidad de los registros enviados  o no. Los posibles valores que puede tomar este elemento son los que aparecen más abajo enumerados.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:enumeration value="PROCESADO TOTALMENTE"/>
+							<xsd:enumeration value="PROCESADO PARCIALMENTE"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="NUMERO_PROCESADOS">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="es">Número de registros procesados.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:pattern value="\d{4}"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="TRANSFORMACIONESPROCESADAS">
+					<xsd:complexType>
+						<xsd:sequence maxOccurs="5">
+							<xsd:element name="ENVIO_109" type="ENVIO_109TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_139" type="ENVIO_139TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_189" type="ENVIO_189TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_209" type="ENVIO_209TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_239" type="ENVIO_239TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_289" type="ENVIO_289TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_309" type="ENVIO_309TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_339" type="ENVIO_339TYPE" minOccurs="0"/>
+							<xsd:element name="ENVIO_389" type="ENVIO_389TYPE" minOccurs="0"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="version" type="xsd:string" fixed="5.000"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="ENVIO_109TYPE">
+		<xsd:sequence>
+			<xsd:element name="TRANSFORMACION_109" type="TRANSFORMACION_109TYPE"/>
+			<xsd:element name="RESPUESTATRANSFORMACION" type="RESPUESTATRANSFORMACIONTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO_139TYPE">
+		<xsd:sequence>
+			<xsd:element name="TRANSFORMACION_139" type="TRANSFORMACION_139TYPE"/>
+			<xsd:element name="RESPUESTATRANSFORMACION" type="RESPUESTATRANSFORMACIONTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO_189TYPE">
+		<xsd:sequence>
+			<xsd:element name="TRANSFORMACION_189" type="TRANSFORMACION_189TYPE"/>
+			<xsd:element name="RESPUESTATRANSFORMACION" type="RESPUESTATRANSFORMACIONTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO_209TYPE">
+		<xsd:sequence>
+			<xsd:element name="TRANSFORMACION_209" type="TRANSFORMACION_209TYPE"/>
+			<xsd:element name="RESPUESTATRANSFORMACION" type="RESPUESTATRANSFORMACIONTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO_239TYPE">
+		<xsd:sequence>
+			<xsd:element name="TRANSFORMACION_239" type="TRANSFORMACION_239TYPE"/>
+			<xsd:element name="RESPUESTATRANSFORMACION" type="RESPUESTATRANSFORMACIONTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO_289TYPE">
+		<xsd:sequence>
+			<xsd:element name="TRANSFORMACION_289" type="TRANSFORMACION_289TYPE"/>
+			<xsd:element name="RESPUESTATRANSFORMACION" type="RESPUESTATRANSFORMACIONTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO_309TYPE">
+		<xsd:sequence>
+			<xsd:element name="TRANSFORMACION_309" type="TRANSFORMACION_309TYPE"/>
+			<xsd:element name="RESPUESTATRANSFORMACION" type="RESPUESTATRANSFORMACIONTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO_339TYPE">
+		<xsd:sequence>
+			<xsd:element name="TRANSFORMACION_339" type="TRANSFORMACION_339TYPE"/>
+			<xsd:element name="RESPUESTATRANSFORMACION" type="RESPUESTATRANSFORMACIONTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ENVIO_389TYPE">
+		<xsd:sequence>
+			<xsd:element name="TRANSFORMACION_389" type="TRANSFORMACION_389TYPE"/>
+			<xsd:element name="RESPUESTATRANSFORMACION" type="RESPUESTATRANSFORMACIONTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RESPUESTATRANSFORMACIONTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Elementos generados por el SPEE que son devueltos como respuesta al envío de la comunicación de una transformación mediante ficheros XML.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="RESULTADO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Resultado del procesamiento de cada una de las transformacionesenviadas. Los posibles valores que puede tomar este elemento son los que aparecen más abajo enumerados.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="ACEPTADO"/>
+						<xsd:enumeration value="RECHAZADO"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="NUM_TRANSFORMACION">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Número fijo asignado a todas las transformaciones (actualmente 55). Este número fijo asignado a la transformación y añadido al identificador del contrato que se está transformando, compondrá el identificador de la transformación.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="FECHACOMUNICACION" type="FECHATYPE" nillable="true">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Fecha de comunicación de la transformación.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="USUARIO" type="USUARIOTYPE">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Usuario que envía el fichero.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="FECHAALTA" type="FECHATYPE" nillable="true">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Fecha de mecanización de la transformación.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="OBLIGCB">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de obligatoriedad de presentación de la Copia Básica. (S-obligatoria   N-no obligatoria).</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[SN]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="LEYBONIF">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Ley de bonificación a la que queda acogida la transformación. Sus posibles valores se encuentran codificados en la tabla TEKLEYBO.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="LEYFOMENTO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Ley de fomento de la contratación indefinida a la que queda acogida la transformación. Sus posibles valores se encuentran codificados en la tabla TENLEYDE.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="LEYREDUCCION">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Ley de reducción de cuotas a la que queda acogida la transformación. Sus posibles valores se encuentran codificados en la tabla TQNLEYRE.txt de la Ayuda XML - Ultima versión - Tablas de códigos.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="ERRORES" type="ERRORTYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ERRORTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Errores generados como resultado del proceso de envío de la comunicación de una transformación mediante ficheros XML.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="ERROR" maxOccurs="15">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Código de error de la transformación. Sus posibles valores se encuentran codificados en la tabla TERRORES.txt de la Ayuda XML - Ultima versión - Tablas de códigos de respuesta.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:length value="7"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="USUARIOTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Usuario que envía el fichero.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

@@ -78,7 +78,7 @@ public class ModelPE226 extends AbstractContractModel {
 	final static String PE226_SEPE_TOWN2 = "munisepe2";
 	final static String PE226_SIGN_TOWN = "munifirma";
 	final static String PE226_MORE_CLAUSE = "clausadici";
-	final static String PE226_SING_DAY = "diafirma";
+	final static String PE226_SIGN_DAY = "diafirma";
 	final static String PE226_SIGN_MONTH = "mesfirma";
 	final static String PE226_SIGN_YEAR = "añofirma";
 	
@@ -199,7 +199,9 @@ public class ModelPE226 extends AbstractContractModel {
 						Integer horasJornada = Integer.parseInt(contrataParams.getHorasJornada());
 						Integer horasFormacion = Integer.parseInt(contrataParams.getHorasFormacion());
 						getPdfFieldsMap().get(PE226_TOTAL_HOURS).setValue(String.valueOf(horasJornada - horasFormacion));
-						getPdfFieldsMap().get(PE226_JOURNAL_PERCENT).setValue(String.valueOf(100-(horasFormacion*100/horasJornada)));
+						if(horasJornada!=null && horasJornada!=0){
+							getPdfFieldsMap().get(PE226_JOURNAL_PERCENT).setValue(String.valueOf(100-(horasFormacion*100/horasJornada)));
+						}
 					}
 				}
 				
@@ -236,7 +238,7 @@ public class ModelPE226 extends AbstractContractModel {
 				getPdfFieldsMap().get(PE226_SEPE_TOWN2).setValue(contract.getWorkPlace().getAddress().getCity());
 				getPdfFieldsMap().get(PE226_SIGN_TOWN).setValue(contract.getWorkPlace().getAddress().getCity());
 				dateFormatter.applyPattern("dd");
-				getPdfFieldsMap().get(PE226_SING_DAY).setValue(dateFormatter.format(contract.getStartDate()));
+				getPdfFieldsMap().get(PE226_SIGN_DAY).setValue(dateFormatter.format(contract.getStartDate()));
 				dateFormatter.applyPattern("MMMM");
 				getPdfFieldsMap().get(PE226_SIGN_MONTH).setValue(dateFormatter.format(contract.getStartDate()));
 				dateFormatter.applyPattern("yy");
