@@ -512,8 +512,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		if ( controller.isShowNewMessageWindow() ) {
 			try {
 				controller.onNewMessage(event);
-				PurchaseReportManager purchaseReportManager = (PurchaseReportManager) AonUtil.getRegisteredBean(PURCHASE_REPORT_CONTROLLER_NAME);
-				purchaseReportManager.setValued(true);
+				this.refresh(event);
 				fireBeforeEmailSend(event, getTo());
 				emailUtil.initMessageController(controller, (Purchase) getTo(), getMoreRecipients());
 			} catch ( Throwable e ) {
