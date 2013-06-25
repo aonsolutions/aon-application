@@ -11,12 +11,11 @@
 
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-		<jasperReportsArtifact>jasperreports-javaflow</jasperReportsArtifact>
-		<jasperReportsVersion>4.5.1</jasperReportsVersion>
+		<jasperReportsArtifact>jasperreports</jasperReportsArtifact>
+		<jasperReportsVersion>5.1.0</jasperReportsVersion>
         <jasperreportsMavenPluginGroup>com.esferalia.aon</jasperreportsMavenPluginGroup>
         <jasperreportsMavenPluginArtifact>aon-maven-plugin</jasperreportsMavenPluginArtifact>
-		<jasperreportsMavenPluginVersion>7.2-SNAPSHOT</jasperreportsMavenPluginVersion>
-		<jasperreportsMavenPluginCompiler>net.sf.jasperreports.engine.design.JRJavacCompiler</jasperreportsMavenPluginCompiler>
+		<jasperreportsMavenPluginVersion>7.20-SNAPSHOT</jasperreportsMavenPluginVersion>
         <maven-build-utils.activationProfiles>perform-stats</maven-build-utils.activationProfiles>
 	</properties>
 
@@ -155,6 +154,7 @@
 		<module>aon-common-resources</module>
 		<module>aon.python</module>
 		<module>aon.aeat.mipf</module>
+		<module>aon-jasperreports</module>
 	</modules>
 
 	<scm>
