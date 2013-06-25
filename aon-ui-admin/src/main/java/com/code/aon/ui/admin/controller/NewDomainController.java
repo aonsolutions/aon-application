@@ -10,6 +10,7 @@ import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
+import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -68,6 +69,7 @@ public class NewDomainController {
 	private boolean domainManagement;
 	private DomainType type;
 	private String owner;
+	private Date expirationDate;
 	
 	private IControllerListener templateDomainFilter;
 	
@@ -152,6 +154,14 @@ public class NewDomainController {
 
 	public void setOwner(String owner) {
 		this.owner = owner;
+	}
+	
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
 	}
 	
 	public void onInit( ActionEvent event) {
@@ -296,6 +306,7 @@ public class NewDomainController {
 		domain.setDescription(description);
 		domain.setEnableHeredity( isEnableHeredity() );
 		domain.setMaxDefinedUsers(0);
+		domain.setExpirationDate(getExpirationDate());
 		if ( isDomainManagement() ) {
 			domain.setSubDomainSuffix(name);
 		}

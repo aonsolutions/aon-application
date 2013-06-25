@@ -48,7 +48,7 @@
 					</c:if>
 					<c:if test="#{aonRole.sysAdmin and (domainSwitcher.type != 'ADMIN')}">						
 						<aon:selectOneMenu id="Domain_type" 
-							value="#{adminDomain.to.type}">
+							required="true" value="#{adminDomain.to.type}">
 							<f:selectItems value="#{adminCollections.newDomainTypes}" />
 						</aon:selectOneMenu>		
 					</c:if>						
@@ -63,7 +63,14 @@
 					<c:if test="#{aonRole.sysAdmin}">
 						<aon:inputText id="Domain_name" required="true"
 							validator="#{adminDomain.domainNameCheck}"
-							size="64" maxlength="#{adminDomain.maxDomainNameLength}" value="#{adminDomain.to.name}" />		
+							size="64" maxlength="#{adminDomain.maxDomainNameLength}" value="#{adminDomain.to.name}" />
+
+						<aon:outputLabel for="Domain_owner"
+							value="#{adminBundle.admin_new_domain_owner}" />
+						<aon:inputText id="Domain_owner" size="90" maxlength="256"
+							validator="#{adminDomain.ownerCheck}" required="true"
+							value="#{adminDomain.to.owner}" />
+									
 						<c:if test="#{!domainSwitcher.childDomain}" >							
 							<aon:outputLabel for="Domain_subDomainSuffix"
 								value="#{adminBundle.admin_domain_subDomainSuffix}" />
@@ -91,6 +98,13 @@
 					</c:if>								
 
 					<c:if test="#{aonRole.sysAdmin}" >
+						<aon:outputLabel for="Domain_expirationDate"
+							value="#{adminBundle.admin_domain_expiration}" />
+						<aon:selectInputDate id="Domain_expirationDate" 
+							value="#{adminDomain.to.expirationDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+											
 						<aon:outputLabel for="Domain_active"
 							value="#{bundle.aon_active}" />
 						<aon:selectBooleanCheckbox id="Domain_active"
@@ -100,12 +114,6 @@
 							value="#{adminBundle.admin_domain_disableDomainManagement}" />
 						<aon:selectBooleanCheckbox id="Domain_disableDomainManagement"
 							value="#{adminDomain.to.disableDomainManagement}" />								
-
-						<aon:outputLabel for="Domain_owner"
-							value="#{adminBundle.admin_new_domain_owner}" />
-						<aon:inputText id="Domain_owner" size="90" maxlength="256"
-							validator="#{adminDomain.ownerCheck}"
-							value="#{adminDomain.to.owner}" />
 
 						<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{adminDomain.to.parent}" />

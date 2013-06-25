@@ -1,5 +1,7 @@
 package com.code.aon.jaas.auth.spi.db;
 
+import java.util.Date;
+
 public class Domain extends BasicInfo {
 	
 	private String dataBaseName;
@@ -7,6 +9,8 @@ public class Domain extends BasicInfo {
 	private String name;
 	
 	private Integer parent;
+	
+	private Date expirationDate;
 
 	public String getDataBaseName() {
 		return dataBaseName;
@@ -30,6 +34,14 @@ public class Domain extends BasicInfo {
 
 	public void setParent(Integer parent) {
 		this.parent = parent;
+	}
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
 	}
 	
 }

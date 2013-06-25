@@ -6,6 +6,7 @@ import java.security.Principal;
 import java.security.acl.Group;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -88,6 +89,9 @@ public class LoginModule extends UsernamePasswordLoginModule {
 			}
 			if (! domain.isActive() ) {
 				throw new AuthenticationLoginException( "aon_login_domain_inactive", domain.getName() );	
+			}
+			if ( (domain.getExpirationDate() != null) && new Date().after(domain.getExpirationDate()) ) {
+				throw new AuthenticationLoginException( "aon_login_domain_expirate", domain.getName() );
 			}
 			principal.setDomain(domainName);
 			principal.setDomainId(domain.getId());

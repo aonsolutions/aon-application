@@ -69,7 +69,7 @@ public class Util {
 		try {
 			ResultSetHandler<Domain> h = new BeanHandler<Domain>(Domain.class);
 			Domain domain = run.query( connection,
-				    "SELECT id, name, parent, active FROM " + DB_SEP + dbName + DB_SEP + ".domain WHERE name =?", h, domainName); 
+				    "SELECT id, name, parent, active, expirationDate FROM " + DB_SEP + dbName + DB_SEP + ".domain WHERE name =?", h, domainName); 
 			LOGGER.debug( "Get domain {} id from {}", domainName, dbName );
 			if ( domain != null ) {
 				domain.setDataBaseName(dbName);
