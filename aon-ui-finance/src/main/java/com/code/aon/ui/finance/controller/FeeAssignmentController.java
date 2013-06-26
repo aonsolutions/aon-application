@@ -12,6 +12,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.enumeration.BillingPeriod;
@@ -21,6 +22,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.company.controller.CompanyCollectionsController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.customer.controller.CustomerListController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -62,6 +65,7 @@ public class FeeAssignmentController extends CustomerListController {
 	}
 
 	private void initializeFee() {
+		CompanyCollectionsController companyCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		try {
 			setFee(new CustomerFee());
 			getFee().setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
@@ -72,6 +76,9 @@ public class FeeAssignmentController extends CustomerListController {
 			getFee().setPeriod(BillingPeriod.NO_PERIOD);
 			getFee().setSecurityLevel(SecurityLevel.OFFICIAL);
 			getFee().setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
+			if (companyCollections.getCurrentUserWorkPlacesCount() == 1) {
+				getFee().setWorkPlace((WorkPlace)companyCollections.getCurrentUserWorkPlaceList().get(0));
+			}
 		} catch (ManagerBeanException ex) {
 			throw new AbortProcessingException("Error al Inicializar la Cuota.");
 		}
