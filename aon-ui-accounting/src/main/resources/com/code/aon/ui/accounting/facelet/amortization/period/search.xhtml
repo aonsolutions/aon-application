@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -29,16 +30,32 @@
 						value="#{periodAmortization.period}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{accountingCollections.activeAccountPeriods}" />
+						<a4j:support event="onchange" actionListener="#{periodAmortization.onPeriodChanged}" 
+							reRender="date-search" ajaxSingle="true" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Amortization_month"
-						value="#{bundle.aon_month}" />
-					<aon:selectOneMenu id="Amortization_month"  
-						value="#{periodAmortization.month}">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{commonCollections.months}" />
-					</aon:selectOneMenu>
-										
+					<aon:outputText value="#{bundle.aon_date_select}" />
+					<aon:div id="date-search">
+						<aon:outputLabel
+							for="AccountEntryDetail_accountEntry_entryDate-From"
+							styleClass="aon-form-date-label aon-margin-left aon-margin-right"
+							value="#{bundle.aon_date_from}" />
+						<aon:selectInputDate
+							id="AccountEntryDetail_accountEntry_entryDate-From"
+							value="#{periodAmortization.fromDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+				
+						<aon:outputLabel
+							for="AccountEntryDetail_accountEntry_entryDate-To"
+							styleClass="aon-form-date-label aon-margin-left aon-margin-right"
+							value="#{bundle.aon_date_to}" />
+						<aon:selectInputDate
+							id="AccountEntryDetail_accountEntry_entryDate-To"
+							value="#{periodAmortization.toDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+					</aon:div>
 									
 				</ui:define>
 			</ui:decorate>

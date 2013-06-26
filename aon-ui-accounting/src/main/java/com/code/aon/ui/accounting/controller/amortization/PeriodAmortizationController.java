@@ -19,7 +19,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -34,7 +33,11 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class PeriodAmortizationController extends BasicController {
 
 	private Period period;
-	private Month month;
+	private Date fromDate;
+	private Date toDate;
+	private boolean pendingStatus;
+	private boolean scoredStatus;
+	private boolean blockedStatus;
 	
 	private double accumulated;
 	private double pending;
@@ -59,16 +62,48 @@ public class PeriodAmortizationController extends BasicController {
 	public Period getPeriod() {
 		return period;
 	}
-
 	public void setPeriod(Period period) {
 		this.period = period;
 	}
-	
-	public Month getMonth() {
-		return month;
+
+	public Date getFromDate() {
+		return fromDate;
 	}
-	public void setMonth(Month month) {
-		this.month = month;
+
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
+
+	public boolean isPendingStatus() {
+		return pendingStatus;
+	}
+
+	public void setPendingStatus(boolean pendingStatus) {
+		this.pendingStatus = pendingStatus;
+	}
+
+	public boolean isScoredStatus() {
+		return scoredStatus;
+	}
+
+	public void setScoredStatus(boolean scoredStatus) {
+		this.scoredStatus = scoredStatus;
+	}
+
+	public boolean isBlockedStatus() {
+		return blockedStatus;
+	}
+
+	public void setBlockedStatus(boolean blockedStatus) {
+		this.blockedStatus = blockedStatus;
 	}
 
 	@Override
@@ -77,14 +112,17 @@ public class PeriodAmortizationController extends BasicController {
 			clearCriteria();
 			String alias = getFieldName(IEntityAlias.AMORTIZATION_DETAIL_TO_DATE);
 			Date fromDate = getPeriod().getInitiationDate();
+			if (getFromDate() != null ) {
+				fromDate = getFromDate();
+			}
 			Date toDate = getPeriod().getDeadline();
-			if ( getMonth() != null ) {
-				int year = CommonUtil.getYear(fromDate);
-				fromDate = CommonUtil.getDate(year, getMonth().getValue(), 1);
-				toDate = CommonUtil.getMonthLastDay(fromDate);
+			if (getToDate() != null ) {
+				toDate = getToDate();
 			}
 			getCriteria().addGreaterThanOrEqualExpression(alias, fromDate);
 			getCriteria().addLessThanOrEqualExpression(alias, toDate);
+			getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.AMORTIZATION_DETAIL_STATUS), AmortizationDetailStatus.BLOCKED);
+			System.out.println(getCriteria());
 			super.onSearch(event);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -115,7 +153,6 @@ public class PeriodAmortizationController extends BasicController {
 			if (list != null && list.size() > 0 && list.get(0) != null) {
 				accumulated = (Double) list.get(0);	
 			}
-			//double pending = CommonUtil.round(a.getAmount() - accumulated - detail.getAllocation());
 			double pending = CommonUtil.round(a.getAmount() - accumulated);
 			
 			detail.setAccumulated(accumulated);
@@ -313,5 +350,14 @@ public class PeriodAmortizationController extends BasicController {
 		} catch (ManagerBeanException e) {
 		}
 		return "???????";
+	}
+	
+	public void onPeriodChanged(ActionEvent event) {
+		setFromDate(null);
+		setToDate(null);
+		if (getPeriod() != null) {
+			setFromDate(getPeriod().getInitiationDate());	
+			setToDate(getPeriod().getDeadline());
+		}
 	}
 }

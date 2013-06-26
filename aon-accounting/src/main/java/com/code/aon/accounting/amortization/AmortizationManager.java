@@ -1,6 +1,7 @@
 package com.code.aon.accounting.amortization;
 
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -28,6 +29,13 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class AmortizationManager {
 
+	private boolean brokenPeriod;
+	private int brokenPeriodFirstDay;
+	private int brokenPeriodFirstMonth;
+	private int brokenPeriodLastDay;
+	private int brokenPeriodLastMonth;
+	
+	
 	public void deleteDetails(Amortization a) {
 		a.getDetails().clear();
 	}
@@ -130,18 +138,43 @@ public class AmortizationManager {
 	}
 
 	private Date getPeriodLastDay(Date date, AmortizationPeriod feePeriod) {
-		if (feePeriod == AmortizationPeriod.MONTHLY) {
-			return  CommonUtil.getMonthLastDay(date);	
-		} else  if (feePeriod == AmortizationPeriod.BI_MONTHLY) {
-			return  CommonUtil.getBiMonthLastDay(date);	
-		} else  if (feePeriod == AmortizationPeriod.QUARTERLY) {
-			return  CommonUtil.getQuarterLastDay(date);	
-		} else  if (feePeriod == AmortizationPeriod.FOUR_MONTHLY) {
-			return  CommonUtil.getFourMonthLastDay(date);	
-		} else  if (feePeriod == AmortizationPeriod.HALF_YEARLY) {
-			return  CommonUtil.getHalfYearLastDay(date);	
+		Date lastDay;
+		if (feePeriod == AmortizationPeriod.YEARLY) {
+			if (brokenPeriod) {
+				lastDay = getBrokenPeriodLastDay(date);
+			} else {
+				lastDay = CommonUtil.getYearLastDay(date);
+			}
+		} else {
+			if (feePeriod == AmortizationPeriod.MONTHLY) {
+				lastDay = CommonUtil.getMonthLastDay(date);
+			} else  if (feePeriod == AmortizationPeriod.BI_MONTHLY) {
+				lastDay = CommonUtil.getBiMonthLastDay(date);	
+			} else  if (feePeriod == AmortizationPeriod.QUARTERLY) {
+				lastDay = CommonUtil.getQuarterLastDay(date);	
+			} else  if (feePeriod == AmortizationPeriod.FOUR_MONTHLY) {
+				lastDay = CommonUtil.getFourMonthLastDay(date);	
+			} else  { // SEMESTRE
+				lastDay = CommonUtil.getHalfYearLastDay(date);	
+			} 
+			if (brokenPeriod) {
+				Date brokenPeriodLastDay = getBrokenPeriodLastDay(date);
+				if ( lastDay.after( brokenPeriodLastDay) ) {
+					lastDay = brokenPeriodLastDay;
+				}
+			}
 		}
-		return  CommonUtil.getYearLastDay(date);
+		return lastDay; 
+	}
+	private Date getBrokenPeriodLastDay(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.set(Calendar.DAY_OF_MONTH, brokenPeriodLastDay);
+		c.set(Calendar.MONTH, brokenPeriodLastMonth);
+		if ( date.after(c.getTime())) {
+			c.set(Calendar.YEAR , c.get(Calendar.YEAR ) + 1);	
+		}
+		return c.getTime();
 	}
 
 	private Date getPeriodFirstDay(Date date,AmortizationPeriod feePeriod) {
@@ -155,6 +188,13 @@ public class AmortizationManager {
 			return  CommonUtil.getFourMonthFirstDay(date);	
 		} else  if (feePeriod == AmortizationPeriod.HALF_YEARLY) {
 			return  CommonUtil.getHalfYearFirstDay(date);	
+		}
+		if (brokenPeriod) {
+			Calendar c = Calendar.getInstance();
+			c.setTime(date);
+			c.set(Calendar.DAY_OF_MONTH, brokenPeriodFirstDay);
+			c.set(Calendar.MONTH, brokenPeriodFirstMonth);
+			return c.getTime();
 		}
 		return CommonUtil.getYearFirstDay(date);
 	}
@@ -186,16 +226,35 @@ public class AmortizationManager {
 		return last;
 	}
 
-	private void ensureParams(Amortization a) {
+	private void ensureParams(Amortization a) throws ManagerBeanException {
 		if (a.getInitialDate() == null) {
 			throw new IllegalArgumentException("Initial Date can not be null");
 		}
-//		if (a.getAmortizationType() == null) {
-//			throw new IllegalArgumentException("Amortization Type can not be null");
-//		}
 		if (a.getAmount() == null) {
 			throw new IllegalArgumentException("Amount can not be null");
 		}
+		brokenPeriod = false;
+		brokenPeriodFirstDay = -1;
+		brokenPeriodFirstMonth = -1;
+		brokenPeriodLastDay = -1;
+		brokenPeriodLastMonth = -1;
+		IManagerBean bean = BeanManager.getManagerBean(Period.class);
+		List<ITransferObject> list = bean.getList(null);
+		if ( list != null && list.size() > 0 ) {
+			Period period = (Period) list.get(0);
+			Date first = period.getInitiationDate();
+			if (!DateUtils.isSameDay(CommonUtil.getYearFirstDay(first),first)) {
+				brokenPeriod = true;
+				Calendar c = Calendar.getInstance();
+				c.setTime(first);
+				brokenPeriodFirstDay = c.get(Calendar.DAY_OF_MONTH);
+				brokenPeriodFirstMonth = c.get(Calendar.MONTH);
+				c.setTime(period.getDeadline());
+				brokenPeriodLastDay = c.get(Calendar.DAY_OF_MONTH);
+				brokenPeriodLastMonth = c.get(Calendar.MONTH);
+			}
+		}
+		
 	}
 
 	private int getAmortizationDays(int currentYear,double years) {

@@ -39,6 +39,7 @@
 						value="#{accountingBundle.accounting_record}"
 						onclick="if (!confirm('#{accountingBundle.accounting_record}?')) return false;"
 						styleClass="aon-finding-toolbar-item aon-icon-task-assume" />
+						
 					<aon:commandButton actionListener="#{periodAmortization.onUnrecord}"
 						title="#{accountingBundle.accounting_unrecord}"
 						value="#{accountingBundle.accounting_unrecord}"
@@ -49,7 +50,7 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:dataTable id="amortizationDataList"
+				<aon:dataTable id="amortizationDataList" style="font-size: 0.9em;"
 					value="#{periodAmortization.calculatedModel}" rows="500" var="to"
 					rendered="#{periodAmortization.model.rowCount > 0}">
 
@@ -88,16 +89,16 @@
 						</rich:columnGroup>
 					</f:facet>
 
-					<aon:column styleClass="aon-editDataTable-textColumn">
+					<aon:column styleClass="aon-editDataTable-iconColumn">
 						<f:facet name="header">
-							<aon:div lyou="none">
+							<aon:div layout="none">
 								<aon:commandLink id="selectButton"
-									value="&#160;" style="padding-right: 16px;"
+									value="&#160;" style="padding-right: 16px; padding-top: 5px;"
 									styleClass="aon-icon-checkAll aon-vertical-align-top"
 									actionListener="#{periodAmortization.onCheckAll}" 
 									reRender="amortizationDataList"/>
 								<aon:commandLink id="unselectButton"
-									value="&#160;" style="padding-right: 16px;"
+									value="&#160;" style="padding-right: 16px; padding-top: 5px;"
 									styleClass="aon-icon-checkNone aon-vertical-align-top"
 									actionListener="#{periodAmortization.onUncheckAll}" 
 									reRender="amortizationDataList"/>
@@ -106,9 +107,9 @@
 						<aon:selectBooleanCheckbox value="#{to.checked}" />
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-textColumn">
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
 						<f:facet name="header">
-							<aon:outputText value="#{accountingBundle.accounting_recorded}" />
+							<aon:outputText value="#{bundle.aon_status}" />
 						</f:facet>
 						<aon:outputText value="#{to.status}" rendered="#{!to.scored}" />
 						<aon:commandLink id="accountEntry-search" 
@@ -123,18 +124,18 @@
 
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-textColumn">
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" >
 						<f:facet name="header">
 							<aon:outputText
-								value="#{accountingBundle.accounting_fixed_asset_account}" />
+								value="#{bundle.aon_description}" />
 						</f:facet>
-						<aon:outputText
-							value="#{to.amortization.fixedAssetAccount.fullDescription}">
-							<aon:abbreviateConverter maxWidth="50" />
+						<aon:outputText style="font-size: 0.9em;"
+							value="#{to.amortization.description}">
+							<aon:abbreviateConverter maxWidth="35" />
 						</aon:outputText>
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-textColumn">
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_date_from}" />
 						</f:facet>
@@ -145,7 +146,7 @@
 						</aon:outputText>
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-numberColumn">
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_amount}" />
 						</f:facet>
@@ -154,7 +155,7 @@
 						</aon:outputText>
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-numberColumn">
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 						<f:facet name="header">
 							<aon:outputText
 								value="#{accountingBundle.accounting_coefficient}" />
@@ -162,16 +163,9 @@
 						<aon:outputText value="#{to.amortization.percentage}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
-<!-- 
-						<aon:outputText value="% (" />
-						<aon:outputText value="#{to.amortization.years}">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
-						<aon:outputText value=")" />
- -->
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-textColumn">
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_date_from}" />
 						</f:facet>
@@ -182,7 +176,7 @@
 						</aon:outputText>
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-textColumn">
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_date_to}" />
 						</f:facet>
@@ -193,7 +187,7 @@
 						</aon:outputText>
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-numberColumn">
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_percentage}" />
 						</f:facet>
@@ -203,7 +197,7 @@
 						<aon:outputText value="%" />
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-numberColumn">
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 						<f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_allocation}" />
 						</f:facet>
@@ -212,7 +206,7 @@
 						</aon:outputText>
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-numberColumn">
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 						<f:facet name="header">
 							<aon:outputText
 								value="#{accountingBundle.accounting_accumulated}" />
@@ -222,7 +216,7 @@
 						</aon:outputText>
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-numberColumn">
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 						<f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_pending}" />
 						</f:facet>
