@@ -2,12 +2,15 @@ package com.code.aon.ui.finance.controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
+import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +25,31 @@ import com.code.aon.ui.util.AonUtil;
 public class FinancePaymentPrintController implements ICollectionProvider, IFinanceConstants {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(FinancePaymentPrintController.class);
+	
+	private final String REPORT_TEMPLATE_1 = "fPaymentList";
+	private final String REPORT_TEMPLATE_2 = "fPaymentListTemplate2";
 
 	private ArrayList<Finance> checks = new ArrayList<Finance>();
+	
+	private String selectedTemplate;
+	
+	public String getSelectedTemplate() {
+		if(StringUtils.isBlank(selectedTemplate)){
+			selectedTemplate = REPORT_TEMPLATE_1;
+		}
+		return selectedTemplate;
+	}
+
+	public void setSelectedTemplate(String selectedTemplate) {
+		this.selectedTemplate = selectedTemplate;
+	}
+	
+	public List<SelectItem> getAvailableTemplates(){
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		list.add(new SelectItem(REPORT_TEMPLATE_1, "Plantilla 1"));
+		list.add(new SelectItem(REPORT_TEMPLATE_2, "Plantilla 2"));
+		return list;
+	}
 
 	private DataModel getModel() {
 		FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
@@ -89,14 +115,15 @@ public class FinancePaymentPrintController implements ICollectionProvider, IFina
 	
 	public void onExecuteReport(){
 		ReportManager report = (ReportManager) AonUtil.getRegisteredBean("report");
+		report.setReportKey(getSelectedTemplate());
 		report.onExecute();
-		clearCheckedFinances();
 	}
 	
 	public void onEditSearchPayment(ActionEvent event){
 		FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
 		financeController.onEditSearchPayment(event);
 		clearCheckedFinances();
+		setSelectedTemplate(null);
 	}
 	
 	@Override
