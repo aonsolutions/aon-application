@@ -25,8 +25,9 @@ public class ContractAttachControllerListener extends AttachmentControllerListen
 			if ( controller.getType() != null ) {
 				criteria.addEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), controller.getType());
 			}
-			criteria.addNotEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA_RESPONSE);
-			criteria.addNotEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA_STATUS);
+			// TODO: excluir ficheros SEPE del modelo
+//			criteria.addNotEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA_RESPONSE);
+//			criteria.addNotEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA_STATUS);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException("Error before model Initialized",e);
 		}
