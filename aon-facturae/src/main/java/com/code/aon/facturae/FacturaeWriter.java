@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -30,6 +31,7 @@ import com.code.aon.geozone.GeoTree;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.IAddress;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
@@ -135,21 +137,21 @@ public class FacturaeWriter {
 		return result;
 	}
 	
-	private AddressType getAddress( RegistryAddress registryAddress, CountryType country ) {
-		AddressType address = new AddressType();
-		address.setAddress( registryAddress.getFullAddress() );
-		address.setPostCode( Util.toPostCodeType(registryAddress.getZip()) );
-		address.setTown( registryAddress.getCity() );
-		address.setProvince( registryAddress.getGeozone().getName() );
-		address.setCountryCode( country );
-		return address;
+	private AddressType getAddress( IAddress address, CountryType country ) {
+		AddressType addressType = new AddressType();
+		addressType.setAddress( address.getFullAddress() );
+		addressType.setPostCode( Util.toPostCodeType(address.getZip()) );
+		addressType.setTown( address.getCity() );
+		addressType.setProvince( address.getGeozone().getName() );
+		addressType.setCountryCode( country );
+		return addressType;
 	}
 	
-	private OverseasAddressType getOverseasAddress( RegistryAddress registryAddress, CountryType country ) {
+	private OverseasAddressType getOverseasAddress( IAddress address, CountryType country ) {
 		OverseasAddressType overseasAddress = new OverseasAddressType();
-		overseasAddress.setAddress( registryAddress.getFullAddress() );
-		overseasAddress.setPostCodeAndTown( registryAddress.getZip() + " " + registryAddress.getCity() );
-		overseasAddress.setProvince( registryAddress.getGeozone().getName() );
+		overseasAddress.setAddress( address.getFullAddress() );
+		overseasAddress.setPostCodeAndTown( address.getZip() + " " + address.getCity() );
+		overseasAddress.setProvince( address.getGeozone().getName() );
 		overseasAddress.setCountryCode( country );
 		return overseasAddress;
 	}
@@ -252,17 +254,16 @@ public class FacturaeWriter {
 		return contactDetails;
 	}
 	
-	private IndividualType getIndividual( Registry registry, String name, RegistryAddress registryAddress ) throws ManagerBeanException {
+	private IndividualType getIndividual( Registry registry, String name, IAddress address ) throws ManagerBeanException {
 		IndividualType individualType = new IndividualType();
 		individualType.setName( Util.toTextMax40Type(name) );
-                // commented out by rtrepiana. surname has been removed from regitry ( now only at person )
-		//String surname = StringUtils.defaultString(registry.getSurname());
-		//individualType.setFirstSurname( Util.toTextMax40Type(surname) );
-		CountryType country = getCountry(registryAddress.getGeozone());
-		if ( CountryType.ESP.equals(country) ) {
-			individualType.setAddressInSpain( getAddress(registryAddress, country) );	
-		} else {
-			individualType.setOverseasAddress( getOverseasAddress(registryAddress, country) );
+		if ( address != null ) {
+			CountryType country = getCountry(address.getGeozone());
+			if ( CountryType.ESP.equals(country) ) {
+				individualType.setAddressInSpain( getAddress(address, country) );	
+			} else {
+				individualType.setOverseasAddress( getOverseasAddress(address, country) );
+			}			
 		}
 		individualType.setContactDetails( getContactDetails(registry) );
 		return individualType;
@@ -290,7 +291,7 @@ public class FacturaeWriter {
 		return registrationData;
 	}
 	
-	private LegalEntityType getLegalEntity( Registry registry, String name, RegistryAddress registryAddress ) throws ManagerBeanException {
+	private LegalEntityType getLegalEntity( Registry registry, String name, IAddress address ) throws ManagerBeanException {
 		LegalEntityType legalEntityType = new LegalEntityType();
 		legalEntityType.setCorporateName(name);
 		legalEntityType.setTradeName(registry.getAlias());
@@ -298,17 +299,19 @@ public class FacturaeWriter {
 		if ( recordData != null ) {
 			legalEntityType.setRegistrationData( getRegistrationData(recordData) );
 		}
-		CountryType country = getCountry(registryAddress.getGeozone());
-		if ( CountryType.ESP.equals(country) ) {
-			legalEntityType.setAddressInSpain( getAddress(registryAddress, country) );	
-		} else {
-			legalEntityType.setOverseasAddress( getOverseasAddress(registryAddress, country) );
+		if ( address != null ) {
+			CountryType country = getCountry(address.getGeozone());
+			if ( CountryType.ESP.equals(country) ) {
+				legalEntityType.setAddressInSpain( getAddress(address, country) );	
+			} else {
+				legalEntityType.setOverseasAddress( getOverseasAddress(address, country) );
+			}			
 		}
 		legalEntityType.setContactDetails( getContactDetails(registry) );
 		return legalEntityType;
 	}
 	
-	private BusinessType getBusinessType( Registry registry, String name, String document, RegistryAddress registryAddress ) throws ManagerBeanException {
+	private BusinessType getBusinessType( Registry registry, String name, String document, IAddress address ) throws ManagerBeanException {
 		BusinessType party = new BusinessType();
 		TaxIdentificationType taxIdentification = new TaxIdentificationType();
 		PersonTypeCodeType personType = getPersonTypeCode(registry);
@@ -318,9 +321,9 @@ public class FacturaeWriter {
 		party.setTaxIdentification(taxIdentification);
 		party.setPartyIdentification( String.valueOf(registry.getId()) );
 		if ( personType == PersonTypeCodeType.F ) {
-			party.setIndividual( getIndividual(registry, name, registryAddress) );
+			party.setIndividual( getIndividual(registry, name, address) );
 		} else {
-			party.setLegalEntity( getLegalEntity(registry, name, registryAddress) );
+			party.setLegalEntity( getLegalEntity(registry, name, address) );
 		}
 		return party;
 	}
@@ -362,11 +365,11 @@ public class FacturaeWriter {
 		Registry registry = invoice.getRegistry();
 		String name = StringUtils.defaultIfEmpty(invoice.getRegistryName(), registry.getName());
 		String document = StringUtils.defaultIfEmpty(invoice.getRegistryDocument(), registry.getDocument());
-		RegistryAddress registryAddress = invoice.getRegistryAddress();
-		if ( registryAddress == null ) {
-			registryAddress = registry.getDefaultAddress();
+		IAddress address = invoice.getAddress();
+		if ( address == null ) {
+			address = registry.getDefaultAddress();
 		}
-		return getBusinessType(registry, name, document, registryAddress);
+		return getBusinessType(registry, name, document, address);
 	}
 	
 	private PartiesType getParties() throws ManagerBeanException {
@@ -638,7 +641,7 @@ public class FacturaeWriter {
 		this.pmsUtil = new PmsUtil(invoice);
 	}
 	
-	public void serialize( Invoice invoice, String fileName ) {
+	public void serialize( Invoice invoice, String fileName ) throws AonException {
 		boolean initTransState = HibernateUtil.mustBeginTransaction();
 		boolean initSessionState = HibernateUtil.mustCloseSession();
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
@@ -652,12 +655,13 @@ public class FacturaeWriter {
 	    	if ( pmsUtil.isAddExtensions() ) {
 	    		pmsUtil.transform(fileName + FACTURAE_EXTENSION);
 	    	}
-		} catch (Throwable t ){
+		} catch (Throwable t ) {
 		    try {
 				HibernateUtil.rollbackTransaction(sessionFactoryName);
 			} catch (DAOException e) {
 				LOGGER.error(e.getMessage(), e);
 			}
+		    throw new AonException( t.getMessage(), t);
 		} finally {
 			if (initTransState != HibernateUtil.mustBeginTransaction()) {
 				HibernateUtil.setBeginTransaction(initTransState);

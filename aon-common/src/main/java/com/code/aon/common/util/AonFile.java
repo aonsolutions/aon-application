@@ -102,6 +102,11 @@ public class AonFile {
 		return -1;
 	}
 
+	public String getSizeToDisplay() {
+		long size = getSize();
+		return FileUtils.byteCountToDisplaySize((size >= 0) ? size : 0);
+	}
+	
 	/**
 	 * Sets the file name.
 	 * 

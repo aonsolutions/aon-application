@@ -113,5 +113,6 @@ public interface IFinanceConstants {
 	String FOOTER_TEXT_CONTENT_MSG_KEY_PREFIX = "finance_posInvoice_footerText_default";
 	String POS_RECEIPT = "finance_pos_receipt";
 	String POS_GIFT_RECEIPT = "finance_pos_gift_receipt";
+	String FACTURAE_ERROR = "finance_facturae_error";
 	
 }

@@ -178,7 +178,7 @@
 								<aon:dataTable value="#{webmailMessage.files}" rowKeyVar="row"
 									var="attachment" styleClass="aon-panelGrid-formatting">
 									<aon:column>
-										<aon:outputText value="#{attachment.fileName}" styleClass="aon-bold" />
+										<aon:outputText value="#{attachment.fileName} (#{attachment.sizeToDisplay})" styleClass="aon-bold" />
 										<aon:commandLink
 											reRender="attachDataTable#{messageSuffix}" 
 											value="#{bundle.aon_remove}"

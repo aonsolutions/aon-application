@@ -113,10 +113,8 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 			String filePath = invoiceFile.getAbsolutePath();
 			String fileName = FilenameUtils.getFullPath(filePath) + FilenameUtils.getBaseName(filePath);
 			fw.serialize(invoice, fileName);
-			if ( invoiceFile.length() > 0 ) {
-				data = FileUtils.readFileToByteArray(invoiceFile);
-			}
-		} catch (IOException e) {
+			data = FileUtils.readFileToByteArray(invoiceFile);
+		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		} finally {
 			FileUtils.deleteQuietly(invoiceFile);	

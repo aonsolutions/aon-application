@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonException;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
@@ -54,7 +55,10 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 		messageController.setSubject( getEmailSubject(invoice) );
 		messageController.addAttachment( getInvoiceFile(attach, invoice) );
 		if ( facturae ) {
-			messageController.addAttachment( getInvoiceXml(invoice) );	
+			AonFile xml = getInvoiceXml(invoice);
+			if ( xml != null ) {
+				messageController.addAttachment(xml);	
+			}	
 		}
 	}	
 	
@@ -111,11 +115,18 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 		FacturaeWriter fw = new FacturaeWriter( getCompany() );
 		String filePath = file.getAbsolutePath();
 		String fileName = FilenameUtils.getFullPath(filePath) + FilenameUtils.getBaseName(filePath);
-		fw.serialize(invoice, fileName);
-		AonFile aonFile = new AonFile();
-		aonFile.setFile(file);
-		aonFile.setFileName( "facturae.xml" );
-		aonFile.setMimeType(MimeType.MIME_XML);
+		AonFile aonFile = null;
+		try {
+			fw.serialize(invoice, fileName);
+			aonFile = new AonFile();
+			aonFile.setFile(file);
+			aonFile.setFileName( "facturae.xml" );
+			aonFile.setMimeType(MimeType.MIME_XML);
+		} catch (AonException e) {
+			LOGGER.error( e.getMessage(), e );
+			AonUtil.addErrorMessageFromBundle(BUNDLE_KEY, FACTURAE_ERROR, invoice.getReferenceCode());			
+			FileUtils.deleteQuietly(file);
+		}
 		return aonFile;
 	}
 	

@@ -89,8 +89,10 @@ public class EmailSender {
 	       	multipart.addBodyPart(mainPart);
 			if (! ArrayUtils.isEmpty(attachemnts) ) {
 				for ( AonFile file : attachemnts ) {
-					BodyPart bodyPart = WebmailUtil.getBodyPart(file);
-					multipart.addBodyPart(bodyPart);
+					if ( file != null ) {
+						BodyPart bodyPart = WebmailUtil.getBodyPart(file);
+						multipart.addBodyPart(bodyPart);						
+					}
 				}
 		       	if ( securityInfo != null ) {
 		       		multipart = EmailSecurity.sign( multipart, securityInfo );
