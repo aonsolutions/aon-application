@@ -489,12 +489,6 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>commons-javaflow</groupId>
-			<artifactId>commons-javaflow</artifactId>
-			<version>20060411</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.sun</groupId>
 			<artifactId>jimi</artifactId>
 			<version>1.0</version>
