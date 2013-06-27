@@ -29,12 +29,8 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.ProjectCommercial;
-import com.code.aon.commercial.Question;
-import com.code.aon.commercial.QuestionValue;
 import com.code.aon.commercial.Target;
-import com.code.aon.commercial.TargetProfile;
 import com.code.aon.commercial.enumeration.ProjectSource;
-import com.code.aon.commercial.enumeration.QuestionType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -57,11 +53,14 @@ import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.Question;
+import com.code.aon.registry.QuestionValue;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.RegistryProfile;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
-import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
+import com.code.aon.registry.enumeration.QuestionType;
 import com.code.aon.ui.commercial.controller.CommercialTrackingController;
 import com.code.aon.ui.commercial.controller.ProjectCommercialController;
 import com.code.aon.ui.commercial.event.ProjectCommercialSearchListener;
@@ -77,6 +76,7 @@ import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.groupware.controller.AlarmController;
 import com.code.aon.ui.mailing.MailData;
 import com.code.aon.ui.mailing.MailingManager;
+import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.WebmailException;
@@ -454,22 +454,22 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 	
 	private void updateTargetProfile() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(TargetProfile.class);
+		IManagerBean bean = BeanManager.getManagerBean(RegistryProfile.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TARGET_PROFILE_TARGET_ID), this.target.getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TARGET_PROFILE_QUESTION_ID), getQuestion().getId());
-		TargetProfile targetProfile = null;
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_PROFILE_REGISTRY_ID), this.target.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_PROFILE_QUESTION_ID), getQuestion().getId());
+		RegistryProfile registryProfile = null;
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {
-			targetProfile = (TargetProfile) list.get(0);
+			registryProfile = (RegistryProfile) list.get(0);
 		} else {
-			targetProfile = new TargetProfile();
-			targetProfile.setTarget( this.target );
-			targetProfile.setQuestion( getQuestion() );
+			registryProfile = new RegistryProfile();
+			registryProfile.setRegistry( this.target.getRegistry() );
+			registryProfile.setQuestion( getQuestion() );
 		}
-		targetProfile.setLastUpdate( new Date() );
-		this.response.copyValues(targetProfile);
-		bean.insertOrUpdate( targetProfile );
+		registryProfile.setLastUpdate( new Date() );
+		this.response.copyValues(registryProfile);
+		bean.insertOrUpdate( registryProfile );
 	}
 	
 	private void saveResponse() throws ManagerBeanException {	
@@ -487,7 +487,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 	
 	private void refreshQuestionValues( SurveyQuestion sq ) throws ManagerBeanException {
-		questionValues = CommercialCollectionsController.getQuestionValues(sq.getQuestion());
+		questionValues = RegistryCollectionsController.getQuestionValues(sq.getQuestion());
 		this.questionValueId = null;
 	}
 	

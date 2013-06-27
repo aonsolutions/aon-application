@@ -1,6 +1,5 @@
 package com.code.aon.ui.marketing.print;
 
-import static com.code.aon.ui.commercial.controller.ICommercialConstants.TARGET;
 import static com.code.aon.ui.common.ICommonConstants.COMMENT;
 import static com.code.aon.ui.common.ICommonConstants.COMPANY_DOCUMENT;
 import static com.code.aon.ui.common.ICommonConstants.ID;
@@ -10,6 +9,7 @@ import static com.code.aon.ui.marketing.controller.IMarketingConstants.ACTION_EX
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.BUNDLE_NAME;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.CAMPAIGN_ACTION_CONTROLLER_NAME;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.SURVEY;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.TARGET;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,9 +37,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.commercial.Question;
 import com.code.aon.commercial.Target;
-import com.code.aon.commercial.enumeration.QuestionType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -51,10 +49,13 @@ import com.code.aon.marketing.SurveyQuestion;
 import com.code.aon.marketing.SurveyResponse;
 import com.code.aon.marketing.SurveyResponseDetail;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Question;
+import com.code.aon.registry.enumeration.QuestionType;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.marketing.controller.IMarketingConstants;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -184,9 +185,9 @@ public class MarketingActionReport {
             sheet.setColumnWidth(3, 200*256);
             row = sheet.createRow(0);
             HSSFCellUtil.createCell(row, 0, AonUtil.getMessage(ID), headerCellStyle);
-            HSSFCellUtil.createCell(row, 1, AonUtil.getMessage(ICommercialConstants.BUNDLE_NAME, ICommercialConstants.QUESTION), headerCellStyle);
-            HSSFCellUtil.createCell(row, 2, AonUtil.getMessage(ICommercialConstants.BUNDLE_NAME, ICommercialConstants.QUESTION), headerCellStyle);
-            HSSFCellUtil.createCell(row, 3, AonUtil.getMessage(ICommercialConstants.BUNDLE_NAME, ICommercialConstants.QUESTION), headerCellStyle);
+            HSSFCellUtil.createCell(row, 1, AonUtil.getMessage(ICommercialConstants.BUNDLE_NAME, IRegistryConstants.QUESTION), headerCellStyle);
+            HSSFCellUtil.createCell(row, 2, AonUtil.getMessage(ICommercialConstants.BUNDLE_NAME, IRegistryConstants.QUESTION), headerCellStyle);
+            HSSFCellUtil.createCell(row, 3, AonUtil.getMessage(ICommercialConstants.BUNDLE_NAME, IRegistryConstants.QUESTION), headerCellStyle);
             rowIdx = 1;
 			for (Question q : getSurveyQuestionList()) {
 				row = sheet.createRow(rowIdx);

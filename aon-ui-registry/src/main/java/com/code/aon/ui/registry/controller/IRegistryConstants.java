@@ -31,6 +31,12 @@ public interface IRegistryConstants {
 	
 	String INVALID_EMAIL = "registry_invalid_email";
 	
+	String TARGET = "registry_target";
+
+	String QUESTION = "registry_question";
+	
+	String RESPONSE = "registry_response";
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************

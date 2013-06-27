@@ -5,11 +5,11 @@ import java.util.Map;
 
 import org.apache.commons.lang.ObjectUtils;
 
-import com.code.aon.commercial.Question;
-import com.code.aon.commercial.enumeration.QuestionType;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.SurveyResponse;
 import com.code.aon.marketing.SurveyResponseDetail;
+import com.code.aon.registry.Question;
+import com.code.aon.registry.enumeration.QuestionType;
 import com.code.aon.ui.util.AonUtil;
 
 public class QuestionValueReport {

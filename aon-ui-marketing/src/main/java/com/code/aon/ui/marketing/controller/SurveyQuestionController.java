@@ -16,8 +16,8 @@ import com.code.aon.marketing.SurveyQuestion;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 /**
@@ -57,7 +57,7 @@ public class SurveyQuestionController extends BasicController implements IMarket
 	}
 
 	private void refreshQuestionValues( SurveyQuestion sq ) throws ManagerBeanException {
-		questionValues = CommercialCollectionsController.getQuestionValues(sq.getQuestion());
+		questionValues = RegistryCollectionsController.getQuestionValues(sq.getQuestion());
 	}
 	
 	public boolean isShowSurveyWorkflowWindow() {
