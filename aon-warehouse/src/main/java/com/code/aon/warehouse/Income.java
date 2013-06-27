@@ -15,10 +15,12 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -33,7 +35,7 @@ import com.esferalia.aon.entity.master.IncomeDB;
 
 @Entity
 @Table(name="income", uniqueConstraints = @UniqueConstraint(columnNames={"supplier", "reference_code"}))
-public class Income extends IncomeDB implements ICalculableContainer, IBankAccountContainer, IPayMethod {
+public class Income extends IncomeDB implements ICalculableContainer, IBankAccountContainer, IPayMethod, IHeaderObject {
 	
 	private static final long serialVersionUID = 1L;
     private static final String DELIM = " ";
@@ -110,6 +112,39 @@ public class Income extends IncomeDB implements ICalculableContainer, IBankAccou
 			LOGGER.error("Error obtaining incomeDetail orderedList", e);
 		}
 		return null;
+	}
+	
+	
+	
+	
+	@Transient
+	public String getSeries() {
+		if (StringUtils.contains(getReferenceCode(), "/")) {
+			return StringUtils.substringBefore(getReferenceCode(), "/");
+		}
+		return null;
+	}
+
+	public void setSeries(String series) {
+
+	}
+
+	@Transient
+	public int getNumber() {
+		if (StringUtils.contains(getReferenceCode(), "/")) {
+			String after = StringUtils.substringAfter(getReferenceCode(), "/");
+			if (StringUtils.isNotEmpty(after)) {
+				try {
+					return Integer.parseInt(after);
+				} catch (NumberFormatException e) {
+					LOGGER.error("INCOME NO ES IHEADEROBJECT!", e);
+				}
+			}
+		}
+		return 0;
+	}
+
+	public void setNumber(int number) {
 	}
 
 }
