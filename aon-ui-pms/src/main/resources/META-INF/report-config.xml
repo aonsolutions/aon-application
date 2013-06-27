@@ -157,19 +157,4 @@
 		</params>
 	</report>
 	
-	<!--  ********* Reservation Sale Invoice ********* -->
-	<report id="selectedInvoice" description="Fee Hotel Invoice's Report Template">
-		<template path="/com/esferalia/aon/ui/pms/report/saleInvoice.jasper" />
-		<collection provider="#{selectedInvoice}" forceRefresh="true" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
-			<param id="pmsInvoicePrinter" value="#{pmsInvoicePrinter.getInstance}" />
-		</params>
-	</report>	
-
 </report-config>

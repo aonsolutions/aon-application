@@ -36,6 +36,7 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
@@ -501,13 +502,13 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	}
 
 	public void onRectifyInvoiceShow(ActionEvent event) {
-		if (!model.isRowAvailable()) {
-			setShowRectificationWindow(false);
-			String msg = "No se puede Abonar. Factura no disponible.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
 		try {
+			if (!getModel().isRowAvailable()) {
+				setShowRectificationWindow(false);
+				String msg = "No se puede Abonar. Factura no disponible.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
 			if (!PosUtils.isUserPosShiftOpened()) {
 				setShowRectificationWindow(false);
 				String msg = "No se puede Abonar. El Usuario no ha abierto la Caja.";
@@ -558,8 +559,8 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 
 	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
-			SelectedInvoiceController controller = (SelectedInvoiceController) AonUtil.getRegisteredBean(SELECTED_INVOICE_CONTROLLER_NAME);
-			controller.setTo((Invoice)getModel().getRowData());
+			SaleInvoiceController invoiceController = (SaleInvoiceController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+			invoiceController.load(event, ((Invoice)getModel().getRowData()).getId());
 		}
 	}
 

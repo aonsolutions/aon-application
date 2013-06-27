@@ -109,14 +109,16 @@
 			actionListener="#{controller.onLoadInvoice}"
 			reRender="aonContent">
 		</aon:commandLink>
-		<aon:htmlCommandLink id="invoiceReport"
+		<aon:htmlCommandLink id="invoiceReport" target="_blank"
 			styleClass="aon-icon-pdf"
 			value="&#160;&#160;&#160;&#160;&#160;&#160;" 
 			title="#{bundle.aon_report}"
 			rendered="#{!aonRole.financeOperator}" 
-			action="#{report.onExecute}" target="_blank"
+			action="#{saleInvoiceSigner.onReport}"
 			actionListener="#{controller.onPrintInvoice}">
-			<f:param name="reportKey" value="selectedInvoice" />
+			<f:param name="reportKey" value="#{company.saleInvoiceTemplateValue}" />
+			<f:setPropertyActionListener target="#{saleInvoiceSigner.reportKey}"
+				value="#{company.saleInvoiceTemplateValue}" />
 		</aon:htmlCommandLink>
 	</aon:column>
 

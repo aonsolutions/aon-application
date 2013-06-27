@@ -132,12 +132,15 @@
 					value="#{true}" />
 			</aon:commandButton>
 		</c:if>
-		<aon:htmlCommandLink id="reservationInvoice-report"
-			value="&#160;&#160;&#160;&#160;&#160;&#160;" title="#{bundle.aon_report}"
-			action="#{report.onExecute}" target="_blank"
-			actionListener="#{controller.onPrintInvoice}"
-			styleClass="aon-icon-pdf">
-			<f:param name="reportKey" value="selectedInvoice" />
+		<aon:htmlCommandLink id="reservationInvoice-report" target="_blank"
+			styleClass="aon-icon-pdf"
+			value="&#160;&#160;&#160;&#160;&#160;&#160;" 
+			title="#{bundle.aon_report}"
+			action="#{saleInvoiceSigner.onReport}"
+			actionListener="#{controller.onPrintInvoice}">
+			<f:param name="reportKey" value="#{company.saleInvoiceTemplateValue}" />
+			<f:setPropertyActionListener target="#{saleInvoiceSigner.reportKey}"
+				value="#{company.saleInvoiceTemplateValue}" />
 		</aon:htmlCommandLink>
 	</aon:column>
 

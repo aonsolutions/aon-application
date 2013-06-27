@@ -265,8 +265,10 @@ public class PosShiftController extends BasicController implements IFinanceConst
 	}
 
 	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {
-		//SelectedInvoiceController controller = (SelectedInvoiceController)AonUtil.getRegisteredBean(IPmsConstants.SELECTED_INVOICE_CONTROLLER_NAME);
-		//controller.setTo(((Finance)getFinanceModel().getRowData()).getInvoice());
+		if (getFinanceModel().isRowAvailable()) {
+			SaleInvoiceController invoiceController = (SaleInvoiceController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+			invoiceController.load(event, ((Finance)getFinanceModel().getRowData()).getInvoice().getId());
+		}
 	}
 
 

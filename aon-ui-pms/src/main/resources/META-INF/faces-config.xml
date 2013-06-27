@@ -1069,12 +1069,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 	
-	<managed-bean>
-		<managed-bean-name>selectedInvoice</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.pms.controller.SelectedInvoiceController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>				
-	</managed-bean>
-	
 	<!-- ************* PAYMENT CARD SETTLE ***************** -->
 	<managed-bean>
 		<managed-bean-name>paymentCardSettle</managed-bean-name>

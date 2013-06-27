@@ -39,6 +39,7 @@ import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
@@ -770,7 +771,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	public void onRectifyInvoiceShow(ActionEvent event) {
-		if (!invoiceModel.isRowAvailable()) {
+		if (!getInvoiceModel().isRowAvailable()) {
 			setShowRectificationWindow(false);
 			String msg = "No se puede Abonar. Factura no disponible.";
 			AonUtil.addErrorMessage(msg);
@@ -834,9 +835,9 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {
-		if (invoiceModel.isRowAvailable()) {
-			SelectedInvoiceController controller = (SelectedInvoiceController) AonUtil.getRegisteredBean(SELECTED_INVOICE_CONTROLLER_NAME);
-			controller.setTo((Invoice)getInvoiceModel().getRowData());
+		if (getInvoiceModel().isRowAvailable()) {
+			SaleInvoiceController invoiceController = (SaleInvoiceController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+			invoiceController.load(event, ((Invoice)getInvoiceModel().getRowData()).getId());
 		}
 	}
 
