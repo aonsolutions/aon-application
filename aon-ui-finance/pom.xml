@@ -132,6 +132,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.product</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.registry</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>

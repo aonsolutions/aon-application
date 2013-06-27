@@ -5,6 +5,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.customer.Customer;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
@@ -34,6 +36,8 @@ public class HotelControllerListener extends ControllerAdapter {
 		workPlace.setAddress(new RegistryAddress());
 		workPlace.getAddress().setId(0);
 		workPlace.getAddress().setStreetType(StreetType.CL);
+		workPlace.setCustomer(new Customer());
+		workPlace.getCustomer().setRegistry(new Registry());
 		hotel.setWorkPlace(workPlace);
 	}
 

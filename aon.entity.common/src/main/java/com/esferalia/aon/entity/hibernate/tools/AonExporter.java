@@ -306,6 +306,7 @@ public class AonExporter extends GenericExporter{
 		map.put("InvoiceDetail","com.code.aon.finance.InvoiceDetail");
 		map.put("InvoiceTax","com.code.aon.finance.InvoiceTax");
         map.put("Pos","com.code.aon.finance.Pos");
+        map.put("PosCatalogue","com.code.aon.finance.PosCatalogue");
         map.put("PosShift","com.code.aon.finance.PosShift");
         map.put("PosShiftCount","com.code.aon.finance.PosShiftCount");
 

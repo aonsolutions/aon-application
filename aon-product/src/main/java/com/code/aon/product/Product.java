@@ -31,8 +31,17 @@ public class Product extends ProductDB {
 	private static final long serialVersionUID = 1L;
 
 	private Set<Item> items = new HashSet<Item>();
-	
 	private Set<ProductTag> tags = new HashSet<ProductTag>();
+
+	@Transient
+	public String getShortName() {
+		return (getName().length() > 16) ? StringUtils.substring(getName(), 0, 16) : getName();
+	}
+
+	@Transient
+	public boolean isWithholding() {
+		return (getRetention() != null && getRetention().getId() != null);
+	}
 
     @OneToMany(mappedBy="product")
 	public Set<Item> getItems() {
@@ -47,11 +56,6 @@ public class Product extends ProductDB {
 	public void addItems(Item item) {
 		item.setProduct( this );
 		this.items.add( item );
-	}
-
-	@Transient
-	public boolean isWithholding() {
-		return (getRetention() != null && getRetention().getId() != null);
 	}
 
 	@OneToMany(mappedBy = "product", cascade={CascadeType.REMOVE})
@@ -70,11 +74,11 @@ public class Product extends ProductDB {
 		String alias = bean.getFieldName(IEntityAlias.PRODUCT_TAG_PRODUCT_ID);
 		criteria.addEqualExpression(alias, getId());
 		List<ITransferObject> list = bean.getList(criteria);
-		if (! list.isEmpty() ) {
+		if (!list.isEmpty()) {
 			Set<String> tags = new TreeSet<String>();
-			for( ITransferObject to : list ) {
+			for(ITransferObject to : list) {
 				ProductTag pt = (ProductTag) to;
-				tags.add( pt.getTag().getName() );
+				tags.add(pt.getTag().getName());
 			}
 			return StringUtils.join(tags, ", ");
 		}

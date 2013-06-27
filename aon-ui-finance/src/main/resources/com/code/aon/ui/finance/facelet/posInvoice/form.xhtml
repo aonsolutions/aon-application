@@ -28,9 +28,22 @@
 					<ui:param name="skipCancelButton" value="#{true}" />
 					<ui:param name="skipSearchButton" value="#{true}" />
 					<ui:param name="skipBackButton" value="#{true}" />
+					<ui:define name="beforeSpinToolbarContent">
+						<aon:outputText value="#{posInvoice.to.posShift.pos.workPlace.description}" styleClass="aon-margin-left aon-bold" />
+						<aon:outputText value="-" styleClass="aon-margin-left aon-margin-right aon-bold" />
+						<aon:outputText value="#{posInvoice.to.posShift.pos.name}" styleClass="aon-margin-right aon-bold" />
+
+						<aon:commandButton id="invoiceRegistryData" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-edit-add-user"
+							value="#{customerBundle.customer_customer}"
+							ajaxSingle="true">
+							<f:setPropertyActionListener target="#{posInvoice.showRegistryDataWindow}"
+								value="#{true}" />
+						</aon:commandButton>
+					</ui:define>
 				</ui:decorate>
 			</aon:div>
-			
+
 			<rich:jQuery timing="onload"
 				selector="#Item_id" query="focus()" />			
 
@@ -46,7 +59,7 @@
 								aon-italic aon-width-70,
 								aon-message-big2 aon-width-auto,
 								aon-italic aon-width-80,
-								aon-message-big2 aon-width-180">
+								aon-message-big2 aon-width-160">
 
 							<c:if test="#{posInvoice.new}">
 								<aon:outputText value="&#160;" />
@@ -58,13 +71,9 @@
 							<c:if test="#{!posInvoice.new}">
 								<aon:outputText value="&#160;" />
 								<aon:outputLabel value="#{financeBundle.finance_invoice_number}:" />
-								<aon:panelGrid styleClass="aon-width-all" columns="3"
-									columnClasses="aon-width-200,aon-normal aon-italic aon-width-50,aon-width-auto">
+								<aon:panelGrid styleClass="aon-width-all" columns="2"
+									columnClasses="aon-width-200,aon-width-auto">
 									<aon:outputText value="#{posInvoice.to.referenceCode}" />
-									<c:if test="#{!empty posInvoice.to.registryDocument}">
-										<aon:outputLabel value="#{bundle.aon_company_document}:" />
-										<aon:outputText value="#{posInvoice.to.registryDocument}" />
-									</c:if>
 								</aon:panelGrid>
 
 								<aon:outputLabel value="#{bundle.aon_date_time}:" />
@@ -73,23 +82,29 @@
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
 
-								<aon:outputText value="&#160;" />
-								<aon:outputLabel value="#{customerBundle.customer_customer}:" />
-								<aon:div>
-									<aon:outputText value="#{posInvoice.to.registryName}">
-										<aon:abbreviateConverter maxWidth="30" />
-									</aon:outputText>
-									<rich:toolTip>
-										<aon:outputText value="#{posInvoice.to.registryName}" />
-									</rich:toolTip>
-									<aon:commandLink id="invoiceRegistryData" immediate="true"
-										value="&#160;" title="#{bundle.aon_edit}"
-										styleClass="aon-icon-edit-add-user" style="margin-left: 5px; padding-right: 12px;"
-										ajaxSingle="true">
-										<f:setPropertyActionListener target="#{posInvoice.showRegistryDataWindow}"
-											value="#{true}" />
-									</aon:commandLink>
-								</aon:div>
+								<c:if test="#{posInvoice.to.registryName != posInvoice.defaultCustomer.registry.name}">
+									<aon:outputText value="&#160;" />
+									<aon:outputLabel value="#{customerBundle.customer_customer}:" />
+									<aon:div>
+										<aon:outputText value="#{posInvoice.to.registryName}">
+											<aon:abbreviateConverter maxWidth="30" />
+										</aon:outputText>
+										<rich:toolTip>
+											<aon:outputText value="#{posInvoice.to.registryName}" />
+										</rich:toolTip>
+										<aon:commandLink id="invoiceAddressButton" immediate="true"
+											value="&#160;" title="#{bundle.aon_edit} #{bundle.aon_address}"
+											styleClass="aon-icon-edit-add-address" style="margin-left: 5px; padding-right: 12px;"
+											actionListener="#{posInvoice.onInvoiceAddressShow}"
+											reRender="showInvoiceAddressWindow">
+											<f:setPropertyActionListener target="#{posInvoice.showInvoiceAddressWindow}"
+												value="#{true}" />								
+										</aon:commandLink>
+									</aon:div>
+									<aon:outputLabel value="#{bundle.aon_company_document}:" />
+									<aon:outputText value="#{posInvoice.to.registryDocument}" />
+								</c:if>
+<!-- 
 								<aon:outputLabel value="#{financeBundle.finance_pos_seller_label}:" />
 								<aon:div>
 									<c:if test="#{posInvoice.to.seller.registry.id != null}">
@@ -100,10 +115,6 @@
 											<aon:outputText value="#{posInvoice.to.seller.registry.fullName}" />
 										</rich:toolTip>
 									</c:if>
-									<c:if test="#{posInvoice.to.seller.registry.id == null}">
-										<aon:outputText styleClass="aon-label-error aon-italic"
-											 value="#{bundle.aon_unspecified}" />
-									</c:if>
 									<aon:commandLink id="invoiceSellerData" immediate="true"
 										value="&#160;" title="#{bundle.aon_edit}"
 										styleClass="aon-icon-edit-add-user" style="margin-left: 5px; padding-right: 12px;"
@@ -112,124 +123,48 @@
 											value="#{true}" />
 									</aon:commandLink>
 								</aon:div>
+ -->
 
-								<aon:outputText value="&#160;" />
-								<aon:outputLabel value="#{bundle.aon_address}:" />
-								<aon:div styleClass="aon-nowrap">
-									<c:if test="#{posInvoice.to.registryAddress.id != null or posInvoiceAddress.to.id != null}">
+								<c:if test="#{posInvoice.to.registryAddress.id != null or posInvoiceAddress.to.id != null}">
+									<aon:outputText value="&#160;" />
+									<aon:outputLabel value="#{bundle.aon_address}:" />
+									<aon:div styleClass="aon-nowrap">
 										<aon:outputText value="#{posInvoice.address}">
 											<aon:abbreviateConverter maxWidth="30" />
 										</aon:outputText>
-										<aon:outputText styleClass="aon-margin-left" value="#{posInvoice.location}">
+										<rich:toolTip>
+											<aon:outputText value="#{posInvoice.address}" />
+										</rich:toolTip>
+									</aon:div>
+									<aon:outputLabel value="#{bundle.aon_city}:" />
+									<aon:div styleClass="aon-nowrap">
+										<aon:outputText value="#{posInvoice.location}">
 											<aon:abbreviateConverter maxWidth="20" />
 										</aon:outputText>
 										<rich:toolTip>
-											<aon:outputText value="#{posInvoice.address} #{posInvoice.location}" />
+											<aon:outputText value="#{posInvoice.location}" />
 										</rich:toolTip>
-									</c:if>
-									<c:if test="#{posInvoice.to.registryAddress.id == null and posInvoiceAddress.to.id == null}">
-										<aon:outputText styleClass="aon-label-error aon-italic"
-											 value="#{bundle.aon_unspecified}" />
-									</c:if>
-									<aon:commandLink id="invoiceAddressButton" immediate="true"
-										value="&#160;" title="#{bundle.aon_edit} #{bundle.aon_address}"
-										styleClass="aon-icon-edit-add-address" style="margin-left: 5px; padding-right: 12px;"
-										actionListener="#{posInvoice.onInvoiceAddressShow}"
-										reRender="showInvoiceAddressWindow">
-										<f:setPropertyActionListener target="#{posInvoice.showInvoiceAddressWindow}"
-											value="#{true}" />								
-									</aon:commandLink>
-								</aon:div>
-								<aon:outputLabel value="#{financeBundle.finance_pos}:" />
-								<aon:div>
-									<aon:outputText value="#{posInvoice.to.posShift.pos.name}">
-										<aon:abbreviateConverter maxWidth="20" />
-									</aon:outputText>
-									<rich:toolTip>
-										<aon:outputText value="#{posInvoice.to.posShift.pos.workPlace.description}" />
-									</rich:toolTip>
-								</aon:div>
+									</aon:div>
+								</c:if>
 							</c:if>
 
 						</aon:panelGrid>
 
 						<aon:div id="PosInvoiceDetailWizard" styleClass="aon-margin-bottom">
-							<aon:panelGrid id="posInvoiceDetailItemDataTable" columns="3"
-								styleClass="aon-width-all" style="background-color:#f6f5e3; border:#d8d37a 1px solid;"
-								columnClasses="aon-padding-left aon-width-60,aon-width-auto,aon-padding-top aon-text-center aon-width-70">
-
-								<aon:outputLabel for="Item_id" value="#{productBundle.product_item}:" />
-								<ui:include src="/com/code/aon/ui/product/facelet/item/lookupDetail.xhtml">
-									<ui:param name="lookupTo" value="#{posInvoiceDetail.to.item}" />
-									<ui:param name="idRequired" value="#{true}" />
-									<ui:param name="skipLabel" value="#{true}" />
-									<ui:param name="skipGoToButton" value="#{true}" />
-									<ui:param name="skipNewButton" value="#{true}" />
-									<ui:param name="lookupInputSuggestSize" value="40" />
-									<ui:param name="lookupInputOnFocus" value="saveTicketDetail" />
-									<ui:param name="lookupReRender"	value="PosInvoiceDetailWizard" />
-									<aon:methodParam name="lookupChangeListener"
-										value="#{posInvoiceDetail.onItemChanged}" type="lookupChangeListener" />
+							<c:if test="#{posInvoice.posShift.pos.shop}">
+								<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formWizardShop.xhtml">
+									<ui:param name="invoiceController" value="#{posInvoice}" />
+									<ui:param name="detailController" value="#{posInvoiceDetail}" />
+									<ui:param name="financeController" value="#{posInvoiceFinance}" />
 								</ui:include>
-								<aon:commandButton id="saveTicketDetail"
-									styleClass="aon-medium-commandButton aon-width-60"
-									value="#{bundle.aon_key_save_description}"
-									title="#{bundle.aon_key_save_accelerator}"
-									disabled="#{posInvoice.new or posInvoiceDetail.to.item.id == null or posInvoiceFinance.rowCount > 0}"
-									actionListener="#{posInvoiceDetail.onAccept}"
-									accesskey="#{bundle.aon_key_save}" />
-
-								<aon:outputLabel for="InvoiceDetail_price" styleClass="aon-input-required" 
-									value="#{bundle.aon_price}:" />
-								<aon:div styleClass="aon-nowrap">
-									<aon:outputText id="InvoiceDetail_price" styleClass="aon-bold aon-margin-right"
-										value="#{posInvoiceDetail.to.salesPrice}">
-										<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-									</aon:outputText>
-									<aon:outputLabel for="InvoiceDetail_discount" styleClass="aon-margin-left aon-margin-right"
-										value="#{bundle.aon_discount}:" />
-									<aon:inputText id="InvoiceDetail_discount"
-										value="#{posInvoiceDetail.to.discountExpression.discountExpr}"
-										required="true" size="3" maxlength="5"
-										valueChangeListener="#{posInvoiceDetail.onDiscountChanged}"
-										ajaxSingle="true" />
-									<aon:outputText styleClass="aon-bold aon-margin-right" value=" %" />
-									<aon:outputLabel for="InvoiceDetail_quantity" styleClass="aon-margin-left aon-margin-right"
-										value="#{bundle.aon_quantity}:" />
-									<aon:commandButton id="PosDetail-minusQuantity" immediate="true"
-										styleClass="aon-medium-commandButton aon-width-30"
-										value="-"
-										actionListener="#{posInvoiceDetail.onMinusQuantity}"
-										reRender="InvoiceDetail_quantity" ajaxSingle="true" />
-									<aon:inputText id="InvoiceDetail_quantity"
-										styleClass="aon-margin-right"
-										value="#{posInvoiceDetail.to.quantity}" 
-										required="true" size="3" maxlength="5"
-										valueChangeListener="#{posInvoiceDetail.onQuantityChanged}"
-										reRender="InvoiceDetail_discount,InvoiceDetail_price" ajaxSingle="true"
-										focus="InvoiceDetail_discount" />
-									<aon:commandButton id="PosDetail-plusQuantity" immediate="true"
-										styleClass="aon-medium-commandButton aon-width-30"
-										value="+"
-										actionListener="#{posInvoiceDetail.onPlusQuantity}"
-										reRender="InvoiceDetail_quantity" ajaxSingle="true" />
-								</aon:div>
-								<aon:commandButton id="PosDetail-itemInfo" immediate="true" 
-									styleClass="aon-medium-commandButton aon-width-60"
-									value="#{productBundle.product_stock}"
-									disabled="#{posInvoiceDetail.to.item.id == null or !posInvoiceDetail.to.item.product.inventoriable}"
-									actionListener="#{itemInfo.onShowPanel}"
-									reRender="itemInfoContainer">
-									<aon:set var="#{itemInfo.stockVisible}" value="#{true}" />
-									<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
-									<aon:set var="#{itemInfo.item}" value="#{posInvoiceDetail.to.item}" /> 
-									<aon:set var="#{itemInfo.warehouse}" value="#{null}" /> 
-									<aon:set var="#{itemInfo.rowStock}" value="#{posInvoiceDetail.rowStock}" /> 
-									<aon:set var="#{itemInfo.componentId}" value="Item_id" />
-									<aon:set var="#{itemInfo.alternativeMethod}" value="posInvoiceDetail.onItemChanged" />
-								</aon:commandButton>															
-
-							</aon:panelGrid>
+							</c:if>
+							<c:if test="#{posInvoice.posShift.pos.barRestaurant}">
+								<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formWizardRestaurant.xhtml">
+									<ui:param name="invoiceController" value="#{posInvoice}" />
+									<ui:param name="detailController" value="#{posInvoiceDetail}" />
+									<ui:param name="financeController" value="#{posInvoiceFinance}" />
+								</ui:include>
+							</c:if>
  						</aon:div>
 
 						<c:if test="#{!posInvoice.new and posInvoiceDetail.rowCount > 0}">

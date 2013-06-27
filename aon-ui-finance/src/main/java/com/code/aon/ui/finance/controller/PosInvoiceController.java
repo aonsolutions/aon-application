@@ -1,5 +1,7 @@
 package com.code.aon.ui.finance.controller;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,16 +21,26 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.Tag;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.customer.Customer;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.PosCatalogue;
 import com.code.aon.finance.PosShift;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.product.CatalogueItem;
+import com.code.aon.product.Item;
+import com.code.aon.product.Product;
+import com.code.aon.product.ProductTag;
+import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.report.ReportException;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.finance.util.PosUtils;
@@ -41,7 +53,15 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class PosInvoiceController extends SaleInvoiceController {
 
 	private PosShift posShift;
+	private Customer defaultCustomer;
 	private Seller seller;
+	private List<ProductTag> productTags;
+	private List<Tag> tags;
+	private List<Product> selectedProducts;
+	private List<Tag> pagedTags;
+	private List<Product> pagedSelectedProducts;
+	private Integer tagPage;
+	private Integer selectedProductPage;
 	private List<Invoice> suspendedInvoiceList;
 	private boolean showFinishTicketWindow;
 	private boolean showRecoverTicketWindow;
@@ -64,12 +84,36 @@ public class PosInvoiceController extends SaleInvoiceController {
 		this.posShift = posShift;
 	}
 
+	public Customer getDefaultCustomer() {
+		return defaultCustomer;
+	}
+
+	public void setDefaultCustomer(Customer defaultCustomer) {
+		this.defaultCustomer = defaultCustomer;
+	}
+
 	public Seller getSeller() {
 		return seller;
 	}
 
 	public void setSeller(Seller seller) {
-		this.seller= seller;
+		this.seller = seller;
+	}
+
+	public Integer getTagPage() {
+		return tagPage;
+	}
+
+	public void setTagPage(Integer tagPage) {
+		this.tagPage = tagPage;
+	}
+
+	public Integer getSelectedProductPage() {
+		return selectedProductPage;
+	}
+
+	public void setSelectedProductPage(Integer selectedProductPage) {
+		this.selectedProductPage = selectedProductPage;
 	}
 
 	public boolean isShowFinishTicketWindow() {
@@ -119,6 +163,17 @@ public class PosInvoiceController extends SaleInvoiceController {
 
 		onReset(event);
 		FormUtil.getController(getInvoiceDetailControllerName()).onReset(null);
+		resetTagsView();
+	}
+
+	private void resetTagsView() {
+		setProductTags(null);
+		setTags(null);
+		setSelectedProducts(null);
+		setPagedTags(null);
+		setPagedSelectedProducts(null);
+		setTagPage(1);
+		setSelectedProductPage(1);
 	}
 
 	@Override
@@ -138,6 +193,210 @@ public class PosInvoiceController extends SaleInvoiceController {
 		super.refresh(event);
 		FormUtil.getController(getInvoiceDetailControllerName()).onSearch(event);
 		FormUtil.getController(getInvoiceDetailControllerName()).onReset(event);
+	}
+
+	public List<ProductTag> getProductTags() {
+		if (productTags == null && getPosShift().getPos().isBarRestaurant()) {
+			productTags = new LinkedList<ProductTag>();
+			try {
+				IManagerBean posCatalogueBean = BeanManager.getManagerBean(PosCatalogue.class);
+				IManagerBean catalogueItemBean = BeanManager.getManagerBean(CatalogueItem.class);
+				IManagerBean productTagBean = BeanManager.getManagerBean(ProductTag.class);
+
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(posCatalogueBean.getFieldName(IEntityAlias.POS_CATALOGUE_POS_ID), getPosShift().getPos().getId());
+				criteria.addLessThanOrEqualExpression(posCatalogueBean.getFieldName(IEntityAlias.POS_CATALOGUE_CATALOGUE_START_DATE), getInvoice().getIssueDate());
+				Expression dateExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(posCatalogueBean.getFieldName(IEntityAlias.POS_CATALOGUE_CATALOGUE_END_DATE), getInvoice().getIssueDate());
+				Expression nullExpr = ExpressionUtilities.getNullExpression(posCatalogueBean.getFieldName(IEntityAlias.POS_CATALOGUE_CATALOGUE_END_DATE));
+				criteria.addExpression(ExpressionUtilities.getOrExpression(dateExpr, nullExpr));
+				for (ITransferObject ito : posCatalogueBean.getList(criteria)) {
+					PosCatalogue posCatalogue = (PosCatalogue)ito;
+					criteria = new Criteria();
+					criteria.addEqualExpression(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID), posCatalogue.getCatalogue().getId());
+					criteria.addOrder(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_PRODUCT_NAME));
+					for (ITransferObject itr : catalogueItemBean.getList(criteria)) {
+						CatalogueItem catalogueItem = (CatalogueItem)itr;
+						if (catalogueItem.getItem().isActive()) {
+							criteria = new Criteria();
+							criteria.addEqualExpression(productTagBean.getFieldName(IEntityAlias.PRODUCT_TAG_PRODUCT_ID), catalogueItem.getItem().getProduct().getId());
+							for (ITransferObject itt : productTagBean.getList(criteria)) {
+								productTags.add((ProductTag)itt);
+							}
+						}
+					}
+				}
+			} catch (ManagerBeanException ex) {
+				String msg = "Error obteniendo la lista de Productos disponibles.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+		}
+		return productTags;
+	}
+
+	public void setProductTags(List<ProductTag> productTags) {
+		this.productTags = productTags;
+	}
+
+	public List<Tag> getTags() {
+		if (tags == null && getPosShift().getPos().isBarRestaurant()) {
+			tags = new LinkedList<Tag>();
+			for (ProductTag productTag : getProductTags()) {
+				if (!tags.contains(productTag.getTag())) {
+					tags.add(productTag.getTag());
+				}
+			}
+
+			class TagComparator implements Comparator<ITransferObject> {
+				public int compare(ITransferObject o1, ITransferObject o2) {
+					if (o1 instanceof Tag && o2 instanceof Tag) {
+						Tag tag1 = (Tag)o1;
+						Tag tag2 = (Tag)o2;
+						return tag1.getName().compareTo(tag2.getName());
+					}
+					return 0;
+				}
+			}
+			Collections.sort(tags, new TagComparator());
+		}
+		return tags;
+	}
+
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
+	}
+
+	public int getTagsCount() {
+		return (getTags() == null) ? 0 : getTags().size();
+	}
+
+	public int getTagsNumCols() {
+		double cols = getTagsCount() / getPosShift().getPos().getNumRows();
+		return (cols > 2) ? 3 : ((cols > 1) ? 2 : 1);
+	}
+
+	public int getTagsLimit() {
+		return getTagsNumCols() * getPosShift().getPos().getNumRows();
+	}
+
+	public List<Product> getSelectedProducts() {
+		return selectedProducts;
+	}
+
+	public void setSelectedProducts(List<Product> selectedProducts) {
+		this.selectedProducts = selectedProducts;
+	}
+
+	public int getSelectedProductsCount() {
+		return (getSelectedProducts() == null) ? 0 : getSelectedProducts().size();
+	}
+
+	public List<Tag> getPagedTags() {
+		if (pagedTags == null && getPosShift().getPos().isBarRestaurant()) {
+			int tagsLimit = getTagsLimit();
+			if (getTagsCount() < tagsLimit) {
+				pagedTags = getTags().subList(0, getTagsCount());
+			} else {
+				int fromIndex = (getTagPage() == 1) ? 0 : tagsLimit * (getTagPage() - 1) - (2 * (getTagPage() - 1) - 1);
+				int toIndex = (getTagPage() == 1) ? tagsLimit - 1 : fromIndex + tagsLimit - 2;
+				pagedTags = getTags().subList(fromIndex, (toIndex < getTagsCount()) ? toIndex : getTagsCount());
+			}
+		}
+		return pagedTags;
+	}
+
+	public void setPagedTags(List<Tag> pagedTags) {
+		this.pagedTags = pagedTags;
+	}
+
+	public int getPagedTagsCount() {
+		return (getPagedTags() == null) ? 0 : getPagedTags().size();
+	}
+
+	public void onPreviousTagPage(ActionEvent event) {
+		setTagPage(getTagPage() - 1);
+		setPagedTags(null);
+	}
+
+	public void onNextTagPage(ActionEvent event) {
+		setTagPage(getTagPage() + 1);
+		setPagedTags(null);
+	}
+
+	public void onSelectTag(ActionEvent event) {
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		Map<String, String> params = ec.getRequestParameterMap();
+		Integer selectedTag = new Integer(params.get("selectedTag"));
+
+		setPagedSelectedProducts(null);
+		setSelectedProducts(new LinkedList<Product>());
+		for (ProductTag productTag : getProductTags()) {
+			if (productTag.getTag().getId().equals(selectedTag)) {
+				getSelectedProducts().add(productTag.getProduct());
+			}
+		}
+	}
+
+	public List<Product> getPagedSelectedProducts() {
+		if (pagedSelectedProducts == null && selectedProducts != null && getPosShift().getPos().isBarRestaurant()) {
+			int posLimit = getPosShift().getPos().getLimit();
+			if (getSelectedProductsCount() < posLimit) {
+				pagedSelectedProducts = getSelectedProducts().subList(0, getSelectedProductsCount());
+			} else {
+				int fromIndex = (getSelectedProductPage() == 1) ? 0 : posLimit * (getSelectedProductPage() - 1) - (2 * (getSelectedProductPage() - 1) - 1);
+				int toIndex = (getSelectedProductPage() == 1) ? posLimit - 1 : fromIndex + posLimit - 2;
+				pagedSelectedProducts = getSelectedProducts().subList(fromIndex, (toIndex < getSelectedProductsCount()) ? toIndex : getSelectedProductsCount());
+			}
+		}
+		return pagedSelectedProducts;
+	}
+
+	public void setPagedSelectedProducts(List<Product> pagedSelectedProducts) {
+		this.pagedSelectedProducts = pagedSelectedProducts;
+	}
+
+	public int getPagedSelectedProductsCount() {
+		return (getPagedSelectedProducts() == null) ? 0 : getPagedSelectedProducts().size();
+	}
+
+	public void onPreviousSelectedProductPage(ActionEvent event) {
+		setSelectedProductPage(getSelectedProductPage() - 1);
+		setPagedSelectedProducts(null);
+	}
+
+	public void onNextSelectedProductPage(ActionEvent event) {
+		setSelectedProductPage(getSelectedProductPage() + 1);
+		setPagedSelectedProducts(null);
+	}
+
+	public void onSelectProduct(ActionEvent event) {
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		Map<String, String> params = ec.getRequestParameterMap();
+		Item item = obtainItem(new Integer(params.get("selectedProduct")));
+
+		InvoiceDetail invoiceDetail = (InvoiceDetail)FormUtil.getController(getInvoiceDetailControllerName()).getTo();
+		invoiceDetail.setItem(item);
+		invoiceDetail.setDescription(item.getFullName());
+		invoiceDetail.setQuantity(1);
+		invoiceDetail.setPrice(item.getPrice());
+		FormUtil.getController(getInvoiceDetailControllerName()).onAccept(event);
+	}
+
+	private Item obtainItem(Integer productId) {
+		try {
+			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), productId);
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
+			for (ITransferObject ito : itemBean.getList(criteria)) {
+				return (Item)ito;
+			}
+		} catch (ManagerBeanException ex) {
+			String msg = "Error obteniendo la lista de Productos disponibles.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		return null;
 	}
 
 	public DataModel getTicketModel() {

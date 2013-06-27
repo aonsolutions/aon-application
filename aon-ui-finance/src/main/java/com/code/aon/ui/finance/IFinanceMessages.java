@@ -47,7 +47,7 @@ public interface IFinanceMessages {
 	String FINANCE_INVOICE_SALES = "finance_invoice_sales";
 	String FINANCE_INVOICE_DELIVERY = "finance_invoice_delivery";
 	String FINANCE_POS_OPENED = "finance_pos_opened";
-
+	String FINANCE_POS_CATALOGUE_ERROR = "finance_pos_catalogue_error";
 
 }
 

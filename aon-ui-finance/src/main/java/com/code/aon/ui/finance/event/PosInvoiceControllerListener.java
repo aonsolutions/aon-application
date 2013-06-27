@@ -42,9 +42,9 @@ public class PosInvoiceControllerListener extends SaleInvoiceControllerListener 
 					invoice.setSecurityLevel(series.getSecurityLevel());
 				}
 
-				Customer customer = obtainPosCustomer(invoice.getPosShift().getPos());
-				if (customer != null) {
-					controller.customerChanged(customer);
+				controller.setDefaultCustomer(obtainPosCustomer(invoice.getPosShift().getPos()));
+				if (controller.getDefaultCustomer() != null) {
+					controller.customerChanged(controller.getDefaultCustomer());
 				}
 
 				if (controller.getSeller() != null && controller.getSeller().getId() != null) {
@@ -86,6 +86,8 @@ public class PosInvoiceControllerListener extends SaleInvoiceControllerListener 
 	private Customer obtainPosCustomer(Pos pos) throws ManagerBeanException {
 		if (pos.getCustomer() != null && pos.getCustomer().getId() != null) {
 			return pos.getCustomer();
+		} else if (pos.getWorkPlace().getCustomer() != null && pos.getWorkPlace().getCustomer().getId() != null) {
+			return pos.getWorkPlace().getCustomer();
 		} else {
 			IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
 			Criteria criteria = new Criteria();

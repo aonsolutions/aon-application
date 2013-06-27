@@ -208,6 +208,11 @@
 		<hibernate names="id,domain,department.id,workPlace.id,workPlace.description,workPlace.scope.id,name,series,customer.id,displayMode,pinPad,commerce,signaturePassword,terminal,portConfiguration,posVersion,active"/>
 	</bean> 
 
+	<bean class="com.code.aon.finance.PosCatalogue" sqlName="pos_catalogue">
+		<alias names="id,pos_id,catalogue_id,catalogue_name,catalogue_startDate,catalogue_endDate" />
+		<hibernate names="id,pos.id,catalogue.id,catalogue.name,catalogue.startDate,catalogue.endDate" />
+	</bean>
+	
 	<bean class="com.code.aon.finance.PosShift" sqlName="pos_shift">
 		<alias names="id,domain,pos_id,pos_workPlace_id,pos_department,pos_department_id,pos_workPlace_scope_id,shift,username,startTime,endTime,initialAmount,remarks"/>
 		<hibernate names="id,domain,pos.id,pos.workPlace.id,pos.department,pos.department.id,pos.workPlace.scope.id,shift,username,startTime,endTime,initialAmount,remarks"/>
@@ -371,6 +376,11 @@
 	<bean class="com.code.aon.product.Product" sqlName="product">
 		<alias names="brand_id,product_category_id,code,composition,compositionPrice,id,domain,inventoriable,name,purchaseAccount_id,retention_id,salesAccount_id,status,type,vat_id" />
 		<hibernate names="brand.id,category.id,code,composition,compositionPrice,id,domain,inventoriable,name,purchaseAccount.id,retention.id,salesAccount.id,status,type,vat.id" />
+	</bean>
+
+	<bean class="com.code.aon.product.ProductTag" sqlName="product_tag">
+		<alias names="id,product_id,product_name,tag_id,tag_name" />
+		<hibernate names="id,product.id,product.name,tag.id,tag.name" />
 	</bean>
 
 	<bean class="com.code.aon.product.TariffCatalogue" sqlName="tariff_catalogue">

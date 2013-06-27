@@ -125,7 +125,7 @@
 					<aon:outputLabel for="Customer_id" 
 						value="#{pmsBundle.pms_direct_customer}" />
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
-						<ui:param name="lookupTo" value="#{hotel.to.customer}" />
+						<ui:param name="lookupTo" value="#{hotel.to.workPlace.customer}" />
 						<ui:param name="idRequired" value="#{true}" />
 						<ui:param name="skipLabel" value="#{true}" />
 					</ui:include>
