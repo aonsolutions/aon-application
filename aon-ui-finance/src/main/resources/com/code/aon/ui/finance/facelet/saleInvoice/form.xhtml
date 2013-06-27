@@ -33,7 +33,7 @@
 						</c:if>
 						<aon:htmlCommandLink id="saleInvoice-report"
 							value="#{financeBundle.finance_invoice}" target="_new" 
-							rendered="#{!saleInvoice.accountSource and saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
+							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
 							action="#{saleInvoiceSigner.onReport}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
