@@ -52,6 +52,10 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.IAddress;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAddress;
@@ -95,13 +99,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private boolean showFiscalInformationWindow;
 	private boolean showAmortizationWindow;
 	private boolean showRectificationWindow;
+	private boolean showPaymentDataInListView;
 	private String rectificationSeries;
 	private int rectificationNumber;
 	private Date rectificationDate;
 	private String rectificationCause;
 	private boolean showDiscountsWindow;
 	private String discountExpression;
-	private double totalInvoiceAmount;
+	private Double totalInvoiceAmount;
 	private FinanceEmailUtil emailController;
 	
 	public InvoiceController() {
@@ -259,6 +264,15 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		loadProjects(invoice.getRegistry().getId());
 	}
 	
+
+	public boolean isShowPaymentDataInListView() {
+		return showPaymentDataInListView;
+	}
+
+	public void setShowPaymentDataInListView(boolean showPaymentDataInListView) {
+		this.showPaymentDataInListView = showPaymentDataInListView;
+	}
+
 	public boolean isShowRegistryDataWindow() {
 		return showRegistryDataWindow;
 	}
@@ -501,11 +515,11 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		this.discountExpression = discountExpression;
 	}
 
-	public double getTotalInvoiceAmount() {
+	public Double getTotalInvoiceAmount() {
 		return totalInvoiceAmount;
 	}
 
-	public void setTotalInvoiceAmount(double totalInvoiceAmount) {
+	public void setTotalInvoiceAmount(Double totalInvoiceAmount) {
 		this.totalInvoiceAmount = totalInvoiceAmount;
 	}
 	
@@ -1067,6 +1081,24 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	
 	public boolean isAmoritizationNavigationDisabled() {
 		return ( getBackAction() != null);
+	}
+	
+	public void getSelectionTotalAmount(ActionEvent event) {
+		try {	
+			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);			
+			Criteria criteria = new Criteria();
+			String idAlias = invoiceBean.getFieldName(IEntityAlias.INVOICE_ID);
+			ProjectionList pl = new ProjectionList( Projection.property(idAlias) );
+			Expression exp = ExpressionUtilities.getSubQueryExpression(Invoice.class, getCriteria(), pl);
+			criteria.addInExpression(idAlias, exp);
+			Projection amountProjection = Projection.sum(invoiceBean.getFieldName(IEntityAlias.INVOICE_TOTAL));
+			Double amount = (Double)invoiceBean.getUniqueResult(amountProjection, criteria);
+			setTotalInvoiceAmount(CommonUtil.round(amount==null?0:amount));
+		} catch (ManagerBeanException e) {
+			String message = "Imposible obtener el total";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
+		}		
 	}
 	
 }

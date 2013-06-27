@@ -33,12 +33,17 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-			
+				<aon:div styleClass="aon-width-all aon-text-right">
+					<aon:selectBooleanCheckbox ajaxSingle="true"
+						reRender="purchaseInvoiceList"
+						value="#{purchaseInvoice.showPaymentDataInListView}"/>
+					<aon:outputText value="#{financeBundle.finance_invoice_show_payment_data}"/>
+				</aon:div>
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{purchaseInvoice}" />
 					<ui:define name="columns">
 						<aon:column alias="Invoice.issueDate"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-textColumn aon-width-80">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_date}" />
 							</f:facet>
@@ -49,7 +54,7 @@
 						</aon:column>
 	
 						<aon:column alias="Invoice.referenceCode"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-textColumn aon-width-120">
 							<f:facet name="header">
 								<aon:outputText value="#{financeBundle.finance_invoice_number}" />
 							</f:facet>
@@ -57,7 +62,7 @@
 						</aon:column>
 	
 						<aon:column alias="Invoice.series,Invoice.number"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-textColumn aon-width-80">
 							<f:facet name="header">
 								<aon:outputText value="#{financeBundle.finance_invoice_document_number}" />
 							</f:facet>
@@ -65,17 +70,17 @@
 						</aon:column>
 					
 						<aon:column alias="Invoice.registryName"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
 								<aon:outputText value="#{supplierBundle.supplier_supplier}" />
 							</f:facet>
 							<aon:outputText value="#{to.registryName}">
-								<aon:abbreviateConverter maxWidth="50" />
+								<aon:abbreviateConverter maxWidth="40" />
 							</aon:outputText>
 						</aon:column>
 	
 						<aon:column alias="Invoice.registryDocument"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-textColumn aon-width-80">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_company_document}" />
 							</f:facet>
@@ -83,33 +88,35 @@
 						</aon:column>
 	
 						<aon:column alias="Invoice.status"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-textColumn aon-width-80"
+							style="font-size: 0.9em;">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
 							<aon:outputText value="#{to.status}" />
 						</aon:column>
 	
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{configBundle.config_pay_method}" />
-							</f:facet>
-							<aon:outputText value="#{to.payMethod}">
-								<aon:abbreviateConverter maxWidth="15" />
-							</aon:outputText>
-							<f:facet name="footer">
-								<aon:outputText value="#{financeBundle.finance_total_amount}" />
-							</f:facet>														
-						</aon:column>
-	
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_checking_finance_status_abbrv}" />
-							</f:facet>
-							<aon:outputText value="#{to.invoiceFinanceStatus}" />
-						</aon:column>
-	
-						<aon:column styleClass="aon-editDataTable-numberColumn">
+						<c:if test="#{controller.showPaymentDataInListView}">
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
+								style="font-size: 0.9em;">
+								<f:facet name="header">
+									<aon:outputText value="#{configBundle.config_pay_method}" />
+								</f:facet>
+								<aon:outputText value="#{to.payMethod}">
+									<aon:abbreviateConverter maxWidth="15" />
+								</aon:outputText>
+							</aon:column>
+							
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-80"
+								style="font-size: 0.9em;">
+								<f:facet name="header">
+									<aon:outputText value="#{financeBundle.finance_checking_finance_status_abbrv}" />
+								</f:facet>
+								<aon:outputText value="#{to.invoiceFinanceStatus}" />
+							</aon:column>
+						</c:if> 	
+ 	
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_total}" />
 							</f:facet>
@@ -117,15 +124,22 @@
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 							<f:facet name="footer">
-								<aon:div style="float:right">
-									<aon:outputText style="text-align:right" value="#{controller.totalInvoiceAmount}" >
+								<aon:div id="totalAmountContainer" style="float:right">
+									<aon:commandLink immediate="true" 
+										reRender="totalAmountContainer"
+										value="#{financeBundle.finance_total_amount}"
+										styleClass="aon-dataTable-link aon-nowrap"
+										rendered="#{controller.totalInvoiceAmount == null}"
+										actionListener="#{controller.getSelectionTotalAmount}"/>									
+									<aon:outputText	rendered="#{controller.totalInvoiceAmount != null}"
+										style="text-align:right" value="#{controller.totalInvoiceAmount}" >
 										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</aon:outputText>
 								</aon:div>
 							</f:facet>
 						</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-textColumn">
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
