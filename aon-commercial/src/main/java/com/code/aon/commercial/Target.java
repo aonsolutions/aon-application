@@ -11,12 +11,16 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Formula;
 
+import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.RegistryItem;
+import com.code.aon.registry.RegistryProfile;
+import com.code.aon.registry.RegistrySeller;
 import com.esferalia.aon.entity.master.TargetDB;
 
 @Entity
@@ -26,15 +30,16 @@ public class Target extends TargetDB implements ITaxInfo, IRegistry, IScopable {
 	private static final long serialVersionUID = 1L;
 
 	private boolean customer;
-	private Set<TargetItem> items = new HashSet<TargetItem>();
-	private Set<TargetSeller> sellers = new HashSet<TargetSeller>();
+	private Set<RegistryItem> items = new HashSet<RegistryItem>();
+	private Set<RegistrySeller> sellers = new HashSet<RegistrySeller>();
 	private Set<ProjectCommercial> projects = new HashSet<ProjectCommercial>();
 	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
-	private Set<TargetProfile> profiles = new HashSet<TargetProfile>();
+	private Set<RegistryProfile> profiles = new HashSet<RegistryProfile>();
 
 	public Target() {
     	setTransaction(InvoiceTransactionType.NATIONAL);
     	setStatus(TargetStatus.ACTIVE);
+    	setAdvertising(Advertising.ALLOWED);
 	}
 
 	@Formula("(select COUNT(*) from customer c where registry = c.registry)")
@@ -46,21 +51,21 @@ public class Target extends TargetDB implements ITaxInfo, IRegistry, IScopable {
 		this.customer = customer;
 	}
 		
-	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})	
-	public Set<TargetItem> getItems() {
+	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})	
+	public Set<RegistryItem> getItems() {
 		return items;
 	}
 
-	public void setItems(Set<TargetItem> items) {
+	public void setItems(Set<RegistryItem> items) {
 		this.items = items;
 	}
 
-	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})	
-	public Set<TargetSeller> getSellers() {
+	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})	
+	public Set<RegistrySeller> getSellers() {
 		return sellers;
 	}
 
-	public void setSellers(Set<TargetSeller> sellers) {
+	public void setSellers(Set<RegistrySeller> sellers) {
 		this.sellers = sellers;
 	}
 
@@ -82,12 +87,12 @@ public class Target extends TargetDB implements ITaxInfo, IRegistry, IScopable {
 		this.documents = documents;
 	}	
 
-	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})
-	public Set<TargetProfile> getProfiles() {
+	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
+	public Set<RegistryProfile> getProfiles() {
 		return profiles;
 	}
 
-	public void setProfiles(Set<TargetProfile> profiles) {
+	public void setProfiles(Set<RegistryProfile> profiles) {
 		this.profiles = profiles;
 	}
 	

@@ -21,13 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.commercial.Question;
 import com.code.aon.commercial.Target;
-import com.code.aon.commercial.TargetItem;
-import com.code.aon.commercial.TargetProfile;
-import com.code.aon.commercial.TargetSeller;
 import com.code.aon.commercial.enumeration.Advertising;
-import com.code.aon.commercial.enumeration.QuestionType;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.CriteriaUtilities;
@@ -41,11 +36,15 @@ import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.registry.Category;
+import com.code.aon.registry.Question;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.RegistryItem;
 import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.RegistryProfile;
 import com.code.aon.registry.RegistrySegment;
+import com.code.aon.registry.RegistrySeller;
 import com.code.aon.registry.Segment;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
@@ -54,21 +53,13 @@ import com.code.aon.sales.bridge.util.SalesBridgeUtil;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.commercial.ICommercialMessages;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.IController;
-import com.code.aon.ui.form.event.ControllerAdapter;
-import com.code.aon.ui.form.event.ControllerEvent;
-import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.report.export.ReportExporter;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.entity.IEntityAlias;
 
 public class TargetController extends RegistryController implements ICommercialConstants {
 
 	private Set<Integer> checks = new HashSet<Integer>();
-	
-	private IControllerListener questionListener;
 	
 	private ResourceBundle bundle;
 
@@ -152,29 +143,6 @@ public class TargetController extends RegistryController implements ICommercialC
 		SalesBridgeUtil salesUtil = new SalesBridgeUtil();
 		Customer customer = salesUtil.createCustomer((Target)getTo());
 		((Target)getTo()).setCustomer(customer.getId()!=null);
-	}
-
-	public IControllerListener getQuestionListener() {
-		if ( questionListener == null ) {
-			questionListener = new ControllerAdapter() {
-				@Override
-				public void beforeModelInitialized(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {
-						String alias = controller.getFieldName(IEntityAlias.QUESTION_TYPE);
-						controller.getCriteria().addNotEqualExpression(alias, QuestionType.INFO);
-					} catch (ManagerBeanException e) {
-						throw new ControllerListenerException(e);
-					} 
-				}		
-			};
-		}
-		return questionListener;
-	}
-
-	public void setQuestionListener(IControllerListener questionListener) {
-		this.questionListener = questionListener;
 	}
 
 	public void onDetailReport(ActionEvent event){
@@ -284,14 +252,14 @@ public class TargetController extends RegistryController implements ICommercialC
 			pojoMapping.put(mappingPrefix + ".registry.addresses.geozone", GeoZone.class);
 			pojoMapping.put(mappingPrefix + ".documents", RegistryAttachment.class);
 			pojoMapping.put(mappingPrefix + ".documents.category", Category.class);
-			pojoMapping.put(mappingPrefix + ".items", TargetItem.class);
+			pojoMapping.put(mappingPrefix + ".items", RegistryItem.class);
 			pojoMapping.put(mappingPrefix + ".items.item", Item.class);
 			pojoMapping.put(mappingPrefix + ".items.item.product", Product.class);
 			pojoMapping.put(mappingPrefix + ".items.item.product.category", ProductCategory.class);
-			pojoMapping.put(mappingPrefix + ".sellers", TargetSeller.class);
+			pojoMapping.put(mappingPrefix + ".sellers", RegistrySeller.class);
 			pojoMapping.put(mappingPrefix + ".sellers.seller", Seller.class);
 			pojoMapping.put(mappingPrefix + ".sellers.seller.registry", Registry.class);
-			pojoMapping.put(mappingPrefix + ".profiles", TargetProfile.class);
+			pojoMapping.put(mappingPrefix + ".profiles", RegistryProfile.class);
 			pojoMapping.put(mappingPrefix + ".profiles.question", Question.class);
 
 			String where = CriteriaUtilities.toSQLString(getCriteria(), true, pojoMapping, tableMapping);

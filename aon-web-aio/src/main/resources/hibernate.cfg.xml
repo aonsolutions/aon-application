@@ -104,13 +104,7 @@
 		<mapping class="com.code.aon.commercial.OfferDetailCommission"/>
 		<mapping class="com.code.aon.commercial.OfferTerm"/>
 		<mapping class="com.code.aon.commercial.ProjectCommercial"/>
-		<mapping class="com.code.aon.commercial.Question"/>
-		<mapping class="com.code.aon.commercial.QuestionValue"/>		
 		<mapping class="com.code.aon.commercial.Target"/>
-		<mapping class="com.code.aon.commercial.TargetItem"/>
-		<mapping class="com.code.aon.commercial.TargetProfile"/>
-		<mapping class="com.code.aon.commercial.TargetSeller"/>
-		<mapping class="com.code.aon.commercial.TargetSupplier"/>
 		
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.Company"/>
@@ -331,6 +325,8 @@
 		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.person.Person"/>
 		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.Question"/>
+		<mapping class="com.code.aon.registry.QuestionValue"/>				
 		<mapping class="com.code.aon.registry.RegistryBank"/>
 		<mapping class="com.code.aon.registry.RecordData"/>
 		<mapping class="com.code.aon.registry.Registry"/>
@@ -339,11 +335,15 @@
 		<mapping class="com.code.aon.registry.RegistryAttachment"/>
 		<mapping class="com.code.aon.registry.RegistryAttachmentTag"/>
 		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
+		<mapping class="com.code.aon.registry.RegistryItem"/>		
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
 		<mapping class="com.code.aon.registry.RegistryNote"/>
 		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
+		<mapping class="com.code.aon.registry.RegistryProfile"/>		
 		<mapping class="com.code.aon.registry.RegistryRelationship"/>
 		<mapping class="com.code.aon.registry.RegistrySegment"/>
+		<mapping class="com.code.aon.registry.RegistrySeller"/>
+		<mapping class="com.code.aon.registry.RegistrySupplier"/>		
 		<mapping class="com.code.aon.registry.Relationship"/>
 		<mapping class="com.code.aon.registry.Segment"/>
 

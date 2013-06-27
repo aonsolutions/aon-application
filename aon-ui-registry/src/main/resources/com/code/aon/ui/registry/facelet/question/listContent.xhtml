@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+					
+	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50"
+		alias="Question.id" >
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_id}" />
+		</f:facet>
+		<aon:outputText value="#{to.id}"/>
+	</aon:column>
+
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-150"
+		alias="Question.type" >
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_type}" />
+		</f:facet>
+		<aon:outputText value="#{to.type}"/>
+	</aon:column>
+
+	<aon:column styleClass="aon-editDataTable-textColumn"
+		alias="Question.text" >
+		<f:facet name="header">
+			<aon:outputText value="#{registryBundle.registry_question}" />
+		</f:facet>
+		<aon:outputText value="#{to.text}"/>
+	</aon:column>
+
+	<aon:column styleClass="aon-editDataTable-iconColumn"
+		alias="Question.active" >
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_active}" />
+		</f:facet>
+		<aon:outputText
+			styleClass="#{(to.active)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
+			value="&#160;" />
+	</aon:column>
+
+</ui:composition>

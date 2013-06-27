@@ -6,8 +6,8 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.commercial.IValueHolder;
-import com.code.aon.commercial.enumeration.QuestionType;
+import com.code.aon.registry.IValueHolder;
+import com.code.aon.registry.enumeration.QuestionType;
 import com.esferalia.aon.entity.master.SurveyResponseDetailDB;
 
 @Entity

@@ -18,14 +18,14 @@
 						aon-panelGrid-even aon-width-150,
 						aon-panelGrid-even aon-width-auto">
 			<aon:outputLabel for="Rnote_fromDate" value="#{bundle.aon_date_from}"/>
-			<aon:selectInputDate renderAsPopup="true" id="Rnote_fromDate"
+			<aon:selectInputDate id="Rnote_fromDate"
 				popupDateFormat="#{bundle.aon_date_pattern}"
-				value="#{controller.fromDate}" enableManualInput="true" />
+				value="#{controller.fromDate}" />
 			
 			<aon:outputLabel for="Rnote_toDate" value="#{bundle.aon_date_to}"/>
-			<aon:selectInputDate renderAsPopup="true" id="Rnote_toDate"
+			<aon:selectInputDate id="Rnote_toDate"
 				popupDateFormat="#{bundle.aon_date_pattern}"
-				value="#{controller.toDate}" enableManualInput="true" />
+				value="#{controller.toDate}" />
 
 			<aon:outputLabel for="Rnote_noteType2ss"
 				value="#{bundle.aon_type}" />
@@ -80,15 +80,13 @@
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
-						<aon:selectInputDate renderAsPopup="true"
+						<aon:selectInputDate
 							popupDateFormat="#{bundle.aon_date_pattern}"
-							rendered="#{to.id==controller.to.id}" value="#{controller.to.noteDate}"
-							enableManualInput="true" />
+							rendered="#{to.id==controller.to.id}" value="#{controller.to.noteDate}" />
 						<f:facet name="footer">
-							<aon:selectInputDate renderAsPopup="true"
+							<aon:selectInputDate
 								popupDateFormat="#{bundle.aon_date_pattern}"
-								rendered="#{controller.new}" value="#{controller.to.noteDate}"
-								enableManualInput="true" />
+								rendered="#{controller.new}" value="#{controller.to.noteDate}" />
 						</f:facet>
 					</aon:column>
 

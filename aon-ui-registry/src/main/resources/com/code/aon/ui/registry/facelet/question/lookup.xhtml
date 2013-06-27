@@ -1,0 +1,18 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:include src="/com/code/aon/ui/resources/facelet/shared/lookupAudit.xhtml" >
+		<ui:param name="lookupBean" value="#{questionLookup}" />
+		<ui:param name="lookupSelectType" value="list"/>
+		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.text}"/>
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.text} (#{lto.id})"/>		
+		<ui:param name="controller" value="#{question}" />
+		<ui:param name="lookupLabel" value="#{registryBundle.registry_question}" />
+		<ui:param name="searchButtonTitle" value="#{registryBundle.registry_question_selection}" />
+		<ui:param name="skipNewButton" value="#{true}" />
+	</ui:include>
+
+</ui:composition>

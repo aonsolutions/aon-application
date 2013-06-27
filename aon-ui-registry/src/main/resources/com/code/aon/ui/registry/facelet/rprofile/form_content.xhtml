@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:outputLabel for="RegistryProfile_lastUpdate" value="#{registryBundle.registry_profile_lastUpdate}" />
+	<aon:selectInputDate id="RegistryProfile_lastUpdate" value="#{controller.to.lastUpdate}"
+		timeZone="#{timeZoneController.timeZone}"  required="true"
+		popupDateFormat="#{bundle.aon_date_pattern}">
+	</aon:selectInputDate>
+	
+	<ui:include src="/com/code/aon/ui/registry/facelet/question/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{controller.to.question}" />
+		<ui:param name="idRequired" value="#{true}" />
+		<ui:param name="lookupReRender" value="RegistryProfile_response-New" />
+		<ui:param name="lookupControllerListener" value="#{question.notInfoListener}" />
+		<aon:methodParam name="lookupChangeListener"
+			value="#{controller.questionChanged}" type="lookupChangeListener" />		
+	</ui:include>
+
+	<aon:outputLabel for="RegistryProfile_value-New"
+		value="#{registryBundle.registry_response}" />
+	<aon:div id="RegistryProfile_response-New">
+		<aon:div layout="none">
+			<ui:include src="/com/code/aon/ui/registry/facelet/valueHolder/inputValueEx.xhtml" >
+				<ui:param name="inputId" value="RegistryProfile_value-New" />
+				<ui:param name="valueHolder" value="#{controller.to}" />
+				<ui:param name="questionValueId" value="#{controller.questionValueId}" />
+				<ui:param name="questionValues" value="#{controller.questionValues}" />
+			</ui:include>
+		</aon:div>
+	</aon:div>
+
+</ui:composition>

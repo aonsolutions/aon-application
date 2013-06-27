@@ -72,10 +72,10 @@ public class RegistryController extends BasicController {
 	private boolean showNewSegmentWindow;
 	private boolean showNewAddInfoWindow;
 	private boolean showNewDirStaffWindow;
-	private boolean showNewTargetItemWindow;
-	private boolean showNewTargetProfileWindow;
-	private boolean showNewTargetSellerWindow;
-	private boolean showNewTargetSupplierWindow;
+	private boolean showNewRegistryItemWindow;
+	private boolean showNewRegistryProfileWindow;
+	private boolean showNewRegistrySellerWindow;
+	private boolean showNewRegistrySupplierWindow;
 	private boolean showNewDocumentWindow;
 
 	public String getSelectedTab() {
@@ -150,36 +150,37 @@ public class RegistryController extends BasicController {
 		this.showNewProjectWindow = showNewProjectWindow;
 	}
 	
-	public boolean isShowNewTargetItemWindow() {
-		return showNewTargetItemWindow;
+	public boolean isShowNewRegistryItemWindow() {
+		return showNewRegistryItemWindow;
 	}
 
-	public void setShowNewTargetItemWindow(boolean showNewTargetItemWindow) {
-		this.showNewTargetItemWindow = showNewTargetItemWindow;
+	public void setShowNewRegistryItemWindow(boolean showNewRegistryItemWindow) {
+		this.showNewRegistryItemWindow = showNewRegistryItemWindow;
 	}
 
-	public boolean isShowNewTargetProfileWindow() {
-		return showNewTargetProfileWindow;
+	public boolean isShowNewRegistryProfileWindow() {
+		return showNewRegistryProfileWindow;
 	}
 
-	public void setShowNewTargetProfileWindow(boolean showNewTargetProfileWindow) {
-		this.showNewTargetProfileWindow = showNewTargetProfileWindow;
+	public void setShowNewRegistryProfileWindow(boolean showNewRegistryProfileWindow) {
+		this.showNewRegistryProfileWindow = showNewRegistryProfileWindow;
 	}
 
-	public boolean isShowNewTargetSellerWindow() {
-		return showNewTargetSellerWindow;
+	public boolean isShowNewRegistrySellerWindow() {
+		return showNewRegistrySellerWindow;
 	}
 
-	public void setShowNewTargetSellerWindow(boolean showNewTargetSellerWindow) {
-		this.showNewTargetSellerWindow = showNewTargetSellerWindow;
+	public void setShowNewRegistrySellerWindow(boolean showNewRegistrySellerWindow) {
+		this.showNewRegistrySellerWindow = showNewRegistrySellerWindow;
 	}
 
-	public boolean isShowNewTargetSupplierWindow() {
-		return showNewTargetSupplierWindow;
+	public boolean isShowNewRegistrySupplierWindow() {
+		return showNewRegistrySupplierWindow;
 	}
 
-	public void setShowNewTargetSupplierWindow(boolean showNewTargetSupplierWindow) {
-		this.showNewTargetSupplierWindow = showNewTargetSupplierWindow;
+	public void setShowNewRegistrySupplierWindow(
+			boolean showNewRegistrySupplierWindow) {
+		this.showNewRegistrySupplierWindow = showNewRegistrySupplierWindow;
 	}
 
 	public boolean isShowNewDocumentWindow() {

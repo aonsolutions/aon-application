@@ -44,15 +44,6 @@ public interface ICommercialConstants {
 	String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
 	String PROJECT_TAS_CONTROLLER_NAME = "projectTas";
 
-
-	// ************************************************************
-	// MESSAGE
-	// ************************************************************
-
-	String TARGET = "commercial_target";
-	String QUESTION = "commercial_question";
-	String RESPONSE = "commercial_response";
-	
 	// ************************************************************
 	// REPORT
 	// ************************************************************

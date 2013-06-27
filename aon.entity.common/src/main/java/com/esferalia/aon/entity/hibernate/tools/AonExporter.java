@@ -244,13 +244,7 @@ public class AonExporter extends GenericExporter{
 		map.put("OfferDetailCommission","com.code.aon.commercial.OfferDetailCommission");
 		map.put("OfferTerm","com.code.aon.commercial.OfferTerm");
 		map.put("ProjectCommercial","com.code.aon.commercial.ProjectCommercial");
-		map.put("Question","com.code.aon.commercial.Question");
-		map.put("QuestionValue","com.code.aon.commercial.QuestionValue");		
 		map.put("Target","com.code.aon.commercial.Target");
-		map.put("TargetItem","com.code.aon.commercial.TargetItem");
-		map.put("TargetProfile","com.code.aon.commercial.TargetProfile");
-		map.put("TargetSeller","com.code.aon.commercial.TargetSeller");
-		map.put("TargetSupplier","com.code.aon.commercial.TargetSupplier");
 
 		//AON COMPANY 
 		map.put("Company","com.code.aon.company.Company");
@@ -488,8 +482,14 @@ public class AonExporter extends GenericExporter{
 		//AON REGISTRY 
 		map.put("Person","com.code.aon.person.Person");
 		map.put("Category","com.code.aon.registry.Category");
+		map.put("Question","com.code.aon.registry.Question");
+		map.put("QuestionValue","com.code.aon.registry.QuestionValue");		
 		map.put("RecordData","com.code.aon.registry.RecordData");
 		map.put("Registry","com.code.aon.registry.Registry");
+		map.put("RegistryItem","com.code.aon.registry.RegistryItem");
+		map.put("RegistryProfile","com.code.aon.registry.RegistryProfile");
+		map.put("RegistrySeller","com.code.aon.registry.RegistrySeller");
+		map.put("RegistrySupplier","com.code.aon.registry.RegistrySupplier");		
 		map.put("RegistryAddInfo","com.code.aon.registry.RegistryAddInfo");
 		map.put("RegistryAddress","com.code.aon.registry.RegistryAddress");
 		map.put("RegistryAttachment","com.code.aon.registry.RegistryAttachment");

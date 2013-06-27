@@ -14,7 +14,7 @@
 		/>
 	</config:config>	
 
-	<commercial:config version="1.4" xmlns:commercial="http://www.esferalia.com/commercial">
+	<commercial:config version="1.5" xmlns:commercial="http://www.esferalia.com/commercial">
 		<commercial:offer
 			showInvoicing="true"
 			showSalesOrder="true"
@@ -23,7 +23,6 @@
 		/>
 		<commercial:target
 			showTaxInfoData="true"
-			showEcommerceTab="false"
 			showProfile="true"
 			showSearchOnlyCustomers="true"
 			showProject="true"

@@ -1008,7 +1008,7 @@
 	
 	<table name="question">
 		<column name="question_text" property="text" />
-		<column name="type" type="com.code.aon.commercial.enumeration.QuestionType"/>
+		<column name="type" type="com.code.aon.registry.enumeration.QuestionType"/>
 		<column name="argument" type="text"/>
 	</table>
 	
@@ -1017,9 +1017,11 @@
 		<column name="value_date" property="date" />
 		<column name="value_number" property="number" type="java.lang.Double"/>
 	</table>
+    
 	<table name="pay_method">
 		<column name="type" type="com.code.aon.config.enumeration.PayMethodType" /> 
 	</table>
+    
 	<table name="payment_concept">
 		<column name="type" type="com.esferalia.aon.salary.enumeration.PaymentType"/>
 		<column name="description_decorable" type="boolean" />
@@ -1286,7 +1288,11 @@
 		<column name="children" type="int"/>
 		<column name="babies" type="int"/>
 	</table>
-	
+	    
+	<table name="ritem" class="com.esferalia.aon.entity.master.RegistryItem" >
+		<column name="status" type="com.code.aon.registry.enumeration.RegistryItemStatus"/>
+	</table>
+    
 	<table name="rmedia" class="com.esferalia.aon.entity.master.RegistryMedia">
 		<column name="media" property="mediaType" type="com.code.aon.registry.enumeration.MediaType"/>
 		<foreign-key constraint-name="FK_RMEDIA_RADDRESS">
@@ -1314,6 +1320,12 @@
 			<many-to-one property="payment" />
 		</foreign-key>
 	</table>
+    
+	<table name="rprofile" class="com.esferalia.aon.entity.master.RegistryProfile" >
+		<column name="value_text" property="text" />
+		<column name="value_date" property="date" />
+		<column name="value_number" property="number" type="java.lang.Double"/>
+	</table>    
 	
 	<table name="rrelationship" class="com.esferalia.aon.entity.master.RegistryRelationship">
 		<foreign-key constraint-name="FK_RRELATIONSHIP_REGISTRY">
@@ -1329,6 +1341,23 @@
 	</table>
 	
 	<table name="rsegment" class="com.esferalia.aon.entity.master.RegistrySegment" />
+	
+	<table name="rseller" class="com.esferalia.aon.entity.master.RegistrySeller" >
+		<column name="status" type="com.code.aon.registry.enumeration.RegistrySellerStatus"/>
+	</table>
+	
+	<table name="rsupplier" class="com.esferalia.aon.entity.master.RegistrySupplier" >
+		<column name="number_of_pymnts" property="numberOfPayments" type="int"/>
+		<column name="days_to_first_pymnt" property="daysToFirstPayment" type="int"/>
+		<column name="days_between_pymnts" property="daysBetweenPayments" type="int"/>
+		<column name="pymnt_days" property="paymentDays" />
+		<column name="bank_account" type="com.code.aon.config.BankAccount"/>
+	</table>
+	
+	<table name="tas_item">
+		<column name="add_info" type="text"/>
+		<column name="description" type="text"/>
+	</table>    
 	
 	<table name="seller">
 		<primary-key>
@@ -1473,33 +1502,6 @@
 		<column name="status" type="com.code.aon.commercial.enumeration.TargetStatus"/>
 		<column name="advertising" type="com.code.aon.commercial.enumeration.Advertising"/>
 		<column name="transaction" type="com.code.aon.config.enumeration.InvoiceTransactionType"/>
-	</table>
-	
-	<table name="target_item">
-		<column name="status" type="com.code.aon.commercial.enumeration.TargetItemStatus"/>
-	</table>
-	
-	<table name="target_seller">
-		<column name="status" type="com.code.aon.commercial.enumeration.TargetSellerStatus"/>
-	</table>
-	
-	<table name="target_profile">
-		<column name="value_text" property="text" />
-		<column name="value_date" property="date" />
-		<column name="value_number" property="number" type="java.lang.Double"/>
-	</table>
-	
-	<table name="target_supplier">
-		<column name="number_of_pymnts" property="numberOfPayments" type="int"/>
-		<column name="days_to_first_pymnt" property="daysToFirstPayment" type="int"/>
-		<column name="days_between_pymnts" property="daysBetweenPayments" type="int"/>
-		<column name="pymnt_days" property="paymentDays" />
-		<column name="bank_account" type="com.code.aon.config.BankAccount"/>
-	</table>
-	
-	<table name="tas_item">
-		<column name="add_info" type="text"/>
-		<column name="description" type="text"/>
 	</table>
 	
 	<table name="task">

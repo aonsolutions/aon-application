@@ -13,10 +13,9 @@
 		value="#{controller.to.description}" />
 
 	<h:outputText value="#{bundle.aon_date}" />
-	<aon:selectInputDate renderAsPopup="true"
+	<aon:selectInputDate 
 		popupDateFormat="#{bundle.aon_date_pattern}"
-		value="#{controller.to.noteDate}"
-		enableManualInput="true" />
+		value="#{controller.to.noteDate}" />
 
 	<aon:outputText value="#{bundle.aon_confidential}" />
 	<aon:selectBooleanCheckbox id="RegistryNote_securityLevel"

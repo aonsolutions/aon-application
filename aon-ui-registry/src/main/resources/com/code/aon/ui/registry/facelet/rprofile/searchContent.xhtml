@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:outputText value="#{bundle.aon_date}" />
+	<aon:div>
+		<aon:outputLabel for="#{controller.pojoShortName}_profiles_lastUpdate-From"
+			styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="#{controller.pojoShortName}_profiles_lastUpdate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+
+		<aon:outputLabel for="#{controller.pojoShortName}_profiles_lastUpdate-To"
+			styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="#{controller.pojoShortName}_profiles_lastUpdate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+	</aon:div>					
+
+	<ui:include src="/com/code/aon/ui/registry/facelet/question/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{searchController.question}" />
+		<ui:param name="lookupControllerListener" value="#{question.notInfoListener}" />
+		<ui:param name="lookupReRender" value="registryProfileValueId" />
+		<aon:methodParam name="lookupChangeListener"
+			value="#{searchController.questionChanged}" type="lookupChangeListener" />														
+	</ui:include>
+	
+	<aon:div styleClass="aon-padding-top">				
+		<aon:outputText value="#{bundle.aon_value}" />
+	</aon:div>
+	<aon:div id="registryProfileValueId">
+		<aon:div rendered="#{searchController.questionResolved}">
+			<ui:include src="/com/code/aon/ui/registry/facelet/valueHolder/inputValueEx.xhtml" >
+				<ui:param name="inputId" value="RegistryProfile_value" />
+				<ui:param name="valueHolder" value="#{searchController.questionValue}" />
+				<ui:param name="questionValueId" value="#{searchController.questionValueId}" />
+				<ui:param name="questionValues" value="#{searchController.questionValues}" />
+			</ui:include>
+		</aon:div>								
+	</aon:div>
+
+</ui:composition>

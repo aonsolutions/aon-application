@@ -1,0 +1,17 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<c:if test="#{!(empty questionValues)}">
+		<aon:selectOneMenu id="#{inputId}" required="true"
+			value="#{questionValueId}">
+			<f:selectItems value="#{questionValues}" />
+		</aon:selectOneMenu>
+	</c:if>
+	<c:if test="#{empty questionValues}">
+		<ui:include src="/com/code/aon/ui/registry/facelet/valueHolder/inputValue.xhtml" />
+	</c:if>
+
+</ui:composition>

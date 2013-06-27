@@ -20,12 +20,9 @@ import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
-import com.code.aon.commercial.TargetSeller;
-import com.code.aon.commercial.TargetSupplier;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
-import com.code.aon.commercial.enumeration.TargetSellerStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -55,7 +52,10 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.RegistryPayMethod;
+import com.code.aon.registry.RegistrySeller;
+import com.code.aon.registry.RegistrySupplier;
 import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.registry.enumeration.RegistrySellerStatus;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.bridge.ProjectTasManager;
 import com.code.aon.sales.bridge.SalesManager;
@@ -459,18 +459,18 @@ public class OfferController extends BasicController implements ISignatureContro
 	public void loadCommercial(Integer id) throws ManagerBeanException {
 		if (id != null) {
 			Offer offer = getOffer();
-			IManagerBean targetSellerBean = BeanManager.getManagerBean(TargetSeller.class);
+			IManagerBean registrySellerBean = BeanManager.getManagerBean(RegistrySeller.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(targetSellerBean.getFieldName(IEntityAlias.TARGET_SELLER_TARGET_ID), id);
-			criteria.addEqualExpression(targetSellerBean.getFieldName(IEntityAlias.TARGET_SELLER_STATUS), TargetSellerStatus.ACTIVE);
-			criteria.addLessThanOrEqualExpression(targetSellerBean.getFieldName(IEntityAlias.TARGET_SELLER_START_DATE), offer.getIssueDate());
-			Expression endDateExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(targetSellerBean.getFieldName(IEntityAlias.TARGET_SELLER_END_DATE), offer.getIssueDate());
-			Expression endNullExpr = ExpressionUtilities.getNullExpression(targetSellerBean.getFieldName(IEntityAlias.TARGET_SELLER_END_DATE));
+			criteria.addEqualExpression(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_REGISTRY_ID), id);
+			criteria.addEqualExpression(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_STATUS), RegistrySellerStatus.ACTIVE);
+			criteria.addLessThanOrEqualExpression(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_START_DATE), offer.getIssueDate());
+			Expression endDateExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_END_DATE), offer.getIssueDate());
+			Expression endNullExpr = ExpressionUtilities.getNullExpression(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_END_DATE));
 			criteria.addExpression(ExpressionUtilities.getOrExpression(endDateExpr, endNullExpr));
-			criteria.addOrder(targetSellerBean.getFieldName(IEntityAlias.TARGET_SELLER_START_DATE));
-			Iterator<ITransferObject> iter = targetSellerBean.getList(criteria).iterator();
+			criteria.addOrder(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_START_DATE));
+			Iterator<ITransferObject> iter = registrySellerBean.getList(criteria).iterator();
 			if (iter.hasNext()) {
-				offer.setSeller(((TargetSeller)iter.next()).getSeller());
+				offer.setSeller(((RegistrySeller)iter.next()).getSeller());
 			} else {
 				offer.setSeller(new Seller());
 				offer.getSeller().setRegistry(new Registry());
@@ -513,21 +513,21 @@ public class OfferController extends BasicController implements ISignatureContro
 			Offer offer = getOffer();
 			offer.setSupplier((Supplier)event.getNewValue());
 
-			IManagerBean bean = BeanManager.getManagerBean(TargetSupplier.class);
+			IManagerBean bean = BeanManager.getManagerBean(RegistrySupplier.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TARGET_SUPPLIER_TARGET_ID), offer.getTarget().getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TARGET_SUPPLIER_SUPPLIER_ID), offer.getSupplier().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_SUPPLIER_REGISTRY_ID), offer.getTarget().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_SUPPLIER_SUPPLIER_ID), offer.getSupplier().getId());
 			Iterator<?> iterator = bean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
-				TargetSupplier targetSupplier = (TargetSupplier)iterator.next();
-				offer.setTariff(targetSupplier.getTariff());
-				offer.setPayMethod(targetSupplier.getPayMethod());
-				offer.setNumberOfPayments(targetSupplier.getNumberOfPayments());
-				offer.setDaysToFirstPayment(targetSupplier.getDaysToFirstPayment());
-				offer.setDaysBetweenPayments(targetSupplier.getDaysBetweenPayments());
-				offer.setPaymentDays(targetSupplier.getPaymentDays());
-				offer.setBank(targetSupplier.getBank());
-				offer.setBankAccount(targetSupplier.getBankAccount());
+				RegistrySupplier registrySupplier = (RegistrySupplier)iterator.next();
+				offer.setTariff(registrySupplier.getTariff());
+				offer.setPayMethod(registrySupplier.getPayMethod());
+				offer.setNumberOfPayments(registrySupplier.getNumberOfPayments());
+				offer.setDaysToFirstPayment(registrySupplier.getDaysToFirstPayment());
+				offer.setDaysBetweenPayments(registrySupplier.getDaysBetweenPayments());
+				offer.setPaymentDays(registrySupplier.getPaymentDays());
+				offer.setBank(registrySupplier.getBank());
+				offer.setBankAccount(registrySupplier.getBankAccount());
 				setDefaultPayMethod(false);
 			}
 		}

@@ -83,36 +83,36 @@
 		<aon:menuItem id="product-button"
 			value="#{(productButtonLabel!=null)?(productButtonLabel):(productBundle.product_module)}"
 			iconClass="aon-icon-product"
-			reRender="showNewTargetItemWindow"
-			actionListener="#{targetItemController.onReset}">
-			<f:setPropertyActionListener target="#{controller.showNewTargetItemWindow}" value="#{true}" />							
+			reRender="showNewRegistryItemWindow"
+			actionListener="#{registryItemController.onReset}">
+			<f:setPropertyActionListener target="#{controller.showNewRegistryItemWindow}" value="#{true}" />							
 		</aon:menuItem>		
 	</c:if>
 	<c:if test="#{showProfileButton}">
 		<aon:menuItem id="profile-button"
-			value="#{(profileButtonLabel!=null)?(profileButtonLabel):(commercialBundle.commercial_target_profile)}"
+			value="#{(profileButtonLabel!=null)?(profileButtonLabel):(registryBundle.registry_profile)}"
 			iconClass="aon-icon-reservation"
-			reRender="showNewTargetProfileWindow"
-			actionListener="#{targetProfileController.onReset}">
-			<f:setPropertyActionListener target="#{controller.showNewTargetProfileWindow}" value="#{true}" />							
+			reRender="showNewRegistryProfileWindow"
+			actionListener="#{registryProfileController.onReset}">
+			<f:setPropertyActionListener target="#{controller.showNewRegistryProfileWindow}" value="#{true}" />							
 		</aon:menuItem>		
 	</c:if>
-	<c:if test="#{showTargetSellerButton}">
-		<aon:menuItem id="targetSeller-button"
+	<c:if test="#{showRegistrySellerButton}">
+		<aon:menuItem id="registrySeller-button"
 			value="#{(sellerButtonLabel!=null)?(sellerButtonLabel):(sellerBundle.seller_seller)}"
 			iconClass="aon-icon-commercial"
-			reRender="showNewTargetSellerWindow"
-			actionListener="#{targetSellerController.onReset}">
-			<f:setPropertyActionListener target="#{controller.showNewTargetSellerWindow}" value="#{true}" />							
+			reRender="showNewRegistrySellerWindow"
+			actionListener="#{registrySellerController.onReset}">
+			<f:setPropertyActionListener target="#{controller.showNewRegistrySellerWindow}" value="#{true}" />							
 		</aon:menuItem>		
 	</c:if>
-	<c:if test="#{showTargetSupplierButton}">
-		<aon:menuItem id="targetSupplier-button"
-			value="#{(supplierButtonLabel!=null)?(supplierButtonLabel):(commercialBundle.commercial_target_supplier_info)}"
+	<c:if test="#{showRegistrySupplierButton}">
+		<aon:menuItem id="registrySupplier-button"
+			value="#{(supplierButtonLabel!=null)?(supplierButtonLabel):(registryBundle.registry_supplier_info)}"
 			iconClass="aon-icon-purchase"
-			reRender="showNewTargetSupplierWindow"
-			actionListener="#{targetSupplierController.onReset}">
-			<f:setPropertyActionListener target="#{controller.showNewTargetSupplierWindow}" value="#{true}" />							
+			reRender="showNewRegistrySupplierWindow"
+			actionListener="#{registrySupplierController.onReset}">
+			<f:setPropertyActionListener target="#{controller.showNewRegistrySupplierWindow}" value="#{true}" />							
 		</aon:menuItem>		
 	</c:if>
 	<c:if test="#{showDocumentButton}">

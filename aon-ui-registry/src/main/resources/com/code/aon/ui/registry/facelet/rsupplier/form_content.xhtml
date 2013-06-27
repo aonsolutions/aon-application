@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+	
+	<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{controller.to.supplier}" />
+		<ui:param name="idRequired" value="#{true}" />
+	</ui:include>
+
+	<aon:outputLabel for="RegistrySupplier_registry_document" 
+		value="#{bundle.aon_company_document}" />
+	<aon:inputText id="RegistrySupplier_registry_document" 
+		value="#{controller.to.supplier.registry.document}"
+		disabled="true" size="10" />
+
+	<aon:outputLabel for="RegistrySupplier_tariff" 
+		value="#{productBundle.product_tariff}" />
+	<aon:selectOneMenu id="RegistrySupplier_tariff" 
+		value="#{controller.to.tariff}">
+		<f:selectItem itemLabel="-" itemValue="" />
+		<f:selectItems value="#{configCollections.tariffs}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="RegistrySupplier_targetExternalCode" 
+		value="#{registryBundle.registry_supplier_customer_id}" />
+	<aon:inputText id="RegistrySupplier_targetExternalCode" 
+		value="#{controller.to.targetExternalCode}"
+		size="10" />
+
+</ui:composition>

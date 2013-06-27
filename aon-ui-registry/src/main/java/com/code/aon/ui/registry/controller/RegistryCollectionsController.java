@@ -8,8 +8,11 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.person.enumeration.Gender;
@@ -18,6 +21,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.registry.Category;
+import com.code.aon.registry.Question;
+import com.code.aon.registry.QuestionValue;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddInfo;
 import com.code.aon.registry.RegistryBank;
@@ -28,10 +33,14 @@ import com.code.aon.registry.enumeration.CategoryType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.NoteType;
+import com.code.aon.registry.enumeration.QuestionType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.registry.enumeration.RegistryItemStatus;
+import com.code.aon.registry.enumeration.RegistrySellerStatus;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.registry.enumeration.TaxRegime;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 /**
@@ -50,13 +59,16 @@ public class RegistryCollectionsController {
 	private List<SelectItem> noteTypes;
 	private List<SelectItem> documentTypes;
 	private List<SelectItem> taxRegimes;
+	private List<SelectItem> registryItemStatuses;
+	private List<SelectItem> registrySellerStatuses;
+	private List<SelectItem> questionTypes;
 	private RegistryBank rBank; // No Borrar. Euke.
 								// Se utiliza como selector 
 								// en la pantalla de alta de vencimientos.
 	
     public List<SelectItem> getAddressTypes() {
     	if ( addressTypes == null ) {
-    		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+    		Locale locale = AonUtil.getCurrentLocale();
     		addressTypes = new LinkedList<SelectItem>();
     		for( AddressType type : AddressType.values() ) {
 	            String name = type.getName(locale); 
@@ -69,7 +81,7 @@ public class RegistryCollectionsController {
 
     public List<SelectItem> getStreetTypes() {
     	if ( streetTypes == null ) {
-	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+    		Locale locale = AonUtil.getCurrentLocale();
 	        streetTypes = new LinkedList<SelectItem>();
 	        for( StreetType type : StreetType.values() ) {
 	            String name = type.getName(locale); 
@@ -82,7 +94,7 @@ public class RegistryCollectionsController {
 
     public List<SelectItem> getMediaTypes() {
     	if ( mediaTypes == null ) {
-	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+    		Locale locale = AonUtil.getCurrentLocale();
 	        mediaTypes = new LinkedList<SelectItem>();
 	        for( MediaType type : MediaType.values() ) {
 	            String name = type.getName(locale); 
@@ -95,7 +107,7 @@ public class RegistryCollectionsController {
     
     public List<SelectItem> getRegistryTypes() {
     	if ( registryTypes == null) {
-	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+    		Locale locale = AonUtil.getCurrentLocale();
 	        registryTypes = new LinkedList<SelectItem>();
 	        for( RegistryType type : RegistryType.values() ) {
 	            String name = type.getName(locale); 
@@ -122,7 +134,7 @@ public class RegistryCollectionsController {
     
     public List<SelectItem> getGenders() {
     	if ( genders == null ) {
-	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+    		Locale locale = AonUtil.getCurrentLocale();
 	        genders = new LinkedList<SelectItem>();
 	        for( Gender gender : Gender.values() ) {
 	            String name = gender.getName(locale); 
@@ -135,7 +147,7 @@ public class RegistryCollectionsController {
     
     public List<SelectItem> getMaritalStatuses() {
     	if ( maritalStatuses == null ) {
-	    	Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+    		Locale locale = AonUtil.getCurrentLocale();
 		    maritalStatuses = new LinkedList<SelectItem>();
 	        for( MaritalStatus status : MaritalStatus.values() ) {
 	            String name = status.getName(locale); 
@@ -148,7 +160,7 @@ public class RegistryCollectionsController {
     
     public List<SelectItem> getRegistryAttachmentTypes() {
     	if ( registryAttachmentTypes == null ) {
-	    	Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+    		Locale locale = AonUtil.getCurrentLocale();
 	    	registryAttachmentTypes = new LinkedList<SelectItem>();
 	        for( RegistryAttachmentType status : RegistryAttachmentType.values() ) {
 	            String name = status.getName(locale); 
@@ -161,7 +173,7 @@ public class RegistryCollectionsController {
     
 	public List<SelectItem> getNoteTypes() {
 		if ( noteTypes == null ) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			noteTypes = new LinkedList<SelectItem>();
 			for( NoteType type : NoteType.values() ) {
 				if (type.compareTo(NoteType.OBSERVATION)!=0){
@@ -176,7 +188,7 @@ public class RegistryCollectionsController {
 	
 	public List<SelectItem> getDocumentTypes() {
 		if ( documentTypes == null ) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			documentTypes = new LinkedList<SelectItem>();
 			for( DocumentType type : DocumentType.values() ) {
 					String name = type.getName(locale);
@@ -189,7 +201,7 @@ public class RegistryCollectionsController {
 	
 	public List<SelectItem> getTaxRegimes() {
 		if ( taxRegimes == null ) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			taxRegimes = new LinkedList<SelectItem>();
 			for( TaxRegime taxRegime : TaxRegime.values() ) {
 					String name = taxRegime.getName(locale);
@@ -315,5 +327,73 @@ public class RegistryCollectionsController {
     public CategoryType[] getCategoryTypes() {
     	return CategoryType.values();
     }
-    
+ 
+	/**
+	 * Gets the registry item statuses.
+	 * 
+	 * @return the registry item statuses
+	 */
+	public List<SelectItem> getRegistryItemStatuses() {
+		if ( registryItemStatuses == null ) {
+			Locale locale = AonUtil.getCurrentLocale();
+			registryItemStatuses = new LinkedList<SelectItem>();
+			for (RegistryItemStatus status : RegistryItemStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				registryItemStatuses.add(item);
+			}
+		}
+		return registryItemStatuses;
+	}
+
+	/**
+	 * Gets the registry item statuses.
+	 * 
+	 * @return the registry item statuses
+	 */
+	public List<SelectItem> getRegistrySellerStatuses() {
+		if ( registrySellerStatuses == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			registrySellerStatuses = new LinkedList<SelectItem>();
+			for (RegistrySellerStatus status : RegistrySellerStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				registrySellerStatuses.add(item);
+			}
+		}
+		return registrySellerStatuses;
+	}
+	
+	public static List<SelectItem> getQuestionValues( Question question ) throws ManagerBeanException {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.QUESTION_VALUE_QUESTION_ID), question.getId());
+		for( ITransferObject to : bean.getList(criteria) ) {
+			QuestionValue questionValue = (QuestionValue) to;
+			Object value = questionValue.getValue( question.getType() );
+			SelectItem item = new SelectItem(questionValue.getId(), ObjectUtils.toString(value));
+			list.add(item);
+		}
+		return list;
+	}	
+ 
+	/**
+	 * Gets the question types.
+	 * 
+	 * @return the question types.
+	 */
+	public List<SelectItem> getQuestionTypes() {
+		if ( questionTypes == null ) {
+			Locale locale = AonUtil.getCurrentLocale();
+			questionTypes = new LinkedList<SelectItem>();
+			for (QuestionType auditLevel : QuestionType.values()) {
+				String name = auditLevel.getName(locale);
+				SelectItem item = new SelectItem(auditLevel, name);
+				questionTypes.add(item);
+			}
+		}
+		return questionTypes;
+	}	
+	
 }

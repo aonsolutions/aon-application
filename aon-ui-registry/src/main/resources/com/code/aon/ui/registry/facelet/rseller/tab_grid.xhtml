@@ -1,0 +1,102 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+		
+		<ui:define name="columns">
+
+			<aon:column styleClass="aon-editDataTable-textColumn"
+				alias="RegistrySeller.seller.registry.name" >
+				<f:facet name="header">
+					<aon:outputLabel for="Seller_id" value="#{sellerBundle.seller_seller}" />
+				</f:facet>
+				<aon:outputText value="#{to.seller.registry.name}"
+					rendered="#{formList}" />
+					
+				<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml" >
+					<ui:param name="lookupTo" value="#{controller.to.seller}" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="lookupInputSuggestSize" value="40" />
+					<ui:param name="lookupRendered" value="#{formEdit}" />
+				</ui:include>
+				<f:facet name="footer" >
+					<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{controller.to.seller}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="lookupInputSuggestSize" value="40" />
+						<ui:param name="lookupRendered" value="#{formNew}" />
+						<ui:param name="lookupSuffix" value="-New" />
+					</ui:include>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-120"
+				alias="RegistrySeller.startDate" >
+				<f:facet name="header">
+					<aon:outputLabel for="RegistrySeller_startDate" value="#{bundle.aon_start_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.startDate}"	rendered="#{formList}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate id="RegistrySeller_startDate" rendered="#{formEdit}"
+					value="#{controller.to.startDate}" required="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}"/>
+				<f:facet name="footer">
+					<aon:selectInputDate id="RegistrySeller_startDate-New" rendered="#{formNew}"
+						value="#{controller.to.startDate}" required="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-120"
+				alias="RegistrySeller.endDate" >
+				<f:facet name="header">
+					<aon:outputLabel for="RegistrySeller_endDate" value="#{bundle.aon_end_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.endDate}" rendered="#{formList}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate id="RegistrySeller_endDate" rendered="#{formEdit}"
+					value="#{controller.to.endDate}"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}"/>
+				<f:facet name="footer">
+					<aon:selectInputDate id="RegistrySeller_endDate-New" rendered="#{formNew}"
+						value="#{controller.to.endDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+				</f:facet>
+			</aon:column>
+					
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
+				alias="RegistrySeller.status" >
+				<f:facet name="header">
+					<aon:outputLabel for="RegistrySeller_status" value="#{bundle.aon_status}" />
+				</f:facet>
+				<aon:outputText value="#{to.status}"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="RegistrySeller_status" rendered="#{formEdit}"
+					required="true" value="#{controller.to.status}">
+					<f:selectItems value="#{registryCollections.registrySellerStatuses}" />
+				</aon:selectOneMenu>								
+				<f:facet name="footer">
+					<aon:selectOneMenu id="RegistrySeller_status-New" rendered="#{formNew}"
+						required="true" value="#{controller.to.status}">
+						<f:selectItems value="#{registryCollections.registrySellerStatuses}" />
+					</aon:selectOneMenu>								
+				</f:facet>
+			</aon:column>
+			
+		</ui:define>
+	</ui:decorate>
+		
+</ui:composition>

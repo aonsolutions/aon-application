@@ -1,0 +1,88 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div>
+
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+
+			<ui:define name="columns">
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-120"
+					alias="RegistryProfile.lastUpdate" >
+					<f:facet name="header">
+						<aon:outputLabel for="RegistryProfile_lastUpdate" value="#{registryBundle.registry_profile_lastUpdate}" />
+					</f:facet>
+					<aon:outputText value="#{to.lastUpdate}" rendered="#{formList}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>				
+					<aon:selectInputDate id="RegistryProfile_lastUpdate" value="#{controller.to.lastUpdate}"
+						timeZone="#{timeZoneController.timeZone}" rendered="#{formEdit}" required="true"
+						popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+					<f:facet name="footer">
+						<aon:selectInputDate id="RegistryProfile_lastUpdate-New" value="#{controller.to.lastUpdate}" 
+							timeZone="#{timeZoneController.timeZone}" rendered="#{formNew}" required="true"
+							popupDateFormat="#{bundle.aon_date_pattern}">
+						</aon:selectInputDate>
+					</f:facet>
+				</aon:column>
+	
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputLabel for="Question_id" value="#{registryBundle.registry_question}" />
+					</f:facet>
+					<aon:outputText value="#{to.question.description}" />
+					<f:facet name="footer">
+						<ui:include src="/com/code/aon/ui/registry/facelet/question/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{controller.to.question}" />
+							<ui:param name="idRequired" value="#{true}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="lookupRendered" value="#{formNew}" />
+							<ui:param name="lookupReRender" value="RegistryProfile_response-New" />
+							<ui:param name="lookupControllerListener" value="#{question.notInfoListener}" />
+							<aon:methodParam name="lookupChangeListener"
+								value="#{controller.questionChanged}" type="lookupChangeListener" />														
+						</ui:include>
+					</f:facet>
+				</aon:column>
+				
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-250">
+					<f:facet name="header">
+						<aon:outputLabel for="RegistryProfile_value"
+							value="#{registryBundle.registry_response}" />
+					</f:facet>
+					<aon:div layout="none" rendered="#{formList}">
+						<ui:include src="/com/code/aon/ui/registry/facelet/valueHolder/outputValue.xhtml" >
+							<ui:param name="valueHolder" value="#{to}" />
+						</ui:include>
+					</aon:div>
+					<aon:div layout="none" rendered="#{formEdit}">
+						<ui:include src="/com/code/aon/ui/registry/facelet/valueHolder/inputValueEx.xhtml" >
+							<ui:param name="inputId" value="RegistryProfile_value" />
+							<ui:param name="valueHolder" value="#{controller.to}" />
+							<ui:param name="questionValueId" value="#{controller.questionValueId}" />
+							<ui:param name="questionValues" value="#{controller.questionValues}" />
+						</ui:include>
+					</aon:div>			
+					<f:facet name="footer">
+						<aon:div id="RegistryProfile_response-New">
+							<aon:div layout="none" rendered="#{formNew}">
+								<ui:include src="/com/code/aon/ui/registry/facelet/valueHolder/inputValueEx.xhtml" >
+									<ui:param name="inputId" value="RegistryProfile_value-New" />
+									<ui:param name="valueHolder" value="#{controller.to}" />
+									<ui:param name="questionValueId" value="#{controller.questionValueId}" />
+									<ui:param name="questionValues" value="#{controller.questionValues}" />
+								</ui:include>
+							</aon:div>
+						</aon:div>
+					</f:facet>
+				</aon:column>			
+				
+			</ui:define>
+		</ui:decorate>
+	</aon:div>
+</ui:composition>
