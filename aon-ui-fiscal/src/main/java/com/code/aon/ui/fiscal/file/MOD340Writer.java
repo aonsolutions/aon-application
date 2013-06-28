@@ -11,11 +11,14 @@ import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.tax.model.MOD340.MOD340;
@@ -23,13 +26,14 @@ import com.code.aon.file.tax.model.MOD340.MOD340Format;
 import com.code.aon.file.tax.model.MOD340.data.Deponent;
 import com.code.aon.file.tax.model.MOD340.data.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.fiscal.mod340.Model340Parameters;
 import com.code.aon.pool.AonConnectionException;
-import com.code.aon.registry.RegistryMedia;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
+import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.util.AonUtil;
 
 public class MOD340Writer implements IFinanceConstants{
@@ -68,9 +72,13 @@ public class MOD340Writer implements IFinanceConstants{
 		ResultSet taxRs = null;
 		PreparedStatement sumPs = null;
 		ResultSet sumRs = null;
+		PreparedStatement rectifiedInvoicePs= null;
+		ResultSet rectifiedInvoiceRs= null;
 		Connection conn = null;
 		try {
 			conn = DatabaseUtil.getConnection( params.getDomain() );
+			String rectifiedSelect = "SELECT i.type,i.series,i.number FROM invoice i WHERE id = ?";
+			rectifiedInvoicePs  = conn.prepareStatement( rectifiedSelect , ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			
 			Deponent deponent = getDeponent();
 			StringWriter stmt = new StringWriter();
@@ -134,9 +142,11 @@ public class MOD340Writer implements IFinanceConstants{
 				taxPs.setInt(1, id);
 				taxRs = taxPs.executeQuery();
 				while (taxRs.next()) {
-					Invoice inv = fillInvoice( invoicesRs );
+					Invoice inv = fillInvoice(rectifiedInvoicePs,rectifiedInvoiceRs, invoicesRs );
 					inv.setRegisterCount(numTaxes);
-					inv.setOperation(numTaxes > 1?"C":"");
+					if (StringUtils.isEmpty(inv.getOperation())) {
+						inv.setOperation(numTaxes > 1?"C":"");
+					}
 					double taxableBase = taxRs.getDouble("taxable_base");
 					double quota = taxRs.getDouble("quota");
 					double surchargeQuota = taxRs.getDouble("surcharge_quota");
@@ -169,49 +179,51 @@ public class MOD340Writer implements IFinanceConstants{
 		} catch (IOException e) {
 			throw new Fd0Exception("ERROR", e.getMessage());
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new Fd0Exception("ERROR", e.getMessage());
 		} catch (AonConnectionException e) {
 			throw new Fd0Exception("ERROR", e.getMessage());
 		} finally {
+			DatabaseUtil.closeQuietly(sumRs);
+			DatabaseUtil.closeQuietly(sumPs);
 			DatabaseUtil.closeQuietly(taxRs);
 			DatabaseUtil.closeQuietly(taxPs);
 			DatabaseUtil.closeQuietly(invoicesRs);
 			DatabaseUtil.closeQuietly(invoicesPs);
+			DatabaseUtil.closeQuietly(rectifiedInvoiceRs);
+			DatabaseUtil.closeQuietly(rectifiedInvoicePs);
 			DatabaseUtil.closeQuietly(conn);
 		}
 	}
 
 	private Deponent getDeponent() throws Fd0Exception{
+		FiscalParametersController fiscalParams = (FiscalParametersController) AonUtil
+				.getRegisteredBean(FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
+
+		Deponent deponent = new  Deponent();
+		deponent.setYear(params.getYear());
+		deponent.setPeriod(params.getPeriodString());
+		deponent.setCode(getCompany().getDocument());
+		deponent.setType("T");
+		deponent.setName(getCompany().getName());
 		try {
-			Deponent deponent = new  Deponent();
-			deponent.setYear(params.getYear());
-			deponent.setPeriod(params.getPeriodString());
-			deponent.setCode(getCompany().getDocument());
-			deponent.setType("T");
-			deponent.setName(getCompany().getName());
-			RegistryMedia phone = getCompany().getPhone();
-			deponent.setRelPhone(null);
-			if (phone != null){
-				try {
-					deponent.setRelPhone(Integer.parseInt( phone.getValue() ));
-				} catch (NumberFormatException e) {
-					// Nothing
-				}
-			}
-			deponent.setRelName(getCompany().getName());
-			deponent.setNumber("340" + deponent.getYear() + deponent.getPeriod() + "0000"); 
-			deponent.setComplementary(null);
-			deponent.setReplacement(params.isReplacement()?"S":null);
-			deponent.setPreviousNumber(params.isReplacement()?params.getPreviousNumber():"0000000000000");
-			deponent.setVatDeclarationNumber(params.getVatDeclarationNumber() );
-			deponent.setTotalRegister( 0 ); 
-			deponent.setTotalTaxableBase(0);
-			deponent.setTotalQuota(0);
-			deponent.setTotalInvoice(0);
-			return deponent;
-		} catch (ManagerBeanException e) {
-			throw new Fd0Exception("ERROR", e.getMessage());
+			String phone = fiscalParams.getContactPhone();
+			phone = StringUtils.remove(phone," ");
+			deponent.setRelPhone(Integer.parseInt( phone ));
+		} catch (NumberFormatException e) {
+			// Nothing
 		}
+		deponent.setRelName(fiscalParams.getContactPerson() );
+		deponent.setNumber("340" + deponent.getYear() + deponent.getPeriod() + "0000"); 
+		deponent.setComplementary(null);
+		deponent.setReplacement(params.isReplacement()?"S":null);
+		deponent.setPreviousNumber(params.isReplacement()?params.getPreviousNumber():"0000000000000");
+		deponent.setVatDeclarationNumber(params.getVatDeclarationNumber() );
+		deponent.setTotalRegister( 0 ); 
+		deponent.setTotalTaxableBase(0);
+		deponent.setTotalQuota(0);
+		deponent.setTotalInvoice(0);
+		return deponent;
 	}
 
 	private void appendParams(StringWriter stmt) {
@@ -233,10 +245,14 @@ public class MOD340Writer implements IFinanceConstants{
 		}
 	}
 
-	private Invoice fillInvoice(ResultSet rs) throws SQLException {
+	private Invoice fillInvoice(PreparedStatement rectifiedInvoicePs, ResultSet  rectifiedInvoiceRs
+			, ResultSet rs) throws SQLException {
 		Invoice inv = new Invoice();
 		InvoiceType type = InvoiceType.values()[rs.getInt("type")];
-//		InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt("transaction")];
+		InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt("transaction")];
+		if (transaction == InvoiceTransactionType.OTHER_ISP) {
+			inv.setOperation("I");
+		}
 		boolean investment = rs.getInt("investment") == 1;
 		if ( type == InvoiceType.SALES) {
 			inv.setType(MOD340.ISSUED);
@@ -244,6 +260,21 @@ public class MOD340Writer implements IFinanceConstants{
 			inv.setFirstInvoiceNumber("");
 			inv.setLastInvoiceNumber("");
 			inv.setRectifiedInvoiceNumber("");
+			RectificationType rt = RectificationType.values()[rs.getInt("rectification_type")];
+			if ( rt == RectificationType.NORMAL_RECTIFIER || rt == RectificationType.SPECIAL_RECTIFIER ) {
+				int rectifiedInvoice = rs.getInt("rectification_invoice");	
+				rectifiedInvoicePs.setInt(1, rectifiedInvoice);
+				rectifiedInvoiceRs = rectifiedInvoicePs.executeQuery();
+				if (rectifiedInvoiceRs.next()) {
+					InvoiceType rType = InvoiceType.values()[rectifiedInvoiceRs.getInt(1)];
+					String rSeries = rectifiedInvoiceRs.getString(2);
+					int rNumber = rectifiedInvoiceRs.getInt(3);
+					String documentNumber = FinanceUtil.getDocumentNumber(rType, rSeries, rNumber);
+					inv.setOperation("D");
+					inv.setRectifiedInvoiceNumber(documentNumber);
+				}
+				rectifiedInvoiceRs.close();
+			}
 		} else if (investment && params.isInvestmentBookEnabled()) {
 				inv.setType(MOD340.INVESTMENT);
 				inv.setYearProrate(0); 
