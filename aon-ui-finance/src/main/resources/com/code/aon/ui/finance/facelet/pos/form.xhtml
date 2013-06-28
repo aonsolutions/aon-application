@@ -70,10 +70,29 @@
 					</ui:include>
 
 					<aon:outputLabel for="Pos_displayMode" value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="Pos_displayMode"
-						value="#{pos.to.displayMode}" required="true">
-						<f:selectItems value="#{financeCollections.posDisplayModes}" />
-					</aon:selectOneMenu>
+					<aon:div id="DisplayModeDiv">
+						<aon:selectOneMenu id="Pos_displayMode"
+							value="#{pos.to.displayMode}" required="true"
+							reRender="DisplayModeDiv" ajaxSingle="true">
+							<f:selectItems value="#{financeCollections.posDisplayModes}" />
+						</aon:selectOneMenu>
+						<aon:outputLabel for="Pos_numRows" value="#{bundle.aon_rows}"
+							styleClass="aon-margin-left aon-margin-right aon-italic"
+							rendered="#{pos.to.barRestaurant}" />
+						<aon:inputText id="Pos_numRows" 
+							value="#{pos.to.numRows}" 
+							size="1" maxlength="1" required="true">
+							<f:validateDoubleRange minimum="3" />
+						</aon:inputText>
+						<aon:outputLabel for="Pos_numCols" value="#{bundle.aon_columns}"
+							styleClass="aon-margin-left aon-margin-right aon-italic"
+							rendered="#{pos.to.barRestaurant}" />
+						<aon:inputText id="Pos_numCols" 
+							value="#{pos.to.numCols}" 
+							size="1" maxlength="1" required="true">
+							<f:validateDoubleRange minimum="3" />
+						</aon:inputText>
+					</aon:div>
 
 					<aon:outputLabel for="Pos_active" value="#{bundle.aon_status}" />
 					<aon:selectOneRadio id="Pos_active"
