@@ -534,6 +534,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		IManagerBean bean = BeanManager.getManagerBean(Purchase.class);
 		bean.restoreNullSubPOJOs(purchase);
 		bean.update(purchase);
+		bean.initializePOJO(purchase);
 	}
 	
 	@SuppressWarnings("unchecked")
