@@ -58,7 +58,7 @@
 		/>				
 	</company:config>
 
-	<customer:config version="1.1" xmlns:customer="http://www.esferalia.com/customer">
+	<customer:config version="1.2" xmlns:customer="http://www.esferalia.com/customer">
 		<customer:customer
 			showOfferData="true"
 			showSalesData="true"
@@ -80,6 +80,10 @@
 			showLoan="false"
 			showCourse="false"			
 			showPerson="false"
+			showProduct="true"
+			showSeller="true"
+			showProfile="true"
+			showSupplier="true"
 		/>
 	</customer:config>
 

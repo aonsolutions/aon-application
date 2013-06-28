@@ -191,6 +191,11 @@
 			<value>#{alumnControllerListener}</value>
 			<!--  aon.ui.customer -->
 			<value>#{customerPersonListener}</value>
+			<!--  aon.ui.registry -->
+			<value>#{customerItemListener}</value>
+			<value>#{customerSellerListener}</value>
+			<value>#{customerProfileListener}</value>
+			<value>#{customerSupplierListener}</value>			
 		</list-entries>
 	</managed-bean>
 

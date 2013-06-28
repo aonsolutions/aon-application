@@ -1175,15 +1175,9 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{targetProfileControllerListener}</value>
+				<value>#{registryProfileControllerListener}</value>
 			</list-entries>
 		</managed-property>				
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>targetProfileControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryProfileControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>

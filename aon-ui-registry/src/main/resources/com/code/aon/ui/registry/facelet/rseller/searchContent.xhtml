@@ -7,7 +7,8 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml" >
-		<ui:param name="lookupTo" value="#{searchController.seller}" />
+		<ui:param name="lookupTo" value="#{searchController.registrySeller}" />
+		<ui:param name="lookupForRegistry" value="#{true}" />
 		<ui:param name="lookupSuffix" value="-RegistrySeller" />
 		<ui:param name="skipNewButton" value="#{true}" />		
 	</ui:include>

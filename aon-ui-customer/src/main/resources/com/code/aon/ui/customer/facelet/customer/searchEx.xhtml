@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -23,5 +24,14 @@
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
+		<c:if test="#{aonConfiguration.bean.customer.showProduct}">
+			<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		</c:if>			
+		<c:if test="#{aonConfiguration.bean.customer.showSeller}">
+			<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+		</c:if>
+		<c:if test="#{aonConfiguration.bean.customer.showProfile}">
+			<aon:lookupButtonPopup lookup="#{questionLookup}" />
+		</c:if>			
 	</ui:define>
 </ui:composition>

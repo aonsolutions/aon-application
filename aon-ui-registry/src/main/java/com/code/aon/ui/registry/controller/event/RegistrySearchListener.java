@@ -5,18 +5,26 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ClassUtils;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Scope;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.registry.Question;
+import com.code.aon.registry.QuestionValue;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.Segment;
 import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
+import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 
 public class RegistrySearchListener extends ControllerSearchListenerEx {
 	
@@ -35,6 +43,16 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 	private Segment[] segments;
 	
 	private Scope[] scopes;
+	
+	private Question question;
+	
+	private QuestionValue questionValue;
+	
+	private List<SelectItem> questionValues;
+	
+	private Integer questionValueId;	
+	
+	private Registry registrySeller;
 	
 	public Scope[] getScopes() {
 		if (ArrayUtils.isEmpty(scopes)) {
@@ -135,6 +153,69 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 		return ids;
 	}
 	
+	public Registry getRegistrySeller() {
+		return registrySeller;
+	}
+
+	public void setRegistrySeller(Registry registrySeller) {
+		this.registrySeller = registrySeller;
+	}
+
+	public Integer getQuestionValueId() {
+		return questionValueId;
+	}
+
+	public void setQuestionValueId(Integer questionValueId) {
+		this.questionValueId = questionValueId;
+	}
+
+	public List<SelectItem> getQuestionValues() {
+		return questionValues;
+	}
+	
+	public void setQuestionValues(List<SelectItem> questionValues) {
+		this.questionValues = questionValues;
+	}
+
+	public Question getQuestion() {
+		return question;
+	}
+
+	public void setQuestion(Question question) {
+		this.question = question;
+	}
+
+	public boolean isQuestionResolved() {
+		return (getQuestion() != null) && (getQuestion().getId() != null);
+	}
+	
+	public QuestionValue getQuestionValue() {
+		return questionValue;
+	}
+
+	public void setQuestionValue(QuestionValue questionValue) {
+		this.questionValue = questionValue;
+	}
+
+
+	public void questionChanged( LookupChangeEvent event ) throws ManagerBeanException {
+		Question question = (Question) event.getNewValue();
+		if ( event.getNewValue() != null ) {
+			QuestionValue qv = new QuestionValue();
+			qv.setQuestion(question);
+			setQuestionValue( qv );
+			questionValues = RegistryCollectionsController.getQuestionValues(question);
+		} else {
+			resetQuestionValue();
+		}
+	}
+	
+	private void resetQuestionValue() {
+		setQuestionValue(null);
+		setQuestionValueId(null);
+		setQuestionValues(null);		
+	}
+	
 	@Override
 	protected void init() throws ManagerBeanException {
 		setMediaTypes(new LinkedList<MediaType>());
@@ -142,6 +223,9 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 		setGeoZones(new GeoZone[]{EMPTY_GEOZONE});
 		setSegments(new Segment[]{EMPTY_SEGMENT});
 		setScopes( new Scope[]{EMPTY_SCOPE} );
+		IManagerBean registryBean = BeanManager.getManagerBean(Registry.class);
+		setRegistrySeller( (Registry) registryBean.createNewTo() );
+		resetQuestionValue();
 	}
 	
 	public String getPreffix() throws ManagerBeanException {
@@ -156,6 +240,21 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 		return getController().resolveAlias(getPreffix() + alias);
 	}
 	
+	private void completeCriteria( Criteria criteria, QuestionValue qv ) {
+		switch ( qv.getQuestion().getType() ) {
+			case BOOLEAN:
+			case NUMBER:
+				criteria.addEqualExpression("Registry.profiles.number", qv.getNumber());
+				break;
+			case DATE:
+				criteria.addEqualExpression("Registry.profiles.date", qv.getDate());
+				break;
+			case TEXT:
+				criteria.addEqualExpression("Registry.profiles.text", qv.getText());
+				break;
+		}		
+	}	
+	
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		String mediaType = resolveAlias("medias_mediaType");
@@ -167,6 +266,22 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 		if ( getScopesSize() > 0 ) {
 			addEnumToCriteria(criteria, "Registry.scope<id", getScopesIds().toArray());	
 		}		
+		if ( (getRegistrySeller() != null) && (getRegistrySeller().getId() != null) ) {
+			String seller = getController().resolveAlias("Registry_sellers_seller_id");
+			criteria.addEqualExpression(seller, getRegistrySeller().getId());			
+		}
+		if ( isQuestionResolved() ) {
+			criteria.addEqualExpression("Registry.profiles.question.id", getQuestion().getId());	
+			if ( getQuestionValueId() != null ) {
+				IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
+				QuestionValue qv = (QuestionValue) bean.get(getQuestionValueId());
+				if ( qv != null ) {
+					completeCriteria(criteria, qv);
+				}
+			} else if (! getQuestionValue().isNotFilled() ) {
+				completeCriteria(criteria, getQuestionValue());
+			}
+		}				
 	}
 	
 	public void onAddMediaType(ActionEvent event) {
