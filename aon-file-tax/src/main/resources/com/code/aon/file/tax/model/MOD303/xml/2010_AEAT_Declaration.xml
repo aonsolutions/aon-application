@@ -5,8 +5,8 @@
 	<field name="free0" value=" " format="Alphabetic" pattern="X" />
 	<field name="type" value="bean" bean="Declaration" property="declarationType" format="AlphaNumeric" pattern="X(1)" />
 	<field name="document" value="bean" bean="Declaration" property="document" format="Nif" pattern="X(9)" />
-	<field name="name" value="bean" bean="Declaration" property="name" format="AlphaNumeric" pattern="X(30)" />
-	<field name="free1" value=" " format="Alphabetic" pattern="X(15)" />
+	<field name="surname" value="bean" bean="Declaration" property="surname" format="AlphaNumeric" pattern="X(30)" />
+	<field name="name" value="bean" bean="Declaration" property="name" format="AlphaNumeric" pattern="X(15)" />
 	<field name="taxRefundRegistry" value="bean" bean="Declaration" property="taxRefundRegistryNumber" format="Numeric" pattern="9(1)" />
 	<field name="year" value="bean" bean="Declaration" property="year" format="Numeric" pattern="9(4)" />
 	<field name="period" value="bean" bean="Declaration" property="period" format="AlphaNumeric" pattern="X(2)" />

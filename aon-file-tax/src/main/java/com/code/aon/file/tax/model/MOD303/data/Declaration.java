@@ -23,11 +23,13 @@ public class Declaration {
 	private boolean specialProrataApplied;
 	private double prorata;
 
+	private boolean person;
 	private String document;
 	private Integer startPeriod;
 	private Integer endPeriod;
 	private Double result;
 	private String name;
+	private String surname;
 	private String address;
 	private Integer addressNumber;
 	private String entity;
@@ -193,6 +195,13 @@ public class Declaration {
 		return isTaxRefundRegistry()?1:2;
 	}
 	
+	public boolean isPerson() {
+		return person;
+	}
+	public void setPerson(boolean person) {
+		this.person = person;
+	}
+	
 	public String getDocument() {
 		return document;
 	}
@@ -243,7 +252,12 @@ public class Declaration {
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	public String getSurname() {
+		return surname;
+	}
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
 	public String getAddress() {
 		return address;
 	}

@@ -130,7 +130,7 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 	private void addDeclarante(Element dec, Declaration declaration) {
 		Element decl = dec.addElement(DECLARANTE);
 		decl.addElement(DATO).addAttribute(NOMBRE,NIF).addAttribute(VALOR, declaration.getDocument());
-		decl.addElement(DATO).addAttribute(NOMBRE,RSOCIAL).addAttribute(VALOR, declaration.getName());
+		decl.addElement(DATO).addAttribute(NOMBRE,RSOCIAL).addAttribute(VALOR, declaration.getSurname());
 		decl.addElement(DATO).addAttribute(NOMBRE,CALLE).addAttribute(VALOR, declaration.getAddress());
 		decl.addElement(DATO).addAttribute(NOMBRE,NUM).addAttribute(VALOR, declaration.getAddressNumber().toString());
 		decl.addElement(DATO).addAttribute(NOMBRE,LETRA).addAttribute(VALOR, EMPTY);

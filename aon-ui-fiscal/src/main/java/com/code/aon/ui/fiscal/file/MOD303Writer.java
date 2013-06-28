@@ -33,6 +33,8 @@ import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.enumeration.DocumentType;
+import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -87,6 +89,8 @@ public class MOD303Writer {
 				declaration.setBankName(vatTaxDeclaration.getRegistryBank().getBank().getName());
 			}
 			Company company = getCompany(vatTaxDeclaration.getDomain());
+			declaration.setPerson(company.getRegistry().getType() == RegistryType.NATURAL 
+					|| company.getDocumentType() != DocumentType.CIF);
 			declaration.setDocument(company.getDocument());
 			declaration.setStartPeriod(0);
 			declaration.setEndPeriod(0);
@@ -96,7 +100,20 @@ public class MOD303Writer {
 			declaration.setStartPeriod(Integer.parseInt( startDate));
 			String endDate = formatter.format(vatTax.getPeriod().getDueDate(year));
 			declaration.setEndPeriod(Integer.parseInt( endDate));
-			declaration.setName(company.getName());
+			String name = company.getName();
+			declaration.setSurname(name);	
+			declaration.setName(null);
+			if (vatTaxDeclaration.getAdministration() == Administration.COMMON_TERRITORY) {
+				if (declaration.isPerson()) {
+					if (StringUtils.contains(name, ',')) {
+						declaration.setName(StringUtils.trim(StringUtils.substringAfter(name, ",")));
+						declaration.setSurname(StringUtils.trim(StringUtils.substringBefore(name, ",")));
+					} else {
+						declaration.setName(StringUtils.trim(StringUtils.substringBefore(name, " ")));
+						declaration.setSurname(StringUtils.trim(StringUtils.substringAfter(name, " ")));
+					}
+				} 
+			}
 			RegistryMedia rm =company.getPhone(); 
 			declaration.setTelephone((rm!=null && StringUtils.isNotBlank(rm.getValue()))?rm.getValue():"0");
 			rm =company.getFax();

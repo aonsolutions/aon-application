@@ -235,8 +235,7 @@ public class VatTaxDeclarationController extends LinesController {
 	
 	public boolean isAeatValidable() {
 		VatTaxDeclaration to = (VatTaxDeclaration) getTo();
-		return ( !isNew() 
-			&& isScriptPresent());
+		return ( !isNew() && to.isFromCommonTerritory() && isScriptPresent() );
 	}
 	private String validateAeatFile() {
 		getMipf().validateAeatFile(fileOutput);
