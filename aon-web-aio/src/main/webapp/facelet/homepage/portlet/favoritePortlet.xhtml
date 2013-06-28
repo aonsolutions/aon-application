@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<aon:div styleClass="aon-portlet">
+		<aon:div styleClass="aon-portlet-title">
+			<aon:div styleClass="aon-portlet-title-buttons">
+				<aon:commandLink id="favorite-reset" actionListener="#{favorite.onReset}" action="favorite_form">
+						<aon:outputText value="&#160;"  styleClass="aon-icon-portlet aon-icon-new"/>
+				</aon:commandLink>
+			</aon:div>
+			<aon:commandLink id="favorite-search" actionListener="#{favorite.onSearch}" action="favorite_list">
+				<aon:outputText value="#{groupwareBundle.aon_favorites}" styleClass="aon-portlet-title-text aon-icon aon-icon-favorite"/>
+			</aon:commandLink>	
+		</aon:div>
+		<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
+			<aon:dataTable id="desktopFavoriteList"
+				value="#{favorite.model}" var="to" rows="5"
+				columnClasses="aon-table-portlet-column"
+				rowClasses="aon-table-portlet-row"
+				styleClass="aon-width-170 aon-table-portlet">
+
+				<aon:column>
+					<h:outputLink target="_blank" value="#{to.url}">
+						<aon:outputText value="#{to.description}"/>	
+					</h:outputLink>	
+				</aon:column>			
+
+			</aon:dataTable>
+		</aon:div>
+	</aon:div>
+
+</ui:composition>

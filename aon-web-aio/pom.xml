@@ -141,7 +141,7 @@
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.accounting</artifactId>
 			<version>${project.version}</version>
-			<scope>runtime</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
@@ -225,7 +225,7 @@
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.fiscal</artifactId>
 			<version>${project.version}</version>
-			<scope>runtime</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>

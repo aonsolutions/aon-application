@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<aon:div styleClass="aon-portlet">
+		<aon:div styleClass="aon-portlet-title">
+			<aon:commandLink id="desktop_groupware_taskInbox"
+				action="task_list"
+				actionListener="#{task.onLaunch}">
+				<aon:outputText value="#{bundle.aon_tasks}" 
+					styleClass="aon-portlet-title-text aon-icon aon-icon-task-assume"/>
+			</aon:commandLink>
+		</aon:div>
+		<aon:div styleClass="aon-portlet-body">
+			<aon:dataTable id="taskSummaryList"
+				value="#{desktop.taskSummaryModel}" var="to"
+				columnClasses="aon-table-portlet-column"
+				rowClasses="aon-table-portlet-row"
+				styleClass="aon-width-170 aon-table-portlet">
+
+				<aon:column styleClass="aon-text-left" >
+					<aon:outputText value="#{to.description}"/>
+				</aon:column>
+
+				<aon:column styleClass="aon-text-right" >
+					<aon:outputText value="#{to.total}"/>
+				</aon:column>
+
+			</aon:dataTable>
+		</aon:div>
+	</aon:div>
+
+</ui:composition>

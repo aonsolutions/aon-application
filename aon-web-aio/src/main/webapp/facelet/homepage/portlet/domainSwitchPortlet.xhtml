@@ -1,0 +1,19 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<aon:div styleClass="aon-portlet">
+		<aon:div styleClass="aon-portlet-title">
+			<aon:outputText value="#{configBundle.config_domain_module}" styleClass="aon-portlet-title-text aon-icon aon-icon-company"/>
+		</aon:div>
+		<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
+			<ui:include src="/com/code/aon/ui/config/facelet/domain/selection_listContent.xhtml" />
+		</aon:div>
+	</aon:div>
+
+</ui:composition>

@@ -1,0 +1,37 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<aon:componentGroup
+		family="javax.faces.Command"
+		rendered="#{aonRole.guest}"
+		method="#{aonRole.doNothing}">
+
+		<h:panelGrid styleClass="aon-width-all aon-vertical-align-top"
+			headerClass="aon-direct-access-panel aon-icon-optionFavorite">
+			<f:facet name="header">
+				<h:panelGrid style="height: 20px;" columns="3"
+					columnClasses="aon-nowrap,aon-width-all," >
+					<aon:outputText value="#{auditBundle.audit_favorite_module}" />
+					<aon:outputText value="&#160;" />
+					<aon:commandLink id="favorite" immediate="true"
+						value="&#160;" title="#{bundle.aon_editing}"
+						action="actionFavorite" actionListener="#{actionFavorite.onInit}"
+						styleClass="aon-icon-edit" />
+				</h:panelGrid>						
+			</f:facet>
+			<aon:div styleClass="aon-direct-access-list">
+				<h:panelGrid styleClass="aon-width-all " columns="#{columnNumber}"
+					columnClasses="aon-width-half aon-padding-righter,aon-width-half"> 
+					<aon:dynamicInclude value="#{actionFavorite.template}" />
+				</h:panelGrid>
+			</aon:div>
+		</h:panelGrid>
+	</aon:componentGroup>
+	
+</ui:composition>

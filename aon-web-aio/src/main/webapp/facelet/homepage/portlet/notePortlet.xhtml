@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<aon:div styleClass="aon-portlet">
+		<aon:div styleClass="aon-portlet-title">
+			<aon:div styleClass="aon-portlet-title-buttons">
+				<aon:commandLink id="note-reset" actionListener="#{note.onReset}" action="note_form">
+						<aon:outputText value="&#160;"  styleClass="aon-icon-portlet aon-icon-new"/>
+				</aon:commandLink>
+			</aon:div>
+			<aon:commandLink id="note-search" actionListener="#{note.onSearch}" action="note_list">
+				<aon:outputText value="#{groupwareBundle.aon_note}" styleClass="aon-portlet-title-text aon-icon aon-icon-notes"/>
+			</aon:commandLink>	
+		</aon:div>
+		<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
+			<aon:dataTable id="recentNoteList"
+				value="#{desktop.recentNoteModel}" var="to" rows="5"
+				columnClasses="aon-table-portlet-column"
+				rowClasses="aon-table-portlet-row"
+				styleClass="aon-width-170 aon-table-portlet">
+
+				<aon:rowSelector action="note_form" actionListener="#{desktop.onSelectNote}"/>
+				
+				<aon:column>
+					<aon:outputText value="#{to.subject}"/>
+				</aon:column>			
+
+			</aon:dataTable>
+		</aon:div>
+	</aon:div>
+
+</ui:composition>

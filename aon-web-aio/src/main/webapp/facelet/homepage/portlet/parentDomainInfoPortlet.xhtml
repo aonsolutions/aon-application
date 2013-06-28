@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<h:panelGrid columns="2" styleClass="aon-width-all aon-margin-bottom"
+		style="border: solid #CCCCCC 1px; color: #777777; background-color: #F5F5F5;" 
+		columnClasses="aon-width-50 aon-vertical-align-top
+					,aon-width-auto aon-vertical-align-top">
+					
+		<h:commandLink action="start" actionListener="#{domains.onParentDomain}" 
+			disabled="#{!domainSwitcher.enabledGoToParent}">
+			<a4j:mediaOutput
+				mimeType="#{parentDomain.mimeTypeName}"
+				cacheable="false" element="img" 
+				value="aon-parent-logo" 
+				style="height:60px;"
+				createContent="#{parentDomain.createLogoContent}">
+			</a4j:mediaOutput>
+		</h:commandLink>
+		
+		<h:panelGrid styleClass="aon-padding-left aon-width-all">
+			<aon:outputText style="font-size: 1.2em;" styleClass="aon-bold" value="#{parentDomain.name}"/>
+			<aon:outputText value="#{parentDomain.phone}"/>						
+			<aon:commandLink title="#{webmailBundle.webmail_send_email}" 
+				ajaxSingle="true" reRender="showNewMessageWindow"
+				value="#{parentDomain.email}"
+				actionListener="#{webmailMessage.onSendEmail}" >
+				<f:setPropertyActionListener target="#{webmailMessage.showNewMessageWindow}" value="#{true}" />
+				<f:param name="email" value="#{parentDomain.email}" />
+			</aon:commandLink>
+		</h:panelGrid>
+
+	</h:panelGrid>
+
+</ui:composition>

@@ -58,6 +58,15 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	
+	<!--  **** DASHBOEARD CONTROLLER **** -->
+	<managed-bean>
+		<managed-bean-name>dashboard</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.aio.controller.DashboardController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<!-- =================== Application Menu Navigation Rules ================= -->	
 
