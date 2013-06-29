@@ -43,9 +43,6 @@ public class DashboardController {
 
 	private com.code.aon.accounting.Period accountingPeriod;
 	private Integer fiscalYear;
-	private Date fromDate;
-	private Date toDate;
-	
 	
 	public com.code.aon.accounting.Period getAccountingPeriod() {
 		if (accountingPeriod == null) {
@@ -107,25 +104,6 @@ public class DashboardController {
 		this.fiscalYear = fiscalYear;
 	}
 	
-	public Date getFromDate() {
-		if (fromDate == null) {
-			fromDate = CommonUtil.getYearFirstDay(new Date());
-		}
-		return fromDate;
-	}
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-
-	public Date getToDate() {
-		if (toDate == null) {
-			toDate = CommonUtil.getYearLastDay(new Date());
-		}
-		return toDate;
-	}
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
 
 	public void onRefresh(ActionEvent event) {
 		this.messages = null;
@@ -260,7 +238,7 @@ public class DashboardController {
 	
 	public List<DashboardMessage> getMessages() {
 		Connection c = null;
-		if (messages == null) {
+		if (messages == null && getAccountingPeriod() != null) {
 			messages = new LinkedList<DashboardMessage>();
 			try {
 				if (getAccountingPeriod() != null) {
@@ -328,8 +306,8 @@ public class DashboardController {
 		try {
 			ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
-			ps.setDate(1, new java.sql.Date(getFromDate().getTime()));
-			ps.setDate(2, new java.sql.Date(getToDate().getTime()));
+			ps.setDate(1, new java.sql.Date(getAccountingPeriod().getInitiationDate().getTime()));
+			ps.setDate(2, new java.sql.Date(getAccountingPeriod().getDeadline().getTime()));
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				int i = rs.getInt(1);
@@ -373,8 +351,8 @@ public class DashboardController {
 		try {
 			ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
-			ps.setDate(1, new java.sql.Date(getFromDate().getTime()));
-			ps.setDate(2, new java.sql.Date(getToDate().getTime()));
+			ps.setDate(1, new java.sql.Date(getAccountingPeriod().getInitiationDate().getTime()));
+			ps.setDate(2, new java.sql.Date(getAccountingPeriod().getDeadline().getTime()));
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				int i = rs.getInt(1);
@@ -408,8 +386,8 @@ public class DashboardController {
 		try {
 			ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
-			ps.setDate(1, new java.sql.Date(getFromDate().getTime()));
-			ps.setDate(2, new java.sql.Date(getToDate().getTime()));
+			ps.setDate(1, new java.sql.Date(getAccountingPeriod().getInitiationDate().getTime()));
+			ps.setDate(2, new java.sql.Date(getAccountingPeriod().getDeadline().getTime()));
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				int i = rs.getInt(1);
