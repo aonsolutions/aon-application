@@ -35,16 +35,24 @@ public class DailyTrackingController extends BasicController {
 	public final static int COMPANY_TYPE = 1;
 	public final static int GLOBAL_TYPE = 2;
 
+	private boolean minuteModeEnabled;
 	private boolean monitor;
 	private List<SelectItem> projects;
 	private List<SelectItem> activityTypes;
 	private int registryType;
 	private Customer customer;
 
+	
+	public boolean isMinuteModeEnabled() {
+		return minuteModeEnabled;
+	}
+	public void setMinuteModeEnabled(boolean minuteModeEnabled) {
+		this.minuteModeEnabled = minuteModeEnabled;
+	}
+
 	public boolean isMonitor() {
 		return monitor;
 	}
-	
 	public void setMonitor(boolean monitor) {
 		this.monitor = monitor;
 	}

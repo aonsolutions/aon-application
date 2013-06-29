@@ -22,6 +22,13 @@
 						<a4j:support event="onclick" ajaxSingle="true" reRender="dailyTrackingForm" />
 					</aon:selectBooleanCheckbox>
 					<aon:outputLabel for="monitor" value="Monitor" rendered="#{aonRole.taskMonitor}" />
+					
+					<aon:selectBooleanCheckbox id="tracking_minutesModeEnabled"
+						value="#{dailyTracking.minuteModeEnabled}" ajaxSingle="true" 
+						styleClass="aon-margin-left"
+						reRender="DailyTracking_trackingDuration_Container" />
+					<aon:outputLabel for="tracking_minutesModeEnabled" 
+						value="#{groupwareBundle.groupware_minutes_mode}"/>
 				</ui:define>
 
 			</ui:decorate>				
@@ -123,8 +130,22 @@
 
 					<aon:outputLabel for="DailyTracking_trackingDuration"
 						value="#{groupwareBundle.groupware_duration}"/>
-					<aon:inputText id="DailyTracking_trackingDuration"
-						value="#{dailyTracking.to.trackingDuration}" required="#{true}" size="5" />
+					<aon:div id="DailyTracking_trackingDuration_Container">
+						<aon:inputText id="DailyTracking_trackingDuration"
+							rendered="#{!dailyTracking.minuteModeEnabled}"
+							value="#{dailyTracking.to.trackingDuration}" required="#{true}" size="5" />
+						<aon:div rendered="#{dailyTracking.minuteModeEnabled}">
+							<aon:outputLabel for="DailyTracking_trackingDurationHours"
+								value="Horas" styleClass="italic"/>
+							<aon:inputText id="DailyTracking_trackingDurationHours" style="margin-left: 5px;"
+								value="#{dailyTracking.to.hours}" required="#{true}" size="5" />
+							<aon:outputLabel for="DailyTracking_trackingDurationMinutes" 
+								value="Minutos" styleClass="aon-margin-left italic"/>
+							<aon:inputText id="DailyTracking_trackingDurationMinutes" style="margin-left: 5px;"
+								value="#{dailyTracking.to.minutes}" required="#{true}" size="5" />
+						</aon:div>
+					</aon:div>
+						
 
 					<aon:outputLabel for="DailyTracking_cost" 
 						rendered="#{dailyTracking.monitor and !dailyTracking.new}"

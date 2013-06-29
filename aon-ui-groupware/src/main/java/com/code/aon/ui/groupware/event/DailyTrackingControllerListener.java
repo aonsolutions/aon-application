@@ -7,6 +7,7 @@ import java.util.Date;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.groupware.DailyTracking;
 import com.code.aon.groupware.TaskHolder;
@@ -91,4 +92,25 @@ public class DailyTrackingControllerListener extends ControllerAdapter {
    		controller.updateRegistrySelection(tracking.getRegistry());
     }
     
+	
+	@Override
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		DailyTrackingController controller = (DailyTrackingController)event.getController();
+		if (controller.isMinuteModeEnabled()) {
+			DailyTracking tracking = (DailyTracking)controller.getTo();
+			double minutes = tracking.getMinutes();
+			minutes = minutes / 60;
+			tracking.setTrackingDuration( CommonUtil.round(tracking.getHours() + minutes));
+		}
+	}
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		DailyTrackingController controller = (DailyTrackingController)event.getController();
+		if (controller.isMinuteModeEnabled()) {
+			DailyTracking tracking = (DailyTracking)controller.getTo();
+			double minutes = tracking.getMinutes();
+			minutes = minutes / 60;
+			tracking.setTrackingDuration( CommonUtil.round(tracking.getHours() + minutes));
+		}
+	}
 }

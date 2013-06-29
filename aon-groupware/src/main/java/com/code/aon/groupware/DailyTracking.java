@@ -12,10 +12,37 @@ import com.esferalia.aon.entity.master.DailyTrackingDB;
 public class DailyTracking extends DailyTrackingDB {
 	
 	private static final long serialVersionUID = 1L;
+	private int hours;
+	private int minutes;
 
 	@Transient
 	public Double getAmount() {
 		return CommonUtil.round(getTrackingDuration() * getCost());
+	}
+
+	@Transient
+	public int getHours() {
+		return hours;
+	}
+	public void setHours(int hours) {
+		this.hours = hours;
+	}
+
+	@Transient
+	public int getMinutes() {
+		return minutes;
+	}
+	public void setMinutes(int minutes) {
+		this.minutes = minutes;
+	}
+	
+	@Override
+	public void setTrackingDuration(double trackingDuration) {
+		super.setTrackingDuration(trackingDuration);
+		setHours( (int) trackingDuration  );
+		double minutes = (trackingDuration % 1);
+		minutes =  minutes * 60; 
+		setMinutes( (int) CommonUtil.round(minutes,0));
 	}
 	
 }
