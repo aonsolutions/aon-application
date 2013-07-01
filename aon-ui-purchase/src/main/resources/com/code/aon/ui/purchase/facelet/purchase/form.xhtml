@@ -91,15 +91,19 @@
 					<aon:div id="purchaseStatusDiv" >
 						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
 							<aon:div>
-								<aon:inputText id="Purchase_series" 
-									value="#{purchase.to.series}" rendered="#{purchase.pending}"
-									size="4" />
+								<aon:selectOneMenu id="Purchase_series" 
+									value="#{purchase.to.series}" rendered="#{purchase.new}"
+									valueChangeListener="#{purchase.onSeriesChanged}" 
+									reRender="Purchase_number,Purchase_securityLevel">
+									<f:selectItem itemLabel=" " itemValue="#{null}" />
+									<f:selectItems value="#{configCollections.salesSeriesIds}" />
+								</aon:selectOneMenu>									
 								<aon:inputText id="Purchase_number" styleClass="aon-margin-left" 
-									value="#{purchase.to.number}" rendered="#{purchase.pending}"
+									value="#{purchase.to.number}" rendered="#{purchase.new}"
 									required="true" size="7" />
 								<aon:outputText styleClass="aon-bold aon-margin-right"
 									value="#{purchase.to.referenceCode}"
-									rendered="#{!purchase.pending}" />
+									rendered="#{!purchase.new}" />
 							</aon:div>
 							<aon:div>
 								<c:if test="#{aonRole.confidentiality}">

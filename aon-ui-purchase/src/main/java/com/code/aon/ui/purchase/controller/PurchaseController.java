@@ -24,10 +24,13 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.SingleCollectionProvider;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.PurchaseInvoicingManager;
@@ -576,6 +579,20 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		return false;
 	}
 	
+	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		String series = (String) event.getNewValue();
+		int number = obtainMaxNumber(series);
+		SecurityLevel securityLevel = SeriesUtil.getSeriesSecurityLevel(series);
+		if (this.getTo() != null) {
+			Purchase purchase = (Purchase) this.getTo();
+			purchase.setNumber(number);
+			purchase.setSecurityLevel(securityLevel);
+		}
+	}
+
+	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
+    	return SeriesNumberUtil.obtainNumber(seriesId, StringUtils.capitalize(this.getBeanName()));
+	}
 
 	/*
 	 * 
