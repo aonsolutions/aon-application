@@ -319,19 +319,29 @@ public class NewDomainController {
 		return domain.getId();		
 	}
 	
-	private Integer duplicateDomain(Integer parent, String name) throws AonConnectionException, AonSQLException {
-		Integer newDomainId = null;
+	private void updateDomainParent( Integer domainId, Domain newParent ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+		Domain domain = (Domain) bean.get(domainId);
+		if ( domain != null ) {
+			domain.setParent(newParent);
+			bean.update(domain);
+		}
+	}
+	
+	private void duplicateDomain(Integer parent, String name) throws AonConnectionException, AonSQLException, ManagerBeanException {
 		Connection connection = null;
 		try {			
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			AonDomainDuplicate add = new AonDomainDuplicate(connection);
 			add.setDescription(getDomainDescription());
 			add.setOwner(getOwner());
-			newDomainId = add.execute(getTemplateDomain().getId(), name);
+			Integer newDomainId = add.execute(getTemplateDomain().getId(), name);
+			if ( (newDomainId != null) && (parentDomain != null) ) {
+				updateDomainParent( newDomainId, parentDomain );
+			}
 		} finally {
 			DbUtils.closeQuietly(connection);
-		}
-		return newDomainId;		
+		}		
 	}
 	
 	public IControllerListener getTemplateDomainFilter() {
@@ -344,8 +354,13 @@ public class NewDomainController {
 					try {					
 						controller.getCriteria().setSkipDomainFilter(true);						
 						if ( parentDomain != null ) {
-							String parent = controller.getFieldName(IEntityAlias.DOMAIN_PARENT_ID);
-							controller.getCriteria().addEqualExpression(parent, parentDomain.getId());							
+							if ( AonUtil.getRoleManager().isSysAdmin() ) {
+								String management = controller.getFieldName(IEntityAlias.DOMAIN_DOMAIN_MANAGEMENT);
+								controller.getCriteria().addEqualExpression(management, Boolean.FALSE);
+							} else {
+								String parent = controller.getFieldName(IEntityAlias.DOMAIN_PARENT_ID);
+								controller.getCriteria().addEqualExpression(parent, parentDomain.getId());	
+							}							
 						} else {
 							controller.getCriteria().addNullExpression("Domain.parent");
 						}

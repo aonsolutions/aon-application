@@ -20,11 +20,13 @@
 						action="domainPrint_search">
 						<aon:actionListener method="#{domainPrint.onSearch}" />
 					</aon:commandLink> 
-					<aon:commandLink id="newDomainDesktop" 
-						title="#{adminBundle.admin_new_domain}"
-						value="&#160;" styleClass="aon-icon-portlet aon-icon-new" 
-						actionListener="#{domains.onNewDomain}"
-						action="newDomain_form"/> 
+					<c:if test="#{aonRole.admin}">
+						<aon:commandLink id="newDomainDesktop" 
+							title="#{adminBundle.admin_new_domain}"
+							value="&#160;" styleClass="aon-icon-portlet aon-icon-new" 
+							actionListener="#{domains.onNewDomain}"
+							action="newDomain_form"/>
+					</c:if> 
 				</aon:div>
 				<aon:outputText value="#{configBundle.config_domain_module}"
 					styleClass="aon-portlet-title-text aon-icon aon-icon-company"/>
@@ -127,20 +129,22 @@
 								</f:facet>							
 								<aon:outputText value="#{domains.currentDomainChildNumber}" />
 							</aon:column>
-							<aon:column styleClass="aon-width-30 aon-vertical-align-top">
-								<f:facet name="header">
-									<aon:outputText value="&#160;" />
-								</f:facet>
-								<aon:commandButton id="#{dataTableId}-remove"
-									onmouseover="disableRowSelector();"
-									onmouseup="disableRowSelector();"
-									onmouseout="enableRowSelector();"
-									title="#{adminBundle.admin_remove_domain} (#{bundle.aon_key_remove_line_accelerator})"
-									action="removeDomain_form" actionListener="#{domains.onRemoveDomain}"
-									rendered="#{domains.currentDomainChildNumber == 0}"
-									styleClass="aon-editDataTable-button aon-icon-delete"
-									accesskey="#{bundle.aon_key_remove_line}" />
-							</aon:column>
+							<c:if test="#{aonRole.admin}">
+								<aon:column styleClass="aon-width-30 aon-vertical-align-top">
+									<f:facet name="header">
+										<aon:outputText value="&#160;" />
+									</f:facet>
+									<aon:commandButton id="#{dataTableId}-remove"
+										onmouseover="disableRowSelector();"
+										onmouseup="disableRowSelector();"
+										onmouseout="enableRowSelector();"
+										title="#{adminBundle.admin_remove_domain} (#{bundle.aon_key_remove_line_accelerator})"
+										action="removeDomain_form" actionListener="#{domains.onRemoveDomain}"
+										rendered="#{domains.currentDomainChildNumber == 0}"
+										styleClass="aon-editDataTable-button aon-icon-delete"
+										accesskey="#{bundle.aon_key_remove_line}" />
+								</aon:column>
+							</c:if>
 						</ui:define>
 					</ui:decorate>
 				</aon:div>

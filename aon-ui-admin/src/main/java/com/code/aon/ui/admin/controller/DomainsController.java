@@ -87,20 +87,27 @@ public class DomainsController extends BasicController {
 	public void selectDomain( Domain domain ) {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		ds.select(domain.getId(), domain.getDescription());
-		if ( (domain.getParent() != null) && (domain.getParent().getId() != null) ) {
-			ds.setParentDomain(domain.getParent().getId());
+		Domain parent = domain.getParent();
+		if ( (parent != null) && (parent.getId() != null) ) {
+			ds.setParentDomain(parent.getId());
 		} else {
 			ds.setParentDomain(domain.getId());
 		}
-		ds.setDomainManagementAvailable(true);
 		setConfigurationMenu();		
 	}
 	
 	private void setConfigurationMenu() {
-		AonUtil.getRoleManager().setSysAdmin();
 		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
-		String[] categories = new String[]{ENTERPRISE_CATEGORY, CONFIGURATION_CATEGORY};
-		String[] groups = new String[]{GROUP_ENTERPRISE_SECURITY, GROUP_CONFIG_SECURITY, GROUP_CONFIG_COMPANY};
+		String[] categories = null;
+		String[] groups = null;
+		if ( AonUtil.getRoleManager().isAdmin() ) {
+			categories = new String[]{ENTERPRISE_CATEGORY, CONFIGURATION_CATEGORY};
+			groups = new String[]{GROUP_ENTERPRISE_SECURITY, GROUP_CONFIG_SECURITY, GROUP_CONFIG_COMPANY};
+		} else {
+			categories = new String[]{CONFIGURATION_CATEGORY};
+			groups = new String[]{GROUP_CONFIG_SECURITY, GROUP_CONFIG_COMPANY};			
+		}
+		AonUtil.getRoleManager().setSysAdmin();			
 		adc.enableOnly(categories, groups);					
 	}
 
