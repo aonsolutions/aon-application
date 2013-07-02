@@ -26,7 +26,9 @@
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;" >
 									<aon:div style="margin-bottom:30px;">
 										<aon:outputText styleClass="aon-bold"
-											value="#{(controller.confirmNoShow) ? (pmsBundle.pms_no_show_confirm) : (pmsBundle.pms_to_cancel_reservation_confirm)}" />
+											value="#{(controller.confirmNoShow) ? 
+														((controller.to.cancelled) ? (pmsBundle.pms_no_show_confirm) : (pmsBundle.pms_no_show_and_cancel_confirm)) :
+														(pmsBundle.pms_to_cancel_reservation_confirm)}" />
 									</aon:div>
 
 									<aon:panelGrid columns="2" style="width: 100%;" styleClass="aon-panelGrid-formatting"

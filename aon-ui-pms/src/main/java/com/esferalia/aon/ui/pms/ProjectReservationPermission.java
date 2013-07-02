@@ -122,7 +122,7 @@ public class ProjectReservationPermission {
 	}
 
 	public boolean isShowMoreMenuAllowed() {
-		return !reservation.isCancelled() && (reservation.isActive() || !reservation.isCheckOut());
+		return (!reservation.isCancelled() || !reservation.isNoShow()) && (reservation.isActive() || !reservation.isCheckOut());
 	}
 
 	public boolean isCheckInAllowed() throws ManagerBeanException {
@@ -150,7 +150,7 @@ public class ProjectReservationPermission {
 	public boolean isNoShowAllowed() throws ManagerBeanException {
 		Date now = new Date();
 		boolean roleAllowed = (isNoShowable(now)) || (!isRoleUser() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
-		return roleAllowed && reservation.isActive() && reservation.isNoCheck();
+		return roleAllowed && (reservation.isActive() || reservation.isCancelled()) && reservation.isNoCheck();
 	}
 
 	public boolean isCancelAllowed() throws ManagerBeanException {

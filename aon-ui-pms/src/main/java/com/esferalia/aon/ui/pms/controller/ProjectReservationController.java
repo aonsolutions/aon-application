@@ -475,27 +475,29 @@ public class ProjectReservationController extends BasicController implements IPm
 	private void cancelReservation(ActionEvent event) throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 
-		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
-		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
-			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
-	    	getReservationUtils().removeProjectReservationRoomDetails(reservationRoom, false, null);
-		}
+		if (!reservation.isCancelled()) {
+			IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
+			for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
+				ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
+		    	getReservationUtils().removeProjectReservationRoomDetails(reservationRoom, false, null);
+			}
 
-		boolean cancelOk = true;
-		if (StringUtils.isNotEmpty(reservation.getCrsCode())) {
-			ReservationRequestManager requestManager = new ReservationRequestManager();
-			cancelOk = requestManager.processBookingCancelRequest(reservation);
-
-			DateFormat dateFormat = new SimpleDateFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_timestamp_pattern"));
-			reservation.setRemarks((cancelOk ? "OK" : "ERROR") + " CANCEL CRS: " + dateFormat.format(new Date()) + "\n" + reservation.getRemarks());
+			boolean cancelOk = true;
+			if (StringUtils.isNotEmpty(reservation.getCrsCode())) {
+				ReservationRequestManager requestManager = new ReservationRequestManager();
+				cancelOk = requestManager.processBookingCancelRequest(reservation);
+	
+				DateFormat dateFormat = new SimpleDateFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_timestamp_pattern"));
+				reservation.setRemarks((cancelOk ? "OK" : "ERROR") + " CANCEL CRS: " + dateFormat.format(new Date()) + "\n" + reservation.getRemarks());
+			}
 		}
 
 		if (isConfirmNoShow()) {
 			reservation.setCheckStatus(ReservationCheckStatus.NO_SHOW);
 		}
-		reservation.setStatus(ReservationStatus.CANCELLED );
+		reservation.setStatus(ReservationStatus.CANCELLED);
 		accept(event);
 
 		IController reservationRoomController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
