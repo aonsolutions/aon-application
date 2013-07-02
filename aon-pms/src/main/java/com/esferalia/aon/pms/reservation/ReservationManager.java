@@ -114,16 +114,14 @@ public class ReservationManager implements IReservationConstants {
 		if (reservation == null) {
 			reservation = new ProjectReservation();
 			createReservation(reservationType, posType, reservation);
-			return reservation;
-		} else {
-			throw new ReservationException("Reservation already exists, can not be added", reservation.getCrsCode(), 127);
 		}
+		return reservation;
 	}
 
 	private ProjectReservation modifyReservation(HotelReservationType reservationType, POSType posType) throws ManagerBeanException, ReservationException {
 		ProjectReservation reservation = obtainReservation(reservationType);
 		if (reservation != null) {
-			if (reservation.getStatus() == ReservationStatus.ACTIVE || reservation.getStatus() == ReservationStatus.BLOCKED) {
+			if (reservation.isActive() || reservation.isBlocked() || reservation.isCancelled()) {
 				if (isReservationRoomAssigned(reservation)) {
 					removeReservationRoomDetail(reservation, true);
 				}
@@ -133,8 +131,6 @@ public class ReservationManager implements IReservationConstants {
 
 				createReservation(reservationType, posType, reservation);
 				return reservation;
-			} else if (reservation.getStatus() == ReservationStatus.CANCELLED) {
-				throw new ReservationException("Reservation already cancelled, can not be modified", reservation.getCrsCode(), 95);
 			} else {
 				throw new ReservationException("Reservation already invoiced, can not be modified", reservation.getCrsCode(), 255);
 			}
@@ -150,11 +146,11 @@ public class ReservationManager implements IReservationConstants {
 		}
 
 		if (reservation != null) {
-			if (reservation.getStatus() == ReservationStatus.ACTIVE || reservation.getStatus() == ReservationStatus.BLOCKED) {
+			if (reservation.isActive() || reservation.isBlocked()) {
 				removeReservationRoomDetail(reservation, false);
 				cancelReservation(reservation);
 				return reservation;
-			} else if (reservation.getStatus() == ReservationStatus.CANCELLED) {
+			} else if (reservation.isCancelled()) {
 				return reservation;
 			} else {
 				throw new ReservationException("Reservation already invoiced, can not be cancelled", reservation.getCrsCode(), 255);
