@@ -276,7 +276,8 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Top"/>
-					<textFieldExpression><![CDATA[$P{PrintUtil}.numberToText((new Date()).getDay())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{PrintUtil}.numberToText((new Date()).getDay()).toLowerCase() +
+((new Date()).getDay()==1?"o":"")]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 					<reportElement key="textField-5" x="155" y="82" width="385" height="26" isRemoveLineWhenBlank="true"/>
