@@ -43,12 +43,12 @@ public class DomainPrintController extends BasicController {
 	
 	@Override
 	public void onSearch(ActionEvent event) {
-		super.onSearch(event);
 		try {
 			clearCriteria();
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
+		super.onSearch(event);		
 	}
 
 	public int getCurrentDomainChildNumber() throws ManagerBeanException {
