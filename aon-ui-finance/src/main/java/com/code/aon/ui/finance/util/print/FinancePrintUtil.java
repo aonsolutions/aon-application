@@ -19,6 +19,10 @@ public class FinancePrintUtil {
 		return instance;
 	}
 	
+	public static String numberToText(Integer amount){
+		return numberToText(new Double(amount));
+	}
+	
 	public static String numberToText(Double amount){
     	try{
 			String res;
