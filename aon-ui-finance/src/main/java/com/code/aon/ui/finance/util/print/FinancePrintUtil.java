@@ -38,9 +38,13 @@ public class FinancePrintUtil {
 		        int ent_ = Integer.parseInt(str1);
 		        int dec_ = Integer.parseInt(str2);
 		        numero = new Number2Text();
-		        res = numero.convertirLetras(ent_) + " euro" + (ent_==1?"":"s");
+		        res = numero.convertirLetras(ent_);
+		        res = (ent_==1?res.substring(0, res.length()-1):res);
+		        res += " euro" + (ent_==1?"":"s");
 		        res += " con ";
-		        res += numero.convertirLetras(dec_) + " céntimo" + (dec_==1?"":"s");
+		        res += numero.convertirLetras(dec_);
+		        res = (dec_==1?res.substring(0, res.length()-1):res);
+		        res += " céntimo" + (dec_==1?"":"s");
 			} else {
 		        int num_ = Integer.parseInt(num);
 		        numero = new Number2Text();
@@ -52,5 +56,10 @@ public class FinancePrintUtil {
 		}
     	return null;
     }
+	
+	public static String monthDayToText(Integer dayNumber){
+		Number2Text numero = new Number2Text();
+		return numero.convertirLetras(dayNumber);
+	}
 
 }
