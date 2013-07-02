@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="180"/>
+	<property name="ireport.x" value="217"/>
 	<property name="ireport.y" value="546"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -276,7 +276,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Top"/>
-					<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{PrintUtil}.numberTotext((new Date()).getDay())]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 					<reportElement key="textField-5" x="150" y="68" width="385" height="26" isRemoveLineWhenBlank="true"/>
@@ -312,7 +312,7 @@
 					<textFieldExpression><![CDATA[$F{dueDate}]]></textFieldExpression>
 				</textField>
 				<textField pattern="yyyy" isBlankWhenNull="true">
-					<reportElement key="textField-5" x="300" y="34" width="30" height="15" isRemoveLineWhenBlank="true"/>
+					<reportElement key="textField-5" x="305" y="34" width="30" height="15" isRemoveLineWhenBlank="true"/>
 					<box leftPadding="0" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -334,7 +334,7 @@
 					<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
 				</textField>
 				<textField pattern="yyyy" isBlankWhenNull="true">
-					<reportElement key="textField-5" x="519" y="94" width="25" height="14" isRemoveLineWhenBlank="true"/>
+					<reportElement key="textField-5" x="524" y="94" width="25" height="14" isRemoveLineWhenBlank="true"/>
 					<box topPadding="0" leftPadding="0" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
