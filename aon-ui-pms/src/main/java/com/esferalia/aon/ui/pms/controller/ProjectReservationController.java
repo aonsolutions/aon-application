@@ -450,10 +450,8 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public void onUndoCheckStatus(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		if (reservation.isCheckIn()) {
-			reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
-			accept(event);
-		}
+		reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
+		accept(event);
 	}
 
 	public void onBlock(ActionEvent event) {

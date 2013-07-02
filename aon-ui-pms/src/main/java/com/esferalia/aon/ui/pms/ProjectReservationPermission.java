@@ -11,6 +11,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationService;
+import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class ProjectReservationPermission {
@@ -178,7 +179,9 @@ public class ProjectReservationPermission {
 
 	public boolean isUndoCheckStatusAllowed() throws ManagerBeanException {
 		Date now = new Date();
-		return reservation.isCheckIn() && reservation.isActive() && isInHouse(now);
+		boolean roleAllowed = (!isRoleUser() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
+		boolean isOnlyNoShow = reservation.getCheckStatus() == ReservationCheckStatus.NO_SHOW;
+		return roleAllowed && ((isOnlyNoShow && reservation.isCancelled()) || (reservation.isCheckIn() && reservation.isActive() && isInHouse(now)));
 	}
 
 	public boolean isCheckStatusVisible() throws ManagerBeanException {
