@@ -158,6 +158,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 					+ " WHERE (d.parent = " + getParentDomain() 
 					+ " OR d.id = " + getParentDomain() + ")"
 					+ " AND d.active = 1"
+					+ " AND (d.expirationDate is null OR d.expirationDate > NOW())"
 					+ " ORDER BY d.parent ,d.description";
 			Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
 			List<?> queryList = query.list();
@@ -183,6 +184,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 			String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
 			String q = "SELECT count(d.id) FROM domain d"
 					+ " WHERE d.parent = " +  getParentDomain()
+					+ " AND (d.expirationDate is null OR d.expirationDate > NOW())"
 					+ " AND d.active = 1";
 			SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
 			BigInteger count = (BigInteger) query.uniqueResult();

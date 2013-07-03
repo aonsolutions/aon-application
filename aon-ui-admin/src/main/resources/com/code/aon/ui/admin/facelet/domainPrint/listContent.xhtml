@@ -73,6 +73,17 @@
 		</aon:outputText>
 	</aon:column>
 
+	<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-80"
+		alias="Domain.expirationDate" >
+		<f:facet name="header">
+			<aon:outputText value="#{adminBundle.admin_domain_expiration_short}" />
+		</f:facet>							
+		<aon:outputText value="#{to.expirationDate}" >
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
+	</aon:column>
+	
 	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
 		<f:facet name="header">
 			<aon:outputText value="#{adminBundle.admin_users}" />
