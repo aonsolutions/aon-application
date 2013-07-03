@@ -41,6 +41,8 @@ public class RowSelectorHandler extends TagHandler implements IRichFacesTags {
 	
 	private static final String ON_SUBMIT_VALUE = "if (isRowSelectorDisabled()){return true}";
 	
+	private static final String ROW_SELECTOR_QUEUE = "rowSelectorQueue";
+	
 	private ComponentConfig config;
 	
 	/**
@@ -94,8 +96,8 @@ public class RowSelectorHandler extends TagHandler implements IRichFacesTags {
 			reRender.setForce(true);
 			attributes.add(reRender);
 		}
-		AttributeInfo onSubmit = new AttributeInfo(ON_SUBMIT, ON_SUBMIT_VALUE);
-		attributes.add(onSubmit);
+		attributes.add( new AttributeInfo(ON_SUBMIT, ON_SUBMIT_VALUE) );
+		attributes.add( new AttributeInfo(EVENTS_QUEUE, ROW_SELECTOR_QUEUE) );
 		AonComponentConfig aonConfig = new AonComponentConfig(config, attributes); 
 		return new AjaxSupportHandler(aonConfig);
 	}

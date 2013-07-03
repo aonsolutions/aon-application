@@ -14,6 +14,8 @@ public interface IRichFacesTags {
 	
 	String FOCUS = "focus";
 	
+	String EVENTS_QUEUE = "eventsQueue";
+	
 	String ON_SUBMIT = "onsubmit";
 	
 	String ON_COMPLETE = "oncomplete";
