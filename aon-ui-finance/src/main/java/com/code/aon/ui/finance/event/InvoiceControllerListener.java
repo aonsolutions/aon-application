@@ -18,20 +18,6 @@ public class InvoiceControllerListener extends ControllerAdapter {
 	public void afterModelInitialized(ControllerEvent event)throws ControllerListenerException {
 		InvoiceController controller = (InvoiceController)event.getController();
 		controller.setTotalInvoiceAmount(null);
-//		InvoiceController controller = (InvoiceController)event.getController();
-//		try {	
-//			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);			
-//			Criteria criteria = new Criteria();
-//			String idAlias = invoiceBean.getFieldName(IEntityAlias.INVOICE_ID);
-//			ProjectionList pl = new ProjectionList( Projection.property(idAlias) );
-//			Expression exp = ExpressionUtilities.getSubQueryExpression(Invoice.class, controller.getCriteria(), pl);
-//			criteria.addInExpression(idAlias, exp);
-//			Projection amountProjection = Projection.sum(invoiceBean.getFieldName(IEntityAlias.INVOICE_TOTAL));
-//			Double amount = (Double)invoiceBean.getUniqueResult(amountProjection, criteria);
-//			controller.setTotalInvoiceAmount(CommonUtil.round(amount==null?0:amount));
-//		} catch (ManagerBeanException e) {
-//			throw new ControllerListenerException(e.getMessage(), e);
-//		}		
 	}
 
 	@Override

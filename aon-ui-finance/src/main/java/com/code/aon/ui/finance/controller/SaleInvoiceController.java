@@ -33,6 +33,7 @@ import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
 import com.code.aon.finance.invoicing.engine.InvoicingEngineFactory;
 import com.code.aon.finance.invoicing.engine.delivery.DeliveryInvoicingDAO;
 import com.code.aon.finance.invoicing.engine.delivery.DeliveryInvoicingEngine;
+import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.seller.Seller;
@@ -131,7 +132,7 @@ public class SaleInvoiceController extends InvoiceController {
 		} else {
 			Invoice invoice = getInvoice();
 			invoice.setRegistryAddress(null);
-			invoice.setProject(null);
+			invoice.setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 
 			setAddresses(null);
 			setProjects(null);	

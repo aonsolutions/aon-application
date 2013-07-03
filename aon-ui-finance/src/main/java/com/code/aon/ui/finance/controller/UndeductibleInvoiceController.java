@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -12,6 +13,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Invoice;
+import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.finance.util.CreditorValidationManager;
@@ -54,7 +56,7 @@ public class UndeductibleInvoiceController extends InvoiceController {
 		} else {
 			Invoice invoice = getInvoice();
 			invoice.setRegistryAddress(null);
-			invoice.setProject(null);
+			invoice.setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 
 			setAddresses(null);	
 			setProjects(null);	

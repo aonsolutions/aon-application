@@ -24,6 +24,7 @@ import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
 import com.code.aon.finance.invoicing.engine.InvoicingEngineFactory;
 import com.code.aon.finance.invoicing.engine.income.IncomeInvoicingDAO;
 import com.code.aon.finance.invoicing.engine.income.IncomeInvoicingEngine;
+import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -75,7 +76,7 @@ public class PurchaseInvoiceController extends InvoiceController {
 			validateInvoice();
 		} else {
 			invoice.setRegistryAddress(null);
-			invoice.setProject(null);
+			invoice.setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 
 			setAddresses(null);	
 			setProjects(null);
