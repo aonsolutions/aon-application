@@ -244,7 +244,9 @@ public class BackupController implements IDumpListener {
 	
 	@Override
 	public synchronized void dumpTable(String table, int rowCount) {
-		setProgressMessage( format(BACKUP_TABLE_PROGRESS, table, rowCount) );
+		if ( (rowCount % 100) == 0 ) {
+			setProgressMessage( format(BACKUP_TABLE_PROGRESS, table, rowCount) );	
+		}
 	}
 
 	@Override
@@ -256,6 +258,19 @@ public class BackupController implements IDumpListener {
 	public synchronized void finishDump() {
 		this.progressValue = this.maxProgressValue + 1;
 		setProgressMessage(null);
+	}
+	
+	public boolean isShowIncludeParentDomain() {
+		Domain parent = domain.getParent();
+		return (parent != null) && (parent.getId() != null);
+	}
+
+	public boolean isShowIncludeChildDomains() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(true);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_PARENT_ID), domain.getId());
+		return bean.getCount(criteria) > 0;
 	}
 	
 }
