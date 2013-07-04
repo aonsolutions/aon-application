@@ -108,17 +108,14 @@ public class InventoryDetailController extends LinesController implements IColle
 			criteria.addEqualExpression(field, category.getId());
 		}
 		if ( getBrand() != null ) {
-//			String field = getFieldName(IEntityAlias.INVENTORY_DETAIL_ITEM_PRODUCT_CATEGORY_ID);
 			String field = "InventoryDetail.item.product.brand.id";
 			criteria.addEqualExpression(field, getBrand().getId());
 		}
 		if ( StringUtils.isNotBlank(getCode()) ) {
-//			String field = getFieldName(IEntityAlias.INVENTORY_DETAIL_ITEM_PRODUCT_CODE);
 			String field = "InventoryDetail.item.product.code";
 			criteria.addExpression( ExpressionUtilities.getLikeExpression(field, "%"+getCode()+"%") );
 		}
 		if ( StringUtils.isNotBlank(getDescription()) ) {
-//			String field = getFieldName(IEntityAlias.INVENTORY_DETAIL_ITEM_PRODUCT_NAME);
 			String field = "InventoryDetail.item.product.name";
 			criteria.addExpression( ExpressionUtilities.getLikeExpression(field, "%"+getDescription()+"%") );
 		}

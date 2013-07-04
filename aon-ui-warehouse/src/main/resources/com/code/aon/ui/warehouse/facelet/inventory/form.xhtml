@@ -78,27 +78,7 @@
 						<aon:outputText value="#{inventory.to.description}" size="64" />
 					</aon:panelGrid>
 				</aon:div>
-								
-				<!--  
-				<aon:div styleClass="aon-padding-bottom"
-						style="background-color:#f6f5e3; padding:5px; margin-bottom:5px; width:100%;">
-				  	<aon:outputLabel for="Inventory_category"
-				  		styleClass="aon-italic" 
-				  		value="#{warehouseBundle.warehouse_inventory_category_filter}"  />
-					<aon:selectOneMenu id="Inventory_category" styleClass="aon-margin-left"
-						value="#{inventoryDetail.category}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{productCollections.categories}" />
-					</aon:selectOneMenu>
-					
-					<aon:commandButton title="#{bundle.aon_accept}"
-						actionListener="#{inventoryDetail.loadDetailModel}"
-						reRender="inventoryDetailDiv" value="" 
-						styleClass="aon-editDataTable-button aon-icon-accept aon-margin-left" 
-						accesskey="#{bundle.aon_key_save_line}" />
-				</aon:div>
-				-->
-				
+	
 				<ui:include src="/com/code/aon/ui/warehouse/facelet/inventory/productSearch.xhtml" />
 
 				<aon:div layout="none" id="inventoryDetailDiv" >
