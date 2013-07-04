@@ -255,28 +255,30 @@
 											actionListener="#{purchase.onEditSearch}"
 											value="#{purchaseBundle.purchase_module}" />
 									</aon:div>									
-									<c:if test="#{(domainSwitcher.type == 'HOTEL') and (aonRole.warehouseOperator)}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="proposal"
-												action="proposal_search"
-												actionListener="#{proposal.onEditSearch}"
-												value="#{purchaseBundle.purchase_proposal_module}">
-											</aon:commandLink>
-										</aon:div>				
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="purchaseOrder"
-												action="purchaseOrder_grid"
-												actionListener="#{purchaseOrder.onInit}"
-												value="#{purchaseBundle.purchase_purchaseOrder_module}">
-											</aon:commandLink>
-										</aon:div>				
+									<c:if test="#{aonRole.warehouseOperator}">
+										<c:if test="#{(domainSwitcher.type == 'HOTEL')}">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="proposal"
+													action="proposal_search"
+													actionListener="#{proposal.onEditSearch}"
+													value="#{purchaseBundle.purchase_proposal_module}">
+												</aon:commandLink>
+											</aon:div>				
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="purchaseOrder"
+													action="purchaseOrder_grid"
+													actionListener="#{purchaseOrder.onInit}"
+													value="#{purchaseBundle.purchase_purchaseOrder_module}">
+												</aon:commandLink>
+											</aon:div>				
+										</c:if>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="purchasePrint" 
 												action="purchasePrint_search"
 												actionListener="#{purchasePrint.onEditSearch}"
 												value="#{purchaseBundle.purchase_purchasePrint_module}" />
 										</aon:div>															
-									</c:if>																											
+									</c:if>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="supplier-management" 
 											action="supplier_search-management"
