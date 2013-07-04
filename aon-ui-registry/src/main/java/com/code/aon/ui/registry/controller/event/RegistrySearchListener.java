@@ -16,7 +16,9 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Scope;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Question;
 import com.code.aon.registry.QuestionValue;
 import com.code.aon.registry.Registry;
@@ -225,6 +227,7 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 		setScopes( new Scope[]{EMPTY_SCOPE} );
 		IManagerBean registryBean = BeanManager.getManagerBean(Registry.class);
 		setRegistrySeller( (Registry) registryBean.createNewTo() );
+		setQuestion( (Question) BeanManager.getManagerBean(Question.class).createNewTo() );
 		resetQuestionValue();
 	}
 	
@@ -250,7 +253,8 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 				criteria.addEqualExpression("Registry.profiles.date", qv.getDate());
 				break;
 			case TEXT:
-				criteria.addEqualExpression("Registry.profiles.text", qv.getText());
+				Expression exp = ExpressionUtilities.getLikeExpression("Registry.profiles.text", "%"+qv.getText()+"%");
+				criteria.addExpression(exp);
 				break;
 		}		
 	}	

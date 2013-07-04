@@ -16,7 +16,6 @@ import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.registry.Question;
 import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
@@ -63,8 +62,7 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 		setItem( (Item) itemBean.createNewTo() );
 		CommercialCollectionsController collections = (CommercialCollectionsController) AonUtil.getRegisteredBean(ICommercialConstants.COLLECTIONS_CONTROLLER_NAME);
 		collections.refreshActivities();
-		setAction( (MarketingAction) BeanManager.getManagerBean(MarketingAction.class).createNewTo() );
-		setQuestion( (Question) BeanManager.getManagerBean(Question.class).createNewTo() );		
+		setAction( (MarketingAction) BeanManager.getManagerBean(MarketingAction.class).createNewTo() );		
 		super.init();
 	}
 	
